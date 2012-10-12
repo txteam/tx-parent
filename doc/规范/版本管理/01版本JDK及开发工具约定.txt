@@ -1,0 +1,8 @@
+版本jdk采用jdk1.6.20
+eclipse版本选用3.7.2
+	插件建议：	springTools
+				egit(git版本管理工具)
+				m2(maven插件)
+				apatana(可选,编辑jsp比较好的一个插件)
+数据库开发阶段建议选用postgresql9.1.x版本
+	现在尚缺乏postgresql中文文档支持，在这里建设起来可能以后会有用
