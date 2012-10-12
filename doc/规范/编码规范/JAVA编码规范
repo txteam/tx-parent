@@ -52,5 +52,24 @@
 		if(condition){
 			doSomething...;
 		}
+[格式]:相对独立的程序块之间、变量说明之后必须加空行
+	[示例]:如下例子不符合规范
+		if(StringUtils.isEmpty(password)){
+			return false;
+		}
+		LoginService loginService = new LoginService();
+		...
+		应写为：
+		if(StringUtils.isEmpty(password)){
+			return false;
+		}
+		
+		LoginService loginService = new LoginService();
+		...
+[格式]:对齐只使用空格不使用tab
+	说明：以免不同的编辑器阅读程序时，tab对应空格不同造成程序布局不整齐。
+		在eclipse中可将tab自动替换成空格的选项打开
+	
+		
 		
 		
