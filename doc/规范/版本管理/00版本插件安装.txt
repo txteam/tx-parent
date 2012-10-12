@@ -1,0 +1,9 @@
+版本管理工具
+github
+
+eclipse开发时，建议统一选择egit进行版本管理，以便操作经验共享
+http://download.eclipse.org/egit/updates
+
+
+
+
