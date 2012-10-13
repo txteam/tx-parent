@@ -4,7 +4,7 @@
 
 	<groupId>com.tx</groupId>
 	<artifactId>tx-parent</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<packaging>pom</packaging>
 	<name>Tx-Parent</name>
 	<description>Tx Parent</description>
@@ -25,7 +25,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<!-- projectInfo -->
-
+		
 		<!-- lib info -->
 
 		<!-- Default Build Properties -->
