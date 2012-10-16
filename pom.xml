@@ -816,6 +816,18 @@
 				<version>1.6.4</version>
 			</dependency>
 			<dependency>
+				<groupId>ch.qos.logback</groupId>
+				<artifactId>logback-core</artifactId>
+				<version>0.9.30</version>
+			</dependency>
+			<dependency>
+				<groupId>ch.qos.logback</groupId>
+				<artifactId>logback-classic</artifactId>
+				<version>0.9.30</version>
+			</dependency>
+			
+			<!-- log兼容用 -->
+			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>jcl-over-slf4j</artifactId>
 				<version>1.6.4</version>
@@ -826,15 +838,13 @@
 				<version>1.6.4</version>
 			</dependency>
 			<dependency>
-				<groupId>ch.qos.logback</groupId>
-				<artifactId>logback-core</artifactId>
-				<version>0.9.30</version>
+				<!-- 如果要使用log4j则引入这个 -->
+				<groupId>org.slf4j</groupId>
+				<artifactId>log4j-over-slf4j</artifactId>
+				<version>1.6.4</version>
 			</dependency>
-			<dependency>
-				<groupId>ch.qos.logback</groupId>
-				<artifactId>logback-classic</artifactId>
-				<version>0.9.30</version>
-			</dependency>
+			
+			<!-- 一般用不到 -->
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-log4j12</artifactId>
@@ -864,12 +874,6 @@
 						<artifactId>jmxri</artifactId>
 					</exclusion>
 				</exclusions>
-			</dependency>
-			<dependency>
-				<!-- 如果要使用log4j则引入这个 -->
-				<groupId>org.slf4j</groupId>
-				<artifactId>log4j-over-slf4j</artifactId>
-				<version>1.6.4</version>
 			</dependency>
 
 			<!-- Doc text deal jar JAVA读写 excel,word -->
