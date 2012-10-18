@@ -6,13 +6,14 @@
 	<property name="logfile" value="d:/logs/webdemo" />
 	<property name="maxLogFileSize" value="10MB"></property>
 	<property name="maxLogFileNum" value="3"></property>
+	<timestamp key="date" datePattern="yyyy-MM-dd HH:mm:ss"/>
 
 	<contextName>${contentName}</contextName>
 
 	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
 		<!-- encoder 默认配置为PatternLayoutEncoder -->
 		<encoder>
-			<pattern>${commonPattern}</pattern>
+			<pattern>${date}${commonPattern}</pattern>
 		</encoder>
 	</appender>
 	
@@ -29,7 +30,7 @@
 			<maxFileSize>${maxLogFileSize}</maxFileSize>
 		</triggeringPolicy>
 		<encoder>
-			<pattern>${commonPattern}</pattern>
+			<pattern>${date}${commonPattern}</pattern>
 		</encoder>
 	</appender>
 	
@@ -37,7 +38,7 @@
 	    <file>${logfile}.sql.log</file>  
 	    <append>false</append>  
 	    <encoder>  
-	      <pattern>${commonPattern}</pattern>  
+	      <pattern>${date}${commonPattern}</pattern>  
 	    </encoder>  
 	</appender>  
 
@@ -59,6 +60,7 @@
 	</logger>
 
 	<root level="INFO">
-		<appender-ref ref="STDOUT,FILE" />
+		<appender-ref ref="STDOUT" />
+		<appender-ref ref="FILE" />
 	</root>
 </configuration>
