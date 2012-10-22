@@ -791,24 +791,30 @@
 				</exclusions>
 			</dependency>
 
-			<!-- <dependency> -->
-			<!-- <groupId>opensymphony</groupId> -->
-			<!-- <artifactId>quartz</artifactId> -->
-			<!-- <version>1.6.3</version> -->
-			<!-- <optional>true</optional> -->
-			<!-- </dependency> -->
 			<dependency>
 				<groupId>org.quartz-scheduler</groupId>
 				<artifactId>quartz</artifactId>
 				<version>1.8.6</version>
 				<optional>true</optional>
 			</dependency>
-			<!-- <dependency> -->
-			<!-- <groupId>org.quartz-scheduler</groupId> -->
-			<!-- <artifactId>quartz</artifactId> -->
-			<!-- <version>2.1.6</version> -->
-			<!-- <optional>true</optional> -->
-			<!-- </dependency> -->
+			<dependency>
+				<groupId>org.quartz-scheduler</groupId>
+				<artifactId>quartz-commonj</artifactId>
+				<version>1.8.6</version>
+				<optional>true</optional>
+			</dependency>
+			<dependency>
+				<groupId>org.quartz-scheduler</groupId>
+				<artifactId>quartz-weblogic</artifactId>
+				<version>1.8.6</version>
+				<optional>true</optional>
+			</dependency>
+			<dependency>
+				<groupId>org.quartz-scheduler</groupId>
+				<artifactId>quartz-oracle</artifactId>
+				<version>1.8.6</version>
+				<optional>true</optional>
+			</dependency>
 
 			<dependency>
 				<groupId>hsqldb</groupId>
