@@ -718,6 +718,31 @@
 				</exclusions>
 			</dependency>
 
+			<dependency>
+				<groupId>opensymphony</groupId>
+				<artifactId>quartz</artifactId>
+				<version>1.6.3</version>
+				<optional>true</optional>
+			</dependency>
+			<dependency>
+				<groupId>hsqldb</groupId>
+				<artifactId>hsqldb</artifactId>
+				<version>1.8.0.10</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>javax.mail</groupId>
+				<artifactId>mail</artifactId>
+				<version>1.4</version>
+				<optional>true</optional>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.poi</groupId>
+				<artifactId>poi</artifactId>
+				<version>3.0.2-FINAL</version>
+				<optional>true</optional>
+			</dependency>
+
 			<!-- spring dependency -->
 			<dependency>
 				<groupId>cglib</groupId>
