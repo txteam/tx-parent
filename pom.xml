@@ -1057,6 +1057,13 @@
 				<version>2.4</version>
 				<scope>compile</scope>
 			</dependency>
+			<dependency>
+			    <groupId>tomcat</groupId>
+			    <artifactId>jsp-api</artifactId>
+			    <version>5.5.23</version>
+			    <optional>true</optional>
+				<scope>compile</scope>
+			</dependency>
 
 			<!-- Taglibs -->
 			<dependency>
