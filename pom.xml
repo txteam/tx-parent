@@ -791,6 +791,13 @@
 				</exclusions>
 			</dependency>
 
+			<!-- 定时运行任务 -->
+			<dependency>
+				<groupId>opensymphony</groupId>
+				<artifactId>quartz</artifactId>
+				<version>1.6.3</version>
+				<optional>true</optional>
+			</dependency>
 			<dependency>
 				<groupId>org.quartz-scheduler</groupId>
 				<artifactId>quartz</artifactId>
@@ -853,13 +860,6 @@
 				<groupId>asm</groupId>
 				<artifactId>asm-commons</artifactId>
 				<version>3.1</version>
-				<optional>true</optional>
-			</dependency>
-			<dependency>
-				<!-- 定时运行任务 -->
-				<groupId>opensymphony</groupId>
-				<artifactId>quartz</artifactId>
-				<version>1.6.3</version>
 				<optional>true</optional>
 			</dependency>
 
@@ -1058,10 +1058,10 @@
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
-			    <groupId>tomcat</groupId>
-			    <artifactId>jsp-api</artifactId>
-			    <version>5.5.23</version>
-			    <optional>true</optional>
+				<groupId>tomcat</groupId>
+				<artifactId>jsp-api</artifactId>
+				<version>5.5.23</version>
+				<optional>true</optional>
 				<scope>compile</scope>
 			</dependency>
 
