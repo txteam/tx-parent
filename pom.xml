@@ -1037,9 +1037,9 @@
 					<version>1.7</version>
 					<inherited>true</inherited>
 				</plugin>
+
 				<!-- compliler -->
 				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
 					<version>2.3.2</version>
 					<inherited>true</inherited>
@@ -1130,25 +1130,58 @@
 
 				<!-- package -->
 				<!-- mvn war:war -->
+				<!-- 生成war包 -->
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-war-plugin</artifactId>
-					<version>2.1.1</version>
-					<inherited>true</inherited>
+					<version>2.3</version>
 					<configuration>
-						<packagingExcludes>src/main/webapp/META-INF/context.xml</packagingExcludes>
-						<webXml>src/main/webapp/WEB-INF/web.xml</webXml>
-						<outputDirectory>target</outputDirectory>
-						<warName>${project.artifactId}-${project.version}</warName>
-						<warSourceDirectory>src/main/webapp</warSourceDirectory>
+						<!-- The directory for the generated WAR. -->
+						<!-- Default value is: ${project.build.directory}. -->
+						<outputDirectory>${basedir}/target/war</outputDirectory>
+						<!-- The name of the generated WAR. -->
+						<!-- Default value is: ${project.build.finalName}. -->
+						<warName>ios</warName>
+						<!-- Single directory for extra files to include in the WAR. This is 
+							where you place your JSP files. -->
+						<!-- Default value is: ${basedir}/src/main/webapp. -->
+						<warSourceDirectory>${basedir}/src/main/webapp</warSourceDirectory>
+						<!-- The directory where the webapp is built. -->
+						<!-- Default value is: ${project.build.directory}/${project.build.finalName}. -->
+						<webappDirectory>${basedir}/target/war/webapp</webappDirectory>
+						<!--Directory to unpack dependent WARs into if needed. -->
+						<!--Default value is: ${project.build.directory}/war/work. -->
+						<workDirectory>${basedir}/target/war/work</workDirectory>
+						<!-- The archive configuration to use -->
+						<archive>
+							<!-- Maven 打包 jar 、war 文件时，不将 pom.xml 等打包进包中 -->
+							<addMavenDescriptor>false</addMavenDescriptor>
+						</archive>
+						<packagingExcludes>
+							**/spy.properties
+						</packagingExcludes>
+						<!-- The comma separated list of tokens to exclude when copying the 
+							content of the warSourceDirectory. -->
+						<warSourceExcludes>
+							**/spy.properties
+						</warSourceExcludes>
+						<!-- The path to the web.xml file to use. -->
+						<!-- User property is: maven.war.webxml. -->
+						<webXml>${basedir}/src/main/webapp/WEB-INF/web.xml</webXml>
+						<webResources>
+							<resource>
+								<directory>src/main/webapp/WEB-INF</directory>
+								<targetPath>WEB-INF</targetPath>
+							</resource>
+							<resource>
+								<directory>src/main/java</directory>
+								<excludes>
+									<exclude>**/**.java</exclude>
+								</excludes>
+								<targetPath>WEB-INF/classes</targetPath>
+							</resource>
+						</webResources>
 					</configuration>
-					<dependencies>
-						<dependency>
-							<groupId>org.apache.maven.plugins</groupId>
-							<artifactId>maven-war-plugin</artifactId>
-							<version>2.1.1</version>
-						</dependency>
-					</dependencies>
 				</plugin>
 
 				<!-- mvn jar:jar -->
