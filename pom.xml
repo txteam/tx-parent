@@ -1281,7 +1281,20 @@
 						</dependency>
 					</dependencies>
 				</plugin>
+				<!-- sonar -->
+				<plugin>
+					<groupId>org.codehaus.sonar</groupId>
+					<artifactId>sonar-maven3-plugin</artifactId>
+					<version>3.3</version>
+				</plugin>
+				<!-- <plugin> -->
+				<!-- <groupId>org.codehaus.sonar</groupId> -->
+				<!-- <artifactId>sonar-maven-plugin</artifactId> -->
+				<!-- <version>3.3</version> -->
+				<!-- </plugin> -->
 			</plugins>
+
+
 		</pluginManagement>
 
 		<plugins>
