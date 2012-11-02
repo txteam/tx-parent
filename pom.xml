@@ -770,11 +770,7 @@
 				<artifactId>mail</artifactId>
 				<version>1.4</version>
 			</dependency>
-			<dependency>
-				<groupId>org.apache.poi</groupId>
-				<artifactId>poi</artifactId>
-				<version>3.0.2-FINAL</version>
-			</dependency>
+
 
 			<!-- spring dependency -->
 			<dependency>
@@ -888,31 +884,6 @@
 				<artifactId>xfire-all</artifactId>
 				<version>1.2.6</version>
 			</dependency>
-			<dependency>
-				<groupId>org.codehaus.xfire</groupId>
-				<artifactId>xfire-jaxws</artifactId>
-				<version>1.2.6</version>
-			</dependency>
-			<dependency>
-				<groupId>org.codehaus.xfire</groupId>
-				<artifactId>xfire-core</artifactId>
-				<version>1.2.6</version>
-			</dependency>
-			<dependency>
-				<groupId>org.codehaus.xfire</groupId>
-				<artifactId>xfire-spring</artifactId>
-				<version>1.2.6</version>
-			</dependency>
-			<dependency>
-				<groupId>org.codehaus.xfire</groupId>
-				<artifactId>xfire-annotations</artifactId>
-				<version>1.2.6</version>
-			</dependency>
-			<dependency>
-				<groupId>org.codehaus.xfire</groupId>
-				<artifactId>xfire-jaxb</artifactId>
-				<version>1.2.6</version>
-			</dependency>
 
 			<!-- log -->
 			<dependency>
@@ -988,6 +959,11 @@
 				<artifactId>poi</artifactId>
 				<version>3.7</version>
 			</dependency>
+			<!-- <dependency> -->
+			<!-- <groupId>org.apache.poi</groupId> -->
+			<!-- <artifactId>poi</artifactId> -->
+			<!-- <version>3.0.2-FINAL</version> -->
+			<!-- </dependency> -->
 
 			<!-- Test -->
 			<dependency>
@@ -1061,17 +1037,31 @@
 					<version>1.7</version>
 					<inherited>true</inherited>
 				</plugin>
+				<!-- compliler -->
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
 					<version>2.3.2</version>
 					<inherited>true</inherited>
 					<configuration>
+						<!-- The -source argument for the Java compiler.Default value is: 1.5. -->
 						<source>1.6</source>
+						<!-- The -target argument for the Java compiler.Default value is: 1.5. -->
 						<target>1.6</target>
+						<!-- The -encoding argument for the Java compiler.Default value is: 
+							${project.build.sourceEncoding}. -->
 						<encoding>UTF-8</encoding>
+						<!-- Set to true to show compilation warnings. Default value is: false. -->
+						<showWarnings>true</showWarnings>
+						<showDeprecation>true</showDeprecation>
+						<!-- 发出编译警告和错误时是否停止 -->
+						<!-- <failOnError>false</failOnError> -->
+						<compilerArguments>
+							<extdirs>${basedir}/src/main/webapp/WEB-INF/lib</extdirs>
+						</compilerArguments>
 					</configuration>
 				</plugin>
+
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-resources-plugin</artifactId>
@@ -1265,9 +1255,19 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
+				<inherited>true</inherited>
 			</plugin>
 		</plugins>
 	</build>
 
-
+	<distributionManagement>
+		<repository>
+			<id>releases</id>
+			<url>http://192.168.0.239:8000/nexus/content/repositories/releases</url>
+		</repository>
+		<snapshotRepository>
+			<id>snapshots</id>
+			<url>http://192.168.0.239:8000/nexus/content/repositories/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
 </project>
