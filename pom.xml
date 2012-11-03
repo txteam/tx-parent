@@ -37,6 +37,17 @@
 
 	<dependencyManagement>
 		<dependencies>
+			<dependency>
+				<groupId>com.tx</groupId>
+				<artifactId>tx-core</artifactId>
+				<version>${tx-jar-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.tx</groupId>
+				<artifactId>tx-commons</artifactId>
+				<version>${tx-jar-version}</version>
+			</dependency>
+		
 			<!-- Low 1.6 version of the JDK dependency -->
 			<dependency>
 				<groupId>com.sun.xml.fastinfoset</groupId>
