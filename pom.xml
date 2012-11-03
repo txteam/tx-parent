@@ -883,6 +883,28 @@
 				<groupId>org.codehaus.xfire</groupId>
 				<artifactId>xfire-all</artifactId>
 				<version>1.2.6</version>
+				<exclusions>
+					<exclusion>
+						<artifactId>jmock</artifactId>
+						<groupId>jmock</groupId>
+					</exclusion>
+					<exclusion>
+						<artifactId>commons-logging</artifactId>
+						<groupId>commons-logging</groupId>
+					</exclusion>
+					<exclusion>
+						<artifactId>spring</artifactId>
+						<groupId>org.springframework</groupId>
+					</exclusion>
+					<exclusion>
+						<artifactId>stax-utils</artifactId>
+						<groupId>net.java.dev.stax-utils</groupId>
+					</exclusion>
+					<exclusion>
+						<artifactId>jaxb-impl</artifactId>
+						<groupId>com.sun.xml.bind</groupId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 
 			<!-- log -->
@@ -1026,20 +1048,12 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.codehaus.xfire</groupId>
-			<artifactId>xfire-all</artifactId>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-frontend-jaxws</artifactId>
 			<exclusions>
 				<exclusion>
-					<artifactId>jmock</artifactId>
-					<groupId>jmock</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>commons-logging</artifactId>
-					<groupId>commons-logging</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>spring</artifactId>
-					<groupId>org.springframework</groupId>
+					<artifactId>jaxb-impl</artifactId>
+					<groupId>com.sun.xml.bind</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
