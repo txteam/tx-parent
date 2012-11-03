@@ -4,10 +4,11 @@
 
 	<groupId>com.tx</groupId>
 	<artifactId>tx-parent</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<name>Tx-Parent</name>
-	<description>Tx Parent</description>
+	
+	<name>tx-parent</name>
+	<description>tx parent</description>
 
 	<developers>
 		<developer>
@@ -27,10 +28,12 @@
 		<!-- projectInfo -->
 
 		<!-- lib info -->
+		<tx-jar-version>1.0.0-SNAPSHOT</tx-jar-version>
 
 		<!-- Default Build Properties -->
 		<skipTests>true</skipTests>
 	</properties>
+	
 
 	<dependencyManagement>
 		<dependencies>
@@ -290,6 +293,7 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
+			
 			<!-- xml -->
 			<dependency>
 				<groupId>com.thoughtworks.xstream</groupId>
