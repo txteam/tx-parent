@@ -1,14 +1,29 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-
+	
 	<groupId>com.tx</groupId>
 	<artifactId>tx-parent</artifactId>
-	<version>1.0.1</version>
+	<version>${tx-version}</version>
 	<packaging>pom</packaging>
+
+	<properties>
+		<!-- lib info -->
+		<tx-version>1.0.1</tx-version>
+
+		<!-- base info -->
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+		<!-- projectInfo -->
+
+		<!-- Default Build Properties -->
+		<skipTests>true</skipTests>
+	</properties>
 
 	<name>tx-parent</name>
 	<description>tx parent</description>
+
+
 
 	<developers>
 		<developer>
@@ -21,46 +36,32 @@
 		</developer>
 	</developers>
 
-	<properties>
-		<!-- lib info -->
-		<tx-jar-version>1.0.1</tx-jar-version>
-		
-		<!-- base info -->
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
-		<!-- projectInfo -->
-		
-		<!-- Default Build Properties -->
-		<skipTests>true</skipTests>
-	</properties>
-
-
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
 				<groupId>com.tx</groupId>
 				<artifactId>tx-core</artifactId>
-				<version>${tx-jar-version}</version>
+				<version>${tx-version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.tx</groupId>
 				<artifactId>tx-component-config</artifactId>
-				<version>${tx-jar-version}</version>
+				<version>${tx-version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.tx</groupId>
 				<artifactId>tx-component-calendar</artifactId>
-				<version>${tx-jar-version}</version>
+				<version>${tx-version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.tx</groupId>
 				<artifactId>tx-component-menu</artifactId>
-				<version>${tx-jar-version}</version>
+				<version>${tx-version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.tx</groupId>
 				<artifactId>tx-component-auth</artifactId>
-				<version>${tx-jar-version}</version>
+				<version>${tx-version}</version>
 			</dependency>
 
 			<!-- Low 1.6 version of the JDK dependency -->
@@ -1372,11 +1373,11 @@
 	<distributionManagement>
 		<repository>
 			<id>releases</id>
-			<url>http://192.168.0.239:8000/nexus/content/repositories/releases</url>
+			<url>http://localhost:8081/nexus/content/repositories/releases</url>
 		</repository>
 		<snapshotRepository>
 			<id>snapshots</id>
-			<url>http://192.168.0.239:8000/nexus/content/repositories/snapshots</url>
+			<url>http://localhost:8081/nexus/content/repositories/snapshots</url>
 		</snapshotRepository>
 	</distributionManagement>
 </project>
