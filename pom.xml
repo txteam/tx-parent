@@ -9,7 +9,7 @@
 
 	<properties>
 		<!-- lib info -->
-		<tx-version>1.0.2</tx-version>
+		<tx-version>1.0.3</tx-version>
 
 		<!-- base info -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
