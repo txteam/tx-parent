@@ -9,7 +9,7 @@
 
 	<properties>
 		<!-- lib info -->
-		<tx-version>1.0.10</tx-version>
+		<tx-version>1.0.0-SNAPSHOT</tx-version>
 
 		<!-- base info -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -22,8 +22,6 @@
 
 	<name>tx-parent</name>
 	<description>tx parent</description>
-
-
 
 	<developers>
 		<developer>

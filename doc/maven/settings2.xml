@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+	<!-- 本地仓库地址：可修改为本机任意路径，依赖包将放置于该包中 -->
+	<localRepository>d:/repository/repo3</localRepository>
+
+	<!-- 是否关闭网络连接 -->
+	<!-- <offline>false</offline> -->
+
+	<!-- 默认插件组 -->
+	<pluginGroups>
+		<!-- <pluginGroup>com.your.plugins</pluginGroup> -->
+	</pluginGroups>
+
+	<!-- 配置网络代理 -->
+	<proxies>
+		<!-- <proxy> -->
+		<!-- <id>optional</id> -->
+		<!-- <active>true</active> -->
+		<!-- <protocol>http</protocol> -->
+		<!-- <username>proxyuser</username> -->
+		<!-- <password>proxypass</password> -->
+		<!-- <host>proxy.host.net</host> -->
+		<!-- <port>80</port> -->
+		<!-- <nonProxyHosts>local.net|some.host.com</nonProxyHosts> -->
+		<!-- </proxy> -->
+	</proxies>
+
+	<!-- 对应版本发布时用户名密码 -->
+	<servers>
+		<server>
+			<id>snapshots</id>
+			<username>admin</username>
+			<password>admin</password>
+		</server>
+		<server>
+			<id>releases</id>
+			<username>admin</username>
+			<password>admin</password>
+		</server>
+		<!-- Another sample, using keys to authenticate. -->
+		<!-- <server> -->
+		<!-- <id>siteServer</id> -->
+		<!-- <privateKey>/path/to/private/key</privateKey> -->
+		<!-- <passphrase>optional; leave empty if not used.</passphrase> -->
+		<!-- </server> -->
+	</servers>
+
+	<!-- 中央库镜像化 -->
+	<mirrors>
+		<mirror>
+			<id>nexusForCentral</id>
+			<name>internalNexusRepository</name>
+			<url>http://192.168.0.239:8000/nexus/content/groups/public/</url>
+			<mirrorOf>central</mirrorOf>
+		</mirror>
+	</mirrors>
+
+	<!-- 激活全局的repositories -->
+	<profiles>
+		<profile>
+			<id>bodaProfile</id>
+			<repositories>
+				<repository>
+					<id>nexus</id>
+					<url>http://192.168.0.239:8000/nexus/content/groups/public/</url>
+					<releases>
+						<enabled>true</enabled>
+					</releases>
+					<snapshots>
+						<enabled>true</enabled>
+					</snapshots>
+				</repository>
+			</repositories>
+			<pluginRepositories>
+				<pluginRepository>
+					<id>nexus</id>
+					<url>http://192.168.0.239:8000/nexus/content/groups/public/</url>
+					<releases>
+						<enabled>true</enabled>
+					</releases>
+					<snapshots>
+						<enabled>true</enabled>
+					</snapshots>
+				</pluginRepository>
+			</pluginRepositories>
+		</profile>
+	</profiles>
+
+	<activeProfiles>
+		<activeProfile>bodaProfile</activeProfile>
+	</activeProfiles>
+</settings>
