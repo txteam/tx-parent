@@ -1275,13 +1275,6 @@
 							<exclude>**/impl/*.class</exclude>
 						</excludes>
 					</configuration>
-					<dependencies>
-						<dependency>
-							<groupId>org.apache.maven.plugins</groupId>
-							<artifactId>maven-jar-plugin</artifactId>
-							<version>2.3.2</version>
-						</dependency>
-					</dependencies>
 				</plugin>
 
 				<!-- mvn source:jar -->
@@ -1291,17 +1284,19 @@
 					<version>2.1.2</version>
 					<inherited>true</inherited>
 					<configuration>
+						<attach>true</attach>
 						<excludes>
-							<exclude>**/impl/*.java</exclude>
+							<exclude>**/*Test.java</exclude>
 						</excludes>
 					</configuration>
-					<dependencies>
-						<dependency>
-							<groupId>org.apache.maven.plugins</groupId>
-							<artifactId>maven-source-plugin</artifactId>
-							<version>2.1.2</version>
-						</dependency>
-					</dependencies>
+					<executions>
+						<execution>
+							<phase>compile</phase>
+							<goals>
+								<goal>jar</goal>
+							</goals>
+						</execution>
+					</executions>
 				</plugin>
 
 				<!-- mvn ejb:ejb -->
@@ -1313,13 +1308,6 @@
 					<configuration>
 						<ejbVersion>3.0</ejbVersion>
 					</configuration>
-					<dependencies>
-						<dependency>
-							<groupId>org.apache.maven.plugins</groupId>
-							<artifactId>maven-ejb-plugin</artifactId>
-							<version>2.3</version>
-						</dependency>
-					</dependencies>
 				</plugin>
 
 				<!-- deploy -->
@@ -1382,6 +1370,10 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<inherited>true</inherited>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
 			</plugin>
 		</plugins>
 	</build>
