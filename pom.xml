@@ -43,6 +43,13 @@
 			</dependency>
 			<dependency>
 				<groupId>com.tx</groupId>
+				<artifactId>tx-core</artifactId>
+				<version>${tx-version}</version>
+				<classifier>sources</classifier>
+			</dependency>
+			
+			<dependency>
+				<groupId>com.tx</groupId>
 				<artifactId>tx-component-config</artifactId>
 				<version>${tx-version}</version>
 			</dependency>
