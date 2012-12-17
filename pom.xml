@@ -60,12 +60,17 @@
 			</dependency>
 			<dependency>
 				<groupId>com.tx</groupId>
-				<artifactId>tx-component-menu</artifactId>
+				<artifactId>tx-component-mainframe</artifactId>
 				<version>${tx-version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.tx</groupId>
 				<artifactId>tx-component-auth</artifactId>
+				<version>${tx-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.tx</groupId>
+				<artifactId>tx-component-servicelog</artifactId>
 				<version>${tx-version}</version>
 			</dependency>
 
