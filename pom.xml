@@ -1280,6 +1280,15 @@
 						</webResources>
 					</configuration>
 				</plugin>
+				
+				<!-- resources 编码 -->
+				<plugin>
+				    <groupId>org.apache.maven.plugins</groupId>
+				    <artifactId>maven-resources-plugin</artifactId>
+				    <configuration>
+				        <encoding>UTF-8</encoding>
+				    </configuration>
+				</plugin>
 
 				<!-- mvn jar:jar -->
 				<plugin>
@@ -1288,9 +1297,16 @@
 					<version>2.3.2</version>
 					<inherited>true</inherited>
 					<configuration>
-						<excludes>
-							<exclude>**/impl/*.class</exclude>
-						</excludes>
+						<archive>  
+	                        <manifest>  
+	                            <addClasspath>true</addClasspath>  
+	                            <classpathPrefix>lib/</classpathPrefix>  
+	                            <mainClass>.....MonitorMain</mainClass>  
+	                        </manifest>  
+	                    </archive>
+						<!-- <excludes> -->
+						<!-- <exclude>**/impl/*.class</exclude> -->
+						<!-- </excludes> -->
 					</configuration>
 				</plugin>
 
@@ -1302,6 +1318,7 @@
 					<inherited>true</inherited>
 					<configuration>
 						<attach>true</attach>
+						<encoding>UTF-8</encoding>
 						<excludes>
 							<exclude>**/*Test.java</exclude>
 						</excludes>
@@ -1311,6 +1328,39 @@
 							<phase>compile</phase>
 							<goals>
 								<goal>jar</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				
+				<!-- javadoc -->
+				<plugin>
+				    <groupId>org.apache.maven.plugins</groupId>
+				    <artifactId>maven-javadoc-plugin</artifactId>
+				    <inherited>true</inherited>
+				    <configuration>
+				        <encoding>UTF-8</encoding>
+				    </configuration>
+				    <executions>
+						<execution>
+							<phase>compile</phase>
+						</execution>
+					</executions>
+				</plugin>
+
+				<!-- deploy -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-deploy-plugin</artifactId>
+					<inherited>true</inherited>
+					<configuration>
+						<skip>false</skip>
+					</configuration>
+					<executions>
+						<execution>
+							<phase>install</phase>
+							<goals>
+								<goal>deploy</goal>
 							</goals>
 						</execution>
 					</executions>
@@ -1386,11 +1436,18 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<inherited>true</inherited>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
+			</plugin>
+			<plugin>
+			    <groupId>org.apache.maven.plugins</groupId>
+			    <artifactId>maven-javadoc-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
 			</plugin>
 		</plugins>
 	</build>
