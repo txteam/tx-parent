@@ -1168,6 +1168,7 @@
 						<encoding>UTF-8</encoding>
 					</configuration>
 				</plugin>
+				
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
@@ -1178,6 +1179,7 @@
 						<testFailureIgnore>flase</testFailureIgnore>
 					</configuration>
 				</plugin>
+				
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-dependency-plugin</artifactId>
@@ -1235,24 +1237,24 @@
 					<configuration>
 						<!-- The directory for the generated WAR. -->
 						<!-- Default value is: ${project.build.directory}. -->
-						<outputDirectory>${basedir}/target/war</outputDirectory>
+						<!--<outputDirectory>${basedir}/target/war</outputDirectory>-->
 						<!-- The name of the generated WAR. -->
 						<!-- Default value is: ${project.build.finalName}. -->
-						<warName>ios</warName>
+						<warName>${project.name}</warName>
 						<!-- Single directory for extra files to include in the WAR. This is 
 							where you place your JSP files. -->
 						<!-- Default value is: ${basedir}/src/main/webapp. -->
-						<warSourceDirectory>${basedir}/src/main/webapp</warSourceDirectory>
+						<!--<warSourceDirectory>${basedir}/src/main/webapp</warSourceDirectory>-->
 						<!-- The directory where the webapp is built. -->
 						<!-- Default value is: ${project.build.directory}/${project.build.finalName}. -->
-						<webappDirectory>${basedir}/target/war/webapp</webappDirectory>
+						<!--<webappDirectory>${basedir}/target/war/webapp</webappDirectory>-->
 						<!--Directory to unpack dependent WARs into if needed. -->
 						<!--Default value is: ${project.build.directory}/war/work. -->
-						<workDirectory>${basedir}/target/war/work</workDirectory>
+						<!--<workDirectory>${basedir}/target/war/work</workDirectory>-->
 						<!-- The archive configuration to use -->
 						<archive>
 							<!-- Maven 打包 jar 、war 文件时，不将 pom.xml 等打包进包中 -->
-							<addMavenDescriptor>false</addMavenDescriptor>
+							<addMavenDescriptor>true</addMavenDescriptor>
 						</archive>
 						<packagingExcludes>
 							**/spy.properties
@@ -1280,15 +1282,6 @@
 						</webResources>
 					</configuration>
 				</plugin>
-				
-				<!-- resources 编码 -->
-				<plugin>
-				    <groupId>org.apache.maven.plugins</groupId>
-				    <artifactId>maven-resources-plugin</artifactId>
-				    <configuration>
-				        <encoding>UTF-8</encoding>
-				    </configuration>
-				</plugin>
 
 				<!-- mvn jar:jar -->
 				<plugin>
@@ -1297,13 +1290,13 @@
 					<version>2.3.2</version>
 					<inherited>true</inherited>
 					<configuration>
-						<archive>  
-	                        <manifest>  
-	                            <addClasspath>true</addClasspath>  
-	                            <classpathPrefix>lib/</classpathPrefix>  
-	                            <mainClass>.....MonitorMain</mainClass>  
-	                        </manifest>  
-	                    </archive>
+						<!-- <archive> -->
+						<!-- <manifest> -->
+						<!-- <addClasspath>true</addClasspath> -->
+						<!-- <classpathPrefix>lib/</classpathPrefix> -->
+						<!-- <mainClass>.....MonitorMain</mainClass> -->
+						<!-- </manifest> -->
+						<!-- </archive> -->
 						<!-- <excludes> -->
 						<!-- <exclude>**/impl/*.class</exclude> -->
 						<!-- </excludes> -->
@@ -1439,11 +1432,15 @@
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
 			</plugin>
 			<plugin>
-			    <groupId>org.apache.maven.plugins</groupId>
-			    <artifactId>maven-javadoc-plugin</artifactId>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
