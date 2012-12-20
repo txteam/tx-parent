@@ -1,17 +1,27 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>com.tx</groupId>
-    <artifactId>tx-parent</artifactId>
-    <version>${tx-version}</version>
-  </parent>
-  <artifactId>tx-components</artifactId>
-  <packaging>pom</packaging>
-  <name>tx-components</name>
-  <description>tx-components</description>
-  <modules>
-  	<module>tx-component-auth</module>
-  	<module>tx-component-servicelog</module>
-  	<module>tx-component-config</module>
-  </modules>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.tx</groupId>
+		<artifactId>tx-parent</artifactId>
+		<version>${tx-version}</version>
+	</parent>
+
+	<properties>
+		<!-- lib info -->
+		<tx-component-version>${tx-version}</tx-component-version>
+		<skipTests>true</skipTests>
+	</properties>
+
+	<artifactId>tx-components</artifactId>
+	<packaging>pom</packaging>
+	
+	<name>tx-components</name>
+	<description>tx-components</description>
+	
+	<modules>
+		<module>tx-component-auth</module>
+		<module>tx-component-servicelog</module>
+		<module>tx-component-config</module>
+	</modules>
 </project>

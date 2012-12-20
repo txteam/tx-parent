@@ -131,6 +131,8 @@ public class TreeUtils {
             return treeAbleCollection;
         }
         
+        C parentNodeCollection = newCollectionInstance(treeAbleCollection);
+        
         //循环得到当前传入list上级节点有多少个
         //并进行非法节点过滤，如果某节点id  = parentId将会造成死循环 ,将这样的节点抛弃
         Map<String, C> parentIdIndexMap = new HashMap<String, C>();
@@ -138,14 +140,16 @@ public class TreeUtils {
         for (T treeAbleTemp : treeAbleCollection) {
             String superId = treeAbleTemp.getParentId();
             String id = treeAbleTemp.getId();
+            
+            treeAbleNodeIdSet.add(treeAbleTemp.getId());
             if (StringUtils.isEmpty(id) || id.equals(superId)) {
                 //并进行非法节点过滤，如果某节点id  = parentId将会造成死循环
                 //非法节点在该方法中将被当作根节点放置于树中
                 //doNothing
+                parentNodeCollection.add(treeAbleTemp);
                 continue;
             }
             
-            treeAbleNodeIdSet.add(treeAbleTemp.getId());
             //根据父节点形成父ID与集合的映射
             if (parentIdIndexMap.containsKey(superId)) {
                 parentIdIndexMap.get(superId).add(treeAbleTemp);
@@ -158,16 +162,15 @@ public class TreeUtils {
         }
         
         //迭代生成根节点集合
-        C parentNodeCollection = newCollectionInstance(treeAbleCollection);
+        
         for (T treeAbleTemp : treeAbleCollection) {
             if (!treeAbleNodeIdSet.contains(treeAbleTemp.getParentId())) {
                 parentNodeCollection.add(treeAbleTemp);
             }
         }
-        
-        return changToTree(treeAbleCollection,
-                parentNodeCollection,
-                maxLevelIndex);
+        return changeToTreeByParentIdIndexMap(parentNodeCollection,
+                maxLevelIndex,
+                parentIdIndexMap);
     }
     
     /**
