@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper 
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="auth">
+
+    <!-- 根据操作员id查询操作员拥有的权限引用项 -->  
+    <select id="queryItemAuthRefListByOperId"
+    	parameterType="String" 
+    	resultType="com.tx.component.auth.model.DefaultAuthItemRef">  
+        <![CDATA[
+			select distinct tar.authid,
+			                tar.refid,
+			                tar.authreftype,
+			                tar.createdate,
+			                tar.enddate,
+			                tar.createoperid
+			  from t_auth_authref tar
+			 inner join wd_operator tu on tar.refid = tu.id
+			                          and tar.authreftype = 'AUTHREFTYPE_OPERATOR'
+			                          and tu.id = #{operId}
+			 inner join wd_operator tu2 on tar.refid = tu2.id
+			                           and tar.authreftype =
+			                               'AUTHREFTYPE_OPERATOR_TEMP'
+			                           and tar.enddate > sysdate
+			                           and tu2.id = #{operId}
+			 inner join (select tr.id
+			               from t_auth_role tr, t_oper2role tor
+			              where tor.roleid = tr.id
+			                and tor.operid = #{operId}) tura on tar.refid = tura.id
+        ]]>
+    </select>
+    
+    <!-- 查询某权限类型 -->
+    <select id="queryItemAuthRefList"
+    	parameterType="java.util.Map" 
+    	resultType="com.tx.component.auth.model.DefaultAuthItemRef">  
+        <![CDATA[ 
+			SELECT DISTINCT TAR.AUTHID,
+			                TAR.REFID,
+			                TAR.AUTHREFTYPE,
+			                TAR.CREATEDATE,
+			                TAR.ENDDATE,
+			                TAR.CREATEOPERID
+			  from t_auth_authref tar
+			 where tar.authType = #{authType}
+			   and tar.refid = #{refId}
+			   and tar.operid = #{operId}
+        ]]>   
+    </select>    
+    
+    <!-- 插入权限项 -->
+	<insert id="addAuthItemRef" parameterType="com.tx.component.auth.model.DefaultAuthItemRef">
+		insert into t_auth_authref
+		  (authid, refid, authreftype, createdate, enddate, createoperid)
+		values
+		  (#{authId},
+		   #{refId},
+		   #{authRefType},
+		   #{createDate},
+		   #{endDate},
+		   #{createOperId})
+	</insert>
+	
+	<!-- 删除权限项 -->
+	<delete id="delAuthItemRef" parameterType="com.tx.component.auth.model.DefaultAuthItemRef">
+		delete from t_auth_authref
+		 where refId = #{refId}
+		   and authRefType = #{authRefType}
+	</delete>
+      
+</mapper>  

@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Context>
+<!-- 
+1. MySQL(http://www.mysql.com)mm.mysql-2.0.2-bin.jar 
+Class.forName( "org.gjt.mm.mysql.Driver" ); 
+cn = DriverManager.getConnection( "jdbc:mysql://MyDbComputerNameOrIP:3306/myDatabaseName", sUsr, sPwd );
+2. PostgreSQL(http://www.de.postgresql.org)pgjdbc2.jar 
+Class.forName( "org.postgresql.Driver" ); 
+cn = DriverManager.getConnection( "jdbc:postgresql://MyDbComputerNameOrIP/myDatabaseName", sUsr, sPwd );
+3.Oracle(http://www.oracle.com/ip/deploy/database/oracle9i/)classes12.zip 
+Class.forName( "oracle.jdbc.driver.OracleDriver" ); 
+cn = DriverManager.getConnection( "jdbc:oracle:thin:@MyDbComputerNameOrIP:1521:ORCL", sUsr, sPwd );
+4.Sybase(http://jtds.sourceforge.net)jconn2.jar 
+Class.forName( "com.sybase.jdbc2.jdbc.SybDriver" ); 
+cn = DriverManager.getConnection( "jdbc:sybase:Tds:MyDbComputerNameOrIP:2638", sUsr, sPwd ); 
+//(Default-Username/Password: "dba"/"sql")
+5.Microsoft SQLServer(http://jtds.sourceforge.net) 
+Class.forName( "net.sourceforge.jtds.jdbc.Driver" ); 
+cn = DriverManager.getConnection( "jdbc:jtds:sqlserver://MyDbComputerNameOrIP:1433/master", sUsr, sPwd );
+6.Microsoft SQLServer(http://www.microsoft.com) 
+Class.forName( "com.microsoft.jdbc.sqlserver.SQLServerDriver" ); 
+cn = DriverManager.getConnection( "jdbc:microsoft:sqlserver://MyDbComputerNameOrIP:1433;databaseName=master", sUsr, sPwd );
+7.ODBC 
+Class.forName( "sun.jdbc.odbc.JdbcOdbcDriver" ); 
+Connection cn = DriverManager.getConnection( "jdbc:odbc:" + sDsn, sUsr, sPwd );
+8.DB2 
+Class.forName("com.ibm.db2.jdbc.net.DB2Driver"); 
+String url="jdbc:db2://192.9.200.108:6789/SAMPLE" 
+cn = DriverManager.getConnection( url, sUsr, sPwd );
+9.Microsoft SQL Server series (6.5, 7.x and 2000) and Sybase 10 
+commet 
+JDBC Name: jTDS 
+URL: http://jtds.sourceforge.net/ 
+Version: 0.5.1 
+Download URL: http://sourceforge.net/project/showfiles.php?group_id=33291
+语法: 
+Class.forName("net.sourceforge.jtds.jdbc.Driver "); 
+Connection con = DriverManager.getConnection("jdbc:jtds:sqlserver://host:port/database","user","password"); 
+or 
+Connection con = DriverManager.getConnection("jdbc:jtds:sybase://host:port/database","user","password");
+10.Postgresql 
+JDBC Name: PostgreSQL JDBC 
+URL: http://jdbc.postgresql.org/ 
+Version: 7.3.3 build 110 
+Download URL: http://jdbc.postgresql.org/download.html 
+语法: 
+Class.forName("org.postgresql.Driver");  
+Connection con=DriverManager.getConnection("jdbc:postgresql://host:port/database","user","password");
+-->
+<!--  
+	<Resource name="test_oracle_db" auth="Container" type="javax.sql.DataSource"
+		maxActive="10" maxIdle="30" maxWait="10000" username="testdb"
+		password="testdb" driverClassName="oracle.jdbc.driver.OracleDriver"
+		url="jdbc:oracle:thin:@10.130.53.84:1521:zxin" />
+	<Resource name="test_mysql_db" auth="Container" type="javax.sql.DataSource"
+		maxActive="10" maxIdle="30" maxWait="10000" username="testdb"
+		password="testdb" driverClassName="com.mysql.jdbc.Driver"
+		url="jdbc:mysql://localhost/mysqldb" />
+-->
+	<Resource name="test_postgresql_db" auth="Container" type="javax.sql.DataSource"
+		maxActive="10" maxIdle="30" maxWait="10000" 
+		username="postgres"
+		password="sys" driverClassName="org.postgresql.Driver"
+		url="jdbc:postgresql://127.0.0.1/postgres" />
+</Context>

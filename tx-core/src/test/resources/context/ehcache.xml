@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="ehcache.xsd"
+         updateCheck="false" 
+         monitoring="autodetect"
+         dynamicConfig="true">
+    <!--设置缓存文件保存路径-->
+    <diskStore path="java.io.tmpdir"/>
+
+	<!-- eternal表示缓存是不是永远不超时 -->
+	<!-- timeToLiveSeconds 是缓存中每个元素（这里也就是一个POJO）的超时时间 如果 eternal="false"，超过指定的时间，这个元素就被移走了 -->
+	<!-- timeToIdleSeconds是发呆时间，是可选的。当往缓存里面put的 元素超过500个时，如果overflowToDisk="true"，就会把缓存中的部分数据保存在硬盘上的临时文件里面 -->
+    <defaultCache
+            maxElementsInMemory="10000"
+            eternal="false"
+            timeToIdleSeconds="120"
+            timeToLiveSeconds="120"
+            overflowToDisk="true"
+            diskSpoolBufferSizeMB="10"
+            maxElementsOnDisk="5000000"
+            diskPersistent="false"
+            diskExpiryThreadIntervalSeconds="120"
+            memoryStoreEvictionPolicy="LRU"
+            />
+
+	<cache name="demo.dbCache" 
+		maxElementsInMemory="10000"
+		eternal="false"
+		overflowToDisk="true"
+		timeToIdleSeconds="600"
+		timeToLiveSeconds="600"
+		diskPersistent="false" 
+		diskExpiryThreadIntervalSeconds="120">
+	</cache>
+</ehcache>

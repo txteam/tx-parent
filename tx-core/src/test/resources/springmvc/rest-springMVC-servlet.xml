@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="  
+       http://www.springframework.org/schema/beans  
+       http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+       http://www.springframework.org/schema/context  
+       http://www.springframework.org/schema/context/spring-context-3.1.xsd    
+       http://www.springframework.org/schema/mvc  
+       http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd">
+
+	<!-- 当在web.xml 中 DispatcherServlet使用 <url-pattern>/</url-pattern> 映射时，能映射静态资源 
+		defaultServlet在不同服务器中不太相同 -->
+	<!-- 补充说明：多个HandlerMapping的执行顺序问题： DefaultAnnotationHandlerMapping的order属性值是：0 
+		<mvc:resources/ >自动注册的 SimpleUrlHandlerMapping的order属性值是： 2147483646 <mvc:default-servlet-handler/>自动注册 
+		的SimpleUrlHandlerMapping 的order属性值是： 2147483647 HandlerMapping转到org.springframework.web.servlet.resource.DefaultServletHttpRequestHandler处理 -->
+	<!-- 静态资源映射 -->
+	<mvc:resources mapping="/images/**" location="/resources/images/"
+		cache-period="31556926" />
+	<mvc:resources mapping="/css/**" location="/resources/css/" />
+	<mvc:resources mapping="/js/**" location="/resources/js/" />
+	<mvc:resources mapping="/operamasks/**" location="/resources/operamasks/" />
+	<mvc:resources mapping="/bootstrapui/**" location="/resources/bootstrapui/" />
+	
+	<mvc:default-servlet-handler />
+
+	<!-- 配置扫描 -->
+	<context:component-scan base-package="com.tx.webdemo"
+		use-default-filters="false">
+		<context:include-filter type="annotation"
+			expression="org.springframework.stereotype.Controller" />
+	</context:component-scan>
+
+	<!--添加拦截器，类级别的处理器映射 -->
+	<mvc:interceptors>
+<!-- 		<bean -->
+<!-- 			class="com.tx.core.springmvc.interceptor.StaticResourceSkipInterceptor"> -->
+<!-- 			<property name="skipResourcePath"> -->
+<!-- 				<array> -->
+<!-- 					<value>^.+\.js$</value> -->
+<!-- 					<value>^.+\.css$</value> -->
+<!-- 					<value>^.+\.swf$</value> -->
+<!-- 					<value>^.+\.jpg$</value> -->
+<!-- 					<value>^.+\.gif$</value> -->
+<!-- 					<value>^.+\.png$</value> -->
+<!-- 				</array> -->
+<!-- 			</property> -->
+<!-- 		</bean> -->
+		<bean
+			class="com.tx.core.springmvc.interceptor.RequestInjectAttributeInterceptor" />
+	</mvc:interceptors>
+
+	<!-- <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping"></bean> -->
+
+	<!-- 映射请求申明 -->
+	<bean id="handlerAdapter"
+		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+		<property name="messageConverters">
+			<list>
+				<bean
+					class="org.springframework.http.converter.StringHttpMessageConverter">
+					<property name="supportedMediaTypes">
+						<list>
+							<value>text/plain;charset=UTF-8</value>
+							<value>text/html;charset=UTF-8</value>
+						</list>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+	<bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<property name="order" value="2147483645"></property>
+		<property name="urlMap">
+			<map>
+				<entry key=".+\.jsp" value="jspFileController"/>
+			</map>
+		</property>
+	</bean>
+	<bean id="jspFileController"
+	class="org.springframework.web.servlet.mvc.UrlFilenameViewController">
+		<property name="suffix" value=".jsp"></property>
+	</bean>
+
+	<!-- 异常处理 -->
+	<bean id="exceptionResolver"
+		class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+		<property name="defaultErrorView">
+			<value>errorPages/error</value>
+		</property>
+		<property name="defaultStatusCode">
+			<value>500</value>
+		</property>
+		<property name="warnLogCategory">
+			<value>org.springframework.web.servlet.handler.SimpleMappingExceptionResolver
+			</value>
+		</property>
+		<property name="exceptionMappings">
+			<props>
+				<prop
+					key="org.springframework.web.multipart.MaxUploadSizeExceededException">errorPages/maxUploadExceeded</prop>
+			</props>
+		</property>
+	</bean>
+	<!-- 支持文件上传 -->
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="defaultEncoding" value="UTF-8" />
+		<!-- max size 5M -->
+		<property name="maxUploadSize" value="5000000" />
+	</bean>
+
+	<!-- ==================================== 以下是restful 内容协商的配置 ================================ -->
+	<!-- 根据客户端的不同的请求决定不同的view进行响应, 如 /blog/1.json /blog/1.xml -->
+	<bean
+		class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+		<!-- 设置为true以忽略对Accept Header的支持 -->
+		<property name="ignoreAcceptHeader" value="true" />
+		<!-- 在没有扩展名时即:"/user/1" 时的默认展现形式 -->
+		<property name="defaultContentType" value="text/html" />
+		<!-- 扩展名至mimeType的映射,即 /user.json => application/json -->
+		<property name="mediaTypes">
+			<map>
+				<entry key="html" value="text/html" />
+				<entry key="json" value="application/json" />
+				<entry key="xml" value="application/xml" />
+			</map>
+		</property>
+		<!-- 用于开启 /userinfo/123?format=json 的支持 -->
+		<property name="favorParameter" value="false" />
+		<property name="viewResolvers">
+			<list>
+				<bean class="org.springframework.web.servlet.view.BeanNameViewResolver" />
+				<bean
+					class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+					<property name="viewClass"
+						value="org.springframework.web.servlet.view.JstlView" />
+					<property name="prefix" value="/view" />
+					<property name="suffix" value=".jsp" />
+					<property name="order" value="1" /> <!--NOTICE THE ORDER -->
+				</bean>
+				<!--<bean name="freeMarkerViewResolver" class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver"> -->
+				<!-- <property name="cache" value="true"/> -->
+				<!-- <property name="prefix" value=""/> -->
+				<!-- <property name="suffix" value=".ftl"/> -->
+				<!-- <property name="order" value="2"/> NOTICE THE ORDER -->
+				<!-- </bean> -->
+			</list>
+		</property>
+		<property name="defaultViews">
+			<list>
+				<!-- for application/json -->
+				<bean
+					class="org.springframework.web.servlet.view.json.MappingJacksonJsonView"></bean>
+				<!-- for application/xml -->
+				<bean class="org.springframework.web.servlet.view.xml.MarshallingView">
+					<property name="modelKey" value="toBeMarshalled" />
+					<property name="marshaller">
+						<bean class="org.springframework.oxm.xstream.XStreamMarshaller">
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+</beans>

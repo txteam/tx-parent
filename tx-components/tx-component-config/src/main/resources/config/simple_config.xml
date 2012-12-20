@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configProperties>
+	<configProperty>
+		<key>simpleconfig.key1</key>
+		<defaultValue>simpleconfig.key1Value</defaultValue>
+	</configProperty>
+	<configProperty>
+		<key>simpleconfig.key2</key>
+		<defaultValue>simpleconfig.key2DefaultValue</defaultValue>
+		<developValue>simpleconfig.key2DevelopValue</developValue>
+		<description>配置测试，如果开发模式提取开发值</description>
+	</configProperty>
+</configProperties>

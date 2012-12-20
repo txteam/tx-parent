@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configContext>
+	<!-- if no. default false -->
+	<isDev>false</isDev>
+	<!-- if no. default false 如果不允许重复，当启动时发现配置key重复将抛出异常 -->
+	<repeatAble>false</repeatAble>
+	
+	<!-- configResources -->
+	<configResources>
+		<configResource>
+			<id>db.setting</id>
+			<type>database</type>
+			<jndiName>test_postgresql_db</jndiName>
+			<!-- 如果不同的虚中心的配置不同，以后再加特性进行支持 -->
+			<!-- name,key,value,description 如果不存在，需要  -->
+			<query>select key,value,name,description from t_test_setting</query>
+			<insert>
+				insert into t_test_setting(key,value,name,description)
+					values(#{key},#{value},#{name},#{description})
+			</insert>
+			<update>
+				update t_test_setting 
+				   set value = #{value},
+				   	   name = #{name},
+				   	   description = #{description},
+				 where key = #{key}
+			</update>
+			<!-- 默认reload为关闭 -->
+			<reload>true</reload>
+			<cronExpression>0 0 22 * * ?</cronExpression>
+		</configResource>
+	</configResources>
+	
+	<configLocations>
+		<configLocation>classpath:configcontext/*_config.xml</configLocation>
+	</configLocations>
+</configContext>

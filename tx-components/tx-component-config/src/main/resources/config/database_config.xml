@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configProperties>
+	<configProperty type="1" name="数据库配置">
+		<configProperty type="1" name="jndi数据库">
+			<configProperty name="jndiname">
+				<key>jndi.postgresql.jndiName</key>
+				<defaultValue>test_postgresql_db</defaultValue>
+			</configProperty>
+		</configProperty>
+		<configProperty type="1" name="自建链接数据库">
+			<configProperty name="用户名">
+				<key>dbcpdatasource.postgresql.username</key>
+				<defaultValue>postgres</defaultValue>
+			</configProperty>
+			<configProperty name="密码">
+				<key>dbcpdatasource.postgresql.password</key>
+				<defaultValue>sys</defaultValue>
+			</configProperty>
+			<configProperty name="驱动名称">
+				<key>org.postgresql.Driver</key>
+				<defaultValue>org.postgresql.Driver</defaultValue>
+				<developValue>com.p6spy.engine.spy.P6DataSource</developValue>
+			</configProperty>
+		</configProperty>
+	</configProperty>
+</configProperties>

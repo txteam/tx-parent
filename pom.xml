@@ -1468,4 +1468,8 @@
 			<url>http://192.168.0.239:8000/nexus/content/repositories/snapshots</url>
 		</snapshotRepository>
 	</distributionManagement>
+	<modules>
+		<module>tx-components</module>
+		<module>tx-core</module>
+	</modules>
 </project>

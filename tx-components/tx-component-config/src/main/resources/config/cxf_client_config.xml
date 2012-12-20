@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configProperties>
+	<configProperty type="1" name="cxf客户端配置">
+		<configProperty type="1" name="测试crm系统配置">
+			<configProperty type="1" name="HelloWorldSerivce配置">
+				<configProperty name="hellowordservice.url">
+					<key>crm.helloworldservice.url</key>
+					<defaultValue>http://localhost:8080/HelloWorldService</defaultValue>
+					<developValue>http://localhost:8081/HelloWorldService</developValue>
+				</configProperty>
+				<configProperty name="hellowordservice.timeout">
+					<key>crm.helloworldservice.timeout</key>
+					<defaultValue>2000</defaultValue>
+					<description>单位毫秒,小于或等于0，表示不限制超时时间</description>
+				</configProperty>
+			</configProperty>
+		</configProperty>
+	</configProperty>
+</configProperties>

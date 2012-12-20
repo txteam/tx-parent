@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configProperties>
+	<configProperty type="1" name="系统参数表配置">
+		<configProperty type="1" name="HelloWorldSerivce配置" isVisible="false">
+			<configProperty name="设置一" resource="db.setting">
+				<key>sysparam.key1</key>
+				<defaultValue>defaultValue1</defaultValue>
+				<developValue>这个参数别人看不了</developValue>
+			</configProperty>
+			<configProperty name="hellowordservice.timeout" resource="db.setting">
+				<key>sysparam.key2</key>
+				<defaultValue>defaultValue2</defaultValue>
+			</configProperty>
+		</configProperty>
+	</configProperty>
+</configProperties>
