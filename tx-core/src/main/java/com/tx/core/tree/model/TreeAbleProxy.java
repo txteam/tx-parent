@@ -1,6 +1,6 @@
 package com.tx.core.tree.model;
 
-import java.util.Collection;
+import java.util.List;
 
 /**
  * <树代理，子节点集合无序，节点不可重复>
@@ -11,15 +11,16 @@ import java.util.Collection;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class TreeAbleProxy<C extends Collection<TreeAbleProxy<C, T>>, T>
-        implements TreeAble<C, TreeAbleProxy<C, T>> {
+public class TreeAbleProxy<T>
+        implements TreeAble<List<TreeAbleProxy<T>>, TreeAbleProxy<T>> {
+    
     private T object;
     
     private String id;
     
     private String parentId;
     
-    private C childs;
+    private List<TreeAbleProxy<T>> childs;
     
     public TreeAbleProxy(TreeAbleAdapter<T> adapter, T object) {
         this.id = adapter.getId(object);
@@ -68,18 +69,18 @@ public class TreeAbleProxy<C extends Collection<TreeAbleProxy<C, T>>, T>
     public void setParentId(String parentId) {
         this.parentId = parentId;
     }
-    
+
     /**
      * @return 返回 childs
      */
-    public C getChilds() {
+    public List<TreeAbleProxy<T>> getChilds() {
         return childs;
     }
-    
+
     /**
      * @param 对childs进行赋值
      */
-    public void setChilds(C childs) {
+    public void setChilds(List<TreeAbleProxy<T>> childs) {
         this.childs = childs;
     }
 }
