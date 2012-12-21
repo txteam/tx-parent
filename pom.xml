@@ -845,7 +845,6 @@
 				<groupId>hsqldb</groupId>
 				<artifactId>hsqldb</artifactId>
 				<version>1.8.0.10</version>
-				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>javax.mail</groupId>
@@ -1086,13 +1085,13 @@
 				<groupId>javax.servlet</groupId>
 				<artifactId>servlet-api</artifactId>
 				<version>2.4</version>
-				<scope>compile</scope>
+				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>tomcat</groupId>
 				<artifactId>jsp-api</artifactId>
 				<version>5.5.23</version>
-				<scope>compile</scope>
+				<scope>provided</scope>
 			</dependency>
 
 			<!-- Taglibs -->

@@ -43,33 +43,35 @@ public class ConfigDataSourceFinder implements DataSourceFinder {
     
     private String dbContextPath = "classpath:dbcontext/context.xml";
     
+    private String resourceId;
+    
     private ResourceLoader defaultResourceLoader = new DefaultResourceLoader(
             ConfigDataSourceFinder.class.getClassLoader());
     
     /**
      * <根据jndi名获取jndi数据源>
-     * @param jndiName
+     * @param resourceId
      * @return
      */
     @Override
     @SuppressWarnings("unchecked")
-    public DataSource getDataSource(String jndiName) {
+    public DataSource getDataSource() {
         
-        logger.info("Try to init DataSource by classpath:/resources/context/dbContext.xml jndiName:"
-                + jndiName);
+        logger.info("Try to init DataSource by classpath:/resources/context/dbContext.xml resourceId:"
+                + resourceId);
         // 这里不做同步控制
-        DataSource ds1 = (DataSource) this.dataSourceMap.get(jndiName);
+        DataSource ds1 = (DataSource) this.dataSourceMap.get(resourceId);
         
         if (ds1 != null) {
             return ds1;
         }
         
-        String jndiNameAlias = jndiName;
-        if (jndiName.startsWith(COMP_ENV)) {
-            jndiNameAlias = jndiName.substring(COMP_ENV.length());
+        String resourceIdAlias = resourceId;
+        if (resourceId.startsWith(COMP_ENV)) {
+            resourceIdAlias = resourceId.substring(COMP_ENV.length());
         }
         
-        ds1 = (DataSource) this.dataSourceMap.get(jndiNameAlias);
+        ds1 = (DataSource) this.dataSourceMap.get(resourceIdAlias);
         if (ds1 != null) {
             logger.info("Init DataSource by configDataSource success.");
             return ds1;
@@ -168,7 +170,7 @@ public class ConfigDataSourceFinder implements DataSourceFinder {
             }
         }
         
-        ds1 = (DataSource) this.dataSourceMap.get(jndiNameAlias);
+        ds1 = (DataSource) this.dataSourceMap.get(resourceIdAlias);
         
         if (ds1 != null) {
             logger.info("Init DataSource by configDataSource success.");
@@ -177,5 +179,33 @@ public class ConfigDataSourceFinder implements DataSourceFinder {
         }
         
         return ds1;
+    }
+
+    /**
+     * @return 返回 dbContextPath
+     */
+    public String getDbContextPath() {
+        return dbContextPath;
+    }
+
+    /**
+     * @param 对dbContextPath进行赋值
+     */
+    public void setDbContextPath(String dbContextPath) {
+        this.dbContextPath = dbContextPath;
+    }
+
+    /**
+     * @return 返回 resourceId
+     */
+    public String getResourceId() {
+        return resourceId;
+    }
+
+    /**
+     * @param 对resourceId进行赋值
+     */
+    public void setResourceId(String resourceId) {
+        this.resourceId = resourceId;
     }
 }

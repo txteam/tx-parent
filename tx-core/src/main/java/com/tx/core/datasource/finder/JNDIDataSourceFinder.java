@@ -34,6 +34,8 @@ public class JNDIDataSourceFinder implements DataSourceFinder {
     
     private Map<String, DataSource> dataSourceMap = new HashMap<String, DataSource>();
     
+    private String jndiName;
+    
     /**
      * 从上下文获取数据源
      * @param jndiName
@@ -57,7 +59,7 @@ public class JNDIDataSourceFinder implements DataSourceFinder {
      * @return
      */
     @Override
-    public DataSource getDataSource(String jndiName) {
+    public DataSource getDataSource() {
         logger.info("Try to init DataSource by jndi. jndiName : " + jndiName
                 + "...........");
         // 这里不做同步控制
@@ -89,5 +91,19 @@ public class JNDIDataSourceFinder implements DataSourceFinder {
         }
         logger.info("End init datasource by jndi. ................................");
         return ds1;
+    }
+
+    /**
+     * @return 返回 jndiName
+     */
+    public String getJndiName() {
+        return jndiName;
+    }
+
+    /**
+     * @param 对jndiName进行赋值
+     */
+    public void setJndiName(String jndiName) {
+        this.jndiName = jndiName;
     }
 }

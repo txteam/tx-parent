@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanInitializationException;
@@ -26,9 +25,8 @@ import com.tx.core.datasource.finder.JNDIDataSourceFinder;
  */
 public class DataSourceFactoryBean implements
         FactoryBean<javax.sql.DataSource>, InitializingBean {
-    private Logger logger = LoggerFactory.getLogger(DataSourceFactoryBean.class);
     
-    private String jndiName;
+    private Logger logger = LoggerFactory.getLogger(DataSourceFactoryBean.class);
     
     private DataSource ds = null;
     
@@ -56,12 +54,6 @@ public class DataSourceFactoryBean implements
     public void afterPropertiesSet() throws Exception {
         logger.info("Start init datasource................................");
         
-        if (StringUtils.isEmpty(this.jndiName)) {
-            logger.info("Init datasource fail. jndiname is empty.");
-            throw new BeanInitializationException("jndiname is empty.");
-        }
-        logger.info("Start init datasource jndiname:{}",this.jndiName);
-        
         if (datasourceFinderList == null) {
             logger.info("Init datasource fail. datasourceFinderList is empty.");
             return;
@@ -72,7 +64,7 @@ public class DataSourceFactoryBean implements
                     + finderTemp.getClass().getName()
                     + " . Start...............");
             
-            this.ds = finderTemp.getDataSource(jndiName);
+            this.ds = finderTemp.getDataSource();
             
             if (this.ds != null) {
                 logger.info("Try to init DataSource By finder : "
@@ -96,10 +88,9 @@ public class DataSourceFactoryBean implements
         }
         
         logger.info("Init DataSource by configDataSource fail.");
-        logger.error("Init DataSource fail. With Name: " + jndiName);
         
         throw new BeanInitializationException(
-                "init DataSource fail. jndiName :" + this.jndiName);
+                "init DataSource fail. jndiName :");
         
     }
     
@@ -152,20 +143,6 @@ public class DataSourceFactoryBean implements
         return true;
     }
     
-    /**
-     * @return 返回 jndiName
-     */
-    public String getJndiName() {
-        return jndiName;
-    }
-    
-    /**
-     * @param 对jndiName进行赋值
-     */
-    public void setJndiName(String jndiName) {
-        this.jndiName = jndiName;
-    }
-    
     public boolean isSupportP6spy() {
         return isSupportP6spy;
     }
@@ -180,5 +157,19 @@ public class DataSourceFactoryBean implements
     
     public void setP6spyDataSourceClassName(String p6spyDataSourceClassName) {
         this.p6spyDataSourceClassName = p6spyDataSourceClassName;
+    }
+
+    /**
+     * @return 返回 datasourceFinderList
+     */
+    public List<DataSourceFinder> getDatasourceFinderList() {
+        return datasourceFinderList;
+    }
+
+    /**
+     * @param 对datasourceFinderList进行赋值
+     */
+    public void setDatasourceFinderList(List<DataSourceFinder> datasourceFinderList) {
+        this.datasourceFinderList = datasourceFinderList;
     }
 }

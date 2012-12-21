@@ -89,7 +89,8 @@ public class PagedDiclectStatementHandlerInterceptor implements Interceptor {
       * @see [类、类#方法、类#成员]
      */
     private Object prepare(Invocation invocation) throws Throwable {
-        if (!(invocation.getTarget() instanceof RoutingStatementHandler)) {
+        if (!(invocation.getTarget() instanceof RoutingStatementHandler)
+                 || dialect == null) {
             return invocation.proceed();
         }
         
@@ -121,9 +122,16 @@ public class PagedDiclectStatementHandlerInterceptor implements Interceptor {
                 rowBounds.getOffset(),
                 rowBounds.getLimit());
         
-        if (statement instanceof SimpleStatementHandler) {
+        if (statement instanceof SimpleStatementHandler
+                || (dialect.bindLimitParametersFirst() && !dialect.bindLimitParametersInReverseOrder())) {
             limitSql.replaceAll("rownum <= ?", "rownum <= " + rowBounds.getLimit());
             limitSql.replaceAll("rownum_ > ?", "rownum_ > " + rowBounds.getOffset());
+            limitSql.replaceAll("rownum <= ?", "rownum <= " + rowBounds.getLimit());
+            limitSql.replaceAll("rownum_ > ?", "rownum_ > " + rowBounds.getOffset());
+            limitSql.replaceAll("limit ? ?", "limit " + rowBounds.getOffset() + " " + rowBounds.getLimit());
+            limitSql.replaceAll("top ?", "top " + rowBounds.getLimit());
+            limitSql.replaceAll("limit ?", "limit " + rowBounds.getLimit());
+            limitSql.replaceAll("offset ?", "offset " + rowBounds.getOffset());
         }
         
         //如果为PreparedStatementHandler则无需替换即可
@@ -149,7 +157,7 @@ public class PagedDiclectStatementHandlerInterceptor implements Interceptor {
      */
     private Object parameterize(Invocation invocation) throws Throwable {
         //先执行系统默认的参数设置
-        Object returnObj = invocation.proceed();
+        //Object returnObj = invocation.proceed();
         
         
         //提取statement
@@ -159,8 +167,9 @@ public class PagedDiclectStatementHandlerInterceptor implements Interceptor {
         
         StatementHandler statementHandler = (StatementHandler) metaStatementHandler.getValue("delegate");
         //如果不为两种statement则不继续进行处理
-        if (!(statementHandler instanceof PreparedStatementHandler)) {
-            return returnObj;
+        if (!(statementHandler instanceof PreparedStatementHandler) ||
+                dialect == null) {
+            return invocation.proceed();
         }
         
         RowBounds rowBounds = (RowBounds) metaStatementHandler.getValue("delegate.rowBounds");
@@ -168,14 +177,17 @@ public class PagedDiclectStatementHandlerInterceptor implements Interceptor {
         if (rowBounds == null
                 || rowBounds.equals(RowBounds.DEFAULT)
                 || (rowBounds.getOffset() <= RowBounds.NO_ROW_OFFSET && rowBounds.getLimit() == RowBounds.NO_ROW_LIMIT)) {
-            return returnObj;
+            return invocation.proceed();
         }
         
+        Object returnObj = invocation.proceed();
         //提取参数设置statement
         Statement statement = (Statement) invocation.getArgs()[0]; 
         if (!(statement instanceof PreparedStatement)) {  
             //如果对应statement不为PreparedStatement则直接返回
-            return returnObj;
+            if(dialect.bindLimitParametersInReverseOrder()){
+                return invocation.proceed();
+            }
         }
         
         //设置分页的参数

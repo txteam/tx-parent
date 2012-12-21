@@ -21,7 +21,6 @@ public class DataSourceFactoryBeanTest extends TestCase {
     public void testInitPostgresDataSource() {
         DataSourceFactoryBean dbfb = new DataSourceFactoryBean();
         
-        dbfb.setJndiName("test_postgresql_db");
         DataSource ds = null;
         try {
             dbfb.afterPropertiesSet();
