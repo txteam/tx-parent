@@ -226,7 +226,7 @@ public class AuthContext implements FactoryBean<AuthContext>,
             for (AuthItem authItem : authItemSet) {
                 tempAllAuthItemRef.add(new DefaultAuthItemRef(authItem));
             }
-            tempAllAuthItemRef = tempAllAuthItemRef;
+            superAdminAllAuthItemRef = tempAllAuthItemRef;
         }
         
         authItemMapping = tempAuthItemMapping;

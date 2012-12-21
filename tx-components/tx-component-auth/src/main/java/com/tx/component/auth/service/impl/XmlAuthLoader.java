@@ -51,7 +51,7 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
     private final static String ABSTRACT_AUTH_END = "_ABS";
     
     /** 权限项名 */
-    private final static String AUTH_ELEMENT_NAME = "Auth";
+    private final static String AUTH_ELEMENT_NAME = "auth";
     
     /** 权限节点id */
     private final static String AUTH_ELEMENT_ATTR_ID = "key";
@@ -68,7 +68,7 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
     private ApplicationContext applicationContext;
     
     /** 权限配置地址 */
-    private String[] authConfigLocaions = new String[] { "classpath:authcontext/*_auth_config.xml" };
+    private String[] authConfigLocaions = new String[] { "classpath*:authcontext/*_auth_config.xml" };
     
     /**
      * @param applicationContext
@@ -173,7 +173,7 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
             String description = authElTemp.attributeValue(AUTH_ELEMENT_ATTR_DESCRIPTION);
             boolean isAbstract = false;
             // 如果为抽象权限，则设置权限id为抽象权限的权限type本身
-            if (authType.endsWith(ABSTRACT_AUTH_END)) {
+            if (authType != null && authType.endsWith(ABSTRACT_AUTH_END)) {
                 id = authType;
                 isAbstract = true;
             }
