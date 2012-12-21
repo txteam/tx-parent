@@ -2,10 +2,6 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<properties>
-		<tx_jar_version>1.0.0</tx_jar_version>
-	</properties>
-
 	<parent>
 		<groupId>com.tx</groupId>
 		<artifactId>tx-components</artifactId>
@@ -22,7 +18,6 @@
 		<dependency>
 			<groupId>com.tx</groupId>
 			<artifactId>tx-core</artifactId>
-			<version>${tx_jar_version}</version>
 			<optional>true</optional>
 		</dependency>
 
@@ -31,7 +26,7 @@
 			<artifactId>xstream</artifactId>
 			<optional>true</optional>
 		</dependency>
-				<dependency>
+		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
 			<optional>true</optional>
