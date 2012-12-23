@@ -9,7 +9,6 @@ package com.tx.component.auth.model;
 import java.io.Serializable;
 import java.util.Date;
 
-import org.apache.ibatis.type.Alias;
 import org.slf4j.helpers.MessageFormatter;
 
 import com.tx.component.auth.AuthConstant;

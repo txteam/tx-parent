@@ -29,7 +29,7 @@
 		  FROM ${select.tableName} ${select.simpleTableName}
 		 WHERE
 		<trim prefixOverrides="AND | OR">
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
+			<if test="@com.tx.core.Ognl@isNotEmpty(id)">  
 	            AND ${select.simpleTableName}.${select.idColumnName} = ${r"#{"}${select.idPropertyName}${r"}"}
 	        </if>
 		</trim>
@@ -37,7 +37,7 @@
 	
 	<!-- auto generate default query -->
 	<select id="${select.queryId}" 
-		parameterType="${select.parameterType}"
+		parameterType="java.util.Map"
 		resultMap="${select.resultMapId}">
 		SELECT 
 <#list insert.sqlMapColumnList as column>
@@ -51,20 +51,20 @@
 		<trim prefix="WHERE" prefixOverrides="AND | OR">
 <#list insert.sqlMapColumnList as column>
 <#if column.isSimpleType()>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(${column.propertyName})">  
-	            AND ${select.simpleTableName}.${column.columnName} = ${r"#{"}${column.propertyName}${r"}"}
+			<if test="@com.tx.core.Ognl@isNotEmpty(${column.propertyName})">  
+	            AND ${select.simpleTableName}.${column.columnName} = ${r"#{"}${column.propertyName},javaType=${column.javaType.name}${r"}"}
 	        </if>
 <#else>
 			<if test="${column.propertyName} != null">
-				<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(${column.propertyName}.${column.joinPropertyName})">  
-		            AND ${select.simpleTableName}.${column.columnName} = ${r"#{"}${column.propertyName}.${column.joinPropertyName}${r"}"}
+				<if test="@com.tx.core.Ognl@isNotEmpty(${column.propertyName}.${column.joinPropertyName})">  
+		            AND ${select.simpleTableName}.${column.columnName} = ${r"#{"}${column.propertyName}.${column.joinPropertyName},javaType=${column.javaType.name}${r"}"}
 		        </if>
 	        </if>
 </#if>
 </#list>
 		</trim>
 		<choose>  
-	        <when test="@com.tx.core.util.OgnlUtils@isNotEmpty(orderSql)">  
+	        <when test="@com.tx.core.Ognl@isNotEmpty(orderSql)">  
 	            ORDER BY ${r"#{"}orderSql${r"}"}
 	        </when>
 	        <otherwise>  
@@ -75,20 +75,20 @@
 	
 		<!-- auto generate default count -->
 	<select id="${select.queryId}Count" 
-		parameterType="${select.parameterType}"
+		parameterType="java.util.Map"
 		resultType="java.lang.Integer">
 		SELECT COUNT(1)
 		  FROM ${select.tableName} ${select.simpleTableName}
 		<trim prefix="WHERE" prefixOverrides="AND | OR">
 <#list insert.sqlMapColumnList as column>
 <#if column.isSimpleType()>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(${column.propertyName})">  
-	            AND ${select.simpleTableName}.${column.columnName} = ${r"#{"}${column.propertyName}${r"}"}
+			<if test="@com.tx.core.Ognl@isNotEmpty(${column.propertyName})">  
+	            AND ${select.simpleTableName}.${column.columnName} = ${r"#{"}${column.propertyName},javaType=${column.javaType.name}${r"}"}
 	        </if>
 <#else>
 			<if test="${column.propertyName} != null">
-				<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(${column.propertyName}.${column.joinPropertyName})">  
-		            AND ${select.simpleTableName}.${column.columnName} = ${r"#{"}${column.propertyName}.${column.joinPropertyName}${r"}"}
+				<if test="@com.tx.core.Ognl@isNotEmpty(${column.propertyName}.${column.joinPropertyName})">  
+		            AND ${select.simpleTableName}.${column.columnName} = ${r"#{"}${column.propertyName}.${column.joinPropertyName},javaType=${column.javaType.name}${r"}"}
 		        </if>
 	        </if>
 </#if>
@@ -132,7 +132,7 @@
 		parameterType="${delete.parameterType}">
 		DELETE FROM ${delete.tableName} ${delete.simpleTableName} WHERE
 		<trim prefixOverrides="AND | OR">
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
+			<if test="@com.tx.core.Ognl@isNotEmpty(id)">  
 	            AND ${delete.simpleTableName}.${delete.idColumnName} = ${r"#{"}${delete.idPropertyName}${r"}"}
 	        </if>
 		</trim>

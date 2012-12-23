@@ -8,7 +8,6 @@ package com.tx.core.mybatis.support;
 
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import javax.persistence.PersistenceException;
 
@@ -21,6 +20,8 @@ import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.hibernate.id.IdentifierGenerator;
+import org.hibernate.id.UUIDHexGenerator;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.SqlSessionUtils;
 import org.slf4j.Logger;
@@ -49,6 +50,21 @@ public class MyBatisDaoSupport {
     private static final int defaultDoFlushSize = 100;
     
     private SqlSessionTemplate sqlSessionTemplate;
+    
+    private static final IdentifierGenerator generator = new UUIDHexGenerator();
+    
+    /**
+      * 利用hibernaeUUID生成器，生成唯一键
+      * <功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return String [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public String generateUUID() {
+        return generator.generate(null, null).toString();
+    }
     
     /**
      * 查询实体对象<br/>
@@ -399,7 +415,7 @@ public class MyBatisDaoSupport {
             if (metaObject.hasSetter(keyPropertyName)
                     && String.class.equals(metaObject.getSetterType(keyPropertyName))
                     && StringUtils.isEmpty((String) metaObject.getValue(keyPropertyName))) {
-                metaObject.setValue(keyPropertyName, UUID.randomUUID().toString());
+                metaObject.setValue(keyPropertyName, generateUUID());
             }
         }
         insert(statement, parameter);
@@ -444,7 +460,7 @@ public class MyBatisDaoSupport {
             if (metaObject.hasSetter(keyProperty)
                     && String.class.equals(metaObject.getSetterType(keyProperty))
                     && StringUtils.isEmpty((String) metaObject.getValue(keyProperty))) {
-                metaObject.setValue(keyProperty, UUID.randomUUID().toString());
+                metaObject.setValue(keyProperty, generateUUID());
             }
         }
         
@@ -518,6 +534,114 @@ public class MyBatisDaoSupport {
                         statement,
                         objectList.get(index),
                         null);
+                if ((index > 0 && index % doFlushSize == 0)
+                        || index == objectList.size() - 1) {
+                    try {
+                        List<org.apache.ibatis.executor.BatchResult> test = flushBatchStatements(sqlSession);
+                        System.out.println(test);
+                        startFlushRowIndex = index + 1;
+                    }
+                    catch (Exception ex) {
+                        if (!(ex.getCause() instanceof BatchExecutorException)
+                                || isStopWhenFlushHappenedException) {
+                            DataAccessException translated = this.sqlSessionTemplate.getPersistenceExceptionTranslator()
+                                    .translateExceptionIfPossible((PersistenceException) ex);
+                            throw translated;
+                        }
+                        
+                        BatchExecutorException e = (BatchExecutorException) ex.getCause();
+                        // 如果为忽略错误异常则记录警告日志即可，无需打印堆栈，如果需要堆栈，需将日志级别配置为debug
+                        logger.warn("batchInsert hanppend Exception:{},the exception be igorned.",
+                                ex.toString());
+                        if (logger.isDebugEnabled()) {
+                            logger.debug(ex.toString(), ex);
+                        }
+                        
+                        // 获取错误行数，由于错误行发生的地方
+                        int errorRownumIndex = startFlushRowIndex
+                                + e.getSuccessfulBatchResults().size();
+                        result.addErrorInfoWhenException(objectList.get(index),
+                                errorRownumIndex,
+                                ex);
+                        
+                        //将行索引调整为错误行的行号，即从发生错误的行后面一行继续执行
+                        index = errorRownumIndex;
+                        startFlushRowIndex = errorRownumIndex + 1;
+                    }
+                }
+            }
+        }
+        finally {
+            sqlSession.close();
+        }
+        return result;
+    }
+    
+    /**
+     * 批量插入数据 \主键字段自动生成并插入 <br/>
+     * 1、数据批量插入，默认一次提交100条，当发生异常后继续提交异常行以后的数据，待集合全部进行提交后返回批量处理结果<br/>
+     * 2、数据批量插入，如果需要回滚，当发生异常后，数据库异常即向外抛出，不会进行至全部执行后再抛出异常 <br/>
+     * <功能详细描述>
+     * 
+     * @param statement
+     * @param objectCollection
+     * @param isRollback
+     * @return [参数说明]
+     * 
+     * @return BatchResult<T> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public BatchResult batchInsertUseUUID(String statement, List<?> objectList,
+            String keyPropertyName, boolean isStopWhenFlushHappenedException) {
+        return batchInsertUseUUID(statement,
+                objectList,
+                keyPropertyName,
+                defaultDoFlushSize,
+                isStopWhenFlushHappenedException);
+    }
+    
+    /**
+      * 批量插入数据 \主键字段自动生成并插入<功能简述>
+      * <功能详 细描述>
+      * @param statement
+      * @param objectList
+      * @param keyPropertyName
+      * @param doFlushSize
+      * @param isStopWhenFlushHappenedException
+      * @return [参数说明]
+      * 
+      * @return BatchResult [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    // 批量插入
+    public BatchResult batchInsertUseUUID(String statement, List<?> objectList,
+            String keyPropertyName, int doFlushSize,
+            boolean isStopWhenFlushHappenedException) {
+        BatchResult result = new BatchResult();
+        if (CollectionUtils.isEmpty(objectList)) {
+            return result;
+        }
+        if (doFlushSize <= 0) {
+            doFlushSize = defaultDoFlushSize;
+        }
+        //设置总条数
+        result.setTotalNum(objectList.size());
+        
+        //从当前环境中根据connection生成批量提交的sqlSession
+        SqlSession sqlSession = this.sqlSessionTemplate.getSqlSessionFactory()
+                .openSession(ExecutorType.BATCH);
+        
+        try {
+            // 本次flush的列表开始行行索引
+            int startFlushRowIndex = 0;
+            for (int index = 0; index < objectList.size(); index++) {
+                // 插入对象
+                insertForBatch(sqlSession,
+                        statement,
+                        objectList.get(index),
+                        keyPropertyName);
                 if ((index > 0 && index % doFlushSize == 0)
                         || index == objectList.size() - 1) {
                     try {
