@@ -160,7 +160,7 @@
 				<artifactId>hibernate-validator</artifactId>
 				<version>4.3.1.Final</version>
 			</dependency>
-			
+
 			<!-- hibernate-validator的依赖包 -->
 			<dependency>
 				<groupId>javax.validation</groupId>
@@ -514,12 +514,17 @@
 				<artifactId>jackson-mapper-asl</artifactId>
 				<version>1.7.9</version>
 			</dependency>
-			
+
 			<!-- activiti -->
 			<dependency>
-			  <groupId>org.activiti</groupId>
-			  <artifactId>activiti-engine</artifactId>
-			  <version>5.11</version>
+				<groupId>org.activiti</groupId>
+				<artifactId>activiti-engine</artifactId>
+				<version>5.11</version>
+			</dependency>
+			<dependency>
+				<groupId>org.activiti</groupId>
+				<artifactId>activiti-spring</artifactId>
+				<version>5.9</version>
 			</dependency>
 
 			<!-- mybatis -->
@@ -1174,7 +1179,7 @@
 						<encoding>UTF-8</encoding>
 					</configuration>
 				</plugin>
-				
+
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
@@ -1185,7 +1190,7 @@
 						<testFailureIgnore>flase</testFailureIgnore>
 					</configuration>
 				</plugin>
-				
+
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-dependency-plugin</artifactId>
@@ -1243,20 +1248,20 @@
 					<configuration>
 						<!-- The directory for the generated WAR. -->
 						<!-- Default value is: ${project.build.directory}. -->
-						<!--<outputDirectory>${basedir}/target/war</outputDirectory>-->
+						<!--<outputDirectory>${basedir}/target/war</outputDirectory> -->
 						<!-- The name of the generated WAR. -->
 						<!-- Default value is: ${project.build.finalName}. -->
 						<warName>${project.name}</warName>
 						<!-- Single directory for extra files to include in the WAR. This is 
 							where you place your JSP files. -->
 						<!-- Default value is: ${basedir}/src/main/webapp. -->
-						<!--<warSourceDirectory>${basedir}/src/main/webapp</warSourceDirectory>-->
+						<!--<warSourceDirectory>${basedir}/src/main/webapp</warSourceDirectory> -->
 						<!-- The directory where the webapp is built. -->
 						<!-- Default value is: ${project.build.directory}/${project.build.finalName}. -->
-						<!--<webappDirectory>${basedir}/target/war/webapp</webappDirectory>-->
+						<!--<webappDirectory>${basedir}/target/war/webapp</webappDirectory> -->
 						<!--Directory to unpack dependent WARs into if needed. -->
 						<!--Default value is: ${project.build.directory}/war/work. -->
-						<!--<workDirectory>${basedir}/target/war/work</workDirectory>-->
+						<!--<workDirectory>${basedir}/target/war/work</workDirectory> -->
 						<!-- The archive configuration to use -->
 						<archive>
 							<!-- Maven 打包 jar 、war 文件时，不将 pom.xml 等打包进包中 -->
@@ -1331,16 +1336,16 @@
 						</execution>
 					</executions>
 				</plugin>
-				
+
 				<!-- javadoc -->
 				<plugin>
-				    <groupId>org.apache.maven.plugins</groupId>
-				    <artifactId>maven-javadoc-plugin</artifactId>
-				    <inherited>true</inherited>
-				    <configuration>
-				        <encoding>UTF-8</encoding>
-				    </configuration>
-				    <executions>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-javadoc-plugin</artifactId>
+					<inherited>true</inherited>
+					<configuration>
+						<encoding>UTF-8</encoding>
+					</configuration>
+					<executions>
 						<execution>
 							<phase>compile</phase>
 						</execution>
@@ -1460,14 +1465,14 @@
 		<!-- http://127.0.0.1:8081/nexus/content/repositories/release -->
 		<repository>
 			<id>releases</id>
-			<url>http://127.0.0.1:8081/nexus/content/repositories/releases</url>
+			<url>http://192.168.0.239:8000/nexus/content/repositories/releases</url>
 		</repository>
 		<snapshotRepository>
 			<id>snapshots</id>
-			<url>http://127.0.0.1:8081/nexus/content/repositories/snapshots</url>
+			<url>http://192.168.0.239:8000/nexus/content/repositories/snapshots</url>
 		</snapshotRepository>
 	</distributionManagement>
-	
+
 	<modules>
 		<module>tx-core</module>
 		<module>tx-components</module>
