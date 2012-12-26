@@ -33,7 +33,7 @@ public class PagedList<T> implements Serializable{
     @SuppressWarnings("rawtypes")
     private List<?> list = new ArrayList();
     
-    /** 默认每次查询的页条数 */
+    /** 默认每次查询的页数 */
     private int queryPageSize = PagedConstant.DEFAULT_QUERY_PAGE_SIZE;
     
     /** 每页显示条数 */
