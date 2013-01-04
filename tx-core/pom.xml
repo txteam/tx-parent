@@ -175,10 +175,8 @@
 
 		<!-- test -->
 		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-			<optional>true</optional>
-			<scope>compile</scope>
+		  <groupId>javax.servlet</groupId>
+		  <artifactId>servlet-api</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
