@@ -46,4 +46,8 @@ public interface ErrorCodeConstant {
     /** 权限容器初始化异常 */
     String AUTH_CONTEXT_INIT_EXCEPTION = "000-000-004-100";
     
+    /**********************************自定义标签异常异常**************************************/
+    /** 自定义标签异常异常 */
+    String TAGLIB_EXCEPTION = "000-100-000-000";
+    
 }

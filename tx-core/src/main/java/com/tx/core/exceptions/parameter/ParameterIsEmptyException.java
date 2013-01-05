@@ -28,7 +28,7 @@ public class ParameterIsEmptyException extends SILException {
      */
     public ParameterIsEmptyException(String errorMessage, Throwable cause,
             String... parameters) {
-        super(ErrorCodeConstant.PARAMETER_IS_EMPTY, errorMessage, cause,
+        super(ErrorCodeConstant.TAGLIB_EXCEPTION, errorMessage, cause,
                 parameters);
     }
     
@@ -36,6 +36,6 @@ public class ParameterIsEmptyException extends SILException {
      * <默认构造函数>
      */
     public ParameterIsEmptyException(String errorMessage, String... parameters) {
-        super(ErrorCodeConstant.PARAMETER_IS_EMPTY, errorMessage, parameters);
+        super(ErrorCodeConstant.TAGLIB_EXCEPTION, errorMessage, parameters);
     }
 }

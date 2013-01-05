@@ -115,6 +115,33 @@
 			<optional>true</optional>
 		</dependency>
 
+		<!-- taglib -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jsp-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<!-- jstl的类库，包含TLD 和标记句柄。 -->
+			<groupId>taglibs</groupId>
+			<artifactId>standard</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>ognl</groupId>
+			<artifactId>ognl</artifactId>
+		</dependency>
+
 		<!-- log -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -175,8 +202,8 @@
 
 		<!-- test -->
 		<dependency>
-		  <groupId>javax.servlet</groupId>
-		  <artifactId>servlet-api</artifactId>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>

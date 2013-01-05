@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE taglib
+  PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.2//EN"
+  "http://java.sun.com/dtd/web-jsptaglibrary_1_2.dtd">
+<taglib>
+  <tlib-version>1.0</tlib-version>
+  <jsp-version>1.2</jsp-version>
+  <short-name>ognl</short-name>
+  <uri>http://com.tx.core/taglib/ognl</uri>
+  <display-name>tx taglib core</display-name>
+  <description>tx taglib core library</description>
+
+  <tag>
+    <name>if</name>
+    <tag-class>com.tx.core.taglib.OgnlIfTag</tag-class>
+    <body-content>JSP</body-content>
+    <description>
+        Simple conditional tag, which evalutes its body if the
+        supplied condition is true and optionally exposes a Boolean
+        scripting variable representing the evaluation of this condition
+    </description>
+    <attribute>
+        <name>test</name>
+        <required>true</required>
+        <rtexprvalue>false</rtexprvalue>
+    </attribute>
+    <attribute>
+        <name>var</name>
+        <required>false</required>
+        <rtexprvalue>false</rtexprvalue>
+    </attribute>
+    <attribute>
+        <name>scope</name>
+        <required>false</required>
+        <rtexprvalue>false</rtexprvalue>
+    </attribute>
+  </tag>
+
+  <tag>
+    <name>when</name>
+    <tag-class>com.tx.core.taglib.OgnlWhenTag</tag-class>
+    <body-content>JSP</body-content>
+    <description>
+        Subtag of &lt;choose&gt; that includes its body if its
+        condition evalutes to 'true'
+    </description>
+    <attribute>
+        <name>test</name>
+        <required>true</required>
+        <rtexprvalue>false</rtexprvalue>
+    </attribute>
+  </tag>
+
+</taglib>
