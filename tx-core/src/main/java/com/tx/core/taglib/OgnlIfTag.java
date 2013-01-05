@@ -8,10 +8,12 @@ package com.tx.core.taglib;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspTagException;
+import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.jstl.core.ConditionalTagSupport;
 
 import ognl.OgnlException;
 
+import org.apache.taglibs.standard.lang.jstl.test.PageContextImpl;
 import org.apache.taglibs.standard.tag.common.core.NullAttributeException;
 
 import com.tx.core.taglib.model.TagOgnlExpressionCache;
@@ -82,6 +84,14 @@ public class OgnlIfTag extends ConditionalTagSupport {
     // receives the tag's 'test' attribute
     public void setTest(String test) {
         this.test = test;
+    }
+    
+    public static void main(String[] args) throws Exception{
+        PageContext t = new PageContextImpl();
+        t.setAttribute("test", true);
+        
+        System.out.println(TagOgnlExpressionCache.getValue("test", t));
+        System.out.println(TagOgnlExpressionCache.getValue("getAttribute('test')", t));
     }
     
 }
