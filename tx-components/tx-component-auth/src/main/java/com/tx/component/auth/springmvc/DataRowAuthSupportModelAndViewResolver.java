@@ -13,6 +13,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.servlet.ModelAndView;
@@ -61,8 +62,10 @@ public class DataRowAuthSupportModelAndViewResolver implements ModelAndViewResol
             //如果是ajax请求，则对返回对象进行行过滤处理
             handleByDataRowAuth(returnValue);
         }else if(returnValue instanceof Model ||
-                returnValue instanceof Map<?, ?>){
+                returnValue instanceof Map<?, ?> ||
+                returnValue instanceof ModelMap){
             //对implicitModel以及map进行一并处理
+            
         }else{
             //returnValue instanceof ModelAndView
             //returnValue instanceof View
