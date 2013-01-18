@@ -536,12 +536,36 @@
 				<groupId>org.activiti</groupId>
 				<artifactId>activiti-engine</artifactId>
 				<version>5.11</version>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.activiti</groupId>
 				<artifactId>activiti-spring</artifactId>
 				<version>5.9</version>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
+			<dependency>
+				<groupId>org.activiti</groupId>
+				<artifactId>activiti-cxf</artifactId>
+				<version>5.9</version>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+
 
 			<!-- mybatis -->
 			<dependency>
@@ -1096,6 +1120,12 @@
 						<artifactId>junit-addons-runner</artifactId>
 					</exclusion>
 				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.activiti</groupId>
+				<artifactId>activiti-engine-test-cfg</artifactId>
+				<version>5.0.beta1</version>
+				<scope>test</scope>
 			</dependency>
 
 			<!-- Taglibs -->
