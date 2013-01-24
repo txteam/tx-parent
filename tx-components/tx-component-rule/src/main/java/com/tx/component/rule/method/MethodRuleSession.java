@@ -69,7 +69,7 @@ public class MethodRuleSession implements RuleSession{
      * 
      */
     @Override
-    public void execute() {
+    public void execute(Map<String, Object> facts) {
         
     }
 
