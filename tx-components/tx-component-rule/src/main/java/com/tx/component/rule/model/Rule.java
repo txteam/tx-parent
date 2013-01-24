@@ -33,7 +33,7 @@ public interface Rule {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public String getRule();
+    public String rule();
 
     /**
       * 获取规则类型

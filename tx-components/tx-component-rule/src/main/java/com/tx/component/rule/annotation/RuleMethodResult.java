@@ -13,8 +13,7 @@ import java.lang.annotation.Target;
 
 
  /**
-  * 规则结果句柄
-  * <功能详细描述>
+  * 规则结果句柄<br/>
   * 
   * @author  brady
   * @version  [版本号, 2013-1-24]

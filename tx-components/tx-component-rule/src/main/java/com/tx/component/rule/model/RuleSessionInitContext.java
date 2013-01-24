@@ -4,7 +4,7 @@
  * 修改时间:  2013-1-24
  * <修改描述:>
  */
-package com.tx.component.rule.support;
+package com.tx.component.rule.model;
 
 import java.util.Map;
 

@@ -179,7 +179,7 @@ public class RuleSessionTemplate implements RuleSessionSupport,
             } catch (Throwable t) {
                 Throwable unwrapped = t;
                 if (ruleExceptionTranslator != null) {
-                    Throwable translated = ruleExceptionTranslator.translate(rule,ruleType,ruleExpression, ex);
+                    Throwable translated = null;//ruleExceptionTranslator.translate(rule,ruleType,ruleExpression, ex);
                     if (translated != null) {
                         unwrapped = translated;
                     }

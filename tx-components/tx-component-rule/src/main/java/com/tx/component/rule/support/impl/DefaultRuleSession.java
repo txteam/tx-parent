@@ -4,9 +4,9 @@
  * 修改时间:  2013-1-24
  * <修改描述:>
  */
-package com.tx.component.rule.drools;
+package com.tx.component.rule.support.impl;
 
-import com.tx.component.rule.model.Rule;
+import com.tx.component.rule.support.RuleSession;
 
 
  /**
@@ -18,33 +18,40 @@ import com.tx.component.rule.model.Rule;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
   */
-public class DroolsRule implements Rule {
+public class DefaultRuleSession implements RuleSession {
     
     /**
      * @return
      */
     @Override
     public String rule() {
-        // TODO Auto-generated method stub
         return null;
     }
     
     /**
-     * @return
+     * 
      */
     @Override
-    public String getRuleType() {
-        // TODO Auto-generated method stub
-        return null;
+    public void start() {
+        
     }
     
     /**
-     * @return
+     * 
      */
     @Override
-    public String getServiceType() {
+    public void execute() {
         // TODO Auto-generated method stub
-        return null;
+        
+    }
+    
+    /**
+     * 
+     */
+    @Override
+    public void close() {
+        // TODO Auto-generated method stub
+        
     }
     
 }

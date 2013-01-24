@@ -6,6 +6,8 @@
  */
 package com.tx.component.rule.support;
 
+import java.util.Map;
+
 
 /**
  * 规则会话定义<br/>
@@ -33,7 +35,17 @@ public interface RuleSession{
     public String rule();
     
     /**
-      * 触发规则<br/>
+      * 规则回话开始<br/>
+      * [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public void start(Map<String, Object> globals);
+    
+    /**
+      * 会话执行<br/>
       *     1、该方法被触发后，将会<br/>
       *         首先初始化回话，插入事实，执行规则，销毁回话<br/>
       *     
@@ -44,4 +56,14 @@ public interface RuleSession{
       * @see [类、类#方法、类#成员]
      */
     public void execute();
+    
+    /**
+      * 关闭会话
+      * <功能详细描述> [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public void close();
 }

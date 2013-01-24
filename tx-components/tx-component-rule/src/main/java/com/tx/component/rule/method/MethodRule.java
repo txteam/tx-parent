@@ -29,7 +29,7 @@ public class MethodRule implements Rule {
      * @return
      */
     @Override
-    public String getRule() {
+    public String rule() {
         return ruleAnnotation.rule();
     }
     
