@@ -28,17 +28,6 @@ public class SILException extends RuntimeException {
     private String errorCode = "";
     
     /** <默认构造函数> */
-    public SILException(String errorCode) {
-        super();
-        this.errorCode = errorCode;
-    }
-    
-    /** <默认构造函数> */
-    public SILException(String errorCode, Throwable cause) {
-        super(cause);
-    }
-    
-    /** <默认构造函数> */
     public SILException(String errorCode, String errorMessage,
             String... parameters) {
         super((parameters == null || parameters.length == 0) ? errorMessage

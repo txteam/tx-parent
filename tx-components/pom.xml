@@ -23,5 +23,6 @@
 		<module>tx-component-auth</module>
 		<module>tx-component-servicelog</module>
 		<module>tx-component-config</module>
+		<module>tx-component-rule</module>
 	</modules>
 </project>

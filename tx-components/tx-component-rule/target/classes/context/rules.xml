@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rule_configs>
+
+<rule_config rule="checkFirstTrialDataIntegrityGlobalContext"
+	globalContext="loanBill">
+	<rule_element ruleType="bean">xxx</rule_element>
+</rule_config>
+
+<rule_config rule="checkFirstTrialDataIntegrityGlobalContext"
+	globalContext="loanBill">
+</rule_config>
+
+
+
+</rule_configs>
