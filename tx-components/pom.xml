@@ -24,5 +24,6 @@
 		<module>tx-component-servicelog</module>
 		<module>tx-component-config</module>
 		<module>tx-component-rule</module>
+		<module>tx-component-workflow</module>
 	</modules>
 </project>
