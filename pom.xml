@@ -137,8 +137,6 @@
 				<version>1.4.5</version>
 			</dependency>
 
-
-
 			<!-- hibernate -->
 			<dependency>
 				<groupId>org.hibernate</groupId>

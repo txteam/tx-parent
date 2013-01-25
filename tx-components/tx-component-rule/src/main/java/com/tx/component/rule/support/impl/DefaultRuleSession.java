@@ -6,6 +6,8 @@
  */
 package com.tx.component.rule.support.impl;
 
+import java.util.Map;
+
 import com.tx.component.rule.support.RuleSession;
 
 
@@ -28,23 +30,28 @@ public class DefaultRuleSession implements RuleSession {
         return null;
     }
     
-    /**
-     * 
-     */
-    @Override
-    public void start() {
-        
-    }
+    
     
     /**
-     * 
+     * @param globals
      */
     @Override
-    public void execute() {
+    public void start(Map<String, Object> globals) {
         // TODO Auto-generated method stub
         
     }
-    
+
+    /**
+     * @param fact
+     */
+    @Override
+    public void execute(Map<String, Object> fact) {
+        // TODO Auto-generated method stub
+        
+    }
+
+
+
     /**
      * 
      */

@@ -6,8 +6,6 @@
  */
 package com.tx.component.rule.facade;
 
-import org.drools.template.parser.RuleTemplate;
-
 import com.tx.component.rule.support.RuleSessionTemplate;
 
 

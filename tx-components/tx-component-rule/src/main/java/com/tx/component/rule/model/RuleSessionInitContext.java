@@ -10,8 +10,9 @@ import java.util.Map;
 
 
  /**
-  * 规则回话容初始化容器
-  * <功能详细描述>
+  * 规则回话容初始化容器<br>
+  * 主要含有，事实与全局变量<br/>
+  * 
   * 
   * @author  brady
   * @version  [版本号, 2013-1-24]
@@ -20,8 +21,10 @@ import java.util.Map;
   */
 public class RuleSessionInitContext<T> {
     
+    /** 规则执行时的，事实 */
     private T fact;
     
+    /** 规则执行时的全局参量 */
     private Map<String, ?> global;
 
     /**
