@@ -140,7 +140,7 @@ public interface RuleSessionSupport {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public void evalute(String rule, Map<String, Object> fact);
+    public void evaluate(String rule, Map<String, Object> fact);
     
     /**
       * 解析列表规则结果（推导结论或推论事实）<br/>
@@ -152,6 +152,17 @@ public interface RuleSessionSupport {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public void evalute(String rule, Map<String, ?> fact, Map<String, ?> global);
+    public void evaluate(String rule, Map<String, ?> fact, Map<String, ?> global);
+    
+    /**
+      * 解析列表规则结果（推导结论或推论事实）触发某规则执行<br/>
+      * <功能详细描述>
+      * @param ruleSession 规则会话，需要自信实现相关会话逻辑
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public void evaluate(RuleSession ruleSession);
     
 }

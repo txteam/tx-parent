@@ -6,23 +6,18 @@
  */
 package com.tx.component.rule.support;
 
-import static org.apache.ibatis.reflection.ExceptionUtil.unwrapThrowable;
-import static org.mybatis.spring.SqlSessionUtils.closeSqlSession;
-import static org.mybatis.spring.SqlSessionUtils.getSqlSession;
-import static org.mybatis.spring.SqlSessionUtils.isSqlSessionTransactional;
-
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.ibatis.exceptions.PersistenceException;
 import org.apache.ibatis.session.SqlSession;
-import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.InitializingBean;
 
 import com.tx.component.rule.exceptions.RuleExceptionTranslator;
+import com.tx.component.rule.exceptions.impl.DefaultRuleExceptionTranslator;
+import com.tx.component.rule.model.Rule;
 
 /**
  * 规则运行执行器<br>
@@ -40,7 +35,7 @@ public class RuleSessionTemplate implements RuleSessionSupport,
     private RuleSessionSupport supportProxy;
     
     private RuleExceptionTranslator ruleExceptionTranslator;
-    
+
     /**
      * @throws Exception
      */
@@ -50,6 +45,9 @@ public class RuleSessionTemplate implements RuleSessionSupport,
                 .getClassLoader(),
                 new Class<?>[] { RuleSessionSupport.class },
                 new RuleSessionSupportInvocationHandler());
+        if(this.ruleExceptionTranslator == null){
+            this.ruleExceptionTranslator = new DefaultRuleExceptionTranslator();
+        }
     }
     
     /**
@@ -145,8 +143,17 @@ public class RuleSessionTemplate implements RuleSessionSupport,
      * @param fact
      */
     @Override
-    public void evalute(String rule, Map<String, Object> fact) {
-        this.supportProxy.evalute(rule, fact);
+    public void evaluate(String rule, Map<String, Object> fact) {
+        this.supportProxy.evaluate(rule, fact);
+    }
+    
+    /**
+     * @param ruleSession
+     */
+    @Override
+    public void evaluate(RuleSession ruleSession) {
+        // TODO Auto-generated method stub
+        
     }
     
     /**
@@ -155,12 +162,17 @@ public class RuleSessionTemplate implements RuleSessionSupport,
      * @param global
      */
     @Override
-    public void evalute(String rule, Map<String, ?> fact, Map<String, ?> global) {
-        this.supportProxy.evalute(rule, fact, global);
+    public void evaluate(String rule, Map<String, ?> fact, Map<String, ?> global) {
+        this.supportProxy.evaluate(rule, fact, global);
     }
     
     private class RuleSessionSupportInvocationHandler implements
             InvocationHandler {
+        
+        private Rule rule;
+        
+        private RuleSession ruleSession;
+        
         
         /**
          * @param proxy
@@ -173,21 +185,23 @@ public class RuleSessionTemplate implements RuleSessionSupport,
         public Object invoke(Object proxy, Method method, Object[] args)
                 throws Throwable {
             final SqlSession sqlSession = null;
+            
+            //开始一次会话
+            RuleSessionContext.open();
             try {
                 Object result = method.invoke(sqlSession, args);
                 return result;
             } catch (Throwable t) {
                 Throwable unwrapped = t;
                 if (ruleExceptionTranslator != null) {
-                    Throwable translated = null;//ruleExceptionTranslator.translate(rule,ruleType,ruleExpression, ex);
-                    if (translated != null) {
+                    Throwable translated = ruleExceptionTranslator.translate(rule, ruleSession, t);
+                    if(translated != null){
                         unwrapped = translated;
                     }
                 }
                 throw unwrapped;
             } finally {
-                //close rule session 
-                //如果规则尚未执行完成
+                RuleSessionContext.close();
             }
         }
     }

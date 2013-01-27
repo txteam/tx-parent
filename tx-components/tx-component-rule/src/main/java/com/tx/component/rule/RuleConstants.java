@@ -46,4 +46,8 @@ public class RuleConstants {
     ///** 规则类型：java代码(暂不进行支持) */
     //public static final String RULE_TYPE_SCRIPT_JAVA = "script_java";
     
+    /** 规则约定常量 */
+    public static final String RULE_PROMISE_CONSTANT_RESULT = "result";
+
+    
 }

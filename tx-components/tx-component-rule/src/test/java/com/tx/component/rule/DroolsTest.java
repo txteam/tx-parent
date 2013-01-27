@@ -45,6 +45,7 @@ public class DroolsTest {
         //start
         StatefulKnowledgeSession session = kb.newStatefulKnowledgeSession();
         
+        //.args.session.
         session.setGlobal("xxx", new Object());
         session.setGlobal("xxx", new Object());
         

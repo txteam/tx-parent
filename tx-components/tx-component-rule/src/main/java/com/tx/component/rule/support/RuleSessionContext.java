@@ -4,7 +4,7 @@
  * 修改时间:  2013-1-24
  * <修改描述:>
  */
-package com.tx.component.rule.method;
+package com.tx.component.rule.support;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,7 +17,7 @@ import java.util.Map;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class MethodRuleSessionContext {
+public class RuleSessionContext {
     
     /**
      * 全局容器绑定
@@ -43,8 +43,8 @@ public class MethodRuleSessionContext {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public static void open(Map<String, Object> globals){
-        global.set(globals);
+    public static void open(){
+        global.remove();
     }
     
     /**

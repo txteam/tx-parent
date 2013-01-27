@@ -1,64 +1,57 @@
 /*
  * 描          述:  <描述>
- * 修  改   人:  brady
- * 修改时间:  2013-1-24
+ * 修  改   人:  pengqingyang
+ * 修改时间:  2013-1-27
  * <修改描述:>
  */
 package com.tx.component.rule.support.impl;
 
-import java.util.Map;
-
+import com.tx.component.rule.RuleConstants;
+import com.tx.component.rule.model.Rule;
+import com.tx.component.rule.model.RuleResultHandle;
 import com.tx.component.rule.support.RuleSession;
+import com.tx.component.rule.support.RuleSessionContext;
 
 
  /**
-  * <功能简述>
-  * <功能详细描述>
+  * 默认的规则会话对象，用以代替ruleSesion的公共部分逻辑实现<br/>
+  *     使得继承于该类的规则会话实体
   * 
-  * @author  brady
-  * @version  [版本号, 2013-1-24]
+  * @author  pengqingyang
+  * @version  [版本号, 2013-1-27]
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
   */
-public class DefaultRuleSession implements RuleSession {
+public abstract class DefaultRuleSession<R extends Rule> implements RuleSession {
     
+    //private static final Logger logger = LoggerFactory.getLogger(DefaultRuleSession.class);
+    
+    /** 规则会话对应规则实体 */
+    protected R rule;
+    
+    /**
+     * 规则会话构造函数
+     */
+    public DefaultRuleSession(R rule) {
+        super();
+        this.rule = rule;
+    }
+
     /**
      * @return
      */
     @Override
     public String rule() {
-        return null;
-    }
-    
-    
-    
-    /**
-     * @param globals
-     */
-    @Override
-    public void start(Map<String, Object> globals) {
-        // TODO Auto-generated method stub
-        
+        return rule.rule();
     }
 
     /**
-     * @param fact
+     * @param resultHandle
      */
+    @SuppressWarnings("unchecked")
     @Override
-    public void execute(Map<String, Object> fact) {
-        // TODO Auto-generated method stub
-        
+    public <T> void callback(RuleResultHandle<T> resultHandle) {
+        Object resultObject = RuleSessionContext.getGlobal(RuleConstants.RULE_PROMISE_CONSTANT_RESULT);
+        resultHandle.setValue((T)resultObject);
     }
-
-
-
-    /**
-     * 
-     */
-    @Override
-    public void close() {
-        // TODO Auto-generated method stub
-        
-    }
-    
 }

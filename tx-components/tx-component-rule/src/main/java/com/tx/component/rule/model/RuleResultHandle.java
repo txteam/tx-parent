@@ -4,7 +4,7 @@
  * 修改时间:  2013-1-23
  * <修改描述:>
  */
-package com.tx.component.rule.support;
+package com.tx.component.rule.model;
 
 /**
   * 规则回话结果句柄<br/>
@@ -15,7 +15,7 @@ package com.tx.component.rule.support;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
  */
-public interface RuleSessionResultHandle<R> {
+public interface RuleResultHandle<R> {
     
     /**
       * 获取规则回话结果值(可能为推论结果或符合规则的事实)<br/>

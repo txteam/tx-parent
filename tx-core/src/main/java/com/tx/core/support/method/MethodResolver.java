@@ -32,6 +32,8 @@ public class MethodResolver {
     
     private int parametersLength;
     
+    private Class<?> returnType;
+    
     /**
      * 方法解析器
      */
@@ -64,6 +66,8 @@ public class MethodResolver {
                     methodTypes[i], annotationArr[i]));
         }
         methodResolver.setParametersLength(methodTypes.length);
+        methodResolver.setReturnType(method.getReturnType());
+        
         methodResolverCache.put(method, methodResolver);
         
         return methodResolver;
@@ -125,6 +129,20 @@ public class MethodResolver {
      */
     public void setParametersLength(int parametersLength) {
         this.parametersLength = parametersLength;
+    }
+
+    /**
+     * @return 返回 returnType
+     */
+    public Class<?> getReturnType() {
+        return returnType;
+    }
+
+    /**
+     * @param 对returnType进行赋值
+     */
+    public void setReturnType(Class<?> returnType) {
+        this.returnType = returnType;
     }
 
     //    public void test(String a,Object[] t,String... b){

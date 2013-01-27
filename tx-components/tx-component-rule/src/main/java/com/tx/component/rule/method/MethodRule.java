@@ -1,7 +1,7 @@
 /*
  * 描          述:  <描述>
- * 修  改   人:  brady
- * 修改时间:  2013-1-24
+ * 修  改   人:  pengqingyang
+ * 修改时间:  2013-1-27
  * <修改描述:>
  */
 package com.tx.component.rule.method;
@@ -14,7 +14,7 @@ import com.tx.component.rule.model.Rule;
 /**
  * 方法类型的规则<br/>
  * 
- * @author  brady
+ * @author  pengqingyang
  * @version  [版本号, 2013-1-24]
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
@@ -23,7 +23,9 @@ public class MethodRule implements Rule {
     
     private Method method;
     
-    private com.tx.component.rule.annotation.RuleMethod ruleAnnotation;
+    private Object object;
+    
+    private com.tx.component.rule.method.annotation.RuleMethod ruleAnnotation;
     
     /**
      * @return
@@ -66,7 +68,7 @@ public class MethodRule implements Rule {
     /**
      * @return 返回 ruleAnnotation
      */
-    public com.tx.component.rule.annotation.RuleMethod getRuleAnnotation() {
+    public com.tx.component.rule.method.annotation.RuleMethod getRuleAnnotation() {
         return ruleAnnotation;
     }
     
@@ -74,7 +76,21 @@ public class MethodRule implements Rule {
      * @param 对ruleAnnotation进行赋值
      */
     public void setRuleAnnotation(
-            com.tx.component.rule.annotation.RuleMethod ruleAnnotation) {
+            com.tx.component.rule.method.annotation.RuleMethod ruleAnnotation) {
         this.ruleAnnotation = ruleAnnotation;
+    }
+
+    /**
+     * @return 返回 object
+     */
+    public Object getObject() {
+        return object;
+    }
+
+    /**
+     * @param 对object进行赋值
+     */
+    public void setObject(Object object) {
+        this.object = object;
     }
 }

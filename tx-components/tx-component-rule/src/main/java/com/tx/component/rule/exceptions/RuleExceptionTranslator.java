@@ -6,6 +6,9 @@
  */
 package com.tx.component.rule.exceptions;
 
+import com.tx.component.rule.model.Rule;
+import com.tx.component.rule.support.RuleSession;
+
 /**
  * 规则异常转换器
  * <功能详细描述>
@@ -30,5 +33,5 @@ public interface RuleExceptionTranslator {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    RuleAccessException translate(String rule, String ruleType, Exception ex);
+    RuleAccessException translate(Rule rule, RuleSession ruleSession, Throwable ex);
 }

@@ -8,6 +8,7 @@ package com.tx.component.rule.support;
 
 import java.util.Map;
 
+import com.tx.component.rule.model.RuleResultHandle;
 
 /**
  * 规则会话定义<br/>
@@ -22,7 +23,7 @@ import java.util.Map;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public interface RuleSession{
+public interface RuleSession {
     
     /**
       * 规则名
@@ -33,16 +34,6 @@ public interface RuleSession{
       * @see [类、类#方法、类#成员]
      */
     public String rule();
-    
-    /**
-      * 规则回话开始<br/>
-      * [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    public void start(Map<String, Object> globals);
     
     /**
       * 会话执行<br/>
@@ -58,12 +49,13 @@ public interface RuleSession{
     public void execute(Map<String, Object> fact);
     
     /**
-      * 关闭会话
-      * <功能详细描述> [参数说明]
+      * 回调，用以写入结果值
+      * <功能详细描述>
+      * @param globals [参数说明]
       * 
       * @return void [返回类型说明]
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public void close();
+    public <T> void callback(RuleResultHandle<T> resultHandle);
 }
