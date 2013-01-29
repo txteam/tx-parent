@@ -7,6 +7,7 @@
 package com.tx.component.rule.method;
 
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -22,6 +23,7 @@ import com.tx.component.rule.RuleConstants;
 import com.tx.component.rule.exceptions.RuleAccessException;
 import com.tx.component.rule.method.annotation.RuleMethodParam;
 import com.tx.component.rule.method.annotation.RuleMethodResult;
+import com.tx.component.rule.model.Rule;
 import com.tx.component.rule.support.RuleSessionContext;
 import com.tx.component.rule.support.impl.DefaultRuleSession;
 import com.tx.core.support.method.MethodResolver;
@@ -36,7 +38,7 @@ import com.tx.core.support.method.ParameterResolver;
  * @since  [产品/模块版本]
  */
 public class MethodRuleSession extends DefaultRuleSession<MethodRule> {
-
+    
     private static final Logger logger = LoggerFactory.getLogger(MethodRuleSession.class);
     
     /** 规则会话中是根据结果还是参数，获取规则结果 */
@@ -45,7 +47,9 @@ public class MethodRuleSession extends DefaultRuleSession<MethodRule> {
     public MethodRuleSession(MethodRule rule) {
         super(rule);
     }
-    
+
+
+
     /**
      * 
      */
@@ -59,16 +63,27 @@ public class MethodRuleSession extends DefaultRuleSession<MethodRule> {
                 RuleSessionContext.setGlobal(RuleConstants.RULE_PROMISE_CONSTANT_RESULT,
                         returnObj);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             logger.error("MethodRuleSession execute exception: " + e.toString(),
                     e);
-            throw new RuleAccessException(rule(), this.rule, this,
+            throw new RuleAccessException(this.rule.rule(), this.rule, this,
                     "rule:{} execute exception.");
         }
-        
     }
     
+    /**
+     * @param fact
+     */
+    @Override
+    public void execute(List<Map<String, Object>> facts) {
+        if(facts == null){
+            return ;
+        }
+        for(Map<String, Object> fact : facts){
+            execute(fact);
+        }
+    }
+
     /**
       * 解析生成规则会话方法调用参数数组<br/>
       * <功能详细描述>
@@ -109,27 +124,24 @@ public class MethodRuleSession extends DefaultRuleSession<MethodRule> {
                             resultObj);
                     isHasRuleMethodResultAnnotation = true;
                     continue;
-                }
-                catch (InstantiationException e) {
+                } catch (InstantiationException e) {
                     logger.error("resolveHandlerArguments exceptions: ", e);
                     throw new RuleAccessException(
-                            rule(),
+                            this.rule.rule(),
                             this.rule,
                             this,
                             "rule:{} param[{}] @RuleMethodResult param must has default constructor.",
-                            rule(), String.valueOf(i));
-                }
-                catch (IllegalAccessException e) {
+                            this.rule.rule(), String.valueOf(i));
+                } catch (IllegalAccessException e) {
                     logger.error("resolveHandlerArguments exceptions: ", e);
                     throw new RuleAccessException(
-                            rule(),
+                            this.rule.rule(),
                             this.rule,
                             this,
                             "rule:{} param[{}] @RuleMethodResult param must has default constructor.",
-                            rule(), String.valueOf(i));
+                            this.rule.rule(), String.valueOf(i));
                 }
-            }
-            else if (paramterResolver.isHasAnnotation(RuleMethodParam.class)) {
+            } else if (paramterResolver.isHasAnnotation(RuleMethodParam.class)) {
                 //如果有RuleMethodParam注解
                 RuleMethodParam ruleMethodParamInstance = paramterResolver.getAnnotation(RuleMethodParam.class);
                 if (StringUtils.isEmpty(ruleMethodParamInstance.value())) {
@@ -139,8 +151,7 @@ public class MethodRuleSession extends DefaultRuleSession<MethodRule> {
                         args[i] = fact;
                         continue;
                     }
-                }
-                else if (!StringUtils.isEmpty(ruleMethodParamInstance.value())) {
+                } else if (!StringUtils.isEmpty(ruleMethodParamInstance.value())) {
                     String paramKey = ruleMethodParamInstance.value();
                     Object paramValue = fact.get(paramKey);
                     if (ruleMethodParamInstance.required()
@@ -148,22 +159,20 @@ public class MethodRuleSession extends DefaultRuleSession<MethodRule> {
                         paramValue = ruleMethodParamInstance.defaultValue();
                         if (paramValue == null) {
                             throw new RuleAccessException(
-                                    rule(),
+                                    this.rule.rule(),
                                     this.rule,
                                     this,
                                     "rule:{} param[{}] is required. must has not emptyValue",
-                                    rule(), String.valueOf(i));
+                                    this.rule.rule(), String.valueOf(i));
                         }
                     }
                     args[i] = paramValue;
                     continue;
                 }
-            }
-            else if (typeMap.containsKey(paramterResolver.getParamterType())) {
+            } else if (typeMap.containsKey(paramterResolver.getParamterType())) {
                 //如果没有RuleMethodParam注解，但事实对象中存在同类型的对象，则将最后一个同类型对象压入参数
                 args[i] = typeMap.getFirst(paramterResolver.getParamterType());
-            }
-            else {
+            } else {
                 args[i] = null;
             }
         }

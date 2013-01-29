@@ -6,11 +6,18 @@
  */
 package com.tx.component.rule.drools;
 
+import java.util.Collection;
+import java.util.List;
+
+import org.drools.KnowledgeBase;
+import org.drools.definition.KnowledgePackage;
+
+import com.tx.component.rule.RuleConstants;
 import com.tx.component.rule.model.Rule;
 
 
  /**
-  * <功能简述>
+  * drools规则<br/>
   * <功能详细描述>
   * 
   * @author  brady
@@ -20,13 +27,25 @@ import com.tx.component.rule.model.Rule;
   */
 public class DroolsRule implements Rule {
     
+    /** 规则名 */
+    private String rule;
+    
+    /** 规则的业务类型属性 */
+    private String serviceType;
+    
+    /** 规则基础规则包 */
+    private Collection<KnowledgePackage> basePackages;
+    
+    //private 
+    
+    private KnowledgeBase knowledgeBase;
+    
     /**
      * @return
      */
     @Override
     public String rule() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.rule;
     }
     
     /**
@@ -34,8 +53,7 @@ public class DroolsRule implements Rule {
      */
     @Override
     public String getRuleType() {
-        // TODO Auto-generated method stub
-        return null;
+        return RuleConstants.RULE_TYPE_DROOLS;
     }
     
     /**
@@ -43,8 +61,56 @@ public class DroolsRule implements Rule {
      */
     @Override
     public String getServiceType() {
-        // TODO Auto-generated method stub
         return null;
+    }
+
+    /**
+     * @return 返回 rule
+     */
+    public String getRule() {
+        return rule;
+    }
+
+    /**
+     * @param 对rule进行赋值
+     */
+    public void setRule(String rule) {
+        this.rule = rule;
+    }
+
+    /**
+     * @return 返回 basePackages
+     */
+    public Collection<KnowledgePackage> getBasePackages() {
+        return basePackages;
+    }
+
+    /**
+     * @param 对basePackages进行赋值
+     */
+    public void setBasePackages(Collection<KnowledgePackage> basePackages) {
+        this.basePackages = basePackages;
+    }
+
+    /**
+     * @return 返回 knowledgeBase
+     */
+    public KnowledgeBase getKnowledgeBase() {
+        return knowledgeBase;
+    }
+
+    /**
+     * @param 对knowledgeBase进行赋值
+     */
+    public void setKnowledgeBase(KnowledgeBase knowledgeBase) {
+        this.knowledgeBase = knowledgeBase;
+    }
+
+    /**
+     * @param 对serviceType进行赋值
+     */
+    public void setServiceType(String serviceType) {
+        this.serviceType = serviceType;
     }
     
 }

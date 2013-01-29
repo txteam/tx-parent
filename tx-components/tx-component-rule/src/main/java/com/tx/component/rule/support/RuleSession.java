@@ -6,8 +6,10 @@
  */
 package com.tx.component.rule.support;
 
+import java.util.List;
 import java.util.Map;
 
+import com.tx.component.rule.model.Rule;
 import com.tx.component.rule.model.RuleResultHandle;
 
 /**
@@ -33,10 +35,10 @@ public interface RuleSession {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public String rule();
+    public Rule rule();
     
     /**
-      * 会话执行<br/>
+      * 会话执行,传入一个事实的情况<br/>
       *     1、该方法被触发后，将会<br/>
       *         首先初始化回话，插入事实，执行规则，销毁回话<br/>
       *     
@@ -47,6 +49,19 @@ public interface RuleSession {
       * @see [类、类#方法、类#成员]
      */
     public void execute(Map<String, Object> fact);
+    
+    /**
+     * 会话执行,传入多个事实的情况<br/>
+     *     1、该方法被触发后，将会<br/>
+     *         首先初始化回话，插入事实，执行规则，销毁回话<br/>
+     *     
+     * <功能详细描述> [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    public void execute(List<Map<String, Object>> fact);
     
     /**
       * 回调，用以写入结果值

@@ -9,6 +9,7 @@ package com.tx.component.rule.collection;
 import java.util.List;
 import java.util.Map;
 
+import com.tx.component.rule.context.RuleContext;
 import com.tx.component.rule.model.Rule;
 import com.tx.component.rule.support.RuleSession;
 import com.tx.component.rule.support.RuleSessionFactory;
@@ -16,8 +17,9 @@ import com.tx.component.rule.support.impl.DefaultRuleSession;
 
 
  /**
-  * <功能简述>
-  * <功能详细描述>
+  * 集合类规则会话<br/>
+  *     适用于多个规则一起作用的场景<br/>
+  *     在drools使用情况下，实际一个drools规则自身就可以是一个规则链，并且支持优先级，触发次数等高级属性<br/>
   * 
   * @author  PengQingyang
   * @version  [版本号, 2013-1-27]
@@ -44,8 +46,21 @@ public class CollectionRuleSession extends DefaultRuleSession<CollectionRule> {
             return ;
         }
         for(Rule rule : ruleList){
-            RuleSession ruleSession = RuleSessionFactory.createRuleSession(rule);
+            RuleSession ruleSession = RuleContext.getRuleContext().newRuleSession(rule);
             ruleSession.execute(fact);
+        }
+    }
+    /**
+     * @param facts
+     */
+    @Override
+    public void execute(List<Map<String, Object>> facts) {
+        if(ruleList == null){
+            return ;
+        }
+        for(Rule rule : ruleList){
+            RuleSession ruleSession = RuleContext.getRuleContext().newRuleSession(rule);
+            ruleSession.execute(facts);
         }
     }
 

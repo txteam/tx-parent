@@ -36,13 +36,12 @@ public abstract class DefaultRuleSession<R extends Rule> implements RuleSession 
         super();
         this.rule = rule;
     }
-
+    
     /**
-     * @return
+     * @return 返回 rule
      */
-    @Override
-    public String rule() {
-        return rule.rule();
+    public Rule rule() {
+        return rule;
     }
 
     /**

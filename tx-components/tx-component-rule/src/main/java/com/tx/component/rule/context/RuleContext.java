@@ -6,7 +6,17 @@
  */
 package com.tx.component.rule.context;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.factory.FactoryBean;
+import org.springframework.beans.factory.InitializingBean;
+
+import com.tx.component.rule.model.Rule;
 import com.tx.component.rule.support.RuleSession;
+import com.tx.component.rule.support.RuleSessionFactory;
 
 
 
@@ -21,8 +31,35 @@ import com.tx.component.rule.support.RuleSession;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
   */
-public interface RuleContext {
+public class RuleContext implements InitializingBean,FactoryBean<RuleContext>{
     
+    private static RuleContext ruleContext;
+    
+    /**
+     * 规则加载器
+     */
+    private List<RuleLoader> ruleLoaders;
+    
+    /**
+     * 规则会话工厂类
+     */
+    private RuleSessionFactory ruleSessionFactory;
+    
+    /**
+     * 规则缓存
+     */
+    private Map<String, Rule> ruleMapCache = new HashMap<String, Rule>();
+
+    /**
+     * @throws Exception
+     */
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        //完成属性设置后,加载规则
+        load();
+        setRuleContext(this);
+    }
+
     /**
       * 初始化规则容器
       * <功能详细描述> [参数说明]
@@ -31,7 +68,20 @@ public interface RuleContext {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public void load();
+    public void load(){
+        Map<String, Rule> newCacheMap = new HashMap<String, Rule>();
+        for(RuleLoader ruleLoaderTemp : ruleLoaders){
+            List<Rule> ruleList = ruleLoaderTemp.load();
+            if(CollectionUtils.isEmpty(ruleList)){
+                //如果加载规则为空:
+                continue;
+            }
+            for(Rule ruleTemp : ruleList){
+                newCacheMap.put(ruleTemp.rule(), ruleTemp);
+            }
+        }
+        this.ruleMapCache = newCacheMap;
+    }
     
     /**
       * <功能简述>
@@ -41,18 +91,9 @@ public interface RuleContext {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public void reLoad();
-    
-    /**
-      * 增加或更新规则
-      * <功能详细描述>
-      * @param rule [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    public void saveRule(RuleSession rule);
+    public void reLoad(){
+        load();
+    }
     
     /**
       * 判断容器中是否含有对应的规则<br/>
@@ -65,7 +106,10 @@ public interface RuleContext {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public boolean contains(String rule);
+    public boolean contains(String rule){
+        
+        return ruleMapCache.containsKey(rule);
+    }
     
     /**
       * 获取规则实体
@@ -76,5 +120,46 @@ public interface RuleContext {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public RuleSession getRule(String rule);
+    public RuleSession newRuleSession(Rule rule){
+        return this.ruleSessionFactory.createRuleSession(rule);
+    }
+
+    /**
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public RuleContext getObject() throws Exception {
+        return ruleContext;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public Class<?> getObjectType() {
+        return RuleContext.class;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public boolean isSingleton() {
+        return true;
+    }
+
+    /**
+     * @return 返回 ruleContext
+     */
+    public static RuleContext getRuleContext() {
+        return ruleContext;
+    }
+
+    /**
+     * @param 对ruleContext进行赋值
+     */
+    public void setRuleContext(RuleContext ruleContext) {
+        RuleContext.ruleContext = ruleContext;
+    }
 }
