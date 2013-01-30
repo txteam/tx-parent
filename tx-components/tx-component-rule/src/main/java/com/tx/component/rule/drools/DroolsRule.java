@@ -7,7 +7,6 @@
 package com.tx.component.rule.drools;
 
 import java.util.Collection;
-import java.util.List;
 
 import org.drools.KnowledgeBase;
 import org.drools.definition.KnowledgePackage;
