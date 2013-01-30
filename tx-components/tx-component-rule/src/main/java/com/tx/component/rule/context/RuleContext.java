@@ -10,35 +10,38 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.ApplicationListener;
+import org.springframework.stereotype.Component;
 
+import com.tx.component.rule.exceptions.RuleAccessException;
+import com.tx.component.rule.exceptions.RuleErrorCodeConstant;
 import com.tx.component.rule.model.Rule;
 import com.tx.component.rule.support.RuleSession;
 import com.tx.component.rule.support.RuleSessionFactory;
 
-
-
- /**
-  * 规则容器<br/>
-  *     系统启动时通过该规则容器加载已有的规则<br/>
-  *     可以通过该容器实现规则重加载，添加新的规则<br/>
-  * <功能详细描述>
-  * 
-  * @author  brady
-  * @version  [版本号, 2013-1-23]
-  * @see  [相关类/方法]
-  * @since  [产品/模块版本]
-  */
-public class RuleContext implements InitializingBean,FactoryBean<RuleContext>{
+/**
+ * 规则容器<br/>
+ *     系统启动时通过该规则容器加载已有的规则<br/>
+ *     可以通过该容器实现规则重加载，添加新的规则<br/>
+ * 
+ * @author  brady
+ * @version  [版本号, 2013-1-23]
+ * @see  [相关类/方法]
+ * @since  [产品/模块版本]
+ */
+@Component("ruleContext")
+public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
+        ApplicationListener<LoadRuleEvent> {
     
+    /** 日志记录器 */
+    private static Logger logger = LoggerFactory.getLogger(RuleContext.class);
+    
+    /** 单例的rule容器 */
     private static RuleContext ruleContext;
-    
-    /**
-     * 规则加载器
-     */
-    private List<RuleLoader> ruleLoaders;
     
     /**
      * 规则会话工厂类
@@ -49,50 +52,36 @@ public class RuleContext implements InitializingBean,FactoryBean<RuleContext>{
      * 规则缓存
      */
     private Map<String, Rule> ruleMapCache = new HashMap<String, Rule>();
-
+    
+    /**
+      * 返回ruleContext容器
+      * <功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return RuleContext [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public static RuleContext getRuleContext() {
+        return ruleContext;
+    }
+    
+    /**
+     * @param event
+     */
+    @Override
+    public void onApplicationEvent(LoadRuleEvent event) {
+        List<Rule> ruleList = event.getRuleList();
+        putInCache(ruleList, true);
+    }
+    
     /**
      * @throws Exception
      */
     @Override
     public void afterPropertiesSet() throws Exception {
         //完成属性设置后,加载规则
-        load();
         setRuleContext(this);
-    }
-
-    /**
-      * 初始化规则容器
-      * <功能详细描述> [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    public void load(){
-        Map<String, Rule> newCacheMap = new HashMap<String, Rule>();
-        for(RuleLoader ruleLoaderTemp : ruleLoaders){
-            List<Rule> ruleList = ruleLoaderTemp.load();
-            if(CollectionUtils.isEmpty(ruleList)){
-                //如果加载规则为空:
-                continue;
-            }
-            for(Rule ruleTemp : ruleList){
-                newCacheMap.put(ruleTemp.rule(), ruleTemp);
-            }
-        }
-        this.ruleMapCache = newCacheMap;
-    }
-    
-    /**
-      * <功能简述>
-      * <功能详细描述> [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    public void reLoad(){
-        load();
     }
     
     /**
@@ -106,8 +95,7 @@ public class RuleContext implements InitializingBean,FactoryBean<RuleContext>{
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public boolean contains(String rule){
-        
+    public boolean contains(String rule) {
         return ruleMapCache.containsKey(rule);
     }
     
@@ -120,10 +108,10 @@ public class RuleContext implements InitializingBean,FactoryBean<RuleContext>{
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public RuleSession newRuleSession(Rule rule){
+    public RuleSession newRuleSession(Rule rule) {
         return this.ruleSessionFactory.createRuleSession(rule);
     }
-
+    
     /**
      * @return
      * @throws Exception
@@ -132,7 +120,7 @@ public class RuleContext implements InitializingBean,FactoryBean<RuleContext>{
     public RuleContext getObject() throws Exception {
         return ruleContext;
     }
-
+    
     /**
      * @return
      */
@@ -140,7 +128,7 @@ public class RuleContext implements InitializingBean,FactoryBean<RuleContext>{
     public Class<?> getObjectType() {
         return RuleContext.class;
     }
-
+    
     /**
      * @return
      */
@@ -148,18 +136,69 @@ public class RuleContext implements InitializingBean,FactoryBean<RuleContext>{
     public boolean isSingleton() {
         return true;
     }
-
-    /**
-     * @return 返回 ruleContext
-     */
-    public static RuleContext getRuleContext() {
-        return ruleContext;
-    }
-
+    
     /**
      * @param 对ruleContext进行赋值
      */
     public void setRuleContext(RuleContext ruleContext) {
         RuleContext.ruleContext = ruleContext;
+    }
+    
+    /**
+     * 将指定规则列表，压入规则缓存中<br/>
+     *     1、同名规则将会被缓存<br/>
+     * @param ruleList [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    private void putInCache(List<Rule> ruleList, boolean isCoverWhenSame) {
+        if (ruleList == null) {
+            return;
+        }
+        for (Rule ruleTemp : ruleList) {
+            if (isCoverWhenSame) {
+                this.ruleMapCache.put(ruleTemp.rule(), ruleTemp);
+            }
+            else if (this.ruleMapCache.containsKey(ruleTemp.rule())) {
+                throw new RuleAccessException(ruleTemp.rule(), null, null,
+                        RuleErrorCodeConstant.RULE_EXCEPTION, "重复的规则项:{}",
+                        ruleTemp.rule());
+            }
+            else {
+                this.ruleMapCache.put(ruleTemp.rule(), ruleTemp);
+            }
+            
+        }
+    }
+    
+    /**
+     * 将指定规则压入规则缓存中<br/>
+     *    1、同名规则将会被缓存<br/>
+     * @param ruleList [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    @SuppressWarnings("unused")
+    private void putInCache(Rule rule, boolean isCoverWhenSame) {
+        if (rule == null) {
+            return;
+        }
+        if (isCoverWhenSame) {
+            this.ruleMapCache.put(rule.rule(), rule);
+        }
+        else if (this.ruleMapCache.containsKey(rule.rule())) {
+            throw new RuleAccessException(rule.rule(), null, null,
+                    RuleErrorCodeConstant.RULE_EXCEPTION, "重复的规则项:{}",
+                    rule.rule());
+        }
+        else {
+            this.ruleMapCache.put(rule.rule(), rule);
+            logger.warn("规则项{}被同名规则项覆盖.", rule.rule());
+        }
+        
     }
 }
