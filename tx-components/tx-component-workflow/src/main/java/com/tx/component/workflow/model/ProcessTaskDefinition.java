@@ -12,6 +12,8 @@ import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import org.springframework.core.Ordered;
+
 import com.tx.core.tree.model.TreeAble;
 
 /**
@@ -29,7 +31,7 @@ import com.tx.core.tree.model.TreeAble;
 @Entity
 @Table(name="WF_TASK_DEF")
 public class ProcessTaskDefinition implements Serializable,
-        TreeAble<List<ProcessTaskDefinition>, ProcessTaskDefinition> {
+        TreeAble<List<ProcessTaskDefinition>, ProcessTaskDefinition>,Ordered{
     
     /** 注释内容 */
     private static final long serialVersionUID = 7157946783670094278L;
@@ -49,9 +51,20 @@ public class ProcessTaskDefinition implements Serializable,
     /** 流程是否可见 */
     private boolean isViewAble;
     
+    /** 流程环节顺序 */
+    private int order;
+    
     /** 流程子环节 */
     private List<ProcessTaskDefinition> childs;
     
+    /**
+     * @return
+     */
+    @Override
+    public int getOrder() {
+        return this.order;
+    }
+
     /**
      * @return 返回 alise
      */
@@ -135,4 +148,6 @@ public class ProcessTaskDefinition implements Serializable,
     public void setChilds(List<ProcessTaskDefinition> childs) {
         this.childs = childs;
     }
+    
+    
 }

@@ -12,7 +12,6 @@ import java.util.Map;
 import com.tx.component.rule.context.RuleContext;
 import com.tx.component.rule.model.Rule;
 import com.tx.component.rule.support.RuleSession;
-import com.tx.component.rule.support.RuleSessionFactory;
 import com.tx.component.rule.support.impl.DefaultRuleSession;
 
 
@@ -28,8 +27,6 @@ import com.tx.component.rule.support.impl.DefaultRuleSession;
   */
 public class CollectionRuleSession extends DefaultRuleSession<CollectionRule> {
 
-    private List<Rule> ruleList;
-    
     /**
      * <默认构造函数>
      */
@@ -42,11 +39,11 @@ public class CollectionRuleSession extends DefaultRuleSession<CollectionRule> {
      */
     @Override
     public void execute(Map<String, Object> fact) {
-        if(ruleList == null){
+        if(rule.getRuleList() == null){
             return ;
         }
-        for(Rule rule : ruleList){
-            RuleSession ruleSession = RuleContext.getRuleContext().newRuleSession(rule);
+        for(Rule ruleTemp : rule.getRuleList()){
+            RuleSession ruleSession = RuleContext.getRuleContext().newRuleSession(ruleTemp);
             ruleSession.execute(fact);
         }
     }
@@ -55,26 +52,12 @@ public class CollectionRuleSession extends DefaultRuleSession<CollectionRule> {
      */
     @Override
     public void execute(List<Map<String, Object>> facts) {
-        if(ruleList == null){
+        if(rule.getRuleList() == null){
             return ;
         }
-        for(Rule rule : ruleList){
-            RuleSession ruleSession = RuleContext.getRuleContext().newRuleSession(rule);
+        for(Rule ruleTemp : rule.getRuleList()){
+            RuleSession ruleSession = RuleContext.getRuleContext().newRuleSession(ruleTemp);
             ruleSession.execute(facts);
         }
-    }
-
-    /**
-     * @return 返回 ruleList
-     */
-    public List<Rule> getRuleList() {
-        return ruleList;
-    }
-
-    /**
-     * @param 对ruleList进行赋值
-     */
-    public void setRuleList(List<Rule> ruleList) {
-        this.ruleList = ruleList;
     }
 }

@@ -27,38 +27,35 @@ import com.tx.component.workflow.WorkFlowConstants;
  * @since  [产品/模块版本]
  */
 @Entity
-@Table(name="WF_PROCESS_DEF")
-public class ProcessDefinition implements Serializable{
+@Table(name = "WF_PROCESS_DEF")
+public class ProcessDefinition implements Serializable {
     
     /** 注释内容 */
     private static final long serialVersionUID = 6540929500393797624L;
     
-    /** 流程定义id */
+    /** 流程定义id:由系统自生成 */
     private String id;
+    
+    /** 流程定义key:对应activiti中的key */
+    private String key;
     
     /** 流程名 */
     private String name;
     
-    /** 流程定义对应的业务类型 */
-    private String serviceType;
+    /** 流程类别 */
+    private String category;
     
     /** 流程版本号 */
     private String version;
     
+    /** 流程定义对应的业务类型 */
+    private String serviceType;
+    
     /** 流程状态:用以支持，测试态，运营态等流程状态 */
     private String state = WorkFlowConstants.PROCESS_DEFINITION_STATE_TEST;
     
-    /** 
-     * 定义文件夹所在路径，
-     * 该文件夹下可能为一个zip文件或多个文件，
-     * 其中包含流程定义文件 
-     */
-    private String definitionFileFolderPath;
-    
-    /**
-     * 流程定义文件名
-     */
-    private String fileName;
+    /** 代理的引擎实例 */
+    private Object delegate;
     
     /**
      * @return
@@ -66,14 +63,14 @@ public class ProcessDefinition implements Serializable{
     public String getServiceType() {
         return serviceType;
     }
-
+    
     /**
      * @param 对serviceType进行赋值
      */
     public void setServiceType(String serviceType) {
         this.serviceType = serviceType;
     }
-
+    
     /**
      * @return
      */
@@ -129,33 +126,46 @@ public class ProcessDefinition implements Serializable{
     public void setState(String state) {
         this.state = state;
     }
-    
+
     /**
-     * @return
+     * @return 返回 key
      */
-    
-    public String getFileName() {
-        return fileName;
+    public String getKey() {
+        return key;
     }
 
     /**
-     * @param 对fileName进行赋值
+     * @param 对key进行赋值
      */
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
+    public void setKey(String key) {
+        this.key = key;
     }
 
     /**
-     * @return
+     * @return 返回 category
      */
-    public String getDefinitionFileFolderPath() {
-        return definitionFileFolderPath;
+    public String getCategory() {
+        return category;
     }
-    
+
     /**
-     * @param 对definitionFileFolderPath进行赋值
+     * @param 对category进行赋值
      */
-    public void setDefinitionFileFolderPath(String definitionFileFolderPath) {
-        this.definitionFileFolderPath = definitionFileFolderPath;
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    /**
+     * @return 返回 delegate
+     */
+    public Object getDelegate() {
+        return delegate;
+    }
+
+    /**
+     * @param 对delegate进行赋值
+     */
+    public void setDelegate(Object delegate) {
+        this.delegate = delegate;
     }
 }

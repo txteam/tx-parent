@@ -15,8 +15,8 @@ import com.tx.core.TxConstants;
 
 
  /**
-  * <功能简述>
-  * <功能详细描述>
+  * 集合类规则<br/>
+  *     一组规则的集合<br/>
   * 
   * @author  brady
   * @version  [版本号, 2013-1-24]

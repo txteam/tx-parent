@@ -184,6 +184,14 @@
 			<groupId>org.activiti</groupId>
 			<artifactId>activiti-spring</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.activiti</groupId>
+			<artifactId>activiti-cxf</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.activiti</groupId>
+			<artifactId>activiti-cdi</artifactId>
+		</dependency>
 
 		<!-- p6spy -->
 		<dependency>
@@ -191,11 +199,17 @@
 			<artifactId>p6spy</artifactId>
 			<optional>true</optional>
 		</dependency>
-		<!-- postgresql jdbc optional:true -->
 		<dependency>
 			<groupId>postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.oracle</groupId>
+			<artifactId>ojdbc14</artifactId>
 		</dependency>
 
 		<!-- test -->

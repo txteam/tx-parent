@@ -29,6 +29,7 @@ import org.apache.commons.collections.MapUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -43,9 +44,13 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
   * @since  [产品/模块版本]
   */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:spring/beans-ds.xml",
-        "classpath:spring/beans-tx.xml", "classpath:spring/beans-mybatis.xml",
-        "classpath:spring/beans.xml", "classpath:spring/beans-wf.xml" })
+@ContextConfiguration(locations = { 
+        "classpath:spring/beans-ds.xml",
+        "classpath:spring/beans-tx.xml",
+        "classpath:spring/beans.xml", 
+        "classpath:spring/beans-wf.xml" })
+//@ActiveProfiles("dev")
+@ActiveProfiles("production")
 public class TestWorkflow extends TestWFBase implements InitializingBean{
     
     @Resource(name = "processEngine")
@@ -94,11 +99,12 @@ public class TestWorkflow extends TestWFBase implements InitializingBean{
         System.out.println(processInstance.getId());
     }
     
-    //@Test
+    @Test
     public void testGetProcessAllTask(){
         ProcessDefinition pdTemp = processEngine.getRepositoryService().createProcessDefinitionQuery().
                 processDefinitionKey(this.processDefKey).latestVersion().singleResult();
         
+        //this.processDefinition = pdTemp;
         this.processDefinition = processEngine.getRepositoryService().getProcessDefinition(pdTemp.getId());
         
         ProcessDefinitionEntity pde = (ProcessDefinitionEntity)this.processDefinition;
@@ -110,7 +116,7 @@ public class TestWorkflow extends TestWFBase implements InitializingBean{
         }
     }
   
-    @Test
+    //@Test
     public void testCurrentProcessInsTaskAndToNext(){
         List<Task> taskList = processEngine.getTaskService().createTaskQuery().processInstanceId(this.processInsId).list();
         

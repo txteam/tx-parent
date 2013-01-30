@@ -14,6 +14,7 @@ import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -27,9 +28,13 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @since  [产品/模块版本]
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:spring/beans-ds.xml",
-        "classpath:spring/beans-tx.xml", "classpath:spring/beans-mybatis.xml",
-        "classpath:spring/beans.xml", "classpath:spring/beans-wf.xml" })
+@ContextConfiguration(locations = { 
+        "classpath:spring/beans-ds.xml",
+        "classpath:spring/beans-tx.xml",
+        "classpath:spring/beans.xml", 
+        "classpath:spring/beans-wf.xml" })
+//@ActiveProfiles("dev")
+@ActiveProfiles("production")
 public class TestDeployWorkflow extends TestWFBase {
     
     @Resource(name = "processEngine")
@@ -39,11 +44,11 @@ public class TestDeployWorkflow extends TestWFBase {
     public void test() {
         
         //需要以非“/”开始
-        processEngine.getRepositoryService()
-                .createDeployment()
-                .name("test1")
-                .addClasspathResource("workflow/test1/process.bpmn")
-                .deploy();
+//        processEngine.getRepositoryService()
+//                .createDeployment()
+//                .name("test1")
+//                .addClasspathResource("workflow/test1/process.bpmn")
+//                .deploy();
         
         ProcessInstance pi = processEngine.getRuntimeService().startProcessInstanceByKey("test1");
         
