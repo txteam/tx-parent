@@ -22,7 +22,7 @@ public interface ProcessInsService {
     
     /**
       * 开始一条流程实例<br/>
-      *     创建一个流程实例<br/>
+      *     根据流程的最新版本创建一个流程实例<br/>
       * @param processKey
       * @return [参数说明]
       * 
@@ -71,6 +71,26 @@ public interface ProcessInsService {
       * @see [类、类#方法、类#成员]
      */
     public String start(String processKey,String processInstanceId,Map<String, String> varibalMap);
+    
+    /**
+      *<功能简述>
+      *<功能详细描述>
+      * @param processInsId
+      * @param varibals [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public void setProcessVaribals(String processInsId,Map<String, String> varibals);
+    
+    public void setProcessVaribal(String processInsId,String key,String value);
+    
+    public Map<String, String> getProcessVaribals(String processInsId);
+    
+    public String getProcessInsVaribal(String processInsId,String key);
+    
+    
     
     public String process();
 }

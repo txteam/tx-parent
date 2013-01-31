@@ -77,12 +77,12 @@ public class WorkflowContext implements InitializingBean, SmartLifecycle {
     @Override
     public void start() {
         if (this.repositoryService != null) {
-            try {
-                startWorkflowContext(this.repositoryService, this.deploymentResources);
-            } catch (SchedulerException ex) {
-                throw new SchedulingException(
-                        "Could not start Quartz Scheduler", ex);
-            }
+//            try {
+//                startWorkflowContext(this.repositoryService, this.deploymentResources);
+//            } catch (SchedulerException ex) {
+//                throw new SchedulingException(
+//                        "Could not start Quartz Scheduler", ex);
+//            }
         }
     }
     
@@ -130,42 +130,42 @@ public class WorkflowContext implements InitializingBean, SmartLifecycle {
       * @see [类、类#方法、类#成员]
      */
     protected void startWorkflowContext(final RepositoryService repositoryServiceParameter,
-            final org.springframework.core.io.Resource[] deploymentResourcesParameter)
-            throws SchedulerException {
-        if (startupDelay <= 0) {
-            logger.info("Starting WorkflowContext Scheduler now");
-            scheduler.start();
-        } else {
-            if (logger.isInfoEnabled()) {
-                logger.info("Will start Quartz Scheduler ["
-                        + scheduler.getSchedulerName() + "] in " + startupDelay
-                        + " seconds");
-            }
-            Thread schedulerThread = new Thread() {
-                @Override
-                public void run() {
-                    try {
-                        Thread.sleep(startupDelay * 1000);
-                    } catch (InterruptedException ex) {
-                        // simply proceed
-                    }
-                    if (logger.isInfoEnabled()) {
-                        logger.info("Starting Quartz Scheduler now, after delay of "
-                                + startupDelay + " seconds");
-                    }
-                    try {
-                        scheduler.start();
-                    } catch (SchedulerException ex) {
-                        throw new SchedulingException(
-                                "Could not start Quartz Scheduler after delay",
-                                ex);
-                    }
-                }
-            };
-            schedulerThread.setName("Quartz Scheduler ["
-                    + scheduler.getSchedulerName() + "]");
-            schedulerThread.setDaemon(true);
-            schedulerThread.start();
-        }
+            final org.springframework.core.io.Resource[] deploymentResourcesParameter){
+        //启动加载工作流
+//        if (startupDelay <= 0) {
+//            logger.info("Starting WorkflowContext Scheduler now");
+//            scheduler.start();
+//        } else {
+//            if (logger.isInfoEnabled()) {
+//                logger.info("Will start Quartz Scheduler ["
+//                        + scheduler.getSchedulerName() + "] in " + startupDelay
+//                        + " seconds");
+//            }
+//            Thread schedulerThread = new Thread() {
+//                @Override
+//                public void run() {
+//                    try {
+//                        Thread.sleep(startupDelay * 1000);
+//                    } catch (InterruptedException ex) {
+//                        // simply proceed
+//                    }
+//                    if (logger.isInfoEnabled()) {
+//                        logger.info("Starting Quartz Scheduler now, after delay of "
+//                                + startupDelay + " seconds");
+//                    }
+//                    try {
+//                        scheduler.start();
+//                    } catch (SchedulerException ex) {
+//                        throw new SchedulingException(
+//                                "Could not start Quartz Scheduler after delay",
+//                                ex);
+//                    }
+//                }
+//            };
+//            schedulerThread.setName("Quartz Scheduler ["
+//                    + scheduler.getSchedulerName() + "]");
+//            schedulerThread.setDaemon(true);
+//            schedulerThread.start();
+//        }
     }
 }

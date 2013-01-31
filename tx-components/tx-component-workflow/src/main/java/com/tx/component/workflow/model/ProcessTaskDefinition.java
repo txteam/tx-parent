@@ -48,11 +48,14 @@ public class ProcessTaskDefinition implements Serializable,
     /** 流程环节别名 */
     private String alise;
     
+    /** 流程环节顺序 */
+    private int order;
+    
     /** 流程是否可见 */
     private boolean isViewAble;
     
-    /** 流程环节顺序 */
-    private int order;
+    /** 节点任务类型 */
+    private String taskType;
     
     /** 流程子环节 */
     private List<ProcessTaskDefinition> childs;
