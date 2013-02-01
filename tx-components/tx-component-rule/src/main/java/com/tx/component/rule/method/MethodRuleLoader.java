@@ -24,12 +24,24 @@ public class MethodRuleLoader implements RuleLoader{
     
     /** 规则存在的包 */
     private String rulePackage;
-    
+
     /**
-     * @return
+     * @param rule
+     * @param isCoverWhenSame
      */
     @Override
-    public List<Rule> load() {
-        return null;
+    public void load(Rule rule, boolean isCoverWhenSame) {
+        // TODO Auto-generated method stub
+        
     }
+    
+//    /**
+//     * @return
+//     */
+//    @Override
+//    public List<Rule> load() {
+//        return null;
+//    }
+    
+    
 }

@@ -62,6 +62,7 @@
       <timerEventDefinition></timerEventDefinition>
     </boundaryEvent>
     <sequenceFlow id="flow53" sourceRef="boundarytimer1" targetRef="usertask13"></sequenceFlow>
+    <sequenceFlow id="flow54" sourceRef="businessruletask5" targetRef="usertask1"></sequenceFlow>
   </process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_myProcess">
     <bpmndi:BPMNPlane bpmnElement="myProcess" id="BPMNPlane_myProcess">
@@ -287,6 +288,10 @@
         <omgdi:waypoint x="245.0" y="280.0"></omgdi:waypoint>
         <omgdi:waypoint x="294.0" y="8.0"></omgdi:waypoint>
         <omgdi:waypoint x="336.0" y="7.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow54" id="BPMNEdge_flow54">
+        <omgdi:waypoint x="197.0" y="0.0"></omgdi:waypoint>
+        <omgdi:waypoint x="197.0" y="74.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

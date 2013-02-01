@@ -82,7 +82,7 @@ public class TestWorkflow extends TestWFBase implements InitializingBean{
     
     private ProcessDefinition processDefinition;
     
-    //@Test
+    @Test
     public void testDeploy() {
         
         //需要以非“/”开始
@@ -99,7 +99,7 @@ public class TestWorkflow extends TestWFBase implements InitializingBean{
         System.out.println(processInstance.getId());
     }
     
-    @Test
+    //@Test
     public void testGetProcessAllTask(){
         ProcessDefinition pdTemp = processEngine.getRepositoryService().createProcessDefinitionQuery().
                 processDefinitionKey(this.processDefKey).latestVersion().singleResult();
