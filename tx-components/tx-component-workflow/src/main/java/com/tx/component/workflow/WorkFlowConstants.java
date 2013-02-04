@@ -18,9 +18,13 @@ package com.tx.component.workflow;
   */
 public interface WorkFlowConstants {
     
+    /*********************** 流程状态  **************************/
     /** 流程定义状态: 测试态 */
     String PROCESS_DEFINITION_STATE_TEST = "TEST";
     
     /** 流程定义状态：运营态 */
     String PROCESS_DEFINITION_STATE_OPERATION = "OPERATION";
+    
+    /*********************** 流程操作  **************************/
+    String PROCESS_NAME = "_TEMP_VARIBAL_PROCESS_NAME";
 }

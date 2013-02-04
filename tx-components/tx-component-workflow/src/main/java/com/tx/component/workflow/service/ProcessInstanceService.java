@@ -11,7 +11,7 @@ import java.util.Map;
 
 import org.activiti.engine.impl.task.TaskDefinition;
 
-import com.tx.component.workflow.model.ProcessTransitionDefinition;
+import com.tx.component.workflow.model.ProTransitionDefinition;
 
 /**
  * 工作流实例业务层逻辑<br/>
@@ -168,7 +168,7 @@ public interface ProcessInstanceService {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public List<ProcessTransitionDefinition> getCurrentTaskAllTransition(
+    public List<ProTransitionDefinition> getCurrentTaskAllTransition(
             String processInsId);
     
     public String process();

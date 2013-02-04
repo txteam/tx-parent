@@ -16,7 +16,7 @@ package com.tx.component.workflow.model;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
   */
-public class ProcessTransitionDefinition {
+public class ProTransitionDefinition {
     
     private String id;
     

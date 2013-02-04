@@ -6,6 +6,7 @@
  */
 package com.tx.component.workflow;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -26,6 +27,7 @@ import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
 import org.apache.commons.collections.MapUtils;
+import org.drools.reteoo.AccumulateNode.ActivitySource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.InitializingBean;
@@ -74,7 +76,7 @@ public class TestWorkflow extends TestWFBase implements InitializingBean{
     
     private String processDefId;
     
-    private String processDefKey = "testLoanBillProcess";
+    private String processDefKey = "test";
     
     private String processInsId = "1301";
     
@@ -95,11 +97,15 @@ public class TestWorkflow extends TestWFBase implements InitializingBean{
     
     //@Test
     public void testStartProcessInstanceByKey(){
-        this.processInstance = this.runtimeService.startProcessInstanceByKey(this.processDefKey);
+        Map<String, Object> para = new HashMap<String, Object>();
+        para.put("_processTypeId", "create");
+        this.processInstance = this.runtimeService.startProcessInstanceByKey(this.processDefKey,para);
         System.out.println(processInstance.getId());
+        //3101
+        //this.runtimeService.start
     }
     
-    //@Test
+    @Test
     public void testGetProcessAllTask(){
         ProcessDefinition pdTemp = processEngine.getRepositoryService().createProcessDefinitionQuery().
                 processDefinitionKey(this.processDefKey).latestVersion().singleResult();
@@ -111,9 +117,20 @@ public class TestWorkflow extends TestWFBase implements InitializingBean{
         
         Map<String, TaskDefinition> tdm = pde.getTaskDefinitions();
         
+        System.out.println("taskEntry:");
         for(Entry<String, TaskDefinition> taskEntry : tdm.entrySet()){
             System.out.println(taskEntry.getKey() + " : " + taskEntry.getValue());
         }
+        
+        System.out.println("");
+        System.out.println("getActivities:");
+        List<ActivityImpl> tt = pde.getActivities();
+        for(ActivityImpl ac : tt){
+            System.out.println(ac.getId() + " : " + ac.getActivityBehavior());
+            //ac.getActivityBehavior().
+        }
+        
+        //pde.get
     }
   
     //@Test

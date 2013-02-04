@@ -2,7 +2,9 @@
 <definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="com.tx.wf">
   <process id="test" name="测试申请单流程定义" isExecutable="true">
     <startEvent id="start" name="start"></startEvent>
-    <sequenceFlow id="save" name="save" sourceRef="start" targetRef="state_save"></sequenceFlow>
+    <sequenceFlow id="save" name="save" sourceRef="start" targetRef="state_save">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${_processTypeId=='create'}]]></conditionExpression>
+    </sequenceFlow>
     <userTask id="state_save" name="保存"></userTask>
     <sequenceFlow id="to_submit" name="submit" sourceRef="state_save" targetRef="state_submit"></sequenceFlow>
     <userTask id="state_contract" name="待签约"></userTask>
@@ -10,21 +12,31 @@
     <sequenceFlow id="over" name="over" sourceRef="usertask2" targetRef="end"></sequenceFlow>
     <sequenceFlow id="preSubmitRejectToSave" name="reject" sourceRef="auto_task_check_rule1" targetRef="state_submit"></sequenceFlow>
     <userTask id="state_submit" name="提交" default="flow4"></userTask>
-    <serviceTask id="auto_task_check_rule1" name="审核"></serviceTask>
+    <serviceTask id="auto_task_check_rule1" name="审核" activiti:delegateExpression="${configableRuleEngineDelegate}"></serviceTask>
     <task id="manualtask1" name="高审会签"></task>
     <sequenceFlow id="flow3" name="notMatch" sourceRef="auto_task_check_rule1" targetRef="state_submit"></sequenceFlow>
     <sequenceFlow id="flow4" name="pass" sourceRef="state_submit" targetRef="auto_task_check_rule1"></sequenceFlow>
     <userTask id="usertask1" name="复核"></userTask>
     <sequenceFlow id="flow5" name="pass" sourceRef="auto_task_check_rule1" targetRef="usertask1"></sequenceFlow>
-    <sequenceFlow id="create" name="create" sourceRef="start" targetRef="state_submit"></sequenceFlow>
+    <sequenceFlow id="create" name="create" sourceRef="start" targetRef="state_submit">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${_processTypeId=='create'}]]></conditionExpression>
+    </sequenceFlow>
     <endEvent id="endevent1" name="End"></endEvent>
-    <sequenceFlow id="flow7" name="cancel" sourceRef="usertask1" targetRef="endevent1"></sequenceFlow>
+    <sequenceFlow id="flow7" name="cancel" sourceRef="usertask1" targetRef="endevent1">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${_processTypeId=='cancel'}]]></conditionExpression>
+    </sequenceFlow>
     <exclusiveGateway id="exclusivegateway1" name="根据条件判断是否需要进入会签"></exclusiveGateway>
-    <sequenceFlow id="flow8" name="pass" sourceRef="usertask1" targetRef="exclusivegateway1"></sequenceFlow>
-    <sequenceFlow id="flow9" name="to2" sourceRef="exclusivegateway1" targetRef="state_contract"></sequenceFlow>
-    <sequenceFlow id="flow10" name="to1" sourceRef="exclusivegateway1" targetRef="manualtask1"></sequenceFlow>
+    <sequenceFlow id="flow8" name="pass" sourceRef="usertask1" targetRef="exclusivegateway1">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${_processTypeId=='flow8'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow9" name="to2" sourceRef="exclusivegateway1" targetRef="state_contract">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${_processTypeId=='create'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow10" name="to1" sourceRef="exclusivegateway1" targetRef="manualtask1">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${_processTypeId=='create'}]]></conditionExpression>
+    </sequenceFlow>
     <sequenceFlow id="flow11" name="pass" sourceRef="state_contract" targetRef="servicetask1"></sequenceFlow>
-    <serviceTask id="servicetask1" name="核查审批申请单"></serviceTask>
+    <serviceTask id="servicetask1" name="核查审批申请单" activiti:delegateExpression="${configableRuleEngineDelegate}"></serviceTask>
     <userTask id="usertask2" name="签署"></userTask>
     <sequenceFlow id="flow12" name="pass" sourceRef="servicetask1" targetRef="usertask2"></sequenceFlow>
     <sequenceFlow id="flow13" name="reject" sourceRef="manualtask1" targetRef="endevent1"></sequenceFlow>
@@ -33,9 +45,6 @@
     <sequenceFlow id="flow16" name="pass" sourceRef="manualtask1" targetRef="state_contract"></sequenceFlow>
     <sequenceFlow id="flow17" name="reject" sourceRef="state_contract" targetRef="manualtask1"></sequenceFlow>
     <sequenceFlow id="flow18" name="reject" sourceRef="state_contract" targetRef="usertask1"></sequenceFlow>
-    <textAnnotation id="textannotation1">
-      <text>Enter your text here</text>
-    </textAnnotation>
   </process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_test">
     <bpmndi:BPMNPlane bpmnElement="test" id="BPMNPlane_test">
@@ -95,7 +104,7 @@
         <omgdi:waypoint x="124.0" y="228.0"></omgdi:waypoint>
         <omgdi:waypoint x="170.0" y="227.0"></omgdi:waypoint>
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="14.0" width="100.0" x="10.0" y="0.0"></omgdc:Bounds>
+          <omgdc:Bounds height="14.0" width="100.0" x="9.0" y="-12.0"></omgdc:Bounds>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow3" id="BPMNEdge_flow3">
@@ -104,7 +113,7 @@
         <omgdi:waypoint x="364.0" y="227.0"></omgdi:waypoint>
         <omgdi:waypoint x="275.0" y="227.0"></omgdi:waypoint>
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="14.0" width="100.0" x="10.0" y="0.0"></omgdc:Bounds>
+          <omgdc:Bounds height="14.0" width="100.0" x="6.0" y="-10.0"></omgdc:Bounds>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow4" id="BPMNEdge_flow4">
@@ -125,14 +134,14 @@
         <omgdi:waypoint x="222.0" y="93.0"></omgdi:waypoint>
         <omgdi:waypoint x="338.0" y="110.0"></omgdi:waypoint>
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="14.0" width="100.0" x="9.0" y="-7.0"></omgdc:Bounds>
+          <omgdc:Bounds height="14.0" width="100.0" x="-3.0" y="-18.0"></omgdc:Bounds>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="to_submit" id="BPMNEdge_to_submit">
         <omgdi:waypoint x="338.0" y="165.0"></omgdi:waypoint>
         <omgdi:waypoint x="222.0" y="200.0"></omgdi:waypoint>
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="14.0" width="100.0" x="10.0" y="-7.0"></omgdc:Bounds>
+          <omgdc:Bounds height="14.0" width="100.0" x="9.0" y="-2.0"></omgdc:Bounds>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow7" id="BPMNEdge_flow7">

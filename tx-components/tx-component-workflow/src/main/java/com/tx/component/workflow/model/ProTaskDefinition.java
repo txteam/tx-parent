@@ -30,8 +30,8 @@ import com.tx.core.tree.model.TreeAble;
  */
 @Entity
 @Table(name="WF_TASK_DEF")
-public class ProcessTaskDefinition implements Serializable,
-        TreeAble<List<ProcessTaskDefinition>, ProcessTaskDefinition>,Ordered{
+public class ProTaskDefinition implements Serializable,
+        TreeAble<List<ProTaskDefinition>, ProTaskDefinition>,Ordered{
     
     /** 注释内容 */
     private static final long serialVersionUID = 7157946783670094278L;
@@ -58,7 +58,7 @@ public class ProcessTaskDefinition implements Serializable,
     private String taskType;
     
     /** 流程子环节 */
-    private List<ProcessTaskDefinition> childs;
+    private List<ProTaskDefinition> childs;
     
     /**
      * @return
@@ -141,14 +141,14 @@ public class ProcessTaskDefinition implements Serializable,
     /**
      * @return 返回 childs
      */
-    public List<ProcessTaskDefinition> getChilds() {
+    public List<ProTaskDefinition> getChilds() {
         return childs;
     }
     
     /**
      * @param 对childs进行赋值
      */
-    public void setChilds(List<ProcessTaskDefinition> childs) {
+    public void setChilds(List<ProTaskDefinition> childs) {
         this.childs = childs;
     }
     
