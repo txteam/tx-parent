@@ -16,16 +16,28 @@ import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
-import org.activiti.engine.impl.task.TaskDefinition;
+import org.activiti.engine.impl.persistence.entity.ExecutionEntity;
+import org.activiti.engine.impl.pvm.PvmTransition;
+import org.activiti.engine.impl.pvm.process.ActivityImpl;
+import org.activiti.engine.impl.pvm.process.TransitionImpl;
+import org.activiti.engine.runtime.Execution;
+import org.activiti.engine.runtime.ExecutionQuery;
 import org.activiti.engine.runtime.ProcessInstance;
+import org.activiti.engine.task.Task;
+import org.activiti.engine.task.TaskQuery;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.drools.core.util.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.tx.component.workflow.WorkFlowConstants;
+import com.tx.component.workflow.model.ProTaskDefinition;
 import com.tx.component.workflow.model.ProTransitionDefinition;
+import com.tx.component.workflow.service.ProcessDefinitionService;
 
 /**
  * 流程实例业务层实例<br/>
@@ -39,14 +51,31 @@ import com.tx.component.workflow.model.ProTransitionDefinition;
 @Component("ProcessInstanceService")
 public class ProcessInstanceServiceImpl implements InitializingBean {
     
+    /** 日志记录器 */
+    private static Logger logger = LoggerFactory.getLogger(ProcessInstanceServiceImpl.class);
+    
+    /** activiti流程引擎 */
     @Resource(name = "processEngine")
     private ProcessEngine processEngine;
     
+    /** activiti 运行时业务方法服务 */
     private RuntimeService runtimeService;
     
+    /** activiti 运行时任务方法服务 */
     private TaskService taskService;
     
+    @SuppressWarnings("unused")
     private RepositoryService repositoryService;
+    
+    /** 系统内流程定义业务层 */
+    @Resource(name = "processDefinitionService")
+    private ProcessDefinitionService processDefinitionService;
+    
+    /** 最大并发流程实例锁数，避免同一流程并发调用同一实例进行操作的情况 */
+    private int processInsLockNum = 256;
+    
+    /** 流程实例锁 */
+    private static Object[] processInsLocks;
     
     /**
      * @throws Exception
@@ -56,31 +85,95 @@ public class ProcessInstanceServiceImpl implements InitializingBean {
         this.taskService = processEngine.getTaskService();
         this.repositoryService = processEngine.getRepositoryService();
         this.runtimeService = processEngine.getRuntimeService();
-    }
-    
-    /**
-      * 判断是否传入了有效的businessKey
-      * <功能详细描述>
-      * @param businessKey
-      * @return [参数说明]
-      * 
-      * @return boolean [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    private boolean businessKeyIsValid(String[] businessKey) {
-        if (ArrayUtils.isEmpty(businessKey)
-                || StringUtils.isEmpty(businessKey[0])) {
-            return false;
-        } else {
-            return true;
+        
+        //流程实例锁
+        for (int i = 0; i < (processInsLockNum <= 0 ? Integer.MAX_VALUE
+                : processInsLockNum); i++) {
+            processInsLocks[i] = new Object();
         }
     }
     
     /**
       * 开始一条流程实例<br/>
       *     1、根据流程的最新版本创建一个流程实例<br/>
+      *
+      * @param processDefinitionKey 流程定义key
+      * @return [参数说明]
+      * 
+      * @return String [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public String start(String processDefinitionKey) {
+        ProcessInstance pIns = this.runtimeService.startProcessInstanceByKey(processDefinitionKey);
+        
+        String pInsId = pIns.getProcessInstanceId();
+        return pInsId;
+    }
+    
+    /**
+      * 开始一条流程实例<br/>
+      *     1、根据流程的最新版本创建一个流程实例<br/>
+      * @param processDefinitionId
+      * @return [参数说明]
+      * 
+      * @return String [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public String startByDefId(String processDefinitionId) {
+        ProcessInstance pIns = this.runtimeService.startProcessInstanceById(processDefinitionId);
+        
+        String pInsId = pIns.getProcessInstanceId();
+        return pInsId;
+    }
+    
+    /**
+      * 开始一条流程实例<br/>
+      *     1、根据流程的最新版本创建一个流程实例<br/>
+      *     
+      * @param processDefinitionKey  流程定义key
+      * @param variables  压入流程中当做流程变量的map可以为空
+      * @return [参数说明]
+      * 
+      * @return String [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public String start(String processDefinitionKey,
+            Map<String, Object> variables) {
+        ProcessInstance pIns = this.runtimeService.startProcessInstanceByKey(processDefinitionKey,
+                variables);
+        
+        String pInsId = pIns.getProcessInstanceId();
+        return pInsId;
+    }
+    
+    /**
+      * 开始一条流程实例<br/>
+      *     1、根据流程的最新版本创建一个流程实例<br/>
+      *     
+      * <功能详细描述>
+      * @param processDefinitionKey 流程定义key
+      * @param variables 压入流程中当做流程变量的map可以为空
+      * @param businessKey 用以支持区分流程实例类型的饿一个businessKey可以为空
+      * @return [参数说明]
+      * 
+      * @return String [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public String start(String processDefinitionKey,
+            Map<String, Object> variables, String... businessKey) {
+        
+        return start(processDefinitionKey, null, variables, businessKey);
+    }
+    
+    /**
+      * 开始一条流程实例<br/>
+      *     1、根据流程的最新版本创建一个流程实例<br/>
       *     2、可以传入一个操作<br/>
+      *     
       * @param processDefinitionKey  流程定义key
       * @param processName 操作name对应流程图中的一个transition可以为空
       * @param variables 压入流程中当做流程变量的map可以为空
@@ -126,24 +219,59 @@ public class ProcessInstanceServiceImpl implements InitializingBean {
     }
     
     /**
-     * @param processInsId
-     * @param varibals
-     */
-    public void putProcessInsVaribals(String processInsId,
-            Map<String, Object> varibals) {
-        // TODO Auto-generated method stub
-        
+     * 判断是否传入了有效的businessKey
+     *     1、根据流程的最新版本创建一个流程实例<br/>
+     *     
+     * @param businessKey
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    private boolean businessKeyIsValid(String[] businessKey) {
+        if (ArrayUtils.isEmpty(businessKey)
+                || StringUtils.isEmpty(businessKey[0])) {
+            return false;
+        } else {
+            return true;
+        }
     }
     
     /**
+      * <功能简述>
+      *     Execution的含义就是一个流程实例（ProcessInstance）具体要执行的过程对象<br/>
+      *     ProcessInstance（1）--->Execution(N)，其中N >= 1<br/>
+      *     值相等的情况：<br/>
+      *     除了在流程中启动的子流程之外，流程启动之后在表ACT_RU_EXECUTION中的字段ID_和PROC_INST_ID_字段值是相同的。<br/>
+      *     值不相等的情况：<br/>
+      *     不相等的情况目前只会出现在子流程中（包含：嵌套、引入），<br/>
+      *     例如一个购物流程中除了下单、出库节点之外可能还有一个付款子流程，<br/>
+      *     在实际企业应用中付款流程通常是作为公用的，所以使用子流程作为主流程（购物流程）的一部分。<br/>
+      *     当任务到达子流程时引擎会自动创建一个付款流程，但是这个流程有一个特殊的地方，在数据库可以直观体现，如下图。<br/>
+      *     上图中有两条数据，第二条数据（嵌入的子流程）的PARENT_ID_等于第一条数据的ID_和PROC_INST_ID_，并且两条数据的PROC_INST_ID_相同。
+      * <功能详细描述>
+      * @param executionId
+      * @param varibals [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public void putProcessInsVaribals(String executionId,
+            Map<String, Object> varibals) {
+        this.runtimeService.setVariables(executionId, varibals);
+    }
+    
+    /**
+     * 
      * @param processInsId
-     * @param key
+     * @param variableName
      * @param value
      */
-    public void putProcessInsVaribal(String processInsId, String key,
+    public void putProcessInsVaribal(String executionId, String variableName,
             String value) {
-        // TODO Auto-generated method stub
-        
+        this.runtimeService.setVariable(executionId, variableName, value);
     }
     
     /**
@@ -166,20 +294,91 @@ public class ProcessInstanceServiceImpl implements InitializingBean {
     }
     
     /**
-     * @param processInsId
-     * @return
+      * 完成当前流程环节任务，使其流入下一个流程环节任务 <br/>
+      *     1、如果当前流程实例存在多个在并行的任务将抛出异常 <br/>
+      *     2、
+      * <功能详细描述>
+      * @param processInstanceId [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
      */
-    public List<TaskDefinition> getCurrentTasks(String processInsId) {
-        // TODO Auto-generated method stub
+    @Transactional
+    public void complete(String processInstanceId) {
+        //由流程实例id获取任务实例，如果存在并行任务，调用该方法将抛出异常
+        Task task = getTaskByProInsId(processInstanceId);
+        //完成并行任务
+        this.taskService.complete(task.getId());
+    }
+    
+    /**
+      * 完成当前流程环节任务，使其流入下一个流程环节任务<br/>
+      *     1、如果当前流程实例存在多个在并行的任务将抛出异常<br/>
+      *     2、
+      * <功能详细描述>
+      * @param processInstanceId
+      * @param taskDefKey [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public void complete(String processInstanceId, String taskDefKey) {
+        //完成当前任务实例id
+        Task task = getTaskByProInsIdAndTaskDefKey(processInstanceId, taskDefKey);
+        //完成并行任务
+        this.taskService.complete(task.getId());
+    }
+    
+    /**
+      * 完成当前流程任务环节<br/>
+      *     1、如果当前流程环节存在多个，将会抛出异常<br/>
+      *     2、如果下一个流程环节存在多个，也将会抛出异常<br/>
+      *     3、调用该方法的地方需要自行考虑，如果发生并发时流程的流转问题<br/>
+      * <功能详细描述>
+      * @param processInstanceId(流程实例id)
+      * @return [参数说明]
+      * 
+      * @return ProTransitionDefinition [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public ProTaskDefinition pass(String processInstanceId) {
+        TaskQuery taskQuery = this.taskService.createTaskQuery()
+                .processInstanceId(processInstanceId);
+        //如果流程流转为并行节点，则不适合调用该方法，调用该方法这里讲会抛出异常
+        Task task = taskQuery.singleResult();
+        
+        this.taskService.complete(task.getId());
+        Task newTask = taskQuery.singleResult();
+        
+        //TODO:这个方法需要实际查询一下
+        ProTaskDefinition res = processDefinitionService.getProTaskDefinition(newTask.getTaskDefinitionKey());
+        
+        return res;
+    }
+    
+    public ProTaskDefinition pass(String processInstanceId, String taskDefKey) {
+        
+        return null;
+    }
+    
+    public String process(String processInstanceId, String taskDefKey,String transitionName) {
+        ExecutionEntity exeEntity = getExecutionEntityByProInsIdAndTaskDefKey(processInstanceId, taskDefKey);
+        
+        List<PvmTransition> transitionList = exeEntity.getActivity().getOutgoingTransitions();
+        for(PvmTransition transition : transitionList){
+            //exeEntity.
+        }
         return null;
     }
     
     /**
-     * @param processInsId
      * @return
      */
-    public TaskDefinition getCurrentTask(String processInsId) {
-        // TODO Auto-generated method stub
+    public String process() {
+        
         return null;
     }
     
@@ -194,11 +393,242 @@ public class ProcessInstanceServiceImpl implements InitializingBean {
     }
     
     /**
-     * @return
+      * 获取流程当前任务
+      * <功能详细描述>
+      * @param executionId
+      * @return [参数说明]
+      * 
+      * @return List<ProTaskDefinition> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
      */
-    public String process() {
+    public List<ProTaskDefinition> getCurrentTasks(String executionId) {
+        //this.taskService.
         
         return null;
     }
     
+    public ProTaskDefinition getCurrentTask(String processInstanceId) {
+        TaskQuery taskQuery = this.taskService.createTaskQuery()
+                .processInstanceId(processInstanceId);
+        //如果流程流转为并行节点，则不适合调用该方法，调用该方法这里讲会抛出异常
+        taskQuery.singleResult();
+        
+        return null;
+    }
+    
+    public List<ProTaskDefinition> getCurrentTaskList(String processInstanceId) {
+        TaskQuery taskQuery = this.taskService.createTaskQuery()
+                .processInstanceId(processInstanceId);
+        //
+        taskQuery.singleResult();
+        
+        return null;
+    }
+    
+    /**  
+     * 流程转向操作  
+     *   
+     * @param taskId  
+     *            当前任务ID  
+     * @param activityId  
+     *            目标节点任务ID  
+     * @param variables  
+     *            流程变量  
+     * @throws Exception  
+     */    
+    private static void turnTransition(String taskId, String activityId,    
+            Map<String, Object> variables) throws Exception {    
+        // 当前节点    
+        ActivityImpl currActivity = findActivitiImpl(taskId, null);
+        // 清空当前流向    
+        List<PvmTransition> oriPvmTransitionList = clearTransition(currActivity);    
+    
+        // 创建新流向    
+        TransitionImpl newTransition = currActivity.createOutgoingTransition();    
+        // 目标节点    
+        ActivityImpl pointActivity = findActivitiImpl(taskId, activityId);    
+        // 设置新流向的目标节点    
+        newTransition.setDestination(pointActivity);    
+    
+        // 执行转向任务    
+        taskService.complete(taskId, variables);    
+        // 删除目标节点新流入    
+        pointActivity.getIncomingTransitions().remove(newTransition);    
+    
+        // 还原以前流向    
+        restoreTransition(currActivity, oriPvmTransitionList);    
+    }   
+    
+    /**
+      * <功能简述>
+      * <功能详细描述>
+      *
+      * @param processInstanceId
+      * @param taskDefinitionKey
+      * @return [参数说明]
+      * 
+      * @return Task [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    private Task getTaskByProInsIdAndTaskDefKey(String processInstanceId,
+            String taskDefinitionKey) {
+        TaskQuery taskQuery = this.taskService.createTaskQuery()
+                .processInstanceId(processInstanceId)
+                .taskDefinitionKey(taskDefinitionKey);
+        
+        Task task = taskQuery.singleResult();
+        return task;
+    }
+    
+    /**
+      * 由流程实例id查询当前的任务环节<br/>
+      *     1、如果当前流程环节存在多个，则不能使用该方法，使用该方法，将会导致系统抛出异常<br/>
+      *     2、存在并行节点建议使用getTaskListByProcessInstanceId,或根据流程实例id以及当前的taskDefId去查询<br/>
+      * <功能详细描述>
+      * @param processInstanceId
+      * @return [参数说明]
+      * 
+      * @return Task [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    @SuppressWarnings("unused")
+    private Task getTaskByProInsId(String processInstanceId) {
+        TaskQuery taskQuery = this.taskService.createTaskQuery()
+                .processInstanceId(processInstanceId);
+        
+        //如果流程流转为并行节点，则不适合调用该方法，调用该方法这里讲会抛出异常
+        Task task = taskQuery.singleResult();
+        return task;
+    }
+    
+    /**
+      * 由执行过程id查询当前任务环节<br/>
+      *     在不存在子流程的情况下Process Excution是同一个实例<br/>
+      *     1、如果当前执行过程中存在多个正在并行的流程节点，调用该方法将抛出异常<br/>
+      * <功能详细描述>
+      * @param executionId
+      * @return [参数说明]
+      * 
+      * @return Task [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    @SuppressWarnings("unused")
+    private Task getTaskByExecutionId(String executionId) {
+        TaskQuery taskQuery = this.taskService.createTaskQuery()
+                .executionId(executionId);
+        //如果流程流转为并行节点，则不适合调用该方法，调用该方法这里讲会抛出异常
+        Task task = taskQuery.singleResult();
+        return null;
+    }
+    
+    /**
+      * 由当前流程实例id查询当前任务列表<br/>
+      *     
+      * <功能详细描述>
+      * @param processInstanceId
+      * @return [参数说明]
+      * 
+      * @return List<Task> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    @SuppressWarnings("unused")
+    private List<Task> getTaskListByProInsId(String processInstanceId) {
+        TaskQuery taskQuery = this.taskService.createTaskQuery()
+                .processInstanceId(processInstanceId);
+        List<Task> taskList = taskQuery.list();
+        return taskList;
+    }
+    
+    /**
+      * <功能简述>
+      * <功能详细描述>
+      * @param executionId
+      * @return [参数说明]
+      * 
+      * @return List<Task> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    @SuppressWarnings("unused")
+    private List<Task> getTaskListByExecutionId(String executionId) {
+        TaskQuery taskQuery = this.taskService.createTaskQuery()
+                .executionId(executionId);
+        //如果流程流转为并行节点，则不适合调用该方法，调用该方法这里讲会抛出异常
+        List<Task> taskList = taskQuery.list();
+        return taskList;
+    }
+    
+    /**
+      * 私有方法:获取当前实例的过程对象,入参为流程实例的过程对象 <br/>
+
+      *<功能详细描述>
+      * @param executionId
+      * @return [参数说明]
+      * 
+      * @return ExecutionEntity [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    @SuppressWarnings("unused")
+    private Execution getExecutionByExecutionId(String executionId) {
+        ExecutionQuery exeQuery = this.runtimeService.createExecutionQuery()
+                .executionId(executionId);
+        return exeQuery.singleResult();
+    }
+    
+    /**
+      * 根据流程实例id获取流程实例的过程对象<br/>
+      *     Execution的含义就是一个流程实例（ProcessInstance）具体要执行的过程对象 <br/>
+      *     ProcessInstance（1）--->Execution(N)，其中N >= 1 <br/>
+      *     值相等的情况：<br/>
+      *     除了在流程中启动的子流程之外，流程启动之后在表ACT_RU_EXECUTION中的字段ID_和PROC_INST_ID_字段值是相同的。<br/>
+      *     值不相等的情况：<br/>
+      *     不相等的情况目前只会出现在子流程中（包含：嵌套、引入），<br/>
+      *     例如一个购物流程中除了下单、出库节点之外可能还有一个付款子流程，<br/>
+      *     在实际企业应用中付款流程通常是作为公用的，所以使用子流程作为主流程（购物流程）的一部分。<br/>
+      *     当任务到达子流程时引擎会自动创建一个付款流程，但是这个流程有一个特殊的地方，在数据库可以直观体现，如下图。<br/>
+      *     上图中有两条数据，第二条数据（嵌入的子流程）的PARENT_ID_等于第一条数据的ID_和PROC_INST_ID_，并且两条数据的PROC_INST_ID_相同。
+      * @param processInstanceId 流程实例id
+      * @param forceSingle 
+      *     是否强制转换为单一的流程实例<br/>
+      *     如果为false如果对应流程对象存在多个过程对象时将会抛出异常<br/>
+      *     ActivitiException("Query return "+results.size()+" results instead of max 1");<br/>
+      * @return [参数说明]
+      * 
+      * @return ExecutionEntity [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    @SuppressWarnings("unused")
+    private ExecutionEntity getExetionEntityByProInsId(String processInstanceId) {
+        ExecutionQuery exeQuery = this.runtimeService.createExecutionQuery()
+                .processInstanceId(processInstanceId);
+        Execution res = exeQuery.singleResult();
+        return (ExecutionEntity) res;
+    }
+    
+    /**
+      * 获取指定刘晨故事里id,以及任务定义key对应的流程过程对象实例<br/>
+      * <功能详细描述>
+      * @param processInstanceId
+      * @param taskDefKey
+      * @return [参数说明]
+      * 
+      * @return ExecutionEntity [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    private ExecutionEntity getExecutionEntityByProInsIdAndTaskDefKey(
+            String processInstanceId, String taskDefKey) {
+        Task task = getTaskByProInsIdAndTaskDefKey(processInstanceId,
+                taskDefKey);
+        String executionId = task.getExecutionId();
+        Execution res = getExecutionByExecutionId(executionId);
+        return (ExecutionEntity) res;
+    }
 }

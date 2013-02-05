@@ -6,7 +6,7 @@
  */
 package com.tx.component.workflow.facade;
 
-import com.tx.component.workflow.service.ProcessDefService;
+import com.tx.component.workflow.service.ProcessDefinitionService;
 import com.tx.component.workflow.service.ProcessInstanceService;
 
 /**
@@ -26,7 +26,7 @@ import com.tx.component.workflow.service.ProcessInstanceService;
  * @since  [产品/模块版本]
  */
 public interface WorkFlowEngine extends 
-        ProcessDefService, ProcessInstanceService {
+        ProcessDefinitionService, ProcessInstanceService {
     
     
 }

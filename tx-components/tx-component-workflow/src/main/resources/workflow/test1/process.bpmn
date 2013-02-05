@@ -3,14 +3,14 @@
   <process id="test" name="测试申请单流程定义" isExecutable="true">
     <startEvent id="start" name="start"></startEvent>
     <sequenceFlow id="save" name="save" sourceRef="start" targetRef="state_save">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${_processTypeId=='create'}]]></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${_processTypeId==name}]]></conditionExpression>
     </sequenceFlow>
     <userTask id="state_save" name="保存"></userTask>
     <sequenceFlow id="to_submit" name="submit" sourceRef="state_save" targetRef="state_submit"></sequenceFlow>
     <userTask id="state_contract" name="待签约"></userTask>
     <endEvent id="end" name="End"></endEvent>
     <sequenceFlow id="over" name="over" sourceRef="usertask2" targetRef="end"></sequenceFlow>
-    <sequenceFlow id="preSubmitRejectToSave" name="reject" sourceRef="auto_task_check_rule1" targetRef="state_submit"></sequenceFlow>
+    <sequenceFlow id="preSubmitRejectToSave" name="reject" sourceRef="usertask1" targetRef="state_submit"></sequenceFlow>
     <userTask id="state_submit" name="提交" default="flow4"></userTask>
     <serviceTask id="auto_task_check_rule1" name="审核" activiti:delegateExpression="${configableRuleEngineDelegate}"></serviceTask>
     <task id="manualtask1" name="高审会签"></task>
@@ -18,9 +18,6 @@
     <sequenceFlow id="flow4" name="pass" sourceRef="state_submit" targetRef="auto_task_check_rule1"></sequenceFlow>
     <userTask id="usertask1" name="复核"></userTask>
     <sequenceFlow id="flow5" name="pass" sourceRef="auto_task_check_rule1" targetRef="usertask1"></sequenceFlow>
-    <sequenceFlow id="create" name="create" sourceRef="start" targetRef="state_submit">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${_processTypeId=='create'}]]></conditionExpression>
-    </sequenceFlow>
     <endEvent id="endevent1" name="End"></endEvent>
     <sequenceFlow id="flow7" name="cancel" sourceRef="usertask1" targetRef="endevent1">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${_processTypeId=='cancel'}]]></conditionExpression>
@@ -49,7 +46,7 @@
   <bpmndi:BPMNDiagram id="BPMNDiagram_test">
     <bpmndi:BPMNPlane bpmnElement="test" id="BPMNPlane_test">
       <bpmndi:BPMNShape bpmnElement="start" id="BPMNShape_start">
-        <omgdc:Bounds height="35.0" width="35.0" x="205.0" y="58.0"></omgdc:Bounds>
+        <omgdc:Bounds height="35.0" width="35.0" x="205.0" y="10.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="exclusivegateway1" id="BPMNShape_exclusivegateway1">
         <omgdc:Bounds height="40.0" width="40.0" x="202.0" y="527.0"></omgdc:Bounds>
@@ -70,7 +67,7 @@
         <omgdc:Bounds height="55.0" width="105.0" x="170.0" y="410.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="state_save" id="BPMNShape_state_save">
-        <omgdc:Bounds height="55.0" width="105.0" x="286.0" y="110.0"></omgdc:Bounds>
+        <omgdc:Bounds height="55.0" width="105.0" x="170.0" y="90.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="state_submit" id="BPMNShape_state_submit">
         <omgdc:Bounds height="55.0" width="105.0" x="170.0" y="200.0"></omgdc:Bounds>
@@ -84,13 +81,6 @@
       <bpmndi:BPMNShape bpmnElement="usertask2" id="BPMNShape_usertask2">
         <omgdc:Bounds height="55.0" width="105.0" x="545.0" y="410.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge bpmnElement="create" id="BPMNEdge_create">
-        <omgdi:waypoint x="222.0" y="93.0"></omgdi:waypoint>
-        <omgdi:waypoint x="222.0" y="200.0"></omgdi:waypoint>
-        <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="14.0" width="100.0" x="10.0" y="0.0"></omgdc:Bounds>
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="over" id="BPMNEdge_over">
         <omgdi:waypoint x="597.0" y="410.0"></omgdi:waypoint>
         <omgdi:waypoint x="597.0" y="245.0"></omgdi:waypoint>
@@ -99,8 +89,8 @@
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="preSubmitRejectToSave" id="BPMNEdge_preSubmitRejectToSave">
-        <omgdi:waypoint x="170.0" y="337.0"></omgdi:waypoint>
-        <omgdi:waypoint x="124.0" y="338.0"></omgdi:waypoint>
+        <omgdi:waypoint x="170.0" y="437.0"></omgdi:waypoint>
+        <omgdi:waypoint x="124.0" y="436.0"></omgdi:waypoint>
         <omgdi:waypoint x="124.0" y="228.0"></omgdi:waypoint>
         <omgdi:waypoint x="170.0" y="227.0"></omgdi:waypoint>
         <bpmndi:BPMNLabel>
@@ -131,14 +121,14 @@
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="save" id="BPMNEdge_save">
-        <omgdi:waypoint x="222.0" y="93.0"></omgdi:waypoint>
-        <omgdi:waypoint x="338.0" y="110.0"></omgdi:waypoint>
+        <omgdi:waypoint x="222.0" y="45.0"></omgdi:waypoint>
+        <omgdi:waypoint x="222.0" y="90.0"></omgdi:waypoint>
         <bpmndi:BPMNLabel>
           <omgdc:Bounds height="14.0" width="100.0" x="-3.0" y="-18.0"></omgdc:Bounds>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="to_submit" id="BPMNEdge_to_submit">
-        <omgdi:waypoint x="338.0" y="165.0"></omgdi:waypoint>
+        <omgdi:waypoint x="222.0" y="145.0"></omgdi:waypoint>
         <omgdi:waypoint x="222.0" y="200.0"></omgdi:waypoint>
         <bpmndi:BPMNLabel>
           <omgdc:Bounds height="14.0" width="100.0" x="9.0" y="-2.0"></omgdc:Bounds>
