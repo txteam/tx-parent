@@ -25,8 +25,7 @@ import com.tx.component.workflow.service.ProcessInstanceService;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public interface WorkFlowEngine extends 
-        ProcessDefinitionService, ProcessInstanceService {
+public interface WorkFlowEngine {
     
     
 }

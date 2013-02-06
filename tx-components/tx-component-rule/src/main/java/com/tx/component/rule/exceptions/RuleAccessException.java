@@ -38,7 +38,7 @@ public class RuleAccessException extends SILException {
     public RuleAccessException(String ruleName, Rule rule,
             RuleSession ruleSession, String message, Throwable cause,
             String... parameters) {
-        super(RuleErrorCodeConstant.RULE_EXCEPTION, message, cause, parameters);
+        super("1111", message, cause, parameters);
         this.rule = rule;
         this.ruleSession = ruleSession;
     }
@@ -49,7 +49,7 @@ public class RuleAccessException extends SILException {
      */
     public RuleAccessException(String ruleName, Rule rule,
             RuleSession ruleSession, String message, String... parameters) {
-        super(RuleErrorCodeConstant.RULE_EXCEPTION, message, parameters);
+        super("1111", message, parameters);
         this.rule = rule;
         this.ruleSession = ruleSession;
     }

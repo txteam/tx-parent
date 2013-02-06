@@ -10,7 +10,7 @@ import com.tx.core.exceptions.ErrorCodeConstant;
 import com.tx.core.exceptions.SILException;
 
 /**
- * <参数无效异常>
+ * 参数无效异常
  * <功能详细描述>
  * 
  * @author  PengQingyang

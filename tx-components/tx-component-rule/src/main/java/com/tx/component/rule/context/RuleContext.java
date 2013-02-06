@@ -18,7 +18,6 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
 import com.tx.component.rule.exceptions.RuleAccessException;
-import com.tx.component.rule.exceptions.RuleErrorCodeConstant;
 import com.tx.component.rule.model.Rule;
 import com.tx.component.rule.support.RuleSession;
 import com.tx.component.rule.support.RuleSessionFactory;
@@ -162,8 +161,7 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
                 this.ruleMapCache.put(ruleTemp.rule(), ruleTemp);
             }
             else if (this.ruleMapCache.containsKey(ruleTemp.rule())) {
-                throw new RuleAccessException(ruleTemp.rule(), null, null,
-                        RuleErrorCodeConstant.RULE_EXCEPTION, "重复的规则项:{}",
+                throw new RuleAccessException(ruleTemp.rule(), null, null, "重复的规则项:{}",
                         ruleTemp.rule());
             }
             else {
@@ -191,8 +189,7 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
             this.ruleMapCache.put(rule.rule(), rule);
         }
         else if (this.ruleMapCache.containsKey(rule.rule())) {
-            throw new RuleAccessException(rule.rule(), null, null,
-                    RuleErrorCodeConstant.RULE_EXCEPTION, "重复的规则项:{}",
+            throw new RuleAccessException(rule.rule(), null, null, "重复的规则项:{}",
                     rule.rule());
         }
         else {

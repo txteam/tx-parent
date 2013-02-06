@@ -11,7 +11,7 @@ import com.tx.core.exceptions.SILException;
 
 
  /**
-  * <功能简述>
+  * 资源加载异常
   * <功能详细描述>
   * 
   * @author  PengQingyang
