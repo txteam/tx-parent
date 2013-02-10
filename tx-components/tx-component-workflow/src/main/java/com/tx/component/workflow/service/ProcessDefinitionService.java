@@ -6,11 +6,21 @@
  */
 package com.tx.component.workflow.service;
 
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
+import org.activiti.engine.ProcessEngine;
+import org.activiti.engine.RepositoryService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
+
 import com.tx.component.workflow.model.ProTaskDefinition;
 import com.tx.component.workflow.model.ProcessDefinition;
+import com.tx.component.workflow.service.impl.ProcessInstanceServiceImpl;
 
 /**
  * 流程定义业务层<br/>
@@ -25,7 +35,16 @@ import com.tx.component.workflow.model.ProcessDefinition;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class ProcessDefinitionService {
+public class ProcessDefinitionService implements InitializingBean {
+    
+    /** 日志记录器 */
+    private static Logger logger = LoggerFactory.getLogger(ProcessDefinitionService.class);
+    
+    /** activiti流程引擎 */
+    @Resource(name = "processEngine")
+    private ProcessEngine processEngine;
+    
+    private RepositoryService repositoryService;
     
     /**
      * 流程定义流程定义缓存
@@ -37,6 +56,16 @@ public class ProcessDefinitionService {
      */
     private Map<String, Map<String, ProTaskDefinition>> processTaskDefCache = new HashMap<String, Map<String, ProTaskDefinition>>();
     
+    
+    
+    /**
+     * @throws Exception
+     */
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        this.repositoryService = this.processEngine.getRepositoryService();
+    }
+
     public ProcessDefinition getProcessDefinition(String key){
         return null;
     }
@@ -54,6 +83,13 @@ public class ProcessDefinitionService {
     }
     
     public ProTaskDefinition getProTaskDefinition(String id,String processKey,String xx){
+        return null;
+    }
+    
+    public ProTaskDefinition deploy(InputStream in){
+        //this.repositoryService.
+        
+        
         return null;
     }
 }
