@@ -1328,9 +1328,9 @@
 					<configuration>
 						<verbose>true</verbose>
 						<!-- The -source argument for the Java compiler.Default value is: 1.5. -->
-						<source>1.6</source>
+						<source>1.7</source>
 						<!-- The -target argument for the Java compiler.Default value is: 1.5. -->
-						<target>1.6</target>
+						<target>1.7</target>
 						<!-- The -encoding argument for the Java compiler.Default value is: 
 							${project.build.sourceEncoding}. -->
 						<encoding>UTF-8</encoding>

@@ -3,7 +3,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
 	<!-- 本地仓库地址：可修改为本机任意路径，依赖包将放置于该包中 -->
-	<localRepository>d:/repository/repo3</localRepository>
+	<localRepository>d:/repository/repo</localRepository>
 
 	<!-- 是否关闭网络连接 -->
 	<!-- <offline>false</offline> -->
@@ -32,12 +32,12 @@
 		<server>
 			<id>snapshots</id>
 			<username>admin</username>
-			<password>admin</password>
+			<password>admin123</password>
 		</server>
 		<server>
 			<id>releases</id>
 			<username>admin</username>
-			<password>admin</password>
+			<password>admin123</password>
 		</server>
 		<!-- Another sample, using keys to authenticate. -->
 		<!-- <server> -->
@@ -52,7 +52,7 @@
 		<mirror>
 			<id>nexusForCentral</id>
 			<name>internalNexusRepository</name>
-			<url>http://192.168.0.239:8000/nexus/content/groups/public/</url>
+			<url>http://112.124.7.157:8081/nexus/content/groups/public/</url>
 			<mirrorOf>central</mirrorOf>
 		</mirror>
 	</mirrors>
@@ -64,7 +64,7 @@
 			<repositories>
 				<repository>
 					<id>nexus</id>
-					<url>http://192.168.0.239:8000/nexus/content/groups/public/</url>
+					<url>http://112.124.7.157:8081/nexus/content/groups/public/</url>
 					<releases>
 						<enabled>true</enabled>
 					</releases>
@@ -76,7 +76,7 @@
 			<pluginRepositories>
 				<pluginRepository>
 					<id>nexus</id>
-					<url>http://192.168.0.239:8000/nexus/content/groups/public/</url>
+					<url>http://112.124.7.157:8081/nexus/content/groups/public/</url>
 					<releases>
 						<enabled>true</enabled>
 					</releases>

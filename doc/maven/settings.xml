@@ -158,7 +158,7 @@ under the License.
 	<mirror>  
         <id>nexusForCentral</id>  
         <name>internalNexusRepository</name>  
-        <url>http://192.168.0.239:8000/nexus/content/groups/public</url>  
+        <url>http://112.124.7.157:8081/nexus/content/groups/public</url>  
         <mirrorOf>central</mirrorOf>  
     </mirror> 
     <!-- mirror

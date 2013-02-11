@@ -25,7 +25,7 @@
 				TAII.AUTHTYPE
 		  FROM AUTH_AUTHITEM${tableSuffix} TAII
 		 WHERE TAII.ID = #{authItem.id}
-		   AND TAII.ID = #{authItem.systemId}
+		   AND TAII.SYSTEMID = #{authItem.systemId}
 	</select>
 	
 	<!-- auto generate default query -->
@@ -141,7 +141,7 @@
 		parameterType="java.util.Map">
 		DELETE FROM AUTH_AUTHITEM${tableSuffix} TAII 
 		 WHERE TAII.ID = #{authItem.id}
-		   AND TAII.ID = #{authItem.systemId}
+		   AND TAII.SYSTEMID = #{authItem.systemId}
 	</delete>
 
 	<!-- auto generate default update -->
@@ -172,7 +172,7 @@
 	    	</if>	
 	    </trim>
 		 WHERE TAII.ID = #{authItem.id}
-		   AND TAII.ID = #{authItem.systemId}
+		   AND TAII.SYSTEMID = #{authItem.systemId}
 	</update>  
 
 </mapper>

@@ -11,7 +11,7 @@ create table auth_authitem${tableSuffix}
   authType varchar2(64) not null, 		--权限类型
   viewAble number(1) default 1,		--是否可见
   editAble number(1) default 1,		--是否可编辑
-  valid number(1) default 1,			--isValid
+  valid number(1) default 1,
   primary key(id,systemid)
 );
 create index idx_auth_authitem_01 on auth_authitem${tableSuffix}(parentId);
