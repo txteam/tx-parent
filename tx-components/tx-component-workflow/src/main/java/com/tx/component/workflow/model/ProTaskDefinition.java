@@ -61,6 +61,27 @@ public class ProTaskDefinition implements Serializable,
     private List<ProTaskDefinition> childs;
     
     /**
+     * @return 返回 taskType
+     */
+    public String getTaskType() {
+        return taskType;
+    }
+
+    /**
+     * @param 对taskType进行赋值
+     */
+    public void setTaskType(String taskType) {
+        this.taskType = taskType;
+    }
+
+    /**
+     * @param 对order进行赋值
+     */
+    public void setOrder(int order) {
+        this.order = order;
+    }
+
+    /**
      * @return
      */
     @Override

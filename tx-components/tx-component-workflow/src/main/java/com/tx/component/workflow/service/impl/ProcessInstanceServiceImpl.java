@@ -299,10 +299,11 @@ public class ProcessInstanceServiceImpl implements InitializingBean {
       * @see [类、类#方法、类#成员]
      */
     @Transactional
-    public void putProcessInsVaribals(String executionId,
+    public void setVaribals(String executionId,
             Map<String, Object> varibals) {
         this.runtimeService.setVariables(executionId, varibals);
     }
+    
     
     /**
      * 
@@ -311,7 +312,7 @@ public class ProcessInstanceServiceImpl implements InitializingBean {
      * @param value
      */
     @Transactional
-    public void putProcessInsVaribal(String executionId, String variableName,
+    public void setVaribal(String executionId, String variableName,
             String value) {
         this.runtimeService.setVariable(executionId, variableName, value);
     }
@@ -320,7 +321,7 @@ public class ProcessInstanceServiceImpl implements InitializingBean {
      * @param processInsId
      * @return
      */
-    public Map<String, String> getProcessVaribals(String processInsId) {
+    public Map<String, String> getVaribals(String processInsId) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -378,6 +379,16 @@ public class ProcessInstanceServiceImpl implements InitializingBean {
         }
     }
     
+    /**
+      * 完成指定流程环节任务，使流程流向下一个节点
+      *<功能详细描述>
+      * @param processInstanceId
+      * @param taskVaribals [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
     @Transactional
     public void complete(String processInstanceId,Map<String, Object> taskVaribals) {
         if (StringUtils.isEmpty(processInstanceId)) {
