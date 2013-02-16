@@ -7,6 +7,7 @@
 package com.tx.component.workflow.service.impl;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -90,6 +91,7 @@ public class ProcessInstanceServiceImpl implements InitializingBean {
         this.runtimeService = processEngine.getRuntimeService();
         
         //流程实例锁
+        processInsLocks = new Object[processInsLockNum <= 0 ? 256 : processInsLockNum];
         for (int i = 0; i < (processInsLockNum <= 0 ? 256 : processInsLockNum); i++) {
             processInsLocks[i] = new Object();
         }
@@ -207,76 +209,76 @@ public class ProcessInstanceServiceImpl implements InitializingBean {
         return pInsId;
     }
     
-    /**
-      * 开始一条流程实例<br/>
-      *     1、根据流程的最新版本创建一个流程实例<br/>
-      *     
-      * <功能详细描述>
-      * @param processDefinitionKey 流程定义key
-      * @param variables 压入流程中当做流程变量的map可以为空
-      * @param businessKey 用以支持区分流程实例类型的饿一个businessKey可以为空
-      * @return [参数说明]
-      * 
-      * @return String [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    @Transactional
-    public String start(String processDefinitionKey,
-            Map<String, Object> variables, String... businessKey) {
-        
-        return start(processDefinitionKey, null, variables, businessKey);
-    }
-    
-    /**
-      * 开始一条流程实例<br/>
-      *     1、根据流程的最新版本创建一个流程实例<br/>
-      *     2、可以传入一个操作<br/>
-      *     
-      * @param processDefinitionKey  流程定义key
-      * @param processName 操作name对应流程图中的一个transition可以为空
-      * @param variables 压入流程中当做流程变量的map可以为空
-      * @param businessKey 用以支持区分流程实例类型的饿一个businessKey可以为空
-      * @return [参数说明]
-      * 
-      * @return String [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    @Transactional
-    public String start(String processDefinitionKey, String processName,
-            Map<String, Object> variables, String... businessKey) {
-        ProcessInstance pIns = null;
-        if (!StringUtils.isEmpty(processName)) {
-            if (variables == null) {
-                variables = new HashMap<String, Object>();
-            }
-            variables.put(WorkFlowConstants.PROCESS_NAME, processName);
-        }
-        
-        if (MapUtils.isEmpty(variables)) {
-            if (businessKeyIsValid(businessKey)) {
-                pIns = this.runtimeService.startProcessInstanceByKey(processDefinitionKey,
-                        businessKey[0]);
-            } else {
-                pIns = this.runtimeService.startProcessInstanceByKey(processDefinitionKey);
-            }
-        } else {
-            if (businessKeyIsValid(businessKey)) {
-                pIns = this.runtimeService.startProcessInstanceByKey(processDefinitionKey,
-                        businessKey[0],
-                        variables);
-            } else {
-                pIns = this.runtimeService.startProcessInstanceByKey(processDefinitionKey,
-                        variables);
-            }
-        }
-        
-        String pInsId = pIns.getProcessInstanceId();
-        this.runtimeService.removeVariable(pInsId,
-                WorkFlowConstants.PROCESS_NAME);
-        return pInsId;
-    }
+    //    /**
+    //      * 开始一条流程实例<br/>
+    //      *     1、根据流程的最新版本创建一个流程实例<br/>
+    //      *     
+    //      * <功能详细描述>
+    //      * @param processDefinitionKey 流程定义key
+    //      * @param variables 压入流程中当做流程变量的map可以为空
+    //      * @param businessKey 用以支持区分流程实例类型的饿一个businessKey可以为空
+    //      * @return [参数说明]
+    //      * 
+    //      * @return String [返回类型说明]
+    //      * @exception throws [异常类型] [异常说明]
+    //      * @see [类、类#方法、类#成员]
+    //     */
+    //    @Transactional
+    //    public String start(String processDefinitionKey,
+    //            Map<String, Object> variables, String... businessKey) {
+    //        
+    //        return start(processDefinitionKey, null, variables, businessKey);
+    //    }
+    //    
+    //    /**
+    //      * 开始一条流程实例<br/>
+    //      *     1、根据流程的最新版本创建一个流程实例<br/>
+    //      *     2、可以传入一个操作<br/>
+    //      *     
+    //      * @param processDefinitionKey  流程定义key
+    //      * @param processName 操作name对应流程图中的一个transition可以为空
+    //      * @param variables 压入流程中当做流程变量的map可以为空
+    //      * @param businessKey 用以支持区分流程实例类型的饿一个businessKey可以为空
+    //      * @return [参数说明]
+    //      * 
+    //      * @return String [返回类型说明]
+    //      * @exception throws [异常类型] [异常说明]
+    //      * @see [类、类#方法、类#成员]
+    //     */
+    //    @Transactional
+    //    public String start(String processDefinitionKey, String processName,
+    //            Map<String, Object> variables, String... businessKey) {
+    //        ProcessInstance pIns = null;
+    //        if (!StringUtils.isEmpty(processName)) {
+    //            if (variables == null) {
+    //                variables = new HashMap<String, Object>();
+    //            }
+    //            variables.put(WorkFlowConstants.PROCESS_NAME, processName);
+    //        }
+    //        
+    //        if (MapUtils.isEmpty(variables)) {
+    //            if (businessKeyIsValid(businessKey)) {
+    //                pIns = this.runtimeService.startProcessInstanceByKey(processDefinitionKey,
+    //                        businessKey[0]);
+    //            } else {
+    //                pIns = this.runtimeService.startProcessInstanceByKey(processDefinitionKey);
+    //            }
+    //        } else {
+    //            if (businessKeyIsValid(businessKey)) {
+    //                pIns = this.runtimeService.startProcessInstanceByKey(processDefinitionKey,
+    //                        businessKey[0],
+    //                        variables);
+    //            } else {
+    //                pIns = this.runtimeService.startProcessInstanceByKey(processDefinitionKey,
+    //                        variables);
+    //            }
+    //        }
+    //        
+    //        String pInsId = pIns.getProcessInstanceId();
+    //        this.runtimeService.removeVariable(pInsId,
+    //                WorkFlowConstants.PROCESS_NAME);
+    //        return pInsId;
+    //    }
     
     /**
       * <功能简述>
@@ -299,41 +301,53 @@ public class ProcessInstanceServiceImpl implements InitializingBean {
       * @see [类、类#方法、类#成员]
      */
     @Transactional
-    public void setVaribals(String executionId,
-            Map<String, Object> varibals) {
+    public void setVaribals(String executionId, Map<String, Object> varibals) {
         this.runtimeService.setVariables(executionId, varibals);
     }
     
-    
     /**
      * 
-     * @param processInsId
+     * @param executionId
      * @param variableName
      * @param value
      */
     @Transactional
-    public void setVaribal(String executionId, String variableName,
-            String value) {
+    public void setVaribal(String executionId, String variableName, String value) {
         this.runtimeService.setVariable(executionId, variableName, value);
     }
     
     /**
-     * @param processInsId
+     * 获取流程环节实例变量集合
+     * @param executionId
      * @return
      */
-    public Map<String, String> getVaribals(String processInsId) {
-        // TODO Auto-generated method stub
-        return null;
+    public Map<String, Object> getVaribals(String executionId) {
+        return this.runtimeService.getVariables(executionId);
     }
     
     /**
-     * @param processInsId
+      *<功能简述>
+      *<功能详细描述>
+      * @param executionId
+      * @param variableNames
+      * @return [参数说明]
+      * 
+      * @return Map<String,Object> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public Map<String, Object> getVaribals(String executionId,
+            Collection<String> variableNames) {
+        return this.runtimeService.getVariables(executionId, variableNames);
+    }
+    
+    /**
+     * @param executionId
      * @param key
      * @return
      */
-    public String getProcessInsVaribal(String processInsId, String key) {
-        // TODO Auto-generated method stub
-        return null;
+    public Object getVaribal(String executionId, String variableName) {
+        return this.runtimeService.getVariable(executionId, variableName);
     }
     
     /**
@@ -346,11 +360,34 @@ public class ProcessInstanceServiceImpl implements InitializingBean {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public List<ProTaskDefinition> getCurrentProTask(String processInstanceId) {
+    public List<ProTaskDefinition> getCurrentProTaskList(
+            String processInstanceId) {
         if (StringUtils.isEmpty(processInstanceId)) {
             throw new ParameterIsEmptyException(
                     "ProcessInstanceServic.complete processInstanceId is empty.");
         }
+        List<Task> taskList = getTaskListByProInsId(processInstanceId);
+        return null;
+    }
+    
+    /**
+      * <功能简述>
+      * <功能详细描述>
+      * @param processInstanceId
+      * @return [参数说明]
+      * 
+      * @return ProTaskDefinition [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public ProTaskDefinition getCurrentProTask(String processInstanceId) {
+        if (StringUtils.isEmpty(processInstanceId)) {
+            throw new ParameterIsEmptyException(
+                    "ProcessInstanceServic.complete processInstanceId is empty.");
+        }
+        Task task = getTaskByProInsId(processInstanceId);
+        String processDefId = task.getProcessDefinitionId();
+        String taskDefKey = task.getTaskDefinitionKey();
         return null;
     }
     
@@ -390,7 +427,8 @@ public class ProcessInstanceServiceImpl implements InitializingBean {
       * @see [类、类#方法、类#成员]
      */
     @Transactional
-    public void complete(String processInstanceId,Map<String, Object> taskVaribals) {
+    public void complete(String processInstanceId,
+            Map<String, Object> taskVaribals) {
         if (StringUtils.isEmpty(processInstanceId)) {
             throw new ParameterIsEmptyException(
                     "ProcessInstanceServic.complete processInstanceId is empty.");
@@ -399,7 +437,7 @@ public class ProcessInstanceServiceImpl implements InitializingBean {
             //由流程实例id获取任务实例，如果存在并行任务，调用该方法将抛出异常
             Task task = getTaskByProInsId(processInstanceId);
             //完成并行任务
-            this.taskService.complete(task.getId());
+            this.taskService.complete(task.getId(), taskVaribals);
         }
     }
     
@@ -458,7 +496,7 @@ public class ProcessInstanceServiceImpl implements InitializingBean {
             
             Task newTask = getTaskByProInsId(processInstanceId);
             //TODO:这个方法需要实际查询一下
-            ProTaskDefinition res = processDefinitionService.getProTaskDefinition(newTask.getTaskDefinitionKey());
+            ProTaskDefinition res = null;//processDefinitionService.getProTaskDefinition(newTask.getTaskDefinitionKey());
             
             return res;
         }
@@ -494,7 +532,7 @@ public class ProcessInstanceServiceImpl implements InitializingBean {
             Task newTask = getTaskByProInsId(processInstanceId);
             
             //TODO:这个方法需要实际查询一下
-            ProTaskDefinition res = processDefinitionService.getProTaskDefinition(newTask.getTaskDefinitionKey());
+            ProTaskDefinition res = null;//processDefinitionService.getProTaskDefinition(newTask.getTaskDefinitionKey());
             
             return res;
         }
@@ -543,12 +581,14 @@ public class ProcessInstanceServiceImpl implements InitializingBean {
             }
             if(rightTransition != null){
                 outGoingTransitionList.clear();
-                outGoingTransitionList
+                //outGoingTransitionList
                 
             }else{
                 throw new WorkflowAccessException(
                         "ProcessInstanceServic.process processInstanceId or taskDefKey is empty.");
             }
+            
+            return null;
             
         }
     }
@@ -611,25 +651,25 @@ public class ProcessInstanceServiceImpl implements InitializingBean {
      */
     private static void turnTransition(String taskId, String activityId,
             Map<String, Object> variables) throws Exception {
-        // 当前节点    
-        ActivityImpl currActivity = findActivitiImpl(taskId, null);
-        // 清空当前流向    
-        List<PvmTransition> oriPvmTransitionList = clearTransition(currActivity);
-        
-        // 创建新流向    
-        TransitionImpl newTransition = currActivity.createOutgoingTransition();
-        // 目标节点    
-        ActivityImpl pointActivity = findActivitiImpl(taskId, activityId);
-        // 设置新流向的目标节点    
-        newTransition.setDestination(pointActivity);
-        
-        // 执行转向任务    
-        taskService.complete(taskId, variables);
-        // 删除目标节点新流入    
-        pointActivity.getIncomingTransitions().remove(newTransition);
-        
-        // 还原以前流向    
-        restoreTransition(currActivity, oriPvmTransitionList);
+//        // 当前节点    
+//        ActivityImpl currActivity = findActivitiImpl(taskId, null);
+//        // 清空当前流向    
+//        List<PvmTransition> oriPvmTransitionList = clearTransition(currActivity);
+//        
+//        // 创建新流向    
+//        TransitionImpl newTransition = currActivity.createOutgoingTransition();
+//        // 目标节点    
+//        ActivityImpl pointActivity = findActivitiImpl(taskId, activityId);
+//        // 设置新流向的目标节点    
+//        newTransition.setDestination(pointActivity);
+//        
+//        // 执行转向任务    
+//        taskService.complete(taskId, variables);
+//        // 删除目标节点新流入    
+//        pointActivity.getIncomingTransitions().remove(newTransition);
+//        
+//        // 还原以前流向    
+//        restoreTransition(currActivity, oriPvmTransitionList);
     }
     
     /**
@@ -830,7 +870,7 @@ public class ProcessInstanceServiceImpl implements InitializingBean {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    private boolean businessKeyIsValid(String[] businessKey) {
+    private boolean businessKeyIsExsit(String[] businessKey) {
         if (ArrayUtils.isEmpty(businessKey)
                 || StringUtils.isEmpty(businessKey[0])) {
             return false;

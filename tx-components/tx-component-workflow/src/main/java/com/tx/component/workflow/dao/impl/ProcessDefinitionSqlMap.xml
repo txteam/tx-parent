@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper 
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="processDefinition">
+
+	<!-- auto generate default resultMap -->
+	<resultMap id="processDefinitionMap" 
+		type="com.tx.component.workflow.model.ProcessDefinition">
+	</resultMap>
+	
+	<!-- auto generate default find -->
+	<select id="findProcessDefinition" 
+		parameterType="com.tx.component.workflow.model.ProcessDefinition"
+		resultMap="processDefinitionMap">
+		SELECT 
+				TWFPROCESSDEF.ID,
+				TWFPROCESSDEF.CATEGORY,
+				TWFPROCESSDEF.NAME,
+				TWFPROCESSDEF.STATE,
+				TWFPROCESSDEF.WFDID,
+				TWFPROCESSDEF.SERVICETYPE,
+				TWFPROCESSDEF.WFDKEY AS key,
+				TWFPROCESSDEF.VERSION
+		  FROM WF_PROCESS_DEF TWFPROCESSDEF
+		 WHERE
+		<trim prefixOverrides="AND | OR">
+			<if test="@com.tx.core.Ognl@isNotEmpty(id)">  
+	            AND TWFPROCESSDEF.ID = #{id}
+	        </if>
+		</trim>
+	</select>
+	
+	<!-- auto generate default query -->
+	<select id="queryProcessDefinition" 
+		parameterType="java.util.Map"
+		resultMap="processDefinitionMap">
+		SELECT 
+				TWFPROCESSDEF.ID,
+				TWFPROCESSDEF.CATEGORY,
+				TWFPROCESSDEF.NAME,
+				TWFPROCESSDEF.STATE,
+				TWFPROCESSDEF.WFDID,
+				TWFPROCESSDEF.SERVICETYPE,
+				TWFPROCESSDEF.WFDKEY AS key,
+				TWFPROCESSDEF.VERSION
+		  FROM WF_PROCESS_DEF TWFPROCESSDEF
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="@com.tx.core.Ognl@isNotEmpty(id)">  
+	            AND TWFPROCESSDEF.ID = #{id,javaType=java.lang.String}
+	        </if>
+			<if test="@com.tx.core.Ognl@isNotEmpty(category)">  
+	            AND TWFPROCESSDEF.CATEGORY = #{category,javaType=java.lang.String}
+	        </if>
+			<if test="@com.tx.core.Ognl@isNotEmpty(name)">  
+	            AND TWFPROCESSDEF.NAME = #{name,javaType=java.lang.String}
+	        </if>
+			<if test="@com.tx.core.Ognl@isNotEmpty(state)">  
+	            AND TWFPROCESSDEF.STATE = #{state,javaType=java.lang.String}
+	        </if>
+			<if test="@com.tx.core.Ognl@isNotEmpty(wfdId)">  
+	            AND TWFPROCESSDEF.WFDID = #{wfdId,javaType=java.lang.String}
+	        </if>
+			<if test="@com.tx.core.Ognl@isNotEmpty(serviceType)">  
+	            AND TWFPROCESSDEF.SERVICETYPE = #{serviceType,javaType=java.lang.String}
+	        </if>
+			<if test="@com.tx.core.Ognl@isNotEmpty(key)">  
+	            AND TWFPROCESSDEF.WFDKEY = #{key,javaType=java.lang.String}
+	        </if>
+			<if test="@com.tx.core.Ognl@isNotEmpty(version)">  
+	            AND TWFPROCESSDEF.VERSION = #{version,javaType=java.lang.String}
+	        </if>
+		</trim>
+		<choose>  
+	        <when test="@com.tx.core.Ognl@isNotEmpty(orderSql)">  
+	            ORDER BY #{orderSql}
+	        </when>
+	        <otherwise>  
+	            <!-- //TODO:ADD DEFAULT ORDER COLUMN OR DONOTHING! -->
+	        </otherwise>  
+	    </choose>
+	</select>
+	
+		<!-- auto generate default count -->
+	<select id="queryProcessDefinitionCount" 
+		parameterType="java.util.Map"
+		resultType="java.lang.Integer">
+		SELECT COUNT(1)
+		  FROM WF_PROCESS_DEF TWFPROCESSDEF
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="@com.tx.core.Ognl@isNotEmpty(id)">  
+	            AND TWFPROCESSDEF.ID = #{id,javaType=java.lang.String}
+	        </if>
+			<if test="@com.tx.core.Ognl@isNotEmpty(category)">  
+	            AND TWFPROCESSDEF.CATEGORY = #{category,javaType=java.lang.String}
+	        </if>
+			<if test="@com.tx.core.Ognl@isNotEmpty(name)">  
+	            AND TWFPROCESSDEF.NAME = #{name,javaType=java.lang.String}
+	        </if>
+			<if test="@com.tx.core.Ognl@isNotEmpty(state)">  
+	            AND TWFPROCESSDEF.STATE = #{state,javaType=java.lang.String}
+	        </if>
+			<if test="@com.tx.core.Ognl@isNotEmpty(wfdId)">  
+	            AND TWFPROCESSDEF.WFDID = #{wfdId,javaType=java.lang.String}
+	        </if>
+			<if test="@com.tx.core.Ognl@isNotEmpty(serviceType)">  
+	            AND TWFPROCESSDEF.SERVICETYPE = #{serviceType,javaType=java.lang.String}
+	        </if>
+			<if test="@com.tx.core.Ognl@isNotEmpty(key)">  
+	            AND TWFPROCESSDEF.WFDKEY = #{key,javaType=java.lang.String}
+	        </if>
+			<if test="@com.tx.core.Ognl@isNotEmpty(version)">  
+	            AND TWFPROCESSDEF.VERSION = #{version,javaType=java.lang.String}
+	        </if>
+		</trim>
+	</select>
+    
+    <!-- auto generate default insert -->
+    <insert id="insertProcessDefinition" 
+		parameterType="com.tx.component.workflow.model.ProcessDefinition">
+		INSERT INTO WF_PROCESS_DEF
+		(
+			ID,
+			CATEGORY,
+			NAME,
+			STATE,
+			WFDID,
+			SERVICETYPE,
+			WFDKEY,
+			VERSION
+		)
+		VALUES
+		(
+			#{id},
+			#{category},
+			#{name},
+			#{state},
+			#{wfdId},
+			#{serviceType},
+			#{key},
+			#{version}
+		)
+	</insert>
+	
+	<!-- auto generate default delete -->
+	<delete id="deleteProcessDefinition" 
+		parameterType="com.tx.component.workflow.model.ProcessDefinition">
+		DELETE FROM WF_PROCESS_DEF TWFPROCESSDEF WHERE
+		<trim prefixOverrides="AND | OR">
+			<if test="@com.tx.core.Ognl@isNotEmpty(id)">  
+	            AND TWFPROCESSDEF.ID = #{id}
+	        </if>
+		</trim>
+	</delete>
+
+	<!-- auto generate default update -->
+	<update id="updateProcessDefinition"
+	    parameterType="java.util.Map">  
+	    UPDATE WF_PROCESS_DEF TWFPROCESSDEF
+	    <trim prefix="SET" suffixOverrides=",">
+			<if test="_parameter.containsKey('category')">
+	    		CATEGORY = #{category,javaType=java.lang.String},
+	    	</if>	
+			<if test="_parameter.containsKey('name')">
+	    		NAME = #{name,javaType=java.lang.String},
+	    	</if>	
+			<if test="_parameter.containsKey('state')">
+	    		STATE = #{state,javaType=java.lang.String},
+	    	</if>	
+			<if test="_parameter.containsKey('wfdId')">
+	    		WFDID = #{wfdId,javaType=java.lang.String},
+	    	</if>	
+			<if test="_parameter.containsKey('serviceType')">
+	    		SERVICETYPE = #{serviceType,javaType=java.lang.String},
+	    	</if>	
+			<if test="_parameter.containsKey('key')">
+	    		WFDKEY = #{key,javaType=java.lang.String},
+	    	</if>	
+			<if test="_parameter.containsKey('version')">
+	    		VERSION = #{version,javaType=java.lang.String},
+	    	</if>	
+	    </trim>
+	    WHERE TWFPROCESSDEF.ID = #{id} 
+	</update>  
+
+</mapper>
+<!--
+sqlMap生成描述:
+
+-->

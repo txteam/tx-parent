@@ -6,9 +6,6 @@
  */
 package com.tx.component.workflow.facade;
 
-import com.tx.component.workflow.service.ProcessDefinitionService;
-import com.tx.component.workflow.service.ProcessInstanceService;
-
 /**
  * 工作流引擎门面类用以对外提供服务<br/>
  * 封装的意义：隔离底层工作流引擎实现（与jbpm,activiti,cutomize隔离）<br/>

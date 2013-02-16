@@ -41,6 +41,7 @@
 			<groupId>commons-collections</groupId>
 			<artifactId>commons-collections</artifactId>
 		</dependency>
+
 		<!-- commons optional -->
 		<dependency>
 			<groupId>commons-pool</groupId>
@@ -51,6 +52,12 @@
 			<groupId>commons-dbcp</groupId>
 			<artifactId>commons-dbcp</artifactId>
 			<optional>true</optional>
+		</dependency>
+	
+		<!-- depend -->
+		<dependency>
+			<groupId>cglib</groupId>
+			<artifactId>cglib-nodep</artifactId>
 		</dependency>
 
 		<!-- srpingframework -->
@@ -174,6 +181,7 @@
 			<groupId>jaxen</groupId>
 			<artifactId>jaxen</artifactId>
 		</dependency>
+
 
 		<!-- activiti -->
 		<dependency>

@@ -7,9 +7,13 @@
 package com.tx.component.workflow.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.tx.component.workflow.WorkFlowConstants;
 
@@ -34,9 +38,15 @@ public class ProcessDefinition implements Serializable {
     private static final long serialVersionUID = 6540929500393797624L;
     
     /** 流程定义id:由系统自生成 */
+    @Id
     private String id;
     
+    /** 流程定义id */
+    @Column(name = "wfdid")
+    private String wfdId;
+    
     /** 流程定义key:对应activiti中的key */
+    @Column(name = "wfdkey")
     private String key;
     
     /** 流程名 */
@@ -54,8 +64,13 @@ public class ProcessDefinition implements Serializable {
     /** 流程状态:用以支持，测试态，运营态等流程状态 */
     private String state = WorkFlowConstants.PROCESS_DEFINITION_STATE_TEST;
     
-    /** 代理的引擎实例 */
+    /** 代理的引擎实例 可对应org.activiti.engine.repository.ProcessDefinition */
+    @Transient
     private Object delegate;
+    
+    private Date createDate;
+    
+    private Date lastUpdateDate;
     
     /**
      * @return
@@ -126,7 +141,21 @@ public class ProcessDefinition implements Serializable {
     public void setState(String state) {
         this.state = state;
     }
-
+    
+    /**
+     * @return 返回 wfdId
+     */
+    public String getWfdId() {
+        return wfdId;
+    }
+    
+    /**
+     * @param 对wfdId进行赋值
+     */
+    public void setWfdId(String wfdId) {
+        this.wfdId = wfdId;
+    }
+    
     /**
      * @return 返回 key
      */
@@ -147,25 +176,53 @@ public class ProcessDefinition implements Serializable {
     public String getCategory() {
         return category;
     }
-
+    
     /**
      * @param 对category进行赋值
      */
     public void setCategory(String category) {
         this.category = category;
     }
-
+    
     /**
      * @return 返回 delegate
      */
     public Object getDelegate() {
         return delegate;
     }
-
+    
     /**
      * @param 对delegate进行赋值
      */
     public void setDelegate(Object delegate) {
         this.delegate = delegate;
+    }
+
+    /**
+     * @return 返回 createDate
+     */
+    public Date getCreateDate() {
+        return createDate;
+    }
+
+    /**
+     * @param 对createDate进行赋值
+     */
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
+    }
+
+    /**
+     * @return 返回 lastUpdateDate
+     */
+    public Date getLastUpdateDate() {
+        return lastUpdateDate;
+    }
+
+    /**
+     * @param 对lastUpdateDate进行赋值
+     */
+    public void setLastUpdateDate(Date lastUpdateDate) {
+        this.lastUpdateDate = lastUpdateDate;
     }
 }

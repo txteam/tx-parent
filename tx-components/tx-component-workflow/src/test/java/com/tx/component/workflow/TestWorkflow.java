@@ -27,7 +27,6 @@ import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
 import org.apache.commons.collections.MapUtils;
-import org.drools.reteoo.AccumulateNode.ActivitySource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.InitializingBean;
@@ -84,7 +83,7 @@ public class TestWorkflow extends TestWFBase implements InitializingBean{
     
     private ProcessDefinition processDefinition;
     
-    @Test
+    //@Test
     public void testDeploy() {
         
         //需要以非“/”开始
@@ -105,7 +104,7 @@ public class TestWorkflow extends TestWFBase implements InitializingBean{
         //this.runtimeService.start
     }
     
-    @Test
+    //@Test
     public void testGetProcessAllTask(){
         ProcessDefinition pdTemp = processEngine.getRepositoryService().createProcessDefinitionQuery().
                 processDefinitionKey(this.processDefKey).latestVersion().singleResult();
@@ -133,7 +132,7 @@ public class TestWorkflow extends TestWFBase implements InitializingBean{
         //pde.get
     }
   
-    //@Test
+    @Test
     public void testCurrentProcessInsTaskAndToNext(){
         List<Task> taskList = processEngine.getTaskService().createTaskQuery().processInstanceId(this.processInsId).list();
         
@@ -142,10 +141,10 @@ public class TestWorkflow extends TestWFBase implements InitializingBean{
             System.out.println(taskTemp.getTaskDefinitionKey());
         }
         
-        Task currentTask = processEngine.getTaskService().createTaskQuery().processInstanceId(this.processInsId).singleResult();
+        //Task currentTask = processEngine.getTaskService().createTaskQuery().processInstanceId(this.processInsId).singleResult();
         
         //this.taskService.
-        this.taskService.complete(currentTask.getId());
+        //this.taskService.complete(currentTask.getId());
         
         List<Task> taskList1 = processEngine.getTaskService().createTaskQuery().processInstanceId(this.processInsId).list();
         
@@ -169,7 +168,7 @@ public class TestWorkflow extends TestWFBase implements InitializingBean{
         
     }
     
-    //@Test
+    @Test
     public void test() {
         
         //需要以非“/”开始
@@ -211,6 +210,14 @@ public class TestWorkflow extends TestWFBase implements InitializingBean{
         
         ProcessDefinition pd2 = processEngine.getRepositoryService().createProcessDefinitionQuery().processDefinitionKey("test1").latestVersion().singleResult();
         ProcessDefinition pd1 = processEngine.getRepositoryService().getProcessDefinition(pd2.getId());
+        
+        processEngine.getRepositoryService().getProcessDefinition(pd2.getId());
+        processEngine.getRepositoryService().getProcessDefinition(pd2.getId());
+        processEngine.getRepositoryService().getProcessDefinition(pd2.getId());
+        processEngine.getRepositoryService().getProcessDefinition(pd2.getId());
+        processEngine.getRepositoryService().getProcessDefinition(pd2.getId());
+        processEngine.getRepositoryService().getProcessDefinition(pd2.getId());
+        
         System.out.println(pd1 instanceof ProcessDefinitionEntity);
         ProcessDefinitionEntity pd = (ProcessDefinitionEntity)pd1;
         Map<String, TaskDefinition> tdm = pd.getTaskDefinitions();
