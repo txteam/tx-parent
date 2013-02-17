@@ -104,7 +104,7 @@ public class TestWorkflow extends TestWFBase implements InitializingBean{
         //this.runtimeService.start
     }
     
-    //@Test
+    @Test
     public void testGetProcessAllTask(){
         ProcessDefinition pdTemp = processEngine.getRepositoryService().createProcessDefinitionQuery().
                 processDefinitionKey(this.processDefKey).latestVersion().singleResult();
@@ -127,6 +127,8 @@ public class TestWorkflow extends TestWFBase implements InitializingBean{
         for(ActivityImpl ac : tt){
             System.out.println(ac.getId() + " : " + ac.getActivityBehavior());
             //ac.getActivityBehavior().
+            
+            
         }
         
         //pde.get
