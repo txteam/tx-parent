@@ -20,8 +20,8 @@ import org.springframework.stereotype.Component;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
   */
-@Component("configableRuleEngineDelegate")
-public class ConfigableRuleEngineDelegate implements JavaDelegate {
+@Component("configableRuleTaskDelegate")
+public class ConfigableRuleTaskDelegate implements JavaDelegate {
 
     /**
      * @param execution

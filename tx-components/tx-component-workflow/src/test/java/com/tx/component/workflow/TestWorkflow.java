@@ -19,20 +19,29 @@ import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
+import org.activiti.engine.impl.bpmn.behavior.ServiceTaskDelegateExpressionActivityBehavior;
+import org.activiti.engine.impl.persistence.entity.ExecutionEntity;
 import org.activiti.engine.impl.persistence.entity.ProcessDefinitionEntity;
 import org.activiti.engine.impl.pvm.PvmTransition;
+import org.activiti.engine.impl.pvm.delegate.ActivityBehavior;
 import org.activiti.engine.impl.pvm.process.ActivityImpl;
 import org.activiti.engine.impl.task.TaskDefinition;
 import org.activiti.engine.repository.ProcessDefinition;
+import org.activiti.engine.runtime.Execution;
+import org.activiti.engine.runtime.ExecutionQuery;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
+import org.activiti.engine.task.TaskQuery;
 import org.apache.commons.collections.MapUtils;
+import org.apache.ibatis.reflection.MetaObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import com.tx.component.workflow.service.ProcessInstanceService;
 
 
  /**
@@ -63,6 +72,10 @@ public class TestWorkflow extends TestWFBase implements InitializingBean{
     
     private RepositoryService repositoryService;
     
+    @Resource(name = "processInstanceService")
+    private ProcessInstanceService processInstanceService;
+
+
     /**
      * @throws Exception
      */
@@ -71,13 +84,14 @@ public class TestWorkflow extends TestWFBase implements InitializingBean{
         this.taskService = processEngine.getTaskService();
         this.repositoryService = processEngine.getRepositoryService();
         this.runtimeService = processEngine.getRuntimeService();
+        
     }
     
     private String processDefId;
     
     private String processDefKey = "test";
     
-    private String processInsId = "1301";
+    private String processInsId = "3505";
     
     private ProcessInstance processInstance;
     
@@ -85,7 +99,6 @@ public class TestWorkflow extends TestWFBase implements InitializingBean{
     
     //@Test
     public void testDeploy() {
-        
         //需要以非“/”开始
         processEngine.getRepositoryService()
                 .createDeployment()
@@ -104,12 +117,18 @@ public class TestWorkflow extends TestWFBase implements InitializingBean{
         //this.runtimeService.start
     }
     
+    //@Test
+    public void test1111(){
+        this.processInstanceService.process(this.processInsId,"submit");
+    }
+    
     @Test
     public void testGetProcessAllTask(){
         ProcessDefinition pdTemp = processEngine.getRepositoryService().createProcessDefinitionQuery().
                 processDefinitionKey(this.processDefKey).latestVersion().singleResult();
         
         //this.processDefinition = pdTemp;
+        System.out.println(pdTemp.getId());
         this.processDefinition = processEngine.getRepositoryService().getProcessDefinition(pdTemp.getId());
         
         ProcessDefinitionEntity pde = (ProcessDefinitionEntity)this.processDefinition;
@@ -128,13 +147,40 @@ public class TestWorkflow extends TestWFBase implements InitializingBean{
             System.out.println(ac.getId() + " : " + ac.getActivityBehavior());
             //ac.getActivityBehavior().
             
-            
+            ActivityBehavior ab = ac.getActivityBehavior();
+            if(ab instanceof ServiceTaskDelegateExpressionActivityBehavior){
+                ServiceTaskDelegateExpressionActivityBehavior sab = (ServiceTaskDelegateExpressionActivityBehavior)ab;
+                
+                MetaObject mo = MetaObject.forObject(sab);
+                
+                System.out.println(mo.getValue("expression"));
+            }
         }
         
         //pde.get
+        //未产生分支的情况
+        Task task = getTaskByProInsId(this.processInsId);
+        System.out.println(task.getExecutionId());
+        ExecutionEntity ec = getExecutionEntityByProInsId(getTaskByProInsId(this.processInsId).getExecutionId());
+        //System.out.println(ec.getTransition());
+        //System.out.println(ec.getTransitionBeingTaken());
+        //System.out.println(ec.getTasks().size());
+        //System.out.println(ec.getActivityId());
+        //System.out.println(ec.getActivity() == null);
+        
+        //this.processDefinition = processEngine.getRepositoryService().getProcessDefinition(task.getProcessDefinitionId());
+        //this.processDefinition.get
+        
+//        for(PvmTransition tr : getExecutionEntityByProInsId(this.processInsId).getActivity().getOutgoingTransitions()){
+//            System.out.println(tr.getId());
+//            System.out.println(tr.getProperty("Name"));
+//        }
+        
+        
+        //System.out.println(getExecutionEntityByProInsId(this.processInsId).get);
     }
   
-    @Test
+    //@Test
     public void testCurrentProcessInsTaskAndToNext(){
         List<Task> taskList = processEngine.getTaskService().createTaskQuery().processInstanceId(this.processInsId).list();
         
@@ -170,7 +216,7 @@ public class TestWorkflow extends TestWFBase implements InitializingBean{
         
     }
     
-    @Test
+    //@Test
     public void test() {
         
         //需要以非“/”开始
@@ -263,6 +309,100 @@ public class TestWorkflow extends TestWFBase implements InitializingBean{
         
         Assert.assertTrue(pInsId != null);
     }
+    
+    /**
+     * 根据流程实例id以及任务定义key找到对应的task实例
+     *
+     * @param processInstanceId
+     * @param taskDefinitionKey
+     * @return [参数说明]
+     * 
+     * @return Task [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+   private Task getTaskByProInsIdAndTaskDefKey(String processInstanceId,
+           String taskDefinitionKey) {
+       TaskQuery taskQuery = this.taskService.createTaskQuery()
+               .processInstanceId(processInstanceId)
+               .taskDefinitionKey(taskDefinitionKey);
+       
+       
+       Task task = taskQuery.singleResult();
+       return task;
+   }
+   
+   /**
+     * 由流程实例id查询当前的任务环节<br/>
+     *     1、如果当前流程环节存在多个，则不能使用该方法，使用该方法，将会导致系统抛出异常<br/>
+     *     2、存在并行节点建议使用getTaskListByProcessInstanceId,或根据流程实例id以及当前的taskDefId去查询<br/>
+     * <功能详细描述>
+     * @param processInstanceId
+     * @return [参数说明]
+     * 
+     * @return Task [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+   @SuppressWarnings("unused")
+   private Task getTaskByProInsId(String processInstanceId) {
+       TaskQuery taskQuery = this.taskService.createTaskQuery()
+               .processInstanceId(processInstanceId);
+       
+       //如果流程流转为并行节点，则不适合调用该方法，调用该方法这里讲会抛出异常
+       Task task = taskQuery.singleResult();
+       return task;
+   }
+   
+   /**
+    * 根据流程实例id获取流程实例的过程对象<br/>
+    *     Execution的含义就是一个流程实例（ProcessInstance）具体要执行的过程对象 <br/>
+    *     ProcessInstance（1）--->Execution(N)，其中N >= 1 <br/>
+    *     值相等的情况：<br/>
+    *     除了在流程中启动的子流程之外，流程启动之后在表ACT_RU_EXECUTION中的字段ID_和PROC_INST_ID_字段值是相同的。<br/>
+    *     值不相等的情况：<br/>
+    *     不相等的情况目前只会出现在子流程中（包含：嵌套、引入），<br/>
+    *     例如一个购物流程中除了下单、出库节点之外可能还有一个付款子流程，<br/>
+    *     在实际企业应用中付款流程通常是作为公用的，所以使用子流程作为主流程（购物流程）的一部分。<br/>
+    *     当任务到达子流程时引擎会自动创建一个付款流程，但是这个流程有一个特殊的地方，在数据库可以直观体现，如下图。<br/>
+    *     上图中有两条数据，第二条数据（嵌入的子流程）的PARENT_ID_等于第一条数据的ID_和PROC_INST_ID_，并且两条数据的PROC_INST_ID_相同。
+    * @param processInstanceId 流程实例id
+    * @param forceSingle 
+    *     是否强制转换为单一的流程实例<br/>
+    *     如果为false如果对应流程对象存在多个过程对象时将会抛出异常<br/>
+    *     ActivitiException("Query return "+results.size()+" results instead of max 1");<br/>
+    * @return [参数说明]
+    * 
+    * @return ExecutionEntity [返回类型说明]
+    * @exception throws [异常类型] [异常说明]
+    * @see [类、类#方法、类#成员]
+   */
+  private ExecutionEntity getExecutionEntityByProInsId(
+          String processInstanceId) {
+      ExecutionQuery exeQuery = this.runtimeService.createExecutionQuery()
+              .processInstanceId(processInstanceId);
+      
+      //如果赌赢流程id对应到了多个excution此处将会抛出异常
+      Execution res = exeQuery.singleResult();
+      return (ExecutionEntity) res;
+  }
+  
+  /**
+   * 私有方法:获取当前实例的过程对象,入参为流程实例的过程对象 <br/>
+
+   *<功能详细描述>
+   * @param executionId
+   * @return [参数说明]
+   * 
+   * @return ExecutionEntity [返回类型说明]
+   * @exception throws [异常类型] [异常说明]
+   * @see [类、类#方法、类#成员]
+  */
+  private Execution getExecutionByExecutionId(String executionId) {
+      ExecutionQuery exeQuery = this.runtimeService.createExecutionQuery()
+              .executionId(executionId);
+      return exeQuery.singleResult();
+  }
     
  
     

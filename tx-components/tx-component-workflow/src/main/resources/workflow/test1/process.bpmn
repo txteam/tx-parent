@@ -2,9 +2,7 @@
 <definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="com.tx.wf">
   <process id="test" name="测试申请单流程定义" isExecutable="true">
     <startEvent id="start" name="start"></startEvent>
-    <sequenceFlow id="save" name="save" sourceRef="start" targetRef="state_save">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${_processTypeId==name}]]></conditionExpression>
-    </sequenceFlow>
+    <sequenceFlow id="save" name="save" sourceRef="start" targetRef="state_save"></sequenceFlow>
     <userTask id="state_save" name="保存"></userTask>
     <sequenceFlow id="to_submit" name="submit" sourceRef="state_save" targetRef="state_submit"></sequenceFlow>
     <userTask id="state_contract" name="待签约"></userTask>
@@ -12,7 +10,7 @@
     <sequenceFlow id="over" name="over" sourceRef="usertask2" targetRef="end"></sequenceFlow>
     <sequenceFlow id="preSubmitRejectToSave" name="reject" sourceRef="usertask1" targetRef="state_submit"></sequenceFlow>
     <userTask id="state_submit" name="提交" default="flow4"></userTask>
-    <serviceTask id="auto_task_check_rule1" name="审核" activiti:delegateExpression="${configableRuleEngineDelegate}"></serviceTask>
+    <serviceTask id="auto_task_check_rule1" name="审核" activiti:delegateExpression="${configableRuleTaskDelegate}"></serviceTask>
     <task id="manualtask1" name="高审会签"></task>
     <sequenceFlow id="flow3" name="notMatch" sourceRef="auto_task_check_rule1" targetRef="state_submit"></sequenceFlow>
     <sequenceFlow id="flow4" name="pass" sourceRef="state_submit" targetRef="auto_task_check_rule1"></sequenceFlow>
@@ -33,7 +31,7 @@
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${_processTypeId=='create'}]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="flow11" name="pass" sourceRef="state_contract" targetRef="servicetask1"></sequenceFlow>
-    <serviceTask id="servicetask1" name="核查审批申请单" activiti:delegateExpression="${configableRuleEngineDelegate}"></serviceTask>
+    <serviceTask id="servicetask1" name="核查审批申请单" activiti:delegateExpression="${configableRuleTaskDelegate}"></serviceTask>
     <userTask id="usertask2" name="签署"></userTask>
     <sequenceFlow id="flow12" name="pass" sourceRef="servicetask1" targetRef="usertask2"></sequenceFlow>
     <sequenceFlow id="flow13" name="reject" sourceRef="manualtask1" targetRef="endevent1"></sequenceFlow>
@@ -55,7 +53,7 @@
         <omgdc:Bounds height="55.0" width="105.0" x="360.0" y="520.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="end" id="BPMNShape_end">
-        <omgdc:Bounds height="35.0" width="35.0" x="580.0" y="210.0"></omgdc:Bounds>
+        <omgdc:Bounds height="35.0" width="35.0" x="580.0" y="220.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="servicetask1" id="BPMNShape_servicetask1">
         <omgdc:Bounds height="55.0" width="105.0" x="360.0" y="410.0"></omgdc:Bounds>
@@ -83,7 +81,7 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge bpmnElement="over" id="BPMNEdge_over">
         <omgdi:waypoint x="597.0" y="410.0"></omgdi:waypoint>
-        <omgdi:waypoint x="597.0" y="245.0"></omgdi:waypoint>
+        <omgdi:waypoint x="597.0" y="255.0"></omgdi:waypoint>
         <bpmndi:BPMNLabel>
           <omgdc:Bounds height="14.0" width="100.0" x="10.0" y="0.0"></omgdc:Bounds>
         </bpmndi:BPMNLabel>

@@ -7,19 +7,24 @@
 package com.tx.component.workflow.service;
 
 import java.io.InputStream;
+import java.util.Date;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.impl.persistence.entity.DeploymentEntity;
+import org.activiti.engine.impl.pvm.process.ActivityImpl;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.repository.ProcessDefinitionQuery;
+import org.codehaus.jackson.map.util.LRUMap;
 import org.drools.core.util.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.tx.component.workflow.WorkFlowConstants;
 import com.tx.core.exceptions.parameter.ParameterIsEmptyException;
 
 /**
@@ -35,10 +40,17 @@ import com.tx.core.exceptions.parameter.ParameterIsEmptyException;
 @Component("processDeployService")
 public class ProcessDeployService implements InitializingBean {
     
+    private boolean isCache = true;
+    
     @Resource(name = "processEngine")
     private ProcessEngine processEngine;
     
+
+    
     private RepositoryService repositoryService;
+    
+    @Resource(name = "processDefinitionService")
+    private ProcessDefinitionService processDefinitionService;
     
     /**
      * @throws Exception
@@ -48,38 +60,110 @@ public class ProcessDeployService implements InitializingBean {
         this.repositoryService = this.processEngine.getRepositoryService();
     }
     
+
+    
     /**
       * 更具指定名，以及输入流部署对应的流程
       * @param key
       * @param inputStream [参数说明]
+      * @param serviceType [参数说明]
       * 
       * @return void [返回类型说明]
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
     @Transactional
-    public void deploy(String key, InputStream inputStream) {
+    public void deploy(String resourceName, InputStream inputStream,
+            String serviceType) {
         //验证参数合法性
-        if (StringUtils.isEmpty(key) || inputStream == null) {
+        if (StringUtils.isEmpty(resourceName) || inputStream == null) {
             throw new ParameterIsEmptyException(
-                    "ProcessDeployService.deploy key or inputStream is empty");
+                    "ProcessDeployService.deploy resourceName or inputStream is empty");
         }
         
         //部署流程
-        DeploymentEntity deployment = (DeploymentEntity) this.repositoryService.createDeployment()
-                .addInputStream(key, inputStream)
-                .deploy();
-        deployment.getCategory();
-        String deploymentId = deployment.getId();
+        DeploymentEntity deployment = deployToActiviti(resourceName,
+                inputStream);
         
         //获取部署的流程定义
+        String deploymentId = deployment.getId();
+        ProcessDefinition processDef = getLastVersionProcessDefinition(deploymentId,
+                resourceName);
+        
+        //持久化到流程定义中
+        deployToLocal(processDef, serviceType);
+    }
+    
+    /**
+      * 部署到本地流程引擎中
+      * <功能详细描述>
+      * @param processDef
+      * @param serviceType
+      * @return [参数说明]
+      * 
+      * @return com.tx.component.workflow.model.ProcessDefinition [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    private com.tx.component.workflow.model.ProcessDefinition deployToLocal(
+            ProcessDefinition processDef, String serviceType) {
+        com.tx.component.workflow.model.ProcessDefinition processDefinition = new com.tx.component.workflow.model.ProcessDefinition();
+        
+        processDefinition.setCategory(processDef.getCategory());
+        processDefinition.setWfdId(processDef.getId());
+        processDefinition.setKey(processDef.getKey());
+        processDefinition.setVersion(String.valueOf(processDef.getVersion()));
+        processDefinition.setName(processDef.getName());
+        
+        processDefinition.setCreateDate(new Date());
+        processDefinition.setLastUpdateDate(new Date());
+        
+        processDefinition.setServiceType(serviceType);
+        processDefinition.setState(WorkFlowConstants.PROCESS_DEFINITION_STATE_CONFIG);
+        
+        this.processDefinitionService.insertProcessDefinition(processDefinition);
+        return null;
+    }
+    
+    /**
+      * 部署到activiti中
+      * <功能详细描述>
+      * @param resourceName
+      * @param inputStream
+      * @return [参数说明]
+      * 
+      * @return DeploymentEntity [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    private DeploymentEntity deployToActiviti(String resourceName,
+            InputStream inputStream) {
+        DeploymentEntity deployment = (DeploymentEntity) this.repositoryService.createDeployment()
+                .addInputStream(resourceName, inputStream)
+                .deploy();
+        return deployment;
+    }
+    
+    /**
+      * 获取最新版本的最新部署流程定义
+      * <功能详细描述>
+      * @param deploymentId
+      * @param resourceName
+      * @return [参数说明]
+      * 
+      * @return ProcessDefinition [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    private ProcessDefinition getLastVersionProcessDefinition(
+            String deploymentId, String resourceName) {
         ProcessDefinitionQuery pdQuery = this.repositoryService.createProcessDefinitionQuery()
                 .deploymentId(deploymentId)
-                .processDefinitionName(key)
-                .latestVersion();
-        ProcessDefinition processDef = pdQuery.singleResult();
+                .processDefinitionResourceName(resourceName);
         
-        //processDef.get
+        ProcessDefinition processDef = pdQuery.latestVersion().singleResult();
+        
+        return processDef;
     }
     
 }

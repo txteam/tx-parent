@@ -19,6 +19,9 @@ package com.tx.component.workflow;
 public interface WorkFlowConstants {
     
     /*********************** 流程状态  **************************/
+    /** 流程定义状态: 配置态 */
+    String PROCESS_DEFINITION_STATE_CONFIG = "CONFIG";
+    
     /** 流程定义状态: 测试态 */
     String PROCESS_DEFINITION_STATE_TEST = "TEST";
     

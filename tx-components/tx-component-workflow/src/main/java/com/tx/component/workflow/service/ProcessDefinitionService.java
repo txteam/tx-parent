@@ -72,37 +72,6 @@ public class ProcessDefinitionService {
     }
     
     /**
-      * 将processDefinition实例插入数据库中保存
-      * <功能详细描述>
-      * @param key
-      * @param name
-      * @param category
-      * @param wfdId [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    @Transactional
-    public void insertProcessDefinition(String key, String name,
-            String category, String wfdId, String serviceType, String state,
-            String version) {
-        ProcessDefinition processDefinition = new ProcessDefinition();
-        
-        processDefinition.setCategory(category);
-        processDefinition.setCreateDate(new Date());
-        processDefinition.setKey(key);
-        processDefinition.setLastUpdateDate(new Date());
-        processDefinition.setName(name);
-        processDefinition.setServiceType(serviceType);
-        processDefinition.setState(state);
-        processDefinition.setVersion(version);
-        processDefinition.setWfdId(wfdId);
-        
-        this.processDefinitionDao.insertProcessDefinition(processDefinition);
-    }
-    
-    /**
       * 根据Id查询ProcessDefinition实体
       * 1、当id为empty时返回null
       * <功能详细描述>
