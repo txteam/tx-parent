@@ -38,12 +38,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.tx.component.workflow.exceptions.WorkflowAccessException;
 import com.tx.component.workflow.model.ProTaskDefinition;
 import com.tx.component.workflow.model.ProTransitionDefinition;
-import com.tx.component.workflow.service.ProcessInstanceService;
+import com.tx.component.workflow.service.ProcessService;
 import com.tx.core.exceptions.parameter.ParameterIsEmptyException;
 
 /**
  * 流程实例业务层实例<br/>
- * <功能详细描述>
  * 
  * @author  brady
  * @version  [版本号, 2013-2-4]
@@ -51,11 +50,11 @@ import com.tx.core.exceptions.parameter.ParameterIsEmptyException;
  * @since  [产品/模块版本]
  */
 @Component("processInstanceService")
-public class ActivitiProcessInstanceServiceImpl implements InitializingBean,
-        ProcessInstanceService {
+public class ActivitiProcessServiceImpl implements InitializingBean,
+        ProcessService {
     
     /** 日志记录器 */
-    private static Logger logger = LoggerFactory.getLogger(ActivitiProcessInstanceServiceImpl.class);
+    private static Logger logger = LoggerFactory.getLogger(ActivitiProcessServiceImpl.class);
     
     /** activiti流程引擎 */
     @Resource(name = "processEngine")
@@ -262,6 +261,22 @@ public class ActivitiProcessInstanceServiceImpl implements InitializingBean,
     }
     
     /**
+     * 设置流程过程对象变量
+     * <功能详细描述>
+     * @param executionId
+     * @param variables [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    @Transactional
+    public void setVariablesLocal(String executionId,
+            Map<String, Object> variables) {
+        this.runtimeService.setVariablesLocal(executionId, variables);
+    }
+    
+    /**
       * 设置流程过程对象变量
       *<功能简述>
       *<功能详细描述>
@@ -280,19 +295,41 @@ public class ActivitiProcessInstanceServiceImpl implements InitializingBean,
     }
     
     /**
-      * 设置流程过程对象变量
+      * 设置流程当前任务节点变量
       * <功能详细描述>
-      * @param executionId
-      * @param variables [参数说明]
+      * @param processInstanceId
+      * @param variableName
+      * @param value [参数说明]
       * 
       * @return void [返回类型说明]
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
     @Transactional
-    public void setVariablesLocal(String executionId,
-            Map<String, Object> variables) {
-        this.runtimeService.setVariablesLocal(executionId, variables);
+    public void setTaskVaribal(String processInstanceId, String variableName,
+            Object value) {
+        Task task = getTaskByProInsId(processInstanceId);
+        this.taskService.setVariable(task.getId(), variableName, value);
+    }
+    
+    /**
+      * 设置流程当前任务节点变量
+      * <功能详细描述>
+      * @param processInstanceId
+      * @param currentTaskDefKey
+      * @param variableName
+      * @param value [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    @Transactional
+    public void setTaskVariableLocal(String processInstanceId,
+            String currentTaskDefKey, String variableName, Object value) {
+        Task task = getTaskByProInsIdAndTaskDefKey(processInstanceId,
+                currentTaskDefKey);
+        this.taskService.setVariableLocal(task.getId(), variableName, value);
     }
     
     /**
@@ -491,7 +528,7 @@ public class ActivitiProcessInstanceServiceImpl implements InitializingBean,
       * @see [类、类#方法、类#成员]
      */
     @Transactional
-    public ProTaskDefinition pass(String processInstanceId) {
+    public void pass(String processInstanceId) {
         if (StringUtils.isEmpty(processInstanceId)) {
             throw new ParameterIsEmptyException(
                     "ProcessInstanceServic.pass processInstanceId is empty.");
@@ -500,12 +537,6 @@ public class ActivitiProcessInstanceServiceImpl implements InitializingBean,
             Task task = getTaskByProInsId(processInstanceId);
             
             this.taskService.complete(task.getId());
-            
-            Task newTask = getTaskByProInsId(processInstanceId);
-            //TODO:这个方法需要实际查询一下
-            ProTaskDefinition res = null;//processDefinitionService.getProTaskDefinition(newTask.getTaskDefinitionKey());
-            
-            return res;
         }
     }
     
@@ -522,8 +553,7 @@ public class ActivitiProcessInstanceServiceImpl implements InitializingBean,
       * @see [类、类#方法、类#成员]
      */
     @Transactional
-    public ProTaskDefinition pass(String processInstanceId,
-            String currentTaskDefKey) {
+    public void pass(String processInstanceId, String currentTaskDefKey) {
         if (StringUtils.isEmpty(processInstanceId)
                 || StringUtils.isEmpty(currentTaskDefKey)) {
             throw new ParameterIsEmptyException(
@@ -537,11 +567,6 @@ public class ActivitiProcessInstanceServiceImpl implements InitializingBean,
             this.taskService.complete(task.getId());
             
             Task newTask = getTaskByProInsId(processInstanceId);
-            
-            //TODO:这个方法需要实际查询一下
-            ProTaskDefinition res = null;//processDefinitionService.getProTaskDefinition(newTask.getTaskDefinitionKey());
-            
-            return res;
         }
     }
     
@@ -691,12 +716,9 @@ public class ActivitiProcessInstanceServiceImpl implements InitializingBean,
     /**  
      * 流程转向操作  
      *   
-     * @param taskId  
-     *            当前任务ID  
-     * @param activityId  
-     *            目标节点任务ID  
-     * @param variables  
-     *            流程变量  
+     * @param taskId 当前任务ID  
+     * @param activityId 目标节点任务ID  
+     * @param variables 流程变量  
      * @throws Exception  
      */
     private static void turnTransition(String taskId, String activityId,
@@ -734,10 +756,10 @@ public class ActivitiProcessInstanceServiceImpl implements InitializingBean,
       * @see [类、类#方法、类#成员]
      */
     private Task getTaskByProInsIdAndTaskDefKey(String processInstanceId,
-            String taskDefinitionKey) {
+            String currentTaskDefKey) {
         TaskQuery taskQuery = this.taskService.createTaskQuery()
                 .processInstanceId(processInstanceId)
-                .taskDefinitionKey(taskDefinitionKey);
+                .taskDefinitionKey(currentTaskDefKey);
         
         Task task = taskQuery.singleResult();
         return task;
@@ -755,7 +777,6 @@ public class ActivitiProcessInstanceServiceImpl implements InitializingBean,
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    @SuppressWarnings("unused")
     private Task getTaskByProInsId(String processInstanceId) {
         TaskQuery taskQuery = this.taskService.createTaskQuery()
                 .processInstanceId(processInstanceId);
@@ -765,26 +786,27 @@ public class ActivitiProcessInstanceServiceImpl implements InitializingBean,
         return task;
     }
     
-    /**
-      * 由执行过程id查询当前任务环节<br/>
-      *     在不存在子流程的情况下Process Excution是同一个实例<br/>
-      *     1、如果当前执行过程中存在多个正在并行的流程节点，调用该方法将抛出异常<br/>
-      * <功能详细描述>
-      * @param executionId
-      * @return [参数说明]
-      * 
-      * @return Task [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    @SuppressWarnings("unused")
-    private Task getTaskByExecutionId(String executionId) {
-        TaskQuery taskQuery = this.taskService.createTaskQuery()
-                .executionId(executionId);
-        //如果流程流转为并行节点，则不适合调用该方法，调用该方法这里讲会抛出异常
-        Task task = taskQuery.singleResult();
-        return null;
-    }
+    //    
+    //    /**
+    //      * 由执行过程id查询当前任务环节<br/>
+    //      *     在不存在子流程的情况下Process Excution是同一个实例<br/>
+    //      *     1、如果当前执行过程中存在多个正在并行的流程节点，调用该方法将抛出异常<br/>
+    //      * <功能详细描述>
+    //      * @param executionId
+    //      * @return [参数说明]
+    //      * 
+    //      * @return Task [返回类型说明]
+    //      * @exception throws [异常类型] [异常说明]
+    //      * @see [类、类#方法、类#成员]
+    //     */
+    //    @SuppressWarnings("unused")
+    //    private Task getTaskByExecutionId(String executionId) {
+    //        TaskQuery taskQuery = this.taskService.createTaskQuery()
+    //                .executionId(executionId);
+    //        //如果流程流转为并行节点，则不适合调用该方法，调用该方法这里讲会抛出异常
+    //        Task task = taskQuery.singleResult();
+    //        return null;
+    //    }
     
     /**
       * 由当前流程实例id查询当前任务列表<br/>
@@ -804,24 +826,24 @@ public class ActivitiProcessInstanceServiceImpl implements InitializingBean,
         return taskList;
     }
     
-    /**
-      * <功能简述>
-      * <功能详细描述>
-      * @param executionId
-      * @return [参数说明]
-      * 
-      * @return List<Task> [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    @SuppressWarnings("unused")
-    private List<Task> getTaskListByExecutionId(String executionId) {
-        TaskQuery taskQuery = this.taskService.createTaskQuery()
-                .executionId(executionId);
-        //如果流程流转为并行节点，则不适合调用该方法，调用该方法这里讲会抛出异常
-        List<Task> taskList = taskQuery.list();
-        return taskList;
-    }
+    //    /**
+    //      * <功能简述>
+    //      * <功能详细描述>
+    //      * @param executionId
+    //      * @return [参数说明]
+    //      * 
+    //      * @return List<Task> [返回类型说明]
+    //      * @exception throws [异常类型] [异常说明]
+    //      * @see [类、类#方法、类#成员]
+    //     */
+    //    @SuppressWarnings("unused")
+    //    private List<Task> getTaskListByExecutionId(String executionId) {
+    //        TaskQuery taskQuery = this.taskService.createTaskQuery()
+    //                .executionId(executionId);
+    //        //如果流程流转为并行节点，则不适合调用该方法，调用该方法这里讲会抛出异常
+    //        List<Task> taskList = taskQuery.list();
+    //        return taskList;
+    //    }
     
     /**
       * 根据流程实例id获取流程实例的过程对象<br/>
@@ -975,13 +997,26 @@ public class ActivitiProcessInstanceServiceImpl implements InitializingBean,
      */
     private ActivityImpl getActivityById(String processDefinitionId,
             String activityId) {
-        ProcessDefinitionEntity pde = getProcessDefinitionByDefId(processDefinitionId);
-        
-        for (ActivityImpl activityTemp : pde.getActivities()) {
-            if (activityId.equals(activityTemp.getId())) {
-                return activityTemp;
+        //如果存在缓存，直接提取缓存中的数据
+        if (activityImplCache.containsKey(processDefinitionId)) {
+            if (activityImplCache.get(processDefinitionId)
+                    .containsKey(activityId)) {
+                return activityImplCache.get(processDefinitionId)
+                        .get(activityId);
             }
+        } else {
+            activityImplCache.put(processDefinitionId,
+                    new HashMap<String, ActivityImpl>());
         }
-        return null;
+        
+        //获取流程定义
+        ProcessDefinitionEntity pde = getProcessDefinitionByDefId(processDefinitionId);
+        Map<String, ActivityImpl> actMap = activityImplCache.get(processDefinitionId);
+        for (ActivityImpl activityTemp : pde.getActivities()) {
+            actMap.put(activityTemp.getId(), activityTemp);
+        }
+        
+        //返回映射的activityId 
+        return actMap.get(activityId);
     }
 }

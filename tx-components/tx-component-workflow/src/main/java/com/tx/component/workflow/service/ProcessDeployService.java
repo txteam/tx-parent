@@ -8,17 +8,14 @@ package com.tx.component.workflow.service;
 
 import java.io.InputStream;
 import java.util.Date;
-import java.util.Map;
 
 import javax.annotation.Resource;
 
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.impl.persistence.entity.DeploymentEntity;
-import org.activiti.engine.impl.pvm.process.ActivityImpl;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.repository.ProcessDefinitionQuery;
-import org.codehaus.jackson.map.util.LRUMap;
 import org.drools.core.util.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Component;
@@ -40,12 +37,8 @@ import com.tx.core.exceptions.parameter.ParameterIsEmptyException;
 @Component("processDeployService")
 public class ProcessDeployService implements InitializingBean {
     
-    private boolean isCache = true;
-    
     @Resource(name = "processEngine")
     private ProcessEngine processEngine;
-    
-
     
     private RepositoryService repositoryService;
     

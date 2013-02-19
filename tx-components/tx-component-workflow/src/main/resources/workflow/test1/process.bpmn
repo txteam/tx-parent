@@ -10,7 +10,7 @@
     <sequenceFlow id="over" name="over" sourceRef="usertask2" targetRef="end"></sequenceFlow>
     <sequenceFlow id="preSubmitRejectToSave" name="reject" sourceRef="usertask1" targetRef="state_submit"></sequenceFlow>
     <userTask id="state_submit" name="提交" default="flow4"></userTask>
-    <serviceTask id="auto_task_check_rule1" name="审核" activiti:delegateExpression="${configableRuleTaskDelegate}"></serviceTask>
+    <serviceTask id="auto_task_check_rule1" name="审核" activiti:class="com.tx.component.workflow.support.behavior.TestBehavior"></serviceTask>
     <task id="manualtask1" name="高审会签"></task>
     <sequenceFlow id="flow3" name="notMatch" sourceRef="auto_task_check_rule1" targetRef="state_submit"></sequenceFlow>
     <sequenceFlow id="flow4" name="pass" sourceRef="state_submit" targetRef="auto_task_check_rule1"></sequenceFlow>

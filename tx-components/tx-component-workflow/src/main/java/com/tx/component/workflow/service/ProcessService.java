@@ -10,7 +10,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.activiti.engine.impl.task.TaskDefinition;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.tx.component.workflow.model.ProTaskDefinition;
@@ -25,7 +24,7 @@ import com.tx.component.workflow.model.ProTransitionDefinition;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public interface ProcessInstanceService {
+public interface ProcessService {
     /**
      * 开始一条流程实例，更多适用于，启动一条非最新版本的流程实例<br/>
      *     1、根据流程的最新版本创建一个流程实例<br/>
@@ -276,7 +275,7 @@ public interface ProcessInstanceService {
      * @see [类、类#方法、类#成员]
     */
    @Transactional
-   public abstract ProTaskDefinition pass(String processInstanceId);
+   public abstract void pass(String processInstanceId);
    
    /**
      * 完成当前流程任务环节，并返回下一个流程环节节点定义<br/>
@@ -291,7 +290,7 @@ public interface ProcessInstanceService {
      * @see [类、类#方法、类#成员]
     */
    @Transactional
-   public abstract ProTaskDefinition pass(String processInstanceId,
+   public abstract void pass(String processInstanceId,
            String currentTaskDefKey);
    
    /**
