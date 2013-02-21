@@ -337,7 +337,7 @@ public class ActivitiProcessServiceImpl implements InitializingBean,
      * @param executionId
      * @return
      */
-    public Map<String, Object> getVaribals(String executionId) {
+    public Map<String, Object> getVariables(String executionId) {
         return this.runtimeService.getVariables(executionId);
     }
     
@@ -352,7 +352,7 @@ public class ActivitiProcessServiceImpl implements InitializingBean,
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public Map<String, Object> getVaribals(String executionId,
+    public Map<String, Object> getVariables(String executionId,
             Collection<String> variableNames) {
         return this.runtimeService.getVariables(executionId, variableNames);
     }
@@ -362,7 +362,7 @@ public class ActivitiProcessServiceImpl implements InitializingBean,
      * @param key
      * @return
      */
-    public Object getVaribal(String executionId, String variableName) {
+    public Object getVariable(String executionId, String variableName) {
         return this.runtimeService.getVariable(executionId, variableName);
     }
     
@@ -382,6 +382,7 @@ public class ActivitiProcessServiceImpl implements InitializingBean,
             throw new ParameterIsEmptyException(
                     "ProcessInstanceServic.complete processInstanceId is empty.");
         }
+        
         List<Task> taskList = getTaskListByProInsId(processInstanceId);
         return null;
     }

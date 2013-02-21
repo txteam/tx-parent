@@ -17,10 +17,20 @@ package com.tx.core.exceptions;
  */
 public enum ErrorCode {
     
-    /* 参数类异常 */
+    /* 参数类异常  */
+    /**
+     *  参数类异常 
+     */
     PARAMETER_EXCEPTION_ERROR_CODE("000-000-001-000", "参数异常"), 
+    /**
+     * 参数不能为空
+     */
     PARAMETER_IS_EMPTY_ERROR_CODE("000-000-001-001", "参数不能为空",PARAMETER_EXCEPTION_ERROR_CODE),
+    /**
+     * 参数无效
+     */
     PARAMETER_IS_INVALID("000-000-001-002", "参数无效",PARAMETER_EXCEPTION_ERROR_CODE),
+    
     /* 资源加载类异常 */
     RESOURCE_LOAD_EXCEPTION("000-000-002-000", "资源加载异常"), 
     /* 日志异常 */

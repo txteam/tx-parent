@@ -153,7 +153,7 @@ public interface ProcessService {
     * @param executionId
     * @return
     */
-   public abstract Map<String, Object> getVaribals(String executionId);
+   public abstract Map<String, Object> getVariables(String executionId);
    
    /**
      *<功能简述>
@@ -166,7 +166,7 @@ public interface ProcessService {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-   public abstract Map<String, Object> getVaribals(String executionId,
+   public abstract Map<String, Object> getVariables(String executionId,
            Collection<String> variableNames);
    
    /**
@@ -174,7 +174,7 @@ public interface ProcessService {
     * @param key
     * @return
     */
-   public abstract Object getVaribal(String executionId, String variableName);
+   public abstract Object getVariable(String executionId, String variableName);
    
    /**
      * 获取指定流程实例的当前流程环节<br/>

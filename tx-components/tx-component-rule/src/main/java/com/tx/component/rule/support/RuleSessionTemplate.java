@@ -36,7 +36,6 @@ public class RuleSessionTemplate implements RuleSessionSupport,
     
     private RuleExceptionTranslator ruleExceptionTranslator;
     
-
     /**
      * @throws Exception
      */
