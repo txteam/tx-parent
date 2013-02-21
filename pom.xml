@@ -1257,7 +1257,7 @@
 				<!-- compliler -->
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
-    				<artifactId>maven-compiler-plugin</artifactId>
+					<artifactId>maven-compiler-plugin</artifactId>
 					<version>3.0</version>
 					<inherited>true</inherited>
 					<configuration>
@@ -1269,8 +1269,8 @@
 							${project.build.sourceEncoding}. -->
 						<encoding>UTF-8</encoding>
 						<!-- Set to true to show compilation warnings. Default value is: false. -->
-						<!--<showWarnings>true</showWarnings>-->
-						<!--<showDeprecation>true</showDeprecation>-->
+						<!--<showWarnings>true</showWarnings> -->
+						<!--<showDeprecation>true</showDeprecation> -->
 						<!-- 发出编译警告和错误时是否停止 -->
 						<!-- <failOnError>false</failOnError> -->
 						<compilerArguments>
