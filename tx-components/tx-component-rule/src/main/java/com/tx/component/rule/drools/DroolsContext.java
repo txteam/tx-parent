@@ -6,8 +6,6 @@
  */
 package com.tx.component.rule.drools;
 
-import java.util.List;
-
 import org.springframework.core.io.Resource;
 
 import com.tx.component.rule.context.RuleLoader;
