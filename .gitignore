@@ -1,4 +1,7 @@
 /target
+/.classpath
+/.project
+/.settings
 
 /tx-core/target
 /tx-core/.classpath
