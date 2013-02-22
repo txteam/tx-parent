@@ -241,10 +241,10 @@ public class JpaMetaClass {
         
         //生成表名的简写
         StringBuilder sb = new StringBuilder();
-        sb.append("t").append(this.tableName.charAt(0));
-        for (int i = 1; i < this.tableName.length(); i++) {
-            if (Character.isUpperCase(this.tableName.charAt(i))) {
-                sb.append(Character.toLowerCase(this.tableName.charAt(i)));
+        sb.append("t").append(this.entitySimpleName.charAt(0));
+        for (int i = 1; i < this.entitySimpleName.length(); i++) {
+            if (Character.isUpperCase(this.entitySimpleName.charAt(i))) {
+                sb.append(Character.toLowerCase(this.entitySimpleName.charAt(i)));
             }
         }
         this.simpleTableName = sb.toString();

@@ -418,7 +418,8 @@ public class JpaEntityFreeMarkerGenerator {
             }
             Class<?> typeTemp = typeMap.get(getterName);
             SqlMapColumn columnTemp = null;
-            if (SIMPLE_TYPE.contains(typeTemp)) {
+            if (SIMPLE_TYPE.contains(typeTemp)
+                    || Enum.class.isAssignableFrom(typeTemp)) {
                 columnTemp = new SqlMapColumn(true, getterName,
                         columnNameMapping.get(getterName).toUpperCase(),
                         typeTemp, null);
