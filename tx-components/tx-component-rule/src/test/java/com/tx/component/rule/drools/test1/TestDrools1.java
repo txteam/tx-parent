@@ -43,7 +43,8 @@ public class TestDrools1 {
         KnowledgeBuilder kBuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
         kBuilder.add(ResourceFactory.newClassPathResource("com/tx/component/rule/test1/test1.drl"),
                 ResourceType.DSL);
-        
+        //kBuilder.getKnowledgePackages()
+       
         final PackageBuilder builder = new PackageBuilder();  
         builder.addPackageFromDrl(ResourceFactory.newClassPathResource("com/tx/component/rule/test1/test1.drl"));   
         
@@ -52,6 +53,7 @@ public class TestDrools1 {
         //Collection<KnowledgePackage> pC = kBuilder.getKnowledgePackages();
         //ruleBase.addPackages(pkgs);
         ruleBase.addPackage(builder.getPackage());
+        
         
         //创建会话
         final StatefulSession session = ruleBase.newStatefulSession();  

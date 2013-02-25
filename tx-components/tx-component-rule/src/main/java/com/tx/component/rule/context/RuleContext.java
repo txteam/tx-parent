@@ -10,6 +10,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
+import net.sf.ehcache.Ehcache;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.FactoryBean;
@@ -21,6 +25,7 @@ import com.tx.component.rule.exceptions.RuleAccessException;
 import com.tx.component.rule.model.Rule;
 import com.tx.component.rule.support.RuleSession;
 import com.tx.component.rule.support.RuleSessionFactory;
+import com.tx.core.support.cache.ehcache.SimpleEhcacheMap;
 
 /**
  * 规则容器<br/>
@@ -48,9 +53,26 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
     private RuleSessionFactory ruleSessionFactory;
     
     /**
+     * 缓存
+     */
+    @Resource(name = "cache")
+    private Ehcache ehcache;
+    
+    /**
      * 规则缓存
      */
-    private Map<String, Rule> ruleMapCache = new HashMap<String, Rule>();
+    private Map<String, Rule> ruleMapCache;
+    
+    /**
+     * @throws Exception
+     */
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        this.ruleMapCache = new SimpleEhcacheMap<String, Rule>(
+                "cache.ruleMapCache", ehcache);
+        //完成属性设置后,加载规则
+        setRuleContext(this);
+    }
     
     /**
       * 返回ruleContext容器
@@ -72,15 +94,6 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
     public void onApplicationEvent(LoadRuleEvent event) {
         List<Rule> ruleList = event.getRuleList();
         putInCache(ruleList, true);
-    }
-    
-    /**
-     * @throws Exception
-     */
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        //完成属性设置后,加载规则
-        setRuleContext(this);
     }
     
     /**
@@ -161,8 +174,8 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
                 this.ruleMapCache.put(ruleTemp.rule(), ruleTemp);
             }
             else if (this.ruleMapCache.containsKey(ruleTemp.rule())) {
-                throw new RuleAccessException(ruleTemp.rule(), null, null, "重复的规则项:{}",
-                        ruleTemp.rule());
+                throw new RuleAccessException(ruleTemp.rule(), null, null,
+                        "重复的规则项:{}", ruleTemp.rule());
             }
             else {
                 this.ruleMapCache.put(ruleTemp.rule(), ruleTemp);

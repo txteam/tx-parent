@@ -6,6 +6,8 @@
  */
 package com.tx.component.rule.model;
 
+import java.io.Serializable;
+
 
  /**
   * 规则实体<br/>
@@ -22,7 +24,7 @@ package com.tx.component.rule.model;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
   */
-public interface Rule {
+public interface Rule extends Serializable{
 
     /**
       * 获取规则名

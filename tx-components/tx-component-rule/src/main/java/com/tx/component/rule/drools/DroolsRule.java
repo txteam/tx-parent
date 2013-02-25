@@ -35,8 +35,7 @@ public class DroolsRule implements Rule {
     /** 规则基础规则包 */
     private Collection<KnowledgePackage> basePackages;
     
-    //private 
-    
+    //private
     private KnowledgeBase knowledgeBase;
     
     /**

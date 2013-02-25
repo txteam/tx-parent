@@ -23,7 +23,6 @@ import com.tx.component.rule.RuleConstants;
 import com.tx.component.rule.exceptions.RuleAccessException;
 import com.tx.component.rule.method.annotation.RuleMethodParam;
 import com.tx.component.rule.method.annotation.RuleMethodResult;
-import com.tx.component.rule.model.Rule;
 import com.tx.component.rule.support.RuleSessionContext;
 import com.tx.component.rule.support.impl.DefaultRuleSession;
 import com.tx.core.support.method.MethodResolver;
@@ -44,12 +43,13 @@ public class MethodRuleSession extends DefaultRuleSession<MethodRule> {
     /** 规则会话中是根据结果还是参数，获取规则结果 */
     private boolean isHasRuleMethodResultAnnotation = false;
     
+    /**
+     * 方法型规则会话构造函数
+     */
     public MethodRuleSession(MethodRule rule) {
         super(rule);
     }
-
-
-
+    
     /**
      * 
      */

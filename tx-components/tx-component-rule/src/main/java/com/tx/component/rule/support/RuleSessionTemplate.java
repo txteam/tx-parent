@@ -225,6 +225,7 @@ public class RuleSessionTemplate implements RuleSessionSupport,
             //开始一次会话
             RuleSessionContext.open();
             try {
+                //ruleSession.callback(resultHandle);
                 Object result = null;//method.invoke(sqlSession, args);
                 return result;
             } catch (Throwable t) {
