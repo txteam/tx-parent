@@ -6,8 +6,6 @@
  */
 package com.tx.core.support.cache.ehcache;
 
-import java.util.Map;
-
 import net.sf.ehcache.Ehcache;
 
 import com.tx.core.support.cache.KeyValueCache;
@@ -73,5 +71,33 @@ public class EhcacheKeyValueCache<K> implements KeyValueCache<K> {
     public void removeByKey(String key) {
         // TODO Auto-generated method stub
         
+    }
+
+    /**
+     * @return 返回 id
+     */
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * @param 对id进行赋值
+     */
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    /**
+     * @return 返回 ehcache
+     */
+    public Ehcache getEhcache() {
+        return ehcache;
+    }
+
+    /**
+     * @param 对ehcache进行赋值
+     */
+    public void setEhcache(Ehcache ehcache) {
+        this.ehcache = ehcache;
     }
 }
