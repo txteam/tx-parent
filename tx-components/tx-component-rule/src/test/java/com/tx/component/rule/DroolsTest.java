@@ -37,8 +37,13 @@ public class DroolsTest {
             System.out.println("kBuilder hasErrors");
         }
         Collection<KnowledgePackage>  kpCollection = kBuilder.getKnowledgePackages();
+        for(KnowledgePackage kp : kpCollection){
+            kp.getName();
+            kp.getGlobalVariables();
+        }
         
         KnowledgeBase kb = KnowledgeBaseFactory.newKnowledgeBase();
+        //kb.addKnowledgePackages(arg0);
         //kb.
         //kb.getRule(packageName, ruleName)
         
