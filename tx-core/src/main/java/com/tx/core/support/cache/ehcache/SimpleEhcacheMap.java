@@ -27,6 +27,7 @@ import com.tx.core.exceptions.parameter.ParameterIsEmptyException;
  * Ehcache的Map实现<br/>
  *   1、适用于缓存Map内部值并不是很多的情况<br/>
  *   2、由于实现其中频繁使用到了对象序列化以及反序列化的过程,如果Map过大会造成性能下降<br/>
+ *   3、从该map中get对象实际是get了一个Object的copy
  * <功能详细描述>
  * 
  * @author  brady
@@ -58,7 +59,7 @@ public class SimpleEhcacheMap<K extends Serializable, V extends Serializable>
     /**
      * <默认构造函数>
      */
-    private SimpleEhcacheMap(String id, Ehcache ehcache) {
+    public SimpleEhcacheMap(String id, Ehcache ehcache) {
         this(id, ehcache, new ConcurrentHashMap<K, V>());
     }
     
@@ -66,7 +67,7 @@ public class SimpleEhcacheMap<K extends Serializable, V extends Serializable>
      * <默认构造函数>
      */
     @SuppressWarnings("unchecked")
-    private SimpleEhcacheMap(String id, Ehcache ehcache, Map<K, V> realMap) {
+    public SimpleEhcacheMap(String id, Ehcache ehcache, Map<K, V> realMap) {
         super();
         if (StringUtils.isEmpty(id) || ehcache == null || realMap == null) {
             throw new ParameterIsEmptyException(
@@ -120,16 +121,16 @@ public class SimpleEhcacheMap<K extends Serializable, V extends Serializable>
                         "EhcacheMap MapInvocationHandler.invoke id:{}:map is empty.");
             }
             Object cacheValue = cacheElement.getValue();
-            if(cacheValue == null || !(cacheValue instanceof Map)){
+            if (cacheValue == null || !(cacheValue instanceof Map)) {
                 throw new ParameterIsEmptyException(
                         "EhcacheMap MapInvocationHandler.invoke id:{}:map is not Map.");
             }
             @SuppressWarnings("unchecked")
-            Map<K, V> realMap = (Map<K, V>)cacheValue;
+            Map<K, V> realMap = (Map<K, V>) cacheValue;
             Object res = method.invoke(realMap, args);
             
             String methodName = method.getName();
-            if(needPutMethodName.contains(methodName)){
+            if (needPutMethodName.contains(methodName)) {
                 ehcache.put(cacheElement);
             }
             return res;
