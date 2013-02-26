@@ -26,7 +26,7 @@ import javax.persistence.Table;
   */
 @Entity
 @Table(name="ru_rule_def")
-public class SimplePersistenceRule implements Serializable{
+public class SimplePersistenceRule implements Serializable,Rule{
     
     /** 注释内容 */
     private static final long serialVersionUID = 3816894065600661189L;
@@ -39,7 +39,7 @@ public class SimplePersistenceRule implements Serializable{
     private String rule;
     
     /** 规则类型 */
-    private String ruleType;
+    private RuleType ruleType;
     
     /** 业务类型 */
     private String serviceType;
@@ -48,9 +48,26 @@ public class SimplePersistenceRule implements Serializable{
     private SimplePersistenceRuleState state;
     
     /**
+     * <默认构造函数>
+     */
+    public SimplePersistenceRule() {
+        super();
+    }
+    
+    /**
+     * <默认构造函数>
+     */
+    public SimplePersistenceRule(Rule rule) {
+        super();
+        this.rule = rule.rule();
+        this.ruleType = rule.getRuleType();
+        this.serviceType = rule.getServiceType();
+    } 
+
+    /**
      * @return
      */
-    public String getRuleType() {
+    public RuleType getRuleType() {
         return this.ruleType;
     }
     
@@ -78,7 +95,7 @@ public class SimplePersistenceRule implements Serializable{
     /**
      * @param 对ruleType进行赋值
      */
-    public void setRuleType(String ruleType) {
+    public void setRuleType(RuleType ruleType) {
         this.ruleType = ruleType;
     }
 
@@ -116,4 +133,14 @@ public class SimplePersistenceRule implements Serializable{
     public void setState(SimplePersistenceRuleState state) {
         this.state = state;
     }
+
+    /**
+     * @return
+     */
+    @Override
+    public String rule() {
+        return this.rule;
+    }
+    
+    
 }

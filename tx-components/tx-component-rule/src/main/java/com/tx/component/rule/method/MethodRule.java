@@ -11,6 +11,7 @@ import java.lang.reflect.Method;
 import com.tx.component.rule.RuleConstants;
 import com.tx.component.rule.method.annotation.RuleMethod;
 import com.tx.component.rule.model.Rule;
+import com.tx.component.rule.model.RuleType;
 
 /**
  * 方法类型的规则<br/>
@@ -61,8 +62,8 @@ public class MethodRule implements Rule {
      * @return
      */
     @Override
-    public String getRuleType() {
-        return RuleConstants.RULE_TYPE_RULE_METHOD;
+    public RuleType getRuleType() {
+        return RuleType.METHOD;
     }
     
     /**

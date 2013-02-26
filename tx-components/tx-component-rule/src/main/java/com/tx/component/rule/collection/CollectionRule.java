@@ -11,6 +11,7 @@ import java.util.List;
 
 import com.tx.component.rule.RuleConstants;
 import com.tx.component.rule.model.Rule;
+import com.tx.component.rule.model.RuleType;
 import com.tx.core.TxConstants;
 
 /**
@@ -43,8 +44,8 @@ public class CollectionRule implements Rule {
      * @return
      */
     @Override
-    public String getRuleType() {
-        return RuleConstants.RULE_TYPE_COLLECTIONS;
+    public RuleType getRuleType() {
+        return RuleType.COLLECTION;
     }
     
     /**

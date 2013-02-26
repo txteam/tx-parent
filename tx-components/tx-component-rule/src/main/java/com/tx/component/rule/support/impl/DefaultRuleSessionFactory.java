@@ -39,7 +39,7 @@ public class DefaultRuleSessionFactory implements RuleSessionFactory{
     */
     public RuleSession createRuleSession(Rule rule) {
         throw new RuleAccessException(rule.rule(), rule, null,
-                "创建规则会话异常：对应规则类型:{}暂不支持", rule.getRuleType());
+                "创建规则会话异常：对应规则类型:{}暂不支持", rule.getRuleType().toString());
     }
     
     /**

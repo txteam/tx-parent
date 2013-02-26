@@ -40,7 +40,7 @@ public class DelegateRule implements Rule{
      * @return
      */
     @Override
-    public String getRuleType() {
+    public RuleType getRuleType() {
         return this.delegateRule.getRuleType();
     }
 

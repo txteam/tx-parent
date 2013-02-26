@@ -46,7 +46,7 @@ public interface Rule extends Serializable{
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public String getRuleType();
+    public RuleType getRuleType();
     
     /**
       * 获取规则的业务类型<br/>

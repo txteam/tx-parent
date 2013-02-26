@@ -11,8 +11,8 @@ import java.util.Collection;
 import org.drools.KnowledgeBase;
 import org.drools.definition.KnowledgePackage;
 
-import com.tx.component.rule.RuleConstants;
 import com.tx.component.rule.model.Rule;
+import com.tx.component.rule.model.RuleType;
 
 
  /**
@@ -53,8 +53,8 @@ public class DroolsRule implements Rule {
      * @return
      */
     @Override
-    public String getRuleType() {
-        return RuleConstants.RULE_TYPE_DROOLS;
+    public RuleType getRuleType() {
+        return RuleType.DROOLS;
     }
     
     /**
