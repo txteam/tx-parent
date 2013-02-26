@@ -12,7 +12,8 @@ import com.tx.component.rule.model.Rule;
 import com.tx.component.rule.support.RuleSession;
 
 /**
- * <功能简述>
+ * 默认的规则异常转换器<br/>
+ *     1、
  * <功能详细描述>
  * 
  * @author  PengQingyang

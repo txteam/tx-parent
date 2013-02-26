@@ -9,6 +9,7 @@ package com.tx.component.rule.context;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 
@@ -47,21 +48,27 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
     /** 单例的rule容器 */
     private static RuleContext ruleContext;
     
-    /**
-     * 规则会话工厂类
-     */
+    /** 注册的规则加载器 */
+    private static Map<RuleLoader, Boolean> registeredRuleLoaderMap = new HashMap<RuleLoader, Boolean>();
+    
+    /** 规则会话工厂类 */
     private RuleSessionFactory ruleSessionFactory;
     
-    /**
-     * 缓存
-     */
+    /** 缓存 */
     @Resource(name = "cache")
     private Ehcache ehcache;
     
-    /**
-     * 规则缓存
-     */
+    /** 规则缓存 */
     private Map<String, Rule> ruleMapCache;
+    
+    /** 是否加载完成 */
+    private boolean loadOver = false;
+    
+    /** 最大等待加载时间 */
+    private long maxLoadTimeout = 1000 * 60 * 5;
+    
+    /** 等待加载的线程映射 */
+    private Map<Thread, Integer> waitThreadMap = new HashMap<Thread, Integer>();
     
     /**
      * @throws Exception
@@ -70,8 +77,28 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
     public void afterPropertiesSet() throws Exception {
         this.ruleMapCache = new SimpleEhcacheMap<String, Rule>(
                 "cache.ruleMapCache", ehcache);
+        
         //完成属性设置后,加载规则
         setRuleContext(this);
+    }
+    
+    /**
+     * 私有化构造函数<默认构造函数>
+     */
+    private RuleContext() {
+    }
+    
+    /**
+      * 注册规则加载器
+      * <功能详细描述>
+      * @param ruleLoader [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public static void registerRuleLoader(RuleLoader ruleLoader) {
+        registeredRuleLoaderMap.put(ruleLoader, false);
     }
     
     /**
@@ -93,7 +120,66 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
     @Override
     public void onApplicationEvent(LoadRuleEvent event) {
         List<Rule> ruleList = event.getRuleList();
+        RuleLoader ruleLoader = event.getRuleLoader();
+        
         putInCache(ruleList, true);
+        registeredRuleLoaderMap.put(ruleLoader, true);
+    }
+    
+    /**
+      * 判断规则是否完成加载
+      * <功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return boolean [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public boolean isLoadFinish() {
+        if (loadOver) {
+            return true;
+        }
+        else {
+            if (registeredRuleLoaderMap != null) {
+                for (Entry<RuleLoader, Boolean> entryTemp : registeredRuleLoaderMap.entrySet()) {
+                    if (!entryTemp.getValue()) {
+                        return false;
+                    }
+                }
+                loadOver = true;
+                return true;
+            }
+            return false;
+        }
+    }
+    
+    /**
+      * 如果规则尚未加载完成，则使当前线程暂停
+      * <功能详细描述> [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public void waitLoading() {
+        if (isLoadFinish()) {
+            return;
+        }
+        else {
+            try {
+                Integer waitTimes = waitThreadMap.get(Thread.currentThread());
+                if (waitTimes == null || waitTimes.intValue() < 3) {
+                    wait(this.maxLoadTimeout);
+                }
+                else {
+                    throw new RuleAccessException(null, null, null,
+                            "规则容器尚未完成规则加载请等待...");
+                }
+            }
+            catch (InterruptedException e) {
+                logger.error("RuleContext.waitLoading exception:" + e.toString(),e);
+            }
+        }
     }
     
     /**
@@ -108,7 +194,23 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
       * @see [类、类#方法、类#成员]
      */
     public boolean contains(String rule) {
+        waitLoading();
         return ruleMapCache.containsKey(rule);
+    }
+    
+    /**
+      * 根据规则名获取规则实例
+      * <功能详细描述>
+      * @param rule
+      * @return [参数说明]
+      * 
+      * @return Rule [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public Rule getRule(String rule){
+        waitLoading();
+        return ruleMapCache.get(rule);
     }
     
     /**

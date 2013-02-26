@@ -1,0 +1,347 @@
+Spring的生命周期.
+ 
+1.       容器启动，实例化所有实现了BeanFactoyPostProcessor接口的类。他会在任何普通Bean实例化之前加载.
+2.       实例化剩下的Bean，对这些Bean进行依赖注入。
+3.       如果Bean有实现BeanNameAware的接口那么对这些Bean进行调用
+4.       如果Bean有实现BeanFactoryAware接口的那么对这些Bean进行调用
+5.       如果Bean有实现ApplicationContextAware接口的那么对这些Bean进行调用
+6.       如果配置有实现BeanPostProcessor的Bean，那么调用它的postProcessBeforeInitialization方法
+7.       如果Bean有实现InitializingBean接口那么对这些Bean进行调用
+8.       如果Bean配置有init属性，那么调用它属性中设置的方法
+9.       如果配置有实现BeanPostProcessor的Bean，那么调用它的postProcessAfterInitialization方法
+10.   Bean正常是使用
+11.   调用DisposableBean接口的destory方法
+12.   调用Bean定义的destory方法
+ 
+如果从大体上区分值分只为四个阶段
+1.       BeanFactoyPostProcessor实例化
+2.       Bean实例化，然后通过某些BeanFactoyPostProcessor来进行依赖注入
+3.       BeanPostProcessor的调用.Spring内置的BeanPostProcessor负责调用Bean实现的接口: BeanNameAware, BeanFactoryAware, ApplicationContextAware等等，等这些内置的BeanPostProcessor调用完后才会调用自己配置的BeanPostProcessor
+4.       Bean销毁阶段
+ 
+ 
+以上是自己总结的，没研究过源码，恐有误…作参考用
+以下附上验证的代码：
+ 
+Java代码 
+package mislay;   
+  
+import org.springframework.beans.BeansException;   
+import org.springframework.beans.factory.config.BeanFactoryPostProcessor;   
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;   
+  
+public class BeanFactoryPostProcessorTest implements BeanFactoryPostProcessor {   
+  
+    @Override  
+    public void postProcessBeanFactory(   
+            ConfigurableListableBeanFactory beanFactory) throws BeansException {   
+        System.out.println("--------> begin BeanFactoryPostProcessorTest");   
+        String[] names = beanFactory.getBeanDefinitionNames();   
+        for (String name : names) {   
+            System.out.println("definition bean name:" + name);   
+        }   
+        System.out.println("<--------- end BeanFactoryPostProcessorTest");   
+    }   
+  
+}  
+[java] view plaincopy
+package mislay;  
+  
+import org.springframework.beans.BeansException;  
+import org.springframework.beans.factory.config.BeanFactoryPostProcessor;  
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;  
+  
+public class BeanFactoryPostProcessorTest implements BeanFactoryPostProcessor {  
+  
+    @Override  
+    public void postProcessBeanFactory(  
+            ConfigurableListableBeanFactory beanFactory) throws BeansException {  
+        System.out.println("--------> begin BeanFactoryPostProcessorTest");  
+        String[] names = beanFactory.getBeanDefinitionNames();  
+        for (String name : names) {  
+            System.out.println("definition bean name:" + name);  
+        }  
+        System.out.println("<--------- end BeanFactoryPostProcessorTest");  
+    }  
+  
+}  
+ 
+Java代码 
+package mislay;   
+  
+import org.springframework.beans.BeansException;   
+import org.springframework.beans.factory.config.BeanPostProcessor;   
+  
+public class BeanPostProcessorTest implements BeanPostProcessor {   
+  
+       
+    @Override  
+    public Object postProcessAfterInitialization(Object bean, String beanName)   
+            throws BeansException {   
+        System.out.println("call BeanPostProcessor interface postProcessAfterInitialization method; :" + beanName);   
+        return bean;   
+    }   
+  
+    @Override  
+    public Object postProcessBeforeInitialization(Object bean, String beanName)   
+            throws BeansException {   
+        System.out.println("call BeanPostProcessor interface postProcessBeforeInitialization method ::" + beanName);   
+        if(bean instanceof BeanTest) {   
+            System.out.println("bean instanceof BeanTest");   
+        }   
+        return bean;   
+    }   
+  
+}  
+[java] view plaincopy
+package mislay;  
+  
+import org.springframework.beans.BeansException;  
+import org.springframework.beans.factory.config.BeanPostProcessor;  
+  
+public class BeanPostProcessorTest implements BeanPostProcessor {  
+  
+      
+    @Override  
+    public Object postProcessAfterInitialization(Object bean, String beanName)  
+            throws BeansException {  
+        System.out.println("call BeanPostProcessor interface postProcessAfterInitialization method; :" + beanName);  
+        return bean;  
+    }  
+  
+    @Override  
+    public Object postProcessBeforeInitialization(Object bean, String beanName)  
+            throws BeansException {  
+        System.out.println("call BeanPostProcessor interface postProcessBeforeInitialization method ::" + beanName);  
+        if(bean instanceof BeanTest) {  
+            System.out.println("bean instanceof BeanTest");  
+        }  
+        return bean;  
+    }  
+  
+}  
+ 
+Java代码 
+package mislay;   
+  
+import org.springframework.beans.BeansException;   
+import org.springframework.beans.factory.BeanFactory;   
+import org.springframework.beans.factory.BeanFactoryAware;   
+import org.springframework.beans.factory.BeanNameAware;   
+import org.springframework.beans.factory.DisposableBean;   
+import org.springframework.beans.factory.InitializingBean;   
+import org.springframework.beans.factory.config.BeanPostProcessor;   
+import org.springframework.context.ApplicationContext;   
+import org.springframework.context.ApplicationContextAware;   
+  
+public class BeanTest implements InitializingBean, DisposableBean,BeanNameAware,BeanFactoryAware,ApplicationContextAware {   
+  
+    @Override  
+    public void afterPropertiesSet() throws Exception {   
+        System.out.println("call InitializingBean interface");   
+           
+    }   
+  
+    @Override  
+    public void destroy() throws Exception {   
+        // TODO Auto-generated method stub   
+        System.out.println("call DisposableBean interface");   
+    }   
+  
+    public void _init() {   
+        System.out.println("call bean init method");   
+    }   
+       
+    public void _destory() {   
+        System.out.println("call bean destory method");   
+    }   
+       
+    public void setSomething(Object something) {   
+        System.out.println("DI call setSomething method");   
+    }   
+       
+    public BeanTest() {   
+        System.out.println("BeanTest create");   
+    }   
+  
+    @Override  
+    public void setBeanName(String name) {   
+        // TODO Auto-generated method stub   
+        System.out.println("call BeanNameAware interface name is:" + name);   
+    }   
+  
+    @Override  
+    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {   
+        // TODO Auto-generated method stub   
+        System.out.println("call BeanFactoryAware interface");   
+    }   
+       
+       
+    @Override  
+    public void setApplicationContext(ApplicationContext applicationContext)   
+            throws BeansException {   
+        // TODO Auto-generated method stub   
+        System.out.println("call ApplicationContextAware interface");   
+    }   
+  
+}  
+[java] view plaincopy
+package mislay;  
+  
+import org.springframework.beans.BeansException;  
+import org.springframework.beans.factory.BeanFactory;  
+import org.springframework.beans.factory.BeanFactoryAware;  
+import org.springframework.beans.factory.BeanNameAware;  
+import org.springframework.beans.factory.DisposableBean;  
+import org.springframework.beans.factory.InitializingBean;  
+import org.springframework.beans.factory.config.BeanPostProcessor;  
+import org.springframework.context.ApplicationContext;  
+import org.springframework.context.ApplicationContextAware;  
+  
+public class BeanTest implements InitializingBean, DisposableBean,BeanNameAware,BeanFactoryAware,ApplicationContextAware {  
+  
+    @Override  
+    public void afterPropertiesSet() throws Exception {  
+        System.out.println("call InitializingBean interface");  
+          
+    }  
+  
+    @Override  
+    public void destroy() throws Exception {  
+        // TODO Auto-generated method stub  
+        System.out.println("call DisposableBean interface");  
+    }  
+  
+    public void _init() {  
+        System.out.println("call bean init method");  
+    }  
+      
+    public void _destory() {  
+        System.out.println("call bean destory method");  
+    }  
+      
+    public void setSomething(Object something) {  
+        System.out.println("DI call setSomething method");  
+    }  
+      
+    public BeanTest() {  
+        System.out.println("BeanTest create");  
+    }  
+  
+    @Override  
+    public void setBeanName(String name) {  
+        // TODO Auto-generated method stub  
+        System.out.println("call BeanNameAware interface name is:" + name);  
+    }  
+  
+    @Override  
+    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {  
+        // TODO Auto-generated method stub  
+        System.out.println("call BeanFactoryAware interface");  
+    }  
+      
+      
+    @Override  
+    public void setApplicationContext(ApplicationContext applicationContext)  
+            throws BeansException {  
+        // TODO Auto-generated method stub  
+        System.out.println("call ApplicationContextAware interface");  
+    }  
+  
+}  
+ 
+Java代码 
+package mislay;   
+  
+import org.springframework.context.ApplicationContext;   
+import org.springframework.context.support.AbstractApplicationContext;   
+import org.springframework.context.support.ClassPathXmlApplicationContext;   
+  
+public class Test {   
+  
+    public static void main(String[] args) {   
+        ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");   
+        ((AbstractApplicationContext) context).registerShutdownHook();   
+    }   
+}  
+[java] view plaincopy
+package mislay;  
+  
+import org.springframework.context.ApplicationContext;  
+import org.springframework.context.support.AbstractApplicationContext;  
+import org.springframework.context.support.ClassPathXmlApplicationContext;  
+  
+public class Test {  
+  
+    public static void main(String[] args) {  
+        ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");  
+        ((AbstractApplicationContext) context).registerShutdownHook();  
+    }  
+}  
+ 
+Java代码 
+//下面是输出的内容   
+  
+  
+//这一段可以看出首先实例化化的BeanFactoryPostProcessor   
+--------> begin BeanFactoryPostProcessorTest   
+definition bean name:mislay.BeanFactoryPostProcessorTest   
+definition bean name:mislay.BeanPostProcessorTest   
+definition bean name:beanTest   
+<--------- end BeanFactoryPostProcessorTest   
+  
+//这一段是Bean的创建以及依赖注入   
+BeanTest create   
+DI call setSomething method   
+  
+//这一段就是内置的BeanPostProcessor调用   
+call BeanNameAware interface name is:beanTest   
+call BeanFactoryAware interface  
+call ApplicationContextAware interface  
+  
+//这里开始调用自己BeanPostProcessor   
+call BeanPostProcessor interface postProcessBeforeInitialization method ::beanTest   
+bean instanceof BeanTest   
+//穿插着对InitializingBean接口和定义的init方法的调用   
+call InitializingBean interface  
+call bean init method   
+call BeanPostProcessor interface postProcessAfterInitialization method; :beanTest   
+//上面就结束了对配置的BeanPostProcessor的调用   
+  
+  
+//最后销毁   
+call DisposableBean interface  
+call bean destory method  
+[java] view plaincopy
+//下面是输出的内容  
+  
+  
+//这一段可以看出首先实例化化的BeanFactoryPostProcessor  
+--------> begin BeanFactoryPostProcessorTest  
+definition bean name:mislay.BeanFactoryPostProcessorTest  
+definition bean name:mislay.BeanPostProcessorTest  
+definition bean name:beanTest  
+<--------- end BeanFactoryPostProcessorTest  
+  
+//这一段是Bean的创建以及依赖注入  
+BeanTest create  
+DI call setSomething method  
+  
+//这一段就是内置的BeanPostProcessor调用  
+call BeanNameAware interface name is:beanTest  
+call BeanFactoryAware interface  
+call ApplicationContextAware interface  
+  
+//这里开始调用自己BeanPostProcessor  
+call BeanPostProcessor interface postProcessBeforeInitialization method ::beanTest  
+bean instanceof BeanTest  
+//穿插着对InitializingBean接口和定义的init方法的调用  
+call InitializingBean interface  
+call bean init method  
+call BeanPostProcessor interface postProcessAfterInitialization method; :beanTest  
+//上面就结束了对配置的BeanPostProcessor的调用  
+  
+  
+//最后销毁  
+call DisposableBean interface  
+call bean destory method  

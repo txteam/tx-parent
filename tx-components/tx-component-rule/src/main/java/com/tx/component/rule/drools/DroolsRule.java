@@ -26,6 +26,9 @@ import com.tx.component.rule.model.Rule;
   */
 public class DroolsRule implements Rule {
     
+    /** 注释内容 */
+    private static final long serialVersionUID = -6764646531144979549L;
+
     /** 规则名 */
     private String rule;
     
@@ -110,5 +113,4 @@ public class DroolsRule implements Rule {
     public void setServiceType(String serviceType) {
         this.serviceType = serviceType;
     }
-    
 }

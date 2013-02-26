@@ -27,9 +27,13 @@ public class LoadRuleEvent extends ApplicationEvent {
     
     private List<Rule> ruleList;
     
+    private RuleLoader ruleLoader;
+    
     /** <默认构造函数> */
-    public LoadRuleEvent(Object source, List<Rule> rules) {
+    public LoadRuleEvent(Object source, RuleLoader ruleLoader,List<Rule> ruleList) {
         super(source);
+        this.ruleLoader = ruleLoader;
+        this.ruleList = ruleList;
     }
 
     /**
@@ -44,6 +48,20 @@ public class LoadRuleEvent extends ApplicationEvent {
      */
     public void setRuleList(List<Rule> ruleList) {
         this.ruleList = ruleList;
+    }
+
+    /**
+     * @return 返回 ruleLoader
+     */
+    public RuleLoader getRuleLoader() {
+        return ruleLoader;
+    }
+
+    /**
+     * @param 对ruleLoader进行赋值
+     */
+    public void setRuleLoader(RuleLoader ruleLoader) {
+        this.ruleLoader = ruleLoader;
     }
     
 }

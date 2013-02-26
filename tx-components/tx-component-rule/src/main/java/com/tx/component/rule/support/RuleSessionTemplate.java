@@ -12,8 +12,8 @@ import java.lang.reflect.Proxy;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.stereotype.Component;
 
 import com.tx.component.rule.exceptions.RuleExceptionTranslator;
 import com.tx.component.rule.exceptions.impl.DefaultRuleExceptionTranslator;
@@ -29,6 +29,7 @@ import com.tx.component.rule.model.Rule;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
+@Component("ruleSessionTemplate")
 public class RuleSessionTemplate implements RuleSessionSupport,
         InitializingBean {
     

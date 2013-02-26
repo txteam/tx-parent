@@ -9,6 +9,7 @@ package com.tx.component.rule.method;
 import java.lang.reflect.Method;
 
 import com.tx.component.rule.RuleConstants;
+import com.tx.component.rule.method.annotation.RuleMethod;
 import com.tx.component.rule.model.Rule;
 
 /**
@@ -21,12 +22,25 @@ import com.tx.component.rule.model.Rule;
  */
 public class MethodRule implements Rule {
     
+    /** 注释内容 */
+    private static final long serialVersionUID = 8734799947265605205L;
+
     private Method method;
     
     private Object object;
     
     private com.tx.component.rule.method.annotation.RuleMethod ruleAnnotation;
-    
+
+    /**
+     * 方法类型规则构造函数
+     */
+    public MethodRule(Method method, Object object, RuleMethod ruleAnnotation) {
+        super();
+        this.method = method;
+        this.object = object;
+        this.ruleAnnotation = ruleAnnotation;
+    }
+
     /**
      * @return
      */

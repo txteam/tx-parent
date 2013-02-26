@@ -26,6 +26,9 @@ import com.tx.component.rule.support.impl.DefaultRuleSession;
  */
 public class DroolsRuleSession extends DefaultRuleSession<DroolsRule> {
     
+    /**
+     * drools规则<默认构造函数>
+     */
     public DroolsRuleSession(DroolsRule rule) {
         super(rule);
     }
@@ -59,7 +62,6 @@ public class DroolsRuleSession extends DefaultRuleSession<DroolsRule> {
      */
     @Override
     public void execute(List<Map<String, Object>> facts) {
-        // TODO Auto-generated method stub
         
     }
     

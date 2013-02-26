@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper 
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="simplePersistenceRule">
+
+	<!-- auto generate default resultMap -->
+	<resultMap id="simplePersistenceRuleMap" 
+		type="com.tx.component.rule.model.SimplePersistenceRule">
+	</resultMap>
+	
+	<!-- auto generate default find -->
+	<select id="findSimplePersistenceRule" 
+		parameterType="com.tx.component.rule.model.SimplePersistenceRule"
+		resultMap="simplePersistenceRuleMap">
+		SELECT 
+				TSPR.ID,
+				TSPR.RULETYPE,
+				TSPR.RULE,
+				TSPR.STATE,
+				TSPR.SERVICETYPE
+		  FROM RU_RULE_DEF TSPR
+		 WHERE
+		<trim prefixOverrides="AND | OR">
+			<if test="@com.tx.core.Ognl@isNotEmpty(id)">  
+	            AND TSPR.ID = #{id}
+	        </if>
+		</trim>
+	</select>
+	
+	<!-- auto generate default query -->
+	<select id="querySimplePersistenceRule" 
+		parameterType="java.util.Map"
+		resultMap="simplePersistenceRuleMap">
+		SELECT 
+				TSPR.ID,
+				TSPR.RULETYPE,
+				TSPR.RULE,
+				TSPR.STATE,
+				TSPR.SERVICETYPE
+		  FROM RU_RULE_DEF TSPR
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="@com.tx.core.Ognl@isNotEmpty(id)">  
+	            AND TSPR.ID = #{id,javaType=java.lang.String}
+	        </if>
+			<if test="@com.tx.core.Ognl@isNotEmpty(ruleType)">  
+	            AND TSPR.RULETYPE = #{ruleType,javaType=java.lang.String}
+	        </if>
+			<if test="@com.tx.core.Ognl@isNotEmpty(rule)">  
+	            AND TSPR.RULE = #{rule,javaType=java.lang.String}
+	        </if>
+			<if test="@com.tx.core.Ognl@isNotEmpty(state)">  
+	            AND TSPR.STATE = #{state,javaType=com.tx.component.rule.model.SimplePersistenceRuleState}
+	        </if>
+			<if test="@com.tx.core.Ognl@isNotEmpty(serviceType)">  
+	            AND TSPR.SERVICETYPE = #{serviceType,javaType=java.lang.String}
+	        </if>
+		</trim>
+		<choose>  
+	        <when test="@com.tx.core.Ognl@isNotEmpty(orderSql)">  
+	            ORDER BY #{orderSql}
+	        </when>
+	        <otherwise>  
+	            ORDER BY ID
+	        </otherwise>  
+	    </choose>
+	</select>
+	
+		<!-- auto generate default count -->
+	<select id="querySimplePersistenceRuleCount" 
+		parameterType="java.util.Map"
+		resultType="java.lang.Integer">
+		SELECT COUNT(1)
+		  FROM RU_RULE_DEF TSPR
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="@com.tx.core.Ognl@isNotEmpty(id)">  
+	            AND TSPR.ID = #{id,javaType=java.lang.String}
+	        </if>
+			<if test="@com.tx.core.Ognl@isNotEmpty(ruleType)">  
+	            AND TSPR.RULETYPE = #{ruleType,javaType=java.lang.String}
+	        </if>
+			<if test="@com.tx.core.Ognl@isNotEmpty(rule)">  
+	            AND TSPR.RULE = #{rule,javaType=java.lang.String}
+	        </if>
+			<if test="@com.tx.core.Ognl@isNotEmpty(state)">  
+	            AND TSPR.STATE = #{state,javaType=com.tx.component.rule.model.SimplePersistenceRuleState}
+	        </if>
+			<if test="@com.tx.core.Ognl@isNotEmpty(serviceType)">  
+	            AND TSPR.SERVICETYPE = #{serviceType,javaType=java.lang.String}
+	        </if>
+		</trim>
+	</select>
+    
+    <!-- auto generate default insert -->
+    <insert id="insertSimplePersistenceRule" 
+		parameterType="com.tx.component.rule.model.SimplePersistenceRule">
+		INSERT INTO RU_RULE_DEF
+		(
+			ID,
+			RULETYPE,
+			RULE,
+			STATE,
+			SERVICETYPE
+		)
+		VALUES
+		(
+			#{id},
+			#{ruleType},
+			#{rule},
+			#{state},
+			#{serviceType}
+		)
+	</insert>
+	
+	<!-- auto generate default delete -->
+	<delete id="deleteSimplePersistenceRule" 
+		parameterType="com.tx.component.rule.model.SimplePersistenceRule">
+		DELETE FROM RU_RULE_DEF TSPR WHERE
+		<trim prefixOverrides="AND | OR">
+			<if test="@com.tx.core.Ognl@isNotEmpty(id)">  
+	            AND TSPR.ID = #{id}
+	        </if>
+		</trim>
+	</delete>
+
+	<!-- auto generate default update -->
+	<update id="updateSimplePersistenceRule"
+	    parameterType="java.util.Map">  
+	    UPDATE ru_rule_def TSPR
+	    <trim prefix="SET" suffixOverrides=",">
+			<if test="_parameter.containsKey('ruleType')">
+	    		RULETYPE = #{ruleType,javaType=java.lang.String},
+	    	</if>	
+			<if test="_parameter.containsKey('rule')">
+	    		RULE = #{rule,javaType=java.lang.String},
+	    	</if>	
+			<if test="_parameter.containsKey('state')">
+	    		STATE = #{state,javaType=com.tx.component.rule.model.SimplePersistenceRuleState},
+	    	</if>	
+			<if test="_parameter.containsKey('serviceType')">
+	    		SERVICETYPE = #{serviceType,javaType=java.lang.String},
+	    	</if>	
+	    </trim>
+	    WHERE TSPR.ID = #{id} 
+	</update>  
+
+</mapper>
+<!--
+sqlMap生成描述:
+
+-->

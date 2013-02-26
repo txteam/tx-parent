@@ -6,6 +6,8 @@
  */
 package com.tx.component.rule.context;
 
+import java.util.List;
+
 import com.tx.component.rule.model.Rule;
 
 /**
@@ -18,7 +20,7 @@ import com.tx.component.rule.model.Rule;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public interface RuleLoader {
+public interface RuleLoader{
     
     /**
      * 加载规则项<br/>
@@ -30,5 +32,5 @@ public interface RuleLoader {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    public void load(Rule rule, boolean isCoverWhenSame);
+    public List<Rule> load();
 }

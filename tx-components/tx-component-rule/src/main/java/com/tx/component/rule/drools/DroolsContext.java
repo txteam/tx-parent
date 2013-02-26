@@ -6,6 +6,8 @@
  */
 package com.tx.component.rule.drools;
 
+import java.util.List;
+
 import org.springframework.core.io.Resource;
 
 import com.tx.component.rule.context.RuleLoader;
@@ -26,23 +28,12 @@ public class DroolsContext implements RuleLoader{
     private Resource droolsRuleLocations;
 
     /**
-     * @param rule
-     * @param isCoverWhenSame
+     * @return
      */
     @Override
-    public void load(Rule rule, boolean isCoverWhenSame) {
+    public List<Rule> load() {
         // TODO Auto-generated method stub
-        
-    } 
-    
-//    /**
-//     * @return
-//     */
-//    @Override
-//    public List<Rule> load() {
-//        return null;
-//    }
-    
-    
+        return null;
+    }
     
 }
