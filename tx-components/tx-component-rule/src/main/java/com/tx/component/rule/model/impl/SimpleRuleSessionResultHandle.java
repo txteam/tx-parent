@@ -6,7 +6,7 @@
  */
 package com.tx.component.rule.model.impl;
 
-import com.tx.component.rule.model.RuleResultHandle;
+import com.tx.component.rule.model.RuleSessionResultHandle;
 
 /**
  * 简单的规则回话结果句柄实现
@@ -16,11 +16,11 @@ import com.tx.component.rule.model.RuleResultHandle;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class SimpleRuleSessionResultHandle<R> implements RuleResultHandle<R> {
+public class SimpleRuleSessionResultHandle<R> implements RuleSessionResultHandle<R> {
     
     private R value;
     
-    private SimpleRuleSessionResultHandle() {
+    public SimpleRuleSessionResultHandle() {
         super();
     }
     

@@ -45,6 +45,14 @@ public class MethodRule implements Rule {
      * @return
      */
     @Override
+    public String getName() {
+        return ruleAnnotation.name();
+    }
+
+    /**
+     * @return
+     */
+    @Override
     public String rule() {
         return ruleAnnotation.rule();
     }

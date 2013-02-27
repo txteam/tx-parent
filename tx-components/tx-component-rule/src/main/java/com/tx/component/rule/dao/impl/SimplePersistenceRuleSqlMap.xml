@@ -18,7 +18,9 @@
 				TSPR.RULETYPE,
 				TSPR.RULE,
 				TSPR.STATE,
-				TSPR.SERVICETYPE
+				TSPR.SERVICETYPE,
+				TSPR.NAME,
+				TSPR.REMARK
 		  FROM RU_RULE_DEF TSPR
 		 WHERE
 		<trim prefixOverrides="AND | OR">
@@ -37,7 +39,9 @@
 				TSPR.RULETYPE,
 				TSPR.RULE,
 				TSPR.STATE,
-				TSPR.SERVICETYPE
+				TSPR.SERVICETYPE,
+				TSPR.NAME,
+				TSPR.REMARK
 		  FROM RU_RULE_DEF TSPR
 		<trim prefix="WHERE" prefixOverrides="AND | OR">
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
@@ -100,7 +104,9 @@
 			RULETYPE,
 			RULE,
 			STATE,
-			SERVICETYPE
+			SERVICETYPE,
+			NAME,
+			REMARK
 		)
 		VALUES
 		(
@@ -108,7 +114,9 @@
 			#{ruleType},
 			#{rule},
 			#{state},
-			#{serviceType}
+			#{serviceType},
+			#{name},
+			#{remark}
 		)
 	</insert>
 	
@@ -139,7 +147,13 @@
 	    	</if>	
 			<if test="_parameter.containsKey('serviceType')">
 	    		SERVICETYPE = #{serviceType,javaType=java.lang.String},
+	    	</if>
+	    	<if test="_parameter.containsKey('name')">
+	    		NAME = #{name,javaType=java.lang.String},
 	    	</if>	
+	    	<if test="_parameter.containsKey('remark')">
+	    		REMARK = #{remark,javaType=java.lang.String},
+	    	</if>		
 	    </trim>
 	    WHERE TSPR.ID = #{id} 
 	</update>  

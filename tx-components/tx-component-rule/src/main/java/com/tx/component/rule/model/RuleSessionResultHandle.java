@@ -15,7 +15,7 @@ package com.tx.component.rule.model;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
  */
-public interface RuleResultHandle<R> {
+public interface RuleSessionResultHandle<R> {
     
     /**
       * 获取规则回话结果值(可能为推论结果或符合规则的事实)<br/>

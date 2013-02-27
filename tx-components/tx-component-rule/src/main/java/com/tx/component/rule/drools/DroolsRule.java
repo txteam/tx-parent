@@ -32,6 +32,9 @@ public class DroolsRule implements Rule {
     /** 规则名 */
     private String rule;
     
+    /** 规则名 */
+    private String name;
+    
     /** 规则的业务类型属性 */
     private String serviceType;
     
@@ -40,7 +43,15 @@ public class DroolsRule implements Rule {
     
     //private
     private KnowledgeBase knowledgeBase;
-    
+
+    /**
+     * @return
+     */
+    @Override
+    public String getName() {
+        return this.name;
+    }
+
     /**
      * @return
      */
@@ -62,7 +73,7 @@ public class DroolsRule implements Rule {
      */
     @Override
     public String getServiceType() {
-        return null;
+        return this.serviceType;
     }
 
     /**

@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.tx.component.rule.model.Rule;
-import com.tx.component.rule.model.RuleResultHandle;
+import com.tx.component.rule.model.RuleSessionResultHandle;
 
 /**
  * 规则会话定义<br/>
@@ -72,5 +72,5 @@ public interface RuleSession {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public <T> void callback(RuleResultHandle<T> resultHandle);
+    public <T> void callback(RuleSessionResultHandle<T> resultHandle);
 }

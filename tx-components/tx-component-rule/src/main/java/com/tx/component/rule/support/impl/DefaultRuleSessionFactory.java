@@ -6,7 +6,6 @@
  */
 package com.tx.component.rule.support.impl;
 
-import com.tx.component.rule.collection.CollectionRule;
 import com.tx.component.rule.drools.DroolsRule;
 import com.tx.component.rule.exceptions.RuleAccessException;
 import com.tx.component.rule.method.MethodRule;
@@ -38,6 +37,11 @@ public class DefaultRuleSessionFactory implements RuleSessionFactory{
      * @see [类、类#方法、类#成员]
     */
     public RuleSession createRuleSession(Rule rule) {
+        if(rule instanceof MethodRule){
+            return newRuleSession((MethodRule)rule);
+        }else if(rule instanceof DroolsRule){
+            return newRuleSession((DroolsRule)rule);
+        }
         throw new RuleAccessException(rule.rule(), rule, null,
                 "创建规则会话异常：对应规则类型:{}暂不支持", rule.getRuleType().toString());
     }
@@ -51,7 +55,7 @@ public class DefaultRuleSessionFactory implements RuleSessionFactory{
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public static RuleSession createRuleSession(MethodRule rule) {
+    private RuleSession newRuleSession(MethodRule rule) {
         MethodRuleSession ruleSession = new MethodRuleSession(rule);
         return ruleSession;
     }
@@ -66,12 +70,7 @@ public class DefaultRuleSessionFactory implements RuleSessionFactory{
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public static RuleSession createRuleSession(DroolsRule rule) {
-        
-        return null;
-    }
-    
-    public static RuleSession createRuleSession(CollectionRule rule) {
+    private RuleSession newRuleSession(DroolsRule rule) {
         
         return null;
     }

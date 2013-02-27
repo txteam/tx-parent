@@ -8,7 +8,7 @@ package com.tx.component.rule.support.impl;
 
 import com.tx.component.rule.RuleConstants;
 import com.tx.component.rule.model.Rule;
-import com.tx.component.rule.model.RuleResultHandle;
+import com.tx.component.rule.model.RuleSessionResultHandle;
 import com.tx.component.rule.support.RuleSession;
 import com.tx.component.rule.support.RuleSessionContext;
 
@@ -49,7 +49,7 @@ public abstract class DefaultRuleSession<R extends Rule> implements RuleSession 
      */
     @SuppressWarnings("unchecked")
     @Override
-    public <T> void callback(RuleResultHandle<T> resultHandle) {
+    public <T> void callback(RuleSessionResultHandle<T> resultHandle) {
         Object resultObject = RuleSessionContext.getGlobal(RuleConstants.RULE_PROMISE_CONSTANT_RESULT);
         resultHandle.setValue((T)resultObject);
     }

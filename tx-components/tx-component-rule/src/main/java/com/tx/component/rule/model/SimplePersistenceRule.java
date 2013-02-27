@@ -35,8 +35,11 @@ public class SimplePersistenceRule implements Serializable,Rule{
     @Id
     private String id;
 
-    /** 规则名 */
+    /** 规则唯一键 */
     private String rule;
+    
+    /** 规则名 */
+    private String name;
     
     /** 规则类型 */
     private RuleType ruleType;
@@ -46,6 +49,9 @@ public class SimplePersistenceRule implements Serializable,Rule{
     
     /** 规则状态 */
     private RuleState state;
+    
+    /** 备注 */
+    private String remark;
     
     /**
      * <默认构造函数>
@@ -141,6 +147,32 @@ public class SimplePersistenceRule implements Serializable,Rule{
     public String rule() {
         return this.rule;
     }
-    
-    
+
+    /**
+     * @return 返回 name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * @param 对name进行赋值
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * @return 返回 remark
+     */
+    public String getRemark() {
+        return remark;
+    }
+
+    /**
+     * @param 对remark进行赋值
+     */
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
 }

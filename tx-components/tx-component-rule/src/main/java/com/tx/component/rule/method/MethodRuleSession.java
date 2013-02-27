@@ -120,6 +120,7 @@ public class MethodRuleSession extends DefaultRuleSession<MethodRule> {
                 Class<?> type = paramterResolver.getParamterType();
                 try {
                     Object resultObj = type.newInstance();
+                    args[i] = resultObj;
                     RuleSessionContext.setGlobal(RuleConstants.RULE_PROMISE_CONSTANT_RESULT,
                             resultObj);
                     isHasRuleMethodResultAnnotation = true;

@@ -1,0 +1,42 @@
+http://mmscau.iteye.com/blog/491318
+读取Guvnor中的规则...
+
+private static KnowledgeBase readKnowledgeBase() throws Exception {
+  KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
+  
+  //修改此方法
+  //kbuilder.add(ResourceFactory.newClassPathResource("Sample.drl"), ResourceType.DRL);
+  kbuilder.add(ResourceFactory.newUrlResource("http://localhost:8080/drools-guvnor/org.drools.guvnor.Guvnor/package/com.chen.rules/LATEST"), ResourceType.PKG);
+  KnowledgeBuilderErrors errors = kbuilder.getErrors();
+  if (errors.size() > 0) {
+   for (KnowledgeBuilderError error: errors) {
+    System.err.println(error);
+   }
+   throw new IllegalArgumentException("Could not parse knowledge.");
+  }
+  KnowledgeBase kbase = KnowledgeBaseFactory.newKnowledgeBase();
+  kbase.addKnowledgePackages(kbuilder.getKnowledgePackages());
+  //采用Agent的方式
+/*  KnowledgeAgent kagent=KnowledgeAgentFactory.newKnowledgeAgent("/deploy.properties");
+  
+  KnowledgeBase kbase=kagent.getKnowledgeBase();*/
+  return kbase;
+ }
+ public static class Message {
+  
+  public static final int HELLO = 0;
+  public static final int GOODBYE = 1;
+  private String message;
+  private int status;
+  public String getMessage() {
+   return this.message;
+  }
+  public void setMessage(String message) {
+   this.message = message;
+  }
+  public int getStatus() {
+   return this.status;
+  }
+  public void setStatus(int status) {
+   this.status = status;
+  }

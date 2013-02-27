@@ -27,7 +27,7 @@ import java.io.Serializable;
 public interface Rule extends Serializable{
 
     /**
-      * 获取规则名
+      * 获取规则名key
       * 
       * @return [参数说明]
       * 
@@ -36,6 +36,17 @@ public interface Rule extends Serializable{
       * @see [类、类#方法、类#成员]
      */
     public String rule();
+    
+    /**
+      * 规则名
+      * <功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return String [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public String getName();
 
     /**
       * 获取规则类型

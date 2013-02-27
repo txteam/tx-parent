@@ -35,7 +35,7 @@ public class ParameterResolver {
         this.paramterType = paramterType;
         if (annotations != null) {
             for (Annotation anno : annotations) {
-                this.paramterAnnotationMap.put(anno.getClass(), anno);
+                this.paramterAnnotationMap.put(anno.annotationType(), anno);
             }
         }
     }

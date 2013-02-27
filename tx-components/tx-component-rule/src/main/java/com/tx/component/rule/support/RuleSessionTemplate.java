@@ -21,7 +21,8 @@ import com.tx.component.rule.context.RuleContext;
 import com.tx.component.rule.exceptions.RuleAccessException;
 import com.tx.component.rule.exceptions.RuleExceptionTranslator;
 import com.tx.component.rule.exceptions.impl.DefaultRuleExceptionTranslator;
-import com.tx.component.rule.model.Rule;
+import com.tx.component.rule.model.RuleSessionResultHandle;
+import com.tx.component.rule.model.impl.SimpleRuleSessionResultHandle;
 import com.tx.core.exceptions.parameter.ParameterIsInvalidException;
 
 /**
@@ -193,6 +194,7 @@ public class RuleSessionTemplate implements RuleSessionSupport,
          * @return
          * @throws Throwable
          */
+        @SuppressWarnings({ "unchecked", "rawtypes" })
         @Override
         public Object invoke(Object proxy, Method method, Object[] args)
                 throws Throwable {
@@ -205,19 +207,28 @@ public class RuleSessionTemplate implements RuleSessionSupport,
             
             //开始一次会话
             RuleSessionContext.open();
-            RuleSession ruleSession = getTargetRuleSession(method,
-                    args,
-                    ruleSession);
+            if(args[2] != null){
+                RuleSessionContext.setGlobals((Map)args[2]);
+            }
+            
+            RuleSession ruleSession = getTargetRuleSession(method, args);
             try {
-                ruleSession.execute(fact);
+                if (args[1] instanceof List) {
+                    ruleSession.execute((List) args[1]);
+                }
+                else if (args[1] instanceof Map) {
+                    ruleSession.execute((Map) args[1]);
+                }
+                
+                RuleSessionResultHandle<Object> resultHandle = new SimpleRuleSessionResultHandle<Object>();
                 ruleSession.callback(resultHandle);
-                //ruleSession.callback(resultHandle);
-                Object result = null;//method.invoke(sqlSession, args);
+                Object result = resultHandle.getValue();
                 return result;
-            } catch (Throwable t) {
+            }
+            catch (Throwable t) {
                 Throwable unwrapped = t;
                 if (ruleExceptionTranslator != null) {
-                    Throwable translated = ruleExceptionTranslator.translate(rule,
+                    Throwable translated = ruleExceptionTranslator.translate(ruleSession.rule(),
                             ruleSession,
                             t);
                     if (translated != null) {
@@ -225,14 +236,15 @@ public class RuleSessionTemplate implements RuleSessionSupport,
                     }
                 }
                 throw unwrapped;
-            } finally {
+            }
+            finally {
                 RuleSessionContext.close();
             }
         }
         
-        /** 
-         *<功能简述>
-         *<功能详细描述>
+        /**
+         * <功能简述>
+         * <功能详细描述>
          * @param method
          * @param args
          * @param ruleSession
@@ -243,8 +255,8 @@ public class RuleSessionTemplate implements RuleSessionSupport,
          * @exception throws [异常类型] [异常说明]
          * @see [类、类#方法、类#成员]
          */
-        private RuleSession getTargetRuleSession(Method method, Object[] args,
-                RuleSession ruleSession) throws RuleAccessException {
+        private RuleSession getTargetRuleSession(Method method, Object[] args)
+                throws RuleAccessException {
             Object arg0 = args[0];
             //ruleSessionTemp中第一个参数必然不能为空，如果为空抛出错误
             //如果不为空，如果判断为String则认为调用的是指定规则的规则会话
@@ -256,9 +268,11 @@ public class RuleSessionTemplate implements RuleSessionSupport,
                         null,
                         "call ruleSession method:{} parameter rule or ruleSession is null.",
                         method.getName());
-            } else if (arg0 instanceof RuleSession) {
-                ruleSession = (RuleSession) arg0;
-            } else if (arg0 instanceof String) {
+            }
+            else if (arg0 instanceof RuleSession) {
+                return (RuleSession) arg0;
+            }
+            else if (arg0 instanceof String) {
                 String ruleKey = (String) arg0;
                 if (!ruleContext.contains(ruleKey)) {
                     throw new RuleAccessException(
@@ -268,13 +282,13 @@ public class RuleSessionTemplate implements RuleSessionSupport,
                             "call ruleSession method:{} parameter rule:{} is not Exist",
                             method.getName(), ruleKey);
                 }
-                ruleSession = ruleContext.newRuleSession(ruleContext.getRule(ruleKey));
-            } else {
+                return ruleContext.newRuleSession(ruleContext.getRule(ruleKey));
+            }
+            else {
                 throw new RuleAccessException(null, null, null,
                         "call ruleSession method:{} parameter is invalid.",
                         method.getName());
             }
-            return ruleSession;
         }
     }
     

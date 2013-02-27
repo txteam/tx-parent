@@ -10,8 +10,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.drools.base.MapGlobalResolver;
+import org.drools.runtime.Globals;
 import org.drools.runtime.StatefulKnowledgeSession;
 
+import com.tx.component.rule.exceptions.RuleAccessException;
 import com.tx.component.rule.support.RuleSessionContext;
 import com.tx.component.rule.support.impl.DefaultRuleSession;
 
@@ -40,8 +43,8 @@ public class DroolsRuleSession extends DefaultRuleSession<DroolsRule> {
     public void execute(Map<String, Object> fact) {
         StatefulKnowledgeSession session = this.rule.getKnowledgeBase()
                 .newStatefulKnowledgeSession();
-        
         try {
+            //获取全局对象
             Map<String, Object> globas = RuleSessionContext.getGlobals();
             for (Entry<String, Object> entryTemp : globas.entrySet()) {
                 session.setGlobal(entryTemp.getKey(), entryTemp.getValue());
@@ -51,6 +54,15 @@ public class DroolsRuleSession extends DefaultRuleSession<DroolsRule> {
             
         }
         finally {
+            Globals globals = session.getGlobals();
+            if (globals instanceof MapGlobalResolver) {
+                MapGlobalResolver globalIns = (MapGlobalResolver)globals;
+            }
+            else {
+                throw new RuleAccessException(this.rule().rule(), this.rule(),
+                        this,
+                        "drools globals is not MapGlobalResolver instance");
+            }
             if (session != null) {
                 session.dispose();
             }

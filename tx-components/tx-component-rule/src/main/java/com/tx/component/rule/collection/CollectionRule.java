@@ -9,7 +9,6 @@ package com.tx.component.rule.collection;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.tx.component.rule.RuleConstants;
 import com.tx.component.rule.model.Rule;
 import com.tx.component.rule.model.RuleType;
 import com.tx.core.TxConstants;
@@ -25,13 +24,26 @@ import com.tx.core.TxConstants;
  */
 public class CollectionRule implements Rule {
     
+    /** 注释内容 */
+    private static final long serialVersionUID = -107185037749395048L;
+
     private String rule;
+    
+    private String name;
     
     private String serviceType;
     
     private List<Rule> ruleList = new ArrayList<Rule>(
             TxConstants.INITIAL_CONLLECTION_SIZE);
     
+    /**
+     * @return
+     */
+    @Override
+    public String getName() {
+        return name;
+    }
+
     /**
      * @return
      */
