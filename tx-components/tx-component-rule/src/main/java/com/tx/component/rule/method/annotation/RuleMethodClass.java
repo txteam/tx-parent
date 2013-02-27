@@ -6,6 +6,11 @@
  */
 package com.tx.component.rule.method.annotation;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 
  /**
   * <功能简述>
@@ -16,6 +21,8 @@ package com.tx.component.rule.method.annotation;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
   */
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
 public @interface RuleMethodClass {
     
 }

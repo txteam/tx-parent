@@ -148,6 +148,7 @@ public class MethodRuleSession extends DefaultRuleSession<MethodRule> {
                     if (Map.class.isAssignableFrom(paramterResolver.getParamterType())
                             || Model.class.isAssignableFrom(paramterResolver.getParamterType())
                             || ModelMap.class.isAssignableFrom(paramterResolver.getParamterType())) {
+                        //TODO:这里有BUG需修正
                         args[i] = fact;
                         continue;
                     }

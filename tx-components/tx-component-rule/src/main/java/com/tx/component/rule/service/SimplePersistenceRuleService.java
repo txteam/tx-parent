@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.tx.component.rule.dao.SimplePersistenceRuleDao;
 import com.tx.component.rule.model.RuleType;
 import com.tx.component.rule.model.SimplePersistenceRule;
+import com.tx.component.rule.model.RuleState;
 import com.tx.core.exceptions.parameter.ParameterIsEmptyException;
 import com.tx.core.paged.model.PagedList;
 
@@ -72,6 +73,37 @@ public class SimplePersistenceRuleService {
         List<SimplePersistenceRule> resList = this.simplePersistenceRuleDao.querySimplePersistenceRuleList(params);
         
         return resList;
+    }
+    
+    /**
+      * 根据规则id改变规则当前状态
+      * <功能详细描述>
+      * @param ruleId
+      * @return [参数说明]
+      * 
+      * @return boolean [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    @Transactional
+    public boolean changeRuleStateById(String ruleId,
+            RuleState state) {
+        if (state == null || StringUtils.isEmpty(ruleId)) {
+            throw new ParameterIsEmptyException(
+                    "SimplePersistenceRuleService.changeRuleStateById ruleId or state.id is empty.");
+        }
+        
+        //生成需要更新字段的hashMap
+        Map<String, Object> updateRowMap = new HashMap<String, Object>();
+        updateRowMap.put("id", ruleId);
+        
+        //需要更新的字段
+        updateRowMap.put("state", state);
+        
+        int updateRowCount = this.simplePersistenceRuleDao.updateSimplePersistenceRule(updateRowMap);
+        
+        //如果需要大于1时，抛出异常并回滚，需要在这里修改
+        return updateRowCount >= 1;
     }
     
     /**

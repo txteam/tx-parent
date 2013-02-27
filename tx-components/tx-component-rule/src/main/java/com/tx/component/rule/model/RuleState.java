@@ -15,7 +15,7 @@ package com.tx.component.rule.model;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
   */
-public enum SimplePersistenceRuleState {
+public enum RuleState {
     
     /**
      * 测试态
@@ -40,7 +40,7 @@ public enum SimplePersistenceRuleState {
     /**
      * <默认构造函数>
      */
-    private SimplePersistenceRuleState(String name) {
+    private RuleState(String name) {
         this.name = name;
     }
 

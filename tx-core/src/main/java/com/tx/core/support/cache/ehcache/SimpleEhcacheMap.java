@@ -38,7 +38,7 @@ import com.tx.core.exceptions.parameter.ParameterIsEmptyException;
 public class SimpleEhcacheMap<K extends Serializable, V extends Serializable>
         implements Map<K, V> {
     
-    private static Set<String> needPutMethodName = new HashSet<String>();
+    private final static Set<String> needPutMethodName = new HashSet<String>();
     
     static {
         needPutMethodName.add("put");

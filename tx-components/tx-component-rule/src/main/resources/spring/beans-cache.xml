@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+	<bean id="ehCacheManager"
+		class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+		<property name="configLocation"
+			value="classpath:context/ehcache.xml"></property>
+		<property name="cacheManagerName"
+			value="demo.cache"></property>
+	</bean>
+
+	<bean id="demoCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+		<property name="eternal" value="true"></property>
+		<property name="cacheManager" ref="ehCacheManager"></property>
+	</bean>
+	<alias name="demoCache" alias="Cache" />
+	<alias name="demoCache" alias="cache" />
+</beans>

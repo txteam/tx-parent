@@ -45,7 +45,7 @@ public class SimplePersistenceRule implements Serializable,Rule{
     private String serviceType;
     
     /** 规则状态 */
-    private SimplePersistenceRuleState state;
+    private RuleState state;
     
     /**
      * <默认构造函数>
@@ -123,14 +123,14 @@ public class SimplePersistenceRule implements Serializable,Rule{
     /**
      * @return 返回 state
      */
-    public SimplePersistenceRuleState getState() {
+    public RuleState getState() {
         return state;
     }
 
     /**
      * @param 对state进行赋值
      */
-    public void setState(SimplePersistenceRuleState state) {
+    public void setState(RuleState state) {
         this.state = state;
     }
 

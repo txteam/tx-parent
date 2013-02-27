@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="ehcache.xsd"
+         updateCheck="false" 
+         monitoring="autodetect"
+         dynamicConfig="true">
+    <!--设置缓存文件保存路径-->
+    <diskStore path="java.io.tmpdir"/>
+
+	<cache name="los.cache" 
+		maxElementsInMemory="10000"
+		eternal="false"
+		overflowToDisk="true"
+		timeToIdleSeconds="600"
+		timeToLiveSeconds="600"
+		diskPersistent="false" 
+		diskExpiryThreadIntervalSeconds="120">
+	</cache>
+</ehcache>

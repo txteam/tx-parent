@@ -14,6 +14,7 @@ import java.util.Map.Entry;
 import javax.annotation.Resource;
 
 import net.sf.ehcache.Ehcache;
+import net.sf.ehcache.store.chm.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +27,7 @@ import com.tx.component.rule.exceptions.RuleAccessException;
 import com.tx.component.rule.model.Rule;
 import com.tx.component.rule.support.RuleSession;
 import com.tx.component.rule.support.RuleSessionFactory;
+import com.tx.component.rule.support.impl.DefaultRuleSessionFactory;
 import com.tx.core.support.cache.ehcache.SimpleEhcacheMap;
 
 /**
@@ -76,8 +78,10 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
     @Override
     public void afterPropertiesSet() throws Exception {
         this.ruleMapCache = new SimpleEhcacheMap<String, Rule>(
-                "cache.ruleMapCache", ehcache);
-        
+                "cache.ruleMapCache", ehcache,new ConcurrentHashMap<String, Rule>());
+        if(ruleSessionFactory == null){
+            this.ruleSessionFactory = new DefaultRuleSessionFactory();
+        }
         //完成属性设置后,加载规则
         setRuleContext(this);
     }
@@ -180,6 +184,20 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
                 logger.error("RuleContext.waitLoading exception:" + e.toString(),e);
             }
         }
+    }
+    
+    /**
+      * 获取缓存的规则总数
+      * <功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return int [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public int size(){
+        waitLoading();
+        return ruleMapCache.size();
     }
     
     /**

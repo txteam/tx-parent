@@ -12,12 +12,17 @@ import java.lang.reflect.Proxy;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Component;
 
+import com.tx.component.rule.context.RuleContext;
+import com.tx.component.rule.exceptions.RuleAccessException;
 import com.tx.component.rule.exceptions.RuleExceptionTranslator;
 import com.tx.component.rule.exceptions.impl.DefaultRuleExceptionTranslator;
 import com.tx.component.rule.model.Rule;
+import com.tx.core.exceptions.parameter.ParameterIsInvalidException;
 
 /**
  * 规则运行执行器<br>
@@ -33,6 +38,9 @@ import com.tx.component.rule.model.Rule;
 public class RuleSessionTemplate implements RuleSessionSupport,
         InitializingBean {
     
+    @Resource(name = "ruleContext")
+    private RuleContext ruleContext;
+    
     private RuleSessionSupport supportProxy;
     
     private RuleExceptionTranslator ruleExceptionTranslator;
@@ -46,21 +54,9 @@ public class RuleSessionTemplate implements RuleSessionSupport,
                 .getClassLoader(),
                 new Class<?>[] { RuleSessionSupport.class },
                 new RuleSessionSupportInvocationHandler());
-        if(this.ruleExceptionTranslator == null){
+        if (this.ruleExceptionTranslator == null) {
             this.ruleExceptionTranslator = new DefaultRuleExceptionTranslator();
         }
-    }
-   
-    /**
-     * @param rule
-     * @param facts
-     * @param global
-     * @return
-     */
-    @Override
-    public boolean evaluateBoolean(String rule, List<Map<String, ?>> facts,
-            Map<String, ?> global) {
-        return supportProxy.evaluateBoolean(rule, facts, global);
     }
     
     /**
@@ -72,7 +68,7 @@ public class RuleSessionTemplate implements RuleSessionSupport,
     @Override
     public <T> List<T> evaluateList(String rule, List<Map<String, ?>> facts,
             Map<String, ?> global) {
-        return supportProxy.evaluateList(rule, facts, global);
+        return supportProxy.<T> evaluateList(rule, facts, global);
     }
     
     /**
@@ -84,7 +80,7 @@ public class RuleSessionTemplate implements RuleSessionSupport,
     @Override
     public <T> Map<String, T> evaluateMap(String rule,
             List<Map<String, ?>> facts, Map<String, ?> global) {
-        return supportProxy.evaluateMap(rule, facts, global);
+        return supportProxy.<T> evaluateMap(rule, facts, global);
     }
     
     /**
@@ -96,9 +92,9 @@ public class RuleSessionTemplate implements RuleSessionSupport,
     @Override
     public <T> T evaluateObject(String rule, List<Map<String, ?>> facts,
             Map<String, ?> global) {
-        return supportProxy.evaluateObject(rule, facts, global);
+        return supportProxy.<T> evaluateObject(rule, facts, global);
     }
-
+    
     /**
      * @param rule
      * @param facts
@@ -109,7 +105,7 @@ public class RuleSessionTemplate implements RuleSessionSupport,
             Map<String, ?> global) {
         supportProxy.evaluate(rule, facts, global);
     }
-
+    
     /**
      * @param ruleSession
      * @param facts
@@ -120,19 +116,6 @@ public class RuleSessionTemplate implements RuleSessionSupport,
             Map<String, ?> global) {
         supportProxy.evaluate(ruleSession, facts, global);
     }
-
-    /**
-     * @param rule
-     * @param fact
-     * @param global
-     * @return
-     */
-    @Override
-    public boolean evaluateBoolean(String rule, Map<String, ?> fact,
-            Map<String, ?> global) {
-        return this.supportProxy.evaluateBoolean(rule, fact, global);
-    }
-
     
     /**
      * @param rule
@@ -143,10 +126,8 @@ public class RuleSessionTemplate implements RuleSessionSupport,
     @Override
     public <T> List<T> evaluateList(String rule, Map<String, ?> fact,
             Map<String, ?> global) {
-        return this.supportProxy.evaluateList(rule, fact, global);
+        return this.supportProxy.<T> evaluateList(rule, fact, global);
     }
-    
-
     
     /**
      * @param rule
@@ -157,10 +138,8 @@ public class RuleSessionTemplate implements RuleSessionSupport,
     @Override
     public <T> Map<String, T> evaluateMap(String rule, Map<String, ?> fact,
             Map<String, ?> global) {
-        return this.supportProxy.evaluateMap(rule, fact, global);
+        return this.supportProxy.<T> evaluateMap(rule, fact, global);
     }
-    
-
     
     /**
      * @param rule
@@ -171,7 +150,7 @@ public class RuleSessionTemplate implements RuleSessionSupport,
     @Override
     public <T> T evaluateObject(String rule, Map<String, ?> fact,
             Map<String, ?> global) {
-        return this.supportProxy.evaluateObject(rule, fact, global);
+        return this.supportProxy.<T> evaluateObject(rule, fact, global);
     }
     
     /**
@@ -207,11 +186,6 @@ public class RuleSessionTemplate implements RuleSessionSupport,
     private class RuleSessionSupportInvocationHandler implements
             InvocationHandler {
         
-        private Rule rule;
-        
-        private RuleSession ruleSession;
-        
-        
         /**
          * @param proxy
          * @param method
@@ -222,18 +196,31 @@ public class RuleSessionTemplate implements RuleSessionSupport,
         @Override
         public Object invoke(Object proxy, Method method, Object[] args)
                 throws Throwable {
+            if (args.length != 3
+                    && !(args[1] instanceof List || args[1] instanceof Map)
+                    && !(args[2] instanceof Map)) {
+                throw new ParameterIsInvalidException(
+                        "RuleSessionSupportInvocationHandler.invoke args invalid");
+            }
             
             //开始一次会话
             RuleSessionContext.open();
+            RuleSession ruleSession = getTargetRuleSession(method,
+                    args,
+                    ruleSession);
             try {
+                ruleSession.execute(fact);
+                ruleSession.callback(resultHandle);
                 //ruleSession.callback(resultHandle);
                 Object result = null;//method.invoke(sqlSession, args);
                 return result;
             } catch (Throwable t) {
                 Throwable unwrapped = t;
                 if (ruleExceptionTranslator != null) {
-                    Throwable translated = ruleExceptionTranslator.translate(rule, ruleSession, t);
-                    if(translated != null){
+                    Throwable translated = ruleExceptionTranslator.translate(rule,
+                            ruleSession,
+                            t);
+                    if (translated != null) {
                         unwrapped = translated;
                     }
                 }
@@ -241,6 +228,53 @@ public class RuleSessionTemplate implements RuleSessionSupport,
             } finally {
                 RuleSessionContext.close();
             }
+        }
+        
+        /** 
+         *<功能简述>
+         *<功能详细描述>
+         * @param method
+         * @param args
+         * @param ruleSession
+         * @return
+         * @throws RuleAccessException [参数说明]
+         * 
+         * @return RuleSession [返回类型说明]
+         * @exception throws [异常类型] [异常说明]
+         * @see [类、类#方法、类#成员]
+         */
+        private RuleSession getTargetRuleSession(Method method, Object[] args,
+                RuleSession ruleSession) throws RuleAccessException {
+            Object arg0 = args[0];
+            //ruleSessionTemp中第一个参数必然不能为空，如果为空抛出错误
+            //如果不为空，如果判断为String则认为调用的是指定规则的规则会话
+            //
+            if (arg0 == null) {
+                throw new RuleAccessException(
+                        null,
+                        null,
+                        null,
+                        "call ruleSession method:{} parameter rule or ruleSession is null.",
+                        method.getName());
+            } else if (arg0 instanceof RuleSession) {
+                ruleSession = (RuleSession) arg0;
+            } else if (arg0 instanceof String) {
+                String ruleKey = (String) arg0;
+                if (!ruleContext.contains(ruleKey)) {
+                    throw new RuleAccessException(
+                            ruleKey,
+                            null,
+                            null,
+                            "call ruleSession method:{} parameter rule:{} is not Exist",
+                            method.getName(), ruleKey);
+                }
+                ruleSession = ruleContext.newRuleSession(ruleContext.getRule(ruleKey));
+            } else {
+                throw new RuleAccessException(null, null, null,
+                        "call ruleSession method:{} parameter is invalid.",
+                        method.getName());
+            }
+            return ruleSession;
         }
     }
     

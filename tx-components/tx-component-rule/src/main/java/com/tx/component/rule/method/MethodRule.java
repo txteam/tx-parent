@@ -8,7 +8,6 @@ package com.tx.component.rule.method;
 
 import java.lang.reflect.Method;
 
-import com.tx.component.rule.RuleConstants;
 import com.tx.component.rule.method.annotation.RuleMethod;
 import com.tx.component.rule.model.Rule;
 import com.tx.component.rule.model.RuleType;

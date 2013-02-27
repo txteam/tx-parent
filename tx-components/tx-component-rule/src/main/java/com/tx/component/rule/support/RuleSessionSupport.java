@@ -23,34 +23,6 @@ import java.util.Map;
 public interface RuleSessionSupport {
     
     /**
-      * 解析boolean值规则结果（推导结论或推论事实）<br/>
-      * @param rule 规则名
-      * @param fact 事实
-      * @param global 全局参数，在规则执行期间能够通过线程取到，将在规则执行完成后进行销毁
-      * @return [参数说明]
-      * 
-      * @return boolean [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    public boolean evaluateBoolean(String rule, Map<String, ?> fact,
-            Map<String, ?> global);
-    
-    /**
-     * 解析boolean值规则结果（推导结论或推论事实）<br/>
-     * @param rule 规则名
-     * @param fact 事实
-     * @param global 全局参数，在规则执行期间能够通过线程取到，将在规则执行完成后进行销毁
-     * @return [参数说明]
-     * 
-     * @return boolean [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-    */
-    public boolean evaluateBoolean(String rule, List<Map<String, ?>> facts,
-            Map<String, ?> global);
-    
-    /**
       * 解析列表规则结果（推导结论或推论事实）<br/>
       * @param rule 规则名
       * @param fact 事实集

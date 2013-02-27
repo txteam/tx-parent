@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
@@ -27,6 +26,7 @@ import com.tx.component.rule.context.RuleLoader;
 import com.tx.component.rule.method.annotation.RuleMethod;
 import com.tx.component.rule.method.annotation.RuleMethodClass;
 import com.tx.component.rule.model.Rule;
+import com.tx.component.rule.model.RuleState;
 import com.tx.component.rule.model.RuleType;
 import com.tx.component.rule.model.SimplePersistenceRule;
 import com.tx.component.rule.service.SimplePersistenceRuleService;
@@ -47,7 +47,7 @@ public class MethodRuleLoader implements RuleLoader, ApplicationContextAware {
     private ApplicationContext applicationContext;
     
     /** 规则存在的包 */
-    private String rulePackage;
+    private String rulePackage = "com.tx";
     
     /** 负责对规则进行持久  */
     @Resource(name = "simplePersistenceRuleService")
@@ -72,8 +72,6 @@ public class MethodRuleLoader implements RuleLoader, ApplicationContextAware {
     /**
      * @return
      */
-    @PostConstruct
-    @Override
     @Transactional
     public List<Rule> load() {
         List<Rule> resList = new ArrayList<Rule>();
@@ -82,15 +80,26 @@ public class MethodRuleLoader implements RuleLoader, ApplicationContextAware {
         List<MethodRule> currentRuleMethodList = scanCurrentSystemRuleMethod();
         //获取历史数据库中存储的规则
         Map<String, SimplePersistenceRule> dbRuleMap = queryDBMethodRuleMap();
+        Map<String, MethodRule> currentRuleMap = new HashMap<String, MethodRule>();
         
         for (MethodRule mrTemp : currentRuleMethodList) {
-            if (!dbRuleMap.containsKey(ruleToStringKey(mrTemp))) {
+            currentRuleMap.put(changeRuleToStringKey(mrTemp), mrTemp);
+            if (!dbRuleMap.containsKey(changeRuleToStringKey(mrTemp))) {
                 SimplePersistenceRule spr = new SimplePersistenceRule(mrTemp);
                 this.simplePersistenceRuleService.insertSimplePersistenceRule(spr);
             }
+            resList.add(mrTemp);
         }
         
-        //TODO:处理db中存在，而现在已经不存在的规则
+        //处理db中存在，而现在已经不存在的规则
+        if(isSynchronizeRemoveNotExsitMethodRule){
+            for (Entry<String, SimplePersistenceRule> mrTemp : dbRuleMap.entrySet()) {
+                if(!currentRuleMap.containsKey(mrTemp.getKey())){
+                    this.simplePersistenceRuleService.changeRuleStateById(mrTemp.getValue().getId(), RuleState.ERROR);
+                }
+            }
+        }
+        
         return resList;
     }
     
@@ -104,7 +113,7 @@ public class MethodRuleLoader implements RuleLoader, ApplicationContextAware {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    private String ruleToStringKey(Rule rule) {
+    private String changeRuleToStringKey(Rule rule) {
         StringBuilder sb = new StringBuilder(TxConstants.INITIAL_STR_LENGTH);
         sb.append(rule.rule())
                 .append("|")
@@ -130,7 +139,7 @@ public class MethodRuleLoader implements RuleLoader, ApplicationContextAware {
             return res;
         }
         for (SimplePersistenceRule simplePRuleTemp : resList) {
-            res.put(ruleToStringKey(simplePRuleTemp), simplePRuleTemp);
+            res.put(changeRuleToStringKey(simplePRuleTemp), simplePRuleTemp);
         }
         return res;
     }
@@ -145,6 +154,7 @@ public class MethodRuleLoader implements RuleLoader, ApplicationContextAware {
       * @see [类、类#方法、类#成员]
      */
     private List<MethodRule> scanCurrentSystemRuleMethod() {
+        //this.applicationContext.
         Map<String, Object> beanMap = this.applicationContext.getBeansWithAnnotation(RuleMethodClass.class);
         List<MethodRule> resList = new ArrayList<MethodRule>();
         for (Entry<String, Object> entryTemp : beanMap.entrySet()) {

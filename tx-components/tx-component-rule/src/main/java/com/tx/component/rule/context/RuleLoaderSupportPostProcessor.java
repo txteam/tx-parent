@@ -6,13 +6,13 @@
  */
 package com.tx.component.rule.context;
 
-import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.util.List;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.cglib.proxy.MethodInterceptor;
+import org.springframework.cglib.proxy.MethodProxy;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
@@ -53,17 +53,19 @@ public class RuleLoaderSupportPostProcessor implements BeanPostProcessor,
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName)
             throws BeansException {
-        if (bean instanceof RuleLoader) {
-            RuleContext.registerRuleLoader((RuleLoader) bean);
-            bean = Proxy.newProxyInstance(this.getClass().getClassLoader(),
-                    new Class[] { RuleLoader.class },
-                    new RuleLoaderInvocationHandler((RuleLoader) bean,
-                            this.applicationContext));
-        }
+        //        if (bean instanceof RuleLoader) {
+        //            RuleContext.registerRuleLoader((RuleLoader) bean);
+        //            bean = RuleLoaderInvocationHandler.
+        //                    Proxy.newProxyInstance(this.getClass().getClassLoader(),
+        //                    new Class[] { bean.getClass() },
+        //                    new RuleLoaderInvocationHandler((RuleLoader) bean,
+        //                            this.applicationContext));
+        //        }
         return bean;
     }
     
     /**
+     * 调用ruleLoader
      * @param bean
      * @param beanName
      * @return
@@ -72,6 +74,18 @@ public class RuleLoaderSupportPostProcessor implements BeanPostProcessor,
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName)
             throws BeansException {
+        if (bean instanceof RuleLoader) {
+            RuleContext.registerRuleLoader((RuleLoader) bean);
+            RuleLoader realRuleLoader = (RuleLoader) bean;
+            List<Rule> ruleList = realRuleLoader.load();
+            this.applicationContext.publishEvent(new LoadRuleEvent(this,
+                    realRuleLoader, ruleList));
+            //            bean = RuleLoaderInvocationHandler.Proxy.newProxyInstance(this.getClass()
+            //                    .getClassLoader(),
+            //                    new Class[] { bean.getClass() },
+            //                    new RuleLoaderInvocationHandler((RuleLoader) bean,
+            //                            this.applicationContext));
+        }
         return bean;
     }
     
@@ -84,8 +98,9 @@ public class RuleLoaderSupportPostProcessor implements BeanPostProcessor,
       * @see  [相关类/方法]
       * @since  [产品/模块版本]
      */
+    @SuppressWarnings("unused")
     private static class RuleLoaderInvocationHandler implements
-            InvocationHandler {
+            MethodInterceptor {
         
         /** ruleLoader原实例 */
         private RuleLoader realRuleLoader;
@@ -100,26 +115,47 @@ public class RuleLoaderSupportPostProcessor implements BeanPostProcessor,
         }
         
         /**
-         * 如果执行了ruleLoader的load方法，通过规则加载事件，将规则发送给规则容器
-         * @param proxy
-         * @param method
-         * @param args
+         * @param arg0
+         * @param arg1
+         * @param arg2
+         * @param arg3
          * @return
          * @throws Throwable
          */
         @Override
-        public Object invoke(Object proxy, Method method, Object[] args)
-                throws Throwable {
-            Object res = method.invoke(realRuleLoader, args);
+        public Object intercept(Object arg0, Method method, Object[] args,
+                MethodProxy methodProxy) throws Throwable {
+            Object res = methodProxy.invoke(realRuleLoader, args);
             if ("load".equals(method.getName()) && res instanceof List) {
                 @SuppressWarnings("unchecked")
                 List<Rule> ruleList = (List<Rule>) res;
                 this.applicationContext.publishEvent(new LoadRuleEvent(this,
                         realRuleLoader, ruleList));
             }
-            
             return res;
         }
+        
+        //        /**
+        //         * 如果执行了ruleLoader的load方法，通过规则加载事件，将规则发送给规则容器
+        //         * @param proxy
+        //         * @param method
+        //         * @param args
+        //         * @return
+        //         * @throws Throwable
+        //         */
+        //        @Override
+        //        public Object invoke(Object proxy, Method method, Object[] args)
+        //                throws Throwable {
+        //            Object res = method.invoke(realRuleLoader, args);
+        //            if ("load".equals(method.getName()) && res instanceof List) {
+        //                @SuppressWarnings("unchecked")
+        //                List<Rule> ruleList = (List<Rule>) res;
+        //                this.applicationContext.publishEvent(new LoadRuleEvent(this,
+        //                        realRuleLoader, ruleList));
+        //            }
+        //            
+        //            return res;
+        //        }
     }
     
 }

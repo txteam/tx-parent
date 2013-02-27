@@ -12,7 +12,9 @@
 
 	<!-- 统一的mybatis异常转换器 -->
 	<bean id="myBatisExceptionTranslator" class="org.mybatis.spring.MyBatisExceptionTranslator">
-		<constructor-arg name="dataSource" ref="datasource"></constructor-arg>
+		<constructor-arg name="dataSource">
+			<ref bean="datasource" />
+		</constructor-arg>
 		<constructor-arg name="exceptionTranslatorLazyInit"
 			value="true"></constructor-arg>
 	</bean>
@@ -29,43 +31,89 @@
 		</property>
 	</bean>
 
+	<beans profile="dev">
+		<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+			<property name="dataSource" ref="datasource"></property>
+			<property name="configLocation" value="classpath:context/mybatis-config.xml"></property>
+			<property name="typeAliasesPackage" value="com.tx.core.mybatis.handler"></property>
+			<property name="mapperLocations">
+				<array>
+					<value>classpath*:com/tx/component/**/*SqlMap.xml</value>
+					<value>classpath*:com/boda/**/*SqlMap.xml</value>
+				</array>
+			</property>
+			<property name="failFast" value="true"></property>
+			<property name="plugins">
+				<array>
+					<bean
+						class="com.tx.core.mybatis.interceptor.PagedDiclectStatementHandlerInterceptor">
+						<property name="dialect">
+							<bean class="org.hibernate.dialect.H2Dialect">
+							</bean>
+						</property>
+					</bean>
+				</array>
+			</property>
+		</bean>
 
-	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
-		<property name="dataSource" ref="datasource"></property>
-		<property name="configLocation" value="classpath:context/mybatis-config.xml"></property>
-		<property name="mapperLocations">
-			<array>
-				<value>classpath*:com/tx/component/auth/*SqlMap.xml</value>
-				<value>classpath*:com/boda/**/*SqlMap.xml</value>
-				<value>classpath*:com/tx/webdemo/**/*SqlMap.xml</value>
-			</array>
-		</property>
-		<property name="typeHandlersPackage" value="com.tx.core.mybatis.handler"></property>
-		<property name="failFast" value="true"></property>
-		<property name="plugins">
-			<array>
-				<bean
-					class="com.tx.core.mybatis.interceptor.PagedDiclectStatementHandlerInterceptor">
-					<property name="dialect">
-						<bean class="org.hibernate.dialect.Oracle10gDialect"></bean>
-					</property>
-				</bean>
-			</array>
-		</property>
-	</bean>
+		<bean id="losDatasource" class="com.tx.core.datasource.DataSourceFactoryBean">
+			<property name="supportP6spy" value="true"></property>
+			<property name="datasourceFinderList">
+				<list>
+					<bean
+						class="com.tx.core.datasource.finder.DelegatingDataSourceImplFinder">
+						<property name="srcDatasource">
+							<ref bean="hsqldbDataSource" />
+						</property>
+					</bean>
+				</list>
+			</property>
+		</bean>
+		<alias name="losDatasource" alias="datasource" />
 
-	<bean id="losDatasource" class="com.tx.core.datasource.DataSourceFactoryBean">
-		<property name="supportP6spy" value="true"></property>
-		<property name="datasourceFinderList">
-			<list>
-				<bean class="com.tx.core.datasource.finder.JNDIDataSourceFinder">
-					<property name="jndiName" value="los_db"></property>
-				</bean>
-				<bean class="com.tx.core.datasource.finder.ConfigDataSourceFinder">
-					<property name="resourceId" value="los_db"></property>
-				</bean>
-			</list>
-		</property>
-	</bean>
-	<alias name="losDatasource" alias="datasource" />
+		<jdbc:embedded-database id="hsqldbDataSource" type="H2">
+			<jdbc:script location="classpath:hsqldb/02_tables.sql" />
+			<jdbc:script location="classpath:hsqldb/09_initdata.sql" />
+		</jdbc:embedded-database>
+
+	</beans>
+
+	<beans profile="production">
+		<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+			<property name="dataSource" ref="datasource"></property>
+			<property name="configLocation" value="classpath:context/mybatis-config.xml"></property>
+			<property name="typeAliasesPackage" value="com.tx.core.mybatis.handler"></property>
+			<property name="mapperLocations">
+				<array>
+					<value>classpath*:com/tx/component/**/*SqlMap.xml</value>
+					<value>classpath*:com/tx/webdemo/**/*SqlMap.xml</value>
+				</array>
+			</property>
+			<property name="failFast" value="true"></property>
+			<property name="plugins">
+				<array>
+					<bean
+						class="com.tx.core.mybatis.interceptor.PagedDiclectStatementHandlerInterceptor">
+						<property name="dialect">
+							<bean class="org.hibernate.dialect.Oracle10gDialect"></bean>
+						</property>
+					</bean>
+				</array>
+			</property>
+		</bean>
+		<bean id="losDatasource" class="com.tx.core.datasource.DataSourceFactoryBean">
+			<property name="supportP6spy" value="true"></property>
+			<property name="datasourceFinderList">
+				<list>
+					<bean class="com.tx.core.datasource.finder.JNDIDataSourceFinder">
+						<property name="jndiName" value="los_db"></property>
+					</bean>
+					<bean class="com.tx.core.datasource.finder.ConfigDataSourceFinder">
+						<property name="resourceId" value="los_db"></property>
+					</bean>
+				</list>
+			</property>
+		</bean>
+		<alias name="losDatasource" alias="datasource" />
+	</beans>
 </beans>
