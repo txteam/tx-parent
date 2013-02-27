@@ -32,6 +32,7 @@
 /tx-components/tx-component-rule/.classpath
 /tx-components/tx-component-rule/.project
 /tx-components/tx-component-rule/.settings
+/tx-components/tx-component-rule/spy.log
 
 /tx-components/tx-component-workflow/target
 /tx-components/tx-component-workflow/.classpath
