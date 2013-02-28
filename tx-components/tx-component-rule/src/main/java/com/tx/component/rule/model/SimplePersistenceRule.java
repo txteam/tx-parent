@@ -41,17 +41,17 @@ public class SimplePersistenceRule implements Serializable,Rule{
     /** 规则名 */
     private String name;
     
-    /** 规则类型 */
-    private RuleType ruleType;
-    
     /** 业务类型 */
     private String serviceType;
     
-    /** 规则状态 */
-    private RuleState state;
-    
     /** 备注 */
     private String remark;
+    
+    /** 规则类型 */
+    private RuleType ruleType;
+    
+    /** 规则状态 */
+    private RuleState state;
     
     /**
      * <默认构造函数>

@@ -61,6 +61,9 @@ public class JpaEntityFreeMarkerGenerator {
     private Class<?> loadTemplateClass = JpaEntityFreeMarkerGenerator.class;
     
     static {
+        SIMPLE_TYPE.add(char[].class);
+        SIMPLE_TYPE.add(byte[].class);
+        
         SIMPLE_TYPE.add(char.class);
         SIMPLE_TYPE.add(byte.class);
         SIMPLE_TYPE.add(int.class);

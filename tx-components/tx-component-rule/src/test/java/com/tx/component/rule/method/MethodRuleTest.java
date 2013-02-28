@@ -22,31 +22,29 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.tx.component.rule.context.RuleContext;
 import com.tx.component.rule.support.RuleSessionTemplate;
 
-
- /**
-  * <功能简述>
-  * <功能详细描述>
-  * 
-  * @author  brady
-  * @version  [版本号, 2013-2-27]
-  * @see  [相关类/方法]
-  * @since  [产品/模块版本]
-  */
+/**
+ * <功能简述>
+ * <功能详细描述>
+ * 
+ * @author  brady
+ * @version  [版本号, 2013-2-27]
+ * @see  [相关类/方法]
+ * @since  [产品/模块版本]
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { 
-        "classpath:spring/beans-ds.xml",
-        "classpath:spring/beans-tx.xml",
-        "classpath:spring/beans-cache.xml",
+@ContextConfiguration(locations = { "classpath:spring/beans-ds.xml",
+        "classpath:spring/beans-tx.xml", "classpath:spring/beans-cache.xml",
         "classpath:spring/beans.xml" })
 @ActiveProfiles("dev")
 public class MethodRuleTest {
     
-    @Resource(name="ruleSessionTemplate")
+    @Resource(name = "ruleSessionTemplate")
     private RuleSessionTemplate ruleSessionTemplate;
     
     @Test
-    public void testRuleConstants(){
+    public void testRuleConstants() {
         try {
+            //
             TestPojo testPojo = new TestPojo();
             testPojo.setTest("test:abc");
             TestPojoDao testPojoDao = new TestPojoDao();
@@ -54,12 +52,18 @@ public class MethodRuleTest {
             fact.put("testPojo", testPojo);
             fact.put("testPojoDao", testPojoDao);
             
+            //
             Map<String, Object> global = new HashMap<String, Object>();
             global.put("globalKey1", "globalValue1:abc");
             
-            List<ProcessRule> resList = ruleSessionTemplate.<ProcessRule>evaluateList("minAgeRule", fact, global);
+            //
+            List<ProcessRule> resList = ruleSessionTemplate.<ProcessRule> evaluateList("minAgeRule",
+                    fact,
+                    global);
             System.out.println(resList.size());
-            resList = ruleSessionTemplate.<ProcessRule>evaluateList("maxAgeRule", fact, global);
+            resList = ruleSessionTemplate.<ProcessRule> evaluateList("maxAgeRule",
+                    fact,
+                    global);
             System.out.println(resList.size());
         } catch (Exception e) {
             e.printStackTrace();

@@ -20,22 +20,49 @@ package com.tx.component.rule.model;
   * @since  [产品/模块版本]
   */
 public enum RuleType {
-    /**
-     * DROOLS规则
-     */
-    DROOLS,
+    
     /**
      * 方法类型规则
      */
-    METHOD,
+    METHOD("方法类规则"),
+    /**
+     * DROOLS规则
+     */
+    DROOLS("drools类规则"),
+    /**
+     * DROOLS规则
+     */
+    DROOLS_DRL_BYTE("",DROOLS),
+    /**
+     * DROOLS规则
+     */
+    DROOLS_PKG_URL("",DROOLS),
+    
     /**
      * 集合类型规则
      */
-    COLLECTION;
+    COLLECTION("集合类规则");
     
     private String name;
     
     private String remark;
+    
+    private RuleType parentType;
+    
+    /**
+     * 规则类型
+     */
+    private RuleType(String name, RuleType parentType) {
+        this.name = name;
+        this.parentType = parentType;
+    }
+    
+    /**
+     * 规则类型
+     */
+    private RuleType(String name) {
+        this.name = name;
+    }
 
     /**
      * @return 返回 name
@@ -63,5 +90,19 @@ public enum RuleType {
      */
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    /**
+     * @return 返回 parentType
+     */
+    public RuleType getParentType() {
+        return parentType;
+    }
+
+    /**
+     * @param 对parentType进行赋值
+     */
+    public void setParentType(RuleType parentType) {
+        this.parentType = parentType;
     }
 }

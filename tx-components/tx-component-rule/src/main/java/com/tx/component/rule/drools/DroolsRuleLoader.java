@@ -44,7 +44,7 @@ public class DroolsRuleLoader implements RuleLoader,ApplicationContextAware{
      */
     @Override
     public List<Rule> load() {
-        
+        //ResourceFactory.
         return null;
     }
     

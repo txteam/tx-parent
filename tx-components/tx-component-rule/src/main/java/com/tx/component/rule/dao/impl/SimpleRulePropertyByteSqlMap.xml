@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper 
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="simpleRulePropertyByte">
+
+	<!-- auto generate default resultMap -->
+	<resultMap id="simpleRulePropertyByteMap" 
+		type="com.tx.component.rule.model.SimpleRulePropertyByte">
+	</resultMap>
+	
+	<!-- auto generate default find -->
+	<select id="findSimpleRulePropertyByte" 
+		parameterType="com.tx.component.rule.model.SimpleRulePropertyByte"
+		resultMap="simpleRulePropertyByteMap">
+		SELECT 
+				TSRPB.RULEID,
+				TSRPB.SIMPLERULEPROPERTYPARAM,
+				TSRPB.PARAMKEY,
+				TSRPB.PARAMVALUE,
+				TSRPB.PARAMVALUEORDERED
+		  FROM RU_RULE_PRO_BYTE TSRPB
+		 WHERE
+		<trim prefixOverrides="AND | OR">
+			<if test="@com.tx.core.Ognl@isNotEmpty(id)">  
+	            AND TSRPB.RULEID = #{ruleId}
+	        </if>
+		</trim>
+	</select>
+	
+	<!-- auto generate default query -->
+	<select id="querySimpleRulePropertyByte" 
+		parameterType="java.util.Map"
+		resultMap="simpleRulePropertyByteMap">
+		SELECT 
+				TSRPB.RULEID,
+				TSRPB.SIMPLERULEPROPERTYPARAM,
+				TSRPB.PARAMKEY,
+				TSRPB.PARAMVALUE,
+				TSRPB.PARAMVALUEORDERED
+		  FROM RU_RULE_PRO_BYTE TSRPB
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="@com.tx.core.Ognl@isNotEmpty(ruleId)">  
+	            AND TSRPB.RULEID = #{ruleId,javaType=java.lang.String}
+	        </if>
+			<if test="@com.tx.core.Ognl@isNotEmpty(simpleRulePropertyParam)">  
+	            AND TSRPB.SIMPLERULEPROPERTYPARAM = #{simpleRulePropertyParam,javaType=com.tx.component.rule.model.SimpleRulePropertyParam}
+	        </if>
+			<if test="@com.tx.core.Ognl@isNotEmpty(paramKey)">  
+	            AND TSRPB.PARAMKEY = #{paramKey,javaType=java.lang.String}
+	        </if>
+			<if test="@com.tx.core.Ognl@isNotEmpty(paramValue)">  
+	            AND TSRPB.PARAMVALUE = #{paramValue,javaType=[B}
+	        </if>
+			<if test="@com.tx.core.Ognl@isNotEmpty(paramValueOrdered)">  
+	            AND TSRPB.PARAMVALUEORDERED = #{paramValueOrdered,javaType=int}
+	        </if>
+		</trim>
+		<choose>  
+	        <when test="@com.tx.core.Ognl@isNotEmpty(orderSql)">  
+	            ORDER BY #{orderSql}
+	        </when>
+	        <otherwise>  
+	            <!-- //TODO:ADD DEFAULT ORDER COLUMN OR DONOTHING! -->
+	        </otherwise>  
+	    </choose>
+	</select>
+	
+		<!-- auto generate default count -->
+	<select id="querySimpleRulePropertyByteCount" 
+		parameterType="java.util.Map"
+		resultType="java.lang.Integer">
+		SELECT COUNT(1)
+		  FROM RU_RULE_PRO_BYTE TSRPB
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="@com.tx.core.Ognl@isNotEmpty(ruleId)">  
+	            AND TSRPB.RULEID = #{ruleId,javaType=java.lang.String}
+	        </if>
+			<if test="@com.tx.core.Ognl@isNotEmpty(simpleRulePropertyParam)">  
+	            AND TSRPB.SIMPLERULEPROPERTYPARAM = #{simpleRulePropertyParam,javaType=com.tx.component.rule.model.SimpleRulePropertyParam}
+	        </if>
+			<if test="@com.tx.core.Ognl@isNotEmpty(paramKey)">  
+	            AND TSRPB.PARAMKEY = #{paramKey,javaType=java.lang.String}
+	        </if>
+			<if test="@com.tx.core.Ognl@isNotEmpty(paramValue)">  
+	            AND TSRPB.PARAMVALUE = #{paramValue,javaType=[B}
+	        </if>
+			<if test="@com.tx.core.Ognl@isNotEmpty(paramValueOrdered)">  
+	            AND TSRPB.PARAMVALUEORDERED = #{paramValueOrdered,javaType=int}
+	        </if>
+		</trim>
+	</select>
+    
+    <!-- auto generate default insert -->
+    <insert id="insertSimpleRulePropertyByte" 
+		parameterType="com.tx.component.rule.model.SimpleRulePropertyByte">
+		INSERT INTO RU_RULE_PRO_BYTE
+		(
+			RULEID,
+			SIMPLERULEPROPERTYPARAM,
+			PARAMKEY,
+			PARAMVALUE,
+			PARAMVALUEORDERED
+		)
+		VALUES
+		(
+			#{ruleId},
+			#{simpleRulePropertyParam},
+			#{paramKey},
+			#{paramValue},
+			#{paramValueOrdered}
+		)
+	</insert>
+	
+	<!-- auto generate default delete -->
+	<delete id="deleteSimpleRulePropertyByte" 
+		parameterType="com.tx.component.rule.model.SimpleRulePropertyByte">
+		DELETE FROM RU_RULE_PRO_BYTE TSRPB WHERE
+		<trim prefixOverrides="AND | OR">
+			<if test="@com.tx.core.Ognl@isNotEmpty(id)">  
+	            AND TSRPB.RULEID = #{ruleId}
+	        </if>
+		</trim>
+	</delete>
+
+	<!-- auto generate default update -->
+	<update id="updateSimpleRulePropertyByte"
+	    parameterType="java.util.Map">  
+	    UPDATE ru_rule_pro_byte TSRPB
+	    <trim prefix="SET" suffixOverrides=",">
+			<if test="_parameter.containsKey('simpleRulePropertyParam')">
+	    		SIMPLERULEPROPERTYPARAM = #{simpleRulePropertyParam,javaType=com.tx.component.rule.model.SimpleRulePropertyParam},
+	    	</if>	
+			<if test="_parameter.containsKey('paramKey')">
+	    		PARAMKEY = #{paramKey,javaType=java.lang.String},
+	    	</if>	
+			<if test="_parameter.containsKey('paramValue')">
+	    		PARAMVALUE = #{paramValue,javaType=[B},
+	    	</if>	
+			<if test="_parameter.containsKey('paramValueOrdered')">
+	    		PARAMVALUEORDERED = #{paramValueOrdered,javaType=int},
+	    	</if>	
+	    </trim>
+	    WHERE TSRPB.RULEID = #{ruleId} 
+	</update>  
+
+</mapper>
+<!--
+sqlMap生成描述:
+
+-->

@@ -7,6 +7,8 @@
 package com.tx.component.rule.mybatishelper;
 
 import com.tx.component.rule.model.SimplePersistenceRule;
+import com.tx.component.rule.model.SimpleRulePropertyByte;
+import com.tx.component.rule.model.SimpleRulePropertyValue;
 import com.tx.core.mybatis.generator.JpaEntityFreeMarkerGenerator;
 
 
@@ -33,7 +35,7 @@ public class GenerateCodeByJpaModelTest {
         factory.setSqlMapTemplateFilePath("com/tx/component/rule/mybatishelper/sqlMap.ftl");
         
         //生成后在自己指定的文件夹中去找即可
-        factory.generate(SimplePersistenceRule.class, "d:/mybatis");
+        factory.generate(SimpleRulePropertyValue.class, "d:/mybatis");
         
         System.out.println("success");
     }

@@ -76,6 +76,7 @@ public class RuleLoaderSupportPostProcessor implements BeanPostProcessor,
             throws BeansException {
         if (bean instanceof RuleLoader) {
             RuleContext.registerRuleLoader((RuleLoader) bean);
+            //TODO:启动一个
             RuleLoader realRuleLoader = (RuleLoader) bean;
             List<Rule> ruleList = realRuleLoader.load();
             this.applicationContext.publishEvent(new LoadRuleEvent(this,
