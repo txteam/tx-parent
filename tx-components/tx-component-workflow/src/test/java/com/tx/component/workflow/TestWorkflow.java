@@ -41,7 +41,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.tx.component.workflow.service.ProcessService;
+import com.tx.component.workflow.service.ProcessInstanceService;
 
 
  /**
@@ -73,7 +73,7 @@ public class TestWorkflow extends TestWFBase implements InitializingBean{
     private RepositoryService repositoryService;
     
     @Resource(name = "processInstanceService")
-    private ProcessService processInstanceService;
+    private ProcessInstanceService processInstanceService;
 
 
     /**

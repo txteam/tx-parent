@@ -8,6 +8,7 @@ package com.tx.component.workflow.mybatishelper;
 
 import com.tx.component.workflow.model.ProTaskDefinition;
 import com.tx.component.workflow.model.ProcessDefinition;
+import com.tx.component.workflow.model.impl.ProcessDefinitionEntity;
 import com.tx.core.mybatis.generator.JpaEntityFreeMarkerGenerator;
 
 
@@ -34,7 +35,7 @@ public class GenerateCodeByJpaModelTest {
         factory.setSqlMapTemplateFilePath("com/tx/component/workflow/mybatishelper/sqlMap.ftl");
         
         //生成后在自己指定的文件夹中去找即可
-        factory.generate(ProcessDefinition.class, "d:/mybatis");
+        factory.generate(ProcessDefinitionEntity.class, "d:/mybatis");
         
         System.out.println("success");
     }

@@ -38,7 +38,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.tx.component.workflow.exceptions.WorkflowAccessException;
 import com.tx.component.workflow.model.ProTaskDefinition;
 import com.tx.component.workflow.model.ProTransitionDefinition;
-import com.tx.component.workflow.service.ProcessService;
+import com.tx.component.workflow.service.ProcessInstanceService;
 import com.tx.core.exceptions.parameter.ParameterIsEmptyException;
 
 /**
@@ -51,7 +51,7 @@ import com.tx.core.exceptions.parameter.ParameterIsEmptyException;
  */
 @Component("processInstanceService")
 public class ActivitiProcessServiceImpl implements InitializingBean,
-        ProcessService {
+        ProcessInstanceService {
     
     /** 日志记录器 */
     private static Logger logger = LoggerFactory.getLogger(ActivitiProcessServiceImpl.class);

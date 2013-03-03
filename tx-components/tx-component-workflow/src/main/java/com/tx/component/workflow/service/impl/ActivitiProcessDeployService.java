@@ -4,10 +4,9 @@
  * 修改时间:  2013-2-16
  * <修改描述:>
  */
-package com.tx.component.workflow.service;
+package com.tx.component.workflow.service.impl;
 
 import java.io.InputStream;
-import java.util.Date;
 
 import javax.annotation.Resource;
 
@@ -21,7 +20,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.tx.component.workflow.WorkFlowConstants;
+import com.tx.component.workflow.model.impl.ActivitiProcessDefinition;
 import com.tx.core.exceptions.parameter.ParameterIsEmptyException;
 
 /**
@@ -35,15 +34,12 @@ import com.tx.core.exceptions.parameter.ParameterIsEmptyException;
  * @since  [产品/模块版本]
  */
 @Component("processDeployService")
-public class ProcessDeployService implements InitializingBean {
+public class ActivitiProcessDeployService implements InitializingBean {
     
     @Resource(name = "processEngine")
     private ProcessEngine processEngine;
     
     private RepositoryService repositoryService;
-    
-    @Resource(name = "processDefinitionService")
-    private ProcessDefinitionService processDefinitionService;
     
     /**
      * @throws Exception
@@ -64,8 +60,8 @@ public class ProcessDeployService implements InitializingBean {
       * @see [类、类#方法、类#成员]
      */
     @Transactional
-    public void deploy(String resourceName, InputStream inputStream,
-            String serviceType) {
+    public com.tx.component.workflow.model.ProcessDefinition deploy(
+            String resourceName, InputStream inputStream, String serviceType) {
         //验证参数合法性
         if (StringUtils.isEmpty(resourceName) || inputStream == null) {
             throw new ParameterIsEmptyException(
@@ -82,38 +78,7 @@ public class ProcessDeployService implements InitializingBean {
                 resourceName);
         
         //持久化到流程定义中
-        deployToLocal(processDef, serviceType);
-    }
-    
-    /**
-      * 部署到本地流程引擎中
-      * <功能详细描述>
-      * @param processDef
-      * @param serviceType
-      * @return [参数说明]
-      * 
-      * @return com.tx.component.workflow.model.ProcessDefinition [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    private com.tx.component.workflow.model.ProcessDefinition deployToLocal(
-            ProcessDefinition processDef, String serviceType) {
-        com.tx.component.workflow.model.ProcessDefinition processDefinition = new com.tx.component.workflow.model.ProcessDefinition();
-        
-        processDefinition.setCategory(processDef.getCategory());
-        processDefinition.setWfdId(processDef.getId());
-        processDefinition.setKey(processDef.getKey());
-        processDefinition.setVersion(String.valueOf(processDef.getVersion()));
-        processDefinition.setName(processDef.getName());
-        
-        processDefinition.setCreateDate(new Date());
-        processDefinition.setLastUpdateDate(new Date());
-        
-        processDefinition.setServiceType(serviceType);
-        processDefinition.setState(WorkFlowConstants.PROCESS_DEFINITION_STATE_CONFIG);
-        
-        this.processDefinitionService.insertProcessDefinition(processDefinition);
-        return null;
+        return new ActivitiProcessDefinition(processDef);
     }
     
     /**
@@ -156,5 +121,4 @@ public class ProcessDeployService implements InitializingBean {
         
         return processDef;
     }
-    
 }

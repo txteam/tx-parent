@@ -24,7 +24,7 @@ import com.tx.component.workflow.model.ProTransitionDefinition;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public interface ProcessService {
+public interface ProcessInstanceService {
     /**
      * 开始一条流程实例，更多适用于，启动一条非最新版本的流程实例<br/>
      *     1、根据流程的最新版本创建一个流程实例<br/>
