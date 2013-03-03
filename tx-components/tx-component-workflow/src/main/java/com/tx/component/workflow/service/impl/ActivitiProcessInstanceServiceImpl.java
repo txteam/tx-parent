@@ -36,7 +36,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.tx.component.workflow.exceptions.WorkflowAccessException;
-import com.tx.component.workflow.model.ProTaskDefinition;
+import com.tx.component.workflow.model.ProTaskInstance;
 import com.tx.component.workflow.model.ProTransitionDefinition;
 import com.tx.component.workflow.service.ProcessInstanceService;
 import com.tx.core.exceptions.parameter.ParameterIsEmptyException;
@@ -50,11 +50,11 @@ import com.tx.core.exceptions.parameter.ParameterIsEmptyException;
  * @since  [产品/模块版本]
  */
 @Component("processInstanceService")
-public class ActivitiProcessServiceImpl implements InitializingBean,
+public class ActivitiProcessInstanceServiceImpl implements InitializingBean,
         ProcessInstanceService {
     
     /** 日志记录器 */
-    private static Logger logger = LoggerFactory.getLogger(ActivitiProcessServiceImpl.class);
+    private static Logger logger = LoggerFactory.getLogger(ActivitiProcessInstanceServiceImpl.class);
     
     /** activiti流程引擎 */
     @Resource(name = "processEngine")
@@ -376,7 +376,7 @@ public class ActivitiProcessServiceImpl implements InitializingBean,
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public List<ProTaskDefinition> getCurrentProTaskList(
+    public List<ProTaskInstance> getCurrentProTaskList(
             String processInstanceId) {
         if (StringUtils.isEmpty(processInstanceId)) {
             throw new ParameterIsEmptyException(
@@ -397,7 +397,7 @@ public class ActivitiProcessServiceImpl implements InitializingBean,
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public ProTaskDefinition getCurrentProTask(String processInstanceId) {
+    public ProTaskInstance getCurrentProTask(String processInstanceId) {
         if (StringUtils.isEmpty(processInstanceId)) {
             throw new ParameterIsEmptyException(
                     "ProcessInstanceServic.complete processInstanceId is empty.");
@@ -690,13 +690,13 @@ public class ActivitiProcessServiceImpl implements InitializingBean,
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public List<ProTaskDefinition> getCurrentTasks(String executionId) {
+    public List<ProTaskInstance> getCurrentTasks(String executionId) {
         //this.taskService.
         
         return null;
     }
     
-    public ProTaskDefinition getCurrentTask(String processInstanceId) {
+    public ProTaskInstance getCurrentTask(String processInstanceId) {
         TaskQuery taskQuery = this.taskService.createTaskQuery()
                 .processInstanceId(processInstanceId);
         //如果流程流转为并行节点，则不适合调用该方法，调用该方法这里讲会抛出异常
@@ -705,7 +705,7 @@ public class ActivitiProcessServiceImpl implements InitializingBean,
         return null;
     }
     
-    public List<ProTaskDefinition> getCurrentTaskList(String processInstanceId) {
+    public List<ProTaskInstance> getCurrentTaskList(String processInstanceId) {
         TaskQuery taskQuery = this.taskService.createTaskQuery()
                 .processInstanceId(processInstanceId);
         //

@@ -16,7 +16,8 @@ package com.tx.component.workflow.model.impl;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
   */
-public class ProTransitionDefinition {
+@Deprecated
+public class ProTransitionDefinitionEntity {
     
     /** 流程流转定义 */
     private String id;
@@ -31,10 +32,10 @@ public class ProTransitionDefinition {
     private Object target;
     
     /** 流程任务源目标定义 */
-    private ProTaskDefinition sourceTaskDefinition;
+    private ProTaskDefinitionEntity sourceTaskDefinition;
     
     /** 流程流转定义 */
-    private ProTaskDefinition targetTaskDefinition;
+    private ProTaskDefinitionEntity targetTaskDefinition;
     
     /** 代理的引擎实例 */
     private Object delegate;
@@ -98,28 +99,28 @@ public class ProTransitionDefinition {
     /**
      * @return 返回 sourceTaskDefinition
      */
-    public ProTaskDefinition getSourceTaskDefinition() {
+    public ProTaskDefinitionEntity getSourceTaskDefinition() {
         return sourceTaskDefinition;
     }
 
     /**
      * @param 对sourceTaskDefinition进行赋值
      */
-    public void setSourceTaskDefinition(ProTaskDefinition sourceTaskDefinition) {
+    public void setSourceTaskDefinition(ProTaskDefinitionEntity sourceTaskDefinition) {
         this.sourceTaskDefinition = sourceTaskDefinition;
     }
 
     /**
      * @return 返回 targetTaskDefinition
      */
-    public ProTaskDefinition getTargetTaskDefinition() {
+    public ProTaskDefinitionEntity getTargetTaskDefinition() {
         return targetTaskDefinition;
     }
 
     /**
      * @param 对targetTaskDefinition进行赋值
      */
-    public void setTargetTaskDefinition(ProTaskDefinition targetTaskDefinition) {
+    public void setTargetTaskDefinition(ProTaskDefinitionEntity targetTaskDefinition) {
         this.targetTaskDefinition = targetTaskDefinition;
     }
 

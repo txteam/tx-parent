@@ -8,6 +8,8 @@ package com.tx.component.workflow.service;
 
 import java.io.InputStream;
 
+import com.tx.component.workflow.model.ProcessDefinition;
+
 
  /**
   * 流程定义相关业务逻辑层
@@ -30,6 +32,6 @@ public interface ProcessDefinitionService {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-   void deploy(String resourceName, InputStream inputStream,
+   ProcessDefinition deploy(String resourceName, InputStream inputStream,
            String serviceType);
 }

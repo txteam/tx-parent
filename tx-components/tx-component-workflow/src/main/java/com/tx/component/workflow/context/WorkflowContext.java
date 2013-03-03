@@ -15,7 +15,6 @@ import org.activiti.engine.TaskService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.context.SmartLifecycle;
 
 /**
  * 流程容器<br/>
@@ -29,8 +28,9 @@ import org.springframework.context.SmartLifecycle;
  * @since  [产品/模块版本]
  */
 @Resource(name = "workflowContext")
-public class WorkflowContext implements InitializingBean, SmartLifecycle {
+public class WorkflowContext implements InitializingBean{
     
+    @SuppressWarnings("unused")
     //日志记录器
     private static Logger logger = LoggerFactory.getLogger(WorkflowContext.class);
     
@@ -38,19 +38,17 @@ public class WorkflowContext implements InitializingBean, SmartLifecycle {
     @Resource(name = "processEngine")
     private ProcessEngine processEngine;
     
+    @SuppressWarnings("unused")
     private RuntimeService runtimeService;
     
+    @SuppressWarnings("unused")
     private TaskService taskService;
     
+    @SuppressWarnings("unused")
     private RepositoryService repositoryService;
     
+    @SuppressWarnings("unused")
     private org.springframework.core.io.Resource[] deploymentResources;
-    
-    private boolean autoStartup;
-    
-    private int phase = Integer.MAX_VALUE;
-    
-    private int startupDelay = 0;
     
     /**
      * @throws Exception
@@ -60,111 +58,5 @@ public class WorkflowContext implements InitializingBean, SmartLifecycle {
         this.taskService = processEngine.getTaskService();
         this.repositoryService = processEngine.getRepositoryService();
         this.runtimeService = processEngine.getRuntimeService();
-    }
-    
-    /**
-     * @return
-     */
-    @Override
-    public int getPhase() {
-        return this.phase;
-    }
-    
-    /**
-     * 
-     */
-    @Override
-    public void start() {
-        if (this.repositoryService != null) {
-//            try {
-//                startWorkflowContext(this.repositoryService, this.deploymentResources);
-//            } catch (SchedulerException ex) {
-//                throw new SchedulingException(
-//                        "Could not start Quartz Scheduler", ex);
-//            }
-        }
-    }
-    
-    /**
-     * 
-     */
-    @Override
-    public void stop() {
-        //doNoThing
-    }
-    
-    /**
-     * @return
-     */
-    @Override
-    public boolean isRunning() {
-        return true;
-    }
-    
-    /**
-     * @return
-     */
-    @Override
-    public boolean isAutoStartup() {
-        return this.autoStartup;
-    }
-    
-    /**
-     * @param callback
-     */
-    @Override
-    public void stop(Runnable callback) {
-        //doNoThing
-    }
-    
-    /**
-      * 加载系统流程<br/>
-      * <功能详细描述>
-      * @param repositoryServiceParameter
-      * @param deploymentResourcesParameter
-      * @throws SchedulerException [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    protected void startWorkflowContext(final RepositoryService repositoryServiceParameter,
-            final org.springframework.core.io.Resource[] deploymentResourcesParameter){
-        //启动加载工作流
-//        if (startupDelay <= 0) {
-//            logger.info("Starting WorkflowContext Scheduler now");
-//            scheduler.start();
-//        } else {
-//            if (logger.isInfoEnabled()) {
-//                logger.info("Will start Quartz Scheduler ["
-//                        + scheduler.getSchedulerName() + "] in " + startupDelay
-//                        + " seconds");
-//            }
-//            Thread schedulerThread = new Thread() {
-//                @Override
-//                public void run() {
-//                    try {
-//                        Thread.sleep(startupDelay * 1000);
-//                    } catch (InterruptedException ex) {
-//                        // simply proceed
-//                    }
-//                    if (logger.isInfoEnabled()) {
-//                        logger.info("Starting Quartz Scheduler now, after delay of "
-//                                + startupDelay + " seconds");
-//                    }
-//                    try {
-//                        scheduler.start();
-//                    } catch (SchedulerException ex) {
-//                        throw new SchedulingException(
-//                                "Could not start Quartz Scheduler after delay",
-//                                ex);
-//                    }
-//                }
-//            };
-//            schedulerThread.setName("Quartz Scheduler ["
-//                    + scheduler.getSchedulerName() + "]");
-//            schedulerThread.setDaemon(true);
-//            schedulerThread.start();
-//        }
     }
 }

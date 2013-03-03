@@ -31,10 +31,11 @@ import com.tx.core.tree.model.TreeAble;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
+@Deprecated
 @Entity
 @Table(name="WF_TASK_DEF")
-public class ProTaskDefinition implements Serializable,
-        TreeAble<List<ProTaskDefinition>, ProTaskDefinition>,Ordered{
+public class ProTaskDefinitionEntity implements Serializable,
+        TreeAble<List<ProTaskDefinitionEntity>, ProTaskDefinitionEntity>,Ordered{
     
     /** 注释内容 */
     private static final long serialVersionUID = 7157946783670094278L;
@@ -78,7 +79,7 @@ public class ProTaskDefinition implements Serializable,
     private boolean isViewAble;
     
     /** 流程子环节 */
-    private List<ProTaskDefinition> childs;
+    private List<ProTaskDefinitionEntity> childs;
     
     /** 代理的引擎实例  org.activiti.engine.task.Task*/
     @Transient
@@ -186,14 +187,14 @@ public class ProTaskDefinition implements Serializable,
     /**
      * @return 返回 childs
      */
-    public List<ProTaskDefinition> getChilds() {
+    public List<ProTaskDefinitionEntity> getChilds() {
         return childs;
     }
     
     /**
      * @param 对childs进行赋值
      */
-    public void setChilds(List<ProTaskDefinition> childs) {
+    public void setChilds(List<ProTaskDefinitionEntity> childs) {
         this.childs = childs;
     }
 

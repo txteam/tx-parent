@@ -31,10 +31,10 @@ public class ProTransitionDefinition {
     private Object target;
     
     /** 流程任务源目标定义 */
-    private ProTaskDefinition sourceTaskDefinition;
+    private ProTaskInstance sourceTaskDefinition;
     
     /** 流程流转定义 */
-    private ProTaskDefinition targetTaskDefinition;
+    private ProTaskInstance targetTaskDefinition;
     
     /** 代理的引擎实例 */
     private Object delegate;
@@ -98,28 +98,28 @@ public class ProTransitionDefinition {
     /**
      * @return 返回 sourceTaskDefinition
      */
-    public ProTaskDefinition getSourceTaskDefinition() {
+    public ProTaskInstance getSourceTaskDefinition() {
         return sourceTaskDefinition;
     }
 
     /**
      * @param 对sourceTaskDefinition进行赋值
      */
-    public void setSourceTaskDefinition(ProTaskDefinition sourceTaskDefinition) {
+    public void setSourceTaskDefinition(ProTaskInstance sourceTaskDefinition) {
         this.sourceTaskDefinition = sourceTaskDefinition;
     }
 
     /**
      * @return 返回 targetTaskDefinition
      */
-    public ProTaskDefinition getTargetTaskDefinition() {
+    public ProTaskInstance getTargetTaskDefinition() {
         return targetTaskDefinition;
     }
 
     /**
      * @param 对targetTaskDefinition进行赋值
      */
-    public void setTargetTaskDefinition(ProTaskDefinition targetTaskDefinition) {
+    public void setTargetTaskDefinition(ProTaskInstance targetTaskDefinition) {
         this.targetTaskDefinition = targetTaskDefinition;
     }
 
