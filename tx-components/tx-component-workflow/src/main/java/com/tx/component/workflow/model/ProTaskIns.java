@@ -21,7 +21,7 @@ import java.util.Date;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public interface ProTaskInstance extends Serializable{
+public interface ProTaskIns extends Serializable{
     
     /**
       * 存储在数据库中Task实例的id

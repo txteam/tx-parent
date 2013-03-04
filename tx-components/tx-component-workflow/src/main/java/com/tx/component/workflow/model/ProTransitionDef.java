@@ -16,7 +16,7 @@ package com.tx.component.workflow.model;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
   */
-public class ProTransitionDefinition {
+public class ProTransitionDef {
     
     /** 流程流转定义 */
     private String id;
@@ -31,10 +31,10 @@ public class ProTransitionDefinition {
     private Object target;
     
     /** 流程任务源目标定义 */
-    private ProTaskInstance sourceTaskDefinition;
+    private ProTaskIns sourceTaskDefinition;
     
     /** 流程流转定义 */
-    private ProTaskInstance targetTaskDefinition;
+    private ProTaskIns targetTaskDefinition;
     
     /** 代理的引擎实例 */
     private Object delegate;
@@ -98,28 +98,28 @@ public class ProTransitionDefinition {
     /**
      * @return 返回 sourceTaskDefinition
      */
-    public ProTaskInstance getSourceTaskDefinition() {
+    public ProTaskIns getSourceTaskDefinition() {
         return sourceTaskDefinition;
     }
 
     /**
      * @param 对sourceTaskDefinition进行赋值
      */
-    public void setSourceTaskDefinition(ProTaskInstance sourceTaskDefinition) {
+    public void setSourceTaskDefinition(ProTaskIns sourceTaskDefinition) {
         this.sourceTaskDefinition = sourceTaskDefinition;
     }
 
     /**
      * @return 返回 targetTaskDefinition
      */
-    public ProTaskInstance getTargetTaskDefinition() {
+    public ProTaskIns getTargetTaskDefinition() {
         return targetTaskDefinition;
     }
 
     /**
      * @param 对targetTaskDefinition进行赋值
      */
-    public void setTargetTaskDefinition(ProTaskInstance targetTaskDefinition) {
+    public void setTargetTaskDefinition(ProTaskIns targetTaskDefinition) {
         this.targetTaskDefinition = targetTaskDefinition;
     }
 

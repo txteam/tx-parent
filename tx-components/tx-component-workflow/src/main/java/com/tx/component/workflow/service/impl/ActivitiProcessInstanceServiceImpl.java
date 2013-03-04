@@ -36,8 +36,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.tx.component.workflow.exceptions.WorkflowAccessException;
-import com.tx.component.workflow.model.ProTaskInstance;
-import com.tx.component.workflow.model.ProTransitionDefinition;
+import com.tx.component.workflow.model.ProTaskIns;
+import com.tx.component.workflow.model.ProTransitionDef;
 import com.tx.component.workflow.service.ProcessInstanceService;
 import com.tx.core.exceptions.parameter.ParameterIsEmptyException;
 
@@ -376,7 +376,7 @@ public class ActivitiProcessInstanceServiceImpl implements InitializingBean,
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public List<ProTaskInstance> getCurrentProTaskList(
+    public List<ProTaskIns> getCurrentProTaskList(
             String processInstanceId) {
         if (StringUtils.isEmpty(processInstanceId)) {
             throw new ParameterIsEmptyException(
@@ -397,7 +397,7 @@ public class ActivitiProcessInstanceServiceImpl implements InitializingBean,
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public ProTaskInstance getCurrentProTask(String processInstanceId) {
+    public ProTaskIns getCurrentProTask(String processInstanceId) {
         if (StringUtils.isEmpty(processInstanceId)) {
             throw new ParameterIsEmptyException(
                     "ProcessInstanceServic.complete processInstanceId is empty.");
@@ -600,6 +600,7 @@ public class ActivitiProcessInstanceServiceImpl implements InitializingBean,
             bakOutGoingTransitionList.addAll(outGoingTransitionList);
             for (PvmTransition transition : outGoingTransitionList) {
                 //根据操作名进行进行流程流转
+                //TODO:同操作名的pvmTransition保留，由condition自行进行判断
                 if (transitionName.equals(transition.getProperty("name"))) {
                     outGoingTransitionList.clear();
                     outGoingTransitionList.add(transition);
@@ -673,7 +674,7 @@ public class ActivitiProcessInstanceServiceImpl implements InitializingBean,
      * @param processInsId
      * @return
      */
-    public List<ProTransitionDefinition> getCurrentTaskAllTransition(
+    public List<ProTransitionDef> getCurrentTaskAllTransition(
             String processInsId) {
         // TODO Auto-generated method stub
         
@@ -690,13 +691,13 @@ public class ActivitiProcessInstanceServiceImpl implements InitializingBean,
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public List<ProTaskInstance> getCurrentTasks(String executionId) {
+    public List<ProTaskIns> getCurrentTasks(String executionId) {
         //this.taskService.
         
         return null;
     }
     
-    public ProTaskInstance getCurrentTask(String processInstanceId) {
+    public ProTaskIns getCurrentTask(String processInstanceId) {
         TaskQuery taskQuery = this.taskService.createTaskQuery()
                 .processInstanceId(processInstanceId);
         //如果流程流转为并行节点，则不适合调用该方法，调用该方法这里讲会抛出异常
@@ -705,7 +706,7 @@ public class ActivitiProcessInstanceServiceImpl implements InitializingBean,
         return null;
     }
     
-    public List<ProTaskInstance> getCurrentTaskList(String processInstanceId) {
+    public List<ProTaskIns> getCurrentTaskList(String processInstanceId) {
         TaskQuery taskQuery = this.taskService.createTaskQuery()
                 .processInstanceId(processInstanceId);
         //
@@ -931,27 +932,6 @@ public class ActivitiProcessInstanceServiceImpl implements InitializingBean,
         int proInsLockIndex = proInsIdHashCode
                 % (processInsLockNum <= 0 ? 256 : processInsLockNum);
         return processInsLocks[proInsLockIndex];
-    }
-    
-    /**
-     * 判断是否传入了有效的businessKey
-     *     1、根据流程的最新版本创建一个流程实例<br/>
-     *     
-     * @param businessKey
-     * @return [参数说明]
-     * 
-     * @return boolean [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-    */
-    @SuppressWarnings("unused")
-    private boolean businessKeyIsExsit(String[] businessKey) {
-        if (ArrayUtils.isEmpty(businessKey)
-                || StringUtils.isEmpty(businessKey[0])) {
-            return false;
-        } else {
-            return true;
-        }
     }
     
     /**

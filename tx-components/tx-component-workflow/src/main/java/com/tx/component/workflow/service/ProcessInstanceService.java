@@ -10,8 +10,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import com.tx.component.workflow.model.ProTaskInstance;
-import com.tx.component.workflow.model.ProTransitionDefinition;
+import com.tx.component.workflow.model.ProTaskIns;
+import com.tx.component.workflow.model.ProTransitionDef;
 
 /**
  * 工作流实例业务层逻辑<br/>
@@ -172,7 +172,7 @@ public interface ProcessInstanceService {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    List<ProTaskInstance> getCurrentProTaskList(String processInstanceId);
+    List<ProTaskIns> getCurrentProTaskList(String processInstanceId);
     
     /**
       * <功能简述>
@@ -184,7 +184,7 @@ public interface ProcessInstanceService {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    ProTaskInstance getCurrentProTask(String processInstanceId);
+    ProTaskIns getCurrentProTask(String processInstanceId);
     
     /**
       * 完成当前流程环节任务，使其流入下一个流程环节任务,
@@ -298,7 +298,7 @@ public interface ProcessInstanceService {
      * @param processInsId
      * @return
      */
-    List<ProTransitionDefinition> getCurrentTaskAllTransition(
+    List<ProTransitionDef> getCurrentTaskAllTransition(
             String processInsId);
     
     /**
@@ -311,10 +311,10 @@ public interface ProcessInstanceService {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    List<ProTaskInstance> getCurrentTasks(String executionId);
+    List<ProTaskIns> getCurrentTasks(String executionId);
     
-    ProTaskInstance getCurrentTask(String processInstanceId);
+    ProTaskIns getCurrentTask(String processInstanceId);
     
-    List<ProTaskInstance> getCurrentTaskList(String processInstanceId);
+    List<ProTaskIns> getCurrentTaskList(String processInstanceId);
     
 }

@@ -10,7 +10,7 @@ import java.util.Date;
 
 import org.activiti.engine.task.Task;
 
-import com.tx.component.workflow.model.ProTaskInstance;
+import com.tx.component.workflow.model.ProTaskIns;
 
 
  /**
@@ -22,7 +22,7 @@ import com.tx.component.workflow.model.ProTaskInstance;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
   */
-public class ActivitiProTaskInstance implements ProTaskInstance {
+public class ActivitiProTaskInstance implements ProTaskIns {
     
     /** 注释内容 */
     private static final long serialVersionUID = -5200062162337090431L;

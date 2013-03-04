@@ -15,7 +15,7 @@ package com.tx.component.workflow.model;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public interface ProTaskDefinition {
+public interface ProTaskDef {
     
     /**
      * task实例名

@@ -8,22 +8,21 @@ package com.tx.component.workflow.service;
 
 import java.io.InputStream;
 
-import com.tx.component.workflow.model.ProcessDefinition;
+import com.tx.component.workflow.model.ProcessDef;
 
-
- /**
-  * 流程定义相关业务逻辑层
-  * <功能详细描述>
-  * 
-  * @author  brady
-  * @version  [版本号, 2013-3-3]
-  * @see  [相关类/方法]
-  * @since  [产品/模块版本]
-  */
+/**
+ * 流程定义相关业务逻辑层
+ * <功能详细描述>
+ * 
+ * @author  brady
+ * @version  [版本号, 2013-3-3]
+ * @see  [相关类/方法]
+ * @since  [产品/模块版本]
+ */
 public interface ProcessDefinitionService {
     
     /**
-     * 更具指定名，以及输入流部署对应的流程
+     * 根据指定名，以及输入流部署对应的流程
      * @param key
      * @param inputStream [参数说明]
      * @param serviceType [参数说明]
@@ -32,6 +31,20 @@ public interface ProcessDefinitionService {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-   ProcessDefinition deploy(String resourceName, InputStream inputStream,
-           String serviceType);
+    ProcessDef deploy(String deployName, String resourceName,
+            InputStream inputStream);
+    
+    /**
+      * 根据流程定义id获取流程实例
+      * <功能详细描述>
+      * @param processDefinitionId
+      * @return [参数说明]
+      * 
+      * @return ProcessDefinition [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    //ProcessDefinition getProcessDefinitionById(String processDefinitionId);
+    
+    
 }

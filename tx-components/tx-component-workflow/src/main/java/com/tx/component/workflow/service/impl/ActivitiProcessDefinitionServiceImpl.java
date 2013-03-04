@@ -21,7 +21,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.tx.component.workflow.model.impl.ActivitiProcessDefinition;
+import com.tx.component.workflow.service.ProcessDefinitionService;
 import com.tx.core.exceptions.parameter.ParameterIsEmptyException;
+import com.tx.core.exceptions.parameter.ParameterIsInvalidException;
 
 /**
  * 流程部署业务层<br/>
@@ -33,8 +35,9 @@ import com.tx.core.exceptions.parameter.ParameterIsEmptyException;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-@Component("processDeployService")
-public class ActivitiProcessDeployService implements InitializingBean {
+@Component("processDefinitionService")
+public class ActivitiProcessDefinitionServiceImpl implements InitializingBean,
+        ProcessDefinitionService {
     
     @Resource(name = "processEngine")
     private ProcessEngine processEngine;
@@ -50,32 +53,35 @@ public class ActivitiProcessDeployService implements InitializingBean {
     }
     
     /**
-      * 更具指定名，以及输入流部署对应的流程
-      * @param key
-      * @param inputStream [参数说明]
-      * @param serviceType [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 根据指定名，以及资源名,以及输入流部署对应的流程
+     * @param deployName
+     * @param resourceName
+     * @param inputStream
+     * @return
      */
     @Transactional
-    public com.tx.component.workflow.model.ProcessDefinition deploy(
-            String resourceName, InputStream inputStream, String serviceType) {
+    public com.tx.component.workflow.model.ProcessDef deploy(
+            String deployName, String resourceName, InputStream inputStream) {
         //验证参数合法性
         if (StringUtils.isEmpty(resourceName) || inputStream == null) {
             throw new ParameterIsEmptyException(
                     "ProcessDeployService.deploy resourceName or inputStream is empty");
         }
+        if (!resourceName.endsWith(".bpmn")) {
+            resourceName = resourceName + ".bpmn";
+        }
+        if (StringUtils.isEmpty(deployName)) {
+            deployName = resourceName;
+        }
         
         //部署流程
-        DeploymentEntity deployment = deployToActiviti(resourceName,
+        DeploymentEntity deployment = deployToActiviti(deployName,
+                resourceName,
                 inputStream);
         
         //获取部署的流程定义
         String deploymentId = deployment.getId();
-        ProcessDefinition processDef = getLastVersionProcessDefinition(deploymentId,
-                resourceName);
+        ProcessDefinition processDef = getProcessDefinitionByDeployId(deploymentId);
         
         //持久化到流程定义中
         return new ActivitiProcessDefinition(processDef);
@@ -92,9 +98,10 @@ public class ActivitiProcessDeployService implements InitializingBean {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    private DeploymentEntity deployToActiviti(String resourceName,
-            InputStream inputStream) {
+    private DeploymentEntity deployToActiviti(String deployName,
+            String resourceName, InputStream inputStream) {
         DeploymentEntity deployment = (DeploymentEntity) this.repositoryService.createDeployment()
+                .name(deployName)
                 .addInputStream(resourceName, inputStream)
                 .deploy();
         return deployment;
@@ -111,13 +118,11 @@ public class ActivitiProcessDeployService implements InitializingBean {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    private ProcessDefinition getLastVersionProcessDefinition(
-            String deploymentId, String resourceName) {
+    private ProcessDefinition getProcessDefinitionByDeployId(String deploymentId) {
         ProcessDefinitionQuery pdQuery = this.repositoryService.createProcessDefinitionQuery()
-                .deploymentId(deploymentId)
-                .processDefinitionResourceName(resourceName);
+                .deploymentId(deploymentId);
         
-        ProcessDefinition processDef = pdQuery.latestVersion().singleResult();
+        ProcessDefinition processDef = pdQuery.singleResult();
         
         return processDef;
     }

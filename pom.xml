@@ -1261,6 +1261,7 @@
 					<version>3.0</version>
 					<inherited>true</inherited>
 					<configuration>
+						<verbose>true</verbose>
 						<!-- The -source argument for the Java compiler.Default value is: 1.5. -->
 						<source>1.6</source>
 						<!-- The -target argument for the Java compiler.Default value is: 1.5. -->

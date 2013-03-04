@@ -6,7 +6,9 @@
  */
 package com.tx.component.workflow.model.impl;
 
-import com.tx.component.workflow.model.ProcessDefinition;
+import org.activiti.engine.repository.ProcessDefinition;
+
+import com.tx.component.workflow.model.ProcessDef;
 
 
  /**
@@ -18,7 +20,7 @@ import com.tx.component.workflow.model.ProcessDefinition;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
   */
-public class ActivitiProcessDefinition implements ProcessDefinition{
+public class ActivitiProcessDefinition implements ProcessDef{
 
     /** 注释内容 */
     private static final long serialVersionUID = -9128041376553836296L;
@@ -26,7 +28,7 @@ public class ActivitiProcessDefinition implements ProcessDefinition{
     /**
      * 流程定义
      */
-    private org.activiti.engine.repository.ProcessDefinition activitiProcessDefDelegate;
+    private ProcessDefinition activitiProcessDefDelegate;
     
     /**
      * <默认构造函数>
