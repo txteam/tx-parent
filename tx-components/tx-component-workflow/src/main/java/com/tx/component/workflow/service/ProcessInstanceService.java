@@ -6,16 +6,15 @@
  */
 package com.tx.component.workflow.service;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import com.tx.component.workflow.model.ProTaskIns;
-import com.tx.component.workflow.model.ProTransitionDef;
+import com.tx.component.workflow.model.ProTaskInstance;
+import com.tx.component.workflow.model.ProcessInstance;
 
 /**
  * 工作流实例业务层逻辑<br/>
- * <功能详细描述>
+ *     注：process,reject,cancel如果和compelet混用会发生线程安全问题
  * 
  * @author  brady
  * @version  [版本号, 2013-1-17]
@@ -35,7 +34,7 @@ public interface ProcessInstanceService {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    String start(String processDefinitionKey);
+    ProcessInstance start(String processDefinitionKey);
     
     /**
       * 开始一条流程实例<br/>
@@ -48,7 +47,7 @@ public interface ProcessInstanceService {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    String startByDefId(String processDefinitionId);
+    ProcessInstance startByDefId(String processDefinitionId);
     
     /**
       * 开始一条流程实例<br/>
@@ -62,7 +61,8 @@ public interface ProcessInstanceService {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    String start(String processDefinitionKey, Map<String, Object> variables);
+    ProcessInstance start(String processDefinitionKey,
+            Map<String, Object> variables);
     
     /**
       * 开始一条流程实例,更多适用于，启动一条非最新版本的流程实例<br/>
@@ -75,7 +75,7 @@ public interface ProcessInstanceService {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    String startByDefId(String processDefinitionId,
+    ProcessInstance startByDefId(String processDefinitionId,
             Map<String, Object> variables);
     
     /**
@@ -135,73 +135,297 @@ public interface ProcessInstanceService {
     void setVariablesLocal(String executionId, Map<String, Object> variables);
     
     /**
-     * 获取流程环节实例变量集合
-     * @param executionId
-     * @return
-     */
-    Map<String, Object> getVariables(String executionId);
-    
-    /**
+      * 获取流程环节实例变量集合
       *<功能简述>
       *<功能详细描述>
       * @param executionId
-      * @param variableNames
       * @return [参数说明]
       * 
       * @return Map<String,Object> [返回类型说明]
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    Map<String, Object> getVariables(String executionId,
-            Collection<String> variableNames);
+    Map<String, Object> getVariables(String executionId);
     
     /**
-     * @param executionId
-     * @param key
-     * @return
+      * 获取持久的流程变量
+      *<功能简述>
+      *<功能详细描述>
+      * @param executionId
+      * @param variableName
+      * @return [参数说明]
+      * 
+      * @return Object [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    Object getVariableLocal(String executionId, String variableName);
+    
+    /**
+      * 获取流程环节实例变量集合
+      *<功能简述>
+      *<功能详细描述>
+      * @param executionId
+      * @return [参数说明]
+      * 
+      * @return Map<String,Object> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    Map<String, Object> getVariablesLocal(String executionId);
+    
+    /**
+      * 获流程变量
+      *<功能详细描述>
+      * @param executionId
+      * @param variableName
+      * @return [参数说明]
+      * 
+      * @return Object [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
      */
     Object getVariable(String executionId, String variableName);
     
     /**
-      * 获取指定流程实例的当前流程环节<br/>
+      * 为流程任务实例设置变量
+      *     1、如果对应流程实例，当前存在多个流程环节不能调用该方法
+      *     2、在该方法实现中事实上市通过流程实例id去获取当前的流程环节，如果查询出有1个以上的流程实例存在，将会抛出异常
       * <功能详细描述>
-      * @param processInstanceId
-      * @return [参数说明]
-      * 
-      * @return List<ProTaskDefinition> [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    List<ProTaskIns> getCurrentProTaskList(String processInstanceId);
-    
-    /**
-      * <功能简述>
-      * <功能详细描述>
-      * @param processInstanceId
-      * @return [参数说明]
-      * 
-      * @return ProTaskDefinition [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    ProTaskIns getCurrentProTask(String processInstanceId);
-    
-    /**
-      * 完成当前流程环节任务，使其流入下一个流程环节任务,
-      *     方法适用于不存在多个流程过程对象的情况，不适用于存在子流程的情况 <br/>
-      *     1、如果当前流程实例存在多个在并行的任务将抛出异常 <br/>
-      * <功能详细描述>
-      * @param processInstanceId [参数说明]
+      * @param processInsId
+      * @param variableName
+      * @param value [参数说明]
       * 
       * @return void [返回类型说明]
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    
-    void complete(String processInstanceId);
+    void setTaskVariable(String processInsId, String variableName, Object value);
     
     /**
-      * 完成指定流程环节任务，使流程流向下一个节点
+      * 为流程任务实例设置变量
+      *<功能详细描述>
+      * @param processInsId
+      * @param currentTaskDefKey
+      * @param variableName
+      * @param value [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    void setTaskVariable(String processInsId, String currentTaskDefKey,
+            String variableName, Object value);
+    
+    /**
+      * 为流程任务实例设置变量集合
+      *     1、如果对应流程实例，当前存在多个流程环节不能调用该方法
+      *     2、在该方法实现中事实上市通过流程实例id去获取当前的流程环节，如果查询出有1个以上的流程实例存在，将会抛出异常
+      *<功能详细描述>
+      * @param processInstanceId
+      * @param variables [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    void setTaskVariables(String processInstanceId,
+            Map<String, Object> variables);
+    
+    /**
+      * 为流程任务实例设置变量集合
+      * <功能详细描述>
+      * @param processInstanceId
+      * @param currentTaskDefKey
+      * @param variables [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    void setTaskVariables(String processInstanceId, String variableName,
+            Map<String, Object> variables);
+    
+    /**
+      * 查询流程任务环节变量
+      *     1、如果对应流程实例，当前存在多个流程环节不能调用该方法
+      *     2、在该方法实现中事实上市通过流程实例id去获取当前的流程环节，如果查询出有1个以上的流程实例存在，将会抛出异常
+      * @param processInstanceId
+      * @param variableName
+      * @return [参数说明]
+      * 
+      * @return Object [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    Object getTaskVarible(String processInstanceId, String variableName);
+    
+    /**
+      * 获流程任务环节变量
+      * <功能详细描述>
+      * @param processInstanceId
+      * @param currentTaskDefKey
+      * @param variableName
+      * @return [参数说明]
+      * 
+      * @return Object [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    Object getTaskVarible(String processInstanceId, String currentTaskDefKey,
+            String variableName);
+    
+    /**
+      * 获流程任务环节变量集合
+      *     1、如果对应流程实例，当前存在多个流程环节不能调用该方法
+      *     2、在该方法实现中事实上市通过流程实例id去获取当前的流程环节，如果查询出有1个以上的流程实例存在，将会抛出异常
+      * @param processInstanceId
+      * @param variableName
+      * @return [参数说明]
+      * 
+      * @return Map<String,Object> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    Map<String, Object> getTaskVaribles(String processInstanceId);
+    
+    /**
+      * 获流程任务环节变量集合
+      *<功能详细描述>
+      * @param processInstanceId
+      * @param currentTaskDefKey
+      * @param variableName
+      * @return [参数说明]
+      * 
+      * @return Map<String,Object> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    Map<String, Object> getTaskVaribles(String processInstanceId,
+            String currentTaskDefKey);
+    
+    /**
+     * 为流程任务实例设置变量
+     *     1、如果对应流程实例，当前存在多个流程环节不能调用该方法
+     *     2、在该方法实现中事实上市通过流程实例id去获取当前的流程环节，如果查询出有1个以上的流程实例存在，将会抛出异常
+     * <功能详细描述>
+     * @param processInsId
+     * @param variableName
+     * @param value [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    void setTaskVariableLocal(String processInsId, String variableName,
+            Object value);
+    
+    /**
+      * 为流程任务实例设置变量
+      *<功能详细描述>
+      * @param processInsId
+      * @param currentTaskDefKey
+      * @param variableName
+      * @param value [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    void setTaskVariableLocal(String processInsId, String currentTaskDefKey,
+            String variableName, Object value);
+    
+    /**
+      * 为流程任务实例设置变量集合
+      *     1、如果对应流程实例，当前存在多个流程环节不能调用该方法
+      *     2、在该方法实现中事实上市通过流程实例id去获取当前的流程环节，如果查询出有1个以上的流程实例存在，将会抛出异常
+      *<功能详细描述>
+      * @param processInstanceId
+      * @param variables [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    void setTaskVariablesLocal(String processInstanceId,
+            Map<String, Object> variables);
+    
+    /**
+      * 为流程任务实例设置变量集合
+      * <功能详细描述>
+      * @param processInstanceId
+      * @param currentTaskDefKey
+      * @param variables [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    void setTaskVariablesLocal(String processInstanceId,
+            String currentTaskDefKey, Map<String, Object> variables);
+    
+    /**
+      * 查询流程任务环节变量
+      *     1、如果对应流程实例，当前存在多个流程环节不能调用该方法
+      *     2、在该方法实现中事实上市通过流程实例id去获取当前的流程环节，如果查询出有1个以上的流程实例存在，将会抛出异常
+      * @param processInstanceId
+      * @param variableName
+      * @return [参数说明]
+      * 
+      * @return Object [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    Object getTaskVaribleLocal(String processInstanceId, String variableName);
+    
+    /**
+      * 获流程任务环节变量
+      * <功能详细描述>
+      * @param processInstanceId
+      * @param currentTaskDefKey
+      * @param variableName
+      * @return [参数说明]
+      * 
+      * @return Object [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    Object getTaskVaribleLocal(String processInstanceId,
+            String currentTaskDefKey, String variableName);
+    
+    /**
+      * 获流程任务环节变量集合
+      *     1、如果对应流程实例，当前存在多个流程环节不能调用该方法
+      *     2、在该方法实现中事实上市通过流程实例id去获取当前的流程环节，如果查询出有1个以上的流程实例存在，将会抛出异常
+      * @param processInstanceId
+      * @param variableName
+      * @return [参数说明]
+      * 
+      * @return Map<String,Object> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    Map<String, Object> getTaskVariblesLocal(String processInstanceId);
+    
+    /**
+      * 获流程任务环节变量集合
+      *<功能详细描述>
+      * @param processInstanceId
+      * @param currentTaskDefKey
+      * @param variableName
+      * @return [参数说明]
+      * 
+      * @return Map<String,Object> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    Map<String, Object> getTaskVariblesLocal(String processInstanceId,
+            String currentTaskDefKey);
+    
+    /**
+      * 完成当前流程环节任务，使其流入下一个流程环节任务,
+      *     方法适用于不存在多个流程过程对象的情况，不适用于存在子流程的情况 <br/>
+      *     1、如果当前流程实例存在多个在并行的任务将抛出异常 <br/>
       *<功能详细描述>
       * @param processInstanceId
       * @param taskVaribals [参数说明]
@@ -217,20 +441,6 @@ public interface ProcessInstanceService {
       * 完成当前流程环节任务，使其流入下一个流程环节任务<br/>
       *     1、如果当前流程实例存在多个在并行的任务将抛出异常<br/>
       *     2、
-      * <功能详细描述>
-      * @param processInstanceId
-      * @param currentTaskDefKey [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    
-    void complete(String processInstanceId, String currentTaskDefKey);
-    
-    /**
-      * 完成当前流程环节任务，使其流入下一个流程环节任务<br/>
-      * <功能详细描述>
       * @param processInstanceId
       * @param currentTaskDefKey
       * @param taskVaribals [参数说明]
@@ -244,44 +454,38 @@ public interface ProcessInstanceService {
             Map<String, Object> taskVaribals);
     
     /**
-      * 完成当前流程任务环节，并返回下一个流程环节节点定义<br/>
-      * 如果当前节点进行某一操作后可能出现分支并行任务时不能使用该方法
-      *     1、如果当前流程环节存在多个，将会抛出异常<br/>
-      *     2、如果下一个流程环节存在多个，也将会抛出异常<br/>
-      *     3、调用该方法的地方需要自行考虑，如果发生并发时流程的流转问题<br/>
-      * <功能详细描述>
-      * @param processInstanceId(流程实例id)
-      * @return [参数说明]
-      * 
-      * @return ProTransitionDefinition [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    
-    void pass(String processInstanceId);
+     * 将流程流转入指定操作名的方向
+     *     1、如果当前流程存在并行流程，调用该方法可能会发生异常
+     * <功能详细描述>
+     * @param processInstanceId(流程实例id)
+     * @return [参数说明]
+     * 
+     * @return ProTransitionDefinition [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    void process(String processInstanceId, String transitionName,
+            Map<String, Object> taskVaribals);
     
     /**
-      * 完成当前流程任务环节，并返回下一个流程环节节点定义<br/>
-      * 如果当前节点进行某一操作后可能出现分支并行任务时不能使用该方法
-      * <功能详细描述>
-      * @param processInstanceId
-      * @param currentTaskDefKey
-      * @return [参数说明]
-      * 
-      * @return ProTaskDefinition [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    void pass(String processInstanceId, String currentTaskDefKey);
-    
-    /**
-     * @return
-     */
-    void process(String processInstanceId, String transitionName);
-    
-    /**
-      *<功能简述>
+      * 将流程流转入指定操作id的方向
+      *     1、如果当前流程存在并行流程，调用该方法可能会发生异常
       *<功能详细描述>
+      * @param processInstanceId
+      * @param transitionId
+      * @param taskVaribals [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    void processById(String processInstanceId, String transitionId,
+            Map<String, Object> taskVaribals);
+    
+    /**
+      * 将流程流转入指定操作名的方向
+      *     1、如果当前流程存在并行流程，调用该方法可能会发生异常
+      * <功能详细描述>
       * @param processInstanceId
       * @param currentTaskDefKey
       * @param transitionName 
@@ -292,29 +496,50 @@ public interface ProcessInstanceService {
       * @see [类、类#方法、类#成员]
      */
     void process(String processInstanceId, String currentTaskDefKey,
-            String transitionName);
+            String transitionName, Map<String, Object> taskVaribals);
     
     /**
-     * @param processInsId
-     * @return
-     */
-    List<ProTransitionDef> getCurrentTaskAllTransition(
-            String processInsId);
+     * 将流程流转入指定操作名的方向
+     *     1、如果当前流程存在并行流程，调用该方法可能会发生异常
+     * <功能详细描述>
+     * @param processInstanceId
+     * @param currentTaskDefKey
+     * @param transitionId 
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    void processById(String processInstanceId, String currentTaskDefKey,
+            String transitionId, Map<String, Object> taskVaribals);
+    
+    //TODO: 支持process By transition And taskDefKey 因当前节是可以知道下一个可触及的任务节点的流向的
+    //TODO: 支持reject,cancel
     
     /**
-      * 获取流程当前任务
+     * 获取指定流程实例的当前流程环节<br/>
+     * <功能详细描述>
+     * @param processInstanceId
+     * @return [参数说明]
+     * 
+     * @return List<ProTaskDefinition> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    List<ProTaskInstance> getCurrentProTaskList(String processInstanceId);
+    
+    /**
+      * 获取指定流程实例的当前流程环节<br/>
+      *     1、如果当前存在并行流程环节该方法将会抛出异常<br/>
       * <功能详细描述>
-      * @param executionId
+      * @param processInstanceId
       * @return [参数说明]
       * 
-      * @return List<ProTaskDefinition> [返回类型说明]
+      * @return ProTaskDefinition [返回类型说明]
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    List<ProTaskIns> getCurrentTasks(String executionId);
-    
-    ProTaskIns getCurrentTask(String processInstanceId);
-    
-    List<ProTaskIns> getCurrentTaskList(String processInstanceId);
+    ProTaskInstance getCurrentProTask(String processInstanceId);
     
 }

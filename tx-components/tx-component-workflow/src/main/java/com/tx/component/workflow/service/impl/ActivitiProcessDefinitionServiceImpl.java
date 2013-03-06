@@ -10,20 +10,16 @@ import java.io.InputStream;
 
 import javax.annotation.Resource;
 
-import org.activiti.engine.ProcessEngine;
-import org.activiti.engine.RepositoryService;
-import org.activiti.engine.impl.persistence.entity.DeploymentEntity;
 import org.activiti.engine.repository.ProcessDefinition;
-import org.activiti.engine.repository.ProcessDefinitionQuery;
 import org.drools.core.util.StringUtils;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.tx.component.workflow.activiti5.ActivitiProcessDefinitionSupport;
+import com.tx.component.workflow.model.ProcessDiagramResource;
 import com.tx.component.workflow.model.impl.ActivitiProcessDefinition;
 import com.tx.component.workflow.service.ProcessDefinitionService;
 import com.tx.core.exceptions.parameter.ParameterIsEmptyException;
-import com.tx.core.exceptions.parameter.ParameterIsInvalidException;
 
 /**
  * 流程部署业务层<br/>
@@ -36,20 +32,22 @@ import com.tx.core.exceptions.parameter.ParameterIsInvalidException;
  * @since  [产品/模块版本]
  */
 @Component("processDefinitionService")
-public class ActivitiProcessDefinitionServiceImpl implements InitializingBean,
+public class ActivitiProcessDefinitionServiceImpl implements
         ProcessDefinitionService {
     
-    @Resource(name = "processEngine")
-    private ProcessEngine processEngine;
-    
-    private RepositoryService repositoryService;
+    @Resource(name = "activitiProcessDefinitionSupport")
+    private ActivitiProcessDefinitionSupport activiti5ProcessDefSupport;
     
     /**
-     * @throws Exception
+     * @param processDefinitionId
+     * @return
      */
     @Override
-    public void afterPropertiesSet() throws Exception {
-        this.repositoryService = this.processEngine.getRepositoryService();
+    public ProcessDiagramResource getProcessDiagramResource(
+            String processDefinitionId) {
+        ProcessDiagramResource res = activiti5ProcessDefSupport.getProcessDiagramResource(processDefinitionId);
+        
+        return res;
     }
     
     /**
@@ -60,7 +58,7 @@ public class ActivitiProcessDefinitionServiceImpl implements InitializingBean,
      * @return
      */
     @Transactional
-    public com.tx.component.workflow.model.ProcessDef deploy(
+    public com.tx.component.workflow.model.ProcessDefinition deploy(
             String deployName, String resourceName, InputStream inputStream) {
         //验证参数合法性
         if (StringUtils.isEmpty(resourceName) || inputStream == null) {
@@ -74,56 +72,24 @@ public class ActivitiProcessDefinitionServiceImpl implements InitializingBean,
             deployName = resourceName;
         }
         
-        //部署流程
-        DeploymentEntity deployment = deployToActiviti(deployName,
+        //部署流程并获取部署成功的流程定义
+        ProcessDefinition processDef = activiti5ProcessDefSupport.deployToActiviti(deployName,
                 resourceName,
                 inputStream);
-        
-        //获取部署的流程定义
-        String deploymentId = deployment.getId();
-        ProcessDefinition processDef = getProcessDefinitionByDeployId(deploymentId);
         
         //持久化到流程定义中
         return new ActivitiProcessDefinition(processDef);
     }
     
     /**
-      * 部署到activiti中
-      * <功能详细描述>
-      * @param resourceName
-      * @param inputStream
-      * @return [参数说明]
-      * 
-      * @return DeploymentEntity [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * @param processDefinitionId
+     * @return
      */
-    private DeploymentEntity deployToActiviti(String deployName,
-            String resourceName, InputStream inputStream) {
-        DeploymentEntity deployment = (DeploymentEntity) this.repositoryService.createDeployment()
-                .name(deployName)
-                .addInputStream(resourceName, inputStream)
-                .deploy();
-        return deployment;
+    @Override
+    public com.tx.component.workflow.model.ProcessDefinition getProcessDefinitionById(
+            String processDefinitionId) {
+        ProcessDefinition processDef = activiti5ProcessDefSupport.getProcessDefinitionById(processDefinitionId);
+        return new ActivitiProcessDefinition(processDef);
     }
     
-    /**
-      * 获取最新版本的最新部署流程定义
-      * <功能详细描述>
-      * @param deploymentId
-      * @param resourceName
-      * @return [参数说明]
-      * 
-      * @return ProcessDefinition [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    private ProcessDefinition getProcessDefinitionByDeployId(String deploymentId) {
-        ProcessDefinitionQuery pdQuery = this.repositoryService.createProcessDefinitionQuery()
-                .deploymentId(deploymentId);
-        
-        ProcessDefinition processDef = pdQuery.singleResult();
-        
-        return processDef;
-    }
 }

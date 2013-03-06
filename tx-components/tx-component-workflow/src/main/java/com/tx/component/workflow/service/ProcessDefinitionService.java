@@ -8,7 +8,8 @@ package com.tx.component.workflow.service;
 
 import java.io.InputStream;
 
-import com.tx.component.workflow.model.ProcessDef;
+import com.tx.component.workflow.model.ProcessDefinition;
+import com.tx.component.workflow.model.ProcessDiagramResource;
 
 /**
  * 流程定义相关业务逻辑层
@@ -31,7 +32,7 @@ public interface ProcessDefinitionService {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    ProcessDef deploy(String deployName, String resourceName,
+    ProcessDefinition deploy(String deployName, String resourceName,
             InputStream inputStream);
     
     /**
@@ -44,7 +45,17 @@ public interface ProcessDefinitionService {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    //ProcessDefinition getProcessDefinitionById(String processDefinitionId);
+    ProcessDefinition getProcessDefinitionById(String processDefinitionId);
     
-    
+    /**
+      * 获取流程图资源
+      * <功能详细描述>
+      * @param processDefinitionId
+      * @return [参数说明]
+      * 
+      * @return ProcessDiagramResource [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    ProcessDiagramResource getProcessDiagramResource(String processDefinitionId);
 }

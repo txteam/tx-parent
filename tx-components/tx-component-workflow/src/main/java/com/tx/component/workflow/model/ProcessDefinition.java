@@ -19,7 +19,7 @@ import java.io.Serializable;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
   */
-public interface ProcessDef extends Serializable{
+public interface ProcessDefinition extends Serializable{
     
     /**
       * 流程定义id

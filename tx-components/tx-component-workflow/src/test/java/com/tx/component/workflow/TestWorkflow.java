@@ -21,7 +21,6 @@ import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.impl.bpmn.behavior.ServiceTaskDelegateExpressionActivityBehavior;
-import org.activiti.engine.impl.persistence.entity.DeploymentEntity;
 import org.activiti.engine.impl.persistence.entity.ExecutionEntity;
 import org.activiti.engine.impl.persistence.entity.ProcessDefinitionEntity;
 import org.activiti.engine.impl.pvm.PvmTransition;
@@ -116,7 +115,7 @@ public class TestWorkflow extends TestWFBase implements InitializingBean {
         org.springframework.core.io.Resource resource = resourceLoader.getResource("classpath:workflow/test1/process.bpmn");
         
         try {
-            com.tx.component.workflow.model.ProcessDef t = processDefinitionService.deploy("test1",
+            com.tx.component.workflow.model.ProcessDefinition t = processDefinitionService.deploy("test1",
                     "process/test",
                     resource.getInputStream());
             System.out.println("......................");
@@ -129,14 +128,18 @@ public class TestWorkflow extends TestWFBase implements InitializingBean {
     
     @Test
     public void testNow() {
-        String proDefId = "test:18:7304";
+        String proDefId = "test:19:7504";
         
-        //String processInsId = processInstanceService.startByDefId(proDefId);
-        //System.out.println(processInsId);
+        processInsId = null;
+        //com.tx.component.workflow.model.ProcessInstance proIns = processInstanceService.startByDefId(proDefId);
+        //processInsId = proIns.getId();
+        System.out.println(processInsId);
         
         //根据流程实例处理
-        processInsId = processInsId == null ? "7401" : processInsId;
+        processInsId = processInsId == null ? "7601" : processInsId;
         //5901
+        
+        //this.processInstanceService.process(processInsId, "通过",null);
         
         //5701
         //this.processInstance = 
@@ -163,6 +166,13 @@ public class TestWorkflow extends TestWFBase implements InitializingBean {
         System.out.println("currentTask:" + currentTask.getTaskDefinitionKey());
         
         List<ActivityImpl> tt = pd.getActivities();
+        
+        Map<String, TaskDefinition> taskMap = pd.getTaskDefinitions();
+        //pd.getActivities();
+        System.out.println("task..............");
+        for(Entry<String, TaskDefinition> entryTemp : taskMap.entrySet()){
+            System.out.println(entryTemp.getKey() + " : " + entryTemp);
+        }
         
         for (ActivityImpl te : tt) {
             System.out.println("");
@@ -204,7 +214,7 @@ public class TestWorkflow extends TestWFBase implements InitializingBean {
     
     //@Test
     public void test1111() {
-        this.processInstanceService.process(this.processInsId, "submit");
+        //this.processInstanceService.process(this.processInsId, "submit");
     }
     
     //@Test

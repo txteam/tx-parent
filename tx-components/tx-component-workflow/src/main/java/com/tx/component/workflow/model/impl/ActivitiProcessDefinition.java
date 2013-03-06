@@ -8,20 +8,18 @@ package com.tx.component.workflow.model.impl;
 
 import org.activiti.engine.repository.ProcessDefinition;
 
-import com.tx.component.workflow.model.ProcessDef;
-
-
- /**
-  * 流程定义实例的activiti实现
-  * <功能详细描述>
-  * 
-  * @author  brady
-  * @version  [版本号, 2013-3-3]
-  * @see  [相关类/方法]
-  * @since  [产品/模块版本]
-  */
-public class ActivitiProcessDefinition implements ProcessDef{
-
+/**
+ * 流程定义实例的activiti实现
+ * <功能详细描述>
+ * 
+ * @author  brady
+ * @version  [版本号, 2013-3-3]
+ * @see  [相关类/方法]
+ * @since  [产品/模块版本]
+ */
+public class ActivitiProcessDefinition implements
+        com.tx.component.workflow.model.ProcessDefinition {
+    
     /** 注释内容 */
     private static final long serialVersionUID = -9128041376553836296L;
     
@@ -38,7 +36,7 @@ public class ActivitiProcessDefinition implements ProcessDef{
         super();
         this.activitiProcessDefDelegate = activitiProcessDefDelegate;
     }
-
+    
     /**
      * @return
      */
@@ -46,7 +44,7 @@ public class ActivitiProcessDefinition implements ProcessDef{
     public String getId() {
         return activitiProcessDefDelegate.getId();
     }
-
+    
     /**
      * @return
      */
@@ -54,7 +52,7 @@ public class ActivitiProcessDefinition implements ProcessDef{
     public String getCategory() {
         return activitiProcessDefDelegate.getCategory();
     }
-
+    
     /**
      * @return
      */
@@ -62,7 +60,7 @@ public class ActivitiProcessDefinition implements ProcessDef{
     public String getName() {
         return activitiProcessDefDelegate.getName();
     }
-
+    
     /**
      * @return
      */
@@ -70,7 +68,7 @@ public class ActivitiProcessDefinition implements ProcessDef{
     public String getKey() {
         return activitiProcessDefDelegate.getKey();
     }
-
+    
     /**
      * @return
      */
@@ -78,7 +76,7 @@ public class ActivitiProcessDefinition implements ProcessDef{
     public String getDescription() {
         return activitiProcessDefDelegate.getDescription();
     }
-
+    
     /**
      * @return
      */
@@ -86,7 +84,7 @@ public class ActivitiProcessDefinition implements ProcessDef{
     public int getVersion() {
         return activitiProcessDefDelegate.getVersion();
     }
-
+    
     /**
      * @return
      */
@@ -94,7 +92,7 @@ public class ActivitiProcessDefinition implements ProcessDef{
     public String getResourceName() {
         return activitiProcessDefDelegate.getResourceName();
     }
-
+    
     /**
      * @return
      */
@@ -102,6 +100,5 @@ public class ActivitiProcessDefinition implements ProcessDef{
     public boolean isSuspended() {
         return activitiProcessDefDelegate.isSuspended();
     }
-    
     
 }

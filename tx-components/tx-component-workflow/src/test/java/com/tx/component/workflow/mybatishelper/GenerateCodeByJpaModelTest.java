@@ -6,9 +6,9 @@
  */
 package com.tx.component.workflow.mybatishelper;
 
-import com.tx.component.workflow.model.ProTaskIns;
-import com.tx.component.workflow.model.ProcessDef;
-import com.tx.component.workflow.model.impl.ProcessDefinitionEntity;
+import com.tx.component.workflow.model.ProTaskInstance;
+import com.tx.component.workflow.model.ProcessDefinition;
+import com.tx.component.workflow.model.bak.ProcessDefinitionEntity;
 import com.tx.core.mybatis.generator.JpaEntityFreeMarkerGenerator;
 
 
