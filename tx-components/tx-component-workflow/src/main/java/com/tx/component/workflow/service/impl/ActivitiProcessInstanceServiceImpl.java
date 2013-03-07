@@ -666,7 +666,6 @@ public class ActivitiProcessInstanceServiceImpl implements InitializingBean,
     
     /**
       * 将流程流转入指定操作名的方向
-      *     1、如果当前流程存在并行流程，调用该方法可能会发生异常
       * @param processInstanceId
       * @param currentTaskDefKey
       * @param transitionName 
