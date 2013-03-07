@@ -7,16 +7,28 @@
 package com.tx.component.workflow.service.impl;
 
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 
+import org.activiti.engine.impl.pvm.PvmTransition;
+import org.activiti.engine.impl.pvm.process.ActivityImpl;
+import org.activiti.engine.impl.task.TaskDefinition;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.drools.core.util.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.tx.component.workflow.activiti5.ActivitiProcessDefinitionSupport;
+import com.tx.component.workflow.model.ProTaskDefinition;
+import com.tx.component.workflow.model.ProTransitionDefinition;
 import com.tx.component.workflow.model.ProcessDiagramResource;
+import com.tx.component.workflow.model.impl.ActivitiProTaskDefinition;
+import com.tx.component.workflow.model.impl.ActivitiProTransitionDefinition;
 import com.tx.component.workflow.model.impl.ActivitiProcessDefinition;
 import com.tx.component.workflow.service.ProcessDefinitionService;
 import com.tx.core.exceptions.parameter.ParameterIsEmptyException;
@@ -91,5 +103,73 @@ public class ActivitiProcessDefinitionServiceImpl implements
         ProcessDefinition processDef = activiti5ProcessDefSupport.getProcessDefinitionById(processDefinitionId);
         return new ActivitiProcessDefinition(processDef);
     }
+
+    /**
+     * @param processDefinitionId
+     * @param taskDefinitionKey
+     * @return
+     */
+    @Override
+    public ProTaskDefinition getProTaskDefinitionByKey(
+            String processDefinitionId, String taskDefinitionKey) {
+        ActivityImpl activityImpl = activiti5ProcessDefSupport.getActivityById(processDefinitionId, taskDefinitionKey);
+        return new ActivitiProTaskDefinition(activityImpl);
+    }
+
+    /**
+     * @param processDefinitionId
+     * @return
+     */
+    @Override
+    public Map<String, ProTaskDefinition> getProTaskDefinitions(
+            String processDefinitionId) {
+        Map<String, TaskDefinition> taskDefinitionMap = activiti5ProcessDefSupport.getTaskDefinitions(processDefinitionId);
+        
+        Map<String, ProTaskDefinition> resMap = new HashMap<String, ProTaskDefinition>();
+        for(Entry<String, TaskDefinition> entryTemp : taskDefinitionMap.entrySet()){
+            ActivityImpl activityImplTemp = activiti5ProcessDefSupport.getActivityById(processDefinitionId, entryTemp.getKey());
+            resMap.put(entryTemp.getKey(), new ActivitiProTaskDefinition(activityImplTemp));
+        }
+        return resMap;
+    }
+
+    /**
+     * @param processDefinitionId
+     * @param classType
+     * @return
+     */
+    @Override
+    public List<ProTaskDefinition> getProTaskDefinitionsByType(
+            String processDefinitionId, Class<?> classType) {
+        List<ProTaskDefinition> resList = new ArrayList<ProTaskDefinition>();
+        
+        List<ActivityImpl> matchActivityImplList = activiti5ProcessDefSupport.getServiceTaskDefinitionsByType(processDefinitionId, classType);
+        if(matchActivityImplList != null){
+            for(ActivityImpl activityImplTemp : matchActivityImplList){
+                resList.add(new ActivitiProTaskDefinition(activityImplTemp));
+            }
+        }
+        
+        return resList;
+    }
+
+    /**
+     * @param processDefinitionId
+     * @param activityId
+     * @return
+     */
+    @Override
+    public List<ProTransitionDefinition> getOutTransitionDefinitions(
+            String processDefinitionId, String activityId) {
+        List<PvmTransition> outPvmTransitions = activiti5ProcessDefSupport.getOutTransitions(processDefinitionId, activityId);
+        
+        List<ProTransitionDefinition> resList = new ArrayList<ProTransitionDefinition>();
+        if(outPvmTransitions != null){
+            for(PvmTransition pvmTransitionTemp : outPvmTransitions)
+            resList.add(new ActivitiProTransitionDefinition(pvmTransitionTemp));
+        }
+        return resList;
+    }
+    
     
 }

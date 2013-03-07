@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
+import org.activiti.engine.impl.pvm.PvmTransition;
 import org.activiti.engine.impl.pvm.process.ActivityImpl;
 import org.activiti.engine.impl.task.TaskDefinition;
 import org.activiti.engine.repository.ProcessDefinition;
@@ -40,8 +41,8 @@ public interface ActivitiProcessDefinitionSupport {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    ProcessDefinition deployToActiviti(String deployName,
-            String resourceName, InputStream inputStream);
+    ProcessDefinition deployToActiviti(String deployName, String resourceName,
+            InputStream inputStream);
     
     /**
       * 根据流程定义id获取流程定义实例<br/> 
@@ -65,8 +66,7 @@ public interface ActivitiProcessDefinitionSupport {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    ProcessDefinition getLastVersionProcessDefinitionByKey(
-            String processDefKey);
+    ProcessDefinition getLastVersionProcessDefinitionByKey(String processDefKey);
     
     /**
       * 获取指定流程定义中，指定activityId对应的节点activity对象
@@ -79,8 +79,7 @@ public interface ActivitiProcessDefinitionSupport {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    ActivityImpl getActivityById(String processDefinitionId,
-            String activityId);
+    ActivityImpl getActivityById(String processDefinitionId, String activityId);
     
     /**
       * 根据流程实例id获取流程图资源定义类
@@ -106,7 +105,13 @@ public interface ActivitiProcessDefinitionSupport {
     Map<String, TaskDefinition> getTaskDefinitions(String processDefinitionId);
     
     /**
-      * 根据接口类型获得匹配的业务定义实例
+      * 根据接口类型获得匹配的代理类
+      *     1、是根据代理类的实际实现类进行获取
+      *     暂支持：
+      *         ServiceTaskDelegateExpressionActivityBehavior
+      *         ClassDelegate
+      *         两个类实现的提取
+      *         如果提取的类实际不存在，则抛出异常
       * <功能详细描述>
       * @return [参数说明]
       * 
@@ -114,5 +119,19 @@ public interface ActivitiProcessDefinitionSupport {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    List<ActivityImpl> getServiceTaskDefinitionsByType(String processDefinitionId);
+    List<ActivityImpl> getServiceTaskDefinitionsByType(
+            String processDefinitionId, Class<?> classType);
+    
+    /**
+      * 获取指定节点流出流向实例
+      * <功能详细描述>
+      * @param processDefinitionId
+      * @param activityId
+      * @return [参数说明]
+      * 
+      * @return List<PvmTransition> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    List<PvmTransition> getOutTransitions(String processDefinitionId,String activityId);
 }

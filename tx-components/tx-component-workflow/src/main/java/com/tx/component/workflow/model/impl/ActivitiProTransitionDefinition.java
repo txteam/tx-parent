@@ -24,6 +24,11 @@ import com.tx.component.workflow.model.ProTransitionDefinition;
 public class ActivitiProTransitionDefinition implements ProTransitionDefinition{
     
     private PvmTransition pvmTransition;
+    
+    public ActivitiProTransitionDefinition(PvmTransition pvmTransition) {
+        super();
+        this.pvmTransition = pvmTransition;
+    }
 
     /**
      * @return

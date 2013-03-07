@@ -180,6 +180,7 @@ public class TestWorkflow extends TestWFBase implements InitializingBean {
             System.out.println(te.getId());
             System.out.println(te.getParent());
             System.out.println(te.getActivityBehavior());
+            System.out.println(te.getClass());
             
             System.out.println("-------------incoming----------------");
             for (PvmTransition ttte : te.getIncomingTransitions()) {

@@ -542,4 +542,17 @@ public interface ProcessInstanceService {
      */
     ProTaskInstance getCurrentProTask(String processInstanceId);
     
+    /**
+      * 根据当前流程实例id,以及任务定义key获取当前的流程任务实例
+      *<功能详细描述>
+      * @param processInstanceId
+      * @param taskDefinitionKey
+      * @return [参数说明]
+      * 
+      * @return ProTaskInstance [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    ProTaskInstance getCurrentProTask(String processInstanceId,String currentTaskDefKey);
+    
 }

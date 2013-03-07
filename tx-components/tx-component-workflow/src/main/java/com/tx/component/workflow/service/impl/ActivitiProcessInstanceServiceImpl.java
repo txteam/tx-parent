@@ -922,6 +922,23 @@ public class ActivitiProcessInstanceServiceImpl implements InitializingBean,
     }
     
     /**
+     * @param processInstanceId
+     * @param taskDefinitionKey
+     * @return
+     */
+    @Override
+    public ProTaskInstance getCurrentProTask(String processInstanceId,
+            String currentTaskDefKey) {
+        if (StringUtils.isEmpty(processInstanceId)) {
+            throw new ParameterIsEmptyException(
+                    "ProcessInstanceServic.complete processInstanceId is empty.");
+        }
+        Task task = getTaskByProInsIdAndTaskDefKey(processInstanceId, currentTaskDefKey);
+        ProTaskInstance res = new ActivitiProTaskInstance(task);
+        return res;
+    }
+
+    /**
       * 根据流程实例id以及任务定义key找到对应的task实例
       *
       * @param processInstanceId
