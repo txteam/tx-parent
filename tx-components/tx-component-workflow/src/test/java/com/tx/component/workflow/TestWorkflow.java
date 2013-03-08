@@ -106,18 +106,23 @@ public class TestWorkflow extends TestWFBase implements InitializingBean {
     public void testDeploy() throws Exception {
         
         //需要以非“/”开始
-        //        processEngine.getRepositoryService()
-        //                .createDeployment()
-        //                .name("test2")
-        //                .addClasspathResource("workflow/test1/process.bpmn")
-        //                .deploy();
+//                processEngine.getRepositoryService()
+//                        .createDeployment()
+//                        .name("test2")
+//                        .addClasspathResource("workflow/test1/test3.bpmn")
+//                        .deploy();
         
-        org.springframework.core.io.Resource resource = resourceLoader.getResource("classpath:workflow/test1/process.bpmn");
+        org.springframework.core.io.Resource resource = resourceLoader.getResource("classpath:workflow/test1/test3.bpmn");
         
+        if(!resource.exists()){
+            System.out.println("not exists");
+            return ;
+        }
         try {
             com.tx.component.workflow.model.ProcessDefinition t = processDefinitionService.deploy("test1",
                     "process/test",
                     resource.getInputStream());
+            
             System.out.println("......................");
             System.out.println("id:" + t.getId());
             System.out.println("key:" + t.getKey());
@@ -128,18 +133,37 @@ public class TestWorkflow extends TestWFBase implements InitializingBean {
     
     @Test
     public void testNow() {
-        String proDefId = "test:19:7504";
+        org.springframework.core.io.Resource resource = resourceLoader.getResource("classpath:workflow/test1/test3.bpmn");
+        
+        if(!resource.exists()){
+            System.out.println("not exists");
+            return ;
+        }
+        com.tx.component.workflow.model.ProcessDefinition t = null;
+        try {
+            t = processDefinitionService.deploy("test1",
+                    "process/test",
+                    resource.getInputStream());
+            
+            System.out.println("......................");
+            System.out.println("id:" + t.getId());
+            System.out.println("key:" + t.getKey());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String proDefId = t.getId();
+        //String proDefId = "myProcess:16:4704";
         
         processInsId = null;
-        //com.tx.component.workflow.model.ProcessInstance proIns = processInstanceService.startByDefId(proDefId);
-        //processInsId = proIns.getId();
+        com.tx.component.workflow.model.ProcessInstance proIns = processInstanceService.startByDefId(proDefId);
+        processInsId = proIns.getId();
         System.out.println(processInsId);
         
         //根据流程实例处理
-        processInsId = processInsId == null ? "7601" : processInsId;
+        processInsId = processInsId == null ? "2401" : processInsId;
         //5901
         
-        //this.processInstanceService.process(processInsId, "通过",null);
+        this.processInstanceService.complete(processInsId,null);
         
         //5701
         //this.processInstance = 

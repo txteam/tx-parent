@@ -77,8 +77,8 @@ public class ActivitiProcessDefinitionServiceImpl implements
             throw new ParameterIsEmptyException(
                     "ProcessDeployService.deploy resourceName or inputStream is empty");
         }
-        if (!resourceName.endsWith(".bpmn")) {
-            resourceName = resourceName + ".bpmn";
+        if (!resourceName.endsWith(".bpmn20.xml")) {
+            resourceName = resourceName + ".bpmn20.xml";
         }
         if (StringUtils.isEmpty(deployName)) {
             deployName = resourceName;

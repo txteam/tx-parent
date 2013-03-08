@@ -87,7 +87,6 @@ public class JpaEntityFreeMarkerGenerator {
         SIMPLE_TYPE.add(java.sql.Date.class);
         SIMPLE_TYPE.add(Timestamp.class);
         SIMPLE_TYPE.add(BigDecimal.class);
-        SIMPLE_TYPE.add(com.ibm.icu.math.BigDecimal.class);
     }
     
     /** 默认的字段比较器，用以排序 */
