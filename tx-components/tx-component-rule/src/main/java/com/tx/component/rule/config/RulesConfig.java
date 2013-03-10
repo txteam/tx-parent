@@ -31,6 +31,22 @@ public class RulesConfig {
     @XStreamImplicit(itemFieldName="rule_config")
     private List<RuleItemConfig> ruleItemConfig = new ArrayList<RuleItemConfig>();
 
+    /** 
+     * 规则类型 可以为drools规则，可以为其他规则的实现<br/>
+     * 可以为ognl<br/>
+     * 可以为
+     */
+    @XStreamAlias("rule_type")
+    private String ruleType="";
+    
+    /**
+     * 规则描述，
+     * 可以为ongl表达式
+     * 可以为groovy代码<需要再进行添加，暂不支持>
+     * 可以为drools规则名
+     */
+    private String ruleExpression = "";
+    
     /**
      * @return 返回 ruleItemConfig
      */

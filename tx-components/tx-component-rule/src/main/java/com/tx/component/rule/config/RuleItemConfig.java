@@ -23,7 +23,7 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
   */
-@XStreamAlias("rule_config")
+@XStreamAlias("rule")
 public class RuleItemConfig {
     
     /** 规则名 */
