@@ -60,6 +60,11 @@ public class MethodRuleLoader implements RuleLoader, ApplicationContextAware {
     private boolean isSynchronizeRemoveNotExsitMethodRule = true;
     
     /**
+     * 规则顺序：值大的规则加载器将会覆盖同名规则加载器
+     */
+    private int order = 0;
+    
+    /**
      * @param applicationContext
      * @throws BeansException
      */
@@ -92,15 +97,34 @@ public class MethodRuleLoader implements RuleLoader, ApplicationContextAware {
         }
         
         //处理db中存在，而现在已经不存在的规则
-        if(isSynchronizeRemoveNotExsitMethodRule){
+        if (isSynchronizeRemoveNotExsitMethodRule) {
             for (Entry<String, SimplePersistenceRule> mrTemp : dbRuleMap.entrySet()) {
-                if(!currentRuleMap.containsKey(mrTemp.getKey())){
-                    this.simplePersistenceRuleService.changeRuleStateById(mrTemp.getValue().getId(), RuleState.ERROR);
+                if (!currentRuleMap.containsKey(mrTemp.getKey())) {
+                    this.simplePersistenceRuleService.changeRuleStateById(mrTemp.getValue()
+                            .getId(),
+                            RuleState.ERROR);
                 }
             }
         }
         
         return resList;
+    }
+    
+    /**
+     * 
+     */
+    @Override
+    public void validate(List<Rule> ruleList) {
+        //doNothing方法级规则，由于在加载逻辑中已经实现了对应的校验，这里就不再进行二次校验了
+    }
+    
+    /**
+     * 方法级规则最先调用校验方法
+     * @return
+     */
+    @Override
+    public int getOrder() {
+        return order;
     }
     
     /**
@@ -157,6 +181,8 @@ public class MethodRuleLoader implements RuleLoader, ApplicationContextAware {
         //this.applicationContext.
         Map<String, Object> beanMap = this.applicationContext.getBeansWithAnnotation(RuleMethodClass.class);
         List<MethodRule> resList = new ArrayList<MethodRule>();
+        List<String> ruleNameList = new ArrayList<String>();
+        
         for (Entry<String, Object> entryTemp : beanMap.entrySet()) {
             Object beanTemp = entryTemp.getValue();
             for (Method methodTemp : beanTemp.getClass().getMethods()) {
@@ -174,10 +200,27 @@ public class MethodRuleLoader implements RuleLoader, ApplicationContextAware {
                 }
                 MethodRule newMR = new MethodRule(methodTemp, beanTemp,
                         ruleAnnotation);
+                if (ruleNameList.contains(newMR.rule())) {
+                    throw new ParameterIsInvalidException(
+                            "MethodRuleLoader.scanCurrentSystemRuleMethod exception class:{} method{} RuleMethod rule{} duplicate",
+                            beanTemp.getClass().toString(),
+                            methodTemp.getName(), newMR.rule());
+                }
+                ruleNameList.add(newMR.rule());
                 resList.add(newMR);
             }
         }
         return resList;
+    }
+    
+    /**
+     * @return
+     */
+    @Override
+    public String ruleLoaderKey() {
+        return String.valueOf(this.getClass().hashCode()
+                + RuleType.METHOD.hashCode()
+                + "DefaultMethodRuleLoader".hashCode());
     }
     
     /**

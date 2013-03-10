@@ -86,8 +86,7 @@ public class SimplePersistenceRuleService {
       * @see [类、类#方法、类#成员]
      */
     @Transactional
-    public boolean changeRuleStateById(String ruleId,
-            RuleState state) {
+    public boolean changeRuleStateById(String ruleId, RuleState state) {
         if (state == null || StringUtils.isEmpty(ruleId)) {
             throw new ParameterIsEmptyException(
                     "SimplePersistenceRuleService.changeRuleStateById ruleId or state.id is empty.");
@@ -212,12 +211,15 @@ public class SimplePersistenceRuleService {
     @Transactional
     public void insertSimplePersistenceRule(
             SimplePersistenceRule simplePersistenceRule) {
-        //TODO:验证参数是否合法，必填字段是否填写，
+        //验证参数是否合法，必填字段是否填写，
         //如果没有填写抛出parameterIsEmptyException,
         //如果有参数不合法ParameterIsInvalidException
-        if (simplePersistenceRule == null /*TODO:|| 其他参数验证*/) {
+        if (simplePersistenceRule == null ||
+                StringUtils.isEmpty(simplePersistenceRule.rule()) ||
+                simplePersistenceRule.getState() == null ||
+                StringUtils.isEmpty(simplePersistenceRule.getServiceType())) {
             throw new ParameterIsEmptyException(
-                    "SimplePersistenceRuleService.insertSimplePersistenceRule simplePersistenceRule isNull.");
+                    "simplePersistenceRule or state or serviceType is empty.");
         }
         
         this.simplePersistenceRuleDao.insertSimplePersistenceRule(simplePersistenceRule);

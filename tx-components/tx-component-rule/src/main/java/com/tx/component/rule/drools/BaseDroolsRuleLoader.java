@@ -17,7 +17,7 @@ import com.tx.component.rule.model.Rule;
 
 
  /**
-  * <功能简述>
+  * drools规则加载器
   * <功能详细描述>
   * 
   * @author  PengQingyang
@@ -25,9 +25,13 @@ import com.tx.component.rule.model.Rule;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
   */
-public class DroolsRuleLoader implements RuleLoader,ApplicationContextAware{
+public abstract class BaseDroolsRuleLoader implements RuleLoader,ApplicationContextAware{
     
-    private ApplicationContext applicationContext;
+    /** spring容器句柄 */
+    protected ApplicationContext applicationContext;
+    
+    /** ruleLoader order值 */
+    private int order;
     
     /**
      * @param applicationContext
@@ -43,9 +47,7 @@ public class DroolsRuleLoader implements RuleLoader,ApplicationContextAware{
      * @return
      */
     @Override
-    public List<Rule> load() {
-        //ResourceFactory.
-        return null;
+    public int getOrder() {
+        return this.order;
     }
-    
 }

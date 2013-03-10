@@ -68,4 +68,25 @@ public interface Rule extends Serializable{
       * @see [类、类#方法、类#成员]
      */
     public String getServiceType();
+    
+    /**
+      * 发挥规则当前状态<br/>
+      * <功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return boolean [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public RuleState getState();
+    
+    /**
+      * 设置规则状态
+      * <功能详细描述> [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public void setState(RuleState state);
 }

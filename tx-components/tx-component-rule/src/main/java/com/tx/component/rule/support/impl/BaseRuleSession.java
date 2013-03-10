@@ -22,9 +22,7 @@ import com.tx.component.rule.support.RuleSessionContext;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
   */
-public abstract class DefaultRuleSession<R extends Rule> implements RuleSession {
-    
-    //private static final Logger logger = LoggerFactory.getLogger(DefaultRuleSession.class);
+public abstract class BaseRuleSession<R extends Rule> implements RuleSession {
     
     /** 规则会话对应规则实体 */
     protected R rule;
@@ -32,7 +30,7 @@ public abstract class DefaultRuleSession<R extends Rule> implements RuleSession 
     /**
      * 规则会话构造函数
      */
-    public DefaultRuleSession(R rule) {
+    public BaseRuleSession(R rule) {
         super();
         this.rule = rule;
     }

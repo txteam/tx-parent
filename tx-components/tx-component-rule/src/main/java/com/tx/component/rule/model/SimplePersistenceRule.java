@@ -68,6 +68,7 @@ public class SimplePersistenceRule implements Serializable,Rule{
         this.rule = rule.rule();
         this.ruleType = rule.getRuleType();
         this.serviceType = rule.getServiceType();
+        this.state = RuleState.OPERATION;
     } 
 
     /**

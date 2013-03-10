@@ -6,6 +6,9 @@
  */
 package com.tx.component.rule.context;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,15 +53,18 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
     /** 单例的rule容器 */
     private static RuleContext ruleContext;
     
-    /** 注册的规则加载器 */
-    private static Map<RuleLoader, Boolean> registeredRuleLoaderMap = new HashMap<RuleLoader, Boolean>();
-    
     /** 规则会话工厂类 */
     private RuleSessionFactory ruleSessionFactory;
     
     /** 缓存 */
     @Resource(name = "cache")
     private Ehcache ehcache;
+    
+    /** 注册的规则加载器 */
+    private static Map<String, Boolean> registeredRuleLoaderMap = new HashMap<String, Boolean>();
+    
+    /** 规则加载记录 */
+    private static Map<RuleLoader, List<Rule>> registeredRuleLoaderRuleListMap = new HashMap<RuleLoader, List<Rule>>();
     
     /** 规则缓存 */
     private Map<String, Rule> ruleMapCache;
@@ -78,8 +84,10 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
     @Override
     public void afterPropertiesSet() throws Exception {
         this.ruleMapCache = new SimpleEhcacheMap<String, Rule>(
-                "cache.ruleMapCache", ehcache,new ConcurrentHashMap<String, Rule>());
-        if(ruleSessionFactory == null){
+                "cache.ruleMapCache", ehcache,
+                new ConcurrentHashMap<String, Rule>());
+        
+        if (ruleSessionFactory == null) {
             this.ruleSessionFactory = new DefaultRuleSessionFactory();
         }
         //完成属性设置后,加载规则
@@ -102,7 +110,7 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
       * @see [类、类#方法、类#成员]
      */
     public static void registerRuleLoader(RuleLoader ruleLoader) {
-        registeredRuleLoaderMap.put(ruleLoader, false);
+        registeredRuleLoaderMap.put(ruleLoader.ruleLoaderKey(), false);
     }
     
     /**
@@ -126,8 +134,57 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
         List<Rule> ruleList = event.getRuleList();
         RuleLoader ruleLoader = event.getRuleLoader();
         
-        putInCache(ruleList, true);
-        registeredRuleLoaderMap.put(ruleLoader, true);
+        //指定规则已经加载
+        registeredRuleLoaderMap.put(ruleLoader.ruleLoaderKey(), true);
+        
+        //设置为对应ruleLoader已加载
+        registeredRuleLoaderRuleListMap.put(ruleLoader, ruleList);
+        if (isLoadFinish()) {
+            validateWhenLoadFinish();
+        }
+    }
+    
+    public void validateWhenLoadFinish() {
+        //获取ruleLoader列表
+        List<RuleLoader> ruleLoaderList = new ArrayList<RuleLoader>(
+                registeredRuleLoaderRuleListMap.keySet());
+        
+        //对ruleLoader进行排序
+        Collections.sort(ruleLoaderList, new Comparator<RuleLoader>() {
+            
+            /**
+             * @param o1
+             * @param o2
+             * @return
+             */
+            @Override
+            public int compare(RuleLoader o1, RuleLoader o2) {
+                if (o1 != null && o2 != null) {
+                    if (o1.getOrder() == o2.getOrder()) {
+                        return 0;
+                    } else if (o1.getOrder() > o2.getOrder()) {
+                        return 1;
+                    } else {
+                        return -1;
+                    }
+                } else if (o1 == null && o2 == null) {
+                    return 0;
+                } else if (o1 == null) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            }
+        });
+        
+        //根据顺序调用规则验证器
+        for (RuleLoader ruleLoaderTemp : ruleLoaderList) {
+            List<Rule> ruleList = registeredRuleLoaderRuleListMap.get(ruleLoaderTemp);
+            ruleLoaderTemp.validate(ruleList);
+            
+            //将对应规则压入容器中
+            putInCache(ruleList, true);
+        }
     }
     
     /**
@@ -142,10 +199,9 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
     public boolean isLoadFinish() {
         if (loadOver) {
             return true;
-        }
-        else {
+        } else {
             if (registeredRuleLoaderMap != null) {
-                for (Entry<RuleLoader, Boolean> entryTemp : registeredRuleLoaderMap.entrySet()) {
+                for (Entry<String, Boolean> entryTemp : registeredRuleLoaderMap.entrySet()) {
                     if (!entryTemp.getValue()) {
                         return false;
                     }
@@ -168,20 +224,19 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
     public void waitLoading() {
         if (isLoadFinish()) {
             return;
-        }
-        else {
+        } else {
             try {
                 Integer waitTimes = waitThreadMap.get(Thread.currentThread());
                 if (waitTimes == null || waitTimes.intValue() < 3) {
                     wait(this.maxLoadTimeout);
-                }
-                else {
+                } else {
                     throw new RuleAccessException(null, null, null,
                             "规则容器尚未完成规则加载请等待...");
                 }
-            }
-            catch (InterruptedException e) {
-                logger.error("RuleContext.waitLoading exception:" + e.toString(),e);
+            } catch (InterruptedException e) {
+                logger.error("RuleContext.waitLoading exception:"
+                        + e.toString(),
+                        e);
             }
         }
     }
@@ -195,7 +250,7 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public int size(){
+    public int size() {
         waitLoading();
         return ruleMapCache.size();
     }
@@ -226,7 +281,7 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public Rule getRule(String rule){
+    public Rule getRule(String rule) {
         waitLoading();
         return ruleMapCache.get(rule);
     }
@@ -292,12 +347,10 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
         for (Rule ruleTemp : ruleList) {
             if (isCoverWhenSame) {
                 this.ruleMapCache.put(ruleTemp.rule(), ruleTemp);
-            }
-            else if (this.ruleMapCache.containsKey(ruleTemp.rule())) {
+            } else if (this.ruleMapCache.containsKey(ruleTemp.rule())) {
                 throw new RuleAccessException(ruleTemp.rule(), null, null,
                         "重复的规则项:{}", ruleTemp.rule());
-            }
-            else {
+            } else {
                 this.ruleMapCache.put(ruleTemp.rule(), ruleTemp);
             }
             
@@ -320,12 +373,10 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
         }
         if (isCoverWhenSame) {
             this.ruleMapCache.put(rule.rule(), rule);
-        }
-        else if (this.ruleMapCache.containsKey(rule.rule())) {
+        } else if (this.ruleMapCache.containsKey(rule.rule())) {
             throw new RuleAccessException(rule.rule(), null, null, "重复的规则项:{}",
                     rule.rule());
-        }
-        else {
+        } else {
             this.ruleMapCache.put(rule.rule(), rule);
             logger.warn("规则项{}被同名规则项覆盖.", rule.rule());
         }

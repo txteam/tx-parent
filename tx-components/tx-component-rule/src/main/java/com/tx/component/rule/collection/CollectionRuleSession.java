@@ -12,7 +12,7 @@ import java.util.Map;
 import com.tx.component.rule.context.RuleContext;
 import com.tx.component.rule.model.Rule;
 import com.tx.component.rule.support.RuleSession;
-import com.tx.component.rule.support.impl.DefaultRuleSession;
+import com.tx.component.rule.support.impl.BaseRuleSession;
 
 /**
  * 集合类规则会话<br/>
@@ -24,7 +24,7 @@ import com.tx.component.rule.support.impl.DefaultRuleSession;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class CollectionRuleSession extends DefaultRuleSession<CollectionRule> {
+public class CollectionRuleSession extends BaseRuleSession<CollectionRule> {
     
     /**
      * <默认构造函数>

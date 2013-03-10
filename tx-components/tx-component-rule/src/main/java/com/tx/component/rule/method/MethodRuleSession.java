@@ -24,7 +24,7 @@ import com.tx.component.rule.exceptions.RuleAccessException;
 import com.tx.component.rule.method.annotation.RuleMethodParam;
 import com.tx.component.rule.method.annotation.RuleMethodResult;
 import com.tx.component.rule.support.RuleSessionContext;
-import com.tx.component.rule.support.impl.DefaultRuleSession;
+import com.tx.component.rule.support.impl.BaseRuleSession;
 import com.tx.core.support.method.MethodResolver;
 import com.tx.core.support.method.ParameterResolver;
 
@@ -36,7 +36,7 @@ import com.tx.core.support.method.ParameterResolver;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class MethodRuleSession extends DefaultRuleSession<MethodRule> {
+public class MethodRuleSession extends BaseRuleSession<MethodRule> {
     
     private static final Logger logger = LoggerFactory.getLogger(MethodRuleSession.class);
     

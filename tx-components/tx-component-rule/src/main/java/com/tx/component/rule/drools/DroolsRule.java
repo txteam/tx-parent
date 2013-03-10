@@ -6,12 +6,10 @@
  */
 package com.tx.component.rule.drools;
 
-import java.util.Collection;
-
 import org.drools.KnowledgeBase;
-import org.drools.definition.KnowledgePackage;
 
 import com.tx.component.rule.model.Rule;
+import com.tx.component.rule.model.RuleState;
 import com.tx.component.rule.model.RuleType;
 
 
@@ -38,11 +36,10 @@ public class DroolsRule implements Rule {
     /** 规则的业务类型属性 */
     private String serviceType;
     
-    /** 规则基础规则包 */
-    private Collection<KnowledgePackage> basePackages;
-    
-    //private
+    /** drools规则knowlegeBase */
     private KnowledgeBase knowledgeBase;
+    
+    private RuleState state;
 
     /**
      * @return
@@ -91,20 +88,6 @@ public class DroolsRule implements Rule {
     }
 
     /**
-     * @return 返回 basePackages
-     */
-    public Collection<KnowledgePackage> getBasePackages() {
-        return basePackages;
-    }
-
-    /**
-     * @param 对basePackages进行赋值
-     */
-    public void setBasePackages(Collection<KnowledgePackage> basePackages) {
-        this.basePackages = basePackages;
-    }
-
-    /**
      * @return 返回 knowledgeBase
      */
     public KnowledgeBase getKnowledgeBase() {
@@ -123,5 +106,19 @@ public class DroolsRule implements Rule {
      */
     public void setServiceType(String serviceType) {
         this.serviceType = serviceType;
+    }
+
+    /**
+     * @return 返回 state
+     */
+    public RuleState getState() {
+        return state;
+    }
+
+    /**
+     * @param 对state进行赋值
+     */
+    public void setState(RuleState state) {
+        this.state = state;
     }
 }

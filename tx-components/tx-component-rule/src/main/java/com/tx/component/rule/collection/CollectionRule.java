@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.tx.component.rule.model.Rule;
+import com.tx.component.rule.model.RuleState;
 import com.tx.component.rule.model.RuleType;
 import com.tx.core.TxConstants;
 
@@ -32,6 +33,8 @@ public class CollectionRule implements Rule {
     private String name;
     
     private String serviceType;
+    
+    private RuleState state;
     
     private List<Rule> ruleList = new ArrayList<Rule>(
             TxConstants.INITIAL_CONLLECTION_SIZE);
@@ -101,5 +104,26 @@ public class CollectionRule implements Rule {
      */
     public void setServiceType(String serviceType) {
         this.serviceType = serviceType;
+    }
+
+    /**
+     * @return 返回 state
+     */
+    public RuleState getState() {
+        return state;
+    }
+
+    /**
+     * @param 对state进行赋值
+     */
+    public void setState(RuleState state) {
+        this.state = state;
+    }
+
+    /**
+     * @param 对name进行赋值
+     */
+    public void setName(String name) {
+        this.name = name;
     }
 }

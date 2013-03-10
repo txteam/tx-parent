@@ -53,14 +53,11 @@ public class RuleLoaderSupportPostProcessor implements BeanPostProcessor,
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName)
             throws BeansException {
-        //        if (bean instanceof RuleLoader) {
-        //            RuleContext.registerRuleLoader((RuleLoader) bean);
-        //            bean = RuleLoaderInvocationHandler.
-        //                    Proxy.newProxyInstance(this.getClass().getClassLoader(),
-        //                    new Class[] { bean.getClass() },
-        //                    new RuleLoaderInvocationHandler((RuleLoader) bean,
-        //                            this.applicationContext));
-        //        }
+        if (bean instanceof RuleLoader) {
+            //如果为ruleLoader则注册入容器，
+            //用以支持后续ruleLoader.load执行完后，判断所有的ruleLoad方法是否都已经执行完成
+            RuleContext.registerRuleLoader((RuleLoader) bean);
+        }
         return bean;
     }
     
@@ -75,17 +72,10 @@ public class RuleLoaderSupportPostProcessor implements BeanPostProcessor,
     public Object postProcessAfterInitialization(Object bean, String beanName)
             throws BeansException {
         if (bean instanceof RuleLoader) {
-            RuleContext.registerRuleLoader((RuleLoader) bean);
-            //TODO:启动一个
             RuleLoader realRuleLoader = (RuleLoader) bean;
             List<Rule> ruleList = realRuleLoader.load();
             this.applicationContext.publishEvent(new LoadRuleEvent(this,
                     realRuleLoader, ruleList));
-            //            bean = RuleLoaderInvocationHandler.Proxy.newProxyInstance(this.getClass()
-            //                    .getClassLoader(),
-            //                    new Class[] { bean.getClass() },
-            //                    new RuleLoaderInvocationHandler((RuleLoader) bean,
-            //                            this.applicationContext));
         }
         return bean;
     }
@@ -135,28 +125,6 @@ public class RuleLoaderSupportPostProcessor implements BeanPostProcessor,
             }
             return res;
         }
-        
-        //        /**
-        //         * 如果执行了ruleLoader的load方法，通过规则加载事件，将规则发送给规则容器
-        //         * @param proxy
-        //         * @param method
-        //         * @param args
-        //         * @return
-        //         * @throws Throwable
-        //         */
-        //        @Override
-        //        public Object invoke(Object proxy, Method method, Object[] args)
-        //                throws Throwable {
-        //            Object res = method.invoke(realRuleLoader, args);
-        //            if ("load".equals(method.getName()) && res instanceof List) {
-        //                @SuppressWarnings("unchecked")
-        //                List<Rule> ruleList = (List<Rule>) res;
-        //                this.applicationContext.publishEvent(new LoadRuleEvent(this,
-        //                        realRuleLoader, ruleList));
-        //            }
-        //            
-        //            return res;
-        //        }
     }
     
 }

@@ -10,6 +10,7 @@ import java.lang.reflect.Method;
 
 import com.tx.component.rule.method.annotation.RuleMethod;
 import com.tx.component.rule.model.Rule;
+import com.tx.component.rule.model.RuleState;
 import com.tx.component.rule.model.RuleType;
 
 /**
@@ -28,6 +29,8 @@ public class MethodRule implements Rule {
     private Method method;
     
     private Object object;
+    
+    private RuleState state;
     
     private com.tx.component.rule.method.annotation.RuleMethod ruleAnnotation;
 
@@ -114,5 +117,19 @@ public class MethodRule implements Rule {
      */
     public void setObject(Object object) {
         this.object = object;
+    }
+
+    /**
+     * @return 返回 state
+     */
+    public RuleState getState() {
+        return state;
+    }
+
+    /**
+     * @param 对state进行赋值
+     */
+    public void setState(RuleState state) {
+        this.state = state;
     }
 }
