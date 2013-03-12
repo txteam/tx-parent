@@ -10,8 +10,8 @@ import java.lang.reflect.Method;
 
 import com.tx.component.rule.method.annotation.RuleMethod;
 import com.tx.component.rule.model.Rule;
-import com.tx.component.rule.model.RuleState;
-import com.tx.component.rule.model.RuleType;
+import com.tx.component.rule.model.RuleStateEnum;
+import com.tx.component.rule.model.RuleTypeEnum;
 
 /**
  * 方法类型的规则<br/>
@@ -30,7 +30,7 @@ public class MethodRule implements Rule {
     
     private Object object;
     
-    private RuleState state;
+    private RuleStateEnum state;
     
     private com.tx.component.rule.method.annotation.RuleMethod ruleAnnotation;
 
@@ -72,8 +72,8 @@ public class MethodRule implements Rule {
      * @return
      */
     @Override
-    public RuleType getRuleType() {
-        return RuleType.METHOD;
+    public RuleTypeEnum getRuleType() {
+        return RuleTypeEnum.METHOD;
     }
     
     /**
@@ -122,14 +122,14 @@ public class MethodRule implements Rule {
     /**
      * @return 返回 state
      */
-    public RuleState getState() {
+    public RuleStateEnum getState() {
         return state;
     }
 
     /**
      * @param 对state进行赋值
      */
-    public void setState(RuleState state) {
+    public void setState(RuleStateEnum state) {
         this.state = state;
     }
 }

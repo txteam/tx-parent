@@ -26,6 +26,8 @@ import com.tx.component.auth.context.AuthContext;
  */
 public class AuthContextSupportInterceptor implements HandlerInterceptor {
     
+    private String authContextKey = "authContext";
+    
     /**
      * @param request
      * @param response
@@ -65,5 +67,20 @@ public class AuthContextSupportInterceptor implements HandlerInterceptor {
             HttpServletResponse response, Object handler, Exception ex)
             throws Exception {
         AuthContext.getContext().removeCurrentSessionFromThread();
+        request.setAttribute(authContextKey, AuthContext.getContext());
+    }
+
+    /**
+     * @return 返回 authContextKey
+     */
+    public String getAuthContextKey() {
+        return authContextKey;
+    }
+
+    /**
+     * @param 对authContextKey进行赋值
+     */
+    public void setAuthContextKey(String authContextKey) {
+        this.authContextKey = authContextKey;
     }
 }

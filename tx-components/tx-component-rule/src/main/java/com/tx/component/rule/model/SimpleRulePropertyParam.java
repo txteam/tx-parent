@@ -21,25 +21,25 @@ public enum SimpleRulePropertyParam {
      * DROOLS_DRL_BYTE属性：
      *     持久化到数据库的规则资源
      */
-    DROOLS_DRL_BYTE_RESOURCE_CONTENT_BYTE(RuleType.DROOLS_DRL_BYTE,
+    DROOLS_DRL_BYTE_RESOURCE_CONTENT_BYTE(RuleTypeEnum.DROOLS_DRL_BYTE,
             "RES_CONTENT_BYTE", "", "", false, true),
     /**
      * DROOLS_PKG_URL属性：
      *      加载规则的url路径(存储相对路径)
      */
-    DROOLS_PKG_URL(RuleType.DROOLS_DRL_BYTE, "RES_CONTENT_BYTE", "", "", false,
+    DROOLS_PKG_URL(RuleTypeEnum.DROOLS_DRL_BYTE, "RES_CONTENT_BYTE", "", "", false,
             true),
     /**
      * Collection属性：
      *     持久化到数据库的规则资源
      */
-    COLLECTION_QUOTE_RULE(RuleType.COLLECTION, "QUOTE_RULE", "", "", true,
+    COLLECTION_QUOTE_RULE(RuleTypeEnum.COLLECTION, "QUOTE_RULE", "", "", true,
             false);
     
     /**
      * 规则类型
      */
-    private RuleType ruleType;
+    private RuleTypeEnum ruleType;
     
     /** 关键字 */
     private String key;
@@ -68,7 +68,7 @@ public enum SimpleRulePropertyParam {
     /**
      * 规则属性构造函数
      */
-    private SimpleRulePropertyParam(RuleType ruleType, String key,
+    private SimpleRulePropertyParam(RuleTypeEnum ruleType, String key,
             String validatorExpression, String validatorMessage,
             boolean isMultiProerty, boolean isBlob) {
         this.ruleType = ruleType;
@@ -152,14 +152,14 @@ public enum SimpleRulePropertyParam {
     /**
      * @return 返回 ruleType
      */
-    public RuleType getRuleType() {
+    public RuleTypeEnum getRuleType() {
         return ruleType;
     }
     
     /**
      * @param 对ruleType进行赋值
      */
-    public void setRuleType(RuleType ruleType) {
+    public void setRuleType(RuleTypeEnum ruleType) {
         this.ruleType = ruleType;
     }
 }

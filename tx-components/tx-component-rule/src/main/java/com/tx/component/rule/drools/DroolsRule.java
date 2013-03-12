@@ -9,8 +9,8 @@ package com.tx.component.rule.drools;
 import org.drools.KnowledgeBase;
 
 import com.tx.component.rule.model.Rule;
-import com.tx.component.rule.model.RuleState;
-import com.tx.component.rule.model.RuleType;
+import com.tx.component.rule.model.RuleStateEnum;
+import com.tx.component.rule.model.RuleTypeEnum;
 
 
  /**
@@ -39,7 +39,7 @@ public class DroolsRule implements Rule {
     /** drools规则knowlegeBase */
     private KnowledgeBase knowledgeBase;
     
-    private RuleState state;
+    private RuleStateEnum state;
 
     /**
      * @return
@@ -61,8 +61,8 @@ public class DroolsRule implements Rule {
      * @return
      */
     @Override
-    public RuleType getRuleType() {
-        return RuleType.DROOLS;
+    public RuleTypeEnum getRuleType() {
+        return RuleTypeEnum.DROOLS;
     }
     
     /**
@@ -111,14 +111,14 @@ public class DroolsRule implements Rule {
     /**
      * @return 返回 state
      */
-    public RuleState getState() {
+    public RuleStateEnum getState() {
         return state;
     }
 
     /**
      * @param 对state进行赋值
      */
-    public void setState(RuleState state) {
+    public void setState(RuleStateEnum state) {
         this.state = state;
     }
 }

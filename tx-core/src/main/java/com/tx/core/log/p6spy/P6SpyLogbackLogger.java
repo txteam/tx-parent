@@ -40,15 +40,18 @@ public class P6SpyLogbackLogger implements P6Logger {
     
     public void logSQL(int connectionId, String now, long elapsed,
             String category, String prepared, String sql) {
-        if (!"resultset".equals(category)) {
-            if("statement".equals(category)){
-                logger.debug("prepared: " + trim(prepared));
-                logger.debug(trim(sql));
-            }else{
-                logger.debug(category);
+        if (logger.isInfoEnabled()) {
+            if (!"resultset".equals(category)) {
+                if ("statement".equals(category)) {
+                    logger.info("prepared: " + trim(prepared));
+                    logger.info(trim(sql));
+                } else {
+                    logger.info(category);
+                }
+            }else if(logger.isDebugEnabled()){
+                logger.debug("resultset: " + trim(prepared));
             }
         }
-        
     }
     
     public void logText(String text) {
@@ -57,7 +60,7 @@ public class P6SpyLogbackLogger implements P6Logger {
     }
     
     public static String trim(String sql) {
-        if(sql == null){
+        if (sql == null) {
             return sql;
         }
         sql = sql.replaceAll("\\s+", " ");

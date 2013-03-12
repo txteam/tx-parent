@@ -52,13 +52,13 @@
 	            AND TSPR.ID = #{id,javaType=java.lang.String}
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(ruleType)">  
-	            AND TSPR.RULETYPE = #{ruleType,javaType=com.tx.component.rule.model.RuleType}
+	            AND TSPR.RULETYPE = #{ruleType,javaType=com.tx.component.rule.model.RuleTypeEnum}
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(rule)">  
 	            AND TSPR.RULE = #{rule,javaType=java.lang.String}
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(state)">  
-	            AND TSPR.STATE = #{state,javaType=com.tx.component.rule.model.RuleState}
+	            AND TSPR.STATE = #{state,javaType=com.tx.component.rule.model.RuleStateEnum}
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(serviceType)">  
 	            AND TSPR.SERVICETYPE = #{serviceType,javaType=java.lang.String}
@@ -85,13 +85,13 @@
 	            AND TSPR.ID = #{id,javaType=java.lang.String}
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(ruleType)">  
-	            AND TSPR.RULETYPE = #{ruleType,javaType=com.tx.component.rule.model.RuleType}
+	            AND TSPR.RULETYPE = #{ruleType,javaType=com.tx.component.rule.model.RuleTypeEnum}
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(rule)">  
 	            AND TSPR.RULE = #{rule,javaType=java.lang.String}
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(state)">  
-	            AND TSPR.STATE = #{state,javaType=com.tx.component.rule.model.RuleState}
+	            AND TSPR.STATE = #{state,javaType=com.tx.component.rule.model.RuleStateEnum}
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(serviceType)">  
 	            AND TSPR.SERVICETYPE = #{serviceType,javaType=java.lang.String}
@@ -141,13 +141,13 @@
 	    UPDATE ru_rule_def TSPR
 	    <trim prefix="SET" suffixOverrides=",">
 			<if test="_parameter.containsKey('ruleType')">
-	    		RULETYPE = #{ruleType,javaType=com.tx.component.rule.model.RuleType},
+	    		RULETYPE = #{ruleType,javaType=com.tx.component.rule.model.RuleTypeEnum},
 	    	</if>	
 			<if test="_parameter.containsKey('rule')">
 	    		RULE = #{rule,javaType=java.lang.String},
 	    	</if>	
 			<if test="_parameter.containsKey('state')">
-	    		STATE = #{state,javaType=com.tx.component.rule.model.RuleState},
+	    		STATE = #{state,javaType=com.tx.component.rule.model.RuleStateEnum},
 	    	</if>	
 			<if test="_parameter.containsKey('serviceType')">
 	    		SERVICETYPE = #{serviceType,javaType=java.lang.String},

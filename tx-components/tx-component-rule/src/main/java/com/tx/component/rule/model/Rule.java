@@ -57,7 +57,7 @@ public interface Rule extends Serializable{
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public RuleType getRuleType();
+    public RuleTypeEnum getRuleType();
     
     /**
       * 获取规则的业务类型<br/>
@@ -78,7 +78,7 @@ public interface Rule extends Serializable{
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public RuleState getState();
+    public RuleStateEnum getState();
     
     /**
       * 设置规则状态
@@ -88,5 +88,5 @@ public interface Rule extends Serializable{
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public void setState(RuleState state);
+    public void setState(RuleStateEnum state);
 }

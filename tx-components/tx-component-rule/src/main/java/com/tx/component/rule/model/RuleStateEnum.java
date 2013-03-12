@@ -15,7 +15,7 @@ package com.tx.component.rule.model;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
   */
-public enum RuleState {
+public enum RuleStateEnum {
     
     /**
      * 测试态
@@ -40,7 +40,7 @@ public enum RuleState {
     /**
      * <默认构造函数>
      */
-    private RuleState(String name) {
+    private RuleStateEnum(String name) {
         this.name = name;
     }
 

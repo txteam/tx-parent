@@ -48,10 +48,10 @@ public class SimplePersistenceRule implements Serializable,Rule{
     private String remark;
     
     /** 规则类型 */
-    private RuleType ruleType;
+    private RuleTypeEnum ruleType;
     
     /** 规则状态 */
-    private RuleState state;
+    private RuleStateEnum state;
     
     /**
      * <默认构造函数>
@@ -68,13 +68,13 @@ public class SimplePersistenceRule implements Serializable,Rule{
         this.rule = rule.rule();
         this.ruleType = rule.getRuleType();
         this.serviceType = rule.getServiceType();
-        this.state = RuleState.OPERATION;
+        this.state = RuleStateEnum.OPERATION;
     } 
 
     /**
      * @return
      */
-    public RuleType getRuleType() {
+    public RuleTypeEnum getRuleType() {
         return this.ruleType;
     }
     
@@ -102,7 +102,7 @@ public class SimplePersistenceRule implements Serializable,Rule{
     /**
      * @param 对ruleType进行赋值
      */
-    public void setRuleType(RuleType ruleType) {
+    public void setRuleType(RuleTypeEnum ruleType) {
         this.ruleType = ruleType;
     }
 
@@ -130,14 +130,14 @@ public class SimplePersistenceRule implements Serializable,Rule{
     /**
      * @return 返回 state
      */
-    public RuleState getState() {
+    public RuleStateEnum getState() {
         return state;
     }
 
     /**
      * @param 对state进行赋值
      */
-    public void setState(RuleState state) {
+    public void setState(RuleStateEnum state) {
         this.state = state;
     }
 

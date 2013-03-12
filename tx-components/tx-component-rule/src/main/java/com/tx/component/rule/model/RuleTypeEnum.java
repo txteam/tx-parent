@@ -19,7 +19,7 @@ package com.tx.component.rule.model;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
   */
-public enum RuleType {
+public enum RuleTypeEnum {
     
     /**
      * 方法类型规则
@@ -37,7 +37,6 @@ public enum RuleType {
      * DROOLS规则
      */
     DROOLS_PKG_URL("",DROOLS),
-    
     /**
      * 集合类型规则
      */
@@ -47,12 +46,12 @@ public enum RuleType {
     
     private String remark;
     
-    private RuleType parentType;
+    private RuleTypeEnum parentType;
     
     /**
      * 规则类型
      */
-    private RuleType(String name, RuleType parentType) {
+    private RuleTypeEnum(String name, RuleTypeEnum parentType) {
         this.name = name;
         this.parentType = parentType;
     }
@@ -60,7 +59,7 @@ public enum RuleType {
     /**
      * 规则类型
      */
-    private RuleType(String name) {
+    private RuleTypeEnum(String name) {
         this.name = name;
     }
 
@@ -95,14 +94,14 @@ public enum RuleType {
     /**
      * @return 返回 parentType
      */
-    public RuleType getParentType() {
+    public RuleTypeEnum getParentType() {
         return parentType;
     }
 
     /**
      * @param 对parentType进行赋值
      */
-    public void setParentType(RuleType parentType) {
+    public void setParentType(RuleTypeEnum parentType) {
         this.parentType = parentType;
     }
 }

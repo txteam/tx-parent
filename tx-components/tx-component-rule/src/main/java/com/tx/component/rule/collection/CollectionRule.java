@@ -10,8 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.tx.component.rule.model.Rule;
-import com.tx.component.rule.model.RuleState;
-import com.tx.component.rule.model.RuleType;
+import com.tx.component.rule.model.RuleStateEnum;
+import com.tx.component.rule.model.RuleTypeEnum;
 import com.tx.core.TxConstants;
 
 /**
@@ -34,7 +34,7 @@ public class CollectionRule implements Rule {
     
     private String serviceType;
     
-    private RuleState state;
+    private RuleStateEnum state;
     
     private List<Rule> ruleList = new ArrayList<Rule>(
             TxConstants.INITIAL_CONLLECTION_SIZE);
@@ -59,8 +59,8 @@ public class CollectionRule implements Rule {
      * @return
      */
     @Override
-    public RuleType getRuleType() {
-        return RuleType.COLLECTION;
+    public RuleTypeEnum getRuleType() {
+        return RuleTypeEnum.COLLECTION;
     }
     
     /**
@@ -109,14 +109,14 @@ public class CollectionRule implements Rule {
     /**
      * @return 返回 state
      */
-    public RuleState getState() {
+    public RuleStateEnum getState() {
         return state;
     }
 
     /**
      * @param 对state进行赋值
      */
-    public void setState(RuleState state) {
+    public void setState(RuleStateEnum state) {
         this.state = state;
     }
 

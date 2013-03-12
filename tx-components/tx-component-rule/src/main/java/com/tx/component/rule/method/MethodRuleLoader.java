@@ -26,8 +26,8 @@ import com.tx.component.rule.context.RuleLoader;
 import com.tx.component.rule.method.annotation.RuleMethod;
 import com.tx.component.rule.method.annotation.RuleMethodClass;
 import com.tx.component.rule.model.Rule;
-import com.tx.component.rule.model.RuleState;
-import com.tx.component.rule.model.RuleType;
+import com.tx.component.rule.model.RuleStateEnum;
+import com.tx.component.rule.model.RuleTypeEnum;
 import com.tx.component.rule.model.SimplePersistenceRule;
 import com.tx.component.rule.service.SimplePersistenceRuleService;
 import com.tx.core.TxConstants;
@@ -102,7 +102,7 @@ public class MethodRuleLoader implements RuleLoader, ApplicationContextAware {
                 if (!currentRuleMap.containsKey(mrTemp.getKey())) {
                     this.simplePersistenceRuleService.changeRuleStateById(mrTemp.getValue()
                             .getId(),
-                            RuleState.ERROR);
+                            RuleStateEnum.ERROR);
                 }
             }
         }
@@ -157,7 +157,7 @@ public class MethodRuleLoader implements RuleLoader, ApplicationContextAware {
       * @see [类、类#方法、类#成员]
      */
     private Map<String, SimplePersistenceRule> queryDBMethodRuleMap() {
-        List<SimplePersistenceRule> resList = this.simplePersistenceRuleService.querySimplePersistenceRuleListByRuleType(RuleType.METHOD);
+        List<SimplePersistenceRule> resList = this.simplePersistenceRuleService.querySimplePersistenceRuleListByRuleType(RuleTypeEnum.METHOD);
         Map<String, SimplePersistenceRule> res = new HashMap<String, SimplePersistenceRule>();
         if (resList == null) {
             return res;
@@ -219,7 +219,7 @@ public class MethodRuleLoader implements RuleLoader, ApplicationContextAware {
     @Override
     public String ruleLoaderKey() {
         return String.valueOf(this.getClass().hashCode()
-                + RuleType.METHOD.hashCode()
+                + RuleTypeEnum.METHOD.hashCode()
                 + "DefaultMethodRuleLoader".hashCode());
     }
     

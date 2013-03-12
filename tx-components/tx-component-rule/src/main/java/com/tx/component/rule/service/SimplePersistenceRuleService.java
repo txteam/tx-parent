@@ -19,9 +19,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.tx.component.rule.dao.SimplePersistenceRuleDao;
-import com.tx.component.rule.model.RuleType;
+import com.tx.component.rule.model.RuleTypeEnum;
 import com.tx.component.rule.model.SimplePersistenceRule;
-import com.tx.component.rule.model.RuleState;
+import com.tx.component.rule.model.RuleStateEnum;
 import com.tx.core.exceptions.parameter.ParameterIsEmptyException;
 import com.tx.core.paged.model.PagedList;
 
@@ -58,7 +58,7 @@ public class SimplePersistenceRuleService {
      * @see [类、类#方法、类#成员]
     */
     public List<SimplePersistenceRule> querySimplePersistenceRuleListByRuleType(
-            RuleType ruleType) {
+            RuleTypeEnum ruleType) {
         //判断条件合法性
         if (ruleType == null) {
             throw new ParameterIsEmptyException(
@@ -86,7 +86,7 @@ public class SimplePersistenceRuleService {
       * @see [类、类#方法、类#成员]
      */
     @Transactional
-    public boolean changeRuleStateById(String ruleId, RuleState state) {
+    public boolean changeRuleStateById(String ruleId, RuleStateEnum state) {
         if (state == null || StringUtils.isEmpty(ruleId)) {
             throw new ParameterIsEmptyException(
                     "SimplePersistenceRuleService.changeRuleStateById ruleId or state.id is empty.");
