@@ -241,6 +241,8 @@ public class MyBatisDaoSupport {
     public <T> PagedList<T> queryPagedList(String statement, Object parameter,
             int pageIndex, int pageSize) {
         PagedList<T> result = new PagedList<T>();
+        result.setPageIndex(pageIndex);
+        result.setPageSize(pageSize);
         
         // 构建Count查询列表中数目
         String queryCountStatement = statement + "Count";
@@ -275,6 +277,8 @@ public class MyBatisDaoSupport {
     public <T> PagedList<T> queryPagedList(String statement, Object parameter,
             int pageIndex, int pageSize, int count) {
         PagedList<T> result = new PagedList<T>();
+        result.setPageIndex(pageIndex);
+        result.setPageSize(pageSize);
         
         // 构建Count查询列表中数目
         if (count <= 0 || pageIndex * pageSize >= count) {

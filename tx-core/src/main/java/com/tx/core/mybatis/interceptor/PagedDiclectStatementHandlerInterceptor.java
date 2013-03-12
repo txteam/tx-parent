@@ -132,6 +132,8 @@ public class PagedDiclectStatementHandlerInterceptor implements Interceptor {
             limitSql.replaceAll("top ?", "top " + rowBounds.getLimit());
             limitSql.replaceAll("limit ?", "limit " + rowBounds.getLimit());
             limitSql.replaceAll("offset ?", "offset " + rowBounds.getOffset());
+            
+            metaStatementHandler.setValue("delegate.rowBounds",RowBounds.DEFAULT);
         }
         
         //如果为PreparedStatementHandler则无需替换即可
@@ -206,6 +208,7 @@ public class PagedDiclectStatementHandlerInterceptor implements Interceptor {
         metaStatementHandler.setValue("delegate.rowBounds",
                 RowBounds.DEFAULT);
         
+        returnObj = invocation.proceed();
         return returnObj;
     }
     
