@@ -49,7 +49,7 @@ public class P6SpyLogbackLogger implements P6Logger {
                     logger.info(category);
                 }
             }else if(logger.isDebugEnabled()){
-                logger.debug("resultset: " + trim(prepared));
+                logger.debug("resultset: " + trim(sql));
             }
         }
     }

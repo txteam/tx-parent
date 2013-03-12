@@ -8,21 +8,22 @@ package com.tx.core.mybatis.interceptor;
 
 import java.lang.reflect.Method;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import org.apache.ibatis.executor.statement.PreparedStatementHandler;
 import org.apache.ibatis.executor.statement.RoutingStatementHandler;
-import org.apache.ibatis.executor.statement.SimpleStatementHandler;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
+import org.apache.ibatis.mapping.ParameterMapping;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.plugin.Intercepts;
 import org.apache.ibatis.plugin.Invocation;
 import org.apache.ibatis.plugin.Plugin;
 import org.apache.ibatis.plugin.Signature;
 import org.apache.ibatis.reflection.MetaObject;
+import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.RowBounds;
 import org.hibernate.dialect.Dialect;
 import org.slf4j.Logger;
@@ -37,9 +38,7 @@ import org.slf4j.LoggerFactory;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-@Intercepts({
-        @Signature(type = StatementHandler.class, method = "prepare", args = { Connection.class }),
-        @Signature(type = StatementHandler.class, method = "parameterize", args = { Statement.class }) })
+@Intercepts({ @Signature(type = StatementHandler.class, method = "prepare", args = { Connection.class }) })
 public class PagedDiclectStatementHandlerInterceptor implements Interceptor {
     
     private Logger logger = LoggerFactory.getLogger(PagedDiclectStatementHandlerInterceptor.class);
@@ -56,8 +55,6 @@ public class PagedDiclectStatementHandlerInterceptor implements Interceptor {
         Method m = invocation.getMethod();
         if ("prepare".equals(m.getName())) {
             return prepare(invocation);
-        } else if ("parameterize".equals(m.getName())) {
-            return parameterize(invocation);
         }
         return invocation.proceed();
     }
@@ -74,7 +71,6 @@ public class PagedDiclectStatementHandlerInterceptor implements Interceptor {
      * @param properties
      */
     public void setProperties(Properties properties) {
-        
     }
     
     /**
@@ -90,7 +86,7 @@ public class PagedDiclectStatementHandlerInterceptor implements Interceptor {
      */
     private Object prepare(Invocation invocation) throws Throwable {
         if (!(invocation.getTarget() instanceof RoutingStatementHandler)
-                 || dialect == null) {
+                || dialect == null) {
             return invocation.proceed();
         }
         
@@ -98,118 +94,136 @@ public class PagedDiclectStatementHandlerInterceptor implements Interceptor {
         RoutingStatementHandler statementHandler = (RoutingStatementHandler) invocation.getTarget();
         
         MetaObject metaStatementHandler = MetaObject.forObject(statementHandler);
-        
-        
+        //提取statement
         StatementHandler statement = (StatementHandler) metaStatementHandler.getValue("delegate");
-        //如果不为两种statement则不继续进行处理
-        if (!(statement instanceof SimpleStatementHandler)
-                && !(statement instanceof PreparedStatementHandler)) {
+        //获取rowBounds
+        RowBounds rowBounds = (RowBounds) metaStatementHandler.getValue("delegate.rowBounds");
+        //获取configuration
+        Configuration configuration = (Configuration) metaStatementHandler.getValue("delegate.configuration");
+       
+        //如果不为PreparedStatementHandler则不继续进行处理
+        //不考虑simpleStatementHandle的情况
+        //如果为需要分页的地方认为都应该是PreparedStatementHandler
+        if (!(statement instanceof PreparedStatementHandler)) {
             return invocation.proceed();
         }
         
-        RowBounds rowBounds = (RowBounds) metaStatementHandler.getValue("delegate.rowBounds");
+        
+        
+        boolean isSupportsVariableLimit = dialect.supportsVariableLimit();//是否支持物理分页
+        boolean isBindOnFirst = dialect.bindLimitParametersFirst();//是否绑定在前
+        boolean isSupportsLimit = dialect.supportsLimit();//是否支持limit
+        boolean isSupportsLimitOffset = dialect.supportsLimitOffset();//是否支持offset
         //根据rowBounds判断是否需要进行物理分页
+        //是否指定了分页条数
         if (rowBounds == null
                 || rowBounds.equals(RowBounds.DEFAULT)
-                || (rowBounds.getOffset() <= RowBounds.NO_ROW_OFFSET && rowBounds.getLimit() == RowBounds.NO_ROW_LIMIT)) {
+                || (rowBounds.getOffset() <= RowBounds.NO_ROW_OFFSET && rowBounds.getLimit() == RowBounds.NO_ROW_LIMIT)
+                || !isSupportsVariableLimit 
+                || (!isSupportsLimit && !isSupportsLimitOffset)) { 
+            //如果不需要分页
+            //或者容器不支持物理分页!dialect.supportsVariableLimit()
             return invocation.proceed();
         }
         
+        //如果需要分页
         //进行处理
         BoundSql boundSql = statementHandler.getBoundSql();
+        List<ParameterMapping> newParameterMappingList = new ArrayList<ParameterMapping>(boundSql.getParameterMappings());
+        boundSql.setAdditionalParameter("_offset", Integer.valueOf(rowBounds.getOffset()));
+        boundSql.setAdditionalParameter("_limit", Integer.valueOf(rowBounds.getLimit()));
+        
         String sql = boundSql.getSql();
+        //利用hibernate方言类生成新的分页语句
         String limitSql = dialect.getLimitString(sql,
                 rowBounds.getOffset(),
                 rowBounds.getLimit());
-        
-        if (statement instanceof SimpleStatementHandler
-                || (dialect.bindLimitParametersFirst() && !dialect.bindLimitParametersInReverseOrder())) {
-            limitSql.replaceAll("rownum <= ?", "rownum <= " + rowBounds.getLimit());
-            limitSql.replaceAll("rownum_ > ?", "rownum_ > " + rowBounds.getOffset());
-            limitSql.replaceAll("rownum <= ?", "rownum <= " + rowBounds.getLimit());
-            limitSql.replaceAll("rownum_ > ?", "rownum_ > " + rowBounds.getOffset());
-            limitSql.replaceAll("limit ? ?", "limit " + rowBounds.getOffset() + " " + rowBounds.getLimit());
-            limitSql.replaceAll("top ?", "top " + rowBounds.getLimit());
-            limitSql.replaceAll("limit ?", "limit " + rowBounds.getLimit());
-            limitSql.replaceAll("offset ?", "offset " + rowBounds.getOffset());
-            
-            metaStatementHandler.setValue("delegate.rowBounds",RowBounds.DEFAULT);
-        }
-        
-        //如果为PreparedStatementHandler则无需替换即可
-        metaStatementHandler.setValue("delegate.boundSql.sql",limitSql);
-        
+        //在调试模式下打印分页sql
         if (logger.isDebugEnabled()) {
             logger.debug("生成分页SQL : " + boundSql.getSql());
         }
+        
+        //如果支持isSupportsLimitOffset并且当前需要偏移值
+        boolean isNeedSetOffset = isSupportsLimitOffset && (rowBounds.getOffset() > 0 || dialect.forceLimitUsage()); 
+        
+        //构建设置的入参
+        //如果不支持物理分页
+        //设置参数
+        if (isBindOnFirst) {
+            if(dialect.bindLimitParametersInReverseOrder()){
+                //true if the correct order is limit, offset
+                if(isSupportsLimit){
+                    newParameterMappingList.add(0, createLimitParameterMapping(configuration));
+                }
+                if(isNeedSetOffset){
+                    newParameterMappingList.add(1, createOffsetParameterMapping(configuration));
+                }
+            }else{
+                if(isNeedSetOffset){
+                    newParameterMappingList.add(0, createOffsetParameterMapping(configuration));
+                }
+                if(isSupportsLimit){
+                    newParameterMappingList.add(1, createLimitParameterMapping(configuration));
+                }
+            }
+        }else{
+            if(dialect.bindLimitParametersInReverseOrder()){
+                //true if the correct order is limit, offset
+                if(isSupportsLimit){
+                    newParameterMappingList.add(createLimitParameterMapping(configuration));
+                }
+                if(isNeedSetOffset){
+                    newParameterMappingList.add(createOffsetParameterMapping(configuration));
+                }
+            }else{
+                if(isNeedSetOffset){
+                    newParameterMappingList.add(createOffsetParameterMapping(configuration));
+                }
+                if(isSupportsLimit){
+                    newParameterMappingList.add(createLimitParameterMapping(configuration));
+                }
+            }
+        }
+        
+        //将sql以及rowBounds替换为不需要再进行多余处理的形式
+        metaStatementHandler.setValue("delegate.boundSql.parameterMappings", newParameterMappingList);
+        metaStatementHandler.setValue("delegate.boundSql.sql", limitSql);
+        metaStatementHandler.setValue("delegate.rowBounds.offset", RowBounds.NO_ROW_OFFSET);
+        metaStatementHandler.setValue("delegate.rowBounds.limit", RowBounds.NO_ROW_LIMIT);
         
         return invocation.proceed();
     }
     
     /**
-      * 设置分页参数
+      * 创建offsetParameter实体
       * <功能详细描述>
-      * @param invocation
-      * @return
-      * @throws Throwable [参数说明]
+      * @param configuration
+      * @return [参数说明]
       * 
-      * @return Object [返回类型说明]
+      * @return ParameterMapping [返回类型说明]
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    private Object parameterize(Invocation invocation) throws Throwable {
-        //先执行系统默认的参数设置
-        //Object returnObj = invocation.proceed();
-        
-        
-        //提取statement
-        RoutingStatementHandler routingStatementHandler = (RoutingStatementHandler) invocation.getTarget();
-        MetaObject metaStatementHandler = MetaObject.forObject(routingStatementHandler);
-        
-        
-        StatementHandler statementHandler = (StatementHandler) metaStatementHandler.getValue("delegate");
-        //如果不为两种statement则不继续进行处理
-        if (!(statementHandler instanceof PreparedStatementHandler) ||
-                dialect == null) {
-            return invocation.proceed();
-        }
-        
-        RowBounds rowBounds = (RowBounds) metaStatementHandler.getValue("delegate.rowBounds");
-        //根据rowBounds判断是否需要进行物理分页
-        if (rowBounds == null
-                || rowBounds.equals(RowBounds.DEFAULT)
-                || (rowBounds.getOffset() <= RowBounds.NO_ROW_OFFSET && rowBounds.getLimit() == RowBounds.NO_ROW_LIMIT)) {
-            return invocation.proceed();
-        }
-        
-        Object returnObj = invocation.proceed();
-        //提取参数设置statement
-        Statement statement = (Statement) invocation.getArgs()[0]; 
-        if (!(statement instanceof PreparedStatement)) {  
-            //如果对应statement不为PreparedStatement则直接返回
-            if(dialect.bindLimitParametersInReverseOrder()){
-                return invocation.proceed();
-            }
-        }
-        
-        //设置分页的参数
-        PreparedStatement ps = (PreparedStatement) statement;
-        int parameterSize = statementHandler.getBoundSql().getParameterMappings().size();
-        if(rowBounds.getOffset() > RowBounds.NO_ROW_OFFSET 
-                || rowBounds.getLimit() < RowBounds.NO_ROW_LIMIT){
-            ps.setInt(parameterSize + 1, rowBounds.getLimit());
-            parameterSize++;
-            if(rowBounds.getOffset() > RowBounds.NO_ROW_OFFSET){
-                ps.setInt(parameterSize + 1, rowBounds.getOffset());
-            }
-        }
-        
-        //替换rowBounds
-        metaStatementHandler.setValue("delegate.rowBounds",
-                RowBounds.DEFAULT);
-        
-        returnObj = invocation.proceed();
-        return returnObj;
+    private ParameterMapping createOffsetParameterMapping(Configuration configuration){
+         ParameterMapping offsetParameterMapping = (new ParameterMapping.Builder(
+                configuration, "_offset", Integer.class)).build();
+         return offsetParameterMapping;
+    }
+    
+    /**
+      * 创建limitParameter实体
+      *<功能详细描述>
+      * @param configuration
+      * @return [参数说明]
+      * 
+      * @return ParameterMapping [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    private ParameterMapping createLimitParameterMapping(Configuration configuration){
+        ParameterMapping limitParameterMapping = (new ParameterMapping.Builder(
+                configuration, "_limit", Integer.class)).build();
+         return limitParameterMapping;
     }
     
     /**
