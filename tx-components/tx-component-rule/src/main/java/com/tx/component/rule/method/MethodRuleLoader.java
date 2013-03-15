@@ -30,6 +30,7 @@ import com.tx.component.rule.model.RuleStateEnum;
 import com.tx.component.rule.model.RuleTypeEnum;
 import com.tx.component.rule.model.SimplePersistenceRule;
 import com.tx.component.rule.service.SimplePersistenceRuleService;
+import com.tx.component.rule.service.SimpleRulePropertyValueService;
 import com.tx.core.TxConstants;
 import com.tx.core.exceptions.parameter.ParameterIsInvalidException;
 
@@ -84,38 +85,45 @@ public class MethodRuleLoader implements RuleLoader, ApplicationContextAware {
         //获取当前存在的方法规则
         List<MethodRule> currentRuleMethodList = scanCurrentSystemRuleMethod();
         //获取历史数据库中存储的规则
-        Map<String, SimplePersistenceRule> dbRuleMap = queryDBMethodRuleMap();
         Map<String, MethodRule> currentRuleMap = new HashMap<String, MethodRule>();
         
+        //获取历史数据库中存储的规则
+        Map<String, SimplePersistenceRule> dbRuleMap = queryDBMethodRuleMap();
+        
+        //压入加载的规则方法
         for (MethodRule mrTemp : currentRuleMethodList) {
-            currentRuleMap.put(changeRuleToStringKey(mrTemp), mrTemp);
-            if (!dbRuleMap.containsKey(changeRuleToStringKey(mrTemp))) {
+            currentRuleMap.put(getRuleKeyFromRule(mrTemp), mrTemp);
+            
+            //如果对应规则，在数据库中原不存在
+            if (!dbRuleMap.containsKey(getRuleKeyFromRule(mrTemp))) {
+                //持久化新添加的规则
                 SimplePersistenceRule spr = new SimplePersistenceRule(mrTemp);
                 this.simplePersistenceRuleService.insertSimplePersistenceRule(spr);
             }
+            
             resList.add(mrTemp);
         }
         
-        //处理db中存在，而现在已经不存在的规则
+        //根据当前系统中存在的规则，如果方法级规则现在不存在了，则将该规则设置为错误态
         if (isSynchronizeRemoveNotExsitMethodRule) {
-            for (Entry<String, SimplePersistenceRule> mrTemp : dbRuleMap.entrySet()) {
-                if (!currentRuleMap.containsKey(mrTemp.getKey())) {
-                    this.simplePersistenceRuleService.changeRuleStateById(mrTemp.getValue()
-                            .getId(),
-                            RuleStateEnum.ERROR);
+            for (Entry<String, SimplePersistenceRule> entryTemp : dbRuleMap.entrySet()) {
+                if (!currentRuleMap.containsKey(getRuleKeyFromRule(entryTemp.getValue()))) {
+                    SimplePersistenceRule spRule = entryTemp.getValue();
+                    //如果不为运营态则将该规则实体社会自为错误态
+                    if (!RuleStateEnum.OPERATION.equals(spRule.getState())) {
+                        //设置对应规则状态为错误态
+                        spRule.setState(RuleStateEnum.ERROR);
+                        
+                        //持久化规则状态
+                        this.simplePersistenceRuleService.changeRuleStateById(spRule.getId(),
+                                RuleStateEnum.ERROR);
+                    }
+                    
                 }
             }
         }
         
         return resList;
-    }
-    
-    /**
-     * 
-     */
-    @Override
-    public void validate(List<Rule> ruleList) {
-        //doNothing方法级规则，由于在加载逻辑中已经实现了对应的校验，这里就不再进行二次校验了
     }
     
     /**
@@ -137,13 +145,13 @@ public class MethodRuleLoader implements RuleLoader, ApplicationContextAware {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    private String changeRuleToStringKey(Rule rule) {
+    private String getRuleKeyFromRule(Rule rule) {
         StringBuilder sb = new StringBuilder(TxConstants.INITIAL_STR_LENGTH);
-        sb.append(rule.rule())
-                .append("|")
-                .append(rule.getRuleType())
-                .append("|")
-                .append(rule.getServiceType());
+        sb.append(rule.getRuleType())
+                .append(".")
+                .append(rule.getServiceType())
+                .append(".")
+                .append(rule.rule());
         return sb.toString();
     }
     
@@ -163,7 +171,7 @@ public class MethodRuleLoader implements RuleLoader, ApplicationContextAware {
             return res;
         }
         for (SimplePersistenceRule simplePRuleTemp : resList) {
-            res.put(changeRuleToStringKey(simplePRuleTemp), simplePRuleTemp);
+            res.put(getRuleKeyFromRule(simplePRuleTemp), simplePRuleTemp);
         }
         return res;
     }
@@ -177,7 +185,7 @@ public class MethodRuleLoader implements RuleLoader, ApplicationContextAware {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    private List<MethodRule> scanCurrentSystemRuleMethod() {
+    public List<MethodRule> scanCurrentSystemRuleMethod() {
         //this.applicationContext.
         Map<String, Object> beanMap = this.applicationContext.getBeansWithAnnotation(RuleMethodClass.class);
         List<MethodRule> resList = new ArrayList<MethodRule>();
@@ -250,5 +258,12 @@ public class MethodRuleLoader implements RuleLoader, ApplicationContextAware {
     public void setSynchronizeRemoveNotExsitMethodRule(
             boolean isSynchronizeRemoveNotExsitMethodRule) {
         this.isSynchronizeRemoveNotExsitMethodRule = isSynchronizeRemoveNotExsitMethodRule;
+    }
+    
+    /**
+     * @param 对order进行赋值
+     */
+    public void setOrder(int order) {
+        this.order = order;
     }
 }

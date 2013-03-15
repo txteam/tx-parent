@@ -106,6 +106,43 @@ public class SimplePersistenceRuleService {
     }
     
     /**
+      * 根据规则实体的联合唯一键，更新规则状态
+      * <功能详细描述>
+      * @param rule
+      * @param serviceType
+      * @param ruleType
+      * @param state
+      * @return [参数说明]
+      * 
+      * @return boolean [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    @Transactional
+    public boolean changeRuleStateByRule(String rule, String serviceType,
+            RuleTypeEnum ruleType, RuleStateEnum state) {
+        if (state == null || StringUtils.isEmpty(rule) || ruleType == null
+                || StringUtils.isEmpty(serviceType)) {
+            throw new ParameterIsEmptyException(
+                    "rule or serviceType or ruleType or state is emtpy.");
+        }
+        
+        //生成需要更新字段的hashMap
+        Map<String, Object> updateRowMap = new HashMap<String, Object>();
+        updateRowMap.put("rule", rule);
+        updateRowMap.put("ruleType", ruleType);
+        updateRowMap.put("serviceType", serviceType);
+        
+        //需要更新的字段
+        updateRowMap.put("state", state);
+        
+        int updateRowCount = this.simplePersistenceRuleDao.updateSimplePersistenceRule(updateRowMap);
+        
+        //如果需要大于1时，抛出异常并回滚，需要在这里修改
+        return updateRowCount >= 1;
+    }
+    
+    /**
       * 根据Id查询SimplePersistenceRule实体
       * 1、当id为empty时返回null
       * <功能详细描述>
@@ -214,10 +251,10 @@ public class SimplePersistenceRuleService {
         //验证参数是否合法，必填字段是否填写，
         //如果没有填写抛出parameterIsEmptyException,
         //如果有参数不合法ParameterIsInvalidException
-        if (simplePersistenceRule == null ||
-                StringUtils.isEmpty(simplePersistenceRule.rule()) ||
-                simplePersistenceRule.getState() == null ||
-                StringUtils.isEmpty(simplePersistenceRule.getServiceType())) {
+        if (simplePersistenceRule == null
+                || StringUtils.isEmpty(simplePersistenceRule.rule())
+                || simplePersistenceRule.getState() == null
+                || StringUtils.isEmpty(simplePersistenceRule.getServiceType())) {
             throw new ParameterIsEmptyException(
                     "simplePersistenceRule or state or serviceType is empty.");
         }
@@ -247,42 +284,5 @@ public class SimplePersistenceRuleService {
         SimplePersistenceRule condition = new SimplePersistenceRule();
         condition.setId(id);
         return this.simplePersistenceRuleDao.deleteSimplePersistenceRule(condition);
-    }
-    
-    /**
-      * 根据id更新对象
-      * <功能详细描述>
-      * @param simplePersistenceRule
-      * @return [参数说明]
-      * 
-      * @return boolean [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    @Transactional
-    public boolean updateById(SimplePersistenceRule simplePersistenceRule) {
-        //TODO:验证参数是否合法，必填字段是否填写，
-        //如果没有填写抛出parameterIsEmptyException,
-        //如果有参数不合法ParameterIsInvalidException
-        if (simplePersistenceRule == null
-                || StringUtils.isEmpty(simplePersistenceRule.getId())) {
-            throw new ParameterIsEmptyException(
-                    "SimplePersistenceRuleService.updateById simplePersistenceRule or simplePersistenceRule.id is empty.");
-        }
-        
-        //TODO:生成需要更新字段的hashMap
-        Map<String, Object> updateRowMap = new HashMap<String, Object>();
-        updateRowMap.put("id", simplePersistenceRule.getId());
-        
-        //TODO:需要更新的字段
-        updateRowMap.put("ruleType", simplePersistenceRule.getRuleType());
-        updateRowMap.put("rule", simplePersistenceRule.getRule());
-        updateRowMap.put("state", simplePersistenceRule.getState());
-        updateRowMap.put("serviceType", simplePersistenceRule.getServiceType());
-        
-        int updateRowCount = this.simplePersistenceRuleDao.updateSimplePersistenceRule(updateRowMap);
-        
-        //TODO:如果需要大于1时，抛出异常并回滚，需要在这里修改
-        return updateRowCount >= 1;
     }
 }

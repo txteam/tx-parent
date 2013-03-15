@@ -15,7 +15,7 @@ package com.tx.component.rule.model;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public enum SimpleRulePropertyParam {
+public enum SimpleRuleParamEnum {
     
     /**
      * DROOLS_DRL_BYTE属性：
@@ -68,7 +68,7 @@ public enum SimpleRulePropertyParam {
     /**
      * 规则属性构造函数
      */
-    private SimpleRulePropertyParam(RuleTypeEnum ruleType, String key,
+    private SimpleRuleParamEnum(RuleTypeEnum ruleType, String key,
             String validatorExpression, String validatorMessage,
             boolean isMultiProerty, boolean isBlob) {
         this.ruleType = ruleType;

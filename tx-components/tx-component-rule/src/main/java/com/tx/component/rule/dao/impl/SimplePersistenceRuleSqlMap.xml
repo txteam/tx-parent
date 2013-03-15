@@ -31,6 +31,15 @@
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
 	            AND TSPR.ID = #{id}
 	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(rule)">
+	            <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(serviceType)">  
+		            <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(ruleType)">
+		            	AND TSPR.RULE = #{rule}
+		            	AND TSPR.SERVICETYPE = #{serviceType}
+			            AND TSPR.RULETYPE = #{ruleType}
+			        </if>
+		        </if>
+	        </if>
 		</trim>
 	</select>
 	
@@ -140,17 +149,8 @@
 	    parameterType="java.util.Map">  
 	    UPDATE ru_rule_def TSPR
 	    <trim prefix="SET" suffixOverrides=",">
-			<if test="_parameter.containsKey('ruleType')">
-	    		RULETYPE = #{ruleType,javaType=com.tx.component.rule.model.RuleTypeEnum},
-	    	</if>	
-			<if test="_parameter.containsKey('rule')">
-	    		RULE = #{rule,javaType=java.lang.String},
-	    	</if>	
 			<if test="_parameter.containsKey('state')">
 	    		STATE = #{state,javaType=com.tx.component.rule.model.RuleStateEnum},
-	    	</if>	
-			<if test="_parameter.containsKey('serviceType')">
-	    		SERVICETYPE = #{serviceType,javaType=java.lang.String},
 	    	</if>
 	    	<if test="_parameter.containsKey('name')">
 	    		NAME = #{name,javaType=java.lang.String},
@@ -159,7 +159,21 @@
 	    		REMARK = #{remark,javaType=java.lang.String},
 	    	</if>		
 	    </trim>
-	    WHERE TSPR.ID = #{id} 
+	    WHERE 
+		<trim prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
+	            AND TSPR.ID = #{id}
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(rule)">
+	            <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(serviceType)">  
+		            <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(ruleType)">
+		            	AND TSPR.RULE = #{rule,javaType=java.lang.String}
+		            	AND TSPR.SERVICETYPE = #{serviceType,javaType=java.lang.String}
+			            AND TSPR.RULETYPE = #{ruleType,javaType=com.tx.component.rule.model.RuleTypeEnum}
+			        </if>
+		        </if>
+	        </if>
+		</trim>
 	</update>  
 
 </mapper>

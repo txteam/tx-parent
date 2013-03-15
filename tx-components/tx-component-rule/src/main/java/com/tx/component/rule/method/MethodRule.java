@@ -42,6 +42,7 @@ public class MethodRule implements Rule {
         this.method = method;
         this.object = object;
         this.ruleAnnotation = ruleAnnotation;
+        this.state = RuleStateEnum.OPERATION;
     }
 
     /**

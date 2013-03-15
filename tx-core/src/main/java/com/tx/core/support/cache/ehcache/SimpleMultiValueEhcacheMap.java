@@ -1,7 +1,7 @@
 /*
  * 描          述:  <描述>
  * 修  改   人:  brady
- * 修改时间:  2013-2-25
+ * 修改时间:  2013-3-14
  * <修改描述:>
  */
 package com.tx.core.support.cache.ehcache;
@@ -12,6 +12,9 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -20,23 +23,21 @@ import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
 
 import org.apache.cxf.common.util.StringUtils;
+import org.springframework.util.MultiValueMap;
 
 import com.tx.core.exceptions.parameter.ParameterIsEmptyException;
 
 /**
- * Ehcache的Map实现<br/>
- *   1、适用于缓存Map内部值并不是很多的情况<br/>
- *   2、由于实现其中频繁使用到了对象序列化以及反序列化的过程,如果Map过大会造成性能下降<br/>
- *   3、从该map中get对象实际是get了一个Object的copy
+ * <功能简述>
  * <功能详细描述>
  * 
  * @author  brady
- * @version  [版本号, 2013-2-25]
+ * @version  [版本号, 2013-3-14]
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class SimpleEhcacheMap<K extends Serializable, V extends Serializable>
-        implements Map<K, V> {
+public class SimpleMultiValueEhcacheMap<K extends Serializable, V extends Serializable>
+        implements MultiValueMap<K, V> {
     
     private final static Set<String> needPutMethodName = new HashSet<String>();
     
@@ -45,6 +46,10 @@ public class SimpleEhcacheMap<K extends Serializable, V extends Serializable>
         needPutMethodName.add("putAll");
         needPutMethodName.add("clear");
         needPutMethodName.add("remove");
+        
+        needPutMethodName.add("add");
+        needPutMethodName.add("set");
+        needPutMethodName.add("setAll");
     }
     
     /** 缓存的id */
@@ -54,20 +59,21 @@ public class SimpleEhcacheMap<K extends Serializable, V extends Serializable>
     private final Ehcache ehcache;
     
     /** map的动态代理类 */
-    private Map<K, V> mapDelegate;
+    private Map<K, List<V>> mapDelegate;
     
     /**
      * <默认构造函数>
      */
-    public SimpleEhcacheMap(String id, Ehcache ehcache) {
-        this(id, ehcache, new ConcurrentHashMap<K, V>());
+    public SimpleMultiValueEhcacheMap(String id, Ehcache ehcache) {
+        this(id, ehcache, new ConcurrentHashMap<K, List<V>>());
     }
     
     /**
      * <默认构造函数>
      */
     @SuppressWarnings("unchecked")
-    public SimpleEhcacheMap(String id, Ehcache ehcache, Map<K, V> realMap) {
+    public SimpleMultiValueEhcacheMap(String id, Ehcache ehcache,
+            Map<K, List<V>> realMap) {
         super();
         if (StringUtils.isEmpty(id) || ehcache == null || realMap == null) {
             throw new ParameterIsEmptyException(
@@ -78,26 +84,27 @@ public class SimpleEhcacheMap<K extends Serializable, V extends Serializable>
                     "EhcacheMap initialize fail.realMap must is empty.");
         }
         this.ehcache = ehcache;
-        this.id = "SimpleEhcacheMap_" + id;
-        realMap = realMap == null ? new ConcurrentHashMap<K, V>() : realMap;
-        this.mapDelegate = (Map<K, V>) Proxy.newProxyInstance(this.getClass()
+        this.id = "SimpleMultiValueEhcacheMap_" + id;
+        realMap = realMap == null ? new ConcurrentHashMap<K, List<V>>()
+                : realMap;
+        this.mapDelegate = (Map<K, List<V>>) Proxy.newProxyInstance(this.getClass()
                 .getClassLoader(),
                 new Class[] { Map.class },
                 new MapInvocationHandler(realMap));
     }
     
     /**
-      * Map的动态代理类，用以动态代理到handle中
-      * <功能详细描述>
-      * 
-      * @author  brady
-      * @version  [版本号, 2013-2-25]
-      * @see  [相关类/方法]
-      * @since  [产品/模块版本]
-     */
+     * Map的动态代理类，用以动态代理到handle中
+     * <功能详细描述>
+     * 
+     * @author  brady
+     * @version  [版本号, 2013-2-25]
+     * @see  [相关类/方法]
+     * @since  [产品/模块版本]
+    */
     private class MapInvocationHandler implements InvocationHandler {
         
-        private MapInvocationHandler(Map<K, V> realMap) {
+        private MapInvocationHandler(Map<K, List<V>> realMap) {
             Element cacheElement = ehcache.get(id);
             if (cacheElement == null) {
                 cacheElement = new Element(id, realMap);
@@ -173,42 +180,6 @@ public class SimpleEhcacheMap<K extends Serializable, V extends Serializable>
     }
     
     /**
-     * @param key
-     * @return
-     */
-    @Override
-    public V get(Object key) {
-        return mapDelegate.get(key);
-    }
-    
-    /**
-     * @param key
-     * @param value
-     * @return
-     */
-    @Override
-    public V put(K key, V value) {
-        return mapDelegate.put(key, value);
-    }
-    
-    /**
-     * @param key
-     * @return
-     */
-    @Override
-    public V remove(Object key) {
-        return mapDelegate.remove(key);
-    }
-    
-    /**
-     * @param m
-     */
-    @Override
-    public void putAll(Map<? extends K, ? extends V> m) {
-        mapDelegate.putAll(m);
-    }
-    
-    /**
      * 
      */
     @Override
@@ -228,15 +199,112 @@ public class SimpleEhcacheMap<K extends Serializable, V extends Serializable>
      * @return
      */
     @Override
-    public Collection<V> values() {
-        return mapDelegate.values();
+    public Set<java.util.Map.Entry<K, List<V>>> entrySet() {
+        return mapDelegate.entrySet();
+    }
+    
+    /**
+     * @param key
+     * @return
+     */
+    @Override
+    public List<V> get(Object key) {
+        return mapDelegate.get(key);
+    }
+    
+    /**
+     * @param key
+     * @param value
+     * @return
+     */
+    @Override
+    public List<V> put(K key, List<V> value) {
+        return mapDelegate.put(key, value);
+    }
+    
+    /**
+     * @param m
+     */
+    @Override
+    public void putAll(Map<? extends K, ? extends List<V>> m) {
+        mapDelegate.putAll(m);
+    }
+    
+    /**
+     * @param key
+     * @return
+     */
+    @Override
+    public List<V> remove(Object key) {
+        return mapDelegate.remove(key);
     }
     
     /**
      * @return
      */
     @Override
-    public Set<java.util.Map.Entry<K, V>> entrySet() {
-        return mapDelegate.entrySet();
+    public Collection<List<V>> values() {
+        return mapDelegate.values();
     }
+    
+    /**
+     * @param key
+     * @return
+     */
+    @Override
+    public V getFirst(K key) {
+        List<V> values = this.mapDelegate.get(key);
+        return (values != null ? values.get(0) : null);
+    }
+    
+    /**
+     * @param key
+     * @param value
+     */
+    @Override
+    public void add(K key, V value) {
+        List<V> values = this.mapDelegate.get(key);
+        if (values == null) {
+            values = new LinkedList<V>();
+            this.mapDelegate.put(key, values);
+        }
+        values.add(value);
+    }
+    
+    /**
+     * @param key
+     * @param value
+     */
+    @Override
+    public void set(K key, V value) {
+        List<V> values = new LinkedList<V>();
+        values.add(value);
+        this.mapDelegate.put(key, values);
+    }
+    
+    /**
+     * @param values
+     */
+    @Override
+    public void setAll(Map<K, V> valuesMap) {
+        for (Entry<K, V> entry : valuesMap.entrySet()) {
+            List<V> values = new LinkedList<V>();
+            values.add(entry.getValue());
+            this.mapDelegate.put(entry.getKey(), values);
+        }
+    }
+    
+    /**
+     * @return
+     */
+    @Override
+    public Map<K, V> toSingleValueMap() {
+        LinkedHashMap<K, V> singleValueMap = new LinkedHashMap<K, V>(
+                this.mapDelegate.size());
+        for (Entry<K, List<V>> entry : this.mapDelegate.entrySet()) {
+            singleValueMap.put(entry.getKey(), entry.getValue().get(0));
+        }
+        return singleValueMap;
+    }
+    
 }

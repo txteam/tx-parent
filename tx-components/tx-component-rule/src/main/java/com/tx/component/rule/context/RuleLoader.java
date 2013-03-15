@@ -38,17 +38,6 @@ public interface RuleLoader extends Ordered {
     public List<Rule> load();
     
     /**
-      * 校验加载的规则是否合法<br/>
-      *     如果校验不合法则将对应规则设置为Error态<br/>
-      * <功能详细描述> [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    public void validate(List<Rule> ruleList);
-    
-    /**
       * 返回ruleLoader唯一key:
       * 用以支持规则加载完成之后，规则检验时需要找到注册的规则加载器所用
       * <功能详细描述>

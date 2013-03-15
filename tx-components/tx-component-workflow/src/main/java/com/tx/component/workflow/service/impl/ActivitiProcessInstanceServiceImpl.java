@@ -1083,6 +1083,7 @@ public class ActivitiProcessInstanceServiceImpl implements InitializingBean,
         int proInsIdHashCode = proInsId.hashCode();
         int proInsLockIndex = proInsIdHashCode
                 % (processInsLockNum <= 0 ? 256 : processInsLockNum);
+        proInsLockIndex = Math.abs(proInsLockIndex);
         return processInsLocks[proInsLockIndex];
     }
     
@@ -1102,6 +1103,7 @@ public class ActivitiProcessInstanceServiceImpl implements InitializingBean,
                 + currentTaskDefinitionKey.hashCode();
         int proDefLockIndex = proDefIdHashCode
                 % (processDefLockNum <= 0 ? 256 : processDefLockNum);
+        proDefLockIndex = Math.abs(proDefLockIndex);
         return processDefLocks[proDefLockIndex];
     }
 }

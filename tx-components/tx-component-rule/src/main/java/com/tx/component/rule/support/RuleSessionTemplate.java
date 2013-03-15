@@ -21,7 +21,9 @@ import com.tx.component.rule.context.RuleContext;
 import com.tx.component.rule.exceptions.RuleAccessException;
 import com.tx.component.rule.exceptions.RuleExceptionTranslator;
 import com.tx.component.rule.exceptions.impl.DefaultRuleExceptionTranslator;
+import com.tx.component.rule.model.Rule;
 import com.tx.component.rule.model.RuleSessionResultHandle;
+import com.tx.component.rule.model.RuleStateEnum;
 import com.tx.component.rule.model.impl.SimpleRuleSessionResultHandle;
 import com.tx.core.exceptions.parameter.ParameterIsInvalidException;
 
@@ -207,16 +209,15 @@ public class RuleSessionTemplate implements RuleSessionSupport,
             
             //开始一次会话
             RuleSessionContext.open();
-            if(args[2] != null){
-                RuleSessionContext.setGlobals((Map)args[2]);
+            if (args[2] != null) {
+                RuleSessionContext.setGlobals((Map) args[2]);
             }
             
             RuleSession ruleSession = getTargetRuleSession(method, args);
             try {
                 if (args[1] instanceof List) {
                     ruleSession.execute((List) args[1]);
-                }
-                else if (args[1] instanceof Map) {
+                } else if (args[1] instanceof Map) {
                     ruleSession.execute((Map) args[1]);
                 }
                 
@@ -224,8 +225,7 @@ public class RuleSessionTemplate implements RuleSessionSupport,
                 ruleSession.callback(resultHandle);
                 Object result = resultHandle.getValue();
                 return result;
-            }
-            catch (Throwable t) {
+            } catch (Throwable t) {
                 Throwable unwrapped = t;
                 if (ruleExceptionTranslator != null) {
                     Throwable translated = ruleExceptionTranslator.translate(ruleSession.rule(),
@@ -236,8 +236,7 @@ public class RuleSessionTemplate implements RuleSessionSupport,
                     }
                 }
                 throw unwrapped;
-            }
-            finally {
+            } finally {
                 RuleSessionContext.close();
             }
         }
@@ -268,11 +267,9 @@ public class RuleSessionTemplate implements RuleSessionSupport,
                         null,
                         "call ruleSession method:{} parameter rule or ruleSession is null.",
                         method.getName());
-            }
-            else if (arg0 instanceof RuleSession) {
+            } else if (arg0 instanceof RuleSession) {
                 return (RuleSession) arg0;
-            }
-            else if (arg0 instanceof String) {
+            } else if (arg0 instanceof String) {
                 String ruleKey = (String) arg0;
                 if (!ruleContext.contains(ruleKey)) {
                     throw new RuleAccessException(
@@ -282,9 +279,21 @@ public class RuleSessionTemplate implements RuleSessionSupport,
                             "call ruleSession method:{} parameter rule:{} is not Exist",
                             method.getName(), ruleKey);
                 }
+                Rule ruleIns = ruleContext.getRule(ruleKey);
+                if (ruleIns == null
+                        || RuleStateEnum.OPERATION.equals(ruleIns.getState())) {
+                    throw new RuleAccessException(
+                            ruleKey,
+                            null,
+                            null,
+                            "对应规则{}当前状态{}非运营态，请进行处理后再调用该规则.",
+                            ruleKey,
+                            ruleIns != null ? (ruleIns.getState() == null ? "nullstate"
+                                    : ruleIns.getState().toString())
+                                    : "");
+                }
                 return ruleContext.newRuleSession(ruleContext.getRule(ruleKey));
-            }
-            else {
+            } else {
                 throw new RuleAccessException(null, null, null,
                         "call ruleSession method:{} parameter is invalid.",
                         method.getName());

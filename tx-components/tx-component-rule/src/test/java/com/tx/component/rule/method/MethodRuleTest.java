@@ -12,14 +12,12 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.drools.template.parser.RuleTemplate;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.tx.component.rule.context.RuleContext;
 import com.tx.component.rule.support.RuleSessionTemplate;
 
 /**
@@ -57,7 +55,7 @@ public class MethodRuleTest {
             global.put("globalKey1", "globalValue1:abc");
             
             //
-            List<ProcessRule> resList = ruleSessionTemplate.<ProcessRule> evaluateList("minAgeRule",
+            List<ProcessRule> resList = ruleSessionTemplate.<ProcessRule> evaluateList("processLoanBill.minAgeRule",
                     fact,
                     global);
             System.out.println(resList.size());

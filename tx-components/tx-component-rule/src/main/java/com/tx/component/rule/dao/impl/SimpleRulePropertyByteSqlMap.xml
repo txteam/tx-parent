@@ -3,6 +3,7 @@
 	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="simpleRulePropertyByte">
+	<cache-ref namespace="simplePersistenceRule"/>
 
 	<!-- auto generate default resultMap -->
 	<resultMap id="simpleRulePropertyByteMap" 
@@ -20,12 +21,14 @@
 				TSRPB.PARAMVALUE,
 				TSRPB.PARAMVALUEORDERED
 		  FROM RU_RULE_PRO_BYTE TSRPB
-		 WHERE
-		<trim prefixOverrides="AND | OR">
-			<if test="@com.tx.core.Ognl@isNotEmpty(id)">  
-	            AND TSRPB.RULEID = #{ruleId}
-	        </if>
-		</trim>
+		 WHERE TSRPB.RULEID = #{ruleId}
+		   AND TSRPB.PARAMVALUEORDERED = #{paramValueOrdered}
+		   <if test="@com.tx.core.Ognl@isNotEmpty(simpleRulePropertyParam)">  
+	            AND TSRPB.SIMPLERULEPROPERTYPARAM = #{simpleRulePropertyParam}
+	       </if>
+	       <if test="@com.tx.core.Ognl@isNotEmpty(paramKey)">  
+	            AND TSRPB.PARAMKEY = #{paramKey,javaType=java.lang.String}
+	       </if>
 	</select>
 	
 	<!-- auto generate default query -->
@@ -49,19 +52,13 @@
 			<if test="@com.tx.core.Ognl@isNotEmpty(paramKey)">  
 	            AND TSRPB.PARAMKEY = #{paramKey,javaType=java.lang.String}
 	        </if>
-			<if test="@com.tx.core.Ognl@isNotEmpty(paramValue)">  
-	            AND TSRPB.PARAMVALUE = #{paramValue,javaType=[B}
-	        </if>
-			<if test="@com.tx.core.Ognl@isNotEmpty(paramValueOrdered)">  
-	            AND TSRPB.PARAMVALUEORDERED = #{paramValueOrdered,javaType=int}
-	        </if>
 		</trim>
 		<choose>  
 	        <when test="@com.tx.core.Ognl@isNotEmpty(orderSql)">  
 	            ORDER BY #{orderSql}
 	        </when>
 	        <otherwise>  
-	            <!-- //TODO:ADD DEFAULT ORDER COLUMN OR DONOTHING! -->
+	            ORDER BY RULEID,TSRPB.PARAMVALUEORDERED
 	        </otherwise>  
 	    </choose>
 	</select>
@@ -82,12 +79,6 @@
 			<if test="@com.tx.core.Ognl@isNotEmpty(paramKey)">  
 	            AND TSRPB.PARAMKEY = #{paramKey,javaType=java.lang.String}
 	        </if>
-			<if test="@com.tx.core.Ognl@isNotEmpty(paramValue)">  
-	            AND TSRPB.PARAMVALUE = #{paramValue,javaType=[B}
-	        </if>
-			<if test="@com.tx.core.Ognl@isNotEmpty(paramValueOrdered)">  
-	            AND TSRPB.PARAMVALUEORDERED = #{paramValueOrdered,javaType=int}
-	        </if>
 		</trim>
 	</select>
     
@@ -107,7 +98,7 @@
 			#{ruleId},
 			#{simpleRulePropertyParam},
 			#{paramKey},
-			#{paramValue},
+			#{paramValue,jdbcType=BLOB},
 			#{paramValueOrdered}
 		)
 	</insert>
@@ -115,35 +106,33 @@
 	<!-- auto generate default delete -->
 	<delete id="deleteSimpleRulePropertyByte" 
 		parameterType="com.tx.component.rule.model.SimpleRulePropertyByte">
-		DELETE FROM RU_RULE_PRO_BYTE TSRPB WHERE
-		<trim prefixOverrides="AND | OR">
-			<if test="@com.tx.core.Ognl@isNotEmpty(id)">  
-	            AND TSRPB.RULEID = #{ruleId}
-	        </if>
-		</trim>
+		DELETE FROM RU_RULE_PRO_BYTE TSRPB
+		 WHERE TSRPB.RULEID = #{ruleId}
+			<if test="@com.tx.core.Ognl@isNotEmpty(paramValueOrdered)">  
+	            AND TSRPB.PARAMVALUEORDERED = #{paramValueOrdered,javaType=java.lang.Integer}
+	       	</if>
+		   	<if test="@com.tx.core.Ognl@isNotEmpty(simpleRulePropertyParam)">  
+	            AND TSRPB.SIMPLERULEPROPERTYPARAM = #{simpleRulePropertyParam}
+	       	</if>
+	       	<if test="@com.tx.core.Ognl@isNotEmpty(paramKey)">  
+	            AND TSRPB.PARAMKEY = #{paramKey,javaType=java.lang.String}
+	       	</if>
 	</delete>
-
+	
 	<!-- auto generate default update -->
 	<update id="updateSimpleRulePropertyByte"
 	    parameterType="java.util.Map">  
 	    UPDATE ru_rule_pro_byte TSRPB
-	    <trim prefix="SET" suffixOverrides=",">
-			<if test="_parameter.containsKey('simpleRulePropertyParam')">
-	    		SIMPLERULEPROPERTYPARAM = #{simpleRulePropertyParam,javaType=com.tx.component.rule.model.SimpleRulePropertyParam},
-	    	</if>	
-			<if test="_parameter.containsKey('paramKey')">
-	    		PARAMKEY = #{paramKey,javaType=java.lang.String},
-	    	</if>	
-			<if test="_parameter.containsKey('paramValue')">
-	    		PARAMVALUE = #{paramValue,javaType=[B},
-	    	</if>	
-			<if test="_parameter.containsKey('paramValueOrdered')">
-	    		PARAMVALUEORDERED = #{paramValueOrdered,javaType=int},
-	    	</if>	
-	    </trim>
-	    WHERE TSRPB.RULEID = #{ruleId} 
+		   SET PARAMVALUE = #{paramValue,jdbcType=blob},
+	   	WHERE TSRPB.RULEID = #{ruleId}
+		  AND TSRPB.PARAMVALUEORDERED = #{paramValueOrdered}
+		  <if test="@com.tx.core.Ognl@isNotEmpty(simpleRulePropertyParam)">  
+	      		AND TSRPB.SIMPLERULEPROPERTYPARAM = #{simpleRulePropertyParam}
+	      </if>
+	      <if test="@com.tx.core.Ognl@isNotEmpty(paramKey)">  
+	            AND TSRPB.PARAMKEY = #{paramKey,javaType=java.lang.String}
+	      </if>
 	</update>  
-
 </mapper>
 <!--
 sqlMap生成描述:

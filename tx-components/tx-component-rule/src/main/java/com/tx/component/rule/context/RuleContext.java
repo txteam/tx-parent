@@ -25,13 +25,16 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
+import org.springframework.util.MultiValueMap;
 
 import com.tx.component.rule.exceptions.RuleAccessException;
 import com.tx.component.rule.model.Rule;
+import com.tx.component.rule.model.RuleStateEnum;
 import com.tx.component.rule.support.RuleSession;
 import com.tx.component.rule.support.RuleSessionFactory;
 import com.tx.component.rule.support.impl.DefaultRuleSessionFactory;
 import com.tx.core.support.cache.ehcache.SimpleEhcacheMap;
+import com.tx.core.support.cache.ehcache.SimpleMultiValueEhcacheMap;
 
 /**
  * 规则容器<br/>
@@ -66,8 +69,14 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
     /** 规则加载记录 */
     private static Map<RuleLoader, List<Rule>> registeredRuleLoaderRuleListMap = new HashMap<RuleLoader, List<Rule>>();
     
-    /** 规则缓存 */
-    private Map<String, Rule> ruleMapCache;
+    /** 规则验证器映射 */
+    private static Map<Class<? extends Rule>, RuleValidator<? extends Rule>> ruleValidatorMap = new HashMap<Class<? extends Rule>, RuleValidator<? extends Rule>>();
+    
+    /** 规则缓存:key为 serviceType + "." + rule */
+    private Map<String, Rule> ruleKeyMapCache;
+    
+    /** 规则缓存:key为 rule 如果存在两个同rule serviceType时，则在该缓存中不进行存入 */
+    private MultiValueMap<String, Rule> multiRuleMapCache;
     
     /** 是否加载完成 */
     private boolean loadOver = false;
@@ -83,9 +92,12 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
      */
     @Override
     public void afterPropertiesSet() throws Exception {
-        this.ruleMapCache = new SimpleEhcacheMap<String, Rule>(
-                "cache.ruleMapCache", ehcache,
+        this.ruleKeyMapCache = new SimpleEhcacheMap<String, Rule>(
+                "cache.ruleKeyMapCache", ehcache,
                 new ConcurrentHashMap<String, Rule>());
+        this.multiRuleMapCache = new SimpleMultiValueEhcacheMap<String, Rule>(
+                "cache.multiRuleMapCache", ehcache,
+                new ConcurrentHashMap<String, List<Rule>>());
         
         if (ruleSessionFactory == null) {
             this.ruleSessionFactory = new DefaultRuleSessionFactory();
@@ -111,6 +123,20 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
      */
     public static void registerRuleLoader(RuleLoader ruleLoader) {
         registeredRuleLoaderMap.put(ruleLoader.ruleLoaderKey(), false);
+    }
+    
+    /**
+      * 注册规则验证器
+      * <功能详细描述>
+      * @param ruleValidator [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public static void registerRuleValidator(
+            RuleValidator<? extends Rule> ruleValidator) {
+        ruleValidatorMap.put(ruleValidator.validateType(), ruleValidator);
     }
     
     /**
@@ -140,18 +166,57 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
         //设置为对应ruleLoader已加载
         registeredRuleLoaderRuleListMap.put(ruleLoader, ruleList);
         if (isLoadFinish()) {
-            validateWhenLoadFinish();
+            putInCacheWhenLoadFinish();
+            
+            List<RuleAndValidatorWrap> ruleAndValidatorWrapList = new ArrayList<RuleContext.RuleAndValidatorWrap>();
+            if(this.ruleKeyMapCache.values() != null){
+                for(Rule ruleTemp : this.ruleKeyMapCache.values()){
+                    if(!RuleStateEnum.OPERATION.equals(ruleTemp.getState())){
+                        //非运营态的规则无需进行验证
+                        continue;
+                    }
+                    RuleValidator<? extends Rule> ruleValidatorTemp = ruleValidatorMap.get(ruleTemp.getClass());
+                    RuleAndValidatorWrap rvWrapTemp = new RuleAndValidatorWrap(ruleTemp, ruleValidatorTemp);
+                    ruleAndValidatorWrapList.add(rvWrapTemp);
+                }
+            }
+            validateWhenLoadFinish(ruleAndValidatorWrapList);
         }
     }
     
-    public void validateWhenLoadFinish() {
+    /**
+      * 如果加载的对应规则为运营态则对该规则进行校验
+      * <功能详细描述>
+      * @param ruleList [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    private void validateWhenLoadFinish(List<RuleAndValidatorWrap> ruleAndValidatorWrapList){
+        for(RuleAndValidatorWrap rvWrapTemp : ruleAndValidatorWrapList){
+            if(rvWrapTemp.getRuleValidator() != null && RuleStateEnum.OPERATION.equals(rvWrapTemp.getRule().getState())){
+                //如果规则为运营态，并且规则校验器不为空时，对规则进行校验
+                rvWrapTemp.getRuleValidator().validate(rvWrapTemp.getRule());
+            }
+        }
+    }
+    
+    /**
+      * 当加载完成压入缓存中
+      * <功能详细描述> [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    private void putInCacheWhenLoadFinish() {
         //获取ruleLoader列表
         List<RuleLoader> ruleLoaderList = new ArrayList<RuleLoader>(
                 registeredRuleLoaderRuleListMap.keySet());
         
         //对ruleLoader进行排序
         Collections.sort(ruleLoaderList, new Comparator<RuleLoader>() {
-            
             /**
              * @param o1
              * @param o2
@@ -180,7 +245,6 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
         //根据顺序调用规则验证器
         for (RuleLoader ruleLoaderTemp : ruleLoaderList) {
             List<Rule> ruleList = registeredRuleLoaderRuleListMap.get(ruleLoaderTemp);
-            ruleLoaderTemp.validate(ruleList);
             
             //将对应规则压入容器中
             putInCache(ruleList, true);
@@ -252,7 +316,7 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
      */
     public int size() {
         waitLoading();
-        return ruleMapCache.size();
+        return ruleKeyMapCache.size();
     }
     
     /**
@@ -268,7 +332,19 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
      */
     public boolean contains(String rule) {
         waitLoading();
-        return ruleMapCache.containsKey(rule);
+        if (ruleKeyMapCache.containsKey(rule)) {
+            return true;
+        } else if (multiRuleMapCache.containsKey(rule)) {
+            if (multiRuleMapCache.get(rule) != null
+                    && multiRuleMapCache.get(rule).size() > 1) {
+                throw new RuleAccessException(rule, null, null,
+                        "未带业务类型（命名空间）的规则，检索到超过多个规则:{}", rule);
+            } else {
+                return true;
+            }
+        } else {
+            return false;
+        }
     }
     
     /**
@@ -283,7 +359,19 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
      */
     public Rule getRule(String rule) {
         waitLoading();
-        return ruleMapCache.get(rule);
+        if (ruleKeyMapCache.containsKey(rule)) {
+            return ruleKeyMapCache.get(rule);
+        } else if (multiRuleMapCache.containsKey(rule)) {
+            if (multiRuleMapCache.get(rule) != null
+                    && multiRuleMapCache.get(rule).size() > 1) {
+                throw new RuleAccessException(rule, null, null,
+                        "未带业务类型（命名空间）的规则，检索到超过多个规则:{}", rule);
+            } else {
+                return multiRuleMapCache.getFirst(rule);
+            }
+        } else {
+            return null;
+        }
     }
     
     /**
@@ -345,15 +433,7 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
             return;
         }
         for (Rule ruleTemp : ruleList) {
-            if (isCoverWhenSame) {
-                this.ruleMapCache.put(ruleTemp.rule(), ruleTemp);
-            } else if (this.ruleMapCache.containsKey(ruleTemp.rule())) {
-                throw new RuleAccessException(ruleTemp.rule(), null, null,
-                        "重复的规则项:{}", ruleTemp.rule());
-            } else {
-                this.ruleMapCache.put(ruleTemp.rule(), ruleTemp);
-            }
-            
+            putInCache(ruleTemp, isCoverWhenSame);
         }
     }
     
@@ -366,20 +446,96 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    @SuppressWarnings("unused")
     private void putInCache(Rule rule, boolean isCoverWhenSame) {
         if (rule == null) {
             return;
         }
         if (isCoverWhenSame) {
-            this.ruleMapCache.put(rule.rule(), rule);
-        } else if (this.ruleMapCache.containsKey(rule.rule())) {
+            this.ruleKeyMapCache.put(getRuleCacheKey(rule), rule);
+        } else if (this.ruleKeyMapCache.containsKey(getRuleCacheKey(rule))) {
             throw new RuleAccessException(rule.rule(), null, null, "重复的规则项:{}",
                     rule.rule());
         } else {
-            this.ruleMapCache.put(rule.rule(), rule);
+            this.ruleKeyMapCache.put(getRuleCacheKey(rule), rule);
             logger.warn("规则项{}被同名规则项覆盖.", rule.rule());
         }
         
+        //如果名字重复了
+        //则不放置该规则则规则简名中，如果遇到需要提取该集合的情况
+        this.multiRuleMapCache.add(rule.rule(), rule);
+    }
+    
+    /**
+      * 获取规则缓存键
+      * <功能详细描述>
+      * @param rule [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    protected String getRuleCacheKey(Rule rule) {
+        return rule.getServiceType() + "." + rule.rule();
+    }
+    
+    /**
+      * 规则以及对应验证器的包装器
+      * <功能详细描述>
+      * 
+      * @author  brady
+      * @version  [版本号, 2013-3-15]
+      * @see  [相关类/方法]
+      * @since  [产品/模块版本]
+     */
+    private static class RuleAndValidatorWrap implements Comparable<RuleAndValidatorWrap>{
+
+        /** 规则本身 */
+        private Rule rule;
+        
+        /** 规则验证器 */
+        private RuleValidator<? extends Rule> ruleValidator;
+        
+        
+        /** <默认构造函数> */
+        public RuleAndValidatorWrap(Rule rule,
+                RuleValidator<? extends Rule> ruleValidator) {
+            super();
+            this.rule = rule;
+            this.ruleValidator = ruleValidator;
+        }
+
+        /**
+         * @param o
+         * @return
+         */
+        @Override
+        public int compareTo(RuleAndValidatorWrap o) {
+            if(o == null){
+                return 1;
+            }
+            if(this.ruleValidator == null && o.ruleValidator == null){
+                return 0;
+            }else if(this.ruleValidator == null){
+                return -1;
+            }else if(o.ruleValidator == null){
+                return 1;
+            }else{
+                 return (new Integer(this.ruleValidator.getOrder())).compareTo(new Integer(o.ruleValidator.getOrder()));
+            }
+        }
+
+        /**
+         * @return 返回 rule
+         */
+        public Rule getRule() {
+            return rule;
+        }
+
+        /**
+         * @return 返回 ruleValidator
+         */
+        public RuleValidator<? extends Rule> getRuleValidator() {
+            return ruleValidator;
+        }
     }
 }
