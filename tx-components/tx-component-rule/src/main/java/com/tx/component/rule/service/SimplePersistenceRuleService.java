@@ -164,29 +164,6 @@ public class SimplePersistenceRuleService {
     }
     
     /**
-      * 根据SimplePersistenceRule实体列表
-      * TODO:补充说明
-      * 
-      * <功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return List<SimplePersistenceRule> [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    public List<SimplePersistenceRule> querySimplePersistenceRuleList(/*TODO:自己定义条件*/) {
-        //TODO:判断条件合法性
-        
-        //TODO:生成查询条件
-        Map<String, Object> params = new HashMap<String, Object>();
-        
-        //TODO:根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
-        List<SimplePersistenceRule> resList = this.simplePersistenceRuleDao.querySimplePersistenceRuleList(params);
-        
-        return resList;
-    }
-    
-    /**
      * 分页查询SimplePersistenceRule实体列表
      * TODO:补充说明
      * 
@@ -210,28 +187,6 @@ public class SimplePersistenceRuleService {
                 pageSize);
         
         return resPagedList;
-    }
-    
-    /**
-      * 查询simplePersistenceRule列表总条数
-      * TODO:补充说明
-      * <功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return int [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    public int countSimplePersistenceRule(/*TODO:自己定义条件*/) {
-        //TODO:判断条件合法性
-        
-        //TODO:生成查询条件
-        Map<String, Object> params = new HashMap<String, Object>();
-        
-        //TODO:根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
-        int res = this.simplePersistenceRuleDao.countSimplePersistenceRule(params);
-        
-        return res;
     }
     
     /**

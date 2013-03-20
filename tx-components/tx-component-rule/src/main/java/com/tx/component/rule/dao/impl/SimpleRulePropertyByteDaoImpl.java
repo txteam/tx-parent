@@ -44,6 +44,14 @@ public class SimpleRulePropertyByteDaoImpl implements SimpleRulePropertyByteDao 
     
     /**
      * @param condition
+     */
+    @Override
+    public void batchInsertSimpleRulePropertyByte(List<SimpleRulePropertyByte> condition) {
+        this.myBatisDaoSupport.batchInsertUseUUID("simpleRulePropertyByte.insertSimpleRulePropertyByte", condition, "id",true);
+    }
+    
+    /**
+     * @param condition
      * @return
      */
     @Override

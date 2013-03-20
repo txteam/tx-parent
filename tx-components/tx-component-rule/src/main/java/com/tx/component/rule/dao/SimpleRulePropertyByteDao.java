@@ -38,6 +38,17 @@ public interface SimpleRulePropertyByteDao {
     public void insertSimpleRulePropertyByte(SimpleRulePropertyByte condition);
     
     /**
+      * 批量插入
+      * <功能详细描述>
+      * @param condition [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public void batchInsertSimpleRulePropertyByte(List<SimpleRulePropertyByte> condition);
+    
+    /**
       * 删除SimpleRulePropertyByte对象
       * 1、auto generate
       * 2、根据入参条件进行删除

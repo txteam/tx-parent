@@ -12,4 +12,4 @@ create table ru_rule_pro_value
 );
 --对于同一规则，相同属性，相同排序的值仅只能有一个
 create unique index idx_rule_pro_value_01 on ru_rule_pro_value(ruleId,paramKey,paramValueOrdered);
-create unique index idx_rule_pro_value_02 on ru_rule_pro_value(ruleId,simpleRulePropertyParam,paramValueOrdered);
+create unique index idx_rule_pro_value_02 on ru_rule_pro_value(ruleId,simpleRulePropertyParam,paramValueOrdered,paramValueOrdered);

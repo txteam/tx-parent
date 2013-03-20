@@ -13,7 +13,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,10 +22,9 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import com.tx.component.rule.dao.SimpleRulePropertyByteDao;
-import com.tx.component.rule.model.SimpleRulePropertyByte;
 import com.tx.component.rule.model.SimpleRuleParamEnum;
+import com.tx.component.rule.model.SimpleRulePropertyByte;
 import com.tx.core.exceptions.parameter.ParameterIsEmptyException;
-import com.tx.core.paged.model.PagedList;
 
 /**
  * SimpleRulePropertyByte的业务层
@@ -114,7 +112,6 @@ public class SimpleRulePropertyByteService {
       * @exception throws 可能存在数据库访问异常DataAccessException
       * @see [类、类#方法、类#成员]
      */
-    
     public void insertSimpleRulePropertyByte(
             SimpleRulePropertyByte simpleRulePropertyByte) {
         //验证参数是否合法，必填字段是否填写，
@@ -122,9 +119,10 @@ public class SimpleRulePropertyByteService {
         //如果有参数不合法ParameterIsInvalruleIdException
         if (simpleRulePropertyByte == null
                 || StringUtils.isEmpty(simpleRulePropertyByte.getRuleId())
-                || simpleRulePropertyByte.getParamKey()) {
+                || StringUtils.isEmpty(simpleRulePropertyByte.getParamKey())
+                || simpleRulePropertyByte.getSimpleRulePropertyParam() == null) {
             throw new ParameterIsEmptyException(
-                    "SimpleRulePropertyByteService.insertSimpleRulePropertyByte simpleRulePropertyByte isNull.");
+                    "simpleRulePropertyByte or .id or .paramKey isEmpty.");
         }
         
         this.simpleRulePropertyByteDao.insertSimpleRulePropertyByte(simpleRulePropertyByte);
