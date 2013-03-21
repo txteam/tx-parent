@@ -2,6 +2,15 @@ package com.tx.component.auth.model;
 
 import java.util.Date;
 
+/**
+  * 权限项引用
+  * <功能详细描述>
+  * 
+  * @author  brady
+  * @version  [版本号, 2013-3-21]
+  * @see  [相关类/方法]
+  * @since  [产品/模块版本]
+ */
 public interface AuthItemRef {
     
     /**

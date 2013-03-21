@@ -284,6 +284,7 @@ public class AuthContext implements FactoryBean<AuthContext>,
             HttpServletResponse response) {
         //绑定线程前先remove一次，以保证不会残留上一次的会话，虽然不是特别需要，也不会占用太多资源
         currentSessionContext.remove();
+        
         //将当前会话绑定到现成中
         currentSessionContext.get().install(request, response);
     }
