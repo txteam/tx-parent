@@ -82,7 +82,6 @@ public class SimpleRulePropertyByteService {
                 resMap.add(srpbTemp.getSimpleRulePropertyParam(), srpbTemp);
             }
         }
-        
         return resMap;
     }
     
@@ -97,7 +96,7 @@ public class SimpleRulePropertyByteService {
      */
     @Transactional
     public void insertSimpleRulePropertyByte(
-            MultiValueMap<SimpleRuleParamEnum, SimpleRulePropertyByte> propertyValuesMap) {
+            MultiValueMap<SimpleRuleParamEnum, SimpleRulePropertyByte> propertyValuesMap){
         
     }
     

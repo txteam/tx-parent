@@ -12,6 +12,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.tx.component.rule.dao.SimplePersistenceRuleDao;
+import com.tx.component.rule.model.Rule;
 import com.tx.component.rule.model.RuleTypeEnum;
 import com.tx.component.rule.model.SimplePersistenceRule;
 import com.tx.component.rule.model.RuleStateEnum;
@@ -47,6 +49,42 @@ public class SimplePersistenceRuleService {
     @Resource(name = "simplePersistenceRuleDao")
     private SimplePersistenceRuleDao simplePersistenceRuleDao;
     
+    @Resource(name = "simpleRulePropertyByteService")
+    private SimpleRulePropertyByteService simpleRulePropertyByteService;
+    
+    @Resource(name = "simpleRulePropertyValueService")
+    private SimpleRulePropertyValueService simpleRulePropertyValueService;
+    
+    @Resource(name = "simpleRulePropertyParamService")
+    private SimpleRulePropertyParamService simpleRulePropertyParamService;
+    
+    /**
+      * 装在规则参数
+      * <功能详细描述>
+      * @param rule [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    private void setupRuleParam(SimplePersistenceRule rule){
+        //如果参数为空，装载参数
+        if (CollectionUtils.isEmpty(rule.getParams())) {
+            rule.setParams(this.simpleRulePropertyParamService.queryParamsByRuleType(rule.getRuleType()));
+        }
+        
+        //装载参数值
+        //装载byte类型值
+        if(rule.isHasByteParam()){
+            rule.setBytePropertyValues(this.simpleRulePropertyByteService.querySimpleRulePropertyByteMultiMap(rule.getId()));
+        }
+        //装载value类型值
+        if(rule.isHasValueParam()){
+            //rule.setStringPropertyValues(this.simpleRulePropertyValueService.query);
+        }
+        
+    }
+    
     /**
      * 根据RuleType查询SimplePersistenceRule实体列表
      * 
@@ -71,6 +109,17 @@ public class SimplePersistenceRuleService {
         
         //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
         List<SimplePersistenceRule> resList = this.simplePersistenceRuleDao.querySimplePersistenceRuleList(params);
+        
+        //如果列表为空直接返回
+        if (resList == null) {
+            return resList;
+        }
+        
+        //列表不为空，设置参数集合，以及查询对应的参数值
+        for (SimplePersistenceRule ruleTemp : resList) {
+            //装载参数
+            setupRuleParam(ruleTemp);
+        }
         
         return resList;
     }

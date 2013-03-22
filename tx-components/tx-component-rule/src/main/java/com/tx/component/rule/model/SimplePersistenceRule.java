@@ -16,8 +16,6 @@ import javax.persistence.Transient;
 
 import org.springframework.util.MultiValueMap;
 
-import com.tx.component.rule.service.SimpleRulePropertyByteService;
-import com.tx.component.rule.service.SimpleRulePropertyValueService;
 import com.tx.core.exceptions.parameter.ParameterIsEmptyException;
 import com.tx.core.exceptions.parameter.ParameterIsInvalidException;
 
@@ -61,19 +59,23 @@ public class SimplePersistenceRule implements Serializable, Rule {
     /** 规则状态 */
     private RuleStateEnum state;
     
+    /** 规则包含的参数集 */
+    @Transient
+    private List<SimpleRuleParamEnum> params;
+    
+    /** 是否拥有byte类型的参数 */
+    private boolean isHasByteParam = false;
+    
+    /** 是否拥有value类型的参数 */
+    private boolean isHasValueParam = false;
+    
     /** byte类型规则参数 */
     @Transient
     private MultiValueMap<SimpleRuleParamEnum, SimpleRulePropertyByte> bytePropertyValues;
     
     /** string类型规则参数 */
     @Transient
-    private MultiValueMap<SimpleRuleParamEnum, SimpleRulePropertyByte> stringPropertyValues;
-    
-    /** 属性持久化句柄 */
-    private SimpleRulePropertyValueService simpleRulePropertyValueService;
-    
-    /** 属性持久化句柄 */
-    private SimpleRulePropertyByteService simpleRulePropertyByteService;
+    private MultiValueMap<SimpleRuleParamEnum, SimpleRulePropertyValue> stringPropertyValues;
     
     /**
       * 获取byte类型属性值，单值和多值的情况都可以从该方法获取
@@ -93,15 +95,6 @@ public class SimplePersistenceRule implements Serializable, Rule {
         if (!propertyParam.isBlob()) {
             throw new ParameterIsInvalidException(
                     "propertyParam is not byte type.{}", propertyParam.getKey());
-        }
-        if (bytePropertyValues == null) {
-            if (simpleRulePropertyByteService == null) {
-                throw new ParameterIsInvalidException(
-                        "bytePropertyValues and simpleRulePropertyByteService is null. rule:{}:{}",
-                        this.id, this.rule);
-            } else {
-                this.bytePropertyValues = this.simpleRulePropertyByteService.querySimpleRulePropertyByteMultiMap(this.id);
-            }
         }
         
         return this.bytePropertyValues.get(propertyParam);
@@ -126,25 +119,16 @@ public class SimplePersistenceRule implements Serializable, Rule {
             throw new ParameterIsInvalidException(
                     "propertyParam is not byte type.{}", propertyParam.getKey());
         }
-        if(propertyParam.isMultiProerty()){
-            throw new ParameterIsInvalidException(
-                    "propertyParam is Multi.{}", propertyParam.getKey());
-        }
-        if (bytePropertyValues == null) {
-            if (simpleRulePropertyByteService == null) {
-                throw new ParameterIsInvalidException(
-                        "bytePropertyValues and simpleRulePropertyByteService is null. rule:{}:{}",
-                        this.id, this.rule);
-            } else {
-                this.bytePropertyValues = this.simpleRulePropertyByteService.querySimpleRulePropertyByteMultiMap(this.id);
-            }
+        if (propertyParam.isMultiProerty()) {
+            throw new ParameterIsInvalidException("propertyParam is Multi.{}",
+                    propertyParam.getKey());
         }
         
         return this.bytePropertyValues.getFirst(propertyParam);
     }
     
     /**
-     * 获取byte类型属性值，单值和多值的情况都可以从该方法获取
+     * 获取value类型属性值，单值和多值的情况都可以从该方法获取
      * <功能详细描述>
      * @param propertyParam
      * @return [参数说明]
@@ -153,29 +137,43 @@ public class SimplePersistenceRule implements Serializable, Rule {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-   public List<SimpleRulePropertyValue> getStringPropertyList(
-           SimpleRuleParamEnum propertyParam) {
-       if (propertyParam == null) {
-           throw new ParameterIsEmptyException("propertyParam is empty.");
-       }
-       if (propertyParam.isBlob()) {
-           throw new ParameterIsInvalidException(
-                   "propertyParam is byte type.{}: rule {}", propertyParam.getKey(),this.rule);
-       }
-       if (stringPropertyValues == null) {
-           if (simpleRulePropertyValueService == null) {
-               throw new ParameterIsInvalidException(
-                       "bytePropertyValues and simpleRulePropertyByteService is null. rule:{}:{}",
-                       this.id, this.rule);
-           } else {
-               this.bytePropertyValues = this.simpleRulePropertyValueService.querySimpleRulePropertyValueList(this.id);
-           }
-       }
-       
-       return this.stringPropertyValues.get(propertyParam);
-   }
+    public List<SimpleRulePropertyValue> getStringPropertyList(
+            SimpleRuleParamEnum propertyParam) {
+        if (propertyParam == null) {
+            throw new ParameterIsEmptyException("propertyParam is empty.");
+        }
+        if (propertyParam.isBlob()) {
+            throw new ParameterIsInvalidException(
+                    "propertyParam is byte type.{}: rule {}",
+                    propertyParam.getKey(), this.rule);
+        }
+        
+        return this.stringPropertyValues.get(propertyParam);
+    }
     
-    
+    /**
+     * 获取value类型属性值，单值和多值的情况都可以从该方法获取
+     * <功能详细描述>
+     * @param propertyParam
+     * @return [参数说明]
+     * 
+     * @return List<SimpleRulePropertyByte> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    public SimpleRulePropertyValue getStringProperty(
+            SimpleRuleParamEnum propertyParam) {
+        if (propertyParam == null) {
+            throw new ParameterIsEmptyException("propertyParam is empty.");
+        }
+        if (propertyParam.isBlob()) {
+            throw new ParameterIsInvalidException(
+                    "propertyParam is byte type.{}: rule {}",
+                    propertyParam.getKey(), this.rule);
+        }
+        
+        return this.stringPropertyValues.getFirst(propertyParam);
+    }
     
     /**
      * <默认构造函数>
@@ -319,7 +317,7 @@ public class SimplePersistenceRule implements Serializable, Rule {
     /**
      * @return 返回 stringPropertyValues
      */
-    public MultiValueMap<SimpleRuleParamEnum, SimpleRulePropertyByte> getStringPropertyValues() {
+    public MultiValueMap<SimpleRuleParamEnum, SimpleRulePropertyValue> getStringPropertyValues() {
         return stringPropertyValues;
     }
     
@@ -327,37 +325,60 @@ public class SimplePersistenceRule implements Serializable, Rule {
      * @param 对stringPropertyValues进行赋值
      */
     public void setStringPropertyValues(
-            MultiValueMap<SimpleRuleParamEnum, SimpleRulePropertyByte> stringPropertyValues) {
+            MultiValueMap<SimpleRuleParamEnum, SimpleRulePropertyValue> stringPropertyValues) {
         this.stringPropertyValues = stringPropertyValues;
     }
     
     /**
-     * @return 返回 simpleRulePropertyValueService
+     * @return 返回 params
      */
-    public SimpleRulePropertyValueService getSimpleRulePropertyValueService() {
-        return simpleRulePropertyValueService;
+    public List<SimpleRuleParamEnum> getParams() {
+        return params;
     }
     
     /**
-     * @param 对simpleRulePropertyValueService进行赋值
+     * @param 对params进行赋值
      */
-    public void setSimpleRulePropertyValueService(
-            SimpleRulePropertyValueService simpleRulePropertyValueService) {
-        this.simpleRulePropertyValueService = simpleRulePropertyValueService;
+    public void setParams(List<SimpleRuleParamEnum> params) {
+        this.params = params;
+        
+        if(this.params != null){
+            for(SimpleRuleParamEnum paramEnumTemp : this.params){
+                if(paramEnumTemp.isBlob()){
+                    this.isHasByteParam = true;
+                }else{
+                    this.isHasValueParam = true;
+                }
+            }
+        }
+    }
+
+    /**
+     * @return 返回 isHasByteParam
+     */
+    public boolean isHasByteParam() {
+        return isHasByteParam;
+    }
+
+    /**
+     * @param 对isHasByteParam进行赋值
+     */
+    public void setHasByteParam(boolean isHasByteParam) {
+        this.isHasByteParam = isHasByteParam;
+    }
+
+    /**
+     * @return 返回 isHasValueParam
+     */
+    public boolean isHasValueParam() {
+        return isHasValueParam;
+    }
+
+    /**
+     * @param 对isHasValueParam进行赋值
+     */
+    public void setHasValueParam(boolean isHasValueParam) {
+        this.isHasValueParam = isHasValueParam;
     }
     
-    /**
-     * @return 返回 simpleRulePropertyByteService
-     */
-    public SimpleRulePropertyByteService getSimpleRulePropertyByteService() {
-        return simpleRulePropertyByteService;
-    }
-    
-    /**
-     * @param 对simpleRulePropertyByteService进行赋值
-     */
-    public void setSimpleRulePropertyByteService(
-            SimpleRulePropertyByteService simpleRulePropertyByteService) {
-        this.simpleRulePropertyByteService = simpleRulePropertyByteService;
-    }
 }

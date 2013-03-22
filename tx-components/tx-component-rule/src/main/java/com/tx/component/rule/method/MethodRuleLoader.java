@@ -30,7 +30,6 @@ import com.tx.component.rule.model.RuleStateEnum;
 import com.tx.component.rule.model.RuleTypeEnum;
 import com.tx.component.rule.model.SimplePersistenceRule;
 import com.tx.component.rule.service.SimplePersistenceRuleService;
-import com.tx.component.rule.service.SimpleRulePropertyValueService;
 import com.tx.core.TxConstants;
 import com.tx.core.exceptions.parameter.ParameterIsInvalidException;
 
