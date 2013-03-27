@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
@@ -27,6 +28,7 @@ import com.tx.component.rule.model.SimpleRuleParamEnum;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
   */
+@Component("simpleRulePropertyParamService")
 public class SimpleRulePropertyParamService implements InitializingBean{
     
     private MultiValueMap<RuleTypeEnum, SimpleRuleParamEnum> paramMultiMap;

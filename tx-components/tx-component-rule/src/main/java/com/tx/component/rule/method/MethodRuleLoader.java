@@ -92,12 +92,18 @@ public class MethodRuleLoader implements RuleLoader, ApplicationContextAware {
         //压入加载的规则方法
         for (MethodRule mrTemp : currentRuleMethodList) {
             currentRuleMap.put(getRuleKeyFromRule(mrTemp), mrTemp);
+            SimplePersistenceRule dbRuleTemp = dbRuleMap.get(getRuleKeyFromRule(mrTemp));
             
             //如果对应规则，在数据库中原不存在
-            if (!dbRuleMap.containsKey(getRuleKeyFromRule(mrTemp))) {
+            if (dbRuleTemp == null) {
                 //持久化新添加的规则
                 SimplePersistenceRule spr = new SimplePersistenceRule(mrTemp);
                 this.simplePersistenceRuleService.insertSimplePersistenceRule(spr);
+            } else if (dbRuleTemp != null
+                    || RuleStateEnum.OPERATION.equals(dbRuleTemp.getState())) {
+                //修改存储中规则状态为持久态
+                this.simplePersistenceRuleService.changeRuleStateById(dbRuleTemp.getId(),
+                        RuleStateEnum.OPERATION);
             }
             
             resList.add(mrTemp);

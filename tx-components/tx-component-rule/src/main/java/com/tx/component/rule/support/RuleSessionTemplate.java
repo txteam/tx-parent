@@ -25,6 +25,9 @@ import com.tx.component.rule.model.Rule;
 import com.tx.component.rule.model.RuleSessionResultHandle;
 import com.tx.component.rule.model.RuleStateEnum;
 import com.tx.component.rule.model.impl.SimpleRuleSessionResultHandle;
+import com.tx.component.rule.transation.RuleSessionContext;
+import com.tx.component.rule.transation.RuleSessionTransaction;
+import com.tx.component.rule.transation.RuleSessionTransactionUtils;
 import com.tx.core.exceptions.parameter.ParameterIsInvalidException;
 
 /**
@@ -207,10 +210,12 @@ public class RuleSessionTemplate implements RuleSessionSupport,
                         "RuleSessionSupportInvocationHandler.invoke args invalid");
             }
             
-            //开始一次会话
-            RuleSessionContext.open();
+            //开启规则会话事务
+            RuleSessionTransaction rsTrans = RuleSessionTransactionUtils.openRuleSessionTransation(ruleContext.getRuleSessionTransactionFactory());
+            
+            //设置会话变量
             if (args[2] != null) {
-                RuleSessionContext.setGlobals((Map) args[2]);
+                RuleSessionContext.getContext().setGlobals((Map) args[2]);
             }
             
             RuleSession ruleSession = getTargetRuleSession(method, args);
@@ -237,7 +242,9 @@ public class RuleSessionTemplate implements RuleSessionSupport,
                 }
                 throw unwrapped;
             } finally {
-                RuleSessionContext.close();
+                //关闭规则会话事务
+                RuleSessionTransactionUtils.closeRuleSessionTransation(rsTrans,
+                        ruleContext.getRuleSessionTransactionFactory());
             }
         }
         
@@ -281,7 +288,7 @@ public class RuleSessionTemplate implements RuleSessionSupport,
                 }
                 Rule ruleIns = ruleContext.getRule(ruleKey);
                 if (ruleIns == null
-                        || RuleStateEnum.OPERATION.equals(ruleIns.getState())) {
+                        || !RuleStateEnum.OPERATION.equals(ruleIns.getState())) {
                     throw new RuleAccessException(
                             ruleKey,
                             null,

@@ -4,10 +4,13 @@
  * 修改时间:  2013-1-24
  * <修改描述:>
  */
-package com.tx.component.rule.support;
+package com.tx.component.rule.transation;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 规则会话容器<br/>
@@ -19,6 +22,10 @@ import java.util.Map;
  */
 public class RuleSessionContext {
     
+    private static RuleSessionContext context = new RuleSessionContext();
+    
+    private static Logger logger = LoggerFactory.getLogger(RuleSessionContext.class);
+    
     /**
      * 全局容器绑定
      */
@@ -29,11 +36,43 @@ public class RuleSessionContext {
          */
         @Override
         protected Map<String, Object> initialValue() {
-            return new HashMap<String, Object>();
+            return null;
         }
     };
     
+    /** 私有化构造函数 */
+    private RuleSessionContext(){
+    }
+    
     /**
+      * 返回context实例
+      * <功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return RuleSessionContext [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public static RuleSessionContext getContext(){
+        return context;
+    }
+    
+    /**
+     *  包可见方法
+      * 规则回话事务是否已经开启
+      * <功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return boolean [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    static boolean isOpen(){
+        return global.get() != null;
+    }
+    
+    /**
+      *  包可见方法
       * 打开方法规则会话容器<br/>
       *     1、初始化容器<br/>
       *     
@@ -43,11 +82,13 @@ public class RuleSessionContext {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public static void open(){
-        global.remove();
+    static void open(){
+        logger.debug("rule session tranaction open.");
+        global.set(new HashMap<String, Object>());
     }
     
     /**
+      * 包可见方法
       * 关闭方法规则会话容器
       *     1、移除方法线程变量 [参数说明]
       * 
@@ -55,7 +96,9 @@ public class RuleSessionContext {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public static void close(){
+    static void close(){
+        logger.debug("rule session tranaction close.");
+        global.set(null);//正常来说这个是不必要的
         global.remove();
     }
     
@@ -69,7 +112,7 @@ public class RuleSessionContext {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public static void setGlobal(String key, Object object) {
+    public void setGlobal(String key, Object object) {
         global.get().put(key, object);
     }
     
@@ -82,7 +125,7 @@ public class RuleSessionContext {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public static void setGlobals(Map<String, Object> globals) {
+    public void setGlobals(Map<String, Object> globals) {
         global.get().putAll(globals);
     }
     
@@ -96,7 +139,7 @@ public class RuleSessionContext {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public static Object getGlobal(String key) {
+    public Object getGlobal(String key) {
         return global.get().get(key);
     }
     
@@ -109,7 +152,7 @@ public class RuleSessionContext {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public static Map<String, Object> getGlobals() {
+    public Map<String, Object> getGlobals() {
         return global.get();
     }
 }

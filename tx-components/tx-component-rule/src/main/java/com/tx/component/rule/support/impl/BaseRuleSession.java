@@ -10,7 +10,7 @@ import com.tx.component.rule.RuleConstants;
 import com.tx.component.rule.model.Rule;
 import com.tx.component.rule.model.RuleSessionResultHandle;
 import com.tx.component.rule.support.RuleSession;
-import com.tx.component.rule.support.RuleSessionContext;
+import com.tx.component.rule.transation.RuleSessionContext;
 
 
  /**
@@ -48,7 +48,7 @@ public abstract class BaseRuleSession<R extends Rule> implements RuleSession {
     @SuppressWarnings("unchecked")
     @Override
     public <T> void callback(RuleSessionResultHandle<T> resultHandle) {
-        Object resultObject = RuleSessionContext.getGlobal(RuleConstants.RULE_PROMISE_CONSTANT_RESULT);
+        Object resultObject = RuleSessionContext.getContext().getGlobal(RuleConstants.RULE_PROMISE_CONSTANT_RESULT);
         resultHandle.setValue((T)resultObject);
     }
 }

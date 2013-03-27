@@ -30,7 +30,7 @@ import com.tx.component.rule.support.RuleSessionTemplate;
  * @since  [产品/模块版本]
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:spring/beans-ds.xml",
+@ContextConfiguration(locations = { "classpath:spring/beans-aop.xml","classpath:spring/beans-ds.xml",
         "classpath:spring/beans-tx.xml", "classpath:spring/beans-cache.xml",
         "classpath:spring/beans.xml" })
 @ActiveProfiles("dev")

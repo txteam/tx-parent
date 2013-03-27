@@ -21,14 +21,14 @@ public enum SimpleRuleParamEnum {
      * DROOLS_DRL_BYTE属性：
      *     持久化到数据库的规则资源
      */
-    DROOLS_DRL_BYTE_RESOURCE_CONTENT_BYTE(RuleTypeEnum.DROOLS_DRL_BYTE,
-            "RES_CONTENT_BYTE", "", "", false, true),
+    DROOLS_DRL_RESOURCE_BYTE(RuleTypeEnum.DROOLS_DRL_BYTE,
+            "RESOURCE_BYTE", "", "", false, true),
     /**
      * DROOLS_PKG_URL属性：
      *      加载规则的url路径(存储相对路径)
      */
-    DROOLS_PKG_URL(RuleTypeEnum.DROOLS_DRL_BYTE, "RES_CONTENT_BYTE", "", "", false,
-            true),
+    DROOLS_PKG_URL_VALUE(RuleTypeEnum.DROOLS_PKG_URL, "URL_VALUE", "", "",
+            false, false),
     /**
      * Collection属性：
      *     持久化到数据库的规则资源

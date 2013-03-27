@@ -15,7 +15,7 @@ import com.tx.component.rule.method.annotation.RuleMethod;
 import com.tx.component.rule.method.annotation.RuleMethodClass;
 import com.tx.component.rule.method.annotation.RuleMethodParam;
 import com.tx.component.rule.method.annotation.RuleMethodResult;
-import com.tx.component.rule.support.RuleSessionContext;
+import com.tx.component.rule.transation.RuleSessionContext;
 
 /**
  * 申请单审核规则
@@ -44,7 +44,7 @@ public class LoanBillProcessRules {
     public void minAgeRule(TestPojo testPojo, TestPojoDao testPojoDao,
             @RuleMethodParam Map<String, ?> facts,
             @RuleMethodResult ArrayList<ProcessRule> violateProcessRuleList) {
-        Object globalValue1 = RuleSessionContext.getGlobals().get("globalKey1");
+        Object globalValue1 = RuleSessionContext.getContext().getGlobals().get("globalKey1");
         System.out.println(globalValue1);
         System.out.println(testPojo != null ? testPojo.getTest() : "null");
         System.out.println(testPojoDao != null ? testPojoDao.call() : "null");

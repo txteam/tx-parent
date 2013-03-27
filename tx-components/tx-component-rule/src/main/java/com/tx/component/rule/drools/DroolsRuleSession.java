@@ -16,8 +16,8 @@ import org.drools.runtime.Globals;
 import org.drools.runtime.StatefulKnowledgeSession;
 
 import com.tx.component.rule.exceptions.RuleAccessException;
-import com.tx.component.rule.support.RuleSessionContext;
 import com.tx.component.rule.support.impl.BaseRuleSession;
+import com.tx.component.rule.transation.RuleSessionContext;
 
 /**
  * drools规则会话实例<br/>
@@ -46,7 +46,7 @@ public class DroolsRuleSession extends BaseRuleSession<DroolsRule> {
                 .newStatefulKnowledgeSession();
         try {
             //获取全局对象
-            Map<String, Object> globas = RuleSessionContext.getGlobals();
+            Map<String, Object> globas = RuleSessionContext.getContext().getGlobals();
             
             //设置全局对象
             for (Entry<String, Object> entryTemp : globas.entrySet()) {
@@ -69,7 +69,7 @@ public class DroolsRuleSession extends BaseRuleSession<DroolsRule> {
                 MetaObject mo = MetaObject.forObject(globalInstance);
                 @SuppressWarnings("unchecked")
                 Map<String, Object> globalMap = (Map<String, Object>)mo.getValue("map");
-                RuleSessionContext.setGlobals(globalMap);
+                RuleSessionContext.getContext().setGlobals(globalMap);
             }
             else {
                 throw new RuleAccessException(this.rule().rule(), this.rule(),
@@ -91,7 +91,7 @@ public class DroolsRuleSession extends BaseRuleSession<DroolsRule> {
                 .newStatefulKnowledgeSession();
         try {
             //获取全局对象
-            Map<String, Object> globas = RuleSessionContext.getGlobals();
+            Map<String, Object> globas = RuleSessionContext.getContext().getGlobals();
             
             //设置全局对象
             for (Entry<String, Object> entryTemp : globas.entrySet()) {
@@ -116,7 +116,7 @@ public class DroolsRuleSession extends BaseRuleSession<DroolsRule> {
                 MetaObject mo = MetaObject.forObject(globalInstance);
                 @SuppressWarnings("unchecked")
                 Map<String, Object> globalMap = (Map<String, Object>)mo.getValue("map");
-                RuleSessionContext.setGlobals(globalMap);
+                RuleSessionContext.getContext().setGlobals(globalMap);
             }
             else {
                 throw new RuleAccessException(this.rule().rule(), this.rule(),

@@ -33,6 +33,8 @@ import com.tx.component.rule.model.RuleStateEnum;
 import com.tx.component.rule.support.RuleSession;
 import com.tx.component.rule.support.RuleSessionFactory;
 import com.tx.component.rule.support.impl.DefaultRuleSessionFactory;
+import com.tx.component.rule.transation.RuleSessionTransactionFactory;
+import com.tx.component.rule.transation.impl.DefaultRuleSessionTransactionFactory;
 import com.tx.core.support.cache.ehcache.SimpleEhcacheMap;
 import com.tx.core.support.cache.ehcache.SimpleMultiValueEhcacheMap;
 
@@ -55,6 +57,9 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
     
     /** 单例的rule容器 */
     private static RuleContext ruleContext;
+    
+    /** 规则会话事务工厂  */
+    private RuleSessionTransactionFactory ruleSessionTransactionFactory;
     
     /** 规则会话工厂类 */
     private RuleSessionFactory ruleSessionFactory;
@@ -101,6 +106,9 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
         
         if (ruleSessionFactory == null) {
             this.ruleSessionFactory = new DefaultRuleSessionFactory();
+        }
+        if (ruleSessionTransactionFactory == null){
+            this.ruleSessionTransactionFactory = new DefaultRuleSessionTransactionFactory();
         }
         //完成属性设置后,加载规则
         setRuleContext(this);
@@ -537,5 +545,34 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
         public RuleValidator<? extends Rule> getRuleValidator() {
             return ruleValidator;
         }
+    }
+
+    /**
+     * @return 返回 ruleSessionTransactionFactory
+     */
+    public RuleSessionTransactionFactory getRuleSessionTransactionFactory() {
+        return ruleSessionTransactionFactory;
+    }
+
+    /**
+     * @param 对ruleSessionTransactionFactory进行赋值
+     */
+    public void setRuleSessionTransactionFactory(
+            RuleSessionTransactionFactory ruleSessionTransactionFactory) {
+        this.ruleSessionTransactionFactory = ruleSessionTransactionFactory;
+    }
+
+    /**
+     * @return 返回 ruleSessionFactory
+     */
+    public RuleSessionFactory getRuleSessionFactory() {
+        return ruleSessionFactory;
+    }
+
+    /**
+     * @param 对ruleSessionFactory进行赋值
+     */
+    public void setRuleSessionFactory(RuleSessionFactory ruleSessionFactory) {
+        this.ruleSessionFactory = ruleSessionFactory;
     }
 }

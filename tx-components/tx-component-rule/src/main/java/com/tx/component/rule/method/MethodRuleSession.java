@@ -23,8 +23,8 @@ import com.tx.component.rule.RuleConstants;
 import com.tx.component.rule.exceptions.RuleAccessException;
 import com.tx.component.rule.method.annotation.RuleMethodParam;
 import com.tx.component.rule.method.annotation.RuleMethodResult;
-import com.tx.component.rule.support.RuleSessionContext;
 import com.tx.component.rule.support.impl.BaseRuleSession;
+import com.tx.component.rule.transation.RuleSessionContext;
 import com.tx.core.support.method.MethodResolver;
 import com.tx.core.support.method.ParameterResolver;
 
@@ -60,7 +60,7 @@ public class MethodRuleSession extends BaseRuleSession<MethodRule> {
             Object returnObj = rule.getMethod().invoke(rule.getObject(), args);
             if (!isHasRuleMethodResultAnnotation) {
                 //将结果对象，写入约定现成变量的key中
-                RuleSessionContext.setGlobal(RuleConstants.RULE_PROMISE_CONSTANT_RESULT,
+                RuleSessionContext.getContext().setGlobal(RuleConstants.RULE_PROMISE_CONSTANT_RESULT,
                         returnObj);
             }
         } catch (Exception e) {
@@ -112,7 +112,7 @@ public class MethodRuleSession extends BaseRuleSession<MethodRule> {
                 //如果注解对应参数为结果，则不再识别其他注解
                 //如果存在多个，ruleSession中只保留最后一个对象的句柄
                 //resultHandle = 
-                Object result = RuleSessionContext.getGlobal(RuleConstants.RULE_PROMISE_CONSTANT_RESULT);
+                Object result = RuleSessionContext.getContext().getGlobal(RuleConstants.RULE_PROMISE_CONSTANT_RESULT);
                 if (result != null) {
                     args[i] = result;
                     continue;
@@ -121,7 +121,7 @@ public class MethodRuleSession extends BaseRuleSession<MethodRule> {
                 try {
                     Object resultObj = type.newInstance();
                     args[i] = resultObj;
-                    RuleSessionContext.setGlobal(RuleConstants.RULE_PROMISE_CONSTANT_RESULT,
+                    RuleSessionContext.getContext().setGlobal(RuleConstants.RULE_PROMISE_CONSTANT_RESULT,
                             resultObj);
                     isHasRuleMethodResultAnnotation = true;
                     continue;

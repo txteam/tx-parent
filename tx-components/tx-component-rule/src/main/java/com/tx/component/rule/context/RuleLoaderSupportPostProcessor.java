@@ -50,8 +50,6 @@ public class RuleLoaderSupportPostProcessor implements BeanPostProcessor,
      * @return
      * @throws BeansException
      */
-    
-    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName)
             throws BeansException {
@@ -59,9 +57,6 @@ public class RuleLoaderSupportPostProcessor implements BeanPostProcessor,
             //如果为ruleLoader则注册入容器，
             //用以支持后续ruleLoader.load执行完后，判断所有的ruleLoad方法是否都已经执行完成
             RuleContext.registerRuleLoader((RuleLoader) bean);
-        }
-        if (bean instanceof RuleValidator){
-            RuleContext.registerRuleValidator((RuleValidator)bean);
         }
         return bean;
     }
@@ -73,6 +68,7 @@ public class RuleLoaderSupportPostProcessor implements BeanPostProcessor,
      * @return
      * @throws BeansException
      */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName)
             throws BeansException {
@@ -81,6 +77,9 @@ public class RuleLoaderSupportPostProcessor implements BeanPostProcessor,
             List<Rule> ruleList = realRuleLoader.load();
             this.applicationContext.publishEvent(new LoadRuleEvent(this,
                     realRuleLoader, ruleList));
+        }
+        if (bean instanceof RuleValidator){
+            RuleContext.registerRuleValidator((RuleValidator)bean);
         }
         return bean;
     }

@@ -64,9 +64,11 @@ public class SimplePersistenceRule implements Serializable, Rule {
     private List<SimpleRuleParamEnum> params;
     
     /** 是否拥有byte类型的参数 */
+    @Transient
     private boolean isHasByteParam = false;
     
     /** 是否拥有value类型的参数 */
+    @Transient
     private boolean isHasValueParam = false;
     
     /** byte类型规则参数 */

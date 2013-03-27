@@ -20,10 +20,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.tx.component.rule.dao.SimplePersistenceRuleDao;
-import com.tx.component.rule.model.Rule;
+import com.tx.component.rule.model.RuleStateEnum;
 import com.tx.component.rule.model.RuleTypeEnum;
 import com.tx.component.rule.model.SimplePersistenceRule;
-import com.tx.component.rule.model.RuleStateEnum;
 import com.tx.core.exceptions.parameter.ParameterIsEmptyException;
 import com.tx.core.paged.model.PagedList;
 
@@ -67,7 +66,7 @@ public class SimplePersistenceRuleService {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    private void setupRuleParam(SimplePersistenceRule rule){
+    private void setupRuleParam(SimplePersistenceRule rule) {
         //如果参数为空，装载参数
         if (CollectionUtils.isEmpty(rule.getParams())) {
             rule.setParams(this.simpleRulePropertyParamService.queryParamsByRuleType(rule.getRuleType()));
@@ -75,14 +74,13 @@ public class SimplePersistenceRuleService {
         
         //装载参数值
         //装载byte类型值
-        if(rule.isHasByteParam()){
+        if (rule.isHasByteParam()) {
             rule.setBytePropertyValues(this.simpleRulePropertyByteService.querySimpleRulePropertyByteMultiMap(rule.getId()));
         }
         //装载value类型值
-        if(rule.isHasValueParam()){
-            //rule.setStringPropertyValues(this.simpleRulePropertyValueService.query);
+        if (rule.isHasValueParam()) {
+            rule.setStringPropertyValues(this.simpleRulePropertyValueService.querySimpleRulePropertyValueMultiMap(rule.getId()));
         }
-        
     }
     
     /**
@@ -209,28 +207,43 @@ public class SimplePersistenceRuleService {
         
         SimplePersistenceRule condition = new SimplePersistenceRule();
         condition.setId(id);
-        return this.simplePersistenceRuleDao.findSimplePersistenceRule(condition);
+        SimplePersistenceRule res = this.simplePersistenceRuleDao.findSimplePersistenceRule(condition);
+        
+        if (res != null) {
+            setupRuleParam(res);
+        }
+        
+        return res;
     }
     
     /**
-     * 分页查询SimplePersistenceRule实体列表
-     * TODO:补充说明
-     * 
-     * <功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return List<SimplePersistenceRule> [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-    */
+      * 分页查询SimplePersistenceRule实体列表<br/>
+      *<功能详细描述>
+      * @param serviceType
+      * @param ruleTypeEnum
+      * @param ruleStateEnum
+      * @param name
+      * @param pageIndex
+      * @param pageSize
+      * @return [参数说明]
+      * 
+      * @return PagedList<SimplePersistenceRule> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
     public PagedList<SimplePersistenceRule> querySimplePersistenceRulePagedList(
-    /*TODO:自己定义条件*/int pageIndex, int pageSize) {
-        //TODO:判断条件合法性
+            String serviceType, RuleTypeEnum ruleTypeEnum,
+            RuleStateEnum ruleStateEnum, String name, int pageIndex,
+            int pageSize) {
         
-        //TODO:生成查询条件
+        //生成查询条件
         Map<String, Object> params = new HashMap<String, Object>();
+        params.put("serviceType", serviceType);
+        params.put("ruleTypeEnum", ruleTypeEnum);
+        params.put("ruleStateEnum", ruleStateEnum);
+        params.put("name", name);
         
-        //TODO:根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
+        //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
         PagedList<SimplePersistenceRule> resPagedList = this.simplePersistenceRuleDao.querySimplePersistenceRulePagedList(params,
                 pageIndex,
                 pageSize);
