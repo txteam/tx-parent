@@ -6,12 +6,13 @@
  */
 package com.tx.component.rule.config;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
+import com.thoughtworks.xstream.annotations.XStreamConverter;
+import com.tx.component.rule.model.RuleTypeEnum;
 
 
  /**
@@ -24,27 +25,86 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
   * @since  [产品/模块版本]
   */
 @XStreamAlias("rule")
+@XStreamConverter(RuleItemConfigConverter.class)
 public class RuleItemConfig {
     
-    /** 规则名 */
-    @XStreamAsAttribute()
+    /**
+     * 规则名，不能为空
+     */
+    @XStreamAsAttribute
+    @XStreamAlias("rule")
     private String rule;
     
-    /** 
-     * 规则执行容器，ruleSessionContext接口的springBean名，<br/>
-     * 用以一些通用化的规则压入<br/>
-     *      比如：压入权限，压入贯穿于系统的一些配置
-     *              压入自定义的一些容器，或值
-     * 暂不实现全类路径的功能
-     * 以后再进行扩展
-     * 可以为空，具体的规则容器，如果在容器运行时自行制定了，该设置将会失效
+    /**
+     * 规则业务类型
      */
-    @XStreamAsAttribute()
-    private String gloabalContext;
+    @XStreamAsAttribute
+    @XStreamAlias("serviceType")
+    private String serviceType="";
     
-    /** rule规则项 */
-    @XStreamImplicit(itemFieldName="rule_element")
-    private List<RuleElementConfig> ruleElements = new ArrayList<RuleElementConfig>();
+    /** 
+     * 规则类型 可以为drools规则，可以为其他规则的实现<br/>
+     * 可以为ognl<br/>
+     * 可以为
+     */
+    @XStreamAsAttribute
+    @XStreamAlias("ruleType")
+    private RuleTypeEnum ruleType;
+    
+    /**
+     * 规则描述，
+     * 可以为ongl表达式
+     * 可以为groovy代码<需要再进行添加，暂不支持>
+     * 可以为drools规则名
+     */
+    private String ruleExpression = "";
+    
+    /**
+     * 属性
+     */
+    private Map<String, String> properties = new HashMap<String, String>();
+
+    /**
+     * @return 返回 ruleType
+     */
+    public RuleTypeEnum getRuleType() {
+        return ruleType;
+    }
+
+    /**
+     * @param 对ruleType进行赋值
+     */
+    public void setRuleType(RuleTypeEnum ruleType) {
+        this.ruleType = ruleType;
+    }
+
+    /**
+     * @return 返回 ruleExpression
+     */
+    public String getRuleExpression() {
+        return ruleExpression;
+    }
+
+    /**
+     * @param 对ruleExpression进行赋值
+     */
+    public void setRuleExpression(String ruleExpression) {
+        this.ruleExpression = ruleExpression;
+    }
+
+    /**
+     * @return 返回 serviceType
+     */
+    public String getServiceType() {
+        return serviceType;
+    }
+
+    /**
+     * @param 对serviceType进行赋值
+     */
+    public void setServiceType(String serviceType) {
+        this.serviceType = serviceType;
+    }
 
     /**
      * @return 返回 rule
@@ -60,33 +120,17 @@ public class RuleItemConfig {
         this.rule = rule;
     }
 
-    
-
     /**
-     * @return 返回 gloabalContextBean
+     * @return 返回 properties
      */
-    public String getGloabalContext() {
-        return gloabalContext;
+    public Map<String, String> getProperties() {
+        return properties;
     }
 
     /**
-     * @param 对gloabalContextBean进行赋值
+     * @param 对properties进行赋值
      */
-    public void setGloabalContext(String gloabalContext) {
-        this.gloabalContext = gloabalContext;
-    }
-
-    /**
-     * @return 返回 ruleElements
-     */
-    public List<RuleElementConfig> getRuleElements() {
-        return ruleElements;
-    }
-
-    /**
-     * @param 对ruleElements进行赋值
-     */
-    public void setRuleElements(List<RuleElementConfig> ruleElements) {
-        this.ruleElements = ruleElements;
+    public void setProperties(Map<String, String> properties) {
+        this.properties = properties;
     }
 }

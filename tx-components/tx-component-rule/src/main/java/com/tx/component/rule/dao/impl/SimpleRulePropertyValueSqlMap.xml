@@ -23,10 +23,10 @@
 		  FROM RU_RULE_PRO_BYTE TSRPV
 		 WHERE TSRPV.RULEID = #{ruleId}
 		   AND TSRPV.PARAMVALUEORDERED = #{paramValueOrdered}
-		   <if test="@com.tx.core.Ognl@isNotEmpty(simpleRulePropertyParam)">  
+		   <if test="simpleRulePropertyParam != null">  
 	            AND TSRPV.SIMPLERULEPROPERTYPARAM = #{simpleRulePropertyParam}
 	       </if>
-	       <if test="@com.tx.core.Ognl@isNotEmpty(paramKey)">  
+	       <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(paramKey)">  
 	            AND TSRPV.PARAMKEY = #{paramKey,javaType=java.lang.String}
 	       </if>
 	</select>
@@ -43,18 +43,18 @@
 				TSRPV.PARAMVALUEORDERED
 		  FROM RU_RULE_PRO_BYTE TSRPV
 		<trim prefix="WHERE" prefixOverrides="AND | OR">
-			<if test="@com.tx.core.Ognl@isNotEmpty(ruleId)">  
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(ruleId)">  
 	            AND TSRPV.RULEID = #{ruleId,javaType=java.lang.String}
 	        </if>
-			<if test="@com.tx.core.Ognl@isNotEmpty(simpleRulePropertyParam)">  
+			<if test="simpleRulePropertyParam != null">  
 	            AND TSRPV.SIMPLERULEPROPERTYPARAM = #{simpleRulePropertyParam,javaType=com.tx.component.rule.model.SimpleRulePropertyParam}
 	        </if>
-			<if test="@com.tx.core.Ognl@isNotEmpty(paramKey)">  
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(paramKey)">  
 	            AND TSRPV.PARAMKEY = #{paramKey,javaType=java.lang.String}
 	        </if>
 		</trim>
 		<choose>  
-	        <when test="@com.tx.core.Ognl@isNotEmpty(orderSql)">  
+	        <when test="@com.tx.core.util.OgnlUtils@isNotEmpty(orderSql)">  
 	            ORDER BY #{orderSql}
 	        </when>
 	        <otherwise>  
@@ -70,19 +70,19 @@
 		SELECT COUNT(1)
 		  FROM RU_RULE_PRO_BYTE TSRPV
 		<trim prefix="WHERE" prefixOverrides="AND | OR">
-			<if test="@com.tx.core.Ognl@isNotEmpty(ruleId)">  
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(ruleId)">  
 	            AND TSRPV.RULEID = #{ruleId,javaType=java.lang.String}
 	        </if>
-			<if test="@com.tx.core.Ognl@isNotEmpty(simpleRulePropertyParam)">  
+			<if test="simpleRulePropertyParam != null">  
 	            AND TSRPV.SIMPLERULEPROPERTYPARAM = #{simpleRulePropertyParam,javaType=com.tx.component.rule.model.SimpleRulePropertyParam}
 	        </if>
-			<if test="@com.tx.core.Ognl@isNotEmpty(paramKey)">  
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(paramKey)">  
 	            AND TSRPV.PARAMKEY = #{paramKey,javaType=java.lang.String}
 	        </if>
-			<if test="@com.tx.core.Ognl@isNotEmpty(paramValue)">  
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(paramValue)">  
 	            AND TSRPV.PARAMVALUE = #{paramValue,javaType=java.lang.String}
 	        </if>
-			<if test="@com.tx.core.Ognl@isNotEmpty(paramValueOrdered)">  
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(paramValueOrdered)">  
 	            AND TSRPV.PARAMVALUEORDERED = #{paramValueOrdered,javaType=int}
 	        </if>
 		</trim>
@@ -114,13 +114,13 @@
 		parameterType="com.tx.component.rule.model.SimpleRulePropertyValue">
 		DELETE FROM RU_RULE_PRO_BYTE TSRPV WHERE
 		 WHERE TSRPV.RULEID = #{ruleId}
-			<if test="@com.tx.core.Ognl@isNotEmpty(paramValueOrdered)">  
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(paramValueOrdered)">  
 	            AND TSRPV.PARAMVALUEORDERED = #{paramValueOrdered,javaType=java.lang.Integer}
 	       </if>
-		   <if test="@com.tx.core.Ognl@isNotEmpty(simpleRulePropertyParam)">  
+		   <if test="simpleRulePropertyParam != null">  
 	            AND TSRPV.SIMPLERULEPROPERTYPARAM = #{simpleRulePropertyParam}
 	       </if>
-	       <if test="@com.tx.core.Ognl@isNotEmpty(paramKey)">  
+	       <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(paramKey)">  
 	            AND TSRPV.PARAMKEY = #{paramKey,javaType=java.lang.String}
 	       </if>
 	</delete>
@@ -132,10 +132,10 @@
 	       SET PARAMVALUE = #{paramValue,jdbcType=java.lang.String}
 		 WHERE TSRPV.RULEID = #{ruleId}
 		   AND TSRPV.PARAMVALUEORDERED = #{paramValueOrdered}
-		   <if test="@com.tx.core.Ognl@isNotEmpty(simpleRulePropertyParam)">  
+		   <if test="simpleRulePropertyParam != null">  
 	            AND TSRPV.SIMPLERULEPROPERTYPARAM = #{simpleRulePropertyParam}
 	       </if>
-	       <if test="@com.tx.core.Ognl@isNotEmpty(paramKey)">  
+	       <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(paramKey)">  
 	            AND TSRPV.PARAMKEY = #{paramKey,javaType=java.lang.String}
 	       </if>
 	</update>  

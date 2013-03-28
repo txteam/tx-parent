@@ -44,6 +44,13 @@ public class DroolsRule implements Rule {
     /**
      * 构造函数,根据二进制流构造drools规则
      */
+    public DroolsRule() {
+        super();
+    }
+    
+    /**
+     * 构造函数,根据二进制流构造drools规则
+     */
     public DroolsRule(SimplePersistenceRule spRule, KnowledgeBase knowledgeBase) {
         super();
         this.rule = spRule.rule();

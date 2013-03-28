@@ -29,7 +29,8 @@ import com.tx.core.paged.model.PagedList;
  * @since  [产品/模块版本]
  */
 @Component("simpleRulePropertyValueDao")
-public class SimpleRulePropertyValueDaoImpl implements SimpleRulePropertyValueDao {
+public class SimpleRulePropertyValueDaoImpl implements
+        SimpleRulePropertyValueDao {
     
     @Resource(name = "myBatisDaoSupport")
     private MyBatisDaoSupport myBatisDaoSupport;
@@ -39,7 +40,21 @@ public class SimpleRulePropertyValueDaoImpl implements SimpleRulePropertyValueDa
      */
     @Override
     public void insertSimpleRulePropertyValue(SimpleRulePropertyValue condition) {
-        this.myBatisDaoSupport.insertUseUUID("simpleRulePropertyValue.insertSimpleRulePropertyValue", condition, "id");
+        this.myBatisDaoSupport.insertUseUUID("simpleRulePropertyValue.insertSimpleRulePropertyValue",
+                condition,
+                "id");
+    }
+    
+    /**
+     * @param condition
+     */
+    @Override
+    public void batchInsertSimpleRulePropertyValue(
+            List<SimpleRulePropertyValue> condition) {
+        this.myBatisDaoSupport.batchInsertUseUUID("simpleRulePropertyValue.insertSimpleRulePropertyValue",
+                condition,
+                "id",
+                true);
     }
     
     /**
@@ -48,7 +63,8 @@ public class SimpleRulePropertyValueDaoImpl implements SimpleRulePropertyValueDa
      */
     @Override
     public int deleteSimpleRulePropertyValue(SimpleRulePropertyValue condition) {
-        return this.myBatisDaoSupport.delete("simpleRulePropertyValue.deleteSimpleRulePropertyValue", condition);
+        return this.myBatisDaoSupport.delete("simpleRulePropertyValue.deleteSimpleRulePropertyValue",
+                condition);
     }
     
     /**
@@ -56,8 +72,10 @@ public class SimpleRulePropertyValueDaoImpl implements SimpleRulePropertyValueDa
      * @return
      */
     @Override
-    public SimpleRulePropertyValue findSimpleRulePropertyValue(SimpleRulePropertyValue condition) {
-        return this.myBatisDaoSupport.<SimpleRulePropertyValue> find("simpleRulePropertyValue.findSimpleRulePropertyValue", condition);
+    public SimpleRulePropertyValue findSimpleRulePropertyValue(
+            SimpleRulePropertyValue condition) {
+        return this.myBatisDaoSupport.<SimpleRulePropertyValue> find("simpleRulePropertyValue.findSimpleRulePropertyValue",
+                condition);
     }
     
     /**
@@ -65,7 +83,8 @@ public class SimpleRulePropertyValueDaoImpl implements SimpleRulePropertyValueDa
      * @return
      */
     @Override
-    public List<SimpleRulePropertyValue> querySimpleRulePropertyValueList(Map<String, Object> params) {
+    public List<SimpleRulePropertyValue> querySimpleRulePropertyValueList(
+            Map<String, Object> params) {
         return this.myBatisDaoSupport.<SimpleRulePropertyValue> queryList("simpleRulePropertyValue.querySimpleRulePropertyValue",
                 params);
     }
@@ -76,8 +95,8 @@ public class SimpleRulePropertyValueDaoImpl implements SimpleRulePropertyValueDa
      * @return
      */
     @Override
-    public List<SimpleRulePropertyValue> querySimpleRulePropertyValueList(Map<String, Object> params,
-            List<Order> orderList) {
+    public List<SimpleRulePropertyValue> querySimpleRulePropertyValueList(
+            Map<String, Object> params, List<Order> orderList) {
         return this.myBatisDaoSupport.<SimpleRulePropertyValue> queryList("simpleRulePropertyValue.querySimpleRulePropertyValue",
                 params,
                 orderList);
@@ -100,8 +119,8 @@ public class SimpleRulePropertyValueDaoImpl implements SimpleRulePropertyValueDa
      * @return
      */
     @Override
-    public PagedList<SimpleRulePropertyValue> querySimpleRulePropertyValuePagedList(Map<String, Object> params,
-            int pageIndex, int pageSize) {
+    public PagedList<SimpleRulePropertyValue> querySimpleRulePropertyValuePagedList(
+            Map<String, Object> params, int pageIndex, int pageSize) {
         return this.myBatisDaoSupport.<SimpleRulePropertyValue> queryPagedList("simpleRulePropertyValue.querySimpleRulePropertyValue",
                 params,
                 pageIndex,
@@ -116,8 +135,9 @@ public class SimpleRulePropertyValueDaoImpl implements SimpleRulePropertyValueDa
      * @return
      */
     @Override
-    public PagedList<SimpleRulePropertyValue> querySimpleRulePropertyValuePagedList(Map<String, Object> params,
-            int pageIndex, int pageSize, List<Order> orderList) {
+    public PagedList<SimpleRulePropertyValue> querySimpleRulePropertyValuePagedList(
+            Map<String, Object> params, int pageIndex, int pageSize,
+            List<Order> orderList) {
         return this.myBatisDaoSupport.<SimpleRulePropertyValue> queryPagedList("simpleRulePropertyValue.querySimpleRulePropertyValue",
                 params,
                 pageIndex,
@@ -131,6 +151,7 @@ public class SimpleRulePropertyValueDaoImpl implements SimpleRulePropertyValueDa
      */
     @Override
     public int updateSimpleRulePropertyValue(Map<String, Object> updateRowMap) {
-        return this.myBatisDaoSupport.update("simpleRulePropertyValue.updateSimpleRulePropertyValue", updateRowMap);
+        return this.myBatisDaoSupport.update("simpleRulePropertyValue.updateSimpleRulePropertyValue",
+                updateRowMap);
     }
 }

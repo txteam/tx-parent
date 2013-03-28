@@ -19,6 +19,8 @@ import org.drools.builder.KnowledgeBuilderFactory;
 import org.drools.builder.ResourceType;
 import org.drools.definition.KnowledgePackage;
 import org.drools.io.ResourceFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.tx.component.rule.context.RuleLoader;
@@ -41,7 +43,10 @@ import com.tx.component.rule.service.SimplePersistenceRuleService;
  * @since  [产品/模块版本]
  */
 @Component("drlByteDroolsRuleLoader")
-public class DrlByteDroolsRuleLoader implements RuleLoader {
+public class DBDrlByteDroolsRuleLoader implements RuleLoader {
+    
+    /** 日志记录器 */
+    private Logger logger = LoggerFactory.getLogger(DBDrlByteDroolsRuleLoader.class);
     
     /** 负责对规则进行持久  */
     @Resource(name = "simplePersistenceRuleService")
@@ -67,6 +72,7 @@ public class DrlByteDroolsRuleLoader implements RuleLoader {
         //加载资源类规则
         for (SimplePersistenceRule spRuleTemp : dbRuleList) {
             if (!RuleStateEnum.OPERATION.equals(spRuleTemp.getState())) {
+                logger.warn("rule:{} state is not operation.load skip.",spRuleTemp.rule());
                 //如果非运营态的规则，不进行加载
                 continue;
             }
@@ -83,6 +89,9 @@ public class DrlByteDroolsRuleLoader implements RuleLoader {
                         ResourceType.DRL);
                 
                 if (kBuilder.hasErrors()) {
+                    logger.warn("rule:{} build has error.load skip." + spRuleTemp.rule());
+                    logger.warn("error:{}",kBuilder.getErrors());
+                    
                     spRuleTemp.setState(RuleStateEnum.ERROR);
                     this.simplePersistenceRuleService.changeRuleStateById(spRuleTemp.getId(),
                             RuleStateEnum.ERROR);
@@ -98,16 +107,6 @@ public class DrlByteDroolsRuleLoader implements RuleLoader {
         }
         
         return resList;
-    }
-    
-    /**
-     * @return
-     */
-    @Override
-    public String ruleLoaderKey() {
-        return String.valueOf(this.getClass().hashCode()
-                + RuleTypeEnum.DROOLS_DRL_BYTE.hashCode()
-                + "BaseDroolsRuleLoader".hashCode());
     }
     
     /**

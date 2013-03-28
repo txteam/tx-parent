@@ -17,7 +17,7 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.tx.core.exceptions.resource.ResourceLoadException;
+import com.tx.core.exceptions.resource.ResourceAccessException;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -70,7 +70,7 @@ public class FreeMarkerUtils {
             return temp;
         } catch (IOException e) {
             logger.error(e.toString(), e);
-            throw new ResourceLoadException("", e);
+            throw new ResourceAccessException("", e);
         }
     }
     
@@ -101,10 +101,10 @@ public class FreeMarkerUtils {
             temp.process(root, out);
         } catch (IOException e) {
             logger.error(e.toString(), e);
-            throw new ResourceLoadException("", e);
+            throw new ResourceAccessException("", e);
         } catch (TemplateException e) {
             logger.error(e.toString(), e);
-            throw new ResourceLoadException("", e);
+            throw new ResourceAccessException("", e);
         } finally {
             IOUtils.closeQuietly(out);
         }

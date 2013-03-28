@@ -19,7 +19,7 @@ import com.tx.core.exceptions.SILException;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
   */
-public class ResourceLoadException extends SILException {
+public class ResourceAccessException extends SILException {
     
     /** 注释内容 */
     private static final long serialVersionUID = -1943248379116091306L;
@@ -27,7 +27,7 @@ public class ResourceLoadException extends SILException {
     /**
      * <默认构造函数>
      */
-    public ResourceLoadException(String errorMessage, Throwable cause,
+    public ResourceAccessException(String errorMessage, Throwable cause,
             String... parameters) {
         super(ErrorCodeConstant.RESOURCE_LOAD_EXCEPTION, errorMessage, cause);
     }
@@ -35,7 +35,7 @@ public class ResourceLoadException extends SILException {
     /**
      * <默认构造函数>
      */
-    public ResourceLoadException(String errorMessage, String... parameters) {
+    public ResourceAccessException(String errorMessage, String... parameters) {
         super(ErrorCodeConstant.RESOURCE_LOAD_EXCEPTION, errorMessage);
     }
     

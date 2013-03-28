@@ -98,7 +98,7 @@ public class MethodRuleLoader implements RuleLoader, ApplicationContextAware {
             if (dbRuleTemp == null) {
                 //持久化新添加的规则
                 SimplePersistenceRule spr = new SimplePersistenceRule(mrTemp);
-                this.simplePersistenceRuleService.insertSimplePersistenceRule(spr);
+                this.simplePersistenceRuleService.saveSimplePersistenceRule(spr);
             } else if (dbRuleTemp != null
                     || RuleStateEnum.OPERATION.equals(dbRuleTemp.getState())) {
                 //修改存储中规则状态为持久态
@@ -227,16 +227,6 @@ public class MethodRuleLoader implements RuleLoader, ApplicationContextAware {
     }
     
     /**
-     * @return
-     */
-    @Override
-    public String ruleLoaderKey() {
-        return String.valueOf(this.getClass().hashCode()
-                + RuleTypeEnum.METHOD.hashCode()
-                + "DefaultMethodRuleLoader".hashCode());
-    }
-    
-    /**
      * @return 返回 rulePackage
      */
     public String getRulePackage() {
@@ -270,5 +260,20 @@ public class MethodRuleLoader implements RuleLoader, ApplicationContextAware {
      */
     public void setOrder(int order) {
         this.order = order;
+    }
+
+    /**
+     * @return 返回 simplePersistenceRuleService
+     */
+    public SimplePersistenceRuleService getSimplePersistenceRuleService() {
+        return simplePersistenceRuleService;
+    }
+
+    /**
+     * @param 对simplePersistenceRuleService进行赋值
+     */
+    public void setSimplePersistenceRuleService(
+            SimplePersistenceRuleService simplePersistenceRuleService) {
+        this.simplePersistenceRuleService = simplePersistenceRuleService;
     }
 }

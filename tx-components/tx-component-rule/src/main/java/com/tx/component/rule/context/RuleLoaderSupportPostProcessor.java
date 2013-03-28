@@ -17,8 +17,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
-import com.tx.component.rule.model.Rule;
-
 /**
  * 用以支持规则加载器，自扩展<br/>
  *     支持插拔式的规则加载器的加入<br/>
@@ -54,9 +52,8 @@ public class RuleLoaderSupportPostProcessor implements BeanPostProcessor,
     public Object postProcessBeforeInitialization(Object bean, String beanName)
             throws BeansException {
         if (bean instanceof RuleLoader) {
-            //如果为ruleLoader则注册入容器，
-            //用以支持后续ruleLoader.load执行完后，判断所有的ruleLoad方法是否都已经执行完成
-            RuleContext.registerRuleLoader((RuleLoader) bean);
+            //如果为ruleLoader则注册入容器
+            RuleContext.registerRuleLoader(beanName);
         }
         return bean;
     }
@@ -74,12 +71,12 @@ public class RuleLoaderSupportPostProcessor implements BeanPostProcessor,
             throws BeansException {
         if (bean instanceof RuleLoader) {
             RuleLoader realRuleLoader = (RuleLoader) bean;
-            List<Rule> ruleList = realRuleLoader.load();
-            this.applicationContext.publishEvent(new LoadRuleEvent(this,
-                    realRuleLoader, ruleList));
+            //通过事件，将加载完成的规则列表，添加进规则容器中
+            this.applicationContext.publishEvent(new RuleLoaderInitializeComplete(
+                    this, realRuleLoader, beanName));
         }
-        if (bean instanceof RuleValidator){
-            RuleContext.registerRuleValidator((RuleValidator)bean);
+        if (bean instanceof RuleValidator) {
+            RuleContext.registerRuleValidator((RuleValidator) bean);
         }
         return bean;
     }
@@ -122,10 +119,10 @@ public class RuleLoaderSupportPostProcessor implements BeanPostProcessor,
                 MethodProxy methodProxy) throws Throwable {
             Object res = methodProxy.invoke(realRuleLoader, args);
             if ("load".equals(method.getName()) && res instanceof List) {
-                @SuppressWarnings("unchecked")
-                List<Rule> ruleList = (List<Rule>) res;
-                this.applicationContext.publishEvent(new LoadRuleEvent(this,
-                        realRuleLoader, ruleList));
+                //                @SuppressWarnings("unchecked")
+                //                List<Rule> ruleList = (List<Rule>) res;
+                //                this.applicationContext.publishEvent(new RuleLoaderInitializeComplete(this,
+                //                        realRuleLoader, ruleList));
             }
             return res;
         }

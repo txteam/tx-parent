@@ -57,13 +57,18 @@ public class SimpleRulePropertyParamService implements InitializingBean{
       * @see [类、类#方法、类#成员]
      */
     public List<SimpleRuleParamEnum> queryParamsByRuleType(RuleTypeEnum ruleType){
+        //如果尚未被装载，则先执行装载
         List<SimpleRuleParamEnum> resList = new ArrayList<SimpleRuleParamEnum>();
         
         //返回参数列表
-        resList.addAll(paramMultiMap.get(ruleType));
+        if(paramMultiMap.get(ruleType) != null){
+            resList.addAll(paramMultiMap.get(ruleType));
+        }
         RuleTypeEnum parentRuleType = ruleType.getParentType();
         while(parentRuleType != null){
-            resList.addAll(paramMultiMap.get(parentRuleType));
+            if(paramMultiMap.get(parentRuleType) != null){
+                resList.addAll(paramMultiMap.get(parentRuleType));
+            }
             parentRuleType = parentRuleType.getParentType();
         }
         

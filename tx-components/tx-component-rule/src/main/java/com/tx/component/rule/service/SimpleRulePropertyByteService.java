@@ -6,10 +6,12 @@
  */
 package com.tx.component.rule.service;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 
@@ -95,36 +97,49 @@ public class SimpleRulePropertyByteService {
       * @see [类、类#方法、类#成员]
      */
     @Transactional
-    public void insertSimpleRulePropertyByte(
+    public void saveSimpleRulePropertyByte(String ruleId,
             MultiValueMap<SimpleRuleParamEnum, SimpleRulePropertyByte> propertyValuesMap){
-        
-    }
-    
-    /**
-      * 将simpleRulePropertyByte实例插入数据库中保存
-      * 1、如果simpleRulePropertyByte为空时抛出参数为空异常
-      * 2、如果simpleRulePropertyByte中部分必要参数为非法值时抛出参数不合法异常
-      * <功能详细描述>
-      * @param simpleRulePropertyByte [参数说明]
-      * 
-      * @return voruleId [返回类型说明]
-      * @exception throws 可能存在数据库访问异常DataAccessException
-      * @see [类、类#方法、类#成员]
-     */
-    public void insertSimpleRulePropertyByte(
-            SimpleRulePropertyByte simpleRulePropertyByte) {
-        //验证参数是否合法，必填字段是否填写，
-        //如果没有填写抛出parameterIsEmptyException,
-        //如果有参数不合法ParameterIsInvalruleIdException
-        if (simpleRulePropertyByte == null
-                || StringUtils.isEmpty(simpleRulePropertyByte.getRuleId())
-                || StringUtils.isEmpty(simpleRulePropertyByte.getParamKey())
-                || simpleRulePropertyByte.getSimpleRulePropertyParam() == null) {
+        if (StringUtils.isEmpty(ruleId)) {
             throw new ParameterIsEmptyException(
-                    "simpleRulePropertyByte or .id or .paramKey isEmpty.");
+                    "ruleId is empty.");
+        }
+        if(propertyValuesMap == null || propertyValuesMap.size() == 0){
+            return ;
         }
         
-        this.simpleRulePropertyByteDao.insertSimpleRulePropertyByte(simpleRulePropertyByte);
+        List<SimpleRulePropertyByte> addByteProValueList = new ArrayList<SimpleRulePropertyByte>();
+        //如果存在需要插入的数据
+        for(Entry<SimpleRuleParamEnum, List<SimpleRulePropertyByte>> entryTemp : propertyValuesMap.entrySet()){
+            SimpleRuleParamEnum paramTemp = entryTemp.getKey();
+            List<SimpleRulePropertyByte> byteListTemp = entryTemp.getValue();
+            //如果对应的链为空,或size为0
+            if(byteListTemp == null || byteListTemp.size() == 0){
+                continue;
+            }
+            //如果只有单值
+            if(byteListTemp.size() == 1){
+                SimpleRulePropertyByte byteTemp = byteListTemp.get(0);
+                byteTemp.setRuleId(ruleId);
+                byteTemp.setParamKey(paramTemp.getKey());
+                byteTemp.setParamValueOrdered(0);
+                byteTemp.setSimpleRulePropertyParam(paramTemp);
+                
+                addByteProValueList.add(byteTemp);
+            }else{
+                int newIndex = 0;
+                for(SimpleRulePropertyByte byteTemp : byteListTemp){
+                    byteTemp.setRuleId(ruleId);
+                    byteTemp.setParamKey(paramTemp.getKey());
+                    byteTemp.setParamValueOrdered(newIndex++);
+                    byteTemp.setSimpleRulePropertyParam(paramTemp);
+                    
+                    addByteProValueList.add(byteTemp);
+                }
+            }
+        }
+        //数据库进行持久
+        deleteByRuleId(ruleId);
+        this.simpleRulePropertyByteDao.batchInsertSimpleRulePropertyByte(addByteProValueList);
     }
     
     /**

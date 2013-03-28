@@ -6,18 +6,22 @@
  */
 package com.tx.component.rule.drools.test1;
 
-import org.drools.RuleBase;
-import org.drools.RuleBaseFactory;
-import org.drools.StatefulSession;
-import org.drools.builder.KnowledgeBuilder;
-import org.drools.builder.KnowledgeBuilderFactory;
-import org.drools.builder.ResourceType;
-import org.drools.compiler.PackageBuilder;
-import org.drools.io.ResourceFactory;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import com.tx.component.rule.method.ProcessRule;
+import com.tx.component.rule.method.TestPojo;
+import com.tx.component.rule.method.TestPojoDao;
+import com.tx.component.rule.support.RuleSessionTemplate;
 
 
  /**
@@ -32,38 +36,40 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
   */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { 
+        "classpath:spring/beans-aop.xml",
         "classpath:spring/beans-ds.xml",
-        "classpath:spring/beans-tx.xml",
+        "classpath:spring/beans-tx.xml", 
+        "classpath:spring/beans-cache.xml",
         "classpath:spring/beans.xml" })
 @ActiveProfiles("dev")
 public class TestDrools1 {
     
-    public static void main(String[] args) throws Exception {
-        //加载KBuilder
-        KnowledgeBuilder kBuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
-        kBuilder.add(ResourceFactory.newClassPathResource("com/tx/component/rule/test1/test1.drl"),
-                ResourceType.DSL);
-        //kBuilder.getKnowledgePackages()
-       
-        final PackageBuilder builder = new PackageBuilder();  
-        builder.addPackageFromDrl(ResourceFactory.newClassPathResource("com/tx/component/rule/test1/test1.drl"));   
-        
-        //创建ruleBase
-        final RuleBase ruleBase = RuleBaseFactory.newRuleBase();  
-        //Collection<KnowledgePackage> pC = kBuilder.getKnowledgePackages();
-        //ruleBase.addPackages(pkgs);
-        ruleBase.addPackage(builder.getPackage());
-        
-        
-        //创建会话
-        final StatefulSession session = ruleBase.newStatefulSession();  
-        for(int i = 0 ; i < 10;i++){  
-//            session.insert(new Guess("A" , i));  
-//            session.insert(new Guess("B" , i));  
-//            session.insert(new Guess("C" , i));  
-//            session.insert(new Guess("D" , i));  
-        }  
-        session.fireAllRules();  
-        session.dispose();  
+    @Resource(name = "ruleSessionTemplate")
+    private RuleSessionTemplate ruleSessionTemplate;
+    
+    @Test
+    public void testRuleConstants() {
+        try {
+            //
+            TestPojo testPojo = new TestPojo();
+            testPojo.setTest("test:abc");
+            TestPojoDao testPojoDao = new TestPojoDao();
+            Map<String, Object> fact = new HashMap<String, Object>();
+            fact.put("testPojo", testPojo);
+            fact.put("testPojoDao", testPojoDao);
+            
+            //
+            Map<String, Object> global = new HashMap<String, Object>();
+            global.put("globalKey1", "globalValue1:abc");
+            
+            //
+            List<ProcessRule> resList = ruleSessionTemplate.<ProcessRule> evaluateList("drools_test1111",
+                    fact,
+                    global);
+            
+            System.out.println(resList);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

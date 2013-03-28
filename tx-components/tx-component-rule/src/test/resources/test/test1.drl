@@ -1,0 +1,21 @@
+//created on: 2013-3-28
+package test
+
+//list any import classes here.
+import java.util.Map;
+import com.tx.component.rule.method.TestPojo;
+import com.tx.component.rule.method.ProcessRule;
+
+//declare any global variables here
+
+function getOrCreateListResultInGlobal() {
+	
+}
+
+rule "年龄大于12(可在产品私有属性中设定)岁"
+    when
+    	$fact : Map(testPojo(test != null))
+    then
+        //actions
+
+end

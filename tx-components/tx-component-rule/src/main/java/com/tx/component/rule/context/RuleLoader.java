@@ -36,16 +36,4 @@ public interface RuleLoader extends Ordered {
      * @see [类、类#方法、类#成员]
     */
     public List<Rule> load();
-    
-    /**
-      * 返回ruleLoader唯一key:
-      * 用以支持规则加载完成之后，规则检验时需要找到注册的规则加载器所用
-      * <功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return String [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    public String ruleLoaderKey();
 }

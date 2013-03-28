@@ -12,6 +12,7 @@ import java.util.List;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
+import com.tx.component.rule.model.RuleTypeEnum;
 import com.tx.core.util.XstreamUtils;
 
 
@@ -28,24 +29,8 @@ import com.tx.core.util.XstreamUtils;
 public class RulesConfig {
     
     /** 规则项目 对应具体的节点ruleItemConfig */
-    @XStreamImplicit(itemFieldName="rule_config")
+    @XStreamImplicit(itemFieldName="rule")
     private List<RuleItemConfig> ruleItemConfig = new ArrayList<RuleItemConfig>();
-
-    /** 
-     * 规则类型 可以为drools规则，可以为其他规则的实现<br/>
-     * 可以为ognl<br/>
-     * 可以为
-     */
-    @XStreamAlias("rule_type")
-    private String ruleType="";
-    
-    /**
-     * 规则描述，
-     * 可以为ongl表达式
-     * 可以为groovy代码<需要再进行添加，暂不支持>
-     * 可以为drools规则名
-     */
-    private String ruleExpression = "";
     
     /**
      * @return 返回 ruleItemConfig
@@ -65,12 +50,11 @@ public class RulesConfig {
         RulesConfig r = new RulesConfig();
         r.getRuleItemConfig().add(new RuleItemConfig());
         RuleItemConfig rr = r.getRuleItemConfig().get(0);
-        rr.setGloabalContext("testGloabalContext");
-        rr.setRule("testRule");
-        rr.getRuleElements().add(new RuleElementConfig());
-        RuleElementConfig rec = rr.getRuleElements().get(0);
-        rec.setRuleExpression("testRuleExpression");
-        rec.setRuleType("testRuleType");
+        
+        rr.setRule("test1");
+        rr.setRuleExpression("/xxx");
+        rr.setRuleType(RuleTypeEnum.DROOLS_DRL_BYTE);
+        rr.setServiceType("test");
         
         XStream x = XstreamUtils.getXstream(RulesConfig.class);
         System.out.println(x.toXML(r));

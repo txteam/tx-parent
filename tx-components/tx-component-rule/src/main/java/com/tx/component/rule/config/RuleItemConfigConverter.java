@@ -6,6 +6,9 @@
  */
 package com.tx.component.rule.config;
 
+import java.util.Map.Entry;
+
+import org.apache.commons.collections.MapUtils;
 import org.apache.cxf.common.util.StringUtils;
 
 import com.thoughtworks.xstream.converters.Converter;
@@ -13,6 +16,7 @@ import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+import com.tx.component.rule.model.RuleTypeEnum;
 
 /**
  * 用以支持ruleElement又有属性又有值的情况
@@ -31,7 +35,7 @@ public class RuleItemConfigConverter implements Converter {
      */
     @Override
     public boolean canConvert(@SuppressWarnings("rawtypes") Class type) {
-        return type.equals(RuleElementConfig.class);
+        return type.equals(RuleItemConfig.class);
     }
     
     /**
@@ -42,17 +46,25 @@ public class RuleItemConfigConverter implements Converter {
     @Override
     public void marshal(Object source, HierarchicalStreamWriter writer,
             MarshallingContext context) {
-        RuleElementConfig ruleElement = (RuleElementConfig) source;
+        RuleItemConfig ruleItem = (RuleItemConfig) source;
         
-        if (ruleElement == null){
+        if (ruleItem == null){
             return ;
         }
         
-        if(!StringUtils.isEmpty(ruleElement.getRuleType())){
-            writer.addAttribute("ruleType", ruleElement.getRuleType());
+        //attribute
+        writer.addAttribute("rule", ruleItem.getRule());//rule不能为空
+        writer.addAttribute("ruleType", ruleItem.getRuleType().toString());
+        writer.addAttribute("serviceType", ruleItem.getServiceType());
+        
+        if(MapUtils.isEmpty(ruleItem.getProperties())){
+            for(Entry<String, String> entryTemp : ruleItem.getProperties().entrySet()){
+                writer.addAttribute(entryTemp.getKey(), entryTemp.getValue());
+            }
         }
-        if(!StringUtils.isEmpty(ruleElement.getRuleExpression())){
-            writer.setValue(ruleElement.getRuleExpression());
+        //
+        if(!StringUtils.isEmpty(ruleItem.getRuleExpression())){
+            writer.setValue(ruleItem.getRuleExpression());
         }else{
             writer.setValue("");
         }
@@ -66,12 +78,19 @@ public class RuleItemConfigConverter implements Converter {
     @Override
     public Object unmarshal(HierarchicalStreamReader reader,
             UnmarshallingContext context) {
-        RuleElementConfig ruleElement = new RuleElementConfig();
-        String type = reader.getAttribute("ruleType");
-        ruleElement.setRuleType(type);
+        RuleItemConfig ruleItem = new RuleItemConfig();
+        
+        String rule = reader.getAttribute("rule");
+        String serviceType = reader.getAttribute("serviceType");
+        String ruleType = reader.getAttribute("ruleType");
         String value = reader.getValue();
-        ruleElement.setRuleExpression(value);
-        return ruleElement;
+        
+        ruleItem.setRule(rule);
+        ruleItem.setServiceType(serviceType);
+        ruleItem.setRuleType(RuleTypeEnum.valueOf(ruleType));
+        ruleItem.setRuleExpression(value);
+        
+        return ruleItem;
     }
     
 }

@@ -13,6 +13,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -217,6 +218,69 @@ public class SimplePersistenceRuleService {
     }
     
     /**
+      * 根据规则主键查询规则实体
+      * <功能详细描述>
+      * @param ruleType
+      * @param serviceType
+      * @param rule
+      * @return [参数说明]
+      * 
+      * @return SimplePersistenceRule [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public SimplePersistenceRule findSimplePersistenceRuleByRulePK(
+            RuleTypeEnum ruleType, String serviceType, String rule) {
+        if (ruleType == null
+                || StringUtils.isEmpty(serviceType)
+                || StringUtils.isEmpty(rule)) {
+            throw new ParameterIsEmptyException("ruleType or serviceType or rule is empty.");
+        }
+        
+        SimplePersistenceRule condition = new SimplePersistenceRule();
+        condition.setRuleType(ruleType);
+        condition.setServiceType(serviceType);
+        condition.setRule(rule);
+        
+        SimplePersistenceRule res = this.simplePersistenceRuleDao.findSimplePersistenceRule(condition);
+        
+        if (res != null) {
+            setupRuleParam(res);
+        }
+        
+        return res;
+    }
+    
+    /**
+      * 根据规则主键信息判断对应规则是否存在
+      * <功能详细描述>
+      * @param ruleType
+      * @param serviceType
+      * @param rule
+      * @return [参数说明]
+      * 
+      * @return boolean [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public boolean isExistByRulePK(RuleTypeEnum ruleType, String serviceType, String rule){
+        if (ruleType == null
+                || StringUtils.isEmpty(serviceType)
+                || StringUtils.isEmpty(rule)) {
+            throw new ParameterIsEmptyException("ruleType or serviceType or rule is empty.");
+        }
+        
+        SimplePersistenceRule condition = new SimplePersistenceRule();
+        condition.setRuleType(ruleType);
+        condition.setServiceType(serviceType);
+        condition.setRule(rule);
+        
+        SimplePersistenceRule res = this.simplePersistenceRuleDao.findSimplePersistenceRule(condition);
+        
+        return res != null;
+    }
+    
+    /**
       * 分页查询SimplePersistenceRule实体列表<br/>
       *<功能详细描述>
       * @param serviceType
@@ -256,27 +320,53 @@ public class SimplePersistenceRuleService {
       * 1、如果simplePersistenceRule为空时抛出参数为空异常
       * 2、如果simplePersistenceRule中部分必要参数为非法值时抛出参数不合法异常
       * <功能详细描述>
-      * @param simplePersistenceRule [参数说明]
+      * @param rule [参数说明]
       * 
       * @return void [返回类型说明]
       * @exception throws 可能存在数据库访问异常DataAccessException
       * @see [类、类#方法、类#成员]
      */
     @Transactional
-    public void insertSimplePersistenceRule(
-            SimplePersistenceRule simplePersistenceRule) {
+    public void saveSimplePersistenceRule(
+            SimplePersistenceRule rule) {
         //验证参数是否合法，必填字段是否填写，
         //如果没有填写抛出parameterIsEmptyException,
         //如果有参数不合法ParameterIsInvalidException
-        if (simplePersistenceRule == null
-                || StringUtils.isEmpty(simplePersistenceRule.rule())
-                || simplePersistenceRule.getState() == null
-                || StringUtils.isEmpty(simplePersistenceRule.getServiceType())) {
+        if (rule == null
+                || StringUtils.isEmpty(rule.rule())
+                || rule.getState() == null
+                || StringUtils.isEmpty(rule.getServiceType())) {
             throw new ParameterIsEmptyException(
                     "simplePersistenceRule or state or serviceType is empty.");
         }
+        //查询对应规则，是否已经存在
+        SimplePersistenceRule oldRule = findSimplePersistenceRuleByRulePK(rule.getRuleType(), rule.getServiceType(), rule.rule());
         
-        this.simplePersistenceRuleDao.insertSimplePersistenceRule(simplePersistenceRule);
+        if(oldRule == null){
+            this.simplePersistenceRuleDao.insertSimplePersistenceRule(rule);
+        }else{
+            Map<String, Object> updateRowMap = new HashMap<String, Object>();
+            updateRowMap.put("id", oldRule.getId());
+            
+            updateRowMap.put("state", rule.getState());
+            updateRowMap.put("name", rule.getName());
+            updateRowMap.put("remark", rule.getRemark());
+            this.simplePersistenceRuleDao.updateSimplePersistenceRule(updateRowMap);
+        }
+        
+        //设置属性
+        if (CollectionUtils.isEmpty(rule.getParams())) {
+            rule.setParams(this.simpleRulePropertyParamService.queryParamsByRuleType(rule.getRuleType()));
+        }
+        //装载参数值
+        //持久化byte类型值
+        if (rule.isHasByteParam() && !MapUtils.isEmpty(rule.getBytePropertyValues())) {
+            this.simpleRulePropertyByteService.saveSimpleRulePropertyByte(rule.getId(), rule.getBytePropertyValues());
+        }
+        //持久化value类型值
+        if (rule.isHasValueParam() && !MapUtils.isEmpty(rule.getStringPropertyValues())) {
+            this.simpleRulePropertyValueService.saveSimpleRulePropertyValue(rule.getId(), rule.getStringPropertyValues());
+        }
     }
     
     /**
@@ -292,7 +382,7 @@ public class SimplePersistenceRuleService {
       * @see [类、类#方法、类#成员]
      */
     @Transactional
-    public int deleteById(String id) {
+    public boolean deleteById(String id) {
         if (StringUtils.isEmpty(id)) {
             throw new ParameterIsEmptyException(
                     "SimplePersistenceRuleService.deleteById id isEmpty.");
@@ -300,6 +390,12 @@ public class SimplePersistenceRuleService {
         
         SimplePersistenceRule condition = new SimplePersistenceRule();
         condition.setId(id);
-        return this.simplePersistenceRuleDao.deleteSimplePersistenceRule(condition);
+        
+        boolean resFlag = this.simplePersistenceRuleDao.deleteSimplePersistenceRule(condition) == 1;
+        if(resFlag){
+            this.simpleRulePropertyByteService.deleteByRuleId(id);
+            this.simpleRulePropertyValueService.deleteByRuleId(id);
+        }
+        return resFlag;
     }
 }
