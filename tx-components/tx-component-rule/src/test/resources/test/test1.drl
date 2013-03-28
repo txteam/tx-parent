@@ -16,6 +16,6 @@ rule "年龄大于12(可在产品私有属性中设定)岁"
     when
     	$fact : Map(testPojo(test != null))
     then
-        //actions
-
+        System.out.print("abc");
+		
 end

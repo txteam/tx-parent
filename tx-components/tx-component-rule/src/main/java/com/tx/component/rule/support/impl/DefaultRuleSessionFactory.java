@@ -7,6 +7,7 @@
 package com.tx.component.rule.support.impl;
 
 import com.tx.component.rule.drools.DroolsRule;
+import com.tx.component.rule.drools.DroolsRuleSession;
 import com.tx.component.rule.exceptions.RuleAccessException;
 import com.tx.component.rule.method.MethodRule;
 import com.tx.component.rule.method.MethodRuleSession;
@@ -71,7 +72,7 @@ public class DefaultRuleSessionFactory implements RuleSessionFactory{
       * @see [类、类#方法、类#成员]
      */
     private RuleSession newRuleSession(DroolsRule rule) {
-        
-        return null;
+        DroolsRuleSession ruleSession = new DroolsRuleSession(rule);
+        return ruleSession;
     }
 }

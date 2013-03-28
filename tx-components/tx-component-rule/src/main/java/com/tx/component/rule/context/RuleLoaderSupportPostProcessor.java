@@ -6,13 +6,8 @@
  */
 package com.tx.component.rule.context;
 
-import java.lang.reflect.Method;
-import java.util.List;
-
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.cglib.proxy.MethodInterceptor;
-import org.springframework.cglib.proxy.MethodProxy;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
@@ -30,6 +25,7 @@ import org.springframework.stereotype.Component;
 public class RuleLoaderSupportPostProcessor implements BeanPostProcessor,
         ApplicationContextAware {
     
+    @SuppressWarnings("unused")
     private ApplicationContext applicationContext;
     
     /**
@@ -51,10 +47,6 @@ public class RuleLoaderSupportPostProcessor implements BeanPostProcessor,
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName)
             throws BeansException {
-        if (bean instanceof RuleLoader) {
-            //如果为ruleLoader则注册入容器
-            RuleContext.registerRuleLoader(beanName);
-        }
         return bean;
     }
     
@@ -71,61 +63,16 @@ public class RuleLoaderSupportPostProcessor implements BeanPostProcessor,
             throws BeansException {
         if (bean instanceof RuleLoader) {
             RuleLoader realRuleLoader = (RuleLoader) bean;
+            RuleContext.registerRuleLoader(realRuleLoader);
+            
             //通过事件，将加载完成的规则列表，添加进规则容器中
-            this.applicationContext.publishEvent(new RuleLoaderInitializeComplete(
-                    this, realRuleLoader, beanName));
+            //            this.applicationContext.publishEvent(new RuleLoaderInitializeComplete(
+            //                    this, realRuleLoader, beanName));
         }
         if (bean instanceof RuleValidator) {
             RuleContext.registerRuleValidator((RuleValidator) bean);
         }
         return bean;
-    }
-    
-    /**
-      * 规则加载器注入句柄
-      * <功能详细描述>
-      * 
-      * @author  PengQingyang
-      * @version  [版本号, 2013-1-31]
-      * @see  [相关类/方法]
-      * @since  [产品/模块版本]
-     */
-    @SuppressWarnings("unused")
-    private static class RuleLoaderInvocationHandler implements
-            MethodInterceptor {
-        
-        /** ruleLoader原实例 */
-        private RuleLoader realRuleLoader;
-        
-        private ApplicationContext applicationContext;
-        
-        /** 构造器 */
-        public RuleLoaderInvocationHandler(RuleLoader realRuleLoader,
-                ApplicationContext applicationContext) {
-            super();
-            this.realRuleLoader = realRuleLoader;
-        }
-        
-        /**
-         * @param arg0
-         * @param arg1
-         * @param arg2
-         * @param arg3
-         * @return
-         * @throws Throwable
-         */
-        @Override
-        public Object intercept(Object arg0, Method method, Object[] args,
-                MethodProxy methodProxy) throws Throwable {
-            Object res = methodProxy.invoke(realRuleLoader, args);
-            if ("load".equals(method.getName()) && res instanceof List) {
-                //                @SuppressWarnings("unchecked")
-                //                List<Rule> ruleList = (List<Rule>) res;
-                //                this.applicationContext.publishEvent(new RuleLoaderInitializeComplete(this,
-                //                        realRuleLoader, ruleList));
-            }
-            return res;
-        }
     }
     
 }

@@ -12,7 +12,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 
@@ -24,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
 
@@ -50,7 +50,7 @@ import com.tx.core.support.cache.ehcache.SimpleMultiValueEhcacheMap;
  */
 @Component("ruleContext")
 public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
-        ApplicationListener<RuleLoaderInitializeComplete> {
+        ApplicationListener<ContextRefreshedEvent>{
     
     /** 日志记录器 */
     private static Logger logger = LoggerFactory.getLogger(RuleContext.class);
@@ -69,10 +69,7 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
     private Ehcache ehcache;
     
     /** 注册的规则加载器 */
-    private static Map<String, Boolean> registeredRuleLoaderNameMap = new HashMap<String, Boolean>();
-    
-    /** 注册的规则加载器 */
-    private static Map<String, RuleLoader> registeredRuleLoaderMap = new HashMap<String, RuleLoader>();
+    private static List<RuleLoader> registeredRuleLoaderList = new ArrayList<RuleLoader>();
     
     /** 规则验证器映射 */
     private static Map<Class<? extends Rule>, RuleValidator<? extends Rule>> ruleValidatorMap = new HashMap<Class<? extends Rule>, RuleValidator<? extends Rule>>();
@@ -107,7 +104,7 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
         if (ruleSessionFactory == null) {
             this.ruleSessionFactory = new DefaultRuleSessionFactory();
         }
-        if (ruleSessionTransactionFactory == null) {
+        if (ruleSessionTransactionFactory == null){
             this.ruleSessionTransactionFactory = new DefaultRuleSessionTransactionFactory();
         }
         //完成属性设置后,加载规则
@@ -129,9 +126,8 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public static void registerRuleLoader(String ruleLoaderBeanName) {
-        registeredRuleLoaderNameMap.put(ruleLoaderBeanName,
-                false);
+    public static void registerRuleLoader(RuleLoader ruleLoader) {
+        registeredRuleLoaderList.add(ruleLoader);
     }
     
     /**
@@ -165,33 +161,22 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
      * @param event
      */
     @Override
-    public void onApplicationEvent(RuleLoaderInitializeComplete event) {
-        RuleLoader ruleLoader = event.getRuleLoader();
-        String ruleLoaderName = event.getRuleLoaderName();
+    public void onApplicationEvent(ContextRefreshedEvent event) {
+        putInCacheWhenLoadFinish();
         
-        //指定规则已经加载
-        registeredRuleLoaderNameMap.put(ruleLoaderName, true);
-        registeredRuleLoaderMap.put(ruleLoaderName, ruleLoader);
-        
-        //设置为对应ruleLoader已加载
-        if (isLoadFinish()) {
-            putInCacheWhenLoadFinish();
-            
-            List<RuleAndValidatorWrap> ruleAndValidatorWrapList = new ArrayList<RuleContext.RuleAndValidatorWrap>();
-            if (this.ruleKeyMapCache.values() != null) {
-                for (Rule ruleTemp : this.ruleKeyMapCache.values()) {
-                    if (!RuleStateEnum.OPERATION.equals(ruleTemp.getState())) {
-                        //非运营态的规则无需进行验证
-                        continue;
-                    }
-                    RuleValidator<? extends Rule> ruleValidatorTemp = ruleValidatorMap.get(ruleTemp.getClass());
-                    RuleAndValidatorWrap rvWrapTemp = new RuleAndValidatorWrap(
-                            ruleTemp, ruleValidatorTemp);
-                    ruleAndValidatorWrapList.add(rvWrapTemp);
+        List<RuleAndValidatorWrap> ruleAndValidatorWrapList = new ArrayList<RuleContext.RuleAndValidatorWrap>();
+        if(this.ruleKeyMapCache.values() != null){
+            for(Rule ruleTemp : this.ruleKeyMapCache.values()){
+                if(!RuleStateEnum.OPERATION.equals(ruleTemp.getState())){
+                    //非运营态的规则无需进行验证
+                    continue;
                 }
+                RuleValidator<? extends Rule> ruleValidatorTemp = ruleValidatorMap.get(ruleTemp.getClass());
+                RuleAndValidatorWrap rvWrapTemp = new RuleAndValidatorWrap(ruleTemp, ruleValidatorTemp);
+                ruleAndValidatorWrapList.add(rvWrapTemp);
             }
-            validateWhenLoadFinish(ruleAndValidatorWrapList);
         }
+        validateWhenLoadFinish(ruleAndValidatorWrapList);
     }
     
     /**
@@ -203,12 +188,9 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    private void validateWhenLoadFinish(
-            List<RuleAndValidatorWrap> ruleAndValidatorWrapList) {
-        for (RuleAndValidatorWrap rvWrapTemp : ruleAndValidatorWrapList) {
-            if (rvWrapTemp.getRuleValidator() != null
-                    && RuleStateEnum.OPERATION.equals(rvWrapTemp.getRule()
-                            .getState())) {
+    private void validateWhenLoadFinish(List<RuleAndValidatorWrap> ruleAndValidatorWrapList){
+        for(RuleAndValidatorWrap rvWrapTemp : ruleAndValidatorWrapList){
+            if(rvWrapTemp.getRuleValidator() != null && RuleStateEnum.OPERATION.equals(rvWrapTemp.getRule().getState())){
                 //如果规则为运营态，并且规则校验器不为空时，对规则进行校验
                 rvWrapTemp.getRuleValidator().validate(rvWrapTemp.getRule());
             }
@@ -225,8 +207,7 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
      */
     private void putInCacheWhenLoadFinish() {
         //获取ruleLoader列表
-        List<RuleLoader> ruleLoaderList = new ArrayList<RuleLoader>(
-                registeredRuleLoaderMap.values());
+        List<RuleLoader> ruleLoaderList = registeredRuleLoaderList;
         
         //对ruleLoader进行排序
         Collections.sort(ruleLoaderList, new Comparator<RuleLoader>() {
@@ -262,6 +243,8 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
             //将对应规则压入容器中
             putInCache(ruleList, true);
         }
+        
+        loadOver = true;
     }
     
     /**
@@ -277,13 +260,7 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
         if (loadOver) {
             return true;
         } else {
-            for (Entry<String, Boolean> entryTemp : registeredRuleLoaderNameMap.entrySet()) {
-                if (!entryTemp.getValue()) {
-                    return false;
-                }
-            }
-            loadOver = true;
-            return true;
+            return false;
         }
     }
     
@@ -497,14 +474,14 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
       * @see  [相关类/方法]
       * @since  [产品/模块版本]
      */
-    private static class RuleAndValidatorWrap implements
-            Comparable<RuleAndValidatorWrap> {
-        
+    private static class RuleAndValidatorWrap implements Comparable<RuleAndValidatorWrap>{
+
         /** 规则本身 */
         private Rule rule;
         
         /** 规则验证器 */
         private RuleValidator<? extends Rule> ruleValidator;
+        
         
         /** <默认构造函数> */
         public RuleAndValidatorWrap(Rule rule,
@@ -513,35 +490,34 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
             this.rule = rule;
             this.ruleValidator = ruleValidator;
         }
-        
+
         /**
          * @param o
          * @return
          */
         @Override
         public int compareTo(RuleAndValidatorWrap o) {
-            if (o == null) {
+            if(o == null){
                 return 1;
             }
-            if (this.ruleValidator == null && o.ruleValidator == null) {
+            if(this.ruleValidator == null && o.ruleValidator == null){
                 return 0;
-            } else if (this.ruleValidator == null) {
+            }else if(this.ruleValidator == null){
                 return -1;
-            } else if (o.ruleValidator == null) {
+            }else if(o.ruleValidator == null){
                 return 1;
-            } else {
-                return (new Integer(this.ruleValidator.getOrder())).compareTo(new Integer(
-                        o.ruleValidator.getOrder()));
+            }else{
+                 return (new Integer(this.ruleValidator.getOrder())).compareTo(new Integer(o.ruleValidator.getOrder()));
             }
         }
-        
+
         /**
          * @return 返回 rule
          */
         public Rule getRule() {
             return rule;
         }
-        
+
         /**
          * @return 返回 ruleValidator
          */
@@ -549,14 +525,14 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
             return ruleValidator;
         }
     }
-    
+
     /**
      * @return 返回 ruleSessionTransactionFactory
      */
     public RuleSessionTransactionFactory getRuleSessionTransactionFactory() {
         return ruleSessionTransactionFactory;
     }
-    
+
     /**
      * @param 对ruleSessionTransactionFactory进行赋值
      */
@@ -564,14 +540,14 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
             RuleSessionTransactionFactory ruleSessionTransactionFactory) {
         this.ruleSessionTransactionFactory = ruleSessionTransactionFactory;
     }
-    
+
     /**
      * @return 返回 ruleSessionFactory
      */
     public RuleSessionFactory getRuleSessionFactory() {
         return ruleSessionFactory;
     }
-    
+
     /**
      * @param 对ruleSessionFactory进行赋值
      */
