@@ -31,7 +31,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration(locations = { 
         "classpath:spring/beans-ds.xml",
         "classpath:spring/beans-tx.xml",
-        "classpath:spring/beans.xml", 
         "classpath:spring/beans-wf.xml" })
 //@ActiveProfiles("dev")
 @ActiveProfiles("production")

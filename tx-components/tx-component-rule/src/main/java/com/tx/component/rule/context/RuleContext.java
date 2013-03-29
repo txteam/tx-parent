@@ -24,7 +24,6 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
 
 import com.tx.component.rule.exceptions.RuleAccessException;
@@ -48,7 +47,6 @@ import com.tx.core.support.cache.ehcache.SimpleMultiValueEhcacheMap;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-@Component("ruleContext")
 public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
         ApplicationListener<ContextRefreshedEvent>{
     
@@ -553,5 +551,47 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
      */
     public void setRuleSessionFactory(RuleSessionFactory ruleSessionFactory) {
         this.ruleSessionFactory = ruleSessionFactory;
+    }
+
+    /**
+     * @return 返回 ehcache
+     */
+    public Ehcache getEhcache() {
+        return ehcache;
+    }
+
+    /**
+     * @param 对ehcache进行赋值
+     */
+    public void setEhcache(Ehcache ehcache) {
+        this.ehcache = ehcache;
+    }
+
+    /**
+     * @return 返回 loadOver
+     */
+    public boolean isLoadOver() {
+        return loadOver;
+    }
+
+    /**
+     * @param 对loadOver进行赋值
+     */
+    public void setLoadOver(boolean loadOver) {
+        this.loadOver = loadOver;
+    }
+
+    /**
+     * @return 返回 maxLoadTimeout
+     */
+    public long getMaxLoadTimeout() {
+        return maxLoadTimeout;
+    }
+
+    /**
+     * @param 对maxLoadTimeout进行赋值
+     */
+    public void setMaxLoadTimeout(long maxLoadTimeout) {
+        this.maxLoadTimeout = maxLoadTimeout;
     }
 }

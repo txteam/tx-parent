@@ -19,7 +19,6 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.tx.component.rule.context.RuleLoader;
@@ -41,7 +40,6 @@ import com.tx.core.exceptions.parameter.ParameterIsInvalidException;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-@Component("methodRuleLoader")
 public class MethodRuleLoader implements RuleLoader, ApplicationContextAware {
     
     private ApplicationContext applicationContext;
@@ -276,4 +274,6 @@ public class MethodRuleLoader implements RuleLoader, ApplicationContextAware {
             SimplePersistenceRuleService simplePersistenceRuleService) {
         this.simplePersistenceRuleService = simplePersistenceRuleService;
     }
+    
+    
 }

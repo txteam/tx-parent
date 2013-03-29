@@ -21,7 +21,6 @@ import org.drools.definition.KnowledgePackage;
 import org.drools.io.ResourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 import com.tx.component.rule.context.RuleLoader;
 import com.tx.component.rule.model.Rule;
@@ -42,7 +41,6 @@ import com.tx.component.rule.service.SimplePersistenceRuleService;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-@Component("drlByteDroolsRuleLoader")
 public class DBDrlByteDroolsRuleLoader implements RuleLoader {
     
     /** 日志记录器 */

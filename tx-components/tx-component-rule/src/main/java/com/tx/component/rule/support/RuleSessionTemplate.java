@@ -15,7 +15,6 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.stereotype.Component;
 
 import com.tx.component.rule.context.RuleContext;
 import com.tx.component.rule.exceptions.RuleAccessException;
@@ -40,7 +39,6 @@ import com.tx.core.exceptions.parameter.ParameterIsInvalidException;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-@Component("ruleSessionTemplate")
 public class RuleSessionTemplate implements RuleSessionSupport,
         InitializingBean {
     
@@ -307,5 +305,33 @@ public class RuleSessionTemplate implements RuleSessionSupport,
             }
         }
     }
-    
+
+    /**
+     * @return 返回 ruleContext
+     */
+    public RuleContext getRuleContext() {
+        return ruleContext;
+    }
+
+    /**
+     * @param 对ruleContext进行赋值
+     */
+    public void setRuleContext(RuleContext ruleContext) {
+        this.ruleContext = ruleContext;
+    }
+
+    /**
+     * @return 返回 ruleExceptionTranslator
+     */
+    public RuleExceptionTranslator getRuleExceptionTranslator() {
+        return ruleExceptionTranslator;
+    }
+
+    /**
+     * @param 对ruleExceptionTranslator进行赋值
+     */
+    public void setRuleExceptionTranslator(
+            RuleExceptionTranslator ruleExceptionTranslator) {
+        this.ruleExceptionTranslator = ruleExceptionTranslator;
+    }
 }

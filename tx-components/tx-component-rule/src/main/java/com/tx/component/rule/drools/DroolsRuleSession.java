@@ -14,6 +14,8 @@ import org.apache.ibatis.reflection.MetaObject;
 import org.drools.base.MapGlobalResolver;
 import org.drools.runtime.Globals;
 import org.drools.runtime.StatefulKnowledgeSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.tx.component.rule.exceptions.RuleAccessException;
 import com.tx.component.rule.support.impl.BaseRuleSession;
@@ -29,6 +31,9 @@ import com.tx.component.rule.transation.RuleSessionContext;
  * @since  [产品/模块版本]
  */
 public class DroolsRuleSession extends BaseRuleSession<DroolsRule> {
+    
+    /** 日志记录器 */
+    private static Logger logger = LoggerFactory.getLogger(DroolsRuleSession.class);
     
     /**
      * drools规则<默认构造函数>
@@ -46,11 +51,18 @@ public class DroolsRuleSession extends BaseRuleSession<DroolsRule> {
                 .newStatefulKnowledgeSession();
         try {
             //获取全局对象
-            Map<String, Object> globas = RuleSessionContext.getContext().getGlobals();
+            Map<String, Object> globas = RuleSessionContext.getContext()
+                    .getGlobals();
             
             //设置全局对象
             for (Entry<String, Object> entryTemp : globas.entrySet()) {
-                session.setGlobal(entryTemp.getKey(), entryTemp.getValue());
+                try {
+                    session.setGlobal(entryTemp.getKey(), entryTemp.getValue());
+                } catch (RuntimeException e) {
+                    logger.warn("rule:{} set global.key:{} exception:{}",
+                            new Object[] { this.rule.rule(),
+                                    entryTemp.getKey(), e.toString() });
+                }
             }
             
             //插入事实
@@ -58,20 +70,19 @@ public class DroolsRuleSession extends BaseRuleSession<DroolsRule> {
             
             //触发规则调用
             session.fireAllRules();
-        }
-        catch (Exception e) {
-            
-        }
-        finally {
+        } catch (Exception e) {
+            logger.error(e.toString(), e);
+            throw new RuleAccessException(this.rule.getName(), this.rule, this,
+                    "exception:" + e.toString());
+        } finally {
             Globals globals = session.getGlobals();
             if (globals instanceof MapGlobalResolver) {
-                MapGlobalResolver globalInstance = (MapGlobalResolver)globals;
+                MapGlobalResolver globalInstance = (MapGlobalResolver) globals;
                 MetaObject mo = MetaObject.forObject(globalInstance);
                 @SuppressWarnings("unchecked")
-                Map<String, Object> globalMap = (Map<String, Object>)mo.getValue("map");
+                Map<String, Object> globalMap = (Map<String, Object>) mo.getValue("map");
                 RuleSessionContext.getContext().setGlobals(globalMap);
-            }
-            else {
+            } else {
                 throw new RuleAccessException(this.rule().rule(), this.rule(),
                         this,
                         "drools globals is not MapGlobalResolver instance");
@@ -91,34 +102,40 @@ public class DroolsRuleSession extends BaseRuleSession<DroolsRule> {
                 .newStatefulKnowledgeSession();
         try {
             //获取全局对象
-            Map<String, Object> globas = RuleSessionContext.getContext().getGlobals();
+            Map<String, Object> globas = RuleSessionContext.getContext()
+                    .getGlobals();
             
             //设置全局对象
             for (Entry<String, Object> entryTemp : globas.entrySet()) {
-                session.setGlobal(entryTemp.getKey(), entryTemp.getValue());
+                try {
+                    session.setGlobal(entryTemp.getKey(), entryTemp.getValue());
+                } catch (RuntimeException e) {
+                    logger.warn("rule:{} set global.key:{} exception:{}",
+                            new Object[] { this.rule.rule(),
+                                    entryTemp.getKey(), e.toString() });
+                }
             }
             
             //插入事实
-            for(Map<String, Object> fact : facts){
+            for (Map<String, Object> fact : facts) {
                 session.insert(fact);
             }
             
             //触发规则调用
             session.fireAllRules();
-        }
-        catch (Exception e) {
-            
-        }
-        finally {
+        } catch (Exception e) {
+            logger.error(e.toString(), e);
+            throw new RuleAccessException(this.rule.getName(), this.rule, this,
+                    "exception:" + e.toString());
+        } finally {
             Globals globals = session.getGlobals();
             if (globals instanceof MapGlobalResolver) {
-                MapGlobalResolver globalInstance = (MapGlobalResolver)globals;
+                MapGlobalResolver globalInstance = (MapGlobalResolver) globals;
                 MetaObject mo = MetaObject.forObject(globalInstance);
                 @SuppressWarnings("unchecked")
-                Map<String, Object> globalMap = (Map<String, Object>)mo.getValue("map");
+                Map<String, Object> globalMap = (Map<String, Object>) mo.getValue("map");
                 RuleSessionContext.getContext().setGlobals(globalMap);
-            }
-            else {
+            } else {
                 throw new RuleAccessException(this.rule().rule(), this.rule(),
                         this,
                         "drools globals is not MapGlobalResolver instance");

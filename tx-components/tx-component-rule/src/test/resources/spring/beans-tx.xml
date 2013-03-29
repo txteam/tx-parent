@@ -19,11 +19,5 @@
     </bean>
 
     <tx:annotation-driven transaction-manager="transactionManager"/>
-    
-    <!-- if there multi trans
-    <bean id="transactionManager2" class="org.springframework.jdbc.DataSourceTransactionManager">
-    <qualifier value="account"/>
-    </bean>
-    //-->
 
 </beans>

@@ -28,7 +28,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.Resource;
-import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
@@ -52,7 +51,6 @@ import com.tx.core.util.XstreamUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-@Component("ruleConfigLoader")
 public class RuleConfigLoader implements RuleLoader,ApplicationContextAware{
     
     /** */
@@ -208,6 +206,7 @@ public class RuleConfigLoader implements RuleLoader,ApplicationContextAware{
         bytePropertyValues.add(SimpleRuleParamEnum.DROOLS_DRL_RESOURCE_BYTE, proByte);
         spRule.setBytePropertyValues(bytePropertyValues);
         spRule.setState(RuleStateEnum.OPERATION);
+        //持久配置文件中规则
         this.simplePersistenceRuleService.saveSimplePersistenceRule(spRule);
         
         //构建返回的drools规则
@@ -245,5 +244,26 @@ public class RuleConfigLoader implements RuleLoader,ApplicationContextAware{
             }
         }
         return ruleItemList;
+    }
+
+    /**
+     * @return 返回 configLocations
+     */
+    public String getConfigLocations() {
+        return configLocations;
+    }
+
+    /**
+     * @param 对configLocations进行赋值
+     */
+    public void setConfigLocations(String configLocations) {
+        this.configLocations = configLocations;
+    }
+
+    /**
+     * @param 对order进行赋值
+     */
+    public void setOrder(int order) {
+        this.order = order;
     }
 }

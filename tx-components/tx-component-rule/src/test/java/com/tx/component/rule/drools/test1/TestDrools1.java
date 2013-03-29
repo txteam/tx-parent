@@ -40,7 +40,7 @@ import com.tx.component.rule.support.RuleSessionTemplate;
         "classpath:spring/beans-ds.xml",
         "classpath:spring/beans-tx.xml", 
         "classpath:spring/beans-cache.xml",
-        "classpath:spring/beans.xml" })
+        "classpath:spring/beans-rule.xml"})
 @ActiveProfiles("dev")
 public class TestDrools1 {
     
@@ -63,7 +63,7 @@ public class TestDrools1 {
             global.put("globalKey1", "globalValue1:abc");
             
             //
-            List<ProcessRule> resList = ruleSessionTemplate.<ProcessRule> evaluateList("drools_test1111",
+            List<ProcessRule> resList = ruleSessionTemplate.<ProcessRule> evaluateList("test.drools_test1111",
                     fact,
                     global);
             
