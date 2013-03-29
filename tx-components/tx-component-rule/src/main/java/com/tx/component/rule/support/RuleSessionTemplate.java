@@ -24,9 +24,8 @@ import com.tx.component.rule.model.Rule;
 import com.tx.component.rule.model.RuleSessionResultHandle;
 import com.tx.component.rule.model.RuleStateEnum;
 import com.tx.component.rule.model.impl.SimpleRuleSessionResultHandle;
-import com.tx.component.rule.transation.RuleSessionContext;
-import com.tx.component.rule.transation.RuleSessionTransaction;
-import com.tx.component.rule.transation.RuleSessionTransactionUtils;
+import com.tx.component.rule.transation.RuleSessionTransactionCallback;
+import com.tx.component.rule.transation.impl.RuleSessionTransationTemplate;
 import com.tx.core.exceptions.parameter.ParameterIsInvalidException;
 
 /**
@@ -49,6 +48,8 @@ public class RuleSessionTemplate implements RuleSessionSupport,
     
     private RuleExceptionTranslator ruleExceptionTranslator;
     
+    private RuleSessionTransationTemplate ruleSessionTransationTemplate;
+    
     /**
      * @throws Exception
      */
@@ -60,6 +61,10 @@ public class RuleSessionTemplate implements RuleSessionSupport,
                 new RuleSessionSupportInvocationHandler());
         if (this.ruleExceptionTranslator == null) {
             this.ruleExceptionTranslator = new DefaultRuleExceptionTranslator();
+        }
+        if (ruleSessionTransationTemplate == null) {
+            this.ruleSessionTransationTemplate = new RuleSessionTransationTemplate(
+                    this.ruleContext);
         }
     }
     
@@ -199,8 +204,8 @@ public class RuleSessionTemplate implements RuleSessionSupport,
          */
         @SuppressWarnings({ "unchecked", "rawtypes" })
         @Override
-        public Object invoke(Object proxy, Method method, Object[] args)
-                throws Throwable {
+        public Object invoke(final Object proxy, final Method method,
+                final Object[] args) throws Throwable {
             if (args.length != 3
                     && !(args[1] instanceof List || args[1] instanceof Map)
                     && !(args[2] instanceof Map)) {
@@ -208,42 +213,38 @@ public class RuleSessionTemplate implements RuleSessionSupport,
                         "RuleSessionSupportInvocationHandler.invoke args invalid");
             }
             
-            //开启规则会话事务
-            RuleSessionTransaction rsTrans = RuleSessionTransactionUtils.openRuleSessionTransation(ruleContext.getRuleSessionTransactionFactory());
+            final RuleSessionResultHandle<Object> resultHandle = new SimpleRuleSessionResultHandle<Object>();
             
-            //设置会话变量
-            if (args[2] != null) {
-                RuleSessionContext.getContext().setGlobals((Map) args[2]);
-            }
-            
-            RuleSession ruleSession = getTargetRuleSession(method, args);
-            try {
-                if (args[1] instanceof List) {
-                    ruleSession.execute((List) args[1]);
-                } else if (args[1] instanceof Map) {
-                    ruleSession.execute((Map) args[1]);
-                }
-                
-                RuleSessionResultHandle<Object> resultHandle = new SimpleRuleSessionResultHandle<Object>();
-                ruleSession.callback(resultHandle);
-                Object result = resultHandle.getValue();
-                return result;
-            } catch (Throwable t) {
-                Throwable unwrapped = t;
-                if (ruleExceptionTranslator != null) {
-                    Throwable translated = ruleExceptionTranslator.translate(ruleSession.rule(),
-                            ruleSession,
-                            t);
-                    if (translated != null) {
-                        unwrapped = translated;
+            //通过内部类执行实现事务自动开启关闭
+            ruleSessionTransationTemplate.execute(new RuleSessionTransactionCallback() {
+                @Override
+                public void doInTransaction() throws Throwable {
+                    RuleSession ruleSession = getTargetRuleSession(method, args);
+                    try {
+                        if (args[1] instanceof List) {
+                            ruleSession.execute((List) args[1]);
+                        } else if (args[1] instanceof Map) {
+                            ruleSession.execute((Map) args[1]);
+                        }
+                        
+                        ruleSession.callback(resultHandle);
+                    } catch (Throwable t) {
+                        Throwable unwrapped = t;
+                        if (ruleExceptionTranslator != null) {
+                            Throwable translated = ruleExceptionTranslator.translate(ruleSession.rule(),
+                                    ruleSession,
+                                    t);
+                            if (translated != null) {
+                                unwrapped = translated;
+                            }
+                        }
+                        throw unwrapped;
                     }
                 }
-                throw unwrapped;
-            } finally {
-                //关闭规则会话事务
-                RuleSessionTransactionUtils.closeRuleSessionTransation(rsTrans,
-                        ruleContext.getRuleSessionTransactionFactory());
-            }
+            },(Map) args[2]);
+            
+            Object result = resultHandle.getValue();
+            return result;
         }
         
         /**
@@ -305,28 +306,28 @@ public class RuleSessionTemplate implements RuleSessionSupport,
             }
         }
     }
-
+    
     /**
      * @return 返回 ruleContext
      */
     public RuleContext getRuleContext() {
         return ruleContext;
     }
-
+    
     /**
      * @param 对ruleContext进行赋值
      */
     public void setRuleContext(RuleContext ruleContext) {
         this.ruleContext = ruleContext;
     }
-
+    
     /**
      * @return 返回 ruleExceptionTranslator
      */
     public RuleExceptionTranslator getRuleExceptionTranslator() {
         return ruleExceptionTranslator;
     }
-
+    
     /**
      * @param 对ruleExceptionTranslator进行赋值
      */
