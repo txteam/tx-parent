@@ -29,7 +29,7 @@
 		  FROM ${select.tableName} ${select.simpleTableName}
 		 WHERE
 		<trim prefixOverrides="AND | OR">
-			<if test="@com.tx.core.Ognl@isNotEmpty(id)">  
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
 	            AND ${select.simpleTableName}.${select.idColumnName} = ${r"#{"}${select.idPropertyName}${r"}"}
 	        </if>
 		</trim>
@@ -51,12 +51,12 @@
 		<trim prefix="WHERE" prefixOverrides="AND | OR">
 <#list insert.sqlMapColumnList as column>
 <#if column.isSimpleType()>
-			<if test="@com.tx.core.Ognl@isNotEmpty(${column.propertyName})">  
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(${column.propertyName})">  
 	            AND ${select.simpleTableName}.${column.columnName} = ${r"#{"}${column.propertyName},javaType=${column.javaType.name}${r"}"}
 	        </if>
 <#else>
 			<if test="${column.propertyName} != null">
-				<if test="@com.tx.core.Ognl@isNotEmpty(${column.propertyName}.${column.joinPropertyName})">  
+				<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(${column.propertyName}.${column.joinPropertyName})">  
 		            AND ${select.simpleTableName}.${column.columnName} = ${r"#{"}${column.propertyName}.${column.joinPropertyName},javaType=${column.javaType.name}${r"}"}
 		        </if>
 	        </if>
@@ -64,7 +64,7 @@
 </#list>
 		</trim>
 		<choose>  
-	        <when test="@com.tx.core.Ognl@isNotEmpty(orderSql)">  
+	        <when test="@com.tx.core.util.OgnlUtils@isNotEmpty(orderSql)">  
 	            ORDER BY ${r"#{"}orderSql${r"}"}
 	        </when>
 	        <otherwise>  
@@ -82,12 +82,12 @@
 		<trim prefix="WHERE" prefixOverrides="AND | OR">
 <#list insert.sqlMapColumnList as column>
 <#if column.isSimpleType()>
-			<if test="@com.tx.core.Ognl@isNotEmpty(${column.propertyName})">  
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(${column.propertyName})">  
 	            AND ${select.simpleTableName}.${column.columnName} = ${r"#{"}${column.propertyName},javaType=${column.javaType.name}${r"}"}
 	        </if>
 <#else>
 			<if test="${column.propertyName} != null">
-				<if test="@com.tx.core.Ognl@isNotEmpty(${column.propertyName}.${column.joinPropertyName})">  
+				<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(${column.propertyName}.${column.joinPropertyName})">  
 		            AND ${select.simpleTableName}.${column.columnName} = ${r"#{"}${column.propertyName}.${column.joinPropertyName},javaType=${column.javaType.name}${r"}"}
 		        </if>
 	        </if>
@@ -132,7 +132,7 @@
 		parameterType="${delete.parameterType}">
 		DELETE FROM ${delete.tableName} ${delete.simpleTableName} WHERE
 		<trim prefixOverrides="AND | OR">
-			<if test="@com.tx.core.Ognl@isNotEmpty(id)">  
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
 	            AND ${delete.simpleTableName}.${delete.idColumnName} = ${r"#{"}${delete.idPropertyName}${r"}"}
 	        </if>
 		</trim>

@@ -6,8 +6,6 @@
  */
 package com.tx.component.rule.mybatishelper;
 
-import com.tx.component.rule.model.SimplePersistenceRule;
-import com.tx.component.rule.model.SimpleRulePropertyByte;
 import com.tx.component.rule.model.SimpleRulePropertyValue;
 import com.tx.core.mybatis.generator.JpaEntityFreeMarkerGenerator;
 
