@@ -164,6 +164,7 @@ public class RuleConfigLoader implements RuleLoader,ApplicationContextAware{
         Resource drlFileResource = this.applicationContext.getResource(ruleExpression);
         if(!drlFileResource.exists() || !drlFileResource.isReadable()){
             spRule.setState(RuleStateEnum.ERROR);
+            
             //如果对应资源不存在，则不再继续加载该资源，并不进行持久
             logger.warn("drl_drools_byte ruleExpression:{} is not exist.",ruleExpression);
             return null;

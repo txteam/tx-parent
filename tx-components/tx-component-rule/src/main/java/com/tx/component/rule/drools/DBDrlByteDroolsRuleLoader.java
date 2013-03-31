@@ -7,22 +7,18 @@
 package com.tx.component.rule.drools;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import javax.annotation.Resource;
 
 import org.drools.KnowledgeBase;
-import org.drools.KnowledgeBaseFactory;
-import org.drools.builder.KnowledgeBuilder;
-import org.drools.builder.KnowledgeBuilderFactory;
 import org.drools.builder.ResourceType;
-import org.drools.definition.KnowledgePackage;
 import org.drools.io.ResourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.tx.component.rule.context.RuleLoader;
+import com.tx.component.rule.exceptions.DroolsKnowledgeBaseInitException;
 import com.tx.component.rule.model.Rule;
 import com.tx.component.rule.model.RuleStateEnum;
 import com.tx.component.rule.model.RuleTypeEnum;
@@ -70,8 +66,11 @@ public class DBDrlByteDroolsRuleLoader implements RuleLoader {
         //加载资源类规则
         for (SimplePersistenceRule spRuleTemp : dbRuleList) {
             if (!RuleStateEnum.OPERATION.equals(spRuleTemp.getState())) {
-                logger.warn("rule:{} state is not operation.load skip.",spRuleTemp.rule());
-                //如果非运营态的规则，不进行加载
+                logger.warn("rule:{} state is not operation.load skip.",
+                        spRuleTemp.rule());
+                
+                //如果非运营态的规则
+                resList.add(new DroolsRule(spRuleTemp, null));
                 continue;
             }
             //获取属性
@@ -82,23 +81,19 @@ public class DBDrlByteDroolsRuleLoader implements RuleLoader {
                         RuleStateEnum.ERROR);
                 continue;
             } else {
-                KnowledgeBuilder kBuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
-                kBuilder.add(ResourceFactory.newByteArrayResource(srpb.getParamValue()),
-                        ResourceType.DRL);
-                
-                if (kBuilder.hasErrors()) {
-                    logger.warn("rule:{} build has error.load skip." + spRuleTemp.rule());
-                    logger.warn("error:{}",kBuilder.getErrors());
+                KnowledgeBase knowledgeBase = null;
+                try {
+                    knowledgeBase = DroolsHelper.newKnowledgeBase(ResourceFactory.newByteArrayResource(srpb.getParamValue()),
+                            ResourceType.DRL);
+                } catch (DroolsKnowledgeBaseInitException e) {
+                    logger.warn("rule:{} build has error.load skip."
+                            + spRuleTemp.rule());
+                    logger.warn("error:{}", e.getKnowledgeBuilderErrors());
                     
                     spRuleTemp.setState(RuleStateEnum.ERROR);
                     this.simplePersistenceRuleService.changeRuleStateById(spRuleTemp.getId(),
                             RuleStateEnum.ERROR);
-                    continue;
                 }
-                
-                Collection<KnowledgePackage> kpCollection = kBuilder.getKnowledgePackages();
-                KnowledgeBase knowledgeBase = KnowledgeBaseFactory.newKnowledgeBase();
-                knowledgeBase.addKnowledgePackages(kpCollection);
                 
                 resList.add(new DroolsRule(spRuleTemp, knowledgeBase));
             }

@@ -12,6 +12,7 @@ import com.tx.component.rule.method.annotation.RuleMethod;
 import com.tx.component.rule.model.Rule;
 import com.tx.component.rule.model.RuleStateEnum;
 import com.tx.component.rule.model.RuleTypeEnum;
+import com.tx.component.rule.model.SimplePersistenceRule;
 
 /**
  * 方法类型的规则<br/>
@@ -25,7 +26,7 @@ public class MethodRule implements Rule {
     
     /** 注释内容 */
     private static final long serialVersionUID = 8734799947265605205L;
-
+    
     private Method method;
     
     private Object object;
@@ -33,18 +34,31 @@ public class MethodRule implements Rule {
     private RuleStateEnum state;
     
     private com.tx.component.rule.method.annotation.RuleMethod ruleAnnotation;
-
+    
+    /** 数据库中存储的规则实体 */
+    private SimplePersistenceRule simplePersistenceRule;
+    
     /**
      * 方法类型规则构造函数
      */
-    public MethodRule(Method method, Object object, RuleMethod ruleAnnotation) {
+    public MethodRule(Method method,
+            Object object, RuleMethod ruleAnnotation) {
         super();
         this.method = method;
         this.object = object;
         this.ruleAnnotation = ruleAnnotation;
         this.state = RuleStateEnum.OPERATION;
     }
-
+    
+    /**
+     * 方法类型规则构造函数
+     */
+    public MethodRule(SimplePersistenceRule simplePersistenceRule) {
+        super();
+        this.simplePersistenceRule = simplePersistenceRule;
+        this.state = simplePersistenceRule.getState();
+    }
+    
     /**
      * @return
      */
@@ -52,7 +66,7 @@ public class MethodRule implements Rule {
     public String getName() {
         return ruleAnnotation.name();
     }
-
+    
     /**
      * @return
      */
@@ -68,7 +82,7 @@ public class MethodRule implements Rule {
     public String getServiceType() {
         return ruleAnnotation.serviceType();
     }
-
+    
     /**
      * @return
      */
@@ -105,32 +119,46 @@ public class MethodRule implements Rule {
             com.tx.component.rule.method.annotation.RuleMethod ruleAnnotation) {
         this.ruleAnnotation = ruleAnnotation;
     }
-
+    
     /**
      * @return 返回 object
      */
     public Object getObject() {
         return object;
     }
-
+    
     /**
      * @param 对object进行赋值
      */
     public void setObject(Object object) {
         this.object = object;
     }
-
+    
     /**
      * @return 返回 state
      */
     public RuleStateEnum getState() {
         return state;
     }
-
+    
     /**
      * @param 对state进行赋值
      */
     public void setState(RuleStateEnum state) {
         this.state = state;
+    }
+
+    /**
+     * @return 返回 simplePersistenceRule
+     */
+    public SimplePersistenceRule getSimplePersistenceRule() {
+        return simplePersistenceRule;
+    }
+
+    /**
+     * @param 对simplePersistenceRule进行赋值
+     */
+    public void setSimplePersistenceRule(SimplePersistenceRule simplePersistenceRule) {
+        this.simplePersistenceRule = simplePersistenceRule;
     }
 }

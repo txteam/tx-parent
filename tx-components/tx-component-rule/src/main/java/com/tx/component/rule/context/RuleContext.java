@@ -105,6 +105,7 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
         if (ruleSessionTransactionFactory == null){
             this.ruleSessionTransactionFactory = new DefaultRuleSessionTransactionFactory();
         }
+        
         //完成属性设置后,加载规则
         setRuleContext(this);
     }
@@ -175,6 +176,9 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
             }
         }
         validateWhenLoadFinish(ruleAndValidatorWrapList);
+        
+        //规则加载完成后，发出规则加载完成事件
+        event.getApplicationContext().publishEvent(new RuleContextInitializeComplete(event.getApplicationContext()));
     }
     
     /**

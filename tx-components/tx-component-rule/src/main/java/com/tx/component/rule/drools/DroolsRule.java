@@ -41,6 +41,9 @@ public class DroolsRule implements Rule {
     
     private RuleStateEnum state;
     
+    /** 数据库中存储的规则实体 */
+    private SimplePersistenceRule simplePersistenceRule;
+    
     /**
      * 构造函数,根据二进制流构造drools规则
      */
@@ -53,6 +56,8 @@ public class DroolsRule implements Rule {
      */
     public DroolsRule(SimplePersistenceRule spRule, KnowledgeBase knowledgeBase) {
         super();
+        this.simplePersistenceRule = spRule;
+        
         this.rule = spRule.rule();
         this.name = spRule.getName();
         this.serviceType = spRule.getServiceType();
@@ -140,5 +145,26 @@ public class DroolsRule implements Rule {
      */
     public void setState(RuleStateEnum state) {
         this.state = state;
+    }
+
+    /**
+     * @return 返回 simplePersistenceRule
+     */
+    public SimplePersistenceRule getSimplePersistenceRule() {
+        return simplePersistenceRule;
+    }
+
+    /**
+     * @param 对simplePersistenceRule进行赋值
+     */
+    public void setSimplePersistenceRule(SimplePersistenceRule simplePersistenceRule) {
+        this.simplePersistenceRule = simplePersistenceRule;
+    }
+
+    /**
+     * @param 对name进行赋值
+     */
+    public void setName(String name) {
+        this.name = name;
     }
 }

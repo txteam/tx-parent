@@ -97,13 +97,25 @@ public class MethodRuleLoader implements RuleLoader, ApplicationContextAware {
                 //持久化新添加的规则
                 SimplePersistenceRule spr = new SimplePersistenceRule(mrTemp);
                 this.simplePersistenceRuleService.saveSimplePersistenceRule(spr);
+                
+                //设置对应的存储规则
+                mrTemp.setSimplePersistenceRule(spr);
             } else if (dbRuleTemp != null
-                    || RuleStateEnum.OPERATION.equals(dbRuleTemp.getState())) {
+                    && !RuleStateEnum.OPERATION.equals(dbRuleTemp.getState())) {
                 //修改存储中规则状态为持久态
                 this.simplePersistenceRuleService.changeRuleStateById(dbRuleTemp.getId(),
                         RuleStateEnum.OPERATION);
+                
+                mrTemp.setSimplePersistenceRule(dbRuleTemp);
+            } else{
+                //设置规则状态
+                mrTemp.setSimplePersistenceRule(dbRuleTemp);
             }
             
+            //设置该部分需要写入容器的规则状态为运营态
+            mrTemp.setState(RuleStateEnum.OPERATION);
+            
+            //添加到容器中
             resList.add(mrTemp);
         }
         
@@ -120,6 +132,12 @@ public class MethodRuleLoader implements RuleLoader, ApplicationContextAware {
                         //持久化规则状态
                         this.simplePersistenceRuleService.changeRuleStateById(spRule.getId(),
                                 RuleStateEnum.ERROR);
+                        
+                        //错误态的规则，依然加入规则容器中
+                        MethodRule methodRule = new MethodRule(spRule);
+                        methodRule.setState(RuleStateEnum.ERROR);
+                        
+                        resList.add(spRule);
                     }
                     
                 }
