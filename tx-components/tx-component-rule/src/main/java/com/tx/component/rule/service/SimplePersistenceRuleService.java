@@ -335,9 +335,10 @@ public class SimplePersistenceRuleService {
         if (rule == null
                 || StringUtils.isEmpty(rule.rule())
                 || rule.getState() == null
+                || rule.getRuleType() == null
                 || StringUtils.isEmpty(rule.getServiceType())) {
             throw new ParameterIsEmptyException(
-                    "simplePersistenceRule or state or serviceType is empty.");
+                    "simplePersistenceRule or state or serviceType or ruleType is empty.");
         }
         //查询对应规则，是否已经存在
         SimplePersistenceRule oldRule = findSimplePersistenceRuleByRulePK(rule.getRuleType(), rule.getServiceType(), rule.rule());

@@ -54,11 +54,21 @@ public interface AuthItem extends TreeAble<List<AuthItem>, AuthItem> {
     String getAuthType();
     
     /**
-     * 判断是否为抽象权限
-     * （即：不为实际的权限项）
+     * 判断是否可见
      * @return 返回 isAbstract
      */
-    boolean isAbstract();
+    boolean isViewAble();
+    
+    /**
+      * 是否可编辑
+      * <功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return boolean [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    boolean isEditAble();
     
     /**
      * 该权限是否有效

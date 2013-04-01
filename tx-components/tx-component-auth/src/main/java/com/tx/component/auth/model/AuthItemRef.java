@@ -14,12 +14,13 @@ import java.util.Date;
 public interface AuthItemRef {
     
     /**
-     * 权限引用项的类型
-     * 利用该类型
-     * 实现            人员权限   AUTHREFTYPE_OPERATOR
-     *         临时权限   AUTHREFTYPE_OPERATOR_TEMP
-     *         角色权限   AUTHREFTYPE_ROLE
+     * 权限引用项的类型<br/>
+     * 利用该类型<br/>
+     * 实现           人员权限   AUTHREFTYPE_OPERATOR          <br/>
+     *         临时权限   AUTHREFTYPE_OPERATOR_TEMP     <br/>
+     *         角色权限   AUTHREFTYPE_ROLE              <br/>
      *         职位权限   ...
+     *         ...
      * 这里用String虽没有int查询快，但能让sql可读性增强
      * @return 返回 authRefType
      */

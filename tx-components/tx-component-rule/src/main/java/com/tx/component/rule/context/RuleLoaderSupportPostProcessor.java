@@ -63,14 +63,10 @@ public class RuleLoaderSupportPostProcessor implements BeanPostProcessor,
             throws BeansException {
         if (bean instanceof RuleLoader) {
             RuleLoader realRuleLoader = (RuleLoader) bean;
-            RuleContext.registerRuleLoader(realRuleLoader);
-            
-            //通过事件，将加载完成的规则列表，添加进规则容器中
-            //            this.applicationContext.publishEvent(new RuleLoaderInitializeComplete(
-            //                    this, realRuleLoader, beanName));
+            RuleContext.registeRuleLoader(realRuleLoader);
         }
-        if (bean instanceof RuleValidator) {
-            RuleContext.registerRuleValidator((RuleValidator) bean);
+        if (bean instanceof RuleRegister) {
+            RuleContext.registeRuleValidator((RuleRegister) bean);
         }
         return bean;
     }

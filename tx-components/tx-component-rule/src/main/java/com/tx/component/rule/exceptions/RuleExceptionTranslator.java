@@ -20,6 +20,8 @@ import com.tx.component.rule.support.RuleSession;
  */
 public interface RuleExceptionTranslator {
     
+    public static final String RULE_ERROR_CODE = "RuleError_000_001";
+    
     /**
       * 规则异常转换器接口
       * 1、将请求规则生命周期内发生的异常进行转换

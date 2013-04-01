@@ -46,6 +46,26 @@ public class SILException extends RuntimeException {
     }
     
     /**
+     * <默认构造函数>
+     */
+    public SILException(String errorCode, String errorMessage,
+            Object[] parameters) {
+        super((parameters == null || parameters.length == 0) ? errorMessage
+                : MessageFormatter.arrayFormat(errorMessage, parameters)
+                        .getMessage());
+        this.errorCode = errorCode;
+    }
+    
+    /** <默认构造函数> */
+    public SILException(String errorCode, String errorMessage, Throwable cause,
+            Object[] parameters) {
+        super((parameters == null || parameters.length == 0) ? errorMessage
+                : MessageFormatter.arrayFormat(errorMessage, parameters)
+                        .getMessage(), cause);
+        this.errorCode = errorCode;
+    }
+    
+    /**
      * @return
      */
     public String toString() {

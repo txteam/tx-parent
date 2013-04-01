@@ -26,12 +26,8 @@ import org.springframework.context.ApplicationContextAware;
 import com.tx.component.auth.exceptions.AuthContextInitException;
 import com.tx.component.auth.model.AuthItem;
 import com.tx.component.auth.model.AuthItemRef;
-import com.tx.component.auth.model.DefaultAuthItemRef;
-import com.tx.component.auth.service.AuthChecker;
-import com.tx.component.auth.service.AuthLoader;
+import com.tx.component.auth.model.AuthItemRefImpl;
 import com.tx.component.auth.service.AuthService;
-import com.tx.component.auth.service.SuperAdminChecker;
-import com.tx.component.auth.service.impl.XmlAuthLoader;
 
 /**
  * 权限容器<br/>
@@ -47,22 +43,6 @@ public class AuthContext implements FactoryBean<AuthContext>,
     
     /** 日志记录器 */
     private static final Logger logger = LoggerFactory.getLogger(AuthContext.class);
-    
-    /** 懒汉模式工厂实例  */
-    private static AuthContext context;
-    
-    /**
-     * 权限检查器映射，以权限
-     * 权限类型检查器默认会添加几个检查器 用户自定义添加的权限检查器会覆盖该检查器
-     */
-    private static Map<String, AuthChecker> authCheckerMapping;
-    
-    /**
-     * 系统的权限项集合<br/>
-     * key为权限项唯一键（key,id）<br/>
-     * value为具体的权限项
-     */
-    private static Map<String, AuthItem> authItemMapping;
     
     /**
      * 线程变量:当前会话容器<br/>
@@ -80,12 +60,28 @@ public class AuthContext implements FactoryBean<AuthContext>,
         }
     };
     
+    /** 懒汉模式工厂实例  */
+    private static AuthContext context;
+    
+    /** 所有的权限项目的引用，如果超级管理员开关打开，将在系统加载权限项同时生成一份超级管理员权限引用 */
+    private List<AuthItemRef> superAdminAllAuthItemRef;
+    
+    /**
+     * 权限检查器映射，以权限
+     * 权限类型检查器默认会添加几个检查器 用户自定义添加的权限检查器会覆盖该检查器
+     */
+    private static Map<String, AuthChecker> authCheckerMapping;
+    
+    /**
+     * 系统的权限项集合<br/>
+     * key为权限项唯一键（key,id）<br/>
+     * value为具体的权限项
+     */
+    private static Map<String, AuthItem> authItemMapping;
+    
+    
     /** 业务日志记录器：默认使用logback日志记录器  */
     private static Logger serviceLogger = LoggerFactory.getLogger(AuthContext.class);
-    
-    /** 当前spring容器 */
-    @SuppressWarnings("unused")
-    private ApplicationContext applicationContext;
     
     /** 权限业务逻辑层 */
     private AuthService authService;
@@ -94,7 +90,7 @@ public class AuthContext implements FactoryBean<AuthContext>,
     private List<AuthChecker> authCheckers;
     
     /** 权限加载器 : 默认为通过xml配置加载权限，*/
-    private AuthLoader authLoader = new XmlAuthLoader();
+    private List<AuthLoader> authLoaders;
     
     /** 
      * 超级管理员开关，默认为关闭<br/>
@@ -107,8 +103,11 @@ public class AuthContext implements FactoryBean<AuthContext>,
     /** 超级管理员认证器 */
     private SuperAdminChecker superAdminChecker;
     
-    /** 所有的权限项目的引用，如果超级管理员开关打开，将在系统加载权限项同时生成一份超级管理员权限引用 */
-    private List<AuthItemRef> superAdminAllAuthItemRef;
+
+    
+    /** 当前spring容器 */
+    @SuppressWarnings("unused")
+    private ApplicationContext applicationContext;
     
     /**
      * ApplicationContextAware接口实现<br/>
@@ -166,8 +165,10 @@ public class AuthContext implements FactoryBean<AuthContext>,
      */
     @Override
     public void afterPropertiesSet() throws Exception {
+        //加载系统的权限项
         loadAuthConfig();
         
+        //使系统context指向实体本身
         context = this;
     }
     
@@ -211,22 +212,29 @@ public class AuthContext implements FactoryBean<AuthContext>,
       * @see [类、类#方法、类#成员]
      */
     private void loadAuthItems() {
-        //加载权限项
-        Set<AuthItem> authItemSet = this.authLoader.loadAuthItems();
-        
-        //将权限项压入映射
-        Map<String, AuthItem> tempAuthItemMapping = new HashMap<String, AuthItem>();
-        for (AuthItem authItem : authItemSet) {
-            tempAuthItemMapping.put(authItem.getId(), authItem);
+        if(this.authLoaders == null || this.authLoaders.size() == 0){
+            logger.warn("AuthContext init.AuthLoader is empty.");
+            return ;
         }
         
-        //如果支持超级管理开关打开，这里将申城一份全权限的引用，以便后续人员获取权限
-        if (superAdministratorSwitch) {
-            List<AuthItemRef> tempAllAuthItemRef = new ArrayList<AuthItemRef>();
+        //权限项映射
+        Map<String, AuthItem> tempAuthItemMapping = new HashMap<String, AuthItem>();
+        for(AuthLoader authLoaderTemp : this.authLoaders){
+            //加载权限项
+            Set<AuthItem> authItemSet = authLoaderTemp.loadAuthItems();
+            
             for (AuthItem authItem : authItemSet) {
-                tempAllAuthItemRef.add(new DefaultAuthItemRef(authItem));
+                tempAuthItemMapping.put(authItem.getId(), authItem);
             }
-            superAdminAllAuthItemRef = tempAllAuthItemRef;
+            
+            //如果支持超级管理开关打开，这里将申城一份全权限的引用，以便后续人员获取权限
+            if (superAdministratorSwitch) {
+                List<AuthItemRef> tempAllAuthItemRef = new ArrayList<AuthItemRef>();
+                for (AuthItem authItem : authItemSet) {
+                    tempAllAuthItemRef.add(new AuthItemRefImpl(authItem));
+                }
+                superAdminAllAuthItemRef = tempAllAuthItemRef;
+            }
         }
         
         authItemMapping = tempAuthItemMapping;
@@ -429,17 +437,17 @@ public class AuthContext implements FactoryBean<AuthContext>,
     }
 
     /**
-     * @return 返回 authLoader
+     * @return 返回 authLoaders
      */
-    public AuthLoader getAuthLoader() {
-        return authLoader;
+    public List<AuthLoader> getAuthLoaders() {
+        return authLoaders;
     }
 
     /**
-     * @param 对authLoader进行赋值
+     * @param 对authLoaders进行赋值
      */
-    public void setAuthLoader(AuthLoader authLoader) {
-        this.authLoader = authLoader;
+    public void setAuthLoaders(List<AuthLoader> authLoaders) {
+        this.authLoaders = authLoaders;
     }
 
     /**
@@ -484,6 +492,4 @@ public class AuthContext implements FactoryBean<AuthContext>,
             List<AuthItemRef> superAdminAllAuthItemRef) {
         this.superAdminAllAuthItemRef = superAdminAllAuthItemRef;
     }
-    
-    
 }

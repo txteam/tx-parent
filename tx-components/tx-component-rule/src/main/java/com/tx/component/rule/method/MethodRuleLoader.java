@@ -6,7 +6,6 @@
  */
 package com.tx.component.rule.method;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,22 +14,18 @@ import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.tx.component.rule.context.RuleLoader;
-import com.tx.component.rule.method.annotation.RuleMethod;
-import com.tx.component.rule.method.annotation.RuleMethodClass;
 import com.tx.component.rule.model.Rule;
 import com.tx.component.rule.model.RuleStateEnum;
 import com.tx.component.rule.model.RuleTypeEnum;
 import com.tx.component.rule.model.SimplePersistenceRule;
 import com.tx.component.rule.service.SimplePersistenceRuleService;
 import com.tx.core.TxConstants;
-import com.tx.core.exceptions.parameter.ParameterIsInvalidException;
 
 /**
  * 方法类型的规则加载器<br/>
@@ -80,7 +75,7 @@ public class MethodRuleLoader implements RuleLoader, ApplicationContextAware {
         List<Rule> resList = new ArrayList<Rule>();
         
         //获取当前存在的方法规则
-        List<MethodRule> currentRuleMethodList = scanCurrentSystemRuleMethod();
+        List<MethodRule> currentRuleMethodList = MethodRuleHelper.scanCurrentSystemRuleMethod(this.applicationContext);
         //获取历史数据库中存储的规则
         Map<String, MethodRule> currentRuleMap = new HashMap<String, MethodRule>();
         
@@ -89,7 +84,10 @@ public class MethodRuleLoader implements RuleLoader, ApplicationContextAware {
         
         //压入加载的规则方法
         for (MethodRule mrTemp : currentRuleMethodList) {
+            //设置该部分需要写入容器的规则状态为运营态
+            mrTemp.setState(RuleStateEnum.OPERATION);
             currentRuleMap.put(getRuleKeyFromRule(mrTemp), mrTemp);
+            
             SimplePersistenceRule dbRuleTemp = dbRuleMap.get(getRuleKeyFromRule(mrTemp));
             
             //如果对应规则，在数据库中原不存在
@@ -100,20 +98,19 @@ public class MethodRuleLoader implements RuleLoader, ApplicationContextAware {
                 
                 //设置对应的存储规则
                 mrTemp.setSimplePersistenceRule(spr);
-            } else if (dbRuleTemp != null
+            }
+            else if (dbRuleTemp != null
                     && !RuleStateEnum.OPERATION.equals(dbRuleTemp.getState())) {
                 //修改存储中规则状态为持久态
                 this.simplePersistenceRuleService.changeRuleStateById(dbRuleTemp.getId(),
                         RuleStateEnum.OPERATION);
                 
                 mrTemp.setSimplePersistenceRule(dbRuleTemp);
-            } else{
+            }
+            else {
                 //设置规则状态
                 mrTemp.setSimplePersistenceRule(dbRuleTemp);
             }
-            
-            //设置该部分需要写入容器的规则状态为运营态
-            mrTemp.setState(RuleStateEnum.OPERATION);
             
             //添加到容器中
             resList.add(mrTemp);
@@ -135,9 +132,8 @@ public class MethodRuleLoader implements RuleLoader, ApplicationContextAware {
                         
                         //错误态的规则，依然加入规则容器中
                         MethodRule methodRule = new MethodRule(spRule);
-                        methodRule.setState(RuleStateEnum.ERROR);
                         
-                        resList.add(spRule);
+                        resList.add(methodRule);
                     }
                     
                 }
@@ -198,51 +194,6 @@ public class MethodRuleLoader implements RuleLoader, ApplicationContextAware {
     }
     
     /**
-      * 扫描获取当前系统中存在的方法类型规则
-      * <功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return List<MethodRule> [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    public List<MethodRule> scanCurrentSystemRuleMethod() {
-        //this.applicationContext.
-        Map<String, Object> beanMap = this.applicationContext.getBeansWithAnnotation(RuleMethodClass.class);
-        List<MethodRule> resList = new ArrayList<MethodRule>();
-        List<String> ruleNameList = new ArrayList<String>();
-        
-        for (Entry<String, Object> entryTemp : beanMap.entrySet()) {
-            Object beanTemp = entryTemp.getValue();
-            for (Method methodTemp : beanTemp.getClass().getMethods()) {
-                //如果方法没有ruleMethod注解
-                if (!methodTemp.isAnnotationPresent(RuleMethod.class)) {
-                    continue;
-                }
-                RuleMethod ruleAnnotation = methodTemp.getAnnotation(RuleMethod.class);
-                if (StringUtils.isEmpty(ruleAnnotation.rule())
-                        || StringUtils.isEmpty(ruleAnnotation.serviceType())) {
-                    throw new ParameterIsInvalidException(
-                            "MethodRuleLoader.scanCurrentSystemRuleMethod exception class:{} method{} RuleMethod invalid",
-                            beanTemp.getClass().toString(),
-                            methodTemp.getName());
-                }
-                MethodRule newMR = new MethodRule(methodTemp, beanTemp,
-                        ruleAnnotation);
-                if (ruleNameList.contains(newMR.rule())) {
-                    throw new ParameterIsInvalidException(
-                            "MethodRuleLoader.scanCurrentSystemRuleMethod exception class:{} method{} RuleMethod rule{} duplicate",
-                            beanTemp.getClass().toString(),
-                            methodTemp.getName(), newMR.rule());
-                }
-                ruleNameList.add(newMR.rule());
-                resList.add(newMR);
-            }
-        }
-        return resList;
-    }
-    
-    /**
      * @return 返回 rulePackage
      */
     public String getRulePackage() {
@@ -277,14 +228,14 @@ public class MethodRuleLoader implements RuleLoader, ApplicationContextAware {
     public void setOrder(int order) {
         this.order = order;
     }
-
+    
     /**
      * @return 返回 simplePersistenceRuleService
      */
     public SimplePersistenceRuleService getSimplePersistenceRuleService() {
         return simplePersistenceRuleService;
     }
-
+    
     /**
      * @param 对simplePersistenceRuleService进行赋值
      */
@@ -292,6 +243,5 @@ public class MethodRuleLoader implements RuleLoader, ApplicationContextAware {
             SimplePersistenceRuleService simplePersistenceRuleService) {
         this.simplePersistenceRuleService = simplePersistenceRuleService;
     }
-    
     
 }

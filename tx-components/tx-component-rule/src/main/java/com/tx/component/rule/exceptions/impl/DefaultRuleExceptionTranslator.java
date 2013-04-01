@@ -13,7 +13,7 @@ import com.tx.component.rule.support.RuleSession;
 
 /**
  * 默认的规则异常转换器<br/>
- *     1、
+ *     1、规则异常放翻译器，负责将规则会话内发生的异常，用RuleAccessException进行包装<br/>
  * <功能详细描述>
  * 
  * @author  PengQingyang
@@ -37,7 +37,7 @@ public class DefaultRuleExceptionTranslator implements RuleExceptionTranslator {
         }
         
         return new RuleAccessException(rule.rule(), rule, ruleSession,
-                ex.getMessage());
+                ex.getMessage(), ex);
     }
     
 }

@@ -25,6 +25,17 @@ import java.io.Serializable;
   * @since  [产品/模块版本]
   */
 public interface Rule extends Serializable{
+    
+    /**
+      * 规则实体唯一键
+      * <功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return String [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public String getId();
 
     /**
       * 获取规则名key

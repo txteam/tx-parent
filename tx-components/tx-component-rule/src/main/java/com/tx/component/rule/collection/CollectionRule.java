@@ -12,6 +12,7 @@ import java.util.List;
 import com.tx.component.rule.model.Rule;
 import com.tx.component.rule.model.RuleStateEnum;
 import com.tx.component.rule.model.RuleTypeEnum;
+import com.tx.component.rule.model.SimplePersistenceRule;
 import com.tx.core.TxConstants;
 
 /**
@@ -27,24 +28,18 @@ public class CollectionRule implements Rule {
     
     /** 注释内容 */
     private static final long serialVersionUID = -107185037749395048L;
-
-    private String rule;
-    
-    private String name;
-    
-    private String serviceType;
-    
-    private RuleStateEnum state;
     
     private List<Rule> ruleList = new ArrayList<Rule>(
             TxConstants.INITIAL_CONLLECTION_SIZE);
+    
+    private SimplePersistenceRule simplePersistenceRule;
     
     /**
      * @return
      */
     @Override
     public String getName() {
-        return name;
+        return this.simplePersistenceRule.getName();
     }
 
     /**
@@ -52,7 +47,7 @@ public class CollectionRule implements Rule {
      */
     @Override
     public String rule() {
-        return rule;
+        return this.simplePersistenceRule.rule();
     }
     
     /**
@@ -68,62 +63,72 @@ public class CollectionRule implements Rule {
      */
     @Override
     public String getServiceType() {
-        return this.serviceType;
+        return this.simplePersistenceRule.getServiceType();
     }
     
     /**
      * @return 返回 rule
      */
     public String getRule() {
-        return rule;
+        return this.simplePersistenceRule.getRule();
     }
-    
+
     /**
-     * @param 对rule进行赋值
+     * @return
      */
-    public void setRule(String rule) {
-        this.rule = rule;
+    @Override
+    public String getId() {
+        return this.simplePersistenceRule.getId();
     }
-    
+
+    /**
+     * @return
+     */
+    @Override
+    public RuleStateEnum getState() {
+        if(this.simplePersistenceRule == null){
+            return RuleStateEnum.ERROR;
+        }else{
+            return this.simplePersistenceRule.getState();
+        }
+    }
+
+    /**
+     * @param state
+     */
+    @Override
+    public void setState(RuleStateEnum state) {
+        if (state != null && this.simplePersistenceRule != null
+                && !state.equals(this.simplePersistenceRule.getState())) {
+            this.simplePersistenceRule.setState(state);
+        }
+    }
+
     /**
      * @return 返回 ruleList
      */
     public List<Rule> getRuleList() {
         return ruleList;
     }
-    
+
     /**
      * @param 对ruleList进行赋值
      */
     public void setRuleList(List<Rule> ruleList) {
         this.ruleList = ruleList;
     }
-    
+
     /**
-     * @param 对serviceType进行赋值
+     * @return 返回 simplePersistenceRule
      */
-    public void setServiceType(String serviceType) {
-        this.serviceType = serviceType;
+    public SimplePersistenceRule getSimplePersistenceRule() {
+        return simplePersistenceRule;
     }
 
     /**
-     * @return 返回 state
+     * @param 对simplePersistenceRule进行赋值
      */
-    public RuleStateEnum getState() {
-        return state;
-    }
-
-    /**
-     * @param 对state进行赋值
-     */
-    public void setState(RuleStateEnum state) {
-        this.state = state;
-    }
-
-    /**
-     * @param 对name进行赋值
-     */
-    public void setName(String name) {
-        this.name = name;
+    public void setSimplePersistenceRule(SimplePersistenceRule simplePersistenceRule) {
+        this.simplePersistenceRule = simplePersistenceRule;
     }
 }

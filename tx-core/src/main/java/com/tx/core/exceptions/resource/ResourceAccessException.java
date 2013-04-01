@@ -39,4 +39,17 @@ public class ResourceAccessException extends SILException {
         super(ErrorCodeConstant.RESOURCE_LOAD_EXCEPTION, errorMessage);
     }
     
+    /** <默认构造函数> */
+    public ResourceAccessException(String errorMessage,
+            Object[] parameters) {
+        super(ErrorCodeConstant.RESOURCE_LOAD_EXCEPTION, errorMessage, parameters);
+    }
+    
+    /** <默认构造函数> */
+    public ResourceAccessException(String errorMessage, Throwable cause,
+            Object[] parameters) {
+        super(ErrorCodeConstant.RESOURCE_LOAD_EXCEPTION, errorMessage, cause,
+                parameters);
+    }
+    
 }

@@ -22,7 +22,7 @@
 
 	<!-- 数据库中drools加载器 -->
 	<bean id="drlByteDroolsRuleLoader"
-		class="com.tx.component.rule.drools.DBDrlByteDroolsRuleLoader">
+		class="com.tx.component.rule.drools.DRLByteDroolsRuleLoader">
 	</bean>
 	
 	<!-- 方法类型规则加载器 -->

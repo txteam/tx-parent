@@ -27,41 +27,18 @@ public class DroolsRule implements Rule {
     /** 注释内容 */
     private static final long serialVersionUID = -6764646531144979549L;
     
-    /** 规则名 */
-    private String rule;
-    
-    /** 规则名 */
-    private String name;
-    
-    /** 规则的业务类型属性 */
-    private String serviceType;
-    
     /** drools规则knowlegeBase */
     private KnowledgeBase knowledgeBase;
     
-    private RuleStateEnum state;
-    
     /** 数据库中存储的规则实体 */
     private SimplePersistenceRule simplePersistenceRule;
-    
-    /**
-     * 构造函数,根据二进制流构造drools规则
-     */
-    public DroolsRule() {
-        super();
-    }
-    
+        
     /**
      * 构造函数,根据二进制流构造drools规则
      */
     public DroolsRule(SimplePersistenceRule spRule, KnowledgeBase knowledgeBase) {
         super();
         this.simplePersistenceRule = spRule;
-        
-        this.rule = spRule.rule();
-        this.name = spRule.getName();
-        this.serviceType = spRule.getServiceType();
-        this.state = spRule.getState();
         
         this.knowledgeBase = knowledgeBase;
     }
@@ -70,46 +47,16 @@ public class DroolsRule implements Rule {
      * @return
      */
     @Override
-    public String getName() {
-        return this.name;
+    public String getId() {
+        return this.simplePersistenceRule.getId();
     }
-    
-    /**
-     * @return
-     */
-    @Override
-    public String rule() {
-        return this.rule;
-    }
-    
+
     /**
      * @return
      */
     @Override
     public RuleTypeEnum getRuleType() {
         return RuleTypeEnum.DROOLS;
-    }
-    
-    /**
-     * @return
-     */
-    @Override
-    public String getServiceType() {
-        return this.serviceType;
-    }
-    
-    /**
-     * @return 返回 rule
-     */
-    public String getRule() {
-        return rule;
-    }
-    
-    /**
-     * @param 对rule进行赋值
-     */
-    public void setRule(String rule) {
-        this.rule = rule;
     }
     
     /**
@@ -127,44 +74,64 @@ public class DroolsRule implements Rule {
     }
     
     /**
-     * @param 对serviceType进行赋值
-     */
-    public void setServiceType(String serviceType) {
-        this.serviceType = serviceType;
-    }
-    
-    /**
-     * @return 返回 state
-     */
-    public RuleStateEnum getState() {
-        return state;
-    }
-    
-    /**
-     * @param 对state进行赋值
-     */
-    public void setState(RuleStateEnum state) {
-        this.state = state;
-    }
-
-    /**
      * @return 返回 simplePersistenceRule
      */
     public SimplePersistenceRule getSimplePersistenceRule() {
         return simplePersistenceRule;
     }
-
+    
     /**
      * @param 对simplePersistenceRule进行赋值
      */
-    public void setSimplePersistenceRule(SimplePersistenceRule simplePersistenceRule) {
+    public void setSimplePersistenceRule(
+            SimplePersistenceRule simplePersistenceRule) {
         this.simplePersistenceRule = simplePersistenceRule;
     }
-
+    
     /**
-     * @param 对name进行赋值
+     * @return
      */
-    public void setName(String name) {
-        this.name = name;
+    @Override
+    public String rule() {
+        return this.simplePersistenceRule.getRule();
+    }
+    
+    /**
+     * @return
+     */
+    @Override
+    public String getName() {
+        return this.simplePersistenceRule.getName();
+    }
+    
+    /**
+     * @return
+     */
+    @Override
+    public String getServiceType() {
+        return this.simplePersistenceRule.getServiceType();
+    }
+    
+    /**
+     * @return
+     */
+    @Override
+    public RuleStateEnum getState() {
+        if(this.simplePersistenceRule == null){
+            return RuleStateEnum.ERROR;
+        }else{
+            return this.simplePersistenceRule.getState();
+        }
+    }
+    
+    /**
+     * @param state
+     */
+    @Override
+    public void setState(RuleStateEnum state) {
+        if (state != null && this.simplePersistenceRule != null
+                && !state.equals(this.simplePersistenceRule.getState())) {
+            this.simplePersistenceRule.setState(state);
+        }
     }
 }

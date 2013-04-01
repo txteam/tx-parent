@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<auths>
+	<!-- 这样就添加了新的：抽象权限 -->
+	<authType key="AUTH_MANAGE" name="权限管理">
+		<auth key="auth_operator_modify" name="编辑操作员权限">
+		</auth>
+		<auth key="auth_operator_modify" name="编辑角色权限">
+		</auth>
+		<auth key="auth_grant_temp" name="临时权限授权">
+		</auth>
+	</authType>
+</auths>

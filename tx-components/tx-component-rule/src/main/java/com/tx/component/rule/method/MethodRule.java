@@ -31,8 +31,6 @@ public class MethodRule implements Rule {
     
     private Object object;
     
-    private RuleStateEnum state;
-    
     private com.tx.component.rule.method.annotation.RuleMethod ruleAnnotation;
     
     /** 数据库中存储的规则实体 */
@@ -47,7 +45,6 @@ public class MethodRule implements Rule {
         this.method = method;
         this.object = object;
         this.ruleAnnotation = ruleAnnotation;
-        this.state = RuleStateEnum.OPERATION;
     }
     
     /**
@@ -56,9 +53,16 @@ public class MethodRule implements Rule {
     public MethodRule(SimplePersistenceRule simplePersistenceRule) {
         super();
         this.simplePersistenceRule = simplePersistenceRule;
-        this.state = simplePersistenceRule.getState();
     }
     
+    /**
+     * @return
+     */
+    @Override
+    public String getId() {
+        return this.simplePersistenceRule.getId();
+    }
+
     /**
      * @return
      */
@@ -138,14 +142,21 @@ public class MethodRule implements Rule {
      * @return 返回 state
      */
     public RuleStateEnum getState() {
-        return state;
+        if(this.simplePersistenceRule == null){
+            return RuleStateEnum.ERROR;
+        }else{
+            return this.simplePersistenceRule.getState();
+        }
     }
     
     /**
      * @param 对state进行赋值
      */
     public void setState(RuleStateEnum state) {
-        this.state = state;
+        if (state != null && this.simplePersistenceRule != null
+                && !state.equals(this.simplePersistenceRule.getState())) {
+            this.simplePersistenceRule.setState(state);
+        }
     }
 
     /**

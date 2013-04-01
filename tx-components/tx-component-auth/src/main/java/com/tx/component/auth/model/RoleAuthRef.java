@@ -17,7 +17,7 @@ import com.tx.component.auth.AuthConstant;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class RoleAuthRef extends DefaultAuthItemRef {
+public class RoleAuthRef extends AuthItemRefImpl {
     
     /** 注释内容 */
     private static final long serialVersionUID = -5225480864798103809L;

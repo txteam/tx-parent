@@ -18,6 +18,7 @@ import javax.annotation.Resource;
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.store.chm.ConcurrentHashMap;
 
+import org.drools.core.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.FactoryBean;
@@ -27,8 +28,12 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.util.MultiValueMap;
 
 import com.tx.component.rule.exceptions.RuleAccessException;
+import com.tx.component.rule.exceptions.RuleRegisteException;
 import com.tx.component.rule.model.Rule;
 import com.tx.component.rule.model.RuleStateEnum;
+import com.tx.component.rule.model.RuleTypeEnum;
+import com.tx.component.rule.model.SimplePersistenceRule;
+import com.tx.component.rule.service.SimplePersistenceRuleService;
 import com.tx.component.rule.support.RuleSession;
 import com.tx.component.rule.support.RuleSessionFactory;
 import com.tx.component.rule.support.impl.DefaultRuleSessionFactory;
@@ -48,7 +53,7 @@ import com.tx.core.support.cache.ehcache.SimpleMultiValueEhcacheMap;
  * @since  [产品/模块版本]
  */
 public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
-        ApplicationListener<ContextRefreshedEvent>{
+        ApplicationListener<ContextRefreshedEvent> {
     
     /** 日志记录器 */
     private static Logger logger = LoggerFactory.getLogger(RuleContext.class);
@@ -66,11 +71,15 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
     @Resource(name = "cache")
     private Ehcache ehcache;
     
+    /** 持久化规则业务层 */
+    @Resource(name = "simplePersistenceRuleService")
+    private SimplePersistenceRuleService simplePersistenceRuleService;
+    
     /** 注册的规则加载器 */
     private static List<RuleLoader> registeredRuleLoaderList = new ArrayList<RuleLoader>();
     
     /** 规则验证器映射 */
-    private static Map<Class<? extends Rule>, RuleValidator<? extends Rule>> ruleValidatorMap = new HashMap<Class<? extends Rule>, RuleValidator<? extends Rule>>();
+    private static Map<RuleTypeEnum, RuleRegister<? extends Rule>> ruleValidatorMap = new HashMap<RuleTypeEnum, RuleRegister<? extends Rule>>();
     
     /** 规则缓存:key为 serviceType + "." + rule */
     private Map<String, Rule> ruleKeyMapCache;
@@ -102,7 +111,7 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
         if (ruleSessionFactory == null) {
             this.ruleSessionFactory = new DefaultRuleSessionFactory();
         }
-        if (ruleSessionTransactionFactory == null){
+        if (ruleSessionTransactionFactory == null) {
             this.ruleSessionTransactionFactory = new DefaultRuleSessionTransactionFactory();
         }
         
@@ -125,7 +134,7 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public static void registerRuleLoader(RuleLoader ruleLoader) {
+    public static void registeRuleLoader(RuleLoader ruleLoader) {
         registeredRuleLoaderList.add(ruleLoader);
     }
     
@@ -138,9 +147,64 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public static void registerRuleValidator(
-            RuleValidator<? extends Rule> ruleValidator) {
-        ruleValidatorMap.put(ruleValidator.validateType(), ruleValidator);
+    public static void registeRuleValidator(
+            RuleRegister<? extends Rule> ruleValidator) {
+        ruleValidatorMap.put(ruleValidator.ruleType(), ruleValidator);
+    }
+    
+    /**
+      * 将规则注册入规则容器中
+      * <功能详细描述>
+      * @param spRule [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public void registeRule(SimplePersistenceRule spRule) {
+        if (spRule == null || StringUtils.isEmpty(spRule.getRule())
+                || StringUtils.isEmpty(spRule.getServiceType())
+                || spRule.getRuleType() == null) {
+            throw new RuleRegisteException(
+                    "spRule or rule or serviceType or ruleType is null");
+        }
+        
+        RuleRegister<? extends Rule> ruleValidatorTemp = ruleValidatorMap.get(spRule.getRuleType());
+        if(ruleValidatorTemp == null){
+            throw new RuleRegisteException(
+                    "ruleType:{} RuleRegister not exist.",spRule.getRuleType().toString());
+        }
+        
+        //调用对应注册器方法，将规则注册入容器中
+        Rule realRule = ruleValidatorTemp.registe(spRule);
+        if(realRule != null){
+            putInCache(realRule, true);
+        }else{
+            throw new RuleRegisteException(
+                    "ruleType:{} RuleRegister call registe return null realRule.",spRule.getRuleType().toString());
+        }
+    }
+    
+    /**
+      * 反注册规则
+      * <功能详细描述>
+      * @param rule [参数说明] serviceType.rule
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public void unRegisteRule(String rule){
+        Rule ruleImpl = getRuleContext().getRule(rule);
+        if(ruleImpl == null){
+            return;
+        }
+        
+        //删除持久化数据
+        this.simplePersistenceRuleService.deleteById(ruleImpl.getId());
+        
+        //从缓存中移除对应规则
+        removeFromCache(ruleImpl);
     }
     
     /**
@@ -161,24 +225,31 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
      */
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
-        putInCacheWhenLoadFinish();
+        //启动时，利用ruleLoad加载，并将规则压入缓存中
+        loadAndPutInCacheWhenStart();
         
+        //根据规则类型，对加载的规则进行校验
         List<RuleAndValidatorWrap> ruleAndValidatorWrapList = new ArrayList<RuleContext.RuleAndValidatorWrap>();
-        if(this.ruleKeyMapCache.values() != null){
-            for(Rule ruleTemp : this.ruleKeyMapCache.values()){
-                if(!RuleStateEnum.OPERATION.equals(ruleTemp.getState())){
+        if (this.ruleKeyMapCache.values() != null) {
+            for (Rule ruleTemp : this.ruleKeyMapCache.values()) {
+                if (!RuleStateEnum.OPERATION.equals(ruleTemp.getState())) {
                     //非运营态的规则无需进行验证
                     continue;
                 }
-                RuleValidator<? extends Rule> ruleValidatorTemp = ruleValidatorMap.get(ruleTemp.getClass());
-                RuleAndValidatorWrap rvWrapTemp = new RuleAndValidatorWrap(ruleTemp, ruleValidatorTemp);
-                ruleAndValidatorWrapList.add(rvWrapTemp);
+                RuleRegister<? extends Rule> ruleValidatorTemp = ruleValidatorMap.get(ruleTemp.getRuleType());
+                if (ruleValidatorTemp != null) {
+                    RuleAndValidatorWrap rvWrapTemp = new RuleAndValidatorWrap(
+                            ruleTemp, ruleValidatorTemp);
+                    ruleAndValidatorWrapList.add(rvWrapTemp);
+                }
             }
         }
         validateWhenLoadFinish(ruleAndValidatorWrapList);
         
         //规则加载完成后，发出规则加载完成事件
-        event.getApplicationContext().publishEvent(new RuleContextInitializeComplete(event.getApplicationContext()));
+        event.getApplicationContext()
+                .publishEvent(new RuleContextInitializeComplete(
+                        event.getApplicationContext()));
     }
     
     /**
@@ -190,9 +261,12 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    private void validateWhenLoadFinish(List<RuleAndValidatorWrap> ruleAndValidatorWrapList){
-        for(RuleAndValidatorWrap rvWrapTemp : ruleAndValidatorWrapList){
-            if(rvWrapTemp.getRuleValidator() != null && RuleStateEnum.OPERATION.equals(rvWrapTemp.getRule().getState())){
+    private void validateWhenLoadFinish(
+            List<RuleAndValidatorWrap> ruleAndValidatorWrapList) {
+        for (RuleAndValidatorWrap rvWrapTemp : ruleAndValidatorWrapList) {
+            if (rvWrapTemp.getRuleValidator() != null
+                    && RuleStateEnum.OPERATION.equals(rvWrapTemp.getRule()
+                            .getState())) {
                 //如果规则为运营态，并且规则校验器不为空时，对规则进行校验
                 rvWrapTemp.getRuleValidator().validate(rvWrapTemp.getRule());
             }
@@ -207,7 +281,7 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    private void putInCacheWhenLoadFinish() {
+    private void loadAndPutInCacheWhenStart() {
         //获取ruleLoader列表
         List<RuleLoader> ruleLoaderList = registeredRuleLoaderList;
         
@@ -223,16 +297,21 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
                 if (o1 != null && o2 != null) {
                     if (o1.getOrder() == o2.getOrder()) {
                         return 0;
-                    } else if (o1.getOrder() > o2.getOrder()) {
+                    }
+                    else if (o1.getOrder() > o2.getOrder()) {
                         return 1;
-                    } else {
+                    }
+                    else {
                         return -1;
                     }
-                } else if (o1 == null && o2 == null) {
+                }
+                else if (o1 == null && o2 == null) {
                     return 0;
-                } else if (o1 == null) {
+                }
+                else if (o1 == null) {
                     return -1;
-                } else {
+                }
+                else {
                     return 1;
                 }
             }
@@ -261,7 +340,8 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
     public boolean isLoadFinish() {
         if (loadOver) {
             return true;
-        } else {
+        }
+        else {
             return false;
         }
     }
@@ -277,16 +357,19 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
     public void waitLoading() {
         if (isLoadFinish()) {
             return;
-        } else {
+        }
+        else {
             try {
                 Integer waitTimes = waitThreadMap.get(Thread.currentThread());
                 if (waitTimes == null || waitTimes.intValue() < 3) {
                     wait(this.maxLoadTimeout);
-                } else {
+                }
+                else {
                     throw new RuleAccessException(null, null, null,
                             "规则容器尚未完成规则加载请等待...");
                 }
-            } catch (InterruptedException e) {
+            }
+            catch (InterruptedException e) {
                 logger.error("RuleContext.waitLoading exception:"
                         + e.toString(),
                         e);
@@ -323,15 +406,18 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
         waitLoading();
         if (ruleKeyMapCache.containsKey(rule)) {
             return true;
-        } else if (multiRuleMapCache.containsKey(rule)) {
+        }
+        else if (multiRuleMapCache.containsKey(rule)) {
             if (multiRuleMapCache.get(rule) != null
                     && multiRuleMapCache.get(rule).size() > 1) {
                 throw new RuleAccessException(rule, null, null,
                         "未带业务类型（命名空间）的规则，检索到超过多个规则:{}", rule);
-            } else {
+            }
+            else {
                 return true;
             }
-        } else {
+        }
+        else {
             return false;
         }
     }
@@ -350,15 +436,18 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
         waitLoading();
         if (ruleKeyMapCache.containsKey(rule)) {
             return ruleKeyMapCache.get(rule);
-        } else if (multiRuleMapCache.containsKey(rule)) {
+        }
+        else if (multiRuleMapCache.containsKey(rule)) {
             if (multiRuleMapCache.get(rule) != null
                     && multiRuleMapCache.get(rule).size() > 1) {
                 throw new RuleAccessException(rule, null, null,
                         "未带业务类型（命名空间）的规则，检索到超过多个规则:{}", rule);
-            } else {
+            }
+            else {
                 return multiRuleMapCache.getFirst(rule);
             }
-        } else {
+        }
+        else {
             return null;
         }
     }
@@ -439,19 +528,55 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
         if (rule == null) {
             return;
         }
+        
+        //保证如果serviceType.rule不重复，则将同名的规则，压入multiRuleMapCache中
+        //该缓存主要为了兼容处理，不带serviceType的规则访问情况
+        if (!this.ruleKeyMapCache.containsKey(getRuleCacheKey(rule))) {
+            //如果名字重复了
+            //则不放置该规则则规则简名中，如果遇到需要提取该集合的情况
+            this.multiRuleMapCache.add(rule.rule(), rule);
+        }
+        
+        //规则放置主容器
         if (isCoverWhenSame) {
             this.ruleKeyMapCache.put(getRuleCacheKey(rule), rule);
-        } else if (this.ruleKeyMapCache.containsKey(getRuleCacheKey(rule))) {
+        }
+        else if (this.ruleKeyMapCache.containsKey(getRuleCacheKey(rule))) {
             throw new RuleAccessException(rule.rule(), null, null, "重复的规则项:{}",
                     rule.rule());
-        } else {
+        }
+        else {
             this.ruleKeyMapCache.put(getRuleCacheKey(rule), rule);
             logger.warn("规则项{}被同名规则项覆盖.", rule.rule());
         }
+    }
+    
+    /**
+      * 从缓存中将规则实体移除
+      * <功能详细描述>
+      * @param rule [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    private void removeFromCache(Rule rule){
+        if(rule == null){
+            return ;
+        }
         
-        //如果名字重复了
-        //则不放置该规则则规则简名中，如果遇到需要提取该集合的情况
-        this.multiRuleMapCache.add(rule.rule(), rule);
+        //从缓存中移除
+        if (!this.ruleKeyMapCache.containsKey(getRuleCacheKey(rule))) {
+            //从ruleKeyMapCache中移除
+            this.ruleKeyMapCache.remove(getRuleCacheKey(rule));
+            //移除重复的
+            List<Rule> ruleList = this.multiRuleMapCache.get(rule.rule());
+            if(ruleList != null && ruleList.size() > 1){
+                ruleList.remove(rule);
+            }else{
+                this.multiRuleMapCache.remove(rule.rule());
+            }
+        }
     }
     
     /**
@@ -476,65 +601,69 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
       * @see  [相关类/方法]
       * @since  [产品/模块版本]
      */
-    private static class RuleAndValidatorWrap implements Comparable<RuleAndValidatorWrap>{
-
+    private static class RuleAndValidatorWrap implements
+            Comparable<RuleAndValidatorWrap> {
+        
         /** 规则本身 */
         private Rule rule;
         
         /** 规则验证器 */
-        private RuleValidator<? extends Rule> ruleValidator;
-        
+        private RuleRegister<? extends Rule> ruleValidator;
         
         /** <默认构造函数> */
         public RuleAndValidatorWrap(Rule rule,
-                RuleValidator<? extends Rule> ruleValidator) {
+                RuleRegister<? extends Rule> ruleValidator) {
             super();
             this.rule = rule;
             this.ruleValidator = ruleValidator;
         }
-
+        
         /**
          * @param o
          * @return
          */
         @Override
         public int compareTo(RuleAndValidatorWrap o) {
-            if(o == null){
+            if (o == null) {
                 return 1;
             }
-            if(this.ruleValidator == null && o.ruleValidator == null){
+            if (this.ruleValidator == null && o.ruleValidator == null) {
                 return 0;
-            }else if(this.ruleValidator == null){
+            }
+            else if (this.ruleValidator == null) {
                 return -1;
-            }else if(o.ruleValidator == null){
+            }
+            else if (o.ruleValidator == null) {
                 return 1;
-            }else{
-                 return (new Integer(this.ruleValidator.getOrder())).compareTo(new Integer(o.ruleValidator.getOrder()));
+            }
+            else {
+                return (new Integer(this.ruleValidator.getOrder())).compareTo(new Integer(
+                        o.ruleValidator.getOrder()));
             }
         }
-
+        
         /**
          * @return 返回 rule
          */
         public Rule getRule() {
             return rule;
         }
-
+        
         /**
          * @return 返回 ruleValidator
          */
-        public RuleValidator<? extends Rule> getRuleValidator() {
+        public RuleRegister<? extends Rule> getRuleValidator() {
             return ruleValidator;
         }
     }
-
+    
     /**
      * @return 返回 ruleSessionTransactionFactory
      */
     public RuleSessionTransactionFactory getRuleSessionTransactionFactory() {
         return ruleSessionTransactionFactory;
     }
-
+    
     /**
      * @param 对ruleSessionTransactionFactory进行赋值
      */
@@ -542,56 +671,56 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
             RuleSessionTransactionFactory ruleSessionTransactionFactory) {
         this.ruleSessionTransactionFactory = ruleSessionTransactionFactory;
     }
-
+    
     /**
      * @return 返回 ruleSessionFactory
      */
     public RuleSessionFactory getRuleSessionFactory() {
         return ruleSessionFactory;
     }
-
+    
     /**
      * @param 对ruleSessionFactory进行赋值
      */
     public void setRuleSessionFactory(RuleSessionFactory ruleSessionFactory) {
         this.ruleSessionFactory = ruleSessionFactory;
     }
-
+    
     /**
      * @return 返回 ehcache
      */
     public Ehcache getEhcache() {
         return ehcache;
     }
-
+    
     /**
      * @param 对ehcache进行赋值
      */
     public void setEhcache(Ehcache ehcache) {
         this.ehcache = ehcache;
     }
-
+    
     /**
      * @return 返回 loadOver
      */
     public boolean isLoadOver() {
         return loadOver;
     }
-
+    
     /**
      * @param 对loadOver进行赋值
      */
     public void setLoadOver(boolean loadOver) {
         this.loadOver = loadOver;
     }
-
+    
     /**
      * @return 返回 maxLoadTimeout
      */
     public long getMaxLoadTimeout() {
         return maxLoadTimeout;
     }
-
+    
     /**
      * @param 对maxLoadTimeout进行赋值
      */

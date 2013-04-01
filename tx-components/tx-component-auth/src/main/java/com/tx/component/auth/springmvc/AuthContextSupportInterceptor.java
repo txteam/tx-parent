@@ -53,6 +53,7 @@ public class AuthContextSupportInterceptor implements HandlerInterceptor {
     public void postHandle(HttpServletRequest request,
             HttpServletResponse response, Object handler,
             ModelAndView modelAndView) throws Exception {
+        request.setAttribute(authContextKey, AuthContext.getContext());
     }
     
     /**

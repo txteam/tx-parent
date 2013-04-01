@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.tx.component.auth.dao.AuthDao;
 import com.tx.component.auth.model.AuthItemRef;
-import com.tx.component.auth.model.DefaultAuthItemRef;
+import com.tx.component.auth.model.AuthItemRefImpl;
 import com.tx.core.exceptions.parameter.ParameterIsEmptyException;
 
 /**
@@ -127,7 +127,7 @@ public class AuthService {
             List<String> newAuthIds) {
         List<AuthItemRef> authItemRefList = new ArrayList<AuthItemRef>();
         for (String newAuthId : newAuthIds) {
-            DefaultAuthItemRef authItemRef = new DefaultAuthItemRef();
+            AuthItemRefImpl authItemRef = new AuthItemRefImpl();
             authItemRef.setCreateDate(new Date());
             authItemRef.setAuthRefType(authRefType);
             authItemRef.setRefId(refId);
@@ -158,7 +158,7 @@ public class AuthService {
             List<String> newAuthIds, String authRefType) {
         List<AuthItemRef> authItemRefList = new ArrayList<AuthItemRef>();
         for (String newAuthId : newAuthIds) {
-            DefaultAuthItemRef authItemRef = new DefaultAuthItemRef();
+            AuthItemRefImpl authItemRef = new AuthItemRefImpl();
             authItemRef.setCreateDate(new Date());
             authItemRef.setAuthRefType(authRefType);
             authItemRef.setRefId(refId);
