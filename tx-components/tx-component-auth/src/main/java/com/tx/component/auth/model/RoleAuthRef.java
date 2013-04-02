@@ -49,27 +49,11 @@ public class RoleAuthRef extends AuthItemRefImpl {
     }
     
     /**
-     * @return
+     * @param refId
      */
     @Override
-    public String getRefId() {
-        return super.getRefId();
+    public void setRefId(String refId) {
+        super.setRefId(refId);
+        this.roleId = refId;
     }
-    
-    /**
-     * @return
-     */
-    @Override
-    public String getAuthId() {
-        return super.getAuthId();
-    }
-    
-    /**
-     * @param authRefType
-     */
-    @Override
-    public void setAuthRefType(String authRefType) {
-        super.setAuthRefType(AuthConstant.AUTHREFTYPE_ROLE);
-    }
-    
 }

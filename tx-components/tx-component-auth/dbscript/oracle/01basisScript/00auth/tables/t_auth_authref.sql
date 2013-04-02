@@ -1,6 +1,7 @@
 --****************************************************************************
--- 权限关联表ca为components_auth的简写
+-- 权限关联表t_auth_authref
 --****************************************************************************
+--drop table t_auth_authref;
 create table t_auth_authref
 (
   authid varchar2(128) not null,
@@ -9,6 +10,7 @@ create table t_auth_authref
   createdate date default sysdate not null,
   enddate date,
   createoperid varchar2(64) not null,
+  isValidDependEndDate number(1) default 0,
   primary key(authid,refid,authreftype)
 );
 create index idx_auth_authref_02 on t_auth_authref(refid,authreftype);
@@ -21,4 +23,4 @@ comment on column t_auth_authref.authreftype is '权限关联项类型 AUTHREFTYPE_OPER
 comment on column t_auth_authref.createdate is '权限关联项创建时间';
 comment on column t_auth_authref.enddate is '权限关联项目失效时间';
 comment on column t_auth_authref.createoperid is '权限授予人';
-
+comment on column t_auth_authref.isValidDependEndDate is '有效性是否依赖结束时间';

@@ -1,11 +1,12 @@
 --****************************************************************************
 -- 角色信息表
 --****************************************************************************
+drop table t_auth_role;
 create table t_auth_role
 (
   id varchar2(64) not null,
   name varchar2(64) not null,
-  creatOperId varchar2(64) not null,
+  createOperId varchar2(64) not null,
   createdate date default sysdate not null,
   updatedate date,
   updateOperId varchar2(64),
@@ -14,7 +15,7 @@ create table t_auth_role
   primary key (id)
 );
 create unique index idx_auth_role_01 on t_auth_role(name);
-create index idx_auth_role_02 on t_auth_role (creatOperId);
+create index idx_auth_role_02 on t_auth_role (createOperId);
 
 comment on table t_auth_role is '角色信息表';
 comment on column t_auth_role.id is '角色id';

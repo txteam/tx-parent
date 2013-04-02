@@ -35,25 +35,16 @@ public interface AuthConstant {
     
     
     //start-----------------------权限类型----------------------
-    /** 权限类型：操作权限父节类型，抽象权限，不是真是的权限  */
-    public final static String TYPE_ABS_OPERATE = "TYPE_OPERATE_ABS";
+    /** 权限类型：默认的权限类型:为抽象类型，不能直接作为权限的权限类型，用以支持AuthCheck的功能 */
+    public final static String AUTHTYPE_ABSTRACT_DEFAULT = "AUTHTYPE_ABSTRACT_DEFAULT";
     
     /** 权限类型：操作权限 */
-    public final static String TYPE_OPERATE = "TYPE_OPERATE";
-    
-    /** 权限类型：数据权限 */
-    public final static String TYPE_ABS_DATA = "TYPE_DATA_ABS";
-    
-    /** 权限类型：数据列权限父节类型，抽象权限，不是真是的权限 */
-    public final static String TYPE_ABS_DATA_COLUMN = "TYPE_DATA_COLUMN_ABS";
+    public final static String AUTHTYPE_OPERATE = "AUTHTYPE_OPERATE";
     
     /** 权限类型：数据列权限 */
-    public final static String TYPE_DATA_COLUMN = "TYPE_DATA_COLUMN";
-    
-    /** 权限类型: 数据行权限父节类型，抽象权限，不是真是的权限 */
-    public final static String TYPE_ABS_DATA_ROW = "TYPE_DATA_ROW_ABS";
+    public final static String AUTHTYPE_DATA_COLUMN = "AUTHTYPE_DATA_COLUMN";
     
     /** 权限类型: 数据行权限 */
-    public final static String TYPE_DATA_ROW = "TYPE_DATA_ROW";
+    public final static String AUTHTYPE_DATA_ROW = "AUTHTYPE_DATA_ROW";
     //end-----------------------权限类型----------------------
 }

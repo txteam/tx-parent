@@ -14,10 +14,12 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import com.tx.core.exceptions.parameter.ParameterIsEmptyException;
 import com.tx.core.exceptions.parameter.ParameterIsInvalidException;
+import com.tx.core.exceptions.util.AssertUtils;
 
 /**
  * 规则基础实现<br/>
@@ -314,6 +316,93 @@ public class SimplePersistenceRule implements Serializable, Rule {
     public void setBytePropertyValues(
             MultiValueMap<SimpleRuleParamEnum, SimpleRulePropertyByte> bytePropertyValues) {
         this.bytePropertyValues = bytePropertyValues;
+    }
+    
+    /**
+      * 添加byte类型值
+      * <功能详细描述>
+      * @param simpleRuleParamEnum
+      * @param byteProperty [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public void addBytePropertyValue(SimpleRuleParamEnum simpleRuleParamEnum,SimpleRulePropertyByte byteProperty){
+        if(this.bytePropertyValues == null){
+            this.bytePropertyValues = new LinkedMultiValueMap<SimpleRuleParamEnum, SimpleRulePropertyByte>();
+        }
+        
+        this.bytePropertyValues.add(simpleRuleParamEnum, byteProperty);
+    }
+    
+    /**
+      * 添加byte类型值
+      * <功能详细描述>
+      * @param simpleRuleParamEnum
+      * @param bytes [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public void addBytePropertyValue(SimpleRuleParamEnum simpleRuleParamEnum,byte[] bytes){
+        AssertUtils.notNull(simpleRuleParamEnum,"simpleRuleParamEnum is null");
+        AssertUtils.notNull(bytes,"bytes is null");
+        AssertUtils.isTrue(simpleRuleParamEnum.isBlob(),"simpleRuleParamEnum is not blob.");
+        
+        if(this.bytePropertyValues == null){
+            this.bytePropertyValues = new LinkedMultiValueMap<SimpleRuleParamEnum, SimpleRulePropertyByte>();
+        }
+        
+        SimpleRulePropertyByte newByteProperty = new SimpleRulePropertyByte();
+        newByteProperty.setParamKey(simpleRuleParamEnum.getKey());
+        newByteProperty.setParamValue(bytes);
+        newByteProperty.setRuleId(this.id);
+        newByteProperty.setSimpleRulePropertyParam(simpleRuleParamEnum);
+        newByteProperty.setParamValueOrdered(0);
+        this.bytePropertyValues.add(simpleRuleParamEnum, newByteProperty);
+    }
+    
+    /**
+      * 添加byte类型值
+      * <功能详细描述>
+      * @param simpleRuleParamEnum
+      * @param bytesList [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public void addBytePropertyValue(SimpleRuleParamEnum simpleRuleParamEnum,List<byte[]> bytesList){
+        AssertUtils.notNull(simpleRuleParamEnum,"simpleRuleParamEnum is null");
+        AssertUtils.notEmpty(bytesList,"bytes is null");
+        AssertUtils.isTrue(simpleRuleParamEnum.isBlob(),"simpleRuleParamEnum is not blob.");
+        AssertUtils.isTrue(simpleRuleParamEnum.isMultiProerty(),"simpleRuleParamEnum is not isMultiProerty");
+        
+        if(this.bytePropertyValues == null){
+            this.bytePropertyValues = new LinkedMultiValueMap<SimpleRuleParamEnum, SimpleRulePropertyByte>();
+        }
+        
+        int index = 0;
+        for(byte[] byteTemp : bytesList){
+            SimpleRulePropertyByte newByteProperty = new SimpleRulePropertyByte();
+            newByteProperty.setParamKey(simpleRuleParamEnum.getKey());
+            newByteProperty.setParamValue(byteTemp);
+            newByteProperty.setRuleId(this.id);
+            newByteProperty.setSimpleRulePropertyParam(simpleRuleParamEnum);
+            newByteProperty.setParamValueOrdered(index++);
+            
+            this.bytePropertyValues.add(simpleRuleParamEnum, newByteProperty);
+        }
+    }
+    
+    public void clearBytePropertyValue(){
+        if(this.bytePropertyValues == null){
+            this.bytePropertyValues = new LinkedMultiValueMap<SimpleRuleParamEnum, SimpleRulePropertyByte>();
+        }
+        
+        this.bytePropertyValues.clear();
     }
     
     /**

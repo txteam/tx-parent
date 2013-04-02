@@ -36,9 +36,9 @@ public interface AuthItemRef {
     String getRefId();
     
     /**
-     * @return 返回 authId
+     * @return 返回 auth
      */
-    String getAuthId();
+    AuthItem getAuthItem();
     
     /**
      * @return 返回 createOperId

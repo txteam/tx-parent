@@ -94,7 +94,7 @@ public class CurrentSessionContext implements Serializable {
         Map<String, AuthItemRef> authItemRefMap = new HashMap<String, AuthItemRef>();
         if (authItemRefSet != null) {
             for (AuthItemRef refTemp : authItemRefSet) {
-                authItemRefMap.put(refTemp.getAuthId(), refTemp);
+                authItemRefMap.put(refTemp.getAuthItem().getId(), refTemp);
             }
         }
         this.session.setAttribute(AuthConstant.SESSION_KEY_CURRENT_USER_AUTHREF_MAP,

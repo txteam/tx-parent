@@ -7,6 +7,7 @@
 package com.tx.component.auth.context;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +28,10 @@ import com.tx.component.auth.exceptions.AuthContextInitException;
 import com.tx.component.auth.model.AuthItem;
 import com.tx.component.auth.model.AuthItemRef;
 import com.tx.component.auth.model.AuthItemRefImpl;
+import com.tx.component.auth.model.AuthTypeItem;
+import com.tx.component.auth.model.AuthTypeItem.AuthTypeFactory;
 import com.tx.component.auth.service.AuthService;
+import com.tx.component.auth.service.impl.AuthServiceImpl;
 
 /**
  * 权限容器<br/>
@@ -60,6 +64,9 @@ public class AuthContext implements FactoryBean<AuthContext>,
         }
     };
     
+    /** 当前spring容器 */
+    private ApplicationContext applicationContext;
+    
     /** 懒汉模式工厂实例  */
     private static AuthContext context;
     
@@ -79,8 +86,8 @@ public class AuthContext implements FactoryBean<AuthContext>,
      */
     private static Map<String, AuthItem> authItemMapping;
     
-    
     /** 业务日志记录器：默认使用logback日志记录器  */
+    @SuppressWarnings("unused")
     private static Logger serviceLogger = LoggerFactory.getLogger(AuthContext.class);
     
     /** 权限业务逻辑层 */
@@ -103,11 +110,7 @@ public class AuthContext implements FactoryBean<AuthContext>,
     /** 超级管理员认证器 */
     private SuperAdminChecker superAdminChecker;
     
-
     
-    /** 当前spring容器 */
-    @SuppressWarnings("unused")
-    private ApplicationContext applicationContext;
     
     /**
      * ApplicationContextAware接口实现<br/>
@@ -127,7 +130,7 @@ public class AuthContext implements FactoryBean<AuthContext>,
      */
     @Override
     public AuthContext getObject() throws Exception {
-        return AuthContext.context;
+        return this;
     }
     
     /**
@@ -144,6 +147,29 @@ public class AuthContext implements FactoryBean<AuthContext>,
     @Override
     public boolean isSingleton() {
         return true;
+    }
+    
+    /**
+      * 生成新的权限类型项
+      * <功能详细描述>
+      * @param authType
+      * @param name
+      * @param description
+      * @param isViewAble
+      * @param isEditAble
+      * @return [参数说明]
+      * 
+      * @return AuthTypeItem [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public static AuthTypeItem registeAuthTypeItem(String authType, String name,
+            String description, boolean isViewAble, boolean isEditAble) {
+        return AuthTypeFactory.newAuthTypeInstance(authType,
+                name,
+                description,
+                isViewAble,
+                isEditAble);
     }
     
     /**
@@ -165,6 +191,12 @@ public class AuthContext implements FactoryBean<AuthContext>,
      */
     @Override
     public void afterPropertiesSet() throws Exception {
+        Collection<AuthLoader> authLoader = this.applicationContext.getBeansOfType(AuthLoader.class).values();
+        this.authLoaders = new ArrayList<AuthLoader>(authLoader);
+        
+        Collection<AuthChecker> authCheckers = this.applicationContext.getBeansOfType(AuthChecker.class).values();
+        this.authCheckers = new ArrayList<AuthChecker>(authCheckers);
+         
         //加载系统的权限项
         loadAuthConfig();
         
@@ -196,7 +228,7 @@ public class AuthContext implements FactoryBean<AuthContext>,
         //自动加载容器中实现的权限检查器
         logger.info("初始化权限容器start...");
         logger.info("      加载权限检查器...");
-        loadAuthChecker();
+        initAuthChecker();
         logger.info("      加载权限项...");
         loadAuthItems();
         logger.info("初始化权限容器end...");
@@ -212,14 +244,14 @@ public class AuthContext implements FactoryBean<AuthContext>,
       * @see [类、类#方法、类#成员]
      */
     private void loadAuthItems() {
-        if(this.authLoaders == null || this.authLoaders.size() == 0){
+        if (this.authLoaders == null || this.authLoaders.size() == 0) {
             logger.warn("AuthContext init.AuthLoader is empty.");
-            return ;
+            return;
         }
         
         //权限项映射
         Map<String, AuthItem> tempAuthItemMapping = new HashMap<String, AuthItem>();
-        for(AuthLoader authLoaderTemp : this.authLoaders){
+        for (AuthLoader authLoaderTemp : this.authLoaders) {
             //加载权限项
             Set<AuthItem> authItemSet = authLoaderTemp.loadAuthItems();
             
@@ -248,7 +280,7 @@ public class AuthContext implements FactoryBean<AuthContext>,
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    private void loadAuthChecker() {
+    private void initAuthChecker() {
         if (this.authCheckers == null || this.authCheckers.size() == 0) {
             throw new AuthContextInitException("权限容器初始化异常,未注入权限检查器");
         }
@@ -357,8 +389,7 @@ public class AuthContext implements FactoryBean<AuthContext>,
         if (superAdministratorSwitch
                 && superAdminChecker.isSuperAdmin(operatorId)) {
             authItemRefList = superAdminAllAuthItemRef;
-        }
-        else {
+        } else {
             authItemRefList = authService.queryAuthItemRefSetByOperatorId(operatorId);
         }
         return authItemRefList;
@@ -393,103 +424,46 @@ public class AuthContext implements FactoryBean<AuthContext>,
         return authCheckerMapping.get(authItem.getAuthType())
                 .isHasAuth(authItem, objects);
     }
-
-    /**
-     * @return 返回 serviceLogger
-     */
-    public static Logger getServiceLogger() {
-        return serviceLogger;
-    }
-
+    
     /**
      * @param 对serviceLogger进行赋值
      */
     public static void setServiceLogger(Logger serviceLogger) {
         AuthContext.serviceLogger = serviceLogger;
     }
-
-    /**
-     * @return 返回 authService
-     */
-    public AuthService getAuthService() {
-        return authService;
-    }
-
+    
     /**
      * @param 对authService进行赋值
      */
-    public void setAuthService(AuthService authService) {
+    public void setAuthService(AuthServiceImpl authService) {
         this.authService = authService;
     }
-
-    /**
-     * @return 返回 authCheckers
-     */
-    public List<AuthChecker> getAuthCheckers() {
-        return authCheckers;
-    }
-
+    
     /**
      * @param 对authCheckers进行赋值
      */
     public void setAuthCheckers(List<AuthChecker> authCheckers) {
         this.authCheckers = authCheckers;
     }
-
-    /**
-     * @return 返回 authLoaders
-     */
-    public List<AuthLoader> getAuthLoaders() {
-        return authLoaders;
-    }
-
+    
     /**
      * @param 对authLoaders进行赋值
      */
     public void setAuthLoaders(List<AuthLoader> authLoaders) {
         this.authLoaders = authLoaders;
     }
-
-    /**
-     * @return 返回 superAdministratorSwitch
-     */
-    public boolean isSuperAdministratorSwitch() {
-        return superAdministratorSwitch;
-    }
-
+    
     /**
      * @param 对superAdministratorSwitch进行赋值
      */
     public void setSuperAdministratorSwitch(boolean superAdministratorSwitch) {
         this.superAdministratorSwitch = superAdministratorSwitch;
     }
-
-    /**
-     * @return 返回 superAdminChecker
-     */
-    public SuperAdminChecker getSuperAdminChecker() {
-        return superAdminChecker;
-    }
-
+    
     /**
      * @param 对superAdminChecker进行赋值
      */
     public void setSuperAdminChecker(SuperAdminChecker superAdminChecker) {
         this.superAdminChecker = superAdminChecker;
-    }
-
-    /**
-     * @return 返回 superAdminAllAuthItemRef
-     */
-    public List<AuthItemRef> getSuperAdminAllAuthItemRef() {
-        return superAdminAllAuthItemRef;
-    }
-
-    /**
-     * @param 对superAdminAllAuthItemRef进行赋值
-     */
-    public void setSuperAdminAllAuthItemRef(
-            List<AuthItemRef> superAdminAllAuthItemRef) {
-        this.superAdminAllAuthItemRef = superAdminAllAuthItemRef;
     }
 }

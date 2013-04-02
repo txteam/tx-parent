@@ -31,24 +31,22 @@ import com.tx.core.exceptions.parameter.ParameterIsEmptyException;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-@Component("authItemImplService")
-public class AuthItemImplService {
+@Component("authItemService")
+public class AuthItemService {
     
     @SuppressWarnings("unused")
-    private Logger logger = LoggerFactory.getLogger(AuthItemImplService.class);
+    private Logger logger = LoggerFactory.getLogger(AuthItemService.class);
     
     @SuppressWarnings("unused")
     //@Resource(name = "serviceLogger")
     private Logger serviceLogger;
     
     @Resource(name = "authItemImplDao")
-    private AuthItemImplDao authItemImplDao;
+    private AuthItemImplDao authItemDao;
 
-    
     /**
-      * 根据AuthItemImpl实体列表
-      * TODO:补充说明
-      * 
+      * 查询AuthItem实体列表<br/>
+      *     
       * <功能详细描述>
       * @return [参数说明]
       * 
@@ -56,14 +54,15 @@ public class AuthItemImplService {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public List<AuthItemImpl> queryAuthItemImplList() {
-        //TODO:判断条件合法性
-        
-        //TODO:生成查询条件
+    public List<AuthItemImpl> queryAuthItemList(String authType) {
+        //生成查询条件
         Map<String, Object> params = new HashMap<String, Object>();
+        if(!StringUtils.isEmpty(authType)){
+            params.put("authType", authType);
+        }
         
-        //TODO:根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
-        List<AuthItemImpl> resList = this.authItemImplDao.queryAuthItemImplList(params);
+        //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
+        List<AuthItemImpl> resList = this.authItemDao.queryAuthItemImplList(params);
         
         return resList;
     }
@@ -89,7 +88,7 @@ public class AuthItemImplService {
                     "AuthItemImplService.insertAuthItemImpl authItemImpl isNull.");
         }
         
-        this.authItemImplDao.insertAuthItemImpl(authItemImpl);
+        this.authItemDao.insertAuthItemImpl(authItemImpl);
     }
     
     /**
@@ -113,7 +112,7 @@ public class AuthItemImplService {
         
         AuthItemImpl condition = new AuthItemImpl();
         condition.setId(id);
-        return this.authItemImplDao.deleteAuthItemImpl(condition);
+        return this.authItemDao.deleteAuthItemImpl(condition);
     }
     
     /**
@@ -149,7 +148,7 @@ public class AuthItemImplService {
 		updateRowMap.put("name", authItemImpl.getName());	
 		updateRowMap.put("authType", authItemImpl.getAuthType());	
         
-        int updateRowCount = this.authItemImplDao.updateAuthItemImpl(updateRowMap);
+        int updateRowCount = this.authItemDao.updateAuthItemImpl(updateRowMap);
         
         //TODO:如果需要大于1时，抛出异常并回滚，需要在这里修改
         return updateRowCount >= 1;

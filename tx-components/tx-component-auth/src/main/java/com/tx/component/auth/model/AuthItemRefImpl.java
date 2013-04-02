@@ -9,6 +9,12 @@ package com.tx.component.auth.model;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
 import org.slf4j.helpers.MessageFormatter;
 
 import com.tx.component.auth.AuthConstant;
@@ -25,6 +31,8 @@ import com.tx.component.auth.AuthConstant;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
+@Entity
+@Table(name = "t_auth_authref")
 public class AuthItemRefImpl implements Serializable, AuthItemRef {
     
     /** 注释内容 */
@@ -42,14 +50,23 @@ public class AuthItemRefImpl implements Serializable, AuthItemRef {
      */
     public AuthItemRefImpl(AuthItem authItem) {
         super();
-        this.authId = authItem.getId();
+        this.authItem = authItem;
         this.authRefType = AuthConstant.AUTHREFTYPE_OPERATOR;
     }
+    
+    /** 权限引用类型 */
+    private String authRefType;
+    
+    /** 权限引用唯一键 */
+    @Id
+    private String refId;
     
     /** 
      * 权限引用对应的权限id
      */
-    private String authId;
+    @ManyToOne
+    @Column( name = "authId")
+    private AuthItem authItem;
     
     /**
      * 权限授予人
@@ -61,10 +78,6 @@ public class AuthItemRefImpl implements Serializable, AuthItemRef {
     
     /** 权限引用项的失效时间 */
     private Date endDate;
-    
-    private String authRefType;
-    
-    private String refId;
     
     /**
      * 是否支持根据权限引用的引用的结束时间<br/>
@@ -89,18 +102,17 @@ public class AuthItemRefImpl implements Serializable, AuthItemRef {
     }
     
     /**
-     * @return
+     * @return 返回 authItem
      */
-    @Override
-    public String getAuthId() {
-        return authId;
+    public AuthItem getAuthItem() {
+        return authItem;
     }
     
     /**
-     * @param 对authId进行赋值
+     * @param 对authItem进行赋值
      */
-    public void setAuthId(String authId) {
-        this.authId = authId;
+    public void setAuthItem(AuthItem authItem) {
+        this.authItem = authItem;
     }
     
     /**
@@ -168,14 +180,14 @@ public class AuthItemRefImpl implements Serializable, AuthItemRef {
     public boolean isValidDependEndDate() {
         return isValidDependEndDate;
     }
-
+    
     /**
      * @param 对isValidDependEndDate进行赋值
      */
     public void setValidDependEndDate(boolean isValidDependEndDate) {
         this.isValidDependEndDate = isValidDependEndDate;
     }
-
+    
     /**
      * @param obj
      * @return
@@ -184,16 +196,15 @@ public class AuthItemRefImpl implements Serializable, AuthItemRef {
     public boolean equals(Object obj) {
         if (obj == null || obj instanceof AuthItemRef) {
             return false;
-        }
-        else {
+        } else {
             AuthItemRef otherAuthItemRef = (AuthItemRef) obj;
-            if (this.getAuthId() == null || this.getAuthRefType() == null) {
+            if (this.authItem == null || this.authRefType == null
+                    || this.refId == null) {
                 return this == otherAuthItemRef;
-            }
-            else {
-                return this.getAuthId().equals(otherAuthItemRef.getAuthId())
-                        && this.getAuthRefType()
-                                .equals(otherAuthItemRef.getAuthRefType());
+            } else {
+                return this.authItem.equals(otherAuthItemRef.getAuthItem())
+                        && this.authRefType.equals(otherAuthItemRef.getAuthRefType())
+                        && this.refId.equals(otherAuthItemRef.getRefId());
             }
         }
     }
@@ -203,13 +214,12 @@ public class AuthItemRefImpl implements Serializable, AuthItemRef {
      */
     @Override
     public int hashCode() {
-        if (this.getAuthId() == null || this.getAuthRefType() == null) {
+        if (this.authItem == null || this.authRefType == null
+                || this.refId == null) {
             return super.hashCode();
-        }
-        else {
-            return this.getAuthId().hashCode()
-                    + this.getAuthRefType().hashCode()
-                    + this.getClass().hashCode();
+        } else {
+            return this.authItem.hashCode() + this.authRefType.hashCode()
+                    + this.refId.hashCode() + this.getClass().hashCode();
         }
     }
     
@@ -218,8 +228,8 @@ public class AuthItemRefImpl implements Serializable, AuthItemRef {
      */
     @Override
     public String toString() {
-        return MessageFormatter.arrayFormat("authItem: {authId:{},authItemRef:{}}",
-                new String[] { this.authId, this.authRefType })
+        return MessageFormatter.arrayFormat("authItem: {authId:{},authItemRef:{},refId{}}",
+                new Object[] { this.authItem, this.authRefType, this.refId })
                 .getMessage();
     }
 }

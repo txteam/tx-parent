@@ -71,6 +71,17 @@ public interface AuthItem extends TreeAble<List<AuthItem>, AuthItem> {
     boolean isEditAble();
     
     /**
+      * 是否能进行配置
+      * <功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return boolean [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    boolean isConfigAble();
+    
+    /**
      * 该权限是否有效
      * @return 返回 isValid
      */

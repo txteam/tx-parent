@@ -7,7 +7,6 @@
 package com.tx.component.auth.dao.impl;
 
 import java.util.List;
-import java.util.Map;
 
 import com.tx.component.auth.dao.AuthDao;
 import com.tx.component.auth.model.AuthItemRef;
@@ -33,32 +32,6 @@ public class AuthDaoImpl implements AuthDao {
 	public List<AuthItemRef> queryItemAuthRefListByOperId(String operatorId) {
 		return this.myBatisDaoSupport.<AuthItemRef>queryList(
 				"queryItemAuthRefListByOperId", operatorId);
-	}
-
-	/**
-	 * @param operId
-	 * @return
-	 */
-	@Override
-	public List<AuthItemRef> queryItemAuthRefList(Map<String, Object> params) {
-		return this.myBatisDaoSupport.<AuthItemRef>queryList(
-				"queryItemAuthRefList", params);
-	}
-
-	/**
-	 * @param authItemRef
-	 */
-	@Override
-	public void addAuthItemRefList(List<AuthItemRef> authItemRefList) {
-		this.myBatisDaoSupport.batchInsert("addAuthItemRef", authItemRefList, true);
-	}
-
-	/**
-	 * @param authItemRef
-	 */
-	@Override
-	public void delAuthItemRefList(List<AuthItemRef> authItemRefList) {
-		this.myBatisDaoSupport.batchDelete("delAuthItemRef", authItemRefList, true);
 	}
 
     /**

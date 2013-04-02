@@ -39,6 +39,7 @@ import com.tx.component.rule.support.RuleSessionFactory;
 import com.tx.component.rule.support.impl.DefaultRuleSessionFactory;
 import com.tx.component.rule.transation.RuleSessionTransactionFactory;
 import com.tx.component.rule.transation.impl.DefaultRuleSessionTransactionFactory;
+import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.support.cache.ehcache.SimpleEhcacheMap;
 import com.tx.core.support.cache.ehcache.SimpleMultiValueEhcacheMap;
 
@@ -161,7 +162,7 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public void registeRule(SimplePersistenceRule spRule) {
+    public Rule registeRule(SimplePersistenceRule spRule) {
         if (spRule == null || StringUtils.isEmpty(spRule.getRule())
                 || StringUtils.isEmpty(spRule.getServiceType())
                 || spRule.getRuleType() == null) {
@@ -169,20 +170,21 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
                     "spRule or rule or serviceType or ruleType is null");
         }
         
-        RuleRegister<? extends Rule> ruleValidatorTemp = ruleValidatorMap.get(spRule.getRuleType());
-        if(ruleValidatorTemp == null){
+        RuleRegister<? extends Rule> ruleRegisterTemp = ruleValidatorMap.get(spRule.getRuleType());
+        if(ruleRegisterTemp == null){
             throw new RuleRegisteException(
                     "ruleType:{} RuleRegister not exist.",spRule.getRuleType().toString());
         }
         
         //调用对应注册器方法，将规则注册入容器中
-        Rule realRule = ruleValidatorTemp.registe(spRule);
+        Rule realRule = ruleRegisterTemp.registe(spRule);
         if(realRule != null){
             putInCache(realRule, true);
         }else{
             throw new RuleRegisteException(
                     "ruleType:{} RuleRegister call registe return null realRule.",spRule.getRuleType().toString());
         }
+        return realRule;
     }
     
     /**
@@ -578,6 +580,22 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
             }
         }
     }
+    
+    /**
+     * 获取规则关键字
+     * <功能详细描述>
+     * @param rule
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+   public String getRuleKey(Rule rule){
+       AssertUtils.notNull(rule,"rule is emtpy.");
+       
+       return getRuleCacheKey(rule);
+   }
     
     /**
       * 获取规则缓存键

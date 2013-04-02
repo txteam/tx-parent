@@ -4,7 +4,7 @@
  * 修改时间:  2012-12-14
  * <修改描述:>
  */
-package com.tx.component.auth.context.impl;
+package com.tx.component.auth.context.loader;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,6 +17,7 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.Element;
@@ -27,11 +28,14 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.Resource;
+import org.springframework.stereotype.Component;
 
+import com.tx.component.auth.context.AuthContext;
 import com.tx.component.auth.context.AuthLoader;
 import com.tx.component.auth.exceptions.AuthContextInitException;
 import com.tx.component.auth.model.AuthItem;
 import com.tx.component.auth.model.AuthItemImpl;
+import com.tx.core.exceptions.util.AssertUtils;
 
 /**
  * 通过xml配置文件加载权限项<br/>
@@ -42,6 +46,7 @@ import com.tx.component.auth.model.AuthItemImpl;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
+@Component("xmlAuthLoader")
 public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
     
     /** 日志记录器 */
@@ -59,6 +64,9 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
     /** 权限节点isValid */
     private final static String AUTH_ELEMENT_ATTR_ISVALID = "isValid";
     
+    /** 节点isEditAble */
+    private final static String AUTH_ELEMENT_ATTR_ISEDITABLE = "isEditAble";
+    
     /** 节点id */
     private final static String ELEMENT_ATTR_ID = "key";
     
@@ -71,8 +79,8 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
     /** 节点isViewAble */
     private final static String ELEMENT_ATTR_ISVIEWABLE = "isViewAble";
     
-    /** 节点isEditAble */
-    private final static String ELEMENT_ATTR_ISEDITABLE = "isEditAble";
+    /** 节点isConfigAble */
+    private final static String ELEMENT_ATTR_ISCONFIGABLE = "isConfigAble";
     
     private ApplicationContext applicationContext;
     
@@ -113,8 +121,7 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
         List<Resource> configResourceList = null;
         try {
             configResourceList = getConfigResourceList();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             logger.error("加载权限配置异常信息配置路径为:{}异常信息{}",
                     this.authConfigLocaions,
                     e.toString());
@@ -140,24 +147,74 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
                 Element rootElement = doc.getRootElement();
                 
                 //处理auth节点
+                @SuppressWarnings("unchecked")
                 List<Element> authElList = rootElement.elements(AUTH_ELEMENT_NAME);
-                // 根据配置资源加载权限
-                loadAuthItemConfig(null,null, authItemMap,authElList);
+                //根据配置资源加载权限
+                loadAuthItemConfigFromAuthElement(null,
+                        null,
+                        authItemMap,
+                        authElList);
                 
                 //处理authType节点
+                @SuppressWarnings("unchecked")
                 List<Element> authTypeElList = rootElement.elements(AUTHTYPE_ELEMENT_NAME);
-                
-                
-            }
-            catch (Exception e) {
+                //加载权限项
+                loadAuthItemConfigFromAuthTypeElement(authItemMap,
+                        authTypeElList);
+            } catch (Exception e) {
                 throw new AuthContextInitException("权限配置加载异常.", e);
-            }
-            finally {
+            } finally {
                 IOUtils.closeQuietly(io);
             }
         }
         
         return authItemMap;
+    }
+    
+    /**
+      * 加载权限项配置
+      * <功能详细描述>
+      * @param authItemMap
+      * @param authTypeElList [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    private void loadAuthItemConfigFromAuthTypeElement(
+            Map<String, AuthItemImpl> authItemMap, List<Element> authTypeElList) {
+        if (CollectionUtils.isEmpty(authTypeElList)) {
+            return;
+        }
+        
+        for (Element authTypeElTemp : authTypeElList) {
+            // 读取权限配置的属性值
+            String authType = authTypeElTemp.attributeValue(ELEMENT_ATTR_ID);
+            String name = authTypeElTemp.attributeValue(ELEMENT_ATTR_NAME);
+            String description = authTypeElTemp.attributeValue(ELEMENT_ATTR_DESCRIPTION);
+            Boolean isViewAbleObj = BooleanUtils.toBooleanObject(authTypeElTemp.attributeValue(ELEMENT_ATTR_ISVIEWABLE));
+            Boolean isConfigAbleObj = BooleanUtils.toBooleanObject(authTypeElTemp.attributeValue(ELEMENT_ATTR_ISCONFIGABLE));
+            
+            boolean isViewAble = isViewAbleObj != null ? isViewAbleObj.booleanValue()
+                    : true;
+            boolean isConfigAble = isConfigAbleObj != null ? isConfigAbleObj.booleanValue()
+                    : true;
+            //注册权限类型
+            AuthContext.registeAuthTypeItem(authType,
+                    name,
+                    description,
+                    isViewAble,
+                    isConfigAble);
+            
+            //权限ElTemp
+            @SuppressWarnings("unchecked")
+            List<Element> authTypeElListTemp = authTypeElTemp.elements(AUTH_ELEMENT_NAME);
+            // 迭代生成子权限
+            loadAuthItemConfigFromAuthElement(authType,
+                    null,
+                    authItemMap,
+                    authTypeElListTemp);
+        }
     }
     
     /**
@@ -173,7 +230,7 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    private void loadAuthItemConfig(String parentElAuthType,
+    private void loadAuthItemConfigFromAuthElement(String parentElAuthType,
             AuthItemImpl parentAuthItem, Map<String, AuthItemImpl> authItemMap,
             List<Element> authElList) {
         if (CollectionUtils.isEmpty(authElList)) {
@@ -186,17 +243,30 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
             String id = authElTemp.attributeValue(ELEMENT_ATTR_ID);
             String name = authElTemp.attributeValue(ELEMENT_ATTR_NAME);
             String description = authElTemp.attributeValue(ELEMENT_ATTR_DESCRIPTION);
-            boolean isValid = true;
-            boolean isViewAble = true;
-            boolean isEditAble = true;
+            Boolean isValidObj = BooleanUtils.toBooleanObject(authElTemp.attributeValue(AUTH_ELEMENT_ATTR_ISVALID));
+            Boolean isViewAbleObj = BooleanUtils.toBooleanObject(authElTemp.attributeValue(ELEMENT_ATTR_ISVIEWABLE));
+            Boolean isEditAbleObj = BooleanUtils.toBooleanObject(authElTemp.attributeValue(AUTH_ELEMENT_ATTR_ISEDITABLE));
+            Boolean isConfigAbleObj = BooleanUtils.toBooleanObject(authElTemp.attributeValue(ELEMENT_ATTR_ISCONFIGABLE));
+            
+            boolean isValid = isValidObj != null ? isValidObj.booleanValue()
+                    : true;
+            boolean isViewAble = isViewAbleObj != null ? isViewAbleObj.booleanValue()
+                    : true;
+            boolean isEditAble = isEditAbleObj != null ? isEditAbleObj.booleanValue()
+                    : false;
+            boolean isConfigAble = isConfigAbleObj != null ? isConfigAbleObj.booleanValue()
+                    : true;
+            
             String authType = authElTemp.attributeValue(AUTH_ELEMENT_ATTR_AUTHTYPE);
+            if(StringUtils.isEmpty(authType)){
+                authType = parentElAuthType;
+            }
             
             AuthItemImpl newAuthItem = null;
             if (authItemMap.containsKey(id)) {
                 // 如果对应权限已经存在则获取对应权限
                 newAuthItem = authItemMap.get(id);
-            }
-            else {
+            } else {
                 // 如果该权限原不存在则新生成
                 newAuthItem = createChildAuthItem(parentAuthItem,
                         id,
@@ -205,12 +275,19 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
                         description,
                         isValid,
                         isViewAble,
-                        isEditAble);
+                        isEditAble,
+                        isConfigAble);
             }
             authItemMap.put(id, newAuthItem);
             
+            //权限ElTemp
+            @SuppressWarnings("unchecked")
+            List<Element> authTypeElListTemp = authElTemp.elements(AUTH_ELEMENT_NAME);
             // 迭代生成子权限
-            loadAuthItemConfig(newAuthItem, authItemMap, authElTemp);
+            loadAuthItemConfigFromAuthElement(newAuthItem.getAuthType(),
+                    newAuthItem,
+                    authItemMap,
+                    authTypeElListTemp);
         }
     }
     
@@ -234,7 +311,8 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
      */
     private AuthItemImpl createChildAuthItem(AuthItem parentAuthItem,
             String id, String authType, String name, String description,
-            boolean isValid, boolean isViewAble, boolean isEditAble) {
+            boolean isValid, boolean isViewAble, boolean isEditAble,
+            boolean isConfigAble) {
         //创建权限实体
         AuthItemImpl authItem = new AuthItemImpl();
         authItem.setId(id);
@@ -253,6 +331,12 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
         authItem.setValid(isValid);
         authItem.setViewAble(isViewAble);
         authItem.setEditAble(isEditAble);
+        authItem.setConfigAble(isConfigAble);
+        
+        //断言新生成的权限项，权限类型不能为空
+        AssertUtils.notEmpty(authItem.getAuthType(),
+                "auth:{} authType is empty",
+                id);
         
         return authItem;
     }

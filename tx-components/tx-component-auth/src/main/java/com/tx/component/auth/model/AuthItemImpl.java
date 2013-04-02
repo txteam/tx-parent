@@ -65,14 +65,17 @@ public class AuthItemImpl implements Serializable, AuthItem {
     @OneToMany(fetch = FetchType.LAZY)
     private List<AuthItem> childs = new ArrayList<AuthItem>();
     
+    /** 是否有效，默认为true,权限可停用 */
+    private boolean isValid = true;
+    
+    /** 是否可编辑 */
+    private boolean isEditAble = false;
+    
     /** 是否可见 */
     private boolean isViewAble = true;
     
-    /** 是否可编辑 */
-    private boolean isEditAble = true;
-    
-    /** 是否有效，默认为true,权限可停用 */
-    private boolean isValid = true;
+    /** 是否可配置 */
+    private boolean isConfigAble = true;
     
     /**
      * @return
@@ -208,6 +211,20 @@ public class AuthItemImpl implements Serializable, AuthItem {
         this.isValid = isValid;
     }
     
+    /**
+     * @return 返回 isConfigAble
+     */
+    public boolean isConfigAble() {
+        return isConfigAble;
+    }
+
+    /**
+     * @param 对isConfigAble进行赋值
+     */
+    public void setConfigAble(boolean isConfigAble) {
+        this.isConfigAble = isConfigAble;
+    }
+
     /**
      * @param obj
      * @return

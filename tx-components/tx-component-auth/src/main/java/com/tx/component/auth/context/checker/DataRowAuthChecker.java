@@ -4,15 +4,17 @@
  * 修改时间:  2012-12-10
  * <修改描述:>
  */
-package com.tx.component.auth.context.impl;
+package com.tx.component.auth.context.checker;
+
+import org.springframework.stereotype.Component;
 
 import com.tx.component.auth.AuthConstant;
 import com.tx.component.auth.model.AuthItem;
 import com.tx.component.auth.model.AuthItemRef;
 
 
- /**
- * <功能简述>
+/**
+ * 数据行权限检测器
  * <功能详细描述>
  * 
  * @author  grace
@@ -20,6 +22,7 @@ import com.tx.component.auth.model.AuthItemRef;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
+@Component("dataRowAuthChecker")
 public class DataRowAuthChecker extends BaseAuthChecker{
 
 	/**
@@ -27,7 +30,7 @@ public class DataRowAuthChecker extends BaseAuthChecker{
 	 */
 	@Override
 	public String getCheckAuthType() {
-		return AuthConstant.TYPE_DATA_ROW;
+		return AuthConstant.AUTHTYPE_DATA_ROW;
 	}
 
     /**
@@ -39,6 +42,10 @@ public class DataRowAuthChecker extends BaseAuthChecker{
     @Override
     public boolean isHasAuth(AuthItem authItem, AuthItemRef authItemRef,
             Object... objects) {
-        return true;
+        if(authItemRef != null && authItem != null){
+            return true;
+        }else{
+            return false;
+        }
     }
 }

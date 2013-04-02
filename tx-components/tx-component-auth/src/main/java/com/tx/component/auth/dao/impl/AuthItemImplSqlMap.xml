@@ -15,12 +15,12 @@
 		resultMap="authItemImplMap">
 		SELECT 
 				TAII.ID,
-				TAII.VALID,
 				TAII.PARENTID,
 				TAII.DESCRIPTION,
-				TAII.EDITABLE,
-				TAII.VIEWABLE,
 				TAII.NAME,
+				TAII.ISVALID,
+				TAII.ISEDITABLE,
+				TAII.ISVIEWABLE,
 				TAII.AUTHTYPE
 		  FROM T_AUTH_AUTHITEM TAII
 		 WHERE
@@ -37,35 +37,29 @@
 		resultMap="authItemImplMap">
 		SELECT 
 				TAII.ID,
-				TAII.VALID,
 				TAII.PARENTID,
 				TAII.DESCRIPTION,
-				TAII.EDITABLE,
-				TAII.VIEWABLE,
 				TAII.NAME,
+				TAII.ISVALID,
+				TAII.ISEDITABLE,
+				TAII.ISVIEWABLE,
 				TAII.AUTHTYPE
 		  FROM T_AUTH_AUTHITEM TAII
 		<trim prefix="WHERE" prefixOverrides="AND | OR">
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
 	            AND TAII.ID = #{id,javaType=java.lang.String}
 	        </if>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(valid)">  
-	            AND TAII.VALID = #{valid,javaType=boolean}
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(isValid)">  
+	            AND TAII.ISVALID = #{isValid,javaType=boolean}
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(parentId)">  
 	            AND TAII.PARENTID = #{parentId,javaType=java.lang.String}
 	        </if>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(description)">  
-	            AND TAII.DESCRIPTION = #{description,javaType=java.lang.String}
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(isEditAble)">  
+	            AND TAII.ISEDITABLE = #{isEditAble,javaType=boolean}
 	        </if>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(editAble)">  
-	            AND TAII.EDITABLE = #{editAble,javaType=boolean}
-	        </if>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(viewAble)">  
-	            AND TAII.VIEWABLE = #{viewAble,javaType=boolean}
-	        </if>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(name)">  
-	            AND TAII.NAME = #{name,javaType=java.lang.String}
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(isViewAble)">  
+	            AND TAII.ISVIEWABLE = #{isViewAble,javaType=boolean}
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authType)">  
 	            AND TAII.AUTHTYPE = #{authType,javaType=java.lang.String}
@@ -76,7 +70,7 @@
 	            ORDER BY #{orderSql}
 	        </when>
 	        <otherwise>  
-	            <!-- //TODO:ADD DEFAULT ORDER COLUMN OR DONOTHING! -->
+	            ORDER BY TAII.AUTHTYPE,TAII.ID
 	        </otherwise>  
 	    </choose>
 	</select>
@@ -91,23 +85,17 @@
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
 	            AND TAII.ID = #{id,javaType=java.lang.String}
 	        </if>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(valid)">  
-	            AND TAII.VALID = #{valid,javaType=boolean}
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(isValid)">  
+	            AND TAII.ISVALID = #{isValid,javaType=boolean}
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(parentId)">  
 	            AND TAII.PARENTID = #{parentId,javaType=java.lang.String}
 	        </if>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(description)">  
-	            AND TAII.DESCRIPTION = #{description,javaType=java.lang.String}
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(isEditAble)">  
+	            AND TAII.ISEDITABLE = #{isEditAble,javaType=boolean}
 	        </if>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(editAble)">  
-	            AND TAII.EDITABLE = #{editAble,javaType=boolean}
-	        </if>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(viewAble)">  
-	            AND TAII.VIEWABLE = #{viewAble,javaType=boolean}
-	        </if>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(name)">  
-	            AND TAII.NAME = #{name,javaType=java.lang.String}
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(isViewAble)">  
+	            AND TAII.ISVIEWABLE = #{isViewAble,javaType=boolean}
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authType)">  
 	            AND TAII.AUTHTYPE = #{authType,javaType=java.lang.String}
@@ -121,22 +109,22 @@
 		INSERT INTO T_AUTH_AUTHITEM
 		(
 			ID,
-			VALID,
+			ISVALID,
 			PARENTID,
 			DESCRIPTION,
-			EDITABLE,
-			VIEWABLE,
+			ISEDITABLE,
+			ISVIEWABLE,
 			NAME,
 			AUTHTYPE
 		)
 		VALUES
 		(
 			#{id},
-			#{valid},
+			#{isValid},
 			#{parentId},
 			#{description},
-			#{editAble},
-			#{viewAble},
+			#{isEditAble},
+			#{isViewAble},
 			#{name},
 			#{authType}
 		)
@@ -158,8 +146,8 @@
 	    parameterType="java.util.Map">  
 	    UPDATE t_auth_authitem TAII
 	    <trim prefix="SET" suffixOverrides=",">
-			<if test="_parameter.containsKey('valid')">
-	    		VALID = #{valid,javaType=boolean},
+			<if test="_parameter.containsKey('isValid')">
+	    		ISVALID = #{isValid,javaType=boolean},
 	    	</if>	
 			<if test="_parameter.containsKey('parentId')">
 	    		PARENTID = #{parentId,javaType=java.lang.String},
@@ -167,11 +155,11 @@
 			<if test="_parameter.containsKey('description')">
 	    		DESCRIPTION = #{description,javaType=java.lang.String},
 	    	</if>	
-			<if test="_parameter.containsKey('editAble')">
-	    		EDITABLE = #{editAble,javaType=boolean},
+			<if test="_parameter.containsKey('isEditAble')">
+	    		ISEDITABLE = #{isEditAble,javaType=boolean},
 	    	</if>	
-			<if test="_parameter.containsKey('viewAble')">
-	    		VIEWABLE = #{viewAble,javaType=boolean},
+			<if test="_parameter.containsKey('isViewAble')">
+	    		ISVIEWABLE = #{isViewAble,javaType=boolean},
 	    	</if>	
 			<if test="_parameter.containsKey('name')">
 	    		NAME = #{name,javaType=java.lang.String},

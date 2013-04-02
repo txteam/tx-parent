@@ -7,7 +7,7 @@
     <!-- 根据操作员id查询操作员拥有的权限引用项 -->  
     <select id="queryItemAuthRefListByOperId"
     	parameterType="String" 
-    	resultType="com.tx.component.auth.model.DefaultAuthItemRef">  
+    	resultType="com.tx.component.auth.model.AuthItemRefImpl">  
         <![CDATA[
 			select distinct tar.authid,
 			                tar.refid,
@@ -30,43 +30,5 @@
 			                and tor.operid = #{operId}) tura on tar.refid = tura.id
         ]]>
     </select>
-    
-    <!-- 查询某权限类型 -->
-    <select id="queryItemAuthRefList"
-    	parameterType="java.util.Map" 
-    	resultType="com.tx.component.auth.model.DefaultAuthItemRef">  
-        <![CDATA[ 
-			SELECT DISTINCT TAR.AUTHID,
-			                TAR.REFID,
-			                TAR.AUTHREFTYPE,
-			                TAR.CREATEDATE,
-			                TAR.ENDDATE,
-			                TAR.CREATEOPERID
-			  from t_auth_authref tar
-			 where tar.authType = #{authType}
-			   and tar.refid = #{refId}
-			   and tar.operid = #{operId}
-        ]]>   
-    </select>    
-    
-    <!-- 插入权限项 -->
-	<insert id="addAuthItemRef" parameterType="com.tx.component.auth.model.DefaultAuthItemRef">
-		insert into t_auth_authref
-		  (authid, refid, authreftype, createdate, enddate, createoperid)
-		values
-		  (#{authId},
-		   #{refId},
-		   #{authRefType},
-		   #{createDate},
-		   #{endDate},
-		   #{createOperId})
-	</insert>
-	
-	<!-- 删除权限项 -->
-	<delete id="delAuthItemRef" parameterType="com.tx.component.auth.model.DefaultAuthItemRef">
-		delete from t_auth_authref
-		 where refId = #{refId}
-		   and authRefType = #{authRefType}
-	</delete>
       
 </mapper>  

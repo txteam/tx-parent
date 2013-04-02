@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper 
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="authItemRefImpl">
+
+	<!-- auto generate default resultMap -->
+	<resultMap id="authItemRefImplMap" 
+		type="com.tx.component.auth.model.AuthItemRefImpl">
+		<result column="authItem_id" property="authItem.id"/>
+	</resultMap>
+	
+	<!-- auto generate default find -->
+	<select id="findAuthItemRefImpl" 
+		parameterType="com.tx.component.auth.model.AuthItemRefImpl"
+		resultMap="authItemRefImplMap">
+		SELECT 
+				TAIRI.REFID,
+				TAIRI.AUTHREFTYPE,
+				TAIRI.AUTHID AS authItem_id,
+				TAIRI.ISVALIDDEPENDENDDATE,
+				TAIRI.CREATEOPERID,
+				TAIRI.ENDDATE,
+				TAIRI.CREATEDATE
+		  FROM T_AUTH_AUTHREF TAIRI
+		 WHERE TAIRI.REFID = #{refId}
+		   AND TAIRI.AUTHREFTYPE = #{authRefType} 
+		   AND TAIRI.AUTHID = #{authItem.id}
+	</select>
+	
+	<!-- auto generate default query -->
+	<select id="queryAuthItemRefImpl" 
+		parameterType="java.util.Map"
+		resultMap="authItemRefImplMap">
+		SELECT 
+				TAIRI.REFID,
+				TAIRI.AUTHREFTYPE,
+				TAIRI.AUTHID AS authItem_id,
+				TAIRI.ISVALIDDEPENDENDDATE,
+				TAIRI.CREATEOPERID,
+				TAIRI.ENDDATE,
+				TAIRI.CREATEDATE
+		  FROM T_AUTH_AUTHREF TAIRI
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(refId)">  
+	            AND TAIRI.REFID = #{refId,javaType=java.lang.String}
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authRefType)">  
+	            AND TAIRI.AUTHREFTYPE = #{authRefType,javaType=java.lang.String}
+	        </if>
+			<if test="authItem != null">
+				<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authItem.id)">  
+		            AND TAIRI.AUTHID = #{authItem.id,javaType=java.lang.String}
+		        </if>
+	        </if>
+		</trim>
+		<choose>  
+	        <when test="@com.tx.core.util.OgnlUtils@isNotEmpty(orderSql)">  
+	            ORDER BY #{orderSql}
+	        </when>
+	        <otherwise>  
+	            ORDER BY AUTHREFTYPE,AUTHID
+	        </otherwise>  
+	    </choose>
+	</select>
+	
+		<!-- auto generate default count -->
+	<select id="queryAuthItemRefImplCount" 
+		parameterType="java.util.Map"
+		resultType="java.lang.Integer">
+		SELECT COUNT(1)
+		  FROM T_AUTH_AUTHREF TAIRI
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(refId)">  
+	            AND TAIRI.REFID = #{refId,javaType=java.lang.String}
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authRefType)">  
+	            AND TAIRI.AUTHREFTYPE = #{authRefType,javaType=java.lang.String}
+	        </if>
+			<if test="authItem != null">
+				<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authItem.id)">  
+		            AND TAIRI.AUTHID = #{authItem.id,javaType=java.lang.String}
+		        </if>
+	        </if>
+		</trim>
+	</select>
+    
+    <!-- auto generate default insert -->
+    <insert id="insertAuthItemRefImpl" 
+		parameterType="com.tx.component.auth.model.AuthItemRefImpl">
+		INSERT INTO T_AUTH_AUTHREF
+		(
+			REFID,
+			AUTHREFTYPE,
+			AUTHID,
+			ISVALIDDEPENDENDDATE,
+			CREATEOPERID,
+			ENDDATE,
+			CREATEDATE
+		)
+		VALUES
+		(
+			#{refId},
+			#{authRefType},
+			#{authItem.id},
+			#{isValidDependEndDate},
+			#{createOperId},
+			#{endDate},
+			#{createDate}
+		)
+	</insert>
+	
+	<!-- auto generate default delete -->
+	<delete id="deleteAuthItemRefImpl" 
+		parameterType="com.tx.component.auth.model.AuthItemRefImpl">
+		DELETE FROM T_AUTH_AUTHREF TAIRI WHERE
+			   TAIRI.REFID = #{refId}
+		   AND TAIRI.AUTHREFTYPE = #{authRefType} 
+		   AND TAIRI.AUTHID = #{authItem.id}
+	</delete>
+
+	<!-- auto generate default update -->
+	<update id="updateAuthItemRefImpl"
+	    parameterType="java.util.Map">  
+	    UPDATE t_auth_authref TAIRI
+	    <trim prefix="SET" suffixOverrides=",">
+			<if test="_parameter.containsKey('validDependEndDate')">
+	    		VALIDDEPENDENDDATE = #{validDependEndDate,javaType=boolean},
+	    	</if>	
+			<if test="_parameter.containsKey('createOperId')">
+	    		CREATEOPERID = #{createOperId,javaType=java.lang.String},
+	    	</if>	
+			<if test="_parameter.containsKey('endDate')">
+	    		ENDDATE = #{endDate,javaType=java.util.Date},
+	    	</if>
+	    </trim>
+	    WHERE TAIRI.REFID = #{refId}
+		  AND TAIRI.AUTHREFTYPE = #{authRefType} 
+		  AND TAIRI.AUTHID = #{authItem.id}
+	</update>  
+
+</mapper>
+<!--
+sqlMap生成描述:
+
+-->

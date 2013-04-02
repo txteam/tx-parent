@@ -59,13 +59,17 @@ public class RuleSessionTransactionUtils {
             throw new ParameterIsEmptyException("ruleSessionTransactionFactory is empty.");
         }
         
+        //从当前线程中根据factory获取可能存在的transHolder
         RuleSessionTransactionHolder ruleSessionTransHolder = (RuleSessionTransactionHolder) TransactionSynchronizationManager.getResource(rstFactory);
         
+        //如果transHolder存在，并且（并未结束，或已经托管给事务容器）
         if (ruleSessionTransHolder != null
                 && (!ruleSessionTransHolder.isReleased() || ruleSessionTransHolder.isSynchronizedWithTransaction())) {
             ruleSessionTransHolder.requested();
-            if (!ruleSessionTransHolder.isReleased()) {
+            if (ruleSessionTransHolder.isReleased()) {
+                logger.warn("-----------------------------------------------------------------------");
                 logger.warn("ruleSessionTransHolder.isReleased. so re new open ruleSessionTransation");
+                logger.warn("-----------------------------------------------------------------------");
                 ruleSessionTransHolder.setRuleSessionTransaction(rstFactory.openRuleSessionTransaction());
             }
             return ruleSessionTransHolder.getRuleSessionTransaction();

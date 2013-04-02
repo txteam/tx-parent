@@ -11,5 +11,5 @@ create table t_auth_authitem
   isViewAble integer default 1,		--是否可见
   isEditAble integer default 1,		--是否可编辑
   isValid integer default 1,		--isValid
-  primary key(authid,refid,authreftype)
+  primary key(id)
 );
