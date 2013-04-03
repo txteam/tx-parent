@@ -13,6 +13,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.tx.component.auth.context.AuthContext;
+import com.tx.component.auth.context.AuthSessionContext;
 
 /**
  * 权限容器拦截器支持器<br/>
@@ -38,7 +39,7 @@ public class AuthContextSupportInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request,
             HttpServletResponse response, Object handler) throws Exception {
-        AuthContext.getContext().bindCurrentSessionToThread(request, response);
+        AuthSessionContext.bindCurrentSessionToThread(request, response);
         return true;
     }
     
@@ -67,7 +68,7 @@ public class AuthContextSupportInterceptor implements HandlerInterceptor {
     public void afterCompletion(HttpServletRequest request,
             HttpServletResponse response, Object handler, Exception ex)
             throws Exception {
-        AuthContext.getContext().removeCurrentSessionFromThread();
+        AuthSessionContext.removeCurrentSessionFromThread();
         request.setAttribute(authContextKey, AuthContext.getContext());
     }
 

@@ -8,13 +8,8 @@ package com.tx.component.auth.model;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
-
-import net.sf.ehcache.store.chm.ConcurrentHashMap;
 
 import org.apache.cxf.common.util.StringUtils;
-
-import com.tx.core.exceptions.parameter.ParameterIsEmptyException;
 
 /**
  * 权限项类型<br/>
@@ -34,16 +29,16 @@ public class AuthTypeItem implements Serializable {
     private String authType;
     
     /** 权限类型名  */
-    private String name;
+    private String name = "";
     
     /** 权限类型描述 */
-    private String description;
+    private String description = "";
     
     /** 是否可见 */
-    private boolean isViewAble;
+    private boolean isViewAble = true;
     
     /** 是否可在统一权限管理界面进行编辑  */
-    private boolean isConfigAble;
+    private boolean isConfigAble = true;
     
     /** 权限项列表 */
     private List<AuthItem> authItemList;
@@ -52,7 +47,7 @@ public class AuthTypeItem implements Serializable {
      * 使AuthType构造函数为包内可见，使外部不能通过new去创建AuthTypeItem
      * <默认构造函数>
      */
-    private AuthTypeItem(String authType, String name, String description,
+    public AuthTypeItem(String authType, String name, String description,
             boolean isViewAble, boolean isConfigAble) {
         super();
         this.authType = authType;
@@ -60,6 +55,15 @@ public class AuthTypeItem implements Serializable {
         this.description = description;
         this.isViewAble = isViewAble;
         this.isConfigAble = isConfigAble;
+    }
+    
+    /**
+     * 使AuthType构造函数为包内可见，使外部不能通过new去创建AuthTypeItem
+     * <默认构造函数>
+     */
+    public AuthTypeItem(String authType) {
+        super();
+        this.authType = authType;
     }
     
     /**
@@ -177,66 +181,5 @@ public class AuthTypeItem implements Serializable {
             return super.hashCode();
         }
         return this.authType.hashCode();
-    }
-    
-    /**
-      * 权限类型工厂<br/>
-      * <功能详细描述>
-      * 
-      * @author  brady
-      * @version  [版本号, 2013-4-2]
-      * @see  [相关类/方法]
-      * @since  [产品/模块版本]
-     */
-    public static abstract class AuthTypeFactory {
-        
-        /** 权限类型映射 */
-        private static Map<String, AuthTypeItem> authTypeItemMapping = new ConcurrentHashMap<String, AuthTypeItem>();
-        
-        /**
-          * 创建权限类型实例<br/>
-          * <功能详细描述>
-          * @param authType
-          * @param name
-          * @param description
-          * @param isViewAble
-          * @param isConfigAble
-          * @return [参数说明]
-          * 
-          * @return AuthTypeItem [返回类型说明]
-          * @exception throws [异常类型] [异常说明]
-          * @see [类、类#方法、类#成员]
-         */
-        public synchronized static AuthTypeItem newAuthTypeInstance(String authType, String name, String description,
-                boolean isViewAble, boolean isConfigAble) {
-            if(StringUtils.isEmpty(authType)){
-                throw new ParameterIsEmptyException("authType is empty");
-            }
-            
-            AuthTypeItem res = null;
-            if(authTypeItemMapping.containsKey(authType)){
-                res = authTypeItemMapping.get(authType);
-                if(!StringUtils.isEmpty(name)){
-                    res.setName(name);
-                }
-                if(StringUtils.isEmpty(description)){
-                    res.setDescription(description);
-                }
-                //如果其中有一个与默认值不同，则认为不同的该值将生效
-                //如果其中有任意一个设置为不可见，则认为该类型可见
-                if(!isViewAble){
-                    res.setViewAble(isViewAble);
-                }
-                //如果其中有任意一个设置为不可编辑，则认为不可编辑
-                if(!isConfigAble){
-                    res.setConfigAble(isConfigAble);
-                }
-               
-            }else{
-                res = new AuthTypeItem(authType,name,description,isViewAble,isConfigAble);
-                authTypeItemMapping.put(authType, res);
-            }
-            return res;
-        }
     }
 }

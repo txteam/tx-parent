@@ -68,14 +68,34 @@ public class AuthItemImpl implements Serializable, AuthItem {
     /** 是否有效，默认为true,权限可停用 */
     private boolean isValid = true;
     
-    /** 是否可编辑 */
-    private boolean isEditAble = false;
+    /** 是否可配置 */
+    private boolean isConfigAble = true;
     
     /** 是否可见 */
     private boolean isViewAble = true;
     
-    /** 是否可配置 */
-    private boolean isConfigAble = true;
+    /** 是否可编辑 */
+    private boolean isEditAble = false;
+    
+    /** <默认构造函数> */
+    public AuthItemImpl() {
+        super();
+    }
+    
+    /** <默认构造函数> */
+    public AuthItemImpl(String id, String parentId, String name,
+            String description, String authType, boolean isValid,
+            boolean isConfigAble, boolean isViewAble) {
+        super();
+        this.id = id;
+        this.parentId = parentId;
+        this.name = name;
+        this.description = description;
+        this.authType = authType;
+        this.isValid = isValid;
+        this.isConfigAble = isConfigAble;
+        this.isViewAble = isViewAble;
+    }
     
     /**
      * @return
@@ -174,28 +194,28 @@ public class AuthItemImpl implements Serializable, AuthItem {
     public boolean isViewAble() {
         return isViewAble;
     }
-
+    
     /**
      * @param 对isViewAble进行赋值
      */
     public void setViewAble(boolean isViewAble) {
         this.isViewAble = isViewAble;
     }
-
+    
     /**
      * @return 返回 isEditAble
      */
     public boolean isEditAble() {
         return isEditAble;
     }
-
+    
     /**
      * @param 对isEditAble进行赋值
      */
     public void setEditAble(boolean isEditAble) {
         this.isEditAble = isEditAble;
     }
-
+    
     /**
      * @return
      */
@@ -217,14 +237,14 @@ public class AuthItemImpl implements Serializable, AuthItem {
     public boolean isConfigAble() {
         return isConfigAble;
     }
-
+    
     /**
      * @param 对isConfigAble进行赋值
      */
     public void setConfigAble(boolean isConfigAble) {
         this.isConfigAble = isConfigAble;
     }
-
+    
     /**
      * @param obj
      * @return
@@ -233,14 +253,12 @@ public class AuthItemImpl implements Serializable, AuthItem {
     public boolean equals(Object obj) {
         if (obj == null || !(obj instanceof AuthItem)) {
             return false;
-        }
-        else {
+        } else {
             AuthItem other = (AuthItem) obj;
             if (this.id == null) {
                 //仅以两者是否是同一个对象的链接进行判断
                 return this == other;
-            }
-            else {
+            } else {
                 return this.id.equals(other.getId());
             }
         }

@@ -34,6 +34,9 @@ public class DBAuthLoader implements AuthLoader{
     
     @Resource(name = "authItemService")
     private AuthItemService authItemService;
+    
+    /** 加载顺序 */
+    private int order = 1;
 
     /**
      * 从数据库中加载权限项
@@ -52,4 +55,14 @@ public class DBAuthLoader implements AuthLoader{
         }
         return resSet;
     }
+
+    /**
+     * @return
+     */
+    @Override
+    public int getOrder() {
+        return order;
+    }
+    
+    
 }

@@ -87,6 +87,9 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
     /** 权限配置地址 */
     private String[] authConfigLocaions = new String[] { "classpath*:authcontext/*_auth_config.xml" };
     
+    /** 加载器运行顺序 */
+    private int order = 0;
+    
     /**
      * @param applicationContext
      * @throws BeansException
@@ -199,8 +202,9 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
                     : true;
             boolean isConfigAble = isConfigAbleObj != null ? isConfigAbleObj.booleanValue()
                     : true;
+            
             //注册权限类型
-            AuthContext.registeAuthTypeItem(authType,
+            AuthContext.getContext().registeNewOrGetAuthTypeItem(authType,
                     name,
                     description,
                     isViewAble,
@@ -384,5 +388,12 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
     public void setAuthConfigLocaions(String[] authConfigLocaions) {
         this.authConfigLocaions = authConfigLocaions;
     }
-    
+
+    /**
+     * @return
+     */
+    @Override
+    public int getOrder() {
+        return this.order;
+    }
 }

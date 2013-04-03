@@ -25,6 +25,9 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationAdapter;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.util.MultiValueMap;
 
 import com.tx.component.rule.exceptions.RuleAccessException;
@@ -98,6 +101,12 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
     private Map<Thread, Integer> waitThreadMap = new HashMap<Thread, Integer>();
     
     /**
+     * 私有化构造函数<默认构造函数>
+     */
+    private RuleContext() {
+    }
+    
+    /**
      * @throws Exception
      */
     @Override
@@ -118,12 +127,6 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
         
         //完成属性设置后,加载规则
         setRuleContext(this);
-    }
-    
-    /**
-     * 私有化构造函数<默认构造函数>
-     */
-    private RuleContext() {
     }
     
     /**
@@ -162,6 +165,7 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
+    @Transactional
     public Rule registeRule(SimplePersistenceRule spRule) {
         if (spRule == null || StringUtils.isEmpty(spRule.getRule())
                 || StringUtils.isEmpty(spRule.getServiceType())
@@ -171,18 +175,31 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
         }
         
         RuleRegister<? extends Rule> ruleRegisterTemp = ruleValidatorMap.get(spRule.getRuleType());
-        if(ruleRegisterTemp == null){
+        if (ruleRegisterTemp == null) {
             throw new RuleRegisteException(
-                    "ruleType:{} RuleRegister not exist.",spRule.getRuleType().toString());
+                    "ruleType:{} RuleRegister not exist.", spRule.getRuleType()
+                            .toString());
         }
         
         //调用对应注册器方法，将规则注册入容器中
-        Rule realRule = ruleRegisterTemp.registe(spRule);
-        if(realRule != null){
-            putInCache(realRule, true);
-        }else{
+        final Rule realRule = ruleRegisterTemp.registe(spRule);
+        if (realRule != null) {
+            if (TransactionSynchronizationManager.isSynchronizationActive()) {
+                //如果在事务逻辑中执行
+                TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
+                    @Override
+                    public void afterCommit() {
+                        putInCache(realRule, true);
+                    }
+                });
+            } else {
+                //如果在非事务中执行
+                putInCache(realRule, true);
+            }
+        } else {
             throw new RuleRegisteException(
-                    "ruleType:{} RuleRegister call registe return null realRule.",spRule.getRuleType().toString());
+                    "ruleType:{} RuleRegister call registe return null realRule.",
+                    spRule.getRuleType().toString());
         }
         return realRule;
     }
@@ -196,9 +213,9 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public void unRegisteRule(String rule){
+    public void unRegisteRule(String rule) {
         Rule ruleImpl = getRuleContext().getRule(rule);
-        if(ruleImpl == null){
+        if (ruleImpl == null) {
             return;
         }
         
@@ -299,21 +316,16 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
                 if (o1 != null && o2 != null) {
                     if (o1.getOrder() == o2.getOrder()) {
                         return 0;
-                    }
-                    else if (o1.getOrder() > o2.getOrder()) {
+                    } else if (o1.getOrder() > o2.getOrder()) {
                         return 1;
-                    }
-                    else {
+                    } else {
                         return -1;
                     }
-                }
-                else if (o1 == null && o2 == null) {
+                } else if (o1 == null && o2 == null) {
                     return 0;
-                }
-                else if (o1 == null) {
+                } else if (o1 == null) {
                     return -1;
-                }
-                else {
+                } else {
                     return 1;
                 }
             }
@@ -342,8 +354,7 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
     public boolean isLoadFinish() {
         if (loadOver) {
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -359,19 +370,16 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
     public void waitLoading() {
         if (isLoadFinish()) {
             return;
-        }
-        else {
+        } else {
             try {
                 Integer waitTimes = waitThreadMap.get(Thread.currentThread());
                 if (waitTimes == null || waitTimes.intValue() < 3) {
                     wait(this.maxLoadTimeout);
-                }
-                else {
+                } else {
                     throw new RuleAccessException(null, null, null,
                             "规则容器尚未完成规则加载请等待...");
                 }
-            }
-            catch (InterruptedException e) {
+            } catch (InterruptedException e) {
                 logger.error("RuleContext.waitLoading exception:"
                         + e.toString(),
                         e);
@@ -408,18 +416,15 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
         waitLoading();
         if (ruleKeyMapCache.containsKey(rule)) {
             return true;
-        }
-        else if (multiRuleMapCache.containsKey(rule)) {
+        } else if (multiRuleMapCache.containsKey(rule)) {
             if (multiRuleMapCache.get(rule) != null
                     && multiRuleMapCache.get(rule).size() > 1) {
                 throw new RuleAccessException(rule, null, null,
                         "未带业务类型（命名空间）的规则，检索到超过多个规则:{}", rule);
-            }
-            else {
+            } else {
                 return true;
             }
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -438,18 +443,15 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
         waitLoading();
         if (ruleKeyMapCache.containsKey(rule)) {
             return ruleKeyMapCache.get(rule);
-        }
-        else if (multiRuleMapCache.containsKey(rule)) {
+        } else if (multiRuleMapCache.containsKey(rule)) {
             if (multiRuleMapCache.get(rule) != null
                     && multiRuleMapCache.get(rule).size() > 1) {
                 throw new RuleAccessException(rule, null, null,
                         "未带业务类型（命名空间）的规则，检索到超过多个规则:{}", rule);
-            }
-            else {
+            } else {
                 return multiRuleMapCache.getFirst(rule);
             }
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -542,12 +544,10 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
         //规则放置主容器
         if (isCoverWhenSame) {
             this.ruleKeyMapCache.put(getRuleCacheKey(rule), rule);
-        }
-        else if (this.ruleKeyMapCache.containsKey(getRuleCacheKey(rule))) {
+        } else if (this.ruleKeyMapCache.containsKey(getRuleCacheKey(rule))) {
             throw new RuleAccessException(rule.rule(), null, null, "重复的规则项:{}",
                     rule.rule());
-        }
-        else {
+        } else {
             this.ruleKeyMapCache.put(getRuleCacheKey(rule), rule);
             logger.warn("规则项{}被同名规则项覆盖.", rule.rule());
         }
@@ -562,9 +562,9 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    private void removeFromCache(Rule rule){
-        if(rule == null){
-            return ;
+    private void removeFromCache(Rule rule) {
+        if (rule == null) {
+            return;
         }
         
         //从缓存中移除
@@ -573,9 +573,9 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
             this.ruleKeyMapCache.remove(getRuleCacheKey(rule));
             //移除重复的
             List<Rule> ruleList = this.multiRuleMapCache.get(rule.rule());
-            if(ruleList != null && ruleList.size() > 1){
+            if (ruleList != null && ruleList.size() > 1) {
                 ruleList.remove(rule);
-            }else{
+            } else {
                 this.multiRuleMapCache.remove(rule.rule());
             }
         }
@@ -591,11 +591,11 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-   public String getRuleKey(Rule rule){
-       AssertUtils.notNull(rule,"rule is emtpy.");
-       
-       return getRuleCacheKey(rule);
-   }
+    public String getRuleKey(Rule rule) {
+        AssertUtils.notNull(rule, "rule is emtpy.");
+        
+        return getRuleCacheKey(rule);
+    }
     
     /**
       * 获取规则缓存键
@@ -647,14 +647,11 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
             }
             if (this.ruleValidator == null && o.ruleValidator == null) {
                 return 0;
-            }
-            else if (this.ruleValidator == null) {
+            } else if (this.ruleValidator == null) {
                 return -1;
-            }
-            else if (o.ruleValidator == null) {
+            } else if (o.ruleValidator == null) {
                 return 1;
-            }
-            else {
+            } else {
                 return (new Integer(this.ruleValidator.getOrder())).compareTo(new Integer(
                         o.ruleValidator.getOrder()));
             }

@@ -120,7 +120,7 @@ public class SimpleMultiValueEhcacheMap<K extends Serializable, V extends Serial
          * @throws Throwable
          */
         @Override
-        public Object invoke(Object proxy, Method method, Object[] args)
+        public synchronized Object invoke(Object proxy, Method method, Object[] args)
                 throws Throwable {
             Element cacheElement = ehcache.get(id);
             if (cacheElement == null) {

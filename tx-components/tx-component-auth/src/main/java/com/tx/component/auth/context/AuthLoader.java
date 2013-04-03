@@ -8,6 +8,8 @@ package com.tx.component.auth.context;
 
 import java.util.Set;
 
+import org.springframework.core.Ordered;
+
 import com.tx.component.auth.model.AuthItem;
 
 
@@ -20,7 +22,7 @@ import com.tx.component.auth.model.AuthItem;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
   */
-public interface AuthLoader {
+public interface AuthLoader extends Ordered{
     
     /**
       * 加载系统的所有权限项

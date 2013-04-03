@@ -27,7 +27,7 @@ import com.tx.core.exceptions.parameter.ParameterIsEmptyException;
  * Ehcache的Map实现<br/>
  *   1、适用于缓存Map内部值并不是很多的情况<br/>
  *   2、由于实现其中频繁使用到了对象序列化以及反序列化的过程,如果Map过大会造成性能下降<br/>
- *   3、从该map中get对象实际是get了一个Object的copy
+ *   3、从该map中get对象实际是get了一个Object的copy 与 SimpleEhcacheMap 在此处有较大区别<br/>
  * <功能详细描述>
  * 
  * @author  brady
@@ -35,7 +35,7 @@ import com.tx.core.exceptions.parameter.ParameterIsEmptyException;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class SimpleEhcacheMap<K extends Serializable, V extends Serializable>
+public class SynchronizedEhcacheMap<K extends Serializable, V extends Serializable>
         implements Map<K, V> {
     
     private final static Set<String> needPutMethodName = new HashSet<String>();
@@ -59,7 +59,7 @@ public class SimpleEhcacheMap<K extends Serializable, V extends Serializable>
     /**
      * <默认构造函数>
      */
-    public SimpleEhcacheMap(String id, Ehcache ehcache) {
+    public SynchronizedEhcacheMap(String id, Ehcache ehcache) {
         this(id, ehcache, new ConcurrentHashMap<K, V>());
     }
     
@@ -67,7 +67,7 @@ public class SimpleEhcacheMap<K extends Serializable, V extends Serializable>
      * <默认构造函数>
      */
     @SuppressWarnings("unchecked")
-    public SimpleEhcacheMap(String id, Ehcache ehcache, Map<K, V> realMap) {
+    public SynchronizedEhcacheMap(String id, Ehcache ehcache, Map<K, V> realMap) {
         super();
         if (StringUtils.isEmpty(id) || ehcache == null || realMap == null) {
             throw new ParameterIsEmptyException(
@@ -77,10 +77,8 @@ public class SimpleEhcacheMap<K extends Serializable, V extends Serializable>
             throw new ParameterIsEmptyException(
                     "EhcacheMap initialize fail.realMap must is empty.");
         }
-        
         this.ehcache = ehcache;
         this.id = "SimpleEhcacheMap_" + id;
-        
         realMap = new ConcurrentHashMap<K, V>(realMap);
         this.mapDelegate = (Map<K, V>) Proxy.newProxyInstance(this.getClass()
                 .getClassLoader(),
@@ -117,8 +115,6 @@ public class SimpleEhcacheMap<K extends Serializable, V extends Serializable>
         @Override
         public synchronized Object invoke(Object proxy, Method method, Object[] args)
                 throws Throwable {
-            
-            
             Element cacheElement = ehcache.get(id);
             if (cacheElement == null) {
                 throw new ParameterIsEmptyException(

@@ -10,13 +10,13 @@ import java.util.Date;
 import java.util.Map;
 
 import com.tx.component.auth.context.AuthChecker;
-import com.tx.component.auth.context.AuthContext;
+import com.tx.component.auth.context.AuthSessionContext;
 import com.tx.component.auth.model.AuthItem;
 import com.tx.component.auth.model.AuthItemRef;
 
 /**
  * 基础权限核查器<br/>
- * <功能详细描述>
+ *     用以支持权限检测
  * 
  * @author  PengQingyang
  * @version  [版本号, 2012-12-15]
@@ -26,6 +26,9 @@ import com.tx.component.auth.model.AuthItemRef;
 public abstract class BaseAuthChecker implements AuthChecker {
     
     /**
+     * 检查是否拥有某权限
+     * 1、如果当前登录人员权限项引用，不存在对对应权限的引用<br/>
+     * 
      * @param authKey
      * @param objects
      * @return
@@ -34,7 +37,7 @@ public abstract class BaseAuthChecker implements AuthChecker {
     public boolean isHasAuth(AuthItem authItem, Object... objects) {
         //如果当前不在请求回话中认为没有权限        
         //获取当前操作人员权限map
-        Map<String, AuthItemRef> currentOperatorAuthRefMap = AuthContext.getContext()
+        Map<String, AuthItemRef> currentOperatorAuthRefMap = AuthSessionContext
                 .getCurrentSessionContext()
                 .getCurrentOperatorAuthMapFromSession();
         
