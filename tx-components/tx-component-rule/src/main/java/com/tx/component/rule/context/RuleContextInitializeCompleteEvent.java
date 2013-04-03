@@ -17,13 +17,13 @@ import org.springframework.context.ApplicationEvent;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class RuleContextInitializeComplete extends ApplicationEvent {
+public class RuleContextInitializeCompleteEvent extends ApplicationEvent {
     
     /** 注释内容 */
     private static final long serialVersionUID = -974486400924338446L;
     
     /** <默认构造函数> */
-    public RuleContextInitializeComplete(ApplicationContext source) {
+    public RuleContextInitializeCompleteEvent(ApplicationContext source) {
         super(source);
     }
     

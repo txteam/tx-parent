@@ -267,7 +267,7 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
         
         //规则加载完成后，发出规则加载完成事件
         event.getApplicationContext()
-                .publishEvent(new RuleContextInitializeComplete(
+                .publishEvent(new RuleContextInitializeCompleteEvent(
                         event.getApplicationContext()));
     }
     
