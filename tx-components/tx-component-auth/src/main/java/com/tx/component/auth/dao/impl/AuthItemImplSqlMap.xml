@@ -133,12 +133,7 @@
 	<!-- auto generate default delete -->
 	<delete id="deleteAuthItemImpl" 
 		parameterType="com.tx.component.auth.model.AuthItemImpl">
-		DELETE FROM T_AUTH_AUTHITEM TAII WHERE
-		<trim prefixOverrides="AND | OR">
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
-	            AND TAII.ID = #{id}
-	        </if>
-		</trim>
+		DELETE FROM T_AUTH_AUTHITEM TAII WHERE AND TAII.ID = #{id}
 	</delete>
 
 	<!-- auto generate default update -->

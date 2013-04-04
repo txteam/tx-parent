@@ -4,9 +4,11 @@
  * 修改时间:  2012-12-1
  * <修改描述:>
  */
-package com.tx.component.auth.context;
+package com.tx.component.auth.context.authchecker;
 
-import com.tx.component.auth.model.AuthItem;
+import java.util.List;
+
+import com.tx.component.auth.model.AuthItemRef;
 
 /**
  * <权限核查器>
@@ -37,8 +39,8 @@ public interface AuthChecker {
       * 检查权限<br/>
       * 在该功能中，能够通过权限容器获取到会话权限容器<br/>
       * 从而获取到request，session等信息进行检查<br/>
-      * @param authKey
-      * @param applicationContext
+      * <功能详细描述>
+      * @param authItemRefList
       * @param objects
       * @return [参数说明]
       * 
@@ -46,5 +48,5 @@ public interface AuthChecker {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public boolean isHasAuth(AuthItem authItem, Object... objects);
+    public boolean isHasAuth(List<AuthItemRef> authItemRefList, Object... objects);
 }

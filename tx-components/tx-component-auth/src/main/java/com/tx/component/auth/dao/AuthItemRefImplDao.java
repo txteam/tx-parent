@@ -38,6 +38,17 @@ public interface AuthItemRefImplDao {
     public void insertAuthItemRefImpl(AuthItemRefImpl condition);
     
     /**
+      * 批量插入权限项引用
+      * <功能详细描述>
+      * @param condition [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public void batchInsertAuthItemRefImpl(List<AuthItemRefImpl> condition);
+    
+    /**
       * 删除AuthItemRefImpl对象
       * 1、auto generate
       * 2、根据入参条件进行删除
@@ -50,6 +61,17 @@ public interface AuthItemRefImplDao {
      */
     //auto generate
     public int deleteAuthItemRefImpl(AuthItemRefImpl condition);
+    
+    /**
+      * 批量删除权限项目引用
+      * <功能详细描述>
+      * @param authItemRefImplList [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public void batchDeleteAuthItemRefImpl(List<AuthItemRefImpl> authItemRefImplList);
     
     /**
       * 查询AuthItemRefImpl实体
@@ -157,4 +179,15 @@ public interface AuthItemRefImplDao {
       * @see [类、类#方法、类#成员]
      */
     public int updateAuthItemRefImpl(Map<String, Object> updateRowMap);
+    
+    /**
+      * 批量更新权限项引用
+      * <功能详细描述>
+      * @param updateRowMapList [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public void batchUpdateAuthItemRefImpl(List<Map<String, Object>> updateRowMapList);
 }

@@ -4,12 +4,11 @@
  * 修改时间:  2012-12-10
  * <修改描述:>
  */
-package com.tx.component.auth.context.checker;
+package com.tx.component.auth.context.authchecker.impl;
 
-import org.springframework.stereotype.Component;
+import java.util.List;
 
 import com.tx.component.auth.AuthConstant;
-import com.tx.component.auth.model.AuthItem;
 import com.tx.component.auth.model.AuthItemRef;
 
 
@@ -22,7 +21,6 @@ import com.tx.component.auth.model.AuthItemRef;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-@Component("dataRowAuthChecker")
 public class DataRowAuthChecker extends BaseAuthChecker{
 
 	/**
@@ -34,18 +32,19 @@ public class DataRowAuthChecker extends BaseAuthChecker{
 	}
 
     /**
-     * @param authItem
-     * @param authItemRef
+     * 判断是否拥有权限
+     * <功能详细描述>
+     * @param authItemRefList
      * @param objects
-     * @return
-     */
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
     @Override
-    public boolean isHasAuth(AuthItem authItem, AuthItemRef authItemRef,
+    public boolean judgeIsHasAuth(List<AuthItemRef> authItemRefList,
             Object... objects) {
-        if(authItemRef != null && authItem != null){
-            return true;
-        }else{
-            return false;
-        }
+        return true;
     }
 }

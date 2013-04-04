@@ -4,7 +4,7 @@
  * 修改时间:  2013-4-3
  * <修改描述:>
  */
-package com.tx.component.auth.context.register;
+package com.tx.component.auth.context.register.impl;
 
 
  /**

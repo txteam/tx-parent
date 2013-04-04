@@ -28,7 +28,7 @@ import org.springframework.util.MultiValueMap;
 import com.tx.core.exceptions.parameter.ParameterIsEmptyException;
 
 /**
- * <功能简述>
+ * 基于ehcache的多值缓存
  * <功能详细描述>
  * 
  * @author  brady

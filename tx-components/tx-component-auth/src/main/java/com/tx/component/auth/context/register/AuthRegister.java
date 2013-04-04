@@ -4,7 +4,7 @@
  * 修改时间:  2013-4-2
  * <修改描述:>
  */
-package com.tx.component.auth.context;
+package com.tx.component.auth.context.register;
 
 import com.tx.component.auth.model.AuthItem;
 
@@ -40,5 +40,5 @@ public interface AuthRegister {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public void registeAuth(AuthItem authItem);
+    public AuthItem registeAuth(AuthItem authItem);
 }

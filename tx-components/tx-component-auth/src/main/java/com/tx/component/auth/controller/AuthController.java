@@ -11,7 +11,7 @@ import java.util.List;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.tx.component.auth.context.AuthContext;
+import com.tx.component.auth.context.AuthSessionContext;
 import com.tx.component.auth.model.AuthItem;
 
 
@@ -42,7 +42,7 @@ public class AuthController {
         //AuthContext.getContext().getAllAuthRefByOperatorId(operatorId);
         
         //获取当前系统所有的权限项
-        AuthContext.getContext().getAuthItemMapping();
+        //AuthSessionContext.getContext().getAuthRefMultiValueMapFromSession();
         
         //获取当前人员所拥有的权限项
         

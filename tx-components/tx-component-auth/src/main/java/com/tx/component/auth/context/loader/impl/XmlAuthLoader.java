@@ -4,7 +4,7 @@
  * 修改时间:  2012-12-14
  * <修改描述:>
  */
-package com.tx.component.auth.context.loader;
+package com.tx.component.auth.context.loader.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,8 +30,8 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
-import com.tx.component.auth.context.AuthContext;
-import com.tx.component.auth.context.AuthLoader;
+import com.tx.component.auth.context.AuthTypeItemContext;
+import com.tx.component.auth.context.loader.AuthLoader;
 import com.tx.component.auth.exceptions.AuthContextInitException;
 import com.tx.component.auth.model.AuthItem;
 import com.tx.component.auth.model.AuthItemImpl;
@@ -204,7 +204,7 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
                     : true;
             
             //注册权限类型
-            AuthContext.getContext().registeNewOrGetAuthTypeItem(authType,
+            AuthTypeItemContext.getContext().getAuthTypeItem(authType,
                     name,
                     description,
                     isViewAble,

@@ -4,7 +4,7 @@
  * 修改时间:  2013-4-3
  * <修改描述:>
  */
-package com.tx.component.auth.context.factory;
+package com.tx.component.auth.context;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,12 +16,11 @@ import org.apache.commons.collections.ListUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.cxf.common.util.StringUtils;
 
-import com.tx.component.auth.context.AuthTypeFactory;
 import com.tx.component.auth.model.AuthTypeItem;
 import com.tx.core.exceptions.parameter.ParameterIsEmptyException;
 
 /**
- * 权限类型工厂
+ * 权限类型容器<br/>
  * <功能详细描述>
  * 
  * @author  brady
@@ -29,23 +28,33 @@ import com.tx.core.exceptions.parameter.ParameterIsEmptyException;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class DefaultAuthTypeFactory implements AuthTypeFactory {
+public class AuthTypeItemContext{
     
-    private static AuthTypeFactory factory = new DefaultAuthTypeFactory();
+    private static AuthTypeItemContext context = new AuthTypeItemContext();
     
     /** 权限类型映射 */
     private static Map<String, AuthTypeItem> authTypeItemMapping = new ConcurrentHashMap<String, AuthTypeItem>();
     
     /** <默认构造函数> */
-    private DefaultAuthTypeFactory() {
+    private AuthTypeItemContext() {
         super();
     }
     
-    public static AuthTypeFactory newInstance() {
-        return factory;
+    /**
+      * 取得权限类型容器实例
+      * <功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return AuthTypeContext [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public static AuthTypeItemContext getContext() {
+        return context;
     }
     
     /**
+     * 创建权限类型实例<br/>
      * @param authType
      * @param name
      * @param description
@@ -53,8 +62,7 @@ public class DefaultAuthTypeFactory implements AuthTypeFactory {
      * @param isConfigAble
      * @return
      */
-    @Override
-    public synchronized AuthTypeItem registeNewOrGetAuthTypeItem(
+    public synchronized AuthTypeItem getAuthTypeItem(
             String authType, String name, String description,
             boolean isViewAble, boolean isConfigAble) {
         if (StringUtils.isEmpty(authType)) {
@@ -88,11 +96,17 @@ public class DefaultAuthTypeFactory implements AuthTypeFactory {
     }
     
     /**
-     * @param authType
-     * @return
+      * 获取权限类型实例<br/>
+      *     如果权限类型容器中不存在对应权限类型项实例则生成并注入容器<br/>
+      * <功能详细描述>
+      * @param authType
+      * @return [参数说明]
+      * 
+      * @return AuthTypeItem [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
      */
-    @Override
-    public synchronized AuthTypeItem registeNewOrGetAuthTypeItem(String authType) {
+    public synchronized AuthTypeItem getAuthTypeItem(String authType) {
         if (StringUtils.isEmpty(authType)) {
             throw new ParameterIsEmptyException("authType is empty");
         }
@@ -108,24 +122,36 @@ public class DefaultAuthTypeFactory implements AuthTypeFactory {
     }
     
     /**
-     * @return
+      * 获取所有注册过的权限类型<br/>
+      *     如果权限类型容器中不存在对应权限类型项实例则生成并注入容器<br/>
+      * <功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return List<AuthTypeItem> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
      */
-    @SuppressWarnings("unchecked")
-    @Override
-    public List<AuthTypeItem> getAllRegistedAuthTypeItemList() {
+    public List<AuthTypeItem> getAllAuthTypeItemList() {
         List<AuthTypeItem> authTypeList = new ArrayList<AuthTypeItem>(
                 authTypeItemMapping.values());
-        return ListUtils.unmodifiableList(authTypeList);
+        
+        @SuppressWarnings("unchecked")
+        List<AuthTypeItem> authItemList = ListUtils.unmodifiableList(authTypeList);
+        return authItemList;
     }
     
     /**
-     * @return
+      * 获取系统中已经注册过的权限项映射<br/>
+      * <功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return Map<String,AuthTypeItem> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
      */
-    @Override
-    public Map<String, AuthTypeItem> getAllRegistedAuthTypeItemMap() {
+    public Map<String, AuthTypeItem> getAllAuthTypeItemMap() {
         @SuppressWarnings("unchecked")
         Map<String, AuthTypeItem> res = MapUtils.unmodifiableMap(authTypeItemMapping);
         return res;
     }
-    
 }

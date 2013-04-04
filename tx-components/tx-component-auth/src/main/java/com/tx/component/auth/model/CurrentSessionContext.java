@@ -4,19 +4,13 @@
  * 修改时间:  2012-12-3
  * <修改描述:>
  */
-package com.tx.component.auth.context;
+package com.tx.component.auth.model;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
-import com.tx.component.auth.AuthConstant;
-import com.tx.component.auth.model.AuthItemRef;
 
 /**
  * 当前会话容器<br/> 
@@ -72,56 +66,6 @@ public class CurrentSessionContext implements Serializable {
         this.request = null;
         this.response = null;
         this.session = null;
-    }
-    
-    /**
-      * 将当前操作人员的权限引用放入session中 <br/>
-      * 1、如果当前不存在会话，者直接跳过该逻辑<br/>
-      *<功能详细描述>
-      * @param authItemRefList [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    public void setCurrentOperatorAuthToSession(List<AuthItemRef> authItemRefSet) {
-        //如果当前不存在会话，者直接跳过该逻辑
-        if (this.session == null) {
-            return;
-        }
-        
-        //如果当前人员不含有权限，也会压入一个空的权限引用map
-        Map<String, AuthItemRef> authItemRefMap = new HashMap<String, AuthItemRef>();
-        if (authItemRefSet != null) {
-            for (AuthItemRef refTemp : authItemRefSet) {
-                authItemRefMap.put(refTemp.getAuthItem().getId(), refTemp);
-            }
-        }
-        this.session.setAttribute(AuthConstant.SESSION_KEY_CURRENT_USER_AUTHREF_MAP,
-                authItemRefMap);
-    }
-    
-    /**
-      * 从session中获取当前操作人员的权限集合<br/>
-      * 1、当前如果不存在会话，者返回null
-      *<功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return List<AuthItemRef> [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    public Map<String, AuthItemRef> getCurrentOperatorAuthMapFromSession() {
-        if (this.session == null
-                || this.session.getAttribute(AuthConstant.SESSION_KEY_CURRENT_USER_AUTHREF_MAP) == null
-                || !(this.session.getAttribute(AuthConstant.SESSION_KEY_CURRENT_USER_AUTHREF_MAP) instanceof Map<?, ?>)) {
-            return null;
-        }
-        
-        @SuppressWarnings("unchecked")
-        Map<String, AuthItemRef> authItemRefMap = (Map<String, AuthItemRef>) this.session.getAttribute(AuthConstant.SESSION_KEY_CURRENT_USER_AUTHREF_MAP);
-        return authItemRefMap == null ? new HashMap<String, AuthItemRef>()
-                : authItemRefMap;
     }
     
     /**

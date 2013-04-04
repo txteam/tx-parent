@@ -27,6 +27,22 @@ public interface AuthItemRef {
     String getAuthRefType();
     
     /**
+     * @return 返回 authItem实例
+     */
+    AuthItem getAuthItem();
+    
+    /**
+      * 设置权限引用项，对应的权限实体
+      * <功能详细描述>
+      * @param authItem [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    void setAuthItem(AuthItem authItem);
+    
+    /**
      * 权限关联项id 
      * 可以是角色的id,
      * 可以是职位的id
@@ -34,11 +50,6 @@ public interface AuthItemRef {
      * @return 返回 refId
      */
     String getRefId();
-    
-    /**
-     * @return 返回 auth
-     */
-    AuthItem getAuthItem();
     
     /**
      * @return 返回 createOperId

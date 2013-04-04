@@ -6,6 +6,7 @@
  */
 package com.tx.component.auth.springmvc;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -28,6 +29,9 @@ import com.tx.component.auth.context.AuthSessionContext;
 public class AuthContextSupportInterceptor implements HandlerInterceptor {
     
     private String authContextKey = "authContext";
+    
+    @Resource(name = "authContext")
+    private AuthContext authContext;
     
     /**
      * @param request
@@ -54,7 +58,7 @@ public class AuthContextSupportInterceptor implements HandlerInterceptor {
     public void postHandle(HttpServletRequest request,
             HttpServletResponse response, Object handler,
             ModelAndView modelAndView) throws Exception {
-        request.setAttribute(authContextKey, AuthContext.getContext());
+        request.setAttribute(authContextKey, authContext);
     }
     
     /**
@@ -69,7 +73,7 @@ public class AuthContextSupportInterceptor implements HandlerInterceptor {
             HttpServletResponse response, Object handler, Exception ex)
             throws Exception {
         AuthSessionContext.removeCurrentSessionFromThread();
-        request.setAttribute(authContextKey, AuthContext.getContext());
+        request.setAttribute(authContextKey, authContext);
     }
 
     /**

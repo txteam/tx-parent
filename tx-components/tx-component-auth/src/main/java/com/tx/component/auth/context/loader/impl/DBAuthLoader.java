@@ -4,7 +4,7 @@
  * 修改时间:  2013-4-2
  * <修改描述:>
  */
-package com.tx.component.auth.context.loader;
+package com.tx.component.auth.context.loader.impl;
 
 import java.util.HashSet;
 import java.util.List;
@@ -14,14 +14,14 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
 
-import com.tx.component.auth.context.AuthLoader;
+import com.tx.component.auth.context.loader.AuthLoader;
 import com.tx.component.auth.model.AuthItem;
 import com.tx.component.auth.model.AuthItemImpl;
-import com.tx.component.auth.service.AuthItemService;
+import com.tx.component.auth.service.AuthItemImplService;
 
 
  /**
-  * 权限加载器<br/>
+  * 权限加载器，从DB中进行加载<br/>
   * <功能详细描述>
   * 
   * @author  PengQingyang
@@ -32,8 +32,8 @@ import com.tx.component.auth.service.AuthItemService;
 @Component("dbAuthLoad")
 public class DBAuthLoader implements AuthLoader{
     
-    @Resource(name = "authItemService")
-    private AuthItemService authItemService;
+    @Resource(name = "authItemImplService")
+    private AuthItemImplService authItemService;
     
     /** 加载顺序 */
     private int order = 1;
@@ -45,7 +45,7 @@ public class DBAuthLoader implements AuthLoader{
     @Override
     public Set<AuthItem> loadAuthItems() {
         Set<AuthItem> resSet = new HashSet<AuthItem>();
-        List<AuthItemImpl> authItemImplList = this.authItemService.queryAuthItemList(null);
+        List<AuthItemImpl> authItemImplList = this.authItemService.queryAllAuthItemList();
         if(authItemImplList == null){
             return resSet;
         }
@@ -63,6 +63,5 @@ public class DBAuthLoader implements AuthLoader{
     public int getOrder() {
         return order;
     }
-    
     
 }

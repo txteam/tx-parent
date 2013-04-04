@@ -17,20 +17,32 @@ package com.tx.component.auth;
  */
 public interface AuthConstant {
     
-    //----------------session 中获取权限的key --------------
-    /** 当前用户权限引用keySet */
-    public final static String SESSION_KEY_CURRENT_USER_AUTHREF_MAP = "CURRENT_USER_AUTHREF_MAP_!@#$%^&*";
-    
+    //----------------session 中获取权限的key --------------    
     
     //start-----------------------权限引用类型----------------------
+    /** 操作员权限引用项：操作员权限引用 */
+    public static final String AUTHREFTYPE_DEFAULT = "AUTHREFTYPE_DEFAULT";
+    
     /** 操作员权限引用项：操作员权限引用 */
     public static final String AUTHREFTYPE_OPERATOR = "AUTHREFTYPE_OPERATOR";
     
     /** 操作员权限引用项：操作员临时权限引用 */
-    public static final String AUTHREFTYPE_OPERATOR_TEMP = "AUTHREFTYPE_OPERATOR_TEMP";
+    public static final String AUTHREFTYPE_OPERATOR_TEMPORARY = "AUTHREFTYPE_OPERATOR_TEMPORARY";
     
     /** 操作员权限引用项：角色权限引用 */
     public static final String AUTHREFTYPE_ROLE = "AUTHREFTYPE_ROLE";
+    
+    /** 操作员权限引用项：职位权限引用 */
+    public static final String AUTHREFTYPE_POST = "AUTHREFTYPE_POST";
+    
+    /** 操作员权限引用项：组织权限引用 */
+    public static final String AUTHREFTYPE_ORGANIZATION = "AUTHREFTYPE_ORGANIZATION";
+    
+    /** 操作员权限引用项：部门权限引用 */
+    public static final String AUTHREFTYPE_DEPARTMENT = "AUTHREFTYPE_DEPARTMENT";
+    
+    /** 操作员权限引用项：地区权限引用 */
+    public static final String AUTHREFTYPE_AREA = "AUTHREFTYPE_AREA";
     //end-----------------------权限引用类型----------------------
     
     
@@ -47,4 +59,5 @@ public interface AuthConstant {
     /** 权限类型: 数据行权限 */
     public final static String AUTHTYPE_DATA_ROW = "AUTHTYPE_DATA_ROW";
     //end-----------------------权限类型----------------------
+    
 }

@@ -44,6 +44,14 @@ public class AuthItemRefImplDaoImpl implements AuthItemRefImplDao {
     
     /**
      * @param condition
+     */
+    @Override
+    public void batchInsertAuthItemRefImpl(List<AuthItemRefImpl> condition) {
+        this.myBatisDaoSupport.batchInsertUseUUID("authItemRefImpl.insertAuthItemRefImpl", condition, "id", true);
+    }
+
+    /**
+     * @param condition
      * @return
      */
     @Override
@@ -51,6 +59,15 @@ public class AuthItemRefImplDaoImpl implements AuthItemRefImplDao {
         return this.myBatisDaoSupport.delete("authItemRefImpl.deleteAuthItemRefImpl", condition);
     }
     
+    /**
+     * @param authItemRefImplList
+     */
+    @Override
+    public void batchDeleteAuthItemRefImpl(
+            List<AuthItemRefImpl> authItemRefImplList) {
+        this.myBatisDaoSupport.batchDelete("authItemRefImpl.deleteAuthItemRefImpl", authItemRefImplList, true);
+    }
+
     /**
      * @param condition
      * @return
@@ -132,5 +149,14 @@ public class AuthItemRefImplDaoImpl implements AuthItemRefImplDao {
     @Override
     public int updateAuthItemRefImpl(Map<String, Object> updateRowMap) {
         return this.myBatisDaoSupport.update("authItemRefImpl.updateAuthItemRefImpl", updateRowMap);
+    }
+
+    /**
+     * @param updateRowMapList
+     */
+    @Override
+    public void batchUpdateAuthItemRefImpl(
+            List<Map<String, Object>> updateRowMapList) {
+        this.myBatisDaoSupport.batchUpdate("authItemRefImpl.updateAuthItemRefImpl", updateRowMapList, true);
     }
 }

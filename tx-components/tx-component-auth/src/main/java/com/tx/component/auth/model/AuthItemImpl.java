@@ -59,7 +59,7 @@ public class AuthItemImpl implements Serializable, AuthItem {
      *      流程环节权限
      *      通过多个纬度的权限交叉可以达到多纬度的授权体系
      */
-    private String authType = "";
+    private String authType;
     
     /** 子权限列表 */
     @OneToMany(fetch = FetchType.LAZY)
@@ -83,6 +83,12 @@ public class AuthItemImpl implements Serializable, AuthItem {
     }
     
     /** <默认构造函数> */
+    public AuthItemImpl(String id) {
+        super();
+        this.id = id;
+    }
+
+    /** <默认构造函数> */
     public AuthItemImpl(String id, String parentId, String name,
             String description, String authType, boolean isValid,
             boolean isConfigAble, boolean isViewAble) {
@@ -97,6 +103,24 @@ public class AuthItemImpl implements Serializable, AuthItem {
         this.isViewAble = isViewAble;
     }
     
+    /** <默认构造函数> */
+    public AuthItemImpl(String id, String parentId, String name,
+            String description, String authType, List<AuthItem> childs,
+            boolean isValid, boolean isConfigAble, boolean isViewAble,
+            boolean isEditAble) {
+        super();
+        this.id = id;
+        this.parentId = parentId;
+        this.name = name;
+        this.description = description;
+        this.authType = authType;
+        this.childs = childs;
+        this.isValid = isValid;
+        this.isConfigAble = isConfigAble;
+        this.isViewAble = isViewAble;
+        this.isEditAble = isEditAble;
+    }
+
     /**
      * @return
      */

@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.tx.component.auth.dao.AuthItemImplDao;
 import com.tx.component.auth.model.AuthItemImpl;
 import com.tx.core.exceptions.parameter.ParameterIsEmptyException;
+import com.tx.core.exceptions.util.AssertUtils;
 
 /**
  * AuthItemImpl的业务层
@@ -31,11 +32,11 @@ import com.tx.core.exceptions.parameter.ParameterIsEmptyException;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-@Component("authItemService")
-public class AuthItemService {
+@Component("authItemImplService")
+public class AuthItemImplService {
     
     @SuppressWarnings("unused")
-    private Logger logger = LoggerFactory.getLogger(AuthItemService.class);
+    private Logger logger = LoggerFactory.getLogger(AuthItemImplService.class);
     
     @SuppressWarnings("unused")
     //@Resource(name = "serviceLogger")
@@ -43,18 +44,40 @@ public class AuthItemService {
     
     @Resource(name = "authItemImplDao")
     private AuthItemImplDao authItemDao;
-
+    
+    @Resource(name = "authItemRefImplService")
+    private AuthItemRefImplService authItemRefService;
+    
     /**
-      * 查询AuthItem实体列表<br/>
-      *     
+      * 查询数据库中存储的所有权限项<br/>
       * <功能详细描述>
+      * 
       * @return [参数说明]
       * 
       * @return List<AuthItemImpl> [返回类型说明]
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public List<AuthItemImpl> queryAuthItemList(String authType) {
+    public List<AuthItemImpl> queryAllAuthItemList() {
+        //查询权限项集合
+        List<AuthItemImpl> resList = this.authItemDao.queryAuthItemImplList(null);
+        
+        return resList;
+    }
+
+    /**
+      * 查询AuthItem实体列表<br/>
+      * <功能详细描述>
+      * 
+      * @return [参数说明]
+      * 
+      * @return List<AuthItemImpl> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public List<AuthItemImpl> queryAuthItemListByAuthType(String authType) {
+        AssertUtils.notEmpty(authType,"authType is empty.");
+        
         //生成查询条件
         Map<String, Object> params = new HashMap<String, Object>();
         if(!StringUtils.isEmpty(authType)){
@@ -80,13 +103,8 @@ public class AuthItemService {
      */
     @Transactional
     public void insertAuthItemImpl(AuthItemImpl authItemImpl) {
-        //TODO:验证参数是否合法，必填字段是否填写，
-        //如果没有填写抛出parameterIsEmptyException,
-        //如果有参数不合法ParameterIsInvalidException
-        if (authItemImpl == null /*TODO:|| 其他参数验证*/) {
-            throw new ParameterIsEmptyException(
-                    "AuthItemImplService.insertAuthItemImpl authItemImpl isNull.");
-        }
+        AssertUtils.notNull(authItemImpl, "authItem is null.");
+        AssertUtils.notEmpty(authItemImpl.getAuthType(),"authItem.authType is empty.");
         
         this.authItemDao.insertAuthItemImpl(authItemImpl);
     }
@@ -104,15 +122,16 @@ public class AuthItemService {
       * @see [类、类#方法、类#成员]
      */
     @Transactional
-    public int deleteById(String id) {
-        if (StringUtils.isEmpty(id)) {
+    public void deleteById(String authItemId) {
+        if (StringUtils.isEmpty(authItemId)) {
             throw new ParameterIsEmptyException(
                     "AuthItemImplService.deleteById id isEmpty.");
         }
         
         AuthItemImpl condition = new AuthItemImpl();
-        condition.setId(id);
-        return this.authItemDao.deleteAuthItemImpl(condition);
+        condition.setId(authItemId);
+        this.authItemDao.deleteAuthItemImpl(condition);
+        this.authItemRefService.deleteByAuthItemId(authItemId);
     }
     
     /**
@@ -127,19 +146,14 @@ public class AuthItemService {
      */
     @Transactional
     public boolean updateById(AuthItemImpl authItemImpl) {
-        //TODO:验证参数是否合法，必填字段是否填写，
-        //如果没有填写抛出parameterIsEmptyException,
-        //如果有参数不合法ParameterIsInvalidException
-        if (authItemImpl == null || StringUtils.isEmpty(authItemImpl.getId())) {
-            throw new ParameterIsEmptyException(
-                    "AuthItemImplService.updateById authItemImpl or authItemImpl.id is empty.");
-        }
+        AssertUtils.notNull(authItemImpl,"authItem is null");
+        AssertUtils.notEmpty(authItemImpl.getId(),"authItem.id is empty.");
         
-        //TODO:生成需要更新字段的hashMap
+        //生成需要更新字段的hashMap
         Map<String, Object> updateRowMap = new HashMap<String, Object>();
         updateRowMap.put("id", authItemImpl.getId());
         
-        //TODO:需要更新的字段
+        //需要更新的字段
 		updateRowMap.put("valid", authItemImpl.isValid());	
 		updateRowMap.put("parentId", authItemImpl.getParentId());	
 		updateRowMap.put("description", authItemImpl.getDescription());	
@@ -150,7 +164,7 @@ public class AuthItemService {
         
         int updateRowCount = this.authItemDao.updateAuthItemImpl(updateRowMap);
         
-        //TODO:如果需要大于1时，抛出异常并回滚，需要在这里修改
+        //如果需要大于1时，抛出异常并回滚，需要在这里修改
         return updateRowCount >= 1;
     }
 }

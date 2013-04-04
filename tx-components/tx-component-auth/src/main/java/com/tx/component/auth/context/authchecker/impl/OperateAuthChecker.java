@@ -4,12 +4,13 @@
  * 修改时间:  2012-12-10
  * <修改描述:>
  */
-package com.tx.component.auth.context.checker;
+package com.tx.component.auth.context.authchecker.impl;
+
+import java.util.List;
 
 import org.springframework.stereotype.Component;
 
 import com.tx.component.auth.AuthConstant;
-import com.tx.component.auth.model.AuthItem;
 import com.tx.component.auth.model.AuthItemRef;
 
 
@@ -34,13 +35,18 @@ public class OperateAuthChecker extends BaseAuthChecker{
 	}
 
     /**
-     * @param authItem
-     * @param authItemRef
+     * 判断是否拥有权限
+     * <功能详细描述>
+     * @param authItemRefList
      * @param objects
-     * @return
-     */
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
     @Override
-    public boolean isHasAuth(AuthItem authItem, AuthItemRef authItemRef,
+    public boolean judgeIsHasAuth(List<AuthItemRef> authItemRefList,
             Object... objects) {
         return true;
     }
