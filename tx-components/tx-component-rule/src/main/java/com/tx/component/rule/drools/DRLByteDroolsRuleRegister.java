@@ -117,8 +117,8 @@ public class DRLByteDroolsRuleRegister implements RuleRegister<DroolsRule> {
                 logger.warn("error:{}", e.getKnowledgeBuilderErrors());
                 
                 rule.setState(RuleStateEnum.ERROR);
+                rule.setRemark(e.getKnowledgeBuilderErrors().toString());
             }
-            
             //持久化该规则
             this.simplePersistenceRuleService.saveSimplePersistenceRule(rule);
             

@@ -9,6 +9,7 @@ package com.tx.component.auth.model;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -82,12 +83,46 @@ public class AuthItemImpl implements Serializable, AuthItem {
         super();
     }
     
+    /**
+     * <默认构造函数>
+     */
+    public AuthItemImpl(Map<String, Object> authItemRowMap) {
+        super();
+        if (authItemRowMap.containsKey("id")) {
+            this.id = (String) authItemRowMap.get("id");
+        }
+        if (authItemRowMap.containsKey("parentId")) {
+            this.parentId = (String) authItemRowMap.get("parentId");
+        }
+        if (authItemRowMap.containsKey("name")) {
+            this.name = (String) authItemRowMap.get("name");
+        }
+        if (authItemRowMap.containsKey("description")) {
+            this.description = (String) authItemRowMap.get("description");
+        }
+        if (authItemRowMap.containsKey("authType")) {
+            this.authType = (String) authItemRowMap.get("authType");
+        }
+        if (authItemRowMap.containsKey(isValid)) {
+            this.isValid = (boolean) authItemRowMap.containsKey("isValid");
+        }
+        if (authItemRowMap.containsKey(isConfigAble)) {
+            this.isConfigAble = (boolean) authItemRowMap.containsKey("isConfigAble");
+        }
+        if (authItemRowMap.containsKey(isViewAble)) {
+            this.isViewAble = (boolean) authItemRowMap.containsKey("isViewAble");
+        }
+        if (authItemRowMap.containsKey(isEditAble)) {
+            this.isEditAble = (boolean) authItemRowMap.containsKey("isEditAble");
+        }
+    }
+    
     /** <默认构造函数> */
     public AuthItemImpl(String id) {
         super();
         this.id = id;
     }
-
+    
     /** <默认构造函数> */
     public AuthItemImpl(String id, String parentId, String name,
             String description, String authType, boolean isValid,
@@ -120,7 +155,7 @@ public class AuthItemImpl implements Serializable, AuthItem {
         this.isViewAble = isViewAble;
         this.isEditAble = isEditAble;
     }
-
+    
     /**
      * @return
      */

@@ -20,6 +20,7 @@ import javax.annotation.Resource;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.ListUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.cxf.common.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -55,7 +56,7 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @since [产品/模块版本]
  */
 public class AuthContext implements FactoryBean<AuthContext>,
-        ApplicationContextAware, InitializingBean,BeanNameAware {
+        ApplicationContextAware, InitializingBean, BeanNameAware {
     
     /** 日志记录器 */
     private static final Logger logger = LoggerFactory.getLogger(AuthContext.class);
@@ -115,7 +116,7 @@ public class AuthContext implements FactoryBean<AuthContext>,
     public void setBeanName(String name) {
         this.beanName = name;
     }
-
+    
     /**
      * ApplicationContextAware接口实现<br/>
      * 用以获取spring容器引用
@@ -189,7 +190,7 @@ public class AuthContext implements FactoryBean<AuthContext>,
         authContext = this;
         logger.info("初始化权限容器end...");
     }
-
+    
     /**
      * 加载系统的权限项
      * 1、加载同时，检查对应的权限检查器是否存在，如果不存在，则抛出异常提示，对应权限检查器不存在
@@ -263,7 +264,6 @@ public class AuthContext implements FactoryBean<AuthContext>,
             adminCheckerMapping = tempAuthCheckerMapping;
             return;
         }
-        
         
         for (AdminChecker authCheckerTemp : adminCheckers) {
             logger.info("加载超级管理员认证器：超级管理员引用类型:'{}':认证器类：'{}'",
@@ -341,10 +341,11 @@ public class AuthContext implements FactoryBean<AuthContext>,
         boolean isSuperAdmin = false;
         String adminRefType = null;
         String adminRefId = null;
-        if(!MapUtils.isEmpty(adminCheckerMapping)){
-            for(Entry<String, String> refType2RefIdEntry : refType2RefIdMapping.entrySet()){
-                if(adminCheckerMapping.get(refType2RefIdEntry.getKey()) != null
-                        && adminCheckerMapping.get(refType2RefIdEntry.getKey()).isSuperAdmin(refType2RefIdEntry.getValue())){
+        if (!MapUtils.isEmpty(adminCheckerMapping)) {
+            for (Entry<String, String> refType2RefIdEntry : refType2RefIdMapping.entrySet()) {
+                if (adminCheckerMapping.get(refType2RefIdEntry.getKey()) != null
+                        && adminCheckerMapping.get(refType2RefIdEntry.getKey())
+                                .isSuperAdmin(refType2RefIdEntry.getValue())) {
                     isSuperAdmin = true;
                     adminRefType = refType2RefIdEntry.getKey();
                     adminRefId = refType2RefIdEntry.getValue();
@@ -352,10 +353,10 @@ public class AuthContext implements FactoryBean<AuthContext>,
             }
         }
         
-        if(isSuperAdmin){
+        if (isSuperAdmin) {
             //如果是超级管理员则拥有所有权限项的引用
             authItemRefList = new ArrayList<AuthItemRef>();
-            for(AuthItem authItemTemp : authItemMapping.values()){
+            for (AuthItem authItemTemp : authItemMapping.values()) {
                 AuthItemRefImpl newAuthItemRefTemp = new AuthItemRefImpl();
                 newAuthItemRefTemp.setAuthItem(authItemTemp);
                 newAuthItemRefTemp.setAuthRefType(adminRefType);
@@ -366,12 +367,12 @@ public class AuthContext implements FactoryBean<AuthContext>,
                 //构建的超级管理员的权限引用
                 authItemRefList.add(newAuthItemRefTemp);
             }
-        }else{
+        } else {
             //如果不是超级管理员，根据引用表查询得到相关的权限引用
             authItemRefList = new ArrayList<AuthItemRef>();
             List<AuthItemRefImpl> refImplList = this.authItemRefService.queryAuthItemRefListByRefType2RefIdMapping(refType2RefIdMapping);
-            if(refImplList != null){
-                for(AuthItemRefImpl refImplTemp : refImplList){
+            if (refImplList != null) {
+                for (AuthItemRefImpl refImplTemp : refImplList) {
                     loadAuthItemRef(refImplTemp);
                 }
             }
@@ -381,13 +382,14 @@ public class AuthContext implements FactoryBean<AuthContext>,
         authSessionContext.putAuthRefToSession(authItemRefList);
     }
     
-    private void loadAuthItemRef(AuthItemRefImpl refImpl){
-        if(refImpl == null || refImpl.getAuthItem() == null){
-            return ;
+    private void loadAuthItemRef(AuthItemRefImpl refImpl) {
+        if (refImpl == null || refImpl.getAuthItem() == null) {
+            return;
         }
         
-        AuthItem realAuthItem = authItemMapping.get(refImpl.getAuthItem().getId());
-        if(realAuthItem != null){
+        AuthItem realAuthItem = authItemMapping.get(refImpl.getAuthItem()
+                .getId());
+        if (realAuthItem != null) {
             refImpl.setAuthItem(realAuthItem);
         }
     }
@@ -429,16 +431,70 @@ public class AuthContext implements FactoryBean<AuthContext>,
                 authChecker = this.defaultAuthChecker;
             }
             return authChecker.isHasAuth(authItemRefList, objects);
-        }else{
+        } else {
             return false;
         }
     }
     
     /**
+      * 注册权限项到容器<br/>
+      *     如果容器中不存在对应id的权限项会抛出异常<br/>
+      * <功能详细描述>
+      * @param id
+      * @param isValid
+      * @return [参数说明]
+      * 
+      * @return AuthItem [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public AuthItem registeAuth(String id, boolean isValid) {
+        //参数合法性验证
+        AssertUtils.notEmpty(id, "id is empty.");
+        AssertUtils.isTrue(authItemMapping.containsKey(id),
+                "id:{} not exist in current authContext.",
+                id);
+        
+        Map<String, Object> authItemRowMap = new HashMap<String, Object>();
+        authItemRowMap.put("id", id);
+        authItemRowMap.put("isValid", isValid);
+        
+        AuthItem res = doRegisteSaveAuth(authItemRowMap);
+        return res;
+    }
+    
+    /**
+     * 注册权限项到容器<br/>
+      *     如果容器中不存在对应id的权限项会抛出异常<br/>
+      * @param id
+      * @param name
+      * @param isValid
+      * @return [参数说明]
+      * 
+      * @return AuthItem [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public AuthItem registeAuth(String id, String name, boolean isValid) {
+        //参数合法性验证
+        AssertUtils.notEmpty(id, "id is empty.");
+        AssertUtils.isTrue(authItemMapping.containsKey(id),
+                "id:{} not exist in current authContext.",
+                id);
+        
+        Map<String, Object> authItemRowMap = new HashMap<String, Object>();
+        authItemRowMap.put("id", id);
+        authItemRowMap.put("name", name);
+        authItemRowMap.put("isValid", isValid);
+        
+        AuthItem res = doRegisteSaveAuth(authItemRowMap);
+        return res;
+    }
+    
+    /**
       * 装载注册权限项<br/>
-      *     动态注入容器<br/>
-      *     该注入过程，调用注入的authRegister进行，
-      *     如果找不到对应权限类型，则调用
+      *     如果对应权限项已经存在，则进行更新<br/>
+      *     如果对应权限项不存在，则进行增加<br/>
       * <功能详细描述>
       * @param authItem
       * @return [参数说明]
@@ -448,27 +504,53 @@ public class AuthContext implements FactoryBean<AuthContext>,
       * @see [类、类#方法、类#成员]
      */
     public AuthItem registeAuth(AuthItem authItem) {
+        AssertUtils.notNull(authItem, "authItem is null");
         //参数合法性验证
-        AssertUtils.notNull(authItem, "authItemImpl is null");
-        AssertUtils.notEmpty(authItem.getAuthType(), "authType is empty.");
+        //参数合法性验证
+        boolean isNeedNew = false;
+        if (StringUtils.isEmpty(authItem.getId())
+                || !authItemMapping.containsKey(authItem.getId())) {
+            isNeedNew = true;
+        }
         
-        //获取权限类型项（如果权限类型项不存在，则注册）
-        AuthTypeItemContext.getContext()
-                .getAuthTypeItem(authItem.getAuthType());
-        
-        //构建注册实体
-        AuthItemImpl newAuthItemImpl = new AuthItemImpl();
-        newAuthItemImpl.setAuthType(authItem.getAuthType());
-        newAuthItemImpl.setDescription(authItem.getDescription());
-        newAuthItemImpl.setEditAble(authItem.isEditAble());
-        newAuthItemImpl.setName(authItem.getName());
-        newAuthItemImpl.setConfigAble(authItem.isConfigAble());
-        newAuthItemImpl.setValid(authItem.isValid());
-        newAuthItemImpl.setViewAble(authItem.isViewAble());
-        
-        //持久化权限项
-        doRegisteAuth(newAuthItemImpl);
-        return newAuthItemImpl;
+        AuthItemImpl res = null;
+        if (isNeedNew) {
+            AssertUtils.notNull(authItem, "authItemImpl is null");
+            AssertUtils.notEmpty(authItem.getAuthType(), "authType is empty.");
+            
+            //获取权限类型项（如果权限类型项不存在，则注册）
+            AuthTypeItemContext.getContext()
+                    .getAuthTypeItem(authItem.getAuthType());
+            
+            //构建注册实体
+            AuthItemImpl newAuthItemImpl = new AuthItemImpl();
+            newAuthItemImpl.setId(authItem.getId());
+            newAuthItemImpl.setParentId(authItem.getParentId());
+            newAuthItemImpl.setAuthType(authItem.getAuthType());
+            newAuthItemImpl.setDescription(authItem.getDescription());
+            newAuthItemImpl.setEditAble(authItem.isEditAble());
+            newAuthItemImpl.setName(authItem.getName());
+            newAuthItemImpl.setConfigAble(authItem.isConfigAble());
+            newAuthItemImpl.setValid(authItem.isValid());
+            newAuthItemImpl.setViewAble(authItem.isViewAble());
+            
+            //持久化权限项
+            res = doRegisteNewAuth(newAuthItemImpl);
+        } else {
+            Map<String, Object> authItemRowMap = new HashMap<String, Object>();
+            authItemRowMap.put("id", authItem.getId());
+            authItemRowMap.put("parentId", authItem.getParentId());
+            authItemRowMap.put("authType", authItem.getAuthType());
+            authItemRowMap.put("description", authItem.getDescription());
+            authItemRowMap.put("isEditAble", authItem.isEditAble());
+            authItemRowMap.put("name", authItem.getName());
+            authItemRowMap.put("isConfigAble", authItem.isConfigAble());
+            authItemRowMap.put("isValid", authItem.isValid());
+            authItemRowMap.put("isViewAble", authItem.isViewAble());
+            
+            res = doRegisteSaveAuth(authItemRowMap);
+        }
+        return res;
     }
     
     /**
@@ -476,6 +558,7 @@ public class AuthContext implements FactoryBean<AuthContext>,
       *     动态注入容器<br/>
       *     该注入过程，调用注入的authRegister进行，
       *     如果找不到对应权限类型，则调用
+      *     如果对应权限项已经存在，则根据传入的信息进行更新，如果不存在则插入<br/>
       *<功能详细描述>
       * @param authType
       * @param name
@@ -491,22 +574,87 @@ public class AuthContext implements FactoryBean<AuthContext>,
             String description, String authType, boolean isValid,
             boolean isConfigAble, boolean isViewAble, boolean isEditAble) {
         //参数合法性验证
-        AssertUtils.notEmpty(authType, "authType is empty.");
+        boolean isNeedNew = false;
+        if (StringUtils.isEmpty(id) || !authItemMapping.containsKey(id)) {
+            isNeedNew = true;
+        }
         
-        AuthItemImpl newAuthItemImpl = new AuthItemImpl();
-        newAuthItemImpl.setAuthType(authType);
-        newAuthItemImpl.setDescription(description);
+        AuthItemImpl res = null;
+        if (isNeedNew) {
+            AuthItemImpl newAuthItemImpl = new AuthItemImpl();
+            newAuthItemImpl.setId(id);
+            newAuthItemImpl.setParentId(parentId);
+            newAuthItemImpl.setName(name);
+            newAuthItemImpl.setAuthType(authType);
+            newAuthItemImpl.setDescription(description);
+            newAuthItemImpl.setEditAble(isEditAble);
+            newAuthItemImpl.setConfigAble(isConfigAble);
+            newAuthItemImpl.setValid(isValid);
+            newAuthItemImpl.setViewAble(isViewAble);
+            
+            //持久化权限项
+            res = doRegisteNewAuth(newAuthItemImpl);
+        } else {
+            Map<String, Object> authItemRowMap = new HashMap<String, Object>();
+            authItemRowMap.put("id", id);
+            authItemRowMap.put("name", name);
+            authItemRowMap.put("authType", authType);
+            authItemRowMap.put("isValid", isValid);
+            
+            res = doRegisteSaveAuth(authItemRowMap);
+        }
         
-        newAuthItemImpl.setName(name);
+        return res;
+    }
+    
+    /**
+      * 装载注册权限项<br/>
+      *     动态注入容器<br/>
+      *     该注入过程，调用注入的authRegister进行，
+      *     如果找不到对应权限类型，则调用
+      *     如果对应权限项已经存在，则根据传入的信息进行更新，如果不存在则插入<br/>
+      *<功能详细描述>
+      * @param id
+      * @param name
+      * @param authType
+      * @param isValid
+      * @return [参数说明]
+      * 
+      * @return AuthItem [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public AuthItem registeAuth(String id, String name, String authType,
+            boolean isValid) {
+        //参数合法性验证
+        boolean isNeedNew = false;
+        if (StringUtils.isEmpty(id) || !authItemMapping.containsKey(id)) {
+            isNeedNew = true;
+        }
         
-        newAuthItemImpl.setEditAble(isEditAble);
-        newAuthItemImpl.setConfigAble(isConfigAble);
-        newAuthItemImpl.setValid(isValid);
-        newAuthItemImpl.setViewAble(isViewAble);
-        
-        //持久化权限项
-        doRegisteAuth(newAuthItemImpl);
-        return newAuthItemImpl;
+        AuthItemImpl res = null;
+        if (isNeedNew) {
+            AuthItemImpl newAuthItemImpl = new AuthItemImpl();
+            newAuthItemImpl.setName(name);
+            newAuthItemImpl.setAuthType(authType);
+            newAuthItemImpl.setValid(isValid);
+            
+            newAuthItemImpl.setEditAble(true);
+            newAuthItemImpl.setConfigAble(true);
+            newAuthItemImpl.setViewAble(true);
+            
+            //持久化权限项
+            res = doRegisteNewAuth(newAuthItemImpl);
+        } else {
+            Map<String, Object> authItemRowMap = new HashMap<String, Object>();
+            authItemRowMap.put("id", id);
+            authItemRowMap.put("name", name);
+            authItemRowMap.put("authType", authType);
+            authItemRowMap.put("isValid", isValid);
+            
+            res = doRegisteSaveAuth(authItemRowMap);
+        }
+        return res;
     }
     
     /**
@@ -523,8 +671,7 @@ public class AuthContext implements FactoryBean<AuthContext>,
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public AuthItem registeAuth(String name,
-            String description, String authType) {
+    public AuthItem registeAuth(String name, String description, String authType) {
         //参数合法性验证
         AssertUtils.notEmpty(authType, "authType is empty.");
         
@@ -540,12 +687,45 @@ public class AuthContext implements FactoryBean<AuthContext>,
         newAuthItemImpl.setViewAble(true);
         
         //持久化权限项
-        doRegisteAuth(newAuthItemImpl);
-        return newAuthItemImpl;
+        return doRegisteNewAuth(newAuthItemImpl);
     }
     
     /**
-      * 向容器中注册权限项<br/>
+     * 装载注册权限项<br/>
+     *     动态注入容器<br/>
+     *     该注入过程，调用注入的authRegister进行
+     *<功能详细描述>
+     * @param name
+     * @param description
+     * @param authType
+     * @return [参数说明]
+     * 
+     * @return AuthItem [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    public AuthItem registeAuth(String name, String description,
+            String authType, boolean isValid, boolean isConfigAble,
+            boolean isEditAble, boolean isViewAble) {
+        //参数合法性验证
+        AssertUtils.notEmpty(authType, "authType is empty.");
+        
+        AuthItemImpl newAuthItemImpl = new AuthItemImpl();
+        newAuthItemImpl.setAuthType(authType);
+        newAuthItemImpl.setDescription(description);
+        newAuthItemImpl.setName(name);
+        
+        newAuthItemImpl.setConfigAble(isViewAble);
+        newAuthItemImpl.setEditAble(isEditAble);
+        newAuthItemImpl.setValid(isValid);
+        newAuthItemImpl.setViewAble(isConfigAble);
+        
+        //持久化权限项
+        return doRegisteNewAuth(newAuthItemImpl);
+    }
+    
+    /**
+      * 向容器中注册新权限项<br/>
       * <功能详细描述>
       * @param authItemImpl
       * @return [参数说明]
@@ -554,7 +734,7 @@ public class AuthContext implements FactoryBean<AuthContext>,
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    private String doRegisteAuth(final AuthItemImpl authItemImpl) {
+    private AuthItemImpl doRegisteNewAuth(final AuthItemImpl authItemImpl) {
         AssertUtils.notNull(authItemImpl, "authItemImpl is null");
         AssertUtils.notEmpty(authItemImpl.getAuthType(), "authType is empty.");
         //获取权限类型项
@@ -575,7 +755,41 @@ public class AuthContext implements FactoryBean<AuthContext>,
             authItemMapping.put(authItemImpl.getId(), authItemImpl);
         }
         
-        return null;
+        return authItemImpl;
+    }
+    
+    /**
+      * 更新容器中的权限项
+      * <功能详细描述>
+      * @param authItemRowMap
+      * @return [参数说明]
+      * 
+      * @return String [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    private AuthItemImpl doRegisteSaveAuth(
+            final Map<String, Object> authItemRowMap) {
+        AssertUtils.notNull(authItemRowMap, "authItemRowMap is null");
+        AssertUtils.notEmpty((String) authItemRowMap.get("id"),
+                "authItemRowMap.id is empty.");
+        
+        final AuthItemImpl authItemImpl = this.authItemService.saveAuthItemImplByAuthItemRowMap(authItemRowMap);
+        
+        if (TransactionSynchronizationManager.isSynchronizationActive()) {
+            //如果在事务逻辑中执行
+            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
+                @Override
+                public void afterCommit() {
+                    authItemMapping.put(authItemImpl.getId(), authItemImpl);
+                }
+            });
+        } else {
+            //如果在非事务中执行
+            authItemMapping.put(authItemImpl.getId(), authItemImpl);
+        }
+        
+        return authItemImpl;
     }
     
     /**
@@ -588,7 +802,7 @@ public class AuthContext implements FactoryBean<AuthContext>,
       * @see [类、类#方法、类#成员]
      */
     public void unRegisteAuth(String authItemId) {
-        AssertUtils.notEmpty(authItemId,"authItemId is empty.");
+        AssertUtils.notEmpty(authItemId, "authItemId is empty.");
         
         //卸载权限项
         doUnRegisteAuth(authItemId);
@@ -605,7 +819,7 @@ public class AuthContext implements FactoryBean<AuthContext>,
       * @see [类、类#方法、类#成员]
      */
     private void doUnRegisteAuth(final String authItemId) {
-        AssertUtils.notEmpty(authItemId,"authItemId is empty.");
+        AssertUtils.notEmpty(authItemId, "authItemId is empty.");
         
         //持久化对应的权限项到数据库中
         this.authItemService.deleteById(authItemId);
@@ -635,61 +849,61 @@ public class AuthContext implements FactoryBean<AuthContext>,
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public static boolean checkHasAuth(String authKey, Object... objects){
+    public static boolean checkHasAuth(String authKey, Object... objects) {
         AssertUtils.notNull(authContext, "AuthContext init fail.");
         
         return authContext.isHasAuth(authKey, objects);
     }
-
+    
     /**
      * @return 返回 defaultAuthChecker
      */
     public AuthChecker getDefaultAuthChecker() {
         return defaultAuthChecker;
     }
-
+    
     /**
      * @param 对defaultAuthChecker进行赋值
      */
     public void setDefaultAuthChecker(AuthChecker defaultAuthChecker) {
         this.defaultAuthChecker = defaultAuthChecker;
     }
-
+    
     /**
      * @return 返回 authItemService
      */
     public AuthItemImplService getAuthItemService() {
         return authItemService;
     }
-
+    
     /**
      * @param 对authItemService进行赋值
      */
     public void setAuthItemService(AuthItemImplService authItemService) {
         this.authItemService = authItemService;
     }
-
+    
     /**
      * @return 返回 authItemRefService
      */
     public AuthItemRefImplService getAuthItemRefService() {
         return authItemRefService;
     }
-
+    
     /**
      * @param 对authItemRefService进行赋值
      */
     public void setAuthItemRefService(AuthItemRefImplService authItemRefService) {
         this.authItemRefService = authItemRefService;
     }
-
+    
     /**
      * @return 返回 authSessionContext
      */
     public AuthSessionContext getAuthSessionContext() {
         return authSessionContext;
     }
-
+    
     /**
      * @param 对authSessionContext进行赋值
      */

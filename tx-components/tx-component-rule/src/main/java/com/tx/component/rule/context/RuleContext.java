@@ -93,7 +93,7 @@ public class RuleContext implements BeanNameAware, FactoryBean<RuleContext>,
     private List<RuleLoader> registeredRuleLoaderList = new ArrayList<RuleLoader>();
     
     /** 规则验证器映射 */
-    private Map<RuleTypeEnum, RuleRegister<? extends Rule>> ruleValidatorMap = new HashMap<RuleTypeEnum, RuleRegister<? extends Rule>>();
+    private Map<RuleTypeEnum, RuleRegister<? extends Rule>> ruleRegisterMap = new HashMap<RuleTypeEnum, RuleRegister<? extends Rule>>();
     
     /** 规则缓存:key为 serviceType + "." + rule */
     private Map<String, Rule> ruleKeyMapCache;
@@ -200,7 +200,7 @@ public class RuleContext implements BeanNameAware, FactoryBean<RuleContext>,
             @SuppressWarnings("rawtypes") Collection<RuleRegister> ruleValidators) {
         if(!CollectionUtils.isEmpty(ruleValidators)){
             for(RuleRegister<? extends Rule> ruleRegisterTemp : ruleValidators){
-                ruleValidatorMap.put(ruleRegisterTemp.ruleType(), ruleRegisterTemp);
+                ruleRegisterMap.put(ruleRegisterTemp.ruleType(), ruleRegisterTemp);
             }
         }
     }
@@ -223,7 +223,7 @@ public class RuleContext implements BeanNameAware, FactoryBean<RuleContext>,
                     "spRule or rule or serviceType or ruleType is null");
         }
         
-        RuleRegister<? extends Rule> ruleRegisterTemp = ruleValidatorMap.get(spRule.getRuleType());
+        RuleRegister<? extends Rule> ruleRegisterTemp = ruleRegisterMap.get(spRule.getRuleType());
         if (ruleRegisterTemp == null) {
             throw new RuleRegisteException(
                     "ruleType:{} RuleRegister not exist.", spRule.getRuleType()
@@ -296,7 +296,7 @@ public class RuleContext implements BeanNameAware, FactoryBean<RuleContext>,
                     //非运营态的规则无需进行验证
                     continue;
                 }
-                RuleRegister<? extends Rule> ruleValidatorTemp = ruleValidatorMap.get(ruleTemp.getRuleType());
+                RuleRegister<? extends Rule> ruleValidatorTemp = ruleRegisterMap.get(ruleTemp.getRuleType());
                 if (ruleValidatorTemp != null) {
                     RuleAndValidatorWrap rvWrapTemp = new RuleAndValidatorWrap(
                             ruleTemp, ruleValidatorTemp);

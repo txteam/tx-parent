@@ -49,6 +49,26 @@ public class AuthItemImplService {
     private AuthItemRefImplService authItemRefService;
     
     /**
+      * 查找权限项目实例
+      * <功能详细描述>
+      * @param authItemId
+      * @return [参数说明]
+      * 
+      * @return AuthItemImpl [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public AuthItemImpl findAuthItemImplById(String authItemId){
+        AssertUtils.notEmpty(authItemId,"authItemId is empty.");
+        
+        AuthItemImpl condition = new AuthItemImpl();
+        condition.setId(authItemId);
+        
+        AuthItemImpl res = this.authItemDao.findAuthItemImpl(condition);
+        return res;
+    }
+    
+    /**
       * 查询数据库中存储的所有权限项<br/>
       * <功能详细描述>
       * 
@@ -166,5 +186,30 @@ public class AuthItemImplService {
         
         //如果需要大于1时，抛出异常并回滚，需要在这里修改
         return updateRowCount >= 1;
+    }
+    
+    /**
+      * 更新权限项
+      *<功能详细描述>
+      * @param authItemRowMap
+      * @return [参数说明]
+      * 
+      * @return boolean [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public AuthItemImpl saveAuthItemImplByAuthItemRowMap(Map<String, Object> authItemRowMap) {
+        AssertUtils.notNull(authItemRowMap,"authItemRowMap is null");
+        AssertUtils.notEmpty((String)authItemRowMap.get("id"),"authItemRowMap.id is empty.");   
+        String authItemId = (String)authItemRowMap.get("id");
+        AuthItemImpl authItem = findAuthItemImplById(authItemId);
+        if(authItem != null){
+            this.authItemDao.updateAuthItemImpl(authItemRowMap);
+        }else{
+            authItem = new AuthItemImpl(authItemRowMap);
+            insertAuthItemImpl(authItem);
+        }
+        
+        return authItem;
     }
 }

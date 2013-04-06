@@ -108,7 +108,7 @@ public class AssertUtils {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public static void isTrue(boolean expression, String message) {
+    public static void isTrue(boolean expression, String message,String... parameters) {
         if (!expression) {
             throw new ParameterIsInvalidException(message);
         }
@@ -122,8 +122,11 @@ public class AssertUtils {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public static void isTrue(boolean expression) {
-        isTrue(expression, "[Assertion failed] - this expression must be true");
+    public static void isTrue(boolean expression,String message,Object[] parameters) {
+        if (!expression) {
+            throw new ParameterIsEmptyException(
+                    MessageFormatter.format(message, parameters).getMessage());
+        }
     }
     
     /**
