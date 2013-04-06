@@ -7,6 +7,7 @@
 package com.tx.component.rule.context;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -18,13 +19,16 @@ import javax.annotation.Resource;
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.store.chm.ConcurrentHashMap;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.drools.core.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronizationAdapter;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
@@ -56,14 +60,20 @@ import com.tx.core.support.cache.ehcache.SimpleMultiValueEhcacheMap;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
-        ApplicationListener<ContextRefreshedEvent> {
+public class RuleContext implements BeanNameAware, FactoryBean<RuleContext>,
+        InitializingBean,ApplicationContextAware{
     
     /** 日志记录器 */
     private static Logger logger = LoggerFactory.getLogger(RuleContext.class);
     
     /** 单例的rule容器 */
-    private static RuleContext ruleContext;
+    private static Map<String, RuleContext> ruleContextMapping = new HashMap<String, RuleContext>();
+    
+    /** spring容器引用 */
+    private ApplicationContext applicationContext;
+    
+    /** rulecontext name */
+    private String beanName;
     
     /** 规则会话事务工厂  */
     private RuleSessionTransactionFactory ruleSessionTransactionFactory;
@@ -80,10 +90,10 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
     private SimplePersistenceRuleService simplePersistenceRuleService;
     
     /** 注册的规则加载器 */
-    private static List<RuleLoader> registeredRuleLoaderList = new ArrayList<RuleLoader>();
+    private List<RuleLoader> registeredRuleLoaderList = new ArrayList<RuleLoader>();
     
     /** 规则验证器映射 */
-    private static Map<RuleTypeEnum, RuleRegister<? extends Rule>> ruleValidatorMap = new HashMap<RuleTypeEnum, RuleRegister<? extends Rule>>();
+    private Map<RuleTypeEnum, RuleRegister<? extends Rule>> ruleValidatorMap = new HashMap<RuleTypeEnum, RuleRegister<? extends Rule>>();
     
     /** 规则缓存:key为 serviceType + "." + rule */
     private Map<String, Rule> ruleKeyMapCache;
@@ -101,22 +111,52 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
     private Map<Thread, Integer> waitThreadMap = new HashMap<Thread, Integer>();
     
     /**
-     * 私有化构造函数<默认构造函数>
+     * <默认构造函数>
      */
-    private RuleContext() {
+    public RuleContext() {
     }
     
+    /**
+     * @param name
+     */
+    @Override
+    public void setBeanName(String name) {
+        logger.info("RuleContext name:{} Initializing setBeanName.");
+        this.beanName = name;
+    }
+    
+    /**
+     * @param applicationContext
+     * @throws BeansException
+     */
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext)
+            throws BeansException {
+        logger.info("RuleContext init applicationContext.");
+        this.applicationContext = applicationContext;
+    }
+
     /**
      * @throws Exception
      */
     @Override
     public void afterPropertiesSet() throws Exception {
+        logger.info("开始初始化规则容器....");
+        
         this.ruleKeyMapCache = new SimpleEhcacheMap<String, Rule>(
                 "cache.ruleKeyMapCache", ehcache,
                 new ConcurrentHashMap<String, Rule>());
         this.multiRuleMapCache = new SimpleMultiValueEhcacheMap<String, Rule>(
                 "cache.multiRuleMapCache", ehcache,
                 new ConcurrentHashMap<String, List<Rule>>());
+        
+        logger.info("加载规则加载器....");
+        Collection<RuleLoader> ruleLoaders = this.applicationContext.getBeansOfType(RuleLoader.class).values();
+        registeRuleLoader(ruleLoaders);
+        logger.info("加载规则注册器...");
+        @SuppressWarnings("rawtypes")
+        Collection<RuleRegister> ruleRegisters = this.applicationContext.getBeansOfType(RuleRegister.class).values();
+        registeRuleRegister(ruleRegisters);
         
         if (ruleSessionFactory == null) {
             this.ruleSessionFactory = new DefaultRuleSessionFactory();
@@ -125,8 +165,11 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
             this.ruleSessionTransactionFactory = new DefaultRuleSessionTransactionFactory();
         }
         
-        //完成属性设置后,加载规则
-        setRuleContext(this);
+        init(this.applicationContext);
+        
+        RuleContext.ruleContextMapping.put(this.beanName, this);
+        
+        logger.info("加载规则注册器...");
     }
     
     /**
@@ -138,8 +181,10 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public static void registeRuleLoader(RuleLoader ruleLoader) {
-        registeredRuleLoaderList.add(ruleLoader);
+    public void registeRuleLoader(Collection<RuleLoader> ruleLoaders) {
+        if(!CollectionUtils.isEmpty(ruleLoaders)){
+            registeredRuleLoaderList.addAll(ruleLoaders);
+        }
     }
     
     /**
@@ -151,9 +196,13 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public static void registeRuleValidator(
-            RuleRegister<? extends Rule> ruleValidator) {
-        ruleValidatorMap.put(ruleValidator.ruleType(), ruleValidator);
+    public void registeRuleRegister(
+            @SuppressWarnings("rawtypes") Collection<RuleRegister> ruleValidators) {
+        if(!CollectionUtils.isEmpty(ruleValidators)){
+            for(RuleRegister<? extends Rule> ruleRegisterTemp : ruleValidators){
+                ruleValidatorMap.put(ruleRegisterTemp.ruleType(), ruleRegisterTemp);
+            }
+        }
     }
     
     /**
@@ -214,7 +263,7 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
       * @see [类、类#方法、类#成员]
      */
     public void unRegisteRule(String rule) {
-        Rule ruleImpl = getRuleContext().getRule(rule);
+        Rule ruleImpl = getRule(rule);
         if (ruleImpl == null) {
             return;
         }
@@ -227,23 +276,15 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
     }
     
     /**
-      * 返回ruleContext容器
+      * 初始化容器
       * <功能详细描述>
-      * @return [参数说明]
+      * @param currentApplicationContext [参数说明]
       * 
-      * @return RuleContext [返回类型说明]
+      * @return void [返回类型说明]
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public static RuleContext getRuleContext() {
-        return ruleContext;
-    }
-    
-    /**
-     * @param event
-     */
-    @Override
-    public void onApplicationEvent(ContextRefreshedEvent event) {
+    private void init(ApplicationContext currentApplicationContext) {
         //启动时，利用ruleLoad加载，并将规则压入缓存中
         loadAndPutInCacheWhenStart();
         
@@ -266,9 +307,8 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
         validateWhenLoadFinish(ruleAndValidatorWrapList);
         
         //规则加载完成后，发出规则加载完成事件
-        event.getApplicationContext()
-                .publishEvent(new RuleContextInitializeCompleteEvent(
-                        event.getApplicationContext()));
+        currentApplicationContext.publishEvent(new RuleContextInitializedEvent(
+                currentApplicationContext));
     }
     
     /**
@@ -475,7 +515,7 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
      */
     @Override
     public RuleContext getObject() throws Exception {
-        return ruleContext;
+        return this;
     }
     
     /**
@@ -492,13 +532,6 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
     @Override
     public boolean isSingleton() {
         return true;
-    }
-    
-    /**
-     * @param 对ruleContext进行赋值
-     */
-    public void setRuleContext(RuleContext ruleContext) {
-        RuleContext.ruleContext = ruleContext;
     }
     
     /**
@@ -742,4 +775,19 @@ public class RuleContext implements InitializingBean, FactoryBean<RuleContext>,
     public void setMaxLoadTimeout(long maxLoadTimeout) {
         this.maxLoadTimeout = maxLoadTimeout;
     }
+
+    /**
+     * @return 返回 waitThreadMap
+     */
+    public Map<Thread, Integer> getWaitThreadMap() {
+        return waitThreadMap;
+    }
+
+    /**
+     * @param 对waitThreadMap进行赋值
+     */
+    public void setWaitThreadMap(Map<Thread, Integer> waitThreadMap) {
+        this.waitThreadMap = waitThreadMap;
+    }
+    
 }

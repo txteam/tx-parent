@@ -11,6 +11,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.cxf.common.util.StringUtils;
 import org.springframework.stereotype.Component;
 
 import com.tx.component.auth.dao.AuthItemImplDao;
@@ -39,7 +40,11 @@ public class AuthItemImplDaoImpl implements AuthItemImplDao {
      */
     @Override
     public void insertAuthItemImpl(AuthItemImpl condition) {
-        this.myBatisDaoSupport.insertUseUUID("authItemImpl.insertAuthItemImpl", condition, "id");
+        if(StringUtils.isEmpty(condition.getId())){
+            this.myBatisDaoSupport.insertUseUUID("authItemImpl.insertAuthItemImpl", condition, "id");
+        }else{
+            this.myBatisDaoSupport.insert("authItemImpl.insertAuthItemImpl", condition);
+        }
     }
     
     /**

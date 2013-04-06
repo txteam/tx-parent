@@ -7,7 +7,7 @@
 package com.tx.component.rule.context;
 
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationEvent;
+import org.springframework.context.event.ApplicationContextEvent;
 
 /**
  * 规则加载器初始化完成事件<br/>
@@ -17,14 +17,13 @@ import org.springframework.context.ApplicationEvent;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class RuleContextInitializeCompleteEvent extends ApplicationEvent {
+public class RuleContextInitializedEvent extends ApplicationContextEvent {
     
     /** 注释内容 */
     private static final long serialVersionUID = -974486400924338446L;
     
     /** <默认构造函数> */
-    public RuleContextInitializeCompleteEvent(ApplicationContext source) {
+    public RuleContextInitializedEvent(ApplicationContext source) {
         super(source);
     }
-    
 }

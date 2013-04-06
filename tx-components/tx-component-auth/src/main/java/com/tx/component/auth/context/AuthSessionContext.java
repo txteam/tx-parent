@@ -36,6 +36,7 @@ public class AuthSessionContext implements FactoryBean<AuthSessionContext>,Initi
     
     public final static String SESSION_KEY_CURRENT_OPERATOR_ID = "CURRENT_OPERATOR_ID_!@#$%^&*";
     
+    @SuppressWarnings("unused")
     private static AuthSessionContext context;
     
     /**
@@ -53,23 +54,6 @@ public class AuthSessionContext implements FactoryBean<AuthSessionContext>,Initi
             return csContext;
         }
     };
-    
-    /**
-      * 获取权限会话容器<br/>
-      * <功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return AuthSessionContext [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    //建议尽量不要用这个方法
-    //如果采取的注入的方法，后期扩展才相对灵活
-    //尽量降低权限容器与其它功能的耦合度
-    @Deprecated
-    protected static AuthSessionContext getContext(){
-        return AuthSessionContext.context;
-    }
 
     /**
      * @throws Exception

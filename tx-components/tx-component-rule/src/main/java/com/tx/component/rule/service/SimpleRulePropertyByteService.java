@@ -103,6 +103,7 @@ public class SimpleRulePropertyByteService {
             throw new ParameterIsEmptyException(
                     "ruleId is empty.");
         }
+        
         if(propertyValuesMap == null || propertyValuesMap.size() == 0){
             return ;
         }

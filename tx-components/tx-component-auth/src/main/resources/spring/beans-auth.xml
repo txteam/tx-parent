@@ -12,7 +12,7 @@
 			expression="org.springframework.stereotype.Controller" />
 	</context:component-scan>
 
-	<bean id="authcontext" class="com.tx.component.auth.context.AuthContext">
+	<bean id="authContext" class="com.tx.component.auth.context.AuthContext">
 	</bean>
 
 	<bean id="authSessionContext" class="com.tx.component.auth.context.AuthSessionContext"></bean>

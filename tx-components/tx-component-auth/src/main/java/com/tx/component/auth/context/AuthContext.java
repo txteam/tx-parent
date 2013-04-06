@@ -23,6 +23,7 @@ import org.apache.commons.collections.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -54,19 +55,25 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @since [产品/模块版本]
  */
 public class AuthContext implements FactoryBean<AuthContext>,
-        ApplicationContextAware, InitializingBean {
+        ApplicationContextAware, InitializingBean,BeanNameAware {
     
     /** 日志记录器 */
     private static final Logger logger = LoggerFactory.getLogger(AuthContext.class);
     
     /** 业务日志记录器：默认使用logback日志记录器  */
-    private static Logger serviceLogger = LoggerFactory.getLogger(AuthContext.class);
+    @SuppressWarnings("unused")
+    private Logger serviceLogger = LoggerFactory.getLogger(AuthContext.class);
     
     /** 懒汉模式工厂实例  */
-    private static AuthContext context;
+    private static Map<String, AuthContext> authContextMapping = new HashMap<String, AuthContext>();
+    
+    private static AuthContext authContext = null;
     
     /** 当前spring容器 */
     private ApplicationContext applicationContext;
+    
+    /** spring容器中beanName */
+    private String beanName;
     
     /** 默认的权限检查器 */
     private AuthChecker defaultAuthChecker;
@@ -79,6 +86,9 @@ public class AuthContext implements FactoryBean<AuthContext>,
     
     /** 超级管理员认证器 */
     private Map<String, AdminChecker> adminCheckerMapping;
+    
+    /** 权限加载器 */
+    private List<AuthLoader> authLoaderList;
     
     /**
      * 系统的权限项集合<br/>
@@ -98,6 +108,14 @@ public class AuthContext implements FactoryBean<AuthContext>,
     @Resource(name = "authSessionContext")
     private AuthSessionContext authSessionContext;
     
+    /**
+     * @param name
+     */
+    @Override
+    public void setBeanName(String name) {
+        this.beanName = name;
+    }
+
     /**
      * ApplicationContextAware接口实现<br/>
      * 用以获取spring容器引用
@@ -136,23 +154,6 @@ public class AuthContext implements FactoryBean<AuthContext>,
     }
     
     /**
-      * 获取权限容器唯一容器
-      * <功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return AuthContext [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    //建议尽量不要用这个方法
-    //如果采取的注入的方法，后期扩展才相对灵活
-    //尽量降低权限容器与其它功能的耦合度
-    @Deprecated
-    public static AuthContext getContext() {
-        return AuthContext.context;
-    }
-    
-    /**
      * InitializingBean接口的实现，用以在容器参数设置完成后加载相关权限
      * @throws Exception
      */
@@ -176,17 +177,19 @@ public class AuthContext implements FactoryBean<AuthContext>,
                 .values();
         loadAuthChecker(authCheckers);
         //向容器中注册加载器
-        logger.info("      加载权限项...");
+        logger.info("      加载权限项加载器...");
         //读取系统中注册的加载器
         Collection<AuthLoader> authLoader = this.applicationContext.getBeansOfType(AuthLoader.class)
                 .values();
-        loadAuthItems(new ArrayList<AuthLoader>(authLoader));
+        this.authLoaderList = new ArrayList<AuthLoader>(authLoader);
+        loadAuthItems(this.authLoaderList);
         
         //使系统context指向实体本身
-        context = this;
+        authContextMapping.put(this.beanName, this);
+        authContext = this;
         logger.info("初始化权限容器end...");
     }
-    
+
     /**
      * 加载系统的权限项
      * 1、加载同时，检查对应的权限检查器是否存在，如果不存在，则抛出异常提示，对应权限检查器不存在
@@ -507,6 +510,41 @@ public class AuthContext implements FactoryBean<AuthContext>,
     }
     
     /**
+      * 装载注册权限项<br/>
+      *     动态注入容器<br/>
+      *     该注入过程，调用注入的authRegister进行
+      *<功能详细描述>
+      * @param name
+      * @param description
+      * @param authType
+      * @return [参数说明]
+      * 
+      * @return AuthItem [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public AuthItem registeAuth(String name,
+            String description, String authType) {
+        //参数合法性验证
+        AssertUtils.notEmpty(authType, "authType is empty.");
+        
+        AuthItemImpl newAuthItemImpl = new AuthItemImpl();
+        newAuthItemImpl.setAuthType(authType);
+        newAuthItemImpl.setDescription(description);
+        
+        newAuthItemImpl.setName(name);
+        
+        newAuthItemImpl.setConfigAble(true);
+        newAuthItemImpl.setEditAble(true);
+        newAuthItemImpl.setValid(true);
+        newAuthItemImpl.setViewAble(true);
+        
+        //持久化权限项
+        doRegisteAuth(newAuthItemImpl);
+        return newAuthItemImpl;
+    }
+    
+    /**
       * 向容器中注册权限项<br/>
       * <功能详细描述>
       * @param authItemImpl
@@ -585,19 +623,22 @@ public class AuthContext implements FactoryBean<AuthContext>,
             authItemMapping.remove(authItemId);
         }
     }
-
+    
     /**
-     * @return 返回 serviceLogger
+      * 判断是否拥有某权限<br/>
+      * <功能详细描述>
+      * @param authKey
+      * @param objects
+      * @return [参数说明]
+      * 
+      * @return boolean [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
      */
-    public static Logger getServiceLogger() {
-        return serviceLogger;
-    }
-
-    /**
-     * @param 对serviceLogger进行赋值
-     */
-    public static void setServiceLogger(Logger serviceLogger) {
-        AuthContext.serviceLogger = serviceLogger;
+    public static boolean checkHasAuth(String authKey, Object... objects){
+        AssertUtils.notNull(authContext, "AuthContext init fail.");
+        
+        return authContext.isHasAuth(authKey, objects);
     }
 
     /**

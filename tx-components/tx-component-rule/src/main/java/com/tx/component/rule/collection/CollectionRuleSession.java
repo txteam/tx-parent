@@ -38,14 +38,14 @@ public class CollectionRuleSession extends BaseRuleSession<CollectionRule> {
      */
     @Override
     public void execute(Map<String, Object> fact) {
-        if (rule.getRuleList() == null) {
-            return;
-        }
-        for (Rule ruleTemp : rule.getRuleList()) {
-            RuleSession ruleSession = RuleContext.getRuleContext()
-                    .newRuleSession(ruleTemp);
-            ruleSession.execute(fact);
-        }
+//        if (rule.getRuleList() == null) {
+//            return;
+//        }
+//        for (Rule ruleTemp : rule.getRuleList()) {
+//            //RuleSession ruleSession = RuleContext.getRuleContext()
+//            //        .newRuleSession(ruleTemp);
+//            ruleSession.execute(fact);
+//        }
     }
     
     /**
@@ -53,13 +53,13 @@ public class CollectionRuleSession extends BaseRuleSession<CollectionRule> {
      */
     @Override
     public void execute(List<Map<String, Object>> facts) {
-        if (rule.getRuleList() == null) {
-            return;
-        }
-        for (Rule ruleTemp : rule.getRuleList()) {
-            RuleSession ruleSession = RuleContext.getRuleContext()
-                    .newRuleSession(ruleTemp);
-            ruleSession.execute(facts);
-        }
+//        if (rule.getRuleList() == null) {
+//            return;
+//        }
+//        for (Rule ruleTemp : rule.getRuleList()) {
+//            RuleSession ruleSession = RuleContext.getRuleContext()
+//                    .newRuleSession(ruleTemp);
+//            ruleSession.execute(facts);
+//        }
     }
 }
