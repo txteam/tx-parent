@@ -9,8 +9,6 @@ package com.tx.core.mybatis.support;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.PersistenceException;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.ibatis.executor.BatchExecutorException;
@@ -18,16 +16,19 @@ import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
-import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.SqlSessionManager;
 import org.hibernate.id.IdentifierGenerator;
 import org.hibernate.id.UUIDHexGenerator;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.SqlSessionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.DataAccessException;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.dao.support.PersistenceExceptionTranslator;
 
+import com.tx.core.exceptions.parameter.ParameterIsEmptyException;
+import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.mybatis.model.BatchResult;
 import com.tx.core.mybatis.model.Order;
 import com.tx.core.paged.model.PagedList;
@@ -40,7 +41,7 @@ import com.tx.core.paged.model.PagedList;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public class MyBatisDaoSupport {
+public class MyBatisDaoSupport implements InitializingBean {
     
     private Logger logger = LoggerFactory.getLogger(MyBatisDaoSupport.class);
     
@@ -49,9 +50,63 @@ public class MyBatisDaoSupport {
      */
     private static final int defaultDoFlushSize = 100;
     
+    private static final IdentifierGenerator generator = new UUIDHexGenerator();
+    
     private SqlSessionTemplate sqlSessionTemplate;
     
-    private static final IdentifierGenerator generator = new UUIDHexGenerator();
+    private SqlSessionTemplate batchSqlSessionTemplate;
+    
+    private SqlSessionFactory sqlSessionFactory = null;
+    
+    private PersistenceExceptionTranslator exceptionTranslator = null;
+    
+    /** <默认构造函数> */
+    public MyBatisDaoSupport() {
+        super();
+    }
+    
+    /** <默认构造函数> */
+    public MyBatisDaoSupport(SqlSessionFactory sqlSessionFactory,
+            PersistenceExceptionTranslator exceptionTranslator) {
+        super();
+        this.sqlSessionFactory = sqlSessionFactory;
+        this.exceptionTranslator = exceptionTranslator;
+    }
+    
+    /**
+     * @throws Exception
+     */
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        if (sqlSessionTemplate == null && sqlSessionFactory == null) {
+            throw new ParameterIsEmptyException(
+                    "sqlSessionTemplate and sqlSessionFactory is null");
+        }
+        AssertUtils.notNull(sqlSessionTemplate, "sqlSessionTemplate is null.");
+        
+        if (this.sqlSessionFactory == null) {
+            this.sqlSessionFactory = this.sqlSessionTemplate.getSqlSessionFactory();
+        }
+        if (this.sqlSessionTemplate == null) {
+            this.sqlSessionTemplate = new SqlSessionTemplate(
+                    this.sqlSessionFactory, ExecutorType.SIMPLE,
+                    this.exceptionTranslator);
+        } else if (this.exceptionTranslator == null) {
+            MetaObject mo = MetaObject.forObject(this.sqlSessionTemplate);
+            this.exceptionTranslator = (PersistenceExceptionTranslator) mo.getValue("exceptionTranslator");
+        }
+        
+        //创建batchSqlSessionFactory
+        if (batchSqlSessionTemplate != null) {
+            AssertUtils.isTrue(this.sqlSessionTemplate.getSqlSessionFactory() != this.batchSqlSessionTemplate.getSqlSessionFactory(),
+                    "batchSqlSessionTemplate.sqlSessionFactory == sqlSessionTemplate.sqlSessionFactory");
+        } else {
+            SqlSessionFactory batchSqlSessionFactory = SqlSessionManager.newInstance(this.sqlSessionFactory);
+            batchSqlSessionTemplate = new SqlSessionTemplate(
+                    batchSqlSessionFactory, ExecutorType.BATCH,
+                    this.exceptionTranslator);
+        }
+    }
     
     /**
       * 利用hibernaeUUID生成器，生成唯一键
@@ -82,8 +137,7 @@ public class MyBatisDaoSupport {
     public <T> T find(String statement, Object parameter) {
         if (parameter != null) {
             return this.sqlSessionTemplate.<T> selectOne(statement, parameter);
-        }
-        else {
+        } else {
             return this.sqlSessionTemplate.<T> selectOne(statement);
         }
     }
@@ -103,8 +157,7 @@ public class MyBatisDaoSupport {
         if (parameter != null) {
             return (Integer) this.sqlSessionTemplate.selectOne(statement,
                     parameter);
-        }
-        else {
+        } else {
             return (Integer) this.sqlSessionTemplate.selectOne(statement);
         }
     }
@@ -123,8 +176,7 @@ public class MyBatisDaoSupport {
     public <T> List<T> queryList(String statement, Object parameter) {
         if (parameter != null) {
             return this.sqlSessionTemplate.<T> selectList(statement, parameter);
-        }
-        else {
+        } else {
             return this.sqlSessionTemplate.<T> selectList(statement);
         }
     }
@@ -346,8 +398,7 @@ public class MyBatisDaoSupport {
             return this.sqlSessionTemplate.<K, V> selectMap(statement,
                     parameter,
                     mapKey);
-        }
-        else {
+        } else {
             return this.sqlSessionTemplate.<K, V> selectMap(statement, mapKey);
         }
     }
@@ -393,8 +444,7 @@ public class MyBatisDaoSupport {
             ResultHandler handler) {
         if (parameter != null) {
             this.sqlSessionTemplate.select(statement, parameter, handler);
-        }
-        else {
+        } else {
             this.sqlSessionTemplate.select(statement, handler);
         }
     }
@@ -439,11 +489,41 @@ public class MyBatisDaoSupport {
     public void insert(String statement, Object parameter) {
         if (parameter != null) {
             this.sqlSessionTemplate.insert(statement, parameter);
-        }
-        else {
+        } else {
             this.sqlSessionTemplate.insert(statement);
         }
     }
+    
+    //    /**
+    //     * 提供给批量插入使用 需要使用用户自己控制异常处理， 以及flush的时候 需要自己调用
+    //     * 
+    //     * @param statement
+    //     * @param parameter
+    //     *            [参数说明]
+    //     * 
+    //     * @return void [返回类型说明]
+    //     * @exception throws [异常类型] [异常说明]
+    //     * @see [类、类#方法、类#成员]
+    //     */
+    //    @Deprecated
+    //    private void insertForBatch(SqlSession sqlSession, String statement,
+    //            Object parameter, String keyProperty) {
+    //        if (!StringUtils.isEmpty(keyProperty)) {
+    //            //如果指定了keyProperty
+    //            MetaObject metaObject = MetaObject.forObject(parameter);
+    //            if (metaObject.hasSetter(keyProperty)
+    //                    && String.class.equals(metaObject.getSetterType(keyProperty))
+    //                    && StringUtils.isEmpty((String) metaObject.getValue(keyProperty))) {
+    //                metaObject.setValue(keyProperty, generateUUID());
+    //            }
+    //        }
+    //        
+    //        if (parameter != null) {
+    //            sqlSession.insert(statement, parameter);
+    //        } else {
+    //            sqlSession.insert(statement);
+    //        }
+    //    }
     
     /**
      * 提供给批量插入使用 需要使用用户自己控制异常处理， 以及flush的时候 需要自己调用
@@ -456,8 +536,8 @@ public class MyBatisDaoSupport {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    private void insertForBatch(SqlSession sqlSession, String statement,
-            Object parameter, String keyProperty) {
+    private void insertForBatch(String statement, Object parameter,
+            String keyProperty) {
         if (!StringUtils.isEmpty(keyProperty)) {
             //如果指定了keyProperty
             MetaObject metaObject = MetaObject.forObject(parameter);
@@ -469,10 +549,9 @@ public class MyBatisDaoSupport {
         }
         
         if (parameter != null) {
-            sqlSession.insert(statement, parameter);
-        }
-        else {
-            sqlSession.insert(statement);
+            this.batchSqlSessionTemplate.insert(statement, parameter);
+        } else {
+            this.batchSqlSessionTemplate.insert(statement);
         }
     }
     
@@ -525,59 +604,47 @@ public class MyBatisDaoSupport {
         //设置总条数
         result.setTotalNum(objectList.size());
         
-        //从当前环境中根据connection生成批量提交的sqlSession
-        SqlSession sqlSession = this.sqlSessionTemplate.getSqlSessionFactory()
-                .openSession(ExecutorType.BATCH);
-        
-        try {
-            // 本次flush的列表开始行行索引
-            int startFlushRowIndex = 0;
-            for (int index = 0; index < objectList.size(); index++) {
-                // 插入对象
-                insertForBatch(sqlSession,
-                        statement,
-                        objectList.get(index),
-                        null);
-                if ((index > 0 && index % doFlushSize == 0)
-                        || index == objectList.size() - 1) {
-                    try {
-                        List<org.apache.ibatis.executor.BatchResult> test = flushBatchStatements(sqlSession);
-                        System.out.println(test);
-                        startFlushRowIndex = index + 1;
+        // 本次flush的列表开始行行索引
+        int startFlushRowIndex = 0;
+        for (int index = 0; index < objectList.size(); index++) {
+            // 插入对象
+            insertForBatch(statement,
+                    objectList.get(index),
+                    null);
+            if ((index > 0 && index % doFlushSize == 0)
+                    || index == objectList.size() - 1) {
+                try {
+                    @SuppressWarnings("unused")
+                    List<org.apache.ibatis.executor.BatchResult> test = flushBatchStatements();
+                    //System.out.println(test);
+                    startFlushRowIndex = index + 1;
+                } catch (BatchExecutorException ex) {
+                    if (isStopWhenFlushHappenedException) {
+                        throw ex;
                     }
-                    catch (Exception ex) {
-                        if (!(ex.getCause() instanceof BatchExecutorException)
-                                || isStopWhenFlushHappenedException) {
-                            DataAccessException translated = this.sqlSessionTemplate.getPersistenceExceptionTranslator()
-                                    .translateExceptionIfPossible((PersistenceException) ex);
-                            throw translated;
-                        }
-                        
-                        BatchExecutorException e = (BatchExecutorException) ex.getCause();
-                        // 如果为忽略错误异常则记录警告日志即可，无需打印堆栈，如果需要堆栈，需将日志级别配置为debug
-                        logger.warn("batchInsert hanppend Exception:{},the exception be igorned.",
-                                ex.toString());
-                        if (logger.isDebugEnabled()) {
-                            logger.debug(ex.toString(), ex);
-                        }
-                        
-                        // 获取错误行数，由于错误行发生的地方
-                        int errorRownumIndex = startFlushRowIndex
-                                + e.getSuccessfulBatchResults().size();
-                        result.addErrorInfoWhenException(objectList.get(index),
-                                errorRownumIndex,
-                                ex);
-                        
-                        //将行索引调整为错误行的行号，即从发生错误的行后面一行继续执行
-                        index = errorRownumIndex;
-                        startFlushRowIndex = errorRownumIndex + 1;
+                    
+                    BatchExecutorException e = (BatchExecutorException) ex.getCause();
+                    // 如果为忽略错误异常则记录警告日志即可，无需打印堆栈，如果需要堆栈，需将日志级别配置为debug
+                    logger.warn("batchInsert hanppend Exception:{},the exception be igorned.",
+                            ex.toString());
+                    if (logger.isDebugEnabled()) {
+                        logger.debug(ex.toString(), ex);
                     }
+                    
+                    // 获取错误行数，由于错误行发生的地方
+                    int errorRownumIndex = startFlushRowIndex
+                            + e.getSuccessfulBatchResults().size();
+                    result.addErrorInfoWhenException(objectList.get(index),
+                            errorRownumIndex,
+                            ex);
+                    
+                    //将行索引调整为错误行的行号，即从发生错误的行后面一行继续执行
+                    index = errorRownumIndex;
+                    startFlushRowIndex = errorRownumIndex + 1;
                 }
             }
         }
-        finally {
-            sqlSession.close();
-        }
+        
         return result;
     }
     
@@ -634,58 +701,53 @@ public class MyBatisDaoSupport {
         result.setTotalNum(objectList.size());
         
         //从当前环境中根据connection生成批量提交的sqlSession
-        SqlSession sqlSession = this.sqlSessionTemplate.getSqlSessionFactory()
-                .openSession(ExecutorType.BATCH);
+        SqlSessionFactory newSqlSessionFactory = SqlSessionManager.newInstance(this.sqlSessionTemplate.getSqlSessionFactory());
         
-        try {
-            // 本次flush的列表开始行行索引
-            int startFlushRowIndex = 0;
-            for (int index = 0; index < objectList.size(); index++) {
-                // 插入对象
-                insertForBatch(sqlSession,
-                        statement,
-                        objectList.get(index),
-                        keyPropertyName);
-                if ((index > 0 && index % doFlushSize == 0)
-                        || index == objectList.size() - 1) {
-                    try {
-                        List<org.apache.ibatis.executor.BatchResult> test = flushBatchStatements(sqlSession);
-                        System.out.println(test);
-                        startFlushRowIndex = index + 1;
+        SqlSessionUtils.getSqlSession(newSqlSessionFactory,
+                ExecutorType.BATCH,
+                null);
+        
+        // 本次flush的列表开始行行索引
+        int startFlushRowIndex = 0;
+        for (int index = 0; index < objectList.size(); index++) {
+            // 插入对象
+            insertForBatch(statement,
+                    objectList.get(index),
+                    keyPropertyName);
+            if ((index > 0 && index % doFlushSize == 0)
+                    || index == objectList.size() - 1) {
+                try {
+                    @SuppressWarnings("unused")
+                    List<org.apache.ibatis.executor.BatchResult> test = flushBatchStatements();
+                    //System.out.println(test);
+                    startFlushRowIndex = index + 1;
+                } catch (BatchExecutorException ex) {
+                    if (isStopWhenFlushHappenedException) {
+                        throw ex;
                     }
-                    catch (Exception ex) {
-                        if (!(ex.getCause() instanceof BatchExecutorException)
-                                || isStopWhenFlushHappenedException) {
-                            DataAccessException translated = this.sqlSessionTemplate.getPersistenceExceptionTranslator()
-                                    .translateExceptionIfPossible((PersistenceException) ex);
-                            throw translated;
-                        }
-                        
-                        BatchExecutorException e = (BatchExecutorException) ex.getCause();
-                        // 如果为忽略错误异常则记录警告日志即可，无需打印堆栈，如果需要堆栈，需将日志级别配置为debug
-                        logger.warn("batchInsert hanppend Exception:{},the exception be igorned.",
-                                ex.toString());
-                        if (logger.isDebugEnabled()) {
-                            logger.debug(ex.toString(), ex);
-                        }
-                        
-                        // 获取错误行数，由于错误行发生的地方
-                        int errorRownumIndex = startFlushRowIndex
-                                + e.getSuccessfulBatchResults().size();
-                        result.addErrorInfoWhenException(objectList.get(index),
-                                errorRownumIndex,
-                                ex);
-                        
-                        //将行索引调整为错误行的行号，即从发生错误的行后面一行继续执行
-                        index = errorRownumIndex;
-                        startFlushRowIndex = errorRownumIndex + 1;
+                    
+                    BatchExecutorException e = (BatchExecutorException) ex.getCause();
+                    // 如果为忽略错误异常则记录警告日志即可，无需打印堆栈，如果需要堆栈，需将日志级别配置为debug
+                    logger.warn("batchInsert hanppend Exception:{},the exception be igorned.",
+                            ex.toString());
+                    if (logger.isDebugEnabled()) {
+                        logger.debug(ex.toString(), ex);
                     }
+                    
+                    // 获取错误行数，由于错误行发生的地方
+                    int errorRownumIndex = startFlushRowIndex
+                            + e.getSuccessfulBatchResults().size();
+                    result.addErrorInfoWhenException(objectList.get(index),
+                            errorRownumIndex,
+                            ex);
+                    
+                    //将行索引调整为错误行的行号，即从发生错误的行后面一行继续执行
+                    index = errorRownumIndex;
+                    startFlushRowIndex = errorRownumIndex + 1;
                 }
             }
         }
-        finally {
-            sqlSession.close();
-        }
+        
         return result;
     }
     
@@ -703,11 +765,30 @@ public class MyBatisDaoSupport {
     public int update(String statement, Object parameter) {
         if (parameter != null) {
             return this.sqlSessionTemplate.update(statement, parameter);
-        }
-        else {
+        } else {
             return this.sqlSessionTemplate.update(statement);
         }
     }
+    
+    //    /**
+    //     * 提供给批量更新使用 需要使用用户自己控制异常处理， 以及flush的时候 需要自己调用
+    //     * 
+    //     * @param statement
+    //     * @param parameter
+    //     *            [参数说明]
+    //     * 
+    //     * @return void [返回类型说明]
+    //     * @exception throws [异常类型] [异常说明]
+    //     * @see [类、类#方法、类#成员]
+    //     */
+    //    private void updateForBatch(SqlSession sqlSession, String statement,
+    //            Object parameter) {
+    //        if (parameter != null) {
+    //            sqlSession.update(statement, parameter);
+    //        } else {
+    //            sqlSession.update(statement);
+    //        }
+    //    }
     
     /**
      * 提供给批量更新使用 需要使用用户自己控制异常处理， 以及flush的时候 需要自己调用
@@ -720,13 +801,11 @@ public class MyBatisDaoSupport {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    private void updateForBatch(SqlSession sqlSession, String statement,
-            Object parameter) {
+    private void updateForBatch(String statement, Object parameter) {
         if (parameter != null) {
-            sqlSession.update(statement, parameter);
-        }
-        else {
-            sqlSession.update(statement);
+            this.batchSqlSessionTemplate.update(statement, parameter);
+        } else {
+            this.batchSqlSessionTemplate.update(statement);
         }
     }
     
@@ -776,55 +855,43 @@ public class MyBatisDaoSupport {
             doFlushSize = defaultDoFlushSize;
         }
         
-        //从当前环境中根据connection生成批量提交的sqlSession
-        SqlSession sqlSession = this.sqlSessionTemplate.getSqlSessionFactory()
-                .openSession(ExecutorType.BATCH);
-        
-        try {
-            // 本次flush的列表开始行行索引
-            int startFlushRowIndex = 0;
-            for (int index = 0; index < objectList.size(); index++) {
-                // 插入对象
-                updateForBatch(sqlSession, statement, objectList.get(index));
-                if ((index > 0 && index % doFlushSize == 0)
-                        || index == objectList.size() - 1) {
-                    try {
-                        List<org.apache.ibatis.executor.BatchResult> test = flushBatchStatements(sqlSession);
-                        System.out.println(test);
-                        startFlushRowIndex = index + 1;
+        // 本次flush的列表开始行行索引
+        int startFlushRowIndex = 0;
+        for (int index = 0; index < objectList.size(); index++) {
+            // 插入对象
+            updateForBatch(statement, objectList.get(index));
+            if ((index > 0 && index % doFlushSize == 0)
+                    || index == objectList.size() - 1) {
+                try {
+                    @SuppressWarnings("unused")
+                    List<org.apache.ibatis.executor.BatchResult> test = flushBatchStatements();
+                    //System.out.println(test);
+                    startFlushRowIndex = index + 1;
+                } catch (BatchExecutorException ex) {
+                    if (isStopWhenFlushHappenedException) {
+                        throw ex;
                     }
-                    catch (Exception ex) {
-                        if (!(ex.getCause() instanceof BatchExecutorException)
-                                || isStopWhenFlushHappenedException) {
-                            DataAccessException translated = this.sqlSessionTemplate.getPersistenceExceptionTranslator()
-                                    .translateExceptionIfPossible((PersistenceException) ex);
-                            throw translated;
-                        }
-                        
-                        BatchExecutorException e = (BatchExecutorException) ex.getCause();
-                        // 如果为忽略错误异常则记录警告日志即可，无需打印堆栈，如果需要堆栈，需将日志级别配置为debug
-                        logger.warn("batchUpdate hanppend Exception:{},the exception be igorned.",
-                                ex.toString());
-                        if (logger.isDebugEnabled()) {
-                            logger.debug(ex.toString(), ex);
-                        }
-                        
-                        // 获取错误行数，由于错误行发生的地方
-                        int errorRownumIndex = startFlushRowIndex
-                                + e.getSuccessfulBatchResults().size();
-                        result.addErrorInfoWhenException(objectList.get(index),
-                                errorRownumIndex,
-                                ex);
-                        
-                        //将行索引调整为错误行的行号，即从发生错误的行后面一行继续执行
-                        index = errorRownumIndex;
-                        startFlushRowIndex = errorRownumIndex + 1;
+                    
+                    BatchExecutorException e = (BatchExecutorException) ex.getCause();
+                    // 如果为忽略错误异常则记录警告日志即可，无需打印堆栈，如果需要堆栈，需将日志级别配置为debug
+                    logger.warn("batchUpdate hanppend Exception:{},the exception be igorned.",
+                            ex.toString());
+                    if (logger.isDebugEnabled()) {
+                        logger.debug(ex.toString(), ex);
                     }
+                    
+                    // 获取错误行数，由于错误行发生的地方
+                    int errorRownumIndex = startFlushRowIndex
+                            + e.getSuccessfulBatchResults().size();
+                    result.addErrorInfoWhenException(objectList.get(index),
+                            errorRownumIndex,
+                            ex);
+                    
+                    //将行索引调整为错误行的行号，即从发生错误的行后面一行继续执行
+                    index = errorRownumIndex;
+                    startFlushRowIndex = errorRownumIndex + 1;
                 }
             }
-        }
-        finally {
-            sqlSession.close();
         }
         
         return result;
@@ -851,11 +918,31 @@ public class MyBatisDaoSupport {
         Object resObj = find(findStatement, parameter);
         if (resObj == null) {
             insert(insertStatement, parameter);
-        }
-        else {
+        } else {
             update(updateStatement, parameter);
         }
     }
+    
+    //    /**
+    //     * 提供给批量save(新增或修改)使用 需要使用用户自己控制异常处理， 以及flush的时候 需要自己调用
+    //     * 
+    //     * @param statement
+    //     * @param parameter
+    //     *            [参数说明]
+    //     * 
+    //     * @return void [返回类型说明]
+    //     * @exception throws [异常类型] [异常说明]
+    //     * @see [类、类#方法、类#成员]
+    //     */
+    //    public void saveForBatch(SqlSession sqlSession, String findStatement,
+    //            String insertStatement, String updateStatement, Object parameter) {
+    //        Object resObj = find(findStatement, parameter);
+    //        if (resObj == null) {
+    //            insertForBatch(sqlSession, insertStatement, parameter, null);
+    //        } else {
+    //            updateForBatch(sqlSession, updateStatement, parameter);
+    //        }
+    //    }
     
     /**
      * 提供给批量save(新增或修改)使用 需要使用用户自己控制异常处理， 以及flush的时候 需要自己调用
@@ -868,14 +955,13 @@ public class MyBatisDaoSupport {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public void saveForBatch(SqlSession sqlSession, String findStatement,
-            String insertStatement, String updateStatement, Object parameter) {
+    public void saveForBatch(String findStatement, String insertStatement,
+            String updateStatement, Object parameter) {
         Object resObj = find(findStatement, parameter);
         if (resObj == null) {
-            insertForBatch(sqlSession, insertStatement, parameter, null);
-        }
-        else {
-            updateForBatch(sqlSession, updateStatement, parameter);
+            insertForBatch(insertStatement, parameter, null);
+        } else {
+            updateForBatch(updateStatement, parameter);
         }
     }
     
@@ -929,27 +1015,21 @@ public class MyBatisDaoSupport {
             doFlushSize = defaultDoFlushSize;
         }
         
-        //从当前环境中根据connection生成批量提交的sqlSession
-        SqlSession sqlSession = SqlSessionUtils.getSqlSession(this.sqlSessionTemplate.getSqlSessionFactory(),
-                ExecutorType.BATCH,
-                this.sqlSessionTemplate.getPersistenceExceptionTranslator());
-        
         // 本次flush的列表开始行行索引
         int startFlushRowIndex = 0;
         for (int index = 0; index < objectList.size(); index++) {
             // 插入对象
-            saveForBatch(sqlSession,
-                    findStatement,
+            saveForBatch(findStatement,
                     insertStatement,
                     updateStatement,
                     objectList.get(index));
             index++;
             if (index % doFlushSize == 0 || index == objectList.size()) {
                 try {
-                    flushBatchStatements(sqlSession);
+                    @SuppressWarnings("unused")
+                    List<org.apache.ibatis.executor.BatchResult> test = flushBatchStatements();
                     startFlushRowIndex = index;
-                }
-                catch (BatchExecutorException ex) {
+                } catch (BatchExecutorException ex) {
                     if (isStopWhenFlushHappenedException) {
                         throw ex;
                     }
@@ -1010,11 +1090,30 @@ public class MyBatisDaoSupport {
     public int delete(String statement, Object parameter) {
         if (parameter != null) {
             return this.sqlSessionTemplate.delete(statement, parameter);
-        }
-        else {
+        } else {
             return this.sqlSessionTemplate.delete(statement);
         }
     }
+    
+    //    /**
+    //     * 提供给批量删除使用 需要使用用户自己控制异常处理， 以及flush的时候 需要自己调用
+    //     * 
+    //     * @param statement
+    //     * @param parameter
+    //     *            [参数说明]
+    //     * 
+    //     * @return void [返回类型说明]
+    //     * @exception throws [异常类型] [异常说明]
+    //     * @see [类、类#方法、类#成员]
+    //     */
+    //    public void deleteForBatch(SqlSession sqlSession, String statement,
+    //            Object parameter) {
+    //        if (parameter != null) {
+    //            sqlSession.delete(statement, parameter);
+    //        } else {
+    //            sqlSession.delete(statement);
+    //        }
+    //    }
     
     /**
      * 提供给批量删除使用 需要使用用户自己控制异常处理， 以及flush的时候 需要自己调用
@@ -1027,13 +1126,12 @@ public class MyBatisDaoSupport {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public void deleteForBatch(SqlSession sqlSession, String statement,
+    public void deleteForBatch(String statement,
             Object parameter) {
         if (parameter != null) {
-            sqlSession.delete(statement, parameter);
-        }
-        else {
-            sqlSession.delete(statement);
+            this.batchSqlSessionTemplate.delete(statement, parameter);
+        } else {
+            this.batchSqlSessionTemplate.delete(statement);
         }
     }
     
@@ -1083,55 +1181,43 @@ public class MyBatisDaoSupport {
             doFlushSize = defaultDoFlushSize;
         }
         
-        //从当前环境中根据connection生成批量提交的sqlSession
-        SqlSession sqlSession = this.sqlSessionTemplate.getSqlSessionFactory()
-                .openSession(ExecutorType.BATCH);
-        
-        try {
-            // 本次flush的列表开始行行索引
-            int startFlushRowIndex = 0;
-            for (int index = 0; index < objectList.size(); index++) {
-                // 插入对象
-                deleteForBatch(sqlSession, statement, objectList.get(index));
-                if ((index > 0 && index % doFlushSize == 0)
-                        || index == objectList.size() - 1) {
-                    try {
-                        List<org.apache.ibatis.executor.BatchResult> test = flushBatchStatements(sqlSession);
-                        System.out.println(test);
-                        startFlushRowIndex = index + 1;
+        // 本次flush的列表开始行行索引
+        int startFlushRowIndex = 0;
+        for (int index = 0; index < objectList.size(); index++) {
+            // 插入对象
+            deleteForBatch(statement, objectList.get(index));
+            if ((index > 0 && index % doFlushSize == 0)
+                    || index == objectList.size() - 1) {
+                try {
+                    @SuppressWarnings("unused")
+                    List<org.apache.ibatis.executor.BatchResult> test = flushBatchStatements();
+                    //System.out.println(test);
+                    startFlushRowIndex = index + 1;
+                } catch (BatchExecutorException ex) {
+                    if (isStopWhenFlushHappenedException) {
+                        throw ex;
                     }
-                    catch (Exception ex) {
-                        if (!(ex.getCause() instanceof BatchExecutorException)
-                                || isStopWhenFlushHappenedException) {
-                            DataAccessException translated = this.sqlSessionTemplate.getPersistenceExceptionTranslator()
-                                    .translateExceptionIfPossible((PersistenceException) ex);
-                            throw translated;
-                        }
-                        
-                        BatchExecutorException e = (BatchExecutorException) ex.getCause();
-                        // 如果为忽略错误异常则记录警告日志即可，无需打印堆栈，如果需要堆栈，需将日志级别配置为debug
-                        logger.warn("batchUpdate hanppend Exception:{},the exception be igorned.",
-                                ex.toString());
-                        if (logger.isDebugEnabled()) {
-                            logger.debug(ex.toString(), ex);
-                        }
-                        
-                        // 获取错误行数，由于错误行发生的地方
-                        int errorRownumIndex = startFlushRowIndex
-                                + e.getSuccessfulBatchResults().size();
-                        result.addErrorInfoWhenException(objectList.get(index),
-                                errorRownumIndex,
-                                ex);
-                        
-                        //将行索引调整为错误行的行号，即从发生错误的行后面一行继续执行
-                        index = errorRownumIndex;
-                        startFlushRowIndex = errorRownumIndex + 1;
+                    
+                    BatchExecutorException e = (BatchExecutorException) ex.getCause();
+                    // 如果为忽略错误异常则记录警告日志即可，无需打印堆栈，如果需要堆栈，需将日志级别配置为debug
+                    logger.warn("batchUpdate hanppend Exception:{},the exception be igorned.",
+                            ex.toString());
+                    if (logger.isDebugEnabled()) {
+                        logger.debug(ex.toString(), ex);
                     }
+                    
+                    // 获取错误行数，由于错误行发生的地方
+                    int errorRownumIndex = startFlushRowIndex
+                            + e.getSuccessfulBatchResults().size();
+                    result.addErrorInfoWhenException(objectList.get(index),
+                            errorRownumIndex,
+                            ex);
+                    
+                    //将行索引调整为错误行的行号，即从发生错误的行后面一行继续执行
+                    index = errorRownumIndex;
+                    startFlushRowIndex = errorRownumIndex + 1;
                 }
             }
-        }
-        finally {
-            sqlSession.close();
         }
         
         return result;
@@ -1148,9 +1234,8 @@ public class MyBatisDaoSupport {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    private List<org.apache.ibatis.executor.BatchResult> flushBatchStatements(
-            SqlSession sqlSession) {
-        return sqlSession.flushStatements();
+    private List<org.apache.ibatis.executor.BatchResult> flushBatchStatements() {
+        return this.batchSqlSessionTemplate.flushStatements();
     }
     
     /**
@@ -1180,4 +1265,40 @@ public class MyBatisDaoSupport {
         this.sqlSessionTemplate = sqlSessionTemplate;
     }
     
+    /**
+     * @return 返回 batchSqlSessionTemplate
+     */
+    public SqlSessionTemplate getBatchSqlSessionTemplate() {
+        return batchSqlSessionTemplate;
+    }
+    
+    /**
+     * @param 对batchSqlSessionTemplate进行赋值
+     */
+    public void setBatchSqlSessionTemplate(
+            SqlSessionTemplate batchSqlSessionTemplate) {
+        this.batchSqlSessionTemplate = batchSqlSessionTemplate;
+    }
+    
+    /**
+     * @return 返回 exceptionTranslator
+     */
+    public PersistenceExceptionTranslator getExceptionTranslator() {
+        return exceptionTranslator;
+    }
+    
+    /**
+     * @param 对exceptionTranslator进行赋值
+     */
+    public void setExceptionTranslator(
+            PersistenceExceptionTranslator exceptionTranslator) {
+        this.exceptionTranslator = exceptionTranslator;
+    }
+    
+    /**
+     * @param 对sqlSessionFactory进行赋值
+     */
+    public void setSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
+        this.sqlSessionFactory = sqlSessionFactory;
+    }
 }
