@@ -11,7 +11,6 @@ import java.util.List;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.tx.component.auth.context.AuthSessionContext;
 import com.tx.component.auth.model.AuthItem;
 
 

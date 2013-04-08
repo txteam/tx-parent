@@ -343,6 +343,10 @@ public class SimplePersistenceRuleService {
         //查询对应规则，是否已经存在
         SimplePersistenceRule oldRule = findSimplePersistenceRuleByRulePK(rule.getRuleType(), rule.getServiceType(), rule.rule());
         
+        if(rule.getRemark() != null
+                && rule.getRemark().length() > 2000){
+            rule.setRemark(rule.getRemark().substring(0, 1997) + "...");
+        }
         if(oldRule == null){
             this.simplePersistenceRuleDao.insertSimplePersistenceRule(rule);
         }else{

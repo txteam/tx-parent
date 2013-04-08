@@ -6,6 +6,8 @@
  */
 package com.tx.core.spring.event;
 
+import java.util.Map;
+
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.ApplicationContextEvent;
 
@@ -26,9 +28,12 @@ public class BeansInitializedEvent<T> extends ApplicationContextEvent{
     
     private Class<T> type;
     
-    public BeansInitializedEvent(ApplicationContext source,Class<T> type) {
+    private Map<String, T> beans;
+    
+    public BeansInitializedEvent(ApplicationContext source,Class<T> type,Map<String, T> beans) {
         super(source);
         this.type = type;
+        this.beans = beans;
     }
 
     /**
@@ -43,5 +48,19 @@ public class BeansInitializedEvent<T> extends ApplicationContextEvent{
      */
     public void setType(Class<T> type) {
         this.type = type;
+    }
+
+    /**
+     * @return 返回 beans
+     */
+    public Map<String, T> getBeans() {
+        return beans;
+    }
+
+    /**
+     * @param 对beans进行赋值
+     */
+    public void setBeans(Map<String, T> beans) {
+        this.beans = beans;
     }
 }

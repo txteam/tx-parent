@@ -6,6 +6,8 @@
  */
 package com.tx.component.rule.context;
 
+import org.springframework.stereotype.Component;
+
 import com.tx.core.spring.processor.BeansInitializedEventSupportPostProcessor;
 
 /**
@@ -17,6 +19,7 @@ import com.tx.core.spring.processor.BeansInitializedEventSupportPostProcessor;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
+@Component("ruleLoaderSupportPostProcessor")
 public class RuleLoaderSupportPostProcessor extends BeansInitializedEventSupportPostProcessor<RuleLoader> {
 
 

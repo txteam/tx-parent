@@ -6,14 +6,15 @@
  */
 package com.tx.core.spring.processor;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
 
 import com.tx.core.spring.event.BeansInitializedEvent;
 
@@ -27,23 +28,32 @@ import com.tx.core.spring.event.BeansInitializedEvent;
  * @since  [产品/模块版本]
  */
 public abstract class BeansInitializedEventSupportPostProcessor<T> implements
-        BeanPostProcessor, ApplicationContextAware {
+        BeanPostProcessor, ApplicationListener<ContextRefreshedEvent> {
     
-    private ApplicationContext applicationContext;
+    private Logger logger = LoggerFactory.getLogger(BeansInitializedEventSupportPostProcessor.class);
     
-    private Set<String> waitInitRuleLoaderNameSet = new HashSet<String>();
-
+    private Map<String, T> beansMapping = new HashMap<String, T>();
+    
+    private boolean isBeansInitializedEventPublished = false;
+    
     /**
-     * @param applicationContext
-     * @throws BeansException
+     * @param event
      */
     @Override
-    public void setApplicationContext(ApplicationContext applicationContext)
-            throws BeansException {
-        this.applicationContext = applicationContext;
-        waitInitRuleLoaderNameSet.addAll(this.applicationContext.getBeansOfType(beanType()).keySet());
+    public void onApplicationEvent(ContextRefreshedEvent event) {
+        logger.info("on ContextRefreshedEvent ...");
+        if (!isBeansInitializedEventPublished) {
+            isBeansInitializedEventPublished = true;
+            event.getApplicationContext()
+                    .publishEvent(new BeansInitializedEvent<T>(
+                            event.getApplicationContext(), beanType(),
+                            beansMapping));
+            logger.info("publish BeansInitializedEvent beanType:{} beans.size:{} ...",beanType().getName(),beansMapping.size());
+        }else{
+            logger.info("publish BeansInitializedEvent not need republish. ...");
+        }
     }
-
+    
     /**
      * @param bean
      * @param beanName
@@ -53,6 +63,9 @@ public abstract class BeansInitializedEventSupportPostProcessor<T> implements
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName)
             throws BeansException {
+        if (beanType().isAssignableFrom(bean.getClass())) {
+            beansMapping.put(beanName, null);
+        }
         return bean;
     }
     
@@ -62,15 +75,12 @@ public abstract class BeansInitializedEventSupportPostProcessor<T> implements
      * @return
      * @throws BeansException
      */
+    @SuppressWarnings("unchecked")
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName)
             throws BeansException {
-        if (waitInitRuleLoaderNameSet.contains(beanName)) {
-            waitInitRuleLoaderNameSet.remove(beanName);
-            if (CollectionUtils.isEmpty(waitInitRuleLoaderNameSet)) {
-                this.applicationContext.publishEvent(new BeansInitializedEvent<T>(
-                        this.applicationContext, beanType()));
-            }
+        if (beansMapping.containsKey(beanName)) {
+            beansMapping.put(beanName, (T) bean);
         }
         return bean;
     }

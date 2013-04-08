@@ -11,13 +11,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.springframework.beans.factory.FactoryBean;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
@@ -35,16 +32,11 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class AuthSessionContext implements FactoryBean<AuthSessionContext>,InitializingBean{
+public abstract class AuthSessionContext {
     
     public final static String SESSION_KEY_CURRENT_OPERATOR_AUTHREF_MULTIVALUEMAP = "CURRENT_OPERATOR_AUTHREF_MULTIVALUEMAP_!@#$%^&*";
     
     public final static String SESSION_KEY_CURRENT_OPERATOR_ID = "CURRENT_OPERATOR_ID_!@#$%^&*";
-    
-    private static AuthSessionContext context;
-    
-    @Resource(name = "authContext")
-    private AuthContext authContext;
     
     /**
      * 线程变量:当前会话容器<br/>
@@ -63,62 +55,6 @@ public class AuthSessionContext implements FactoryBean<AuthSessionContext>,Initi
     };
     
     /**
-     * <默认构造函数>
-     */
-    public AuthSessionContext(){
-        AssertUtils.isNull(AuthSessionContext.context,
-                "AuthSessionContext must be singleton.it has be created");
-    }
-    
-    /**
-      * 获取权限会话容器
-      * <功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return AuthSessionContext [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    public static AuthSessionContext getContext(){
-        AssertUtils.notNull(AuthSessionContext.context,
-                "AuthContext is not initialize.");
-        return AuthSessionContext.context;
-    }
-
-    /**
-     * @throws Exception
-     */
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        context = this;
-    }
-
-    /**
-     * @return
-     * @throws Exception
-     */
-    @Override
-    public AuthSessionContext getObject() throws Exception {
-        return this;
-    }
-    
-    /**
-     * @return
-     */
-    @Override
-    public Class<?> getObjectType() {
-        return AuthSessionContext.class;
-    }
-    
-    /**
-     * @return
-     */
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-    
-    /**
       * 将操作员的id放入session中
       * <功能详细描述>
       * @param operatorId [参数说明]
@@ -127,13 +63,12 @@ public class AuthSessionContext implements FactoryBean<AuthSessionContext>,Initi
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public void putOperatorIdToSession(String operatorId){
-        AssertUtils.notEmpty(operatorId,"operatorId is empty.");
+    public static void putOperatorIdToSession(String operatorId) {
+        AssertUtils.notEmpty(operatorId, "operatorId is empty.");
         
         currentSessionContext.get()
-        .getSession()
-        .setAttribute(SESSION_KEY_CURRENT_OPERATOR_ID,
-                operatorId);
+                .getSession()
+                .setAttribute(SESSION_KEY_CURRENT_OPERATOR_ID, operatorId);
     }
     
     /**
@@ -144,8 +79,8 @@ public class AuthSessionContext implements FactoryBean<AuthSessionContext>,Initi
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public String getOperatorIdFromSession(){
-        String operatorId = (String)currentSessionContext.get()
+    public static String getOperatorIdFromSession() {
+        String operatorId = (String) currentSessionContext.get()
                 .getSession()
                 .getAttribute(SESSION_KEY_CURRENT_OPERATOR_ID);
         
@@ -162,7 +97,7 @@ public class AuthSessionContext implements FactoryBean<AuthSessionContext>,Initi
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    public void putAuthRefToSession(List<AuthItemRef> authItemRefList) {
+    public static void putAuthRefToSession(List<AuthItemRef> authItemRefList) {
         MultiValueMap<String, AuthItemRef> authItemRefMap = new LinkedMultiValueMap<String, AuthItemRef>();
         //如果当前不存在会话，者直接跳过该逻辑
         if (!CollectionUtils.isEmpty(authItemRefList)) {
@@ -189,7 +124,7 @@ public class AuthSessionContext implements FactoryBean<AuthSessionContext>,Initi
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public MultiValueMap<String, AuthItemRef> getAuthRefMultiValueMapFromSession() {
+    public static MultiValueMap<String, AuthItemRef> getAuthRefMultiValueMapFromSession() {
         @SuppressWarnings("unchecked")
         MultiValueMap<String, AuthItemRef> authItemRefMap = (MultiValueMap<String, AuthItemRef>) currentSessionContext.get()
                 .getSession()
@@ -208,7 +143,7 @@ public class AuthSessionContext implements FactoryBean<AuthSessionContext>,Initi
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public List<AuthItemRef> getAuthRefListFromSession(String authItemId) {
+    public static List<AuthItemRef> getAuthRefListFromSession(String authItemId) {
         @SuppressWarnings("unchecked")
         MultiValueMap<String, AuthItemRef> authItemRefMap = (MultiValueMap<String, AuthItemRef>) currentSessionContext.get()
                 .getSession()
@@ -226,12 +161,12 @@ public class AuthSessionContext implements FactoryBean<AuthSessionContext>,Initi
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public List<AuthItem> getAuthItemListDependAuthRefOfSession(){
-        Map<String, AuthItem> authItemMapping = authContext.getAllAuthItemMapping();
+    public static List<AuthItem> getAuthItemListDependAuthRefOfSession() {
+        Map<String, AuthItem> authItemMapping = AuthContext.getContext().getAllAuthItemMapping();
         
         List<AuthItem> authItemList = new ArrayList<AuthItem>();
         MultiValueMap<String, AuthItemRef> authRefMulMap = getAuthRefMultiValueMapFromSession();
-        for(String authIdTemp : authRefMulMap.keySet()){
+        for (String authIdTemp : authRefMulMap.keySet()) {
             authItemList.add(authItemMapping.get(authIdTemp));
         }
         return authItemList;
@@ -246,17 +181,17 @@ public class AuthSessionContext implements FactoryBean<AuthSessionContext>,Initi
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public List<AuthItem> getPerpetualAuthItemListDependAuthRefOfSession(){
-        Map<String, AuthItem> authItemMapping = authContext.getAllAuthItemMapping();
+    public static List<AuthItem> getPerpetualAuthItemListDependAuthRefOfSession() {
+        Map<String, AuthItem> authItemMapping = AuthContext.getContext().getAllAuthItemMapping();
         
         List<AuthItem> authItemList = new ArrayList<AuthItem>();
         MultiValueMap<String, AuthItemRef> authRefMulMap = getAuthRefMultiValueMapFromSession();
-        for(Entry<String, List<AuthItemRef>> entryTemp : authRefMulMap.entrySet()){
+        for (Entry<String, List<AuthItemRef>> entryTemp : authRefMulMap.entrySet()) {
             AuthItem authItemTemp = authItemMapping.get(entryTemp.getKey());
             List<AuthItemRef> authItemRefListTemp = entryTemp.getValue();
-            if(!CollectionUtils.isEmpty(authItemRefListTemp)){
-                for(AuthItemRef authItemRefTemp : authItemRefListTemp){
-                    if(!authItemRefTemp.isValidDependEndDate()){
+            if (!CollectionUtils.isEmpty(authItemRefListTemp)) {
+                for (AuthItemRef authItemRefTemp : authItemRefListTemp) {
+                    if (!authItemRefTemp.isValidDependEndDate()) {
                         //只压入不依赖结束时间（永久类型）的权限
                         authItemList.add(authItemTemp);
                     }
@@ -275,7 +210,7 @@ public class AuthSessionContext implements FactoryBean<AuthSessionContext>,Initi
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public static CurrentSessionContext getCurrentSessionContext(){
+    public static CurrentSessionContext getCurrentSessionContext() {
         return currentSessionContext.get();
     }
     

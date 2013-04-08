@@ -47,6 +47,7 @@ import com.tx.component.rule.support.impl.DefaultRuleSessionFactory;
 import com.tx.component.rule.transation.RuleSessionTransactionFactory;
 import com.tx.component.rule.transation.impl.DefaultRuleSessionTransactionFactory;
 import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.spring.event.BeansInitializedEvent;
 import com.tx.core.support.cache.ehcache.SimpleEhcacheMap;
 import com.tx.core.support.cache.ehcache.SimpleMultiValueEhcacheMap;
 
@@ -61,7 +62,7 @@ import com.tx.core.support.cache.ehcache.SimpleMultiValueEhcacheMap;
  * @since  [产品/模块版本]
  */
 public class RuleContext implements BeanNameAware, FactoryBean<RuleContext>,
-        InitializingBean,ApplicationContextAware{
+        InitializingBean, ApplicationContextAware {
     
     /** 日志记录器 */
     private static Logger logger = LoggerFactory.getLogger(RuleContext.class);
@@ -135,7 +136,7 @@ public class RuleContext implements BeanNameAware, FactoryBean<RuleContext>,
         logger.info("RuleContext init applicationContext.");
         this.applicationContext = applicationContext;
     }
-
+    
     /**
      * @throws Exception
      */
@@ -151,11 +152,13 @@ public class RuleContext implements BeanNameAware, FactoryBean<RuleContext>,
                 new ConcurrentHashMap<String, List<Rule>>());
         
         logger.info("加载规则加载器....");
-        Collection<RuleLoader> ruleLoaders = this.applicationContext.getBeansOfType(RuleLoader.class).values();
+        Collection<RuleLoader> ruleLoaders = this.applicationContext.getBeansOfType(RuleLoader.class)
+                .values();
         registeRuleLoader(ruleLoaders);
         logger.info("加载规则注册器...");
         @SuppressWarnings("rawtypes")
-        Collection<RuleRegister> ruleRegisters = this.applicationContext.getBeansOfType(RuleRegister.class).values();
+        Collection<RuleRegister> ruleRegisters = this.applicationContext.getBeansOfType(RuleRegister.class)
+                .values();
         registeRuleRegister(ruleRegisters);
         
         if (ruleSessionFactory == null) {
@@ -173,6 +176,18 @@ public class RuleContext implements BeanNameAware, FactoryBean<RuleContext>,
     }
     
     /**
+     * @param event
+     */
+    //@Override
+    public void onApplicationEvent(BeansInitializedEvent<RuleLoader> event) {
+        logger.info("onApplicationEvent listener...");
+        if (RuleLoader.class.isAssignableFrom(event.getType())) {
+            init(event.getApplicationContext());
+        }
+        logger.info("onApplicationEvent init success...");
+    }
+    
+    /**
       * 注册规则加载器
       * <功能详细描述>
       * @param ruleLoader [参数说明]
@@ -182,7 +197,7 @@ public class RuleContext implements BeanNameAware, FactoryBean<RuleContext>,
       * @see [类、类#方法、类#成员]
      */
     public void registeRuleLoader(Collection<RuleLoader> ruleLoaders) {
-        if(!CollectionUtils.isEmpty(ruleLoaders)){
+        if (!CollectionUtils.isEmpty(ruleLoaders)) {
             registeredRuleLoaderList.addAll(ruleLoaders);
         }
     }
@@ -198,9 +213,10 @@ public class RuleContext implements BeanNameAware, FactoryBean<RuleContext>,
      */
     public void registeRuleRegister(
             @SuppressWarnings("rawtypes") Collection<RuleRegister> ruleValidators) {
-        if(!CollectionUtils.isEmpty(ruleValidators)){
-            for(RuleRegister<? extends Rule> ruleRegisterTemp : ruleValidators){
-                ruleRegisterMap.put(ruleRegisterTemp.ruleType(), ruleRegisterTemp);
+        if (!CollectionUtils.isEmpty(ruleValidators)) {
+            for (RuleRegister<? extends Rule> ruleRegisterTemp : ruleValidators) {
+                ruleRegisterMap.put(ruleRegisterTemp.ruleType(),
+                        ruleRegisterTemp);
             }
         }
     }
@@ -775,19 +791,18 @@ public class RuleContext implements BeanNameAware, FactoryBean<RuleContext>,
     public void setMaxLoadTimeout(long maxLoadTimeout) {
         this.maxLoadTimeout = maxLoadTimeout;
     }
-
+    
     /**
      * @return 返回 waitThreadMap
      */
     public Map<Thread, Integer> getWaitThreadMap() {
         return waitThreadMap;
     }
-
+    
     /**
      * @param 对waitThreadMap进行赋值
      */
     public void setWaitThreadMap(Map<Thread, Integer> waitThreadMap) {
         this.waitThreadMap = waitThreadMap;
     }
-    
 }

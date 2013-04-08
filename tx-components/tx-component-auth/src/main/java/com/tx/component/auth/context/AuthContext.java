@@ -104,9 +104,6 @@ public class AuthContext implements FactoryBean<AuthContext>,
     @Resource(name = "authItemRefImplService")
     private AuthItemRefImplService authItemRefService;
     
-    @Resource(name = "authSessionContext")
-    private AuthSessionContext authSessionContext;
-    
     /**
      * <默认构造函数>
      */
@@ -399,9 +396,18 @@ public class AuthContext implements FactoryBean<AuthContext>,
         }
         
         //将权限引用写入容器
-        authSessionContext.putAuthRefToSession(authItemRefList);
+        AuthSessionContext.putAuthRefToSession(authItemRefList);
     }
     
+    /**
+      * 加载权限引用项
+      * <功能详细描述>
+      * @param refImpl [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
     private void loadAuthItemRef(AuthItemRefImpl refImpl) {
         if (refImpl == null || refImpl.getAuthItem() == null) {
             return;
@@ -429,7 +435,7 @@ public class AuthContext implements FactoryBean<AuthContext>,
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public boolean isHasAuth(String authKey, Object... objects) {
+    public boolean hasAuth(String authKey, Object... objects) {
         //检查对应权限的权限类型是否正确
         AuthItem authItem = authItemMapping.get(authKey);
         if (authItem == null) {
@@ -443,7 +449,7 @@ public class AuthContext implements FactoryBean<AuthContext>,
         }
         
         //如果当前权限引用依赖有效时间，则判断该权限引用是否还有效
-        List<AuthItemRef> authItemRefList = authSessionContext.getAuthRefListFromSession(authItem.getId());
+        List<AuthItemRef> authItemRefList = AuthSessionContext.getAuthRefListFromSession(authItem.getId());
         if (!CollectionUtils.isEmpty(authItemRefList)) {
             //根据权限类型获取对应的权限检查器映射
             AuthChecker authChecker = null;
@@ -905,10 +911,9 @@ public class AuthContext implements FactoryBean<AuthContext>,
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public static boolean checkHasAuth(String authKey, Object... objects) {
+    public static boolean isHasAuth(String authKey, Object... objects) {
         AssertUtils.notNull(authContext, "AuthContext init fail.");
-        
-        return authContext.isHasAuth(authKey, objects);
+        return authContext.hasAuth(authKey, objects);
     }
     
     /**
@@ -951,19 +956,5 @@ public class AuthContext implements FactoryBean<AuthContext>,
      */
     public void setAuthItemRefService(AuthItemRefImplService authItemRefService) {
         this.authItemRefService = authItemRefService;
-    }
-    
-    /**
-     * @return 返回 authSessionContext
-     */
-    public AuthSessionContext getAuthSessionContext() {
-        return authSessionContext;
-    }
-    
-    /**
-     * @param 对authSessionContext进行赋值
-     */
-    public void setAuthSessionContext(AuthSessionContext authSessionContext) {
-        this.authSessionContext = authSessionContext;
     }
 }

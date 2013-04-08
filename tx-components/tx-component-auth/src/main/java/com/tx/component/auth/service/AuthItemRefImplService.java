@@ -49,9 +49,6 @@ public class AuthItemRefImplService {
     @Resource(name = "authItemRefImplDao")
     private AuthItemRefImplDao authItemRefImplDao;
     
-    @Resource(name = "authSessionContext")
-    private AuthSessionContext authSessionContext;
-    
     /**
       * 根据具体的权限引用类型以及引用id查询权限引用集合<br/>
       *     系统登录需要调用该方法，以获知当前人员拥有的权限引用集合<br/>
@@ -299,7 +296,7 @@ public class AuthItemRefImplService {
         List<AuthItemRefImpl> authItemRefList = new ArrayList<AuthItemRefImpl>();
         
         //取得当前登录人员id
-        String currentOperatorId = authSessionContext.getOperatorIdFromSession();
+        String currentOperatorId = AuthSessionContext.getOperatorIdFromSession();
         for (String authItemIdTemp : needInsertAuthItemIds) {
             AuthItemRefImpl authItemRef = new AuthItemRefImpl();
             authItemRef.setCreateDate(new Date());
@@ -335,7 +332,7 @@ public class AuthItemRefImplService {
         List<AuthItemRefImpl> authItemRefList = new ArrayList<AuthItemRefImpl>();
         
         //取得当前登录人员id
-        String currentOperatorId = authSessionContext.getOperatorIdFromSession();
+        String currentOperatorId = AuthSessionContext.getOperatorIdFromSession();
         for (String refIdTemp : needInsertRefIds) {
             AuthItemRefImpl authItemRef = new AuthItemRefImpl();
             authItemRef.setCreateDate(new Date());
