@@ -65,15 +65,13 @@ public class AuthContext implements FactoryBean<AuthContext>,
     @SuppressWarnings("unused")
     private Logger serviceLogger = LoggerFactory.getLogger(AuthContext.class);
     
-    /** 懒汉模式工厂实例  */
-    private static Map<String, AuthContext> authContextMapping = new HashMap<String, AuthContext>();
-    
     private static AuthContext authContext = null;
     
     /** 当前spring容器 */
     private ApplicationContext applicationContext;
     
     /** spring容器中beanName */
+    @SuppressWarnings("unused")
     private String beanName;
     
     /** 默认的权限检查器 */
@@ -108,6 +106,29 @@ public class AuthContext implements FactoryBean<AuthContext>,
     
     @Resource(name = "authSessionContext")
     private AuthSessionContext authSessionContext;
+    
+    /**
+     * <默认构造函数>
+     */
+    public AuthContext() {
+        AssertUtils.isNull(AuthContext.authContext,
+                "AuthContext must be singleton.it has be created");
+    }
+    
+    /**
+      * 获取权限容器实例
+      *<功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return AuthContext [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public static AuthContext getContext() {
+        AssertUtils.notNull(AuthContext.authContext,
+                "AuthContext is not initialize.");
+        return authContext;
+    }
     
     /**
      * @param name
@@ -186,7 +207,6 @@ public class AuthContext implements FactoryBean<AuthContext>,
         loadAuthItems(this.authLoaderList);
         
         //使系统context指向实体本身
-        authContextMapping.put(this.beanName, this);
         authContext = this;
         logger.info("初始化权限容器end...");
     }
@@ -518,10 +538,6 @@ public class AuthContext implements FactoryBean<AuthContext>,
             AssertUtils.notNull(authItem, "authItemImpl is null");
             AssertUtils.notEmpty(authItem.getAuthType(), "authType is empty.");
             
-            //获取权限类型项（如果权限类型项不存在，则注册）
-            AuthTypeItemContext.getContext()
-                    .getAuthTypeItem(authItem.getAuthType());
-            
             //构建注册实体
             AuthItemImpl newAuthItemImpl = new AuthItemImpl();
             newAuthItemImpl.setId(authItem.getId());
@@ -743,7 +759,11 @@ public class AuthContext implements FactoryBean<AuthContext>,
     private AuthItemImpl doRegisteNewAuth(final AuthItemImpl authItemImpl) {
         AssertUtils.notNull(authItemImpl, "authItemImpl is null");
         AssertUtils.notEmpty(authItemImpl.getAuthType(), "authType is empty.");
-        //获取权限类型项
+        
+        //获取权限类型项（如果权限类型项不存在，则注册）
+        //向权限容器中注册权类型
+        AuthTypeItemContext.getContext()
+                .registeAuthTypeItem(authItemImpl.getAuthType());
         
         //持久化对应的权限项到数据库中
         this.authItemService.insertAuthItemImpl(authItemImpl);
@@ -796,6 +816,36 @@ public class AuthContext implements FactoryBean<AuthContext>,
         }
         
         return authItemImpl;
+    }
+    
+    /**
+      * 保存某一权限 的：对应权限引用类型的新的权限引用id集合
+      * <功能详细描述>
+      * @param authRefType
+      * @param authItemId
+      * @param refIdList [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public void saveAuthItemOfAuthRefIdList(String authRefType,String authItemId,List<String> refIdList){
+        this.authItemRefService.saveAuthItemOfAuthRefList(authRefType, authItemId, refIdList);
+    }
+    
+    /**
+      * 保存指定引用类型引用id的：引用到的权限id的集合
+      * <功能详细描述>
+      * @param authRefType
+      * @param refId
+      * @param authItemIdList [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public void saveAuthRefOfAuthItemIdList(String authRefType,String refId,List<String> authItemIdList){
+        this.authItemRefService.saveAuthRefOfAuthItemList(authRefType, refId, authItemIdList);
     }
     
     /**

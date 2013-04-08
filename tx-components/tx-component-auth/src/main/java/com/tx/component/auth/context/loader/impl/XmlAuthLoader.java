@@ -204,7 +204,7 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
                     : true;
             
             //注册权限类型
-            AuthTypeItemContext.getContext().getAuthTypeItem(authType,
+            AuthTypeItemContext.getContext().registeAuthTypeItem(authType,
                     name,
                     description,
                     isViewAble,
@@ -265,6 +265,11 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
             if(StringUtils.isEmpty(authType)){
                 authType = parentElAuthType;
             }
+            AssertUtils.notEmpty("xml resource.authType","auth:{} authType is empty.",id);
+            
+            //向权限类型容器中注册权限类型
+            AuthTypeItemContext.getContext().registeAuthTypeItem(authType);
+            
             
             AuthItemImpl newAuthItem = null;
             if (authItemMap.containsKey(id)) {

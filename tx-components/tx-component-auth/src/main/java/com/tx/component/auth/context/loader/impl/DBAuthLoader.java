@@ -14,6 +14,7 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
 
+import com.tx.component.auth.context.AuthTypeItemContext;
 import com.tx.component.auth.context.loader.AuthLoader;
 import com.tx.component.auth.model.AuthItem;
 import com.tx.component.auth.model.AuthItemImpl;
@@ -51,6 +52,7 @@ public class DBAuthLoader implements AuthLoader{
         }
         
         for(AuthItemImpl authItemTemp : authItemImplList){
+            AuthTypeItemContext.getContext().registeAuthTypeItem(authItemTemp.getAuthType());
             resSet.add(authItemTemp);
         }
         return resSet;

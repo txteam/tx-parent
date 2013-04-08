@@ -62,7 +62,7 @@ public class AuthTypeItemContext{
      * @param isConfigAble
      * @return
      */
-    public synchronized AuthTypeItem getAuthTypeItem(
+    public synchronized AuthTypeItem registeAuthTypeItem(
             String authType, String name, String description,
             boolean isViewAble, boolean isConfigAble) {
         if (StringUtils.isEmpty(authType)) {
@@ -106,7 +106,7 @@ public class AuthTypeItemContext{
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public synchronized AuthTypeItem getAuthTypeItem(String authType) {
+    public synchronized AuthTypeItem registeAuthTypeItem(String authType) {
         if (StringUtils.isEmpty(authType)) {
             throw new ParameterIsEmptyException("authType is empty");
         }

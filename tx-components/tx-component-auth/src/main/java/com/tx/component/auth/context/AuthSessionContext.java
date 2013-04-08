@@ -6,8 +6,12 @@
  */
 package com.tx.component.auth.context;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -17,6 +21,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import com.tx.component.auth.model.AuthItem;
 import com.tx.component.auth.model.AuthItemRef;
 import com.tx.component.auth.model.CurrentSessionContext;
 import com.tx.core.exceptions.util.AssertUtils;
@@ -36,8 +41,10 @@ public class AuthSessionContext implements FactoryBean<AuthSessionContext>,Initi
     
     public final static String SESSION_KEY_CURRENT_OPERATOR_ID = "CURRENT_OPERATOR_ID_!@#$%^&*";
     
-    @SuppressWarnings("unused")
     private static AuthSessionContext context;
+    
+    @Resource(name = "authContext")
+    private AuthContext authContext;
     
     /**
      * 线程变量:当前会话容器<br/>
@@ -54,6 +61,29 @@ public class AuthSessionContext implements FactoryBean<AuthSessionContext>,Initi
             return csContext;
         }
     };
+    
+    /**
+     * <默认构造函数>
+     */
+    public AuthSessionContext(){
+        AssertUtils.isNull(AuthSessionContext.context,
+                "AuthSessionContext must be singleton.it has be created");
+    }
+    
+    /**
+      * 获取权限会话容器
+      * <功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return AuthSessionContext [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public static AuthSessionContext getContext(){
+        AssertUtils.notNull(AuthSessionContext.context,
+                "AuthContext is not initialize.");
+        return AuthSessionContext.context;
+    }
 
     /**
      * @throws Exception
@@ -185,6 +215,55 @@ public class AuthSessionContext implements FactoryBean<AuthSessionContext>,Initi
                 .getAttribute(SESSION_KEY_CURRENT_OPERATOR_AUTHREF_MULTIVALUEMAP);
         List<AuthItemRef> authItemRefList = authItemRefMap.get(authItemId);
         return authItemRefList;
+    }
+    
+    /**
+      * 获取当前所有权限引用对应的权限项列表
+      *<功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return List<AuthItem> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public List<AuthItem> getAuthItemListDependAuthRefOfSession(){
+        Map<String, AuthItem> authItemMapping = authContext.getAllAuthItemMapping();
+        
+        List<AuthItem> authItemList = new ArrayList<AuthItem>();
+        MultiValueMap<String, AuthItemRef> authRefMulMap = getAuthRefMultiValueMapFromSession();
+        for(String authIdTemp : authRefMulMap.keySet()){
+            authItemList.add(authItemMapping.get(authIdTemp));
+        }
+        return authItemList;
+    }
+    
+    /**
+      * 获取当前拥有的永久类型权限项列表
+      * <功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return List<AuthItem> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public List<AuthItem> getPerpetualAuthItemListDependAuthRefOfSession(){
+        Map<String, AuthItem> authItemMapping = authContext.getAllAuthItemMapping();
+        
+        List<AuthItem> authItemList = new ArrayList<AuthItem>();
+        MultiValueMap<String, AuthItemRef> authRefMulMap = getAuthRefMultiValueMapFromSession();
+        for(Entry<String, List<AuthItemRef>> entryTemp : authRefMulMap.entrySet()){
+            AuthItem authItemTemp = authItemMapping.get(entryTemp.getKey());
+            List<AuthItemRef> authItemRefListTemp = entryTemp.getValue();
+            if(!CollectionUtils.isEmpty(authItemRefListTemp)){
+                for(AuthItemRef authItemRefTemp : authItemRefListTemp){
+                    if(!authItemRefTemp.isValidDependEndDate()){
+                        //只压入不依赖结束时间（永久类型）的权限
+                        authItemList.add(authItemTemp);
+                    }
+                }
+            }
+        }
+        return authItemList;
     }
     
     /**

@@ -26,7 +26,6 @@ import com.tx.component.auth.dao.AuthItemRefImplDao;
 import com.tx.component.auth.model.AuthItemImpl;
 import com.tx.component.auth.model.AuthItemRef;
 import com.tx.component.auth.model.AuthItemRefImpl;
-import com.tx.core.exceptions.parameter.ParameterIsEmptyException;
 import com.tx.core.exceptions.util.AssertUtils;
 
 /**
@@ -106,6 +105,67 @@ public class AuthItemRefImplService {
     }
     
     /**
+      * 根据引用类型以及权限项id获取，对应的引用类型中有哪些引用实体id引用了该权限<br/>
+      * <功能详细描述>
+      * @param authRefType
+      * @param refId
+      * @return [参数说明]
+      * 
+      * @return List<AuthItemRefImpl> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public List<AuthItemRefImpl> queryAuthItemRefListByRefTypeAndAuthItemId(
+            String authRefType,String authItemId){
+        AssertUtils.notEmpty(authRefType, "authRefType is empty.");
+        AssertUtils.notEmpty(authItemId, "refId is empty.");
+        
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("authRefType", authRefType);
+        params.put("refId", authItemId);
+        
+        List<AuthItemRefImpl> authItemRefImplList = this.authItemRefImplDao.queryAuthItemRefImplList(params);
+        
+        return authItemRefImplList;
+    } 
+    
+    /**
+      * 保存权限项目
+      * <功能详细描述>
+      * @param authRefType
+      * @param authId
+      * @param refIdList [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public void saveAuthItemOfAuthRefList(String authRefType,String authItemId,List<String> refIdList){
+        AssertUtils.notEmpty(authRefType, "authRefType is empty");
+        AssertUtils.notEmpty(authItemId, "authItemId is empty");
+        
+        //这里应该先判断一下当前人员是否拥有对应的权限
+        //TODO:
+        List<String> srcAuthRefIds = new ArrayList<String>();
+        List<AuthItemRefImpl> authItemRefImplList = queryAuthItemRefListByRefTypeAndAuthItemId(authRefType,authItemId);
+        if (authItemRefImplList != null) {
+            for (AuthItemRefImpl refTemp : authItemRefImplList) {
+                srcAuthRefIds.add(refTemp.getRefId());
+            }
+        }
+        
+        @SuppressWarnings("unchecked")
+        List<String> needDeleteRefIds = ListUtils.subtract(srcAuthRefIds,
+                refIdList);
+        @SuppressWarnings("unchecked")
+        List<String> needInsertRefIds = ListUtils.subtract(refIdList,
+                srcAuthRefIds);
+        
+        batchDeleteAuthItemRefByRefIds(authRefType, authItemId, needDeleteRefIds);
+        batchInsertAuthItemRefByRefIds(authRefType, authItemId, needInsertRefIds);
+    }
+    
+    /**
       * 根据存入的权限项目id集合，以及权限引用类型，引用id<br/>
       *     更新对应应用的权限集<br/>
       * <功能详细描述>
@@ -118,31 +178,34 @@ public class AuthItemRefImplService {
       * @see [类、类#方法、类#成员]
      */
     @Transactional
-    public void saveNewAuthItemRef(String authRefType, String refId,
+    public void saveAuthRefOfAuthItemList(String authRefType, String refId,
             List<String> authItemIds) {
         AssertUtils.notEmpty(authRefType, "authRefType is empty");
         AssertUtils.notEmpty(refId, "refId is empty");
         
+        //为了安全应该先过滤掉当前人员不存在，或仅仅是临时权限的权限项
+        //TODO:XXX
+        
         //存储前,获取原有的权限引用
-        List<String> srcIds = new ArrayList<String>();
-        List<AuthItemRefImpl> authItemRefImpl = queryAuthItemRefListByRefTypeAndRefId(authRefType,
+        List<String> srcAuthItemIds = new ArrayList<String>();
+        List<AuthItemRefImpl> authItemRefImplList = queryAuthItemRefListByRefTypeAndRefId(authRefType,
                 refId);
-        if (authItemRefImpl != null) {
-            for (AuthItemRefImpl refTemp : authItemRefImpl) {
-                srcIds.add(refTemp.getAuthItem().getId());
+        if (authItemRefImplList != null) {
+            for (AuthItemRefImpl refTemp : authItemRefImplList) {
+                srcAuthItemIds.add(refTemp.getAuthItem().getId());
             }
         }
         
         //求差集，得到需要删除，以及需要增加的权限id集合
         @SuppressWarnings("unchecked")
-        List<String> needDeleteAuthItemIds = ListUtils.subtract(srcIds,
+        List<String> needDeleteAuthItemIds = ListUtils.subtract(srcAuthItemIds,
                 authItemIds);
         @SuppressWarnings("unchecked")
         List<String> needInsertAuthItemIds = ListUtils.subtract(authItemIds,
-                srcIds);
+                srcAuthItemIds);
         
-        batchDeleteAuthItemRef(authRefType, refId, needDeleteAuthItemIds);
-        batchInsertAuthItemRef(authRefType, refId, needInsertAuthItemIds);
+        batchDeleteAuthItemRefByAuthItemIds(authRefType, refId, needDeleteAuthItemIds);
+        batchInsertAuthItemRefByAuthItemIds(authRefType, refId, needInsertAuthItemIds);
     }
     
     /**
@@ -159,7 +222,7 @@ public class AuthItemRefImplService {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    private void batchDeleteAuthItemRef(String authRefType, String refId,
+    private void batchDeleteAuthItemRefByAuthItemIds(String authRefType, String refId,
             List<String> needDeleteAuthItemIds) {
         if (CollectionUtils.isEmpty(needDeleteAuthItemIds)) {
             return;
@@ -167,12 +230,47 @@ public class AuthItemRefImplService {
         
         //如果存在需要删除的权限引用项
         List<AuthItemRefImpl> authItemRefList = new ArrayList<AuthItemRefImpl>();
-        for (String newAuthId : needDeleteAuthItemIds) {
+        for (String authItemIdTemp : needDeleteAuthItemIds) {
             AuthItemRefImpl authItemRef = new AuthItemRefImpl();
             authItemRef.setAuthRefType(authRefType);
             authItemRef.setRefId(refId);
-            authItemRef.setAuthItem(new AuthItemImpl(newAuthId));
             
+            authItemRef.setAuthItem(new AuthItemImpl(authItemIdTemp));
+            authItemRefList.add(authItemRef);
+        }
+        this.authItemRefImplDao.batchDeleteAuthItemRefImpl(authItemRefList);
+        
+        //TODO:记录相关业务日志
+        //        serviceLogger.info(" {}于 {} 删除类型为{}的日志引用{}.", new String[] { userId,
+        //                DateFormatUtils.format(new Date(), "yyyy-MM-dd HH:mm:ss"),
+        //                authRefType, ArrayUtils.toString(newAuthIds) });
+    }
+    
+    /**
+      * 批量删除权限项的多个权限项目引用 
+      * <功能详细描述>
+      * @param authRefType
+      * @param authItemId
+      * @param needDeleteRefIds [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    private void batchDeleteAuthItemRefByRefIds(String authRefType, String authItemId,
+            List<String> needDeleteRefIds) {
+        if (CollectionUtils.isEmpty(needDeleteRefIds)) {
+            return;
+        }
+        
+        //如果存在需要删除的权限引用项
+        List<AuthItemRefImpl> authItemRefList = new ArrayList<AuthItemRefImpl>();
+        for (String refIdTemp : needDeleteRefIds) {
+            AuthItemRefImpl authItemRef = new AuthItemRefImpl();
+            authItemRef.setAuthRefType(authRefType);
+            authItemRef.setAuthItem(new AuthItemImpl(authItemId));
+            
+            authItemRef.setRefId(refIdTemp);
             authItemRefList.add(authItemRef);
         }
         this.authItemRefImplDao.batchDeleteAuthItemRefImpl(authItemRefList);
@@ -196,18 +294,20 @@ public class AuthItemRefImplService {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    private void batchInsertAuthItemRef(String authRefType, String refId,
+    private void batchInsertAuthItemRefByAuthItemIds(String authRefType, String refId,
             List<String> needInsertAuthItemIds) {
         List<AuthItemRefImpl> authItemRefList = new ArrayList<AuthItemRefImpl>();
+        
+        //取得当前登录人员id
         String currentOperatorId = authSessionContext.getOperatorIdFromSession();
-        for (String newAuthId : needInsertAuthItemIds) {
+        for (String authItemIdTemp : needInsertAuthItemIds) {
             AuthItemRefImpl authItemRef = new AuthItemRefImpl();
             authItemRef.setCreateDate(new Date());
             authItemRef.setCreateOperId(currentOperatorId);
             
             authItemRef.setAuthRefType(authRefType);
             authItemRef.setRefId(refId);
-            authItemRef.setAuthItem(new AuthItemImpl(newAuthId));
+            authItemRef.setAuthItem(new AuthItemImpl(authItemIdTemp));
             authItemRef.setValidDependEndDate(false);
             
             authItemRefList.add(authItemRef);
@@ -220,46 +320,40 @@ public class AuthItemRefImplService {
     }
     
     /**
-      * 将authItemRefImpl实例插入数据库中保存
-      * 1、如果authItemRefImpl为空时抛出参数为空异常
-      * 2、如果authItemRefImpl中部分必要参数为非法值时抛出参数不合法异常
+      * 批量插入某一权限引用类型的，一组引用id
       * <功能详细描述>
-      * @param authItemRefImpl [参数说明]
-      * 
-      * @return vorefId [返回类型说明]
-      * @exception throws 可能存在数据库访问异常DataAccessException
-      * @see [类、类#方法、类#成员]
-     */
-    @Transactional
-    public void insertAuthItemRefImpl(AuthItemRefImpl authItemRefImpl) {
-        //TODO:验证参数是否合法，必填字段是否填写，
-        //如果没有填写抛出parameterIsEmptyException,
-        //如果有参数不合法ParameterIsInvalrefIdException
-        if (authItemRefImpl == null /*TODO:|| 其他参数验证*/) {
-            throw new ParameterIsEmptyException(
-                    "AuthItemRefImplService.insertAuthItemRefImpl authItemRefImpl isNull.");
-        }
-        
-        this.authItemRefImplDao.insertAuthItemRefImpl(authItemRefImpl);
-    }
-    
-    /**
-      * 根据权限引用项主键删除对应的权限引用项
-      * 
-      * <功能详细描述>
+      * @param authRefType
       * @param authItemId
-      * @param refType
-      * @param refId
-      * @return [参数说明]
+      * @param needInsertRefIds [参数说明]
       * 
-      * @return int [返回类型说明]
+      * @return void [返回类型说明]
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    @SuppressWarnings("unused")
-    private void deleteByPk(String authItemId, String refType, String refId) {
-        //AssertUtils.isem
+    private void batchInsertAuthItemRefByRefIds(String authRefType, String authItemId,
+            List<String> needInsertRefIds) {
+        List<AuthItemRefImpl> authItemRefList = new ArrayList<AuthItemRefImpl>();
         
+        //取得当前登录人员id
+        String currentOperatorId = authSessionContext.getOperatorIdFromSession();
+        for (String refIdTemp : needInsertRefIds) {
+            AuthItemRefImpl authItemRef = new AuthItemRefImpl();
+            authItemRef.setCreateDate(new Date());
+            authItemRef.setCreateOperId(currentOperatorId);
+            authItemRef.setAuthItem(new AuthItemImpl(authItemId));
+            authItemRef.setAuthRefType(authRefType);
+            authItemRef.setValidDependEndDate(false);
+            
+            authItemRef.setRefId(refIdTemp);
+            
+            //添加进批量处理列表
+            authItemRefList.add(authItemRef);
+        }
+        
+        this.authItemRefImplDao.batchInsertAuthItemRefImpl(authItemRefList);
+        //        serviceLogger.info(" {}于 {} 新增类型为{}的日志引用{}.", new String[] { userId,
+        //                DateFormatUtils.format(new Date(), "yyyy-MM-dd HH:mm:ss"),
+        //                authRefType, ArrayUtils.toString(newAuthIds) });
     }
     
     /**
