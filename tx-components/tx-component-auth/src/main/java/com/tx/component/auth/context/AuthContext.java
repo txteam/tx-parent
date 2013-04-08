@@ -539,8 +539,8 @@ public class AuthContext implements FactoryBean<AuthContext>,
         } else {
             Map<String, Object> authItemRowMap = new HashMap<String, Object>();
             authItemRowMap.put("id", authItem.getId());
+            
             authItemRowMap.put("parentId", authItem.getParentId());
-            authItemRowMap.put("authType", authItem.getAuthType());
             authItemRowMap.put("description", authItem.getDescription());
             authItemRowMap.put("isEditAble", authItem.isEditAble());
             authItemRowMap.put("name", authItem.getName());
@@ -597,9 +597,14 @@ public class AuthContext implements FactoryBean<AuthContext>,
         } else {
             Map<String, Object> authItemRowMap = new HashMap<String, Object>();
             authItemRowMap.put("id", id);
+            
+            authItemRowMap.put("parentId", parentId);
+            authItemRowMap.put("description", description);
+            authItemRowMap.put("isEditAble", isEditAble);
             authItemRowMap.put("name", name);
-            authItemRowMap.put("authType", authType);
+            authItemRowMap.put("isConfigAble", isConfigAble);
             authItemRowMap.put("isValid", isValid);
+            authItemRowMap.put("isViewAble", isViewAble);
             
             res = doRegisteSaveAuth(authItemRowMap);
         }
@@ -624,8 +629,8 @@ public class AuthContext implements FactoryBean<AuthContext>,
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public AuthItem registeAuth(String id, String name, String authType,
-            boolean isValid) {
+    public AuthItem registeAuth(String id, String name, String description,
+            String authType, boolean isValid) {
         //参数合法性验证
         boolean isNeedNew = false;
         if (StringUtils.isEmpty(id) || !authItemMapping.containsKey(id)) {
@@ -648,8 +653,9 @@ public class AuthContext implements FactoryBean<AuthContext>,
         } else {
             Map<String, Object> authItemRowMap = new HashMap<String, Object>();
             authItemRowMap.put("id", id);
+            
             authItemRowMap.put("name", name);
-            authItemRowMap.put("authType", authType);
+            authItemRowMap.put("description", description);
             authItemRowMap.put("isValid", isValid);
             
             res = doRegisteSaveAuth(authItemRowMap);

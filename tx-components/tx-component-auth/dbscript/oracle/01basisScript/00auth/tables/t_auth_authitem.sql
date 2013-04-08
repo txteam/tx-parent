@@ -5,8 +5,8 @@ create table t_auth_authitem
 (
   id varchar2(64) not null,				--权限项唯一键key 
   parentId varchar2(64),				--父级权限id
-  name varchar2(128),					--权限项名 
-  description varchar2(256),			--权限项目描述
+  name varchar2(256),					--权限项名 
+  description varchar2(1024),			--权限项目描述
   authType varchar2(64) not null, 		--权限类型
   isViewAble number(1) default 1,		--是否可见
   isEditAble number(1) default 1,		--是否可编辑
