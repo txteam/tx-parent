@@ -835,8 +835,11 @@ public class AuthContext implements FactoryBean<AuthContext>,
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public void saveAuthItemOfAuthRefIdList(String authRefType,String authItemId,List<String> refIdList){
-        this.authItemRefService.saveAuthItemOfAuthRefList(authRefType, authItemId, refIdList);
+    public void saveAuthItemOfAuthRefIdList(String authRefType,
+            String authItemId, List<String> refIdList) {
+        this.authItemRefService.saveAuthItemOfAuthRefList(authRefType,
+                authItemId,
+                refIdList);
     }
     
     /**
@@ -850,8 +853,97 @@ public class AuthContext implements FactoryBean<AuthContext>,
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public void saveAuthRefOfAuthItemIdList(String authRefType,String refId,List<String> authItemIdList){
-        this.authItemRefService.saveAuthRefOfAuthItemList(authRefType, refId, authItemIdList);
+    public void saveAuthRefOfAuthItemIdList(String authRefType, String refId,
+            List<String> authItemIdList) {
+        this.authItemRefService.saveAuthRefOfAuthItemList(authRefType,
+                refId,
+                authItemIdList);
+    }
+    
+    /**
+      * 根据引用id以及权限引用类型查询权限引用集合<br/>
+      *<功能详细描述>
+      * @param authRefType
+      * @param refId
+      * @return [参数说明]
+      * 
+      * @return List<AuthItemRef> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public List<AuthItemRef> queryAuthItemRefListByAuthRefTypeAndRefId(
+            String authRefType, String refId) {
+        List<AuthItemRefImpl> authItemRefImplList = this.authItemRefService.queryAuthItemRefListByRefTypeAndRefId(authRefType,
+                refId);
+        
+        List<AuthItemRef> resList = changeAuthItemRefImplListToAuthItemRefList(authItemRefImplList);
+        return resList;
+    }
+    
+    /**
+      * 根据引用类型以及权限项id获取，对应的引用类型中有哪些引用实体id引用了该权限<br/>
+      *<功能详细描述>
+      * @param authRefType
+      * @param authItemId
+      * @return [参数说明]
+      * 
+      * @return List<AuthItemRef> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public List<AuthItemRef> queryAuthItemRefListByAuthRefTypeAndAuthItemId(
+            String authRefType, String authItemId) {
+        List<AuthItemRefImpl> authItemRefImplList = this.authItemRefService.queryAuthItemRefListByRefTypeAndAuthItemId(authRefType,
+                authItemId);
+        
+        List<AuthItemRef> resList = changeAuthItemRefImplListToAuthItemRefList(authItemRefImplList);
+        return resList;
+    }
+    
+    /**
+      * 根据具体的权限引用类型以及引用id查询权限引用集合<br/>
+      *     系统登录需要调用该方法，以获知当前人员拥有的权限引用集合<br/>
+      *<功能详细描述>
+      * @param refType2RefIdMapping
+      * @return [参数说明]
+      * 
+      * @return List<AuthItemRef> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public List<AuthItemRef> queryAuthItemRefListByRefType2RefIdMapping(
+            Map<String, String> refType2RefIdMapping) {
+        List<AuthItemRefImpl> authItemRefImplList = this.authItemRefService.queryAuthItemRefListByRefType2RefIdMapping(refType2RefIdMapping);
+        
+        List<AuthItemRef> resList = changeAuthItemRefImplListToAuthItemRefList(authItemRefImplList);
+        return resList;
+    }
+    
+    /**
+      * 将authItemRefImpl列表转换为authItemRef列表<br/>
+      * 并在转换过程中将实际的authItem实例设置进去<br/>
+      * <功能详细描述>
+      * @param authItemRefImplList
+      * @return [参数说明]
+      * 
+      * @return List<AuthItemRef> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    private List<AuthItemRef> changeAuthItemRefImplListToAuthItemRefList(
+            List<AuthItemRefImpl> authItemRefImplList) {
+        List<AuthItemRef> resList = new ArrayList<AuthItemRef>();
+        if (CollectionUtils.isEmpty(authItemRefImplList)) {
+            return resList;
+        }
+        
+        for (AuthItemRefImpl authItemRefTemp : authItemRefImplList) {
+            authItemRefTemp.setAuthItem(authItemMapping.get(authItemRefTemp.getAuthItem()
+                    .getId()));
+            resList.add(authItemRefTemp);
+        }
+        
+        return resList;
     }
     
     /**

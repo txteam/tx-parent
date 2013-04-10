@@ -16,6 +16,12 @@
 	<bean id="ruleContext"
 		class="com.tx.component.rule.context.RuleContext">
 	</bean>
+	<bean id="ruleSessionTransationTemplate"
+		class="com.tx.component.rule.transation.impl.RuleSessionTransationTemplate">
+		<constructor-arg name="ruleContext">
+			<ref bean="ruleContext"/>
+		</constructor-arg>
+	</bean>
 	
 	<!-- 配置文件加载器 -->
 	<bean id="ruleConfigLoader"

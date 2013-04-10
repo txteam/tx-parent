@@ -7,7 +7,9 @@
 	<!-- auto generate default resultMap -->
 	<resultMap id="authItemRefImplMap" 
 		type="com.tx.component.auth.model.AuthItemRefImpl">
-		<result column="authItem_id" property="authItem.id"/>
+		<association property="authItem" javaType="com.tx.component.auth.model.AuthItemImpl">
+			<result column="authItem_id" property="id"/>
+		</association>
 	</resultMap>
 	
 	<!-- auto generate default find -->
@@ -41,7 +43,14 @@
 				TAIRI.ENDDATE,
 				TAIRI.CREATEDATE
 		  FROM T_AUTH_AUTHREF TAIRI
+		<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authType)">
+			,T_AUTH_AUTHITEM
+		</if>
 		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authType)">
+				AND TAIRI.AUTHID = TAII.ID
+				AND TAII.AUTHTYPE = #{authType,javaType=java.lang.String}
+			</if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(refType2RefIdMapping)">
 				AND
 				<foreach collection="#{refType2RefIdMapping.entrySet()}" open="(" close=")" item="entryTemp" separator="or">
@@ -77,7 +86,14 @@
 		resultType="java.lang.Integer">
 		SELECT COUNT(1)
 		  FROM T_AUTH_AUTHREF TAIRI
+		<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authType)">
+			,T_AUTH_AUTHITEM TAII
+		</if>
 		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authType)">
+				AND TAIRI.AUTHID = TAII.ID
+				AND TAII.AUTHTYPE = #{authType,javaType=java.lang.String}
+			</if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(refType2RefIdMapping)">
 				AND
 				<foreach collection="#{refType2RefIdMapping.entrySet()}" open="(" close=")" item="entryTemp" separator="or">
@@ -139,6 +155,9 @@
 				<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authItem.id)">  
 		            AND TAIRI.AUTHID = #{authItem.id}
 		        </if>
+			    <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authItem.authType)">
+					AND EXISTS SELECT 1 FROM T_AUTH_AUTHITEM TAII WHERE TAIRI.AUTHID = TAII.ID AND TAII.AUTHTYPE = #{authItem.authType}
+				</if>
 	        </if>
 		</trim>
 	</delete>

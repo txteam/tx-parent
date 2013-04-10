@@ -17,6 +17,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * 权限项
  * 如果两个权限项的 id与authType相同，则被认为是同一个authitem
@@ -82,7 +84,7 @@ public class AuthItemImpl implements Serializable, AuthItem {
     public AuthItemImpl() {
         super();
     }
-    
+
     /**
      * <默认构造函数>
      */
@@ -123,6 +125,13 @@ public class AuthItemImpl implements Serializable, AuthItem {
         this.id = id;
     }
     
+    /** <默认构造函数> */
+    public AuthItemImpl(String id, String authType) {
+        super();
+        this.id = id;
+        this.authType = authType;
+    }
+
     /** <默认构造函数> */
     public AuthItemImpl(String id, String parentId, String name,
             String description, String authType, boolean isValid,
@@ -184,6 +193,9 @@ public class AuthItemImpl implements Serializable, AuthItem {
      */
     @Override
     public String getName() {
+        if(StringUtils.isEmpty(name)){
+            return id;
+        }
         return name;
     }
     

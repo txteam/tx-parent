@@ -325,6 +325,7 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
         //创建权限实体
         AuthItemImpl authItem = new AuthItemImpl();
         authItem.setId(id);
+        authItem.setName(name);
         authItem.setDescription(description);
         authItem.setAuthType(authType);
         

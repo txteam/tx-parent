@@ -133,7 +133,7 @@
 	<!-- auto generate default delete -->
 	<delete id="deleteAuthItemImpl" 
 		parameterType="com.tx.component.auth.model.AuthItemImpl">
-		DELETE FROM T_AUTH_AUTHITEM TAII WHERE AND TAII.ID = #{id}
+		DELETE FROM T_AUTH_AUTHITEM TAII WHERE TAII.ID = #{id}
 	</delete>
 
 	<!-- auto generate default update -->

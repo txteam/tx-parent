@@ -111,6 +111,7 @@ public class DRLByteDroolsRuleRegister implements RuleRegister<DroolsRule> {
                 knowledgeBase = DroolsRuleHelper.newKnowledgeBase(ResourceFactory.newByteArrayResource(srpb.getParamValue()),
                         ResourceType.DRL);
                 rule.setState(RuleStateEnum.OPERATION);
+                rule.setRemark("success.");
             } catch (DroolsKnowledgeBaseInitException e) {
                 logger.warn("rule:{} build has error.load skip."
                         + rule.rule());

@@ -75,7 +75,7 @@ public class AuthTypeItemContext{
             if (!StringUtils.isEmpty(name)) {
                 res.setName(name);
             }
-            if (StringUtils.isEmpty(description)) {
+            if (!StringUtils.isEmpty(description)) {
                 res.setDescription(description);
             }
             //如果其中有一个与默认值不同，则认为不同的该值将生效
