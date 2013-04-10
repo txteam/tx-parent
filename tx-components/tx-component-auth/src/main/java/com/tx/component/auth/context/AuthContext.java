@@ -843,6 +843,25 @@ public class AuthContext implements FactoryBean<AuthContext>,
     }
     
     /**
+     * 保存某一权限 的：对应权限引用类型的新的权限引用id集合
+     * <功能详细描述>
+     * @param authRefType
+     * @param authItemId
+     * @param refIdList [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    public void saveAuthItemOfAuthRefIdList(String authType,
+            String authRefType, String authItemId, List<String> refIdList) {
+        this.authItemRefService.saveAuthItemOfAuthRefList(authType,
+                authRefType,
+                authItemId,
+                refIdList);
+    }
+    
+    /**
       * 保存指定引用类型引用id的：引用到的权限id的集合
       * <功能详细描述>
       * @param authRefType
@@ -856,6 +875,25 @@ public class AuthContext implements FactoryBean<AuthContext>,
     public void saveAuthRefOfAuthItemIdList(String authRefType, String refId,
             List<String> authItemIdList) {
         this.authItemRefService.saveAuthRefOfAuthItemList(authRefType,
+                refId,
+                authItemIdList);
+    }
+    
+    /**
+     * 保存指定引用类型引用id的：引用到的权限id的集合
+     * <功能详细描述>
+     * @param authRefType
+     * @param refId
+     * @param authItemIdList [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    public void saveAuthRefOfAuthItemIdList(String authType,
+            String authRefType, String refId, List<String> authItemIdList) {
+        this.authItemRefService.saveAuthRefOfAuthItemList(authType,
+                authRefType,
                 refId,
                 authItemIdList);
     }
