@@ -195,6 +195,9 @@ public class AuthItemRefImplService {
             String authItemId, List<String> refIdList) {
         AssertUtils.notEmpty(authRefType, "authRefType is empty");
         AssertUtils.notEmpty(authItemId, "authItemId is empty");
+        if(refIdList == null){
+            refIdList = new ArrayList<String>();
+        }
         
         //这里应该先判断一下当前人员是否拥有对应的权限
         //TODO:
@@ -238,6 +241,9 @@ public class AuthItemRefImplService {
             String authItemId, List<String> refIdList) {
         AssertUtils.notEmpty(authRefType, "authRefType is empty");
         AssertUtils.notEmpty(authItemId, "authItemId is empty");
+        if(refIdList == null){
+            refIdList = new ArrayList<String>();
+        }
         
         //这里应该先判断一下当前人员是否拥有对应的权限
         //TODO:
@@ -282,6 +288,9 @@ public class AuthItemRefImplService {
             List<String> authItemIds) {
         AssertUtils.notEmpty(authRefType, "authRefType is empty");
         AssertUtils.notEmpty(refId, "refId is empty");
+        if(authItemIds == null){
+            authItemIds = new ArrayList<String>();
+        }
         
         //为了安全应该先过滤掉当前人员不存在，或仅仅是临时权限的权限项
         //TODO:XXX
@@ -329,6 +338,9 @@ public class AuthItemRefImplService {
             List<String> authItemIds) {
         AssertUtils.notEmpty(authRefType, "authRefType is empty");
         AssertUtils.notEmpty(refId, "refId is empty");
+        if(authItemIds == null){
+            authItemIds = new ArrayList<String>();
+        }
         
         //为了安全应该先过滤掉当前人员不存在，或仅仅是临时权限的权限项
         //TODO:XXX

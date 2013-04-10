@@ -156,7 +156,7 @@
 		            AND TAIRI.AUTHID = #{authItem.id}
 		        </if>
 			    <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authItem.authType)">
-					AND EXISTS SELECT 1 FROM T_AUTH_AUTHITEM TAII WHERE TAIRI.AUTHID = TAII.ID AND TAII.AUTHTYPE = #{authItem.authType}
+					AND EXISTS (SELECT 1 FROM T_AUTH_AUTHITEM TAII WHERE TAIRI.AUTHID = TAII.ID AND TAII.AUTHTYPE = #{authItem.authType})
 				</if>
 	        </if>
 		</trim>
