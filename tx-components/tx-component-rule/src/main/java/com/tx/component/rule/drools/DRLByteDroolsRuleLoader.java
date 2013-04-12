@@ -94,8 +94,10 @@ public class DRLByteDroolsRuleLoader implements RuleLoader {
                     logger.warn("error:{}", e.getKnowledgeBuilderErrors());
                     
                     spRuleTemp.setState(RuleStateEnum.ERROR);
-                    this.simplePersistenceRuleService.changeRuleStateById(spRuleTemp.getId(),
-                            RuleStateEnum.ERROR);
+                    //如果对应规则，生成drools规则实体时，编译错误，仅仅在当前容器注册时显示为错误态
+                    //事实上，可能是其他系统的规则体，所以无需对此处的错误态进行持久
+                    //this.simplePersistenceRuleService.changeRuleStateById(spRuleTemp.getId(),
+                    //        RuleStateEnum.ERROR);
                 }
                 
                 resList.add(new DroolsRule(spRuleTemp, knowledgeBase));

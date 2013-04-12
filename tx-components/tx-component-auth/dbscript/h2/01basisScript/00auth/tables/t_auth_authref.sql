@@ -5,6 +5,7 @@ create table t_auth_authref
 (
   authid varchar(128) not null,
   refid  varchar(64) not null,
+  authType varchar(64) not null,
   authreftype varchar(64) not null,
   createdate date default sysdate not null,
   enddate date,

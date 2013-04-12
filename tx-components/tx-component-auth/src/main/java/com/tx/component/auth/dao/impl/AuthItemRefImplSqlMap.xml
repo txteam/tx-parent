@@ -7,8 +7,15 @@
 	<!-- auto generate default resultMap -->
 	<resultMap id="authItemRefImplMap" 
 		type="com.tx.component.auth.model.AuthItemRefImpl">
+		<result property="refId" column="REFID"/>
+		<result property="authRefType" column="AUTHREFTYPE"/>
+		<result property="isValidDependEndDate" column="ISVALIDDEPENDENDDATE"/>
+		<result property="createOperId" column="CREATEOPERID"/>
+		<result property="endDate" column="ENDDATE"/>
+		<result property="createDate" column="CREATEDATE"/>
 		<association property="authItem" javaType="com.tx.component.auth.model.AuthItemImpl">
 			<result column="authItem_id" property="id"/>
+			<result column="authItem_authType" property="authType"/>
 		</association>
 	</resultMap>
 	
@@ -20,6 +27,7 @@
 				TAIRI.REFID,
 				TAIRI.AUTHREFTYPE,
 				TAIRI.AUTHID AS authItem_id,
+				TAIRI.AUTHTYPE AS authItem_authType,
 				TAIRI.ISVALIDDEPENDENDDATE,
 				TAIRI.CREATEOPERID,
 				TAIRI.ENDDATE,
@@ -38,18 +46,18 @@
 				TAIRI.REFID,
 				TAIRI.AUTHREFTYPE,
 				TAIRI.AUTHID AS authItem_id,
+				TAIRI.AUTHTYPE AS authItem_authType,
 				TAIRI.ISVALIDDEPENDENDDATE,
 				TAIRI.CREATEOPERID,
 				TAIRI.ENDDATE,
 				TAIRI.CREATEDATE
 		  FROM T_AUTH_AUTHREF TAIRI
-		<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authType)">
-			,T_AUTH_AUTHITEM
-		</if>
 		<trim prefix="WHERE" prefixOverrides="AND | OR">
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authType)">
-				AND TAIRI.AUTHID = TAII.ID
 				AND TAII.AUTHTYPE = #{authType,javaType=java.lang.String}
+			</if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authItemId)">
+				AND TAIRI.AUTHID = #{authItemId,javaType=java.lang.String}
 			</if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(refType2RefIdMapping)">
 				AND
@@ -67,6 +75,9 @@
 			<if test="authItem != null">
 				<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authItem.id)">  
 		            AND TAIRI.AUTHID = #{authItem.id,javaType=java.lang.String}
+		        </if>
+		        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authItem.authType)">  
+		            AND TAIRI.AUTHTYPE = #{authItem.authType,javaType=java.lang.String}
 		        </if>
 	        </if>
 		</trim>
@@ -86,13 +97,12 @@
 		resultType="java.lang.Integer">
 		SELECT COUNT(1)
 		  FROM T_AUTH_AUTHREF TAIRI
-		<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authType)">
-			,T_AUTH_AUTHITEM TAII
-		</if>
 		<trim prefix="WHERE" prefixOverrides="AND | OR">
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authType)">
-				AND TAIRI.AUTHID = TAII.ID
 				AND TAII.AUTHTYPE = #{authType,javaType=java.lang.String}
+			</if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authItemId)">
+				AND TAIRI.AUTHID = #{authItemId,javaType=java.lang.String}
 			</if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(refType2RefIdMapping)">
 				AND
@@ -111,6 +121,9 @@
 				<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authItem.id)">  
 		            AND TAIRI.AUTHID = #{authItem.id,javaType=java.lang.String}
 		        </if>
+		        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authItem.authType)">  
+		            AND TAIRI.AUTHTYPE = #{authItem.authType,javaType=java.lang.String}
+		        </if>
 	        </if>
 		</trim>
 	</select>
@@ -123,6 +136,7 @@
 			REFID,
 			AUTHREFTYPE,
 			AUTHID,
+			AUTHTYPE,
 			ISVALIDDEPENDENDDATE,
 			CREATEOPERID,
 			ENDDATE,
@@ -133,6 +147,7 @@
 			#{refId},
 			#{authRefType},
 			#{authItem.id},
+			#{authItem.authType},
 			#{isValidDependEndDate},
 			#{createOperId},
 			#{endDate},
@@ -155,9 +170,9 @@
 				<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authItem.id)">  
 		            AND TAIRI.AUTHID = #{authItem.id}
 		        </if>
-			    <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authItem.authType)">
-					AND EXISTS (SELECT 1 FROM T_AUTH_AUTHITEM TAII WHERE TAIRI.AUTHID = TAII.ID AND TAII.AUTHTYPE = #{authItem.authType})
-				</if>
+		        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authItem.authType)">  
+		            AND TAIRI.AUTHTYPE = #{authItem.authType,javaType=java.lang.String}
+		        </if>
 	        </if>
 		</trim>
 	</delete>

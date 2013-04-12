@@ -58,7 +58,7 @@ import com.tx.component.workflow.service.ProcessInstanceService;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:spring/beans-ds.xml",
-        "classpath:spring/beans-tx.xml", "classpath:spring/beans.xml",
+        "classpath:spring/beans-tx.xml",
         "classpath:spring/beans-wf.xml" })
 //@ActiveProfiles("dev")
 @ActiveProfiles("production")

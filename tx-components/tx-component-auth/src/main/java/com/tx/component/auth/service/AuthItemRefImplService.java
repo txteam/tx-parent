@@ -21,8 +21,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.tx.component.auth.context.AuthContext;
 import com.tx.component.auth.context.AuthSessionContext;
 import com.tx.component.auth.dao.AuthItemRefImplDao;
+import com.tx.component.auth.model.AuthItem;
 import com.tx.component.auth.model.AuthItemImpl;
 import com.tx.component.auth.model.AuthItemRef;
 import com.tx.component.auth.model.AuthItemRefImpl;
@@ -119,6 +121,7 @@ public class AuthItemRefImplService {
         AssertUtils.notEmpty(authRefType, "authRefType is empty.");
         
         Map<String, Object> params = new HashMap<String, Object>();
+        params.put("authType", authType);
         params.put("refId", refId);
         params.put("authRefType", authRefType);
         
@@ -145,7 +148,7 @@ public class AuthItemRefImplService {
         
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("authRefType", authRefType);
-        params.put("refId", authItemId);
+        params.put("authItemId", authItemId);
         
         List<AuthItemRefImpl> authItemRefImplList = this.authItemRefImplDao.queryAuthItemRefImplList(params);
         
@@ -172,7 +175,7 @@ public class AuthItemRefImplService {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("authType", authType);
         params.put("authRefType", authRefType);
-        params.put("refId", authItemId);
+        params.put("authItemId", authItemId);
         
         List<AuthItemRefImpl> authItemRefImplList = this.authItemRefImplDao.queryAuthItemRefImplList(params);
         
@@ -191,6 +194,7 @@ public class AuthItemRefImplService {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
+    @Transactional
     public void saveAuthItemOfAuthRefList(String authRefType,
             String authItemId, List<String> refIdList) {
         AssertUtils.notEmpty(authRefType, "authRefType is empty");
@@ -237,6 +241,7 @@ public class AuthItemRefImplService {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
+    @Transactional
     public void saveAuthItemOfAuthRefList(String authType,String authRefType,
             String authItemId, List<String> refIdList) {
         AssertUtils.notEmpty(authRefType, "authRefType is empty");
@@ -334,6 +339,7 @@ public class AuthItemRefImplService {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
+    @Transactional
     public void saveAuthRefOfAuthItemList(String authType,String authRefType, String refId,
             List<String> authItemIds) {
         AssertUtils.notEmpty(authRefType, "authRefType is empty");
@@ -542,7 +548,7 @@ public class AuthItemRefImplService {
             
             authItemRef.setAuthRefType(authRefType);
             authItemRef.setRefId(refId);
-            authItemRef.setAuthItem(new AuthItemImpl(authItemIdTemp));
+            authItemRef.setAuthItem(AuthContext.getContext().getAuthItemFromContextById(authItemIdTemp));
             authItemRef.setValidDependEndDate(false);
             
             authItemRefList.add(authItemRef);
@@ -570,12 +576,13 @@ public class AuthItemRefImplService {
         List<AuthItemRefImpl> authItemRefList = new ArrayList<AuthItemRefImpl>();
         
         //取得当前登录人员id
+        AuthItem authItem = AuthContext.getContext().getAuthItemFromContextById(authItemId);
         String currentOperatorId = AuthSessionContext.getOperatorIdFromSession();
         for (String refIdTemp : needInsertRefIds) {
             AuthItemRefImpl authItemRef = new AuthItemRefImpl();
             authItemRef.setCreateDate(new Date());
             authItemRef.setCreateOperId(currentOperatorId);
-            authItemRef.setAuthItem(new AuthItemImpl(authItemId));
+            authItemRef.setAuthItem(authItem);
             authItemRef.setAuthRefType(authRefType);
             authItemRef.setValidDependEndDate(false);
             

@@ -421,6 +421,20 @@ public class AuthContext implements FactoryBean<AuthContext>,
     }
     
     /**
+      * 从权限容器中，根据权限项id,获取对应的权限项
+      * <功能详细描述>
+      * @param authItemId
+      * @return [参数说明]
+      * 
+      * @return AuthItem [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public AuthItem getAuthItemFromContextById(String authItemId){
+        return authItemMapping.get(authItemId);
+    }
+    
+    /**
      * 判断是否具有某权限<br/>
      * authType:除定制的几类权限特性以外， 可以为 业务权限 产品权限
      * 这里权限验证会根据当前会话以及对应的权限验证器判断是否具有对应权限
@@ -474,6 +488,7 @@ public class AuthContext implements FactoryBean<AuthContext>,
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
+    
     public AuthItem registeAuth(String id, boolean isValid) {
         //参数合法性验证
         AssertUtils.notEmpty(id, "id is empty.");

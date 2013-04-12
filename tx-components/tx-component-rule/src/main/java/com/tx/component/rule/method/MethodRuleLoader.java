@@ -127,8 +127,9 @@ public class MethodRuleLoader implements RuleLoader, ApplicationContextAware {
                         spRule.setState(RuleStateEnum.ERROR);
                         
                         //持久化规则状态
-                        this.simplePersistenceRuleService.changeRuleStateById(spRule.getId(),
-                                RuleStateEnum.ERROR);
+                        //可能是其他系统的规则实体，这里不对不存在的方法实体进行持久化状态
+                        //this.simplePersistenceRuleService.changeRuleStateById(spRule.getId(),
+                        //        RuleStateEnum.ERROR);
                         
                         //错误态的规则，依然加入规则容器中
                         MethodRule methodRule = new MethodRule(spRule);

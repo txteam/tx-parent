@@ -198,6 +198,7 @@ public class AuthItemImplService {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
+    @Transactional
     public AuthItemImpl saveAuthItemImplByAuthItemRowMap(Map<String, Object> authItemRowMap) {
         AssertUtils.notNull(authItemRowMap,"authItemRowMap is null");
         AssertUtils.notEmpty((String)authItemRowMap.get("id"),"authItemRowMap.id is empty.");   
