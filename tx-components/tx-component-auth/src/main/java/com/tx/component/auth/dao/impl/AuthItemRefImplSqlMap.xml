@@ -13,10 +13,8 @@
 		<result property="createOperId" column="CREATEOPERID"/>
 		<result property="endDate" column="ENDDATE"/>
 		<result property="createDate" column="CREATEDATE"/>
-		<association property="authItem" javaType="com.tx.component.auth.model.AuthItemImpl">
-			<result column="authItem_id" property="id"/>
-			<result column="authItem_authType" property="authType"/>
-		</association>
+		<result property="authItemImpl.id" column="authItem_id"/>
+		<result property="authItemImpl.authType" column="authItem_authType"/>
 	</resultMap>
 	
 	<!-- auto generate default find -->

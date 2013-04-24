@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.apache.cxf.common.util.StringUtils;
 import org.slf4j.helpers.MessageFormatter;
 
 import com.tx.component.auth.AuthConstant;
@@ -48,9 +49,9 @@ public class AuthItemRefImpl implements Serializable, AuthItemRef {
     /**
      * <默认构造函数>
      */
-    public AuthItemRefImpl(AuthItem authItem) {
+    public AuthItemRefImpl(AuthItemImpl authItem) {
         super();
-        this.authItem = authItem;
+        this.authItemImpl = authItem;
         this.authRefType = AuthConstant.AUTHREFTYPE_OPERATOR;
     }
     
@@ -65,8 +66,8 @@ public class AuthItemRefImpl implements Serializable, AuthItemRef {
      * 权限引用对应的权限id
      */
     @ManyToOne
-    @Column( name = "authId")
-    private AuthItem authItem;
+    @Column(name = "authId")
+    private AuthItemImpl authItemImpl;
     
     /**
      * 权限授予人
@@ -101,20 +102,38 @@ public class AuthItemRefImpl implements Serializable, AuthItemRef {
         return this.refId;
     }
     
+    
+    
     /**
-     * @return 返回 authItem
+     * @return 返回 authItemImpl
      */
+    public AuthItemImpl getAuthItemImpl() {
+        return authItemImpl;
+    }
+
+    /**
+     * @param 对authItemImpl进行赋值
+     */
+    public void setAuthItemImpl(AuthItemImpl authItemImpl) {
+        this.authItemImpl = authItemImpl;
+    }
+
+    /**
+     * @return
+     */
+    @Override
     public AuthItem getAuthItem() {
-        return authItem;
+        return this.authItemImpl;
     }
     
-    /**
-     * @param 对authItem进行赋值
-     */
-    public void setAuthItem(AuthItem authItem) {
-        this.authItem = authItem;
+    public void setAuthItem(AuthItem authItem){
+        if(authItem instanceof AuthItemImpl){
+            this.authItemImpl = (AuthItemImpl)authItem;
+        }else{
+            this.authItemImpl = new AuthItemImpl(authItem);
+        }
     }
-    
+
     /**
      * @return
      */
@@ -198,11 +217,13 @@ public class AuthItemRefImpl implements Serializable, AuthItemRef {
             return false;
         } else {
             AuthItemRef otherAuthItemRef = (AuthItemRef) obj;
-            if (this.authItem == null || this.authRefType == null
-                    || this.refId == null) {
+            if (this.authItemImpl == null || StringUtils.isEmpty(this.authRefType)
+                    || StringUtils.isEmpty(this.refId)
+                    || StringUtils.isEmpty(this.authItemImpl.getAuthType())
+                    || StringUtils.isEmpty(this.authItemImpl.getId())) {
                 return this == otherAuthItemRef;
             } else {
-                return this.authItem.equals(otherAuthItemRef.getAuthItem())
+                return this.authItemImpl.equals(otherAuthItemRef.getAuthItem())
                         && this.authRefType.equals(otherAuthItemRef.getAuthRefType())
                         && this.refId.equals(otherAuthItemRef.getRefId());
             }
@@ -214,12 +235,14 @@ public class AuthItemRefImpl implements Serializable, AuthItemRef {
      */
     @Override
     public int hashCode() {
-        if (this.authItem == null || this.authRefType == null
-                || this.refId == null) {
+        if (this.authItemImpl == null || StringUtils.isEmpty(this.authRefType)
+                || StringUtils.isEmpty(this.refId)
+                || StringUtils.isEmpty(this.authItemImpl.getAuthType())
+                || StringUtils.isEmpty(this.authItemImpl.getId())) {
             return super.hashCode();
         } else {
-            return this.authItem.hashCode() + this.authRefType.hashCode()
-                    + this.refId.hashCode() + this.getClass().hashCode();
+            return this.refId.hashCode() + this.authRefType.hashCode()
+                    + this.authItemImpl.hashCode();
         }
     }
     
@@ -228,8 +251,8 @@ public class AuthItemRefImpl implements Serializable, AuthItemRef {
      */
     @Override
     public String toString() {
-        return MessageFormatter.arrayFormat("authItem: {authId:{},authItemRef:{},refId{}}",
-                new Object[] { this.authItem, this.authRefType, this.refId })
+        return MessageFormatter.arrayFormat("authItemRef: {refId{},authRefType:{},authItem:{},,}",
+                new Object[] { this.refId, this.authRefType, this.authItemImpl })
                 .getMessage();
     }
 }

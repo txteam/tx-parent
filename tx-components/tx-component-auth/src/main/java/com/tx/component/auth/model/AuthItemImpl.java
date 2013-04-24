@@ -84,7 +84,7 @@ public class AuthItemImpl implements Serializable, AuthItem {
     public AuthItemImpl() {
         super();
     }
-
+    
     /**
      * <默认构造函数>
      */
@@ -119,6 +119,22 @@ public class AuthItemImpl implements Serializable, AuthItem {
         }
     }
     
+    /**
+     * <默认构造函数>
+     */
+    public AuthItemImpl(AuthItem otherAuthItem) {
+        super();
+        this.id = otherAuthItem.getId();
+        this.parentId = otherAuthItem.getParentId();
+        this.name = otherAuthItem.getName();
+        this.description = otherAuthItem.getDescription();
+        this.authType = otherAuthItem.getAuthType();
+        this.isValid = otherAuthItem.isValid();
+        this.isConfigAble = otherAuthItem.isConfigAble();
+        this.isViewAble = otherAuthItem.isViewAble();
+        this.isEditAble = otherAuthItem.isEditAble();
+    }
+    
     /** <默认构造函数> */
     public AuthItemImpl(String id) {
         super();
@@ -131,7 +147,7 @@ public class AuthItemImpl implements Serializable, AuthItem {
         this.id = id;
         this.authType = authType;
     }
-
+    
     /** <默认构造函数> */
     public AuthItemImpl(String id, String parentId, String name,
             String description, String authType, boolean isValid,
@@ -193,7 +209,7 @@ public class AuthItemImpl implements Serializable, AuthItem {
      */
     @Override
     public String getName() {
-        if(StringUtils.isEmpty(name)){
+        if (StringUtils.isEmpty(name)) {
             return id;
         }
         return name;
@@ -326,11 +342,13 @@ public class AuthItemImpl implements Serializable, AuthItem {
             return false;
         } else {
             AuthItem other = (AuthItem) obj;
-            if (this.id == null) {
+            if (StringUtils.isEmpty(this.id)
+                    || StringUtils.isEmpty(this.authType)) {
                 //仅以两者是否是同一个对象的链接进行判断
                 return this == other;
             } else {
-                return this.id.equals(other.getId());
+                return this.id.equals(other.getId())
+                        && this.authType.equals(other.getAuthType());
             }
         }
     }
@@ -340,9 +358,9 @@ public class AuthItemImpl implements Serializable, AuthItem {
      */
     @Override
     public int hashCode() {
-        if (this.getId() == null) {
+        if (StringUtils.isEmpty(this.id) || StringUtils.isEmpty(this.authType)) {
             return super.hashCode();
         }
-        return this.getId().hashCode();
+        return this.id.hashCode() + this.authType.hashCode();
     }
 }
