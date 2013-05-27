@@ -37,8 +37,9 @@ public @interface ParamAlias {
     public String value();
     
     /**
-      *<功能简述>
-      *<功能详细描述>
+      * 实现类<br/>
+      *     适用于注解处，类型为接口的形式<br/>
+      * <功能详细描述>
       * @return [参数说明]
       * 
       * @return Class<?> [返回类型说明]

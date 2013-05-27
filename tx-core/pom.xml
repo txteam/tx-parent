@@ -75,6 +75,16 @@
 			<optional>true</optional>
 		</dependency>
 
+		<!-- quartz -->
+		<dependency>
+			<groupId>org.quartz-scheduler</groupId>
+			<artifactId>quartz</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.quartz-scheduler</groupId>
+			<artifactId>quartz-oracle</artifactId>
+		</dependency>
+
 		<!-- cxf -->
 		<dependency>
 			<groupId>org.apache.cxf</groupId>
@@ -124,6 +134,13 @@
 			<artifactId>freemarker</artifactId>
 			<optional>true</optional>
 		</dependency>
+
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<optional>true</optional>
+		</dependency>
+
 
 		<!-- taglib -->
 		<dependency>
