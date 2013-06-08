@@ -6,16 +6,24 @@
  */
 package com.tx.core.support.poi.util;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.support.poi.CellReader;
@@ -31,6 +39,8 @@ import com.tx.core.support.poi.CellRowMapper;
  * @since  [产品/模块版本]
  */
 public class ExcelReadUtils {
+    
+    private static ResourceLoader resourceLoader = new DefaultResourceLoader();
     
     /**
      * 默认的事件格式字符串
@@ -59,7 +69,9 @@ public class ExcelReadUtils {
                     }
                     break;
                 case Cell.CELL_TYPE_STRING:
-                    res = cell.getStringCellValue();
+                    res = cell.getStringCellValue() != null ? cell.getStringCellValue()
+                            .trim()
+                            : "";
                     break;
                 
                 case Cell.CELL_TYPE_BOOLEAN:
@@ -72,7 +84,56 @@ public class ExcelReadUtils {
         }
     };
     
+    /**
+     * 解析获取workbook实例
+     * <功能详细描述>
+     * @param inputStream
+     * @return
+     * @throws IOException [参数说明]
+     * 
+     * @return Workbook [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    public static Workbook getWorkBook(String filePath) {
+        AssertUtils.notEmpty(filePath, "filePath is empty.");
+        
+        Resource fileResource = resourceLoader.getResource(filePath);
+        
+        AssertUtils.isTrue(fileResource != null && fileResource.exists(),
+                "file is not exist.");
+        
+        Workbook book = null;
+        InputStream in = null;
+        try {
+            in = fileResource.getInputStream();
+            book = new HSSFWorkbook(in);
+        } catch (IOException e) {
+            return null;
+        } finally {
+            IOUtils.closeQuietly(in);
+        }
+        
+        return book;
+    }
     
+    /**
+      * 解析获取workbook实例
+      * <功能详细描述>
+      * @param inputStream
+      * @return
+      * @throws IOException [参数说明]
+      * 
+      * @return Workbook [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public static Workbook getWorkBook(InputStream inputStream)
+            throws IOException {
+        Workbook book = null;
+        book = new HSSFWorkbook(inputStream);
+        return book;
+    }
     
     /**
       * 读取excel数据并写入map中<br/>
@@ -86,7 +147,7 @@ public class ExcelReadUtils {
       * @see [类、类#方法、类#成员]
      */
     public static List<Map<String, String>> readSheet(final Sheet sheet,
-            final String[] keys){
+            final String[] keys) {
         List<Map<String, String>> resList = readSheet(sheet, keys, 0);
         
         return resList;
@@ -165,8 +226,13 @@ public class ExcelReadUtils {
                         break;//直接跳出本次循环
                     }
                     Cell cell = row.getCell(keyIndex);
-                    res.put(keys[keyIndex],
-                            finalCellReader.read(cell, keyIndex));
+                    if(cell == null){
+                        res.put(keys[keyIndex],
+                                "");
+                    }else{
+                        res.put(keys[keyIndex],
+                                finalCellReader.read(cell, keyIndex));
+                    }
                 }
                 
                 return res;
@@ -223,6 +289,9 @@ public class ExcelReadUtils {
             }
             //获取到对应的行数据<br/>
             Row row = sheet.getRow(r);
+            if(row == null){
+                continue;
+            }
             //构造对象实例
             T tInsTemp = rowMapper.mapRow(row, r);
             
