@@ -84,7 +84,7 @@ public class DataRowAuthSupportModelAndViewResolver implements ModelAndViewResol
             return ;
         }
         
-        Class<?> type = obj.getClass();
+        //Class<?> type = obj.getClass();
         
         //AnnotationUtils.s
     }
