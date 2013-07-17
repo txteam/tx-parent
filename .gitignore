@@ -17,6 +17,7 @@
 /tx-components/tx-component-config/.classpath
 /tx-components/tx-component-config/.project
 /tx-components/tx-component-config/.settings
+/tx-components/tx-component-config/*/.svn/*
 
 /tx-components/tx-component-auth/target
 /tx-components/tx-component-auth/.classpath
