@@ -16,7 +16,18 @@ package com.tx.component.template.model;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
   */
-public class TemplateColumn {
+public class TemplateColumn extends TemplateEngineBaseModel{
     
+    private String name;
+    
+    private String columnName;
+    
+    private String description;
+    
+    private boolean isNullAble;
+    
+    private boolean isSearchIndex;
+    
+    private boolean isBlob;
     
 }
