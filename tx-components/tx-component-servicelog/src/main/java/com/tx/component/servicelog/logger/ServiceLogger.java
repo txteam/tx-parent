@@ -6,14 +6,7 @@
  */
 package com.tx.component.servicelog.logger;
 
-import java.awt.Menu;
-
-import org.apache.commons.httpclient.util.DateUtil;
-import org.slf4j.Logger;
 import org.slf4j.helpers.MarkerIgnoringBase;
-import org.slf4j.helpers.MessageFormatter;
-
-import com.tx.component.servicelog.context.LoggerContext;
 
 
  /**
