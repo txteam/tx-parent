@@ -12,17 +12,16 @@ import com.tx.component.rule.model.Rule;
 import com.tx.component.rule.model.RuleTypeEnum;
 import com.tx.component.rule.model.SimplePersistenceRule;
 
-
- /**
-  * 规则验证器接口
-  * <功能详细描述>
-  * 
-  * @author  brady
-  * @version  [版本号, 2013-3-14]
-  * @see  [相关类/方法]
-  * @since  [产品/模块版本]
-  */
-public interface RuleRegister<R extends Rule> extends Ordered{
+/**
+ * 规则验证器接口
+ * <功能详细描述>
+ * 
+ * @author  brady
+ * @version  [版本号, 2013-3-14]
+ * @see  [相关类/方法]
+ * @since  [产品/模块版本]
+ */
+public interface RuleRegister<R extends Rule> extends Ordered {
     
     /**
       * 验证类型<br/>

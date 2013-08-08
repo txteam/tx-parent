@@ -25,7 +25,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanNameAware;
-import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -55,8 +54,8 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public class AuthContext implements FactoryBean<AuthContext>,
-        ApplicationContextAware, InitializingBean, BeanNameAware {
+public class AuthContext implements ApplicationContextAware, InitializingBean,
+        BeanNameAware {
     
     /** 日志记录器 */
     private static final Logger logger = LoggerFactory.getLogger(AuthContext.class);
@@ -107,7 +106,7 @@ public class AuthContext implements FactoryBean<AuthContext>,
     /**
      * <默认构造函数>
      */
-    public AuthContext() {
+    private AuthContext() {
         AssertUtils.isNull(AuthContext.authContext,
                 "AuthContext must be singleton.it has be created");
     }
@@ -145,31 +144,6 @@ public class AuthContext implements FactoryBean<AuthContext>,
     public void setApplicationContext(ApplicationContext context)
             throws BeansException {
         this.applicationContext = context;
-    }
-    
-    /**
-     * @return
-     * @throws Exception
-     */
-    @Override
-    public AuthContext getObject() throws Exception {
-        return this;
-    }
-    
-    /**
-     * @return
-     */
-    @Override
-    public Class<?> getObjectType() {
-        return AuthContext.class;
-    }
-    
-    /**
-     * @return
-     */
-    @Override
-    public boolean isSingleton() {
-        return true;
     }
     
     /**
@@ -430,7 +404,7 @@ public class AuthContext implements FactoryBean<AuthContext>,
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public AuthItem getAuthItemFromContextById(String authItemId){
+    public AuthItem getAuthItemFromContextById(String authItemId) {
         return authItemMapping.get(authItemId);
     }
     

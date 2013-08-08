@@ -22,7 +22,7 @@ import java.util.Map;
 public interface TemplateDataService {
     
     /**
-      *<功能简述>
+      * 插入模板数据<br/>
       *<功能详细描述>
       * @param templateId
       * @param rowMap [参数说明]
@@ -33,10 +33,40 @@ public interface TemplateDataService {
      */
     public void insertTemplateData(String templateId,Map<String, Object> rowMap);
     
+    /**
+      * 批量插入模板数据<br/>
+      *<功能详细描述>
+      * @param templateId
+      * @param rowMapList [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
     public void batchInsertTemplateData(String templateId,List<Map<String, Object>> rowMapList);
     
+    /**
+      * 根据默认的模板数据主键删除对应的模板数据<br/>
+      *<功能详细描述>
+      * @param templateId
+      * @param rowDataId [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
     public void deleteTemplateDataByRowDataId(String templateId,String rowDataId);
     
+    /**
+      * 删除模板数据<br/>
+      *<功能详细描述>
+      * @param templateId
+      * @param rowMap [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
     public void deleteTemplateDataByRowMap(String templateId,Map<String, Object> rowMap);
     
     public void findTemplateDataByRowDataId(String templateId,String rowDataId);

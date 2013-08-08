@@ -20,9 +20,9 @@ import com.tx.core.spring.processor.BeansInitializedEventSupportPostProcessor;
  * @since  [产品/模块版本]
  */
 @Component("ruleLoaderSupportPostProcessor")
-public class RuleLoaderSupportPostProcessor extends BeansInitializedEventSupportPostProcessor<RuleLoader> {
-
-
+public class RuleLoaderSupportPostProcessor extends
+        BeansInitializedEventSupportPostProcessor<RuleLoader> {
+    
     /**
      * @return
      */

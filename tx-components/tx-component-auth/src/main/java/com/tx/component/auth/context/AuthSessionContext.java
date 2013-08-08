@@ -24,7 +24,7 @@ import com.tx.component.auth.model.CurrentSessionContext;
 import com.tx.core.exceptions.util.AssertUtils;
 
 /**
- * 权限会话容器
+ * 权限会话容器<br/>
  * <功能详细描述>
  * 
  * @author  brady
@@ -34,9 +34,9 @@ import com.tx.core.exceptions.util.AssertUtils;
  */
 public abstract class AuthSessionContext {
     
-    public final static String SESSION_KEY_CURRENT_OPERATOR_AUTHREF_MULTIVALUEMAP = "CURRENT_OPERATOR_AUTHREF_MULTIVALUEMAP_!@#$%^&*";
+    public final static String SESSION_KEY_CURRENT_OPERATOR_AUTHREF_MULTIVALUEMAP = "AUTH_CONTEXT_CURRENT_OPERATOR_AUTHREF_MULTIVALUEMAP";
     
-    public final static String SESSION_KEY_CURRENT_OPERATOR_ID = "CURRENT_OPERATOR_ID_!@#$%^&*";
+    public final static String SESSION_KEY_CURRENT_OPERATOR_ID = "AUTH_CONTEXT_CURRENT_OPERATOR_ID";
     
     /**
      * 线程变量:当前会话容器<br/>
