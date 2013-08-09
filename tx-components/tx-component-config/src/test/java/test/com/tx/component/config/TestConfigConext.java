@@ -6,8 +6,9 @@
  */
 package test.com.tx.component.config;
 
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import com.tx.component.config.model.ConfigPropertyItem;
+import com.tx.component.config.support.ConfigResourcePropertiesPersister;
+import com.tx.component.config.support.cppersister.CustomizedConfigPropertiesPersister;
 
 /**
  * <测试配置容器>
@@ -21,9 +22,20 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class TestConfigConext {
     
     public static void main(String[] args) {
-        ApplicationContext context = new ClassPathXmlApplicationContext(
-                "classpath:/com/tx/component/config/applicationContext-config.xml");
+        //ApplicationContext context = new ClassPathXmlApplicationContext(
+        //        "classpath:/com/tx/component/config/applicationContext-config.xml");
         
+        ConfigResourcePropertiesPersister  crpp = 
+                CustomizedConfigPropertiesPersister.newInstance();
+        
+        
+        
+        ConfigPropertyItem c = new ConfigPropertyItem();
+        c.setValue("-->添加到被观察之前设置的值");
+        
+        c.addObserver(crpp);
+        
+        c.setValue("-->添加被观察之后改变的值");
         
     }
     

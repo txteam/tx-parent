@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+	<comment>configContext.db.oracle</comment>
+
+	<!-- 创建容器表语句(日志表) -->
+	<entry key="createContextTable">
+		CREATE TABLE {} (
+			VERSION VARCHAR2(64),
+       		DATA_ DATE
+		)
+	</entry>
+	
+	<!-- 创建配置容器属性项表语句 -->
+	<entry key="createPropertiesTable">
+		CREATE TABLE {}(
+		     ID VARCHAR2(64) PRIMARY KEY,
+		     CREATEDATE DATE DEFAULT SYSDATE NOT NULL,
+		     LASTUPDATEDATE DATE DEFAULT SYSDATE NOT NULL,
+		     SYSTEMSOURCEID VARCHAR2(255) DEFAULT 'DEFAULT' NOT NULL,
+		     CONFIGRESOURCEID VARCHAR2(255),
+		     EDITABLE NUMBER(1) DEFAULT 0,
+		     VIEWABLE NUMBER(1) DEFAULT 1,
+		     VALID NUMBER(1) DEFAULT 1,
+		     NAME VARCHAR2(255),
+		     KEY VARCHAR2(64) NOT NULL,
+		     PARENTKEY VARCHAR2(64),
+		     VALUE VARCHAR2(256) NOT NULL,
+		     DESCRIPTION VARCHAR2(512),
+		     VIEWEXPRESSION VARCHAR2(1024),
+		     VALIDATEEXPRESSION VARCHAR2(1024)
+		)
+	</entry>
+	
+
+	<!-- 查询配置容器属相项语句 -->
+	<entry key="findBy">
+	    SELECT ID,
+			   CREATEDATE,
+			   LASTUPDATEDATE,
+	    	   SYSTEMSOURCEID,
+	           CONFIGRESOURCEID,
+	           EDITABLE,
+	           VIEWABLE,
+	           VALID,
+	           NAME,
+	           KEY,
+	           PARENTKEY,
+	           VALUE,
+	           DESCRIPTION,
+	           VIEWEXPRESSION,
+	           VALIDATEEXPRESSION
+	      FROM {}
+	     WHERE ID = ?
+	</entry>
+	
+	<!-- 查询配置容器属相项语句 -->
+	<entry key="queryBySystemSourceId">
+		SELECT ID,
+			   CREATEDATE,
+			   LASTUPDATEDATE,
+	    	   SYSTEMSOURCEID,
+	           CONFIGRESOURCEID,
+	           EDITABLE,
+	           VIEWABLE,
+	           VALID,
+	           NAME,
+	           KEY,
+	           PARENTKEY,
+	           VALUE,
+	           DESCRIPTION,
+	           VIEWEXPRESSION,
+	           VALIDATEEXPRESSION
+		  FROM {}
+		 WHERE SYSTEMSOURCEID = ?
+	</entry>
+	
+	<entry key="delete">
+		DELETE FROM {}
+	</entry>
+	
+	<entry key="insert">
+		INSERT INTO {}
+		  (ID,
+		   CONFIGRESOURCEID,
+		   EDITABLE,
+		   VIEWABLE,
+		   VALID,
+		   NAME,
+		   KEY,
+		   PARENTKEY,
+		   VALUE,
+		   DESCRIPTION,
+		   VIEWEXPRESSION,
+		   VALIDATEEXPRESSION)
+		VALUES
+		  (:id,
+		   :configResourceId,
+		   :editAble,
+		   :viewAble,
+		   :valid,
+		   :name,
+		   :key,
+		   :parentKey,
+		   :value,
+		   :description,
+		   :viewExpression,
+		   :validateExpression)
+	</entry>
+	
+	<entry key="update">
+		UPDATE {} 
+		SET  
+		WHERE ID = ?
+	</entry>
+
+</properties>

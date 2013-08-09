@@ -25,19 +25,19 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
 public class ConfigPropertiesSettings {
     
     @XStreamImplicit(itemFieldName="property")
-    private List<ConfigPropertySetting> configPropertyList;
+    private List<ConfigPropertiesSetting> configPropertyList;
 
     /**
      * @return 返回 configPropertyList
      */
-    public List<ConfigPropertySetting> getConfigPropertyList() {
+    public List<ConfigPropertiesSetting> getConfigPropertyList() {
         return configPropertyList;
     }
 
     /**
      * @param 对configPropertyList进行赋值
      */
-    public void setConfigPropertyList(List<ConfigPropertySetting> configPropertyList) {
+    public void setConfigPropertyList(List<ConfigPropertiesSetting> configPropertyList) {
         this.configPropertyList = configPropertyList;
     }
 }

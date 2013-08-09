@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configContext>
+	<!-- 是否是开发模式 -->
+	<isDevelop>true</isDevelop>
+	<!-- 是否允许属性重复.如果不允许重复，当启动时发现配置key重复将抛出异常 -->
+	<repeatAble>true</repeatAble>
+	<!-- configResourcePersisterPackage -->
+	<configResourcePersisterPackage>com.tx</configResourcePersisterPackage>
+	
+	<!-- 从db中读取配置 -->
+	<configResources>
+		<configResource>
+			<id>db.setting</id>
+			<type>database</type>
+			<jndiName>test_postgresql_db</jndiName>
+			<!-- 如果不同的虚中心的配置不同，以后再加特性进行支持 -->
+			<!-- name,key,value,description 如果不存在，需要 -->
+			<query>select PROPERTIES_KEY,PROPERTIES_VALUE,PROPERTIES_NAME,PROPERTIES_DESC,PROPERTIES_ISDEV from t_test_setting</query>
+			<insert>
+				insert into t_test_setting 
+				(PROPERTIES_ID,PROPERTIES_KEY,PROPERTIES_DEFAULT_VALUE,PROPERTIES_NAME,PROPERTIES_DESC,PROPERTIES_ISDEV) 
+				values 
+				(t_test_setting_sequence.nextval,?,?,?,?,?)
+			</insert>
+			<update>
+				update t_test_setting
+				   set 
+				     PROPERTIES_VALUE=?,
+				     PROPERTIES_NAME=?,
+				     PROPERTIES_DESC=?
+				where PROPERTIES_KEY=? and PROPERTIES_ISDEV=?
+			</update>
+			<delete>
+				delete from t_test_setting where properties_key=? and properties_isdev=?
+			</delete>
+			<!-- 默认reload为关闭 -->
+			<reload>true</reload>
+			<cronExpression>0 0 22 * * ?</cronExpression>
+		</configResource>
+		<configResource>
+			<id>cus.config</id>
+			<type>customized</type>
+			<locations>
+		        <string>classpath:config/configXml/*_config.xml</string>
+		        <string>classpath:config/configXml/*_testconfig.xml</string>	
+			</locations>
+		</configResource>
+		<configResource>
+			<id>pro.config</id>
+			<type>property</type>
+			<locations>
+				<string>classpath:config/configProperties/*_config.properties</string>
+			</locations>
+		</configResource>
+	</configResources>
+
+
+</configContext>

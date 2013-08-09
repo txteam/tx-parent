@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configProperties>
+	<property name="数据库配置">
+		<property name="jndi数据库">
+			<property name="jndiname">
+				<key>jndi.postgresql.jndiName</key>
+				<defaultValue>test_postgresql_db</defaultValue>
+			</property>
+		</property>
+	 
+	</property>
+</configProperties>

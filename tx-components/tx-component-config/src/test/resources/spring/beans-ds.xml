@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://www.springframework.org/schema/beans" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/jdbc
+		http://www.springframework.org/schema/jdbc/spring-jdbc-3.1.xsd  
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context-3.1.xsd       
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+
+	<bean id="transactionTemplate" 
+		class="org.springframework.transaction.support.TransactionTemplate">
+		<property name="transactionManager">
+			<ref bean="transactionManager"/>
+		</property>
+	</bean>
+	
+	<bean id="transactionManager" 
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource">
+			<ref bean="datasource"/>
+		</property>
+	</bean>
+	
+	
+
+	<beans profile="dev">
+
+		<bean id="losDatasource" class="com.tx.core.datasource.DataSourceFactoryBean">
+			<property name="supportP6spy" value="true"></property>
+			<property name="datasourceFinderList">
+				<list>
+					<bean
+						class="com.tx.core.datasource.finder.DelegatingDataSourceImplFinder">
+						<property name="srcDatasource">
+							<ref bean="hsqldbDataSource" />
+						</property>
+					</bean>
+				</list>
+			</property>
+		</bean>
+		<alias name="losDatasource" alias="datasource" />
+
+		<jdbc:embedded-database id="hsqldbDataSource" type="H2">
+			<jdbc:script location="classpath:hsqldb/02_tables.sql" />
+			<jdbc:script location="classpath:hsqldb/09_initdata.sql" />
+		</jdbc:embedded-database>
+
+	</beans>
+
+	<beans profile="production">
+		<bean id="losDatasource" class="com.tx.core.datasource.DataSourceFactoryBean">
+			<property name="supportP6spy" value="true"></property>
+			<property name="datasourceFinderList">
+				<list>
+					<bean class="com.tx.core.datasource.finder.JNDIDataSourceFinder">
+						<property name="jndiName" value="los_db"></property>
+					</bean>
+					<bean class="com.tx.core.datasource.finder.ConfigDataSourceFinder">
+						<property name="resourceId" value="los_db"></property>
+					</bean>
+				</list>
+			</property>
+		</bean>
+		<alias name="losDatasource" alias="datasource" />
+	</beans>
+</beans>

@@ -1,40 +1,68 @@
-/**
- * 文 件 名:  ConfigContext.java
- * 版    权:  TX Workgroup . Copyright YYYY-YYYY,  All rights reserved
- * 描    述:  <描述>
- * 修 改 人:  PengQingyang
- * 修改时间:  2012-10-5
+/*
+ * 描          述:  <描述>
+ * 修  改   人:  wanxin
+ * 修改时间:  2013-8-8
  * <修改描述:>
  */
 package com.tx.component.config.context;
 
-import org.quartz.Scheduler;
-import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
-
 /**
- * <配置容器>
- * <用以加载系统配置，支持动态加载系统中各配置>
+ * 配置容器<br/>
+ * <功能详细描述>
  * 
- * @author  PengQingyang
- * @version  [版本号, 2012-10-5]
+ * @author  wanxin
+ * @version  [版本号, 2013-8-8]
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class ConfigContext extends PropertyPlaceholderConfigurer {
+public class ConfigContext {
     
-    private Scheduler scheduler;
-
-    /**
-     * @return 返回 scheduler
-     */
-    public Scheduler getScheduler() {
-        return scheduler;
+    /** 是否处于开发模式  开发模式中 getValue 将优先获取 developValue */
+    private boolean isDevelop = false;
+    
+    /** 配置是否可重复 */
+    private boolean repeatAble = false;
+    
+    private static ConfigContext context;
+    
+    private ConfigContext() {
+        super();
     }
-
+    
+    public static ConfigContext getContext() {
+        synchronized (ConfigContext.class) {
+            if (context == null) {
+                context = new ConfigContext();
+            }
+        }
+        return context;
+    }
+    
     /**
-     * @param 对scheduler进行赋值
+     * @return 返回 isDevelop
      */
-    public void setScheduler(Scheduler scheduler) {
-        this.scheduler = scheduler;
+    public boolean isDevelop() {
+        return isDevelop;
+    }
+    
+    /**
+     * @param 对isDevelop进行赋值
+     */
+    public void setDevelop(boolean isDevelop) {
+        this.isDevelop = isDevelop;
+    }
+    
+    /**
+     * @return 返回 repeatAble
+     */
+    public boolean isRepeatAble() {
+        return repeatAble;
+    }
+    
+    /**
+     * @param 对repeatAble进行赋值
+     */
+    public void setRepeatAble(boolean repeatAble) {
+        this.repeatAble = repeatAble;
     }
 }
