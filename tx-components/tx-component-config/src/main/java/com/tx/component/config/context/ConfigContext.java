@@ -8,7 +8,8 @@ package com.tx.component.config.context;
 
 /**
  * 配置容器<br/>
- * <功能详细描述>
+ * test1
+ * test1
  * 
  * @author  wanxin
  * @version  [版本号, 2013-8-8]
