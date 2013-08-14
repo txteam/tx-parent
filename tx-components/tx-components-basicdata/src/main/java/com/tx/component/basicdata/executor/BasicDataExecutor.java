@@ -4,7 +4,7 @@
  * 修改时间:  2013-8-14
  * <修改描述:>
  */
-package com.tx.component.basicdata.context;
+package com.tx.component.basicdata.executor;
 
 import java.util.List;
 import java.util.Map;
@@ -20,7 +20,7 @@ import com.tx.core.paged.model.PagedList;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public interface BasicData<T> extends Comparable<T>{
+public interface BasicDataExecutor<T> extends Comparable<T>{
     
     /**
       * 获取对应的所有基础数据<br/>
