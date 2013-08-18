@@ -1421,6 +1421,7 @@
 						<!-- The path to the web.xml file to use. -->
 						<!-- User property is: maven.war.webxml. -->
 						<webXml>${basedir}/src/main/webapp/WEB-INF/web.xml</webXml>
+						<!-- 
 						<webResources>
 							<resource>
 								<directory>src/main/webapp/WEB-INF</directory>
@@ -1434,6 +1435,7 @@
 								<targetPath>WEB-INF/classes</targetPath>
 							</resource>
 						</webResources>
+						 -->
 					</configuration>
 				</plugin>
 

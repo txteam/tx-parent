@@ -162,7 +162,8 @@ public abstract class AuthSessionContext {
       * @see [类、类#方法、类#成员]
      */
     public static List<AuthItem> getAuthItemListDependAuthRefOfSession() {
-        Map<String, AuthItem> authItemMapping = AuthContext.getContext().getAllAuthItemMapping();
+        Map<String, AuthItem> authItemMapping = AuthContext.getContext()
+                .getAllAuthItemMapping();
         
         List<AuthItem> authItemList = new ArrayList<AuthItem>();
         MultiValueMap<String, AuthItemRef> authRefMulMap = getAuthRefMultiValueMapFromSession();
@@ -182,7 +183,8 @@ public abstract class AuthSessionContext {
       * @see [类、类#方法、类#成员]
      */
     public static List<AuthItem> getPerpetualAuthItemListDependAuthRefOfSession() {
-        Map<String, AuthItem> authItemMapping = AuthContext.getContext().getAllAuthItemMapping();
+        Map<String, AuthItem> authItemMapping = AuthContext.getContext()
+                .getAllAuthItemMapping();
         
         List<AuthItem> authItemList = new ArrayList<AuthItem>();
         MultiValueMap<String, AuthItemRef> authRefMulMap = getAuthRefMultiValueMapFromSession();
