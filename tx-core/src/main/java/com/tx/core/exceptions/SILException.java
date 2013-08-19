@@ -19,7 +19,7 @@ import com.tx.core.TxConstants;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class SILException extends RuntimeException {
+public abstract class SILException extends RuntimeException {
     
     /** 注释内容 */
     private static final long serialVersionUID = 4629630103815146373L;
@@ -27,42 +27,52 @@ public class SILException extends RuntimeException {
     /** 错误编码 */
     private String errorCode = "";
     
+    private String errorMessage = "";
+    
+    public abstract String getErrorCode();
+    
+    public abstract String getErrorMessage();
+    
     /** <默认构造函数> */
-    public SILException(String errorCode, String errorMessage,
+    public SILException(String message,
             String... parameters) {
-        super((parameters == null || parameters.length == 0) ? errorMessage
-                : MessageFormatter.arrayFormat(errorMessage, parameters)
+        super((parameters == null || parameters.length == 0) ? message
+                : MessageFormatter.arrayFormat(message, parameters)
                         .getMessage());
-        this.errorCode = errorCode;
+        this.errorCode = getErrorCode();
+        this.errorMessage = getErrorMessage();
     }
     
     /** <默认构造函数> */
-    public SILException(String errorCode, String errorMessage, Throwable cause,
+    public SILException(String message, Throwable cause,
             String... parameters) {
-        super((parameters == null || parameters.length == 0) ? errorMessage
-                : MessageFormatter.arrayFormat(errorMessage, parameters)
+        super((parameters == null || parameters.length == 0) ? message
+                : MessageFormatter.arrayFormat(message, parameters)
                         .getMessage(), cause);
-        this.errorCode = errorCode;
+        this.errorCode = getErrorCode();
+        this.errorMessage = getErrorMessage();
     }
     
     /**
      * <默认构造函数>
      */
-    public SILException(String errorCode, String errorMessage,
+    public SILException(String message,
             Object[] parameters) {
-        super((parameters == null || parameters.length == 0) ? errorMessage
-                : MessageFormatter.arrayFormat(errorMessage, parameters)
+        super((parameters == null || parameters.length == 0) ? message
+                : MessageFormatter.arrayFormat(message, parameters)
                         .getMessage());
-        this.errorCode = errorCode;
+        this.errorCode = getErrorCode();
+        this.errorMessage = getErrorMessage();
     }
     
     /** <默认构造函数> */
-    public SILException(String errorCode, String errorMessage, Throwable cause,
+    public SILException(String message, Throwable cause,
             Object[] parameters) {
-        super((parameters == null || parameters.length == 0) ? errorMessage
-                : MessageFormatter.arrayFormat(errorMessage, parameters)
+        super((parameters == null || parameters.length == 0) ? message
+                : MessageFormatter.arrayFormat(message, parameters)
                         .getMessage(), cause);
-        this.errorCode = errorCode;
+        this.errorCode = getErrorCode();
+        this.errorMessage = getErrorMessage();
     }
     
     /**
@@ -70,8 +80,10 @@ public class SILException extends RuntimeException {
      */
     public String toString() {
         StringBuilder sb = new StringBuilder(TxConstants.INITIAL_STR_LENGTH);
-        sb.append("SILException errorCode: ").append(this.errorCode);
-        sb.append(" . Exception to String: ").append(super.toString());
+        sb.append("SILException: ").append(this.getClass().getName());
+        sb.append("   errorCode: ").append(this.errorCode).append("/n");
+        sb.append("   errorMessage: ").append(this.errorMessage).append(this.errorCode).append("/n");
+        sb.append("   Exception toString: ").append(super.toString());
         return sb.toString();
     }
 }
