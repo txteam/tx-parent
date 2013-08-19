@@ -99,6 +99,12 @@
 			<artifactId>commons-dbcp</artifactId>
 		</dependency>
 
+		<!-- barcode4j -->
+		<dependency>
+			<groupId>net.sf.barcode4j</groupId>
+			<artifactId>barcode4j</artifactId>
+		</dependency>
+
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
@@ -183,17 +189,17 @@
 
 		<!-- aop -->
 		<dependency>
-			<!-- aopï¿½ï¿½ï¿½ï¿½ï¿½Æ¶ï¿½ï¿½ï¿½aopï¿½æ·¶ -->
+			<!-- aopÁªÃËÖÆ¶¨µÄaop¹æ·¶ -->
 			<groupId>aopalliance</groupId>
 			<artifactId>aopalliance</artifactId>
 		</dependency>
 		<dependency>
-			<!-- aop aspectjÊµï¿½ï¿½ -->
+			<!-- aop aspectjÊµÏÖ -->
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjrt</artifactId>
 		</dependency>
 		<dependency>
-			<!-- aop aspectjÊµï¿½ï¿½ -->
+			<!-- aop aspectjÊµÏÖ -->
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjweaver</artifactId>
 		</dependency>
@@ -252,6 +258,17 @@
 			<artifactId>quartz-oracle</artifactId>
 		</dependency>
 
+		<!-- activiti -->
+		<dependency>
+			<groupId>org.activiti</groupId>
+			<artifactId>activiti-engine</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.activiti</groupId>
+			<artifactId>activiti-spring</artifactId>
+		</dependency>
+
 		<!-- drools -->
 		<dependency>
 			<groupId>org.drools</groupId>
@@ -295,7 +312,7 @@
 			<artifactId>jstl</artifactId>
 		</dependency>
 		<dependency>
-			<!-- jstlï¿½ï¿½ï¿½ï¿½â£¬ï¿½ï¿½TLD ï¿½Í±ï¿½Ç¾ï¿½ï¿½ -->
+			<!-- jstlµÄÀà¿â£¬°üº¬TLD ºÍ±ê¼Ç¾ä±ú¡£ -->
 			<groupId>taglibs</groupId>
 			<artifactId>standard</artifactId>
 		</dependency>
@@ -339,12 +356,16 @@
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.iscreen</groupId>
+			<artifactId>iscreen-ognl</artifactId>
+			<version>2.0.1</version>
+		</dependency>
 
 		<!-- junit -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
