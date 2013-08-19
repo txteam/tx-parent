@@ -144,23 +144,4 @@ public class MethodResolver {
     public void setReturnType(Class<?> returnType) {
         this.returnType = returnType;
     }
-
-    //    public void test(String a,Object[] t,String... b){
-    //        
-    //    }
-    //    
-    //    public static void main(String[] args) {
-    //        
-    //        Method[] methods = MethodResolver.class.getMethods();
-    //        
-    //        for(Method m : methods){
-    //            if("test".equals(m.getName())){
-    //                MethodResolver r = MethodResolver.resolveMethodResolver(m);
-    //                System.out.println(r.getParametersLength());
-    //                for(int i = 0 ; i < r.getParametersLength() ; i ++){
-    //                    System.out.println(r.getParameterResolvers().get(i).getParamterType());
-    //                }
-    //            }
-    //        }
-    //    }
 }
