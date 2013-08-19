@@ -48,8 +48,6 @@ import com.tx.component.rule.transation.RuleSessionTransactionFactory;
 import com.tx.component.rule.transation.impl.DefaultRuleSessionTransactionFactory;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.spring.event.BeansInitializedEvent;
-import com.tx.core.support.cache.ehcache.SimpleEhcacheMap;
-import com.tx.core.support.cache.ehcache.SimpleMultiValueEhcacheMap;
 
 /**
  * 规则容器<br/>
