@@ -40,9 +40,9 @@ public class AssertUtils {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    public static void notEmpty(Object obj, String objName) {
+    public static void notEmpty(Object obj, String message) {
         //不为空
-        notEmpty(obj, objName + " is null or empty");
+        notEmpty(obj, message + " is null or empty");
     }
     
     /**

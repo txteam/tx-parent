@@ -39,27 +39,17 @@ public class AuthContextInitException extends SILException {
     }
 
     /** <默认构造函数> */
-    public AuthContextInitException(String message, Object[] parameters,
-            Throwable cause) {
-        super(message, parameters, cause);
-        // TODO Auto-generated constructor stub
-    }
-
-    /** <默认构造函数> */
     public AuthContextInitException(String message, Object[] parameters) {
         super(message, parameters);
-        // TODO Auto-generated constructor stub
     }
 
     /** <默认构造函数> */
-    public AuthContextInitException(String errorMessage, Throwable cause) {
-        super(errorMessage, cause);
-        // TODO Auto-generated constructor stub
+    public AuthContextInitException(String message, Throwable cause) {
+        super(message, cause);
     }
 
     /** <默认构造函数> */
-    public AuthContextInitException(String errorMessage) {
-        super(errorMessage);
-        // TODO Auto-generated constructor stub
+    public AuthContextInitException(String message) {
+        super(message);
     }
 }

@@ -46,37 +46,32 @@ public class DataSourceTypeUnSupportException extends SILException {
     
     /** <默认构造函数> */
     public DataSourceTypeUnSupportException(DataSourceTypeEnum dataSourceType) {
-        this(dataSourceType, "不支持的数据源类型.", null);
+        this("不支持的数据源类型:" + dataSourceType);
+        this.dataSourceType = dataSourceType;
     }
     
     /** <默认构造函数> */
     public DataSourceTypeUnSupportException(DataSourceTypeEnum dataSourceType,
             String message, Object[] parameters) {
-        super(message, parameters);
+        this(message, parameters);
         this.dataSourceType = dataSourceType;
-    }
-    
-    /** <默认构造函数> */
-    public DataSourceTypeUnSupportException(String message,
-            Object[] parameters, Throwable cause) {
-        super(message, parameters, cause);
     }
     
     /** <默认构造函数> */
     public DataSourceTypeUnSupportException(String message, Object[] parameters) {
         super(message, parameters);
     }
-    
+
     /** <默认构造函数> */
-    public DataSourceTypeUnSupportException(String errorMessage, Throwable cause) {
-        super(errorMessage, cause);
+    public DataSourceTypeUnSupportException(String message, Throwable cause) {
+        super(message, cause);
     }
-    
+
     /** <默认构造函数> */
-    public DataSourceTypeUnSupportException(String errorMessage) {
-        super(errorMessage);
+    public DataSourceTypeUnSupportException(String message) {
+        super(message);
     }
-    
+
     /**
      * @return 返回 dataSourceType
      */

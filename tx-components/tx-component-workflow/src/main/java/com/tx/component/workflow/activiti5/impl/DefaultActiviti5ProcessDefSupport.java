@@ -101,7 +101,7 @@ public abstract class DefaultActiviti5ProcessDefSupport implements
         ProcessDefinitionEntity res = (ProcessDefinitionEntity) this.repositoryService.getProcessDefinition(processDefinitionId);
         if (res == null) {
             throw new WorkflowAccessException("id为:{}流程定义不存在",
-                    processDefinitionId);
+                    new Object[]{processDefinitionId});
         }
         return res;
     }

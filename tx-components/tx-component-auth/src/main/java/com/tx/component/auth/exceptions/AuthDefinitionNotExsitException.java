@@ -6,7 +6,6 @@
  */
 package com.tx.component.auth.exceptions;
 
-import com.tx.core.exceptions.ErrorCodeConstant;
 import com.tx.core.exceptions.SILException;
 
 /**
@@ -25,47 +24,27 @@ public class AuthDefinitionNotExsitException extends SILException {
     /** 注释内容 */
     private static final long serialVersionUID = -2814953773924819958L;
     
-    private String ruleId;
+    private String authKey;
+
+    /**
+     * @return
+     */
+    @Override
+    protected String doGetErrorCode() {
+        return "AUTH_KEY_NOT_EXSIT_ERROR";
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    protected String doGetErrorMessage() {
+        return "权限未定义";
+    }
     
     /** <默认构造函数> */
-    public AuthDefinitionNotExsitException(String message, Object[] parameters) {
-        super(message, parameters);
-        // TODO Auto-generated constructor stub
-    }
-
-    /** <默认构造函数> */
-    public AuthDefinitionNotExsitException(String message, String... parameters) {
-        super(message, parameters);
-    }
-
-    /** <默认构造函数> */
-    public AuthDefinitionNotExsitException(String message, Throwable cause,
-            Object[] parameters) {
-        super(message, cause, parameters);
-    }
-
-    /** <默认构造函数> */
-    public AuthDefinitionNotExsitException(String message, Throwable cause,
-            String... parameters) {
-        super(message, cause, parameters);
-    }
-
-    /** <默认构造函数> */
-    public AuthDefinitionNotExsitException(String errorMessage) {
-        super(errorMessage);
-    }
-
-    /**
-     * @return 返回 ruleId
-     */
-    public String getRuleId() {
-        return ruleId;
-    }
-
-    /**
-     * @param 对ruleId进行赋值
-     */
-    public void setRuleId(String ruleId) {
-        this.ruleId = ruleId;
+    public AuthDefinitionNotExsitException(String authKey) {
+        super(authKey + "权限未定义");
+        this.authKey = authKey;
     }
 }

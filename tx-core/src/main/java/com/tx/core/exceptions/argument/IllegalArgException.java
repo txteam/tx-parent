@@ -40,23 +40,12 @@ public class IllegalArgException extends SILException {
     }
 
     /** <默认构造函数> */
-    public IllegalArgException(String message, Object[] parameters,
-            Throwable cause) {
-        super(message, parameters, cause);
-    }
-
-    /** <默认构造函数> */
     public IllegalArgException(String message, Object[] parameters) {
         super(message, parameters);
     }
 
     /** <默认构造函数> */
-    public IllegalArgException(String errorMessage, Throwable cause) {
-        super(errorMessage, cause);
-    }
-
-    /** <默认构造函数> */
-    public IllegalArgException(String errorMessage) {
-        super(errorMessage);
+    public IllegalArgException(String message) {
+        super(message);
     }
 }

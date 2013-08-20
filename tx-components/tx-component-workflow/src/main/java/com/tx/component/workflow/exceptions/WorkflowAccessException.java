@@ -6,7 +6,6 @@
  */
 package com.tx.component.workflow.exceptions;
 
-import com.tx.core.exceptions.ErrorCode;
 import com.tx.core.exceptions.SILException;
 
 /**
@@ -23,22 +22,35 @@ public class WorkflowAccessException extends SILException {
     
     /** 注释内容 */
     private static final long serialVersionUID = -5085470848631474509L;
-    
+
     /**
-     * <默认构造函数>
+     * @return
      */
-    public WorkflowAccessException(String errorMessage, String... parameters) {
-        super(ErrorCode.WORKFLOW_EXCEPTION_ERROR_CODE.getCode(), errorMessage,
-                parameters);
+    @Override
+    protected String doGetErrorCode() {
+        return "WORKFLOW_ACCESS_EXCEPTION";
     }
-    
+
     /**
-     * <默认构造函数>
+     * @return
      */
-    public WorkflowAccessException(String errorMessage, Throwable cause,
-            String... parameters) {
-        super(ErrorCode.WORKFLOW_EXCEPTION_ERROR_CODE.getCode(), errorMessage,
-                cause, parameters);
+    @Override
+    protected String doGetErrorMessage() {
+        return "流程流转异常";
     }
-    
+
+    /** <默认构造函数> */
+    public WorkflowAccessException(String message, Object[] parameters) {
+        super(message, parameters);
+    }
+
+    /** <默认构造函数> */
+    public WorkflowAccessException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    /** <默认构造函数> */
+    public WorkflowAccessException(String message) {
+        super(message);
+    }
 }

@@ -6,7 +6,7 @@
  */
 package com.tx.core.exceptions.argument;
 
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.helpers.MessageFormatter;
 
 /**
@@ -26,7 +26,7 @@ public class NullArgException extends IllegalArgException {
     /**
      * 参数名数组
      */
-    private String[] argumensNames;
+    private String argumentName;
     
     /**
      * @return
@@ -41,57 +41,28 @@ public class NullArgException extends IllegalArgException {
      */
     @Override
     protected String doGetErrorMessage() {
-        return ArrayUtils.isEmpty(argumensNames) ? "参数不能为空"
-                : MessageFormatter.arrayFormat("参数：{}不能为空",
-                        new Object[] { argumensNames }).getMessage();
+        return StringUtils.isBlank(argumentName) ? "参数不能为空"
+                : MessageFormatter.arrayFormat("参数：{} 不能为空",
+                        new Object[] { argumentName }).getMessage();
     }
     
     /** <默认构造函数> */
-    public NullArgException(String[] argumensNames,String message, 
-            Object[] parameters) {
-        super(message, parameters);
-        this.argumensNames = argumensNames;
-    }
-    
-    /** <默认构造函数> */
-    public NullArgException(String[] argumensNames,String message, 
-            String... parameters) {
-        super(message, parameters);
-        this.argumensNames = argumensNames;
-    }
-    
-    /** <默认构造函数> */
-    public NullArgException(String message, Object[] parameters,
-            Throwable cause) {
-        super(message, parameters, cause);
-    }
-
-    /** <默认构造函数> */
-    public NullArgException(String message, Object[] parameters) {
-        super(message, parameters);
-    }
-
-    /** <默认构造函数> */
-    public NullArgException(String errorMessage, Throwable cause) {
-        super(errorMessage, cause);
-    }
-
-    /** <默认构造函数> */
-    public NullArgException(String errorMessage) {
-        super(errorMessage);
+    public NullArgException(String argumentName) {
+        super(argumentName + "不能为空");
+        this.argumentName = argumentName;
     }
 
     /**
-     * @return 返回 argumensNames
+     * @return 返回 argumentName
      */
-    public String[] getArgumensNames() {
-        return argumensNames;
+    public String getArgumentName() {
+        return argumentName;
     }
-    
+
     /**
-     * @param 对argumensNames进行赋值
+     * @param 对argumentName进行赋值
      */
-    public void setArgumensNames(String[] argumensNames) {
-        this.argumensNames = argumensNames;
+    public void setArgumentName(String argumentName) {
+        this.argumentName = argumentName;
     }
 }

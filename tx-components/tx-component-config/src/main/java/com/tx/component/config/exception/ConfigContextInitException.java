@@ -25,24 +25,35 @@ public class ConfigContextInitException extends SILException {
     
     /** 配置容器 */
     public static final String ERROR_CODE_CONFIG_CONTEXT_INIT = "configcontext_000_001";
-    
-    public ConfigContextInitException(String errorMessage,
-            Object[] parameters) {
-        super(ERROR_CODE_CONFIG_CONTEXT_INIT, errorMessage, parameters);
+
+    /**
+     * @return
+     */
+    @Override
+    protected String doGetErrorCode() {
+        return "CONFIGCONTEXT_INIT_ERROR";
     }
 
-    public ConfigContextInitException(String errorMessage,
-            String... parameters) {
-        super(ERROR_CODE_CONFIG_CONTEXT_INIT, errorMessage, parameters);
+    /**
+     * @return
+     */
+    @Override
+    protected String doGetErrorMessage() {
+        return "权限容器初始化异常";
     }
 
-    public ConfigContextInitException(String errorMessage,
-            Throwable cause, Object[] parameters) {
-        super(ERROR_CODE_CONFIG_CONTEXT_INIT, errorMessage, cause, parameters);
+    /** <默认构造函数> */
+    public ConfigContextInitException(String message, Object[] parameters) {
+        super(message, parameters);
     }
 
-    public ConfigContextInitException(String errorMessage,
-            Throwable cause, String... parameters) {
-        super(ERROR_CODE_CONFIG_CONTEXT_INIT, errorMessage, cause, parameters);
+    /** <默认构造函数> */
+    public ConfigContextInitException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    /** <默认构造函数> */
+    public ConfigContextInitException(String message) {
+        super(message);
     }
 }

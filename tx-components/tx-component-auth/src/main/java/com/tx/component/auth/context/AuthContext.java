@@ -428,7 +428,7 @@ public class AuthContext implements ApplicationContextAware, InitializingBean,
         AuthItem authItem = authItemMapping.get(authKey);
         if (authItem == null) {
             throw new AuthContextInitException(
-                    "The authKey:{} AuthItem is not exists.", authKey);
+                    "The authKey:{} AuthItem is not exists.", new Object[]{authKey});
         }
         
         //如果对应权限项已经无效，则认为拥有权限

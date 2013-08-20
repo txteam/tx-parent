@@ -33,7 +33,7 @@ public class ResourceAccessException extends SILException {
     protected String doGetErrorCode() {
         return "RESOURCE_ACCESS_ERROR";
     }
-
+    
     /**
      * @return
      */
@@ -43,49 +43,39 @@ public class ResourceAccessException extends SILException {
     }
     
     /** <默认构造函数> */
-    public ResourceAccessException(Resource resource, String message,
-            Object[] parameters, Throwable cause) {
-        super(message, parameters, cause);
+    public ResourceAccessException(Resource resource, String message) {
+        this(message);
+        this.resource = resource;
     }
     
     /** <默认构造函数> */
     public ResourceAccessException(Resource resource, String message,
             Object[] parameters) {
-        super(message, parameters);
+        this(message, parameters);
+        this.resource = resource;
     }
     
     /** <默认构造函数> */
-    public ResourceAccessException(Resource resource, String errorMessage,
-            Throwable cause) {
-        super(errorMessage, cause);
+    public ResourceAccessException(Resource resource, String message,Throwable cause) {
+        this(message);
+        this.resource = resource;
     }
-    
-    /** <默认构造函数> */
-    public ResourceAccessException(Resource resource, String errorMessage) {
-        super(errorMessage);
-    }
-    
-    /** <默认构造函数> */
-    public ResourceAccessException(String message, Object[] parameters,
-            Throwable cause) {
-        super(message, parameters, cause);
-    }
-    
+
     /** <默认构造函数> */
     public ResourceAccessException(String message, Object[] parameters) {
         super(message, parameters);
     }
-    
+
     /** <默认构造函数> */
-    public ResourceAccessException(String errorMessage, Throwable cause) {
-        super(errorMessage, cause);
+    public ResourceAccessException(String message, Throwable cause) {
+        super(message, cause);
     }
-    
+
     /** <默认构造函数> */
-    public ResourceAccessException(String errorMessage) {
-        super(errorMessage);
+    public ResourceAccessException(String message) {
+        super(message);
     }
-    
+
     /**
      * @return 返回 resource
      */

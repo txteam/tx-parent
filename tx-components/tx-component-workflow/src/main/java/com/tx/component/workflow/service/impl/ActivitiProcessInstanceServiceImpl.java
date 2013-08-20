@@ -736,7 +736,7 @@ public class ActivitiProcessInstanceServiceImpl implements InitializingBean,
             //如果不存在指定名称的操作
             throw new WorkflowAccessException(
                     "ProcessInstanceServic.process:{} transition:{} not exist.",
-                    processInstanceId, transitionName);
+                    new Object[]{processInstanceId, transitionName} );
         }
         
         //清空原流向集合
@@ -855,7 +855,7 @@ public class ActivitiProcessInstanceServiceImpl implements InitializingBean,
             //如果不存在指定名称的操作
             throw new WorkflowAccessException(
                     "ProcessInstanceServic.process:{} transition:{} not exist.",
-                    processInstanceId, transitionId);
+                    new Object[]{processInstanceId, transitionId});
         }
         
         //清空原流向集合

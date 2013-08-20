@@ -6,6 +6,7 @@
  */
 package com.tx.core.util;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringEscapeUtils;
@@ -22,7 +23,6 @@ import org.apache.commons.lang.StringUtils;
  */
 public class SqlUtils {
     
-    
     /**
       * 对sql进行处理放置sql注入
       * <功能详细描述>
@@ -33,12 +33,47 @@ public class SqlUtils {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public static String escapeSql(String srcSql){
+    public static String escapeSql(String srcSql) {
         String newSql = StringEscapeUtils.escapeSql(srcSql);
         return newSql;
     }
     
-//    public static List<String> splitSql(String srcSql){
-//        StringUtils.splitByWholeSeparator(str, separator, max)
-//    }
+    /**
+      * 将sqlContent依据';\s' '/\s'进行分割，分割为多个sql语句
+      *     但字符中的特殊符号要允许输入
+      *     服务于，读取sql文件后，逐句sql进行执行 
+      *<功能详细描述>
+      * @param srcSqlContent
+      * @return [参数说明]
+      * 
+      * @return String [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public static List<String> splitSqlContent(String srcSqlContent) {
+        if (StringUtils.isBlank(srcSqlContent)) {
+            return new ArrayList<String>();
+        }
+        String[] res = srcSqlContent.split("[;/]\\s|[;/]$");
+        List<String> resList = new ArrayList<String>(res.length);
+        for (String sqlTemp : res) {
+            if (!StringUtils.isBlank(sqlTemp)) {
+                resList.add(sqlTemp);
+            }
+        }
+        return resList;
+    }
+    
+    public static void main(String[] args) {
+        String sqlContent = "create table \n (id_ " +
+        		"varchar2(32));\n create index xxx;\n/ " +
+        		"insert into (id) valuse ('absdsdf;dsfasd;asdf');\n " +
+        		"insert into(id) values('test');";
+        
+        List<String> res = splitSqlContent(sqlContent);
+        for (String temp : res) {
+            System.out.print("   newSql:");
+            System.out.println(temp);
+        }
+    }
 }

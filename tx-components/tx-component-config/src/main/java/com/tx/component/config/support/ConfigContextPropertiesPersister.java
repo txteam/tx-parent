@@ -220,7 +220,7 @@ public class ConfigContextPropertiesPersister implements PropertiesPersister {
         } else {
             throw new ConfigContextInitException(
                     "   >>>配置容器加载: 加载资源类型为:{}的配置资源失败.找不到对应配置资源类型加载器",
-                    configResource.getType());
+                    new Object[]{configResource.getType()});
         }
         return resList;
         

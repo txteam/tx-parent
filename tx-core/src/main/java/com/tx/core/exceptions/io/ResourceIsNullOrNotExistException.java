@@ -41,31 +41,19 @@ public class ResourceIsNullOrNotExistException extends ResourceAccessException{
 
     /** <默认构造函数> */
     public ResourceIsNullOrNotExistException(Resource resource, String message,
-            Object[] parameters, Throwable cause) {
-        super(resource, message, parameters, cause);
-    }
-
-    /** <默认构造函数> */
-    public ResourceIsNullOrNotExistException(Resource resource, String message,
             Object[] parameters) {
         super(resource, message, parameters);
     }
 
     /** <默认构造函数> */
-    public ResourceIsNullOrNotExistException(Resource resource, String errorMessage,
+    public ResourceIsNullOrNotExistException(Resource resource, String message,
             Throwable cause) {
-        super(resource, errorMessage, cause);
+        super(resource, message, cause);
     }
 
     /** <默认构造函数> */
-    public ResourceIsNullOrNotExistException(Resource resource, String errorMessage) {
-        super(resource, errorMessage);
-    }
-
-    /** <默认构造函数> */
-    public ResourceIsNullOrNotExistException(String message, Object[] parameters,
-            Throwable cause) {
-        super(message, parameters, cause);
+    public ResourceIsNullOrNotExistException(Resource resource, String message) {
+        super(resource, message);
     }
 
     /** <默认构造函数> */
@@ -74,12 +62,12 @@ public class ResourceIsNullOrNotExistException extends ResourceAccessException{
     }
 
     /** <默认构造函数> */
-    public ResourceIsNullOrNotExistException(String errorMessage, Throwable cause) {
-        super(errorMessage, cause);
+    public ResourceIsNullOrNotExistException(String message, Throwable cause) {
+        super(message, cause);
     }
 
     /** <默认构造函数> */
-    public ResourceIsNullOrNotExistException(String errorMessage) {
-        super(errorMessage);
+    public ResourceIsNullOrNotExistException(String message) {
+        super(message);
     }
 }

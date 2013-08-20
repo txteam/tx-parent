@@ -70,7 +70,7 @@ public class FreeMarkerUtils {
             return temp;
         } catch (IOException e) {
             logger.error(e.toString(), e);
-            throw new ResourceAccessException("", e);
+            throw new ResourceAccessException("加载freeMarker模版.发生IOException", e);
         }
     }
     
@@ -101,10 +101,10 @@ public class FreeMarkerUtils {
             temp.process(root, out);
         } catch (IOException e) {
             logger.error(e.toString(), e);
-            throw new ResourceAccessException("", e);
+            throw new ResourceAccessException("根据freeMarker模版生成目标文件.发生IOException", e);
         } catch (TemplateException e) {
             logger.error(e.toString(), e);
-            throw new ResourceAccessException("", e);
+            throw new ResourceAccessException("根据freeMarker模版生成目标文件.发生TemplateException", e);
         } finally {
             IOUtils.closeQuietly(out);
         }

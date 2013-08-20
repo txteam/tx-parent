@@ -30,52 +30,21 @@ public class RuleAccessException extends SILException {
     
     private RuleSession ruleSession;
     
-    /**
-     * 规则访问异常
-     * @param message 异常信息
-     * @param cause 内部异常
-     */
-    public RuleAccessException(String ruleName, Rule rule,
-            RuleSession ruleSession, String message, Throwable cause,
-            String... parameters) {
-        super(RuleExceptionTranslator.RULE_ERROR_CODE, message, cause, parameters);
-        this.rule = rule;
-        this.ruleSession = ruleSession;
-    }
     
-    /**
-     * 规则访问异常
-     * @param message 异常信息
-     */
-    public RuleAccessException(String ruleName, Rule rule,
-            RuleSession ruleSession, String message, String... parameters) {
-        super("1111", message, parameters);
-        this.rule = rule;
-        this.ruleSession = ruleSession;
+
+    /** <默认构造函数> */
+    public RuleAccessException(String message, Object[] parameters) {
+        super(message, parameters);
     }
-    
-    /**
-     * 规则访问异常
-     * @param message 异常信息
-     * @param cause 内部异常
-     */
-    public RuleAccessException(String ruleName, Rule rule,
-            RuleSession ruleSession, String message, Throwable cause,
-            Object[] parameters) {
-        super(RuleExceptionTranslator.RULE_ERROR_CODE, message, cause, parameters);
-        this.rule = rule;
-        this.ruleSession = ruleSession;
+
+    /** <默认构造函数> */
+    public RuleAccessException(String message, Throwable cause) {
+        super(message, cause);
     }
-    
-    /**
-     * 规则访问异常
-     * @param message 异常信息
-     */
-    public RuleAccessException(String ruleName, Rule rule,
-            RuleSession ruleSession, String message, Object[] parameters) {
-        super("1111", message, parameters);
-        this.rule = rule;
-        this.ruleSession = ruleSession;
+
+    /** <默认构造函数> */
+    public RuleAccessException(String message) {
+        super(message);
     }
 
     /**
