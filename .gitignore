@@ -19,7 +19,7 @@
 /tx-components/tx-component-config/.settings
 /tx-components/tx-component-config/.svn
 
-/tx-components/tx-component-basicdata/target
+
 /tx-components/tx-component-basicdata/.classpath
 /tx-components/tx-component-basicdata/.project
 /tx-components/tx-component-basicdata/.settings
@@ -41,7 +41,7 @@
 /tx-components/tx-component-rule/.settings
 /tx-components/tx-component-rule/spy.log
 
-/tx-components/tx-component-workflow/target
+
 /tx-components/tx-component-workflow/.classpath
 /tx-components/tx-component-workflow/.project
 /tx-components/tx-component-workflow/.settings
