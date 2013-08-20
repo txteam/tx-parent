@@ -6,7 +6,10 @@
  */
 package com.tx.core.util;
 
+import java.util.List;
+
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * sql工具类
@@ -18,6 +21,7 @@ import org.apache.commons.lang.StringEscapeUtils;
  * @since  [产品/模块版本]
  */
 public class SqlUtils {
+    
     
     /**
       * 对sql进行处理放置sql注入
@@ -34,48 +38,7 @@ public class SqlUtils {
         return newSql;
     }
     
-    /**
-      * 创建%在开头的字符串
-      *<功能详细描述>
-      * @param srcString
-      * @return [参数说明]
-      * 
-      * @return String [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    public static String createLikeStringAtStart(String srcString) {
-        String newString = "%" + StringEscapeUtils.escapeSql(srcString);
-        return newString;
-    }
-    
-    /**
-     * 创建%在末尾的字符串
-     *<功能详细描述>
-     * @param srcString
-     * @return [参数说明]
-     * 
-     * @return String [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-    */
-    public static String createLikeStringAtEnd(String srcString) {
-        String newString = StringEscapeUtils.escapeSql(srcString) + "%";
-        return newString;
-    }
-    
-    /**
-      * 创建%在前后均有的字符串
-      * <功能详细描述>
-      * @param srcString
-      * @return [参数说明]
-      * 
-      * @return String [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    public static String createLikeString(String srcString) {
-        String newString = "%" + StringEscapeUtils.escapeSql(srcString) + "%";
-        return newString;
-    }
+//    public static List<String> splitSql(String srcSql){
+//        StringUtils.splitByWholeSeparator(str, separator, max)
+//    }
 }

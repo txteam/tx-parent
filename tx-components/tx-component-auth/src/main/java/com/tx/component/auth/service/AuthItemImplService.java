@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.tx.component.auth.dao.AuthItemImplDao;
 import com.tx.component.auth.model.AuthItemImpl;
-import com.tx.core.exceptions.argument.NullArgumentException;
+import com.tx.core.exceptions.argument.NullArgException;
 import com.tx.core.exceptions.util.AssertUtils;
 
 /**
@@ -144,7 +144,7 @@ public class AuthItemImplService {
     @Transactional
     public void deleteById(String authItemId) {
         if (StringUtils.isEmpty(authItemId)) {
-            throw new NullArgumentException(
+            throw new NullArgException(
                     "AuthItemImplService.deleteById id isEmpty.");
         }
         

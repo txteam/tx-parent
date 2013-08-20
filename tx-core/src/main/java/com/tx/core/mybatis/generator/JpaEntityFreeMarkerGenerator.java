@@ -22,7 +22,7 @@ import java.util.Set;
 import org.apache.cxf.common.util.StringUtils;
 import org.springframework.util.ClassUtils;
 
-import com.tx.core.exceptions.parameter.ParameterIsInvalidException;
+import com.tx.core.exceptions.argument.IllegalArgException;
 import com.tx.core.mybatis.generator.model.DaoGeneratorModel;
 import com.tx.core.mybatis.generator.model.DeleteMapper;
 import com.tx.core.mybatis.generator.model.InsertMapper;
@@ -431,8 +431,8 @@ public class JpaEntityFreeMarkerGenerator {
                 Class<?> tempIdType = temp.getGetterReturnTypeMapping().get(tempIdPropertyName);
                 if (StringUtils.isEmpty(tempIdPropertyName)) {
                     //如果不为简单对象，关联对象中又不存在主键设置，这里将认为发生了异常，这样的情形不应该出现
-                    throw new ParameterIsInvalidException(typeTemp.getName()
-                            + " id property is empty");
+                    throw new IllegalArgException(typeTemp.getName()
+                            + " id property is empty.");
                 }
                 columnTemp = new SqlMapColumn(false, getterName,
                         columnNameMapping.get(getterName).toUpperCase(),

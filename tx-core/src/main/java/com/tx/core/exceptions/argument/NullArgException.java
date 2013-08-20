@@ -18,7 +18,7 @@ import org.slf4j.helpers.MessageFormatter;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class NullArgumentException extends IllegalArgumentException {
+public class NullArgException extends IllegalArgException {
     
     /** 注释内容 */
     private static final long serialVersionUID = -7356506779676885246L;
@@ -47,35 +47,37 @@ public class NullArgumentException extends IllegalArgumentException {
     }
     
     /** <默认构造函数> */
-    public NullArgumentException(String[] argumensNames,String message, 
+    public NullArgException(String[] argumensNames,String message, 
             Object[] parameters) {
         super(message, parameters);
+        this.argumensNames = argumensNames;
     }
     
     /** <默认构造函数> */
-    public NullArgumentException(String[] argumensNames,String message, 
+    public NullArgException(String[] argumensNames,String message, 
             String... parameters) {
         super(message, parameters);
+        this.argumensNames = argumensNames;
     }
     
     /** <默认构造函数> */
-    public NullArgumentException(String message, Object[] parameters,
+    public NullArgException(String message, Object[] parameters,
             Throwable cause) {
         super(message, parameters, cause);
     }
 
     /** <默认构造函数> */
-    public NullArgumentException(String message, Object[] parameters) {
+    public NullArgException(String message, Object[] parameters) {
         super(message, parameters);
     }
 
     /** <默认构造函数> */
-    public NullArgumentException(String errorMessage, Throwable cause) {
+    public NullArgException(String errorMessage, Throwable cause) {
         super(errorMessage, cause);
     }
 
     /** <默认构造函数> */
-    public NullArgumentException(String errorMessage) {
+    public NullArgException(String errorMessage) {
         super(errorMessage);
     }
 

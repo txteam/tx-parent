@@ -18,7 +18,7 @@ import com.tx.core.exceptions.SILException;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
   */
-public class IllegalArgumentException extends SILException {
+public class IllegalArgException extends SILException {
     
     /** 注释内容 */
     private static final long serialVersionUID = 533782652240275430L;
@@ -40,23 +40,23 @@ public class IllegalArgumentException extends SILException {
     }
 
     /** <默认构造函数> */
-    public IllegalArgumentException(String message, Object[] parameters,
+    public IllegalArgException(String message, Object[] parameters,
             Throwable cause) {
         super(message, parameters, cause);
     }
 
     /** <默认构造函数> */
-    public IllegalArgumentException(String message, Object[] parameters) {
+    public IllegalArgException(String message, Object[] parameters) {
         super(message, parameters);
     }
 
     /** <默认构造函数> */
-    public IllegalArgumentException(String errorMessage, Throwable cause) {
+    public IllegalArgException(String errorMessage, Throwable cause) {
         super(errorMessage, cause);
     }
 
     /** <默认构造函数> */
-    public IllegalArgumentException(String errorMessage) {
+    public IllegalArgException(String errorMessage) {
         super(errorMessage);
     }
 }

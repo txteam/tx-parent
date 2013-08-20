@@ -36,7 +36,7 @@ import org.springframework.stereotype.Component;
 
 import com.tx.component.workflow.exceptions.WorkflowAccessException;
 import com.tx.component.workflow.model.ProcessDiagramResource;
-import com.tx.core.exceptions.argument.NullArgumentException;
+import com.tx.core.exceptions.argument.NullArgException;
 
 /**
  * activiti5流程辅助类接口实现<br/>
@@ -98,7 +98,7 @@ public class CacheActiviti5ProcessDefSupport extends
     public ProcessDefinition deployToActiviti(String deployName,
             String resourceName, InputStream inputStream) {
         if(StringUtils.isEmpty(resourceName) || inputStream  == null){
-            throw new NullArgumentException("resourceName is empty or inputStream is null.");
+            throw new NullArgException("resourceName is empty or inputStream is null.");
         }
         ProcessDefinition proDef = super.deployToActiviti(deployName,
                 resourceName,
@@ -116,7 +116,7 @@ public class CacheActiviti5ProcessDefSupport extends
     @Override
     public ProcessDefinition getProcessDefinitionById(String processDefinitionId) {
         if(StringUtils.isEmpty(processDefinitionId)){
-            throw new NullArgumentException("processDefinitionId is empty.");
+            throw new NullArgException("processDefinitionId is empty.");
         }
         //如果缓存中存在直接从缓存中进行获取
         ProcessDefinitionEntity proDef = null;
@@ -149,7 +149,7 @@ public class CacheActiviti5ProcessDefSupport extends
     public ProcessDefinition getLastVersionProcessDefinitionByKey(
             String processDefKey) {
         if(StringUtils.isEmpty(processDefKey)){
-            throw new NullArgumentException("processDefinitionId is empty.");
+            throw new NullArgException("processDefinitionId is empty.");
         }
         ProcessDefinition proDef = super.getLastVersionProcessDefinitionByKey(processDefKey);
         //通过非id获取的ProcessDefinition转型为ProcessDefinitionEntity后获取transitions或activiti时会出现问题
@@ -168,7 +168,7 @@ public class CacheActiviti5ProcessDefSupport extends
             String activityId) {
         if(StringUtils.isEmpty(processDefinitionId) ||
                 StringUtils.isEmpty(activityId)){
-            throw new NullArgumentException("processDefinitionId or activityId is empty.");
+            throw new NullArgException("processDefinitionId or activityId is empty.");
         }
         //如果存在缓存，直接提取缓存中的数据
         if (activityImplCache.containsKey(processDefinitionId)) {
@@ -199,7 +199,7 @@ public class CacheActiviti5ProcessDefSupport extends
     public ProcessDiagramResource getProcessDiagramResource(
             String processDefinitionId) {
         if(StringUtils.isEmpty(processDefinitionId)){
-            throw new NullArgumentException("processDefinitionId is empty.");
+            throw new NullArgException("processDefinitionId is empty.");
         }
         ProcessDefinition proDef = getProcessDefinitionById(processDefinitionId);
         String resourceName = proDef.getDiagramResourceName();
@@ -233,7 +233,7 @@ public class CacheActiviti5ProcessDefSupport extends
     public Map<String, TaskDefinition> getTaskDefinitions(
             String processDefinitionId) {
         if(StringUtils.isEmpty(processDefinitionId)){
-            throw new NullArgumentException("processDefinitionId is empty.");
+            throw new NullArgException("processDefinitionId is empty.");
         }
         ProcessDefinitionEntity proDef = (ProcessDefinitionEntity) getProcessDefinitionById(processDefinitionId);
         return proDef.getTaskDefinitions();
@@ -247,7 +247,7 @@ public class CacheActiviti5ProcessDefSupport extends
             String processDefinitionId, Class<?> classType) {
         if(StringUtils.isEmpty(processDefinitionId) ||
                 classType == null){
-            throw new NullArgumentException("processDefinitionId is empty. or classType is null");
+            throw new NullArgException("processDefinitionId is empty. or classType is null");
         }
         ProcessDefinitionEntity proDef = (ProcessDefinitionEntity) getProcessDefinitionById(processDefinitionId);
         

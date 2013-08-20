@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.dao.support.PersistenceExceptionTranslator;
 
-import com.tx.core.exceptions.argument.NullArgumentException;
+import com.tx.core.exceptions.argument.NullArgException;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.mybatis.model.BatchResult;
 import com.tx.core.mybatis.model.Order;
@@ -79,7 +79,7 @@ public class MyBatisDaoSupport implements InitializingBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         if (sqlSessionTemplate == null && sqlSessionFactory == null) {
-            throw new NullArgumentException(
+            throw new NullArgException(
                     "sqlSessionTemplate and sqlSessionFactory is null");
         }
         AssertUtils.notNull(sqlSessionTemplate, "sqlSessionTemplate is null.");

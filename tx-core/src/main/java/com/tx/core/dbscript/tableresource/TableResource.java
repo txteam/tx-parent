@@ -73,7 +73,7 @@ public interface TableResource {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public void createTable(DataSourceTypeEnum dataSourceType, String version,
+    public void createTable(DataSourceTypeEnum dataSourceType,
             Map<String, String> params);
     
     /**
@@ -87,7 +87,7 @@ public interface TableResource {
       * @see [类、类#方法、类#成员]
      */
     public void initTableData(DataSourceTypeEnum dataSourceType,
-            String version, Map<String, String> params);
+            Map<String, String> params);
     
     /**
       * 备份表

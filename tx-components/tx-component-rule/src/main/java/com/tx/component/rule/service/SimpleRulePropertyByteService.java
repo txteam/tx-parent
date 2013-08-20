@@ -26,7 +26,7 @@ import org.springframework.util.MultiValueMap;
 import com.tx.component.rule.dao.SimpleRulePropertyByteDao;
 import com.tx.component.rule.model.SimpleRuleParamEnum;
 import com.tx.component.rule.model.SimpleRulePropertyByte;
-import com.tx.core.exceptions.argument.NullArgumentException;
+import com.tx.core.exceptions.argument.NullArgException;
 
 /**
  * SimpleRulePropertyByte的业务层
@@ -64,7 +64,7 @@ public class SimpleRulePropertyByteService {
     public MultiValueMap<SimpleRuleParamEnum, SimpleRulePropertyByte> querySimpleRulePropertyByteMultiMap(
             String ruleId) {
         if (StringUtils.isEmpty(ruleId)) {
-            throw new NullArgumentException("ruleId is emtpy.");
+            throw new NullArgException("ruleId is emtpy.");
         }
         
         //生成查询条件
@@ -100,7 +100,7 @@ public class SimpleRulePropertyByteService {
     public void saveSimpleRulePropertyByte(String ruleId,
             MultiValueMap<SimpleRuleParamEnum, SimpleRulePropertyByte> propertyValuesMap){
         if (StringUtils.isEmpty(ruleId)) {
-            throw new NullArgumentException(
+            throw new NullArgException(
                     "ruleId is empty.");
         }
         
@@ -158,7 +158,7 @@ public class SimpleRulePropertyByteService {
     @Transactional
     public int deleteByRuleId(String ruleId) {
         if (StringUtils.isEmpty(ruleId)) {
-            throw new NullArgumentException(
+            throw new NullArgException(
                     "SimpleRulePropertyByteService.deleteByRuleId ruleId isEmpty.");
         }
         

@@ -17,7 +17,7 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.cxf.common.util.StringUtils;
 
 import com.tx.component.auth.model.AuthTypeItem;
-import com.tx.core.exceptions.argument.NullArgumentException;
+import com.tx.core.exceptions.argument.NullArgException;
 
 /**
  * 权限类型容器<br/>
@@ -66,7 +66,7 @@ public class AuthTypeItemContext{
             String authType, String name, String description,
             boolean isViewAble, boolean isConfigAble) {
         if (StringUtils.isEmpty(authType)) {
-            throw new NullArgumentException("authType is empty");
+            throw new NullArgException("authType is empty");
         }
         
         AuthTypeItem res = null;
@@ -108,7 +108,7 @@ public class AuthTypeItemContext{
      */
     public synchronized AuthTypeItem registeAuthTypeItem(String authType) {
         if (StringUtils.isEmpty(authType)) {
-            throw new NullArgumentException("authType is empty");
+            throw new NullArgException("authType is empty");
         }
         
         AuthTypeItem res = null;

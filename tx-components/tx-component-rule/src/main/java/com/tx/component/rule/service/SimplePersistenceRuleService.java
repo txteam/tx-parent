@@ -24,7 +24,7 @@ import com.tx.component.rule.dao.SimplePersistenceRuleDao;
 import com.tx.component.rule.model.RuleStateEnum;
 import com.tx.component.rule.model.RuleTypeEnum;
 import com.tx.component.rule.model.SimplePersistenceRule;
-import com.tx.core.exceptions.argument.NullArgumentException;
+import com.tx.core.exceptions.argument.NullArgException;
 import com.tx.core.paged.model.PagedList;
 
 /**
@@ -98,7 +98,7 @@ public class SimplePersistenceRuleService {
             RuleTypeEnum ruleType) {
         //判断条件合法性
         if (ruleType == null) {
-            throw new NullArgumentException(
+            throw new NullArgException(
                     "SimplePersistenceRuleService.querySimplePersistenceRuleListByRuleType ruleType is empty.");
         }
         
@@ -136,7 +136,7 @@ public class SimplePersistenceRuleService {
     @Transactional
     public boolean changeRuleStateById(String ruleId, RuleStateEnum state) {
         if (state == null || StringUtils.isEmpty(ruleId)) {
-            throw new NullArgumentException(
+            throw new NullArgException(
                     "SimplePersistenceRuleService.changeRuleStateById ruleId or state.id is empty.");
         }
         
@@ -171,7 +171,7 @@ public class SimplePersistenceRuleService {
             RuleTypeEnum ruleType, RuleStateEnum state) {
         if (state == null || StringUtils.isEmpty(rule) || ruleType == null
                 || StringUtils.isEmpty(serviceType)) {
-            throw new NullArgumentException(
+            throw new NullArgException(
                     "rule or serviceType or ruleType or state is emtpy.");
         }
         
@@ -234,7 +234,7 @@ public class SimplePersistenceRuleService {
         if (ruleType == null
                 || StringUtils.isEmpty(serviceType)
                 || StringUtils.isEmpty(rule)) {
-            throw new NullArgumentException("ruleType or serviceType or rule is empty.");
+            throw new NullArgException("ruleType or serviceType or rule is empty.");
         }
         
         SimplePersistenceRule condition = new SimplePersistenceRule();
@@ -267,7 +267,7 @@ public class SimplePersistenceRuleService {
         if (ruleType == null
                 || StringUtils.isEmpty(serviceType)
                 || StringUtils.isEmpty(rule)) {
-            throw new NullArgumentException("ruleType or serviceType or rule is empty.");
+            throw new NullArgException("ruleType or serviceType or rule is empty.");
         }
         
         SimplePersistenceRule condition = new SimplePersistenceRule();
@@ -337,7 +337,7 @@ public class SimplePersistenceRuleService {
                 || rule.getState() == null
                 || rule.getRuleType() == null
                 || StringUtils.isEmpty(rule.getServiceType())) {
-            throw new NullArgumentException(
+            throw new NullArgException(
                     "simplePersistenceRule or state or serviceType or ruleType is empty.");
         }
         //查询对应规则，是否已经存在
@@ -389,7 +389,7 @@ public class SimplePersistenceRuleService {
     @Transactional
     public boolean deleteById(String id) {
         if (StringUtils.isEmpty(id)) {
-            throw new NullArgumentException(
+            throw new NullArgException(
                     "SimplePersistenceRuleService.deleteById id isEmpty.");
         }
         

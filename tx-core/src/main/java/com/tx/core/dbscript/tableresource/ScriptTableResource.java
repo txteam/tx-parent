@@ -15,8 +15,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.util.CollectionUtils;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
+import com.tx.core.dbscript.exception.DataSourceTypeUnSupportException;
 import com.tx.core.dbscript.model.DataSourceTypeEnum;
 
 /**
@@ -28,7 +30,7 @@ import com.tx.core.dbscript.model.DataSourceTypeEnum;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public abstract class BaseTableResource implements TableResource {
+public abstract class ScriptTableResource implements TableResource {
     
     /** 日志记录器 */
     private Logger logger = LoggerFactory.getLogger(TableResource.class);
@@ -36,20 +38,27 @@ public abstract class BaseTableResource implements TableResource {
     /** 数据操作句柄 */
     private JdbcTemplate jdbcTemplate;
     
+    private TransactionTemplate transactionTemplate;
+    
     /**
      * <默认构造函数>
      */
-    public BaseTableResource(JdbcTemplate jdbcTemplate) {
+    public ScriptTableResource(JdbcTemplate jdbcTemplate) {
         super();
         this.jdbcTemplate = jdbcTemplate;
+        this.transactionTemplate = new TransactionTemplate(
+                new DataSourceTransactionManager(
+                        this.jdbcTemplate.getDataSource()));
     }
     
     /**
      * <默认构造函数>
      */
-    public BaseTableResource(DataSource dataSource) {
+    public ScriptTableResource(DataSource dataSource) {
         super();
         this.jdbcTemplate = new JdbcTemplate(dataSource);
+        this.transactionTemplate = new TransactionTemplate(
+                new DataSourceTransactionManager(dataSource));
     }
     
     /**
@@ -125,15 +134,14 @@ public abstract class BaseTableResource implements TableResource {
     public void createTable(DataSourceTypeEnum dataSourceType,
             Map<String, String> params) {
         String tableName = getTableName(params);
-        String createTableSql = doGetCreateTableSql(dataSourceType,
+        String createTableSql = getCreateTableSql(dataSourceType,
                 tableName,
                 params);
-        logger.info("成功创建表：{}.创建表语句为：{}.", tableName, createTableSql);
         this.jdbcTemplate.execute(createTableSql);
     }
     
     /**
-      * 获取创建表Sql
+      * 创建表Sql
       *<功能详细描述>
       * @param dataSourceType
       * @param tableName [参数说明]
@@ -142,8 +150,27 @@ public abstract class BaseTableResource implements TableResource {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    protected abstract String doGetCreateTableSql(
-            DataSourceTypeEnum dataSourceType, String tableName,
+    protected String getCreateTableSql(DataSourceTypeEnum dataSourceType,
+            String tableName, Map<String, String> params) {
+        String createTableSql = "";
+        switch (dataSourceType) {
+            case ORACLE:
+            case ORACLE9I:
+            case ORACLE10G:
+                createTableSql = getCreateSqlForOracle(tableName, params);
+                break;
+            case H2:
+                createTableSql = getCreateSqlForH2(tableName, params);
+            default:
+                throw new DataSourceTypeUnSupportException(dataSourceType);
+        }
+        return createTableSql;
+    }
+    
+    protected abstract String getCreateSqlForOracle(String tableName,
+            Map<String, String> params);
+    
+    protected abstract String getCreateSqlForH2(String tableName,
             Map<String, String> params);
     
     /**
@@ -155,20 +182,13 @@ public abstract class BaseTableResource implements TableResource {
             Map<String, String> params) {
         //this.transactionTemplate.execute(action);
         String tableName = getTableName(params);
-        final List<String> createTableSqlList = doGetInitDataSql(dataSourceType,
+        String createTableSql = getCreateTableSql(dataSourceType,
                 tableName,
                 params);
-        if (CollectionUtils.isEmpty(createTableSqlList)) {
-            return;
-        }
-        for (String initSqlTemp : createTableSqlList) {
-            jdbcTemplate.execute(initSqlTemp);
-        }
+        this.jdbcTemplate.execute(createTableSql);
     }
     
-    protected abstract List<String> doGetInitDataSql(
-            DataSourceTypeEnum dataSourceType, String tableName,
-            Map<String, String> params);
+    protected abstract List<String> doGetInitDataSql();
     
     /**
      * @param dataSourceType
@@ -177,6 +197,7 @@ public abstract class BaseTableResource implements TableResource {
     @Override
     public void backupTable(DataSourceTypeEnum dataSourceType,
             Map<String, String> params) {
+        // TODO Auto-generated method stub
         
     }
     

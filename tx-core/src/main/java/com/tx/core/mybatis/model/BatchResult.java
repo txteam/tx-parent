@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * <功能简述> <功能详细描述>
+ * 批量操作结果<br/>
  * 
  * @author brady
  * @version [版本号, 2012-12-5]

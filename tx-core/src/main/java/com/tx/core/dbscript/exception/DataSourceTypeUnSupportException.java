@@ -9,44 +9,85 @@ package com.tx.core.dbscript.exception;
 import com.tx.core.dbscript.model.DataSourceTypeEnum;
 import com.tx.core.exceptions.SILException;
 
-
- /**
-  * 不支持的数据源类型异常
-  * <功能详细描述>
-  * 
-  * @author  PengQingyang
-  * @version  [版本号, 2013-8-19]
-  * @see  [相关类/方法]
-  * @since  [产品/模块版本]
-  */
-public class DataSourceTypeUnSupportException extends SILException{
+/**
+ * 不支持的数据源类型异常
+ * <功能详细描述>
+ * 
+ * @author  PengQingyang
+ * @version  [版本号, 2013-8-19]
+ * @see  [相关类/方法]
+ * @since  [产品/模块版本]
+ */
+public class DataSourceTypeUnSupportException extends SILException {
+    
+    /** 注释内容 */
+    private static final long serialVersionUID = 5983718256413464840L;
     
     /**
      * 指定的数据源类型<br/>
      */
     private DataSourceTypeEnum dataSourceType;
-
-    private DataSourceTypeUnSupportException(String errorCode,
-            String errorMessage, Object[] parameters) {
-        super(errorCode, errorMessage, parameters);
-        // TODO Auto-generated constructor stub
+    
+    /**
+     * @return
+     */
+    @Override
+    protected String doGetErrorCode() {
+        return "DATASOURCETYPE_UNSUPPORT_ERROR";
     }
-
-    private DataSourceTypeUnSupportException(String errorCode,
-            String errorMessage, String... parameters) {
-        super(errorCode, errorMessage, parameters);
-        // TODO Auto-generated constructor stub
+    
+    /**
+     * @return
+     */
+    @Override
+    protected String doGetErrorMessage() {
+        return "不支持的数据源类型";
     }
-
-    private DataSourceTypeUnSupportException(String errorCode,
-            String errorMessage, Throwable cause, Object[] parameters) {
-        super(errorCode, errorMessage, cause, parameters);
-        // TODO Auto-generated constructor stub
+    
+    /** <默认构造函数> */
+    public DataSourceTypeUnSupportException(DataSourceTypeEnum dataSourceType) {
+        this(dataSourceType, "不支持的数据源类型.", null);
     }
-
-    private DataSourceTypeUnSupportException(String errorCode,
-            String errorMessage, Throwable cause, String... parameters) {
-        super(errorCode, errorMessage, cause, parameters);
-        // TODO Auto-generated constructor stub
+    
+    /** <默认构造函数> */
+    public DataSourceTypeUnSupportException(DataSourceTypeEnum dataSourceType,
+            String message, Object[] parameters) {
+        super(message, parameters);
+        this.dataSourceType = dataSourceType;
+    }
+    
+    /** <默认构造函数> */
+    public DataSourceTypeUnSupportException(String message,
+            Object[] parameters, Throwable cause) {
+        super(message, parameters, cause);
+    }
+    
+    /** <默认构造函数> */
+    public DataSourceTypeUnSupportException(String message, Object[] parameters) {
+        super(message, parameters);
+    }
+    
+    /** <默认构造函数> */
+    public DataSourceTypeUnSupportException(String errorMessage, Throwable cause) {
+        super(errorMessage, cause);
+    }
+    
+    /** <默认构造函数> */
+    public DataSourceTypeUnSupportException(String errorMessage) {
+        super(errorMessage);
+    }
+    
+    /**
+     * @return 返回 dataSourceType
+     */
+    public DataSourceTypeEnum getDataSourceType() {
+        return dataSourceType;
+    }
+    
+    /**
+     * @param 对dataSourceType进行赋值
+     */
+    public void setDataSourceType(DataSourceTypeEnum dataSourceType) {
+        this.dataSourceType = dataSourceType;
     }
 }

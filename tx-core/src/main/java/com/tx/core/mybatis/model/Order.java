@@ -13,11 +13,11 @@ import java.util.Set;
 import org.apache.cxf.common.util.StringUtils;
 
 import com.tx.core.TxConstants;
-import com.tx.core.exceptions.argument.NullArgumentException;
-import com.tx.core.exceptions.parameter.ParameterIsInvalidException;
+import com.tx.core.exceptions.argument.IllegalArgException;
+import com.tx.core.exceptions.argument.NullArgException;
 
 /**
- * <排序支持>
+ * 排序支持
  * <功能详细描述>
  * 
  * @author  PengQingyang
@@ -68,13 +68,12 @@ public class Order implements Serializable {
      */
     private Order(String columnNames, boolean ascending) {
         if (StringUtils.isEmpty(columnNames)) {
-            throw new NullArgumentException(
+            throw new NullArgException(
                     "Order(columnNames,ascending) columnNames is empty.");
         }
         if (columnNames.indexOf(";") >= 0 || columnNames.indexOf("'") >= 0) {
-            throw new ParameterIsInvalidException(
-                    "Order(columnNames,ascending) columnNames hase invalid char {}",
-                    ";或'");
+            throw new IllegalArgException(
+                    "Order(columnNames,ascending) columnNames hase invalid char ;或'");
         }
         String upcaseColumnNamesString = columnNames.toUpperCase();
         String columns[] = upcaseColumnNamesString.split(",");
@@ -82,9 +81,9 @@ public class Order implements Serializable {
         for (String columnTemp : columns) {
             columnTemp = columnTemp.trim();
             if (unSafeKeyword.contains(columnTemp)) {
-                throw new ParameterIsInvalidException(
-                        "Order(columnNames,ascending) columnNames hase invalid keyword {}.",
-                        columnTemp);
+                throw new IllegalArgException(
+                        "Order(columnNames,ascending) columnNames hase invalid keyword "
+                                + columnTemp);
             }
             sb.append(columnTemp).append(",");
         }
@@ -108,7 +107,7 @@ public class Order implements Serializable {
     public String toString() {
         return toSqlString();
     }
-
+    
     /**
      * Ascending order
      *

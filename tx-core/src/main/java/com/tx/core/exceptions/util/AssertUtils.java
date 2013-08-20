@@ -9,13 +9,15 @@ package com.tx.core.exceptions.util;
 import java.util.Collection;
 import java.util.Map;
 
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.helpers.MessageFormatter;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
-import com.tx.core.exceptions.argument.NullArgumentException;
-import com.tx.core.exceptions.parameter.ParameterIsInvalidException;
+import com.tx.core.exceptions.argument.IllegalArgException;
+import com.tx.core.exceptions.argument.NullArgException;
 
 /**
  * 断言工具类<br/>
@@ -38,12 +40,9 @@ public class AssertUtils {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    public static void notEmpty(String str, String message,
-            String... parameters) {
-        if (StringUtils.isEmpty(str)) {
-            throw new NullArgumentException(
-                    MessageFormatter.format(message, parameters).getMessage());
-        }
+    public static void notEmpty(Object obj, String objName) {
+        //不为空
+        notEmpty(obj, objName + " is null or empty");
     }
     
     /**
@@ -56,11 +55,55 @@ public class AssertUtils {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    public static void notEmpty(String str, String message, Object[] parameters) {
-        if (StringUtils.isEmpty(str)) {
-            throw new NullArgumentException(
-                    MessageFormatter.format(message, parameters).getMessage());
+    public static void notEmpty(Object obj, String message,
+            String... parameters) {
+        //不为空
+        notEmpty(obj, "objName is null or empty", (Object[]) parameters);
+    }
+    
+    /**
+     * 断言对应字符串不能为空<br/>
+     * <功能详细描述>
+     * @param str
+     * @param message [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    @SuppressWarnings("rawtypes")
+    public static void notEmpty(Object obj, String message, Object[] parameters) {
+        //不为空
+        notNull(obj, message, parameters);
+        if (obj instanceof String && StringUtils.isEmpty((String) obj)) {
+            throw new NullArgException(MessageFormatter.arrayFormat(message,
+                    parameters).getMessage());
+        } else if (obj instanceof Collection
+                && CollectionUtils.isEmpty((Collection) obj)) {
+            throw new NullArgException(MessageFormatter.arrayFormat(message,
+                    parameters).getMessage());
+        } else if (obj instanceof Map && MapUtils.isEmpty((Map) obj)) {
+            throw new NullArgException(MessageFormatter.arrayFormat(message,
+                    parameters).getMessage());
+        } else if (obj instanceof Object[]
+                && ArrayUtils.isEmpty((Object[]) obj)) {
+            throw new NullArgException(MessageFormatter.arrayFormat(message,
+                    parameters).getMessage());
         }
+    }
+    
+    /**
+     * 断言对象不为空<br/>
+     * <功能详细描述>
+     * @param object
+     * @param message [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    public static void notNull(Object object, String objectName) {
+        notNull(object, objectName + " is null.");
     }
     
     /**
@@ -75,10 +118,7 @@ public class AssertUtils {
     */
     public static void notNull(Object object, String message,
             String... parameters) {
-        if (object == null) {
-            throw new ParameterIsInvalidException(
-                    MessageFormatter.format(message, parameters).getMessage());
-        }
+        notNull(object, message, (Object[]) parameters);
     }
     
     /**
@@ -90,16 +130,17 @@ public class AssertUtils {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public static void notNull(Object str, String message, Object[] parameters) {
-        if (str == null) {
-            throw new NullArgumentException(
-                    MessageFormatter.format(message, parameters).getMessage());
+    public static void notNull(Object object, String message,
+            Object[] parameters) {
+        if (object == null) {
+            throw new NullArgException(MessageFormatter.arrayFormat(message,
+                    parameters).getMessage());
         }
     }
     
     /**
-      * 断言表达式是否为真<br/>
-      *     如果不为真，抛出参数非法异常ParameterIsInvalidException<br/>
+      * 断言表达式是为真<br/>
+      *     如果不为真，抛出参数非法异常IllegalArgException<br/>
       * <功能详细描述>
       * @param expression
       * @param message [参数说明]
@@ -108,26 +149,39 @@ public class AssertUtils {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public static void isTrue(boolean expression, String message,String... parameters) {
-        if (!expression) {
-            throw new ParameterIsInvalidException(message);
-        }
+    public static void isTrue(boolean expression, String message,
+            String... parameters) {
+        isTrue(expression, message, (Object[]) parameters);
     }
     
     /**
-      * 断言表达式是否为真
+      * 断言表达式是为真<br/>
+      *     如果不为真，抛出参数非法异常IllegalArgException<br/>
+      * <功能详细描述>
       * @param expression [参数说明]
       * 
       * @return void [返回类型说明]
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public static void isTrue(boolean expression,String message,Object[] parameters) {
+    public static void isTrue(boolean expression, String message,
+            Object[] parameters) {
         if (!expression) {
-            throw new NullArgumentException(
-                    MessageFormatter.format(message, parameters).getMessage());
+            throw new IllegalArgException(MessageFormatter.arrayFormat(message,
+                    parameters).getMessage());
         }
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     /**
       * 断言表达式是否为空<br/>
@@ -142,7 +196,7 @@ public class AssertUtils {
      */
     public static void isNull(Object object, String message) {
         if (object != null) {
-            throw new ParameterIsInvalidException(message);
+            throw new IllegalArgException(message);
         }
     }
     
