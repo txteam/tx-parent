@@ -20,7 +20,7 @@ import org.apache.commons.lang.reflect.FieldUtils;
 import org.apache.ibatis.reflection.MetaClass;
 import org.springframework.beans.BeanUtils;
 
-import com.tx.core.exceptions.parameter.ParameterIsEmptyException;
+import com.tx.core.exceptions.argument.NullArgumentException;
 
 /**
  * 类声明属性工具类
@@ -50,7 +50,7 @@ public class MetaAnnotationClass {
      */
     public static MetaAnnotationClass forClass(Class<?> type) {
         if (type == null) {
-            throw new ParameterIsEmptyException(
+            throw new NullArgumentException(
                     "MetaAnnotationClass forClass parameter type is empty.");
         }
         if (cacheMap.containsKey(type)) {

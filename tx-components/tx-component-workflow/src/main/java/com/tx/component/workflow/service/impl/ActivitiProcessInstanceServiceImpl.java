@@ -37,7 +37,7 @@ import com.tx.component.workflow.model.ProTaskInstance;
 import com.tx.component.workflow.model.impl.ActivitiProTaskInstance;
 import com.tx.component.workflow.model.impl.ActivitiProcessInstance;
 import com.tx.component.workflow.service.ProcessInstanceService;
-import com.tx.core.exceptions.parameter.ParameterIsEmptyException;
+import com.tx.core.exceptions.argument.NullArgumentException;
 
 /**
  * 流程实例业务层实例<br/>
@@ -116,7 +116,7 @@ public class ActivitiProcessInstanceServiceImpl implements InitializingBean,
     public com.tx.component.workflow.model.ProcessInstance start(
             String processDefinitionKey) {
         if (StringUtils.isEmpty(processDefinitionKey)) {
-            throw new ParameterIsEmptyException(
+            throw new NullArgumentException(
                     "ProcessInstanceServic.start processDefinitionKey is empty.");
         }
         
@@ -146,7 +146,7 @@ public class ActivitiProcessInstanceServiceImpl implements InitializingBean,
     public com.tx.component.workflow.model.ProcessInstance startByDefId(
             String processDefinitionId) {
         if (StringUtils.isEmpty(processDefinitionId)) {
-            throw new ParameterIsEmptyException(
+            throw new NullArgumentException(
                     "ProcessInstanceServic.startByDefId processDefinitionId is empty.");
         }
         
@@ -177,7 +177,7 @@ public class ActivitiProcessInstanceServiceImpl implements InitializingBean,
     public com.tx.component.workflow.model.ProcessInstance start(
             String processDefinitionKey, Map<String, Object> variables) {
         if (StringUtils.isEmpty(processDefinitionKey)) {
-            throw new ParameterIsEmptyException(
+            throw new NullArgumentException(
                     "ProcessInstanceServic.start processDefinitionKey is empty.");
         }
         
@@ -208,7 +208,7 @@ public class ActivitiProcessInstanceServiceImpl implements InitializingBean,
     public com.tx.component.workflow.model.ProcessInstance startByDefId(
             String processDefinitionId, Map<String, Object> variables) {
         if (StringUtils.isEmpty(processDefinitionId)) {
-            throw new ParameterIsEmptyException(
+            throw new NullArgumentException(
                     "ProcessInstanceServic.startByDefId processDefinitionId is empty.");
         }
         
@@ -580,7 +580,7 @@ public class ActivitiProcessInstanceServiceImpl implements InitializingBean,
     public void complete(String processInstanceId,
             Map<String, Object> taskVaribals) {
         if (StringUtils.isEmpty(processInstanceId)) {
-            throw new ParameterIsEmptyException(
+            throw new NullArgumentException(
                     "ProcessInstanceServic.complete processInstanceId is empty.");
         }
         synchronized (getLockByProInsId(processInstanceId)) {
@@ -614,7 +614,7 @@ public class ActivitiProcessInstanceServiceImpl implements InitializingBean,
             Map<String, Object> taskVaribals) {
         if (StringUtils.isEmpty(processInstanceId)
                 || StringUtils.isEmpty(currentTaskDefKey)) {
-            throw new ParameterIsEmptyException(
+            throw new NullArgumentException(
                     "ProcessInstanceServic.complete processInstanceId or currentTaskDefKey is empty.");
         }
         synchronized (getLockByProInsId(processInstanceId)) {
@@ -643,7 +643,7 @@ public class ActivitiProcessInstanceServiceImpl implements InitializingBean,
             Map<String, Object> taskVaribals) {
         if (StringUtils.isEmpty(processInstanceId)
                 || StringUtils.isEmpty(transitionName)) {
-            throw new ParameterIsEmptyException(
+            throw new NullArgumentException(
                     "ProcessInstanceServic.process processInstanceId or transitionName is empty.");
         }
         synchronized (getLockByProInsId(processInstanceId)) {
@@ -681,7 +681,7 @@ public class ActivitiProcessInstanceServiceImpl implements InitializingBean,
             String transitionName, Map<String, Object> taskVaribals) {
         if (StringUtils.isEmpty(processInstanceId)
                 || StringUtils.isEmpty(currentTaskDefKey)) {
-            throw new ParameterIsEmptyException(
+            throw new NullArgumentException(
                     "ProcessInstanceServic.process processInstanceId or currentTaskDefKey is empty.");
         }
         synchronized (getLockByProInsId(processInstanceId)) {
@@ -765,7 +765,7 @@ public class ActivitiProcessInstanceServiceImpl implements InitializingBean,
             Map<String, Object> taskVaribals) {
         if (StringUtils.isEmpty(processInstanceId)
                 || StringUtils.isEmpty(transitionId)) {
-            throw new ParameterIsEmptyException(
+            throw new NullArgumentException(
                     "ProcessInstanceServic.process processInstanceId or transitionId is empty.");
         }
         synchronized (getLockByProInsId(processInstanceId)) {
@@ -799,7 +799,7 @@ public class ActivitiProcessInstanceServiceImpl implements InitializingBean,
         if (StringUtils.isEmpty(processInstanceId)
                 || StringUtils.isEmpty(currentTaskDefKey)
                 || StringUtils.isEmpty(transitionId)) {
-            throw new ParameterIsEmptyException(
+            throw new NullArgumentException(
                     "ProcessInstanceServic.process processInstanceId or currentTaskDefKey or transitionId is empty.");
         }
         synchronized (getLockByProInsId(processInstanceId)) {
@@ -887,7 +887,7 @@ public class ActivitiProcessInstanceServiceImpl implements InitializingBean,
     @Override
     public List<ProTaskInstance> getCurrentProTaskList(String processInstanceId) {
         if (StringUtils.isEmpty(processInstanceId)) {
-            throw new ParameterIsEmptyException(
+            throw new NullArgumentException(
                     "ProcessInstanceServic.complete processInstanceId is empty.");
         }
         
@@ -912,7 +912,7 @@ public class ActivitiProcessInstanceServiceImpl implements InitializingBean,
     @Override
     public ProTaskInstance getCurrentProTask(String processInstanceId) {
         if (StringUtils.isEmpty(processInstanceId)) {
-            throw new ParameterIsEmptyException(
+            throw new NullArgumentException(
                     "ProcessInstanceServic.complete processInstanceId is empty.");
         }
         Task task = getTaskByProInsId(processInstanceId);
@@ -929,7 +929,7 @@ public class ActivitiProcessInstanceServiceImpl implements InitializingBean,
     public ProTaskInstance getCurrentProTask(String processInstanceId,
             String currentTaskDefKey) {
         if (StringUtils.isEmpty(processInstanceId)) {
-            throw new ParameterIsEmptyException(
+            throw new NullArgumentException(
                     "ProcessInstanceServic.complete processInstanceId is empty.");
         }
         Task task = getTaskByProInsIdAndTaskDefKey(processInstanceId, currentTaskDefKey);

@@ -14,7 +14,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
-import com.tx.core.exceptions.parameter.ParameterIsEmptyException;
+import com.tx.core.exceptions.argument.NullArgumentException;
 import com.tx.core.exceptions.parameter.ParameterIsInvalidException;
 
 /**
@@ -41,7 +41,7 @@ public class AssertUtils {
     public static void notEmpty(String str, String message,
             String... parameters) {
         if (StringUtils.isEmpty(str)) {
-            throw new ParameterIsEmptyException(
+            throw new NullArgumentException(
                     MessageFormatter.format(message, parameters).getMessage());
         }
     }
@@ -58,7 +58,7 @@ public class AssertUtils {
     */
     public static void notEmpty(String str, String message, Object[] parameters) {
         if (StringUtils.isEmpty(str)) {
-            throw new ParameterIsEmptyException(
+            throw new NullArgumentException(
                     MessageFormatter.format(message, parameters).getMessage());
         }
     }
@@ -92,7 +92,7 @@ public class AssertUtils {
      */
     public static void notNull(Object str, String message, Object[] parameters) {
         if (str == null) {
-            throw new ParameterIsEmptyException(
+            throw new NullArgumentException(
                     MessageFormatter.format(message, parameters).getMessage());
         }
     }
@@ -124,7 +124,7 @@ public class AssertUtils {
      */
     public static void isTrue(boolean expression,String message,Object[] parameters) {
         if (!expression) {
-            throw new ParameterIsEmptyException(
+            throw new NullArgumentException(
                     MessageFormatter.format(message, parameters).getMessage());
         }
     }

@@ -28,35 +28,31 @@ public class AuthDefinitionNotExsitException extends SILException {
     private String ruleId;
     
     /** <默认构造函数> */
-    public AuthDefinitionNotExsitException(String ruleId, String errorMessage,
-            String... parameters) {
-        super(ErrorCodeConstant.AUTH_CONTEXT_EXCEPTION, errorMessage,
-                parameters);
-        this.ruleId = ruleId;
+    public AuthDefinitionNotExsitException(String message, Object[] parameters) {
+        super(message, parameters);
+        // TODO Auto-generated constructor stub
     }
-    
+
     /** <默认构造函数> */
-    public AuthDefinitionNotExsitException(String ruleId, String errorMessage,
-            Throwable cause, String... parameters) {
-        super(ErrorCodeConstant.AUTH_CONTEXT_EXCEPTION, errorMessage, cause,
-                parameters);
-        this.ruleId = ruleId;
+    public AuthDefinitionNotExsitException(String message, String... parameters) {
+        super(message, parameters);
     }
-    
+
     /** <默认构造函数> */
-    public AuthDefinitionNotExsitException(String ruleId, String errorMessage,
+    public AuthDefinitionNotExsitException(String message, Throwable cause,
             Object[] parameters) {
-        super(ErrorCodeConstant.AUTH_CONTEXT_EXCEPTION, errorMessage,
-                parameters);
-        this.ruleId = ruleId;
+        super(message, cause, parameters);
     }
-    
+
     /** <默认构造函数> */
-    public AuthDefinitionNotExsitException(String ruleId, String errorMessage,
-            Throwable cause, Object[] parameters) {
-        super(ErrorCodeConstant.AUTH_CONTEXT_EXCEPTION, errorMessage, cause,
-                parameters);
-        this.ruleId = ruleId;
+    public AuthDefinitionNotExsitException(String message, Throwable cause,
+            String... parameters) {
+        super(message, cause, parameters);
+    }
+
+    /** <默认构造函数> */
+    public AuthDefinitionNotExsitException(String errorMessage) {
+        super(errorMessage);
     }
 
     /**

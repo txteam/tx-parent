@@ -31,7 +31,7 @@ import com.tx.component.workflow.model.impl.ActivitiProTaskDefinition;
 import com.tx.component.workflow.model.impl.ActivitiProTransitionDefinition;
 import com.tx.component.workflow.model.impl.ActivitiProcessDefinition;
 import com.tx.component.workflow.service.ProcessDefinitionService;
-import com.tx.core.exceptions.parameter.ParameterIsEmptyException;
+import com.tx.core.exceptions.argument.NullArgumentException;
 
 /**
  * 流程部署业务层<br/>
@@ -74,7 +74,7 @@ public class ActivitiProcessDefinitionServiceImpl implements
             String deployName, String resourceName, InputStream inputStream) {
         //验证参数合法性
         if (StringUtils.isEmpty(resourceName) || inputStream == null) {
-            throw new ParameterIsEmptyException(
+            throw new NullArgumentException(
                     "ProcessDeployService.deploy resourceName or inputStream is empty");
         }
         if (!resourceName.endsWith(".bpmn20.xml")) {

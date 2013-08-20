@@ -13,7 +13,7 @@ import java.util.Set;
 import org.apache.cxf.common.util.StringUtils;
 
 import com.tx.core.TxConstants;
-import com.tx.core.exceptions.parameter.ParameterIsEmptyException;
+import com.tx.core.exceptions.argument.NullArgumentException;
 import com.tx.core.exceptions.parameter.ParameterIsInvalidException;
 
 /**
@@ -68,7 +68,7 @@ public class Order implements Serializable {
      */
     private Order(String columnNames, boolean ascending) {
         if (StringUtils.isEmpty(columnNames)) {
-            throw new ParameterIsEmptyException(
+            throw new NullArgumentException(
                     "Order(columnNames,ascending) columnNames is empty.");
         }
         if (columnNames.indexOf(";") >= 0 || columnNames.indexOf("'") >= 0) {

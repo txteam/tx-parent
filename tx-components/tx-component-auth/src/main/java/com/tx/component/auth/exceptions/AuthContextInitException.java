@@ -6,7 +6,6 @@
  */
 package com.tx.component.auth.exceptions;
 
-import com.tx.core.exceptions.ErrorCodeConstant;
 import com.tx.core.exceptions.SILException;
 
 /**
@@ -22,38 +21,45 @@ public class AuthContextInitException extends SILException {
     
     /** 注释内容 */
     private static final long serialVersionUID = 7273081031541085969L;
-    
+
     /**
-     * <默认构造函数>
+     * @return
      */
-    public AuthContextInitException(String errorMessage, Throwable cause,
-            String... parameters) {
-        super(ErrorCodeConstant.AUTH_CONTEXT_EXCEPTION, errorMessage, cause,
-                parameters);
+    @Override
+    protected String doGetErrorCode() {
+        return "AUTH_CONTEXT_INIT_ERROR";
     }
-    
+
     /**
-     * <默认构造函数>
+     * @return
      */
-    public AuthContextInitException(String errorMessage, String... parameters) {
-        super(ErrorCodeConstant.AUTH_CONTEXT_EXCEPTION, errorMessage,
-                parameters);
+    @Override
+    protected String doGetErrorMessage() {
+        return "权限容器初始化错误";
     }
-    
-    /**
-     * <默认构造函数>
-     */
-    public AuthContextInitException(String errorMessage, Throwable cause,
-            Object[] parameters) {
-        super(ErrorCodeConstant.AUTH_CONTEXT_EXCEPTION, errorMessage, cause,
-                parameters);
+
+    /** <默认构造函数> */
+    public AuthContextInitException(String message, Object[] parameters,
+            Throwable cause) {
+        super(message, parameters, cause);
+        // TODO Auto-generated constructor stub
     }
-    
-    /**
-     * <默认构造函数>
-     */
-    public AuthContextInitException(String errorMessage, Object[] parameters) {
-        super(ErrorCodeConstant.AUTH_CONTEXT_EXCEPTION, errorMessage,
-                parameters);
+
+    /** <默认构造函数> */
+    public AuthContextInitException(String message, Object[] parameters) {
+        super(message, parameters);
+        // TODO Auto-generated constructor stub
+    }
+
+    /** <默认构造函数> */
+    public AuthContextInitException(String errorMessage, Throwable cause) {
+        super(errorMessage, cause);
+        // TODO Auto-generated constructor stub
+    }
+
+    /** <默认构造函数> */
+    public AuthContextInitException(String errorMessage) {
+        super(errorMessage);
+        // TODO Auto-generated constructor stub
     }
 }

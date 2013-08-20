@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-import com.tx.core.exceptions.parameter.ParameterIsEmptyException;
+import com.tx.core.exceptions.argument.NullArgumentException;
 
 /**
  * 规则会话工具类，用以支持当前事务的开启关闭<br/>
@@ -56,7 +56,7 @@ public class RuleSessionTransactionUtils {
     private static RuleSessionTransaction doOpenRuleSessionTransation(
             RuleSessionTransactionFactory rstFactory){
         if(rstFactory == null){
-            throw new ParameterIsEmptyException("ruleSessionTransactionFactory is empty.");
+            throw new NullArgumentException("ruleSessionTransactionFactory is empty.");
         }
         
         //从当前线程中根据factory获取可能存在的transHolder

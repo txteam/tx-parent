@@ -40,7 +40,7 @@ import com.tx.component.rule.model.SimplePersistenceRule;
 import com.tx.component.rule.model.SimpleRuleParamEnum;
 import com.tx.component.rule.model.SimpleRulePropertyByte;
 import com.tx.component.rule.service.SimplePersistenceRuleService;
-import com.tx.core.exceptions.parameter.ParameterIsEmptyException;
+import com.tx.core.exceptions.argument.NullArgumentException;
 import com.tx.core.util.XstreamUtils;
 
 /**
@@ -119,7 +119,7 @@ public class RuleConfigLoader implements RuleLoader,ApplicationContextAware{
         for(RuleItemConfig ruleItemConfigTemp : ruleItemList){
             if(ruleItemConfigTemp == null || StringUtils.isEmpty(ruleItemConfigTemp.getRule())
                     || ruleItemConfigTemp.getRuleType() == null){
-                throw new ParameterIsEmptyException("规则项{}不合法，rule or ruleType is empty.");
+                throw new NullArgumentException("规则项{}不合法，rule or ruleType is empty.");
             }
             switch (ruleItemConfigTemp.getRuleType()) {
                 case DROOLS_DRL_BYTE:

@@ -17,7 +17,7 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.tx.core.exceptions.resource.ResourceAccessException;
+import com.tx.core.exceptions.io.ResourceAccessException;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;

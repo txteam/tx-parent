@@ -17,7 +17,7 @@ import javax.persistence.Transient;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
-import com.tx.core.exceptions.parameter.ParameterIsEmptyException;
+import com.tx.core.exceptions.argument.NullArgumentException;
 import com.tx.core.exceptions.parameter.ParameterIsInvalidException;
 import com.tx.core.exceptions.util.AssertUtils;
 
@@ -94,7 +94,7 @@ public class SimplePersistenceRule implements Serializable, Rule {
     public List<SimpleRulePropertyByte> getBytePropertyList(
             SimpleRuleParamEnum propertyParam) {
         if (propertyParam == null) {
-            throw new ParameterIsEmptyException("propertyParam is empty.");
+            throw new NullArgumentException("propertyParam is empty.");
         }
         if (!propertyParam.isBlob()) {
             throw new ParameterIsInvalidException(
@@ -117,7 +117,7 @@ public class SimplePersistenceRule implements Serializable, Rule {
     public SimpleRulePropertyByte getByteProperty(
             SimpleRuleParamEnum propertyParam) {
         if (propertyParam == null) {
-            throw new ParameterIsEmptyException("propertyParam is empty.");
+            throw new NullArgumentException("propertyParam is empty.");
         }
         if (!propertyParam.isBlob()) {
             throw new ParameterIsInvalidException(
@@ -144,7 +144,7 @@ public class SimplePersistenceRule implements Serializable, Rule {
     public List<SimpleRulePropertyValue> getStringPropertyList(
             SimpleRuleParamEnum propertyParam) {
         if (propertyParam == null) {
-            throw new ParameterIsEmptyException("propertyParam is empty.");
+            throw new NullArgumentException("propertyParam is empty.");
         }
         if (propertyParam.isBlob()) {
             throw new ParameterIsInvalidException(
@@ -168,7 +168,7 @@ public class SimplePersistenceRule implements Serializable, Rule {
     public SimpleRulePropertyValue getStringProperty(
             SimpleRuleParamEnum propertyParam) {
         if (propertyParam == null) {
-            throw new ParameterIsEmptyException("propertyParam is empty.");
+            throw new NullArgumentException("propertyParam is empty.");
         }
         if (propertyParam.isBlob()) {
             throw new ParameterIsInvalidException(

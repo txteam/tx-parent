@@ -29,7 +29,7 @@ import com.tx.component.config.context.ConfigContextConfigurer;
 import com.tx.component.config.dao.ConfigPropertyItemDao;
 import com.tx.component.config.model.ConfigPropertyItem;
 import com.tx.component.config.util.UUIDUtils;
-import com.tx.core.exceptions.parameter.ParameterIsEmptyException;
+import com.tx.core.exceptions.argument.NullArgumentException;
 import com.tx.core.paged.model.PagedList;
 
 /**
@@ -120,7 +120,7 @@ public class ConfigPropertyItemService {
         //如果没有填写抛出parameterIsEmptyException,
         //如果有参数不合法ParameterIsInvalidException
         if (configPropertyItem == null /*TODO:|| 其他参数验证*/) {
-            throw new ParameterIsEmptyException(
+            throw new NullArgumentException(
                     "ConfigPropertyItemService.insertConfigPropertyItem configPropertyItem isNull.");
         }
         //随机生成一个UUID
@@ -143,7 +143,7 @@ public class ConfigPropertyItemService {
     @Transactional
     public int deleteById(final String id) {
         if (StringUtils.isEmpty(id)) {
-            throw new ParameterIsEmptyException(
+            throw new NullArgumentException(
                     "ConfigPropertyItemService.deleteById id isEmpty.");
         }
         
@@ -180,7 +180,7 @@ public class ConfigPropertyItemService {
         //如果有参数不合法ParameterIsInvalidException
         if (configPropertyItem == null
                 || StringUtils.isEmpty(configPropertyItem.getId())) {
-            throw new ParameterIsEmptyException(
+            throw new NullArgumentException(
                     "ConfigPropertyItemService.updateById configPropertyItem or configPropertyItem.id is empty.");
         }
         

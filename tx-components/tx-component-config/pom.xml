@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>com.tx</groupId>
 		<artifactId>tx-components</artifactId>
-		<version>1.2.3-SNAPSHOT</version>
+		<version>1.3.0-SNAPSHOT</version>
 	</parent>
 
 	<groupId>com.tx.config</groupId>
@@ -189,17 +189,17 @@
 
 		<!-- aop -->
 		<dependency>
-			<!-- aopÁªÃËÖÆ¶¨µÄaop¹æ·¶ -->
+			<!-- aopï¿½ï¿½ï¿½ï¿½ï¿½Æ¶ï¿½ï¿½ï¿½aopï¿½æ·¶ -->
 			<groupId>aopalliance</groupId>
 			<artifactId>aopalliance</artifactId>
 		</dependency>
 		<dependency>
-			<!-- aop aspectjÊµÏÖ -->
+			<!-- aop aspectjÊµï¿½ï¿½ -->
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjrt</artifactId>
 		</dependency>
 		<dependency>
-			<!-- aop aspectjÊµÏÖ -->
+			<!-- aop aspectjÊµï¿½ï¿½ -->
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjweaver</artifactId>
 		</dependency>
@@ -312,7 +312,7 @@
 			<artifactId>jstl</artifactId>
 		</dependency>
 		<dependency>
-			<!-- jstlµÄÀà¿â£¬°üº¬TLD ºÍ±ê¼Ç¾ä±ú¡£ -->
+			<!-- jstlï¿½ï¿½ï¿½ï¿½â£¬ï¿½ï¿½TLD ï¿½Í±ï¿½Ç¾ï¿½ï¿½ -->
 			<groupId>taglibs</groupId>
 			<artifactId>standard</artifactId>
 		</dependency>

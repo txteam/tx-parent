@@ -26,7 +26,7 @@ import com.tx.component.rule.model.SimplePersistenceRule;
 import com.tx.component.rule.model.SimpleRuleParamEnum;
 import com.tx.component.rule.model.SimpleRulePropertyByte;
 import com.tx.component.rule.service.SimplePersistenceRuleService;
-import com.tx.core.exceptions.parameter.ParameterIsEmptyException;
+import com.tx.core.exceptions.argument.NullArgumentException;
 
 /**
  * DROOLS_DRL_BYTE类型的规则注册器
@@ -98,7 +98,7 @@ public class DRLByteDroolsRuleRegister implements RuleRegister<DroolsRule> {
     public Rule registe(SimplePersistenceRule rule) {
         if (rule == null) {
             logger.warn("registe rule fail. rule is empty.");
-            throw new ParameterIsEmptyException(
+            throw new NullArgumentException(
                     "registe rule fail.rule is null.");
         }
         if (rule.getByteProperty(SimpleRuleParamEnum.DROOLS_DRL_RESOURCE_BYTE) != null

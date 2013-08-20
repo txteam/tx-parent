@@ -1,52 +1,30 @@
 /target
-/.classpath
-/.project
 /.settings
 
 /tx-core/target
-/tx-core/.classpath
-/tx-core/.project
 /tx-core/.settings
 
 /tx-components/target
-/tx-components/.classpath
-/tx-components/.project
 /tx-components/.settings
 
 /tx-components/tx-component-config/target
-/tx-components/tx-component-config/.classpath
-/tx-components/tx-component-config/.project
 /tx-components/tx-component-config/.settings
 /tx-components/tx-component-config/.svn
 
 /tx-components/tx-component-basicdata/target
-/tx-components/tx-component-basicdata/.classpath
-/tx-components/tx-component-basicdata/.project
 /tx-components/tx-component-basicdata/.settings
-/tx-components/tx-component-basicdata/.svn
 
 /tx-components/tx-component-auth/target
-/tx-components/tx-component-auth/.classpath
-/tx-components/tx-component-auth/.project
 /tx-components/tx-component-auth/.settings
 
 /tx-components/tx-component-servicelog/target
-/tx-components/tx-component-servicelog/.classpath
-/tx-components/tx-component-servicelog/.project
 /tx-components/tx-component-servicelog/.settings
 
 /tx-components/tx-component-rule/target
-/tx-components/tx-component-rule/.classpath
-/tx-components/tx-component-rule/.project
 /tx-components/tx-component-rule/.settings
-/tx-components/tx-component-rule/spy.log
 
 /tx-components/tx-component-workflow/target
-/tx-components/tx-component-workflow/.classpath
-/tx-components/tx-component-workflow/.project
 /tx-components/tx-component-workflow/.settings
 
 /tx-components/tx-component-template/target
-/tx-components/tx-component-template/.classpath
-/tx-components/tx-component-template/.project
 /tx-components/tx-component-template/.settings
