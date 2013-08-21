@@ -43,18 +43,18 @@ public class SqlUtils {
       *     但字符中的特殊符号要允许输入
       *     服务于，读取sql文件后，逐句sql进行执行 
       *<功能详细描述>
-      * @param srcSqlContent
+      * @param srcSqlScript
       * @return [参数说明]
       * 
       * @return String [返回类型说明]
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public static List<String> splitSqlContent(String srcSqlContent) {
-        if (StringUtils.isBlank(srcSqlContent)) {
+    public static List<String> splitSqlScript(String srcSqlScript) {
+        if (StringUtils.isBlank(srcSqlScript)) {
             return new ArrayList<String>();
         }
-        String[] res = srcSqlContent.split("[;/]\\s|[;/]$");
+        String[] res = srcSqlScript.split("[;/]\\s|[;/]$");
         List<String> resList = new ArrayList<String>(res.length);
         for (String sqlTemp : res) {
             if (!StringUtils.isBlank(sqlTemp)) {
@@ -70,7 +70,7 @@ public class SqlUtils {
         		"insert into (id) valuse ('absdsdf;dsfasd;asdf');\n " +
         		"insert into(id) values('test');";
         
-        List<String> res = splitSqlContent(sqlContent);
+        List<String> res = splitSqlScript(sqlContent);
         for (String temp : res) {
             System.out.print("   newSql:");
             System.out.println(temp);

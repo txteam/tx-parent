@@ -17,7 +17,9 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.util.CollectionUtils;
 
+import com.tx.core.dbscript.exception.UnsupportAutoUpdateException;
 import com.tx.core.dbscript.model.DataSourceTypeEnum;
+import com.tx.core.util.SqlUtils;
 
 /**
  * TableResource基础类<br/>
@@ -82,7 +84,8 @@ public abstract class BaseTableResource implements TableResource {
         try {
             this.jdbcTemplate.execute("select 1 from " + tableName);
             return true;
-        } catch (DataAccessException e) {
+        }
+        catch (DataAccessException e) {
             return false;
         }
     }
@@ -125,11 +128,19 @@ public abstract class BaseTableResource implements TableResource {
     public void createTable(DataSourceTypeEnum dataSourceType,
             Map<String, String> params) {
         String tableName = getTableName(params);
-        String createTableSql = doGetCreateTableSql(dataSourceType,
+        String createTableSqlScript = doGetCreateTableSqlScript(dataSourceType,
                 tableName,
                 params);
-        logger.info("成功创建表：{}.创建表语句为：{}.", tableName, createTableSql);
-        this.jdbcTemplate.execute(createTableSql);
+        logger.info("准备执行创建表：{}.创建表脚本：{}.", tableName, createTableSqlScript);
+        List<String> createTableSqlList = SqlUtils.splitSqlScript(createTableSqlScript);
+        if (CollectionUtils.isEmpty(createTableSqlList)) {
+            return;
+        }
+        for (String createSqlTemp : createTableSqlList) {
+            logger.info("  创建表：{}.执行语句：{}.", tableName, createSqlTemp);
+            jdbcTemplate.execute(createSqlTemp);
+        }
+        logger.info("  表创建成功：{}.", tableName);
     }
     
     /**
@@ -142,7 +153,7 @@ public abstract class BaseTableResource implements TableResource {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    protected abstract String doGetCreateTableSql(
+    protected abstract String doGetCreateTableSqlScript(
             DataSourceTypeEnum dataSourceType, String tableName,
             Map<String, String> params);
     
@@ -153,20 +164,24 @@ public abstract class BaseTableResource implements TableResource {
     @Override
     public void initTableData(DataSourceTypeEnum dataSourceType,
             Map<String, String> params) {
-        //this.transactionTemplate.execute(action);
         String tableName = getTableName(params);
-        final List<String> createTableSqlList = doGetInitDataSql(dataSourceType,
+        String initTableSqlScript = doGetInitDataSqlScript(dataSourceType,
                 tableName,
                 params);
-        if (CollectionUtils.isEmpty(createTableSqlList)) {
+        
+        logger.info("准备执行初始化表：{}.初始化脚本：{}.", tableName, initTableSqlScript);
+        final List<String> initTableSqlList = SqlUtils.splitSqlScript(initTableSqlScript);
+        if (CollectionUtils.isEmpty(initTableSqlList)) {
             return;
         }
-        for (String initSqlTemp : createTableSqlList) {
+        for (String initSqlTemp : initTableSqlList) {
+            logger.info("  初始化表：{}.执行语句：{}.", tableName, initSqlTemp);
             jdbcTemplate.execute(initSqlTemp);
         }
+        logger.info("  表初始化成功：{}.", tableName);
     }
     
-    protected abstract List<String> doGetInitDataSql(
+    protected abstract String doGetInitDataSqlScript(
             DataSourceTypeEnum dataSourceType, String tableName,
             Map<String, String> params);
     
@@ -177,7 +192,9 @@ public abstract class BaseTableResource implements TableResource {
     @Override
     public void backupTable(DataSourceTypeEnum dataSourceType,
             Map<String, String> params) {
-        
+        String tableName = this.getTableName(params);
+        throw new UnsupportAutoUpdateException(tableName, tableName
+                + "暂不支持自动备份.");
     }
     
     /**
@@ -187,8 +204,9 @@ public abstract class BaseTableResource implements TableResource {
     @Override
     public void updateTable(DataSourceTypeEnum dataSourceType, String version,
             Map<String, String> params) {
-        // TODO Auto-generated method stub
-        
+        String tableName = this.getTableName(params);
+        throw new UnsupportAutoUpdateException(tableName, tableName
+                + "暂不支持表自动升级.");
     }
     
     /**
@@ -198,7 +216,8 @@ public abstract class BaseTableResource implements TableResource {
     @Override
     public void updateTableData(DataSourceTypeEnum dataSourceType,
             String version, Map<String, String> params) {
-        // TODO Auto-generated method stub
-        
+        String tableName = this.getTableName(params);
+        throw new UnsupportAutoUpdateException(tableName, tableName
+                + "暂不支持数据自动升级.");
     }
 }

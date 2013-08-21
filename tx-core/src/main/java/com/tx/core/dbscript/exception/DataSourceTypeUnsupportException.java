@@ -11,14 +11,14 @@ import com.tx.core.exceptions.SILException;
 
 /**
  * 不支持的数据源类型异常
- * <功能详细描述>
+ *     Unsupport Type error
  * 
  * @author  PengQingyang
  * @version  [版本号, 2013-8-19]
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class DataSourceTypeUnSupportException extends SILException {
+public class DataSourceTypeUnsupportException extends SILException {
     
     /** 注释内容 */
     private static final long serialVersionUID = 5983718256413464840L;
@@ -45,33 +45,26 @@ public class DataSourceTypeUnSupportException extends SILException {
     }
     
     /** <默认构造函数> */
-    public DataSourceTypeUnSupportException(DataSourceTypeEnum dataSourceType) {
-        this("不支持的数据源类型:" + dataSourceType);
-        this.dataSourceType = dataSourceType;
-    }
-    
-    /** <默认构造函数> */
-    public DataSourceTypeUnSupportException(DataSourceTypeEnum dataSourceType,
+    public DataSourceTypeUnsupportException(DataSourceTypeEnum dataSourceType,
             String message, Object[] parameters) {
-        this(message, parameters);
+        super(message, parameters);
         this.dataSourceType = dataSourceType;
     }
     
     /** <默认构造函数> */
-    public DataSourceTypeUnSupportException(String message, Object[] parameters) {
-        super(message, parameters);
-    }
-
-    /** <默认构造函数> */
-    public DataSourceTypeUnSupportException(String message, Throwable cause) {
+    public DataSourceTypeUnsupportException(DataSourceTypeEnum dataSourceType,
+            String message, Throwable cause) {
         super(message, cause);
+        this.dataSourceType = dataSourceType;
     }
-
+    
     /** <默认构造函数> */
-    public DataSourceTypeUnSupportException(String message) {
+    public DataSourceTypeUnsupportException(DataSourceTypeEnum dataSourceType,
+            String message) {
         super(message);
+        this.dataSourceType = dataSourceType;
     }
-
+    
     /**
      * @return 返回 dataSourceType
      */
