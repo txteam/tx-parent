@@ -9,12 +9,12 @@ package com.tx.core.exceptions.util;
 import java.util.Collection;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.helpers.MessageFormatter;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
 
 import com.tx.core.exceptions.argument.IllegalArgException;
 import com.tx.core.exceptions.argument.NullArgException;
@@ -31,22 +31,7 @@ import com.tx.core.exceptions.argument.NullArgException;
 public class AssertUtils {
     
     /**
-     * 断言对应字符串不能为空<br/>
-     * <功能详细描述>
-     * @param str
-     * @param message [参数说明]
-     * 
-     * @return void [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-    */
-    public static void notEmpty(Object obj, String message) {
-        //不为空
-        notEmpty(obj, message + " is null or empty");
-    }
-    
-    /**
-     * 断言对应字符串不能为空<br/>
+     * 断言对应对象非空(支持：字符串，数组，集合，Map)<br/>
      * <功能详细描述>
      * @param str
      * @param message [参数说明]
@@ -58,11 +43,11 @@ public class AssertUtils {
     public static void notEmpty(Object obj, String message,
             String... parameters) {
         //不为空
-        notEmpty(obj, "objName is null or empty", (Object[]) parameters);
+        notEmpty(obj, message, (Object[]) parameters);
     }
     
     /**
-     * 断言对应字符串不能为空<br/>
+     * 断言对应对象非空(支持：字符串，数组，集合，Map)<br/>
      * <功能详细描述>
      * @param str
      * @param message [参数说明]
@@ -75,7 +60,8 @@ public class AssertUtils {
     public static void notEmpty(Object obj, String message, Object[] parameters) {
         //不为空
         notNull(obj, message, parameters);
-        if (obj instanceof String && StringUtils.isEmpty((String) obj)) {
+        if (obj instanceof String
+                && StringUtils.isBlank((String) obj)) {
             throw new NullArgException(MessageFormatter.arrayFormat(message,
                     parameters).getMessage());
         } else if (obj instanceof Collection
@@ -93,17 +79,51 @@ public class AssertUtils {
     }
     
     /**
-     * 断言对象不为空<br/>
+     * 断言对应对象为空(支持：字符串，数组，集合，Map)<br/>
      * <功能详细描述>
-     * @param object
+     * @param str
      * @param message [参数说明]
      * 
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    public static void notNull(Object object, String objectName) {
-        notNull(object, objectName + " is null.");
+    public static void isEmpty(Object obj, String message,
+            String... parameters) {
+        //不为空
+        isEmpty(obj, message, (Object[]) parameters);
+    }
+    
+    /**
+     * 断言对应字符串不能为空<br/>
+     * <功能详细描述>
+     * @param str
+     * @param message [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    @SuppressWarnings("rawtypes")
+    public static void isEmpty(Object obj, String message, Object[] parameters) {
+        //不为空
+        isNull(obj, message, parameters);
+        if (obj instanceof String
+                && !StringUtils.isBlank((String) obj)) {
+            throw new NullArgException(MessageFormatter.arrayFormat(message,
+                    parameters).getMessage());
+        } else if (obj instanceof Collection
+                && !CollectionUtils.isEmpty((Collection) obj)) {
+            throw new NullArgException(MessageFormatter.arrayFormat(message,
+                    parameters).getMessage());
+        } else if (obj instanceof Map && !MapUtils.isEmpty((Map) obj)) {
+            throw new NullArgException(MessageFormatter.arrayFormat(message,
+                    parameters).getMessage());
+        } else if (obj instanceof Object[]
+                && !ArrayUtils.isEmpty((Object[]) obj)) {
+            throw new NullArgException(MessageFormatter.arrayFormat(message,
+                    parameters).getMessage());
+        }
     }
     
     /**
@@ -134,6 +154,37 @@ public class AssertUtils {
             Object[] parameters) {
         if (object == null) {
             throw new NullArgException(MessageFormatter.arrayFormat(message,
+                    parameters).getMessage());
+        }
+    }
+    
+    /**
+     * 断言对象为空<br/>
+     * <功能详细描述>
+     * @param object
+     * @param message [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    public static void isNull(Object object, String message,
+            String... parameters) {
+        notNull(object, message, (Object[]) parameters);
+    }
+    
+    /**
+      * 断言对象为空<br/>
+      * <功能详细描述>
+      * @param object [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public static void isNull(Object object, String message, Object[] parameters) {
+        if (object != null) {
+            throw new IllegalArgException(MessageFormatter.arrayFormat(message,
                     parameters).getMessage());
         }
     }
@@ -170,236 +221,6 @@ public class AssertUtils {
             throw new IllegalArgException(MessageFormatter.arrayFormat(message,
                     parameters).getMessage());
         }
-    }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    /**
-      * 断言表达式是否为空<br/>
-      *     如果不为空，抛出参数非法异常<br/>
-      *<功能详细描述>
-      * @param object
-      * @param message [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    public static void isNull(Object object, String message) {
-        if (object != null) {
-            throw new IllegalArgException(message);
-        }
-    }
-    
-    /**
-      * 断言表达式是否为空<br/>
-      * <功能详细描述>
-      * @param object [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    public static void isNull(Object object) {
-        isNull(object, "[Assertion failed] - the object argument must be null");
-    }
-    
-    /**
-     * Assert that the given String is not empty; that is,
-     * it must not be {@code null} and not the empty String.
-     * <pre class="code">Assert.hasLength(name, "Name must not be empty");</pre>
-     * @param text the String to check
-     * @param message the exception message to use if the assertion fails
-     * @see StringUtils#hasLength
-     */
-    public static void hasLength(String text, String message) {
-        if (!StringUtils.hasLength(text)) {
-            throw new IllegalArgumentException(message);
-        }
-    }
-    
-    /**
-     * Assert that the given String is not empty; that is,
-     * it must not be {@code null} and not the empty String.
-     * <pre class="code">Assert.hasLength(name);</pre>
-     * @param text the String to check
-     * @see StringUtils#hasLength
-     */
-    public static void hasLength(String text) {
-        hasLength(text,
-                "[Assertion failed] - this String argument must have length; it must not be null or empty");
-    }
-    
-    /**
-     * Assert that the given String has valid text content; that is, it must not
-     * be {@code null} and must contain at least one non-whitespace character.
-     * <pre class="code">Assert.hasText(name, "'name' must not be empty");</pre>
-     * @param text the String to check
-     * @param message the exception message to use if the assertion fails
-     * @see StringUtils#hasText
-     */
-    public static void hasText(String text, String message) {
-        if (!StringUtils.hasText(text)) {
-            throw new IllegalArgumentException(message);
-        }
-    }
-    
-    /**
-     * Assert that the given String has valid text content; that is, it must not
-     * be {@code null} and must contain at least one non-whitespace character.
-     * <pre class="code">Assert.hasText(name, "'name' must not be empty");</pre>
-     * @param text the String to check
-     * @see StringUtils#hasText
-     */
-    public static void hasText(String text) {
-        hasText(text,
-                "[Assertion failed] - this String argument must have text; it must not be null, empty, or blank");
-    }
-    
-    /**
-     * Assert that the given text does not contain the given substring.
-     * <pre class="code">Assert.doesNotContain(name, "rod", "Name must not contain 'rod'");</pre>
-     * @param textToSearch the text to search
-     * @param substring the substring to find within the text
-     * @param message the exception message to use if the assertion fails
-     */
-    public static void doesNotContain(String textToSearch, String substring,
-            String message) {
-        if (StringUtils.hasLength(textToSearch)
-                && StringUtils.hasLength(substring)
-                && textToSearch.indexOf(substring) != -1) {
-            throw new IllegalArgumentException(message);
-        }
-    }
-    
-    /**
-     * Assert that the given text does not contain the given substring.
-     * <pre class="code">Assert.doesNotContain(name, "rod");</pre>
-     * @param textToSearch the text to search
-     * @param substring the substring to find within the text
-     */
-    public static void doesNotContain(String textToSearch, String substring) {
-        doesNotContain(textToSearch,
-                substring,
-                "[Assertion failed] - this String argument must not contain the substring ["
-                        + substring + "]");
-    }
-    
-    /**
-     * Assert that an array has elements; that is, it must not be
-     * {@code null} and must have at least one element.
-     * <pre class="code">Assert.notEmpty(array, "The array must have elements");</pre>
-     * @param array the array to check
-     * @param message the exception message to use if the assertion fails
-     * @throws IllegalArgumentException if the object array is {@code null} or has no elements
-     */
-    public static void notEmpty(Object[] array, String message) {
-        if (ObjectUtils.isEmpty(array)) {
-            throw new IllegalArgumentException(message);
-        }
-    }
-    
-    /**
-     * Assert that an array has elements; that is, it must not be
-     * {@code null} and must have at least one element.
-     * <pre class="code">Assert.notEmpty(array);</pre>
-     * @param array the array to check
-     * @throws IllegalArgumentException if the object array is {@code null} or has no elements
-     */
-    public static void notEmpty(Object[] array) {
-        notEmpty(array,
-                "[Assertion failed] - this array must not be empty: it must contain at least 1 element");
-    }
-    
-    /**
-     * Assert that an array has no null elements.
-     * Note: Does not complain if the array is empty!
-     * <pre class="code">Assert.noNullElements(array, "The array must have non-null elements");</pre>
-     * @param array the array to check
-     * @param message the exception message to use if the assertion fails
-     * @throws IllegalArgumentException if the object array contains a {@code null} element
-     */
-    public static void noNullElements(Object[] array, String message) {
-        if (array != null) {
-            for (int i = 0; i < array.length; i++) {
-                if (array[i] == null) {
-                    throw new IllegalArgumentException(message);
-                }
-            }
-        }
-    }
-    
-    /**
-     * Assert that an array has no null elements.
-     * Note: Does not complain if the array is empty!
-     * <pre class="code">Assert.noNullElements(array);</pre>
-     * @param array the array to check
-     * @throws IllegalArgumentException if the object array contains a {@code null} element
-     */
-    public static void noNullElements(Object[] array) {
-        noNullElements(array,
-                "[Assertion failed] - this array must not contain any null elements");
-    }
-    
-    /**
-     * Assert that a collection has elements; that is, it must not be
-     * {@code null} and must have at least one element.
-     * <pre class="code">Assert.notEmpty(collection, "Collection must have elements");</pre>
-     * @param collection the collection to check
-     * @param message the exception message to use if the assertion fails
-     * @throws IllegalArgumentException if the collection is {@code null} or has no elements
-     */
-    public static void notEmpty(Collection<?> collection, String message) {
-        if (CollectionUtils.isEmpty(collection)) {
-            throw new IllegalArgumentException(message);
-        }
-    }
-    
-    /**
-     * Assert that a collection has elements; that is, it must not be
-     * {@code null} and must have at least one element.
-     * <pre class="code">Assert.notEmpty(collection, "Collection must have elements");</pre>
-     * @param collection the collection to check
-     * @throws IllegalArgumentException if the collection is {@code null} or has no elements
-     */
-    public static void notEmpty(Collection<?> collection) {
-        notEmpty(collection,
-                "[Assertion failed] - this collection must not be empty: it must contain at least 1 element");
-    }
-    
-    /**
-     * Assert that a Map has entries; that is, it must not be {@code null}
-     * and must have at least one entry.
-     * <pre class="code">Assert.notEmpty(map, "Map must have entries");</pre>
-     * @param map the map to check
-     * @param message the exception message to use if the assertion fails
-     * @throws IllegalArgumentException if the map is {@code null} or has no entries
-     */
-    public static void notEmpty(Map<?, ?> map, String message) {
-        if (CollectionUtils.isEmpty(map)) {
-            throw new IllegalArgumentException(message);
-        }
-    }
-    
-    /**
-     * Assert that a Map has entries; that is, it must not be {@code null}
-     * and must have at least one entry.
-     * <pre class="code">Assert.notEmpty(map);</pre>
-     * @param map the map to check
-     * @throws IllegalArgumentException if the map is {@code null} or has no entries
-     */
-    public static void notEmpty(Map<?, ?> map) {
-        notEmpty(map,
-                "[Assertion failed] - this map must not be empty; it must contain at least one entry");
     }
     
     /**
