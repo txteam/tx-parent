@@ -4,7 +4,7 @@
  * 修改时间:  2013-8-19
  * <修改描述:>
  */
-package com.tx.core.dbscript.configurer;
+package com.tx.core.dbscript.configuror;
 
 import javax.activation.DataSource;
 
@@ -20,7 +20,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
   */
-public class DBScriptAutoExecuteConfigurer {
+public class DBScriptAutoExecuteConfigurator {
     
     private String dbScriptLocation;
     

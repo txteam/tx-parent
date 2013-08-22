@@ -35,13 +35,13 @@ import com.tx.component.config.support.ConfigContextPropertiesPersister;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public class ConfigContextConfigurer extends PropertyPlaceholderConfigurer implements
+public class ConfigContextConfigurator extends PropertyPlaceholderConfigurer implements
         InitializingBean {
     
     private static final String XML_SUFFIX = ".xml";
     
     /** 日志记录器 */
-    private static Logger logger = LoggerFactory.getLogger(ConfigContextConfigurer.class);
+    private static Logger logger = LoggerFactory.getLogger(ConfigContextConfigurator.class);
     
     private String tableSuffix;
     
@@ -57,7 +57,7 @@ public class ConfigContextConfigurer extends PropertyPlaceholderConfigurer imple
     /**
      * 本类初始化时加载context/configContextCfg.xml 如果容器没有传入参数,则默认按上边的位置读取
      */
-    public ConfigContextConfigurer() {
+    public ConfigContextConfigurator() {
         logger.info("configContext Log:  配置容器加载器初始化开始.");
         
     }

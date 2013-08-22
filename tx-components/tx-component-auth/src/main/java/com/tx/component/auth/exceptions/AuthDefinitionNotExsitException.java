@@ -47,4 +47,18 @@ public class AuthDefinitionNotExsitException extends SILException {
         super(authKey + "权限未定义");
         this.authKey = authKey;
     }
+
+    /**
+     * @return 返回 authKey
+     */
+    public String getAuthKey() {
+        return authKey;
+    }
+
+    /**
+     * @param 对authKey进行赋值
+     */
+    public void setAuthKey(String authKey) {
+        this.authKey = authKey;
+    }
 }

@@ -25,7 +25,7 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import com.tx.component.config.context.ConfigContextConfigurer;
+import com.tx.component.config.context.ConfigContextConfigurator;
 import com.tx.component.config.dao.ConfigPropertyItemDao;
 import com.tx.component.config.model.ConfigPropertyItem;
 import com.tx.component.config.util.UUIDUtils;

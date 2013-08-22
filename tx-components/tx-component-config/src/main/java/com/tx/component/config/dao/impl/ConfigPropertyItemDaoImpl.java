@@ -30,7 +30,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
-import com.tx.component.config.context.ConfigContextConfigurer;
+import com.tx.component.config.context.ConfigContextConfigurator;
 import com.tx.component.config.dao.ConfigPropertyItemDao;
 import com.tx.component.config.exception.ConfigContextInitException;
 import com.tx.component.config.model.ConfigPropertyItem;
@@ -47,7 +47,7 @@ import com.tx.core.mybatis.model.Order;
  */
 public class ConfigPropertyItemDaoImpl implements ConfigPropertyItemDao {
     
-    private static Logger logger = LoggerFactory.getLogger(ConfigContextConfigurer.class);
+    private static Logger logger = LoggerFactory.getLogger(ConfigContextConfigurator.class);
     
     private static ResourceLoader resourceLoader = new DefaultResourceLoader();
     

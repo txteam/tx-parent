@@ -6,20 +6,20 @@
  */
 package com.tx.core.dbscript.tableresource;
 
-import java.util.List;
+import java.io.IOException;
 import java.util.Map;
 
 import javax.sql.DataSource;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.dao.DataAccessException;
+import org.apache.commons.io.IOUtils;
+import org.springframework.context.ResourceLoaderAware;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.transaction.support.TransactionTemplate;
 
-import com.tx.core.dbscript.exception.DataSourceTypeUnsupportException;
 import com.tx.core.dbscript.model.DataSourceTypeEnum;
+import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.exceptions.util.ExceptionWrapperUtils;
 
 /**
  * TableResource基础类<br/>
@@ -30,11 +30,35 @@ import com.tx.core.dbscript.model.DataSourceTypeEnum;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public abstract class ScriptTableResource extends BaseTableResource {
+public abstract class ScriptTableResource extends BaseTableResource implements
+        ResourceLoaderAware {
     
-    /** 日志记录器 */
-    private Logger logger = LoggerFactory.getLogger(TableResource.class);
+    private ResourceLoader resourceLoader;
+    
+    /** <默认构造函数> */
+    public ScriptTableResource(DataSource dataSource) {
+        super(dataSource);
+    }
 
+    /** <默认构造函数> */
+    public ScriptTableResource(JdbcTemplate jdbcTemplate) {
+        super(jdbcTemplate);
+    }
+
+    protected abstract String getCreateTableSqlScriptFilePath(
+            DataSourceTypeEnum dataSourceType, String tableName);
+    
+    protected abstract String getInitDataSqlScriptFilePath(
+            DataSourceTypeEnum dataSourceType, String tableName);
+    
+    /**
+     * @param resourceLoader
+     */
+    @Override
+    public void setResourceLoader(ResourceLoader resourceLoader) {
+        this.resourceLoader = resourceLoader;
+    }
+    
     /**
      * @param dataSourceType
      * @param tableName
@@ -45,12 +69,22 @@ public abstract class ScriptTableResource extends BaseTableResource {
     protected String doGetCreateTableSqlScript(
             DataSourceTypeEnum dataSourceType, String tableName,
             Map<String, String> params) {
-        // TODO Auto-generated method stub
-        return null;
+        String location = getCreateTableSqlScriptFilePath(dataSourceType,
+                tableName);
+        Resource resource = this.resourceLoader.getResource(location);
+        AssertUtils.isExist(resource,
+                "createTableSqlScript is null or not exist.tableName:{},filePath:{}",
+                new Object[] { tableName, location });
+        try {
+            String script = IOUtils.toString(resource.getInputStream());
+            return script;
+        } catch (IOException e) {
+            throw ExceptionWrapperUtils.wrapperIOException(e,
+                    "读取创建脚本异常. tableName:{},filePath:{}",
+                    new Object[] { tableName, location });
+        }
     }
-
-
-
+    
     /**
      * @param dataSourceType
      * @param tableName
@@ -60,19 +94,19 @@ public abstract class ScriptTableResource extends BaseTableResource {
     @Override
     protected String doGetInitDataSqlScript(DataSourceTypeEnum dataSourceType,
             String tableName, Map<String, String> params) {
-        String createTableSql = "";
-        switch (dataSourceType) {
-            case ORACLE:
-            case ORACLE9I:
-            case ORACLE10G:
-                createTableSql = getCreateSqlForOracle(tableName, params);
-                break;
-            case H2:
-                createTableSql = getCreateSqlForH2(tableName, params);
-            default:
-                throw new DataSourceTypeUnsupportException(dataSourceType,"自动创建表异常，不支持的数据源类型");
+        String location = getInitDataSqlScriptFilePath(dataSourceType,
+                tableName);
+        Resource resource = this.resourceLoader.getResource(location);
+        AssertUtils.isExist(resource,
+                "initTableSqlScript is null or not exist.tableName:{},filePath:{}",
+                new Object[] { tableName, location });
+        try {
+            String script = IOUtils.toString(resource.getInputStream());
+            return script;
+        } catch (IOException e) {
+            throw ExceptionWrapperUtils.wrapperIOException(e,
+                    "读取初始化脚本异常. tableName:{},filePath:{}",
+                    new Object[] { tableName, location });
         }
-        return createTableSql;
-        return null;
     }
 }

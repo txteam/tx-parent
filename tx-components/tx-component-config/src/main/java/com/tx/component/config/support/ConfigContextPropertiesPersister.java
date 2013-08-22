@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.PropertiesPersister;
 
 import com.thoughtworks.xstream.XStream;
-import com.tx.component.config.context.ConfigContextConfigurer;
+import com.tx.component.config.context.ConfigContextConfigurator;
 import com.tx.component.config.exception.ConfigContextInitException;
 import com.tx.component.config.model.ConfigPropertyItem;
 import com.tx.component.config.service.ConfigPropertyItemService;
@@ -47,7 +47,7 @@ import com.tx.core.util.XstreamUtils;
 public class ConfigContextPropertiesPersister implements PropertiesPersister {
     
     /** 日志记录器 */
-    private static Logger logger = LoggerFactory.getLogger(ConfigContextConfigurer.class);
+    private static Logger logger = LoggerFactory.getLogger(ConfigContextConfigurator.class);
     
     /** 配置容器基础配置文件解析器 */
     private static XStream configContextParse = XstreamUtils.getXstream(ConfigContextCfg.class);

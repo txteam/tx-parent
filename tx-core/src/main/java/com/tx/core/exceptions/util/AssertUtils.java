@@ -6,18 +6,23 @@
  */
 package com.tx.core.exceptions.util;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.helpers.MessageFormatter;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 
+import com.tx.core.exceptions.SILException;
 import com.tx.core.exceptions.argument.IllegalArgException;
 import com.tx.core.exceptions.argument.NullArgException;
+import com.tx.core.exceptions.io.ResourceIsNullOrNotExistException;
+import com.tx.core.util.ObjectUtils;
 
 /**
  * 断言工具类<br/>
@@ -29,6 +34,23 @@ import com.tx.core.exceptions.argument.NullArgException;
  * @since  [产品/模块版本]
  */
 public class AssertUtils {
+    
+    /**
+     * 判断对象不为空则抛出指定异常<br/>
+     * <功能详细描述>
+     * @param obj
+     * @param exception [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+   public static void isTrue(boolean flag, SILException exception) {
+       //不为空
+       if (flag) {
+           throw exception;
+       }
+   }
     
     /**
      * 断言对应对象非空(支持：字符串，数组，集合，Map)<br/>
@@ -56,23 +78,10 @@ public class AssertUtils {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    @SuppressWarnings("rawtypes")
     public static void notEmpty(Object obj, String message, Object[] parameters) {
         //不为空
         notNull(obj, message, parameters);
-        if (obj instanceof String
-                && StringUtils.isBlank((String) obj)) {
-            throw new NullArgException(MessageFormatter.arrayFormat(message,
-                    parameters).getMessage());
-        } else if (obj instanceof Collection
-                && CollectionUtils.isEmpty((Collection) obj)) {
-            throw new NullArgException(MessageFormatter.arrayFormat(message,
-                    parameters).getMessage());
-        } else if (obj instanceof Map && MapUtils.isEmpty((Map) obj)) {
-            throw new NullArgException(MessageFormatter.arrayFormat(message,
-                    parameters).getMessage());
-        } else if (obj instanceof Object[]
-                && ArrayUtils.isEmpty((Object[]) obj)) {
+        if (ObjectUtils.isEmpty(obj)) {
             throw new NullArgException(MessageFormatter.arrayFormat(message,
                     parameters).getMessage());
         }
@@ -88,8 +97,7 @@ public class AssertUtils {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    public static void isEmpty(Object obj, String message,
-            String... parameters) {
+    public static void isEmpty(Object obj, String message, String... parameters) {
         //不为空
         isEmpty(obj, message, (Object[]) parameters);
     }
@@ -108,8 +116,7 @@ public class AssertUtils {
     public static void isEmpty(Object obj, String message, Object[] parameters) {
         //不为空
         isNull(obj, message, parameters);
-        if (obj instanceof String
-                && !StringUtils.isBlank((String) obj)) {
+        if (obj instanceof String && !StringUtils.isBlank((String) obj)) {
             throw new NullArgException(MessageFormatter.arrayFormat(message,
                     parameters).getMessage());
         } else if (obj instanceof Collection
@@ -263,7 +270,7 @@ public class AssertUtils {
      * @param subType the sub type to check
      * @throws IllegalArgumentException if the classes are not assignable
      */
-    public static void isAssignable(Class superType, Class subType) {
+    public static void isAssignable(Class superType, @SuppressWarnings("rawtypes") Class subType) {
         isAssignable(superType, subType, "");
     }
     
@@ -288,31 +295,66 @@ public class AssertUtils {
     }
     
     /**
-     * Assert a boolean expression, throwing {@code IllegalStateException}
-     * if the test result is {@code false}. Call isTrue if you wish to
-     * throw IllegalArgumentException on an assertion failure.
-     * <pre class="code">Assert.state(id == null, "The id property must not already be initialized");</pre>
-     * @param expression a boolean expression
-     * @param message the exception message to use if the assertion fails
-     * @throws IllegalStateException if expression is {@code false}
-     */
-    public static void state(boolean expression, String message) {
-        if (!expression) {
-            throw new IllegalStateException(message);
+     * 断言资源是存在否则抛出资源不存在异常<br/>
+     * <功能详细描述>
+     * @param str
+     * @param message [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    public static void isExist(Resource resource, String message,
+            String... parameters) {
+        isExist(resource, message, (Object[]) parameters);
+    }
+    
+    /**
+     * 断言资源是存在否则抛出资源不存在异常<br/>
+     * <功能详细描述>
+     * @param str
+     * @param message [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    public static void isExist(Resource resource, String message,
+            Object[] parameters) {
+        if (resource == null || !resource.exists()) {
+            throw new ResourceIsNullOrNotExistException(resource, message,
+                    parameters);
         }
     }
     
     /**
-     * Assert a boolean expression, throwing {@link IllegalStateException}
-     * if the test result is {@code false}.
-     * <p>Call {@link #isTrue(boolean)} if you wish to
-     * throw {@link IllegalArgumentException} on an assertion failure.
-     * <pre class="code">Assert.state(id == null);</pre>
-     * @param expression a boolean expression
-     * @throws IllegalStateException if the supplied expression is {@code false}
-     */
-    public static void state(boolean expression) {
-        state(expression,
-                "[Assertion failed] - this state invariant must be true");
+     * 断言资源是存在否则抛出资源不存在异常<br/>
+     * <功能详细描述>
+     * @param str
+     * @param message [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    public static void isExist(File file, String message, String... parameters) {
+        isExist(file, message, (Object[]) parameters);
+    }
+    
+    /**
+     * 断言资源是存在否则抛出资源不存在异常<br/>
+     * <功能详细描述>
+     * @param str
+     * @param message [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    public static void isExist(File file, String message, Object[] parameters) {
+        if (file == null || !file.exists()) {
+            throw new ResourceIsNullOrNotExistException(new FileSystemResource(
+                    file), message, parameters);
+        }
     }
 }

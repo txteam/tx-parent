@@ -21,7 +21,7 @@ import org.springframework.core.PriorityOrdered;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class BasicDataContextConfigurer implements BeanFactoryPostProcessor,
+public class BasicDataContextConfigurator implements BeanFactoryPostProcessor,
         PriorityOrdered {
     
     private int order = Ordered.LOWEST_PRECEDENCE - 1;

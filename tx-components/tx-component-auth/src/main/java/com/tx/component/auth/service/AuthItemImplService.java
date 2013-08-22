@@ -202,6 +202,7 @@ public class AuthItemImplService {
     public AuthItemImpl saveAuthItemImplByAuthItemRowMap(Map<String, Object> authItemRowMap) {
         AssertUtils.notNull(authItemRowMap,"authItemRowMap is null");
         AssertUtils.notEmpty((String)authItemRowMap.get("id"),"authItemRowMap.id is empty.");   
+        
         String authItemId = (String)authItemRowMap.get("id");
         AuthItemImpl authItem = findAuthItemImplById(authItemId);
         if(authItem != null){

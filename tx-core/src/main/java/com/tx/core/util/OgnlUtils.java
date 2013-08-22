@@ -6,13 +6,6 @@
  */
 package com.tx.core.util;
 
-import java.util.Collection;
-import java.util.Map;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
 
 
  /**
@@ -40,19 +33,7 @@ public class OgnlUtils {
      */
     public static boolean isEmpty(Object obj){
         //为空时认为是empty的
-        if(obj == null){
-            return true;
-        }else if(obj instanceof String){
-            return StringUtils.isEmpty((String)obj);
-        }else if(obj instanceof Collection<?>){
-            return CollectionUtils.isEmpty((Collection<?>)obj);
-        }else if(obj instanceof Map<?, ?>){
-            return MapUtils.isEmpty((Map<?, ?>)obj);
-        }else if(obj instanceof Object[]){
-            return ArrayUtils.isEmpty((Object[])obj);
-        }else{
-            return false;
-        }
+        return ObjectUtils.isEmpty(obj);
     }
     
     /**
@@ -66,7 +47,7 @@ public class OgnlUtils {
       * @see [类、类#方法、类#成员]
      */
     public static boolean isNotEmpty(Object obj){
-        return !isEmpty(obj);
+        return !ObjectUtils.isEmpty(obj);
     }
     
 }
