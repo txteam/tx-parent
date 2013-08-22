@@ -136,10 +136,10 @@ public class SILException extends RuntimeException {
         StringBuilder sb = new StringBuilder(TxConstants.INITIAL_STR_LENGTH);
         sb.append("SILException: ")
                 .append(this.getClass().getName())
-                .append("/n");
-        sb.append("   errorCode: ").append(this.errorCode).append("/n");
-        sb.append("   errorMessage: ").append(this.errorMessage).append("/n");
-        sb.append("   message: ").append(super.getMessage()).append("/n");
+                .append("\n");
+        sb.append("   errorCode: ").append(this.errorCode).append("\n");
+        sb.append("   errorMessage: ").append(this.errorMessage).append("\n");
+        sb.append("   message: ").append(super.getMessage()).append("\n");
         sb.append("   Exception toString: ").append(super.toString());
         return sb.toString();
     }

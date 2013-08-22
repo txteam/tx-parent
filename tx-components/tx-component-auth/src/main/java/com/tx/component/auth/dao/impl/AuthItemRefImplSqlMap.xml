@@ -59,7 +59,7 @@
 			</if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(refType2RefIdMapping)">
 				AND
-				<foreach collection="#{refType2RefIdMapping.entrySet()}" open="(" close=")" item="entryTemp" separator="or">
+				<foreach collection="#{refType2RefIdMapping.entrySet().iterator() }" open="(" close=")" item="entryTemp" separator="or">
 					(TAIRI.AUTHREFTYPE = #{entryTemp.getKey(),javaType=java.lang.String}
 					AND TAIRI.REFID = #{entryTemp.getValue,javaType=java.lang.String})
 				</foreach>

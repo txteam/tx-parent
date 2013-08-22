@@ -24,11 +24,11 @@ import org.apache.cxf.common.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.OrderComparator;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionSynchronizationAdapter;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
@@ -54,8 +54,8 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public class AuthContext implements ApplicationContextAware, InitializingBean,
-        BeanNameAware {
+@Component("authContext")
+public class AuthContext implements ApplicationContextAware, InitializingBean {
     
     /** 日志记录器 */
     private static final Logger logger = LoggerFactory.getLogger(AuthContext.class);
@@ -64,14 +64,10 @@ public class AuthContext implements ApplicationContextAware, InitializingBean,
     @SuppressWarnings("unused")
     private Logger serviceLogger = LoggerFactory.getLogger(AuthContext.class);
     
-    private static AuthContext authContext = null;
+    private static AuthContext authContext;// = new AuthContext();
     
     /** 当前spring容器 */
     private ApplicationContext applicationContext;
-    
-    /** spring容器中beanName */
-    @SuppressWarnings("unused")
-    private String beanName;
     
     /** 默认的权限检查器 */
     private AuthChecker defaultAuthChecker;
@@ -106,9 +102,7 @@ public class AuthContext implements ApplicationContextAware, InitializingBean,
     /**
      * <默认构造函数>
      */
-    private AuthContext() {
-        AssertUtils.isNull(AuthContext.authContext,
-                "AuthContext must be singleton.it has be created");
+    public AuthContext() {
     }
     
     /**
@@ -121,17 +115,7 @@ public class AuthContext implements ApplicationContextAware, InitializingBean,
       * @see [类、类#方法、类#成员]
      */
     public static AuthContext getContext() {
-        AssertUtils.notNull(AuthContext.authContext,
-                "AuthContext is not initialize.");
         return authContext;
-    }
-    
-    /**
-     * @param name
-     */
-    @Override
-    public void setBeanName(String name) {
-        this.beanName = name;
     }
     
     /**
@@ -344,7 +328,7 @@ public class AuthContext implements ApplicationContextAware, InitializingBean,
             }
         }
         
-        if (isSuperAdmin) {
+        if (true) {
             //如果是超级管理员则拥有所有权限项的引用
             authItemRefList = new ArrayList<AuthItemRef>();
             for (AuthItem authItemTemp : authItemMapping.values()) {
@@ -358,7 +342,8 @@ public class AuthContext implements ApplicationContextAware, InitializingBean,
                 //构建的超级管理员的权限引用
                 authItemRefList.add(newAuthItemRefTemp);
             }
-        } else {
+        }
+        else {
             //如果不是超级管理员，根据引用表查询得到相关的权限引用
             authItemRefList = new ArrayList<AuthItemRef>();
             List<AuthItemRefImpl> refImplList = this.authItemRefService.queryAuthItemRefListByRefType2RefIdMapping(refType2RefIdMapping);
@@ -428,7 +413,8 @@ public class AuthContext implements ApplicationContextAware, InitializingBean,
         AuthItem authItem = authItemMapping.get(authKey);
         if (authItem == null) {
             throw new AuthContextInitException(
-                    "The authKey:{} AuthItem is not exists.", new Object[]{authKey});
+                    "The authKey:{} AuthItem is not exists.",
+                    new Object[] { authKey });
         }
         
         //如果对应权限项已经无效，则认为拥有权限
@@ -445,7 +431,8 @@ public class AuthContext implements ApplicationContextAware, InitializingBean,
                 authChecker = this.defaultAuthChecker;
             }
             return authChecker.isHasAuth(authItemRefList, objects);
-        } else {
+        }
+        else {
             return false;
         }
     }
@@ -547,7 +534,8 @@ public class AuthContext implements ApplicationContextAware, InitializingBean,
             
             //持久化权限项
             res = doRegisteNewAuth(newAuthItemImpl);
-        } else {
+        }
+        else {
             Map<String, Object> authItemRowMap = new HashMap<String, Object>();
             authItemRowMap.put("id", authItem.getId());
             
@@ -605,7 +593,8 @@ public class AuthContext implements ApplicationContextAware, InitializingBean,
             
             //持久化权限项
             res = doRegisteNewAuth(newAuthItemImpl);
-        } else {
+        }
+        else {
             Map<String, Object> authItemRowMap = new HashMap<String, Object>();
             authItemRowMap.put("id", id);
             
@@ -661,7 +650,8 @@ public class AuthContext implements ApplicationContextAware, InitializingBean,
             
             //持久化权限项
             res = doRegisteNewAuth(newAuthItemImpl);
-        } else {
+        }
+        else {
             Map<String, Object> authItemRowMap = new HashMap<String, Object>();
             authItemRowMap.put("id", id);
             
@@ -771,7 +761,8 @@ public class AuthContext implements ApplicationContextAware, InitializingBean,
                     authItemMapping.put(authItemImpl.getId(), authItemImpl);
                 }
             });
-        } else {
+        }
+        else {
             //如果在非事务中执行
             authItemMapping.put(authItemImpl.getId(), authItemImpl);
         }
@@ -805,7 +796,8 @@ public class AuthContext implements ApplicationContextAware, InitializingBean,
                     authItemMapping.put(authItemImpl.getId(), authItemImpl);
                 }
             });
-        } else {
+        }
+        else {
             //如果在非事务中执行
             authItemMapping.put(authItemImpl.getId(), authItemImpl);
         }
@@ -1013,7 +1005,8 @@ public class AuthContext implements ApplicationContextAware, InitializingBean,
                     authItemMapping.remove(authItemId);
                 }
             });
-        } else {
+        }
+        else {
             //如果在非事务中执行
             authItemMapping.remove(authItemId);
         }
