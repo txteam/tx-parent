@@ -1,12 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <auths>
-	<!-- 这样就添加了新的：抽象权限 -->
-	<authType key="AUTH_MANAGE" name="权限管理">
-		<auth key="auth_operator_modify" name="编辑操作员权限">
+	<!-- 操作权限 -->
+	<authType key="AUTHTYPE_OPERATE" name="操作权限">
+		<!-- 菜单系统配置权限 -->
+		<auth key="system_config_manange" name="系统配置">
+			<auth key="auth_config_manage" name="配置权限">
+				<auth key="auth2operator_config_manage" name="配置人员权限">
+				</auth>
+				<auth key="auth2role_config_manage" name="配置角色权限">
+				</auth>
+				<auth key="auth2org_config_manage" name="配置组织权限">
+				</auth>
+				<auth key="tempauth_config_manage" name="临时权限授权">
+				</auth>
+			</auth>
 		</auth>
-		<auth key="auth_operator_modify" name="编辑角色权限">
+		<auth key="appointParent_auth" name="预约登记">
+			<auth key="appoint_auth" name="预约"/>
+			<auth key="appointQuery_auth" name="预约查询"></auth>
 		</auth>
-		<auth key="auth_grant_temp" name="临时权限授权">
+		<auth key="enterBillParent_auth" name="录单">
+			<auth key="enteringQuery_auth" name="录单查询"/>
+			<auth key="enterBill_menu_auth" name="新申请"/>
+		</auth>
+		<auth key="approvalSystem_auth" name="审批系统">
+			<auth key="waitInspectList_auth" name="工序流程" />
+			<auth key="workList_auth" name="考察清单" />
+			<auth key="approvalWorkStationList_auth" name="审批工作台" />
+		</auth>
+		<auth key="base_auth" name="基础数据维护">
+			<auth key="templetTable_auth" name="模板" />
+		</auth>
+		
+		<auth key="system_menu_auth" name="系统管理">
+			<auth key="system_menu_organization_authority_auth" name="组织权限" />
+			<auth key="system_menu_employee_auth" name="职员权限" />
+			<auth key="system_menu_post_auth" name="职位权限" />
+			<auth key="system_menu_logout_auth" name="退出" />
 		</auth>
 	</authType>
 </auths>
