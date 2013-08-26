@@ -258,7 +258,7 @@ public class JpaMetaClass {
         parseMessage.append(message).append("\n");
     }
     
-    /** 实体类型:包括报名的类全名 */
+    /** 实体类型:包括包名的类全名 */
     private String entityTypeName;
     
     /** 去掉包名的类名:并转换首字母为小写 */

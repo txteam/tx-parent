@@ -37,7 +37,7 @@ public class DBAuthLoader implements AuthLoader{
     private AuthItemImplService authItemService;
     
     /** 加载顺序 */
-    private int order = 1;
+    private int order = Integer.MAX_VALUE;
 
     /**
      * 从数据库中加载权限项

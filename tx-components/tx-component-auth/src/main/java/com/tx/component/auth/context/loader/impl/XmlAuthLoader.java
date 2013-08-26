@@ -88,7 +88,7 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
     private String[] authConfigLocaions = new String[] { "classpath*:authcontext/*_auth_config.xml" };
     
     /** 加载器运行顺序 */
-    private int order = 0;
+    private int order = Integer.MAX_VALUE - 1;
     
     /**
      * @param applicationContext

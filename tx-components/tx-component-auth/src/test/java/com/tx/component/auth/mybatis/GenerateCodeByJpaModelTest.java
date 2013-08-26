@@ -6,6 +6,7 @@
  */
 package com.tx.component.auth.mybatis;
 
+import com.tx.component.auth.model.AuthTypeItem;
 import com.tx.core.mybatis.generator.JpaEntityFreeMarkerGenerator;
 
 
@@ -32,7 +33,7 @@ public class GenerateCodeByJpaModelTest {
         factory.setSqlMapTemplateFilePath("com/tx/component/auth/mybatis/sqlMap.ftl");
         
         //生成后在自己指定的文件夹中去找即可
-        factory.generate(null, "d:/mybatis");
+        factory.generate(AuthTypeItem.class, "d:/mybatis");
         
         System.out.println("success");
     }

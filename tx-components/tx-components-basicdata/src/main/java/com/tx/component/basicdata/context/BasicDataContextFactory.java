@@ -7,6 +7,7 @@
 package com.tx.component.basicdata.context;
 
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.stereotype.Component;
 
 
  /**
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.FactoryBean;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
   */
+@Component("basicDataContext")
 public class BasicDataContextFactory implements FactoryBean<BasicDataContext>{
     
     /**
