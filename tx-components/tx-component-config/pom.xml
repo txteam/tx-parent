@@ -26,14 +26,6 @@
 			<groupId>com.tx</groupId>
 			<artifactId>tx-component-servicelog</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>com.tx</groupId>
-			<artifactId>tx-component-rule</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.tx</groupId>
-			<artifactId>tx-component-workflow</artifactId>
-		</dependency>
 
 		<!-- commons -->
 		<dependency>
