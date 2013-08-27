@@ -29,7 +29,7 @@
 		  FROM ${select.tableName} ${select.simpleTableName}
 		 WHERE
 		<trim prefixOverrides="AND | OR">
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(${select.idPropertyName})">  
 	            AND ${select.simpleTableName}.${select.idColumnName} = ${r"#{"}${select.idPropertyName}${r"}"}
 	        </if>
 		</trim>
@@ -132,7 +132,7 @@
 		parameterType="${delete.parameterType}">
 		DELETE FROM ${delete.tableName} ${delete.simpleTableName} WHERE
 		<trim prefixOverrides="AND | OR">
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(${delete.idPropertyName})">  
 	            AND ${delete.simpleTableName}.${delete.idColumnName} = ${r"#{"}${delete.idPropertyName}${r"}"}
 	        </if>
 		</trim>

@@ -74,6 +74,8 @@
 		<jdbc:embedded-database id="hsqldbDataSource" type="H2">
 			<jdbc:script location="classpath:hsqldb/02_tables.sql" />
 			<jdbc:script location="classpath:hsqldb/09_initdata.sql" />
+			<jdbc:script encoding="UTF-8"/>
+			<jdbc:script execution="DESTROY"/>
 		</jdbc:embedded-database>
 
 	</beans>

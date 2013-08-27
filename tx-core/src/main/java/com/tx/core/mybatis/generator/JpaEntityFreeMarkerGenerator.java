@@ -214,7 +214,7 @@ public class JpaEntityFreeMarkerGenerator {
                 .entrySet()) {
             ColumnInfo columnInfo = entryTemp.getValue();
             dbScriptMapper.getColumnName2TypeNameMapping()
-                    .put(entryTemp.getKey(),
+                    .put(columnInfo.getName(),
                             dialect.getTypeName(columnInfo.getJdbcType(),
                                     columnInfo.getLength(),
                                     columnInfo.getPrecision(),

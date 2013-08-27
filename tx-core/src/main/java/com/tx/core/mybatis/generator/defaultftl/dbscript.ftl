@@ -3,18 +3,14 @@
 --****************************************************************************
 create table ${dbScriptMapper.tableName}(
 <#list dbScriptMapper.columnName2TypeNameMapping?keys as entryKey>
-	${entryKey}		${dbScriptMapper.columnName2TypeNameMapping[entryKey]},
+	${entryKey} ${dbScriptMapper.columnName2TypeNameMapping[entryKey]},
 </#list>
-	primary key(${dbScriptMapper.pkColumnName});
+	primary key(${dbScriptMapper.pkColumnName})
 );
---create index idx_xxxx_xxxx on ${tableName}(xxxx);
---create unique index idx_xxxx_xxxx on ${tableName}(xxxx);
+--create index idx_xxxx_xxxx on ${dbScriptMapper.tableName}(xxxx);
+--create unique index idx_xxxx_xxxx on ${dbScriptMapper.tableName}(xxxx);
 
---comment on table ${tableName} is 'demo信息表';
+--comment on table ${dbScriptMapper.tableName} is 'demo信息表';
 <#list dbScriptMapper.columnName2TypeNameMapping?keys as entryKey>
---comment on column ${tableName}.${entry.key()} is 'xxxx';
+--comment on column ${dbScriptMapper.tableName}.${entryKey} is 'xxxx';
 </#list>
-<!--
-dbscript生成描述:
-${parseMessage}
--->

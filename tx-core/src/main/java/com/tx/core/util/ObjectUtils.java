@@ -12,7 +12,6 @@ import java.util.Map;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.ibatis.reflection.MetaObject;
 
@@ -70,7 +69,7 @@ public class ObjectUtils {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public static int generateHashCode(Object thisObj,
+    public static int generateHashCode(int superHashCode, Object thisObj,
             String... dependPropertyName) {
         AssertUtils.notNull(thisObj, "thisObj is null.");
         
@@ -78,7 +77,7 @@ public class ObjectUtils {
         int resHashCode = thisObj.getClass().hashCode();
         for (String propertyNameTemp : dependPropertyName) {
             Object value = metaObject.getValue(propertyNameTemp);
-            resHashCode += value == null ?  : value.hashCode();
+            resHashCode += value == null ? superHashCode : value.hashCode();
         }
         return resHashCode;
     }
@@ -100,10 +99,9 @@ public class ObjectUtils {
             String... dependPropertyName) {
         AssertUtils.notNull(thisObj, "thisObj is null.");
         
-        if (otherObj == null) {
-            return false;
-        } else if (!ClassUtils.isAssignable(thisObj.getClass(),
-                otherObj.getClass())) {
+        if (thisObj == otherObj) {
+            return true;
+        } else if (!thisObj.getClass().isAssignableFrom(otherObj.getClass())) {
             return false;
         } else {
             MetaObject thisMetaObject = MetaObject.forObject(thisObj);
