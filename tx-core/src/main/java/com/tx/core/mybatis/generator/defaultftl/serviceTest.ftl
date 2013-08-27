@@ -15,10 +15,10 @@ import junit.framework.Assert;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.junit.Test;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.TestBase;
 import ${service.basePackage}.model.${service.entitySimpleName};
 import ${service.basePackage}.service.${service.entitySimpleName}Service;
 import com.tx.core.paged.model.PagedList;
@@ -35,16 +35,20 @@ import com.tx.core.paged.model.PagedList;
   */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { 
+        "classpath:spring/beans-aop.xml",
+        "classpath:spring/beans-auth.xml",
+        "classpath:spring/beans-cache.xml",
         "classpath:spring/beans-ds.xml",
-        "classpath:spring/beans-tx.xml", 
-        "classpath:spring/beans-mybatis.xml",
+        "classpath:spring/beans-i18n.xml",
+        "classpath:spring/beans-tx.xml",
         "classpath:spring/beans.xml" })
+@ActiveProfiles("dev")
 public class ${service.entitySimpleName}ServiceTest {
     
     /** 设置jndi */
     @BeforeClass
     public static void setUp() {
-        TestBase.bindDsToJNDI();
+        //bindJNDI
     }
     
     @Resource(name="${service.lowerCaseEntitySimpleName}Service")

@@ -17,12 +17,17 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.cxf.common.util.StringUtils;
+import org.hibernate.dialect.Dialect;
 import org.springframework.util.ClassUtils;
 
+import com.tx.core.dbscript.model.DataSourceTypeEnum;
 import com.tx.core.exceptions.argument.IllegalArgException;
+import com.tx.core.mybatis.generator.model.ColumnInfo;
+import com.tx.core.mybatis.generator.model.DBScriptMapper;
 import com.tx.core.mybatis.generator.model.DaoGeneratorModel;
 import com.tx.core.mybatis.generator.model.DeleteMapper;
 import com.tx.core.mybatis.generator.model.InsertMapper;
@@ -57,6 +62,8 @@ public class JpaEntityFreeMarkerGenerator {
     private String serviceTemplateFilePath = "com/tx/core/mybatis/generator/defaultftl/service.ftl";
     
     private String serviceTestTemplateFilePath = "com/tx/core/mybatis/generator/defaultftl/serviceTest.ftl";
+    
+    private String dbScriptTemplateFilePath = "com/tx/core/mybatis/generator/defaultftl/dbScript.ftl";
     
     private Class<?> loadTemplateClass = JpaEntityFreeMarkerGenerator.class;
     
@@ -129,6 +136,98 @@ public class JpaEntityFreeMarkerGenerator {
         generateService(japMetaClass, resultFolderPath);
         
         //生成service单元测试类
+    }
+    
+    /**
+      * 字段类型映射器<br/>
+      * <功能详细描述>
+      * 
+      * @author  brady
+      * @version  [版本号, 2013-8-27]
+      * @see  [相关类/方法]
+      * @since  [产品/模块版本]
+     */
+    public static interface ColumnTypeMapper {
+        
+        /**
+          * 生成数据字段类型
+          *<功能详细描述>
+          * @param dataSourceType
+          * @param jdbcType
+          * @param columnName
+          * @return [参数说明]
+          * 
+          * @return String [返回类型说明]
+          * @exception throws [异常类型] [异常说明]
+          * @see [类、类#方法、类#成员]
+         */
+        public String generateColumnType(DataSourceTypeEnum dataSourceType,
+                Class<?> jdbcType, String columnName);
+    }
+    
+    public static class DefaultColumnTypeMapper implements ColumnTypeMapper {
+        
+        /**
+         * @param jdbcType
+         * @param columnName
+         * @return
+         */
+        @Override
+        public String generateColumnType(DataSourceTypeEnum dataSourceType,
+                Class<?> jdbcType, String columnName) {
+            // TODO Auto-generated method stub
+            return null;
+        }
+        
+    }
+    
+    public void generateScript(Class<?> type, String resultFolderPath) {
+        JpaMetaClass jpaMetaClass = JpaMetaClass.forClass(type);
+        
+        //生成service单元测试类
+        generateScriptByDataSourceType(DataSourceTypeEnum.ORACLE,
+                jpaMetaClass,
+                resultFolderPath);
+        generateScriptByDataSourceType(DataSourceTypeEnum.H2,
+                jpaMetaClass,
+                resultFolderPath);
+        generateScriptByDataSourceType(DataSourceTypeEnum.MYSQL,
+                jpaMetaClass,
+                resultFolderPath);
+    }
+    
+    private void generateScriptByDataSourceType(
+            DataSourceTypeEnum dataSourceType, JpaMetaClass jpaMetaClass,
+            String resultFolderPath) {
+        //
+        Dialect dialect = dataSourceType.getHibernateDialect();
+        
+        Map<String, Object> data = new HashMap<String, Object>();
+        
+        DBScriptMapper dbScriptMapper = new DBScriptMapper();
+        dbScriptMapper.setTableName(jpaMetaClass.getTableName().toUpperCase());
+        dbScriptMapper.setPkColumnName(jpaMetaClass.getColumnInfoMapping()
+                .get(jpaMetaClass.getIdPropertyName())
+                .getName()
+                .toUpperCase());
+        for (Entry<String, ColumnInfo> entryTemp : jpaMetaClass.getColumnInfoMapping()
+                .entrySet()) {
+            ColumnInfo columnInfo = entryTemp.getValue();
+            dbScriptMapper.getColumnName2TypeNameMapping()
+                    .put(entryTemp.getKey(),
+                            dialect.getTypeName(columnInfo.getJdbcType(),
+                                    columnInfo.getLength(),
+                                    columnInfo.getPrecision(),
+                                    columnInfo.getScale()));
+        }
+        data.put("dbScriptMapper", dbScriptMapper);
+        
+        FreeMarkerUtils.fprint(loadTemplateClass,
+                this.dbScriptTemplateFilePath,
+                data,
+                resultFolderPath + "/dbscript/autogenscript/"
+                        + dataSourceType.getName() + "/"
+                        + jpaMetaClass.getTableName().toUpperCase() + ".sql");
     }
     
     /**
@@ -428,7 +527,8 @@ public class JpaEntityFreeMarkerGenerator {
             } else {
                 JpaMetaClass temp = JpaMetaClass.forClass(typeTemp);
                 String tempIdPropertyName = temp.getIdPropertyName();
-                Class<?> tempIdType = temp.getGetterReturnTypeMapping().get(tempIdPropertyName);
+                Class<?> tempIdType = temp.getGetterReturnTypeMapping()
+                        .get(tempIdPropertyName);
                 if (StringUtils.isEmpty(tempIdPropertyName)) {
                     //如果不为简单对象，关联对象中又不存在主键设置，这里将认为发生了异常，这样的情形不应该出现
                     throw new IllegalArgException(typeTemp.getName()
@@ -452,95 +552,111 @@ public class JpaEntityFreeMarkerGenerator {
         Collections.sort(columnList, columnComparator);
         return columnList;
     }
-
+    
     /**
      * @return 返回 sqlMapTemplateFilePath
      */
     public String getSqlMapTemplateFilePath() {
         return sqlMapTemplateFilePath;
     }
-
+    
     /**
      * @param 对sqlMapTemplateFilePath进行赋值
      */
     public void setSqlMapTemplateFilePath(String sqlMapTemplateFilePath) {
         this.sqlMapTemplateFilePath = sqlMapTemplateFilePath;
     }
-
+    
     /**
      * @return 返回 daoTemplateFilePath
      */
     public String getDaoTemplateFilePath() {
         return daoTemplateFilePath;
     }
-
+    
     /**
      * @param 对daoTemplateFilePath进行赋值
      */
     public void setDaoTemplateFilePath(String daoTemplateFilePath) {
         this.daoTemplateFilePath = daoTemplateFilePath;
     }
-
+    
     /**
      * @return 返回 daoImplTemplateFilePath
      */
     public String getDaoImplTemplateFilePath() {
         return daoImplTemplateFilePath;
     }
-
+    
     /**
      * @param 对daoImplTemplateFilePath进行赋值
      */
     public void setDaoImplTemplateFilePath(String daoImplTemplateFilePath) {
         this.daoImplTemplateFilePath = daoImplTemplateFilePath;
     }
-
+    
     /**
      * @return 返回 serviceTemplateFilePath
      */
     public String getServiceTemplateFilePath() {
         return serviceTemplateFilePath;
     }
-
+    
     /**
      * @param 对serviceTemplateFilePath进行赋值
      */
     public void setServiceTemplateFilePath(String serviceTemplateFilePath) {
         this.serviceTemplateFilePath = serviceTemplateFilePath;
     }
-
+    
     /**
      * @return 返回 serviceTestTemplateFilePath
      */
     public String getServiceTestTemplateFilePath() {
         return serviceTestTemplateFilePath;
     }
-
+    
     /**
      * @param 对serviceTestTemplateFilePath进行赋值
      */
-    public void setServiceTestTemplateFilePath(String serviceTestTemplateFilePath) {
+    public void setServiceTestTemplateFilePath(
+            String serviceTestTemplateFilePath) {
         this.serviceTestTemplateFilePath = serviceTestTemplateFilePath;
     }
-
+    
     /**
      * @return 返回 loadTemplateClass
      */
     public Class<?> getLoadTemplateClass() {
         return loadTemplateClass;
     }
-
+    
     /**
      * @param 对loadTemplateClass进行赋值
      */
     public void setLoadTemplateClass(Class<?> loadTemplateClass) {
         this.loadTemplateClass = loadTemplateClass;
     }
-
+    
     /**
      * @return 返回 columncomparator
      */
     public static Comparator<SqlMapColumn> getColumncomparator() {
         return columnComparator;
     }
+    
+    /**
+     * @return 返回 dbScriptTemplateFilePath
+     */
+    public String getDbScriptTemplateFilePath() {
+        return dbScriptTemplateFilePath;
+    }
+    
+    /**
+     * @param 对dbScriptTemplateFilePath进行赋值
+     */
+    public void setDbScriptTemplateFilePath(String dbScriptTemplateFilePath) {
+        this.dbScriptTemplateFilePath = dbScriptTemplateFilePath;
+    }
+    
 }

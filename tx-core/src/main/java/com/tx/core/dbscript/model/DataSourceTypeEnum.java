@@ -8,6 +8,7 @@ package com.tx.core.dbscript.model;
 
 import org.hibernate.dialect.Dialect;
 import org.hibernate.dialect.H2Dialect;
+import org.hibernate.dialect.MySQL5InnoDBDialect;
 import org.hibernate.dialect.Oracle10gDialect;
 
 /**
@@ -23,19 +24,27 @@ public enum DataSourceTypeEnum {
     /**
      * oracle
      */
-    ORACLE("oracle", new Oracle10gDialect()),
+    ORACLE("ORACLE", new Oracle10gDialect()),
     /**
      * oracle
      */
-    ORACLE9I("oracle9i", new Oracle10gDialect()),
+    ORACLE9I("ORACLE9I", new Oracle10gDialect()),
     /**
      * oracle
      */
-    ORACLE10G("oracle10g", new Oracle10gDialect()),
+    ORACLE10G("ORACLE10G", new Oracle10gDialect()),
     /**
      * H2
      */
-    H2("h2", new H2Dialect());
+    H2("H2", new H2Dialect()),
+    /**
+     * MYSQL
+     */
+    MYSQL("MYSQL", new MySQL5InnoDBDialect()),
+    /**
+     * MYSQL
+     */
+    MySQL5InnoDBDialect("MYSQL5INNODB", new MySQL5InnoDBDialect());
     
     /**
      * 数据源类型名

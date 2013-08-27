@@ -6,17 +6,16 @@
  */
 package com.tx.core.util;
 
-import java.lang.ref.SoftReference;
 import java.util.Collection;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.ibatis.reflection.MetaObject;
 
-import com.thoughtworks.xstream.mapper.Mapper.Null;
 import com.tx.core.exceptions.util.AssertUtils;
 
 /**
@@ -73,20 +72,20 @@ public class ObjectUtils {
      */
     public static int generateHashCode(Object thisObj,
             String... dependPropertyName) {
-        if(thisObj == null){
-            return Null.class.hashCode();
-        }
-        MetaObject metaObject = MetaObject.forObject(thisObj);
+        AssertUtils.notNull(thisObj, "thisObj is null.");
         
+        MetaObject metaObject = MetaObject.forObject(thisObj);
         int resHashCode = thisObj.getClass().hashCode();
-        for(String propertyNameTemp : dependPropertyName){
-            //String getterNameTemp = metaObject.getGetterNames();
+        for (String propertyNameTemp : dependPropertyName) {
+            Object value = metaObject.getValue(propertyNameTemp);
+            resHashCode += value == null ?  : value.hashCode();
         }
-        return  resHashCode;
+        return resHashCode;
     }
     
     /**
       * 根据依赖的属性名，判断对象是否相等
+      *     当指定字段都为空时判断两对象引用是否相同
       *<功能详细描述>
       * @param thisObj
       * @param otherObj
@@ -99,7 +98,24 @@ public class ObjectUtils {
      */
     public static boolean equals(Object thisObj, Object otherObj,
             String... dependPropertyName) {
+        AssertUtils.notNull(thisObj, "thisObj is null.");
         
-        return false;
+        if (otherObj == null) {
+            return false;
+        } else if (!ClassUtils.isAssignable(thisObj.getClass(),
+                otherObj.getClass())) {
+            return false;
+        } else {
+            MetaObject thisMetaObject = MetaObject.forObject(thisObj);
+            MetaObject otherMetaObject = MetaObject.forObject(otherObj);
+            
+            for (String propertyNameTemp : dependPropertyName) {
+                if (!org.apache.commons.lang.ObjectUtils.equals(thisMetaObject.getValue(propertyNameTemp),
+                        otherMetaObject.getValue(propertyNameTemp))) {
+                    return false;
+                }
+            }
+            return true;
+        }
     }
 }

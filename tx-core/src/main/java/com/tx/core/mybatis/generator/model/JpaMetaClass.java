@@ -70,7 +70,7 @@ public class JpaMetaClass {
             
             PropertyDescriptor propertyDescriptor = BeanUtils.getPropertyDescriptor(type,
                     getterNameTemp);
-            if(propertyDescriptor == null){
+            if (propertyDescriptor == null) {
                 this.ignoreGetterMapping.put(getterNameTemp, true);
                 continue;
             }
@@ -138,15 +138,7 @@ public class JpaMetaClass {
         }
         
         //识别属性对应字段
-        if (getterMethod.isAnnotationPresent(JoinColumn.class)
-                || (getterField != null && getterField.isAnnotationPresent(JoinColumn.class))) {
-            JoinColumn columnAnn = getterMethod.getAnnotation(JoinColumn.class);
-            if (columnAnn == null && getterField != null) {
-                columnAnn = getterField.getAnnotation(JoinColumn.class);
-            }
-            this.columnNameMapping.put(propertyName, columnAnn.name());
-            this.joinColumnAnnoMapping.put(propertyName, columnAnn);
-        } else if (getterMethod.isAnnotationPresent(Column.class)
+        if (getterMethod.isAnnotationPresent(Column.class)
                 || (getterField != null && getterField.isAnnotationPresent(Column.class))) {
             Column columnAnn = getterMethod.getAnnotation(Column.class);
             if (columnAnn == null && getterField != null) {
@@ -154,8 +146,28 @@ public class JpaMetaClass {
             }
             this.columnNameMapping.put(propertyName, columnAnn.name());
             this.columnAnnoMapping.put(propertyName, columnAnn);
+            
+            this.columnInfoMapping.put(propertyName, new ColumnInfo(columnAnn,
+                    columnAnn.name(), getterField.getType(), propertyName,
+                    ""));
+        } else if (getterMethod.isAnnotationPresent(JoinColumn.class)
+                || (getterField != null && getterField.isAnnotationPresent(JoinColumn.class))) {
+            JoinColumn columnAnn = getterMethod.getAnnotation(JoinColumn.class);
+            if (columnAnn == null && getterField != null) {
+                columnAnn = getterField.getAnnotation(JoinColumn.class);
+            }
+            this.columnNameMapping.put(propertyName, columnAnn.name());
+            this.joinColumnAnnoMapping.put(propertyName, columnAnn);
+            
+            this.columnInfoMapping.put(propertyName, new ColumnInfo(null,
+                    columnAnn.name(), getterField.getType(), propertyName,
+                    ""));
         } else {
             this.columnNameMapping.put(propertyName, propertyName);
+            
+            this.columnInfoMapping.put(propertyName, new ColumnInfo(null,
+                    propertyName, getterField.getType(), propertyName,
+                    ""));
         }
     }
     
@@ -296,6 +308,8 @@ public class JpaMetaClass {
      * 字段名映射
      */
     private Map<String, String> columnNameMapping = new HashMap<String, String>();
+    
+    private Map<String, ColumnInfo> columnInfoMapping = new HashMap<String, ColumnInfo>();
     
     private Map<String, Column> columnAnnoMapping = new HashMap<String, Column>();
     
@@ -554,5 +568,19 @@ public class JpaMetaClass {
     public void setJoinColumnAnnoMapping(
             Map<String, JoinColumn> joinColumnAnnoMapping) {
         this.joinColumnAnnoMapping = joinColumnAnnoMapping;
+    }
+    
+    /**
+     * @return 返回 columnInfoMapping
+     */
+    public Map<String, ColumnInfo> getColumnInfoMapping() {
+        return columnInfoMapping;
+    }
+    
+    /**
+     * @param 对columnInfoMapping进行赋值
+     */
+    public void setColumnInfoMapping(Map<String, ColumnInfo> columnInfoMapping) {
+        this.columnInfoMapping = columnInfoMapping;
     }
 }

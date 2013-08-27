@@ -12,7 +12,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -20,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ${service.basePackage}.dao.${service.entitySimpleName}Dao;
 import ${service.basePackage}.model.${service.entitySimpleName};
-import com.tx.core.exceptions.parameter.ParameterIsEmptyException;
+import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.paged.model.PagedList;
 
 /**
@@ -46,8 +45,49 @@ public class ${service.entitySimpleName}Service {
     private ${service.entitySimpleName}Dao ${service.lowerCaseEntitySimpleName}Dao;
     
     /**
+      * 将${service.lowerCaseEntitySimpleName}实例插入数据库中保存
+      * 1、如果${service.lowerCaseEntitySimpleName}为空时抛出参数为空异常
+      * 2、如果${service.lowerCaseEntitySimpleName}中部分必要参数为非法值时抛出参数不合法异常
+     * <功能详细描述>
+     * @param district [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws
+     * @see [类、类#方法、类#成员]
+    */
+    @Transactional
+    public void insert${service.entitySimpleName}(${service.entitySimpleName} ${service.lowerCaseEntitySimpleName}) {
+        //TODO:验证参数是否合法，必填字段是否填写，
+        AssertUtils.notNull(${service.lowerCaseEntitySimpleName}, "${service.lowerCaseEntitySimpleName} is null.");
+        AssertUtils.notEmpty(${service.lowerCaseEntitySimpleName}.get${service.upCaseIdPropertyName}(), "${service.lowerCaseEntitySimpleName}.${service.idPropertyName} is empty.");
+        
+        this.${service.lowerCaseEntitySimpleName}Dao.insert${service.entitySimpleName}(${service.lowerCaseEntitySimpleName});
+    }
+      
+     /**
+      * 根据${service.idPropertyName}删除${service.lowerCaseEntitySimpleName}实例
+      * 1、如果入参数为空，则抛出异常
+      * 2、执行删除后，将返回数据库中被影响的条数
+      * @param ${service.idPropertyName}
+      * @return 返回删除的数据条数，<br/>
+      * 有些业务场景，如果已经被别人删除同样也可以认为是成功的
+      * 这里讲通用生成的业务层代码定义为返回影响的条数
+      * @return int [返回类型说明]
+      * @exception throws 
+      * @see [类、类#方法、类#成员]
+     */
+    @Transactional
+    public int deleteBy${service.upCaseIdPropertyName}(String ${service.idPropertyName}) {
+        AssertUtils.notEmpty(${service.idPropertyName}, "${service.idPropertyName} is empty.");
+        
+        ${service.entitySimpleName} condition = new ${service.entitySimpleName}();
+        condition.set${service.upCaseIdPropertyName}(${service.idPropertyName});
+        return this.${service.lowerCaseEntitySimpleName}Dao.delete${service.entitySimpleName}(condition);
+    }
+    
+    /**
       * 根据${service.upCaseIdPropertyName}查询${service.entitySimpleName}实体
-      * 1、当${service.idPropertyName}为empty时返回null
+      * 1、当${service.idPropertyName}为empty时抛出异常
       * <功能详细描述>
       * @param ${service.idPropertyName}
       * @return [参数说明]
@@ -57,9 +97,7 @@ public class ${service.entitySimpleName}Service {
       * @see [类、类#方法、类#成员]
      */
     public ${service.entitySimpleName} find${service.entitySimpleName}By${service.upCaseIdPropertyName}(String ${service.idPropertyName}) {
-        if (StringUtils.isEmpty(${service.idPropertyName})) {
-            return null;
-        }
+        AssertUtils.notEmpty(${service.idPropertyName}, "${service.idPropertyName} is empty.");
         
         ${service.entitySimpleName} condition = new ${service.entitySimpleName}();
         condition.set${service.upCaseIdPropertyName}(${service.idPropertyName});
@@ -81,7 +119,7 @@ public class ${service.entitySimpleName}Service {
         //TODO:判断条件合法性
         
         //TODO:生成查询条件
-        Map<String, Object> params = new HashMap();
+        Map<String, Object> params = new HashMap<String, Object>();
         
         //TODO:根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
         List<${service.entitySimpleName}> resList = this.${service.lowerCaseEntitySimpleName}Dao.query${service.entitySimpleName}List(params);
@@ -136,54 +174,6 @@ public class ${service.entitySimpleName}Service {
     }
     
     /**
-      * 将${service.lowerCaseEntitySimpleName}实例插入数据库中保存
-      * 1、如果${service.lowerCaseEntitySimpleName}为空时抛出参数为空异常
-      * 2、如果${service.lowerCaseEntitySimpleName}中部分必要参数为非法值时抛出参数不合法异常
-      * <功能详细描述>
-      * @param ${service.lowerCaseEntitySimpleName} [参数说明]
-      * 
-      * @return vo${service.idPropertyName} [返回类型说明]
-      * @exception throws 可能存在数据库访问异常DataAccessException
-      * @see [类、类#方法、类#成员]
-     */
-    @Transactional
-    public void insert${service.entitySimpleName}(${service.entitySimpleName} ${service.lowerCaseEntitySimpleName}) {
-        //TODO:验证参数是否合法，必填字段是否填写，
-        //如果没有填写抛出parameterIsEmptyException,
-        //如果有参数不合法ParameterIsInval${service.idPropertyName}Exception
-        if (${service.lowerCaseEntitySimpleName} == null /*TODO:|| 其他参数验证*/) {
-            throw new ParameterIsEmptyException(
-                    "${service.entitySimpleName}Service.insert${service.entitySimpleName} ${service.lowerCaseEntitySimpleName} isNull.");
-        }
-        
-        this.${service.lowerCaseEntitySimpleName}Dao.insert${service.entitySimpleName}(${service.lowerCaseEntitySimpleName});
-    }
-    
-    /**
-      * 根据${service.idPropertyName}删除${service.lowerCaseEntitySimpleName}实例
-      * 1、如果入参数为空，则抛出异常
-      * 2、执行删除后，将返回数据库中被影响的条数
-      * @param ${service.idPropertyName}
-      * @return 返回删除的数据条数，<br/>
-      * 有些业务场景，如果已经被别人删除同样也可以认为是成功的
-      * 这里讲通用生成的业务层代码定义为返回影响的条数
-      * @return int [返回类型说明]
-      * @exception throws 可能存在数据库访问异常DataAccessException
-      * @see [类、类#方法、类#成员]
-     */
-    @Transactional
-    public int deleteBy${service.upCaseIdPropertyName}(String ${service.idPropertyName}) {
-        if (StringUtils.isEmpty(${service.idPropertyName})) {
-            throw new ParameterIsEmptyException(
-                    "${service.entitySimpleName}Service.deleteBy${service.upCaseIdPropertyName} ${service.idPropertyName} isEmpty.");
-        }
-        
-        ${service.entitySimpleName} condition = new ${service.entitySimpleName}();
-        condition.set${service.upCaseIdPropertyName}(${service.idPropertyName});
-        return this.${service.lowerCaseEntitySimpleName}Dao.delete${service.entitySimpleName}(condition);
-    }
-    
-    /**
       * 根据${service.idPropertyName}更新对象
       * <功能详细描述>
       * @param ${service.lowerCaseEntitySimpleName}
@@ -196,12 +186,9 @@ public class ${service.entitySimpleName}Service {
     @Transactional
     public boolean updateBy${service.upCaseIdPropertyName}(${service.entitySimpleName} ${service.lowerCaseEntitySimpleName}) {
         //TODO:验证参数是否合法，必填字段是否填写，
-        //如果没有填写抛出parameterIsEmptyException,
-        //如果有参数不合法ParameterIsInval${service.idPropertyName}Exception
-        if (${service.lowerCaseEntitySimpleName} == null || StringUtils.isEmpty(${service.lowerCaseEntitySimpleName}.get${service.upCaseIdPropertyName}())) {
-            throw new ParameterIsEmptyException(
-                    "${service.entitySimpleName}Service.updateBy${service.upCaseIdPropertyName} ${service.lowerCaseEntitySimpleName} or ${service.lowerCaseEntitySimpleName}.${service.idPropertyName} is empty.");
-        }
+        AssertUtils.notNull(${service.lowerCaseEntitySimpleName}, "${service.lowerCaseEntitySimpleName} is null.");
+        AssertUtils.notEmpty(${service.lowerCaseEntitySimpleName}.get${service.upCaseIdPropertyName}(), "${service.lowerCaseEntitySimpleName}.${service.idPropertyName} is empty.");
+        
         
         //TODO:生成需要更新字段的hashMap
         Map<String, Object> updateRowMap = new HashMap<String, Object>();
