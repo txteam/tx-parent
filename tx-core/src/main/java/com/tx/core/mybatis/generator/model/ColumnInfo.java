@@ -152,7 +152,8 @@ public class ColumnInfo {
         if (StringUtils.endsWithIgnoreCase(propertyName, "id")) {
             return 64;
         } else if (StringUtils.endsWithIgnoreCase(propertyName, "desc")
-                || StringUtils.endsWithIgnoreCase(propertyName, "description")) {
+                || StringUtils.endsWithIgnoreCase(propertyName, "description")
+                || StringUtils.endsWithIgnoreCase(propertyName, "remark")) {
             return 2000;
         } else if (StringUtils.endsWithIgnoreCase(propertyName, "name")
                 || StringUtils.endsWithIgnoreCase(propertyName, "code")) {
