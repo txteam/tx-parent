@@ -12,6 +12,9 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.core.Ordered;
 import org.springframework.core.PriorityOrdered;
 
+import com.tx.component.basicdata.annotation.BasicDataModel;
+import com.tx.core.util.ClassScanUtils;
+
 /**
  * 基础数据容器配置加载<br/>
  * <功能详细描述>
@@ -25,6 +28,8 @@ public class BasicDataContextConfigurator implements BeanFactoryPostProcessor,
         PriorityOrdered {
     
     private int order = Ordered.LOWEST_PRECEDENCE - 1;
+    
+    private String[] packageNames;
     
     /**
      * @return
@@ -41,6 +46,6 @@ public class BasicDataContextConfigurator implements BeanFactoryPostProcessor,
     @Override
     public void postProcessBeanFactory(
             ConfigurableListableBeanFactory beanFactory) throws BeansException {
-        
+        ClassScanUtils.scanByAnnotation(BasicDataModel.class, packageNames);
     }
 }

@@ -73,7 +73,32 @@
 	</entry>
 	
 	<entry key="insert">
-		INSERT INTO {} (?,?,?,?,?,?,?,?,?,?,?,?) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)
+				INSERT INTO {}
+		  (ID,
+		   CONFIGRESOURCEID,
+		   EDITABLE,
+		   VIEWABLE,
+		   VALID,
+		   NAME,
+		   KEY,
+		   PARENTKEY,
+		   VALUE,
+		   DESCRIPTION,
+		   VIEWEXPRESSION,
+		   VALIDATEEXPRESSION)
+		VALUES
+		  (:id,
+		   :configResourceId,
+		   :editAble,
+		   :viewAble,
+		   :valid,
+		   :name,
+		   :key,
+		   :parentKey,
+		   :value,
+		   :description,
+		   :viewExpression,
+		   :validateExpression)
 	</entry>
 	
 	<entry key="update">

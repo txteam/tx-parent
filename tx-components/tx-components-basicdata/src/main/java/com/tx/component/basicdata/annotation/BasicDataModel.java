@@ -6,6 +6,10 @@
  */
 package com.tx.component.basicdata.annotation;
 
+import com.tx.component.basicdata.executor.BasicDataExecutor;
+
+
+
 
  /**
   * 基础数据模型<br/>
@@ -19,19 +23,18 @@ package com.tx.component.basicdata.annotation;
 public @interface BasicDataModel {
     
     /**
-     * 是否进行数据缓存<br/>
-     *<功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return boolean [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-    */
-   public boolean isCache() default true;
+      * 基础数据类型别名<br/>
+      *<功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return String [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public String alias();
     
     /**
-      * 是否在启动时就进行缓存<br/>
-      *     如果isCache为false，该配置则无效
+      * 是否可编辑<br/>
       *<功能详细描述>
       * @return [参数说明]
       * 
@@ -39,13 +42,17 @@ public @interface BasicDataModel {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public boolean isCacheOnStartup() default false;
+    public boolean isModifyAble();
     
-    public String querySql();
-    
-    public String insertSql();
-    
-    public String deleteSql();
-    
-    public String updateSql();
+    /**
+      * 基础数据的默认执行器类型<br/>
+      *<功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return Class<BasicDataExecutor> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    @SuppressWarnings("rawtypes")
+    public Class<BasicDataExecutor> executor();
 }

@@ -43,17 +43,12 @@ public class ConfigContextInitException extends SILException {
     }
 
     /** <默认构造函数> */
-    public ConfigContextInitException(String message, Object[] parameters) {
+    public ConfigContextInitException(String message, Object... parameters) {
         super(message, parameters);
     }
 
     /** <默认构造函数> */
     public ConfigContextInitException(String message, Throwable cause) {
         super(message, cause);
-    }
-
-    /** <默认构造函数> */
-    public ConfigContextInitException(String message) {
-        super(message);
     }
 }

@@ -36,14 +36,17 @@ import com.tx.component.config.support.ConfigContextPropertiesPersister;
  * @since [产品/模块版本]
  */
 public class ConfigContextConfigurator extends PropertyPlaceholderConfigurer implements
-        InitializingBean {
+        InitializingBean{
     
     private static final String XML_SUFFIX = ".xml";
     
     /** 日志记录器 */
     private static Logger logger = LoggerFactory.getLogger(ConfigContextConfigurator.class);
     
+    /** 默认的表后缀名 */
     private String tableSuffix;
+    
+    private boolean databaseSchemaUpdate = true;
     
     /** 配置容器基础配置文件资源 */
     private Resource configContextCfgLocation;
@@ -59,9 +62,8 @@ public class ConfigContextConfigurator extends PropertyPlaceholderConfigurer imp
      */
     public ConfigContextConfigurator() {
         logger.info("configContext Log:  配置容器加载器初始化开始.");
-        
     }
-    
+
     /**
      * @throws Exception
      */
@@ -70,6 +72,8 @@ public class ConfigContextConfigurator extends PropertyPlaceholderConfigurer imp
         if (dataSource == null) {
             throw new ConfigContextInitException("  请为配置容器配置数据源.");
         }
+        
+        
         if (this.transactionTemplate == null) {
             throw new ConfigContextInitException("  请为配置容器配置事务处理器.");
         }
@@ -164,5 +168,33 @@ public class ConfigContextConfigurator extends PropertyPlaceholderConfigurer imp
      */
     public void setTransactionTemplate(TransactionTemplate transactionTemplate) {
         this.transactionTemplate = transactionTemplate;
+    }
+
+    /**
+     * @return 返回 tableSuffix
+     */
+    public String getTableSuffix() {
+        return tableSuffix;
+    }
+
+    /**
+     * @param 对tableSuffix进行赋值
+     */
+    public void setTableSuffix(String tableSuffix) {
+        this.tableSuffix = tableSuffix;
+    }
+
+    /**
+     * @return 返回 databaseSchemaUpdate
+     */
+    public boolean isDatabaseSchemaUpdate() {
+        return databaseSchemaUpdate;
+    }
+
+    /**
+     * @param 对databaseSchemaUpdate进行赋值
+     */
+    public void setDatabaseSchemaUpdate(boolean databaseSchemaUpdate) {
+        this.databaseSchemaUpdate = databaseSchemaUpdate;
     }
 }

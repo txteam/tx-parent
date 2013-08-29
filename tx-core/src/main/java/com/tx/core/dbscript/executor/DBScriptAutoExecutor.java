@@ -30,7 +30,7 @@ import com.tx.core.exceptions.util.ExceptionWrapperUtils;
 /**
  * 数据库脚本自动执行器<br/>
  *     1、有了这个再次封装，简化原dataSourceInitializer配置
- *     2、
+ *     2、数据脚本自动执行器
  * <功能详细描述>
  * 
  * @author  brady
@@ -65,6 +65,40 @@ public class DBScriptAutoExecutor implements InitializingBean, DisposableBean,
     
     private DatabasePopulator destoryDatabasePopulator;
     
+    /** <默认构造函数> */
+    public DBScriptAutoExecutor() {
+    }
+    
+    /** <默认构造函数> */
+    public DBScriptAutoExecutor(DataSource dataSource, Resource initScriptResources,boolean enabled) {
+        super();
+        this.enabled = enabled;
+        this.dataSource = dataSource;
+        
+        ResourceDatabasePopulator resourceDatabasePopulator = new ResourceDatabasePopulator();
+        resourceDatabasePopulator.setContinueOnError(this.continueOnError);
+        resourceDatabasePopulator.setIgnoreFailedDrops(this.ignoreFailedDrops);
+        resourceDatabasePopulator.setSqlScriptEncoding(sqlScriptEncoding);
+        
+        resourceDatabasePopulator.setScripts(new Resource[]{initScriptResources});
+        this.initDatabasePopulator = resourceDatabasePopulator;
+    }
+    
+    /** <默认构造函数> */
+    public DBScriptAutoExecutor(DataSource dataSource, List<Resource> initScriptResources,boolean enabled) {
+        super();
+        this.enabled = enabled;
+        this.dataSource = dataSource;
+        
+        ResourceDatabasePopulator resourceDatabasePopulator = new ResourceDatabasePopulator();
+        resourceDatabasePopulator.setContinueOnError(this.continueOnError);
+        resourceDatabasePopulator.setIgnoreFailedDrops(this.ignoreFailedDrops);
+        resourceDatabasePopulator.setSqlScriptEncoding(sqlScriptEncoding);
+        
+        resourceDatabasePopulator.setScripts(initScriptResources.toArray(new Resource[initScriptResources.size()]));
+        this.initDatabasePopulator = resourceDatabasePopulator;
+    }
+    
     /**
      * @param applicationContext
      * @throws BeansException
@@ -74,8 +108,9 @@ public class DBScriptAutoExecutor implements InitializingBean, DisposableBean,
             throws BeansException {
         this.applicationContext = applicationContext;
     }
-    
+
     /**
+     * 初始化后开始自动执行脚本
      * @throws Exception
      */
     @Override
@@ -104,11 +139,24 @@ public class DBScriptAutoExecutor implements InitializingBean, DisposableBean,
             this.destoryDatabasePopulator = resourceDatabasePopulator;
         }
         
+        //自动执行脚本
+        execute();
+    }
+    
+    /**
+      * 开始自动执行脚本<br/>
+      *<功能详细描述>
+      * @throws Exception [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public void execute() throws Exception {
         if (this.initDatabasePopulator != null && this.enabled) {
             DatabasePopulatorUtils.execute(this.initDatabasePopulator,
                     this.dataSource);
         }
-        
     }
     
     /**

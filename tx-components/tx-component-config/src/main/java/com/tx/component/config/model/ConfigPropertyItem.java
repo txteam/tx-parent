@@ -25,7 +25,7 @@ public class ConfigPropertyItem extends Observable {
     private String id;
     
     /** 系统资源id: 唯一系统具有唯一的systemSourceId用于区分配置中不同系统的参数 */
-    private String systemSourceId;
+    private String systemId;
     
     /** 配置资源唯一键 */
     private String configResourceId;
@@ -270,16 +270,16 @@ public class ConfigPropertyItem extends Observable {
     }
 
     /**
-     * @return 返回 systemSourceId
+     * @return 返回 systemId
      */
-    public String getSystemSourceId() {
-        return systemSourceId;
+    public String getSystemId() {
+        return systemId;
     }
 
     /**
-     * @param 对systemSourceId进行赋值
+     * @param 对systemId进行赋值
      */
-    public void setSystemSourceId(String systemSourceId) {
-        this.systemSourceId = systemSourceId;
+    public void setSystemId(String systemId) {
+        this.systemId = systemId;
     }
 }
