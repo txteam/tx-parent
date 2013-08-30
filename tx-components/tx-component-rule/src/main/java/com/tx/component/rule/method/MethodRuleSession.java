@@ -60,14 +60,16 @@ public class MethodRuleSession extends BaseRuleSession<MethodRule> {
             Object returnObj = rule.getMethod().invoke(rule.getObject(), args);
             if (!isHasRuleMethodResultAnnotation) {
                 //将结果对象，写入约定现成变量的key中
-                RuleSessionContext.getContext().setGlobal(RuleConstants.RULE_PROMISE_CONSTANT_RESULT,
-                        returnObj);
+                RuleSessionContext.getContext()
+                        .setGlobal(RuleConstants.RULE_PROMISE_CONSTANT_RESULT,
+                                returnObj);
             }
         } catch (Exception e) {
             logger.error("MethodRuleSession execute exception: " + e.toString(),
                     e);
             throw new RuleAccessException(this.rule.rule(), this.rule, this,
-                    "rule:{} execute exception.");
+                    "rule:{} execute exception.",
+                    new Object[] { this.rule.rule() });
         }
     }
     
@@ -76,14 +78,14 @@ public class MethodRuleSession extends BaseRuleSession<MethodRule> {
      */
     @Override
     public void execute(List<Map<String, Object>> facts) {
-        if(facts == null){
-            return ;
+        if (facts == null) {
+            return;
         }
-        for(Map<String, Object> fact : facts){
+        for (Map<String, Object> fact : facts) {
             execute(fact);
         }
     }
-
+    
     /**
       * 解析生成规则会话方法调用参数数组<br/>
       * <功能详细描述>
@@ -112,7 +114,8 @@ public class MethodRuleSession extends BaseRuleSession<MethodRule> {
                 //如果注解对应参数为结果，则不再识别其他注解
                 //如果存在多个，ruleSession中只保留最后一个对象的句柄
                 //resultHandle = 
-                Object result = RuleSessionContext.getContext().getGlobal(RuleConstants.RULE_PROMISE_CONSTANT_RESULT);
+                Object result = RuleSessionContext.getContext()
+                        .getGlobal(RuleConstants.RULE_PROMISE_CONSTANT_RESULT);
                 if (result != null) {
                     args[i] = result;
                     continue;
@@ -121,8 +124,9 @@ public class MethodRuleSession extends BaseRuleSession<MethodRule> {
                 try {
                     Object resultObj = type.newInstance();
                     args[i] = resultObj;
-                    RuleSessionContext.getContext().setGlobal(RuleConstants.RULE_PROMISE_CONSTANT_RESULT,
-                            resultObj);
+                    RuleSessionContext.getContext()
+                            .setGlobal(RuleConstants.RULE_PROMISE_CONSTANT_RESULT,
+                                    resultObj);
                     isHasRuleMethodResultAnnotation = true;
                     continue;
                 } catch (InstantiationException e) {
@@ -132,7 +136,7 @@ public class MethodRuleSession extends BaseRuleSession<MethodRule> {
                             this.rule,
                             this,
                             "rule:{} param[{}] @RuleMethodResult param must has default constructor.",
-                            this.rule.rule(), String.valueOf(i));
+                            new Object[] { this.rule.rule(), String.valueOf(i) });
                 } catch (IllegalAccessException e) {
                     logger.error("resolveHandlerArguments exceptions: ", e);
                     throw new RuleAccessException(
@@ -140,7 +144,7 @@ public class MethodRuleSession extends BaseRuleSession<MethodRule> {
                             this.rule,
                             this,
                             "rule:{} param[{}] @RuleMethodResult param must has default constructor.",
-                            this.rule.rule(), String.valueOf(i));
+                            new Object[] { this.rule.rule(), String.valueOf(i) });
                 }
             } else if (paramterResolver.isHasAnnotation(RuleMethodParam.class)) {
                 //如果有RuleMethodParam注解
@@ -165,7 +169,8 @@ public class MethodRuleSession extends BaseRuleSession<MethodRule> {
                                     this.rule,
                                     this,
                                     "rule:{} param[{}] is required. must has not emptyValue",
-                                    this.rule.rule(), String.valueOf(i));
+                                    new Object[] { this.rule.rule(),
+                                            String.valueOf(i) });
                         }
                     }
                     args[i] = paramValue;

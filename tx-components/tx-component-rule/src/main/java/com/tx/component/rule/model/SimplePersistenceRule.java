@@ -17,7 +17,6 @@ import javax.persistence.Transient;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
-import com.tx.core.exceptions.argument.NullArgException;
 import com.tx.core.exceptions.util.AssertUtils;
 
 /**
@@ -92,13 +91,10 @@ public class SimplePersistenceRule implements Serializable, Rule {
      */
     public List<SimpleRulePropertyByte> getBytePropertyList(
             SimpleRuleParamEnum propertyParam) {
-        if (propertyParam == null) {
-            throw new NullArgException("propertyParam is empty.");
-        }
-        if (!propertyParam.isBlob()) {
-            throw new ParameterIsInvalidException(
-                    "propertyParam is not byte type.{}", propertyParam.getKey());
-        }
+        AssertUtils.notNull(propertyParam, "propertyParam is empty.");
+        AssertUtils.isTrue(propertyParam.isBlob(),
+                "propertyParam is not byte type.{}",
+                propertyParam.getKey());
         
         return this.bytePropertyValues.get(propertyParam);
     }
@@ -115,17 +111,13 @@ public class SimplePersistenceRule implements Serializable, Rule {
      */
     public SimpleRulePropertyByte getByteProperty(
             SimpleRuleParamEnum propertyParam) {
-        if (propertyParam == null) {
-            throw new NullArgException("propertyParam is empty.");
-        }
-        if (!propertyParam.isBlob()) {
-            throw new ParameterIsInvalidException(
-                    "propertyParam is not byte type.{}", propertyParam.getKey());
-        }
-        if (propertyParam.isMultiProerty()) {
-            throw new ParameterIsInvalidException("propertyParam is Multi.{}",
-                    propertyParam.getKey());
-        }
+        AssertUtils.notNull(propertyParam, "propertyParam is empty.");
+        AssertUtils.isTrue(propertyParam.isBlob(),
+                "propertyParam is not byte type.{}",
+                propertyParam.getKey());
+        AssertUtils.isTrue(!propertyParam.isMultiProerty(),
+                "propertyParam is Multi.{}",
+                propertyParam.getKey());
         
         return this.bytePropertyValues.getFirst(propertyParam);
     }
@@ -142,14 +134,9 @@ public class SimplePersistenceRule implements Serializable, Rule {
     */
     public List<SimpleRulePropertyValue> getStringPropertyList(
             SimpleRuleParamEnum propertyParam) {
-        if (propertyParam == null) {
-            throw new NullArgException("propertyParam is empty.");
-        }
-        if (propertyParam.isBlob()) {
-            throw new ParameterIsInvalidException(
-                    "propertyParam is byte type.{}: rule {}",
-                    propertyParam.getKey(), this.rule);
-        }
+        AssertUtils.notNull(propertyParam, "propertyParam is empty.");
+        AssertUtils.isTrue(!propertyParam.isBlob(),
+                "propertyParam is byte type.{}: rule {}");
         
         return this.stringPropertyValues.get(propertyParam);
     }
@@ -166,14 +153,11 @@ public class SimplePersistenceRule implements Serializable, Rule {
     */
     public SimpleRulePropertyValue getStringProperty(
             SimpleRuleParamEnum propertyParam) {
-        if (propertyParam == null) {
-            throw new NullArgException("propertyParam is empty.");
-        }
-        if (propertyParam.isBlob()) {
-            throw new ParameterIsInvalidException(
-                    "propertyParam is byte type.{}: rule {}",
-                    propertyParam.getKey(), this.rule);
-        }
+        AssertUtils.notNull(propertyParam, "propertyParam is empty.");
+        AssertUtils.isTrue(!propertyParam.isBlob(),
+                "propertyParam is byte type.{}: rule {}",
+                propertyParam.getKey(),
+                this.rule);
         
         return this.stringPropertyValues.getFirst(propertyParam);
     }
@@ -327,8 +311,9 @@ public class SimplePersistenceRule implements Serializable, Rule {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public void addBytePropertyValue(SimpleRuleParamEnum simpleRuleParamEnum,SimpleRulePropertyByte byteProperty){
-        if(this.bytePropertyValues == null){
+    public void addBytePropertyValue(SimpleRuleParamEnum simpleRuleParamEnum,
+            SimpleRulePropertyByte byteProperty) {
+        if (this.bytePropertyValues == null) {
             this.bytePropertyValues = new LinkedMultiValueMap<SimpleRuleParamEnum, SimpleRulePropertyByte>();
         }
         
@@ -345,12 +330,14 @@ public class SimplePersistenceRule implements Serializable, Rule {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public void addBytePropertyValue(SimpleRuleParamEnum simpleRuleParamEnum,byte[] bytes){
-        AssertUtils.notNull(simpleRuleParamEnum,"simpleRuleParamEnum is null");
-        AssertUtils.notNull(bytes,"bytes is null");
-        AssertUtils.isTrue(simpleRuleParamEnum.isBlob(),"simpleRuleParamEnum is not blob.");
+    public void addBytePropertyValue(SimpleRuleParamEnum simpleRuleParamEnum,
+            byte[] bytes) {
+        AssertUtils.notNull(simpleRuleParamEnum, "simpleRuleParamEnum is null");
+        AssertUtils.notNull(bytes, "bytes is null");
+        AssertUtils.isTrue(simpleRuleParamEnum.isBlob(),
+                "simpleRuleParamEnum is not blob.");
         
-        if(this.bytePropertyValues == null){
+        if (this.bytePropertyValues == null) {
             this.bytePropertyValues = new LinkedMultiValueMap<SimpleRuleParamEnum, SimpleRulePropertyByte>();
         }
         
@@ -373,18 +360,21 @@ public class SimplePersistenceRule implements Serializable, Rule {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public void addBytePropertyValue(SimpleRuleParamEnum simpleRuleParamEnum,List<byte[]> bytesList){
-        AssertUtils.notNull(simpleRuleParamEnum,"simpleRuleParamEnum is null");
-        AssertUtils.notEmpty(bytesList,"bytes is null");
-        AssertUtils.isTrue(simpleRuleParamEnum.isBlob(),"simpleRuleParamEnum is not blob.");
-        AssertUtils.isTrue(simpleRuleParamEnum.isMultiProerty(),"simpleRuleParamEnum is not isMultiProerty");
+    public void addBytePropertyValue(SimpleRuleParamEnum simpleRuleParamEnum,
+            List<byte[]> bytesList) {
+        AssertUtils.notNull(simpleRuleParamEnum, "simpleRuleParamEnum is null");
+        AssertUtils.notEmpty(bytesList, "bytes is null");
+        AssertUtils.isTrue(simpleRuleParamEnum.isBlob(),
+                "simpleRuleParamEnum is not blob.");
+        AssertUtils.isTrue(simpleRuleParamEnum.isMultiProerty(),
+                "simpleRuleParamEnum is not isMultiProerty");
         
-        if(this.bytePropertyValues == null){
+        if (this.bytePropertyValues == null) {
             this.bytePropertyValues = new LinkedMultiValueMap<SimpleRuleParamEnum, SimpleRulePropertyByte>();
         }
         
         int index = 0;
-        for(byte[] byteTemp : bytesList){
+        for (byte[] byteTemp : bytesList) {
             SimpleRulePropertyByte newByteProperty = new SimpleRulePropertyByte();
             newByteProperty.setParamKey(simpleRuleParamEnum.getKey());
             newByteProperty.setParamValue(byteTemp);
@@ -396,8 +386,8 @@ public class SimplePersistenceRule implements Serializable, Rule {
         }
     }
     
-    public void clearBytePropertyValue(){
-        if(this.bytePropertyValues == null){
+    public void clearBytePropertyValue() {
+        if (this.bytePropertyValues == null) {
             this.bytePropertyValues = new LinkedMultiValueMap<SimpleRuleParamEnum, SimpleRulePropertyByte>();
         }
         
@@ -432,38 +422,38 @@ public class SimplePersistenceRule implements Serializable, Rule {
     public void setParams(List<SimpleRuleParamEnum> params) {
         this.params = params;
         
-        if(this.params != null){
-            for(SimpleRuleParamEnum paramEnumTemp : this.params){
-                if(paramEnumTemp.isBlob()){
+        if (this.params != null) {
+            for (SimpleRuleParamEnum paramEnumTemp : this.params) {
+                if (paramEnumTemp.isBlob()) {
                     this.isHasByteParam = true;
-                }else{
+                } else {
                     this.isHasValueParam = true;
                 }
             }
         }
     }
-
+    
     /**
      * @return 返回 isHasByteParam
      */
     public boolean isHasByteParam() {
         return isHasByteParam;
     }
-
+    
     /**
      * @param 对isHasByteParam进行赋值
      */
     public void setHasByteParam(boolean isHasByteParam) {
         this.isHasByteParam = isHasByteParam;
     }
-
+    
     /**
      * @return 返回 isHasValueParam
      */
     public boolean isHasValueParam() {
         return isHasValueParam;
     }
-
+    
     /**
      * @param 对isHasValueParam进行赋值
      */

@@ -22,28 +22,31 @@ public class RuleRegisteException extends SILException {
     /** 注释内容 */
     private static final long serialVersionUID = -7388892404144552007L;
     
-    /** <默认构造函数> */
-    public RuleRegisteException(String errorMessage, String... parameters) {
-        super(RuleExceptionTranslator.RULE_ERROR_CODE, errorMessage, parameters);
+    /**
+     * @return
+     */
+    @Override
+    protected String doGetErrorCode() {
+        return "RULE_REGISTE_ERROR";
     }
-    
-    /** <默认构造函数> */
-    public RuleRegisteException(String errorMessage, Throwable cause,
-            String... parameters) {
-        super(RuleExceptionTranslator.RULE_ERROR_CODE, errorMessage, cause,
-                parameters);
+
+    /**
+     * @return
+     */
+    @Override
+    protected String doGetErrorMessage() {
+        return "规则容器注册规则异常";
     }
-    
-    /** <默认构造函数> */
-    public RuleRegisteException(String errorMessage, Object[] parameters) {
-        super(RuleExceptionTranslator.RULE_ERROR_CODE, errorMessage, parameters);
+
+    public RuleRegisteException(String message, Object[] parameters) {
+        super(message, parameters);
     }
-    
-    /** <默认构造函数> */
-    public RuleRegisteException(String errorMessage, Throwable cause,
-            Object[] parameters) {
-        super(RuleExceptionTranslator.RULE_ERROR_CODE, errorMessage, cause,
-                parameters);
+
+    public RuleRegisteException(String message, Throwable cause) {
+        super(message, cause);
     }
-    
+
+    public RuleRegisteException(String message) {
+        super(message);
+    }
 }

@@ -21,18 +21,32 @@ public class RuleSessionTransactionException extends SILException {
     
     /** 注释内容 */
     private static final long serialVersionUID = 4501605360800406598L;
-    
-    /** <默认构造函数> */
-    public RuleSessionTransactionException(String errorMessage,
-            String... parameters) {
-        super(RuleExceptionTranslator.RULE_ERROR_CODE, errorMessage, parameters);
+
+    /**
+     * @return
+     */
+    @Override
+    protected String doGetErrorCode() {
+        return "rule_session_transation_error";
     }
-    
-    /** <默认构造函数> */
-    public RuleSessionTransactionException(String errorMessage,
-            Throwable cause, String... parameters) {
-        super(RuleExceptionTranslator.RULE_ERROR_CODE, errorMessage, cause,
-                parameters);
+
+    /**
+     * @return
+     */
+    @Override
+    protected String doGetErrorMessage() {
+        return "规则会话事务异常";
     }
-    
+
+    public RuleSessionTransactionException(String message, Object[] parameters) {
+        super(message, parameters);
+    }
+
+    public RuleSessionTransactionException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public RuleSessionTransactionException(String message) {
+        super(message);
+    }
 }

@@ -142,6 +142,7 @@ public class RuleContext implements BeanNameAware, FactoryBean<RuleContext>,
     public void afterPropertiesSet() throws Exception {
         logger.info("开始初始化规则容器....");
         
+        //TODO:缓存模型
         this.ruleKeyMapCache = new SimpleEhcacheMap<String, Rule>(
                 "cache.ruleKeyMapCache", ehcache,
                 new ConcurrentHashMap<String, Rule>());

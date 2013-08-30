@@ -29,8 +29,17 @@ public class RuleAccessException extends SILException {
     private Rule rule;
     
     private RuleSession ruleSession;
-    
-    
+
+    /**
+     * <默认构造函数>
+     */
+    public RuleAccessException(String ruleName, Rule rule,
+            RuleSession ruleSession,String message,Object[] parameters) {
+        super(message,parameters);
+        this.ruleName = ruleName;
+        this.rule = rule;
+        this.ruleSession = ruleSession;
+    }
 
     /** <默认构造函数> */
     public RuleAccessException(String message, Object[] parameters) {

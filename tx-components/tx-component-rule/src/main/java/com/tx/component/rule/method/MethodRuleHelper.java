@@ -12,12 +12,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.context.ApplicationContext;
 
 import com.tx.component.rule.method.annotation.RuleMethod;
 import com.tx.component.rule.method.annotation.RuleMethodClass;
-import com.tx.core.exceptions.parameter.ParameterIsInvalidException;
+import com.tx.core.exceptions.argument.IllegalArgException;
+import com.tx.core.exceptions.util.AssertUtils;
 
 /**
  * 方法规则帮助类<br/>
@@ -57,20 +57,19 @@ public abstract class MethodRuleHelper {
                 
                 //如果含有：提取，并生成MethodRule
                 RuleMethod ruleAnnotation = methodTemp.getAnnotation(RuleMethod.class);
-                if (StringUtils.isEmpty(ruleAnnotation.rule())
-                        || StringUtils.isEmpty(ruleAnnotation.serviceType())) {
-                    throw new ParameterIsInvalidException(
-                            "MethodRuleLoader.scanCurrentSystemRuleMethod exception class:{} method{} RuleMethod invalid",
-                            beanTemp.getClass().toString(),
-                            methodTemp.getName());
-                }
+                
+                AssertUtils.notEmpty(ruleAnnotation.rule(),
+                        "ruleAnnotation.rule is empty.");
+                AssertUtils.notEmpty(ruleAnnotation.serviceType(),
+                        "ruleAnnotation.type is empty.");
+                
                 MethodRule newMR = new MethodRule(methodTemp, beanTemp,
                         ruleAnnotation);
                 if (ruleNameList.contains(newMR.rule())) {
-                    throw new ParameterIsInvalidException(
+                    throw new IllegalArgException(
                             "MethodRuleLoader.scanCurrentSystemRuleMethod exception class:{} method{} RuleMethod rule{} duplicate",
-                            beanTemp.getClass().toString(),
-                            methodTemp.getName(), newMR.rule());
+                            new Object[] { beanTemp.getClass(),
+                                    methodTemp.getName(), newMR.rule() });
                 }
                 ruleNameList.add(newMR.rule());
                 resList.add(newMR);

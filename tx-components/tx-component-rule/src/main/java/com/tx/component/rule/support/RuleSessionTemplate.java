@@ -26,6 +26,7 @@ import com.tx.component.rule.model.RuleStateEnum;
 import com.tx.component.rule.model.impl.SimpleRuleSessionResultHandle;
 import com.tx.component.rule.transation.RuleSessionTransactionCallback;
 import com.tx.component.rule.transation.impl.RuleSessionTransationTemplate;
+import com.tx.core.exceptions.argument.IllegalArgException;
 import com.tx.core.exceptions.parameter.ParameterIsInvalidException;
 
 /**
@@ -209,7 +210,7 @@ public class RuleSessionTemplate implements RuleSessionSupport,
             if (args.length != 3
                     && !(args[1] instanceof List || args[1] instanceof Map)
                     && !(args[2] instanceof Map)) {
-                throw new ParameterIsInvalidException(
+                throw new IllegalArgException(
                         "RuleSessionSupportInvocationHandler.invoke args invalid");
             }
             

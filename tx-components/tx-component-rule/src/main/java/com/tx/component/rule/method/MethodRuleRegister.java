@@ -91,10 +91,9 @@ public class MethodRuleRegister implements RuleRegister<MethodRule>,
      */
     @Override
     public Rule registe(SimplePersistenceRule rule) {
-        //method rule规则不能通过注册器动态添加
         throw new SILException(RuleExceptionTranslator.RULE_ERROR_CODE,
-                "method rule register not support.rule:{}",
-                rule != null ? rule.rule() : "null");
+                new Object[] { "method rule register not support.rule:{}",
+                        rule != null ? rule.rule() : "null" });
     }
     
     /**
@@ -115,8 +114,7 @@ public class MethodRuleRegister implements RuleRegister<MethodRule>,
                     this.simplePersistenceRuleService.changeRuleStateById(spRule.getId(),
                             RuleStateEnum.ERROR);
                 }
-            }
-            else {
+            } else {
                 rule.setState(RuleStateEnum.ERROR);
                 this.simplePersistenceRuleService.changeRuleStateByRule(rule.rule(),
                         rule.getServiceType(),
