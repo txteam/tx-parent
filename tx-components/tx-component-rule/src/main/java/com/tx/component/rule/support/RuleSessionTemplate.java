@@ -27,7 +27,6 @@ import com.tx.component.rule.model.impl.SimpleRuleSessionResultHandle;
 import com.tx.component.rule.transation.RuleSessionTransactionCallback;
 import com.tx.component.rule.transation.impl.RuleSessionTransationTemplate;
 import com.tx.core.exceptions.argument.IllegalArgException;
-import com.tx.core.exceptions.parameter.ParameterIsInvalidException;
 
 /**
  * 规则运行执行器<br>
@@ -242,7 +241,8 @@ public class RuleSessionTemplate implements RuleSessionSupport,
                         throw unwrapped;
                     }
                 }
-            },(Map) args[2]);
+            },
+                    (Map) args[2]);
             
             Object result = resultHandle.getValue();
             return result;
@@ -269,22 +269,16 @@ public class RuleSessionTemplate implements RuleSessionSupport,
             //
             if (arg0 == null) {
                 throw new RuleAccessException(
-                        null,
-                        null,
-                        null,
                         "call ruleSession method:{} parameter rule or ruleSession is null.",
-                        method.getName());
+                        new Object[] { method.getName() });
             } else if (arg0 instanceof RuleSession) {
                 return (RuleSession) arg0;
             } else if (arg0 instanceof String) {
                 String ruleKey = (String) arg0;
                 if (!ruleContext.contains(ruleKey)) {
                     throw new RuleAccessException(
-                            ruleKey,
-                            null,
-                            null,
-                            "call ruleSession method:{} parameter rule:{} is not Exist",
-                            method.getName(), ruleKey);
+                            "call ruleSession method:{} parameter rule or ruleSession is null.",
+                            new Object[] { method.getName() });
                 }
                 Rule ruleIns = ruleContext.getRule(ruleKey);
                 if (ruleIns == null
@@ -294,16 +288,17 @@ public class RuleSessionTemplate implements RuleSessionSupport,
                             null,
                             null,
                             "对应规则{}当前状态{}非运营态，请进行处理后再调用该规则.",
-                            ruleKey,
-                            ruleIns != null ? (ruleIns.getState() == null ? "nullstate"
-                                    : ruleIns.getState().toString())
-                                    : "");
+                            new Object[] {
+                                    ruleKey,
+                                    ruleIns != null ? (ruleIns.getState() == null ? "nullstate"
+                                            : ruleIns.getState().toString())
+                                            : "" });
                 }
                 return ruleContext.newRuleSession(ruleContext.getRule(ruleKey));
             } else {
-                throw new RuleAccessException(null, null, null,
+                throw new RuleAccessException(
                         "call ruleSession method:{} parameter is invalid.",
-                        method.getName());
+                        new Object[] { method.getName() });
             }
         }
     }

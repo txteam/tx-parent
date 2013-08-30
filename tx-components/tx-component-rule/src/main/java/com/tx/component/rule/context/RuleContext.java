@@ -32,6 +32,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronizationAdapter;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import com.tx.component.rule.exceptions.RuleAccessException;
@@ -143,12 +144,14 @@ public class RuleContext implements BeanNameAware, FactoryBean<RuleContext>,
         logger.info("开始初始化规则容器....");
         
         //TODO:缓存模型
-        this.ruleKeyMapCache = new SimpleEhcacheMap<String, Rule>(
-                "cache.ruleKeyMapCache", ehcache,
-                new ConcurrentHashMap<String, Rule>());
-        this.multiRuleMapCache = new SimpleMultiValueEhcacheMap<String, Rule>(
-                "cache.multiRuleMapCache", ehcache,
-                new ConcurrentHashMap<String, List<Rule>>());
+//        this.ruleKeyMapCache = new SimpleEhcacheMap<String, Rule>(
+//                "cache.ruleKeyMapCache", ehcache,
+//                new ConcurrentHashMap<String, Rule>());
+//        this.multiRuleMapCache = new SimpleMultiValueEhcacheMap<String, Rule>(
+//                "cache.multiRuleMapCache", ehcache,
+//                new ConcurrentHashMap<String, List<Rule>>());
+        this.ruleKeyMapCache = new ConcurrentHashMap<String, Rule>();
+        this.multiRuleMapCache = new LinkedMultiValueMap<String, Rule>();
         
         logger.info("加载规则加载器....");
         Collection<RuleLoader> ruleLoaders = this.applicationContext.getBeansOfType(RuleLoader.class)
@@ -241,8 +244,7 @@ public class RuleContext implements BeanNameAware, FactoryBean<RuleContext>,
         RuleRegister<? extends Rule> ruleRegisterTemp = ruleRegisterMap.get(spRule.getRuleType());
         if (ruleRegisterTemp == null) {
             throw new RuleRegisteException(
-                    "ruleType:{} RuleRegister not exist.", spRule.getRuleType()
-                            .toString());
+                    "ruleType:{} RuleRegister not exist.", new Object[]{spRule.getRuleType()});
         }
         
         //调用对应注册器方法，将规则注册入容器中
@@ -263,7 +265,7 @@ public class RuleContext implements BeanNameAware, FactoryBean<RuleContext>,
         } else {
             throw new RuleRegisteException(
                     "ruleType:{} RuleRegister call registe return null realRule.",
-                    spRule.getRuleType().toString());
+                    new Object[]{spRule.getRuleType()});
         }
         return realRule;
     }
@@ -431,8 +433,7 @@ public class RuleContext implements BeanNameAware, FactoryBean<RuleContext>,
                 if (waitTimes == null || waitTimes.intValue() < 3) {
                     wait(this.maxLoadTimeout);
                 } else {
-                    throw new RuleAccessException(null, null, null,
-                            "规则容器尚未完成规则加载请等待...");
+                    throw new RuleAccessException("规则容器尚未完成规则加载请等待...");
                 }
             } catch (InterruptedException e) {
                 logger.error("RuleContext.waitLoading exception:"
@@ -474,8 +475,7 @@ public class RuleContext implements BeanNameAware, FactoryBean<RuleContext>,
         } else if (multiRuleMapCache.containsKey(rule)) {
             if (multiRuleMapCache.get(rule) != null
                     && multiRuleMapCache.get(rule).size() > 1) {
-                throw new RuleAccessException(rule, null, null,
-                        "未带业务类型（命名空间）的规则，检索到超过多个规则:{}", rule);
+                throw new RuleAccessException("未带业务类型（命名空间）的规则，检索到超过多个规则:{}", new Object[]{rule});
             } else {
                 return true;
             }
@@ -501,8 +501,7 @@ public class RuleContext implements BeanNameAware, FactoryBean<RuleContext>,
         } else if (multiRuleMapCache.containsKey(rule)) {
             if (multiRuleMapCache.get(rule) != null
                     && multiRuleMapCache.get(rule).size() > 1) {
-                throw new RuleAccessException(rule, null, null,
-                        "未带业务类型（命名空间）的规则，检索到超过多个规则:{}", rule);
+                throw new RuleAccessException("未带业务类型（命名空间）的规则，检索到超过多个规则:{}", new Object[]{rule});
             } else {
                 return multiRuleMapCache.getFirst(rule);
             }
@@ -593,8 +592,8 @@ public class RuleContext implements BeanNameAware, FactoryBean<RuleContext>,
         if (isCoverWhenSame) {
             this.ruleKeyMapCache.put(getRuleCacheKey(rule), rule);
         } else if (this.ruleKeyMapCache.containsKey(getRuleCacheKey(rule))) {
-            throw new RuleAccessException(rule.rule(), null, null, "重复的规则项:{}",
-                    rule.rule());
+            throw new RuleAccessException("重复的规则项:{}",new Object[]{rule.rule()}
+                    );
         } else {
             this.ruleKeyMapCache.put(getRuleCacheKey(rule), rule);
             logger.warn("规则项{}被同名规则项覆盖.", rule.rule());

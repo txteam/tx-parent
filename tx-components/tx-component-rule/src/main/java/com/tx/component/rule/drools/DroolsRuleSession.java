@@ -73,7 +73,7 @@ public class DroolsRuleSession extends BaseRuleSession<DroolsRule> {
         } catch (Exception e) {
             logger.error(e.toString(), e);
             throw new RuleAccessException(this.rule.getName(), this.rule, this,
-                    "exception:" + e.toString());
+                    e.toString(), e);
         } finally {
             Globals globals = session.getGlobals();
             if (globals instanceof MapGlobalResolver) {
@@ -85,7 +85,8 @@ public class DroolsRuleSession extends BaseRuleSession<DroolsRule> {
             } else {
                 throw new RuleAccessException(this.rule().rule(), this.rule(),
                         this,
-                        "drools globals is not MapGlobalResolver instance");
+                        "drools globals is not MapGlobalResolver instance",
+                        new Object[] {});
             }
             if (session != null) {
                 session.dispose();
@@ -126,7 +127,7 @@ public class DroolsRuleSession extends BaseRuleSession<DroolsRule> {
         } catch (Exception e) {
             logger.error(e.toString(), e);
             throw new RuleAccessException(this.rule.getName(), this.rule, this,
-                    "exception:" + e.toString());
+                    e.toString(), e);
         } finally {
             Globals globals = session.getGlobals();
             if (globals instanceof MapGlobalResolver) {
@@ -138,7 +139,8 @@ public class DroolsRuleSession extends BaseRuleSession<DroolsRule> {
             } else {
                 throw new RuleAccessException(this.rule().rule(), this.rule(),
                         this,
-                        "drools globals is not MapGlobalResolver instance");
+                        "drools globals is not MapGlobalResolver instance",
+                        new Object[] {});
             }
             if (session != null) {
                 session.dispose();

@@ -45,12 +45,27 @@ public class AssertUtils {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-   public static void isTrue(boolean flag, SILException exception) {
-       //不为空
-       if (flag) {
-           throw exception;
-       }
-   }
+    public static void isTrue(boolean flag, SILException exception) {
+        //不为空
+        if (flag) {
+            throw exception;
+        }
+    }
+    
+    /**
+     * 断言对应对象非空(支持：字符串，数组，集合，Map)<br/>
+     * <功能详细描述>
+     * @param str
+     * @param message [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    public static void notEmpty(Object obj) {
+        //不为空
+        notEmpty(obj, "");
+    }
     
     /**
      * 断言对应对象非空(支持：字符串，数组，集合，Map)<br/>
@@ -85,6 +100,21 @@ public class AssertUtils {
             throw new NullArgException(MessageFormatter.arrayFormat(message,
                     parameters).getMessage());
         }
+    }
+    
+    /**
+     * 断言对应对象为空(支持：字符串，数组，集合，Map)<br/>
+     * <功能详细描述>
+     * @param str
+     * @param message [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    public static void isEmpty(Object obj) {
+        //不为空
+        isEmpty(obj, "");
     }
     
     /**
@@ -143,6 +173,20 @@ public class AssertUtils {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
+    public static void notNull(Object object) {
+        notNull(object, "");
+    }
+    
+    /**
+     * 断言对象不为空<br/>
+     * <功能详细描述>
+     * @param object
+     * @param message [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
     public static void notNull(Object object, String message,
             String... parameters) {
         notNull(object, message, (Object[]) parameters);
@@ -175,6 +219,20 @@ public class AssertUtils {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
+    public static void isNull(Object object) {
+        notNull(object, "");
+    }
+    
+    /**
+     * 断言对象为空<br/>
+     * <功能详细描述>
+     * @param object
+     * @param message [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
     public static void isNull(Object object, String message,
             String... parameters) {
         notNull(object, message, (Object[]) parameters);
@@ -195,6 +253,21 @@ public class AssertUtils {
                     parameters).getMessage());
         }
     }
+    
+    /**
+     * 断言表达式是为真<br/>
+     *     如果不为真，抛出参数非法异常IllegalArgException<br/>
+     * <功能详细描述>
+     * @param expression
+     * @param message [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+   public static void isTrue(boolean expression) {
+       isTrue(expression, "");
+   }
     
     /**
       * 断言表达式是为真<br/>
@@ -231,30 +304,97 @@ public class AssertUtils {
     }
     
     /**
-     * Assert that the provided object is an instance of the provided class.
-     * <pre class="code">Assert.instanceOf(Foo.class, foo);</pre>
-     * @param clazz the required class
-     * @param obj the object to check
-     * @throws IllegalArgumentException if the object is not an instance of clazz
-     * @see Class#isInstance
+     * 断言表达式是不为真<br/>
+     *     如果不为真，抛出参数非法异常IllegalArgException<br/>
+     * <功能详细描述>
+     * @param expression
+     * @param message [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    public static void notTrue(boolean expression) {
+        notTrue(expression, "");
+    }
+    
+    /**
+     * 断言表达式是不为真<br/>
+     *     如果不为真，抛出参数非法异常IllegalArgException<br/>
+     * <功能详细描述>
+     * @param expression
+     * @param message [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    public static void notTrue(boolean expression, String message,
+            String... parameters) {
+        notTrue(expression, message, (Object[]) parameters);
+    }
+    
+    /**
+      * 断言表达式是不为真<br/>
+      *     如果不为真，抛出参数非法异常IllegalArgException<br/>
+      * <功能详细描述>
+      * @param expression [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
      */
+    public static void notTrue(boolean expression, String message,
+            Object[] parameters) {
+        if (expression) {
+            throw new IllegalArgException(MessageFormatter.arrayFormat(message,
+                    parameters).getMessage());
+        }
+    }
+    
+    /**
+     * 断言是否为指定类型的实例
+     *<功能详细描述>
+     * @param clazz
+     * @param obj [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
     public static void isInstanceOf(Class<?> clazz, Object obj) {
         isInstanceOf(clazz, obj, "");
     }
     
     /**
-     * Assert that the provided object is an instance of the provided class.
-     * <pre class="code">Assert.instanceOf(Foo.class, foo);</pre>
-     * @param type the type to check against
-     * @param obj the object to check
-     * @param message a message which will be prepended to the message produced by
-     * the function itself, and which may be used to provide context. It should
-     * normally end in a ": " or ". " so that the function generate message looks
-     * ok when prepended to it.
-     * @throws IllegalArgumentException if the object is not an instance of clazz
-     * @see Class#isInstance
+      * 断言是否为指定类型的实例
+      *<功能详细描述>
+      * @param clazz
+      * @param obj [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
      */
-    public static void isInstanceOf(Class<?> type, Object obj, String message) {
+    public static void isInstanceOf(Class<?> clazz, Object obj, String message,
+            String... parameters) {
+        isInstanceOf(clazz, obj, message, (Object[]) parameters);
+    }
+    
+    /**
+      * 断言对象是否为指定类型的实例
+      *<功能详细描述>
+      * @param type
+      * @param obj
+      * @param message
+      * @param parameters [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public static void isInstanceOf(Class<?> type, Object obj, String message,
+            Object[] parameters) {
         notNull(type, "Type to check against must not be null");
         if (!type.isInstance(obj)) {
             throw new IllegalArgumentException(message + ". Object of class ["
@@ -264,13 +404,17 @@ public class AssertUtils {
     }
     
     /**
-     * Assert that {@code superType.isAssignableFrom(subType)} is {@code true}.
-     * <pre class="code">Assert.isAssignable(Number.class, myClass);</pre>
-     * @param superType the super type to check
-     * @param subType the sub type to check
-     * @throws IllegalArgumentException if the classes are not assignable
+      *<功能简述>
+      *<功能详细描述>
+      * @param superType
+      * @param subType [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
      */
-    public static void isAssignable(Class superType, @SuppressWarnings("rawtypes") Class subType) {
+    @SuppressWarnings("rawtypes")
+    public static void isAssignable(Class superType, Class subType) {
         isAssignable(superType, subType, "");
     }
     

@@ -15,18 +15,16 @@ import com.tx.component.rule.model.Rule;
 import com.tx.component.rule.support.RuleSession;
 import com.tx.component.rule.support.RuleSessionFactory;
 
-
- /**
-  * 默认的规则会话工厂<br/>
-  * <功能详细描述>
-  * 
-  * @author  brady
-  * @version  [版本号, 2013-1-28]
-  * @see  [相关类/方法]
-  * @since  [产品/模块版本]
-  */
-public class DefaultRuleSessionFactory implements RuleSessionFactory{
-    
+/**
+ * 默认的规则会话工厂<br/>
+ * <功能详细描述>
+ * 
+ * @author  brady
+ * @version  [版本号, 2013-1-28]
+ * @see  [相关类/方法]
+ * @since  [产品/模块版本]
+ */
+public class DefaultRuleSessionFactory implements RuleSessionFactory {
     
     /**
      * 创建规则会话<br/>
@@ -38,13 +36,13 @@ public class DefaultRuleSessionFactory implements RuleSessionFactory{
      * @see [类、类#方法、类#成员]
     */
     public RuleSession createRuleSession(Rule rule) {
-        if(rule instanceof MethodRule){
-            return newRuleSession((MethodRule)rule);
-        }else if(rule instanceof DroolsRule){
-            return newRuleSession((DroolsRule)rule);
+        if (rule instanceof MethodRule) {
+            return newRuleSession((MethodRule) rule);
+        } else if (rule instanceof DroolsRule) {
+            return newRuleSession((DroolsRule) rule);
         }
-        throw new RuleAccessException(rule.rule(), rule, null,
-                "创建规则会话异常：对应规则类型:{}暂不支持", rule.getRuleType().toString());
+        throw new RuleAccessException(rule.rule(), rule, (RuleSession) null,
+                "创建规则会话异常：对应规则类型:{}暂不支持", new Object[] { rule.getRuleType() });
     }
     
     /**
