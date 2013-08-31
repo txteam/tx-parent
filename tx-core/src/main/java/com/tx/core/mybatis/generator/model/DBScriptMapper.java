@@ -112,7 +112,7 @@ public class DBScriptMapper {
     public static void main(String[] args) {
         MySQL5InnoDBDialect d = new MySQL5InnoDBDialect();
         
-        System.out.println(d.getTypeName(Types.VARCHAR));
+        System.out.println(d.getTypeName(Types.BIT));
         System.out.println(d.getTypeName(Types.CHAR));
         System.out.println(d.getTypeName(Types.VARCHAR, 40, 0, 0));
         
