@@ -135,6 +135,12 @@
 			<optional>true</optional>
 		</dependency>
 
+		<dependency>
+			<groupId>com.healthmarketscience.sqlbuilder</groupId>
+			<artifactId>sqlbuilder</artifactId>
+			<optional>true</optional>
+		</dependency>
+
 		<!-- mybatis -->
 		<dependency>
 			<groupId>org.mybatis</groupId>

@@ -4,7 +4,7 @@
  * 修改时间:  2013-8-14
  * <修改描述:>
  */
-package com.tx.component.basicdata.context;
+package com.tx.component.basicdata.context.impl;
 
 
  /**

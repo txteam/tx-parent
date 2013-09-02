@@ -9,6 +9,8 @@ package com.tx.component.basicdata.context;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.stereotype.Component;
 
+import com.tx.component.basicdata.context.impl.BasicDataContext;
+
 
  /**
   * 基础数据容器工厂<br/>
@@ -28,7 +30,8 @@ public class BasicDataContextFactory implements FactoryBean<BasicDataContext>{
      */
     @Override
     public BasicDataContext getObject() throws Exception {
-        return BasicDataContext.newInstance();
+        //return BasicDataContext.newInstance();
+        return null;
     }
 
     /**

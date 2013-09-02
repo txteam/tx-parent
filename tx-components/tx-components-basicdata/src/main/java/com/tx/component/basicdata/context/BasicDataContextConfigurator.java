@@ -12,7 +12,7 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.core.Ordered;
 import org.springframework.core.PriorityOrdered;
 
-import com.tx.component.basicdata.annotation.BasicDataModel;
+import com.tx.component.basicdata.annotation.BasicData;
 import com.tx.core.util.ClassScanUtils;
 
 /**
@@ -46,6 +46,6 @@ public class BasicDataContextConfigurator implements BeanFactoryPostProcessor,
     @Override
     public void postProcessBeanFactory(
             ConfigurableListableBeanFactory beanFactory) throws BeansException {
-        ClassScanUtils.scanByAnnotation(BasicDataModel.class, packageNames);
+        ClassScanUtils.scanByAnnotation(BasicData.class, packageNames);
     }
 }

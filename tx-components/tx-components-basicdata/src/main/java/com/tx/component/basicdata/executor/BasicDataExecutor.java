@@ -20,7 +20,43 @@ import com.tx.core.paged.model.PagedList;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public interface BasicDataExecutor<T> extends Comparable<T>{
+public interface BasicDataExecutor<T> {
+    
+    /**
+     * 判断基础数据是否包含指定数据<br/>
+     *<功能详细描述>
+     * @param obj
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    public boolean contains(String pk);
+    
+    /**
+     * 根据主键获取对象
+     *<功能详细描述>
+     * @param findCondition
+     * @return [参数说明]
+     * 
+     * @return T [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    public T get(String pk);
+    
+    /**
+      * 根据条件查询指定对象
+      *<功能详细描述>
+      * @param findCondition
+      * @return [参数说明]
+      * 
+      * @return T [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public T find(T findCondition);
     
     /**
       * 获取对应的所有基础数据<br/>
@@ -105,5 +141,6 @@ public interface BasicDataExecutor<T> extends Comparable<T>{
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public int update(T instance);
+    public int update(Map<String, Object> params);
+    
 }

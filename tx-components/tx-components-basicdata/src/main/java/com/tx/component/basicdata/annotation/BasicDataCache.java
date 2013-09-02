@@ -6,6 +6,11 @@
  */
 package com.tx.component.basicdata.annotation;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 import com.tx.component.basicdata.model.CacheType;
 
 
@@ -21,6 +26,8 @@ import com.tx.component.basicdata.model.CacheType;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
   */
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.TYPE})
 public @interface BasicDataCache {
     
     /**
