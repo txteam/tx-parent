@@ -31,6 +31,7 @@ import com.tx.core.exceptions.util.AssertUtils;
   */
 public class ReflectionUtils {
 
+    @SuppressWarnings("unused")
     private static Logger logger = LoggerFactory.getLogger(ReflectionUtils.class);
     
     /**

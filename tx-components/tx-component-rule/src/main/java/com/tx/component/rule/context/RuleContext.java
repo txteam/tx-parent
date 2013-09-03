@@ -13,11 +13,11 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Resource;
 
 import net.sf.ehcache.Ehcache;
-import net.sf.ehcache.store.chm.ConcurrentHashMap;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.drools.core.util.StringUtils;
@@ -48,7 +48,6 @@ import com.tx.component.rule.support.impl.DefaultRuleSessionFactory;
 import com.tx.component.rule.transation.RuleSessionTransactionFactory;
 import com.tx.component.rule.transation.impl.DefaultRuleSessionTransactionFactory;
 import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.spring.event.BeansInitializedEvent;
 
 /**
  * 规则容器<br/>

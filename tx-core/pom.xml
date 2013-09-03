@@ -74,8 +74,8 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-jdbc</artifactId>
 		</dependency>
-		
-		<!-- srpingframework web and orm-->
+
+		<!-- srpingframework web and orm -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-web</artifactId>
@@ -86,7 +86,7 @@
 			<artifactId>spring-orm</artifactId>
 			<optional>true</optional>
 		</dependency>
-				<dependency>
+		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
 			<optional>true</optional>
@@ -123,11 +123,15 @@
 			<artifactId>xfire-all</artifactId>
 			<optional>true</optional>
 		</dependency>
-		
+
 		<!-- cache -->
 		<dependency>
 			<groupId>net.sf.ehcache</groupId>
 			<artifactId>ehcache-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.ehcache</groupId>
+			<artifactId>ehcache-jgroupsreplication</artifactId>
 		</dependency>
 
 		<!-- hibernate -->
@@ -168,14 +172,14 @@
 			<artifactId>freemarker</artifactId>
 			<optional>true</optional>
 		</dependency>
-		
+
 		<!-- poi -->
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
 			<optional>true</optional>
 		</dependency>
-		
+
 		<!-- ognl -->
 		<dependency>
 			<groupId>ognl</groupId>
@@ -241,7 +245,7 @@
 			<groupId>com.thoughtworks.xstream</groupId>
 			<artifactId>xstream</artifactId>
 		</dependency>
-		
+
 		<!-- dom4j -->
 		<dependency>
 			<groupId>dom4j</groupId>

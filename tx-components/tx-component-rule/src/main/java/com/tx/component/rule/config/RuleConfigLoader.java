@@ -51,7 +51,7 @@ import com.tx.core.util.XstreamUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class RuleConfigLoader implements RuleLoader,ApplicationContextAware{
+public class RuleConfigLoader implements RuleLoader, ApplicationContextAware {
     
     /** */
     private Logger logger = LoggerFactory.getLogger(RuleConfigLoader.class);
@@ -80,7 +80,7 @@ public class RuleConfigLoader implements RuleLoader,ApplicationContextAware{
             throws BeansException {
         this.applicationContext = applicationContext;
     }
-
+    
     /**
      * @return
      */
@@ -103,28 +103,30 @@ public class RuleConfigLoader implements RuleLoader,ApplicationContextAware{
         try {
             ruleItemList = loadFromConfigXML();
         } catch (IOException e) {
-            logger.warn(e.toString(),e);
-            logger.warn("load config fail. configLocations:{}",this.configLocations);
+            logger.warn(e.toString(), e);
+            logger.warn("load config fail. configLocations:{}",
+                    this.configLocations);
         }
         
         //如果配置文件未配置规则
-        if(ruleItemList == null || ruleItemList.size() == 0){
+        if (ruleItemList == null || ruleItemList.size() == 0) {
             return null;
         }
         
         List<Rule> resList = new ArrayList<Rule>();
         
-        
         //循环根据配置加载支持类型的规则
-        for(RuleItemConfig ruleItemConfigTemp : ruleItemList){
-            if(ruleItemConfigTemp == null || StringUtils.isEmpty(ruleItemConfigTemp.getRule())
-                    || ruleItemConfigTemp.getRuleType() == null){
-                throw new NullArgException("规则项{}不合法，rule or ruleType is empty.");
+        for (RuleItemConfig ruleItemConfigTemp : ruleItemList) {
+            if (ruleItemConfigTemp == null
+                    || StringUtils.isEmpty(ruleItemConfigTemp.getRule())
+                    || ruleItemConfigTemp.getRuleType() == null) {
+                throw new NullArgException(
+                        "规则项{}不合法，rule or ruleType is empty.");
             }
             switch (ruleItemConfigTemp.getRuleType()) {
                 case DROOLS_DRL_BYTE:
                     DroolsRule ruleTemp = createDrlByteDroolsRule(ruleItemConfigTemp);
-                    if(ruleTemp != null){
+                    if (ruleTemp != null) {
                         resList.add(ruleTemp);
                     }
                     break;
@@ -147,7 +149,7 @@ public class RuleConfigLoader implements RuleLoader,ApplicationContextAware{
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    private DroolsRule createDrlByteDroolsRule(RuleItemConfig ruleItemConfigTemp){
+    private DroolsRule createDrlByteDroolsRule(RuleItemConfig ruleItemConfigTemp) {
         SimplePersistenceRule spRule = new SimplePersistenceRule();
         
         //设置规则通用属性
@@ -162,30 +164,32 @@ public class RuleConfigLoader implements RuleLoader,ApplicationContextAware{
         byte[] bytes = null;
         
         Resource drlFileResource = this.applicationContext.getResource(ruleExpression);
-        if(!drlFileResource.exists() || !drlFileResource.isReadable()){
+        if (!drlFileResource.exists() || !drlFileResource.isReadable()) {
             spRule.setState(RuleStateEnum.ERROR);
             
             //如果对应资源不存在，则不再继续加载该资源，并不进行持久
-            logger.warn("drl_drools_byte ruleExpression:{} is not exist.",ruleExpression);
+            logger.warn("drl_drools_byte ruleExpression:{} is not exist.",
+                    ruleExpression);
             return null;
-        }else{
+        } else {
             InputStream input = null;
             
             try {
                 input = drlFileResource.getInputStream();
                 bytes = IOUtils.toByteArray(input);
             } catch (IOException e) {
-                logger.error(e.toString(),e);
+                logger.error(e.toString(), e);
                 
-            } finally{
+            } finally {
                 IOUtils.closeQuietly(input);
             }
             
         }
         
         //保存规则
-        if(bytes == null){
-            logger.warn("rule:{} byte is empty.load skip." + ruleItemConfigTemp.getRule());
+        if (bytes == null) {
+            logger.warn("rule:{} byte is empty.load skip."
+                    + ruleItemConfigTemp.getRule());
             return null;
         }
         
@@ -195,8 +199,9 @@ public class RuleConfigLoader implements RuleLoader,ApplicationContextAware{
                 ResourceType.DRL);
         
         if (kBuilder.hasErrors()) {
-            logger.warn("rule:{} build has error.load skip." + ruleItemConfigTemp.getRule());
-            logger.warn("error:{}",kBuilder.getErrors());
+            logger.warn("rule:{} build has error.load skip."
+                    + ruleItemConfigTemp.getRule());
+            logger.warn("error:{}", kBuilder.getErrors());
             return null;
         }
         
@@ -204,7 +209,8 @@ public class RuleConfigLoader implements RuleLoader,ApplicationContextAware{
         MultiValueMap<SimpleRuleParamEnum, SimpleRulePropertyByte> bytePropertyValues = new LinkedMultiValueMap<SimpleRuleParamEnum, SimpleRulePropertyByte>();
         SimpleRulePropertyByte proByte = new SimpleRulePropertyByte();
         proByte.setParamValue(bytes);
-        bytePropertyValues.add(SimpleRuleParamEnum.DROOLS_DRL_RESOURCE_BYTE, proByte);
+        bytePropertyValues.add(SimpleRuleParamEnum.DROOLS_DRL_RESOURCE_BYTE,
+                proByte);
         spRule.setBytePropertyValues(bytePropertyValues);
         spRule.setState(RuleStateEnum.OPERATION);
         //持久配置文件中规则
@@ -217,7 +223,7 @@ public class RuleConfigLoader implements RuleLoader,ApplicationContextAware{
         
         return new DroolsRule(spRule, knowledgeBase);
     }
-
+    
     /**
       * 从配置资源中加载规则配置<br/>
       * <功能详细描述>
@@ -235,7 +241,7 @@ public class RuleConfigLoader implements RuleLoader,ApplicationContextAware{
             InputStream in = null;
             try {
                 in = resourceTemp.getInputStream();
-                RulesConfig rulesConfigsTemp = (RulesConfig)ruleConfigParse.fromXML(in);
+                RulesConfig rulesConfigsTemp = (RulesConfig) ruleConfigParse.fromXML(in);
                 
                 ruleItemList.addAll(rulesConfigsTemp.getRuleItemConfig());
             } catch (Exception e) {
@@ -246,21 +252,21 @@ public class RuleConfigLoader implements RuleLoader,ApplicationContextAware{
         }
         return ruleItemList;
     }
-
+    
     /**
      * @return 返回 configLocations
      */
     public String getConfigLocations() {
         return configLocations;
     }
-
+    
     /**
      * @param 对configLocations进行赋值
      */
     public void setConfigLocations(String configLocations) {
         this.configLocations = configLocations;
     }
-
+    
     /**
      * @param 对order进行赋值
      */

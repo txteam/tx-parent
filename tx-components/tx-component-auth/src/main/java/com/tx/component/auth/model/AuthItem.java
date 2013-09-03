@@ -1,5 +1,6 @@
 package com.tx.component.auth.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 import com.tx.core.tree.model.TreeAble;
@@ -13,7 +14,8 @@ import com.tx.core.tree.model.TreeAble;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
  */
-public interface AuthItem extends TreeAble<List<AuthItem>, AuthItem> {
+public interface AuthItem extends TreeAble<List<AuthItem>, AuthItem>,
+        Serializable {
     
     /**
      * 权限项唯一键key 

@@ -457,7 +457,12 @@
 			<dependency>
 				<groupId>net.sf.ehcache</groupId>
 				<artifactId>ehcache-core</artifactId>
-				<version>2.4.8</version>
+				<version>2.5.6</version>
+			</dependency>
+			<dependency>
+				<groupId>net.sf.ehcache</groupId>
+				<artifactId>ehcache-jgroupsreplication</artifactId>
+				<version>1.7</version>
 			</dependency>
 
 			<!-- p6spy -->

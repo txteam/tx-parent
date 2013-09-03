@@ -17,6 +17,8 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import net.sf.ehcache.CacheManager;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.ListUtils;
 import org.apache.commons.collections.MapUtils;
@@ -44,6 +46,7 @@ import com.tx.component.auth.model.AuthItemRefImpl;
 import com.tx.component.auth.service.AuthItemImplService;
 import com.tx.component.auth.service.AuthItemRefImplService;
 import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.support.cache.map.SimpleEhcacheMap;
 
 /**
  * 权限容器<br/>
@@ -89,7 +92,9 @@ public class AuthContext implements ApplicationContextAware, InitializingBean {
      * key为权限项唯一键（key,id）<br/>
      * value为具体的权限项
      */
-    private Map<String, AuthItem> authItemMapping;
+    private SimpleEhcacheMap<String, AuthItem> authItemMapping;
+    
+    private CacheManager cacheManager;
     
     /** 权限项业务层 */
     @Resource(name = "authItemImplService")
@@ -177,7 +182,9 @@ public class AuthContext implements ApplicationContextAware, InitializingBean {
     */
     private void loadAuthItems(List<AuthLoader> authLoaders) {
         //权限项映射
-        Map<String, AuthItem> tempAuthItemMapping = new HashMap<String, AuthItem>();
+        //TODO:systemId + cacheName
+        SimpleEhcacheMap<String, AuthItem> tempAuthItemMapping = new SimpleEhcacheMap<String, AuthItem>(
+                cacheManager, "","authItemCache");
         if (authLoaders == null || authLoaders.size() == 0) {
             logger.warn("AuthContext init.AuthLoader is empty.");
             authItemMapping = tempAuthItemMapping;
@@ -342,8 +349,7 @@ public class AuthContext implements ApplicationContextAware, InitializingBean {
                 //构建的超级管理员的权限引用
                 authItemRefList.add(newAuthItemRefTemp);
             }
-        }
-        else {
+        } else {
             //如果不是超级管理员，根据引用表查询得到相关的权限引用
             authItemRefList = new ArrayList<AuthItemRef>();
             List<AuthItemRefImpl> refImplList = this.authItemRefService.queryAuthItemRefListByRefType2RefIdMapping(refType2RefIdMapping);
@@ -431,8 +437,7 @@ public class AuthContext implements ApplicationContextAware, InitializingBean {
                 authChecker = this.defaultAuthChecker;
             }
             return authChecker.isHasAuth(authItemRefList, objects);
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -534,8 +539,7 @@ public class AuthContext implements ApplicationContextAware, InitializingBean {
             
             //持久化权限项
             res = doRegisteNewAuth(newAuthItemImpl);
-        }
-        else {
+        } else {
             Map<String, Object> authItemRowMap = new HashMap<String, Object>();
             authItemRowMap.put("id", authItem.getId());
             
@@ -593,8 +597,7 @@ public class AuthContext implements ApplicationContextAware, InitializingBean {
             
             //持久化权限项
             res = doRegisteNewAuth(newAuthItemImpl);
-        }
-        else {
+        } else {
             Map<String, Object> authItemRowMap = new HashMap<String, Object>();
             authItemRowMap.put("id", id);
             
@@ -650,8 +653,7 @@ public class AuthContext implements ApplicationContextAware, InitializingBean {
             
             //持久化权限项
             res = doRegisteNewAuth(newAuthItemImpl);
-        }
-        else {
+        } else {
             Map<String, Object> authItemRowMap = new HashMap<String, Object>();
             authItemRowMap.put("id", id);
             
@@ -761,8 +763,7 @@ public class AuthContext implements ApplicationContextAware, InitializingBean {
                     authItemMapping.put(authItemImpl.getId(), authItemImpl);
                 }
             });
-        }
-        else {
+        } else {
             //如果在非事务中执行
             authItemMapping.put(authItemImpl.getId(), authItemImpl);
         }
@@ -796,8 +797,7 @@ public class AuthContext implements ApplicationContextAware, InitializingBean {
                     authItemMapping.put(authItemImpl.getId(), authItemImpl);
                 }
             });
-        }
-        else {
+        } else {
             //如果在非事务中执行
             authItemMapping.put(authItemImpl.getId(), authItemImpl);
         }
@@ -1005,8 +1005,7 @@ public class AuthContext implements ApplicationContextAware, InitializingBean {
                     authItemMapping.remove(authItemId);
                 }
             });
-        }
-        else {
+        } else {
             //如果在非事务中执行
             authItemMapping.remove(authItemId);
         }
