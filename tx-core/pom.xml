@@ -123,6 +123,12 @@
 			<artifactId>xfire-all</artifactId>
 			<optional>true</optional>
 		</dependency>
+		
+		<!-- cache -->
+		<dependency>
+			<groupId>net.sf.ehcache</groupId>
+			<artifactId>ehcache-core</artifactId>
+		</dependency>
 
 		<!-- hibernate -->
 		<dependency>
