@@ -45,9 +45,6 @@ public class AuthItemRefImplService {
     @SuppressWarnings("unused")
     private Logger logger = LoggerFactory.getLogger(AuthItemRefImplService.class);
     
-    @SuppressWarnings("unused")
-    private Logger serviceLogger;
-    
     @Resource(name = "authItemRefImplDao")
     private AuthItemRefImplDao authItemRefImplDao;
     
@@ -199,7 +196,7 @@ public class AuthItemRefImplService {
             String authItemId, List<String> refIdList) {
         AssertUtils.notEmpty(authRefType, "authRefType is empty");
         AssertUtils.notEmpty(authItemId, "authItemId is empty");
-        if(refIdList == null){
+        if (refIdList == null) {
             refIdList = new ArrayList<String>();
         }
         
@@ -242,11 +239,11 @@ public class AuthItemRefImplService {
       * @see [类、类#方法、类#成员]
      */
     @Transactional
-    public void saveAuthItemOfAuthRefList(String authType,String authRefType,
+    public void saveAuthItemOfAuthRefList(String authType, String authRefType,
             String authItemId, List<String> refIdList) {
         AssertUtils.notEmpty(authRefType, "authRefType is empty");
         AssertUtils.notEmpty(authItemId, "authItemId is empty");
-        if(refIdList == null){
+        if (refIdList == null) {
             refIdList = new ArrayList<String>();
         }
         
@@ -268,7 +265,8 @@ public class AuthItemRefImplService {
         List<String> needInsertRefIds = ListUtils.subtract(refIdList,
                 srcAuthRefIds);
         
-        batchDeleteAuthItemRefByRefIds(authType,authRefType,
+        batchDeleteAuthItemRefByRefIds(authType,
+                authRefType,
                 authItemId,
                 needDeleteRefIds);
         batchInsertAuthItemRefByRefIds(authRefType,
@@ -293,7 +291,7 @@ public class AuthItemRefImplService {
             List<String> authItemIds) {
         AssertUtils.notEmpty(authRefType, "authRefType is empty");
         AssertUtils.notEmpty(refId, "refId is empty");
-        if(authItemIds == null){
+        if (authItemIds == null) {
             authItemIds = new ArrayList<String>();
         }
         
@@ -340,11 +338,11 @@ public class AuthItemRefImplService {
       * @see [类、类#方法、类#成员]
      */
     @Transactional
-    public void saveAuthRefOfAuthItemList(String authType,String authRefType, String refId,
-            List<String> authItemIds) {
+    public void saveAuthRefOfAuthItemList(String authType, String authRefType,
+            String refId, List<String> authItemIds) {
         AssertUtils.notEmpty(authRefType, "authRefType is empty");
         AssertUtils.notEmpty(refId, "refId is empty");
-        if(authItemIds == null){
+        if (authItemIds == null) {
             authItemIds = new ArrayList<String>();
         }
         
@@ -369,7 +367,8 @@ public class AuthItemRefImplService {
         List<String> needInsertAuthItemIds = ListUtils.subtract(authItemIds,
                 srcAuthItemIds);
         
-        batchDeleteAuthItemRefByAuthItemIds(authType,authRefType,
+        batchDeleteAuthItemRefByAuthItemIds(authType,
+                authRefType,
                 refId,
                 needDeleteAuthItemIds);
         batchInsertAuthItemRefByAuthItemIds(authRefType,
@@ -427,8 +426,8 @@ public class AuthItemRefImplService {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    private void batchDeleteAuthItemRefByAuthItemIds(String authType,String authRefType,
-            String refId, List<String> needDeleteAuthItemIds) {
+    private void batchDeleteAuthItemRefByAuthItemIds(String authType,
+            String authRefType, String refId, List<String> needDeleteAuthItemIds) {
         if (CollectionUtils.isEmpty(needDeleteAuthItemIds)) {
             return;
         }
@@ -440,7 +439,7 @@ public class AuthItemRefImplService {
             authItemRef.setAuthRefType(authRefType);
             authItemRef.setRefId(refId);
             
-            authItemRef.setAuthItem(new AuthItemImpl(authItemIdTemp,authType));
+            authItemRef.setAuthItem(new AuthItemImpl(authItemIdTemp, authType));
             authItemRefList.add(authItemRef);
         }
         this.authItemRefImplDao.batchDeleteAuthItemRefImpl(authItemRefList);
@@ -498,8 +497,8 @@ public class AuthItemRefImplService {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    private void batchDeleteAuthItemRefByRefIds(String authType,String authRefType,
-            String authItemId, List<String> needDeleteRefIds) {
+    private void batchDeleteAuthItemRefByRefIds(String authType,
+            String authRefType, String authItemId, List<String> needDeleteRefIds) {
         if (CollectionUtils.isEmpty(needDeleteRefIds)) {
             return;
         }
@@ -509,7 +508,7 @@ public class AuthItemRefImplService {
         for (String refIdTemp : needDeleteRefIds) {
             AuthItemRefImpl authItemRef = new AuthItemRefImpl();
             authItemRef.setAuthRefType(authRefType);
-            authItemRef.setAuthItem(new AuthItemImpl(authItemId,authType));
+            authItemRef.setAuthItem(new AuthItemImpl(authItemId, authType));
             
             authItemRef.setRefId(refIdTemp);
             authItemRefList.add(authItemRef);
@@ -548,7 +547,8 @@ public class AuthItemRefImplService {
             
             authItemRef.setAuthRefType(authRefType);
             authItemRef.setRefId(refId);
-            authItemRef.setAuthItem(AuthContext.getContext().getAuthItemFromContextById(authItemIdTemp));
+            authItemRef.setAuthItem(AuthContext.getContext()
+                    .getAuthItemFromContextById(authItemIdTemp));
             authItemRef.setValidDependEndDate(false);
             
             authItemRefList.add(authItemRef);
@@ -576,7 +576,8 @@ public class AuthItemRefImplService {
         List<AuthItemRefImpl> authItemRefList = new ArrayList<AuthItemRefImpl>();
         
         //取得当前登录人员id
-        AuthItem authItem = AuthContext.getContext().getAuthItemFromContextById(authItemId);
+        AuthItem authItem = AuthContext.getContext()
+                .getAuthItemFromContextById(authItemId);
         String currentOperatorId = AuthSessionContext.getOperatorIdFromSession();
         for (String refIdTemp : needInsertRefIds) {
             AuthItemRefImpl authItemRef = new AuthItemRefImpl();

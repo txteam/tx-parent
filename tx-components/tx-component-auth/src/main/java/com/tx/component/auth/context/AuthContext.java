@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -17,7 +18,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
-import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Cache;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.ListUtils;
@@ -30,7 +31,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.OrderComparator;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionSynchronizationAdapter;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
@@ -46,7 +46,7 @@ import com.tx.component.auth.model.AuthItemRefImpl;
 import com.tx.component.auth.service.AuthItemImplService;
 import com.tx.component.auth.service.AuthItemRefImplService;
 import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.support.cache.map.SimpleEhcacheMap;
+import com.tx.core.support.cache.map.EhcacheMap;
 
 /**
  * 权限容器<br/>
@@ -57,17 +57,13 @@ import com.tx.core.support.cache.map.SimpleEhcacheMap;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-@Component("authContext")
 public class AuthContext implements ApplicationContextAware, InitializingBean {
     
     /** 日志记录器 */
     private static final Logger logger = LoggerFactory.getLogger(AuthContext.class);
     
-    /** 业务日志记录器：默认使用logback日志记录器  */
-    @SuppressWarnings("unused")
-    private Logger serviceLogger = LoggerFactory.getLogger(AuthContext.class);
-    
-    private static AuthContext authContext;// = new AuthContext();
+    /** 单子模式权限容器唯一实例 */
+    private static AuthContext authContext;
     
     /** 当前spring容器 */
     private ApplicationContext applicationContext;
@@ -87,15 +83,16 @@ public class AuthContext implements ApplicationContextAware, InitializingBean {
     /** 权限加载器 */
     private List<AuthLoader> authLoaderList;
     
+    /** 权限项缓存对应的缓存生成器 */
+    private Cache cache;
+    
     /**
      * 系统的权限项集合<br/>
      * key为权限项唯一键（key,id）<br/>
      * value为具体的权限项
      */
-    private SimpleEhcacheMap<String, AuthItem> authItemMapping;
-    
-    private CacheManager cacheManager;
-    
+    private Map<String, AuthItem> authItemMapping;
+
     /** 权限项业务层 */
     @Resource(name = "authItemImplService")
     private AuthItemImplService authItemService;
@@ -106,8 +103,9 @@ public class AuthContext implements ApplicationContextAware, InitializingBean {
     
     /**
      * <默认构造函数>
+     * 构造函数级别为子类可见<br/>
      */
-    public AuthContext() {
+    protected AuthContext() {
     }
     
     /**
@@ -164,6 +162,7 @@ public class AuthContext implements ApplicationContextAware, InitializingBean {
         Collection<AuthLoader> authLoader = this.applicationContext.getBeansOfType(AuthLoader.class)
                 .values();
         this.authLoaderList = new ArrayList<AuthLoader>(authLoader);
+        this.authItemMapping = new EhcacheMap<String, AuthItem>(this.cache);
         loadAuthItems(this.authLoaderList);
         
         //使系统context指向实体本身
@@ -182,15 +181,12 @@ public class AuthContext implements ApplicationContextAware, InitializingBean {
     */
     private void loadAuthItems(List<AuthLoader> authLoaders) {
         //权限项映射
-        //TODO:systemId + cacheName
-        SimpleEhcacheMap<String, AuthItem> tempAuthItemMapping = new SimpleEhcacheMap<String, AuthItem>(
-                cacheManager, "","authItemCache");
         if (authLoaders == null || authLoaders.size() == 0) {
             logger.warn("AuthContext init.AuthLoader is empty.");
-            authItemMapping = tempAuthItemMapping;
             return;
         }
         
+        Map<String, AuthItem> tempAuthItemMapping = new HashMap<String, AuthItem>();
         //一句加载器order值进行排序，根据优先级进行加载
         Collections.sort(authLoaders, new OrderComparator());
         for (AuthLoader authLoaderTemp : authLoaders) {
@@ -201,7 +197,20 @@ public class AuthContext implements ApplicationContextAware, InitializingBean {
                 tempAuthItemMapping.put(authItem.getId(), authItem);
             }
         }
-        authItemMapping = tempAuthItemMapping;
+        
+        //移除原存在，现在不存在的
+        Set<String> needRemoveKeySet = new HashSet<String>();
+        for(String authItemKeyTemp : authItemMapping.keySet()){
+            if(!tempAuthItemMapping.containsKey(authItemKeyTemp)){
+                needRemoveKeySet.add(authItemKeyTemp);
+            }
+        }
+        //进行实际的移除
+        for(String needRemoveKey : needRemoveKeySet){
+            authItemMapping.remove(needRemoveKey);
+        }
+        //进行添加或更新
+        authItemMapping.putAll(tempAuthItemMapping);
     }
     
     /**

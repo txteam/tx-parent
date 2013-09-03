@@ -20,6 +20,8 @@ import net.sf.ehcache.Element;
 
 import org.apache.commons.collections.MapUtils;
 
+import com.tx.core.exceptions.util.AssertUtils;
+
 /**
  * 基于缓存的Map实现<br/>
  * <功能详细描述>
@@ -29,7 +31,7 @@ import org.apache.commons.collections.MapUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class SimpleEhcacheMap<K extends Serializable, V extends Serializable>
+public class EhcacheMap<K extends Serializable, V extends Serializable>
         implements Map<K, V> {
     
     /** 缓存的id */
@@ -39,13 +41,22 @@ public class SimpleEhcacheMap<K extends Serializable, V extends Serializable>
     private final Ehcache ehcache;
     
     /** <默认构造函数> */
-    public SimpleEhcacheMap(CacheManager cacheManager, String systemName,
-            String id) {
+    public EhcacheMap(Ehcache ehcache) {
+        super();
+        AssertUtils.notNull( ehcache,"ehcache is null");
+        this.id = ehcache.getName();
+        this.ehcache = ehcache;
+    }
+    
+    /** <默认构造函数> */
+    public EhcacheMap(CacheManager cacheManager, String cacheName) {
         super();
         //初始化缓存实现，如果已经存在，则认为系统中使用同key的缓存非法
         //如果需要两处共用一个simplEhcache需要自行解决共享问题
-        this.id = "simpleEhcacheMap_" + systemName + id;
-        cacheManager.cacheExists(this.id);
+        this.id = "ehcacheMap_" + cacheName;
+        //如果已经存在(即重复唯一键，则抛出异常)
+        AssertUtils.notTrue(cacheManager.cacheExists(this.id),
+                "重复的缓存名：ehcacheMap_" + cacheName);
         cacheManager.addCache(this.id);
         this.ehcache = cacheManager.getEhcache(this.id);
     }
@@ -168,9 +179,10 @@ public class SimpleEhcacheMap<K extends Serializable, V extends Serializable>
         List keys = this.ehcache.getKeys();
         Map<Object, Element> allMap = this.ehcache.getAll(keys);
         Map<K, V> tempMap = new HashMap<K, V>();
-        for(Entry<Object, Element> entryTemp : allMap.entrySet()){
-            if(entryTemp.getValue() != null){
-                tempMap.put((K)entryTemp.getKey(), (V)(entryTemp.getValue().getValue()));
+        for (Entry<Object, Element> entryTemp : allMap.entrySet()) {
+            if (entryTemp.getValue() != null) {
+                tempMap.put((K) entryTemp.getKey(),
+                        (V) (entryTemp.getValue().getValue()));
             }
         }
         return tempMap.values();
@@ -186,16 +198,15 @@ public class SimpleEhcacheMap<K extends Serializable, V extends Serializable>
         List keys = this.ehcache.getKeys();
         Map<Object, Element> allMap = this.ehcache.getAll(keys);
         Map<K, V> tempMap = new HashMap<K, V>();
-        for(Entry<Object, Element> entryTemp : allMap.entrySet()){
-            if(entryTemp.getValue() != null){
-                tempMap.put((K)entryTemp.getKey(), (V)(entryTemp.getValue().getValue()));
+        for (Entry<Object, Element> entryTemp : allMap.entrySet()) {
+            if (entryTemp.getValue() != null) {
+                tempMap.put((K) entryTemp.getKey(),
+                        (V) (entryTemp.getValue().getValue()));
             }
         }
         boolean resFlag = tempMap.containsValue(value);
         return resFlag;
     }
-    
-
     
     /**
      * @return
@@ -206,12 +217,37 @@ public class SimpleEhcacheMap<K extends Serializable, V extends Serializable>
         List keys = this.ehcache.getKeys();
         Map<Object, Element> allMap = this.ehcache.getAll(keys);
         Map<K, V> tempMap = new HashMap<K, V>();
-        for(Entry<Object, Element> entryTemp : allMap.entrySet()){
-            if(entryTemp.getValue() != null){
-                tempMap.put((K)entryTemp.getKey(), (V)(entryTemp.getValue().getValue()));
+        for (Entry<Object, Element> entryTemp : allMap.entrySet()) {
+            if (entryTemp.getValue() != null) {
+                tempMap.put((K) entryTemp.getKey(),
+                        (V) (entryTemp.getValue().getValue()));
             }
         }
         return tempMap.entrySet();
+    }
+    
+    /**
+      * 将缓存Map转换为一个实际的Map
+      *<功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return Map<K,V> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    @SuppressWarnings("unchecked")
+    public Map<K, V> toMap() {
+        @SuppressWarnings("rawtypes")
+        List keys = this.ehcache.getKeys();
+        Map<Object, Element> allMap = this.ehcache.getAll(keys);
+        Map<K, V> tempMap = new HashMap<K, V>();
+        for (Entry<Object, Element> entryTemp : allMap.entrySet()) {
+            if (entryTemp.getValue() != null) {
+                tempMap.put((K) entryTemp.getKey(),
+                        (V) (entryTemp.getValue().getValue()));
+            }
+        }
+        return tempMap;
     }
     
 }

@@ -6,7 +6,6 @@
  */
 package com.tx.component.auth.model;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -33,8 +32,8 @@ import com.tx.component.auth.AuthConstant;
  * @since  [产品/模块版本]
  */
 @Entity
-@Table(name = "t_auth_authref")
-public class AuthItemRefImpl implements Serializable, AuthItemRef {
+@Table(name = "auth_authref")
+public class AuthItemRefImpl implements AuthItemRef {
     
     /** 注释内容 */
     private static final long serialVersionUID = -7928952142014599323L;
@@ -54,6 +53,12 @@ public class AuthItemRefImpl implements Serializable, AuthItemRef {
         this.authItemImpl = authItem;
         this.authRefType = AuthConstant.AUTHREFTYPE_OPERATOR;
     }
+    
+    /** 
+     * 所属系统id:不能为空 
+     * 具体的一个权限的引用必然属于一个系统<br/> 
+     */
+    private String systemId;
     
     /** 权限引用类型 */
     private String authRefType;
@@ -85,7 +90,21 @@ public class AuthItemRefImpl implements Serializable, AuthItemRef {
      * 判断权限是否需要根据结束时间验证其有效性
      */
     private boolean isValidDependEndDate = false;
-    
+
+    /**
+     * @return 返回 systemId
+     */
+    public String getSystemId() {
+        return systemId;
+    }
+
+    /**
+     * @param 对systemId进行赋值
+     */
+    public void setSystemId(String systemId) {
+        this.systemId = systemId;
+    }
+
     /**
      * @return
      */

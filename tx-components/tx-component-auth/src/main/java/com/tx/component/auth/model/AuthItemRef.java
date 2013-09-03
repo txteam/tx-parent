@@ -1,5 +1,6 @@
 package com.tx.component.auth.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -11,7 +12,18 @@ import java.util.Date;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
  */
-public interface AuthItemRef {
+public interface AuthItemRef extends Serializable{
+    
+    /**
+      * 获取系统id
+      *<功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return String [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    String getSystemId();
     
     /**
      * 权限引用项的类型<br/>

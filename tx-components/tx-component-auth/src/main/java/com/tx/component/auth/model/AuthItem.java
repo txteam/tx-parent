@@ -26,6 +26,17 @@ public interface AuthItem extends TreeAble<List<AuthItem>, AuthItem>,
     String getId();
     
     /**
+      * 获取权限项系统id
+      *<功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return String [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    String getSystemId();
+    
+    /**
      * 父级权限id
      * @return 返回 parentId 
      */

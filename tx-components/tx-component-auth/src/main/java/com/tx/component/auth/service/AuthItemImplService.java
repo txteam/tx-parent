@@ -38,10 +38,6 @@ public class AuthItemImplService {
     @SuppressWarnings("unused")
     private Logger logger = LoggerFactory.getLogger(AuthItemImplService.class);
     
-    @SuppressWarnings("unused")
-    //@Resource(name = "serviceLogger")
-    private Logger serviceLogger;
-    
     @Resource(name = "authItemImplDao")
     private AuthItemImplDao authItemDao;
     
@@ -58,8 +54,8 @@ public class AuthItemImplService {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public AuthItemImpl findAuthItemImplById(String authItemId){
-        AssertUtils.notEmpty(authItemId,"authItemId is empty.");
+    public AuthItemImpl findAuthItemImplById(String authItemId) {
+        AssertUtils.notEmpty(authItemId, "authItemId is empty.");
         
         AuthItemImpl condition = new AuthItemImpl();
         condition.setId(authItemId);
@@ -84,7 +80,7 @@ public class AuthItemImplService {
         
         return resList;
     }
-
+    
     /**
       * 查询AuthItem实体列表<br/>
       * <功能详细描述>
@@ -96,11 +92,11 @@ public class AuthItemImplService {
       * @see [类、类#方法、类#成员]
      */
     public List<AuthItemImpl> queryAuthItemListByAuthType(String authType) {
-        AssertUtils.notEmpty(authType,"authType is empty.");
+        AssertUtils.notEmpty(authType, "authType is empty.");
         
         //生成查询条件
         Map<String, Object> params = new HashMap<String, Object>();
-        if(!StringUtils.isEmpty(authType)){
+        if (!StringUtils.isEmpty(authType)) {
             params.put("authType", authType);
         }
         
@@ -124,7 +120,8 @@ public class AuthItemImplService {
     @Transactional
     public void insertAuthItemImpl(AuthItemImpl authItemImpl) {
         AssertUtils.notNull(authItemImpl, "authItem is null.");
-        AssertUtils.notEmpty(authItemImpl.getAuthType(),"authItem.authType is empty.");
+        AssertUtils.notEmpty(authItemImpl.getAuthType(),
+                "authItem.authType is empty.");
         
         this.authItemDao.insertAuthItemImpl(authItemImpl);
     }
@@ -166,21 +163,21 @@ public class AuthItemImplService {
      */
     @Transactional
     public boolean updateById(AuthItemImpl authItemImpl) {
-        AssertUtils.notNull(authItemImpl,"authItem is null");
-        AssertUtils.notEmpty(authItemImpl.getId(),"authItem.id is empty.");
+        AssertUtils.notNull(authItemImpl, "authItem is null");
+        AssertUtils.notEmpty(authItemImpl.getId(), "authItem.id is empty.");
         
         //生成需要更新字段的hashMap
         Map<String, Object> updateRowMap = new HashMap<String, Object>();
         updateRowMap.put("id", authItemImpl.getId());
         
         //需要更新的字段
-		updateRowMap.put("valid", authItemImpl.isValid());	
-		updateRowMap.put("parentId", authItemImpl.getParentId());	
-		updateRowMap.put("description", authItemImpl.getDescription());	
-		updateRowMap.put("editAble", authItemImpl.isEditAble());	
-		updateRowMap.put("viewAble", authItemImpl.isViewAble());	
-		updateRowMap.put("name", authItemImpl.getName());	
-		updateRowMap.put("authType", authItemImpl.getAuthType());	
+        updateRowMap.put("valid", authItemImpl.isValid());
+        updateRowMap.put("parentId", authItemImpl.getParentId());
+        updateRowMap.put("description", authItemImpl.getDescription());
+        updateRowMap.put("editAble", authItemImpl.isEditAble());
+        updateRowMap.put("viewAble", authItemImpl.isViewAble());
+        updateRowMap.put("name", authItemImpl.getName());
+        updateRowMap.put("authType", authItemImpl.getAuthType());
         
         int updateRowCount = this.authItemDao.updateAuthItemImpl(updateRowMap);
         
@@ -199,15 +196,17 @@ public class AuthItemImplService {
       * @see [类、类#方法、类#成员]
      */
     @Transactional
-    public AuthItemImpl saveAuthItemImplByAuthItemRowMap(Map<String, Object> authItemRowMap) {
-        AssertUtils.notNull(authItemRowMap,"authItemRowMap is null");
-        AssertUtils.notEmpty((String)authItemRowMap.get("id"),"authItemRowMap.id is empty.");   
+    public AuthItemImpl saveAuthItemImplByAuthItemRowMap(
+            Map<String, Object> authItemRowMap) {
+        AssertUtils.notNull(authItemRowMap, "authItemRowMap is null");
+        AssertUtils.notEmpty((String) authItemRowMap.get("id"),
+                "authItemRowMap.id is empty.");
         
-        String authItemId = (String)authItemRowMap.get("id");
+        String authItemId = (String) authItemRowMap.get("id");
         AuthItemImpl authItem = findAuthItemImplById(authItemId);
-        if(authItem != null){
+        if (authItem != null) {
             this.authItemDao.updateAuthItemImpl(authItemRowMap);
-        }else{
+        } else {
             authItem = new AuthItemImpl(authItemRowMap);
             insertAuthItemImpl(authItem);
         }

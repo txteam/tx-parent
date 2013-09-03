@@ -7,6 +7,7 @@
 package com.tx.core.dbscript.executor;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +20,8 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.init.DatabasePopulator;
 import org.springframework.jdbc.datasource.init.DatabasePopulatorUtils;
@@ -70,7 +73,8 @@ public class DBScriptAutoExecutor implements InitializingBean, DisposableBean,
     }
     
     /** <默认构造函数> */
-    public DBScriptAutoExecutor(DataSource dataSource, Resource initScriptResources,boolean enabled) {
+    public DBScriptAutoExecutor(DataSource dataSource,
+            String initScript, boolean enabled) {
         super();
         this.enabled = enabled;
         this.dataSource = dataSource;
@@ -80,12 +84,46 @@ public class DBScriptAutoExecutor implements InitializingBean, DisposableBean,
         resourceDatabasePopulator.setIgnoreFailedDrops(this.ignoreFailedDrops);
         resourceDatabasePopulator.setSqlScriptEncoding(sqlScriptEncoding);
         
-        resourceDatabasePopulator.setScripts(new Resource[]{initScriptResources});
+        resourceDatabasePopulator.setScripts(new Resource[] { new ByteArrayResource(initScript.getBytes()) });
         this.initDatabasePopulator = resourceDatabasePopulator;
     }
     
     /** <默认构造函数> */
-    public DBScriptAutoExecutor(DataSource dataSource, List<Resource> initScriptResources,boolean enabled) {
+    public DBScriptAutoExecutor(DataSource dataSource,
+            InputStream initScriptInputStream, boolean enabled) {
+        super();
+        this.enabled = enabled;
+        this.dataSource = dataSource;
+        
+        ResourceDatabasePopulator resourceDatabasePopulator = new ResourceDatabasePopulator();
+        resourceDatabasePopulator.setContinueOnError(this.continueOnError);
+        resourceDatabasePopulator.setIgnoreFailedDrops(this.ignoreFailedDrops);
+        resourceDatabasePopulator.setSqlScriptEncoding(sqlScriptEncoding);
+        
+        resourceDatabasePopulator.setScripts(new Resource[] { new InputStreamResource(
+                initScriptInputStream) });
+        this.initDatabasePopulator = resourceDatabasePopulator;
+    }
+    
+    /** <默认构造函数> */
+    public DBScriptAutoExecutor(DataSource dataSource,
+            Resource initScriptResources, boolean enabled) {
+        super();
+        this.enabled = enabled;
+        this.dataSource = dataSource;
+        
+        ResourceDatabasePopulator resourceDatabasePopulator = new ResourceDatabasePopulator();
+        resourceDatabasePopulator.setContinueOnError(this.continueOnError);
+        resourceDatabasePopulator.setIgnoreFailedDrops(this.ignoreFailedDrops);
+        resourceDatabasePopulator.setSqlScriptEncoding(sqlScriptEncoding);
+        
+        resourceDatabasePopulator.setScripts(new Resource[] { initScriptResources });
+        this.initDatabasePopulator = resourceDatabasePopulator;
+    }
+    
+    /** <默认构造函数> */
+    public DBScriptAutoExecutor(DataSource dataSource,
+            List<Resource> initScriptResources, boolean enabled) {
         super();
         this.enabled = enabled;
         this.dataSource = dataSource;
@@ -108,7 +146,7 @@ public class DBScriptAutoExecutor implements InitializingBean, DisposableBean,
             throws BeansException {
         this.applicationContext = applicationContext;
     }
-
+    
     /**
      * 初始化后开始自动执行脚本
      * @throws Exception

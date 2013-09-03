@@ -6,7 +6,6 @@
  */
 package com.tx.component.auth.model;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +18,8 @@ import javax.persistence.Table;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.tx.core.util.ObjectUtils;
+
 /**
  * 权限项
  * 如果两个权限项的 id与authType相同，则被认为是同一个authitem
@@ -30,8 +31,8 @@ import org.apache.commons.lang.StringUtils;
  * @since  [产品/模块版本]
  */
 @Entity
-@Table(name = "t_auth_authitem")
-public class AuthItemImpl implements Serializable, AuthItem {
+@Table(name = "auth_authitem")
+public class AuthItemImpl implements AuthItem {
     
     /** 注释内容 */
     private static final long serialVersionUID = -5205952448154970380L;
@@ -47,6 +48,9 @@ public class AuthItemImpl implements Serializable, AuthItem {
     
     /** 父级权限id */
     private String parentId;
+    
+    /** 系统唯一id */
+    private String systemId;
     
     /** 权限项名 */
     private String name;
@@ -205,6 +209,20 @@ public class AuthItemImpl implements Serializable, AuthItem {
     }
     
     /**
+     * @return 返回 systemId
+     */
+    public String getSystemId() {
+        return systemId;
+    }
+
+    /**
+     * @param 对systemId进行赋值
+     */
+    public void setSystemId(String systemId) {
+        this.systemId = systemId;
+    }
+
+    /**
      * @return
      */
     @Override
@@ -338,19 +356,7 @@ public class AuthItemImpl implements Serializable, AuthItem {
      */
     @Override
     public boolean equals(Object obj) {
-        if (obj == null || !(obj instanceof AuthItem)) {
-            return false;
-        } else {
-            AuthItem other = (AuthItem) obj;
-            if (StringUtils.isEmpty(this.id)
-                    || StringUtils.isEmpty(this.authType)) {
-                //仅以两者是否是同一个对象的链接进行判断
-                return this == other;
-            } else {
-                return this.id.equals(other.getId())
-                        && this.authType.equals(other.getAuthType());
-            }
-        }
+        return ObjectUtils.equals(this, obj, "systemId", "id", "authType");
     }
     
     /**
@@ -358,9 +364,11 @@ public class AuthItemImpl implements Serializable, AuthItem {
      */
     @Override
     public int hashCode() {
-        if (StringUtils.isEmpty(this.id) || StringUtils.isEmpty(this.authType)) {
-            return super.hashCode();
-        }
-        return this.id.hashCode() + this.authType.hashCode();
+        int resHashCode = ObjectUtils.generateHashCode(super.hashCode(),
+                this,
+                "systemId",
+                "id",
+                "authType");
+        return resHashCode;
     }
 }
