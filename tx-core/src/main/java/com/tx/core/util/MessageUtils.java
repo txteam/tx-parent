@@ -31,7 +31,7 @@ public class MessageUtils {
       * @see [类、类#方法、类#成员]
      */
     public static String createMessage(String message, Object... objArr) {
-        return MessageFormatter.arrayFormat(message,objArr).getMessage();
+        return MessageFormatter.arrayFormat(message, objArr).getMessage();
     }
     
 }
