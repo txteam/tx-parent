@@ -6,6 +6,8 @@
  */
 package com.tx.core.mybatis.handler;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -18,7 +20,8 @@ import org.apache.ibatis.type.MappedTypes;
 import com.tx.core.util.JdbcUtils;
 
 /**
- * <功能简述>
+ * 修改默认的BigDecimal映射处理器
+ * 替换系统中的TypeHandler
  * <功能详细描述>
  * 
  * @author  brady
@@ -26,8 +29,8 @@ import com.tx.core.util.JdbcUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-@MappedTypes(value = { Long.class })
-public class NullAbleLongTypeHandler extends BaseTypeHandler<Long> {
+@MappedTypes(value = { BigInteger.class})
+public class NullAbleBigIntegerTypeHandler extends BaseTypeHandler<BigInteger> {
     
     /**
      * @param ps
@@ -37,11 +40,11 @@ public class NullAbleLongTypeHandler extends BaseTypeHandler<Long> {
      * @throws SQLException
      */
     @Override
-    public void setParameter(PreparedStatement ps, int i, Long parameter,
+    public void setParameter(PreparedStatement ps, int i, BigInteger parameter,
             JdbcType jdbcType) throws SQLException {
         if (parameter == null
                 && (jdbcType == null || JdbcType.OTHER == jdbcType)) {
-            ps.setNull(i, JdbcUtils.getSqlTypeByJavaType(Long.class));
+            ps.setNull(i, JdbcUtils.getSqlTypeByJavaType(BigInteger.class));
         } else {
             super.setParameter(ps, i, parameter, jdbcType);
         }
@@ -49,25 +52,26 @@ public class NullAbleLongTypeHandler extends BaseTypeHandler<Long> {
     
     @Override
     public void setNonNullParameter(PreparedStatement ps, int i,
-            Long parameter, JdbcType jdbcType) throws SQLException {
-        ps.setLong(i, parameter);
+            BigInteger parameter, JdbcType jdbcType) throws SQLException {
+        ps.setBigDecimal(i, new BigDecimal(parameter));
     }
     
     @Override
-    public Long getNullableResult(ResultSet rs, String columnName)
+    public BigInteger getNullableResult(ResultSet rs, String columnName)
             throws SQLException {
-        return rs.getLong(columnName);
+        return rs.getBigDecimal(columnName).toBigInteger();
     }
     
     @Override
-    public Long getNullableResult(ResultSet rs, int columnIndex)
+    public BigInteger getNullableResult(ResultSet rs, int columnIndex)
             throws SQLException {
-        return rs.getLong(columnIndex);
+        return rs.getBigDecimal(columnIndex).toBigInteger();
     }
     
     @Override
-    public Long getNullableResult(CallableStatement cs, int columnIndex)
+    public BigInteger getNullableResult(CallableStatement cs, int columnIndex)
             throws SQLException {
-        return cs.getLong(columnIndex);
+        return cs.getBigDecimal(columnIndex).toBigInteger();
     }
+    
 }

@@ -65,6 +65,8 @@ public class RuleContext implements BeanNameAware, FactoryBean<RuleContext>,
     /** 日志记录器 */
     private static Logger logger = LoggerFactory.getLogger(RuleContext.class);
     
+    /* 不需要注入属性 */
+    
     /** 单例的rule容器 */
     private static Map<String, RuleContext> ruleContextMapping = new HashMap<String, RuleContext>();
     
@@ -74,6 +76,14 @@ public class RuleContext implements BeanNameAware, FactoryBean<RuleContext>,
     /** rulecontext name */
     private String beanName;
     
+    /** 注册的规则加载器 */
+    private List<RuleLoader> registeredRuleLoaderList = new ArrayList<RuleLoader>();
+    
+    /** 规则验证器映射 */
+    private Map<RuleTypeEnum, RuleRegister<? extends Rule>> ruleRegisterMap = new HashMap<RuleTypeEnum, RuleRegister<? extends Rule>>();
+    
+    /* 可注入属性 */
+    
     /** 规则会话事务工厂  */
     private RuleSessionTransactionFactory ruleSessionTransactionFactory;
     
@@ -81,33 +91,19 @@ public class RuleContext implements BeanNameAware, FactoryBean<RuleContext>,
     private RuleSessionFactory ruleSessionFactory;
     
     /** 缓存 */
-    @Resource(name = "cache")
     private Ehcache ehcache;
+    
+    /* 自动注入属性 */
     
     /** 持久化规则业务层 */
     @Resource(name = "simplePersistenceRuleService")
     private SimplePersistenceRuleService simplePersistenceRuleService;
-    
-    /** 注册的规则加载器 */
-    private List<RuleLoader> registeredRuleLoaderList = new ArrayList<RuleLoader>();
-    
-    /** 规则验证器映射 */
-    private Map<RuleTypeEnum, RuleRegister<? extends Rule>> ruleRegisterMap = new HashMap<RuleTypeEnum, RuleRegister<? extends Rule>>();
-    
+
     /** 规则缓存:key为 serviceType + "." + rule */
     private Map<String, Rule> ruleKeyMapCache;
     
     /** 规则缓存:key为 rule 如果存在两个同rule serviceType时，则在该缓存中不进行存入 */
     private MultiValueMap<String, Rule> multiRuleMapCache;
-    
-    /** 是否加载完成 */
-    private boolean loadOver = false;
-    
-    /** 最大等待加载时间 */
-    private long maxLoadTimeout = 1000 * 60 * 5;
-    
-    /** 等待加载的线程映射 */
-    private Map<Thread, Integer> waitThreadMap = new HashMap<Thread, Integer>();
     
     /**
      * <默认构造函数>
@@ -156,6 +152,7 @@ public class RuleContext implements BeanNameAware, FactoryBean<RuleContext>,
         Collection<RuleLoader> ruleLoaders = this.applicationContext.getBeansOfType(RuleLoader.class)
                 .values();
         registeRuleLoader(ruleLoaders);
+        
         logger.info("加载规则注册器...");
         @SuppressWarnings("rawtypes")
         Collection<RuleRegister> ruleRegisters = this.applicationContext.getBeansOfType(RuleRegister.class)

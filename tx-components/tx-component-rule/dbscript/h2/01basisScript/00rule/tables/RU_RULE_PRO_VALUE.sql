@@ -5,7 +5,7 @@ create table ru_rule_pro_value
 (
 	ruleId varchar(64) not null,		   		  --对应规则id
 	paramKey varchar(64) not null,				  --对应属性key
-	simpleRulePropertyParam varchar(64) not null,	  --对应属性
+	simpleRulePropertyParam varchar(64) not null, --对应属性
 	paramValueOrdered integer default 0 not null, --对应属性排序值
 	paramValue varchar(2000),					  --对应属性值
 	primary key(ruleId)

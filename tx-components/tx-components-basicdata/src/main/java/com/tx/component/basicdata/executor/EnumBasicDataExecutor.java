@@ -10,8 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang3.EnumUtils;
 
 import com.tx.component.basicdata.exception.UnModifyAbleException;
@@ -30,8 +28,8 @@ public class EnumBasicDataExecutor<T extends Enum<T>> extends
         BaseBasicDataExecutor<T> {
     
     /** <默认构造函数> */
-    public EnumBasicDataExecutor(DataSource dataSource, Class<T> type) {
-        super(dataSource, type);
+    public EnumBasicDataExecutor(Class<T> type) {
+        super(type);
     }
     
     /**

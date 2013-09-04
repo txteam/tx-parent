@@ -16,6 +16,8 @@ import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.MappedTypes;
 
+import com.tx.core.util.JdbcUtils;
+
 /**
  * 修改默认的BigDecimal映射处理器
  * 替换系统中的TypeHandler
@@ -41,7 +43,7 @@ public class NullAbleBigDecimalTypeHandler extends BaseTypeHandler<BigDecimal> {
             JdbcType jdbcType) throws SQLException {
         if (parameter == null
                 && (jdbcType == null || JdbcType.OTHER == jdbcType)) {
-            ps.setBigDecimal(i, null);
+            ps.setNull(i, JdbcUtils.getSqlTypeByJavaType(BigDecimal.class));
         } else {
             super.setParameter(ps, i, parameter, jdbcType);
         }

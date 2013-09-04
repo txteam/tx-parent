@@ -1,25 +1,22 @@
 /*
  * 描          述:  <描述>
  * 修  改   人:  brady
- * 修改时间:  2013-9-2
+ * 修改时间:  2013-9-5
  * <修改描述:>
  */
-package com.tx.core.jdbc.query;
+package com.tx.core.dbutils;
 
 
  /**
-  *  查询条件类型枚举<br/>
+  * SimpleSqlMapMapper构建工厂
   * <功能详细描述>
   * 
   * @author  brady
-  * @version  [版本号, 2013-9-2]
+  * @version  [版本号, 2013-9-5]
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
   */
-public enum QueryConditionTypeEnum {
+public class SimpleSqlMapMapperFactory {
     
-    EQUAL,
-    LIKE,
-    LESS_THAN,
-    MORE_THAN;
+    public 
 }

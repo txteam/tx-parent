@@ -54,6 +54,18 @@ public @interface BasicData {
     public boolean isModifyAble();
     
     /**
+      * 默认的查询条件
+      * 例如可以设置   type = x这样的条件
+      *<功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return String[] [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public String[] queryCondition() default {};
+    
+    /**
       * 基础数据的默认执行器类型<br/>
       *<功能详细描述>
       * @return [参数说明]

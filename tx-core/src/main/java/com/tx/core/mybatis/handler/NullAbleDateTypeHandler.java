@@ -17,6 +17,8 @@ import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.MappedTypes;
 
+import com.tx.core.util.JdbcUtils;
+
 /**
  * 修改默认的Date映射处理器
  * 替换系统中的TypeHandler
@@ -49,7 +51,7 @@ public class NullAbleDateTypeHandler extends BaseTypeHandler<Date> {
             JdbcType jdbcType) throws SQLException {
         if (parameter == null
                 && (jdbcType == null || JdbcType.OTHER == jdbcType)) {
-            ps.setTimestamp(i, null);
+            ps.setNull(i, JdbcUtils.getSqlTypeByJavaType(Date.class));
         } else {
             super.setParameter(ps, i, parameter, jdbcType);
         }

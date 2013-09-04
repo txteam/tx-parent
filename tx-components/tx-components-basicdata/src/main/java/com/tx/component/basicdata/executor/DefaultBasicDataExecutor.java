@@ -6,22 +6,22 @@
  */
 package com.tx.component.basicdata.executor;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
 import javax.sql.DataSource;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.ibatis.reflection.MetaClass;
 import org.hibernate.dialect.Dialect;
+import org.springframework.jdbc.core.PreparedStatementSetter;
+import org.springframework.jdbc.core.RowCallbackHandler;
 
-import com.tx.component.basicdata.annotation.BasicDataExecutorSQL;
 import com.tx.component.basicdata.context.BasicData;
-import com.tx.component.basicdata.model.PropertyItemInfo;
-import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.exceptions.util.ExceptionWrapperUtils;
 import com.tx.core.paged.model.PagedList;
-import com.tx.core.reflection.ReflectionUtils;
 import com.tx.core.reflection.exception.ReflectionException;
 
 /**
@@ -53,38 +53,7 @@ public class DefaultBasicDataExecutor<T> extends BaseBasicDataExecutor<T> {
     
     /** <默认构造函数> */
     public DefaultBasicDataExecutor(DataSource dataSource, Class<T> type) {
-        super(dataSource, type);
-        
-        for(PropertyItemInfo propertyTemp : basicData.getPropertyItemInfoList()){
-            
-        }
-        
-        if(type.isAnnotationPresent(BasicDataExecutorSQL.class)){
-            initByBasicDataExecutorSQL(type);
-        }else{
-            
-        }
-    }
-    
-     /** 
-      *<功能简述>
-      *<功能详细描述>
-      * @param type [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-      */
-    private void initByBasicDataExecutorSQL(Class<T> type) {
-        BasicDataExecutorSQL basicDataExecutorSQL = type.getAnnotation(BasicDataExecutorSQL.class);
-        if(basicDataExecutorSQL != null){
-            this.findSql = basicDataExecutorSQL.findSql();
-            this.querySql = basicDataExecutorSQL.querySql();
-            this.insertSql = basicDataExecutorSQL.insertSql();
-            this.deleteSql = basicDataExecutorSQL.deleteSql();
-            this.updateSql = basicDataExecutorSQL.updateSql();
-            this.countSql = basicDataExecutorSQL.countSql();
-        }
+
     }
     
     /**
@@ -103,7 +72,21 @@ public class DefaultBasicDataExecutor<T> extends BaseBasicDataExecutor<T> {
      */
     @Override
     protected T doFind(T obj) {
-        // TODO Auto-generated method stub
+        getJdbcTemplate().query(sql, new PreparedStatementSetter() {
+            
+            @Override
+            public void setValues(PreparedStatement ps) throws SQLException {
+                // TODO Auto-generated method stub
+                
+            }
+        }, new RowCallbackHandler() {
+            
+            @Override
+            public void processRow(ResultSet rs) throws SQLException {
+                // TODO Auto-generated method stub
+                
+            }
+        })
         return null;
     }
     
@@ -155,6 +138,16 @@ public class DefaultBasicDataExecutor<T> extends BaseBasicDataExecutor<T> {
                     e,
                     obj);
         }
+        getJdbcTemplate().update(sql, new PreparedStatementSetter(){
+            /**
+             * @param ps
+             * @throws SQLException
+             */
+            @Override
+            public void setValues(PreparedStatement ps) throws SQLException {
+                ps.setTimestamp(arg0, arg1)
+            }
+        });
         getNamedJdbcTemplate().update(insertSql, objMap);
     }
     

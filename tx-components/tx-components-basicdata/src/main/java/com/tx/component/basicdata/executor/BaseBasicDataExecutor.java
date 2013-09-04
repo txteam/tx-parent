@@ -11,8 +11,13 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
-import org.springframework.cache.annotation.Cacheable;
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.transaction.support.TransactionSynchronizationAdapter;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import com.tx.core.paged.model.PagedList;
 
@@ -31,14 +36,43 @@ public abstract class BaseBasicDataExecutor<T> implements BasicDataExecutor<T> {
     
     private NamedParameterJdbcTemplate namedJdbcTemplate;
     
+    private JdbcTemplate jdbcTemplate;
+    
+    private Cache cache;
+    
+    private String cacheName;
+    
     private boolean cacheEnable;
     
     /** <默认构造函数> */
-    public BaseBasicDataExecutor(DataSource dataSource,Class<T> type) {
+    public BaseBasicDataExecutor(DataSource dataSource,CacheManager cacheManager,Class<T> type) {
         this.type = type;
-        if(dataSource != null){
-            this.namedJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+        this.cacheName = "basicdata_cache_" + type.getName();
+        if(!type.isEnum()){
+            if(dataSource != null){
+                this.namedJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+                this.jdbcTemplate = new JdbcTemplate(dataSource);
+            }
+            if(cacheEnable){
+                if(cacheManager == null){
+                    cacheManager = CacheManager.create();
+                }
+                if(!cacheManager.cacheExists(this.cacheName)){
+                    cacheManager.addCache(this.cacheName);
+                }
+                this.cache = cacheManager.getCache(this.cacheName);
+            }
         }
+    }
+    
+    /** <默认构造函数> */
+    public BaseBasicDataExecutor(Class<T> type) {
+        this(null,null,type);
+    }
+    
+    /** <默认构造函数> */
+    public BaseBasicDataExecutor(CacheManager cacheManager,Class<T> type) {
+        this(null,cacheManager,type);
     }
     
     /**
@@ -180,8 +214,6 @@ public abstract class BaseBasicDataExecutor<T> implements BasicDataExecutor<T> {
      */
     @Override
     public List<T> list() {
-        //TODO: query from cache
-        
         List<T> resList = doQuery(null);
         return resList;
     }
@@ -231,7 +263,7 @@ public abstract class BaseBasicDataExecutor<T> implements BasicDataExecutor<T> {
     @Override
     public void insert(T instance) {
         doInsert(instance);
-        //TODO: clearCache
+        clearCache();
     }
     
     /**
@@ -241,8 +273,7 @@ public abstract class BaseBasicDataExecutor<T> implements BasicDataExecutor<T> {
     @Override
     public int delete(Map<String, Object> params) {
         int resInt = doDelete(params);
-        
-        //TODO: clearCache
+        clearCache();
         return resInt;
     }
     
@@ -253,8 +284,32 @@ public abstract class BaseBasicDataExecutor<T> implements BasicDataExecutor<T> {
     @Override
     public int update(Map<String, Object> params) {
         int resInt = doUpdate(params);
-        //TODO: clearCache
+        clearCache();
         return resInt;
+    }
+    
+    /**
+      * 清空缓存<br/>
+      *<功能详细描述> [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    protected void clearCache(){
+        final Cache finalCache = this.cache; 
+        if (TransactionSynchronizationManager.isSynchronizationActive()) {
+            //如果在事务逻辑中执行
+            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
+                @Override
+                public void afterCommit() {
+                    finalCache.removeAll();
+                }
+            });
+        } else {
+            //如果在非事务中执行
+            finalCache.removeAll();
+        }
     }
     
     /**
@@ -276,5 +331,12 @@ public abstract class BaseBasicDataExecutor<T> implements BasicDataExecutor<T> {
      */
     protected NamedParameterJdbcTemplate getNamedJdbcTemplate() {
         return namedJdbcTemplate;
+    }
+
+    /**
+     * @return 返回 jdbcTemplate
+     */
+    protected JdbcTemplate getJdbcTemplate() {
+        return jdbcTemplate;
     }
 }

@@ -15,6 +15,8 @@ import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.MappedTypes;
 
+import com.tx.core.util.JdbcUtils;
+
 /**
  * <功能简述>
  * <功能详细描述>
@@ -24,7 +26,7 @@ import org.apache.ibatis.type.MappedTypes;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-@MappedTypes(value = { Byte.class, Character.class })
+@MappedTypes(value = { Byte.class})
 public class NullAbleByteTypeHandler extends BaseTypeHandler<Byte> {
     
     /**
@@ -39,7 +41,7 @@ public class NullAbleByteTypeHandler extends BaseTypeHandler<Byte> {
             JdbcType jdbcType) throws SQLException {
         if (parameter == null
                 && (jdbcType == null || JdbcType.OTHER == jdbcType)) {
-            ps.setNull(i, JdbcType.CHAR.TYPE_CODE);
+            ps.setNull(i, JdbcUtils.getSqlTypeByJavaType(Byte.class));
         } else {
             super.setParameter(ps, i, parameter, jdbcType);
         }

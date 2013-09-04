@@ -15,6 +15,8 @@ import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.MappedTypes;
 
+import com.tx.core.util.JdbcUtils;
+
 /**
  * <功能简述>
  * <功能详细描述>
@@ -39,7 +41,7 @@ public class NullAbleDoubleTypeHandler extends BaseTypeHandler<Double> {
             JdbcType jdbcType) throws SQLException {
         if (parameter == null
                 && (jdbcType == null || JdbcType.OTHER == jdbcType)) {
-            ps.setNull(i, JdbcType.DOUBLE.TYPE_CODE);
+            ps.setNull(i, JdbcUtils.getSqlTypeByJavaType(Double.class));
         } else {
             super.setParameter(ps, i, parameter, jdbcType);
         }
