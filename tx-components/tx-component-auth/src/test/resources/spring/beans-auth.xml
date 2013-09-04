@@ -7,11 +7,36 @@
 		http://www.springframework.org/schema/beans 
 		http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
 
+	<!-- 扫描权限模块中需要装载的bean -->
 	<context:component-scan base-package="com.tx.component.auth">
-		<context:exclude-filter type="annotation"
-			expression="org.springframework.stereotype.Controller" />
 	</context:component-scan>
+	
+	<bean id="authItemCache" 
+		class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+		<property name="cacheManager">
+			<ref bean="identicalEhcacheManager"/>
+		</property>
+	</bean>	
 
 	<bean id="authContext" class="com.tx.component.auth.context.AuthContextFactory">
+		<property name="cache">
+			<ref bean="authItemCache"/>
+		</property>
+		<property name="defaultAuthChecker">
+			<bean class="com.tx.component.auth.context.authchecker.impl.DefaultAuthChecker"></bean>
+		</property>
+		<property name="dataSource">
+			<ref bean="dataSource"/>
+		</property>
+		<property name="dataSourceType" value="H2"/>
+		<property name="systemId" value="testauth"/>
+		<property name="tableSuffix" value="_test"/>
+		<property name="databaseSchemaUpdate" value="true"></property>
+	</bean>
+	
+	<bean class="com.tx.component.auth.context.loader.impl.XmlAuthLoader"></bean>
+	<bean class="com.tx.component.auth.context.loader.impl.DBAuthLoader">
+		<property name="systemId" value="testauth"></property>
+		<property name="tableSuffix" value="_test"></property>
 	</bean>
 </beans>

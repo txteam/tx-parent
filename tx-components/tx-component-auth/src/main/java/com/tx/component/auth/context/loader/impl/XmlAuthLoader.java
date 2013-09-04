@@ -28,7 +28,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.Resource;
-import org.springframework.stereotype.Component;
 
 import com.tx.component.auth.context.AuthTypeItemContext;
 import com.tx.component.auth.context.loader.AuthLoader;
@@ -46,7 +45,6 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-@Component("xmlAuthLoader")
 public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
     
     /** 日志记录器 */
@@ -62,10 +60,10 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
     private final static String AUTH_ELEMENT_ATTR_AUTHTYPE = "authType";
     
     /** 权限节点isValid */
-    private final static String AUTH_ELEMENT_ATTR_ISVALID = "isValid";
+    private final static String AUTH_ELEMENT_ATTR_ISVALID = "valid";
     
     /** 节点isEditAble */
-    private final static String AUTH_ELEMENT_ATTR_ISEDITABLE = "isEditAble";
+    private final static String AUTH_ELEMENT_ATTR_ISEDITABLE = "editAble";
     
     /** 节点id */
     private final static String ELEMENT_ATTR_ID = "key";
@@ -77,10 +75,10 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
     private final static String ELEMENT_ATTR_DESCRIPTION = "description";
     
     /** 节点isViewAble */
-    private final static String ELEMENT_ATTR_ISVIEWABLE = "isViewAble";
+    private final static String ELEMENT_ATTR_ISVIEWABLE = "viewAble";
     
     /** 节点isConfigAble */
-    private final static String ELEMENT_ATTR_ISCONFIGABLE = "isConfigAble";
+    private final static String ELEMENT_ATTR_ISCONFIGABLE = "configAble";
     
     private ApplicationContext applicationContext;
     

@@ -14,10 +14,10 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.apache.cxf.common.util.StringUtils;
 import org.slf4j.helpers.MessageFormatter;
 
 import com.tx.component.auth.AuthConstant;
+import com.tx.core.util.ObjectUtils;
 
 /**
  * 权限引用项
@@ -54,11 +54,8 @@ public class AuthItemRefImpl implements AuthItemRef {
         this.authRefType = AuthConstant.AUTHREFTYPE_OPERATOR;
     }
     
-    /** 
-     * 所属系统id:不能为空 
-     * 具体的一个权限的引用必然属于一个系统<br/> 
-     */
-    private String systemId;
+    /** 权限引用唯一键盘，全局唯一 */
+    private String id;
     
     /** 权限引用类型 */
     private String authRefType;
@@ -89,22 +86,8 @@ public class AuthItemRefImpl implements AuthItemRef {
      * 是否支持根据权限引用的引用的结束时间<br/>
      * 判断权限是否需要根据结束时间验证其有效性
      */
-    private boolean isValidDependEndDate = false;
-
-    /**
-     * @return 返回 systemId
-     */
-    public String getSystemId() {
-        return systemId;
-    }
-
-    /**
-     * @param 对systemId进行赋值
-     */
-    public void setSystemId(String systemId) {
-        this.systemId = systemId;
-    }
-
+    private boolean validDependEndDate = false;
+    
     /**
      * @return
      */
@@ -121,22 +104,34 @@ public class AuthItemRefImpl implements AuthItemRef {
         return this.refId;
     }
     
-    
-    
+    /**
+     * @return 返回 id
+     */
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * @param 对id进行赋值
+     */
+    public void setId(String id) {
+        this.id = id;
+    }
+
     /**
      * @return 返回 authItemImpl
      */
     public AuthItemImpl getAuthItemImpl() {
         return authItemImpl;
     }
-
+    
     /**
      * @param 对authItemImpl进行赋值
      */
     public void setAuthItemImpl(AuthItemImpl authItemImpl) {
         this.authItemImpl = authItemImpl;
     }
-
+    
     /**
      * @return
      */
@@ -145,14 +140,23 @@ public class AuthItemRefImpl implements AuthItemRef {
         return this.authItemImpl;
     }
     
-    public void setAuthItem(AuthItem authItem){
-        if(authItem instanceof AuthItemImpl){
-            this.authItemImpl = (AuthItemImpl)authItem;
-        }else{
+    /**
+      * 设置权限项
+      *<功能详细描述>
+      * @param authItem [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public void setAuthItem(AuthItem authItem) {
+        if (authItem instanceof AuthItemImpl) {
+            this.authItemImpl = (AuthItemImpl) authItem;
+        } else {
             this.authItemImpl = new AuthItemImpl(authItem);
         }
     }
-
+    
     /**
      * @return
      */
@@ -213,17 +217,17 @@ public class AuthItemRefImpl implements AuthItemRef {
     }
     
     /**
-     * @return 返回 isValidDependEndDate
+     * @return 返回 validDependEndDate
      */
     public boolean isValidDependEndDate() {
-        return isValidDependEndDate;
+        return validDependEndDate;
     }
     
     /**
-     * @param 对isValidDependEndDate进行赋值
+     * @param 对validDependEndDate进行赋值
      */
-    public void setValidDependEndDate(boolean isValidDependEndDate) {
-        this.isValidDependEndDate = isValidDependEndDate;
+    public void setValidDependEndDate(boolean validDependEndDate) {
+        this.validDependEndDate = validDependEndDate;
     }
     
     /**
@@ -232,21 +236,13 @@ public class AuthItemRefImpl implements AuthItemRef {
      */
     @Override
     public boolean equals(Object obj) {
-        if (obj == null || obj instanceof AuthItemRef) {
-            return false;
-        } else {
-            AuthItemRef otherAuthItemRef = (AuthItemRef) obj;
-            if (this.authItemImpl == null || StringUtils.isEmpty(this.authRefType)
-                    || StringUtils.isEmpty(this.refId)
-                    || StringUtils.isEmpty(this.authItemImpl.getAuthType())
-                    || StringUtils.isEmpty(this.authItemImpl.getId())) {
-                return this == otherAuthItemRef;
-            } else {
-                return this.authItemImpl.equals(otherAuthItemRef.getAuthItem())
-                        && this.authRefType.equals(otherAuthItemRef.getAuthRefType())
-                        && this.refId.equals(otherAuthItemRef.getRefId());
-            }
-        }
+        boolean flag = ObjectUtils.equals(this,
+                obj,
+                "id",
+                "authItem",
+                "authRefType",
+                "refId");
+        return flag;
     }
     
     /**
@@ -254,15 +250,13 @@ public class AuthItemRefImpl implements AuthItemRef {
      */
     @Override
     public int hashCode() {
-        if (this.authItemImpl == null || StringUtils.isEmpty(this.authRefType)
-                || StringUtils.isEmpty(this.refId)
-                || StringUtils.isEmpty(this.authItemImpl.getAuthType())
-                || StringUtils.isEmpty(this.authItemImpl.getId())) {
-            return super.hashCode();
-        } else {
-            return this.refId.hashCode() + this.authRefType.hashCode()
-                    + this.authItemImpl.hashCode();
-        }
+        int hashCode = ObjectUtils.generateHashCode(super.hashCode(),
+                this,
+                "id",
+                "authItem",
+                "authRefType",
+                "refId");
+        return hashCode;
     }
     
     /**

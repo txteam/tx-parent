@@ -35,7 +35,8 @@ public interface AuthItemRefImplDao {
       * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public void insertAuthItemRefImpl(AuthItemRefImpl condition);
+    public void insertAuthItemRefImpl(AuthItemRefImpl condition,
+            String tableSuffix);
     
     /**
       * 批量插入权限项引用
@@ -46,7 +47,8 @@ public interface AuthItemRefImplDao {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public void batchInsertAuthItemRefImpl(List<AuthItemRefImpl> condition);
+    public void batchInsertAuthItemRefImpl(List<AuthItemRefImpl> condition,
+            String tableSuffix);
     
     /**
       * 删除AuthItemRefImpl对象
@@ -60,7 +62,8 @@ public interface AuthItemRefImplDao {
       * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public int deleteAuthItemRefImpl(AuthItemRefImpl condition);
+    public int deleteAuthItemRefImpl(AuthItemRefImpl condition,
+            String tableSuffix);
     
     /**
       * 批量删除权限项目引用
@@ -71,7 +74,8 @@ public interface AuthItemRefImplDao {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public void batchDeleteAuthItemRefImpl(List<AuthItemRefImpl> authItemRefImplList);
+    public void batchDeleteAuthItemRefImpl(
+            List<AuthItemRefImpl> authItemRefImplList, String tableSuffix);
     
     /**
       * 查询AuthItemRefImpl实体
@@ -85,7 +89,8 @@ public interface AuthItemRefImplDao {
       * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public AuthItemRefImpl findAuthItemRefImpl(AuthItemRefImpl condition);
+    public AuthItemRefImpl findAuthItemRefImpl(AuthItemRefImpl condition,
+            String tableSuffix);
     
     /**
       * 根据条件查询AuthItemRefImpl列表
@@ -99,7 +104,8 @@ public interface AuthItemRefImplDao {
       * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public List<AuthItemRefImpl> queryAuthItemRefImplList(Map<String, Object> params);
+    public List<AuthItemRefImpl> queryAuthItemRefImplList(
+            Map<String, Object> params, String tableSuffix);
     
     /**
       * 根据指定查询条件以及排序列查询AuthItemRefImpl列表
@@ -114,8 +120,9 @@ public interface AuthItemRefImplDao {
       * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public List<AuthItemRefImpl> queryAuthItemRefImplList(Map<String, Object> params,
-            List<Order> orderList);
+    public List<AuthItemRefImpl> queryAuthItemRefImplList(
+            Map<String, Object> params, List<Order> orderList,
+            String tableSuffix);
     
     /**
       * 根据条件查询AuthItemRefImpl列表总数
@@ -128,7 +135,8 @@ public interface AuthItemRefImplDao {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public int countAuthItemRefImpl(Map<String, Object> params);
+    public int countAuthItemRefImpl(Map<String, Object> params,
+            String tableSuffix);
     
     /**
       * 分页查询AuthItemRefImpl列表
@@ -144,8 +152,9 @@ public interface AuthItemRefImplDao {
       * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public PagedList<AuthItemRefImpl> queryAuthItemRefImplPagedList(Map<String, Object> params,
-            int pageIndex, int pageSize);
+    public PagedList<AuthItemRefImpl> queryAuthItemRefImplPagedList(
+            Map<String, Object> params, int pageIndex, int pageSize,
+            String tableSuffix);
     
     /**
       * 分页查询AuthItemRefImpl列表，传入排序字段
@@ -162,9 +171,9 @@ public interface AuthItemRefImplDao {
       * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public PagedList<AuthItemRefImpl> queryAuthItemRefImplPagedList(Map<String, Object> params,
-            int pageIndex, int pageSize, List<Order> orderList);
-    
+    public PagedList<AuthItemRefImpl> queryAuthItemRefImplPagedList(
+            Map<String, Object> params, int pageIndex, int pageSize,
+            List<Order> orderList, String tableSuffix);
     
     /**
       * 更新AuthItemRefImpl实体，
@@ -178,16 +187,18 @@ public interface AuthItemRefImplDao {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public int updateAuthItemRefImpl(Map<String, Object> updateRowMap);
+    public int updateAuthItemRefImpl(Map<String, Object> updateRowMap,
+            String tableSuffix);
     
-    /**
-      * 批量更新权限项引用
-      * <功能详细描述>
-      * @param updateRowMapList [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    public void batchUpdateAuthItemRefImpl(List<Map<String, Object>> updateRowMapList);
+    //    /**
+    //      * 批量更新权限项引用
+    //      * <功能详细描述>
+    //      * @param updateRowMapList [参数说明]
+    //      * 
+    //      * @return void [返回类型说明]
+    //      * @exception throws [异常类型] [异常说明]
+    //      * @see [类、类#方法、类#成员]
+    //     */
+    //    public void batchUpdateAuthItemRefImpl(
+    //            List<Map<String, Object>> updateRowMapList, String tableSuffix);
 }
