@@ -20,7 +20,11 @@ import java.util.Set;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.ibatis.jdbc.SqlBuilder;
 import org.apache.ibatis.reflection.MetaObject;
+import org.apache.ibatis.type.JdbcType;
 import org.hibernate.dialect.Dialect;
+import org.hibernate.dialect.H2Dialect;
+import org.hibernate.dialect.MySQL5InnoDBDialect;
+import org.hibernate.dialect.Oracle9iDialect;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowCallbackHandler;
 
@@ -60,7 +64,7 @@ public class SimpleSqlMapMapper {
     private final LinkedHashMap<String, String> queryConditionProperty2SqlMapping = new LinkedHashMap<String, String>();
     
     /** 可查询的属性名 */
-    private final LinkedHashMap<String, Class<?>> queryConditionProperty2TypeMapping = new LinkedHashMap<String, Class<?>>();
+    private final LinkedHashMap<String, JdbcType> queryConditionProperty2TypeMapping = new LinkedHashMap<String, JdbcType>();
     
     /** 与字段无关的其他条件,直接添加到查询语句中，无需进行setter */
     private final Set<String> otherCondition = new HashSet<String>();
@@ -130,14 +134,14 @@ public class SimpleSqlMapMapper {
       * @see [类、类#方法、类#成员]
      */
     public void addQueryConditionProperty2SqlMapping(String propertyName,
-            String conditionExpression, Class<?> type) {
+            String conditionExpression, JdbcType jdbcType) {
         AssertUtils.notEmpty(propertyName, "propertyName is empty.");
         AssertUtils.notEmpty(conditionExpression,
                 "conditionExpression is empty.");
         
         this.queryConditionProperty2SqlMapping.put(propertyName,
                 conditionExpression);
-        this.queryConditionProperty2TypeMapping.put(propertyName, type);
+        this.queryConditionProperty2TypeMapping.put(propertyName, jdbcType);
     }
     
     /**
@@ -362,7 +366,7 @@ public class SimpleSqlMapMapper {
             }
             SqlBuilder.WHERE(entryTemp.getValue());
         }
-        for (String conditionExpressionTemp : otherCondition){
+        for (String conditionExpressionTemp : otherCondition) {
             SqlBuilder.WHERE(conditionExpressionTemp);
         }
         String querySql = SqlBuilder.SQL();
@@ -395,7 +399,7 @@ public class SimpleSqlMapMapper {
             }
             SqlBuilder.WHERE(entryTemp.getValue());
         }
-        for (String conditionExpressionTemp : otherCondition){
+        for (String conditionExpressionTemp : otherCondition) {
             SqlBuilder.WHERE(conditionExpressionTemp);
         }
         String querySql = SqlBuilder.SQL();
@@ -427,11 +431,11 @@ public class SimpleSqlMapMapper {
                     if (ObjectUtils.isEmpty(valueObj)) {
                         continue;
                     }
-                    Class<?> setterType = queryConditionProperty2TypeMapping.get(queryPropertyName);
+                    JdbcType jdbcType = queryConditionProperty2TypeMapping.get(queryPropertyName);
                     JdbcUtils.setPreparedStatementValueForSimpleType(ps,
                             i,
                             valueObj,
-                            setterType);
+                            jdbcType);
                     i++;
                 }
                 Class<?> setterType = property2JavaTypeMapping.get(finalPkName);
@@ -466,7 +470,7 @@ public class SimpleSqlMapMapper {
                 || (!isSupportsLimit && !isSupportsLimitOffset)) {
             return querySql;
         } else {
-        //如果支持
+            //如果支持
             String limitSql = dialect.getLimitString(querySql, offset, limit);
             return limitSql;
         }
@@ -524,11 +528,11 @@ public class SimpleSqlMapMapper {
                     if (ObjectUtils.isEmpty(valueObj)) {
                         continue;
                     }
-                    Class<?> setterType = queryConditionProperty2TypeMapping.get(queryPropertyName);
+                    JdbcType jdbcType = queryConditionProperty2TypeMapping.get(queryPropertyName);
                     JdbcUtils.setPreparedStatementValueForSimpleType(ps,
                             i++,
                             valueObj,
-                            setterType);
+                            jdbcType);
                 }
                 if (!isBindOnFirst) {
                     if (bindLimitParametersInReverseOrder) {
@@ -603,54 +607,59 @@ public class SimpleSqlMapMapper {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-   public PreparedStatementSetter getUpdateSetter(Object obj) {
-       AssertUtils.notEmpty(obj, "update obj must not empty.");
-       
-       //获取当前对象中有哪些属性
-       final MetaObject metaObject = MetaObject.forObject(obj);
-       String[] getterNames = metaObject.getGetterNames();
-       final Set<String> keySet = new HashSet<String>();
-       for (String keyTemp : getterNames) {
-           keySet.add(keyTemp);
-       }
-       AssertUtils.isTrue(keySet.contains(this.pkName),
-               "obj:{} must contains pk{}.",
-               new Object[] { obj, this.pkName });
-       
-       PreparedStatementSetter res = new PreparedStatementSetter() {
-           @Override
-           public void setValues(PreparedStatement ps) throws SQLException {
-               int i = 1;
-               for (String propertyNameTemp : modifyAblePropertyNames) {
-                   Object valueObj = metaObject.getValue(propertyNameTemp);
-                   if (!keySet.contains(propertyNameTemp)) {
-                       continue;
-                   }
-                   Class<?> setterType = queryConditionProperty2TypeMapping.get(propertyNameTemp);
-                   JdbcUtils.setPreparedStatementValueForSimpleType(ps,
-                           i,
-                           valueObj,
-                           setterType);
-                   i++;
-               }
-           }
-       };
-       return res;
-   }
+    public PreparedStatementSetter getUpdateSetter(Object obj) {
+        AssertUtils.notEmpty(obj, "update obj must not empty.");
+        
+        //获取当前对象中有哪些属性
+        final MetaObject metaObject = MetaObject.forObject(obj);
+        String[] getterNames = metaObject.getGetterNames();
+        final Set<String> keySet = new HashSet<String>();
+        for (String keyTemp : getterNames) {
+            keySet.add(keyTemp);
+        }
+        AssertUtils.isTrue(keySet.contains(this.pkName),
+                "obj:{} must contains pk{}.",
+                new Object[] { obj, this.pkName });
+        
+        final String finalPkName = this.pkName;
+        PreparedStatementSetter res = new PreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement ps) throws SQLException {
+                int i = 1;
+                for (String propertyNameTemp : modifyAblePropertyNames) {
+                    Object valueObj = metaObject.getValue(propertyNameTemp);
+                    if (!keySet.contains(propertyNameTemp)) {
+                        continue;
+                    }
+                    Class<?> setterType = property2JavaTypeMapping.get(propertyNameTemp);
+                    JdbcUtils.setPreparedStatementValueForSimpleType(ps,
+                            i++,
+                            valueObj,
+                            setterType);
+                }
+                Class<?> setterType = property2JavaTypeMapping.get(finalPkName);
+                JdbcUtils.setPreparedStatementValueForSimpleType(ps,
+                        1,
+                        metaObject.getValue(finalPkName),
+                        setterType);
+            }
+        };
+        return res;
+    }
     
     public static void main(String[] args) {
         SimpleSqlMapMapper simpleSqlMapMapper = new SimpleSqlMapMapper("id",
                 "t_test");
-        simpleSqlMapMapper.addProperty2columnMapping("id", "idcol", String.class);
+        simpleSqlMapMapper.addProperty2columnMapping("id",
+                "idcol",
+                String.class);
         simpleSqlMapMapper.addProperty2columnMapping("aaa",
                 "aCol",
                 String.class);
         simpleSqlMapMapper.addProperty2columnMapping("bbb",
                 "bCol",
                 String.class);
-        simpleSqlMapMapper.addProperty2columnMapping("ccc",
-                "cCol",
-                Date.class);
+        simpleSqlMapMapper.addProperty2columnMapping("ccc", "cCol", Date.class);
         //simpleSqlMapMapper.addQueryConditionProperty2SqlMapping("", conditionExpression)
         //simpleSqlMapMapper.addq
         
@@ -658,9 +667,15 @@ public class SimpleSqlMapMapper {
         System.out.println(simpleSqlMapMapper.deleteSql());
         System.out.println(simpleSqlMapMapper.findSql());
         
-        simpleSqlMapMapper.addQueryConditionProperty2SqlMapping("aaa", "AAA = ?", String.class);
-        simpleSqlMapMapper.addQueryConditionProperty2SqlMapping("minCCC", "CCC > ?", String.class);
-        simpleSqlMapMapper.addQueryConditionProperty2SqlMapping("maxCCC", "CCC < ?", String.class);
+        simpleSqlMapMapper.addQueryConditionProperty2SqlMapping("aaa",
+                "AAA = ?",
+                JdbcType.VARCHAR);
+        simpleSqlMapMapper.addQueryConditionProperty2SqlMapping("minCCC",
+                "CCC > ?",
+                JdbcType.TIMESTAMP);
+        simpleSqlMapMapper.addQueryConditionProperty2SqlMapping("maxCCC",
+                "CCC < ?",
+                JdbcType.TIMESTAMP);
         
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("aaa", "111");
@@ -676,5 +691,30 @@ public class SimpleSqlMapMapper {
         params2.put("aaa", "111");
         params2.put("id", "111");
         System.out.println(simpleSqlMapMapper.updateSql(params2));
+        
+        System.out.println(simpleSqlMapMapper.queryPagedSql(new Oracle9iDialect(),
+                params,
+                1,
+                10));
+        System.out.println(simpleSqlMapMapper.queryPagedSql(new Oracle9iDialect(),
+                params,
+                2,
+                10));
+        System.out.println(simpleSqlMapMapper.queryPagedSql(new MySQL5InnoDBDialect(),
+                params,
+                1,
+                10));
+        System.out.println(simpleSqlMapMapper.queryPagedSql(new MySQL5InnoDBDialect(),
+                params,
+                2,
+                10));
+        System.out.println(simpleSqlMapMapper.queryPagedSql(new H2Dialect(),
+                params,
+                1,
+                10));
+        System.out.println(simpleSqlMapMapper.queryPagedSql(new H2Dialect(),
+                params,
+                2,
+                10));
     }
 }

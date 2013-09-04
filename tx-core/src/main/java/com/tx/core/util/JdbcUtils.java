@@ -91,8 +91,8 @@ public class JdbcUtils {
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public static void setPreparedStatementValueForSimpleType(
-            PreparedStatement ps, int parameterIndex, Object value, Class<?> type)
-            throws SQLException {
+            PreparedStatement ps, int parameterIndex, Object value,
+            Class<?> type) throws SQLException {
         AssertUtils.isTrue(SIMPLE_TYPE_2_TYPES_MAP.containsKey(type),
                 "type:{} is not simple type",
                 new Object[] { type });
@@ -112,6 +112,35 @@ public class JdbcUtils {
     }
     
     /**
+     * 为简单属性设值<br/>
+     *<功能详细描述>
+     * @param ps
+     * @param parameterIndex
+     * @param value
+     * @param type
+     * @throws SQLException [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public static void setPreparedStatementValueForSimpleType(
+            PreparedStatement ps, int parameterIndex, Object value,
+            JdbcType jdbcType) throws SQLException {
+        if (value == null) {
+            ps.setNull(parameterIndex, jdbcType.TYPE_CODE);
+            return;
+        }
+        
+        TypeHandler typeHandler = typeHandlerRegistry.getTypeHandler(jdbcType);
+        typeHandler.setParameter(ps,
+                parameterIndex,
+                value,
+                jdbcType);
+    }
+    
+    /**
       * 获取值<br/> 
       *<功能详细描述>
       * @param rs
@@ -128,8 +157,7 @@ public class JdbcUtils {
     public static Object getResultSetValueForSimpleType(ResultSet rs,
             String columnName, Class<?> type) throws SQLException {
         TypeHandler typeHandler = typeHandlerRegistry.getTypeHandler(type);
-        Object res = typeHandler.getResult(rs,
-                columnName);
+        Object res = typeHandler.getResult(rs, columnName);
         return res;
     }
     

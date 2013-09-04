@@ -6,6 +6,8 @@
  */
 package com.tx.core.dbutils;
 
+import java.util.WeakHashMap;
+
 
  /**
   * SimpleSqlMapMapper构建工厂
@@ -18,5 +20,7 @@ package com.tx.core.dbutils;
   */
 public class SimpleSqlMapMapperFactory {
     
-    public 
+    /** 弱引用映射 */
+    private WeakHashMap<Class<?>, SimpleSqlMapMapper> mapping = new WeakHashMap<Class<?>, SimpleSqlMapMapper>();
+    
 }

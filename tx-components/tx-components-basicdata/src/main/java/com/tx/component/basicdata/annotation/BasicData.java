@@ -6,8 +6,14 @@
  */
 package com.tx.component.basicdata.annotation;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.util.List;
+
 import com.tx.component.basicdata.executor.BasicDataExecutor;
-import com.tx.component.basicdata.executor.DefaultBasicDataExecutor;
+import com.tx.component.basicdata.model.QueryCondition;
 
 /**
  * 基础数据模型<br/>
@@ -18,6 +24,8 @@ import com.tx.component.basicdata.executor.DefaultBasicDataExecutor;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.TYPE})
 public @interface BasicData {
     
     /**
@@ -63,7 +71,7 @@ public @interface BasicData {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public String[] queryCondition() default {};
+    public String[] conditions() default {};
     
     /**
       * 基础数据的默认执行器类型<br/>
@@ -75,5 +83,5 @@ public @interface BasicData {
       * @see [类、类#方法、类#成员]
      */
     @SuppressWarnings("rawtypes")
-    public Class<? extends BasicDataExecutor> executor() default DefaultBasicDataExecutor.class;
+    public Class<? extends BasicDataExecutor> executor();
 }
