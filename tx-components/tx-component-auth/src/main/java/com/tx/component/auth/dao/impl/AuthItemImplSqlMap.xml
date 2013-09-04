@@ -11,24 +11,21 @@
 	
 	<!-- auto generate default find -->
 	<select id="findAuthItemImpl" 
-		parameterType="com.tx.component.auth.model.AuthItemImpl"
+		parameterType="java.util.Map"
 		resultMap="authItemImplMap">
 		SELECT 
 				TAII.ID,
 				TAII.PARENTID,
+				TAII.SYSTEMID,
 				TAII.DESCRIPTION,
 				TAII.NAME,
-				TAII.ISVALID,
-				TAII.ISEDITABLE,
-				TAII.ISVIEWABLE,
+				TAII.VALID,
+				TAII.EDITABLE,
+				TAII.VIEWABLE,
 				TAII.AUTHTYPE
-		  FROM T_AUTH_AUTHITEM TAII
-		 WHERE
-		<trim prefixOverrides="AND | OR">
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
-	            AND TAII.ID = #{id}
-	        </if>
-		</trim>
+		  FROM AUTH_AUTHITEM${tableSuffix} TAII
+		 WHERE TAII.ID = #{authItem.id}
+		   AND TAII.ID = #{authItem.systemId}
 	</select>
 	
 	<!-- auto generate default query -->
@@ -38,28 +35,32 @@
 		SELECT 
 				TAII.ID,
 				TAII.PARENTID,
+				TAII.SYSTEMID,
 				TAII.DESCRIPTION,
 				TAII.NAME,
-				TAII.ISVALID,
-				TAII.ISEDITABLE,
-				TAII.ISVIEWABLE,
+				TAII.VALID,
+				TAII.EDITABLE,
+				TAII.VIEWABLE,
 				TAII.AUTHTYPE
-		  FROM T_AUTH_AUTHITEM TAII
+		  FROM AUTH_AUTHITEM${tableSuffix} TAII
 		<trim prefix="WHERE" prefixOverrides="AND | OR">
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
 	            AND TAII.ID = #{id,javaType=java.lang.String}
 	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(systemId)">  
+	            AND TAII.SYSTEMID = #{systemId,javaType=java.lang.String}
+	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(isValid)">  
-	            AND TAII.ISVALID = #{isValid,javaType=boolean}
+	            AND TAII.VALID = #{valid,javaType=boolean}
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(parentId)">  
 	            AND TAII.PARENTID = #{parentId,javaType=java.lang.String}
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(isEditAble)">  
-	            AND TAII.ISEDITABLE = #{isEditAble,javaType=boolean}
+	            AND TAII.EDITABLE = #{editAble,javaType=boolean}
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(isViewAble)">  
-	            AND TAII.ISVIEWABLE = #{isViewAble,javaType=boolean}
+	            AND TAII.VIEWABLE = #{viewAble,javaType=boolean}
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authType)">  
 	            AND TAII.AUTHTYPE = #{authType,javaType=java.lang.String}
@@ -80,10 +81,13 @@
 		parameterType="java.util.Map"
 		resultType="java.lang.Integer">
 		SELECT COUNT(1)
-		  FROM T_AUTH_AUTHITEM TAII
+		  FROM AUTH_AUTHITEM${tableSuffix} TAII
 		<trim prefix="WHERE" prefixOverrides="AND | OR">
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
 	            AND TAII.ID = #{id,javaType=java.lang.String}
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(systemId)">  
+	            AND TAII.SYSTEMID = #{systemId,javaType=java.lang.String}
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(isValid)">  
 	            AND TAII.ISVALID = #{isValid,javaType=boolean}
@@ -105,44 +109,48 @@
     
     <!-- auto generate default insert -->
     <insert id="insertAuthItemImpl" 
-		parameterType="com.tx.component.auth.model.AuthItemImpl">
-		INSERT INTO T_AUTH_AUTHITEM
+		parameterType="java.util.Map">
+		INSERT INTO AUTH_AUTHITEM${tableSuffix}
 		(
 			ID,
-			ISVALID,
 			PARENTID,
-			DESCRIPTION,
-			ISEDITABLE,
-			ISVIEWABLE,
+			SYSTEMID,
+			VALID,
+			EDITABLE,
+			VIEWABLE,
 			NAME,
+			DESCRIPTION,
 			AUTHTYPE
 		)
 		VALUES
 		(
-			#{id},
-			#{isValid},
-			#{parentId},
-			#{description},
-			#{isEditAble},
-			#{isViewAble},
-			#{name},
-			#{authType}
+			#{authItem.id},
+			#{authItem.parentId},
+			#{authItem.systemId},
+			#{authItem.valid},
+			#{authItem.editAble},
+			#{authItem.viewAble},
+			#{authItem.name},
+			#{authItem.description},
+			#{authItem.authType}
 		)
 	</insert>
 	
 	<!-- auto generate default delete -->
 	<delete id="deleteAuthItemImpl" 
-		parameterType="com.tx.component.auth.model.AuthItemImpl">
-		DELETE FROM T_AUTH_AUTHITEM TAII WHERE TAII.ID = #{id}
+		parameterType="java.util.Map">
+		DELETE FROM AUTH_AUTHITEM${tableSuffix} TAII 
+		 WHERE TAII.ID = #{authItem.id}
+		   AND TAII.ID = #{authItem.systemId}
 	</delete>
 
 	<!-- auto generate default update -->
 	<update id="updateAuthItemImpl"
 	    parameterType="java.util.Map">  
-	    UPDATE t_auth_authitem TAII
+	    UPDATE AUTH_AUTHITEM${tableSuffix} TAII
 	    <trim prefix="SET" suffixOverrides=",">
-			<if test="_parameter.containsKey('isValid')">
-	    		ISVALID = #{isValid,javaType=boolean},
+			<if test="_parameter.containsKey('valid')">
+	    		VALID = #{valid,javaType=boolean},
 	    	</if>	
 			<if test="_parameter.containsKey('parentId')">
 	    		PARENTID = #{parentId,javaType=java.lang.String},
@@ -151,10 +159,10 @@
 	    		DESCRIPTION = #{description,javaType=java.lang.String},
 	    	</if>	
 			<if test="_parameter.containsKey('isEditAble')">
-	    		ISEDITABLE = #{isEditAble,javaType=boolean},
+	    		EDITABLE = #{editAble,javaType=boolean},
 	    	</if>	
 			<if test="_parameter.containsKey('isViewAble')">
-	    		ISVIEWABLE = #{isViewAble,javaType=boolean},
+	    		VIEWABLE = #{viewAble,javaType=boolean},
 	    	</if>	
 			<if test="_parameter.containsKey('name')">
 	    		NAME = #{name,javaType=java.lang.String},
@@ -163,7 +171,8 @@
 	    		AUTHTYPE = #{authType,javaType=java.lang.String},
 	    	</if>	
 	    </trim>
-	    WHERE TAII.ID = #{id} 
+		 WHERE TAII.ID = #{authItem.id}
+		   AND TAII.ID = #{authItem.systemId}
 	</update>  
 
 </mapper>

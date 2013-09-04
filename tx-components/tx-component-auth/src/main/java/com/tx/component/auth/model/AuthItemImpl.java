@@ -73,16 +73,16 @@ public class AuthItemImpl implements AuthItem {
     private List<AuthItem> childs = new ArrayList<AuthItem>();
     
     /** 是否有效，默认为true,权限可停用 */
-    private boolean isValid = true;
+    private boolean valid = true;
     
     /** 是否可配置 */
-    private boolean isConfigAble = true;
+    private boolean configAble = true;
     
     /** 是否可见 */
-    private boolean isViewAble = true;
+    private boolean viewAble = true;
     
     /** 是否可编辑 */
-    private boolean isEditAble = false;
+    private boolean editAble = false;
     
     /** <默认构造函数> */
     public AuthItemImpl() {
@@ -100,6 +100,9 @@ public class AuthItemImpl implements AuthItem {
         if (authItemRowMap.containsKey("parentId")) {
             this.parentId = (String) authItemRowMap.get("parentId");
         }
+        if (authItemRowMap.containsKey("systemId")) {
+            this.systemId = (String) authItemRowMap.get("systemId");
+        }
         if (authItemRowMap.containsKey("name")) {
             this.name = (String) authItemRowMap.get("name");
         }
@@ -109,17 +112,17 @@ public class AuthItemImpl implements AuthItem {
         if (authItemRowMap.containsKey("authType")) {
             this.authType = (String) authItemRowMap.get("authType");
         }
-        if (authItemRowMap.containsKey(isValid)) {
-            this.isValid = (boolean) authItemRowMap.containsKey("isValid");
+        if (authItemRowMap.containsKey(valid)) {
+            this.valid = (boolean) authItemRowMap.containsKey("valid");
         }
-        if (authItemRowMap.containsKey(isConfigAble)) {
-            this.isConfigAble = (boolean) authItemRowMap.containsKey("isConfigAble");
+        if (authItemRowMap.containsKey(configAble)) {
+            this.configAble = (boolean) authItemRowMap.containsKey("configAble");
         }
-        if (authItemRowMap.containsKey(isViewAble)) {
-            this.isViewAble = (boolean) authItemRowMap.containsKey("isViewAble");
+        if (authItemRowMap.containsKey(viewAble)) {
+            this.viewAble = (boolean) authItemRowMap.containsKey("viewAble");
         }
-        if (authItemRowMap.containsKey(isEditAble)) {
-            this.isEditAble = (boolean) authItemRowMap.containsKey("isEditAble");
+        if (authItemRowMap.containsKey(editAble)) {
+            this.editAble = (boolean) authItemRowMap.containsKey("editAble");
         }
     }
     
@@ -130,60 +133,65 @@ public class AuthItemImpl implements AuthItem {
         super();
         this.id = otherAuthItem.getId();
         this.parentId = otherAuthItem.getParentId();
+        this.systemId = otherAuthItem.getSystemId();
         this.name = otherAuthItem.getName();
         this.description = otherAuthItem.getDescription();
         this.authType = otherAuthItem.getAuthType();
-        this.isValid = otherAuthItem.isValid();
-        this.isConfigAble = otherAuthItem.isConfigAble();
-        this.isViewAble = otherAuthItem.isViewAble();
-        this.isEditAble = otherAuthItem.isEditAble();
+        this.valid = otherAuthItem.isValid();
+        this.configAble = otherAuthItem.isConfigAble();
+        this.viewAble = otherAuthItem.isViewAble();
+        this.editAble = otherAuthItem.isEditAble();
     }
     
     /** <默认构造函数> */
-    public AuthItemImpl(String id) {
+    public AuthItemImpl(String id, String sytemId) {
         super();
         this.id = id;
+        this.systemId = sytemId;
     }
     
     /** <默认构造函数> */
-    public AuthItemImpl(String id, String authType) {
+    public AuthItemImpl(String id, String systemId, String authType) {
         super();
         this.id = id;
+        this.systemId = systemId;
         this.authType = authType;
     }
     
-    /** <默认构造函数> */
-    public AuthItemImpl(String id, String parentId, String name,
-            String description, String authType, boolean isValid,
-            boolean isConfigAble, boolean isViewAble) {
-        super();
-        this.id = id;
-        this.parentId = parentId;
-        this.name = name;
-        this.description = description;
-        this.authType = authType;
-        this.isValid = isValid;
-        this.isConfigAble = isConfigAble;
-        this.isViewAble = isViewAble;
-    }
-    
-    /** <默认构造函数> */
-    public AuthItemImpl(String id, String parentId, String name,
-            String description, String authType, List<AuthItem> childs,
-            boolean isValid, boolean isConfigAble, boolean isViewAble,
-            boolean isEditAble) {
-        super();
-        this.id = id;
-        this.parentId = parentId;
-        this.name = name;
-        this.description = description;
-        this.authType = authType;
-        this.childs = childs;
-        this.isValid = isValid;
-        this.isConfigAble = isConfigAble;
-        this.isViewAble = isViewAble;
-        this.isEditAble = isEditAble;
-    }
+//    /** <默认构造函数> */
+//    public AuthItemImpl(String id, String systemId, String parentId,
+//            String name, String description, String authType, boolean valid,
+//            boolean configAble, boolean viewAble) {
+//        super();
+//        this.id = id;
+//        this.parentId = parentId;
+//        this.systemId = systemId;
+//        this.name = name;
+//        this.description = description;
+//        this.authType = authType;
+//        this.valid = valid;
+//        this.configAble = configAble;
+//        this.viewAble = viewAble;
+//    }
+//    
+//    /** <默认构造函数> */
+//    public AuthItemImpl(String id, String systemId, String parentId,
+//            String name, String description, String authType,
+//            List<AuthItem> childs, boolean valid, boolean configAble,
+//            boolean viewAble, boolean editAble) {
+//        super();
+//        this.id = id;
+//        this.systemId = systemId;
+//        this.parentId = parentId;
+//        this.name = name;
+//        this.description = description;
+//        this.authType = authType;
+//        this.childs = childs;
+//        this.valid = valid;
+//        this.configAble = configAble;
+//        this.viewAble = viewAble;
+//        this.editAble = editAble;
+//    }
     
     /**
      * @return
@@ -214,14 +222,14 @@ public class AuthItemImpl implements AuthItem {
     public String getSystemId() {
         return systemId;
     }
-
+    
     /**
      * @param 对systemId进行赋值
      */
     public void setSystemId(String systemId) {
         this.systemId = systemId;
     }
-
+    
     /**
      * @return
      */
@@ -294,60 +302,59 @@ public class AuthItemImpl implements AuthItem {
     }
     
     /**
-     * @return 返回 isViewAble
+     * @return 返回 valid
      */
-    public boolean isViewAble() {
-        return isViewAble;
-    }
-    
-    /**
-     * @param 对isViewAble进行赋值
-     */
-    public void setViewAble(boolean isViewAble) {
-        this.isViewAble = isViewAble;
-    }
-    
-    /**
-     * @return 返回 isEditAble
-     */
-    public boolean isEditAble() {
-        return isEditAble;
-    }
-    
-    /**
-     * @param 对isEditAble进行赋值
-     */
-    public void setEditAble(boolean isEditAble) {
-        this.isEditAble = isEditAble;
-    }
-    
-    /**
-     * @return
-     */
-    @Override
     public boolean isValid() {
-        return isValid;
+        return valid;
     }
     
     /**
-     * @param isValid
+     * @param 对valid进行赋值
      */
-    public void setValid(boolean isValid) {
-        this.isValid = isValid;
+    public void setValid(boolean valid) {
+        this.valid = valid;
     }
     
     /**
-     * @return 返回 isConfigAble
+     * @return 返回 configAble
      */
     public boolean isConfigAble() {
-        return isConfigAble;
+        return configAble;
     }
     
     /**
-     * @param 对isConfigAble进行赋值
+     * @param 对configAble进行赋值
      */
-    public void setConfigAble(boolean isConfigAble) {
-        this.isConfigAble = isConfigAble;
+    public void setConfigAble(boolean configAble) {
+        this.configAble = configAble;
+    }
+    
+    /**
+     * @return 返回 viewAble
+     */
+    public boolean isViewAble() {
+        return viewAble;
+    }
+    
+    /**
+     * @param 对viewAble进行赋值
+     */
+    public void setViewAble(boolean viewAble) {
+        this.viewAble = viewAble;
+    }
+    
+    /**
+     * @return 返回 editAble
+     */
+    public boolean isEditAble() {
+        return editAble;
+    }
+    
+    /**
+     * @param 对editAble进行赋值
+     */
+    public void setEditAble(boolean editAble) {
+        this.editAble = editAble;
     }
     
     /**

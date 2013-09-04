@@ -6,11 +6,14 @@
  */
 package com.tx.component.auth.dao.impl;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Component;
 
 import com.tx.component.auth.dao.AuthItemRefImplDao;
@@ -38,25 +41,52 @@ public class AuthItemRefImplDaoImpl implements AuthItemRefImplDao {
      * @param condition
      */
     @Override
-    public void insertAuthItemRefImpl(AuthItemRefImpl condition) {
-        this.myBatisDaoSupport.insertUseUUID("authItemRefImpl.insertAuthItemRefImpl", condition, "id");
+    public void insertAuthItemRefImpl(AuthItemRefImpl condition,
+            String tableSuffix) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("authItemRef", condition);
+        params.put("tableSuffix", tableSuffix);
+        
+        this.myBatisDaoSupport.insertUseUUID("authItemRefImpl.insertAuthItemRefImpl",
+                params,
+                "authItemRef.id");
     }
     
     /**
      * @param condition
      */
     @Override
-    public void batchInsertAuthItemRefImpl(List<AuthItemRefImpl> condition) {
-        this.myBatisDaoSupport.batchInsertUseUUID("authItemRefImpl.insertAuthItemRefImpl", condition, "id", true);
+    public void batchInsertAuthItemRefImpl(List<AuthItemRefImpl> condition,
+            String tableSuffix) {
+        if (CollectionUtils.isEmpty(condition)) {
+            return;
+        }
+        List<Map<String, Object>> paramsList = new ArrayList<Map<String, Object>>();
+        for (AuthItemRefImpl authRefTemp : condition) {
+            Map<String, Object> params = new HashMap<String, Object>();
+            params.put("authItemRef", authRefTemp);
+            params.put("tableSuffix", tableSuffix);
+            paramsList.add(params);
+        }
+        this.myBatisDaoSupport.batchInsertUseUUID("authItemRefImpl.insertAuthItemRefImpl",
+                paramsList,
+                "authItemRef.id",
+                true);
     }
-
+    
     /**
      * @param condition
      * @return
      */
     @Override
-    public int deleteAuthItemRefImpl(AuthItemRefImpl condition) {
-        return this.myBatisDaoSupport.delete("authItemRefImpl.deleteAuthItemRefImpl", condition);
+    public int deleteAuthItemRefImpl(AuthItemRefImpl condition,
+            String tableSuffix) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("authItemRef", condition);
+        params.put("tableSuffix", tableSuffix);
+        
+        return this.myBatisDaoSupport.delete("authItemRefImpl.deleteAuthItemRefImpl",
+                params);
     }
     
     /**
@@ -64,17 +94,36 @@ public class AuthItemRefImplDaoImpl implements AuthItemRefImplDao {
      */
     @Override
     public void batchDeleteAuthItemRefImpl(
-            List<AuthItemRefImpl> authItemRefImplList) {
-        this.myBatisDaoSupport.batchDelete("authItemRefImpl.deleteAuthItemRefImpl", authItemRefImplList, true);
+            List<AuthItemRefImpl> authItemRefImplList, String tableSuffix) {
+        if (CollectionUtils.isEmpty(authItemRefImplList)) {
+            return;
+        }
+        List<Map<String, Object>> paramsList = new ArrayList<Map<String, Object>>();
+        for (AuthItemRefImpl authRefTemp : authItemRefImplList) {
+            Map<String, Object> params = new HashMap<String, Object>();
+            params.put("authItemRef", authRefTemp);
+            params.put("tableSuffix", tableSuffix);
+            paramsList.add(params);
+        }
+        
+        this.myBatisDaoSupport.batchDelete("authItemRefImpl.deleteAuthItemRefImpl",
+                paramsList,
+                true);
     }
-
+    
     /**
      * @param condition
      * @return
      */
     @Override
-    public AuthItemRefImpl findAuthItemRefImpl(AuthItemRefImpl condition) {
-        return this.myBatisDaoSupport.<AuthItemRefImpl> find("authItemRefImpl.findAuthItemRefImpl", condition);
+    public AuthItemRefImpl findAuthItemRefImpl(AuthItemRefImpl condition,
+            String tableSuffix) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("authItemRef", condition);
+        params.put("tableSuffix", tableSuffix);
+        
+        return this.myBatisDaoSupport.<AuthItemRefImpl> find("authItemRefImpl.findAuthItemRefImpl",
+                params);
     }
     
     /**
@@ -82,7 +131,12 @@ public class AuthItemRefImplDaoImpl implements AuthItemRefImplDao {
      * @return
      */
     @Override
-    public List<AuthItemRefImpl> queryAuthItemRefImplList(Map<String, Object> params) {
+    public List<AuthItemRefImpl> queryAuthItemRefImplList(
+            Map<String, Object> params, String tableSuffix) {
+        if(params == null){
+            params = new HashMap<String, Object>();
+        }
+        params.put("tableSuffix", tableSuffix);
         return this.myBatisDaoSupport.<AuthItemRefImpl> queryList("authItemRefImpl.queryAuthItemRefImpl",
                 params);
     }
@@ -93,8 +147,13 @@ public class AuthItemRefImplDaoImpl implements AuthItemRefImplDao {
      * @return
      */
     @Override
-    public List<AuthItemRefImpl> queryAuthItemRefImplList(Map<String, Object> params,
-            List<Order> orderList) {
+    public List<AuthItemRefImpl> queryAuthItemRefImplList(
+            Map<String, Object> params, List<Order> orderList,
+            String tableSuffix) {
+        if(params == null){
+            params = new HashMap<String, Object>();
+        }
+        params.put("tableSuffix", tableSuffix);
         return this.myBatisDaoSupport.<AuthItemRefImpl> queryList("authItemRefImpl.queryAuthItemRefImpl",
                 params,
                 orderList);
@@ -105,7 +164,12 @@ public class AuthItemRefImplDaoImpl implements AuthItemRefImplDao {
      * @return
      */
     @Override
-    public int countAuthItemRefImpl(Map<String, Object> params) {
+    public int countAuthItemRefImpl(Map<String, Object> params,
+            String tableSuffix) {
+        if(params == null){
+            params = new HashMap<String, Object>();
+        }
+        params.put("tableSuffix", tableSuffix);
         return this.myBatisDaoSupport.<Integer> find("authItemRefImpl.queryAuthItemRefImplCount",
                 params);
     }
@@ -117,8 +181,13 @@ public class AuthItemRefImplDaoImpl implements AuthItemRefImplDao {
      * @return
      */
     @Override
-    public PagedList<AuthItemRefImpl> queryAuthItemRefImplPagedList(Map<String, Object> params,
-            int pageIndex, int pageSize) {
+    public PagedList<AuthItemRefImpl> queryAuthItemRefImplPagedList(
+            Map<String, Object> params, int pageIndex, int pageSize,
+            String tableSuffix) {
+        if(params == null){
+            params = new HashMap<String, Object>();
+        }
+        params.put("tableSuffix", tableSuffix);
         return this.myBatisDaoSupport.<AuthItemRefImpl> queryPagedList("authItemRefImpl.queryAuthItemRefImpl",
                 params,
                 pageIndex,
@@ -133,8 +202,13 @@ public class AuthItemRefImplDaoImpl implements AuthItemRefImplDao {
      * @return
      */
     @Override
-    public PagedList<AuthItemRefImpl> queryAuthItemRefImplPagedList(Map<String, Object> params,
-            int pageIndex, int pageSize, List<Order> orderList) {
+    public PagedList<AuthItemRefImpl> queryAuthItemRefImplPagedList(
+            Map<String, Object> params, int pageIndex, int pageSize,
+            List<Order> orderList, String tableSuffix) {
+        if(params == null){
+            params = new HashMap<String, Object>();
+        }
+        params.put("tableSuffix", tableSuffix);
         return this.myBatisDaoSupport.<AuthItemRefImpl> queryPagedList("authItemRefImpl.queryAuthItemRefImpl",
                 params,
                 pageIndex,
@@ -147,16 +221,10 @@ public class AuthItemRefImplDaoImpl implements AuthItemRefImplDao {
      * @return
      */
     @Override
-    public int updateAuthItemRefImpl(Map<String, Object> updateRowMap) {
-        return this.myBatisDaoSupport.update("authItemRefImpl.updateAuthItemRefImpl", updateRowMap);
-    }
-
-    /**
-     * @param updateRowMapList
-     */
-    @Override
-    public void batchUpdateAuthItemRefImpl(
-            List<Map<String, Object>> updateRowMapList) {
-        this.myBatisDaoSupport.batchUpdate("authItemRefImpl.updateAuthItemRefImpl", updateRowMapList, true);
+    public int updateAuthItemRefImpl(Map<String, Object> updateRowMap,
+            String tableSuffix) {
+        updateRowMap.put("tableSuffix", tableSuffix);
+        return this.myBatisDaoSupport.update("authItemRefImpl.updateAuthItemRefImpl",
+                updateRowMap);
     }
 }

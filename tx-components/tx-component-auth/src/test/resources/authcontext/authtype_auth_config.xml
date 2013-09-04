@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<auths>
+	<!-- 操作权限：具体对应到菜单,页面级控件权限，等 -->
+	<authType key="AUTHTYPE_OPERATE" name="操作权限">
+	</authType>
+
+	<!-- 数据权限: 具体到根据某权限能够查看到某一级数据的问题   -->
+	<authType key="AUTHTYPE_DATA" name="数据权限">
+	</authType>
+	
+	<!-- 贷款产品权限: 具体到贷款产品，贷款产品增加后会关联增加   -->
+	<authType key="AUTHTYPE_CREDIT_TEST" name="测试动态添加权限" editAble="true">
+	</authType>
+	
+	<!-- 贷款产品权限: 具体到贷款产品，贷款产品增加后会关联增加   -->
+	<authType key="AUTHTYPE_CREDIT_PRODUCT" name="贷款产品权限">
+	</authType>
+	
+	<!-- 贷款产品权限: 具体到贷款产品，贷款产品增加后会关联增加   -->
+	<authType key="AUTHTYPE_EXAMINE_RULE" name="豁免审批权限" viewAble="false">
+	</authType>
+	
+	<!-- 贷款产品权限: 具体到贷款产品，贷款产品增加后会关联增加   -->
+	<authType key="AUTHTYPE_EXAMINE_MONEY" name="豁免金额权限" configAble="false">
+	</authType>
+	
+	<!-- 贷款产品权限: 具体到贷款产品，贷款产品增加后会关联增加   -->
+	<authType key="AUTHTYPE_EXAMINE_TIME" name="豁免审批期限权限" configAble="false">
+	</authType>
+</auths>

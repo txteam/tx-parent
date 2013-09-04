@@ -92,6 +92,23 @@
 			<optional>true</optional>
 		</dependency>
 
+		<!-- aop -->
+		<dependency>
+			<!-- aop联盟制定的aop规范 -->
+			<groupId>aopalliance</groupId>
+			<artifactId>aopalliance</artifactId>
+		</dependency>
+		<dependency>
+			<!-- aop aspectj实现 -->
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjrt</artifactId>
+		</dependency>
+		<dependency>
+			<!-- aop aspectj实现 -->
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjweaver</artifactId>
+		</dependency>
+
 
 		<!-- quartz -->
 		<dependency>

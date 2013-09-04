@@ -12,7 +12,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -20,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.tx.component.auth.dao.AuthItemImplDao;
 import com.tx.component.auth.model.AuthItemImpl;
-import com.tx.core.exceptions.argument.NullArgException;
 import com.tx.core.exceptions.util.AssertUtils;
 
 /**
@@ -54,32 +52,40 @@ public class AuthItemImplService {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public AuthItemImpl findAuthItemImplById(String authItemId) {
+    public AuthItemImpl findAuthItemImplById(String authItemId,
+            String systemId, String tableSuffix) {
         AssertUtils.notEmpty(authItemId, "authItemId is empty.");
+        AssertUtils.notEmpty(systemId, "systemId is empty.");
         
         AuthItemImpl condition = new AuthItemImpl();
         condition.setId(authItemId);
+        condition.setSystemId(systemId);
         
-        AuthItemImpl res = this.authItemDao.findAuthItemImpl(condition);
+        AuthItemImpl res = this.authItemDao.findAuthItemImpl(condition,
+                tableSuffix);
         return res;
     }
     
     /**
-      * 查询数据库中存储的所有权限项<br/>
-      * <功能详细描述>
-      * 
-      * @return [参数说明]
-      * 
-      * @return List<AuthItemImpl> [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    public List<AuthItemImpl> queryAllAuthItemList() {
-        //查询权限项集合
-        List<AuthItemImpl> resList = this.authItemDao.queryAuthItemImplList(null);
-        
-        return resList;
-    }
+     * 查询数据库中存储的所有权限项<br/>
+     * <功能详细描述>
+     * 
+     * @return [参数说明]
+     * 
+     * @return List<AuthItemImpl> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+   public List<AuthItemImpl> queryAllAuthItemListBySystemId(String systemId, String tableSuffix) {
+       AssertUtils.notEmpty(systemId, "systemId is empty.");
+       
+       Map<String, Object> params = new HashMap<String, Object>();
+       params.put("systemId", systemId);
+       //查询权限项集合
+       List<AuthItemImpl> resList = this.authItemDao.queryAuthItemImplList(params,tableSuffix);
+       
+       return resList;
+   }
     
     /**
       * 查询AuthItem实体列表<br/>
@@ -91,17 +97,17 @@ public class AuthItemImplService {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public List<AuthItemImpl> queryAuthItemListByAuthType(String authType) {
+    public List<AuthItemImpl> queryAuthItemListByAuthType(String authType,String systemId, String tableSuffix) {
+        AssertUtils.notEmpty(systemId, "systemId is empty.");
         AssertUtils.notEmpty(authType, "authType is empty.");
         
         //生成查询条件
         Map<String, Object> params = new HashMap<String, Object>();
-        if (!StringUtils.isEmpty(authType)) {
-            params.put("authType", authType);
-        }
+        params.put("authType", authType);
+        params.put("systemId", systemId);
         
         //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
-        List<AuthItemImpl> resList = this.authItemDao.queryAuthItemImplList(params);
+        List<AuthItemImpl> resList = this.authItemDao.queryAuthItemImplList(params,tableSuffix);
         
         return resList;
     }
@@ -118,12 +124,17 @@ public class AuthItemImplService {
       * @see [类、类#方法、类#成员]
      */
     @Transactional
-    public void insertAuthItemImpl(AuthItemImpl authItemImpl) {
+    public void insertAuthItemImpl(AuthItemImpl authItemImpl, String systemId,
+            String tableSuffix) {
         AssertUtils.notNull(authItemImpl, "authItem is null.");
         AssertUtils.notEmpty(authItemImpl.getAuthType(),
                 "authItem.authType is empty.");
+        AssertUtils.notEmpty(systemId, "systemId is empty.");
         
-        this.authItemDao.insertAuthItemImpl(authItemImpl);
+        //setSystemId
+        authItemImpl.setSystemId(systemId);
+        
+        this.authItemDao.insertAuthItemImpl(authItemImpl, tableSuffix);
     }
     
     /**
@@ -139,16 +150,17 @@ public class AuthItemImplService {
       * @see [类、类#方法、类#成员]
      */
     @Transactional
-    public void deleteById(String authItemId) {
-        if (StringUtils.isEmpty(authItemId)) {
-            throw new NullArgException(
-                    "AuthItemImplService.deleteById id isEmpty.");
-        }
+    public void deleteById(String authItemId, String systemId,
+            String tableSuffix) {
+        AssertUtils.notEmpty(systemId, "systemId is empty.");
+        AssertUtils.notEmpty(authItemId, "authItemId is empty.");
         
         AuthItemImpl condition = new AuthItemImpl();
         condition.setId(authItemId);
-        this.authItemDao.deleteAuthItemImpl(condition);
-        this.authItemRefService.deleteByAuthItemId(authItemId);
+        condition.setSystemId(systemId);
+        
+        this.authItemDao.deleteAuthItemImpl(condition, tableSuffix);
+        this.authItemRefService.deleteByAuthItemId(authItemId,systemId,tableSuffix);
     }
     
     /**
@@ -162,13 +174,16 @@ public class AuthItemImplService {
       * @see [类、类#方法、类#成员]
      */
     @Transactional
-    public boolean updateById(AuthItemImpl authItemImpl) {
+    public boolean updateById(AuthItemImpl authItemImpl, String systemId,
+            String tableSuffix) {
         AssertUtils.notNull(authItemImpl, "authItem is null");
         AssertUtils.notEmpty(authItemImpl.getId(), "authItem.id is empty.");
+        AssertUtils.notEmpty(systemId, "systemId is empty.");
         
         //生成需要更新字段的hashMap
         Map<String, Object> updateRowMap = new HashMap<String, Object>();
         updateRowMap.put("id", authItemImpl.getId());
+        updateRowMap.put("systemId", systemId);
         
         //需要更新的字段
         updateRowMap.put("valid", authItemImpl.isValid());
@@ -179,7 +194,8 @@ public class AuthItemImplService {
         updateRowMap.put("name", authItemImpl.getName());
         updateRowMap.put("authType", authItemImpl.getAuthType());
         
-        int updateRowCount = this.authItemDao.updateAuthItemImpl(updateRowMap);
+        int updateRowCount = this.authItemDao.updateAuthItemImpl(updateRowMap,
+                tableSuffix);
         
         //如果需要大于1时，抛出异常并回滚，需要在这里修改
         return updateRowCount >= 1;
@@ -197,18 +213,24 @@ public class AuthItemImplService {
      */
     @Transactional
     public AuthItemImpl saveAuthItemImplByAuthItemRowMap(
-            Map<String, Object> authItemRowMap) {
+            Map<String, Object> authItemRowMap, String systemId,
+            String tableSuffix) {
         AssertUtils.notNull(authItemRowMap, "authItemRowMap is null");
         AssertUtils.notEmpty((String) authItemRowMap.get("id"),
                 "authItemRowMap.id is empty.");
+        AssertUtils.notEmpty(systemId, "systemId is empty.");
+        //写入systemId
+        authItemRowMap.put("systemId", systemId);
         
         String authItemId = (String) authItemRowMap.get("id");
-        AuthItemImpl authItem = findAuthItemImplById(authItemId);
+        AuthItemImpl authItem = findAuthItemImplById(authItemId,
+                systemId,
+                tableSuffix);
         if (authItem != null) {
-            this.authItemDao.updateAuthItemImpl(authItemRowMap);
+            this.authItemDao.updateAuthItemImpl(authItemRowMap, tableSuffix);
         } else {
             authItem = new AuthItemImpl(authItemRowMap);
-            insertAuthItemImpl(authItem);
+            insertAuthItemImpl(authItem,systemId,tableSuffix);
         }
         
         return authItem;

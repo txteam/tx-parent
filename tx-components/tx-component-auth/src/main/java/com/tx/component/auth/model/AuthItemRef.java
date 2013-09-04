@@ -15,7 +15,7 @@ import java.util.Date;
 public interface AuthItemRef extends Serializable{
     
     /**
-      * 获取系统id
+      * 权限引用项唯一键<br/>
       *<功能详细描述>
       * @return [参数说明]
       * 
@@ -23,7 +23,7 @@ public interface AuthItemRef extends Serializable{
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    String getSystemId();
+    String getId();
     
     /**
      * 权限引用项的类型<br/>

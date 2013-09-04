@@ -6,6 +6,8 @@
  */
 package com.tx.component.auth.context;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -17,13 +19,15 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.annotation.Resource;
+import javax.sql.DataSource;
 
 import net.sf.ehcache.Cache;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.ListUtils;
 import org.apache.commons.collections.MapUtils;
-import org.apache.cxf.common.util.StringUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -38,6 +42,7 @@ import com.tx.component.auth.context.adminchecker.AdminChecker;
 import com.tx.component.auth.context.authchecker.AuthChecker;
 import com.tx.component.auth.context.authchecker.impl.DefaultAuthChecker;
 import com.tx.component.auth.context.loader.AuthLoader;
+import com.tx.component.auth.dbscript.DataSourceType;
 import com.tx.component.auth.exceptions.AuthContextInitException;
 import com.tx.component.auth.model.AuthItem;
 import com.tx.component.auth.model.AuthItemImpl;
@@ -45,7 +50,9 @@ import com.tx.component.auth.model.AuthItemRef;
 import com.tx.component.auth.model.AuthItemRefImpl;
 import com.tx.component.auth.service.AuthItemImplService;
 import com.tx.component.auth.service.AuthItemRefImplService;
+import com.tx.core.dbscript.executor.DBScriptAutoExecutor;
 import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.exceptions.util.ExceptionWrapperUtils;
 import com.tx.core.support.cache.map.EhcacheMap;
 
 /**
@@ -62,14 +69,13 @@ public class AuthContext implements ApplicationContextAware, InitializingBean {
     /** 日志记录器 */
     private static final Logger logger = LoggerFactory.getLogger(AuthContext.class);
     
+    /* 不需要进行注入部分属性 */
+    
     /** 单子模式权限容器唯一实例 */
     private static AuthContext authContext;
     
     /** 当前spring容器 */
     private ApplicationContext applicationContext;
-    
-    /** 默认的权限检查器 */
-    private AuthChecker defaultAuthChecker;
     
     /**
      * 权限检查器映射，以权限
@@ -83,16 +89,38 @@ public class AuthContext implements ApplicationContextAware, InitializingBean {
     /** 权限加载器 */
     private List<AuthLoader> authLoaderList;
     
-    /** 权限项缓存对应的缓存生成器 */
-    private Cache cache;
-    
     /**
      * 系统的权限项集合<br/>
      * key为权限项唯一键（key,id）<br/>
      * value为具体的权限项
      */
     private Map<String, AuthItem> authItemMapping;
-
+    
+    /* 可注入部分属性 */
+    
+    /** 默认的权限检查器 */
+    private AuthChecker defaultAuthChecker;
+    
+    /** 权限项缓存对应的缓存生成器 */
+    private Cache cache;
+    
+    /** 系统id 64，用以与其他系统区分 */
+    private String systemId;
+    
+    /** 表后缀名 */
+    private String tableSuffix;
+    
+    /** 数据源类型 */
+    private DataSourceType dataSourceType = DataSourceType.H2;
+    
+    /** 数据源 */
+    private DataSource dataSource;
+    
+    /** 数据库脚本是否自动执行 */
+    private boolean databaseSchemaUpdate = false;
+    
+    /* 自动注入部分属性 */
+    
     /** 权限项业务层 */
     @Resource(name = "authItemImplService")
     private AuthItemImplService authItemService;
@@ -145,6 +173,19 @@ public class AuthContext implements ApplicationContextAware, InitializingBean {
             this.defaultAuthChecker = new DefaultAuthChecker();
         }
         
+        logger.info("初始化权限容器表结构.表后缀名为：{}...", this.tableSuffix);
+        if (databaseSchemaUpdate) {
+            String dbScriptContext = loadDBScript();
+            dbScriptContext = StringUtils.replace(dbScriptContext,
+                    "${tableSuffix}",
+                    this.tableSuffix);
+            logger.debug(" 自动初始化权限容器表结构,dbScriptContext：\n{}", dbScriptContext);
+            DBScriptAutoExecutor dbExecutor = new DBScriptAutoExecutor(
+                    dataSource, dbScriptContext, databaseSchemaUpdate);
+            dbExecutor.execute();
+            logger.info(" 自动初始化权限容器表结构完成.表后缀名为：{}...", this.tableSuffix);
+        }
+        
         //加载超级管理员认证器
         Collection<AdminChecker> adminCheckers = this.applicationContext.getBeansOfType(AdminChecker.class)
                 .values();
@@ -162,12 +203,52 @@ public class AuthContext implements ApplicationContextAware, InitializingBean {
         Collection<AuthLoader> authLoader = this.applicationContext.getBeansOfType(AuthLoader.class)
                 .values();
         this.authLoaderList = new ArrayList<AuthLoader>(authLoader);
-        this.authItemMapping = new EhcacheMap<String, AuthItem>(this.cache);
+        if (this.cache != null) {
+            this.authItemMapping = new EhcacheMap<String, AuthItem>(this.cache);
+        } else {
+            this.authItemMapping = new HashMap<String, AuthItem>();
+        }
         loadAuthItems(this.authLoaderList);
         
         //使系统context指向实体本身
         authContext = this;
         logger.info("初始化权限容器end...");
+    }
+    
+    /** 
+     * 加载脚本
+     *<功能详细描述> [参数说明]
+     * 
+     * @return void [返回类型说明]
+    * @throws IOException 
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    private String loadDBScript() {
+        String dbScriptBasePath = dataSourceType.getBasePath();
+        String dbScriptPath = org.springframework.util.StringUtils.cleanPath("classpath*:"
+                + dbScriptBasePath + "auth_base_1.0.0.sql");
+        org.springframework.core.io.Resource dbScriptResource = this.applicationContext.getResource(dbScriptPath);
+        if (!dbScriptResource.exists()) {
+            dbScriptPath = org.springframework.util.StringUtils.cleanPath("classpath:"
+                    + dbScriptBasePath + "auth_base_1.0.0.sql");
+            dbScriptResource = this.applicationContext.getResource(dbScriptPath);
+        }
+        
+        AssertUtils.isExist(dbScriptResource,
+                "dbScriptResource is not exist.path:{}",
+                dbScriptPath);
+        InputStream in = null;
+        
+        try {
+            in = dbScriptResource.getInputStream();
+            return IOUtils.toString(dbScriptResource.getInputStream());
+        } catch (IOException e) {
+            throw ExceptionWrapperUtils.wrapperIOException(e,
+                    "read dbScriptResource error.");
+        } finally {
+            IOUtils.closeQuietly(in);
+        }
     }
     
     /**
@@ -200,17 +281,18 @@ public class AuthContext implements ApplicationContextAware, InitializingBean {
         
         //移除原存在，现在不存在的
         Set<String> needRemoveKeySet = new HashSet<String>();
-        for(String authItemKeyTemp : authItemMapping.keySet()){
-            if(!tempAuthItemMapping.containsKey(authItemKeyTemp)){
+        for (String authItemKeyTemp : authItemMapping.keySet()) {
+            if (!tempAuthItemMapping.containsKey(authItemKeyTemp)) {
                 needRemoveKeySet.add(authItemKeyTemp);
             }
         }
-        //进行实际的移除
-        for(String needRemoveKey : needRemoveKeySet){
-            authItemMapping.remove(needRemoveKey);
-        }
+        
         //进行添加或更新
         authItemMapping.putAll(tempAuthItemMapping);
+        //进行实际的移除
+        for (String needRemoveKey : needRemoveKeySet) {
+            authItemMapping.remove(needRemoveKey);
+        }
     }
     
     /**
@@ -344,7 +426,7 @@ public class AuthContext implements ApplicationContextAware, InitializingBean {
             }
         }
         
-        if (true) {
+        if (isSuperAdmin) {
             //如果是超级管理员则拥有所有权限项的引用
             authItemRefList = new ArrayList<AuthItemRef>();
             for (AuthItem authItemTemp : authItemMapping.values()) {
@@ -361,7 +443,9 @@ public class AuthContext implements ApplicationContextAware, InitializingBean {
         } else {
             //如果不是超级管理员，根据引用表查询得到相关的权限引用
             authItemRefList = new ArrayList<AuthItemRef>();
-            List<AuthItemRefImpl> refImplList = this.authItemRefService.queryAuthItemRefListByRefType2RefIdMapping(refType2RefIdMapping);
+            List<AuthItemRefImpl> refImplList = this.authItemRefService.queryAuthItemRefListByRefType2RefIdMapping(refType2RefIdMapping,
+                    this.systemId,
+                    this.tableSuffix);
             if (refImplList != null) {
                 for (AuthItemRefImpl refImplTemp : refImplList) {
                     loadAuthItemRef(refImplTemp);
@@ -451,61 +535,61 @@ public class AuthContext implements ApplicationContextAware, InitializingBean {
         }
     }
     
-    /**
-      * 注册权限项到容器<br/>
-      *     如果容器中不存在对应id的权限项会抛出异常<br/>
-      * <功能详细描述>
-      * @param id
-      * @param isValid
-      * @return [参数说明]
-      * 
-      * @return AuthItem [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
+    //    /**
+    //      * 注册权限项到容器<br/>
+    //      *     如果容器中不存在对应id的权限项会抛出异常<br/>
+    //      * <功能详细描述>
+    //      * @param id
+    //      * @param valid
+    //      * @return [参数说明]
+    //      * 
+    //      * @return AuthItem [返回类型说明]
+    //      * @exception throws [异常类型] [异常说明]
+    //      * @see [类、类#方法、类#成员]
+    //     */
+    //    
+    //    public AuthItem registeAuth(String id, boolean valid) {
+    //        //参数合法性验证
+    //        AssertUtils.notEmpty(id, "id is empty.");
+    //        AssertUtils.isTrue(authItemMapping.containsKey(id),
+    //                "id:{} not exist in current authContext.",
+    //                id);
+    //        
+    //        Map<String, Object> authItemRowMap = new HashMap<String, Object>();
+    //        authItemRowMap.put("id", id);
+    //        authItemRowMap.put("valid", valid);
+    //        
+    //        AuthItem res = doRegisteSaveAuth(authItemRowMap);
+    //        return res;
+    //    }
     
-    public AuthItem registeAuth(String id, boolean isValid) {
-        //参数合法性验证
-        AssertUtils.notEmpty(id, "id is empty.");
-        AssertUtils.isTrue(authItemMapping.containsKey(id),
-                "id:{} not exist in current authContext.",
-                id);
-        
-        Map<String, Object> authItemRowMap = new HashMap<String, Object>();
-        authItemRowMap.put("id", id);
-        authItemRowMap.put("isValid", isValid);
-        
-        AuthItem res = doRegisteSaveAuth(authItemRowMap);
-        return res;
-    }
-    
-    /**
-     * 注册权限项到容器<br/>
-      *     如果容器中不存在对应id的权限项会抛出异常<br/>
-      * @param id
-      * @param name
-      * @param isValid
-      * @return [参数说明]
-      * 
-      * @return AuthItem [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    public AuthItem registeAuth(String id, String name, boolean isValid) {
-        //参数合法性验证
-        AssertUtils.notEmpty(id, "id is empty.");
-        AssertUtils.isTrue(authItemMapping.containsKey(id),
-                "id:{} not exist in current authContext.",
-                id);
-        
-        Map<String, Object> authItemRowMap = new HashMap<String, Object>();
-        authItemRowMap.put("id", id);
-        authItemRowMap.put("name", name);
-        authItemRowMap.put("isValid", isValid);
-        
-        AuthItem res = doRegisteSaveAuth(authItemRowMap);
-        return res;
-    }
+    //    /**
+    //     * 注册权限项到容器<br/>
+    //      *     如果容器中不存在对应id的权限项会抛出异常<br/>
+    //      * @param id
+    //      * @param name
+    //      * @param isValid
+    //      * @return [参数说明]
+    //      * 
+    //      * @return AuthItem [返回类型说明]
+    //      * @exception throws [异常类型] [异常说明]
+    //      * @see [类、类#方法、类#成员]
+    //     */
+    //    public AuthItem registeAuth(String id, String name, boolean valid) {
+    //        //参数合法性验证
+    //        AssertUtils.notEmpty(id, "id is empty.");
+    //        AssertUtils.isTrue(authItemMapping.containsKey(id),
+    //                "id:{} not exist in current authContext.",
+    //                id);
+    //        
+    //        Map<String, Object> authItemRowMap = new HashMap<String, Object>();
+    //        authItemRowMap.put("id", id);
+    //        authItemRowMap.put("name", name);
+    //        authItemRowMap.put("valid", valid);
+    //        
+    //        AuthItem res = doRegisteSaveAuth(authItemRowMap);
+    //        return res;
+    //    }
     
     /**
       * 装载注册权限项<br/>
@@ -554,11 +638,11 @@ public class AuthContext implements ApplicationContextAware, InitializingBean {
             
             authItemRowMap.put("parentId", authItem.getParentId());
             authItemRowMap.put("description", authItem.getDescription());
-            authItemRowMap.put("isEditAble", authItem.isEditAble());
+            authItemRowMap.put("editAble", authItem.isEditAble());
             authItemRowMap.put("name", authItem.getName());
-            authItemRowMap.put("isConfigAble", authItem.isConfigAble());
-            authItemRowMap.put("isValid", authItem.isValid());
-            authItemRowMap.put("isViewAble", authItem.isViewAble());
+            authItemRowMap.put("configAble", authItem.isConfigAble());
+            authItemRowMap.put("valid", authItem.isValid());
+            authItemRowMap.put("viewAble", authItem.isViewAble());
             
             res = doRegisteSaveAuth(authItemRowMap);
         }
@@ -583,8 +667,8 @@ public class AuthContext implements ApplicationContextAware, InitializingBean {
       * @see [类、类#方法、类#成员]
      */
     public AuthItem registeAuth(String id, String parentId, String name,
-            String description, String authType, boolean isValid,
-            boolean isConfigAble, boolean isViewAble, boolean isEditAble) {
+            String description, String authType, boolean valid,
+            boolean configAble, boolean viewAble, boolean editAble) {
         //参数合法性验证
         boolean isNeedNew = false;
         if (StringUtils.isEmpty(id) || !authItemMapping.containsKey(id)) {
@@ -599,10 +683,10 @@ public class AuthContext implements ApplicationContextAware, InitializingBean {
             newAuthItemImpl.setName(name);
             newAuthItemImpl.setAuthType(authType);
             newAuthItemImpl.setDescription(description);
-            newAuthItemImpl.setEditAble(isEditAble);
-            newAuthItemImpl.setConfigAble(isConfigAble);
-            newAuthItemImpl.setValid(isValid);
-            newAuthItemImpl.setViewAble(isViewAble);
+            newAuthItemImpl.setEditAble(editAble);
+            newAuthItemImpl.setConfigAble(configAble);
+            newAuthItemImpl.setValid(valid);
+            newAuthItemImpl.setViewAble(viewAble);
             
             //持久化权限项
             res = doRegisteNewAuth(newAuthItemImpl);
@@ -612,11 +696,11 @@ public class AuthContext implements ApplicationContextAware, InitializingBean {
             
             authItemRowMap.put("parentId", parentId);
             authItemRowMap.put("description", description);
-            authItemRowMap.put("isEditAble", isEditAble);
+            authItemRowMap.put("editAble", editAble);
             authItemRowMap.put("name", name);
-            authItemRowMap.put("isConfigAble", isConfigAble);
-            authItemRowMap.put("isValid", isValid);
-            authItemRowMap.put("isViewAble", isViewAble);
+            authItemRowMap.put("configAble", configAble);
+            authItemRowMap.put("valid", valid);
+            authItemRowMap.put("viewAble", viewAble);
             
             res = doRegisteSaveAuth(authItemRowMap);
         }
@@ -642,7 +726,7 @@ public class AuthContext implements ApplicationContextAware, InitializingBean {
       * @see [类、类#方法、类#成员]
      */
     public AuthItem registeAuth(String id, String name, String description,
-            String authType, boolean isValid) {
+            String authType, boolean valid) {
         //参数合法性验证
         boolean isNeedNew = false;
         if (StringUtils.isEmpty(id) || !authItemMapping.containsKey(id)) {
@@ -652,9 +736,10 @@ public class AuthContext implements ApplicationContextAware, InitializingBean {
         AuthItemImpl res = null;
         if (isNeedNew) {
             AuthItemImpl newAuthItemImpl = new AuthItemImpl();
+            newAuthItemImpl.setId(id);
             newAuthItemImpl.setName(name);
             newAuthItemImpl.setAuthType(authType);
-            newAuthItemImpl.setValid(isValid);
+            newAuthItemImpl.setValid(valid);
             
             newAuthItemImpl.setEditAble(true);
             newAuthItemImpl.setConfigAble(true);
@@ -668,7 +753,7 @@ public class AuthContext implements ApplicationContextAware, InitializingBean {
             
             authItemRowMap.put("name", name);
             authItemRowMap.put("description", description);
-            authItemRowMap.put("isValid", isValid);
+            authItemRowMap.put("valid", valid);
             
             res = doRegisteSaveAuth(authItemRowMap);
         }
@@ -762,7 +847,9 @@ public class AuthContext implements ApplicationContextAware, InitializingBean {
                 .registeAuthTypeItem(authItemImpl.getAuthType());
         
         //持久化对应的权限项到数据库中
-        this.authItemService.insertAuthItemImpl(authItemImpl);
+        this.authItemService.insertAuthItemImpl(authItemImpl,
+                this.systemId,
+                this.tableSuffix);
         
         if (TransactionSynchronizationManager.isSynchronizationActive()) {
             //如果在事务逻辑中执行
@@ -796,7 +883,9 @@ public class AuthContext implements ApplicationContextAware, InitializingBean {
         AssertUtils.notEmpty((String) authItemRowMap.get("id"),
                 "authItemRowMap.id is empty.");
         
-        final AuthItemImpl authItemImpl = this.authItemService.saveAuthItemImplByAuthItemRowMap(authItemRowMap);
+        final AuthItemImpl authItemImpl = this.authItemService.saveAuthItemImplByAuthItemRowMap(authItemRowMap,
+                this.systemId,
+                this.tableSuffix);
         
         if (TransactionSynchronizationManager.isSynchronizationActive()) {
             //如果在事务逻辑中执行
@@ -829,7 +918,9 @@ public class AuthContext implements ApplicationContextAware, InitializingBean {
             String authItemId, List<String> refIdList) {
         this.authItemRefService.saveAuthItemOfAuthRefList(authRefType,
                 authItemId,
-                refIdList);
+                refIdList,
+                this.systemId,
+                this.tableSuffix);
     }
     
     /**
@@ -848,7 +939,9 @@ public class AuthContext implements ApplicationContextAware, InitializingBean {
         this.authItemRefService.saveAuthItemOfAuthRefList(authType,
                 authRefType,
                 authItemId,
-                refIdList);
+                refIdList,
+                this.systemId,
+                this.tableSuffix);
     }
     
     /**
@@ -866,7 +959,9 @@ public class AuthContext implements ApplicationContextAware, InitializingBean {
             List<String> authItemIdList) {
         this.authItemRefService.saveAuthRefOfAuthItemList(authRefType,
                 refId,
-                authItemIdList);
+                authItemIdList,
+                this.systemId,
+                this.tableSuffix);
     }
     
     /**
@@ -885,7 +980,9 @@ public class AuthContext implements ApplicationContextAware, InitializingBean {
         this.authItemRefService.saveAuthRefOfAuthItemList(authType,
                 authRefType,
                 refId,
-                authItemIdList);
+                authItemIdList,
+                this.systemId,
+                this.tableSuffix);
     }
     
     /**
@@ -902,7 +999,9 @@ public class AuthContext implements ApplicationContextAware, InitializingBean {
     public List<AuthItemRef> queryAuthItemRefListByAuthRefTypeAndRefId(
             String authRefType, String refId) {
         List<AuthItemRefImpl> authItemRefImplList = this.authItemRefService.queryAuthItemRefListByRefTypeAndRefId(authRefType,
-                refId);
+                refId,
+                this.systemId,
+                this.tableSuffix);
         
         List<AuthItemRef> resList = changeAuthItemRefImplListToAuthItemRefList(authItemRefImplList);
         return resList;
@@ -922,7 +1021,9 @@ public class AuthContext implements ApplicationContextAware, InitializingBean {
     public List<AuthItemRef> queryAuthItemRefListByAuthRefTypeAndAuthItemId(
             String authRefType, String authItemId) {
         List<AuthItemRefImpl> authItemRefImplList = this.authItemRefService.queryAuthItemRefListByRefTypeAndAuthItemId(authRefType,
-                authItemId);
+                authItemId,
+                this.systemId,
+                this.tableSuffix);
         
         List<AuthItemRef> resList = changeAuthItemRefImplListToAuthItemRefList(authItemRefImplList);
         return resList;
@@ -941,7 +1042,9 @@ public class AuthContext implements ApplicationContextAware, InitializingBean {
      */
     public List<AuthItemRef> queryAuthItemRefListByRefType2RefIdMapping(
             Map<String, String> refType2RefIdMapping) {
-        List<AuthItemRefImpl> authItemRefImplList = this.authItemRefService.queryAuthItemRefListByRefType2RefIdMapping(refType2RefIdMapping);
+        List<AuthItemRefImpl> authItemRefImplList = this.authItemRefService.queryAuthItemRefListByRefType2RefIdMapping(refType2RefIdMapping,
+                this.systemId,
+                this.tableSuffix);
         
         List<AuthItemRef> resList = changeAuthItemRefImplListToAuthItemRefList(authItemRefImplList);
         return resList;
@@ -1004,7 +1107,9 @@ public class AuthContext implements ApplicationContextAware, InitializingBean {
         AssertUtils.notEmpty(authItemId, "authItemId is empty.");
         
         //持久化对应的权限项到数据库中
-        this.authItemService.deleteById(authItemId);
+        this.authItemService.deleteById(authItemId,
+                this.systemId,
+                this.tableSuffix);
         
         if (TransactionSynchronizationManager.isSynchronizationActive()) {
             //如果在事务逻辑中执行
@@ -1037,13 +1142,6 @@ public class AuthContext implements ApplicationContextAware, InitializingBean {
     }
     
     /**
-     * @return 返回 defaultAuthChecker
-     */
-    public AuthChecker getDefaultAuthChecker() {
-        return defaultAuthChecker;
-    }
-    
-    /**
      * @param 对defaultAuthChecker进行赋值
      */
     public void setDefaultAuthChecker(AuthChecker defaultAuthChecker) {
@@ -1051,30 +1149,44 @@ public class AuthContext implements ApplicationContextAware, InitializingBean {
     }
     
     /**
-     * @return 返回 authItemService
+     * @param 对cache进行赋值
      */
-    public AuthItemImplService getAuthItemService() {
-        return authItemService;
+    public void setCache(Cache cache) {
+        this.cache = cache;
     }
     
     /**
-     * @param 对authItemService进行赋值
+     * @param 对systemId进行赋值
      */
-    public void setAuthItemService(AuthItemImplService authItemService) {
-        this.authItemService = authItemService;
+    public void setSystemId(String systemId) {
+        this.systemId = systemId;
     }
     
     /**
-     * @return 返回 authItemRefService
+     * @param 对tableSuffix进行赋值
      */
-    public AuthItemRefImplService getAuthItemRefService() {
-        return authItemRefService;
+    public void setTableSuffix(String tableSuffix) {
+        this.tableSuffix = tableSuffix;
     }
     
     /**
-     * @param 对authItemRefService进行赋值
+     * @param 对dataSourceType进行赋值
      */
-    public void setAuthItemRefService(AuthItemRefImplService authItemRefService) {
-        this.authItemRefService = authItemRefService;
+    public void setDataSourceType(DataSourceType dataSourceType) {
+        this.dataSourceType = dataSourceType;
+    }
+    
+    /**
+     * @param 对dataSource进行赋值
+     */
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+    
+    /**
+     * @param 对databaseSchemaUpdate进行赋值
+     */
+    public void setDatabaseSchemaUpdate(boolean databaseSchemaUpdate) {
+        this.databaseSchemaUpdate = databaseSchemaUpdate;
     }
 }

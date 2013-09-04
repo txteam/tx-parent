@@ -12,8 +12,6 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
-import org.springframework.stereotype.Component;
-
 import com.tx.component.auth.context.AuthTypeItemContext;
 import com.tx.component.auth.context.loader.AuthLoader;
 import com.tx.component.auth.model.AuthItem;
@@ -30,8 +28,11 @@ import com.tx.component.auth.service.AuthItemImplService;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
   */
-@Component("dbAuthLoad")
 public class DBAuthLoader implements AuthLoader{
+    
+    private String tableSuffix;
+    
+    private String systemId;
     
     @Resource(name = "authItemImplService")
     private AuthItemImplService authItemService;
@@ -46,7 +47,7 @@ public class DBAuthLoader implements AuthLoader{
     @Override
     public Set<AuthItem> loadAuthItems() {
         Set<AuthItem> resSet = new HashSet<AuthItem>();
-        List<AuthItemImpl> authItemImplList = this.authItemService.queryAllAuthItemList();
+        List<AuthItemImpl> authItemImplList = this.authItemService.queryAllAuthItemListBySystemId(systemId,tableSuffix);
         if(authItemImplList == null){
             return resSet;
         }
@@ -65,5 +66,32 @@ public class DBAuthLoader implements AuthLoader{
     public int getOrder() {
         return order;
     }
-    
+
+    /**
+     * @param 对tableSuffix进行赋值
+     */
+    public void setTableSuffix(String tableSuffix) {
+        this.tableSuffix = tableSuffix;
+    }
+
+    /**
+     * @param 对systemId进行赋值
+     */
+    public void setSystemId(String systemId) {
+        this.systemId = systemId;
+    }
+
+    /**
+     * @param 对authItemService进行赋值
+     */
+    public void setAuthItemService(AuthItemImplService authItemService) {
+        this.authItemService = authItemService;
+    }
+
+    /**
+     * @param 对order进行赋值
+     */
+    public void setOrder(int order) {
+        this.order = order;
+    }
 }

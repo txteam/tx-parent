@@ -7,33 +7,43 @@
 	<!-- auto generate default resultMap -->
 	<resultMap id="authItemRefImplMap" 
 		type="com.tx.component.auth.model.AuthItemRefImpl">
-		<result property="refId" column="REFID"/>
-		<result property="authRefType" column="AUTHREFTYPE"/>
-		<result property="isValidDependEndDate" column="ISVALIDDEPENDENDDATE"/>
-		<result property="createOperId" column="CREATEOPERID"/>
-		<result property="endDate" column="ENDDATE"/>
-		<result property="createDate" column="CREATEDATE"/>
 		<result property="authItemImpl.id" column="authItem_id"/>
 		<result property="authItemImpl.authType" column="authItem_authType"/>
+		<result property="authItemImpl.systemId" column="authItem_systemId"/>
 	</resultMap>
 	
 	<!-- auto generate default find -->
 	<select id="findAuthItemRefImpl" 
-		parameterType="com.tx.component.auth.model.AuthItemRefImpl"
+		parameterType="java.util.Map"
 		resultMap="authItemRefImplMap">
 		SELECT 
+				TAIRI.ID,
 				TAIRI.REFID,
 				TAIRI.AUTHREFTYPE,
 				TAIRI.AUTHID AS authItem_id,
 				TAIRI.AUTHTYPE AS authItem_authType,
-				TAIRI.ISVALIDDEPENDENDDATE,
+				TAIRI.SYSTEMID AS authItem_systemId,
+				TAIRI.VALIDDEPENDENDDATE,
 				TAIRI.CREATEOPERID,
 				TAIRI.ENDDATE,
 				TAIRI.CREATEDATE
-		  FROM T_AUTH_AUTHREF TAIRI
-		 WHERE TAIRI.REFID = #{refId}
-		   AND TAIRI.AUTHREFTYPE = #{authRefType} 
-		   AND TAIRI.AUTHID = #{authItem.id}
+		  FROM AUTH_AUTHREF${tableSuffix} TAIRI
+		 WHERE
+		<trim prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authItemRef.id)">  
+	            AND TAIRI.id = #{authItemRef.refId}
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isEmpty(authItemRef.id)">  
+	            AND TAIRI.REFID = #{authItemRef.refId}
+			    AND TAIRI.AUTHREFTYPE = #{authItemRef.authRefType} 
+			    AND TAIRI.AUTHID = #{authItemRef.authItem.id}
+			    AND TAIRI.SYSTEMID = #{authItemRef.authItem.systemId}
+			    <if test="@com.tx.core.util.OgnlUtils@isEmpty(authItemRef.authItem.authType)">  
+		            AND TAIRI.AUTHTYPE = #{authItemRef.authItem.authType}
+		        </if>
+			    
+	        </if>
+		</trim>
 	</select>
 	
 	<!-- auto generate default query -->
@@ -41,18 +51,26 @@
 		parameterType="java.util.Map"
 		resultMap="authItemRefImplMap">
 		SELECT 
+				TAIRI.ID,
 				TAIRI.REFID,
 				TAIRI.AUTHREFTYPE,
 				TAIRI.AUTHID AS authItem_id,
 				TAIRI.AUTHTYPE AS authItem_authType,
-				TAIRI.ISVALIDDEPENDENDDATE,
+				TAIRI.SYSTEMID AS authItem_systemId,
+				TAIRI.VALIDDEPENDENDDATE,
 				TAIRI.CREATEOPERID,
 				TAIRI.ENDDATE,
 				TAIRI.CREATEDATE
-		  FROM T_AUTH_AUTHREF TAIRI
+		  FROM AUTH_AUTHREF${tableSuffix} TAIRI
 		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">
+				AND TAIRI.ID = #{id,javaType=java.lang.String}
+			</if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authType)">
-				AND TAII.AUTHTYPE = #{authType,javaType=java.lang.String}
+				AND TAIRI.AUTHTYPE = #{authType,javaType=java.lang.String}
+			</if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(systemId)">
+				AND TAIRI.SYSTEMID = #{systemId,javaType=java.lang.String}
 			</if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authItemId)">
 				AND TAIRI.AUTHID = #{authItemId,javaType=java.lang.String}
@@ -74,6 +92,9 @@
 				<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authItem.id)">  
 		            AND TAIRI.AUTHID = #{authItem.id,javaType=java.lang.String}
 		        </if>
+		        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authItem.systemId)">  
+		            AND TAIRI.SYSTEMID = #{authItem.systemId,javaType=java.lang.String}
+		        </if>
 		        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authItem.authType)">  
 		            AND TAIRI.AUTHTYPE = #{authItem.authType,javaType=java.lang.String}
 		        </if>
@@ -94,17 +115,23 @@
 		parameterType="java.util.Map"
 		resultType="java.lang.Integer">
 		SELECT COUNT(1)
-		  FROM T_AUTH_AUTHREF TAIRI
+		  FROM AUTH_AUTHREF${tableSuffix} TAIRI
 		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">
+				AND TAIRI.ID = #{id,javaType=java.lang.String}
+			</if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authType)">
-				AND TAII.AUTHTYPE = #{authType,javaType=java.lang.String}
+				AND TAIRI.AUTHTYPE = #{authType,javaType=java.lang.String}
+			</if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(systemId)">
+				AND TAIRI.SYSTEMID = #{systemId,javaType=java.lang.String}
 			</if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authItemId)">
 				AND TAIRI.AUTHID = #{authItemId,javaType=java.lang.String}
 			</if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(refType2RefIdMapping)">
 				AND
-				<foreach collection="#{refType2RefIdMapping.entrySet()}" open="(" close=")" item="entryTemp" separator="or">
+				<foreach collection="#{refType2RefIdMapping.entrySet().iterator() }" open="(" close=")" item="entryTemp" separator="or">
 					(TAIRI.AUTHREFTYPE = #{entryTemp.getKey(),javaType=java.lang.String}
 					AND TAIRI.REFID = #{entryTemp.getValue,javaType=java.lang.String})
 				</foreach>
@@ -119,6 +146,9 @@
 				<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authItem.id)">  
 		            AND TAIRI.AUTHID = #{authItem.id,javaType=java.lang.String}
 		        </if>
+		        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authItem.systemId)">  
+		            AND TAIRI.SYSTEMID = #{authItem.systemId,javaType=java.lang.String}
+		        </if>
 		        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authItem.authType)">  
 		            AND TAIRI.AUTHTYPE = #{authItem.authType,javaType=java.lang.String}
 		        </if>
@@ -128,48 +158,55 @@
     
     <!-- auto generate default insert -->
     <insert id="insertAuthItemRefImpl" 
-		parameterType="com.tx.component.auth.model.AuthItemRefImpl">
-		INSERT INTO T_AUTH_AUTHREF
+		parameterType="java.util.Map">
+		INSERT INTO AUTH_AUTHREF${tableSuffix}
 		(
+			ID,
 			REFID,
 			AUTHREFTYPE,
 			AUTHID,
+			SYSTEMID,
 			AUTHTYPE,
-			ISVALIDDEPENDENDDATE,
+			VALIDDEPENDENDDATE,
 			CREATEOPERID,
 			ENDDATE,
 			CREATEDATE
 		)
 		VALUES
 		(
-			#{refId},
-			#{authRefType},
-			#{authItem.id},
-			#{authItem.authType},
-			#{isValidDependEndDate},
-			#{createOperId},
-			#{endDate},
-			#{createDate}
+			#{authItemRef.id},
+			#{authItemRef.refId},
+			#{authItemRef.authRefType},
+			#{authItemRef.authItem.id},
+			#{authItemRef.authItem.systemId},
+			#{authItemRef.authItem.authType},
+			#{authItemRef.validDependEndDate},
+			#{authItemRef.createOperId},
+			#{authItemRef.endDate},
+			#{authItemRef.createDate}
 		)
 	</insert>
 	
 	<!-- auto generate default delete -->
 	<delete id="deleteAuthItemRefImpl" 
-		parameterType="com.tx.component.auth.model.AuthItemRefImpl">
-		DELETE FROM T_AUTH_AUTHREF TAIRI WHERE
+		parameterType="java.util.Map">
+		DELETE FROM AUTH_AUTHREF${tableSuffix} TAIRI WHERE
 		<trim prefixOverrides="AND | OR">
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(refId)">  
-	            AND TAIRI.REFID = #{refId}
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authItemRef.refId)">  
+	            AND TAIRI.REFID = #{authItemRef.refId}
 	        </if>
-	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authRefType)">  
-	            AND TAIRI.AUTHREFTYPE = #{authRefType} 
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authItemRef.authRefType)">  
+	            AND TAIRI.AUTHREFTYPE = #{authItemRef.authRefType} 
 	        </if>
-	        <if test="authItem != null">
-				<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authItem.id)">  
-		            AND TAIRI.AUTHID = #{authItem.id}
+	        <if test="authItemRef.authItem != null">
+				<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authItemRef.authItem.id)">  
+		            AND TAIRI.AUTHID = #{authItemRef.authItem.id}
 		        </if>
-		        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authItem.authType)">  
-		            AND TAIRI.AUTHTYPE = #{authItem.authType,javaType=java.lang.String}
+		        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authItemRef.authItem.authType)">  
+		            AND TAIRI.AUTHTYPE = #{authItemRef.authItem.authType,javaType=java.lang.String}
+		        </if>
+		        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authItemRef.authItem.systemId)">  
+		            AND TAIRI.SYSTEMID = #{authItemRef.authItem.systemId,javaType=java.lang.String}
 		        </if>
 	        </if>
 		</trim>
@@ -178,7 +215,7 @@
 	<!-- auto generate default update -->
 	<update id="updateAuthItemRefImpl"
 	    parameterType="java.util.Map">  
-	    UPDATE t_auth_authref TAIRI
+	    UPDATE AUTH_AUTHREF${tableSuffix} TAIRI
 	    <trim prefix="SET" suffixOverrides=",">
 			<if test="_parameter.containsKey('validDependEndDate')">
 	    		VALIDDEPENDENDDATE = #{validDependEndDate,javaType=boolean},
@@ -187,9 +224,19 @@
 	    		ENDDATE = #{endDate,javaType=java.util.Date},
 	    	</if>
 	    </trim>
-		 WHERE TAIRI.REFID = #{refId}
-		   AND TAIRI.AUTHREFTYPE = #{authRefType} 
-		   AND TAIRI.AUTHID = #{authItem.id}
+	    WHERE
+		<trim prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authItemRef.id)">  
+	            AND TAIRI.id = #{authItemRef.refId}
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isEmpty(authItemRef.id)">  
+	            AND TAIRI.REFID = #{authItemRef.refId}
+			    AND TAIRI.AUTHREFTYPE = #{authItemRef.authRefType} 
+			    AND TAIRI.AUTHID = #{authItemRef.authItem.id}
+			    AND TAIRI.SYSTEMID = #{authItemRef.authItem.systemId}
+			    AND TAIRI.AUTHTYPE = #{authItemRef.authItem.authType}
+	        </if>
+		</trim>
 	</update>
 </mapper>
 <!--

@@ -27,15 +27,16 @@ public interface AuthItemImplDao {
     /**
       * 插入AuthItemImpl对象实体
       * 1、auto generate
-      * <功能详细描述>
-      * @param condition [参数说明]
+      *<功能详细描述>
+      * @param condition
+      * @param tableSuffix [参数说明]
       * 
       * @return void [返回类型说明]
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public void insertAuthItemImpl(AuthItemImpl condition);
+    public void insertAuthItemImpl(AuthItemImpl condition,String tableSuffix);
     
     /**
       * 删除AuthItemImpl对象
@@ -43,19 +44,21 @@ public interface AuthItemImplDao {
       * 2、根据入参条件进行删除
       * <功能详细描述>
       * @param condition [参数说明]
+      * @param tableSuffix [参数说明]
       * 
       * @return void [返回类型说明]
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public int deleteAuthItemImpl(AuthItemImpl condition);
+    public int deleteAuthItemImpl(AuthItemImpl condition, String tableSuffix);
     
     /**
       * 查询AuthItemImpl实体
       * auto generate
-      * <功能详细描述>
+      *<功能详细描述>
       * @param condition
+      * @param tableSuffix
       * @return [参数说明]
       * 
       * @return AuthItemImpl [返回类型说明]
@@ -63,13 +66,14 @@ public interface AuthItemImplDao {
       * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public AuthItemImpl findAuthItemImpl(AuthItemImpl condition);
+    public AuthItemImpl findAuthItemImpl(AuthItemImpl condition,String tableSuffix);
     
     /**
       * 根据条件查询AuthItemImpl列表
       * auto generate
-      * <功能详细描述>
+      *<功能详细描述>
       * @param params
+      * @param tableSuffix
       * @return [参数说明]
       * 
       * @return List<AuthItemImpl> [返回类型说明]
@@ -77,14 +81,15 @@ public interface AuthItemImplDao {
       * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public List<AuthItemImpl> queryAuthItemImplList(Map<String, Object> params);
+    public List<AuthItemImpl> queryAuthItemImplList(Map<String, Object> params, String tableSuffix);
     
     /**
       * 根据指定查询条件以及排序列查询AuthItemImpl列表
       * auto generate
-      * <功能详细描述>
+      *<功能详细描述>
       * @param params
       * @param orderList
+      * @param tableSuffix
       * @return [参数说明]
       * 
       * @return List<AuthItemImpl> [返回类型说明]
@@ -93,28 +98,30 @@ public interface AuthItemImplDao {
      */
     //auto generate
     public List<AuthItemImpl> queryAuthItemImplList(Map<String, Object> params,
-            List<Order> orderList);
+            List<Order> orderList,String tableSuffix);
     
     /**
       * 根据条件查询AuthItemImpl列表总数
       * auto generated
-      * <功能详细描述>
+      *<功能详细描述>
       * @param params
+      * @param tableSuffix
       * @return [参数说明]
       * 
       * @return int [返回类型说明]
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public int countAuthItemImpl(Map<String, Object> params);
+    public int countAuthItemImpl(Map<String, Object> params, String tableSuffix);
     
     /**
       * 分页查询AuthItemImpl列表
       * auto generate
-      * <功能详细描述>
+      *<功能详细描述>
       * @param params
       * @param pageIndex
       * @param pageSize
+      * @param tableSuffix
       * @return [参数说明]
       * 
       * @return PagedList<AuthItemImpl> [返回类型说明]
@@ -122,17 +129,18 @@ public interface AuthItemImplDao {
       * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public PagedList<AuthItemImpl> queryAuthItemImplPagedList(Map<String, Object> params,
-            int pageIndex, int pageSize);
+    public PagedList<AuthItemImpl> queryAuthItemImplPagedList(
+            Map<String, Object> params, int pageIndex, int pageSize,String tableSuffix);
     
     /**
       * 分页查询AuthItemImpl列表，传入排序字段
       * auto generate
-      * <功能详细描述>
+      *<功能详细描述>
       * @param params
       * @param pageIndex
-      * @param pageSize
       * @param orderList
+      * @param systemId
+      * @param tableSuffix
       * @return [参数说明]
       * 
       * @return PagedList<AuthItemImpl> [返回类型说明]
@@ -140,21 +148,22 @@ public interface AuthItemImplDao {
       * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public PagedList<AuthItemImpl> queryAuthItemImplPagedList(Map<String, Object> params,
-            int pageIndex, int pageSize, List<Order> orderList);
-    
+    public PagedList<AuthItemImpl> queryAuthItemImplPagedList(
+            Map<String, Object> params, int pageIndex, int pageSize,
+            List<Order> orderList, String tableSuffix);
     
     /**
       * 更新AuthItemImpl实体，
       * auto generate
       * 1、传入AuthItemImpl中主键不能为空
-      * <功能详细描述>
-      * @param updateAuthItemImplRowMap
+      *<功能详细描述>
+      * @param updateRowMap
+      * @param tableSuffix
       * @return [参数说明]
       * 
       * @return int [返回类型说明]
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public int updateAuthItemImpl(Map<String, Object> updateRowMap);
+    public int updateAuthItemImpl(Map<String, Object> updateRowMap,String tableSuffix);
 }

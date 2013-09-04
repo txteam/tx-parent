@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<auths>
+	<!-- 操作权限 后缀名为"_ABS"的权限，为抽象权限，自己权限即为 去掉_ABS的权限-->
+	<!-- 如果后缀名为_ABS type优先于key作为AuthItem的key -->
+	<authType key="AUTHTYPE_OPERATE" name="操作权限">
+		<!-- demo的编辑权限，拥有该权限才能查询demo的列表，为增加，删除，修改的父权限 -->
+		<!-- 此处不指定类型，则默认为操作权限 -->
+		<auth key="demo_modify" name="demo的编辑权限"
+			description="菜单demo管理权限，具有该权限才能查看demo列表">
+			<auth key="demo_modify_add" name="demo的增加权限">		
+			</auth>	
+			<auth key="demo_modify_del" name="demo的删除权限">		
+			</auth>	
+			<auth key="demo_modify_update" name="demo的更新权限">		
+			</auth>	
+		</auth>
+	</authType>
+	<authType key="AUTHTYPE_DATA">
+		<!-- demo的编辑权限，拥有该权限才能查询demo的列表，为增加，删除，修改的父权限 -->
+		<!-- 此处不指定类型，则默认为操作权限 -->
+		<auth key="credit_product" name="贷款产品">
+			<auth key="cre_pro_queryCurrentOrg" name="查询所属组织的贷款产品"></auth>
+			<auth key="cre_pro_queryCurrentPost" name="查询所属职位的贷款产品"></auth>
+		</auth>
+		<auth key="loan_cre" name="贷款预约产品">
+			<auth key="query_cre_loan_cur_org" name="查询所属组织的贷款预约单"></auth>
+			<auth key="query_cre_loan_cur_and_child_org" name="查询所属组织及其子级组织的贷款预约单"></auth>
+		</auth>
+	</authType>
+</auths>
