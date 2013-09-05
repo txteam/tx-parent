@@ -10,10 +10,8 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.util.List;
 
 import com.tx.component.basicdata.executor.BasicDataExecutor;
-import com.tx.component.basicdata.model.QueryCondition;
 
 /**
  * 基础数据模型<br/>
@@ -37,7 +35,7 @@ public @interface BasicData {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public String tableName() default "";
+    public String tableName();
     
     /**
       * 基础数据类型别名<br/>
@@ -59,7 +57,7 @@ public @interface BasicData {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public boolean isModifyAble();
+    public boolean isModifyAble() default true;
     
     /**
       * 默认的查询条件

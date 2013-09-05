@@ -8,7 +8,6 @@ package com.tx.component.basicdata.context;
 
 import java.util.List;
 
-import com.tx.component.basicdata.executor.BasicDataExecutor;
 import com.tx.component.basicdata.model.PropertyItemInfo;
 import com.tx.component.basicdata.model.QueryCondition;
 
@@ -29,9 +28,6 @@ public class BasicData<T>{
     
     /** 基础数据界面展示时，查询条件集合 */
     private List<QueryCondition> queryConditionList;
-    
-    /** 基础数据执行器 */
-    private BasicDataExecutor<T> executor;
 
     /**
      * @return 返回 propertyItemInfoList
@@ -59,19 +55,5 @@ public class BasicData<T>{
      */
     public void setQueryConditionList(List<QueryCondition> queryConditionList) {
         this.queryConditionList = queryConditionList;
-    }
-
-    /**
-     * @return 返回 executor
-     */
-    public BasicDataExecutor<T> getExecutor() {
-        return executor;
-    }
-
-    /**
-     * @param 对executor进行赋值
-     */
-    public void setExecutor(BasicDataExecutor<T> executor) {
-        this.executor = executor;
     }
 }

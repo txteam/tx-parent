@@ -10,9 +10,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.EnumUtils;
+import javax.sql.DataSource;
 
-import com.tx.component.basicdata.exception.UnModifyAbleException;
+import net.sf.ehcache.CacheManager;
+
+import org.apache.commons.lang3.EnumUtils;
+import org.hibernate.dialect.Dialect;
+
+import com.tx.core.exceptions.logic.UnExpectCallException;
 import com.tx.core.paged.model.PagedList;
 
 /**
@@ -27,17 +32,40 @@ import com.tx.core.paged.model.PagedList;
 public class EnumBasicDataExecutor<T extends Enum<T>> extends
         BaseBasicDataExecutor<T> {
     
-    /** <默认构造函数> */
-    public EnumBasicDataExecutor(Class<T> type) {
-        super(type);
+    /**
+     * @param method
+     * @param params
+     * @return
+     */
+    @Override
+    protected String generateCacheKey(String method, Object... params) {
+        throw new UnExpectCallException("枚举类基础数据不可能调用到的业务逻辑");
+    }
+
+    /**
+     * <默认构造函数>
+     */
+    public EnumBasicDataExecutor(Class<T> type, boolean cacheEnable,
+            Dialect dialect, DataSource dataSource, CacheManager cacheManager) {
+        super(type, false, null, null, null);
     }
     
     /**
+     * @param obj
+     * @return
+     */
+    @Override
+    protected String getValue(T obj) {
+        return obj.toString();
+    }
+    
+    /**
+     * 重写基类中的get方法,实现不依赖list实现<br/>
      * @param pk
      * @return
      */
     @Override
-    protected T doGet(String pk) {
+    public T get(String pk) {
         T res = EnumUtils.getEnum(getType(), pk);
         return res;
     }
@@ -47,8 +75,9 @@ public class EnumBasicDataExecutor<T extends Enum<T>> extends
      * @return
      */
     @Override
-    protected T doFind(T obj) {
-        return obj;
+    protected T doFind(String pk) {
+        T resObj = EnumUtils.getEnum(getType(), pk);
+        return resObj;
     }
     
     /**
@@ -71,9 +100,11 @@ public class EnumBasicDataExecutor<T extends Enum<T>> extends
     protected PagedList<T> doQueryPagedList(Map<String, Object> params,
             int pageIndex, int pageSize) {
         List<T> resList = EnumUtils.getEnumList(getType());
+        
         int offset = pageSize * (pageIndex - 1);
         int limit = pageSize * pageIndex;
         limit = limit < resList.size() ? limit : resList.size();
+        
         PagedList<T> res = new PagedList<T>();
         res.setCount(resList.size());
         res.setPageIndex(pageIndex);
@@ -104,7 +135,7 @@ public class EnumBasicDataExecutor<T extends Enum<T>> extends
      */
     @Override
     protected int doUpdate(Map<String, Object> params) {
-        throw new UnModifyAbleException(getType());
+        throw new UnExpectCallException("枚举类基础数据不可能调用到的业务逻辑");
     }
     
     /**
@@ -112,7 +143,7 @@ public class EnumBasicDataExecutor<T extends Enum<T>> extends
      */
     @Override
     protected void doInsert(T obj) {
-        throw new UnModifyAbleException(getType());
+        throw new UnExpectCallException("枚举类基础数据不可能调用到的业务逻辑");
     }
     
     /**
@@ -120,7 +151,7 @@ public class EnumBasicDataExecutor<T extends Enum<T>> extends
      * @return
      */
     @Override
-    protected int doDelete(Map<String, Object> params) {
-        throw new UnModifyAbleException(getType());
+    protected int doDelete(String pk) {
+        throw new UnExpectCallException("枚举类基础数据不可能调用到的业务逻辑");
     }
 }

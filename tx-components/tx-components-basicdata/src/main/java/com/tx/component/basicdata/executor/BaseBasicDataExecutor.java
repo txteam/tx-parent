@@ -6,6 +6,7 @@
  */
 package com.tx.component.basicdata.executor;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,12 +14,14 @@ import javax.sql.DataSource;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
 
+import org.hibernate.dialect.Dialect;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.transaction.support.TransactionSynchronizationAdapter;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
+import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.paged.model.PagedList;
 
 /**
@@ -32,61 +35,84 @@ import com.tx.core.paged.model.PagedList;
  */
 public abstract class BaseBasicDataExecutor<T> implements BasicDataExecutor<T> {
     
-    private Class<T> type;
-    
-    private NamedParameterJdbcTemplate namedJdbcTemplate;
-    
+    /** jdbcTemplate */
     private JdbcTemplate jdbcTemplate;
     
-    private Cache cache;
-    
+    /** 缓存名 */
     private String cacheName;
     
+    /** 缓存实体 */
+    private Cache cache;
+    
+    /** 执行器对应类型  */
+    private Class<T> type;
+    
+    /** 方言类 */
+    private Dialect dialect;
+    
+    /** 数据源 */
+    private DataSource dataSource;
+    
+    /** 是否进行缓存 */
     private boolean cacheEnable;
     
     /** <默认构造函数> */
-    public BaseBasicDataExecutor(DataSource dataSource,CacheManager cacheManager,Class<T> type) {
+    public BaseBasicDataExecutor(Class<T> type, boolean cacheEnable,
+            Dialect dialect, DataSource dataSource, CacheManager cacheManager) {
+        AssertUtils.notNull(type, "type is null.");
+        
         this.type = type;
+        this.cacheEnable = cacheEnable;
         this.cacheName = "basicdata_cache_" + type.getName();
-        if(!type.isEnum()){
-            if(dataSource != null){
-                this.namedJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-                this.jdbcTemplate = new JdbcTemplate(dataSource);
+        
+        if (!type.isEnum()) {
+            
+            AssertUtils.notNull(dialect, "dialect is null.");
+            AssertUtils.notNull(dataSource, "dataSource is null.");
+            
+            this.dataSource = dataSource;
+            if (dataSource != null) {
+                this.jdbcTemplate = new JdbcTemplate(this.dataSource);
             }
-            if(cacheEnable){
-                if(cacheManager == null){
+            if (cacheEnable) {
+                AssertUtils.notNull(cacheManager, "cacheManager is null.");
+                if (cacheManager == null) {
                     cacheManager = CacheManager.create();
                 }
-                if(!cacheManager.cacheExists(this.cacheName)){
+                if (!cacheManager.cacheExists(this.cacheName)) {
                     cacheManager.addCache(this.cacheName);
                 }
                 this.cache = cacheManager.getCache(this.cacheName);
             }
+        } else {
+            this.cacheEnable = false;
         }
     }
     
-    /** <默认构造函数> */
-    public BaseBasicDataExecutor(Class<T> type) {
-        this(null,null,type);
-    }
-    
-    /** <默认构造函数> */
-    public BaseBasicDataExecutor(CacheManager cacheManager,Class<T> type) {
-        this(null,cacheManager,type);
-    }
-    
     /**
-      * 根据主键获取对应对象<br/>
-      *     如果不存在则返回空对象<br/>
+      * 生成缓存唯一键
       *<功能详细描述>
-      * @param pk
+      * @param method
+      * @param params
       * @return [参数说明]
       * 
-      * @return T [返回类型说明]
+      * @return String [返回类型说明]
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    protected abstract T doGet(String pk);
+    protected abstract String generateCacheKey(String method, Object... params);
+    
+    /**
+     * 从对象中获取基础数据主键值<br/>
+     *<功能详细描述>
+     * @param obj
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    protected abstract String getValue(T obj);
     
     /**
       * 根据对象信息查询对应对象<br/>
@@ -98,7 +124,7 @@ public abstract class BaseBasicDataExecutor<T> implements BasicDataExecutor<T> {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    protected abstract T doFind(T obj);
+    protected abstract T doFind(String pk);
     
     /**
       * 查询分页列表<br/>
@@ -110,7 +136,8 @@ public abstract class BaseBasicDataExecutor<T> implements BasicDataExecutor<T> {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    protected abstract PagedList<T> doQueryPagedList(Map<String, Object> params,int pageIndex,int pageSize);
+    protected abstract PagedList<T> doQueryPagedList(
+            Map<String, Object> params, int pageIndex, int pageSize);
     
     /**
       * 根据条件查询对象列表<br/>
@@ -169,7 +196,7 @@ public abstract class BaseBasicDataExecutor<T> implements BasicDataExecutor<T> {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    protected abstract int doDelete(Map<String, Object> params);
+    protected abstract int doDelete(String pk);
     
     /**
      * @param pk
@@ -189,24 +216,50 @@ public abstract class BaseBasicDataExecutor<T> implements BasicDataExecutor<T> {
      * @param pk
      * @return
      */
+    @SuppressWarnings("unchecked")
     @Override
     public T get(String pk) {
-        //TODO: find from cache
-        
-        T t = doGet(pk);
-        return t;
+        if (this.cacheEnable) {
+            Element getEl = this.cache.get(generateCacheKey("get"));
+            if (getEl != null) {
+                Object obj = getEl.getObjectKey();
+                Map<String, T> cacheListMap = (Map<String, T>) obj;
+                return cacheListMap.get(pk);
+            }
+        }
+        List<T> listResult = list();
+        Map<String, T> cacheListMap = new HashMap<String, T>();
+        if (listResult != null) {
+            for (T temp : listResult) {
+                cacheListMap.put(getValue(temp), temp);
+            }
+        }
+        if (this.cacheEnable) {
+            this.cache.put(new Element(generateCacheKey("get"), cacheListMap));
+        }
+        T res = cacheListMap.get(pk);
+        return res;
     }
     
     /**
      * @param findCondition
      * @return
      */
+    @SuppressWarnings("unchecked")
     @Override
-    public T find(T findCondition) {
-        //TODO: find from cache
-        
-        T res = doFind(findCondition);
-        return null;
+    public T find(String pk) {
+        if (this.cacheEnable) {
+            Element getEl = this.cache.get(generateCacheKey("find", pk));
+            if (getEl != null) {
+                Object obj = getEl.getObjectKey();
+                return (T)obj;
+            }
+        }
+        T res = doFind(pk);
+        if (this.cacheEnable && res != null) {
+            this.cache.put(new Element(generateCacheKey("find", pk), res));
+        }
+        return res;
     }
     
     /**
@@ -271,10 +324,10 @@ public abstract class BaseBasicDataExecutor<T> implements BasicDataExecutor<T> {
      * @return
      */
     @Override
-    public int delete(Map<String, Object> params) {
-        int resInt = doDelete(params);
+    public boolean delete(String pk) {
+        int resInt = doDelete(pk);
         clearCache();
-        return resInt;
+        return resInt > 0;
     }
     
     /**
@@ -282,10 +335,10 @@ public abstract class BaseBasicDataExecutor<T> implements BasicDataExecutor<T> {
      * @return
      */
     @Override
-    public int update(Map<String, Object> params) {
+    public boolean update(Map<String, Object> params) {
         int resInt = doUpdate(params);
         clearCache();
-        return resInt;
+        return resInt > 0;
     }
     
     /**
@@ -296,8 +349,13 @@ public abstract class BaseBasicDataExecutor<T> implements BasicDataExecutor<T> {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    protected void clearCache(){
-        final Cache finalCache = this.cache; 
+    private void clearCache() {
+        //如果无需缓存
+        if (!this.cacheEnable) {
+            return;
+        }
+        //如果缓存开启
+        final Cache finalCache = this.cache;
         if (TransactionSynchronizationManager.isSynchronizationActive()) {
             //如果在事务逻辑中执行
             TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
@@ -313,30 +371,23 @@ public abstract class BaseBasicDataExecutor<T> implements BasicDataExecutor<T> {
     }
     
     /**
-     * @param 对cacheEnable进行赋值
-     */
-    protected void setCacheEnable(boolean cacheEnable) {
-        this.cacheEnable = cacheEnable;
-    }
-    
-    /**
      * @return 返回 type
      */
     protected Class<T> getType() {
         return type;
     }
-
-    /**
-     * @return 返回 namedJdbcTemplate
-     */
-    protected NamedParameterJdbcTemplate getNamedJdbcTemplate() {
-        return namedJdbcTemplate;
-    }
-
+    
     /**
      * @return 返回 jdbcTemplate
      */
     protected JdbcTemplate getJdbcTemplate() {
         return jdbcTemplate;
+    }
+    
+    /**
+     * @return 返回 dialect
+     */
+    protected Dialect getDialect() {
+        return dialect;
     }
 }

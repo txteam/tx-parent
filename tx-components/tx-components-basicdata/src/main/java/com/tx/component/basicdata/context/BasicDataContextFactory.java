@@ -9,7 +9,6 @@ package com.tx.component.basicdata.context;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.stereotype.Component;
 
-import com.tx.component.basicdata.context.impl.BasicDataContext;
 
 
  /**
@@ -22,7 +21,7 @@ import com.tx.component.basicdata.context.impl.BasicDataContext;
   * @since  [产品/模块版本]
   */
 @Component("basicDataContext")
-public class BasicDataContextFactory implements FactoryBean<BasicDataContext>{
+public class BasicDataContextFactory extends BasicDataContext implements FactoryBean<BasicDataContext>{
     
     /**
      * @return
@@ -30,8 +29,7 @@ public class BasicDataContextFactory implements FactoryBean<BasicDataContext>{
      */
     @Override
     public BasicDataContext getObject() throws Exception {
-        //return BasicDataContext.newInstance();
-        return null;
+        //return ;
     }
 
     /**

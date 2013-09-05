@@ -226,12 +226,12 @@ public class AuthContext implements ApplicationContextAware, InitializingBean {
      */
     private String loadDBScript() {
         String dbScriptBasePath = dataSourceType.getBasePath();
-        String dbScriptPath = org.springframework.util.StringUtils.cleanPath("classpath*:"
+        String dbScriptPath = org.springframework.util.StringUtils.cleanPath("classpath:"
                 + dbScriptBasePath + "auth_base_1.0.0.sql");
         logger.info("load authcontext init dbscript from path:{}", dbScriptPath);
         org.springframework.core.io.Resource dbScriptResource = this.applicationContext.getResource(dbScriptPath);
         if (!dbScriptResource.exists()) {
-            dbScriptPath = org.springframework.util.StringUtils.cleanPath("classpath:"
+            dbScriptPath = org.springframework.util.StringUtils.cleanPath("classpath*:"
                     + dbScriptBasePath + "auth_base_1.0.0.sql");
             logger.info("load authcontext init dbscript from path:{}",
                     dbScriptPath);

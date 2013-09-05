@@ -8,7 +8,7 @@ package com.tx.core.jdbc.util;
 
 import java.util.WeakHashMap;
 
-import com.tx.core.dbutils.SimpleSqlMapMapper;
+import com.tx.core.jdbc.sqlsource.SimpleSqlSource;
 import com.tx.core.mybatis.generator.model.SqlMapMapper;
 
 /**
@@ -29,11 +29,11 @@ public class SimpleSqlMapMapperUtils {
      */
     private static WeakHashMap<Class<?>, SqlMapMapper> sqlMapMapperMapping = new WeakHashMap<Class<?>, SqlMapMapper>();
 
-    public static SimpleSqlMapMapper buildSqlMapMapper(Class<?> type){
+    public static SimpleSqlSource buildSqlMapMapper(Class<?> type){
         return null;
     }
     
-    private static SimpleSqlMapMapper buildSimpleSqlMapMapperByJpaAnnotation(Class<?> type){
+    private static SimpleSqlSource buildSimpleSqlMapMapperByJpaAnnotation(Class<?> type){
         //type.getAnnotation(annotationClass)
         return null;
     }

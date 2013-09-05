@@ -13,7 +13,8 @@ import com.tx.core.paged.model.PagedList;
 
 /**
  * 基础数据类型<br/>
- * <功能详细描述>
+ *     该类中由于默认仅提供了根据主键对对象的操作<br/>
+ *     所以delete,update直接返回true or false<br/>
  * 
  * @author  brady
  * @version  [版本号, 2013-8-14]
@@ -36,6 +37,9 @@ public interface BasicDataExecutor<T> {
     
     /**
      * 根据主键获取对象
+     *     与find不同的是，get的使用方法为
+     *     首先用list获取所有对象，然后建立一个map映射后
+     *     再通过该map.get出对象
      *<功能详细描述>
      * @param findCondition
      * @return [参数说明]
@@ -56,7 +60,7 @@ public interface BasicDataExecutor<T> {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public T find(T findCondition);
+    public T find(String pk);
     
     /**
       * 获取对应的所有基础数据<br/>
@@ -129,7 +133,7 @@ public interface BasicDataExecutor<T> {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public int delete(Map<String, Object> params);
+    public boolean delete(String pk);
     
     /**
       * 更新基础数据实例<br/>
@@ -141,6 +145,5 @@ public interface BasicDataExecutor<T> {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public int update(Map<String, Object> params);
-    
+    public boolean update(Map<String, Object> params);
 }

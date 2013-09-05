@@ -4,7 +4,7 @@
  * 修改时间:  2013-9-4
  * <修改描述:>
  */
-package com.tx.core.dbutils;
+package com.tx.core.jdbc.sqlsource;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -43,7 +43,7 @@ import com.tx.core.util.ObjectUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class SimpleSqlMapMapper {
+public class SimpleSqlSource {
     
     /** 主键属性名 */
     private String pkName;
@@ -57,7 +57,7 @@ public class SimpleSqlMapMapper {
     /** 属性和类型的映射 */
     private final LinkedHashMap<String, Class<?>> property2JavaTypeMapping = new LinkedHashMap<String, Class<?>>();
     
-    /** 其他字段与表达式的映射 */
+    /** 其他字段与表达式的映射:服务于插入语句 */
     private final LinkedHashMap<String, String> otherColumn2expressionMapping = new LinkedHashMap<String, String>();
     
     /** 可查询的属性名 */
@@ -73,29 +73,13 @@ public class SimpleSqlMapMapper {
     private final Set<String> modifyAblePropertyNames = new HashSet<String>();
     
     /** <默认构造函数> */
-    private SimpleSqlMapMapper(String pkName, String tableName) {
+    private SimpleSqlSource(String pkName, String tableName) {
         super();
         
         AssertUtils.notEmpty(pkName, "pkName is empty.");
         AssertUtils.notEmpty(tableName, "tableName is empty.");
         
         this.pkName = pkName.trim();
-        this.tableName = tableName.trim().toUpperCase();
-    }
-    
-    /**
-     * @param 对pkName进行赋值
-     */
-    public void setPkName(String pkName) {
-        AssertUtils.notEmpty(pkName, "pkName is empty.");
-        this.pkName = pkName.trim().toUpperCase();
-    }
-    
-    /**
-     * @param 对tableName进行赋值
-     */
-    public void setTableName(String tableName) {
-        AssertUtils.notEmpty(tableName, "tableName is empty.");
         this.tableName = tableName.trim().toUpperCase();
     }
     
@@ -138,6 +122,7 @@ public class SimpleSqlMapMapper {
         AssertUtils.notEmpty(propertyName, "propertyName is empty.");
         AssertUtils.notEmpty(conditionExpression,
                 "conditionExpression is empty.");
+        AssertUtils.notNull(jdbcType, "jdbcType is empty.");
         
         this.queryConditionProperty2SqlMapping.put(propertyName,
                 conditionExpression);
@@ -168,6 +153,29 @@ public class SimpleSqlMapMapper {
         AssertUtils.notEmpty(modifyAblePropertyName,
                 "modifyAblePropertyName is empty.");
         this.modifyAblePropertyNames.add(modifyAblePropertyName.trim());
+    }
+    
+    /**
+      * 获取对象主键名称<br/>
+      *<功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return String [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public String getPkName() {
+        return pkName;
+    }
+    
+    /**
+     * 获取对象的主键值
+     * @param 对pkName进行赋值
+     */
+    public Object getValue(Object obj) {
+        AssertUtils.notNull(obj, "obj is null.");
+        MetaObject metaObject = MetaObject.forObject(obj);
+        return metaObject.getValue(this.pkName);
     }
     
     /**
@@ -285,6 +293,35 @@ public class SimpleSqlMapMapper {
     }
     
     /**
+     * 获取一个设置的callbackHandler实现
+     *<功能详细描述>
+     * @param newObjInstance
+     * @return [参数说明]
+     * 
+     * @return RowCallbackHandler [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    public RowCallbackHandler getSelectRowCallbackHandler(Object newObjInstance) {
+        final MetaObject metaObject = MetaObject.forObject(newObjInstance);
+        RowCallbackHandler res = new RowCallbackHandler() {
+            @Override
+            public void processRow(ResultSet rs) throws SQLException {
+                for (Entry<String, String> entryTemp : property2columnNameMapping.entrySet()) {
+                    String propertyName = entryTemp.getKey();
+                    String columnName = entryTemp.getValue();
+                    Class<?> type = property2JavaTypeMapping.get(propertyName);
+                    Object value = JdbcUtils.getResultSetValueForSimpleType(rs,
+                            columnName,
+                            type);
+                    metaObject.setValue(propertyName, value);
+                }
+            }
+        };
+        return res;
+    }
+    
+    /**
       * 获取查询单条数据的sql
       *<功能详细描述>
       * @return [参数说明]
@@ -309,35 +346,6 @@ public class SimpleSqlMapMapper {
         String findSql = SqlBuilder.SQL();
         SqlBuilder.RESET();
         return findSql;
-    }
-    
-    /**
-      * 获取一个设置的callbackHandler实现
-      *<功能详细描述>
-      * @param newObjInstance
-      * @return [参数说明]
-      * 
-      * @return RowCallbackHandler [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    public RowCallbackHandler getSelectRowCallbackHandler(Object newObjInstance) {
-        final MetaObject metaObject = MetaObject.forObject(newObjInstance);
-        RowCallbackHandler res = new RowCallbackHandler() {
-            @Override
-            public void processRow(ResultSet rs) throws SQLException {
-                for (Entry<String, String> entryTemp : property2columnNameMapping.entrySet()) {
-                    String propertyName = entryTemp.getKey();
-                    String columnName = entryTemp.getValue();
-                    Class<?> type = property2JavaTypeMapping.get(propertyName);
-                    Object value = JdbcUtils.getResultSetValueForSimpleType(rs,
-                            columnName,
-                            type);
-                    metaObject.setValue(propertyName, value);
-                }
-            }
-        };
-        return res;
     }
     
     /**
@@ -446,6 +454,27 @@ public class SimpleSqlMapMapper {
             }
         };
         return res;
+    }
+    
+    /**
+      * 获取动态查询条件的参数映射关系<br/>
+      *<功能详细描述>
+      * @param obj
+      * @return [参数说明]
+      * 
+      * @return LinkedHashMap<String,Object> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public LinkedHashMap<String, Object> getQueryCondtionParamMaps(Object obj) {
+        final MetaObject metaObject = MetaObject.forObject(obj);
+        final LinkedHashMap<String, Object> resMap = new LinkedHashMap<String, Object>();
+        for (Entry<String, String> entryTemp : queryConditionProperty2SqlMapping.entrySet()) {
+            String queryPropertyName = entryTemp.getKey();
+            Object valueObj = metaObject.getValue(queryPropertyName);
+            resMap.put(queryPropertyName, valueObj);
+        }
+        return resMap;
     }
     
     /**
@@ -588,7 +617,8 @@ public class SimpleSqlMapMapper {
                 continue;
             }
             //Object value = metaObject.getValue(propertyName);
-            SqlBuilder.SET(propertyName + " = ?");
+            String columnName = property2columnNameMapping.get(propertyName);
+            SqlBuilder.SET(columnName + " = ?");
         }
         SqlBuilder.WHERE(this.property2columnNameMapping.get(this.pkName)
                 + " = ? ");
@@ -627,10 +657,10 @@ public class SimpleSqlMapMapper {
             public void setValues(PreparedStatement ps) throws SQLException {
                 int i = 1;
                 for (String propertyNameTemp : modifyAblePropertyNames) {
-                    Object valueObj = metaObject.getValue(propertyNameTemp);
                     if (!keySet.contains(propertyNameTemp)) {
                         continue;
                     }
+                    Object valueObj = metaObject.getValue(propertyNameTemp);
                     Class<?> setterType = property2JavaTypeMapping.get(propertyNameTemp);
                     JdbcUtils.setPreparedStatementValueForSimpleType(ps,
                             i++,
@@ -648,8 +678,7 @@ public class SimpleSqlMapMapper {
     }
     
     public static void main(String[] args) {
-        SimpleSqlMapMapper simpleSqlMapMapper = new SimpleSqlMapMapper("id",
-                "t_test");
+        SimpleSqlSource simpleSqlMapMapper = new SimpleSqlSource("id", "t_test");
         simpleSqlMapMapper.addProperty2columnMapping("id",
                 "idcol",
                 String.class);
