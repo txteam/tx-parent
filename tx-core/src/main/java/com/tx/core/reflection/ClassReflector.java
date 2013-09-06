@@ -32,7 +32,7 @@ public class ClassReflector {
     /**
      * 缓存
      */
-    private static Map<Class<?>, ClassReflector> cacheMap = new WeakHashMap<Class<?>, ClassReflector>();
+    private static WeakHashMap<Class<?>, ClassReflector> cacheMap = new WeakHashMap<Class<?>, ClassReflector>();
     
     /**
       * 类属性工具类
@@ -49,13 +49,16 @@ public class ClassReflector {
             throw new NullArgException(
                     "MetaAnnotationClass forClass parameter type is empty.");
         }
-        if (cacheMap.containsKey(type)) {
-            return cacheMap.get(type);
+        synchronized (type) {
+            if (cacheMap.containsKey(type)) {
+                return cacheMap.get(type);
+            }
+            ClassReflector res = new ClassReflector(type);
+            
+            cacheMap.put(type, res);
+            
+            return res;
         }
-        ClassReflector res = new ClassReflector(type);
-        
-        cacheMap.put(type, res);
-        return res;
     }
     
     /**
@@ -87,37 +90,48 @@ public class ClassReflector {
         super();
         this.type = type;
         
-        Field[] fields = type.getFields();
-        for (Field fieldTemp : fields) {
-            String fieldName = fieldTemp.getName();
-            Class<?> fieldType = fieldTemp.getType();
-            String capitalizeFieldName = StringUtils.capitalize(fieldName);
-            propertyFields.put(fieldName, fieldTemp);
+        Class<?> searchType = type;
+        while (!Object.class.equals(searchType) && searchType != null) {
             
-            Method getterMethod = null;
-            if (boolean.class.isAssignableFrom(fieldTemp.getType())) {
-                getterMethod = getMethod("is" + capitalizeFieldName);
-                if (getterMethod == null
-                        && StringUtils.startsWithIgnoreCase(fieldName, "is")) {
-                    getterMethod = getMethod(fieldName);
+            Field[] fields = searchType.getDeclaredFields();
+            for (Field fieldTemp : fields) {
+                String fieldName = fieldTemp.getName();
+                Class<?> fieldType = fieldTemp.getType();
+                String capitalizeFieldName = StringUtils.capitalize(fieldName);
+                
+                //如果子类已经存在的字段则认为该字段已经被覆写以子类为准
+                if(propertyFields.containsKey(fieldName)){
+                    continue;
                 }
-            } else {
-                getterMethod = getMethod("get" + capitalizeFieldName);
-            }
-            propertyGetterMethods.put(fieldName, getterMethod);
-            
-            Method setterMethod = null;
-            if (boolean.class.isAssignableFrom(fieldTemp.getType())) {
-                getterMethod = getMethod("set" + capitalizeFieldName,
-                        boolean.class);
-                if (getterMethod == null
-                        && StringUtils.startsWithIgnoreCase(fieldName, "is")) {
-                    getterMethod = getMethod("set" + StringUtils.substringAfter(fieldName, "is"),boolean.class);
+                
+                propertyFields.put(fieldName, fieldTemp);
+                
+                Method getterMethod = null;
+                if (boolean.class.isAssignableFrom(fieldTemp.getType())) {
+                    getterMethod = getMethod("is" + capitalizeFieldName);
+                    if (getterMethod == null
+                            && StringUtils.startsWithIgnoreCase(fieldName, "is")) {
+                        getterMethod = getMethod(fieldName);
+                    }
+                } else {
+                    getterMethod = getMethod("get" + capitalizeFieldName);
                 }
-            } else {
-                getterMethod = getMethod("set" + capitalizeFieldName,fieldType);
+                propertyGetterMethods.put(fieldName, getterMethod);
+                
+                Method setterMethod = null;
+                if (boolean.class.isAssignableFrom(fieldTemp.getType())) {
+                    getterMethod = getMethod("set" + capitalizeFieldName,
+                            boolean.class);
+                    if (getterMethod == null
+                            && StringUtils.startsWithIgnoreCase(fieldName, "is")) {
+                        getterMethod = getMethod("set" + StringUtils.substringAfter(fieldName, "is"),boolean.class);
+                    }
+                } else {
+                    getterMethod = getMethod("set" + capitalizeFieldName,fieldType);
+                }
+                propertySetterMethods.put(fieldName, setterMethod);
             }
-            propertySetterMethods.put(fieldName, setterMethod);
+            searchType = searchType.getSuperclass();
         }
     }
     

@@ -76,6 +76,11 @@ public class JdbcUtils {
         return SIMPLE_TYPE_2_TYPES_MAP.get(type);
     }
     
+    public static JdbcType getJdbcTypeByJavaType(Class<?> type) {
+        JdbcType jdbcType = JdbcType.forCode(SIMPLE_TYPE_2_TYPES_MAP.get(type));
+        return jdbcType;
+    }
+    
     /**
       * 为简单属性设值<br/>
       *<功能详细描述>
@@ -109,6 +114,26 @@ public class JdbcUtils {
                 parameterIndex,
                 value,
                 JdbcType.forCode(SIMPLE_TYPE_2_TYPES_MAP.get(type)));
+    }
+    
+    /**
+      * 是否是直接支持存储的类型
+      *<功能详细描述>
+      * @param type
+      * @return [参数说明]
+      * 
+      * @return boolean [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public static boolean isSupportedSimpleType(Class<?> type){
+        @SuppressWarnings("rawtypes")
+        TypeHandler typeHandler = typeHandlerRegistry.getTypeHandler(type);
+        if(typeHandler != null){
+            return true;
+        }else{
+            return false;
+        }
     }
     
     /**
@@ -231,4 +256,7 @@ public class JdbcUtils {
     //        }
     //    }
     
+    public static void main(String[] args) {
+        System.out.println(isSupportedSimpleType(BigDecimal.class));
+    }
 }

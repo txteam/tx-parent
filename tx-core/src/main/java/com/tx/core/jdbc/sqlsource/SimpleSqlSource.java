@@ -6,25 +6,22 @@
  */
 package com.tx.core.jdbc.sqlsource;
 
+import java.io.Serializable;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Date;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.ibatis.jdbc.SqlBuilder;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.type.JdbcType;
 import org.hibernate.dialect.Dialect;
-import org.hibernate.dialect.H2Dialect;
-import org.hibernate.dialect.MySQL5InnoDBDialect;
-import org.hibernate.dialect.Oracle9iDialect;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowCallbackHandler;
 
@@ -43,7 +40,13 @@ import com.tx.core.util.ObjectUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class SimpleSqlSource {
+public class SimpleSqlSource implements Serializable {
+    
+    /** 注释内容 */
+    private static final long serialVersionUID = 3059322593035094214L;
+    
+    /** 方言类 */
+    private Dialect dialect;
     
     /** 主键属性名 */
     private String pkName;
@@ -66,21 +69,26 @@ public class SimpleSqlSource {
     /** 可查询的属性名 */
     private final LinkedHashMap<String, JdbcType> queryConditionProperty2TypeMapping = new LinkedHashMap<String, JdbcType>();
     
+    /** 添加排序条件 */
+    private final List<String> orderList = new ArrayList<String>();
+    
     /** 与字段无关的其他条件,直接添加到查询语句中，无需进行setter */
     private final Set<String> otherCondition = new HashSet<String>();
     
     /** 可编辑的属性名 */
-    private final Set<String> modifyAblePropertyNames = new HashSet<String>();
+    private final Set<String> updateAblePropertyNames = new HashSet<String>();
     
     /** <默认构造函数> */
-    private SimpleSqlSource(String pkName, String tableName) {
+    public SimpleSqlSource(String tableName, String pkName, Dialect dialect) {
         super();
         
         AssertUtils.notEmpty(pkName, "pkName is empty.");
         AssertUtils.notEmpty(tableName, "tableName is empty.");
+        AssertUtils.notNull(dialect, "dialect is empty.");
         
         this.pkName = pkName.trim();
         this.tableName = tableName.trim().toUpperCase();
+        this.dialect = dialect;
     }
     
     /**
@@ -149,10 +157,15 @@ public class SimpleSqlSource {
     /**
      * @param 对modifyAblePropertyNames进行赋值
      */
-    public void addModifyAblePropertyNames(String modifyAblePropertyName) {
+    public void addUpdateAblePropertyNames(String modifyAblePropertyName) {
         AssertUtils.notEmpty(modifyAblePropertyName,
                 "modifyAblePropertyName is empty.");
-        this.modifyAblePropertyNames.add(modifyAblePropertyName.trim());
+        this.updateAblePropertyNames.add(modifyAblePropertyName.trim());
+    }
+    
+    public void addOrder(String order) {
+        AssertUtils.notEmpty(order, "order is empty.");
+        this.orderList.add(order.trim().toUpperCase());
     }
     
     /**
@@ -176,6 +189,26 @@ public class SimpleSqlSource {
         AssertUtils.notNull(obj, "obj is null.");
         MetaObject metaObject = MetaObject.forObject(obj);
         return metaObject.getValue(this.pkName);
+    }
+    
+    public Dialect getDialect() {
+        return this.dialect;
+    }
+    
+    /**
+      * 获取到属性映射到的字段名<br/>
+      *<功能详细描述>
+      * @param propertyName
+      * @return [参数说明]
+      * 
+      * @return String [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public String getColumnNameByPropertyName(String propertyName) {
+        AssertUtils.notEmpty(propertyName, "propertyName is empty.");
+        
+        return this.property2columnNameMapping.get(propertyName);
     }
     
     /**
@@ -377,6 +410,14 @@ public class SimpleSqlSource {
         for (String conditionExpressionTemp : otherCondition) {
             SqlBuilder.WHERE(conditionExpressionTemp);
         }
+        if (CollectionUtils.isEmpty(orderList)) {
+            SqlBuilder.ORDER_BY(this.property2columnNameMapping.get(this.pkName));
+        } else {
+            for (String order : orderList) {
+                SqlBuilder.ORDER_BY(order);
+            }
+        }
+        
         String querySql = SqlBuilder.SQL();
         SqlBuilder.RESET();
         
@@ -472,6 +513,9 @@ public class SimpleSqlSource {
         for (Entry<String, String> entryTemp : queryConditionProperty2SqlMapping.entrySet()) {
             String queryPropertyName = entryTemp.getKey();
             Object valueObj = metaObject.getValue(queryPropertyName);
+            if (ObjectUtils.isEmpty(valueObj)) {
+                continue;
+            }
             resMap.put(queryPropertyName, valueObj);
         }
         return resMap;
@@ -485,8 +529,7 @@ public class SimpleSqlSource {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public String queryPagedSql(Dialect dialect, Object obj, int pageIndex,
-            int pageSize) {
+    public String queryPagedSql(Object obj, int pageIndex, int pageSize) {
         String querySql = querySql(obj);
         int offset = pageSize * (pageIndex - 1);
         int limit = pageSize * pageIndex;
@@ -515,8 +558,8 @@ public class SimpleSqlSource {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    public PreparedStatementSetter getPagedQueryCondtionSetter(Dialect dialect,
-            Object obj, int pageIndex, int pageSize) {
+    public PreparedStatementSetter getPagedQueryCondtionSetter(Object obj,
+            int pageIndex, int pageSize) {
         final MetaObject metaObject = MetaObject.forObject(obj);
         final int offset = pageSize * (pageIndex - 1);
         final int limit = pageSize * pageIndex;
@@ -586,6 +629,23 @@ public class SimpleSqlSource {
     }
     
     /**
+      * 如果没有设定可更新字段，则认为该对象不支持更新<br/>
+      *<功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return boolean [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public boolean isUpdateAble() {
+        if (CollectionUtils.isEmpty(this.updateAblePropertyNames)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+    
+    /**
      * 获取查询sql
      *<功能详细描述>
      * @return [参数说明]
@@ -612,7 +672,7 @@ public class SimpleSqlSource {
         SqlBuilder.BEGIN();
         SqlBuilder.UPDATE(this.tableName);
         
-        for (String propertyName : modifyAblePropertyNames) {
+        for (String propertyName : updateAblePropertyNames) {
             if (!keySet.contains(propertyName)) {
                 continue;
             }
@@ -656,7 +716,7 @@ public class SimpleSqlSource {
             @Override
             public void setValues(PreparedStatement ps) throws SQLException {
                 int i = 1;
-                for (String propertyNameTemp : modifyAblePropertyNames) {
+                for (String propertyNameTemp : updateAblePropertyNames) {
                     if (!keySet.contains(propertyNameTemp)) {
                         continue;
                     }
@@ -675,75 +735,5 @@ public class SimpleSqlSource {
             }
         };
         return res;
-    }
-    
-    public static void main(String[] args) {
-        SimpleSqlSource simpleSqlMapMapper = new SimpleSqlSource("id", "t_test");
-        simpleSqlMapMapper.addProperty2columnMapping("id",
-                "idcol",
-                String.class);
-        simpleSqlMapMapper.addProperty2columnMapping("aaa",
-                "aCol",
-                String.class);
-        simpleSqlMapMapper.addProperty2columnMapping("bbb",
-                "bCol",
-                String.class);
-        simpleSqlMapMapper.addProperty2columnMapping("ccc", "cCol", Date.class);
-        //simpleSqlMapMapper.addQueryConditionProperty2SqlMapping("", conditionExpression)
-        //simpleSqlMapMapper.addq
-        
-        System.out.println(simpleSqlMapMapper.insertSql());
-        System.out.println(simpleSqlMapMapper.deleteSql());
-        System.out.println(simpleSqlMapMapper.findSql());
-        
-        simpleSqlMapMapper.addQueryConditionProperty2SqlMapping("aaa",
-                "AAA = ?",
-                JdbcType.VARCHAR);
-        simpleSqlMapMapper.addQueryConditionProperty2SqlMapping("minCCC",
-                "CCC > ?",
-                JdbcType.TIMESTAMP);
-        simpleSqlMapMapper.addQueryConditionProperty2SqlMapping("maxCCC",
-                "CCC < ?",
-                JdbcType.TIMESTAMP);
-        
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("aaa", "111");
-        params.put("maxCCC", DateUtils.addDays(new Date(), 1));
-        
-        System.out.println(simpleSqlMapMapper.querySql(params));
-        System.out.println(simpleSqlMapMapper.countSql(params));
-        
-        simpleSqlMapMapper.addModifyAblePropertyNames("aaa");
-        simpleSqlMapMapper.addModifyAblePropertyNames("bbb");
-        
-        Map<String, Object> params2 = new HashMap<String, Object>();
-        params2.put("aaa", "111");
-        params2.put("id", "111");
-        System.out.println(simpleSqlMapMapper.updateSql(params2));
-        
-        System.out.println(simpleSqlMapMapper.queryPagedSql(new Oracle9iDialect(),
-                params,
-                1,
-                10));
-        System.out.println(simpleSqlMapMapper.queryPagedSql(new Oracle9iDialect(),
-                params,
-                2,
-                10));
-        System.out.println(simpleSqlMapMapper.queryPagedSql(new MySQL5InnoDBDialect(),
-                params,
-                1,
-                10));
-        System.out.println(simpleSqlMapMapper.queryPagedSql(new MySQL5InnoDBDialect(),
-                params,
-                2,
-                10));
-        System.out.println(simpleSqlMapMapper.queryPagedSql(new H2Dialect(),
-                params,
-                1,
-                10));
-        System.out.println(simpleSqlMapMapper.queryPagedSql(new H2Dialect(),
-                params,
-                2,
-                10));
     }
 }

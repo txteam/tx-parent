@@ -12,8 +12,8 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.slf4j.helpers.MessageFormatter;
 
-import com.tx.core.dbscript.exception.UnexpectIOException;
 import com.tx.core.exceptions.SILException;
+import com.tx.core.exceptions.io.ResourceAccessException;
 import com.tx.core.reflection.exception.ReflectionException;
 
 /**
@@ -166,6 +166,6 @@ public class ExceptionWrapperUtils {
     public static SILException wrapperIOException(IOException ioException,
             String message, Object[] parameters) {
         AssertUtils.notNull(ioException, "ioException not be null");
-        return new UnexpectIOException(ioException, message, parameters);
+        return new ResourceAccessException(MessageFormatter.arrayFormat(message, parameters).getMessage(),ioException);
     }
 }
