@@ -22,14 +22,8 @@ public class QueryCondition {
     /** 服务于界面显示查询条件 */
     private String name;
     
-    /** 传入数据映射 */
-    private JdbcType jdbcType = JdbcType.VARCHAR;
-    
     /** 条件传入关键字 */
     private String key;
-    
-    /** 条件拼接表达式 */
-    private String expression;
     
     /** <默认构造函数> */
     public QueryCondition() {
@@ -41,9 +35,7 @@ public class QueryCondition {
             String expression) {
         super();
         this.name = name;
-        this.jdbcType = jdbcType;
         this.key = key;
-        this.expression = expression;
     }
 
     /**
@@ -61,20 +53,6 @@ public class QueryCondition {
     }
 
     /**
-     * @return 返回 jdbcType
-     */
-    public JdbcType getJdbcType() {
-        return jdbcType;
-    }
-
-    /**
-     * @param 对jdbcType进行赋值
-     */
-    public void setJdbcType(JdbcType jdbcType) {
-        this.jdbcType = jdbcType;
-    }
-
-    /**
      * @return 返回 key
      */
     public String getKey() {
@@ -86,19 +64,5 @@ public class QueryCondition {
      */
     public void setKey(String key) {
         this.key = key;
-    }
-
-    /**
-     * @return 返回 expression
-     */
-    public String getExpression() {
-        return expression;
-    }
-
-    /**
-     * @param 对expression进行赋值
-     */
-    public void setExpression(String expression) {
-        this.expression = expression;
     }
 }

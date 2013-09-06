@@ -21,20 +21,14 @@ public class PropertyItemInfo {
     /** 属性界面展示名称 */
     private String name;
     
-    /** 对应数据库字段名 */
-    private String columnName;
-    
     /** 属性项label名 */
     private String propertyName;
     
     /** 属性项在列表中是否隐藏 */
-    private boolean hidden;
+    private boolean hidden = false;
     
-    /** 对应属性是否被忽略 */
-    private boolean omit;
-    
-    /** 是否是排序字段 */
-    private boolean visibal;
+    /** 是否是可见字段 */
+    private boolean visibal = true;
     
     /** 属性项排序值 */
     private int order;
@@ -54,20 +48,6 @@ public class PropertyItemInfo {
      */
     public void setName(String name) {
         this.name = name;
-    }
-
-    /**
-     * @return 返回 columnName
-     */
-    public String getColumnName() {
-        return columnName;
-    }
-
-    /**
-     * @param 对columnName进行赋值
-     */
-    public void setColumnName(String columnName) {
-        this.columnName = columnName;
     }
 
     /**
@@ -96,20 +76,6 @@ public class PropertyItemInfo {
      */
     public void setHidden(boolean hidden) {
         this.hidden = hidden;
-    }
-
-    /**
-     * @return 返回 omit
-     */
-    public boolean isOmit() {
-        return omit;
-    }
-
-    /**
-     * @param 对omit进行赋值
-     */
-    public void setOmit(boolean omit) {
-        this.omit = omit;
     }
 
     /**
