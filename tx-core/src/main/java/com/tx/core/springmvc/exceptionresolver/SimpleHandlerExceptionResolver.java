@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataAccessException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.SimpleMappingExceptionResolver;
 
@@ -70,8 +71,14 @@ public class SimpleHandlerExceptionResolver extends
         if (e instanceof SILException) {
             SILException sile = (SILException) e;
             message = sile.getErrorMessage();
-        } else {
-            message = e.getMessage();
+        } else if(e instanceof DataAccessException){
+            message = "系统内部错误：数据处理异常";
+        } else if(e instanceof IllegalArgumentException){
+            message = "系统内部错误：参数异常";
+        } else if(e instanceof IllegalArgumentException){
+            message = "系统内部错误：参数异常";
+        }else {
+            message =  "系统内部错误：" + e.toString();
         }
         return message;
     }
