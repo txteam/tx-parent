@@ -36,11 +36,7 @@ public enum RuleTypeEnum {
     /**
      * DROOLS规则
      */
-    DROOLS_PKG_URL("",DROOLS),
-    /**
-     * 集合类型规则
-     */
-    COLLECTION("集合类规则");
+    DROOLS_PKG_URL("",DROOLS);
     
     private String name;
     

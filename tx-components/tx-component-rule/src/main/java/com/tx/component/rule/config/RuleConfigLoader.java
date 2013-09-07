@@ -24,7 +24,6 @@ import org.drools.io.ResourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.Resource;
@@ -57,7 +56,6 @@ public class RuleConfigLoader implements RuleLoader, ApplicationContextAware {
     private Logger logger = LoggerFactory.getLogger(RuleConfigLoader.class);
     
     /** 配置资源集 */
-    @Value("classpath:/rulecontext/*.xml")
     private String configLocations;
     
     /** 加载器运行顺序 */

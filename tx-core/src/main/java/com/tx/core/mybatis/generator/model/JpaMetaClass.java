@@ -389,6 +389,9 @@ public class JpaMetaClass {
      * @return 返回 simpleTableName
      */
     public String getSimpleTableName() {
+        if("TO".equals(simpleTableName.toUpperCase())){
+            simpleTableName = "TO_";
+        }
         return simpleTableName;
     }
     

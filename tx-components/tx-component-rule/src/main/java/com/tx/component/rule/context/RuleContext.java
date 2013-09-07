@@ -13,7 +13,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Resource;
 
@@ -48,6 +47,7 @@ import com.tx.component.rule.support.impl.DefaultRuleSessionFactory;
 import com.tx.component.rule.transation.RuleSessionTransactionFactory;
 import com.tx.component.rule.transation.impl.DefaultRuleSessionTransactionFactory;
 import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.spring.event.BeansInitializedEvent;
 
 /**
  * 规则容器<br/>
@@ -65,8 +65,6 @@ public class RuleContext implements BeanNameAware, FactoryBean<RuleContext>,
     /** 日志记录器 */
     private static Logger logger = LoggerFactory.getLogger(RuleContext.class);
     
-    /* 不需要注入属性 */
-    
     /** 单例的rule容器 */
     private static Map<String, RuleContext> ruleContextMapping = new HashMap<String, RuleContext>();
     
@@ -76,14 +74,6 @@ public class RuleContext implements BeanNameAware, FactoryBean<RuleContext>,
     /** rulecontext name */
     private String beanName;
     
-    /** 注册的规则加载器 */
-    private List<RuleLoader> registeredRuleLoaderList = new ArrayList<RuleLoader>();
-    
-    /** 规则验证器映射 */
-    private Map<RuleTypeEnum, RuleRegister<? extends Rule>> ruleRegisterMap = new HashMap<RuleTypeEnum, RuleRegister<? extends Rule>>();
-    
-    /* 可注入属性 */
-    
     /** 规则会话事务工厂  */
     private RuleSessionTransactionFactory ruleSessionTransactionFactory;
     
@@ -91,19 +81,33 @@ public class RuleContext implements BeanNameAware, FactoryBean<RuleContext>,
     private RuleSessionFactory ruleSessionFactory;
     
     /** 缓存 */
+    @Resource(name = "cache")
     private Ehcache ehcache;
-    
-    /* 自动注入属性 */
     
     /** 持久化规则业务层 */
     @Resource(name = "simplePersistenceRuleService")
     private SimplePersistenceRuleService simplePersistenceRuleService;
-
+    
+    /** 注册的规则加载器 */
+    private List<RuleLoader> registeredRuleLoaderList = new ArrayList<RuleLoader>();
+    
+    /** 规则验证器映射 */
+    private Map<RuleTypeEnum, RuleRegister<? extends Rule>> ruleRegisterMap = new HashMap<RuleTypeEnum, RuleRegister<? extends Rule>>();
+    
     /** 规则缓存:key为 serviceType + "." + rule */
     private Map<String, Rule> ruleKeyMapCache;
     
     /** 规则缓存:key为 rule 如果存在两个同rule serviceType时，则在该缓存中不进行存入 */
     private MultiValueMap<String, Rule> multiRuleMapCache;
+    
+    /** 是否加载完成 */
+    private boolean loadOver = false;
+    
+    /** 最大等待加载时间 */
+    private long maxLoadTimeout = 1000 * 60 * 5;
+    
+    /** 等待加载的线程映射 */
+    private Map<Thread, Integer> waitThreadMap = new HashMap<Thread, Integer>();
     
     /**
      * <默认构造函数>
@@ -138,21 +142,13 @@ public class RuleContext implements BeanNameAware, FactoryBean<RuleContext>,
     public void afterPropertiesSet() throws Exception {
         logger.info("开始初始化规则容器....");
         
-        //TODO:缓存模型
-//        this.ruleKeyMapCache = new SimpleEhcacheMap<String, Rule>(
-//                "cache.ruleKeyMapCache", ehcache,
-//                new ConcurrentHashMap<String, Rule>());
-//        this.multiRuleMapCache = new SimpleMultiValueEhcacheMap<String, Rule>(
-//                "cache.multiRuleMapCache", ehcache,
-//                new ConcurrentHashMap<String, List<Rule>>());
-        this.ruleKeyMapCache = new ConcurrentHashMap<String, Rule>();
-        this.multiRuleMapCache = new LinkedMultiValueMap<String, Rule>();
-        
+        this.ruleKeyMapCache = new HashMap<String, Rule>();
+        this.multiRuleMapCache = new LinkedMultiValueMap<String, Rule>(); 
+                
         logger.info("加载规则加载器....");
         Collection<RuleLoader> ruleLoaders = this.applicationContext.getBeansOfType(RuleLoader.class)
                 .values();
         registeRuleLoader(ruleLoaders);
-        
         logger.info("加载规则注册器...");
         @SuppressWarnings("rawtypes")
         Collection<RuleRegister> ruleRegisters = this.applicationContext.getBeansOfType(RuleRegister.class)
@@ -240,7 +236,7 @@ public class RuleContext implements BeanNameAware, FactoryBean<RuleContext>,
         RuleRegister<? extends Rule> ruleRegisterTemp = ruleRegisterMap.get(spRule.getRuleType());
         if (ruleRegisterTemp == null) {
             throw new RuleRegisteException(
-                    "ruleType:{} RuleRegister not exist.", new Object[]{spRule.getRuleType()});
+                    "ruleType:{} RuleRegister not exist.",new Object[]{spRule.getRuleType()});
         }
         
         //调用对应注册器方法，将规则注册入容器中
@@ -471,7 +467,7 @@ public class RuleContext implements BeanNameAware, FactoryBean<RuleContext>,
         } else if (multiRuleMapCache.containsKey(rule)) {
             if (multiRuleMapCache.get(rule) != null
                     && multiRuleMapCache.get(rule).size() > 1) {
-                throw new RuleAccessException("未带业务类型（命名空间）的规则，检索到超过多个规则:{}", new Object[]{rule});
+                throw new RuleAccessException("规则容器尚未完成规则加载请等待...");
             } else {
                 return true;
             }
@@ -497,7 +493,9 @@ public class RuleContext implements BeanNameAware, FactoryBean<RuleContext>,
         } else if (multiRuleMapCache.containsKey(rule)) {
             if (multiRuleMapCache.get(rule) != null
                     && multiRuleMapCache.get(rule).size() > 1) {
-                throw new RuleAccessException("未带业务类型（命名空间）的规则，检索到超过多个规则:{}", new Object[]{rule});
+                throw new RuleAccessException("规则容器尚未完成规则加载请等待...");
+//                throw new RuleAccessException(rule, null, null,
+//                        "未带业务类型（命名空间）的规则，检索到超过多个规则:{}", rule);
             } else {
                 return multiRuleMapCache.getFirst(rule);
             }
@@ -588,8 +586,9 @@ public class RuleContext implements BeanNameAware, FactoryBean<RuleContext>,
         if (isCoverWhenSame) {
             this.ruleKeyMapCache.put(getRuleCacheKey(rule), rule);
         } else if (this.ruleKeyMapCache.containsKey(getRuleCacheKey(rule))) {
-            throw new RuleAccessException("重复的规则项:{}",new Object[]{rule.rule()}
-                    );
+            throw new RuleAccessException("规则容器尚未完成规则加载请等待...");
+//            throw new RuleAccessException(rule.rule(), null, null, "重复的规则项:{}",
+//                    rule.rule());
         } else {
             this.ruleKeyMapCache.put(getRuleCacheKey(rule), rule);
             logger.warn("规则项{}被同名规则项覆盖.", rule.rule());

@@ -42,10 +42,6 @@ public class SimplePersistenceRuleService {
     @SuppressWarnings("unused")
     private Logger logger = LoggerFactory.getLogger(SimplePersistenceRuleService.class);
     
-    @SuppressWarnings("unused")
-    //@Resource(name = "serviceLogger")
-    private Logger serviceLogger;
-    
     @Resource(name = "simplePersistenceRuleDao")
     private SimplePersistenceRuleDao simplePersistenceRuleDao;
     

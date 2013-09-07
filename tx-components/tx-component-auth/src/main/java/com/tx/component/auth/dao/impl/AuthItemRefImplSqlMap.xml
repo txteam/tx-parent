@@ -75,11 +75,10 @@
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authItemId)">
 				AND TAIRI.AUTHID = #{authItemId,javaType=java.lang.String}
 			</if>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(refType2RefIdMapping)">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(refType2RefIdMap)">
 				AND
-				<foreach collection="#{refType2RefIdMapping.entrySet().iterator() }" open="(" close=")" item="entryTemp" separator="or">
-					(TAIRI.AUTHREFTYPE = #{entryTemp.getKey(),javaType=java.lang.String}
-					AND TAIRI.REFID = #{entryTemp.getValue,javaType=java.lang.String})
+				<foreach collection="refType2RefIdMap.entrySet()" item="entryTemp" open="(" close=")" separator="or">
+					(TAIRI.AUTHREFTYPE = #{entryTemp.key} AND TAIRI.REFID = #{entryTemp.value})
 				</foreach>
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authRefType)">  
@@ -129,11 +128,10 @@
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authItemId)">
 				AND TAIRI.AUTHID = #{authItemId,javaType=java.lang.String}
 			</if>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(refType2RefIdMapping)">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(refType2RefIdMap)">
 				AND
-				<foreach collection="#{refType2RefIdMapping.entrySet().iterator() }" open="(" close=")" item="entryTemp" separator="or">
-					(TAIRI.AUTHREFTYPE = #{entryTemp.getKey(),javaType=java.lang.String}
-					AND TAIRI.REFID = #{entryTemp.getValue,javaType=java.lang.String})
+				<foreach collection="refType2RefIdMap.entrySet()" open="(" close=")" item="entryTemp" separator="OR">
+					(TAIRI.AUTHREFTYPE = #{entryTemp.key} AND TAIRI.REFID = #{entryTemp.value})
 				</foreach>
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authRefType)">  

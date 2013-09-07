@@ -28,13 +28,7 @@ public enum SimpleRuleParamEnum {
      *      加载规则的url路径(存储相对路径)
      */
     DROOLS_PKG_URL_VALUE(RuleTypeEnum.DROOLS_PKG_URL, "URL_VALUE", "", "",
-            false, false),
-    /**
-     * Collection属性：
-     *     持久化到数据库的规则资源
-     */
-    COLLECTION_QUOTE_RULE(RuleTypeEnum.COLLECTION, "QUOTE_RULE", "", "", true,
-            false);
+            false, false);
     
     /**
      * 规则类型
