@@ -24,6 +24,7 @@ import org.apache.ibatis.type.JdbcType;
 import org.hibernate.dialect.Dialect;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowCallbackHandler;
+import org.springframework.jdbc.core.RowMapper;
 
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.util.JdbcUtils;
@@ -40,10 +41,13 @@ import com.tx.core.util.ObjectUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class SimpleSqlSource implements Serializable {
+public class SimpleSqlSource<T> implements Serializable, Cloneable {
     
     /** 注释内容 */
     private static final long serialVersionUID = 3059322593035094214L;
+    
+    /** 对应类的类型 */
+    private Class<T> type;
     
     /** 方言类 */
     private Dialect dialect;
@@ -79,16 +83,32 @@ public class SimpleSqlSource implements Serializable {
     private final Set<String> updateAblePropertyNames = new HashSet<String>();
     
     /** <默认构造函数> */
-    public SimpleSqlSource(String tableName, String pkName, Dialect dialect) {
+    public SimpleSqlSource(Class<T> type,String tableName, String pkName, Dialect dialect) {
         super();
         
+        AssertUtils.notNull(type, "type is empty.");
         AssertUtils.notEmpty(pkName, "pkName is empty.");
         AssertUtils.notEmpty(tableName, "tableName is empty.");
         AssertUtils.notNull(dialect, "dialect is empty.");
         
+        this.type = type;
         this.pkName = pkName.trim();
         this.tableName = tableName.trim().toUpperCase();
         this.dialect = dialect;
+    }
+    
+    /**
+     * @param 对pkName进行赋值
+     */
+    public void setPkName(String pkName) {
+        this.pkName = pkName;
+    }
+    
+    /**
+     * @param 对tableName进行赋值
+     */
+    public void setTableName(String tableName) {
+        this.tableName = tableName;
     }
     
     /**
@@ -323,6 +343,44 @@ public class SimpleSqlSource implements Serializable {
         SqlBuilder.RESET();
         
         return deleteSql;
+    }
+    
+    /**
+      * 获取对象的RowMapper
+      *<功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return RowMapper [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public RowMapper<T> getSelectRowMapper(){
+        final Class<T> finalType = this.type;
+        RowMapper<T> rowMapper = new RowMapper<T>() {
+            /**
+             * @param rs
+             * @param rowNum
+             * @return
+             * @throws SQLException
+             */
+            @Override
+            public T mapRow(ResultSet rs, int rowNum) throws SQLException {
+                T newObjInstance = ObjectUtils.newInstance(finalType);
+                MetaObject metaObject = MetaObject.forObject(newObjInstance);
+                
+                for (Entry<String, String> entryTemp : property2columnNameMapping.entrySet()) {
+                    String propertyName = entryTemp.getKey();
+                    String columnName = entryTemp.getValue();
+                    Class<?> type = property2JavaTypeMapping.get(propertyName);
+                    Object value = JdbcUtils.getResultSetValueForSimpleType(rs,
+                            columnName,
+                            type);
+                    metaObject.setValue(propertyName, value);
+                }
+                return newObjInstance;
+            }
+        };
+        return rowMapper;
     }
     
     /**
@@ -729,11 +787,24 @@ public class SimpleSqlSource implements Serializable {
                 }
                 Class<?> setterType = property2JavaTypeMapping.get(finalPkName);
                 JdbcUtils.setPreparedStatementValueForSimpleType(ps,
-                        1,
+                        i,
                         metaObject.getValue(finalPkName),
                         setterType);
             }
         };
         return res;
     }
+
+    /**
+     * @return
+     * @throws CloneNotSupportedException
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        SimpleSqlSource<T> cloneObj = (SimpleSqlSource<T>)super.clone();
+        return cloneObj;
+    }
+    
+    
 }

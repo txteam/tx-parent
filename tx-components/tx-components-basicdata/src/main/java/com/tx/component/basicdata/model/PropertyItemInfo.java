@@ -6,6 +6,8 @@
  */
 package com.tx.component.basicdata.model;
 
+import com.tx.component.basicdata.valuegenerator.ValueGenerator;
+
 
  /**
   * 属性项信息<br/>
@@ -17,6 +19,9 @@ package com.tx.component.basicdata.model;
   * @since  [产品/模块版本]
   */
 public class PropertyItemInfo {
+    
+    /** 字段对应的java类型 */
+    private Class<?> type;
     
     /** 属性界面展示名称 */
     private String name;
@@ -33,8 +38,20 @@ public class PropertyItemInfo {
     /** 属性项排序值 */
     private int order;
     
-    /** 字段对应的java类型 */
-    private Class<?> type;
+    /** 验证表达式 */
+    private String validateExpression;
+    
+    /** 提示信息，字段验证前显示提示信息 */
+    private String tipMessage;
+    
+    /** 字段验证错误信息 */
+    private String errorMessage;
+    
+    /** 是否可以编辑 */
+    private boolean modifyAble;
+    
+    /** 字段值生成器 */
+    private ValueGenerator<?> valueGenerator;
 
     /**
      * @return 返回 name
@@ -118,5 +135,75 @@ public class PropertyItemInfo {
      */
     public void setType(Class<?> type) {
         this.type = type;
+    }
+
+    /**
+     * @return 返回 validateExpression
+     */
+    public String getValidateExpression() {
+        return validateExpression;
+    }
+
+    /**
+     * @param 对validateExpression进行赋值
+     */
+    public void setValidateExpression(String validateExpression) {
+        this.validateExpression = validateExpression;
+    }
+
+    /**
+     * @return 返回 tipMessage
+     */
+    public String getTipMessage() {
+        return tipMessage;
+    }
+
+    /**
+     * @param 对tipMessage进行赋值
+     */
+    public void setTipMessage(String tipMessage) {
+        this.tipMessage = tipMessage;
+    }
+
+    /**
+     * @return 返回 errorMessage
+     */
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    /**
+     * @param 对errorMessage进行赋值
+     */
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
+
+    /**
+     * @return 返回 modifyAble
+     */
+    public boolean isModifyAble() {
+        return modifyAble;
+    }
+
+    /**
+     * @param 对modifyAble进行赋值
+     */
+    public void setModifyAble(boolean modifyAble) {
+        this.modifyAble = modifyAble;
+    }
+
+    /**
+     * @return 返回 valueGenerator
+     */
+    public ValueGenerator<?> getValueGenerator() {
+        return valueGenerator;
+    }
+
+    /**
+     * @param 对valueGenerator进行赋值
+     */
+    public void setValueGenerator(ValueGenerator<?> valueGenerator) {
+        this.valueGenerator = valueGenerator;
     }
 }

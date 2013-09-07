@@ -77,6 +77,9 @@ public class JdbcUtils {
     }
     
     public static JdbcType getJdbcTypeByJavaType(Class<?> type) {
+        if(SIMPLE_TYPE_2_TYPES_MAP.get(type) == null){
+            return null;
+        }
         JdbcType jdbcType = JdbcType.forCode(SIMPLE_TYPE_2_TYPES_MAP.get(type));
         return jdbcType;
     }
@@ -105,10 +108,6 @@ public class JdbcUtils {
             ps.setNull(parameterIndex, getSqlTypeByJavaType(type));
             return;
         }
-        AssertUtils.isInstanceOf(type,
-                value,
-                "value:{} should be type:{} instance",
-                new Object[] { value, type });
         TypeHandler typeHandler = typeHandlerRegistry.getTypeHandler(type);
         typeHandler.setParameter(ps,
                 parameterIndex,

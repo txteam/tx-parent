@@ -55,7 +55,7 @@ public class EnumBasicDataExecutor<T extends Enum<T>> extends
      * @return
      */
     @Override
-    protected String getValue(T obj) {
+    protected String getKeyValue(T obj) {
         return obj.toString();
     }
     

@@ -12,6 +12,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import com.tx.component.basicdata.executor.BasicDataExecutor;
+import com.tx.component.basicdata.executor.DefaultBasicDataExecutor;
 
 /**
  * 基础数据模型<br/>
@@ -23,11 +24,11 @@ import com.tx.component.basicdata.executor.BasicDataExecutor;
  * @since  [产品/模块版本]
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE})
+@Target({ ElementType.TYPE })
 public @interface BasicData {
     
     /**
-      * 基础数据对应表名
+      * 基础数据所属模块名
       *<功能详细描述>
       * @return [参数说明]
       * 
@@ -35,7 +36,7 @@ public @interface BasicData {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public String tableName();
+    public String module();
     
     /**
       * 基础数据类型别名<br/>
@@ -49,6 +50,29 @@ public @interface BasicData {
     public String name();
     
     /**
+      * 是否可见<br/>
+      *<功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return boolean [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public boolean isVisible();
+    
+    /**
+      * 对象是否需要缓存<br/>
+      *     如果对应对象为枚举这里指定合值，最终仍然会是不需要缓存<br/>
+      *<功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return boolean [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public boolean isCache() default true;
+    
+    /**
       * 是否可编辑<br/>
       *<功能详细描述>
       * @return [参数说明]
@@ -60,18 +84,6 @@ public @interface BasicData {
     public boolean isModifyAble() default true;
     
     /**
-      * 默认的查询条件
-      * 例如可以设置   type = x这样的条件
-      *<功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return String[] [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    public String[] conditions() default {};
-    
-    /**
       * 基础数据的默认执行器类型<br/>
       *<功能详细描述>
       * @return [参数说明]
@@ -81,5 +93,5 @@ public @interface BasicData {
       * @see [类、类#方法、类#成员]
      */
     @SuppressWarnings("rawtypes")
-    public Class<? extends BasicDataExecutor> executor();
+    public Class<? extends BasicDataExecutor> executor() default DefaultBasicDataExecutor.class;
 }

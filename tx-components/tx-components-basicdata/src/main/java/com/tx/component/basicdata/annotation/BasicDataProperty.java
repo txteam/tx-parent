@@ -11,12 +11,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.tx.component.basicdata.valuegenerator.DefaultValueGenerator;
+import com.tx.component.basicdata.valuegenerator.ValueGenerator;
 
 /**
  * 基础数据属性定义<br/>
- *     可指定对应属性在界面显示时是否被显示<br/>
- *     可指定是否为查询条件<br/>
- *     对应数据库字段名<br/>
+ *     添加了该注解的字段，才会出现在界面列表，以及增加界面中
+ *     利用该注解，指定字段意义，以及验证规则
  * <功能详细描述>
  * 
  * @author  brady
@@ -25,78 +26,21 @@ import java.lang.annotation.Target;
  * @since  [产品/模块版本]
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.FIELD})
+@Target({ ElementType.FIELD })
 public @interface BasicDataProperty {
     
     /**
-     * 数据库字段名<br/>
-     *     如果不填写，则默认使用数据字段名<br/>
-     *<功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return String [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-    */
-   public String value() default "";
-   
-   /**
-     * 基础数据名<br/>
-     *     如果不制定，则默认使用数据字段名<br/>
-     * @return [参数说明]
-     * 
-     * @return String [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-    */
-   public String name() default "";
-   
-   /**
-     * 指定字段在显示阶段是否隐藏<br/>
-     *     默认不影藏<br/> 
-     *<功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return boolean [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-    */
-   public boolean isHidden() default false;
-   
-   /**
-     * 指定属性项是否可编辑<br/>
-     *<功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return boolean [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-    */
-   public boolean isModifyAble() default false;
-   
-   /**
-     * 是否不用进行持久<br/>
-     *<功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return boolean [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-    */
-   public boolean isOmit() default false;
-   
-   /**
-     * 是否是排序字段
-     *<功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return boolean [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-    */
-   public boolean isOrderColumn() default false;
-   
-   /**
+      * 基础数据名<br/>
+      *     如果不制定，则默认使用数据字段名<br/>
+      * @return [参数说明]
+      * 
+      * @return String [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public String name();
+    
+    /**
      * 在界面显示时默认的显示位置<br/>
      *<功能详细描述>
      * @return [参数说明]
@@ -105,5 +49,86 @@ public @interface BasicDataProperty {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-   public int order() default 0;
+    public int order();
+    
+    /**
+      * 验证表达式
+      *<功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return String [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public String validateExpression() default "";
+    
+    /**
+      * 提示信息<br/>
+      *<功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return String [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public String tipMessage() default "";
+    
+    /**
+      * 验证不通过时错误提示信息
+      *<功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return String [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public String errorMessage() default "";
+    
+    /**
+      * 是否能够编辑<br/>
+      *     比如主键字段<br/>
+      *     这些字段不能由用户填写，就需要指定对应的属性自动生成器<br/>
+      *<功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return boolean [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public boolean isModifyAble() default true;
+    
+    /**
+      * 默认的值生成器
+      *<功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return Class<ValueGenerator> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    @SuppressWarnings("rawtypes")
+    public Class<? extends ValueGenerator> valueGenerator() default DefaultValueGenerator.class;
+    
+    /**
+      * 指定字段在显示阶段是否隐藏<br/>
+      *     默认不影藏<br/> 
+      *<功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return boolean [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public boolean isHidden() default false;
+    
+    /**
+      * 在界面中是否可见<br/>
+      *<功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return boolean [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public boolean isVisible() default true;
 }

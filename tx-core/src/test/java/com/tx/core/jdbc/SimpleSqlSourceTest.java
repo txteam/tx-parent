@@ -28,8 +28,10 @@ import com.tx.core.jdbc.sqlsource.SimpleSqlSource;
   */
 public class SimpleSqlSourceTest {
     
+        @SuppressWarnings("unchecked")
         public static void main(String[] args) {
-            SimpleSqlSource simpleSqlMapMapper = new SimpleSqlSource("t_test",
+            @SuppressWarnings("rawtypes")
+            SimpleSqlSource simpleSqlMapMapper = new SimpleSqlSource(null,"t_test",
                     "id", new MySQL5InnoDBDialect());
             simpleSqlMapMapper.addProperty2columnMapping("id",
                     "idcol",

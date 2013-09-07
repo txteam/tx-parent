@@ -112,7 +112,7 @@ public abstract class BaseBasicDataExecutor<T> implements BasicDataExecutor<T> {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    protected abstract String getValue(T obj);
+    protected abstract String getKeyValue(T obj);
     
     /**
       * 根据对象信息查询对应对象<br/>
@@ -231,7 +231,7 @@ public abstract class BaseBasicDataExecutor<T> implements BasicDataExecutor<T> {
         Map<String, T> cacheListMap = new HashMap<String, T>();
         if (listResult != null) {
             for (T temp : listResult) {
-                cacheListMap.put(getValue(temp), temp);
+                cacheListMap.put(getKeyValue(temp), temp);
             }
         }
         if (this.cacheEnable) {

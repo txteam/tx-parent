@@ -55,6 +55,7 @@ public class SimpleSqlSourceBuilder {
     /**
      * 本地资源缓存映射,采用弱引用的形式，以便及时回收一些使用不高的sqlSource
      */
+    @SuppressWarnings("rawtypes")
     private final static WeakHashMap<Class<?>, SimpleSqlSource> mapping = new WeakHashMap<Class<?>, SimpleSqlSource>();
     
     /**
@@ -67,9 +68,10 @@ public class SimpleSqlSourceBuilder {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public static SimpleSqlSource build(Class<?> type, Dialect dialect) {
+    @SuppressWarnings("unchecked")
+    public static <T> SimpleSqlSource<T> build(Class<T> type, Dialect dialect) {
         synchronized (type) {
-            SimpleSqlSource simpleSqlSource = null;
+            SimpleSqlSource<T> simpleSqlSource = null;
             if (mapping.containsKey(type)) {
                 return mapping.get(type);
             }
@@ -79,7 +81,8 @@ public class SimpleSqlSourceBuilder {
             String pkName = generatePkPropertyName(type);
             
             //简答的sqlSource源
-            simpleSqlSource = new SimpleSqlSource(tableName,pkName, dialect);
+            simpleSqlSource = new SimpleSqlSource<T>(type, tableName, pkName,
+                    dialect);
             //添加属性与字段的映射关系<br/>
             addProperty2ColumnMapping(type, simpleSqlSource);
             //添加可更新字段
@@ -105,8 +108,8 @@ public class SimpleSqlSourceBuilder {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    private static void addOrderBy(Class<?> type,
-            SimpleSqlSource simpleSqlSource) {
+    private static <T> void addOrderBy(Class<T> type,
+            SimpleSqlSource<T> simpleSqlSource) {
         MetaClass metaClass = MetaClass.forClass(type);
         
         String[] getterNames = metaClass.getGetterNames();
@@ -136,8 +139,13 @@ public class SimpleSqlSourceBuilder {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    private static void addQueryCondition(Class<?> type,
-            SimpleSqlSource simpleSqlSource) {
+    private static <T> void addQueryCondition(Class<T> type,
+            SimpleSqlSource<T> simpleSqlSource) {
+        if (type.isAnnotationPresent(QueryCondition.class)) {
+            QueryCondition qcAnnoTemp = type.getAnnotation(QueryCondition.class);
+            simpleSqlSource.addOtherCondition(qcAnnoTemp.condition());
+        }
+        
         MetaClass metaClass = MetaClass.forClass(type);
         
         String[] getterNames = metaClass.getGetterNames();
@@ -150,14 +158,21 @@ public class SimpleSqlSourceBuilder {
             if (ReflectionUtils.isHasAnnotationForGetter(type,
                     getterNameTemp,
                     QueryCondition.class)) {
-                QueryCondition qcAnno = ReflectionUtils.getGetterAnnotation(type,
+                QueryCondition qcAnnoTemp = ReflectionUtils.getGetterAnnotation(type,
                         getterNameTemp,
                         QueryCondition.class);
-                String keyTemp = StringUtils.isBlank(qcAnno.key()) ? getterNameTemp
-                        : qcAnno.key();
-                simpleSqlSource.addQueryConditionProperty2SqlMapping(keyTemp,
-                        qcAnno.condition(),
-                        getterJdbcType);
+                if(StringUtils.isBlank(qcAnnoTemp.key())){
+                    simpleSqlSource.addOtherCondition(qcAnnoTemp.condition());
+                }else{
+                    simpleSqlSource.addQueryConditionProperty2SqlMapping(qcAnnoTemp.key(),
+                            qcAnnoTemp.condition(),
+                            getterJdbcType);
+                }
+            }
+            
+            //需要忽略的字段直接不进行条件解析
+            if(isNeedSkip(type, getterNameTemp, getterType)){
+                continue;
             }
             
             if (ReflectionUtils.isHasAnnotationForGetter(type,
@@ -183,9 +198,9 @@ public class SimpleSqlSourceBuilder {
                 String keyTemp = StringUtils.isBlank(anno.key()) ? getterNameTemp
                         : anno.key();
                 List<String> concatArgs = new ArrayList<String>();
-                concatArgs.add("%");
+                concatArgs.add("'%'");
                 concatArgs.add("?");
-                concatArgs.add("%");
+                concatArgs.add("'%'");
                 String valueStr = simpleSqlSource.getDialect()
                         .getFunctions()
                         .get("concat")
@@ -209,7 +224,7 @@ public class SimpleSqlSourceBuilder {
                 
                 List<String> concatArgs = new ArrayList<String>();
                 concatArgs.add("?");
-                concatArgs.add("%");
+                concatArgs.add("'%'");
                 String valueStr = simpleSqlSource.getDialect()
                         .getFunctions()
                         .get("concat")
@@ -232,7 +247,7 @@ public class SimpleSqlSourceBuilder {
                         : anno.key();
                 
                 List<String> concatArgs = new ArrayList<String>();
-                concatArgs.add("%");
+                concatArgs.add("'%'");
                 concatArgs.add("?");
                 String valueStr = simpleSqlSource.getDialect()
                         .getFunctions()
@@ -317,25 +332,14 @@ public class SimpleSqlSourceBuilder {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    private static void addUpdateAblePropertys(Class<?> type,
-            SimpleSqlSource simpleSqlSource) {
+    private static <T> void addUpdateAblePropertys(Class<T> type,
+            SimpleSqlSource<T> simpleSqlSource) {
         MetaClass metaClass = MetaClass.forClass(type);
         
         String[] getterNames = metaClass.getGetterNames();
         for (String getterNameTemp : getterNames) {
             Class<?> getterType = metaClass.getGetterType(getterNameTemp);
-            if (ReflectionUtils.isHasAnnotationForGetter(type,
-                    getterNameTemp,
-                    Transient.class)) {
-                continue;
-            }
-            //由于simpleSqlSource不处理过于复杂的对象关联，所以存在oneToManay,ManayToManay也一并忽略
-            if (ReflectionUtils.isHasAnnotationForGetter(type,
-                    getterNameTemp,
-                    OneToMany.class)
-                    || ReflectionUtils.isHasAnnotationForGetter(type,
-                            getterNameTemp,
-                            ManyToMany.class)) {
+            if(isNeedSkip(type, getterNameTemp, getterType)){
                 continue;
             }
             
@@ -360,8 +364,8 @@ public class SimpleSqlSourceBuilder {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    private static void addProperty2ColumnMapping(Class<?> type,
-            SimpleSqlSource simpleSqlSource) {
+    private static <T> void addProperty2ColumnMapping(Class<T> type,
+            SimpleSqlSource<T> simpleSqlSource) {
         MetaClass metaClass = MetaClass.forClass(type);
         
         String[] getterNames = metaClass.getGetterNames();
@@ -370,18 +374,8 @@ public class SimpleSqlSourceBuilder {
             //设置了不需要持久的注解忽略
             String columnName = getterNameTemp.toUpperCase();
             Class<?> getterType = metaClass.getGetterType(getterNameTemp);
-            if (ReflectionUtils.isHasAnnotationForGetter(type,
-                    getterNameTemp,
-                    Transient.class)) {
-                continue;
-            }
-            //由于simpleSqlSource不处理过于复杂的对象关联，所以存在oneToManay,ManayToManay也一并忽略
-            if (ReflectionUtils.isHasAnnotationForGetter(type,
-                    getterNameTemp,
-                    OneToMany.class)
-                    || ReflectionUtils.isHasAnnotationForGetter(type,
-                            getterNameTemp,
-                            ManyToMany.class)) {
+            
+            if(isNeedSkip(type, getterNameTemp, getterType)){
                 continue;
             }
             
@@ -462,6 +456,41 @@ public class SimpleSqlSourceBuilder {
             throw new SqlSourceBuildException("getterType is not supported.",
                     new Object[] { getterType });
         }
+    }
+    
+    /**
+      * 是否需要跳过对应类型<br/>
+      *<功能详细描述>
+      * @param type
+      * @param getterName
+      * @param getterType
+      * @return [参数说明]
+      * 
+      * @return boolean [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    private static <T> boolean isNeedSkip(Class<T> type,String getterName,Class<?> getterType){
+        if (ReflectionUtils.isHasAnnotationForGetter(type,
+                getterName,
+                Transient.class)) {
+            return true;
+        }
+        //由于simpleSqlSource不处理过于复杂的对象关联，所以存在oneToManay,ManayToManay也一并忽略
+        if (ReflectionUtils.isHasAnnotationForGetter(type,
+                getterName,
+                OneToMany.class)
+                || ReflectionUtils.isHasAnnotationForGetter(type,
+                        getterName,
+                        ManyToMany.class)) {
+            return true;
+        }
+        
+        //如果为直接支持存储的字段，则开始解析
+        //if (!JdbcUtils.isSupportedSimpleType(getterType)) {
+        //    return true;
+        //}
+        return false;
     }
     
     /**

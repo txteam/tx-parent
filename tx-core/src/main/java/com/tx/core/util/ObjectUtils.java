@@ -6,6 +6,7 @@
  */
 package com.tx.core.util;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Map;
 
@@ -13,9 +14,11 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.reflect.ConstructorUtils;
 import org.apache.ibatis.reflection.MetaObject;
 
 import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.reflection.exception.ReflectionException;
 
 /**
  * 对象工具类<br/>
@@ -29,6 +32,34 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @since  [产品/模块版本]
  */
 public class ObjectUtils {
+    
+    /**
+      * 根据传入的参数生成对象实例
+      *<功能详细描述>
+      * @param type
+      * @param objects
+      * @return [参数说明]
+      * 
+      * @return T [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T newInstance(Class<T> type,Object... objects){
+        T res = null;
+        try {
+            res = (T)ConstructorUtils.invokeConstructor(type, objects);
+            return res;
+        } catch (NoSuchMethodException e) {
+            throw new ReflectionException("invokeConstructor create newInstance error.", e);
+        } catch (IllegalAccessException e) {
+            throw new ReflectionException("invokeConstructor create newInstance error.", e);
+        } catch (InvocationTargetException e) {
+            throw new ReflectionException("invokeConstructor create newInstance error.", e);
+        } catch (InstantiationException e) {
+            throw new ReflectionException("invokeConstructor create newInstance error.", e);
+        }
+    }
     
     /**
      * 判断入参数是否为空<br/>

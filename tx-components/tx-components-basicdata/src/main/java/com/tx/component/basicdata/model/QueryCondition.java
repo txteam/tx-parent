@@ -6,7 +6,6 @@
  */
 package com.tx.component.basicdata.model;
 
-import org.apache.ibatis.type.JdbcType;
 
 /**
  * 查询条件
@@ -24,19 +23,6 @@ public class QueryCondition {
     
     /** 条件传入关键字 */
     private String key;
-    
-    /** <默认构造函数> */
-    public QueryCondition() {
-        // TODO Auto-generated constructor stub
-    }
-
-    /** <默认构造函数> */
-    public QueryCondition(String name, JdbcType jdbcType, String key,
-            String expression) {
-        super();
-        this.name = name;
-        this.key = key;
-    }
 
     /**
      * @return 返回 name

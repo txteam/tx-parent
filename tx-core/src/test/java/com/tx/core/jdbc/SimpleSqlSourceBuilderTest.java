@@ -9,7 +9,6 @@ package com.tx.core.jdbc;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.commons.collections.MapUtils;
 import org.hibernate.dialect.MySQL5InnoDBDialect;
@@ -34,7 +33,7 @@ public class SimpleSqlSourceBuilderTest {
     //@Test
     public void testbuild1(){
         
-        SimpleSqlSource r = SimpleSqlSourceBuilder.build(TestA.class, new MySQL5InnoDBDialect());
+        SimpleSqlSource<TestA> r = SimpleSqlSourceBuilder.build(TestA.class, new MySQL5InnoDBDialect());
         
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("maxCreateDate", new Date());
@@ -54,10 +53,10 @@ public class SimpleSqlSourceBuilderTest {
         MapUtils.verbosePrint(System.out, "map:", r.getQueryCondtionParamMaps(params));
     }
     
-    @Test
+    //@Test
     public void testbuild2(){
         
-        SimpleSqlSource r = SimpleSqlSourceBuilder.build(TestAChild.class, new Oracle9iDialect());
+        SimpleSqlSource<TestAChild> r = SimpleSqlSourceBuilder.build(TestAChild.class, new Oracle9iDialect());
         
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("maxCreateDate", new Date());
@@ -74,5 +73,42 @@ public class SimpleSqlSourceBuilderTest {
         System.out.println(r.queryPagedSql(params, 2, 10));
         
         MapUtils.verbosePrint(System.out, "map:", r.getQueryCondtionParamMaps(params));
+    }
+    
+    @Test
+    public void testbuild3(){
+        
+
+        
+        SimpleSqlSource<TestAChild> r = SimpleSqlSourceBuilder.build(TestAChild.class, new Oracle9iDialect());
+        
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("maxCreateDate", new Date());
+        params.put("maxCreateDate", new Date());
+        params.put("bbb", "bValue");
+        params.put("aid", "idValue");
+        
+        System.out.println(r.insertSql());
+        System.out.println(r.deleteSql());
+        
+        //SimpleSqlSource rClone = null;
+        
+        try {
+            SimpleSqlSource<TestAChild> srcSqlSource = SimpleSqlSourceBuilder.build(TestAChild.class, new Oracle9iDialect());        
+            System.out.println(srcSqlSource.findSql());
+            
+            @SuppressWarnings("unchecked")
+            SimpleSqlSource<TestAChild> cloneSqlSource = (SimpleSqlSource<TestAChild>)srcSqlSource.clone();
+            cloneSqlSource.setPkName("aaa");
+            cloneSqlSource.addProperty2columnMapping("abcde", "abcdColone", String.class);
+            
+            System.out.println(cloneSqlSource.findSql());
+            System.out.println(srcSqlSource.findSql());
+            
+        } catch (CloneNotSupportedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
     }
 }

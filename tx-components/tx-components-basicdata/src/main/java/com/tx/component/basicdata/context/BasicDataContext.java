@@ -49,12 +49,9 @@ public class BasicDataContext<T> {
         com.tx.component.basicdata.annotation.BasicData basicDataAnno = type.getAnnotation(com.tx.component.basicdata.annotation.BasicData.class);
         
         basicDataAnno.name();
-        basicDataAnno.tableName();
         basicDataAnno.annotationType();
         basicDataAnno.executor();
-        basicDataAnno.conditions();
         
-        ReflectionUtils.getGetterNamesByAnnotationType(type, annotationType)
     }
     
     /**

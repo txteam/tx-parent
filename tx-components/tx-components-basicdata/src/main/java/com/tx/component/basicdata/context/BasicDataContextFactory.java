@@ -29,7 +29,7 @@ public class BasicDataContextFactory extends BasicDataContext implements Factory
      */
     @Override
     public BasicDataContext getObject() throws Exception {
-        //return ;
+        return null;
     }
 
     /**
