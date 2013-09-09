@@ -182,23 +182,31 @@ public class JpaEntityFreeMarkerGenerator {
     }
     
     public void generateScript(Class<?> type, String resultFolderPath) {
+        generateScript(type, resultFolderPath, "UTF-8");
+    }
+    
+    public void generateScript(Class<?> type, String resultFolderPath,
+            String encode) {
         JpaMetaClass jpaMetaClass = JpaMetaClass.forClass(type);
         
         //生成service单元测试类
         generateScriptByDataSourceType(DataSourceTypeEnum.ORACLE,
                 jpaMetaClass,
-                resultFolderPath);
+                resultFolderPath,
+                encode);
         generateScriptByDataSourceType(DataSourceTypeEnum.H2,
                 jpaMetaClass,
-                resultFolderPath);
+                resultFolderPath,
+                encode);
         generateScriptByDataSourceType(DataSourceTypeEnum.MYSQL,
                 jpaMetaClass,
-                resultFolderPath);
+                resultFolderPath,
+                encode);
     }
     
     private void generateScriptByDataSourceType(
             DataSourceTypeEnum dataSourceType, JpaMetaClass jpaMetaClass,
-            String resultFolderPath) {
+            String resultFolderPath, String encode) {
         //
         Dialect dialect = dataSourceType.getHibernateDialect();
         
@@ -222,12 +230,17 @@ public class JpaEntityFreeMarkerGenerator {
         }
         data.put("dbScriptMapper", dbScriptMapper);
         
+        String entityTypeName = jpaMetaClass.getEntityTypeName();
+        String[] splitNames = entityTypeName.split("\\.");
+        String moduleName = splitNames[splitNames.length - 3].toLowerCase();
+        
         FreeMarkerUtils.fprint(loadTemplateClass,
                 this.dbScriptTemplateFilePath,
                 data,
-                resultFolderPath + "/dbscript/autogenscript/"
-                        + dataSourceType.getName() + "/"
-                        + jpaMetaClass.getTableName().toUpperCase() + ".sql");
+                resultFolderPath + "/dbscript/" + dataSourceType.getName()
+                        + "/01basisScript/" + moduleName + "/tables/"
+                        + jpaMetaClass.getTableName().toUpperCase() + ".sql",
+                encode);
     }
     
     /**

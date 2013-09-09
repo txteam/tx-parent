@@ -7,8 +7,10 @@
 package com.tx.core.util;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -101,10 +103,50 @@ public class FreeMarkerUtils {
             temp.process(root, out);
         } catch (IOException e) {
             logger.error(e.toString(), e);
-            throw new ResourceAccessException("根据freeMarker模版生成目标文件.发生IOException", e);
+            throw new ResourceAccessException(
+                    "根据freeMarker模版生成目标文件.发生IOException", e);
         } catch (TemplateException e) {
             logger.error(e.toString(), e);
-            throw new ResourceAccessException("根据freeMarker模版生成目标文件.发生TemplateException", e);
+            throw new ResourceAccessException(
+                    "根据freeMarker模版生成目标文件.发生TemplateException", e);
+        } finally {
+            IOUtils.closeQuietly(out);
+        }
+    }
+    
+    /**
+     * 根据数据以及文件生成模版
+     * <功能详细描述>
+     * @param name
+     * @param root
+     * @param outFile [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    public static void fprint(Class<?> loadClass, String filePath,
+            Map<String, Object> root, String outFilePath, String encode) {
+        OutputStreamWriter out = null;
+        try {
+            //通过一个文件输出流，就可以写到相应的文件中
+            File newFile = new File(outFilePath);
+            if (!newFile.exists()) {
+                FileUtils.forceMkdir(newFile.getParentFile());
+                newFile.createNewFile();
+            }
+            out = new OutputStreamWriter(new FileOutputStream(newFile),encode);
+            
+            Template temp = getTemplateByTemplateClassPath(loadClass, filePath);
+            temp.process(root, out);
+        } catch (IOException e) {
+            logger.error(e.toString(), e);
+            throw new ResourceAccessException(
+                    "根据freeMarker模版生成目标文件.发生IOException", e);
+        } catch (TemplateException e) {
+            logger.error(e.toString(), e);
+            throw new ResourceAccessException(
+                    "根据freeMarker模版生成目标文件.发生TemplateException", e);
         } finally {
             IOUtils.closeQuietly(out);
         }
