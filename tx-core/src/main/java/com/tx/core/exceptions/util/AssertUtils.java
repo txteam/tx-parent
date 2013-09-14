@@ -145,7 +145,9 @@ public class AssertUtils {
     @SuppressWarnings("rawtypes")
     public static void isEmpty(Object obj, String message, Object[] parameters) {
         //不为空
-        isNull(obj, message, parameters);
+        if (obj == null) {
+            return;
+        }
         if (obj instanceof String && !StringUtils.isBlank((String) obj)) {
             throw new NullArgException(MessageFormatter.arrayFormat(message,
                     parameters).getMessage());
@@ -220,7 +222,7 @@ public class AssertUtils {
      * @see [类、类#方法、类#成员]
     */
     public static void isNull(Object object) {
-        notNull(object, "");
+        isNull(object, "");
     }
     
     /**
@@ -235,7 +237,7 @@ public class AssertUtils {
     */
     public static void isNull(Object object, String message,
             String... parameters) {
-        notNull(object, message, (Object[]) parameters);
+        isNull(object, message, (Object[]) parameters);
     }
     
     /**
@@ -265,9 +267,9 @@ public class AssertUtils {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-   public static void isTrue(boolean expression) {
-       isTrue(expression, "");
-   }
+    public static void isTrue(boolean expression) {
+        isTrue(expression, "");
+    }
     
     /**
       * 断言表达式是为真<br/>

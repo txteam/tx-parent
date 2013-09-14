@@ -200,6 +200,99 @@ public class AuthItemRefImplService {
     }
     
     /**
+     * 增加权限项目引用
+     *     需要传入，引用类型，权限项ID，引用id集合
+     * <功能详细描述>
+     * @param authRefType
+     * @param authId
+     * @param refIdList [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    @Transactional
+    public void addAuthItemOfAuthRefList(String authRefType, String authItemId,
+            List<String> addRefIdList, String systemId, String tableSuffix) {
+        AssertUtils.notEmpty(authRefType, "authRefType is empty");
+        AssertUtils.notEmpty(authItemId, "authItemId is empty");
+        AssertUtils.notEmpty(systemId, "systemId is empty");
+        if (addRefIdList == null) {
+            addRefIdList = new ArrayList<String>();
+        }
+        
+        //这里应该先判断一下当前人员是否拥有对应的权限
+        //TODO:
+        List<String> srcAuthRefIds = new ArrayList<String>();
+        List<AuthItemRefImpl> authItemRefImplList = queryAuthItemRefListByRefTypeAndAuthItemId(authRefType,
+                authItemId,
+                systemId,
+                tableSuffix);
+        if (authItemRefImplList != null) {
+            for (AuthItemRefImpl refTemp : authItemRefImplList) {
+                srcAuthRefIds.add(refTemp.getRefId());
+            }
+        }
+        
+        @SuppressWarnings("unchecked")
+        List<String> needInsertRefIds = ListUtils.subtract(addRefIdList,
+                srcAuthRefIds);
+        
+        batchInsertAuthItemRefByRefIds(authRefType,
+                authItemId,
+                needInsertRefIds,
+                systemId,
+                tableSuffix);
+    }
+    
+    /**
+     * 增加权限项目引用
+     *     需要传入，引用类型，权限项ID，引用id集合
+     * <功能详细描述>
+     * @param authRefType
+     * @param authId
+     * @param refIdList [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    @Transactional
+    public void deleteAuthItemOfAuthRefList(String authRefType,
+            String authItemId, List<String> deleteRefIdList, String systemId,
+            String tableSuffix) {
+        AssertUtils.notEmpty(authRefType, "authRefType is empty");
+        AssertUtils.notEmpty(authItemId, "authItemId is empty");
+        AssertUtils.notEmpty(systemId, "systemId is empty");
+        if (deleteRefIdList == null) {
+            deleteRefIdList = new ArrayList<String>();
+        }
+        
+        //这里应该先判断一下当前人员是否拥有对应的权限
+        //TODO:
+        List<String> srcAuthRefIds = new ArrayList<String>();
+        List<AuthItemRefImpl> authItemRefImplList = queryAuthItemRefListByRefTypeAndAuthItemId(authRefType,
+                authItemId,
+                systemId,
+                tableSuffix);
+        if (authItemRefImplList != null) {
+            for (AuthItemRefImpl refTemp : authItemRefImplList) {
+                srcAuthRefIds.add(refTemp.getRefId());
+            }
+        }
+        
+        @SuppressWarnings("unchecked")
+        List<String> needDeleteRefIds = ListUtils.subtract(srcAuthRefIds,
+                deleteRefIdList);
+        
+        batchInsertAuthItemRefByRefIds(authRefType,
+                authItemId,
+                needDeleteRefIds,
+                systemId,
+                tableSuffix);
+    }
+    
+    /**
       * 保存权限项目引用
       *     需要传入，引用类型，权限项ID，引用id集合
       * <功能详细描述>
@@ -254,62 +347,62 @@ public class AuthItemRefImplService {
                 tableSuffix);
     }
     
-    /**
-      * 保存权限项目
-      *     需要传入，权限类型，引用类型，权限项ID，引用id集合
-      * @param authType
-      * @param authRefType
-      * @param authItemId
-      * @param refIdList [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    @Transactional
-    public void saveAuthItemOfAuthRefList(String authType, String authRefType,
-            String authItemId, List<String> refIdList, String systemId,
-            String tableSuffix) {
-        AssertUtils.notEmpty(authRefType, "authRefType is empty");
-        AssertUtils.notEmpty(authItemId, "authItemId is empty");
-        AssertUtils.notEmpty(systemId, "systemId is empty");
-        
-        if (refIdList == null) {
-            refIdList = new ArrayList<String>();
-        }
-        
-        //这里应该先判断一下当前人员是否拥有对应的权限
-        //TODO:
-        List<String> srcAuthRefIds = new ArrayList<String>();
-        List<AuthItemRefImpl> authItemRefImplList = queryAuthItemRefListByRefTypeAndAuthItemId(authRefType,
-                authItemId,
-                systemId,
-                tableSuffix);
-        if (authItemRefImplList != null) {
-            for (AuthItemRefImpl refTemp : authItemRefImplList) {
-                srcAuthRefIds.add(refTemp.getRefId());
-            }
-        }
-        
-        @SuppressWarnings("unchecked")
-        List<String> needDeleteRefIds = ListUtils.subtract(srcAuthRefIds,
-                refIdList);
-        @SuppressWarnings("unchecked")
-        List<String> needInsertRefIds = ListUtils.subtract(refIdList,
-                srcAuthRefIds);
-        
-        batchDeleteAuthItemRefByRefIds(authType,
-                authRefType,
-                authItemId,
-                needDeleteRefIds,
-                systemId,
-                tableSuffix);
-        batchInsertAuthItemRefByRefIds(authRefType,
-                authItemId,
-                needInsertRefIds,
-                systemId,
-                tableSuffix);
-    }
+    //    /**
+    //      * 保存权限项目
+    //      *     需要传入，权限类型，引用类型，权限项ID，引用id集合
+    //      * @param authType
+    //      * @param authRefType
+    //      * @param authItemId
+    //      * @param refIdList [参数说明]
+    //      * 
+    //      * @return void [返回类型说明]
+    //      * @exception throws [异常类型] [异常说明]
+    //      * @see [类、类#方法、类#成员]
+    //     */
+    //    @Transactional
+    //    public void saveAuthItemOfAuthRefList(String authType, String authRefType,
+    //            String authItemId, List<String> refIdList, String systemId,
+    //            String tableSuffix) {
+    //        AssertUtils.notEmpty(authRefType, "authRefType is empty");
+    //        AssertUtils.notEmpty(authItemId, "authItemId is empty");
+    //        AssertUtils.notEmpty(systemId, "systemId is empty");
+    //        
+    //        if (refIdList == null) {
+    //            refIdList = new ArrayList<String>();
+    //        }
+    //        
+    //        //这里应该先判断一下当前人员是否拥有对应的权限
+    //        //TODO:
+    //        List<String> srcAuthRefIds = new ArrayList<String>();
+    //        List<AuthItemRefImpl> authItemRefImplList = queryAuthItemRefListByRefTypeAndAuthItemId(authRefType,
+    //                authItemId,
+    //                systemId,
+    //                tableSuffix);
+    //        if (authItemRefImplList != null) {
+    //            for (AuthItemRefImpl refTemp : authItemRefImplList) {
+    //                srcAuthRefIds.add(refTemp.getRefId());
+    //            }
+    //        }
+    //        
+    //        @SuppressWarnings("unchecked")
+    //        List<String> needDeleteRefIds = ListUtils.subtract(srcAuthRefIds,
+    //                refIdList);
+    //        @SuppressWarnings("unchecked")
+    //        List<String> needInsertRefIds = ListUtils.subtract(refIdList,
+    //                srcAuthRefIds);
+    //        
+    //        batchDeleteAuthItemRefByRefIds(authType,
+    //                authRefType,
+    //                authItemId,
+    //                needDeleteRefIds,
+    //                systemId,
+    //                tableSuffix);
+    //        batchInsertAuthItemRefByRefIds(authRefType,
+    //                authItemId,
+    //                needInsertRefIds,
+    //                systemId,
+    //                tableSuffix);
+    //    }
     
     /**
       * 根据存入的权限项目id集合，以及权限引用类型，引用id<br/>
@@ -714,40 +807,41 @@ public class AuthItemRefImplService {
         AssertUtils.notEmpty(systemId, "systemId is empty");
         
         AuthItemRefImpl condition = new AuthItemRefImpl();
-        condition.setAuthItem(new AuthItemImpl(authItemId,systemId));
-        return this.authItemRefImplDao.deleteAuthItemRefImpl(condition,tableSuffix);
+        condition.setAuthItem(new AuthItemImpl(authItemId, systemId));
+        return this.authItemRefImplDao.deleteAuthItemRefImpl(condition,
+                tableSuffix);
     }
     
-//    /**
-//      * 根据refId更新对象
-//      * <功能详细描述>
-//      * @param authItemRefImpl
-//      * @return [参数说明]
-//      * 
-//      * @return boolean [返回类型说明]
-//      * @exception throws [异常类型] [异常说明]
-//      * @see [类、类#方法、类#成员]
-//     */
-//    @Transactional
-//    public boolean updateByRefId(AuthItemRef authItemRefImpl, String systemId,
-//            String tableSuffix) {
-//        AssertUtils.notNull(authItemRefImpl, "");
-//        AssertUtils.notEmpty(systemId, "systemId is empty");
-//        
-//        //生成需要更新字段的hashMap
-//        Map<String, Object> updateRowMap = new HashMap<String, Object>();
-//        updateRowMap.put("refId", authItemRefImpl.getRefId());
-//        updateRowMap.put("authRefType", authItemRefImpl.getAuthRefType());
-//        updateRowMap.put("authItem", authItemRefImpl.getAuthItem());
-//        
-//        //type:java.lang.String
-//        updateRowMap.put("validDependEndDate",
-//                authItemRefImpl.isValidDependEndDate());
-//        updateRowMap.put("endDate", authItemRefImpl.getEndDate());
-//        
-//        int updateRowCount = this.authItemRefImplDao.updateAuthItemRefImpl(updateRowMap);
-//        
-//        //如果需要大于1时，抛出异常并回滚，需要在这里修改
-//        return updateRowCount >= 1;
-//    }
+    //    /**
+    //      * 根据refId更新对象
+    //      * <功能详细描述>
+    //      * @param authItemRefImpl
+    //      * @return [参数说明]
+    //      * 
+    //      * @return boolean [返回类型说明]
+    //      * @exception throws [异常类型] [异常说明]
+    //      * @see [类、类#方法、类#成员]
+    //     */
+    //    @Transactional
+    //    public boolean updateByRefId(AuthItemRef authItemRefImpl, String systemId,
+    //            String tableSuffix) {
+    //        AssertUtils.notNull(authItemRefImpl, "");
+    //        AssertUtils.notEmpty(systemId, "systemId is empty");
+    //        
+    //        //生成需要更新字段的hashMap
+    //        Map<String, Object> updateRowMap = new HashMap<String, Object>();
+    //        updateRowMap.put("refId", authItemRefImpl.getRefId());
+    //        updateRowMap.put("authRefType", authItemRefImpl.getAuthRefType());
+    //        updateRowMap.put("authItem", authItemRefImpl.getAuthItem());
+    //        
+    //        //type:java.lang.String
+    //        updateRowMap.put("validDependEndDate",
+    //                authItemRefImpl.isValidDependEndDate());
+    //        updateRowMap.put("endDate", authItemRefImpl.getEndDate());
+    //        
+    //        int updateRowCount = this.authItemRefImplDao.updateAuthItemRefImpl(updateRowMap);
+    //        
+    //        //如果需要大于1时，抛出异常并回滚，需要在这里修改
+    //        return updateRowCount >= 1;
+    //    }
 }
