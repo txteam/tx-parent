@@ -281,6 +281,8 @@ public class AuthContext implements ApplicationContextAware, InitializingBean {
             Set<AuthItem> authItemSet = authLoaderTemp.loadAuthItems();
             
             for (AuthItem authItem : authItemSet) {
+                //加载权限并设置加载的权限项目的系统id
+                authItem.setSystemId(this.systemId);
                 tempAuthItemMapping.put(authItem.getId(), authItem);
             }
         }
