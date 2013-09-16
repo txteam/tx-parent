@@ -7,6 +7,7 @@ import javax.sql.DataSource;
 
 import org.springframework.beans.factory.InitializingBean;
 
+import com.tx.component.servicelog.logger.ServiceLogger;
 import com.tx.component.servicelog.model.ServiceLog;
 import com.tx.core.dbscript.model.DataSourceTypeEnum;
 import com.tx.core.exceptions.util.AssertUtils;
@@ -22,10 +23,10 @@ import com.tx.core.jdbc.sqlsource.SimpleSqlSourceBuilder;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
  */
-public class LoggerContext implements InitializingBean{
+public class ServiceLoggerContext implements InitializingBean{
     
     /** 懒汉模式获取日志容器句柄 */
-    private static Map<Class<? extends ServiceLog>, LoggerContext> loggerContextMapping = new HashMap<Class<? extends ServiceLog>, LoggerContext>();
+    private static Map<Class<? extends ServiceLog>, ServiceLogger> loggerContextMapping = new HashMap<Class<? extends ServiceLog>, ServiceLogger>();
     
     private SimpleSqlSourceBuilder simpleSqlSourceBuilder;
     
@@ -36,7 +37,7 @@ public class LoggerContext implements InitializingBean{
     /**
      * 私有化构造方法
      */
-    private LoggerContext() {
+    private ServiceLoggerContext() {
         super();
     }
     
@@ -45,11 +46,11 @@ public class LoggerContext implements InitializingBean{
      * 
      * @return
      */
-    public static LoggerContext getContext(
+    public static ServiceLogger getLogger(
             Class<? extends ServiceLog> serviceLogClass) {
         AssertUtils.notNull(serviceLogClass, "serviceLogClass is null");
         
-        LoggerContext res = null;
+        ServiceLogger res = null;
         synchronized (serviceLogClass) {
             if (loggerContextMapping.containsKey(serviceLogClass)) {
                 res = loggerContextMapping.get(serviceLogClass);
