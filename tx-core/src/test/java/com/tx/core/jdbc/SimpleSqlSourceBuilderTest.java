@@ -30,10 +30,12 @@ import com.tx.core.jdbc.sqlsource.SimpleSqlSourceBuilder;
   */
 public class SimpleSqlSourceBuilderTest {
     
+    private SimpleSqlSourceBuilder simpleSqlSourceBuilder = new SimpleSqlSourceBuilder();
+    
     //@Test
     public void testbuild1(){
         
-        SimpleSqlSource<TestA> r = SimpleSqlSourceBuilder.build(TestA.class, new MySQL5InnoDBDialect());
+        SimpleSqlSource<TestA> r = simpleSqlSourceBuilder.build(TestA.class, new MySQL5InnoDBDialect());
         
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("maxCreateDate", new Date());
@@ -56,7 +58,7 @@ public class SimpleSqlSourceBuilderTest {
     //@Test
     public void testbuild2(){
         
-        SimpleSqlSource<TestAChild> r = SimpleSqlSourceBuilder.build(TestAChild.class, new Oracle9iDialect());
+        SimpleSqlSource<TestAChild> r = simpleSqlSourceBuilder.build(TestAChild.class, new Oracle9iDialect());
         
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("maxCreateDate", new Date());
@@ -80,7 +82,7 @@ public class SimpleSqlSourceBuilderTest {
         
 
         
-        SimpleSqlSource<TestAChild> r = SimpleSqlSourceBuilder.build(TestAChild.class, new Oracle9iDialect());
+        SimpleSqlSource<TestAChild> r = simpleSqlSourceBuilder.build(TestAChild.class, new Oracle9iDialect());
         
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("maxCreateDate", new Date());
@@ -94,7 +96,7 @@ public class SimpleSqlSourceBuilderTest {
         //SimpleSqlSource rClone = null;
         
         try {
-            SimpleSqlSource<TestAChild> srcSqlSource = SimpleSqlSourceBuilder.build(TestAChild.class, new Oracle9iDialect());        
+            SimpleSqlSource<TestAChild> srcSqlSource = simpleSqlSourceBuilder.build(TestAChild.class, new Oracle9iDialect());        
             System.out.println(srcSqlSource.findSql());
             
             @SuppressWarnings("unchecked")

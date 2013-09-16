@@ -23,10 +23,6 @@ public class ServiceLogger extends MarkerIgnoringBase {
     /** 注释内容 */
     private static final long serialVersionUID = -8532128615627064452L;
 
-    //private Logger logger = LoggerFactory.getLogger(ServiceLogger.class);
-
-    //private logse logService;
-
     /**
      * @param arg0
      * @param arg1

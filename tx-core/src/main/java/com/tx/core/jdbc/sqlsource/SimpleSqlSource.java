@@ -805,6 +805,4 @@ public class SimpleSqlSource<T> implements Serializable, Cloneable {
         SimpleSqlSource<T> cloneObj = (SimpleSqlSource<T>)super.clone();
         return cloneObj;
     }
-    
-    
 }

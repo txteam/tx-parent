@@ -1,9 +1,16 @@
 package com.tx.component.servicelog.context;
 
-import java.beans.PropertyDescriptor;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.springframework.beans.factory.FactoryBean;
+import javax.sql.DataSource;
+
 import org.springframework.beans.factory.InitializingBean;
+
+import com.tx.component.servicelog.model.ServiceLog;
+import com.tx.core.dbscript.model.DataSourceTypeEnum;
+import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.jdbc.sqlsource.SimpleSqlSourceBuilder;
 
 /**
   * 日志容器<br/>
@@ -15,27 +22,22 @@ import org.springframework.beans.factory.InitializingBean;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
  */
-public class LoggerContext implements FactoryBean<LoggerContext>,
-        InitializingBean {
+public class LoggerContext implements InitializingBean{
     
     /** 懒汉模式获取日志容器句柄 */
-    private static LoggerContext context = new LoggerContext();
+    private static Map<Class<? extends ServiceLog>, LoggerContext> loggerContextMapping = new HashMap<Class<? extends ServiceLog>, LoggerContext>();
     
-    private static final String[] loggerInterfacePath = { "com.boda.web.controller" };
+    private SimpleSqlSourceBuilder simpleSqlSourceBuilder;
     
-    /** 用以冲在配置属性使用 */
-    private PropertyDescriptor properties;
-
+    private DataSourceTypeEnum dataSourceType;
+    
+    private DataSource dataSource;
+    
     /**
      * 私有化构造方法
      */
     private LoggerContext() {
         super();
-        
-    }
-    
-    private void setContext(LoggerContext context) {
-        LoggerContext.context = context;
     }
     
     /**
@@ -43,41 +45,33 @@ public class LoggerContext implements FactoryBean<LoggerContext>,
      * 
      * @return
      */
-    public static LoggerContext getContext() {
-        return LoggerContext.context;
-    }
-    
-    /**
-     * 初始化读取配置文件
-     */
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        //reLoadConfig();
+    public static LoggerContext getContext(
+            Class<? extends ServiceLog> serviceLogClass) {
+        AssertUtils.notNull(serviceLogClass, "serviceLogClass is null");
         
-        setContext(this);
+        LoggerContext res = null;
+        synchronized (serviceLogClass) {
+            if (loggerContextMapping.containsKey(serviceLogClass)) {
+                res = loggerContextMapping.get(serviceLogClass);
+            } else {
+                
+            }
+        }
+        
+        return res;
     }
     
-    @Override
-    public LoggerContext getObject() throws Exception {
-        return LoggerContext.context;
-    }
-    
-    @Override
-    public Class<?> getObjectType() {
-        return LoggerContext.class;
-    }
-    
-    @Override
-    public boolean isSingleton() {
-        return true;
+    private void aaa(){
+        //this.simpleSqlSourceBuilder.build(type, dialect);
     }
 
     /**
-     * LoggerInterface配置类是配置配置在类上还是在方法上
-     * 
-     * @author liujun
-     * */
-    public enum loggerInterfaceEnum {
-        clazz, method
+     * @throws Exception
+     */
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        // TODO Auto-generated method stub
     }
+    
+    
 }

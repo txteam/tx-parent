@@ -38,11 +38,13 @@ public class DefaultBasicDataExecutor<T> extends BaseBasicDataExecutor<T> {
     
     private SimpleSqlSource<T> simpleSqlSource;
     
+    private SimpleSqlSourceBuilder simpleSqlSourceBuilder = new SimpleSqlSourceBuilder();
+    
     /** <默认构造函数> */
     public DefaultBasicDataExecutor(Class<T> type, boolean cacheEnable,
             Dialect dialect, DataSource dataSource, CacheManager cacheManager) {
         super(type, cacheEnable, dialect, dataSource, cacheManager);
-        this.simpleSqlSource = SimpleSqlSourceBuilder.build(type, dialect);
+        this.simpleSqlSource = simpleSqlSourceBuilder.build(type, dialect);
     }
     
     /**

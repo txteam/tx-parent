@@ -56,7 +56,7 @@ public class SimpleSqlSourceBuilder {
      * 本地资源缓存映射,采用弱引用的形式，以便及时回收一些使用不高的sqlSource
      */
     @SuppressWarnings("rawtypes")
-    private final static WeakHashMap<Class<?>, SimpleSqlSource> mapping = new WeakHashMap<Class<?>, SimpleSqlSource>();
+    private WeakHashMap<Class<?>, SimpleSqlSource> mapping = new WeakHashMap<Class<?>, SimpleSqlSource>();
     
     /**
       * 根据传入类型构建SimpleSqlSource
@@ -69,7 +69,7 @@ public class SimpleSqlSourceBuilder {
       * @see [类、类#方法、类#成员]
      */
     @SuppressWarnings("unchecked")
-    public static <T> SimpleSqlSource<T> build(Class<T> type, Dialect dialect) {
+    public <T> SimpleSqlSource<T> build(Class<T> type, Dialect dialect) {
         synchronized (type) {
             SimpleSqlSource<T> simpleSqlSource = null;
             if (mapping.containsKey(type)) {
@@ -108,7 +108,7 @@ public class SimpleSqlSourceBuilder {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    private static <T> void addOrderBy(Class<T> type,
+    private <T> void addOrderBy(Class<T> type,
             SimpleSqlSource<T> simpleSqlSource) {
         MetaClass metaClass = MetaClass.forClass(type);
         
@@ -139,7 +139,7 @@ public class SimpleSqlSourceBuilder {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    private static <T> void addQueryCondition(Class<T> type,
+    private <T> void addQueryCondition(Class<T> type,
             SimpleSqlSource<T> simpleSqlSource) {
         if (type.isAnnotationPresent(QueryCondition.class)) {
             QueryCondition qcAnnoTemp = type.getAnnotation(QueryCondition.class);
@@ -332,7 +332,7 @@ public class SimpleSqlSourceBuilder {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    private static <T> void addUpdateAblePropertys(Class<T> type,
+    private <T> void addUpdateAblePropertys(Class<T> type,
             SimpleSqlSource<T> simpleSqlSource) {
         MetaClass metaClass = MetaClass.forClass(type);
         
@@ -364,7 +364,7 @@ public class SimpleSqlSourceBuilder {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    private static <T> void addProperty2ColumnMapping(Class<T> type,
+    private <T> void addProperty2ColumnMapping(Class<T> type,
             SimpleSqlSource<T> simpleSqlSource) {
         MetaClass metaClass = MetaClass.forClass(type);
         
@@ -470,7 +470,7 @@ public class SimpleSqlSourceBuilder {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    private static <T> boolean isNeedSkip(Class<T> type,String getterName,Class<?> getterType){
+    private <T> boolean isNeedSkip(Class<T> type,String getterName,Class<?> getterType){
         if (ReflectionUtils.isHasAnnotationForGetter(type,
                 getterName,
                 Transient.class)) {
@@ -503,7 +503,7 @@ public class SimpleSqlSourceBuilder {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    private static String generatePkPropertyName(Class<?> type) {
+    private String generatePkPropertyName(Class<?> type) {
         //获取对象解析器
         MetaClass metaClass = MetaClass.forClass(type);
         
@@ -529,7 +529,7 @@ public class SimpleSqlSourceBuilder {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    private static String generateTableName(Class<?> type) {
+    private String generateTableName(Class<?> type) {
         String tableName = type.getSimpleName().toUpperCase();
         if (type.isAnnotationPresent(Table.class)) {
             Table tableAnno = type.getAnnotation(Table.class);
