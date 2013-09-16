@@ -27,7 +27,7 @@ import com.tx.core.util.JdbcUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-@MappedTypes({String.class,Character.class})
+@MappedTypes({String.class})
 public class NullAbleStringTypeHandler extends BaseTypeHandler<String>{
     
     /**

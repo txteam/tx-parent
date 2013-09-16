@@ -15,6 +15,8 @@ import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.MappedTypes;
 
+import com.tx.core.util.JdbcUtils;
+
 /**
  * 修改默认的String映射处理器
  * 替换系统中的TypeHandler
@@ -49,7 +51,7 @@ public class NullAbleEnumTypeHandler<E extends Enum<E>> extends
     public void setParameter(PreparedStatement ps, int i, Enum<E> parameter,
             JdbcType jdbcType) throws SQLException {
         if (parameter == null && (jdbcType == null || JdbcType.OTHER == jdbcType)) {
-            ps.setString(i, null);
+            ps.setNull(i, JdbcUtils.getSqlTypeByJavaType(String.class));
         } else {
             super.setParameter(ps, i, parameter, jdbcType);
         }
