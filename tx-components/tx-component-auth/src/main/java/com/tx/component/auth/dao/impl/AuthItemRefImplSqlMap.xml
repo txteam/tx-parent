@@ -172,16 +172,16 @@
 		)
 		VALUES
 		(
-			#{authItemRef.id},
-			#{authItemRef.refId},
-			#{authItemRef.authRefType},
-			#{authItemRef.authItem.id},
-			#{authItemRef.authItem.systemId},
-			#{authItemRef.authItem.authType},
-			#{authItemRef.validDependEndDate},
-			#{authItemRef.createOperId},
-			#{authItemRef.endDate},
-			#{authItemRef.createDate}
+			#{authItemRef.id,javaType=java.lang.String},
+			#{authItemRef.refId,javaType=java.lang.String},
+			#{authItemRef.authRefType,javaType=java.lang.String},
+			#{authItemRef.authItem.id,javaType=java.lang.String},
+			#{authItemRef.authItem.systemId,javaType=java.lang.String},
+			#{authItemRef.authItem.authType,javaType=java.lang.String},
+			#{authItemRef.validDependEndDate,javaType=boolean},
+			#{authItemRef.createOperId,javaType=java.lang.String},
+			#{authItemRef.endDate,javaType=java.util.Date},
+			#{authItemRef.createDate,javaType=java.util.Date}
 		)
 	</insert>
 	

@@ -124,15 +124,15 @@
 		)
 		VALUES
 		(
-			#{authItem.id},
-			#{authItem.parentId},
-			#{authItem.systemId},
-			#{authItem.valid},
-			#{authItem.editAble},
-			#{authItem.viewAble},
-			#{authItem.name},
-			#{authItem.description},
-			#{authItem.authType}
+			#{authItem.id,javaType=java.lang.String},
+			#{authItem.parentId,javaType=java.lang.String},
+			#{authItem.systemId,javaType=java.lang.String},
+			#{authItem.valid,javaType=boolean},
+			#{authItem.editAble,javaType=boolean},
+			#{authItem.viewAble,javaType=boolean},
+			#{authItem.name,javaType=java.lang.String},
+			#{authItem.description,javaType=java.lang.String},
+			#{authItem.authType,javaType=java.lang.String}
 		)
 	</insert>
 	
