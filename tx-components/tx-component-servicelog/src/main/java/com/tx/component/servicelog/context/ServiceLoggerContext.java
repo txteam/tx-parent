@@ -61,10 +61,6 @@ public class ServiceLoggerContext implements InitializingBean{
         
         return res;
     }
-    
-    private void aaa(){
-        //this.simpleSqlSourceBuilder.build(type, dialect);
-    }
 
     /**
      * @throws Exception
