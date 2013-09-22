@@ -6,6 +6,9 @@
  */
 package com.tx.component.servicelog.context;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -26,6 +29,14 @@ public class ServiceLoggerSessionContext {
     private HttpServletResponse response;
     
     private HttpSession session;
+    
+    private Map<String, Object> attributes;
+    
+    /** <默认构造函数> */
+    private ServiceLoggerSessionContext() {
+        super();
+        this.attributes = new HashMap<String, Object>();
+    }
     
     /**
      * 线程变量:当前会话容器<br/>
@@ -67,6 +78,8 @@ public class ServiceLoggerSessionContext {
      * @see [类、类#方法、类#成员]
     */
     public static void remove() {
+        ServiceLoggerSessionContext res = context.get();
+        res.clear();
         context.remove();
     }
     
@@ -130,5 +143,52 @@ public class ServiceLoggerSessionContext {
      */
     public void setSession(HttpSession session) {
         this.session = session;
+    }
+    
+    /**
+      * 设置属性值到线程变量中
+      *<功能详细描述>
+      * @param key
+      * @param value [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public void setAttribute(String key, Object value) {
+        this.attributes.put(key, value);
+    }
+    
+    /**
+      * 获取线程变量中的属性值
+      *<功能详细描述>
+      * @param key
+      * @return [参数说明]
+      * 
+      * @return Object [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public Object getAttribute(String key) {
+        Object res = this.attributes.get(key);
+        return res;
+    }
+    
+    /**
+      * 清空线程变量中对象
+      *<功能详细描述> [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public void clear() {
+        if (this.attributes != null) {
+            this.attributes.clear();
+        }
+        this.request = null;
+        this.response = null;
+        this.session = null;
+        this.attributes = null;
     }
 }

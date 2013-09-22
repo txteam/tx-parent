@@ -8,19 +8,18 @@ package com.tx.component.servicelog.defaultimpl;
 
 import java.util.Date;
 
-
- /**
-  * 业务日志模型<br/>
-  *     业务日志主要目的为
-  *     记录：什么人在什么时候做了什么事情<br/>
-  *           所以在这里抽取其中核心要素定义业务日志基类<br/>
-  * <功能详细描述>
-  * 
-  * @author  brady
-  * @version  [版本号, 2013-9-16]
-  * @see  [相关类/方法]
-  * @since  [产品/模块版本]
-  */
+/**
+ * 业务日志模型<br/>
+ *     业务日志主要目的为
+ *     记录：什么人在什么时候做了什么事情<br/>
+ *           所以在这里抽取其中核心要素定义业务日志基类<br/>
+ * <功能详细描述>
+ * 
+ * @author  brady
+ * @version  [版本号, 2013-9-16]
+ * @see  [相关类/方法]
+ * @since  [产品/模块版本]
+ */
 public interface ServiceLog {
     
     /**
@@ -35,6 +34,16 @@ public interface ServiceLog {
     public String getId();
     
     /**
+      * 设置业务日志唯一键<br/>
+      *<功能详细描述> [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public void setId(String id);
+    
+    /**
       * 当前操作员id,可以为空
       *<功能详细描述>
       * @return [参数说明]
@@ -44,6 +53,17 @@ public interface ServiceLog {
       * @see [类、类#方法、类#成员]
      */
     public String getOperatorId();
+    
+    /**
+      * 设置操作员id
+      *<功能详细描述>
+      * @param operatorId [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public void setOperatorId(String operatorId);
     
     /**
       * 获取当前虚中心id
@@ -57,6 +77,17 @@ public interface ServiceLog {
     public String getVcid();
     
     /**
+      * 设置虚中心id
+      *<功能详细描述>
+      * @param vcid [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public void setVcid(String vcid);
+    
+    /**
       * 获取当前组织id 
       *<功能详细描述>
       * @return [参数说明]
@@ -66,6 +97,17 @@ public interface ServiceLog {
       * @see [类、类#方法、类#成员]
      */
     public String getOrganizationId();
+    
+    /**
+      * 设置组织id
+      *<功能详细描述>
+      * @param organizationId [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public void setOrganizationId(String organizationId);
     
     /**
       * 业务日志记录时间<br/> 
@@ -90,6 +132,17 @@ public interface ServiceLog {
     public String getMessage();
     
     /**
+      * 设置业务日志信息<br/> 
+      *<功能详细描述>
+      * @param message [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public void setMessage(String message);
+    
+    /**
       * 获取客户端ip地址
       *<功能详细描述>
       * @return [参数说明]
@@ -98,5 +151,15 @@ public interface ServiceLog {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public String getClientIPAddress();
+    public String getClientIpAddress();
+    
+    /**
+      * 设置客户端ip地址<br/>
+      *<功能详细描述> [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public void setClientIpAddress(String clientIpAddress);
 }

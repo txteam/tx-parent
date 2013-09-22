@@ -6,9 +6,6 @@
  */
 package com.tx.component.servicelog.logger;
 
-import java.util.List;
-
-import com.tx.core.paged.model.PagedList;
 
 /**
  * 业务日志记录器<br/>
@@ -19,7 +16,7 @@ import com.tx.core.paged.model.PagedList;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public interface ServiceLogger<T> {
+public interface ServiceLogPersister{
     
     /**
       * 记录业务日志<br/>
@@ -30,19 +27,5 @@ public interface ServiceLogger<T> {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public void log(Object serviceLog);
-    
-    /**
-      * 分页查询业务日志<br/> 
-      *<功能详细描述>
-      * @param minCreateDate
-      * @param maxCreateDate
-      * @return [参数说明]
-      * 
-      * @return List<PagedList<T>> [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    public List<PagedList<T>> queryPagedList(String minCreateDate,
-            String maxCreateDate);
+    public void persist(Object logInstance);
 }
