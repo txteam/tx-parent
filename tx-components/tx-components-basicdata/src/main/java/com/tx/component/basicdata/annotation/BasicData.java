@@ -50,6 +50,19 @@ public @interface BasicData {
     public String name();
     
     /**
+      * 基础数据对应数据库表名
+      *     如果没有指定，则会使用jpa注解中的对象名
+      *     如果没有jpa对象名，则会默认使用对象名
+      *<功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return String [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public String table() default "";
+    
+    /**
       * 是否可见<br/>
       *<功能详细描述>
       * @return [参数说明]

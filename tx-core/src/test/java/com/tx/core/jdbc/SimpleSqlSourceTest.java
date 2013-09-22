@@ -14,7 +14,7 @@ import org.apache.commons.lang.time.DateUtils;
 import org.apache.ibatis.type.JdbcType;
 import org.hibernate.dialect.MySQL5InnoDBDialect;
 
-import com.tx.core.jdbc.sqlsource.SimpleSqlSource;
+import com.tx.core.jdbc.sqlsource.SqlSource;
 
 
  /**
@@ -31,7 +31,7 @@ public class SimpleSqlSourceTest {
         @SuppressWarnings("unchecked")
         public static void main(String[] args) {
             @SuppressWarnings("rawtypes")
-            SimpleSqlSource simpleSqlMapMapper = new SimpleSqlSource(null,"t_test",
+            SqlSource simpleSqlMapMapper = new SqlSource(null,"t_test",
                     "id", new MySQL5InnoDBDialect());
             simpleSqlMapMapper.addProperty2columnMapping("id",
                     "idcol",

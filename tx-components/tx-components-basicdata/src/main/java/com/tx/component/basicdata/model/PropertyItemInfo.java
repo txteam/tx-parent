@@ -29,6 +29,15 @@ public class PropertyItemInfo {
     /** 属性项label名 */
     private String propertyName;
     
+    /** 属性对应字段名 */
+    private String column;
+    
+    /** 对应属性是否可插入 */
+    private boolean insertAble;
+    
+    /** 对应属性是否可更新 */
+    private boolean updateAble;
+    
     /** 属性项在列表中是否隐藏 */
     private boolean hidden = false;
     
@@ -52,6 +61,20 @@ public class PropertyItemInfo {
     
     /** 字段值生成器 */
     private ValueGenerator<?> valueGenerator;
+
+    /**
+     * @return 返回 type
+     */
+    public Class<?> getType() {
+        return type;
+    }
+
+    /**
+     * @param 对type进行赋值
+     */
+    public void setType(Class<?> type) {
+        this.type = type;
+    }
 
     /**
      * @return 返回 name
@@ -79,6 +102,48 @@ public class PropertyItemInfo {
      */
     public void setPropertyName(String propertyName) {
         this.propertyName = propertyName;
+    }
+
+    /**
+     * @return 返回 column
+     */
+    public String getColumn() {
+        return column;
+    }
+
+    /**
+     * @param 对column进行赋值
+     */
+    public void setColumn(String column) {
+        this.column = column;
+    }
+
+    /**
+     * @return 返回 insertAble
+     */
+    public boolean isInsertAble() {
+        return insertAble;
+    }
+
+    /**
+     * @param 对insertAble进行赋值
+     */
+    public void setInsertAble(boolean insertAble) {
+        this.insertAble = insertAble;
+    }
+
+    /**
+     * @return 返回 updateAble
+     */
+    public boolean isUpdateAble() {
+        return updateAble;
+    }
+
+    /**
+     * @param 对updateAble进行赋值
+     */
+    public void setUpdateAble(boolean updateAble) {
+        this.updateAble = updateAble;
     }
 
     /**
@@ -121,20 +186,6 @@ public class PropertyItemInfo {
      */
     public void setOrder(int order) {
         this.order = order;
-    }
-
-    /**
-     * @return 返回 type
-     */
-    public Class<?> getType() {
-        return type;
-    }
-
-    /**
-     * @param 对type进行赋值
-     */
-    public void setType(Class<?> type) {
-        this.type = type;
     }
 
     /**

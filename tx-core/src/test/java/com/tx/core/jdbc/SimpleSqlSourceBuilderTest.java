@@ -15,8 +15,8 @@ import org.hibernate.dialect.MySQL5InnoDBDialect;
 import org.hibernate.dialect.Oracle9iDialect;
 import org.junit.Test;
 
-import com.tx.core.jdbc.sqlsource.SimpleSqlSource;
-import com.tx.core.jdbc.sqlsource.SimpleSqlSourceBuilder;
+import com.tx.core.jdbc.sqlsource.SqlSource;
+import com.tx.core.jdbc.sqlsource.SqlSourceBuilder;
 
 
  /**
@@ -30,12 +30,12 @@ import com.tx.core.jdbc.sqlsource.SimpleSqlSourceBuilder;
   */
 public class SimpleSqlSourceBuilderTest {
     
-    private SimpleSqlSourceBuilder simpleSqlSourceBuilder = new SimpleSqlSourceBuilder();
+    private SqlSourceBuilder simpleSqlSourceBuilder = new SqlSourceBuilder();
     
     //@Test
     public void testbuild1(){
         
-        SimpleSqlSource<TestA> r = simpleSqlSourceBuilder.build(TestA.class, new MySQL5InnoDBDialect());
+        SqlSource<TestA> r = simpleSqlSourceBuilder.build(TestA.class, new MySQL5InnoDBDialect());
         
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("maxCreateDate", new Date());
@@ -58,7 +58,7 @@ public class SimpleSqlSourceBuilderTest {
     //@Test
     public void testbuild2(){
         
-        SimpleSqlSource<TestAChild> r = simpleSqlSourceBuilder.build(TestAChild.class, new Oracle9iDialect());
+        SqlSource<TestAChild> r = simpleSqlSourceBuilder.build(TestAChild.class, new Oracle9iDialect());
         
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("maxCreateDate", new Date());
@@ -82,7 +82,7 @@ public class SimpleSqlSourceBuilderTest {
         
 
         
-        SimpleSqlSource<TestAChild> r = simpleSqlSourceBuilder.build(TestAChild.class, new Oracle9iDialect());
+        SqlSource<TestAChild> r = simpleSqlSourceBuilder.build(TestAChild.class, new Oracle9iDialect());
         
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("maxCreateDate", new Date());
@@ -96,11 +96,11 @@ public class SimpleSqlSourceBuilderTest {
         //SimpleSqlSource rClone = null;
         
         try {
-            SimpleSqlSource<TestAChild> srcSqlSource = simpleSqlSourceBuilder.build(TestAChild.class, new Oracle9iDialect());        
+            SqlSource<TestAChild> srcSqlSource = simpleSqlSourceBuilder.build(TestAChild.class, new Oracle9iDialect());        
             System.out.println(srcSqlSource.findSql());
             
             @SuppressWarnings("unchecked")
-            SimpleSqlSource<TestAChild> cloneSqlSource = (SimpleSqlSource<TestAChild>)srcSqlSource.clone();
+            SqlSource<TestAChild> cloneSqlSource = (SqlSource<TestAChild>)srcSqlSource.clone();
             cloneSqlSource.setPkName("aaa");
             cloneSqlSource.addProperty2columnMapping("abcde", "abcdColone", String.class);
             

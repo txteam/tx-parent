@@ -4,7 +4,7 @@
  * 修改时间:  2013-9-16
  * <修改描述:>
  */
-package com.tx.component.servicelog.model;
+package com.tx.component.servicelog.defaultimpl;
 
 import java.util.Date;
 
@@ -43,7 +43,29 @@ public interface ServiceLog {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public String getCurrentOperatorId();
+    public String getOperatorId();
+    
+    /**
+      * 获取当前虚中心id
+      *<功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return String [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public String getVcid();
+    
+    /**
+      * 获取当前组织id 
+      *<功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return String [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public String getOrganizationId();
     
     /**
       * 业务日志记录时间<br/> 
@@ -66,4 +88,15 @@ public interface ServiceLog {
       * @see [类、类#方法、类#成员]
      */
     public String getMessage();
+    
+    /**
+      * 获取客户端ip地址
+      *<功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return String [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public String getClientIPAddress();
 }

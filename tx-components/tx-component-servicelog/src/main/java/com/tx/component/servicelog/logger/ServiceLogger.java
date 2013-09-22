@@ -22,17 +22,6 @@ import com.tx.core.paged.model.PagedList;
 public interface ServiceLogger<T> {
     
     /**
-      * 获取业务日志记录器对应的日志类型<br/>
-      *<功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return T [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    public T getServiceLogType();
-    
-    /**
       * 记录业务日志<br/>
       *<功能详细描述>
       * @param serviceLog [参数说明]
@@ -41,7 +30,7 @@ public interface ServiceLogger<T> {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public void log(T serviceLog);
+    public void log(Object serviceLog);
     
     /**
       * 分页查询业务日志<br/> 

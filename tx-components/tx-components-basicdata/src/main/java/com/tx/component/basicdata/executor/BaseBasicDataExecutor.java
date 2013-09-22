@@ -277,9 +277,7 @@ public abstract class BaseBasicDataExecutor<T> implements BasicDataExecutor<T> {
      */
     @Override
     public List<T> query(Map<String, Object> params) {
-        //TODO: query from cache
-        
-        List<T> resList = doQuery(null);
+        List<T> resList = doQuery(params);
         return resList;
     }
     
@@ -292,8 +290,6 @@ public abstract class BaseBasicDataExecutor<T> implements BasicDataExecutor<T> {
     @Override
     public PagedList<T> queryPagedList(Map<String, Object> params,
             int pageIndex, int pageSize) {
-        //TODO: query from cache
-        
         PagedList<T> res = doQueryPagedList(params, pageIndex, pageSize);
         return res;
     }

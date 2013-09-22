@@ -50,13 +50,13 @@ import com.tx.core.util.MessageUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class SimpleSqlSourceBuilder {
+public class SqlSourceBuilder {
     
     /**
      * 本地资源缓存映射,采用弱引用的形式，以便及时回收一些使用不高的sqlSource
      */
     @SuppressWarnings("rawtypes")
-    private WeakHashMap<Class<?>, SimpleSqlSource> mapping = new WeakHashMap<Class<?>, SimpleSqlSource>();
+    private WeakHashMap<Class<?>, SqlSource> mapping = new WeakHashMap<Class<?>, SqlSource>();
     
     /**
       * 根据传入类型构建SimpleSqlSource
@@ -69,9 +69,9 @@ public class SimpleSqlSourceBuilder {
       * @see [类、类#方法、类#成员]
      */
     @SuppressWarnings("unchecked")
-    public <T> SimpleSqlSource<T> build(Class<T> type, Dialect dialect) {
+    public <T> SqlSource<T> build(Class<T> type, Dialect dialect) {
         synchronized (type) {
-            SimpleSqlSource<T> simpleSqlSource = null;
+            SqlSource<T> simpleSqlSource = null;
             if (mapping.containsKey(type)) {
                 return mapping.get(type);
             }
@@ -81,8 +81,10 @@ public class SimpleSqlSourceBuilder {
             String pkName = generatePkPropertyName(type);
             
             //简答的sqlSource源
-            simpleSqlSource = new SimpleSqlSource<T>(type, tableName, pkName,
-                    dialect);
+            simpleSqlSource = new SqlSource<T>(type, dialect);
+            simpleSqlSource.setPkName(pkName);
+            simpleSqlSource.setTableName(tableName);
+            
             //添加属性与字段的映射关系<br/>
             addProperty2ColumnMapping(type, simpleSqlSource);
             //添加可更新字段
@@ -109,7 +111,7 @@ public class SimpleSqlSourceBuilder {
       * @see [类、类#方法、类#成员]
      */
     private <T> void addOrderBy(Class<T> type,
-            SimpleSqlSource<T> simpleSqlSource) {
+            SqlSource<T> simpleSqlSource) {
         MetaClass metaClass = MetaClass.forClass(type);
         
         String[] getterNames = metaClass.getGetterNames();
@@ -140,7 +142,7 @@ public class SimpleSqlSourceBuilder {
       * @see [类、类#方法、类#成员]
      */
     private <T> void addQueryCondition(Class<T> type,
-            SimpleSqlSource<T> simpleSqlSource) {
+            SqlSource<T> simpleSqlSource) {
         if (type.isAnnotationPresent(QueryCondition.class)) {
             QueryCondition qcAnnoTemp = type.getAnnotation(QueryCondition.class);
             simpleSqlSource.addOtherCondition(qcAnnoTemp.condition());
@@ -333,7 +335,7 @@ public class SimpleSqlSourceBuilder {
       * @see [类、类#方法、类#成员]
      */
     private <T> void addUpdateAblePropertys(Class<T> type,
-            SimpleSqlSource<T> simpleSqlSource) {
+            SqlSource<T> simpleSqlSource) {
         MetaClass metaClass = MetaClass.forClass(type);
         
         String[] getterNames = metaClass.getGetterNames();
@@ -365,7 +367,7 @@ public class SimpleSqlSourceBuilder {
       * @see [类、类#方法、类#成员]
      */
     private <T> void addProperty2ColumnMapping(Class<T> type,
-            SimpleSqlSource<T> simpleSqlSource) {
+            SqlSource<T> simpleSqlSource) {
         MetaClass metaClass = MetaClass.forClass(type);
         
         String[] getterNames = metaClass.getGetterNames();

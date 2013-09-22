@@ -41,7 +41,7 @@ import com.tx.core.util.ObjectUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class SimpleSqlSource<T> implements Serializable, Cloneable {
+public class SqlSource<T> implements Serializable, Cloneable {
     
     /** 注释内容 */
     private static final long serialVersionUID = 3059322593035094214L;
@@ -83,10 +83,48 @@ public class SimpleSqlSource<T> implements Serializable, Cloneable {
     private final Set<String> updateAblePropertyNames = new HashSet<String>();
     
     /** <默认构造函数> */
-    public SimpleSqlSource(Class<T> type,String tableName, String pkName, Dialect dialect) {
+    public SqlSource(Class<T> type, String tableName, String pkName,
+            Dialect dialect) {
         super();
         
-        AssertUtils.notNull(type, "type is empty.");
+        AssertUtils.notEmpty(pkName, "pkName is empty.");
+        AssertUtils.notEmpty(tableName, "tableName is empty.");
+        AssertUtils.notNull(dialect, "dialect is empty.");
+        
+        this.type = type;
+        this.pkName = pkName.trim();
+        this.tableName = tableName.trim().toUpperCase();
+        this.dialect = dialect;
+    }
+    
+    /** <默认构造函数> */
+    public SqlSource(String tableName, String pkName, Dialect dialect) {
+        super();
+        
+        AssertUtils.notEmpty(pkName, "pkName is empty.");
+        AssertUtils.notEmpty(tableName, "tableName is empty.");
+        AssertUtils.notNull(dialect, "dialect is empty.");
+        
+        this.pkName = pkName.trim();
+        this.tableName = tableName.trim().toUpperCase();
+        this.dialect = dialect;
+    }
+    
+    /** <默认构造函数> */
+    public SqlSource(Dialect dialect) {
+        super();
+        
+        AssertUtils.notEmpty(pkName, "pkName is empty.");
+        AssertUtils.notEmpty(tableName, "tableName is empty.");
+        AssertUtils.notNull(dialect, "dialect is empty.");
+        
+        this.dialect = dialect;
+    }
+    
+    /** <默认构造函数> */
+    public SqlSource(Class<T> type, Dialect dialect) {
+        super();
+        
         AssertUtils.notEmpty(pkName, "pkName is empty.");
         AssertUtils.notEmpty(tableName, "tableName is empty.");
         AssertUtils.notNull(dialect, "dialect is empty.");
@@ -354,7 +392,9 @@ public class SimpleSqlSource<T> implements Serializable, Cloneable {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public RowMapper<T> getSelectRowMapper(){
+    public RowMapper<T> getSelectRowMapper() {
+        AssertUtils.notNull(this.type, "type is null");
+        
         final Class<T> finalType = this.type;
         RowMapper<T> rowMapper = new RowMapper<T>() {
             /**
@@ -456,14 +496,16 @@ public class SimpleSqlSource<T> implements Serializable, Cloneable {
         }
         SqlBuilder.FROM(this.tableName);
         
-        MetaObject metaObject = MetaObject.forObject(obj);
-        for (Entry<String, String> entryTemp : queryConditionProperty2SqlMapping.entrySet()) {
-            String queryPropertyName = entryTemp.getKey();
-            Object valueObj = metaObject.getValue(queryPropertyName);
-            if (ObjectUtils.isEmpty(valueObj)) {
-                continue;
+        if (!ObjectUtils.isEmpty(obj)) {
+            MetaObject metaObject = MetaObject.forObject(obj);
+            for (Entry<String, String> entryTemp : queryConditionProperty2SqlMapping.entrySet()) {
+                String queryPropertyName = entryTemp.getKey();
+                Object valueObj = metaObject.getValue(queryPropertyName);
+                if (ObjectUtils.isEmpty(valueObj)) {
+                    continue;
+                }
+                SqlBuilder.WHERE(entryTemp.getValue());
             }
-            SqlBuilder.WHERE(entryTemp.getValue());
         }
         for (String conditionExpressionTemp : otherCondition) {
             SqlBuilder.WHERE(conditionExpressionTemp);
@@ -497,14 +539,16 @@ public class SimpleSqlSource<T> implements Serializable, Cloneable {
         SqlBuilder.SELECT("COUNT(1)");
         SqlBuilder.FROM(this.tableName);
         
-        MetaObject metaObject = MetaObject.forObject(obj);
-        for (Entry<String, String> entryTemp : queryConditionProperty2SqlMapping.entrySet()) {
-            String queryPropertyName = entryTemp.getKey();
-            Object valueObj = metaObject.getValue(queryPropertyName);
-            if (ObjectUtils.isEmpty(valueObj)) {
-                continue;
+        if (!ObjectUtils.isEmpty(obj)) {
+            MetaObject metaObject = MetaObject.forObject(obj);
+            for (Entry<String, String> entryTemp : queryConditionProperty2SqlMapping.entrySet()) {
+                String queryPropertyName = entryTemp.getKey();
+                Object valueObj = metaObject.getValue(queryPropertyName);
+                if (ObjectUtils.isEmpty(valueObj)) {
+                    continue;
+                }
+                SqlBuilder.WHERE(entryTemp.getValue());
             }
-            SqlBuilder.WHERE(entryTemp.getValue());
         }
         for (String conditionExpressionTemp : otherCondition) {
             SqlBuilder.WHERE(conditionExpressionTemp);
@@ -526,32 +570,36 @@ public class SimpleSqlSource<T> implements Serializable, Cloneable {
       * @see [类、类#方法、类#成员]
      */
     public PreparedStatementSetter getQueryCondtionSetter(Object obj) {
-        final MetaObject metaObject = MetaObject.forObject(obj);
-        final String finalPkName = this.pkName;
-        PreparedStatementSetter res = new PreparedStatementSetter() {
-            @Override
-            public void setValues(PreparedStatement ps) throws SQLException {
-                int i = 1;
-                for (Entry<String, String> entryTemp : queryConditionProperty2SqlMapping.entrySet()) {
-                    String queryPropertyName = entryTemp.getKey();
-                    Object valueObj = metaObject.getValue(queryPropertyName);
-                    if (ObjectUtils.isEmpty(valueObj)) {
-                        continue;
+        PreparedStatementSetter res = null;
+        if (!ObjectUtils.isEmpty(obj)) {
+            final MetaObject metaObject = MetaObject.forObject(obj);
+            res = new PreparedStatementSetter() {
+                @Override
+                public void setValues(PreparedStatement ps) throws SQLException {
+                    int i = 1;
+                    for (Entry<String, String> entryTemp : queryConditionProperty2SqlMapping.entrySet()) {
+                        String queryPropertyName = entryTemp.getKey();
+                        Object valueObj = metaObject.getValue(queryPropertyName);
+                        if (ObjectUtils.isEmpty(valueObj)) {
+                            continue;
+                        }
+                        JdbcType jdbcType = queryConditionProperty2TypeMapping.get(queryPropertyName);
+                        JdbcUtils.setPreparedStatementValueForSimpleType(ps,
+                                i,
+                                valueObj,
+                                jdbcType);
+                        i++;
                     }
-                    JdbcType jdbcType = queryConditionProperty2TypeMapping.get(queryPropertyName);
-                    JdbcUtils.setPreparedStatementValueForSimpleType(ps,
-                            i,
-                            valueObj,
-                            jdbcType);
-                    i++;
                 }
-                Class<?> setterType = property2JavaTypeMapping.get(finalPkName);
-                JdbcUtils.setPreparedStatementValueForSimpleType(ps,
-                        i++,
-                        metaObject.getValue(finalPkName),
-                        setterType);
-            }
-        };
+            };
+        } else {
+            res = new PreparedStatementSetter() {
+                @Override
+                public void setValues(PreparedStatement ps) throws SQLException {
+                }
+            };
+        }
+        
         return res;
     }
     
@@ -794,7 +842,7 @@ public class SimpleSqlSource<T> implements Serializable, Cloneable {
         };
         return res;
     }
-
+    
     /**
      * @return
      * @throws CloneNotSupportedException
@@ -802,7 +850,14 @@ public class SimpleSqlSource<T> implements Serializable, Cloneable {
     @SuppressWarnings("unchecked")
     @Override
     public Object clone() throws CloneNotSupportedException {
-        SimpleSqlSource<T> cloneObj = (SimpleSqlSource<T>)super.clone();
+        SqlSource<T> cloneObj = (SqlSource<T>) super.clone();
         return cloneObj;
+    }
+    
+    /**
+     * @param 对type进行赋值
+     */
+    public void setType(Class<T> type) {
+        this.type = type;
     }
 }

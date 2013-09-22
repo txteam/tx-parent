@@ -12,9 +12,4 @@
 		<property name="configLocation" value="classpath:/context/ehcache.xml"></property>
 		<property name="cacheManagerName" value="ehcacheManager"></property>
 	</bean>
-	<bean id="identicalEhcacheManager"
-		class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
-		<property name="configLocation" value="classpath:/context/ehcache_identical.xml"></property>
-		<property name="cacheManagerName" value="identicalEhcacheManager"></property>
-	</bean>
 </beans>

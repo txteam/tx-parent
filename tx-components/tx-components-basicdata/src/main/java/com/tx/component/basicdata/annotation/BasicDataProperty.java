@@ -52,6 +52,40 @@ public @interface BasicDataProperty {
     public int order();
     
     /**
+     * 基础数据对应字段名
+     *     如果不为empty则优先使用该字段
+     *<功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+   public String column() default "";
+   
+   /**
+     * 是否是可插入字段<br/>
+     *<功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+   public boolean isInsertAble() default true;
+   
+   /**
+     * 是否是可更新字段<br/>
+     *<功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+   public boolean isUpdateAble() default true;
+    
+    /**
       * 验证表达式
       *<功能详细描述>
       * @return [参数说明]
@@ -98,18 +132,6 @@ public @interface BasicDataProperty {
     public boolean isModifyAble() default true;
     
     /**
-      * 默认的值生成器
-      *<功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return Class<ValueGenerator> [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    @SuppressWarnings("rawtypes")
-    public Class<? extends ValueGenerator> valueGenerator() default DefaultValueGenerator.class;
-    
-    /**
       * 指定字段在显示阶段是否隐藏<br/>
       *     默认不影藏<br/> 
       *<功能详细描述>
@@ -131,4 +153,16 @@ public @interface BasicDataProperty {
       * @see [类、类#方法、类#成员]
      */
     public boolean isVisible() default true;
+    
+    /**
+     * 默认的值生成器
+     *<功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return Class<ValueGenerator> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+   @SuppressWarnings("rawtypes")
+   public Class<? extends ValueGenerator> valueGenerator() default DefaultValueGenerator.class;
 }

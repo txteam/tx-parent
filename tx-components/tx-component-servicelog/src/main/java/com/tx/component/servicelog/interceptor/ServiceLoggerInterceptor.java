@@ -8,22 +8,25 @@ package com.tx.component.servicelog.interceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.tx.component.servicelog.context.ServiceLoggerSessionContext;
 
- /**
-  * 业务日志拦截器<br/>
-  * <功能详细描述>
-  * 
-  * @author  brady
-  * @version  [版本号, 2013-9-17]
-  * @see  [相关类/方法]
-  * @since  [产品/模块版本]
-  */
-public class ServiceLoggerInterceptor implements HandlerInterceptor{
-
+/**
+ * 业务日志拦截器<br/>
+ *     基于springMVC的实现<br/>
+ * <功能详细描述>
+ * 
+ * @author  brady
+ * @version  [版本号, 2013-9-17]
+ * @see  [相关类/方法]
+ * @since  [产品/模块版本]
+ */
+public class ServiceLoggerInterceptor implements HandlerInterceptor {
+    
     /**
      * @param request
      * @param response
@@ -34,10 +37,12 @@ public class ServiceLoggerInterceptor implements HandlerInterceptor{
     @Override
     public boolean preHandle(HttpServletRequest request,
             HttpServletResponse response, Object handler) throws Exception {
-        // TODO Auto-generated method stub
+        HttpSession session = request != null ? request.getSession(false)
+                : null;
+        ServiceLoggerSessionContext.init(request, response, session);
         return false;
     }
-
+    
     /**
      * @param request
      * @param response
@@ -49,10 +54,8 @@ public class ServiceLoggerInterceptor implements HandlerInterceptor{
     public void postHandle(HttpServletRequest request,
             HttpServletResponse response, Object handler,
             ModelAndView modelAndView) throws Exception {
-        // TODO Auto-generated method stub
-        
     }
-
+    
     /**
      * @param request
      * @param response
@@ -64,7 +67,6 @@ public class ServiceLoggerInterceptor implements HandlerInterceptor{
     public void afterCompletion(HttpServletRequest request,
             HttpServletResponse response, Object handler, Exception ex)
             throws Exception {
-        // TODO Auto-generated method stub
-        
+        ServiceLoggerSessionContext.remove();
     }
 }

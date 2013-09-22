@@ -21,8 +21,8 @@ import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
 
-import com.tx.core.jdbc.sqlsource.SimpleSqlSource;
-import com.tx.core.jdbc.sqlsource.SimpleSqlSourceBuilder;
+import com.tx.core.jdbc.sqlsource.SqlSource;
+import com.tx.core.jdbc.sqlsource.SqlSourceBuilder;
 import com.tx.core.paged.model.PagedList;
 
 /**
@@ -36,9 +36,9 @@ import com.tx.core.paged.model.PagedList;
  */
 public class DefaultBasicDataExecutor<T> extends BaseBasicDataExecutor<T> {
     
-    private SimpleSqlSource<T> simpleSqlSource;
+    private SqlSource<T> simpleSqlSource;
     
-    private SimpleSqlSourceBuilder simpleSqlSourceBuilder = new SimpleSqlSourceBuilder();
+    private SqlSourceBuilder simpleSqlSourceBuilder = new SqlSourceBuilder();
     
     /** <默认构造函数> */
     public DefaultBasicDataExecutor(Class<T> type, boolean cacheEnable,
@@ -169,7 +169,7 @@ public class DefaultBasicDataExecutor<T> extends BaseBasicDataExecutor<T> {
      */
     @Override
     protected List<T> doQuery(Map<String, Object> params) {
-        List<T> resList = getJdbcTemplate().query(simpleSqlSource.countSql(params),
+        List<T> resList = getJdbcTemplate().query(simpleSqlSource.querySql(params),
                 simpleSqlSource.getQueryCondtionSetter(params),
                 simpleSqlSource.getSelectRowMapper());
         return resList;
