@@ -9,6 +9,7 @@ package com.tx.component.servicelog.context;
 import org.springframework.beans.factory.FactoryBean;
 
 import com.tx.component.servicelog.logger.ServiceLoggerContext;
+import com.tx.core.exceptions.util.AssertUtils;
 
 /**
  * 业务日志容器句柄
@@ -23,16 +24,19 @@ public class ServiceLoggerContextFactory extends ServiceLoggerConfigurator
         implements FactoryBean<ServiceLoggerContext<?>> {
     
     /** 业务日志实例工厂 */
-    protected ServiceLoggerContextBuilder serviceLoggerContextBuilder;
+    protected static ServiceLoggerContextBuilder serviceLoggerContextBuilder;
+    
+    private Class<?> type;
     
     public static <T> ServiceLoggerContext<T> getContext(Class<T> srcObjType) {
-        if(srcObjType == null){
-            
-            return null;
-        }
-        
         //根据类型构建
+        AssertUtils.notNull(serviceLoggerContextBuilder,
+                "serviceLoggerContextBuilder is null");
+        AssertUtils.notNull(srcObjType,
+                "init ServiceLogContext instance fail. type is null");
         
+        //
+        serviceLoggerContextBuilder.build(srcObjType, dataSourceType, dataSource);
         return null;
     }
     
@@ -42,7 +46,9 @@ public class ServiceLoggerContextFactory extends ServiceLoggerConfigurator
      */
     @Override
     public ServiceLoggerContext<?> getObject() throws Exception {
-        return ServiceLoggerContextImpl.getContext(null);
+        AssertUtils.notNull(type,
+                "init ServiceLogContext instance fail. type is null");
+        return ServiceLoggerContextImpl.getContext(type);
     }
     
     /**

@@ -34,7 +34,7 @@ public class TXServiceLoggerInterceptor extends BaseServiceLoggerInterceptor {
         Map<String, Object> attributes = new HashMap<String, Object>();
         
         attributes.put("clientIpAddress", getClientIpAddress());
-        attributes.put("vcidId", getVcidId());
+        attributes.put("vcid", getVcid());
         attributes.put("organizationId", getOrganizationId());
         attributes.put("operatorId", getOperatorId());
         return attributes;
@@ -105,7 +105,7 @@ public class TXServiceLoggerInterceptor extends BaseServiceLoggerInterceptor {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    private String getVcidId() {
+    private String getVcid() {
         ServiceLoggerSessionContext context = ServiceLoggerSessionContext.getContext();
         
         if (context.getRequest() == null
@@ -114,10 +114,10 @@ public class TXServiceLoggerInterceptor extends BaseServiceLoggerInterceptor {
         } else {
             HttpSession session = context.getRequest().getSession(false);
             
-            Object vcidIdObj = session.getAttribute("vcidId");
-            if (vcidIdObj != null && vcidIdObj instanceof String) {
-                String vcidId = (String) vcidIdObj;
-                return vcidId;
+            Object vcidObj = session.getAttribute("vcid");
+            if (vcidObj != null && vcidObj instanceof String) {
+                String vcid = (String) vcidObj;
+                return vcid;
             } else {
                 return "";
             }

@@ -19,13 +19,13 @@ import com.tx.core.dbscript.model.DataSourceTypeEnum;
 public class ServiceLoggerConfigurator {
     
     /** 数据源类型 */
-    protected DataSourceTypeEnum dataSourceType;
+    protected static DataSourceTypeEnum dataSourceType;
     
     /** 数据源 */
-    protected DataSource dataSource;
+    protected static DataSource dataSource;
     
     /** 方言类 */
-    protected Dialect dialect;
+    protected static Dialect dialect;
     
     /**
      * 私有化构造方法
