@@ -20,7 +20,7 @@ import java.util.Date;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public interface ServiceLog {
+public interface TXServiceLog {
     
     /**
       * 业务日志唯一id

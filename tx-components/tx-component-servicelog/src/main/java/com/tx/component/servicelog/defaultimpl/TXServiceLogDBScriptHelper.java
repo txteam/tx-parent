@@ -15,7 +15,7 @@ package com.tx.component.servicelog.defaultimpl;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class ServiceLogDBScriptHelper {
+public class TXServiceLogDBScriptHelper {
     
     public String generate(Class<?> serviceLogType) {
         return "";

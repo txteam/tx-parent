@@ -11,6 +11,7 @@ import java.util.Date;
 import com.tx.component.servicelog.logger.ServiceLogDecorate;
 import com.tx.component.servicelog.logger.ServiceLogQuerier;
 import com.tx.component.servicelog.logger.ServiceLogPersister;
+import com.tx.component.servicelog.logger.ServiceLoggerContext;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.paged.model.PagedList;
 
@@ -23,7 +24,8 @@ import com.tx.core.paged.model.PagedList;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class ServiceLoggerContext<T> {
+public class ServiceLoggerContextImpl<T> extends ServiceLoggerContextFactory
+        implements ServiceLoggerContext<T> {
     
     /** 业务日志实例装饰器 */
     private ServiceLogDecorate serviceLogDecorate;
@@ -34,44 +36,43 @@ public class ServiceLoggerContext<T> {
     /** 业务日志记录器 */
     private ServiceLogPersister serviceLogPersister;
     
+    /** <默认构造函数> */
+    protected ServiceLoggerContextImpl() {
+    }
+    
+    /** <默认构造函数> */
+    ServiceLoggerContextImpl(ServiceLogDecorate serviceLogDecorate,
+            ServiceLogQuerier<T> serviceLogQuerier,
+            ServiceLogPersister serviceLogPersister) {
+        super();
+        this.serviceLogDecorate = serviceLogDecorate;
+        this.serviceLogQuerier = serviceLogQuerier;
+        this.serviceLogPersister = serviceLogPersister;
+    }
+    
     /**
-      * 向容器中设置属性值<br/>
-      *<功能详细描述>
-      * @param key
-      * @param value [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * @param key
+     * @param value
      */
+    @Override
     public void setAttribute(String key, Object value) {
         ServiceLoggerSessionContext.getContext().setAttribute(key, value);
     }
     
     /**
-      * 获取写入的业务日志属性值<br/>
-      *<功能详细描述>
-      * @param key
-      * @return [参数说明]
-      * 
-      * @return Object [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * @param key
+     * @return
      */
+    @Override
     public Object getAttribute(String key) {
         Object res = ServiceLoggerSessionContext.getContext().getAttribute(key);
         return res;
     }
     
     /**
-      * 记录业务日志<br/> 
-      *<功能详细描述>
-      * @param serviceLogInstance [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * @param serviceLogInstance
      */
+    @Override
     public void log(Object serviceLogInstance) {
         AssertUtils.notNull(serviceLogInstance, "serviceLogInstance is null");
         
@@ -82,16 +83,11 @@ public class ServiceLoggerContext<T> {
     }
     
     /**
-      * 业务日志查询器<br/>
-      *<功能详细描述>
-      * @param minCreateDate
-      * @param maxCreateDate
-      * @return [参数说明]
-      * 
-      * @return PagedList<T> [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * @param minCreateDate
+     * @param maxCreateDate
+     * @return
      */
+    @Override
     public PagedList<T> query(Date minCreateDate, Date maxCreateDate) {
         PagedList<T> res = serviceLogQuerier.queryPagedList(minCreateDate,
                 maxCreateDate);

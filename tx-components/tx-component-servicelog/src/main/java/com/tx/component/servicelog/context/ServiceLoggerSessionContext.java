@@ -28,8 +28,6 @@ public class ServiceLoggerSessionContext {
     
     private HttpServletResponse response;
     
-    private HttpSession session;
-    
     private Map<String, Object> attributes;
     
     /** <默认构造函数> */
@@ -95,12 +93,11 @@ public class ServiceLoggerSessionContext {
       * @see [类、类#方法、类#成员]
      */
     public static void init(HttpServletRequest request,
-            HttpServletResponse response, HttpSession session) {
+            HttpServletResponse response) {
         context.remove();
         ServiceLoggerSessionContext localContext = context.get();
         localContext.setRequest(request);
         localContext.setResponse(response);
-        localContext.setSession(session);
     }
     
     /**
@@ -129,20 +126,6 @@ public class ServiceLoggerSessionContext {
      */
     public void setResponse(HttpServletResponse response) {
         this.response = response;
-    }
-    
-    /**
-     * @return 返回 session
-     */
-    public HttpSession getSession() {
-        return session;
-    }
-    
-    /**
-     * @param 对session进行赋值
-     */
-    public void setSession(HttpSession session) {
-        this.session = session;
     }
     
     /**
@@ -188,7 +171,6 @@ public class ServiceLoggerSessionContext {
         }
         this.request = null;
         this.response = null;
-        this.session = null;
         this.attributes = null;
     }
 }

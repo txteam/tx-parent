@@ -18,7 +18,7 @@ import java.util.Date;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
   */
-public class BaseServiceLog implements ServiceLog{
+public class TXBaseServiceLog implements TXServiceLog{
     
     /** 业务日志id */
     private String id;

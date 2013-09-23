@@ -1,14 +1,9 @@
 package com.tx.component.servicelog.context;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.sql.DataSource;
 
 import org.hibernate.dialect.Dialect;
 
-import com.tx.component.servicelog.defaultimpl.ServiceLog;
-import com.tx.component.servicelog.logger.ServiceLogPersister;
 import com.tx.core.dbscript.model.DataSourceTypeEnum;
 
 /**
@@ -23,20 +18,14 @@ import com.tx.core.dbscript.model.DataSourceTypeEnum;
  */
 public class ServiceLoggerConfigurator {
     
-    /** 懒汉模式获取日志容器句柄 */
-    private static Map<Class<? extends ServiceLog>, ServiceLogPersister> loggerContextMapping = new HashMap<Class<? extends ServiceLog>, ServiceLogPersister>();
-    
-    /** 业务日志实例工厂 */
-    private ServiceLoggerContextBuilder serviceLoggerContextFactory;
-    
     /** 数据源类型 */
-    private DataSourceTypeEnum dataSourceType;
+    protected DataSourceTypeEnum dataSourceType;
     
     /** 数据源 */
-    private DataSource dataSource;
+    protected DataSource dataSource;
     
     /** 方言类 */
-    private Dialect dialect;
+    protected Dialect dialect;
     
     /**
      * 私有化构造方法

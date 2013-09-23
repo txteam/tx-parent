@@ -6,17 +6,20 @@
  */
 package com.tx.component.servicelog.interceptor;
 
+import java.util.Map;
+import java.util.Map.Entry;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
+import org.apache.commons.collections.MapUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.tx.component.servicelog.context.ServiceLoggerSessionContext;
 
 /**
- * 业务日志拦截器<br/>
+ * 业务日志拦截器基础类<br/>
  *     基于springMVC的实现<br/>
  * <功能详细描述>
  * 
@@ -25,7 +28,19 @@ import com.tx.component.servicelog.context.ServiceLoggerSessionContext;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class ServiceLoggerInterceptor implements HandlerInterceptor {
+public abstract class BaseServiceLoggerInterceptor implements
+        HandlerInterceptor {
+    
+    /**
+      * 初始化向业务日志容器线程变量中写入的属性集合
+      *<功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return Map<String,Object> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    protected abstract Map<String, Object> initAttributes();
     
     /**
      * @param request
@@ -37,9 +52,18 @@ public class ServiceLoggerInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request,
             HttpServletResponse response, Object handler) throws Exception {
-        HttpSession session = request != null ? request.getSession(false)
-                : null;
-        ServiceLoggerSessionContext.init(request, response, session);
+        ServiceLoggerSessionContext.init(request, response);
+        
+        //调用需要初始化写入业务日志容器的线程变量值
+        Map<String, Object> attributes = initAttributes();
+        if (!MapUtils.isEmpty(attributes)) {
+            ServiceLoggerSessionContext localContext = ServiceLoggerSessionContext.getContext();
+            
+            for (Entry<String, Object> entryTemp : attributes.entrySet()) {
+                localContext.setAttribute(entryTemp.getKey(),
+                        entryTemp.getValue());
+            }
+        }
         return false;
     }
     
