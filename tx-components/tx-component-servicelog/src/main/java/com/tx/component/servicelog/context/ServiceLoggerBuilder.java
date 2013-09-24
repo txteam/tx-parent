@@ -6,9 +6,9 @@
  */
 package com.tx.component.servicelog.context;
 
-import javax.sql.DataSource;
+import org.springframework.jdbc.core.JdbcTemplate;
 
-import com.tx.component.servicelog.logger.ServiceLoggerContext;
+import com.tx.component.servicelog.logger.ServiceLogger;
 import com.tx.core.dbscript.model.DataSourceTypeEnum;
 
 /**
@@ -21,7 +21,7 @@ import com.tx.core.dbscript.model.DataSourceTypeEnum;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public interface ServiceLoggerContextBuilder {
+public interface ServiceLoggerBuilder {
     
     /**
       * 构造业务日志容器<br/>
@@ -35,7 +35,7 @@ public interface ServiceLoggerContextBuilder {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    <T> ServiceLoggerContext<T> build(Class<T> srcObjType,
-            DataSourceTypeEnum dataSourceType, DataSource dataSource);
+    <T> ServiceLogger<T> build(Class<T> srcObjType,
+            DataSourceTypeEnum dataSourceType, JdbcTemplate jdbcTemplate);
     
 }

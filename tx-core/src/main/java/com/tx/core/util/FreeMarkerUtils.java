@@ -11,6 +11,7 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -135,10 +136,44 @@ public class FreeMarkerUtils {
                 FileUtils.forceMkdir(newFile.getParentFile());
                 newFile.createNewFile();
             }
-            out = new OutputStreamWriter(new FileOutputStream(newFile),encode);
+            out = new OutputStreamWriter(new FileOutputStream(newFile), encode);
             
             Template temp = getTemplateByTemplateClassPath(loadClass, filePath);
             temp.process(root, out);
+        } catch (IOException e) {
+            logger.error(e.toString(), e);
+            throw new ResourceAccessException(
+                    "根据freeMarker模版生成目标文件.发生IOException", e);
+        } catch (TemplateException e) {
+            logger.error(e.toString(), e);
+            throw new ResourceAccessException(
+                    "根据freeMarker模版生成目标文件.发生TemplateException", e);
+        } finally {
+            IOUtils.closeQuietly(out);
+        }
+    }
+    
+    /**
+     * 根据数据以及文件生成模版
+     * <功能详细描述>
+     * @param name
+     * @param root
+     * @param outFile [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    public static String generateContent(Class<?> loadClass,
+            String templateFilePath, Map<String, Object> root, String encode) {
+        StringWriter out = new StringWriter();
+        try {
+            Template temp = getTemplateByTemplateClassPath(loadClass,
+                    templateFilePath);
+            temp.process(root, out);
+            
+            String scriptContent = out.getBuffer().toString();
+            return scriptContent;
         } catch (IOException e) {
             logger.error(e.toString(), e);
             throw new ResourceAccessException(

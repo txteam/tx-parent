@@ -18,7 +18,7 @@ package com.tx.component.servicelog.logger;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
   */
-public interface ServiceLogDecorate {
+public interface ServiceLogDecorate<T> {
     
-    public Object decorate(Object srcObj);
+    public Object decorate(T srcObj);
 }

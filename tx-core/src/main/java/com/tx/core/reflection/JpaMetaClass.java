@@ -4,7 +4,7 @@
  * 修改时间:  2012-12-9
  * <修改描述:>
  */
-package com.tx.core.mybatis.generator.model;
+package com.tx.core.reflection;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
@@ -33,6 +33,8 @@ import org.apache.commons.lang.reflect.FieldUtils;
 import org.apache.ibatis.reflection.MetaClass;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.StringUtils;
+
+import com.tx.core.mybatis.generator.model.ColumnInfo;
 
 /**
  * jpa实体解析结果类
@@ -67,7 +69,6 @@ public class JpaMetaClass {
         this.getterNames = Arrays.asList(metaClass.getGetterNames());
         
         for (String getterNameTemp : this.getterNames) {
-            
             PropertyDescriptor propertyDescriptor = BeanUtils.getPropertyDescriptor(type,
                     getterNameTemp);
             if (propertyDescriptor == null) {
@@ -79,11 +80,7 @@ public class JpaMetaClass {
             Field getterField = FieldUtils.getField(type, getterNameTemp, true);
             
             this.getterMethodMapping.put(getterNameTemp, methodTemp);
-            this.getterFieldMapping.put(getterNameTemp, getterField);
-            
-            this.propertyDescriptorMapping.put(getterNameTemp,
-                    propertyDescriptor);
-            this.getterReturnTypeMapping.put(getterNameTemp, propertyType);
+            this.getterTypeMapping.put(getterNameTemp, propertyType);
             
             //设置为不需要忽略，在方法解析中如果发现为被忽略字段，则重设置
             this.ignoreGetterMapping.put(getterNameTemp, false);
@@ -145,11 +142,9 @@ public class JpaMetaClass {
                 columnAnn = getterField.getAnnotation(Column.class);
             }
             this.columnNameMapping.put(propertyName, columnAnn.name());
-            this.columnAnnoMapping.put(propertyName, columnAnn);
             
             this.columnInfoMapping.put(propertyName, new ColumnInfo(columnAnn,
-                    columnAnn.name(), getterField.getType(), propertyName,
-                    ""));
+                    columnAnn.name(), getterField.getType(), propertyName, ""));
         } else if (getterMethod.isAnnotationPresent(JoinColumn.class)
                 || (getterField != null && getterField.isAnnotationPresent(JoinColumn.class))) {
             JoinColumn columnAnn = getterMethod.getAnnotation(JoinColumn.class);
@@ -157,17 +152,14 @@ public class JpaMetaClass {
                 columnAnn = getterField.getAnnotation(JoinColumn.class);
             }
             this.columnNameMapping.put(propertyName, columnAnn.name());
-            this.joinColumnAnnoMapping.put(propertyName, columnAnn);
             
             this.columnInfoMapping.put(propertyName, new ColumnInfo(null,
-                    columnAnn.name(), getterField.getType(), propertyName,
-                    ""));
+                    columnAnn.name(), getterField.getType(), propertyName, ""));
         } else {
             this.columnNameMapping.put(propertyName, propertyName);
             
             this.columnInfoMapping.put(propertyName, new ColumnInfo(null,
-                    propertyName, getterField.getType(), propertyName,
-                    ""));
+                    propertyName, getterField.getType(), propertyName, ""));
         }
     }
     
@@ -193,7 +185,7 @@ public class JpaMetaClass {
             addParseMessage("warnInfo: @Id type is not String");
         }
         
-        this.idPropertyName = propertyName;
+        this.pkPropertyName = propertyName;
         if (getterMethod.isAnnotationPresent(Generated.class)
                 || (getterField != null && getterField.isAnnotationPresent(Generated.class))) {
             //
@@ -286,37 +278,28 @@ public class JpaMetaClass {
     public String simpleTableName;
     
     /** Id注解对应的属性名 */
-    private String idPropertyName = "";
+    private String pkPropertyName = "";
     
+    /** 主键生成 */
     private String generator;
     
+    /** 主键生成类型，保留字段，暂未使用 */
     private GenerationType generatorType;
     
     /** getter名列表 */
     private List<String> getterNames;
     
+    /** getter对应的属性类型  */
+    private Map<String, Class<?>> getterTypeMapping = new HashMap<String, Class<?>>();
+    
     /** 对应的getter方法 */
     private Map<String, Method> getterMethodMapping = new HashMap<String, Method>();
     
-    /** 对应getter的属性字段  */
-    private Map<String, Field> getterFieldMapping = new HashMap<String, Field>();
-    
-    /** getter对应的属性类型  */
-    private Map<String, Class<?>> getterReturnTypeMapping = new HashMap<String, Class<?>>();
-    
-    /**
-     * 字段名映射
-     */
+    /** 字段名映射 */
     private Map<String, String> columnNameMapping = new HashMap<String, String>();
     
+    /** 字段信息映射 */
     private Map<String, ColumnInfo> columnInfoMapping = new HashMap<String, ColumnInfo>();
-    
-    private Map<String, Column> columnAnnoMapping = new HashMap<String, Column>();
-    
-    private Map<String, JoinColumn> joinColumnAnnoMapping = new HashMap<String, JoinColumn>();
-    
-    /** 属性描述映射 */
-    private Map<String, PropertyDescriptor> propertyDescriptorMapping = new HashMap<String, PropertyDescriptor>();
     
     /** 是否忽略属性的映射 */
     private Map<String, Boolean> ignoreGetterMapping = new HashMap<String, Boolean>();
@@ -336,25 +319,10 @@ public class JpaMetaClass {
     }
     
     /**
-     * @param 对entityTypeName进行赋值
-     */
-    public void setEntityTypeName(String entityTypeName) {
-        this.entityTypeName = entityTypeName;
-    }
-    
-    /**
      * @return 返回 lowerCaseFirstCharEntitySimpleName
      */
     public String getLowerCaseFirstCharEntitySimpleName() {
         return lowerCaseFirstCharEntitySimpleName;
-    }
-    
-    /**
-     * @param 对lowerCaseFirstCharEntitySimpleName进行赋值
-     */
-    public void setLowerCaseFirstCharEntitySimpleName(
-            String lowerCaseFirstCharEntitySimpleName) {
-        this.lowerCaseFirstCharEntitySimpleName = lowerCaseFirstCharEntitySimpleName;
     }
     
     /**
@@ -365,13 +333,6 @@ public class JpaMetaClass {
     }
     
     /**
-     * @param 对entitySimpleName进行赋值
-     */
-    public void setEntitySimpleName(String entitySimpleName) {
-        this.entitySimpleName = entitySimpleName;
-    }
-    
-    /**
      * @return 返回 tableName
      */
     public String getTableName() {
@@ -379,55 +340,26 @@ public class JpaMetaClass {
     }
     
     /**
-     * @param 对tableName进行赋值
-     */
-    public void setTableName(String tableName) {
-        this.tableName = tableName;
-    }
-    
-    /**
      * @return 返回 simpleTableName
      */
     public String getSimpleTableName() {
-        if("TO".equals(simpleTableName.toUpperCase())){
+        if ("TO".equals(simpleTableName.toUpperCase())) {
             simpleTableName = "TO_";
         }
         return simpleTableName;
     }
     
     /**
-     * @param 对simpleTableName进行赋值
-     */
-    public void setSimpleTableName(String simpleTableName) {
-        this.simpleTableName = simpleTableName;
-    }
-    
-    /**
      * @return 返回 idPropertyName
      */
-    public String getIdPropertyName() {
-        return idPropertyName;
+    public String getPkPropertyName() {
+        return pkPropertyName;
     }
-    
-    /**
-     * @param 对idPropertyName进行赋值
-     */
-    public void setIdPropertyName(String idPropertyName) {
-        this.idPropertyName = idPropertyName;
-    }
-    
     /**
      * @return 返回 generator
      */
     public String getGenerator() {
         return generator;
-    }
-    
-    /**
-     * @param 对generator进行赋值
-     */
-    public void setGenerator(String generator) {
-        this.generator = generator;
     }
     
     /**
@@ -438,24 +370,10 @@ public class JpaMetaClass {
     }
     
     /**
-     * @param 对generatorType进行赋值
-     */
-    public void setGeneratorType(GenerationType generatorType) {
-        this.generatorType = generatorType;
-    }
-    
-    /**
      * @return 返回 ignoreGetterMapping
      */
     public Map<String, Boolean> getIgnoreGetterMapping() {
         return ignoreGetterMapping;
-    }
-    
-    /**
-     * @param 对ignoreGetterMapping进行赋值
-     */
-    public void setIgnoreGetterMapping(Map<String, Boolean> ignoreGetterMapping) {
-        this.ignoreGetterMapping = ignoreGetterMapping;
     }
     
     /**
@@ -480,40 +398,10 @@ public class JpaMetaClass {
     }
     
     /**
-     * @param 对getterMethodMapping进行赋值
-     */
-    public void setGetterMethodMapping(Map<String, Method> getterMethodMapping) {
-        this.getterMethodMapping = getterMethodMapping;
-    }
-    
-    /**
      * @return 返回 getterReturnTypeMapping
      */
-    public Map<String, Class<?>> getGetterReturnTypeMapping() {
-        return getterReturnTypeMapping;
-    }
-    
-    /**
-     * @param 对getterReturnTypeMapping进行赋值
-     */
-    public void setGetterReturnTypeMapping(
-            Map<String, Class<?>> getterReturnTypeMapping) {
-        this.getterReturnTypeMapping = getterReturnTypeMapping;
-    }
-    
-    /**
-     * @return 返回 propertyDescriptorMapping
-     */
-    public Map<String, PropertyDescriptor> getPropertyDescriptorMapping() {
-        return propertyDescriptorMapping;
-    }
-    
-    /**
-     * @param 对propertyDescriptorMapping进行赋值
-     */
-    public void setPropertyDescriptorMapping(
-            Map<String, PropertyDescriptor> propertyDescriptorMapping) {
-        this.propertyDescriptorMapping = propertyDescriptorMapping;
+    public Map<String, Class<?>> getGetterTypeMapping() {
+        return getterTypeMapping;
     }
     
     /**
@@ -524,66 +412,9 @@ public class JpaMetaClass {
     }
     
     /**
-     * @param 对columnNameMapping进行赋值
-     */
-    public void setColumnNameMapping(Map<String, String> columnNameMapping) {
-        this.columnNameMapping = columnNameMapping;
-    }
-    
-    /**
-     * @return 返回 getterFieldMapping
-     */
-    public Map<String, Field> getGetterFieldMapping() {
-        return getterFieldMapping;
-    }
-    
-    /**
-     * @param 对getterFieldMapping进行赋值
-     */
-    public void setGetterFieldMapping(Map<String, Field> getterFieldMapping) {
-        this.getterFieldMapping = getterFieldMapping;
-    }
-    
-    /**
-     * @return 返回 columnAnnoMapping
-     */
-    public Map<String, Column> getColumnAnnoMapping() {
-        return columnAnnoMapping;
-    }
-    
-    /**
-     * @param 对columnAnnoMapping进行赋值
-     */
-    public void setColumnAnnoMapping(Map<String, Column> columnAnnoMapping) {
-        this.columnAnnoMapping = columnAnnoMapping;
-    }
-    
-    /**
-     * @return 返回 joinColumnAnnoMapping
-     */
-    public Map<String, JoinColumn> getJoinColumnAnnoMapping() {
-        return joinColumnAnnoMapping;
-    }
-    
-    /**
-     * @param 对joinColumnAnnoMapping进行赋值
-     */
-    public void setJoinColumnAnnoMapping(
-            Map<String, JoinColumn> joinColumnAnnoMapping) {
-        this.joinColumnAnnoMapping = joinColumnAnnoMapping;
-    }
-    
-    /**
      * @return 返回 columnInfoMapping
      */
     public Map<String, ColumnInfo> getColumnInfoMapping() {
         return columnInfoMapping;
-    }
-    
-    /**
-     * @param 对columnInfoMapping进行赋值
-     */
-    public void setColumnInfoMapping(Map<String, ColumnInfo> columnInfoMapping) {
-        this.columnInfoMapping = columnInfoMapping;
     }
 }

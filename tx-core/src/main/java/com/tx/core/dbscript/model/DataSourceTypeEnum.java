@@ -54,14 +54,14 @@ public enum DataSourceTypeEnum {
     /**
      * 对应oracle方言
      */
-    private Dialect hibernateDialect;
+    private Dialect dialect;
     
     /**
      * <默认构造函数>
      */
-    private DataSourceTypeEnum(String name, Dialect hibernateDialect) {
+    private DataSourceTypeEnum(String name, Dialect dialect) {
         this.name = name;
-        this.hibernateDialect = hibernateDialect;
+        this.dialect = dialect;
     }
     
     /**
@@ -77,18 +77,18 @@ public enum DataSourceTypeEnum {
     public void setName(String name) {
         this.name = name;
     }
-    
+
     /**
-     * @return 返回 hibernateDialect
+     * @return 返回 dialect
      */
-    public Dialect getHibernateDialect() {
-        return hibernateDialect;
+    public Dialect getDialect() {
+        return dialect;
     }
-    
+
     /**
-     * @param 对hibernateDialect进行赋值
+     * @param 对dialect进行赋值
      */
-    public void setHibernateDialect(Dialect hibernateDialect) {
-        this.hibernateDialect = hibernateDialect;
+    public void setDialect(Dialect dialect) {
+        this.dialect = dialect;
     }
 }

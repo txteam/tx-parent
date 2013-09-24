@@ -1,6 +1,6 @@
 package com.tx.component.servicelog.logger;
 
-import java.util.Date;
+import java.util.Map;
 
 import com.tx.core.paged.model.PagedList;
 
@@ -13,7 +13,7 @@ import com.tx.core.paged.model.PagedList;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
  */
-public interface ServiceLoggerContext<T> {
+public interface ServiceLogger<T> {
     
     /**
       * 向容器中设置属性值<br/>
@@ -48,19 +48,21 @@ public interface ServiceLoggerContext<T> {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public abstract void log(Object serviceLogInstance);
+    public abstract void log(T serviceLogInstance);
     
     /**
-      * 业务日志查询器<br/>
+      * 分页查询业务日志<br/>
       *<功能详细描述>
-      * @param minCreateDate
-      * @param maxCreateDate
+      * @param params
+      * @param pageIndex
+      * @param pageSize
       * @return [参数说明]
       * 
       * @return PagedList<T> [返回类型说明]
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public abstract PagedList<T> query(Date minCreateDate, Date maxCreateDate);
+    public abstract PagedList<T> queryPagedList(Map<String, Object> params,
+            int pageIndex, int pageSize);
     
 }

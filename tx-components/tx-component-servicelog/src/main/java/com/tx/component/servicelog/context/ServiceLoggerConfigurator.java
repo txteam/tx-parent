@@ -2,9 +2,11 @@ package com.tx.component.servicelog.context;
 
 import javax.sql.DataSource;
 
-import org.hibernate.dialect.Dialect;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import com.tx.core.dbscript.model.DataSourceTypeEnum;
+import com.tx.core.exceptions.util.AssertUtils;
 
 /**
   * 日志容器<br/>
@@ -16,7 +18,7 @@ import com.tx.core.dbscript.model.DataSourceTypeEnum;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
  */
-public class ServiceLoggerConfigurator {
+public class ServiceLoggerConfigurator implements InitializingBean {
     
     /** 数据源类型 */
     protected static DataSourceTypeEnum dataSourceType;
@@ -24,13 +26,38 @@ public class ServiceLoggerConfigurator {
     /** 数据源 */
     protected static DataSource dataSource;
     
-    /** 方言类 */
-    protected static Dialect dialect;
+    /** jdbcTemplate */
+    protected static JdbcTemplate jdbcTemplate;
+    
+    /**
+     * @throws Exception
+     */
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        AssertUtils.notNull(dataSource, "dataSource is null");
+        AssertUtils.notNull(dataSourceType, "dataSourceType is null");
+        
+        jdbcTemplate = new JdbcTemplate(dataSource);
+    }
     
     /**
      * 私有化构造方法
      */
     protected ServiceLoggerConfigurator() {
         super();
+    }
+    
+    /**
+     * @param 对dataSourceType进行赋值
+     */
+    public void setDataSourceType(DataSourceTypeEnum dataSourceType) {
+        ServiceLoggerConfigurator.dataSourceType = dataSourceType;
+    }
+    
+    /**
+     * @param 对dataSource进行赋值
+     */
+    public void setDataSource(DataSource dataSource) {
+        ServiceLoggerConfigurator.dataSource = dataSource;
     }
 }

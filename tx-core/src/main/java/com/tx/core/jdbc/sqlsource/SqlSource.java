@@ -125,13 +125,9 @@ public class SqlSource<T> implements Serializable, Cloneable {
     public SqlSource(Class<T> type, Dialect dialect) {
         super();
         
-        AssertUtils.notEmpty(pkName, "pkName is empty.");
-        AssertUtils.notEmpty(tableName, "tableName is empty.");
         AssertUtils.notNull(dialect, "dialect is empty.");
         
         this.type = type;
-        this.pkName = pkName.trim();
-        this.tableName = tableName.trim().toUpperCase();
         this.dialect = dialect;
     }
     
@@ -139,13 +135,17 @@ public class SqlSource<T> implements Serializable, Cloneable {
      * @param 对pkName进行赋值
      */
     public void setPkName(String pkName) {
-        this.pkName = pkName;
+        AssertUtils.notEmpty(pkName,"pkName is empty.");
+        
+        this.pkName = pkName.trim();
     }
     
     /**
      * @param 对tableName进行赋值
      */
     public void setTableName(String tableName) {
+        AssertUtils.notEmpty(tableName,"tableName is empty.");
+        
         this.tableName = tableName;
     }
     
@@ -510,6 +510,8 @@ public class SqlSource<T> implements Serializable, Cloneable {
         for (String conditionExpressionTemp : otherCondition) {
             SqlBuilder.WHERE(conditionExpressionTemp);
         }
+        
+        //在不存在排序字段时默认使用主键对应字段作为排序字段<br/>
         if (CollectionUtils.isEmpty(orderList)) {
             SqlBuilder.ORDER_BY(this.property2columnNameMapping.get(this.pkName));
         } else {

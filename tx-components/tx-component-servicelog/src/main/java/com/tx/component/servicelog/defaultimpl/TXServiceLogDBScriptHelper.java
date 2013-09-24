@@ -6,6 +6,9 @@
  */
 package com.tx.component.servicelog.defaultimpl;
 
+import com.tx.core.dbscript.model.DataSourceTypeEnum;
+import com.tx.core.mybatis.generator.JpaEntityFreeMarkerGenerator;
+
 /**
  * 业务日志数据脚本生成辅助器<br/>
  * <功能详细描述>
@@ -17,7 +20,29 @@ package com.tx.component.servicelog.defaultimpl;
  */
 public class TXServiceLogDBScriptHelper {
     
-    public String generate(Class<?> serviceLogType) {
-        return "";
+    /**
+      * 生成对应日志对象的脚本
+      *<功能详细描述>
+      * @param serviceLogType
+      * @param dataSourceType
+      * @param encode
+      * @return [参数说明]
+      * 
+      * @return String [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public static String generateDBScriptContent(Class<?> serviceLogType,
+            DataSourceTypeEnum dataSourceType, String encode) {
+        JpaEntityFreeMarkerGenerator factory = new JpaEntityFreeMarkerGenerator();
+        factory.setLoadTemplateClass(TXServiceLogDBScriptHelper.class);
+        factory.setDbScriptTemplateFilePath("com/tx/component/servicelog/defaultimpl/dbscript.ftl");
+        
+        //生成后在自己指定的文件夹中去找即可
+        String script = factory.generateScriptContent(serviceLogType,
+                dataSourceType,
+                encode);
+        
+        return script;
     }
 }

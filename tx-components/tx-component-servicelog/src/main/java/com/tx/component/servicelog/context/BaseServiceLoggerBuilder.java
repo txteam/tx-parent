@@ -6,13 +6,13 @@
  */
 package com.tx.component.servicelog.context;
 
-import javax.sql.DataSource;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import com.tx.component.servicelog.exception.UnsupportServiceLoggerTypeException;
 import com.tx.component.servicelog.logger.ServiceLogDecorate;
 import com.tx.component.servicelog.logger.ServiceLogPersister;
 import com.tx.component.servicelog.logger.ServiceLogQuerier;
-import com.tx.component.servicelog.logger.ServiceLoggerContext;
+import com.tx.component.servicelog.logger.ServiceLogger;
 import com.tx.core.dbscript.model.DataSourceTypeEnum;
 
 /**
@@ -24,8 +24,7 @@ import com.tx.core.dbscript.model.DataSourceTypeEnum;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public abstract class BaseServiceLoggerContextBuilder implements
-        ServiceLoggerContextBuilder {
+public abstract class BaseServiceLoggerBuilder implements ServiceLoggerBuilder {
     
     /**
      * @param srcObjType
@@ -34,10 +33,10 @@ public abstract class BaseServiceLoggerContextBuilder implements
      * @return
      */
     @Override
-    public <T> ServiceLoggerContext<T> build(Class<T> srcObjType,
-            DataSourceTypeEnum dataSourceType, DataSource dataSource) {
+    public <T> ServiceLogger<T> build(Class<T> srcObjType,
+            DataSourceTypeEnum dataSourceType, JdbcTemplate jdbcTemplate) {
         //查看是否支持对应类型的业务日志容器<br/>
-        if (!isSupport(srcObjType)) {
+        if (!isSupport(srcObjType, dataSourceType)) {
             throw new UnsupportServiceLoggerTypeException(
                     "serviceLog type:{} not support auto record by serviceLogContext.",
                     new Object[] { srcObjType });
@@ -45,15 +44,17 @@ public abstract class BaseServiceLoggerContextBuilder implements
         //构建业务日志持久器
         ServiceLogPersister serviceLogPersister = buildServiceLogPersister(srcObjType,
                 dataSourceType,
-                dataSource);
+                jdbcTemplate);
         //构建业务日志装饰器
-        ServiceLogDecorate serviceLogDecorate = buildServiceLogDecorate(srcObjType);
+        ServiceLogDecorate<T> serviceLogDecorate = buildServiceLogDecorate(srcObjType);
         //构建业务日志查询器
-        ServiceLogQuerier<T> serviceLogQuerier = buildServiceLogQuerier(srcObjType);
+        ServiceLogQuerier<T> serviceLogQuerier = buildServiceLogQuerier(srcObjType,
+                dataSourceType,
+                jdbcTemplate);
         
         //构建业务日志容器
-        ServiceLoggerContext<T> context = new ServiceLoggerContextImpl<T>(
-                serviceLogDecorate, serviceLogQuerier, serviceLogPersister);
+        ServiceLogger<T> context = new ServiceLoggerImpl<T>(serviceLogDecorate,
+                serviceLogQuerier, serviceLogPersister);
         
         return context;
     }
@@ -68,7 +69,8 @@ public abstract class BaseServiceLoggerContextBuilder implements
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    protected abstract boolean isSupport(Class<?> srcObjType);
+    protected abstract boolean isSupport(Class<?> srcObjType,
+            DataSourceTypeEnum dataSourceType);
     
     /**
       * 构建业务日志记录器<br/>  
@@ -83,7 +85,7 @@ public abstract class BaseServiceLoggerContextBuilder implements
      */
     protected abstract ServiceLogPersister buildServiceLogPersister(
             Class<?> srcObjType, DataSourceTypeEnum dataSourceType,
-            DataSource dataSource);
+            JdbcTemplate jdbcTemplate);
     
     /**
       * 构建业务日志实例装饰器<br/>
@@ -95,8 +97,8 @@ public abstract class BaseServiceLoggerContextBuilder implements
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    protected abstract ServiceLogDecorate buildServiceLogDecorate(
-            Class<?> srcObjType);
+    protected abstract <T> ServiceLogDecorate<T> buildServiceLogDecorate(
+            Class<T> srcObjType);
     
     /**
       * 构建业务日志查询器<br/> 
@@ -109,6 +111,7 @@ public abstract class BaseServiceLoggerContextBuilder implements
       * @see [类、类#方法、类#成员]
      */
     protected abstract <T> ServiceLogQuerier<T> buildServiceLogQuerier(
-            Class<T> srcObjType);
+            Class<T> srcObjType, DataSourceTypeEnum dataSourceType,
+            JdbcTemplate jdbcTemplate);
     
 }

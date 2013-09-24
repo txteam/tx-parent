@@ -112,9 +112,7 @@ public class SqlSourceBuilder {
      */
     private <T> void addOrderBy(Class<T> type,
             SqlSource<T> simpleSqlSource) {
-        MetaClass metaClass = MetaClass.forClass(type);
-        
-        String[] getterNames = metaClass.getGetterNames();
+        String[] getterNames = ReflectionUtils.getGetterNames(type, false);
         for (String getterNameTemp : getterNames) {
             if (ReflectionUtils.isHasAnnotationForGetter(type,
                     getterNameTemp,
@@ -150,7 +148,7 @@ public class SqlSourceBuilder {
         
         MetaClass metaClass = MetaClass.forClass(type);
         
-        String[] getterNames = metaClass.getGetterNames();
+        String[] getterNames = ReflectionUtils.getGetterNames(type, false);
         for (String getterNameTemp : getterNames) {
             Class<?> getterType = metaClass.getGetterType(getterNameTemp);
             JdbcType getterJdbcType = JdbcUtils.getJdbcTypeByJavaType(getterType);
@@ -338,7 +336,7 @@ public class SqlSourceBuilder {
             SqlSource<T> simpleSqlSource) {
         MetaClass metaClass = MetaClass.forClass(type);
         
-        String[] getterNames = metaClass.getGetterNames();
+        String[] getterNames = ReflectionUtils.getGetterNames(type, false);
         for (String getterNameTemp : getterNames) {
             Class<?> getterType = metaClass.getGetterType(getterNameTemp);
             if(isNeedSkip(type, getterNameTemp, getterType)){
@@ -370,13 +368,17 @@ public class SqlSourceBuilder {
             SqlSource<T> simpleSqlSource) {
         MetaClass metaClass = MetaClass.forClass(type);
         
-        String[] getterNames = metaClass.getGetterNames();
+        String[] getterNames = ReflectionUtils.getGetterNames(type, false);
         for (String getterNameTemp : getterNames) {
             //判断对应字段是否需要被忽略
             //设置了不需要持久的注解忽略
             String columnName = getterNameTemp.toUpperCase();
             Class<?> getterType = metaClass.getGetterType(getterNameTemp);
             
+            //判断对应属性是否为忽略持久属性<br/>
+            //OneToManay
+            //ManayToManay
+            //Trienst
             if(isNeedSkip(type, getterNameTemp, getterType)){
                 continue;
             }
@@ -427,6 +429,7 @@ public class SqlSourceBuilder {
                     }
                     
                 }
+                
                 //兼容处理，如果存在Column也认为是可以的
                 if (ReflectionUtils.isHasAnnotationForGetter(type,
                         getterNameTemp,
@@ -487,11 +490,7 @@ public class SqlSourceBuilder {
                         ManyToMany.class)) {
             return true;
         }
-        
-        //如果为直接支持存储的字段，则开始解析
-        //if (!JdbcUtils.isSupportedSimpleType(getterType)) {
-        //    return true;
-        //}
+
         return false;
     }
     
@@ -507,16 +506,22 @@ public class SqlSourceBuilder {
      */
     private String generatePkPropertyName(Class<?> type) {
         //获取对象解析器
-        MetaClass metaClass = MetaClass.forClass(type);
-        
-        String[] getterNames = metaClass.getGetterNames();
+        String[] getterNames = ReflectionUtils.getGetterNames(type, false);
         for (String getterNameTemp : getterNames) {
+            
             if (ReflectionUtils.isHasAnnotationForGetter(type,
                     getterNameTemp,
                     Id.class)) {
                 return getterNameTemp;
             }
         }
+        //如果没有id注解，兼容性处理，看有没有一个字段为id
+        for (String getterNameTemp : getterNames) {
+            if ("id".equals(getterNameTemp)) {
+                return "id";
+            }
+        }
+        //如果都没有则抛出异常
         throw new SqlSourceBuildException("@Id is not exist.");
     }
     

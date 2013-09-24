@@ -6,7 +6,7 @@
  */
 package com.tx.component.servicelog.logger;
 
-import java.util.Date;
+import java.util.Map;
 
 import com.tx.core.paged.model.PagedList;
 
@@ -32,6 +32,6 @@ public interface ServiceLogQuerier<T> {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    public PagedList<T> queryPagedList(Date minCreateDate,
-            Date maxCreateDate);
+    public PagedList<T> queryPagedList(Map<String, Object> params,
+            int pageIndex, int pageSize);
 }

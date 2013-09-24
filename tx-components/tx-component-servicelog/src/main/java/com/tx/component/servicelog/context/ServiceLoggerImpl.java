@@ -6,12 +6,12 @@
  */
 package com.tx.component.servicelog.context;
 
-import java.util.Date;
+import java.util.Map;
 
 import com.tx.component.servicelog.logger.ServiceLogDecorate;
-import com.tx.component.servicelog.logger.ServiceLogQuerier;
 import com.tx.component.servicelog.logger.ServiceLogPersister;
-import com.tx.component.servicelog.logger.ServiceLoggerContext;
+import com.tx.component.servicelog.logger.ServiceLogQuerier;
+import com.tx.component.servicelog.logger.ServiceLogger;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.paged.model.PagedList;
 
@@ -24,11 +24,11 @@ import com.tx.core.paged.model.PagedList;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class ServiceLoggerContextImpl<T> extends ServiceLoggerContextFactory
-        implements ServiceLoggerContext<T> {
+public class ServiceLoggerImpl<T> extends ServiceLoggerFactory
+        implements ServiceLogger<T> {
     
     /** 业务日志实例装饰器 */
-    private ServiceLogDecorate serviceLogDecorate;
+    private ServiceLogDecorate<T> serviceLogDecorate;
     
     /** 业务日志查询器 */
     private ServiceLogQuerier<T> serviceLogQuerier;
@@ -37,11 +37,11 @@ public class ServiceLoggerContextImpl<T> extends ServiceLoggerContextFactory
     private ServiceLogPersister serviceLogPersister;
     
     /** <默认构造函数> */
-    protected ServiceLoggerContextImpl() {
+    protected ServiceLoggerImpl() {
     }
     
     /** <默认构造函数> */
-    ServiceLoggerContextImpl(ServiceLogDecorate serviceLogDecorate,
+    ServiceLoggerImpl(ServiceLogDecorate<T> serviceLogDecorate,
             ServiceLogQuerier<T> serviceLogQuerier,
             ServiceLogPersister serviceLogPersister) {
         super();
@@ -73,7 +73,7 @@ public class ServiceLoggerContextImpl<T> extends ServiceLoggerContextFactory
      * @param serviceLogInstance
      */
     @Override
-    public void log(Object serviceLogInstance) {
+    public void log(T serviceLogInstance) {
         AssertUtils.notNull(serviceLogInstance, "serviceLogInstance is null");
         
         //利用业务日志装饰器，装饰日志实例
@@ -88,9 +88,10 @@ public class ServiceLoggerContextImpl<T> extends ServiceLoggerContextFactory
      * @return
      */
     @Override
-    public PagedList<T> query(Date minCreateDate, Date maxCreateDate) {
-        PagedList<T> res = serviceLogQuerier.queryPagedList(minCreateDate,
-                maxCreateDate);
+    public PagedList<T> queryPagedList(Map<String, Object> params,
+            int pageIndex, int pageSize) {
+        
+        PagedList<T> res = serviceLogQuerier.queryPagedList(params,pageIndex,pageSize);
         return res;
     }
     
