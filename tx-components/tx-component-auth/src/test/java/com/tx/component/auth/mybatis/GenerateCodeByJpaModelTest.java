@@ -7,7 +7,7 @@
 package com.tx.component.auth.mybatis;
 
 import com.tx.component.auth.model.AuthTypeItem;
-import com.tx.core.mybatis.generator.JpaEntityFreeMarkerGenerator;
+import com.tx.core.generator.JpaEntityFreeMarkerGenerator;
 
 
  /**
@@ -25,13 +25,7 @@ public class GenerateCodeByJpaModelTest {
         
         JpaEntityFreeMarkerGenerator factory = new JpaEntityFreeMarkerGenerator();
         factory.setLoadTemplateClass(GenerateCodeByJpaModelTest.class);
-        
-        factory.setDaoImplTemplateFilePath("com/tx/component/auth/mybatis/daoImpl.ftl");
-        factory.setDaoTemplateFilePath("com/tx/component/auth/mybatis/dao.ftl");
-        factory.setServiceTemplateFilePath("com/tx/component/auth/mybatis/service.ftl");
-        factory.setServiceTestTemplateFilePath("com/tx/component/auth/mybatis/serviceTest.ftl");
-        factory.setSqlMapTemplateFilePath("com/tx/component/auth/mybatis/sqlMap.ftl");
-        
+
         //生成后在自己指定的文件夹中去找即可
         factory.generate(AuthTypeItem.class, "d:/mybatis");
         

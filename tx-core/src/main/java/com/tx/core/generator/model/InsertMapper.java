@@ -4,10 +4,11 @@
  * 修改时间:  2012-12-9
  * <修改描述:>
  */
-package com.tx.core.mybatis.generator.model;
+package com.tx.core.generator.model;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 /**
  * 插入的映射器描述

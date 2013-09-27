@@ -29,7 +29,7 @@ import com.tx.core.util.JdbcUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-@MappedTypes(value = { BigInteger.class})
+@MappedTypes(value = { BigInteger.class })
 public class NullAbleBigIntegerTypeHandler extends BaseTypeHandler<BigInteger> {
     
     /**

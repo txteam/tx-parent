@@ -4,13 +4,14 @@
  * 修改时间:  2012-12-9
  * <修改描述:>
  */
-package com.tx.core.mybatis.generator.model;
+package com.tx.core.generator.model;
 
 import java.util.List;
 
 
+
  /**
-  * 更新映射生成器
+  * <功能简述>
   * <功能详细描述>
   * 
   * @author  PengQingyang
@@ -18,11 +19,17 @@ import java.util.List;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
   */
-public class UpdateMapper {
+public class SelectMapper {
     
-    private String id;
+    private String resultMapId;
+    
+    private String parameterType;
     
     private List<SqlMapColumn> sqlMapColumnList;
+    
+    private String findId;
+    
+    private String queryId;
     
     private String tableName;
     
@@ -33,17 +40,45 @@ public class UpdateMapper {
     private String idPropertyName;
 
     /**
-     * @return 返回 id
+     * @return 返回 queryId
      */
-    public String getId() {
-        return id;
+    public String getQueryId() {
+        return queryId;
     }
 
     /**
-     * @param 对id进行赋值
+     * @param 对queryId进行赋值
      */
-    public void setId(String id) {
-        this.id = id;
+    public void setQueryId(String queryId) {
+        this.queryId = queryId;
+    }
+
+    /**
+     * @return 返回 resultMapId
+     */
+    public String getResultMapId() {
+        return resultMapId;
+    }
+
+    /**
+     * @param 对resultMapId进行赋值
+     */
+    public void setResultMapId(String resultMapId) {
+        this.resultMapId = resultMapId;
+    }
+
+    /**
+     * @return 返回 parameterType
+     */
+    public String getParameterType() {
+        return parameterType;
+    }
+
+    /**
+     * @param 对parameterType进行赋值
+     */
+    public void setParameterType(String parameterType) {
+        this.parameterType = parameterType;
     }
 
     /**
@@ -58,6 +93,20 @@ public class UpdateMapper {
      */
     public void setSqlMapColumnList(List<SqlMapColumn> sqlMapColumnList) {
         this.sqlMapColumnList = sqlMapColumnList;
+    }
+
+    /**
+     * @return 返回 findId
+     */
+    public String getFindId() {
+        return findId;
+    }
+
+    /**
+     * @param 对findId进行赋值
+     */
+    public void setFindId(String findId) {
+        this.findId = findId;
     }
 
     /**

@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.WeakHashMap;
 
 import javax.annotation.Generated;
 import javax.persistence.Column;
@@ -31,10 +32,12 @@ import javax.persistence.Transient;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.reflect.FieldUtils;
 import org.apache.ibatis.reflection.MetaClass;
+import org.apache.poi.hssf.record.formula.functions.T;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.StringUtils;
 
-import com.tx.core.mybatis.generator.model.ColumnInfo;
+import com.tx.core.generator.model.ColumnInfo;
+import com.tx.core.jdbc.sqlsource.SqlSource;
 
 /**
  * jpa实体解析结果类
@@ -45,7 +48,13 @@ import com.tx.core.mybatis.generator.model.ColumnInfo;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class JpaMetaClass {
+public class JpaMetaClass<T> {
+    
+    /**
+     * 本地资源缓存映射,采用弱引用的形式，以便及时回收一些使用不高的sqlSource
+     */
+    @SuppressWarnings("rawtypes")
+    private static WeakHashMap<Class<?>, JpaMetaClass<?>> mapping = new WeakHashMap<Class<?>, JpaMetaClass<?>>();
     
     /**
       * 获取该类解析器的构造方法
@@ -56,11 +65,24 @@ public class JpaMetaClass {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public static JpaMetaClass forClass(Class<?> type) {
-        return new JpaMetaClass(type);
+    @SuppressWarnings("unchecked")
+    public static <TYPE> JpaMetaClass<TYPE> forClass(Class<TYPE> type) {
+        synchronized (type) {
+            JpaMetaClass<TYPE> jpaMetaClass = null;
+            if (mapping.containsKey(type)) {
+                jpaMetaClass = (JpaMetaClass<TYPE>)mapping.get(type);
+                return jpaMetaClass;
+            }
+            
+            //简答的sqlSource源
+            jpaMetaClass = new JpaMetaClass<TYPE>(type);
+            //缓存起来
+            mapping.put(type, jpaMetaClass);
+            return jpaMetaClass;
+        }
     }
     
-    private JpaMetaClass(Class<?> type) {
+    private JpaMetaClass(Class<T> type) {
         //解析实体对象，获取类名，对应数据库表名等信息
         parseForEntity(type);
         
@@ -180,11 +202,6 @@ public class JpaMetaClass {
             return;
         }
         
-        //如果主键类型不为String类型，这里输入一条解析警告信息：提醒核查生成的信息是否合法
-        if (!String.class.equals(propertyType)) {
-            addParseMessage("warnInfo: @Id type is not String");
-        }
-        
         this.pkPropertyName = propertyName;
         if (getterMethod.isAnnotationPresent(Generated.class)
                 || (getterField != null && getterField.isAnnotationPresent(Generated.class))) {
@@ -254,19 +271,12 @@ public class JpaMetaClass {
         this.simpleTableName = sb.toString();
     }
     
-    /** 实体解析信息 */
-    private StringBuffer parseMessage = new StringBuffer();
+    private Class<T> type;
     
-    /** 添加实体解析信息 */
-    public void addParseMessage(String message) {
-        parseMessage.append(message).append("\n");
-    }
+    private ClassReflector<T> classReflector;
     
     /** 实体类型:包括包名的类全名 */
     private String entityTypeName;
-    
-    /** 去掉包名的类名:并转换首字母为小写 */
-    private String lowerCaseFirstCharEntitySimpleName;
     
     /** 去掉包名的类名:并转换首字母为小写 */
     private String entitySimpleName;
@@ -278,51 +288,17 @@ public class JpaMetaClass {
     public String simpleTableName;
     
     /** Id注解对应的属性名 */
-    private String pkPropertyName = "";
-    
-    /** 主键生成 */
-    private String generator;
-    
-    /** 主键生成类型，保留字段，暂未使用 */
-    private GenerationType generatorType;
+    private String pkFieldName = "";
     
     /** getter名列表 */
     private List<String> getterNames;
     
-    /** getter对应的属性类型  */
-    private Map<String, Class<?>> getterTypeMapping = new HashMap<String, Class<?>>();
-    
-    /** 对应的getter方法 */
-    private Map<String, Method> getterMethodMapping = new HashMap<String, Method>();
-    
-    /** 字段名映射 */
-    private Map<String, String> columnNameMapping = new HashMap<String, String>();
-    
-    /** 字段信息映射 */
-    private Map<String, ColumnInfo> columnInfoMapping = new HashMap<String, ColumnInfo>();
-    
-    /** 是否忽略属性的映射 */
-    private Map<String, Boolean> ignoreGetterMapping = new HashMap<String, Boolean>();
-    
-    /**
-     * @return 返回 parseMessage
-     */
-    public StringBuffer getParseMessage() {
-        return parseMessage;
-    }
     
     /**
      * @return 返回 entityTypeName
      */
     public String getEntityTypeName() {
         return entityTypeName;
-    }
-    
-    /**
-     * @return 返回 lowerCaseFirstCharEntitySimpleName
-     */
-    public String getLowerCaseFirstCharEntitySimpleName() {
-        return lowerCaseFirstCharEntitySimpleName;
     }
     
     /**
@@ -350,33 +326,6 @@ public class JpaMetaClass {
     }
     
     /**
-     * @return 返回 idPropertyName
-     */
-    public String getPkPropertyName() {
-        return pkPropertyName;
-    }
-    /**
-     * @return 返回 generator
-     */
-    public String getGenerator() {
-        return generator;
-    }
-    
-    /**
-     * @return 返回 generatorType
-     */
-    public GenerationType getGeneratorType() {
-        return generatorType;
-    }
-    
-    /**
-     * @return 返回 ignoreGetterMapping
-     */
-    public Map<String, Boolean> getIgnoreGetterMapping() {
-        return ignoreGetterMapping;
-    }
-    
-    /**
      * @return 返回 getterNames
      */
     public List<String> getGetterNames() {
@@ -388,33 +337,5 @@ public class JpaMetaClass {
      */
     public void setGetterNames(List<String> getterNames) {
         this.getterNames = getterNames;
-    }
-    
-    /**
-     * @return 返回 getterMethodMapping
-     */
-    public Map<String, Method> getGetterMethodMapping() {
-        return getterMethodMapping;
-    }
-    
-    /**
-     * @return 返回 getterReturnTypeMapping
-     */
-    public Map<String, Class<?>> getGetterTypeMapping() {
-        return getterTypeMapping;
-    }
-    
-    /**
-     * @return 返回 columnNameMapping
-     */
-    public Map<String, String> getColumnNameMapping() {
-        return columnNameMapping;
-    }
-    
-    /**
-     * @return 返回 columnInfoMapping
-     */
-    public Map<String, ColumnInfo> getColumnInfoMapping() {
-        return columnInfoMapping;
     }
 }

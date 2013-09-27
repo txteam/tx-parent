@@ -8,6 +8,7 @@ package com.tx.core.jdbc.sqlsource;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.WeakHashMap;
 
 import javax.persistence.Column;
@@ -22,7 +23,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.ibatis.reflection.MetaClass;
 import org.apache.ibatis.type.JdbcType;
 import org.hibernate.dialect.Dialect;
 
@@ -36,6 +36,7 @@ import com.tx.core.jdbc.sqlsource.annotation.QueryConditionLike;
 import com.tx.core.jdbc.sqlsource.annotation.QueryConditionLikeAfter;
 import com.tx.core.jdbc.sqlsource.annotation.QueryConditionLikeBefore;
 import com.tx.core.jdbc.sqlsource.annotation.UpdateAble;
+import com.tx.core.reflection.ClassReflector;
 import com.tx.core.reflection.ReflectionUtils;
 import com.tx.core.util.JdbcUtils;
 import com.tx.core.util.MessageUtils;
@@ -112,7 +113,9 @@ public class SqlSourceBuilder {
      */
     private <T> void addOrderBy(Class<T> type,
             SqlSource<T> simpleSqlSource) {
-        String[] getterNames = ReflectionUtils.getGetterNames(type, false);
+        ClassReflector classReflector = ClassReflector.forClass(type);
+        
+        Set<String> getterNames = classReflector.getGetterNames();
         for (String getterNameTemp : getterNames) {
             if (ReflectionUtils.isHasAnnotationForGetter(type,
                     getterNameTemp,
@@ -146,11 +149,11 @@ public class SqlSourceBuilder {
             simpleSqlSource.addOtherCondition(qcAnnoTemp.condition());
         }
         
-        MetaClass metaClass = MetaClass.forClass(type);
+        ClassReflector classReflector = ClassReflector.forClass(type);
         
-        String[] getterNames = ReflectionUtils.getGetterNames(type, false);
+        Set<String> getterNames = classReflector.getGetterNames();
         for (String getterNameTemp : getterNames) {
-            Class<?> getterType = metaClass.getGetterType(getterNameTemp);
+            Class<?> getterType = classReflector.getGetterType(getterNameTemp);
             JdbcType getterJdbcType = JdbcUtils.getJdbcTypeByJavaType(getterType);
             String columnName = simpleSqlSource.getColumnNameByPropertyName(getterNameTemp);
             
@@ -334,11 +337,11 @@ public class SqlSourceBuilder {
      */
     private <T> void addUpdateAblePropertys(Class<T> type,
             SqlSource<T> simpleSqlSource) {
-        MetaClass metaClass = MetaClass.forClass(type);
+        ClassReflector classReflector = ClassReflector.forClass(type);
         
-        String[] getterNames = ReflectionUtils.getGetterNames(type, false);
+        Set<String> getterNames = classReflector.getGetterNames();
         for (String getterNameTemp : getterNames) {
-            Class<?> getterType = metaClass.getGetterType(getterNameTemp);
+            Class<?> getterType = classReflector.getGetterType(getterNameTemp);
             if(isNeedSkip(type, getterNameTemp, getterType)){
                 continue;
             }
@@ -366,14 +369,14 @@ public class SqlSourceBuilder {
      */
     private <T> void addProperty2ColumnMapping(Class<T> type,
             SqlSource<T> simpleSqlSource) {
-        MetaClass metaClass = MetaClass.forClass(type);
+        ClassReflector classReflector = ClassReflector.forClass(type);
         
-        String[] getterNames = ReflectionUtils.getGetterNames(type, false);
+        Set<String> getterNames = classReflector.getGetterNames();
         for (String getterNameTemp : getterNames) {
             //判断对应字段是否需要被忽略
             //设置了不需要持久的注解忽略
             String columnName = getterNameTemp.toUpperCase();
-            Class<?> getterType = metaClass.getGetterType(getterNameTemp);
+            Class<?> getterType = classReflector.getGetterType(getterNameTemp);
             
             //判断对应属性是否为忽略持久属性<br/>
             //OneToManay
@@ -505,8 +508,9 @@ public class SqlSourceBuilder {
       * @see [类、类#方法、类#成员]
      */
     private String generatePkPropertyName(Class<?> type) {
+        ClassReflector classReflector = ClassReflector.forClass(type);
         //获取对象解析器
-        String[] getterNames = ReflectionUtils.getGetterNames(type, false);
+        Set<String> getterNames = classReflector.getGetterNames();
         for (String getterNameTemp : getterNames) {
             
             if (ReflectionUtils.isHasAnnotationForGetter(type,

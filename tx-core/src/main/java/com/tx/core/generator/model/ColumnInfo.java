@@ -4,7 +4,7 @@
  * 修改时间:  2013-8-27
  * <修改描述:>
  */
-package com.tx.core.mybatis.generator.model;
+package com.tx.core.generator.model;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;

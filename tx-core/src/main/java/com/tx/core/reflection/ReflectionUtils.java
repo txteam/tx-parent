@@ -11,13 +11,15 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
-import org.apache.ibatis.reflection.MetaClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
-import com.tx.core.TxConstants;
 import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.reflection.exception.InvalidGetterMethod;
+import com.tx.core.reflection.exception.InvalidSetterMethod;
 
 /**
  *  反射工具类<br/>
@@ -34,6 +36,208 @@ public class ReflectionUtils {
     private static Logger logger = LoggerFactory.getLogger(ReflectionUtils.class);
     
     /**
+      * 是否为getter方法
+      *<功能详细描述>
+      * @param method
+      * @return [参数说明]
+      * 
+      * @return boolean [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public static boolean isGetterMethod(Method method) {
+        String methodName = method.getName();
+        Class<?> returnType = method.getReturnType();
+        
+        //如果对应方法有入参则该方法不为getter对应方法
+        if (method.getParameterTypes().length > 0
+                && !Void.class.isAssignableFrom(returnType)) {
+            return false;
+        }
+        
+        if (boolean.class.isAssignableFrom(returnType)) {
+            if (methodName.length() > 2 && methodName.startsWith("is")
+                    && Character.isUpperCase(methodName.charAt(2))) {
+                return true;
+            }
+        } else {
+            if (methodName.length() > 3 && methodName.startsWith("get")
+                    && Character.isUpperCase(methodName.charAt(3))) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
+      * 根据方法名和返回类型获得getterName
+      *<功能详细描述>
+      * @param methodName
+      * @param returnType
+      * @return [参数说明]
+      * 
+      * @return String [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public static String getGetterNameByMethod(Method method) {
+        String methodName = method.getName();
+        Class<?> returnType = method.getReturnType();
+        
+        //如果对应方法有入参则该方法不为getter对应方法
+        if (method.getParameterTypes().length > 0
+                && !Void.class.isAssignableFrom(returnType)) {
+            throw new InvalidGetterMethod(
+                    "方法入参不为空，或返回类型为空.paramterTypes:{};returnType:{}",
+                    new Object[] { method.getParameterTypes(), returnType });
+        }
+        
+        String getterName = null;
+        if (boolean.class.isAssignableFrom(returnType)) {
+            if (methodName.length() > 2 && methodName.startsWith("is")
+                    && Character.isUpperCase(methodName.charAt(2))) {
+                getterName = StringUtils.uncapitalize(methodName.substring(2));
+            }
+        } else {
+            if (methodName.length() > 3 && methodName.startsWith("get")
+                    && Character.isUpperCase(methodName.charAt(3))) {
+                getterName = StringUtils.uncapitalize(methodName.substring(3));
+            }
+        }
+        
+        if (!StringUtils.isEmpty(getterName)) {
+            return getterName;
+        } else {
+            throw new InvalidGetterMethod(
+                    "方法名应该以is/get+首写字母为大写字母的字符串组成.methodName:{}",
+                    new Object[] { methodName });
+        }
+    }
+    
+    /**
+     * 获取方法对应的setter
+     *<功能详细描述>
+     * @param method
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    public static boolean isSetterMethod(Method method) {
+        String methodName = method.getName();
+        Class<?> returnType = method.getReturnType();
+        //Class<?> firstParameterType = null;
+        
+        //如果对应方法返回类型为空，且入参为一个
+        if (!Void.class.isAssignableFrom(returnType)
+                || method.getParameterTypes().length != 1) {
+            return false;
+        }
+        
+        if (methodName.length() > 3 && methodName.startsWith("set")
+                && Character.isUpperCase(methodName.charAt(3))) {
+            return true;
+        }
+        return false;
+    }
+    
+    /**
+      * 获取方法对应的setter
+      *<功能详细描述>
+      * @param method
+      * @return [参数说明]
+      * 
+      * @return String [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public static String getSetterNameByMethod(Method method) {
+        String methodName = method.getName();
+        Class<?> returnType = method.getReturnType();
+        //Class<?> firstParameterType = null;
+        
+        //如果对应方法返回类型为空，且入参为一个
+        if (!Void.class.isAssignableFrom(returnType)
+                || method.getParameterTypes().length != 1) {
+            throw new InvalidSetterMethod(
+                    "方法入参为空，或返回不为空.paramterTypes:{};returnType:{}",
+                    new Object[] { method.getParameterTypes(), returnType });
+        }
+        
+        String setterName = null;
+        if (methodName.length() > 3 && methodName.startsWith("set")
+                && Character.isUpperCase(methodName.charAt(3))) {
+            setterName = StringUtils.uncapitalize(methodName.substring(3));
+        }
+        
+        if (!StringUtils.isEmpty(setterName)) {
+            return setterName;
+        } else {
+            throw new InvalidSetterMethod(
+                    "方法名应该以set+首写字母为大写字母的字符串组成.methodName:{}",
+                    new Object[] { methodName });
+        }
+    }
+    
+    /**
+      * 根据字段名推论得出字段对应的get方法<br/>
+      *<功能详细描述>
+      * @param fieldName
+      * @param type [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public static String getGetMethodNameByField(Field field) {
+        String fieldName = field.getName();
+        Class<?> fieldType = field.getType();
+        String methodName = null;
+        if (boolean.class.isAssignableFrom(fieldType)) {
+            //利用length>2排除掉fieldName = is的情况，如果为is对应方法isIs setIs
+            if (fieldName.length() > 2 && fieldName.startsWith("is")
+                    && Character.isUpperCase(fieldName.charAt(3))) {
+                methodName = fieldName;
+            } else {
+                methodName = "is" + StringUtils.capitalize(fieldName);
+            }
+        } else {
+            methodName = "get" + StringUtils.capitalize(fieldName);
+        }
+        return methodName;
+    }
+    
+    /**
+      * 根据字段名获得对应的set方法<br/>
+      *<功能详细描述>
+      * @param fieldName
+      * @param fieldType
+      * @return [参数说明]
+      * 
+      * @return String [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public static String getSetMethodNameByField(Field field) {
+        String fieldName = field.getName();
+        Class<?> fieldType = field.getType();
+        String methodName = null;
+        if (boolean.class.isAssignableFrom(fieldType)) {
+            if (fieldName.length() > 2 && fieldName.startsWith("is")
+                    && Character.isUpperCase(fieldName.charAt(3))) {
+                methodName = "set"
+                        + StringUtils.capitalize(fieldName.substring(2));
+            } else {
+                methodName = "set" + StringUtils.capitalize(fieldName);
+            }
+        } else {
+            methodName = "set" + StringUtils.capitalize(fieldName);
+        }
+        return methodName;
+    }
+    
+    /**
       * 获取含有指定注解的getter集合<br/>
       *<功能详细描述>
       * @param type
@@ -48,8 +252,8 @@ public class ReflectionUtils {
             Class<?> type, Class<A> annotationType) {
         AssertUtils.notNull(annotationType, "annotationType is null");
         
-        MetaClass metaClass = MetaClass.forClass(type);
-        String[] getterNames = metaClass.getGetterNames();
+        ClassReflector classReflector = ClassReflector.forClass(type);
+        Set<String> getterNames = classReflector.getGetterNames();
         
         List<String> resList = new ArrayList<String>();
         for (String getterNameTemp : getterNames) {
@@ -85,112 +289,49 @@ public class ReflectionUtils {
     }
     
     /**
-      * 获取当前类具有set方法的属性名集合<br/>
+      * 在对应类中是否存在对应属性的get方法
       *<功能详细描述>
       * @param type
-      * @param isIncludeHasNotSetMethod
+      * @param getterName
       * @return [参数说明]
       * 
-      * @return String[] [返回类型说明]
+      * @return boolean [返回类型说明]
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public static String[] getSetterNames(Class<?> type,
-            boolean isIncludeHasNotSetMethod) {
-        MetaClass metaClass = MetaClass.forClass(type);
+    public static boolean isHasGetMethod(Class<?> type, String getterName) {
         ClassReflector reflector = ClassReflector.forClass(type);
         
-        List<String> resList = new ArrayList<String>(
-                TxConstants.INITIAL_CONLLECTION_SIZE);
-        for (String setterName : metaClass.getSetterNames()) {
-            if (!isIncludeHasNotSetMethod) {
-                Method setMethod = reflector.getSetterMethod(setterName);
-                if (setMethod == null) {
-                    continue;
-                }
-            }
-            resList.add(setterName);
+        Method getterMethod = reflector.getGetterMethod(getterName);
+        if (getterMethod != null) {
+            return true;
+        } else {
+            return false;
         }
-        
-        String[] resArr = resList.toArray(new String[resList.size()]);
-        return resArr;
     }
     
     /**
-      * 获取当前类getterNames
+      * 在指定类中是否存在对应属性的set方法
       *<功能详细描述>
       * @param type
-      * @param isIncludeHasNotGetterMethod
+      * @param setterName
       * @return [参数说明]
       * 
-      * @return String[] [返回类型说明]
+      * @return boolean [返回类型说明]
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public static String[] getGetterNames(Class<?> type,
-            boolean isIncludeHasNotGetMethod) {
-        MetaClass metaClass = MetaClass.forClass(type);
+    public static boolean isHasSetMethod(Class<?> type, String setterName) {
         ClassReflector reflector = ClassReflector.forClass(type);
         
-        List<String> resList = new ArrayList<String>(
-                TxConstants.INITIAL_CONLLECTION_SIZE);
-        for (String getterName : metaClass.getGetterNames()) {
-            if (!isIncludeHasNotGetMethod) {
-                Method getMethod = reflector.getGetterMethod(getterName);
-                if (getMethod == null) {
-                    continue;
-                }
-            }
-            resList.add(getterName);
+        Method setterMethod = reflector.getSetterMethod(setterName);
+        if (setterMethod != null) {
+            return true;
+        } else {
+            return false;
         }
         
-        String[] resArr = resList.toArray(new String[resList.size()]);
-        return resArr;
     }
-    
-    //    /**
-    //      * 在对应类中是否存在对应属性的get方法
-    //      *<功能详细描述>
-    //      * @param type
-    //      * @param getterName
-    //      * @return [参数说明]
-    //      * 
-    //      * @return boolean [返回类型说明]
-    //      * @exception throws [异常类型] [异常说明]
-    //      * @see [类、类#方法、类#成员]
-    //     */
-    //    public static boolean isHasGetMethod(Class<?> type, String getterName) {
-    //        ClassReflector reflector = ClassReflector.forClass(type);
-    //        
-    //        Method getterMethod = reflector.getGetterMethod(getterName);
-    //        if (getterMethod != null) {
-    //            return true;
-    //        } else {
-    //            return false;
-    //        }
-    //    }
-    //    
-    //    /**
-    //      * 在指定类中是否存在对应属性的set方法
-    //      *<功能详细描述>
-    //      * @param type
-    //      * @param setterName
-    //      * @return [参数说明]
-    //      * 
-    //      * @return boolean [返回类型说明]
-    //      * @exception throws [异常类型] [异常说明]
-    //      * @see [类、类#方法、类#成员]
-    //     */
-    //    public static boolean isHasSetMethod(Class<?> type, String setterName) {
-    //        ClassReflector reflector = ClassReflector.forClass(type);
-    //        
-    //        Method setterMethod = reflector.getSetterMethod(setterName);
-    //        if (setterMethod != null) {
-    //            return true;
-    //        } else {
-    //            return false;
-    //        }
-    //    }
     
     /**
       * 获取某属性上的注解<br/>
@@ -218,7 +359,7 @@ public class ReflectionUtils {
         }
         
         Field field = reflector.getFiled(getterName);
-        if (getterMethod != null) {
+        if (field != null) {
             res = field.getAnnotation(annotationType);
         }
         return res;

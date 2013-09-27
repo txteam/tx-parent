@@ -4,7 +4,7 @@
  * 修改时间:  2012-12-9
  * <修改描述:>
  */
-package com.tx.core.mybatis.generator;
+package com.tx.core.generator;
 
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
@@ -22,6 +22,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.cxf.common.util.StringUtils;
+import org.apache.ibatis.type.TypeHandlerRegistry;
 import org.hibernate.dialect.Dialect;
 import org.springframework.util.ClassUtils;
 
@@ -49,7 +50,6 @@ import com.tx.core.util.FreeMarkerUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-@Deprecated
 public class JpaEntityFreeMarkerGenerator {
     
     /** 基本类型集合 */
@@ -633,24 +633,10 @@ public class JpaEntityFreeMarkerGenerator {
     }
     
     /**
-     * @return 返回 sqlMapTemplateFilePath
-     */
-    public String getSqlMapTemplateFilePath() {
-        return sqlMapTemplateFilePath;
-    }
-    
-    /**
      * @param 对sqlMapTemplateFilePath进行赋值
      */
     public void setSqlMapTemplateFilePath(String sqlMapTemplateFilePath) {
         this.sqlMapTemplateFilePath = sqlMapTemplateFilePath;
-    }
-    
-    /**
-     * @return 返回 daoTemplateFilePath
-     */
-    public String getDaoTemplateFilePath() {
-        return daoTemplateFilePath;
     }
     
     /**
@@ -661,13 +647,6 @@ public class JpaEntityFreeMarkerGenerator {
     }
     
     /**
-     * @return 返回 daoImplTemplateFilePath
-     */
-    public String getDaoImplTemplateFilePath() {
-        return daoImplTemplateFilePath;
-    }
-    
-    /**
      * @param 对daoImplTemplateFilePath进行赋值
      */
     public void setDaoImplTemplateFilePath(String daoImplTemplateFilePath) {
@@ -675,24 +654,10 @@ public class JpaEntityFreeMarkerGenerator {
     }
     
     /**
-     * @return 返回 serviceTemplateFilePath
-     */
-    public String getServiceTemplateFilePath() {
-        return serviceTemplateFilePath;
-    }
-    
-    /**
      * @param 对serviceTemplateFilePath进行赋值
      */
     public void setServiceTemplateFilePath(String serviceTemplateFilePath) {
         this.serviceTemplateFilePath = serviceTemplateFilePath;
-    }
-    
-    /**
-     * @return 返回 serviceTestTemplateFilePath
-     */
-    public String getServiceTestTemplateFilePath() {
-        return serviceTestTemplateFilePath;
     }
     
     /**
@@ -704,31 +669,10 @@ public class JpaEntityFreeMarkerGenerator {
     }
     
     /**
-     * @return 返回 loadTemplateClass
-     */
-    public Class<?> getLoadTemplateClass() {
-        return loadTemplateClass;
-    }
-    
-    /**
      * @param 对loadTemplateClass进行赋值
      */
     public void setLoadTemplateClass(Class<?> loadTemplateClass) {
         this.loadTemplateClass = loadTemplateClass;
-    }
-    
-    /**
-     * @return 返回 columncomparator
-     */
-    public static Comparator<SqlMapColumn> getColumncomparator() {
-        return columnComparator;
-    }
-    
-    /**
-     * @return 返回 dbScriptTemplateFilePath
-     */
-    public String getDbScriptTemplateFilePath() {
-        return dbScriptTemplateFilePath;
     }
     
     /**
@@ -737,5 +681,4 @@ public class JpaEntityFreeMarkerGenerator {
     public void setDbScriptTemplateFilePath(String dbScriptTemplateFilePath) {
         this.dbScriptTemplateFilePath = dbScriptTemplateFilePath;
     }
-    
 }
