@@ -33,6 +33,20 @@ public class ClassReflector<T> {
     private static WeakHashMap<Class<?>, ClassReflector<?>> cacheMap = new WeakHashMap<Class<?>, ClassReflector<?>>();
     
     /**
+     * 类属性工具类
+     * <功能详细描述>
+     * @param type
+     * @return [参数说明]
+     * 
+     * @return MetaAnnotationClass [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    public static <TYPE> ClassReflector<TYPE> forClass(Class<TYPE> type) {
+        return forClass(type, false);
+    }
+    
+    /**
       * 类属性工具类
       * <功能详细描述>
       * @param type
@@ -43,24 +57,28 @@ public class ClassReflector<T> {
       * @see [类、类#方法、类#成员]
      */
     @SuppressWarnings("unchecked")
-    public static <TYPE> ClassReflector<TYPE> forClass(Class<TYPE> type) {
+    public static <TYPE> ClassReflector<TYPE> forClass(Class<TYPE> type,
+            boolean isIncludeInaccessible) {
         if (type == null) {
             throw new NullArgException(
                     "MetaAnnotationClass forClass parameter type is empty.");
         }
         synchronized (type) {
             if (cacheMap.containsKey(type)) {
-                return (ClassReflector<TYPE>)cacheMap.get(type);
+                return (ClassReflector<TYPE>) cacheMap.get(type);
             }
-            ClassReflector<TYPE> res = new ClassReflector<TYPE>(type);
+            ClassReflector<TYPE> res = new ClassReflector<TYPE>(type,
+                    isIncludeInaccessible);
             
             cacheMap.put(type, res);
             return res;
         }
     }
     
-    /** <默认构造函数> */
-    private ClassReflector(Class<T> type) {
+    /** <默认构造函数> 
+     * isIncludeInaccessible 是否包括不可范文的字段
+     * */
+    private ClassReflector(Class<T> type, boolean isIncludeInaccessible) {
         super();
         this.type = type;
         
@@ -72,18 +90,28 @@ public class ClassReflector<T> {
                 String fieldName = fieldTemp.getName();
                 
                 //如果子类已经存在的字段则认为该字段已经被覆写以子类为准
-                if (this.propertyFields.containsKey(fieldName)) {
+                if (this.fieldNames.contains(fieldName)) {
                     continue;
                 }
                 
-                this.propertyFields.put(fieldName, fieldTemp);
+                this.fieldNames.add(fieldName);
+                this.fieldMapping.put(fieldName, fieldTemp);
+                this.fieldTypeMapping.put(fieldName, fieldTemp.getType());
+                
+                if (isIncludeInaccessible) {
+                    this.getterNames.add(fieldName);
+                    this.getterTypeMapping.put(fieldName, fieldTemp.getType());
+                    this.setterNames.add(fieldName);
+                    this.setterTypeMapping.put(fieldName, fieldTemp.getType());
+                }
             }
             
             Method[] methods = searchType.getMethods();
             for (Method methodTemp : methods) {
                 if (ReflectionUtils.isGetterMethod(methodTemp)) {
                     String getterNameTemp = ReflectionUtils.getGetterNameByMethod(methodTemp);
-                    if (!this.getterNames.contains(getterNameTemp)) {
+                    //这里利用methodKey去判断避免isIncludeInaccessible为true时在field遍历时已经写入了getterType,getterName
+                    if (!this.getterMethodMapping.containsKey(getterNameTemp)) {
                         this.getterNames.add(getterNameTemp);
                         this.getterMethodMapping.put(getterNameTemp, methodTemp);
                         this.getterTypeMapping.put(getterNameTemp,
@@ -92,7 +120,8 @@ public class ClassReflector<T> {
                 }
                 if (ReflectionUtils.isSetterMethod(methodTemp)) {
                     String setterNameTemp = ReflectionUtils.getSetterNameByMethod(methodTemp);
-                    if (!this.setterNames.contains(setterNameTemp)) {
+                    //这里利用methodKey去判断避免isIncludeInaccessible为true时在field遍历时已经写入了setterType,setterName
+                    if (!this.setterMethodMapping.containsKey(setterNameTemp)) {
                         this.setterNames.add(setterNameTemp);
                         this.setterMethodMapping.put(setterNameTemp, methodTemp);
                         this.setterTypeMapping.put(setterNameTemp,
@@ -106,11 +135,15 @@ public class ClassReflector<T> {
     
     private Class<T> type;
     
-    private Map<String, Field> propertyFields = new HashMap<String, Field>();
-    
     private Set<String> setterNames = new HashSet<String>();
     
     private Set<String> getterNames = new HashSet<String>();
+    
+    private Set<String> fieldNames = new HashSet<String>();
+    
+    private Map<String, Field> fieldMapping = new HashMap<String, Field>();
+    
+    private Map<String, Class<?>> fieldTypeMapping = new HashMap<String, Class<?>>();
     
     private Map<String, Method> getterMethodMapping = new HashMap<String, Method>();
     
@@ -132,7 +165,7 @@ public class ClassReflector<T> {
     public Class<?> getType() {
         return this.type;
     }
-
+    
     /**
       * 获取指定属性名的Set方法<br/> 
       *<功能详细描述>
@@ -143,8 +176,22 @@ public class ClassReflector<T> {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public Field getFiled(String propertyName) {
-        return this.propertyFields.get(propertyName);
+    public Field getFiled(String fieldName) {
+        return this.fieldMapping.get(fieldName);
+    }
+    
+    /**
+      * 根据字段名获取字段类型<br/>
+      *<功能详细描述>
+      * @param fieldName
+      * @return [参数说明]
+      * 
+      * @return Class<?> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public Class<?> getFiledType(String fieldName) {
+        return this.fieldTypeMapping.get(fieldName);
     }
     
     /**
@@ -231,4 +278,10 @@ public class ClassReflector<T> {
         return getterNames;
     }
     
+    /**
+     * @return 返回 fieldNames
+     */
+    public Set<String> getFieldNames() {
+        return fieldNames;
+    }
 }

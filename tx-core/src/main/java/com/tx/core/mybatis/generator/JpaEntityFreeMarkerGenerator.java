@@ -27,7 +27,6 @@ import org.springframework.util.ClassUtils;
 
 import com.tx.core.dbscript.model.DataSourceTypeEnum;
 import com.tx.core.exceptions.argument.IllegalArgException;
-import com.tx.core.generator.model.ColumnInfo;
 import com.tx.core.generator.model.DBScriptMapper;
 import com.tx.core.generator.model.DaoGeneratorModel;
 import com.tx.core.generator.model.DeleteMapper;
@@ -37,7 +36,7 @@ import com.tx.core.generator.model.ServiceGeneratorModel;
 import com.tx.core.generator.model.SqlMapColumn;
 import com.tx.core.generator.model.SqlMapMapper;
 import com.tx.core.generator.model.UpdateMapper;
-import com.tx.core.reflection.JpaMetaClass;
+import com.tx.core.reflection.model.ColumnInfo;
 import com.tx.core.util.FreeMarkerUtils;
 
 /**
@@ -242,7 +241,7 @@ public class JpaEntityFreeMarkerGenerator {
         DBScriptMapper dbScriptMapper = new DBScriptMapper();
         dbScriptMapper.setTableName(jpaMetaClass.getTableName().toUpperCase());
         dbScriptMapper.setPkColumnName(jpaMetaClass.getColumnInfoMapping()
-                .get(jpaMetaClass.getPkPropertyName())
+                .get(jpaMetaClass.getIdPropertyName())
                 .getName()
                 .toUpperCase());
         for (Entry<String, ColumnInfo> entryTemp : jpaMetaClass.getColumnInfoMapping()
@@ -281,7 +280,7 @@ public class JpaEntityFreeMarkerGenerator {
         DBScriptMapper dbScriptMapper = new DBScriptMapper();
         dbScriptMapper.setTableName(jpaMetaClass.getTableName().toUpperCase());
         dbScriptMapper.setPkColumnName(jpaMetaClass.getColumnInfoMapping()
-                .get(jpaMetaClass.getPkPropertyName())
+                .get(jpaMetaClass.getIdPropertyName())
                 .getName()
                 .toUpperCase());
         for (Entry<String, ColumnInfo> entryTemp : jpaMetaClass.getColumnInfoMapping()
@@ -327,10 +326,10 @@ public class JpaEntityFreeMarkerGenerator {
         
         model.setBasePackage(ClassUtils.convertResourcePathToClassName(basePath));
         model.setEntitySimpleName(jpaMetaClass.getEntitySimpleName());
-        model.setIdPropertyName(jpaMetaClass.getPkPropertyName());
+        model.setIdPropertyName(jpaMetaClass.getIdPropertyName());
         model.setLowerCaseEntitySimpleName(jpaMetaClass.getLowerCaseFirstCharEntitySimpleName());
         model.setSqlMapColumnList(generateColumnList(jpaMetaClass));
-        model.setUpCaseIdPropertyName(StringUtils.capitalize(jpaMetaClass.getPkPropertyName()));
+        model.setUpCaseIdPropertyName(StringUtils.capitalize(jpaMetaClass.getIdPropertyName()));
         
         //        model.setBasePackage(ClassUtils.convertResourcePathToClassName(basePath));
         //        model.setEntityTypeName(jpaMetaClass.getEntityTypeName());
@@ -448,7 +447,7 @@ public class JpaEntityFreeMarkerGenerator {
         updateMapper.setId("update" + jpaMetaClass.getEntitySimpleName());
         
         Map<String, String> columnNameMapping = jpaMetaClass.getColumnNameMapping();
-        String idPropertyName = jpaMetaClass.getPkPropertyName();
+        String idPropertyName = jpaMetaClass.getIdPropertyName();
         String idColumnName = columnNameMapping.get(idPropertyName);
         
         updateMapper.setIdColumnName(idColumnName == null ? ""
@@ -480,7 +479,7 @@ public class JpaEntityFreeMarkerGenerator {
         selectMapper.setQueryId("query" + jpaMetaClass.getEntitySimpleName());
         
         Map<String, String> columnNameMapping = jpaMetaClass.getColumnNameMapping();
-        String idPropertyName = jpaMetaClass.getPkPropertyName();
+        String idPropertyName = jpaMetaClass.getIdPropertyName();
         String idColumnName = columnNameMapping.get(idPropertyName);
         
         selectMapper.setIdColumnName(idColumnName == null ? ""
@@ -517,7 +516,7 @@ public class JpaEntityFreeMarkerGenerator {
         deleteMapper.setParameterType(jpaMetaClass.getEntityTypeName());
         
         Map<String, String> columnNameMapping = jpaMetaClass.getColumnNameMapping();
-        String idPropertyName = jpaMetaClass.getPkPropertyName();
+        String idPropertyName = jpaMetaClass.getIdPropertyName();
         String idColumnName = columnNameMapping.get(idPropertyName);
         
         deleteMapper.setIdColumnName(idColumnName == null ? ""
@@ -590,7 +589,7 @@ public class JpaEntityFreeMarkerGenerator {
         Map<String, Class<?>> typeMap = jpaMetaClass.getGetterTypeMapping();
         Map<String, Boolean> ignoreMap = jpaMetaClass.getIgnoreGetterMapping();
         Map<String, String> columnNameMapping = jpaMetaClass.getColumnNameMapping();
-        String idPropertyName = jpaMetaClass.getPkPropertyName();
+        String idPropertyName = jpaMetaClass.getIdPropertyName();
         
         for (String getterName : getterNameList) {
             if (StringUtils.isEmpty(getterName) || ignoreMap.get(getterName)) {
@@ -605,7 +604,7 @@ public class JpaEntityFreeMarkerGenerator {
                         typeTemp, null);
             } else {
                 JpaMetaClass temp = JpaMetaClass.forClass(typeTemp);
-                String tempIdPropertyName = temp.getPkPropertyName();
+                String tempIdPropertyName = temp.getIdPropertyName();
                 Class<?> tempIdType = temp.getGetterTypeMapping()
                         .get(tempIdPropertyName);
                 if (StringUtils.isEmpty(tempIdPropertyName)) {

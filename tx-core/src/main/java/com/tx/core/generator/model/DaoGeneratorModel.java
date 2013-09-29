@@ -8,7 +8,8 @@ package com.tx.core.generator.model;
 
 
  /**
-  * <功能简述>
+  * 持久层代码生成模型<br/>
+  *     用以支持*Dao,*DaoImpl实现的生成<br/>
   * <功能详细描述>
   * 
   * @author  brady

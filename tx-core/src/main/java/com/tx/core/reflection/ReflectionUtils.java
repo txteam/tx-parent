@@ -51,7 +51,7 @@ public class ReflectionUtils {
         
         //如果对应方法有入参则该方法不为getter对应方法
         if (method.getParameterTypes().length > 0
-                && !Void.class.isAssignableFrom(returnType)) {
+                && !Void.TYPE.equals(returnType)) {
             return false;
         }
         
@@ -86,7 +86,7 @@ public class ReflectionUtils {
         
         //如果对应方法有入参则该方法不为getter对应方法
         if (method.getParameterTypes().length > 0
-                && !Void.class.isAssignableFrom(returnType)) {
+                && !Void.TYPE.equals(returnType)) {
             throw new InvalidGetterMethod(
                     "方法入参不为空，或返回类型为空.paramterTypes:{};returnType:{}",
                     new Object[] { method.getParameterTypes(), returnType });
@@ -130,7 +130,8 @@ public class ReflectionUtils {
         //Class<?> firstParameterType = null;
         
         //如果对应方法返回类型为空，且入参为一个
-        if (!Void.class.isAssignableFrom(returnType)
+        System.out.println();
+        if (!Void.TYPE.equals(returnType)
                 || method.getParameterTypes().length != 1) {
             return false;
         }
@@ -158,7 +159,7 @@ public class ReflectionUtils {
         //Class<?> firstParameterType = null;
         
         //如果对应方法返回类型为空，且入参为一个
-        if (!Void.class.isAssignableFrom(returnType)
+        if (!Void.TYPE.equals(returnType)
                 || method.getParameterTypes().length != 1) {
             throw new InvalidSetterMethod(
                     "方法入参为空，或返回不为空.paramterTypes:{};returnType:{}",
@@ -252,7 +253,9 @@ public class ReflectionUtils {
             Class<?> type, Class<A> annotationType) {
         AssertUtils.notNull(annotationType, "annotationType is null");
         
+        @SuppressWarnings("rawtypes")
         ClassReflector classReflector = ClassReflector.forClass(type);
+        @SuppressWarnings("unchecked")
         Set<String> getterNames = classReflector.getGetterNames();
         
         List<String> resList = new ArrayList<String>();
@@ -300,6 +303,7 @@ public class ReflectionUtils {
       * @see [类、类#方法、类#成员]
      */
     public static boolean isHasGetMethod(Class<?> type, String getterName) {
+        @SuppressWarnings("rawtypes")
         ClassReflector reflector = ClassReflector.forClass(type);
         
         Method getterMethod = reflector.getGetterMethod(getterName);
@@ -322,6 +326,7 @@ public class ReflectionUtils {
       * @see [类、类#方法、类#成员]
      */
     public static boolean isHasSetMethod(Class<?> type, String setterName) {
+        @SuppressWarnings("rawtypes")
         ClassReflector reflector = ClassReflector.forClass(type);
         
         Method setterMethod = reflector.getSetterMethod(setterName);
@@ -347,6 +352,7 @@ public class ReflectionUtils {
      */
     public static <A extends Annotation> A getGetterAnnotation(Class<?> type,
             String getterName, Class<A> annotationType) {
+        @SuppressWarnings("rawtypes")
         ClassReflector reflector = ClassReflector.forClass(type);
         
         A res = null;

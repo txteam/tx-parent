@@ -211,7 +211,7 @@ public class TestGetSet {
     }
     
     public static void main(String[] args) {
-        ClassReflector classReflector = ClassReflector.forClass(TestGetSet.class);
+        ClassReflector<TestGetSet> classReflector = ClassReflector.forClass(TestGetSet.class);
         
         System.out.println("\n.......getterNames:........");
         for(String getterName : classReflector.getGetterNames()){

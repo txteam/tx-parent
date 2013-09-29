@@ -6,38 +6,21 @@
  */
 package com.tx.core.reflection;
 
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.WeakHashMap;
 
-import javax.annotation.Generated;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
-import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.lang.reflect.FieldUtils;
-import org.apache.ibatis.reflection.MetaClass;
-import org.apache.poi.hssf.record.formula.functions.T;
-import org.springframework.beans.BeanUtils;
-import org.springframework.util.StringUtils;
-
-import com.tx.core.generator.model.ColumnInfo;
-import com.tx.core.jdbc.sqlsource.SqlSource;
+import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.reflection.exception.JpaMetaClassNewInstanceException;
+import com.tx.core.reflection.model.ColumnInfo;
+import com.tx.core.util.JdbcUtils;
 
 /**
  * jpa实体解析结果类
@@ -53,8 +36,21 @@ public class JpaMetaClass<T> {
     /**
      * 本地资源缓存映射,采用弱引用的形式，以便及时回收一些使用不高的sqlSource
      */
-    @SuppressWarnings("rawtypes")
     private static WeakHashMap<Class<?>, JpaMetaClass<?>> mapping = new WeakHashMap<Class<?>, JpaMetaClass<?>>();
+    
+    /**
+      * 默认getterName是不包括仅有field没有get方法的字段
+      *<功能详细描述>
+      * @param type
+      * @return [参数说明]
+      * 
+      * @return JpaMetaClass<TYPE> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public static <TYPE> JpaMetaClass<TYPE> forClass(Class<TYPE> type) {
+        return forClass(type, false);
+    }
     
     /**
       * 获取该类解析器的构造方法
@@ -66,123 +62,36 @@ public class JpaMetaClass<T> {
       * @see [类、类#方法、类#成员]
      */
     @SuppressWarnings("unchecked")
-    public static <TYPE> JpaMetaClass<TYPE> forClass(Class<TYPE> type) {
+    public static <TYPE> JpaMetaClass<TYPE> forClass(Class<TYPE> type,
+            boolean isIncludeInaccessible) {
+        AssertUtils.notNull(type, "type is null");
+        
         synchronized (type) {
             JpaMetaClass<TYPE> jpaMetaClass = null;
             if (mapping.containsKey(type)) {
-                jpaMetaClass = (JpaMetaClass<TYPE>)mapping.get(type);
+                jpaMetaClass = (JpaMetaClass<TYPE>) mapping.get(type);
                 return jpaMetaClass;
             }
             
             //简答的sqlSource源
-            jpaMetaClass = new JpaMetaClass<TYPE>(type);
+            jpaMetaClass = new JpaMetaClass<TYPE>(type, isIncludeInaccessible);
             //缓存起来
             mapping.put(type, jpaMetaClass);
             return jpaMetaClass;
         }
     }
     
-    private JpaMetaClass(Class<T> type) {
+    private JpaMetaClass(Class<T> type, boolean isIncludeInaccessible) {
+        AssertUtils.notNull(type, "type is null");
+        
+        //解析类型
+        this.type = type;
+        this.classReflector = ClassReflector.forClass(type);
+        
         //解析实体对象，获取类名，对应数据库表名等信息
-        parseForEntity(type);
-        
-        //获取对应实体的的所有getter方法
-        MetaClass metaClass = MetaClass.forClass(type);
-        this.getterNames = Arrays.asList(metaClass.getGetterNames());
-        
-        for (String getterNameTemp : this.getterNames) {
-            PropertyDescriptor propertyDescriptor = BeanUtils.getPropertyDescriptor(type,
-                    getterNameTemp);
-            if (propertyDescriptor == null) {
-                this.ignoreGetterMapping.put(getterNameTemp, true);
-                continue;
-            }
-            Method methodTemp = PropertyUtils.getReadMethod(propertyDescriptor);
-            Class<?> propertyType = metaClass.getGetterType(getterNameTemp);
-            Field getterField = FieldUtils.getField(type, getterNameTemp, true);
-            
-            this.getterMethodMapping.put(getterNameTemp, methodTemp);
-            this.getterTypeMapping.put(getterNameTemp, propertyType);
-            
-            //设置为不需要忽略，在方法解析中如果发现为被忽略字段，则重设置
-            this.ignoreGetterMapping.put(getterNameTemp, false);
-            
-            parseMethod(getterNameTemp, propertyType, methodTemp, getterField);
-        }
-    }
-    
-    /**
-      * 解析方法
-      * <功能详细描述>
-      * @param getterMethod [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    private void parseMethod(String propertyName, Class<?> propertyType,
-            Method getterMethod, Field getterField) {
-        //判断对应字段是否为id,如果为id，一并解析id相关jpa配置
-        parseForId(propertyName, propertyType, getterMethod, getterField);
-        
-        //是否为忽略字段
-        if (getterMethod.isAnnotationPresent(Transient.class)
-                || (getterField != null && getterField.isAnnotationPresent(Transient.class))
-                || Map.class.isAssignableFrom(propertyType)
-                || Collection.class.isAssignableFrom(propertyType)) {
-            this.ignoreGetterMapping.put(propertyName, true);
-            return;
-        }
-        //忽略一对多关系字段
-        if (getterMethod.isAnnotationPresent(OneToMany.class)
-                || (getterField != null && getterField.isAnnotationPresent(OneToMany.class))) {
-            this.ignoreGetterMapping.put(propertyName, true);
-            return;
-        }
-        //忽略一对一，但不存在column的字段,
-        if ((getterMethod.isAnnotationPresent(OneToOne.class) || (getterField != null && getterField.isAnnotationPresent(OneToOne.class)))
-                && !(getterMethod.isAnnotationPresent(JoinColumn.class)
-                        || getterMethod.isAnnotationPresent(Column.class)
-                        || (getterField != null && getterField.isAnnotationPresent(JoinColumn.class)) || (getterField != null && getterField.isAnnotationPresent(Column.class)))) {
-            this.ignoreGetterMapping.put(propertyName, true);
-            return;
-        }
-        //忽略一对一，但不存在column的字段,
-        if ((getterMethod.isAnnotationPresent(ManyToMany.class) || (getterField != null && getterField.isAnnotationPresent(ManyToMany.class)))
-                && !(getterMethod.isAnnotationPresent(JoinColumn.class)
-                        || getterMethod.isAnnotationPresent(Column.class)
-                        || (getterField != null && getterField.isAnnotationPresent(JoinColumn.class)) || (getterField != null && getterField.isAnnotationPresent(Column.class)))) {
-            this.ignoreGetterMapping.put(propertyName, true);
-            return;
-        }
-        
-        //识别属性对应字段
-        if (getterMethod.isAnnotationPresent(Column.class)
-                || (getterField != null && getterField.isAnnotationPresent(Column.class))) {
-            Column columnAnn = getterMethod.getAnnotation(Column.class);
-            if (columnAnn == null && getterField != null) {
-                columnAnn = getterField.getAnnotation(Column.class);
-            }
-            this.columnNameMapping.put(propertyName, columnAnn.name());
-            
-            this.columnInfoMapping.put(propertyName, new ColumnInfo(columnAnn,
-                    columnAnn.name(), getterField.getType(), propertyName, ""));
-        } else if (getterMethod.isAnnotationPresent(JoinColumn.class)
-                || (getterField != null && getterField.isAnnotationPresent(JoinColumn.class))) {
-            JoinColumn columnAnn = getterMethod.getAnnotation(JoinColumn.class);
-            if (columnAnn == null && getterField != null) {
-                columnAnn = getterField.getAnnotation(JoinColumn.class);
-            }
-            this.columnNameMapping.put(propertyName, columnAnn.name());
-            
-            this.columnInfoMapping.put(propertyName, new ColumnInfo(null,
-                    columnAnn.name(), getterField.getType(), propertyName, ""));
-        } else {
-            this.columnNameMapping.put(propertyName, propertyName);
-            
-            this.columnInfoMapping.put(propertyName, new ColumnInfo(null,
-                    propertyName, getterField.getType(), propertyName, ""));
-        }
+        parseEntity();
+        //解析pk主键
+        parsePKGetter();
     }
     
     /**
@@ -195,31 +104,96 @@ public class JpaMetaClass<T> {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    private void parseForId(String propertyName, Class<?> propertyType,
-            Method getterMethod, Field getterField) {
-        if (!getterMethod.isAnnotationPresent(Id.class)
-                && (getterField == null || !getterField.isAnnotationPresent(Id.class))) {
+    private void parsePKGetter() {
+        //解析所有的getterNames
+        for (String getterNameTemp : this.classReflector.getGetterNames()) {
+            if (!ReflectionUtils.isHasAnnotationForGetter(type,
+                    getterNameTemp,
+                    Id.class)) {
+                return;
+            }
+            
+            this.pkGetterName = getterNameTemp;
+            this.pkGetterType = this.classReflector.getGetterType(getterNameTemp);
+            
+            //限定主键字段field必须具有get,set方法
+            AssertUtils.isTrue(this.classReflector.getGetterMethod(getterNameTemp) != null,
+                    new JpaMetaClassNewInstanceException(
+                            "type:{} pkPropertyName:{} getterMethod is not exist.",
+                            new Object[] { this.type, getterNameTemp }));
+            AssertUtils.isTrue(this.classReflector.getSetterMethod(getterNameTemp) != null,
+                    new JpaMetaClassNewInstanceException(
+                            "type:{} pkPropertyName:{} setterMethod is not exist.",
+                            new Object[] { this.type, getterNameTemp }));
+            //主键类型应该为直接可以进行存取的类型
+            AssertUtils.isTrue(JdbcUtils.isSupportedSimpleType(pkGetterType),
+                    new JpaMetaClassNewInstanceException(
+                            "type:{} pkPropertyName:{} getterType:{} is not supported.",
+                            new Object[] { this.type, getterNameTemp,
+                                    this.pkGetterType }));
+            
+            //主键生成策略
+            //org.hibernate.annotations.Generated.class
+            //Generated.class
+            if (ReflectionUtils.isHasAnnotationForGetter(type,
+                    getterNameTemp,
+                    GeneratedValue.class)) {
+                GeneratedValue geNnno = ReflectionUtils.getGetterAnnotation(type,
+                        getterNameTemp,
+                        GeneratedValue.class);
+                
+                this.generator = geNnno.generator();
+                this.generationType = geNnno.strategy();
+            }
+            
+            //一旦成功解析到第一个符合的主键即跳出
             return;
         }
         
-        this.pkPropertyName = propertyName;
-        if (getterMethod.isAnnotationPresent(Generated.class)
-                || (getterField != null && getterField.isAnnotationPresent(Generated.class))) {
-            //
-        }
-        if (getterMethod.isAnnotationPresent(org.hibernate.annotations.Generated.class)
-                || (getterField != null && getterField.isAnnotationPresent(org.hibernate.annotations.Generated.class))) {
-            
-        }
-        if (getterMethod.isAnnotationPresent(GeneratedValue.class)
-                || (getterField != null && getterField.isAnnotationPresent(GeneratedValue.class))) {
-            GeneratedValue geNnno = getterMethod.getAnnotation(GeneratedValue.class);
-            if (geNnno == null && getterField != null) {
-                geNnno = getterField.getAnnotation(GeneratedValue.class);
+        //是否存在名为id的getter
+        for (String getterNameTemp : this.classReflector.getGetterNames()) {
+            if (!"id".equals(getterNameTemp)) {
+                continue;
             }
-            this.generator = geNnno.generator();
-            this.generatorType = geNnno.strategy();
+            
+            this.pkGetterName = getterNameTemp;
+            this.pkGetterType = this.classReflector.getGetterType(getterNameTemp);
+            
+            //如果注解不存在，但存在一个getter名为id，就把对应字段作为主键处理
+            //限定主键字段field必须具有get,set方法
+            AssertUtils.isTrue(this.classReflector.getGetterMethod(getterNameTemp) != null,
+                    "type:{} pkPropertyName:{} getterMethod is not exist.",
+                    new Object[] { this.type, getterNameTemp });
+            AssertUtils.isTrue(this.classReflector.getSetterMethod(getterNameTemp) != null,
+                    "type:{} pkPropertyName:{} setterMethod is not exist.",
+                    new Object[] { this.type, getterNameTemp });
+            //主键类型应该为直接可以进行存取的类型
+            AssertUtils.isTrue(JdbcUtils.isSupportedSimpleType(pkGetterType),
+                    new JpaMetaClassNewInstanceException(
+                            "type:{} pkPropertyName:{} getterType:{} is not supported.",
+                            new Object[] { this.type, getterNameTemp,
+                                    this.pkGetterType }));
+            
+            //主键生成策略
+            //org.hibernate.annotations.Generated.class
+            //Generated.class
+            if (ReflectionUtils.isHasAnnotationForGetter(type,
+                    getterNameTemp,
+                    GeneratedValue.class)) {
+                GeneratedValue geNnno = ReflectionUtils.getGetterAnnotation(type,
+                        getterNameTemp,
+                        GeneratedValue.class);
+                
+                this.generator = geNnno.generator();
+                this.generationType = geNnno.strategy();
+            }
+            
+            //一旦成功解析到第一个符合的主键即跳出
+            return;
         }
+        
+        throw new JpaMetaClassNewInstanceException(
+                "type:{} pkGetter is not exist.", new Object[] { this.type });
     }
     
     /**
@@ -232,19 +206,18 @@ public class JpaMetaClass<T> {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    private void parseForEntity(Class<?> type) {
+    private void parseEntity() {
         //获取实体类相关信息
-        this.entityTypeName = type.getName();
-        this.entitySimpleName = type.getSimpleName();
-        this.lowerCaseFirstCharEntitySimpleName = StringUtils.uncapitalize(this.entitySimpleName);
+        this.entityTypeName = this.type.getName();
+        this.entitySimpleName = this.type.getSimpleName();
         this.tableName = this.entitySimpleName;
         
         //获取jpa注解
-        org.hibernate.annotations.Entity hiberEntityAnn = type.getAnnotation(org.hibernate.annotations.Entity.class);
+        org.hibernate.annotations.Entity hiberEntityAnn = this.type.getAnnotation(org.hibernate.annotations.Entity.class);
         if (hiberEntityAnn != null) {
             //do nothing  如果要检查合法性可以将table标签放到这里来检查
         }
-        org.hibernate.annotations.Table hibernateTableAnn = type.getAnnotation(org.hibernate.annotations.Table.class);
+        org.hibernate.annotations.Table hibernateTableAnn = this.type.getAnnotation(org.hibernate.annotations.Table.class);
         if (hibernateTableAnn != null) {
             //do nothing
         }
@@ -268,9 +241,13 @@ public class JpaMetaClass<T> {
                 sb.append(Character.toLowerCase(this.entitySimpleName.charAt(i)));
             }
         }
-        this.simpleTableName = sb.toString();
+        this.simpleTableName = sb.toString().toUpperCase();
+        if ("TO".equals(this.simpleTableName)) {
+            this.simpleTableName = "TO_";
+        }
     }
     
+    /** */
     private Class<T> type;
     
     private ClassReflector<T> classReflector;
@@ -282,17 +259,42 @@ public class JpaMetaClass<T> {
     private String entitySimpleName;
     
     /** 对应表名 */
-    public String tableName;
+    private String tableName;
     
     /** 生成表名的简写，根据对象名生成  */
-    public String simpleTableName;
+    private String simpleTableName;
     
     /** Id注解对应的属性名 */
-    private String pkFieldName = "";
+    private String pkGetterName;
     
-    /** getter名列表 */
-    private List<String> getterNames;
+    /** 主键类型 */
+    private Class<?> pkGetterType;
     
+    /** 自动生成器类型 */
+    private GenerationType generationType;
+    
+    /** 自动生成器 */
+    private String generator;
+    
+    /** getter名及字段信息的映射关系 */
+    private Map<String, ColumnInfo> getter2columnInfoMapping = new HashMap<String, ColumnInfo>();
+    
+    /** getter名及对应的字段类型关系 */
+    private Map<String, Class<?>> getter2typeMapping = new HashMap<String, Class<?>>();
+    
+    /**
+     * @return 返回 type
+     */
+    public Class<T> getType() {
+        return type;
+    }
+    
+    /**
+     * @return 返回 classReflector
+     */
+    public ClassReflector<T> getClassReflector() {
+        return classReflector;
+    }
     
     /**
      * @return 返回 entityTypeName
@@ -319,23 +321,55 @@ public class JpaMetaClass<T> {
      * @return 返回 simpleTableName
      */
     public String getSimpleTableName() {
-        if ("TO".equals(simpleTableName.toUpperCase())) {
-            simpleTableName = "TO_";
-        }
         return simpleTableName;
+    }
+    
+    /**
+     * @return 返回 pkFieldName
+     */
+    public String getPkGetterName() {
+        return pkGetterName;
+    }
+    
+    /**
+     * @return 返回 generationType
+     */
+    public GenerationType getGenerationType() {
+        return generationType;
+    }
+    
+    /**
+     * @return 返回 generator
+     */
+    public String getGenerator() {
+        return generator;
     }
     
     /**
      * @return 返回 getterNames
      */
-    public List<String> getGetterNames() {
-        return getterNames;
+    public Set<String> getGetterNames() {
+        return this.classReflector.getGetterNames();
     }
     
     /**
-     * @param 对getterNames进行赋值
+     * @return 返回 setterNames
      */
-    public void setGetterNames(List<String> getterNames) {
-        this.getterNames = getterNames;
+    public Set<String> getSetterNames() {
+        return this.classReflector.getSetterNames();
+    }
+    
+    /**
+      * 获取getter对应类型
+      *<功能详细描述>
+      * @param getterName
+      * @return [参数说明]
+      * 
+      * @return Class<?> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public Class<?> getGetterType(String getterName) {
+        return this.classReflector.getGetterType(getterName);
     }
 }

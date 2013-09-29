@@ -28,7 +28,6 @@ import org.springframework.util.ClassUtils;
 
 import com.tx.core.dbscript.model.DataSourceTypeEnum;
 import com.tx.core.exceptions.argument.IllegalArgException;
-import com.tx.core.generator.model.ColumnInfo;
 import com.tx.core.generator.model.DBScriptMapper;
 import com.tx.core.generator.model.DaoGeneratorModel;
 import com.tx.core.generator.model.DeleteMapper;
@@ -39,6 +38,7 @@ import com.tx.core.generator.model.SqlMapColumn;
 import com.tx.core.generator.model.SqlMapMapper;
 import com.tx.core.generator.model.UpdateMapper;
 import com.tx.core.reflection.JpaMetaClass;
+import com.tx.core.reflection.model.ColumnInfo;
 import com.tx.core.util.FreeMarkerUtils;
 
 /**
@@ -54,51 +54,6 @@ public class JpaEntityFreeMarkerGenerator {
     
     /** 基本类型集合 */
     private static final Set<Class<?>> SIMPLE_TYPE = new HashSet<Class<?>>();
-    
-    private String sqlMapTemplateFilePath = "com/tx/core/generator/defaultftl/sqlMap.ftl";
-    
-    private String daoTemplateFilePath = "com/tx/core/generator/defaultftl/dao.ftl";
-    
-    private String daoImplTemplateFilePath = "com/tx/core/generator/defaultftl/daoImpl.ftl";
-    
-    private String serviceTemplateFilePath = "com/tx/core/generator/defaultftl/service.ftl";
-    
-    private String serviceTestTemplateFilePath = "com/tx/core/generator/defaultftl/serviceTest.ftl";
-    
-    private String dbScriptTemplateFilePath = "com/tx/core/generator/defaultftl/dbScript.ftl";
-    
-    private Class<?> loadTemplateClass = JpaEntityFreeMarkerGenerator.class;
-    
-    static {
-        SIMPLE_TYPE.add(char[].class);
-        SIMPLE_TYPE.add(byte[].class);
-        
-        SIMPLE_TYPE.add(char.class);
-        SIMPLE_TYPE.add(byte.class);
-        SIMPLE_TYPE.add(int.class);
-        SIMPLE_TYPE.add(short.class);
-        SIMPLE_TYPE.add(double.class);
-        SIMPLE_TYPE.add(float.class);
-        SIMPLE_TYPE.add(long.class);
-        SIMPLE_TYPE.add(boolean.class);
-        
-        SIMPLE_TYPE.add(Character.class);
-        SIMPLE_TYPE.add(Byte.class);
-        SIMPLE_TYPE.add(Integer.class);
-        SIMPLE_TYPE.add(Short.class);
-        SIMPLE_TYPE.add(Double.class);
-        SIMPLE_TYPE.add(Float.class);
-        SIMPLE_TYPE.add(Long.class);
-        SIMPLE_TYPE.add(Boolean.class);
-        
-        SIMPLE_TYPE.add(String.class);
-        SIMPLE_TYPE.add(Date.class);
-        SIMPLE_TYPE.add(java.sql.Date.class);
-        SIMPLE_TYPE.add(Timestamp.class);
-        //SIMPLE_TYPE.add(Number.class);
-        SIMPLE_TYPE.add(BigInteger.class);
-        SIMPLE_TYPE.add(BigDecimal.class);
-    }
     
     /** 默认的字段比较器，用以排序 */
     private static final Comparator<SqlMapColumn> columnComparator = new Comparator<SqlMapColumn>() {
@@ -127,82 +82,61 @@ public class JpaEntityFreeMarkerGenerator {
         }
     };
     
+    private Class<?> loadTemplateClass = JpaEntityFreeMarkerGenerator.class;
+    
+    private String sqlMapTemplateFilePath = "com/tx/core/generator/defaultftl/sqlMap.ftl";
+    
+    private String daoTemplateFilePath = "com/tx/core/generator/defaultftl/dao.ftl";
+    
+    private String daoImplTemplateFilePath = "com/tx/core/generator/defaultftl/daoImpl.ftl";
+    
+    private String serviceTemplateFilePath = "com/tx/core/generator/defaultftl/service.ftl";
+    
+    private String serviceTestTemplateFilePath = "com/tx/core/generator/defaultftl/serviceTest.ftl";
+    
+    private String dbScriptTemplateFilePath = "com/tx/core/generator/defaultftl/dbScript.ftl";
+    
     public void generate(Class<?> type, String resultFolderPath) {
-        JpaMetaClass japMetaClass = JpaMetaClass.forClass(type);
         
         //生成sqlMap
-        generateSimpleSqlMap(japMetaClass, resultFolderPath);
+        generateSimpleSqlMap(type, resultFolderPath);
         
         //生成Dao以及DaoImpl
-        generateDao(japMetaClass, resultFolderPath);
+        generateDao(type, resultFolderPath);
         
         //生成Service
-        generateService(japMetaClass, resultFolderPath);
-        
-        //生成service单元测试类
-    }
-    
-    /**
-      * 字段类型映射器<br/>
-      * <功能详细描述>
-      * 
-      * @author  brady
-      * @version  [版本号, 2013-8-27]
-      * @see  [相关类/方法]
-      * @since  [产品/模块版本]
-     */
-    public static interface ColumnTypeMapper {
-        
-        /**
-          * 生成数据字段类型
-          *<功能详细描述>
-          * @param dataSourceType
-          * @param jdbcType
-          * @param columnName
-          * @return [参数说明]
-          * 
-          * @return String [返回类型说明]
-          * @exception throws [异常类型] [异常说明]
-          * @see [类、类#方法、类#成员]
-         */
-        public String generateColumnType(DataSourceTypeEnum dataSourceType,
-                Class<?> jdbcType, String columnName);
-    }
-    
-    public static class DefaultColumnTypeMapper implements ColumnTypeMapper {
-        
-        /**
-         * @param jdbcType
-         * @param columnName
-         * @return
-         */
-        @Override
-        public String generateColumnType(DataSourceTypeEnum dataSourceType,
-                Class<?> jdbcType, String columnName) {
-            // TODO Auto-generated method stub
-            return null;
-        }
-        
+        generateService(type, resultFolderPath);
     }
     
     public void generateScript(Class<?> type, String resultFolderPath) {
         generateScript(type, resultFolderPath, "UTF-8");
     }
     
+    /**
+      * 生成脚本文件
+      *<功能详细描述>
+      * @param type
+      * @param resultFolderPath
+      * @param encode [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
     public void generateScript(Class<?> type, String resultFolderPath,
             String encode) {
-        JpaMetaClass jpaMetaClass = JpaMetaClass.forClass(type);
+        JpaMetaClass<?> jpaMetaClass = JpaMetaClass.forClass(type);
         
         //生成service单元测试类
-        generateScriptByDataSourceType(DataSourceTypeEnum.ORACLE,
+        generateScript(DataSourceTypeEnum.ORACLE,
                 jpaMetaClass,
                 resultFolderPath,
                 encode);
-        generateScriptByDataSourceType(DataSourceTypeEnum.H2,
+        generateScript(DataSourceTypeEnum.H2,
                 jpaMetaClass,
                 resultFolderPath,
                 encode);
-        generateScriptByDataSourceType(DataSourceTypeEnum.MYSQL,
+        generateScript(DataSourceTypeEnum.MYSQL,
                 jpaMetaClass,
                 resultFolderPath,
                 encode);
@@ -220,9 +154,9 @@ public class JpaEntityFreeMarkerGenerator {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public String generateScriptContent(Class<?> type,
+    public <TYPE> String generateScriptContent(Class<TYPE> type,
             DataSourceTypeEnum dataSourceType, String encode) {
-        JpaMetaClass jpaMetaClass = JpaMetaClass.forClass(type);
+        JpaMetaClass<TYPE> jpaMetaClass = JpaMetaClass.forClass(type);
         
         //生成service单元测试类
         String script = generateScriptContentByDataSourceType(dataSourceType,
@@ -231,9 +165,20 @@ public class JpaEntityFreeMarkerGenerator {
         return script;
     }
     
-    private void generateScriptByDataSourceType(
-            DataSourceTypeEnum dataSourceType, JpaMetaClass jpaMetaClass,
-            String resultFolderPath, String encode) {
+    /**
+      * 生成建表数据库脚本<br/>
+      *<功能详细描述>
+      * @param dataSourceType
+      * @param jpaMetaClass
+      * @param resultFolderPath
+      * @param encode [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public void generateScript(DataSourceTypeEnum dataSourceType,
+            JpaMetaClass<?> jpaMetaClass, String resultFolderPath, String encode) {
         //
         Dialect dialect = dataSourceType.getDialect();
         
@@ -242,7 +187,7 @@ public class JpaEntityFreeMarkerGenerator {
         DBScriptMapper dbScriptMapper = new DBScriptMapper();
         dbScriptMapper.setTableName(jpaMetaClass.getTableName().toUpperCase());
         dbScriptMapper.setPkColumnName(jpaMetaClass.getColumnInfoMapping()
-                .get(jpaMetaClass.getPkPropertyName())
+                .get(jpaMetaClass.getPkGetterName())
                 .getName()
                 .toUpperCase());
         for (Entry<String, ColumnInfo> entryTemp : jpaMetaClass.getColumnInfoMapping()
@@ -281,7 +226,7 @@ public class JpaEntityFreeMarkerGenerator {
         DBScriptMapper dbScriptMapper = new DBScriptMapper();
         dbScriptMapper.setTableName(jpaMetaClass.getTableName().toUpperCase());
         dbScriptMapper.setPkColumnName(jpaMetaClass.getColumnInfoMapping()
-                .get(jpaMetaClass.getPkPropertyName())
+                .get(jpaMetaClass.getPkGetterName())
                 .getName()
                 .toUpperCase());
         for (Entry<String, ColumnInfo> entryTemp : jpaMetaClass.getColumnInfoMapping()
@@ -295,10 +240,6 @@ public class JpaEntityFreeMarkerGenerator {
                                     columnInfo.getScale()));
         }
         data.put("dbScriptMapper", dbScriptMapper);
-        
-        //String entityTypeName = jpaMetaClass.getEntityTypeName();
-        //String[] splitNames = entityTypeName.split("\\.");
-        //String moduleName = splitNames[splitNames.length - 3].toLowerCase();
         
         String content = FreeMarkerUtils.generateContent(loadTemplateClass,
                 this.dbScriptTemplateFilePath,
@@ -317,8 +258,8 @@ public class JpaEntityFreeMarkerGenerator {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    private void generateService(JpaMetaClass jpaMetaClass,
-            String resultFolderPath) {
+    public <TYPE> void generateService(Class<TYPE> type, String resultFolderPath) {
+        JpaMetaClass<TYPE> jpaMetaClass = JpaMetaClass.forClass(type);
         ServiceGeneratorModel model = new ServiceGeneratorModel();
         
         String basePath = ClassUtils.convertClassNameToResourcePath(jpaMetaClass.getEntityTypeName())
@@ -327,15 +268,10 @@ public class JpaEntityFreeMarkerGenerator {
         
         model.setBasePackage(ClassUtils.convertResourcePathToClassName(basePath));
         model.setEntitySimpleName(jpaMetaClass.getEntitySimpleName());
-        model.setIdPropertyName(jpaMetaClass.getPkPropertyName());
-        model.setLowerCaseEntitySimpleName(jpaMetaClass.getLowerCaseFirstCharEntitySimpleName());
-        model.setSqlMapColumnList(generateColumnList(jpaMetaClass));
-        model.setUpCaseIdPropertyName(StringUtils.capitalize(jpaMetaClass.getPkPropertyName()));
-        
-        //        model.setBasePackage(ClassUtils.convertResourcePathToClassName(basePath));
-        //        model.setEntityTypeName(jpaMetaClass.getEntityTypeName());
-        //        model.setSimpleEntityTypeName(jpaMetaClass.getEntitySimpleName());
-        //        model.setLowerCaseEntityTypeName(jpaMetaClass.getLowerCaseFirstCharEntitySimpleName());
+        model.setIdPropertyName(jpaMetaClass.getPkGetterName());
+        model.setLowerCaseEntitySimpleName(org.apache.commons.lang.StringUtils.uncapitalize(jpaMetaClass.getEntitySimpleName()));
+        model.setSqlMapColumnList(generateSqlMapColumnList(jpaMetaClass));
+        model.setUpCaseIdPropertyName(StringUtils.capitalize(jpaMetaClass.getPkGetterName()));
         
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("service", model);
@@ -365,7 +301,8 @@ public class JpaEntityFreeMarkerGenerator {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    private void generateDao(JpaMetaClass jpaMetaClass, String resultFolderPath) {
+    public <TYPE> void generateDao(Class<TYPE> type, String resultFolderPath) {
+        JpaMetaClass<TYPE> jpaMetaClass = JpaMetaClass.forClass(type);
         DaoGeneratorModel model = new DaoGeneratorModel();
         
         String daoPath = ClassUtils.convertClassNameToResourcePath(jpaMetaClass.getEntityTypeName())
@@ -375,7 +312,7 @@ public class JpaEntityFreeMarkerGenerator {
         model.setBasePackage(ClassUtils.convertResourcePathToClassName(daoPath));
         model.setEntityTypeName(jpaMetaClass.getEntityTypeName());
         model.setSimpleEntityTypeName(jpaMetaClass.getEntitySimpleName());
-        model.setLowerCaseEntityTypeName(jpaMetaClass.getLowerCaseFirstCharEntitySimpleName());
+        model.setLowerCaseEntityTypeName(org.apache.commons.lang.StringUtils.uncapitalize(jpaMetaClass.getEntitySimpleName()));
         
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("dao", model);
@@ -403,8 +340,10 @@ public class JpaEntityFreeMarkerGenerator {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    private void generateSimpleSqlMap(JpaMetaClass jpaMetaClass,
+    public <TYPE> void generateSimpleSqlMap(Class<TYPE> type,
             String resultFolderPath) {
+        JpaMetaClass<TYPE> jpaMetaClass = JpaMetaClass.forClass(type);
+        
         SqlMapMapper mapper = generateMapper(jpaMetaClass);
         InsertMapper insert = generateInsertMapper(jpaMetaClass);
         DeleteMapper delete = generateDeleteMapper(jpaMetaClass);
@@ -412,7 +351,7 @@ public class JpaEntityFreeMarkerGenerator {
         UpdateMapper update = generateUpdateMapper(jpaMetaClass);
         
         Map<String, Object> data = new HashMap<String, Object>();
-        data.put("parseMessage", jpaMetaClass.getParseMessage().toString());
+        data.put("parseMessage", "");
         data.put("mapper", mapper);
         data.put("insert", insert);
         data.put("delete", delete);
@@ -442,13 +381,13 @@ public class JpaEntityFreeMarkerGenerator {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public UpdateMapper generateUpdateMapper(JpaMetaClass jpaMetaClass) {
+    private UpdateMapper generateUpdateMapper(JpaMetaClass jpaMetaClass) {
         UpdateMapper updateMapper = new UpdateMapper();
         
         updateMapper.setId("update" + jpaMetaClass.getEntitySimpleName());
         
         Map<String, String> columnNameMapping = jpaMetaClass.getColumnNameMapping();
-        String idPropertyName = jpaMetaClass.getPkPropertyName();
+        String idPropertyName = jpaMetaClass.getPkGetterName();
         String idColumnName = columnNameMapping.get(idPropertyName);
         
         updateMapper.setIdColumnName(idColumnName == null ? ""
@@ -480,7 +419,7 @@ public class JpaEntityFreeMarkerGenerator {
         selectMapper.setQueryId("query" + jpaMetaClass.getEntitySimpleName());
         
         Map<String, String> columnNameMapping = jpaMetaClass.getColumnNameMapping();
-        String idPropertyName = jpaMetaClass.getPkPropertyName();
+        String idPropertyName = jpaMetaClass.getPkGetterName();
         String idColumnName = columnNameMapping.get(idPropertyName);
         
         selectMapper.setIdColumnName(idColumnName == null ? ""
@@ -488,7 +427,7 @@ public class JpaEntityFreeMarkerGenerator {
         selectMapper.setIdPropertyName(idPropertyName);
         
         selectMapper.setParameterType(jpaMetaClass.getEntityTypeName());
-        selectMapper.setResultMapId(jpaMetaClass.getLowerCaseFirstCharEntitySimpleName()
+        selectMapper.setResultMapId(org.apache.commons.lang.StringUtils.uncapitalize(jpaMetaClass.getEntitySimpleName())
                 + "Map");
         
         selectMapper.setSimpleTableName(jpaMetaClass.getSimpleTableName()
@@ -517,7 +456,7 @@ public class JpaEntityFreeMarkerGenerator {
         deleteMapper.setParameterType(jpaMetaClass.getEntityTypeName());
         
         Map<String, String> columnNameMapping = jpaMetaClass.getColumnNameMapping();
-        String idPropertyName = jpaMetaClass.getPkPropertyName();
+        String idPropertyName = jpaMetaClass.getPkGetterName();
         String idColumnName = columnNameMapping.get(idPropertyName);
         
         deleteMapper.setIdColumnName(idColumnName == null ? ""
@@ -540,7 +479,7 @@ public class JpaEntityFreeMarkerGenerator {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public InsertMapper generateInsertMapper(JpaMetaClass jpaMetaClass) {
+    private InsertMapper generateInsertMapper(JpaMetaClass jpaMetaClass) {
         InsertMapper insertMapper = new InsertMapper();
         
         insertMapper.setId("insert" + jpaMetaClass.getEntitySimpleName());
@@ -565,9 +504,9 @@ public class JpaEntityFreeMarkerGenerator {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    private SqlMapMapper generateMapper(JpaMetaClass japMetaClass) {
+    private SqlMapMapper generateMapper(JpaMetaClass jpaMetaClass) {
         SqlMapMapper mapper = new SqlMapMapper();
-        mapper.setNamespace(japMetaClass.getLowerCaseFirstCharEntitySimpleName());
+        mapper.setNamespace(org.apache.commons.lang.StringUtils.uncapitalize(jpaMetaClass.getEntitySimpleName()));
         return mapper;
     }
     
@@ -581,16 +520,17 @@ public class JpaEntityFreeMarkerGenerator {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    private List<SqlMapColumn> generateColumnList(JpaMetaClass jpaMetaClass) {
+    private <TYPE> List<SqlMapColumn> generateSqlMapColumnList(
+            JpaMetaClass<TYPE> jpaMetaClass) {
         List<SqlMapColumn> columnList = new ArrayList<SqlMapColumn>();
         //生成对应需要的列关系
-        List<String> getterNameList = jpaMetaClass.getGetterNames();
+        Set<String> getterNameList = jpaMetaClass.getGetterNames();
         
         Map<String, Method> methodMap = jpaMetaClass.getGetterMethodMapping();
         Map<String, Class<?>> typeMap = jpaMetaClass.getGetterTypeMapping();
         Map<String, Boolean> ignoreMap = jpaMetaClass.getIgnoreGetterMapping();
         Map<String, String> columnNameMapping = jpaMetaClass.getColumnNameMapping();
-        String idPropertyName = jpaMetaClass.getPkPropertyName();
+        String idPropertyName = jpaMetaClass.getPkGetterName();
         
         for (String getterName : getterNameList) {
             if (StringUtils.isEmpty(getterName) || ignoreMap.get(getterName)) {
@@ -605,7 +545,7 @@ public class JpaEntityFreeMarkerGenerator {
                         typeTemp, null);
             } else {
                 JpaMetaClass temp = JpaMetaClass.forClass(typeTemp);
-                String tempIdPropertyName = temp.getPkPropertyName();
+                String tempIdPropertyName = temp.getPkGetterName();
                 Class<?> tempIdType = temp.getGetterTypeMapping()
                         .get(tempIdPropertyName);
                 if (StringUtils.isEmpty(tempIdPropertyName)) {

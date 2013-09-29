@@ -369,7 +369,7 @@ public class SqlSourceBuilder {
      */
     private <T> void addProperty2ColumnMapping(Class<T> type,
             SqlSource<T> simpleSqlSource) {
-        ClassReflector classReflector = ClassReflector.forClass(type);
+        ClassReflector<?> classReflector = ClassReflector.forClass(type);
         
         Set<String> getterNames = classReflector.getGetterNames();
         for (String getterNameTemp : getterNames) {
@@ -430,7 +430,6 @@ public class SqlSourceBuilder {
                                 getterType);
                         continue;
                     }
-                    
                 }
                 
                 //兼容处理，如果存在Column也认为是可以的
@@ -508,7 +507,7 @@ public class SqlSourceBuilder {
       * @see [类、类#方法、类#成员]
      */
     private String generatePkPropertyName(Class<?> type) {
-        ClassReflector classReflector = ClassReflector.forClass(type);
+        ClassReflector<?> classReflector = ClassReflector.forClass(type);
         //获取对象解析器
         Set<String> getterNames = classReflector.getGetterNames();
         for (String getterNameTemp : getterNames) {

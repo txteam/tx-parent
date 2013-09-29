@@ -4,21 +4,18 @@
  * 修改时间:  2013-8-27
  * <修改描述:>
  */
-package com.tx.core.generator.model;
+package com.tx.core.reflection.model;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.sql.Timestamp;
 import java.sql.Types;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.persistence.Column;
 
 import org.apache.commons.lang3.StringUtils;
 
 import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.util.JdbcUtils;
 
 /**
  * 字段信息<br/>
@@ -30,67 +27,6 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @since  [产品/模块版本]
  */
 public class ColumnInfo {
-    
-    /** 基本类型集合 */
-    private static final Map<Class<?>, Integer> SIMPLE_TYPE_2_TYPES_MAP = new HashMap<Class<?>, Integer>();
-    
-    /*
-        Java数据类型    Hibernate数据类型   标准SQL数据类型(PS:对于不同的DB可能有所差异)
-        byte、java.lang.Byte byte    TINYINT
-        short、java.lang.Short   short   SMALLINT
-        int、java.lang.Integer   integer INGEGER
-        long、java.lang.Long long    BIGINT
-        float、java.lang.Float   float   FLOAT
-        double、java.lang.Double double  DOUBLE
-        java.math.BigDecimal    big_decimal NUMERIC
-        char、java.lang.Character    character   CHAR(1)
-        boolean、java.lang.Boolean   boolean BIT
-        java.lang.String    string  VARCHAR
-        boolean、java.lang.Boolean   yes_no  CHAR(1)('Y'或'N')
-        boolean、java.lang.Boolean   true_false  CHAR(1)('Y'或'N')
-        java.util.Date、java.sql.Date    date    DATE
-        java.util.Date、java.sql.Time    time    TIME
-        java.util.Date、java.sql.Timestamp   timestamp   TIMESTAMP
-        java.util.Calendar  calendar    TIMESTAMP
-        java.util.Calendar  calendar_date   DATE
-        byte[]  binary  VARBINARY、BLOB
-        java.lang.String    text    CLOB
-        java.io.Serializable    serializable    VARBINARY、BLOB
-        java.sql.Clob   clob    CLOB
-        java.sql.Blob   blob    BLOB
-        java.lang.Class class   VARCHAR
-        java.util.Locale    locale  VARCHAR
-        java.util.TimeZone  timezone    VARCHAR
-        java.util.Currency  currency    VARCHAR
-     */
-    static {
-        SIMPLE_TYPE_2_TYPES_MAP.put(char[].class,Types.CLOB);
-        SIMPLE_TYPE_2_TYPES_MAP.put(byte[].class,Types.BLOB);
-        
-        SIMPLE_TYPE_2_TYPES_MAP.put(short.class,Types.SMALLINT);
-        SIMPLE_TYPE_2_TYPES_MAP.put(Short.class,Types.SMALLINT);
-        SIMPLE_TYPE_2_TYPES_MAP.put(int.class,Types.INTEGER);
-        SIMPLE_TYPE_2_TYPES_MAP.put(Integer.class,Types.INTEGER);
-        SIMPLE_TYPE_2_TYPES_MAP.put(long.class,Types.BIGINT);
-        SIMPLE_TYPE_2_TYPES_MAP.put(Long.class,Types.BIGINT);
-        SIMPLE_TYPE_2_TYPES_MAP.put(boolean.class,Types.BIT);
-        SIMPLE_TYPE_2_TYPES_MAP.put(Boolean.class,Types.BIT);
-        SIMPLE_TYPE_2_TYPES_MAP.put(byte.class,Types.TINYINT);
-        SIMPLE_TYPE_2_TYPES_MAP.put(Byte.class,Types.TINYINT);
-        SIMPLE_TYPE_2_TYPES_MAP.put(Date.class,Types.TIMESTAMP);
-        SIMPLE_TYPE_2_TYPES_MAP.put(java.sql.Date.class,Types.TIMESTAMP);
-        SIMPLE_TYPE_2_TYPES_MAP.put(Timestamp.class,Types.TIMESTAMP);
-        
-        SIMPLE_TYPE_2_TYPES_MAP.put(char.class,Types.CHAR);
-        SIMPLE_TYPE_2_TYPES_MAP.put(Character.class,Types.CHAR);
-        SIMPLE_TYPE_2_TYPES_MAP.put(double.class,Types.NUMERIC);
-        SIMPLE_TYPE_2_TYPES_MAP.put(Double.class,Types.NUMERIC);
-        SIMPLE_TYPE_2_TYPES_MAP.put(float.class,Types.NUMERIC);
-        SIMPLE_TYPE_2_TYPES_MAP.put(Float.class,Types.NUMERIC);
-        SIMPLE_TYPE_2_TYPES_MAP.put(BigDecimal.class,Types.NUMERIC);
-        SIMPLE_TYPE_2_TYPES_MAP.put(BigInteger.class,Types.NUMERIC);
-        SIMPLE_TYPE_2_TYPES_MAP.put(String.class,Types.VARCHAR);
-    }
     
     public ColumnInfo(Column columnAnno, String columnName, Class<?> javaType,
             String propertyName, String comment) {
@@ -104,30 +40,32 @@ public class ColumnInfo {
         if (javaType.isEnum()) {
             this.jdbcType = Types.VARCHAR;
             this.length = 64;
-        }else if(SIMPLE_TYPE_2_TYPES_MAP.keySet().contains(javaType)){
-            this.jdbcType = SIMPLE_TYPE_2_TYPES_MAP.get(javaType);
-            if(char.class.equals(javaType) || Character.class.equals(javaType)){
+        } else if (JdbcUtils.isSupportedSimpleType(javaType)) {
+            this.jdbcType = JdbcUtils.getSqlTypeByJavaType(javaType);
+            if (char.class.equals(javaType) || Character.class.equals(javaType)) {
                 this.length = 1;
-            }else if(String.class.equals(javaType)){
+            } else if (String.class.equals(javaType)) {
                 this.length = createColumnLength(propertyName);
-            }else if(double.class.equals(javaType) || Double.class.equals(javaType)){
+            } else if (double.class.equals(javaType)
+                    || Double.class.equals(javaType)) {
                 this.length = 64;
                 this.precision = 64;
                 this.scale = 10;
-            }else if(float.class.equals(javaType) || Float.class.equals(javaType)){
+            } else if (float.class.equals(javaType)
+                    || Float.class.equals(javaType)) {
                 this.length = 32;
                 this.precision = 32;
                 this.scale = 5;
-            }else if(BigDecimal.class.equals(javaType)){
+            } else if (BigDecimal.class.equals(javaType)) {
                 this.length = 64;
                 this.precision = 64;
                 this.scale = 10;
-            }else if(BigInteger.class.equals(javaType)){
+            } else if (BigInteger.class.equals(javaType)) {
                 this.length = 64;
                 this.precision = 64;
                 this.scale = 0;
             }
-        }else{
+        } else {
             this.jdbcType = Types.VARCHAR;
             this.length = 64;
         }
@@ -148,6 +86,16 @@ public class ColumnInfo {
         }
     }
     
+    /**
+      * 字段长度默认生成器<br/>
+      *<功能详细描述>
+      * @param propertyName
+      * @return [参数说明]
+      * 
+      * @return int [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
     private int createColumnLength(String propertyName) {
         if (StringUtils.endsWithIgnoreCase(propertyName, "id")) {
             return 64;
