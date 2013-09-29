@@ -33,6 +33,11 @@ public class ClassReflector<T> {
     private static WeakHashMap<Class<?>, ClassReflector<?>> cacheMap = new WeakHashMap<Class<?>, ClassReflector<?>>();
     
     /**
+     * 默认是否包括不可访问的属性
+     */
+    public static boolean defaultIsIncludeInaccessible = false;
+    
+    /**
      * 类属性工具类
      * <功能详细描述>
      * @param type
@@ -43,7 +48,7 @@ public class ClassReflector<T> {
      * @see [类、类#方法、类#成员]
     */
     public static <TYPE> ClassReflector<TYPE> forClass(Class<TYPE> type) {
-        return forClass(type, false);
+        return forClass(type, defaultIsIncludeInaccessible);
     }
     
     /**

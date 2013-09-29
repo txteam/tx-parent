@@ -102,7 +102,7 @@ public class SimpleSqlSourceBuilderTest {
             @SuppressWarnings("unchecked")
             SqlSource<TestAChild> cloneSqlSource = (SqlSource<TestAChild>)srcSqlSource.clone();
             cloneSqlSource.setPkName("aaa");
-            cloneSqlSource.addProperty2columnMapping("abcde", "abcdColone", String.class);
+            cloneSqlSource.addGetter2columnMapping("abcde", "abcdColone", String.class);
             
             System.out.println(cloneSqlSource.findSql());
             System.out.println(srcSqlSource.findSql());

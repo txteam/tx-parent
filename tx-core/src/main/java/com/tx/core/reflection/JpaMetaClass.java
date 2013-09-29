@@ -15,11 +15,16 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import org.apache.commons.collections.MapUtils;
 
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.reflection.exception.JpaMetaClassNewInstanceException;
-import com.tx.core.reflection.model.ColumnInfo;
+import com.tx.core.reflection.model.JpaColumnInfo;
 import com.tx.core.util.JdbcUtils;
 
 /**
@@ -81,6 +86,9 @@ public class JpaMetaClass<T> {
         }
     }
     
+    /**
+     * <默认构造函数>
+     */
     private JpaMetaClass(Class<T> type, boolean isIncludeInaccessible) {
         AssertUtils.notNull(type, "type is null");
         
@@ -93,6 +101,57 @@ public class JpaMetaClass<T> {
         //解析pk主键
         parsePKGetter();
     }
+    
+    private void parseGetter(){
+        //解析所有的getterNames
+        for (String getterNameTemp : this.classReflector.getGetterNames()) {
+            //是否需要忽略对应字段
+            if (isNeedSkip(type, getterNameTemp, this.classReflector.getGetterType(getterNameTemp))){
+                continue;
+            }
+            Class<?> getterType = this.classReflector.getGetterType(getterNameTemp);
+         
+            if (JdbcUtils.isSupportedSimpleType(getterType)) {
+                //如果为支持直接存取的类型
+            }else{
+                //如果吧为支持直接存取的字段类型
+            }
+            
+            //一旦成功解析到第一个符合的主键即跳出
+            return;
+        }
+    }
+    
+    /**
+     * 是否需要跳过对应类型<br/>
+     *<功能详细描述>
+     * @param type
+     * @param getterName
+     * @param getterType
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+   private <T> boolean isNeedSkip(Class<T> type,String getterName,Class<?> getterType){
+       if (ReflectionUtils.isHasAnnotationForGetter(type,
+               getterName,
+               Transient.class)) {
+           return true;
+       }
+       //由于simpleSqlSource不处理过于复杂的对象关联，所以存在oneToManay,ManayToManay也一并忽略
+       if (ReflectionUtils.isHasAnnotationForGetter(type,
+               getterName,
+               OneToMany.class)
+               || ReflectionUtils.isHasAnnotationForGetter(type,
+                       getterName,
+                       ManyToMany.class)) {
+           return true;
+       }
+
+       return false;
+   }
     
     /**
      * 解析生成是否为id
@@ -277,10 +336,10 @@ public class JpaMetaClass<T> {
     private String generator;
     
     /** getter名及字段信息的映射关系 */
-    private Map<String, ColumnInfo> getter2columnInfoMapping = new HashMap<String, ColumnInfo>();
+    private Map<String, JpaColumnInfo> getter2columnInfoMapping = new HashMap<String, JpaColumnInfo>();
     
-    /** getter名及对应的字段类型关系 */
-    private Map<String, Class<?>> getter2typeMapping = new HashMap<String, Class<?>>();
+    /** 数据库字段和getter之间的映射 */
+    private Map<String, String> column2getterMapping = new HashMap<String, String>();
     
     /**
      * @return 返回 type
@@ -371,5 +430,21 @@ public class JpaMetaClass<T> {
      */
     public Class<?> getGetterType(String getterName) {
         return this.classReflector.getGetterType(getterName);
+    }
+    
+    /**
+     * @return 返回 getter2columnInfoMapping
+     */
+    @SuppressWarnings("unchecked")
+    public Map<String, JpaColumnInfo> getGetter2columnInfoMapping() {
+        return MapUtils.unmodifiableMap(getter2columnInfoMapping);
+    }
+    
+    /**
+     * @return 返回 column2getterMapping
+     */
+    @SuppressWarnings("unchecked")
+    public Map<String, String> getColumn2getterMapping() {
+        return MapUtils.unmodifiableMap(column2getterMapping);
     }
 }

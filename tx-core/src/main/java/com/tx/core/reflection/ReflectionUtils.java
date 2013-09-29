@@ -10,7 +10,9 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -36,6 +38,16 @@ public class ReflectionUtils {
     private static Logger logger = LoggerFactory.getLogger(ReflectionUtils.class);
     
     /**
+     * 需要跳过的getter方法
+     *     getClass需要跳过
+     */
+    private static Map<String, Class<?>> needSkipGetterMethod = new HashMap<String, Class<?>>();
+    
+    static {
+        needSkipGetterMethod.put("getClass", Class.class);
+    }
+    
+    /**
       * 是否为getter方法
       *<功能详细描述>
       * @param method
@@ -52,6 +64,13 @@ public class ReflectionUtils {
         //如果对应方法有入参则该方法不为getter对应方法
         if (method.getParameterTypes().length > 0
                 && !Void.TYPE.equals(returnType)) {
+            return false;
+        }
+        
+        //如果为getClass则认为该方法非get方法
+        if (needSkipGetterMethod.containsKey(methodName)
+                && needSkipGetterMethod.get(methodName)
+                        .isAssignableFrom(returnType)) {
             return false;
         }
         
@@ -89,6 +108,15 @@ public class ReflectionUtils {
                 && !Void.TYPE.equals(returnType)) {
             throw new InvalidGetterMethod(
                     "方法入参不为空，或返回类型为空.paramterTypes:{};returnType:{}",
+                    new Object[] { method.getParameterTypes(), returnType });
+        }
+        
+        //如果为getClass则认为该方法非get方法
+        if (needSkipGetterMethod.containsKey(methodName)
+                && needSkipGetterMethod.get(methodName)
+                        .isAssignableFrom(returnType)) {
+            throw new InvalidGetterMethod(
+                    "getClass非get方法，it include needSkipGetterMethod.",
                     new Object[] { method.getParameterTypes(), returnType });
         }
         

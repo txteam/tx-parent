@@ -26,10 +26,10 @@ import com.tx.core.util.JdbcUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class ColumnInfo {
+public class JpaColumnInfo {
     
-    public ColumnInfo(Column columnAnno, String columnName, Class<?> javaType,
-            String propertyName, String comment) {
+    public JpaColumnInfo(Column columnAnno, String columnName,
+            Class<?> javaType, String propertyName, String comment) {
         this.javaType = javaType;
         this.propertyName = propertyName;
         this.comment = comment;

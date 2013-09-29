@@ -86,8 +86,11 @@ public class SqlSourceBuilder {
             simpleSqlSource.setPkName(pkName);
             simpleSqlSource.setTableName(tableName);
             
-            //添加属性与字段的映射关系<br/>
-            addProperty2ColumnMapping(type, simpleSqlSource);
+            //添加getter与字段的映射关系<br/>
+            addGetter2ColumnMapping(type, simpleSqlSource);
+            //添加setter与字段的映射关系<br/>
+            //addSetter2ColumnMapping(type, simpleSqlSource);
+            
             //添加可更新字段
             addUpdateAblePropertys(type, simpleSqlSource);
             //添加查询条件
@@ -111,9 +114,8 @@ public class SqlSourceBuilder {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    private <T> void addOrderBy(Class<T> type,
-            SqlSource<T> simpleSqlSource) {
-        ClassReflector classReflector = ClassReflector.forClass(type);
+    private <T> void addOrderBy(Class<T> type, SqlSource<T> simpleSqlSource) {
+        ClassReflector<T> classReflector = ClassReflector.forClass(type);
         
         Set<String> getterNames = classReflector.getGetterNames();
         for (String getterNameTemp : getterNames) {
@@ -124,7 +126,7 @@ public class SqlSourceBuilder {
                         getterNameTemp,
                         OrderBy.class);
                 
-                String orderByStr = StringUtils.isBlank(anno.value()) ? simpleSqlSource.getColumnNameByPropertyName(getterNameTemp)
+                String orderByStr = StringUtils.isBlank(anno.value()) ? simpleSqlSource.getColumnNameByGetterName(getterNameTemp)
                         : anno.value();
                 
                 simpleSqlSource.addOrder(orderByStr);
@@ -149,13 +151,13 @@ public class SqlSourceBuilder {
             simpleSqlSource.addOtherCondition(qcAnnoTemp.condition());
         }
         
-        ClassReflector classReflector = ClassReflector.forClass(type);
+        ClassReflector<T> classReflector = ClassReflector.forClass(type);
         
         Set<String> getterNames = classReflector.getGetterNames();
         for (String getterNameTemp : getterNames) {
             Class<?> getterType = classReflector.getGetterType(getterNameTemp);
             JdbcType getterJdbcType = JdbcUtils.getJdbcTypeByJavaType(getterType);
-            String columnName = simpleSqlSource.getColumnNameByPropertyName(getterNameTemp);
+            String columnName = simpleSqlSource.getColumnNameByGetterName(getterNameTemp);
             
             //如果存在queryCondition条件
             if (ReflectionUtils.isHasAnnotationForGetter(type,
@@ -164,9 +166,9 @@ public class SqlSourceBuilder {
                 QueryCondition qcAnnoTemp = ReflectionUtils.getGetterAnnotation(type,
                         getterNameTemp,
                         QueryCondition.class);
-                if(StringUtils.isBlank(qcAnnoTemp.key())){
+                if (StringUtils.isBlank(qcAnnoTemp.key())) {
                     simpleSqlSource.addOtherCondition(qcAnnoTemp.condition());
-                }else{
+                } else {
                     simpleSqlSource.addQueryConditionProperty2SqlMapping(qcAnnoTemp.key(),
                             qcAnnoTemp.condition(),
                             getterJdbcType);
@@ -174,7 +176,7 @@ public class SqlSourceBuilder {
             }
             
             //需要忽略的字段直接不进行条件解析
-            if(isNeedSkip(type, getterNameTemp, getterType)){
+            if (isNeedSkip(type, getterNameTemp, getterType)) {
                 continue;
             }
             
@@ -337,12 +339,12 @@ public class SqlSourceBuilder {
      */
     private <T> void addUpdateAblePropertys(Class<T> type,
             SqlSource<T> simpleSqlSource) {
-        ClassReflector classReflector = ClassReflector.forClass(type);
+        ClassReflector<T> classReflector = ClassReflector.forClass(type);
         
         Set<String> getterNames = classReflector.getGetterNames();
         for (String getterNameTemp : getterNames) {
             Class<?> getterType = classReflector.getGetterType(getterNameTemp);
-            if(isNeedSkip(type, getterNameTemp, getterType)){
+            if (isNeedSkip(type, getterNameTemp, getterType)) {
                 continue;
             }
             
@@ -367,7 +369,7 @@ public class SqlSourceBuilder {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    private <T> void addProperty2ColumnMapping(Class<T> type,
+    private <T> void addGetter2ColumnMapping(Class<T> type,
             SqlSource<T> simpleSqlSource) {
         ClassReflector<?> classReflector = ClassReflector.forClass(type);
         
@@ -382,7 +384,7 @@ public class SqlSourceBuilder {
             //OneToManay
             //ManayToManay
             //Trienst
-            if(isNeedSkip(type, getterNameTemp, getterType)){
+            if (isNeedSkip(type, getterNameTemp, getterType)) {
                 continue;
             }
             
@@ -400,7 +402,7 @@ public class SqlSourceBuilder {
                     }
                 }
                 //设置值后然后，解析下一个属性
-                simpleSqlSource.addProperty2columnMapping(getterNameTemp,
+                simpleSqlSource.addGetter2columnMapping(getterNameTemp,
                         columnName,
                         getterType);
                 continue;
@@ -425,7 +427,7 @@ public class SqlSourceBuilder {
                         columnName = joinColAnno.name();
                         String newGetterNameTemp = getterNames + "."
                                 + generatePkPropertyName(getterType);
-                        simpleSqlSource.addProperty2columnMapping(newGetterNameTemp,
+                        simpleSqlSource.addGetter2columnMapping(newGetterNameTemp,
                                 columnName,
                                 getterType);
                         continue;
@@ -444,7 +446,7 @@ public class SqlSourceBuilder {
                         columnName = colAnno.name();
                         String newGetterNameTemp = getterNames + "."
                                 + generatePkPropertyName(getterType);
-                        simpleSqlSource.addProperty2columnMapping(newGetterNameTemp,
+                        simpleSqlSource.addGetter2columnMapping(newGetterNameTemp,
                                 columnName,
                                 getterType);
                         continue;
@@ -454,7 +456,7 @@ public class SqlSourceBuilder {
                 //如果注解不存在
                 String newGetterNameTemp = getterNames + "."
                         + generatePkPropertyName(getterType);
-                simpleSqlSource.addProperty2columnMapping(newGetterNameTemp,
+                simpleSqlSource.addGetter2columnMapping(newGetterNameTemp,
                         columnName,
                         getterType);
                 continue;
@@ -464,6 +466,114 @@ public class SqlSourceBuilder {
                     new Object[] { getterType });
         }
     }
+    
+    //    /**
+    //     * 添加属性与字段的映射关联<br/>
+    //     *<功能详细描述>
+    //     * @param type
+    //     * @param simpleSqlSource [参数说明]
+    //     * 
+    //     * @return void [返回类型说明]
+    //     * @exception throws [异常类型] [异常说明]
+    //     * @see [类、类#方法、类#成员]
+    //    */
+    //   private <T> void addSetter2ColumnMapping(Class<T> type,
+    //           SqlSource<T> simpleSqlSource) {
+    //       ClassReflector<T> classReflector = ClassReflector.forClass(type);
+    //       
+    //       Set<String> setterNames = classReflector.getSetterNames();
+    //       for (String setterNameTemp : setterNames) {
+    //           //判断对应字段是否需要被忽略
+    //           //设置了不需要持久的注解忽略
+    //           String columnName = setterNameTemp.toUpperCase();
+    //           Class<?> setterType = classReflector.getGetterType(setterNameTemp);
+    //           
+    //           //判断对应属性是否为忽略持久属性<br/>
+    //           //OneToManay
+    //           //ManayToManay
+    //           //Trienst
+    //           if(isNeedSkip(type, setterNameTemp, setterType)){
+    //               continue;
+    //           }
+    //           
+    //           //如果为直接支持存储的字段，则开始解析
+    //           if (JdbcUtils.isSupportedSimpleType(setterType)) {
+    //               if (ReflectionUtils.isHasAnnotationForGetter(type,
+    //                       setterNameTemp,
+    //                       Column.class)) {
+    //                   Column colAnno = ReflectionUtils.getGetterAnnotation(type,
+    //                           setterNameTemp,
+    //                           Column.class);
+    //                   if (!StringUtils.isEmpty(colAnno.name())) {
+    //                       //如果存在joinColumn并指定了字段名，则在此处直接解析，然后进行下一个属性解析
+    //                       columnName = colAnno.name().toUpperCase();
+    //                   }
+    //               }
+    //               //设置值后然后，解析下一个属性
+    //               simpleSqlSource.addSetter2columnMapping(setterNameTemp,
+    //                       columnName,
+    //                       setterType);
+    //               continue;
+    //           }
+    //           
+    //           //现在提供的simpleSqlSource暂不考虑对象关联的情况，
+    //           //所以OneToOne,ManeyToOne仅考虑关联的对端的主键的情况
+    //           if (ReflectionUtils.isHasAnnotationForGetter(type,
+    //                   setterNameTemp,
+    //                   OneToOne.class)
+    //                   || ReflectionUtils.isHasAnnotationForGetter(type,
+    //                           setterNameTemp,
+    //                           ManyToOne.class)) {
+    //               if (ReflectionUtils.isHasAnnotationForGetter(type,
+    //                       setterNameTemp,
+    //                       JoinColumn.class)) {
+    //                   JoinColumn joinColAnno = ReflectionUtils.getGetterAnnotation(type,
+    //                           setterNameTemp,
+    //                           JoinColumn.class);
+    //                   if (!StringUtils.isEmpty(joinColAnno.name())) {
+    //                       //如果存在joinColumn并指定了字段名，则在此处直接解析，然后进行下一个属性解析
+    //                       columnName = joinColAnno.name();
+    //                       String newGetterNameTemp = setterNames + "."
+    //                               + generatePkPropertyName(setterType);
+    //                       simpleSqlSource.addSetter2columnMapping(newGetterNameTemp,
+    //                               columnName,
+    //                               setterType);
+    //                       continue;
+    //                   }
+    //               }
+    //               
+    //               //兼容处理，如果存在Column也认为是可以的
+    //               if (ReflectionUtils.isHasAnnotationForGetter(type,
+    //                       setterNameTemp,
+    //                       Column.class)) {
+    //                   Column colAnno = ReflectionUtils.getGetterAnnotation(type,
+    //                           setterNameTemp,
+    //                           Column.class);
+    //                   if (!StringUtils.isEmpty(colAnno.name())) {
+    //                       //如果存在joinColumn并指定了字段名，则在此处直接解析，然后进行下一个属性解析
+    //                       columnName = colAnno.name();
+    //                       String newGetterNameTemp = setterNames + "."
+    //                               + generatePkPropertyName(setterType);
+    //                       simpleSqlSource.addSetter2columnMapping(newGetterNameTemp,
+    //                               columnName,
+    //                               setterType);
+    //                       continue;
+    //                   }
+    //               }
+    //               
+    //               //如果注解不存在
+    //               String newGetterNameTemp = setterNames + "."
+    //                       + generatePkPropertyName(setterType);
+    //               simpleSqlSource.addSetter2columnMapping(newGetterNameTemp,
+    //                       columnName,
+    //                       setterType);
+    //               continue;
+    //           }
+    //           
+    //           throw new SqlSourceBuildException("setterType is not supported.",
+    //                   new Object[] { setterType });
+    //       }
+    //   }
     
     /**
       * 是否需要跳过对应类型<br/>
@@ -477,7 +587,8 @@ public class SqlSourceBuilder {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    private <T> boolean isNeedSkip(Class<T> type,String getterName,Class<?> getterType){
+    private <T> boolean isNeedSkip(Class<T> type, String getterName,
+            Class<?> getterType) {
         if (ReflectionUtils.isHasAnnotationForGetter(type,
                 getterName,
                 Transient.class)) {
@@ -492,7 +603,7 @@ public class SqlSourceBuilder {
                         ManyToMany.class)) {
             return true;
         }
-
+        
         return false;
     }
     

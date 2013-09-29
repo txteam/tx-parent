@@ -643,45 +643,45 @@ public class AuthItemRefImplService {
         //                authRefType, ArrayUtils.toString(newAuthIds) });
     }
     
-    /**
-      * 批量删除权限项的多个权限项目引用 
-      * <功能详细描述>
-      * @param authType
-      * @param authRefType
-      * @param authItemId
-      * @param needDeleteRefIds [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    private void batchDeleteAuthItemRefByRefIds(String authType,
-            String authRefType, String authItemId,
-            List<String> needDeleteRefIds, String systemId, String tableSuffix) {
-        if (CollectionUtils.isEmpty(needDeleteRefIds)) {
-            return;
-        }
-        AssertUtils.notEmpty(systemId, "systemId is empty");
-        
-        //如果存在需要删除的权限引用项
-        List<AuthItemRefImpl> authItemRefList = new ArrayList<AuthItemRefImpl>();
-        for (String refIdTemp : needDeleteRefIds) {
-            AuthItemRefImpl authItemRef = new AuthItemRefImpl();
-            authItemRef.setAuthRefType(authRefType);
-            authItemRef.setAuthItem(new AuthItemImpl(authItemId, systemId,
-                    authType));
-            
-            authItemRef.setRefId(refIdTemp);
-            authItemRefList.add(authItemRef);
-        }
-        this.authItemRefImplDao.batchDeleteAuthItemRefImpl(authItemRefList,
-                tableSuffix);
-        
-        //TODO:记录相关业务日志
-        //        serviceLogger.info(" {}于 {} 删除类型为{}的日志引用{}.", new String[] { userId,
-        //                DateFormatUtils.format(new Date(), "yyyy-MM-dd HH:mm:ss"),
-        //                authRefType, ArrayUtils.toString(newAuthIds) });
-    }
+    //    /**
+    //      * 批量删除权限项的多个权限项目引用 
+    //      * <功能详细描述>
+    //      * @param authType
+    //      * @param authRefType
+    //      * @param authItemId
+    //      * @param needDeleteRefIds [参数说明]
+    //      * 
+    //      * @return void [返回类型说明]
+    //      * @exception throws [异常类型] [异常说明]
+    //      * @see [类、类#方法、类#成员]
+    //     */
+    //    private void batchDeleteAuthItemRefByRefIds(String authType,
+    //            String authRefType, String authItemId,
+    //            List<String> needDeleteRefIds, String systemId, String tableSuffix) {
+    //        if (CollectionUtils.isEmpty(needDeleteRefIds)) {
+    //            return;
+    //        }
+    //        AssertUtils.notEmpty(systemId, "systemId is empty");
+    //        
+    //        //如果存在需要删除的权限引用项
+    //        List<AuthItemRefImpl> authItemRefList = new ArrayList<AuthItemRefImpl>();
+    //        for (String refIdTemp : needDeleteRefIds) {
+    //            AuthItemRefImpl authItemRef = new AuthItemRefImpl();
+    //            authItemRef.setAuthRefType(authRefType);
+    //            authItemRef.setAuthItem(new AuthItemImpl(authItemId, systemId,
+    //                    authType));
+    //            
+    //            authItemRef.setRefId(refIdTemp);
+    //            authItemRefList.add(authItemRef);
+    //        }
+    //        this.authItemRefImplDao.batchDeleteAuthItemRefImpl(authItemRefList,
+    //                tableSuffix);
+    //        
+    //        //TODO:记录相关业务日志
+    //        //        serviceLogger.info(" {}于 {} 删除类型为{}的日志引用{}.", new String[] { userId,
+    //        //                DateFormatUtils.format(new Date(), "yyyy-MM-dd HH:mm:ss"),
+    //        //                authRefType, ArrayUtils.toString(newAuthIds) });
+    //    }
     
     /**
      * 批量添加对权限引用的权限

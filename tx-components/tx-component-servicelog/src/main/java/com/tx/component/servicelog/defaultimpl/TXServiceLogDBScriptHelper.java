@@ -7,7 +7,7 @@
 package com.tx.component.servicelog.defaultimpl;
 
 import com.tx.core.dbscript.model.DataSourceTypeEnum;
-import com.tx.core.mybatis.generator.JpaEntityFreeMarkerGenerator;
+import com.tx.core.generator.JpaEntityFreeMarkerGenerator;
 
 /**
  * 业务日志数据脚本生成辅助器<br/>

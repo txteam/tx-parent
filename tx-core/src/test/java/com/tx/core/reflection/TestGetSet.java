@@ -6,6 +6,8 @@
  */
 package com.tx.core.reflection;
 
+import org.apache.ibatis.reflection.MetaClass;
+
 
  /**
   * <功能简述>
@@ -211,16 +213,18 @@ public class TestGetSet {
     }
     
     public static void main(String[] args) {
-        ClassReflector<TestGetSet> classReflector = ClassReflector.forClass(TestGetSet.class);
+        //ClassReflector<TestGetSet> classReflector = ClassReflector.forClass(TestGetSet.class);
         
         System.out.println("\n.......getterNames:........");
-        for(String getterName : classReflector.getGetterNames()){
+        for(String getterName : MetaClass.forClass(TestGetSet.class).getGetterNames()){
             System.out.println(getterName);
         }
         
+        /*
         System.out.println("\n.......setterNames:........");
         for(String setterName : classReflector.getSetterNames()){
             System.out.println(setterName);
         }
+        */
     }
 }

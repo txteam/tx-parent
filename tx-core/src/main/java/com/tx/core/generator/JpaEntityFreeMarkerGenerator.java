@@ -38,7 +38,7 @@ import com.tx.core.generator.model.SqlMapColumn;
 import com.tx.core.generator.model.SqlMapMapper;
 import com.tx.core.generator.model.UpdateMapper;
 import com.tx.core.reflection.JpaMetaClass;
-import com.tx.core.reflection.model.ColumnInfo;
+import com.tx.core.reflection.model.JpaColumnInfo;
 import com.tx.core.util.FreeMarkerUtils;
 
 /**
@@ -190,9 +190,9 @@ public class JpaEntityFreeMarkerGenerator {
                 .get(jpaMetaClass.getPkGetterName())
                 .getName()
                 .toUpperCase());
-        for (Entry<String, ColumnInfo> entryTemp : jpaMetaClass.getColumnInfoMapping()
+        for (Entry<String, JpaColumnInfo> entryTemp : jpaMetaClass.getColumnInfoMapping()
                 .entrySet()) {
-            ColumnInfo columnInfo = entryTemp.getValue();
+            JpaColumnInfo columnInfo = entryTemp.getValue();
             dbScriptMapper.getColumnName2TypeNameMapping()
                     .put(columnInfo.getName(),
                             dialect.getTypeName(columnInfo.getJdbcType(),
@@ -229,9 +229,9 @@ public class JpaEntityFreeMarkerGenerator {
                 .get(jpaMetaClass.getPkGetterName())
                 .getName()
                 .toUpperCase());
-        for (Entry<String, ColumnInfo> entryTemp : jpaMetaClass.getColumnInfoMapping()
+        for (Entry<String, JpaColumnInfo> entryTemp : jpaMetaClass.getColumnInfoMapping()
                 .entrySet()) {
-            ColumnInfo columnInfo = entryTemp.getValue();
+            JpaColumnInfo columnInfo = entryTemp.getValue();
             dbScriptMapper.getColumnName2TypeNameMapping()
                     .put(columnInfo.getName(),
                             dialect.getTypeName(columnInfo.getJdbcType(),
