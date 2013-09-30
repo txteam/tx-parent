@@ -15,6 +15,7 @@ import javax.persistence.Column;
 import org.apache.commons.lang3.StringUtils;
 
 import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.reflection.ClassReflector;
 import com.tx.core.util.JdbcUtils;
 
 /**
@@ -28,15 +29,22 @@ import com.tx.core.util.JdbcUtils;
  */
 public class JpaColumnInfo {
     
-    public JpaColumnInfo(Column columnAnno, String columnName,
-            Class<?> javaType, String propertyName, String comment) {
-        this.javaType = javaType;
-        this.propertyName = propertyName;
-        this.comment = comment;
-        this.name = columnName;
-        this.length = 0;//createColumnLength(propertyName);
+    public <TYPE> JpaColumnInfo(String getterName, Class<?> getterType,
+            Class<TYPE> type) {
+        ClassReflector<TYPE> classReflector = ClassReflector.forClass(type);
+        this.getterName = getterName;
+        this.getterType = getterType;
+        this.columnName = getterName.toUpperCase();
+
+        //defaultValue
+        this.length = 255;
         this.precision = 0;
         this.scale = 0;
+        
+        if(JdbcUtils.isSupportedSimpleType(this.getterType)){
+            
+        }
+        
         if (javaType.isEnum()) {
             this.jdbcType = Types.VARCHAR;
             this.length = 64;
@@ -111,198 +119,211 @@ public class JpaColumnInfo {
         }
     }
     
-    /**
-     * 字段对应java类型
+    /** 
+     * 是否为简单类型
+     * JdbcUtils.isSupportedSimpleType
+     * 如果为简单类型，则可由typeHandle处理对应类型的增删查改
      */
-    private Class<?> javaType;
+    private boolean simpleType;
     
-    /**
-     * 属性名
-     */
-    private String propertyName;
+    /** 字段名 */
+    private String getterName;
     
-    /**
-     * 字段名
-     */
-    private String name;
+    /** 字段对应java类型 */
+    private Class<?> getterType;
     
-    /**
-     * 是否是唯一键
-     */
+    /** 真正的getter名，可以为xxx.xxx的形式，通过column注解根据类型获取 */
+    private String realGetterName;
+    
+    /** 真正的getter类型 */
+    private String realGetterType;
+    
+    /** 对应数据库字段名 */
+    private String columnName;
+    
+    /** 字段对应注解 */
+    private String columnComment;
+    
+    /** 是否是唯一键 */
     private boolean unique;
     
-    /**
-      * 是否可为空
-     */
+    /** 是否可为空 */
     private boolean nullable;
     
-    /**
-     * 字段注释部分
-     */
-    private String comment;
-    
-    /**
-     * 数据库类型
-     */
-    private int jdbcType;
-    
-    /**
-     * (Optional) The column length. (Applies only if a
-     * string-valued column is used.)
-     */
+    /** column length */
     private int length = 255;
     
-    /**
-     * (Optional) The precision for a decimal (exact numeric)
-     * column. (Applies only if a decimal column is used.)
-     * Value must be set by developer if used when generating
-     * the DDL for the column.
-     */
+    /** The precision for a decimal */
     private int precision = 0;
     
-    /**
-     * (Optional) The scale for a decimal (exact numeric) column.
-     * (Applies only if a decimal column is used.)
-     */
+    /** The scale for a decimal (exact numeric) column */
     private int scale = 0;
-    
+
+    /**
+     * @return 返回 simpleType
+     */
+    public boolean isSimpleType() {
+        return simpleType;
+    }
+
+    /**
+     * @param 对simpleType进行赋值
+     */
+    public void setSimpleType(boolean simpleType) {
+        this.simpleType = simpleType;
+    }
+
+    /**
+     * @return 返回 getterName
+     */
+    public String getGetterName() {
+        return getterName;
+    }
+
+    /**
+     * @param 对getterName进行赋值
+     */
+    public void setGetterName(String getterName) {
+        this.getterName = getterName;
+    }
+
+    /**
+     * @return 返回 getterType
+     */
+    public Class<?> getGetterType() {
+        return getterType;
+    }
+
+    /**
+     * @param 对getterType进行赋值
+     */
+    public void setGetterType(Class<?> getterType) {
+        this.getterType = getterType;
+    }
+
+    /**
+     * @return 返回 realGetterName
+     */
+    public String getRealGetterName() {
+        return realGetterName;
+    }
+
+    /**
+     * @param 对realGetterName进行赋值
+     */
+    public void setRealGetterName(String realGetterName) {
+        this.realGetterName = realGetterName;
+    }
+
+    /**
+     * @return 返回 realGetterType
+     */
+    public String getRealGetterType() {
+        return realGetterType;
+    }
+
+    /**
+     * @param 对realGetterType进行赋值
+     */
+    public void setRealGetterType(String realGetterType) {
+        this.realGetterType = realGetterType;
+    }
+
+    /**
+     * @return 返回 columnName
+     */
+    public String getColumnName() {
+        return columnName;
+    }
+
+    /**
+     * @param 对columnName进行赋值
+     */
+    public void setColumnName(String columnName) {
+        this.columnName = columnName;
+    }
+
+    /**
+     * @return 返回 columnComment
+     */
+    public String getColumnComment() {
+        return columnComment;
+    }
+
+    /**
+     * @param 对columnComment进行赋值
+     */
+    public void setColumnComment(String columnComment) {
+        this.columnComment = columnComment;
+    }
+
     /**
      * @return 返回 unique
      */
     public boolean isUnique() {
         return unique;
     }
-    
+
     /**
      * @param 对unique进行赋值
      */
     public void setUnique(boolean unique) {
         this.unique = unique;
     }
-    
+
     /**
      * @return 返回 nullable
      */
     public boolean isNullable() {
         return nullable;
     }
-    
+
     /**
      * @param 对nullable进行赋值
      */
     public void setNullable(boolean nullable) {
         this.nullable = nullable;
     }
-    
-    /**
-     * @return 返回 comment
-     */
-    public String getComment() {
-        return comment;
-    }
-    
-    /**
-     * @param 对comment进行赋值
-     */
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
-    
-    /**
-     * @return 返回 javaType
-     */
-    public Class<?> getJavaType() {
-        return javaType;
-    }
-    
-    /**
-     * @param 对javaType进行赋值
-     */
-    public void setJavaType(Class<?> javaType) {
-        this.javaType = javaType;
-    }
-    
-    /**
-     * @return 返回 jdbcType
-     */
-    public int getJdbcType() {
-        return jdbcType;
-    }
-    
-    /**
-     * @param 对jdbcType进行赋值
-     */
-    public void setJdbcType(int jdbcType) {
-        this.jdbcType = jdbcType;
-    }
-    
+
     /**
      * @return 返回 length
      */
     public int getLength() {
         return length;
     }
-    
+
     /**
      * @param 对length进行赋值
      */
     public void setLength(int length) {
         this.length = length;
     }
-    
+
     /**
      * @return 返回 precision
      */
     public int getPrecision() {
         return precision;
     }
-    
+
     /**
      * @param 对precision进行赋值
      */
     public void setPrecision(int precision) {
         this.precision = precision;
     }
-    
+
     /**
      * @return 返回 scale
      */
     public int getScale() {
         return scale;
     }
-    
+
     /**
      * @param 对scale进行赋值
      */
     public void setScale(int scale) {
         this.scale = scale;
-    }
-    
-    /**
-     * @return 返回 propertyName
-     */
-    public String getPropertyName() {
-        return propertyName;
-    }
-    
-    /**
-     * @param 对propertyName进行赋值
-     */
-    public void setPropertyName(String propertyName) {
-        this.propertyName = propertyName;
-    }
-    
-    /**
-     * @return 返回 name
-     */
-    public String getName() {
-        return name;
-    }
-    
-    /**
-     * @param 对name进行赋值
-     */
-    public void setName(String name) {
-        this.name = name;
     }
 }

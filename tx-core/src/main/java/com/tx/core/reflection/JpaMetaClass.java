@@ -154,7 +154,9 @@ public class JpaMetaClass<T> {
    }
     
     /**
-     * 解析生成是否为id
+     * 解析主键
+     *     主键对应getter应当存在setter:在该类中设定。
+     *     如果不存在则抛出异常
      * <功能详细描述>
      * @param propertyName
      * @param getterMethod [参数说明]
@@ -339,7 +341,7 @@ public class JpaMetaClass<T> {
     private Map<String, JpaColumnInfo> getter2columnInfoMapping = new HashMap<String, JpaColumnInfo>();
     
     /** 数据库字段和getter之间的映射 */
-    private Map<String, String> column2getterMapping = new HashMap<String, String>();
+    private Map<String, String> column2realGetterMapping = new HashMap<String, String>();
     
     /**
      * @return 返回 type
@@ -445,6 +447,6 @@ public class JpaMetaClass<T> {
      */
     @SuppressWarnings("unchecked")
     public Map<String, String> getColumn2getterMapping() {
-        return MapUtils.unmodifiableMap(column2getterMapping);
+        return MapUtils.unmodifiableMap(column2realGetterMapping);
     }
 }
