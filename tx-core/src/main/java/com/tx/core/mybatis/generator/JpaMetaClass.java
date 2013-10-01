@@ -34,7 +34,6 @@ import org.apache.ibatis.reflection.MetaClass;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.StringUtils;
 
-import com.tx.core.reflection.model.JpaColumnInfo;
 
 /**
  * jpa实体解析结果类
@@ -150,7 +149,7 @@ public class JpaMetaClass {
             this.columnNameMapping.put(propertyName, columnAnn.name());
             this.columnAnnoMapping.put(propertyName, columnAnn);
             
-            this.columnInfoMapping.put(propertyName, new JpaColumnInfo(columnAnn,
+            this.columnInfoMapping.put(propertyName, new ColumnInfo(columnAnn,
                     columnAnn.name(), getterField.getType(), propertyName,
                     ""));
         } else if (getterMethod.isAnnotationPresent(JoinColumn.class)
@@ -162,13 +161,13 @@ public class JpaMetaClass {
             this.columnNameMapping.put(propertyName, columnAnn.name());
             this.joinColumnAnnoMapping.put(propertyName, columnAnn);
             
-            this.columnInfoMapping.put(propertyName, new JpaColumnInfo(null,
+            this.columnInfoMapping.put(propertyName, new ColumnInfo(null,
                     columnAnn.name(), getterField.getType(), propertyName,
                     ""));
         } else {
             this.columnNameMapping.put(propertyName, propertyName);
             
-            this.columnInfoMapping.put(propertyName, new JpaColumnInfo(null,
+            this.columnInfoMapping.put(propertyName, new ColumnInfo(null,
                     propertyName, getterField.getType(), propertyName,
                     ""));
         }
@@ -312,7 +311,7 @@ public class JpaMetaClass {
      */
     private Map<String, String> columnNameMapping = new HashMap<String, String>();
     
-    private Map<String, JpaColumnInfo> columnInfoMapping = new HashMap<String, JpaColumnInfo>();
+    private Map<String, ColumnInfo> columnInfoMapping = new HashMap<String, ColumnInfo>();
     
     private Map<String, Column> columnAnnoMapping = new HashMap<String, Column>();
     
@@ -576,14 +575,14 @@ public class JpaMetaClass {
     /**
      * @return 返回 columnInfoMapping
      */
-    public Map<String, JpaColumnInfo> getColumnInfoMapping() {
+    public Map<String, ColumnInfo> getColumnInfoMapping() {
         return columnInfoMapping;
     }
     
     /**
      * @param 对columnInfoMapping进行赋值
      */
-    public void setColumnInfoMapping(Map<String, JpaColumnInfo> columnInfoMapping) {
+    public void setColumnInfoMapping(Map<String, ColumnInfo> columnInfoMapping) {
         this.columnInfoMapping = columnInfoMapping;
     }
 }

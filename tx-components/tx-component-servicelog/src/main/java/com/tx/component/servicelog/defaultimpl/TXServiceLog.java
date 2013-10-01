@@ -126,6 +126,17 @@ public interface TXServiceLog {
     public Date getCreateDate();
     
     /**
+      * 设置业务日志记录时间<br/>
+      *<功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return Date [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public void setCreateDate(Date createDate);
+    
+    /**
       * 业务日志记录信息<br/> 
       *<功能详细描述>
       * @return [参数说明]

@@ -2,13 +2,13 @@
 -- 表：MAINFRAME_LOGIN_LOG
 --****************************************************************************
 create table MAINFRAME_LOGIN_LOG(
-	id varchar2(64 char),
-	message varchar2(255 char),
-	operatorId varchar2(64 char),
-	vcid varchar2(64 char),
-	organizationId varchar2(64 char),
-	type varchar2(255 char),
-	createDate timestamp,
-	clientIpAddress varchar2(255 char),
+	CLIENTIPADDRESS varchar2(255 char),
+	ORGANIZATIONID varchar2(64 char),
+	MESSAGE varchar2(255 char),
+	CREATEDATE timestamp,
+	VCID varchar2(64 char),
+	ID varchar2(64 char),
+	OPERATORID varchar2(64 char),
+	TYPE varchar2(255 char),
 	primary key(ID)
 );

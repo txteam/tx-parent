@@ -11,8 +11,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.time.DateUtils;
-import org.apache.ibatis.reflection.MetaClass;
-import org.apache.ibatis.reflection.MetaObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -22,9 +20,7 @@ import com.tx.component.servicelog.context.ServiceLoggerContext;
 import com.tx.component.servicelog.defaultimpl.TXServiceLogDBScriptHelper;
 import com.tx.component.servicelog.testmodel.LoginLog;
 import com.tx.core.dbscript.model.DataSourceTypeEnum;
-import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.paged.model.PagedList;
-import com.tx.core.reflection.ReflectionUtils;
 
 /**
  * <功能简述>

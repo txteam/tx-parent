@@ -6,6 +6,7 @@
  */
 package com.tx.component.servicelog.defaultimpl;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -186,6 +187,8 @@ public class TXServiceLoggerBuilder extends BaseServiceLoggerBuilder {
                 logInstance.setOperatorId((String) context.getAttribute("operatorId"));
                 logInstance.setOrganizationId((String) context.getAttribute("organizationId"));
                 logInstance.setVcid((String) context.getAttribute("vcid"));
+                logInstance.setCreateDate(new Date());
+                
                 return logInstance;
             }
         };

@@ -35,7 +35,6 @@ import com.tx.core.generator.model.ServiceGeneratorModel;
 import com.tx.core.generator.model.SqlMapColumn;
 import com.tx.core.generator.model.SqlMapMapper;
 import com.tx.core.generator.model.UpdateMapper;
-import com.tx.core.reflection.model.JpaColumnInfo;
 import com.tx.core.util.FreeMarkerUtils;
 
 /**
@@ -218,9 +217,9 @@ public class JpaEntityFreeMarkerGenerator {
                 .get(jpaMetaClass.getIdPropertyName())
                 .getName()
                 .toUpperCase());
-        for (Entry<String, JpaColumnInfo> entryTemp : jpaMetaClass.getColumnInfoMapping()
+        for (Entry<String, ColumnInfo> entryTemp : jpaMetaClass.getColumnInfoMapping()
                 .entrySet()) {
-            JpaColumnInfo columnInfo = entryTemp.getValue();
+            ColumnInfo columnInfo = entryTemp.getValue();
             dbScriptMapper.getColumnName2TypeNameMapping()
                     .put(columnInfo.getName(),
                             dialect.getTypeName(columnInfo.getJdbcType(),
@@ -554,7 +553,6 @@ public class JpaEntityFreeMarkerGenerator {
             if (idPropertyName.equals(getterName)) {
                 columnTemp.setId(true);
             }
-            columnTemp.setGetterMethod(methodMap.get(getterName));
             
             columnTemp.setGetterMethodSimpleName(org.springframework.util.StringUtils.unqualify(methodMap.get(getterName)
                     .getName()));

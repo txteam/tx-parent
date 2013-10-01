@@ -10,7 +10,7 @@ create table ${dbScriptMapper.tableName}(
 --create index idx_xxxx_xxxx on ${dbScriptMapper.tableName}(xxxx);
 --create unique index idx_xxxx_xxxx on ${dbScriptMapper.tableName}(xxxx);
 
---comment on table ${dbScriptMapper.tableName} is 'demo信息表';
+--comment on table ${dbScriptMapper.tableName} is '${dbScriptMapper.tableName}信息表';
 <#list dbScriptMapper.columnName2TypeNameMapping?keys as entryKey>
 --comment on column ${dbScriptMapper.tableName}.${entryKey} is 'xxxx';
 </#list>

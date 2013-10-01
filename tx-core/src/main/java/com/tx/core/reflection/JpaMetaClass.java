@@ -11,20 +11,25 @@ import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.reflection.exception.JpaMetaClassNewInstanceException;
-import com.tx.core.reflection.model.JpaColumnInfo;
 import com.tx.core.util.JdbcUtils;
 
 /**
@@ -98,27 +103,239 @@ public class JpaMetaClass<T> {
         
         //解析实体对象，获取类名，对应数据库表名等信息
         parseEntity();
+        //解析所有的getter
+        parseGetters();
         //解析pk主键
-        parsePKGetter();
+        parsePK();
     }
     
-    private void parseGetter(){
+    /**
+     * 私有
+     */
+    private JpaMetaClass(Class<T> type) {
+        AssertUtils.notNull(type, "type is null");
+        
+        //解析类型
+        this.type = type;
+        this.classReflector = ClassReflector.forClass(type);
+        
+        //解析实体对象，获取类名，对应数据库表名等信息
+        parseEntity();
+        //解析pk主键
+        parsePK();
+    }
+    
+    /**
+      * 解析jap对象的getter形成getter到column的映射关系(realGetter与getter区别需要明明确)
+      *<功能详细描述> [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    private void parseGetters() {
         //解析所有的getterNames
         for (String getterNameTemp : this.classReflector.getGetterNames()) {
             //是否需要忽略对应字段
-            if (isNeedSkip(type, getterNameTemp, this.classReflector.getGetterType(getterNameTemp))){
+            if (isNeedSkip(type,
+                    getterNameTemp,
+                    this.classReflector.getGetterType(getterNameTemp))) {
                 continue;
             }
+            
             Class<?> getterType = this.classReflector.getGetterType(getterNameTemp);
-         
-            if (JdbcUtils.isSupportedSimpleType(getterType)) {
-                //如果为支持直接存取的类型
-            }else{
-                //如果吧为支持直接存取的字段类型
+            JpaColumnInfo jpaColumnInfo = parseGetter(getterNameTemp,
+                    getterType,
+                    type,
+                    this.classReflector);
+            
+            //将解析结果压入
+            this.column2realGetterMapping.put(jpaColumnInfo.getColumnName()
+                    .toUpperCase(), jpaColumnInfo.getRealGetterName());
+            this.getter2columnInfoMapping.put(getterNameTemp, jpaColumnInfo);
+        }
+    }
+    
+    /**
+      * 解析getter
+      *<功能详细描述>
+      * @param getterName
+      * @param getterType
+      * @param type
+      * @param classReflector
+      * @return [参数说明]
+      * 
+      * @return JpaColumnInfo [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    private JpaColumnInfo parseGetter(String getterName, Class<?> getterType,
+            Class<T> type, ClassReflector<T> classReflector) {
+        //解析所有的getterNames
+        JpaColumnInfo jpaColumnInfo = new JpaColumnInfo();
+        
+        //jpa对象默认属性设置
+        jpaColumnInfo.setGetterName(getterName);
+        jpaColumnInfo.setGetterType(getterType);
+        jpaColumnInfo.setColumnName(getterName.toUpperCase());
+        jpaColumnInfo.setColumnComment("");
+        jpaColumnInfo.setNullable(true);
+        jpaColumnInfo.setUnique(false);
+        jpaColumnInfo.setRealGetterName(getterName);
+        jpaColumnInfo.setRealGetterType(getterType);
+        //设置对应数据库字段类型长度等几个
+        jpaColumnInfo.setLength(255);
+        jpaColumnInfo.setPrecision(0);
+        jpaColumnInfo.setScale(0);
+        
+        //根据是否为简单类型
+        if (JdbcUtils.isSupportedSimpleType(getterType)) {
+            jpaColumnInfo.setSimpleType(true);
+        } else {
+            jpaColumnInfo.setSimpleType(false);
+        }
+        
+        //是否存在Column注解
+        if (ReflectionUtils.isHasAnnotationForGetter(type,
+                getterName,
+                ManyToOne.class)
+                || ReflectionUtils.isHasAnnotationForGetter(type,
+                        getterName,
+                        OneToOne.class)
+                || !JdbcUtils.isSupportedSimpleType(getterType)) {
+            //关联字段默认长度为64，如果注解中写了则进行覆盖
+            jpaColumnInfo.setLength(64);
+            
+            //断言为非简单类型
+            if (!JdbcUtils.isSupportedSimpleType(getterType)) {
+                //关联字段的类型解析结果
+                //为了避免无限循环调用，这里使用了一个内置的特殊方法，不会用到缓存
+                @SuppressWarnings({ "unchecked", "rawtypes" })
+                JpaMetaClass<?> getterTypeJpaMetaClass = new JpaMetaClass(
+                        getterType);
+                //由于在解析过程中已经限定了主键字段仅支持简单类型的字段，所以这里可以简单的就这样进行限制和设定
+                jpaColumnInfo.setRealGetterName(getterName + "."
+                        + getterTypeJpaMetaClass.getPkGetterName());
+                jpaColumnInfo.setRealGetterType(getterTypeJpaMetaClass.getPkGetterType());
+                
+                jpaColumnInfo.setForeignKeyGetterName(getterTypeJpaMetaClass.getPkGetterName());
+                jpaColumnInfo.setForeignKeyGetterType(getterTypeJpaMetaClass.getPkGetterType());
             }
             
-            //一旦成功解析到第一个符合的主键即跳出
-            return;
+            //这里为了兼容处理不作注解的严格兼容行判断，允许存在Column的情况
+            //AssertUtils.isTrue(!JdbcUtils.isSupportedSimpleType(getterType),
+            //new JpaMetaClassNewInstanceException(
+            //"存在ManayToOne,OneToOne注解的字段不应该存在注解@Column应该为JoinColumn.type:{},getterName:{},getterType:{}",
+            //new Object[] { type, getterName, getterType }));
+            //存在Column注解并且为简单类型时
+            if(ReflectionUtils.isHasAnnotationForGetter(type,
+                    getterName,
+                    Column.class)){
+                processWhenColumnAnnotationExist(getterName, type, jpaColumnInfo);
+            }
+            
+            //当JoinColumn存在时
+            if(ReflectionUtils.isHasAnnotationForGetter(type,
+                    getterName,
+                    JoinColumn.class)){
+                processWhenColumnAnnotationExist(getterName, type, jpaColumnInfo);
+            }
+            processWhenJoinColumnExist(getterName, type, jpaColumnInfo);
+            
+        } else {
+            //非关联字段简单类型默认长度为64，如果注解中写了则进行覆盖
+            jpaColumnInfo.setLength(createColumnLength(getterName));
+            
+            //JdbcUtils.isSupportedSimpleType(type)
+            //为简单类型且不存在OneToOne ManyToOne时的解析方案
+            //当JoinColumn存在时
+            if(ReflectionUtils.isHasAnnotationForGetter(type,
+                    getterName,
+                    Column.class)){
+                processWhenColumnAnnotationExist(getterName, type, jpaColumnInfo);
+            }
+        }
+        
+        return jpaColumnInfo;
+    }
+    
+    /** 
+     * 当存在JoinColumn注解时
+     *<功能详细描述>
+     * @param getterName
+     * @param type
+     * @param jpaColumnInfo [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    private void processWhenJoinColumnExist(String getterName, Class<T> type,
+            JpaColumnInfo jpaColumnInfo) {
+        JoinColumn joinColumnAnno = ReflectionUtils.getGetterAnnotation(type,
+                getterName,
+                JoinColumn.class);
+        
+        if (!StringUtils.isEmpty(joinColumnAnno.columnDefinition())) {
+            jpaColumnInfo.setColumnComment(joinColumnAnno.columnDefinition());
+        }
+        if (!StringUtils.isEmpty(joinColumnAnno.name())) {
+            jpaColumnInfo.setColumnName(joinColumnAnno.name().toUpperCase());
+        }
+    }
+    
+    /** 
+     * 当存在Colume注解时的解析办法<br/>
+     *<功能详细描述>
+     * @param getterName
+     * @param type
+     * @param jpaColumnInfo [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    private void processWhenColumnAnnotationExist(String getterName,
+            Class<T> type, JpaColumnInfo jpaColumnInfo) {
+        Column columnAnno = ReflectionUtils.getGetterAnnotation(type,
+                getterName,
+                Column.class);
+        
+        if (!StringUtils.isEmpty(columnAnno.columnDefinition())) {
+            jpaColumnInfo.setColumnComment(columnAnno.columnDefinition());
+        }
+        if (!StringUtils.isEmpty(columnAnno.name())) {
+            jpaColumnInfo.setColumnName(columnAnno.name().toUpperCase());
+        }
+        if (columnAnno.length() != 255) {
+            jpaColumnInfo.setLength(columnAnno.length());
+        }
+        jpaColumnInfo.setPrecision(columnAnno.precision());
+        jpaColumnInfo.setScale(columnAnno.scale());
+    }
+    
+    /**
+      * 字段长度默认生成器<br/>
+      *<功能详细描述>
+      * @param propertyName
+      * @return [参数说明]
+      * 
+      * @return int [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    private int createColumnLength(String getterName) {
+        if (StringUtils.endsWithIgnoreCase(getterName, "id")) {
+            return 64;
+        } else if (StringUtils.endsWithIgnoreCase(getterName, "desc")
+                || StringUtils.endsWithIgnoreCase(getterName, "description")
+                || StringUtils.endsWithIgnoreCase(getterName, "remark")) {
+            return 2000;
+        } else if (StringUtils.endsWithIgnoreCase(getterName, "name")
+                || StringUtils.endsWithIgnoreCase(getterName, "code")) {
+            return 64;
+        } else {
+            return 255;
         }
     }
     
@@ -134,24 +351,40 @@ public class JpaMetaClass<T> {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-   private <T> boolean isNeedSkip(Class<T> type,String getterName,Class<?> getterType){
-       if (ReflectionUtils.isHasAnnotationForGetter(type,
-               getterName,
-               Transient.class)) {
-           return true;
-       }
-       //由于simpleSqlSource不处理过于复杂的对象关联，所以存在oneToManay,ManayToManay也一并忽略
-       if (ReflectionUtils.isHasAnnotationForGetter(type,
-               getterName,
-               OneToMany.class)
-               || ReflectionUtils.isHasAnnotationForGetter(type,
-                       getterName,
-                       ManyToMany.class)) {
-           return true;
-       }
-
-       return false;
-   }
+    private boolean isNeedSkip(Class<T> type, String getterName,
+            Class<?> getterType) {
+        if (ReflectionUtils.isHasAnnotationForGetter(type,
+                getterName,
+                Transient.class)) {
+            return true;
+        }
+        //由于simpleSqlSource不处理过于复杂的对象关联，所以存在oneToManay,ManayToManay也一并忽略
+        if (ReflectionUtils.isHasAnnotationForGetter(type,
+                getterName,
+                OneToMany.class)
+                || ReflectionUtils.isHasAnnotationForGetter(type,
+                        getterName,
+                        ManyToMany.class)) {
+            return true;
+        }
+        
+        //由于simpleSqlSource不处理过于复杂的对象关联，所以存在oneToManay,ManayToManay也一并忽略
+        if ((ReflectionUtils.isHasAnnotationForGetter(type,
+                getterName,
+                OneToMany.class) || ReflectionUtils.isHasAnnotationForGetter(type,
+                getterName,
+                ManyToMany.class))
+                && ReflectionUtils.isHasAnnotationForGetter(getterType,
+                        getterName,
+                        PrimaryKeyJoinColumn.class)) {
+            return true;
+        }
+        
+        //在存在ManyToOne或OneToOne同时又存在PrimaryKeyJoinColumn
+        //认为是比较特殊的情况不进行解析
+        
+        return false;
+    }
     
     /**
      * 解析主键
@@ -165,7 +398,7 @@ public class JpaMetaClass<T> {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    private void parsePKGetter() {
+    private void parsePK() {
         //解析所有的getterNames
         for (String getterNameTemp : this.classReflector.getGetterNames()) {
             if (!ReflectionUtils.isHasAnnotationForGetter(type,
@@ -393,6 +626,13 @@ public class JpaMetaClass<T> {
     }
     
     /**
+     * @return 返回 pkGetterType
+     */
+    public Class<?> getPkGetterType() {
+        return pkGetterType;
+    }
+    
+    /**
      * @return 返回 generationType
      */
     public GenerationType getGenerationType() {
@@ -449,4 +689,5 @@ public class JpaMetaClass<T> {
     public Map<String, String> getColumn2getterMapping() {
         return MapUtils.unmodifiableMap(column2realGetterMapping);
     }
+    
 }

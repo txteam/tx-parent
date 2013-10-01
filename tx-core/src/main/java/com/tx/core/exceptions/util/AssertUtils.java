@@ -47,7 +47,7 @@ public class AssertUtils {
     */
     public static void isTrue(boolean flag, SILException exception) {
         //不为空
-        if (flag) {
+        if (!flag) {
             throw exception;
         }
     }

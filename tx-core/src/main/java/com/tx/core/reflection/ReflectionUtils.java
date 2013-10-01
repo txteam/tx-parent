@@ -238,6 +238,33 @@ public class ReflectionUtils {
     }
     
     /**
+     * 根据字段名推论得出字段对应的get方法<br/>
+     *<功能详细描述>
+     * @param fieldName
+     * @param type [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    public static String getGetMethodNameByGetterNameAndType(String getterName,
+            Class<?> getterType) {
+        String methodName = null;
+        if (boolean.class.isAssignableFrom(getterType)) {
+            //利用length>2排除掉fieldName = is的情况，如果为is对应方法isIs setIs
+            if (getterName.length() > 2 && getterName.startsWith("is")
+                    && Character.isUpperCase(getterName.charAt(3))) {
+                methodName = getterName;
+            } else {
+                methodName = "is" + StringUtils.capitalize(getterName);
+            }
+        } else {
+            methodName = "get" + StringUtils.capitalize(getterName);
+        }
+        return methodName;
+    }
+    
+    /**
       * 根据字段名获得对应的set方法<br/>
       *<功能详细描述>
       * @param fieldName
