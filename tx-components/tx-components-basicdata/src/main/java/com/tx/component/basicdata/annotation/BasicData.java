@@ -12,7 +12,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import com.tx.component.basicdata.executor.BasicDataExecutor;
-import com.tx.component.basicdata.executor.DefaultBasicDataExecutor;
+import com.tx.component.basicdata.executor.SqlSourceBasicDataExecutor;
 
 /**
  * 基础数据模型<br/>
@@ -36,7 +36,7 @@ public @interface BasicData {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public String module();
+    public String module() default "";
     
     /**
       * 基础数据类型别名<br/>
@@ -47,7 +47,19 @@ public @interface BasicData {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public String name();
+    public String name() default "";
+    
+    /**
+      * 获取到基础数据的唯一关键字 
+      * 如果不指定则为类的entityName(含包名)
+      *<功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return String [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public String key() default "";
     
     /**
       * 对象是否需要缓存<br/>
@@ -71,5 +83,5 @@ public @interface BasicData {
       * @see [类、类#方法、类#成员]
      */
     @SuppressWarnings("rawtypes")
-    public Class<? extends BasicDataExecutor> executor() default DefaultBasicDataExecutor.class;
+    public Class<? extends BasicDataExecutor> executor() default SqlSourceBasicDataExecutor.class;
 }

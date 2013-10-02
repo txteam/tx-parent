@@ -523,15 +523,16 @@ public class JpaEntityFreeMarkerGenerator {
                 .entrySet()) {
             String getterName = entryTemp.getKey();
             JpaColumnInfo jpaColumnInfo = entryTemp.getValue();
+            
             SqlMapColumn columnTemp = null;
             if (jpaColumnInfo.isSimpleType()) {
                 columnTemp = new SqlMapColumn(true,
-                        jpaColumnInfo.getRealGetterName(),
+                        jpaColumnInfo.getGetterName(),
                         jpaColumnInfo.getColumnName(),
                         jpaColumnInfo.getRealGetterType(), null);
             } else {
                 columnTemp = new SqlMapColumn(false,
-                        jpaColumnInfo.getRealGetterName(),
+                        jpaColumnInfo.getGetterName(),
                         jpaColumnInfo.getColumnName(),
                         jpaColumnInfo.getRealGetterType(),
                         jpaColumnInfo.getForeignKeyGetterName());

@@ -100,15 +100,13 @@ public class PagedDiclectStatementHandlerInterceptor implements Interceptor {
         RowBounds rowBounds = (RowBounds) metaStatementHandler.getValue("delegate.rowBounds");
         //获取configuration
         Configuration configuration = (Configuration) metaStatementHandler.getValue("delegate.configuration");
-       
+        
         //如果不为PreparedStatementHandler则不继续进行处理
         //不考虑simpleStatementHandle的情况
         //如果为需要分页的地方认为都应该是PreparedStatementHandler
         if (!(statement instanceof PreparedStatementHandler)) {
             return invocation.proceed();
         }
-        
-        
         
         boolean isSupportsVariableLimit = dialect.supportsVariableLimit();//是否支持物理分页
         boolean isBindOnFirst = dialect.bindLimitParametersFirst();//是否绑定在前
@@ -119,8 +117,8 @@ public class PagedDiclectStatementHandlerInterceptor implements Interceptor {
         if (rowBounds == null
                 || rowBounds.equals(RowBounds.DEFAULT)
                 || (rowBounds.getOffset() <= RowBounds.NO_ROW_OFFSET && rowBounds.getLimit() == RowBounds.NO_ROW_LIMIT)
-                || !isSupportsVariableLimit 
-                || (!isSupportsLimit && !isSupportsLimitOffset)) { 
+                || !isSupportsVariableLimit
+                || (!isSupportsLimit && !isSupportsLimitOffset)) {
             //如果不需要分页
             //或者容器不支持物理分页!dialect.supportsVariableLimit()
             return invocation.proceed();
@@ -129,9 +127,12 @@ public class PagedDiclectStatementHandlerInterceptor implements Interceptor {
         //如果需要分页
         //进行处理
         BoundSql boundSql = statementHandler.getBoundSql();
-        List<ParameterMapping> newParameterMappingList = new ArrayList<ParameterMapping>(boundSql.getParameterMappings());
-        boundSql.setAdditionalParameter("_offset", Integer.valueOf(rowBounds.getOffset()));
-        boundSql.setAdditionalParameter("_limit", Integer.valueOf(rowBounds.getLimit()));
+        List<ParameterMapping> newParameterMappingList = new ArrayList<ParameterMapping>(
+                boundSql.getParameterMappings());
+        boundSql.setAdditionalParameter("_offset",
+                Integer.valueOf(rowBounds.getOffset()));
+        boundSql.setAdditionalParameter("_limit",
+                Integer.valueOf(rowBounds.getLimit()));
         
         String sql = boundSql.getSql();
         //利用hibernate方言类生成新的分页语句
@@ -144,52 +145,60 @@ public class PagedDiclectStatementHandlerInterceptor implements Interceptor {
         }
         
         //如果支持isSupportsLimitOffset并且当前需要偏移值
-        boolean isNeedSetOffset = isSupportsLimitOffset && (rowBounds.getOffset() > 0 || dialect.forceLimitUsage()); 
+        boolean isNeedSetOffset = isSupportsLimitOffset
+                && (rowBounds.getOffset() > 0 || dialect.forceLimitUsage());
         
         //构建设置的入参
         //如果不支持物理分页
         //设置参数
         if (isBindOnFirst) {
-            if(dialect.bindLimitParametersInReverseOrder()){
+            if (dialect.bindLimitParametersInReverseOrder()) {
                 //true if the correct order is limit, offset
-                if(isSupportsLimit){
-                    newParameterMappingList.add(0, createLimitParameterMapping(configuration));
+                if (isSupportsLimit) {
+                    newParameterMappingList.add(0,
+                            createLimitParameterMapping(configuration));
                 }
-                if(isNeedSetOffset){
-                    newParameterMappingList.add(1, createOffsetParameterMapping(configuration));
+                if (isNeedSetOffset) {
+                    newParameterMappingList.add(1,
+                            createOffsetParameterMapping(configuration));
                 }
-            }else{
-                if(isNeedSetOffset){
-                    newParameterMappingList.add(0, createOffsetParameterMapping(configuration));
+            } else {
+                if (isNeedSetOffset) {
+                    newParameterMappingList.add(0,
+                            createOffsetParameterMapping(configuration));
                 }
-                if(isSupportsLimit){
-                    newParameterMappingList.add(1, createLimitParameterMapping(configuration));
+                if (isSupportsLimit) {
+                    newParameterMappingList.add(1,
+                            createLimitParameterMapping(configuration));
                 }
             }
-        }else{
-            if(dialect.bindLimitParametersInReverseOrder()){
+        } else {
+            if (dialect.bindLimitParametersInReverseOrder()) {
                 //true if the correct order is limit, offset
-                if(isSupportsLimit){
+                if (isSupportsLimit) {
                     newParameterMappingList.add(createLimitParameterMapping(configuration));
                 }
-                if(isNeedSetOffset){
+                if (isNeedSetOffset) {
                     newParameterMappingList.add(createOffsetParameterMapping(configuration));
                 }
-            }else{
-                if(isNeedSetOffset){
+            } else {
+                if (isNeedSetOffset) {
                     newParameterMappingList.add(createOffsetParameterMapping(configuration));
                 }
-                if(isSupportsLimit){
+                if (isSupportsLimit) {
                     newParameterMappingList.add(createLimitParameterMapping(configuration));
                 }
             }
         }
         
         //将sql以及rowBounds替换为不需要再进行多余处理的形式
-        metaStatementHandler.setValue("delegate.boundSql.parameterMappings", newParameterMappingList);
+        metaStatementHandler.setValue("delegate.boundSql.parameterMappings",
+                newParameterMappingList);
         metaStatementHandler.setValue("delegate.boundSql.sql", limitSql);
-        metaStatementHandler.setValue("delegate.rowBounds.offset", RowBounds.NO_ROW_OFFSET);
-        metaStatementHandler.setValue("delegate.rowBounds.limit", RowBounds.NO_ROW_LIMIT);
+        metaStatementHandler.setValue("delegate.rowBounds.offset",
+                RowBounds.NO_ROW_OFFSET);
+        metaStatementHandler.setValue("delegate.rowBounds.limit",
+                RowBounds.NO_ROW_LIMIT);
         
         return invocation.proceed();
     }
@@ -204,10 +213,11 @@ public class PagedDiclectStatementHandlerInterceptor implements Interceptor {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    private ParameterMapping createOffsetParameterMapping(Configuration configuration){
-         ParameterMapping offsetParameterMapping = (new ParameterMapping.Builder(
+    private ParameterMapping createOffsetParameterMapping(
+            Configuration configuration) {
+        ParameterMapping offsetParameterMapping = (new ParameterMapping.Builder(
                 configuration, "_offset", Integer.class)).build();
-         return offsetParameterMapping;
+        return offsetParameterMapping;
     }
     
     /**
@@ -220,10 +230,11 @@ public class PagedDiclectStatementHandlerInterceptor implements Interceptor {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    private ParameterMapping createLimitParameterMapping(Configuration configuration){
+    private ParameterMapping createLimitParameterMapping(
+            Configuration configuration) {
         ParameterMapping limitParameterMapping = (new ParameterMapping.Builder(
                 configuration, "_limit", Integer.class)).build();
-         return limitParameterMapping;
+        return limitParameterMapping;
     }
     
     /**

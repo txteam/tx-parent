@@ -6,6 +6,10 @@
  */
 package com.tx.component.basicdata.context;
 
+import javax.sql.DataSource;
+
+import net.sf.ehcache.CacheManager;
+
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -13,6 +17,7 @@ import org.springframework.core.Ordered;
 import org.springframework.core.PriorityOrdered;
 
 import com.tx.component.basicdata.annotation.BasicData;
+import com.tx.core.dbscript.model.DataSourceTypeEnum;
 import com.tx.core.util.ClassScanUtils;
 
 /**
@@ -29,7 +34,17 @@ public class BasicDataContextConfigurator implements BeanFactoryPostProcessor,
     
     private int order = Ordered.LOWEST_PRECEDENCE - 1;
     
-    private String[] packageNames;
+    /** 基础数据所在扫描包 */
+    private String basePackage;
+    
+    /** 数据源 */
+    private DataSource dataSource;
+    
+    /** 数据源类型 */
+    private DataSourceTypeEnum dataSourceType;
+    
+    /** 缓存 */
+    private CacheManager cacheManager;
     
     /**
      * @return
@@ -46,6 +61,69 @@ public class BasicDataContextConfigurator implements BeanFactoryPostProcessor,
     @Override
     public void postProcessBeanFactory(
             ConfigurableListableBeanFactory beanFactory) throws BeansException {
-        ClassScanUtils.scanByAnnotation(BasicData.class, packageNames);
+        ClassScanUtils.scanByAnnotation(BasicData.class, "");
+    }
+
+    /**
+     * @return 返回 basePackage
+     */
+    public String getBasePackage() {
+        return basePackage;
+    }
+
+    /**
+     * @param 对basePackage进行赋值
+     */
+    public void setBasePackage(String basePackage) {
+        this.basePackage = basePackage;
+    }
+
+    /**
+     * @return 返回 dataSourceType
+     */
+    public DataSourceTypeEnum getDataSourceType() {
+        return dataSourceType;
+    }
+
+    /**
+     * @param 对dataSourceType进行赋值
+     */
+    public void setDataSourceType(DataSourceTypeEnum dataSourceType) {
+        this.dataSourceType = dataSourceType;
+    }
+
+    /**
+     * @param 对order进行赋值
+     */
+    public void setOrder(int order) {
+        this.order = order;
+    }
+
+    /**
+     * @return 返回 cacheManager
+     */
+    public CacheManager getCacheManager() {
+        return cacheManager;
+    }
+
+    /**
+     * @param 对cacheManager进行赋值
+     */
+    public void setCacheManager(CacheManager cacheManager) {
+        this.cacheManager = cacheManager;
+    }
+
+    /**
+     * @return 返回 dataSource
+     */
+    public DataSource getDataSource() {
+        return dataSource;
+    }
+
+    /**
+     * @param 对dataSource进行赋值
+     */
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 }

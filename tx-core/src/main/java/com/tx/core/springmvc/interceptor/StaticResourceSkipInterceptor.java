@@ -28,6 +28,7 @@ import org.springframework.web.servlet.ModelAndView;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
+@Deprecated
 public class StaticResourceSkipInterceptor implements SkipHandlerInterceptor,
         InitializingBean {
     

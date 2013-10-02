@@ -50,6 +50,9 @@ public class SqlSource<T> implements Serializable, Cloneable {
     /** 对应类的类型 */
     private Class<T> type;
     
+    /** 对应类的反射器 */
+    private ClassReflector<T> classReflector;
+    
     /** 方言类 */
     private Dialect dialect;
     
@@ -88,11 +91,13 @@ public class SqlSource<T> implements Serializable, Cloneable {
             Dialect dialect) {
         super();
         
+        AssertUtils.notNull(type, "type is empty.");
         AssertUtils.notEmpty(pkName, "pkName is empty.");
         AssertUtils.notEmpty(tableName, "tableName is empty.");
         AssertUtils.notNull(dialect, "dialect is empty.");
         
         this.type = type;
+        this.classReflector = ClassReflector.forClass(type);
         this.pkName = pkName.trim();
         this.tableName = tableName.trim().toUpperCase();
         this.dialect = dialect;
@@ -126,9 +131,11 @@ public class SqlSource<T> implements Serializable, Cloneable {
     public SqlSource(Class<T> type, Dialect dialect) {
         super();
         
+        AssertUtils.notNull(type, "type is empty.");
         AssertUtils.notNull(dialect, "dialect is empty.");
         
         this.type = type;
+        this.classReflector = ClassReflector.forClass(type);
         this.dialect = dialect;
     }
     
@@ -410,9 +417,10 @@ public class SqlSource<T> implements Serializable, Cloneable {
      */
     public RowMapper<T> getSelectRowMapper() {
         AssertUtils.notNull(this.type, "type is null");
+        AssertUtils.notNull(this.classReflector, "classReflector is null");
         
         final Class<T> finalType = this.type;
-        final ClassReflector<T> classReflector = ClassReflector.forClass(this.type);
+        final ClassReflector<T> finalClassReflector = this.classReflector;
         RowMapper<T> rowMapper = new RowMapper<T>() {
             /**
              * @param rs
@@ -428,7 +436,8 @@ public class SqlSource<T> implements Serializable, Cloneable {
                 for (Entry<String, String> entryTemp : getter2columnNameMapping.entrySet()) {
                     String propertyName = entryTemp.getKey();
                     String columnName = entryTemp.getValue();
-                    if (classReflector.getSetterNames().contains(propertyName)) {
+                    if (finalClassReflector.getSetterNames()
+                            .contains(propertyName)) {
                         Class<?> type = getter2JavaTypeMapping.get(propertyName);
                         Object value = JdbcUtils.getResultSetValueForSimpleType(rs,
                                 columnName,
@@ -453,9 +462,10 @@ public class SqlSource<T> implements Serializable, Cloneable {
      * @see [类、类#方法、类#成员]
     */
     public RowCallbackHandler getSelectRowCallbackHandler(Object newObjInstance) {
+        AssertUtils.notNull(this.classReflector, "classReflector is null");
         
         final MetaObject metaObject = MetaObject.forObject(newObjInstance);
-        final ClassReflector<T> classReflector = ClassReflector.forClass(this.type);
+        final ClassReflector<T> finalClassReflector = this.classReflector;
         RowCallbackHandler res = new RowCallbackHandler() {
             @Override
             public void processRow(ResultSet rs) throws SQLException {
@@ -464,7 +474,8 @@ public class SqlSource<T> implements Serializable, Cloneable {
                     String propertyName = entryTemp.getKey();
                     String columnName = entryTemp.getValue();
                     
-                    if (classReflector.getSetterNames().contains(propertyName)) {
+                    if (finalClassReflector.getSetterNames()
+                            .contains(propertyName)) {
                         Class<?> type = getter2JavaTypeMapping.get(propertyName);
                         Object value = JdbcUtils.getResultSetValueForSimpleType(rs,
                                 columnName,
@@ -890,6 +901,9 @@ public class SqlSource<T> implements Serializable, Cloneable {
      * @param 对type进行赋值
      */
     public void setType(Class<T> type) {
+        AssertUtils.notNull(type, "type is empty.");
+        
         this.type = type;
+        this.classReflector = ClassReflector.forClass(type);
     }
 }

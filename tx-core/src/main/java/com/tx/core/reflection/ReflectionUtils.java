@@ -20,8 +20,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.reflection.exception.InvalidGetterMethod;
-import com.tx.core.reflection.exception.InvalidSetterMethod;
+import com.tx.core.reflection.exception.InvalidGetterMethodException;
+import com.tx.core.reflection.exception.InvalidSetterMethodException;
 
 /**
  *  反射工具类<br/>
@@ -106,7 +106,7 @@ public class ReflectionUtils {
         //如果对应方法有入参则该方法不为getter对应方法
         if (method.getParameterTypes().length > 0
                 && !Void.TYPE.equals(returnType)) {
-            throw new InvalidGetterMethod(
+            throw new InvalidGetterMethodException(
                     "方法入参不为空，或返回类型为空.paramterTypes:{};returnType:{}",
                     new Object[] { method.getParameterTypes(), returnType });
         }
@@ -115,7 +115,7 @@ public class ReflectionUtils {
         if (needSkipGetterMethod.containsKey(methodName)
                 && needSkipGetterMethod.get(methodName)
                         .isAssignableFrom(returnType)) {
-            throw new InvalidGetterMethod(
+            throw new InvalidGetterMethodException(
                     "getClass非get方法，it include needSkipGetterMethod.",
                     new Object[] { method.getParameterTypes(), returnType });
         }
@@ -136,7 +136,7 @@ public class ReflectionUtils {
         if (!StringUtils.isEmpty(getterName)) {
             return getterName;
         } else {
-            throw new InvalidGetterMethod(
+            throw new InvalidGetterMethodException(
                     "方法名应该以is/get+首写字母为大写字母的字符串组成.methodName:{}",
                     new Object[] { methodName });
         }
@@ -189,7 +189,7 @@ public class ReflectionUtils {
         //如果对应方法返回类型为空，且入参为一个
         if (!Void.TYPE.equals(returnType)
                 || method.getParameterTypes().length != 1) {
-            throw new InvalidSetterMethod(
+            throw new InvalidSetterMethodException(
                     "方法入参为空，或返回不为空.paramterTypes:{};returnType:{}",
                     new Object[] { method.getParameterTypes(), returnType });
         }
@@ -203,7 +203,7 @@ public class ReflectionUtils {
         if (!StringUtils.isEmpty(setterName)) {
             return setterName;
         } else {
-            throw new InvalidSetterMethod(
+            throw new InvalidSetterMethodException(
                     "方法名应该以set+首写字母为大写字母的字符串组成.methodName:{}",
                     new Object[] { methodName });
         }

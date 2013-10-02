@@ -20,7 +20,6 @@ import java.util.Map;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
-import org.apache.ibatis.type.TypeReference;
 
 import com.tx.core.exceptions.util.AssertUtils;
 

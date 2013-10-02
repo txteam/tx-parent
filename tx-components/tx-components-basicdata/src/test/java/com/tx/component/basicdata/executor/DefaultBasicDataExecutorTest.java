@@ -9,15 +9,8 @@ package com.tx.component.basicdata.executor;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.Resource;
-import javax.sql.DataSource;
-
 import junit.framework.Assert;
 
-import net.sf.ehcache.CacheManager;
-
-import org.hibernate.dialect.Dialect;
-import org.hibernate.dialect.H2Dialect;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,20 +35,12 @@ import com.tx.core.util.UUIDUtils;
         "classpath:spring/beans-tx.xml" })
 public class DefaultBasicDataExecutorTest {
     
-    @Resource(name = "ehcacheManager")
-    private CacheManager cacheManager;
-    
-    @Resource(name = "dataSource")
-    private DataSource dataSource;
-    
-    private Dialect dialect = new H2Dialect();
-    
-    private DefaultBasicDataExecutor<AuthItemImpl> executor;
+    private SqlSourceBasicDataExecutor<AuthItemImpl> executor;
     
     @Before
     public void before() {
-        executor = new DefaultBasicDataExecutor<AuthItemImpl>(
-                AuthItemImpl.class, true, dialect, dataSource, cacheManager);
+//        executor = new SqlSourceBasicDataExecutor<AuthItemImpl>(
+//                AuthItemImpl.class, true, dialect, dataSource, cacheManager);
     }
     
     @Test

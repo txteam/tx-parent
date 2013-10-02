@@ -31,6 +31,7 @@ public class SqlMapColumn {
         this.columnName = columnName;
         this.javaType = javaType;
         this.joinPropertyName = joinPropertyName;
+        
         this.isSameName = this.columnName.toUpperCase().equals(this.propertyName.toUpperCase());
     }
     

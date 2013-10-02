@@ -16,11 +16,12 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
-import org.hibernate.dialect.Dialect;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.support.TransactionSynchronizationAdapter;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
+import com.tx.component.basicdata.annotation.BasicData;
+import com.tx.component.basicdata.context.BasicDataContextConfigurator;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.paged.model.PagedList;
 
@@ -44,39 +45,38 @@ public abstract class BaseBasicDataExecutor<T> implements BasicDataExecutor<T> {
     /** 缓存实体 */
     private Cache cache;
     
+    /** 是否开启缓存 */
+    private boolean cacheEnable;
+    
     /** 执行器对应类型  */
     private Class<T> type;
     
-    /** 方言类 */
-    private Dialect dialect;
-    
-    /** 数据源 */
-    private DataSource dataSource;
-    
-    /** 是否进行缓存 */
-    private boolean cacheEnable;
-    
     /** <默认构造函数> */
-    public BaseBasicDataExecutor(Class<T> type, boolean cacheEnable,
-            Dialect dialect, DataSource dataSource, CacheManager cacheManager) {
+    public BaseBasicDataExecutor(Class<T> type, BasicData basicDataAnnotation,
+            BasicDataContextConfigurator configurator) {
         AssertUtils.notNull(type, "type is null.");
         
         this.type = type;
-        this.cacheEnable = cacheEnable;
+        this.cacheEnable = basicDataAnnotation.isCache();
         this.cacheName = "basicdata_cache_" + type.getName();
         
         if (!type.isEnum()) {
+            AssertUtils.notNull(configurator, "configurator is null.");
+            AssertUtils.notNull(configurator.getDataSource(),
+                    "configurator.getDataSource() is null.");
+            AssertUtils.notNull(configurator.getDataSourceType(),
+                    "configurator.getDataSourceType() is null.");
             
-            AssertUtils.notNull(dialect, "dialect is null.");
-            AssertUtils.notNull(dataSource, "dataSource is null.");
-            
-            this.dataSource = dataSource;
+            DataSource dataSource = configurator.getDataSource();
             if (dataSource != null) {
-                this.jdbcTemplate = new JdbcTemplate(this.dataSource);
+                this.jdbcTemplate = new JdbcTemplate(dataSource);
             }
             if (cacheEnable) {
-                AssertUtils.notNull(cacheManager, "cacheManager is null.");
-                if (cacheManager == null) {
+                AssertUtils.notNull(configurator.getCacheManager(),
+                        "cacheManager is null.");
+                
+                CacheManager cacheManager = null;
+                if (configurator.getCacheManager() == null) {
                     cacheManager = CacheManager.create();
                 }
                 if (!cacheManager.cacheExists(this.cacheName)) {
@@ -252,7 +252,7 @@ public abstract class BaseBasicDataExecutor<T> implements BasicDataExecutor<T> {
             Element getEl = this.cache.get(generateCacheKey("find", pk));
             if (getEl != null) {
                 Object obj = getEl.getObjectKey();
-                return (T)obj;
+                return (T) obj;
             }
         }
         T res = doFind(pk);
@@ -265,9 +265,21 @@ public abstract class BaseBasicDataExecutor<T> implements BasicDataExecutor<T> {
     /**
      * @return
      */
+    @SuppressWarnings("unchecked")
     @Override
     public List<T> list() {
+        if (this.cacheEnable) {
+            Element getEl = this.cache.get(generateCacheKey("list"));
+            if (getEl != null) {
+                Object obj = getEl.getObjectKey();
+                return (List<T>) obj;
+            }
+        }
         List<T> resList = doQuery(null);
+        if (this.cacheEnable && resList != null) {
+            this.cache.put(new Element(generateCacheKey("list"), resList));
+        }
+        
         return resList;
     }
     
@@ -275,9 +287,20 @@ public abstract class BaseBasicDataExecutor<T> implements BasicDataExecutor<T> {
      * @param params
      * @return
      */
+    @SuppressWarnings("unchecked")
     @Override
     public List<T> query(Map<String, Object> params) {
+        if (this.cacheEnable) {
+            Element getEl = this.cache.get(generateCacheKey("query",params));
+            if (getEl != null) {
+                Object obj = getEl.getObjectKey();
+                return (List<T>) obj;
+            }
+        }
         List<T> resList = doQuery(params);
+        if (this.cacheEnable && resList != null) {
+            this.cache.put(new Element(generateCacheKey("query",params), resList));
+        }
         return resList;
     }
     
@@ -300,8 +323,6 @@ public abstract class BaseBasicDataExecutor<T> implements BasicDataExecutor<T> {
      */
     @Override
     public int count(Map<String, Object> params) {
-        //TODO: query from cache
-        
         int resCount = doCount(params);
         return resCount;
     }
@@ -378,12 +399,5 @@ public abstract class BaseBasicDataExecutor<T> implements BasicDataExecutor<T> {
      */
     protected JdbcTemplate getJdbcTemplate() {
         return jdbcTemplate;
-    }
-    
-    /**
-     * @return 返回 dialect
-     */
-    protected Dialect getDialect() {
-        return dialect;
     }
 }

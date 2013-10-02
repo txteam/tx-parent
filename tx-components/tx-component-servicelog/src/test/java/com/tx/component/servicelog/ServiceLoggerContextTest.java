@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.time.DateUtils;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -54,7 +55,7 @@ public class ServiceLoggerContextTest {
         params.put("maxCreateDate", DateUtils.addHours(new Date(), 1));
         PagedList<LoginLog> res = ServiceLoggerContext.getLogger(LoginLog.class).queryPagedList(params, 1, 10);
         
-        
+        Assert.assertTrue(res != null && res.getList().size() > 0);
     }
     
     public static void main(String[] args) {

@@ -21,9 +21,12 @@ import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
 
+import com.tx.component.basicdata.annotation.BasicData;
+import com.tx.component.basicdata.context.BasicDataContextConfigurator;
 import com.tx.core.jdbc.sqlsource.SqlSource;
 import com.tx.core.jdbc.sqlsource.SqlSourceBuilder;
 import com.tx.core.paged.model.PagedList;
+import com.tx.core.util.ObjectUtils;
 
 /**
  * 基础数据容器默认执行器<br/>
@@ -34,17 +37,19 @@ import com.tx.core.paged.model.PagedList;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class DefaultBasicDataExecutor<T> extends BaseBasicDataExecutor<T> {
+public class SqlSourceBasicDataExecutor<T> extends BaseBasicDataExecutor<T> {
     
     private SqlSource<T> simpleSqlSource;
     
     private SqlSourceBuilder simpleSqlSourceBuilder = new SqlSourceBuilder();
     
-    /** <默认构造函数> */
-    public DefaultBasicDataExecutor(Class<T> type, boolean cacheEnable,
-            Dialect dialect, DataSource dataSource, CacheManager cacheManager) {
-        super(type, cacheEnable, dialect, dataSource, cacheManager);
-        this.simpleSqlSource = simpleSqlSourceBuilder.build(type, dialect);
+    public SqlSourceBasicDataExecutor(Class<T> type,
+            BasicData basicDataAnnotation,
+            BasicDataContextConfigurator configurator) {
+        super(type, basicDataAnnotation, configurator);
+        
+        this.simpleSqlSource = simpleSqlSourceBuilder.build(type,
+                configurator.getDataSourceType().getDialect());
     }
     
     /**
@@ -63,6 +68,9 @@ public class DefaultBasicDataExecutor<T> extends BaseBasicDataExecutor<T> {
             if (params[0] != null) {
                 LinkedHashMap<String, Object> paramMap = simpleSqlSource.getQueryCondtionParamMaps(params[0]);
                 for (Entry<String, Object> entryTemp : paramMap.entrySet()) {
+                    if (ObjectUtils.isEmpty(entryTemp.getValue())) {
+                        continue;
+                    }
                     hashCode += entryTemp.getKey().hashCode()
                             + entryTemp.getValue().hashCode();
                 }
@@ -74,6 +82,9 @@ public class DefaultBasicDataExecutor<T> extends BaseBasicDataExecutor<T> {
             if (params[0] != null) {
                 LinkedHashMap<String, Object> paramMap = simpleSqlSource.getQueryCondtionParamMaps(params[0]);
                 for (Entry<String, Object> entryTemp : paramMap.entrySet()) {
+                    if (ObjectUtils.isEmpty(entryTemp.getValue())) {
+                        continue;
+                    }
                     hashCode += entryTemp.getKey().hashCode()
                             + entryTemp.getValue().hashCode();
                 }
@@ -85,6 +96,9 @@ public class DefaultBasicDataExecutor<T> extends BaseBasicDataExecutor<T> {
             if (params[0] != null) {
                 LinkedHashMap<String, Object> paramMap = simpleSqlSource.getQueryCondtionParamMaps(params[0]);
                 for (Entry<String, Object> entryTemp : paramMap.entrySet()) {
+                    if (ObjectUtils.isEmpty(entryTemp.getValue())) {
+                        continue;
+                    }
                     hashCode += entryTemp.getKey().hashCode();
                     hashCode += entryTemp.getValue().hashCode();
                 }

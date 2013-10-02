@@ -31,7 +31,7 @@ public class SimpleSqlSourceTest {
         @SuppressWarnings("unchecked")
         public static void main(String[] args) {
             @SuppressWarnings("rawtypes")
-            SqlSource simpleSqlMapMapper = new SqlSource(null,"t_test",
+            SqlSource simpleSqlMapMapper = new SqlSource("t_test",
                     "id", new MySQL5InnoDBDialect());
             simpleSqlMapMapper.addProperty2columnMapping("id",
                     "idcol",

@@ -7,21 +7,18 @@
 package com.tx.component.basicdata.context;
 
 import org.springframework.beans.factory.FactoryBean;
-import org.springframework.stereotype.Component;
 
-
-
- /**
-  * 基础数据容器工厂<br/>
-  * <功能详细描述>
-  * 
-  * @author  brady
-  * @version  [版本号, 2013-8-14]
-  * @see  [相关类/方法]
-  * @since  [产品/模块版本]
-  */
-@Component("basicDataContext")
-public class BasicDataContextFactory extends BasicDataContext implements FactoryBean<BasicDataContext>{
+/**
+ * 基础数据容器工厂<br/>
+ * <功能详细描述>
+ * 
+ * @author  brady
+ * @version  [版本号, 2013-8-14]
+ * @see  [相关类/方法]
+ * @since  [产品/模块版本]
+ */
+public class BasicDataContextFactory extends BasicDataContext implements
+        FactoryBean<BasicDataContext> {
     
     /**
      * @return
@@ -29,9 +26,9 @@ public class BasicDataContextFactory extends BasicDataContext implements Factory
      */
     @Override
     public BasicDataContext getObject() throws Exception {
-        return null;
+        return BasicDataContext.getContext();
     }
-
+    
     /**
      * @return
      */
@@ -39,7 +36,7 @@ public class BasicDataContextFactory extends BasicDataContext implements Factory
     public Class<?> getObjectType() {
         return BasicDataContext.class;
     }
-
+    
     /**
      * @return
      */

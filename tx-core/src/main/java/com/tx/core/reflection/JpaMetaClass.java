@@ -238,10 +238,8 @@ public class JpaMetaClass<T> {
             if(ReflectionUtils.isHasAnnotationForGetter(type,
                     getterName,
                     JoinColumn.class)){
-                processWhenColumnAnnotationExist(getterName, type, jpaColumnInfo);
+                processWhenJoinColumnExist(getterName, type, jpaColumnInfo);
             }
-            processWhenJoinColumnExist(getterName, type, jpaColumnInfo);
-            
         } else {
             //非关联字段简单类型默认长度为64，如果注解中写了则进行覆盖
             jpaColumnInfo.setLength(createColumnLength(getterName));
@@ -404,7 +402,7 @@ public class JpaMetaClass<T> {
             if (!ReflectionUtils.isHasAnnotationForGetter(type,
                     getterNameTemp,
                     Id.class)) {
-                return;
+                continue;
             }
             
             this.pkGetterName = getterNameTemp;

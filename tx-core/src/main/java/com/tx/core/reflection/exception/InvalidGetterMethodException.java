@@ -18,7 +18,7 @@ import com.tx.core.exceptions.SILException;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
   */
-public class InvalidGetterMethod extends SILException{
+public class InvalidGetterMethodException extends SILException{
 
     /** 注释内容 */
     private static final long serialVersionUID = 7454235870627099536L;
@@ -40,12 +40,12 @@ public class InvalidGetterMethod extends SILException{
     }
 
     /** <默认构造函数> */
-    public InvalidGetterMethod(String message, Object[] parameters) {
+    public InvalidGetterMethodException(String message, Object[] parameters) {
         super(message, parameters);
     }
 
     /** <默认构造函数> */
-    public InvalidGetterMethod(String message) {
+    public InvalidGetterMethodException(String message) {
         super(message);
     }
 }
