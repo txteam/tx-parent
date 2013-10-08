@@ -64,7 +64,7 @@ public abstract class BaseServiceLoggerInterceptor implements
                         entryTemp.getValue());
             }
         }
-        return false;
+        return true;
     }
     
     /**

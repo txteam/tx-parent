@@ -550,6 +550,12 @@ public class JpaMetaClass<T> {
     /** 去掉包名的类名:并转换首字母为小写 */
     private String entitySimpleName;
     
+    /** 所在模块包名 */
+    private String modulePackageName;
+    
+    /** 所在模块包简写名 */
+    private String modulePackageSimpleName;
+    
     /** 对应表名 */
     private String tableName;
     
@@ -687,5 +693,18 @@ public class JpaMetaClass<T> {
     public Map<String, String> getColumn2getterMapping() {
         return MapUtils.unmodifiableMap(column2realGetterMapping);
     }
-    
+
+    /**
+     * @return 返回 modulePackageName
+     */
+    public String getModulePackageName() {
+        return modulePackageName;
+    }
+
+    /**
+     * @return 返回 modulePackageSimpleName
+     */
+    public String getModulePackageSimpleName() {
+        return modulePackageSimpleName;
+    }
 }

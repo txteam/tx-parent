@@ -178,4 +178,24 @@ public interface TXServiceLog {
       * @see [类、类#方法、类#成员]
      */
     public void setClientIpAddress(String clientIpAddress);
+    
+    /**
+     * @return 返回 operatorLoginName
+     */
+    public String getOperatorLoginName();
+
+    /**
+     * @param 对operatorLoginName进行赋值
+     */
+    public void setOperatorLoginName(String operatorLoginName);
+
+    /**
+     * @return 返回 operatorName
+     */
+    public String getOperatorName();
+
+    /**
+     * @param 对operatorName进行赋值
+     */
+    public void setOperatorName(String operatorName);
 }

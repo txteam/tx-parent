@@ -188,6 +188,8 @@ public class TXServiceLoggerBuilder extends BaseServiceLoggerBuilder {
                 logInstance.setOrganizationId((String) context.getAttribute("organizationId"));
                 logInstance.setVcid((String) context.getAttribute("vcid"));
                 logInstance.setCreateDate(new Date());
+                logInstance.setOperatorName((String) context.getAttribute("operatorName"));
+                logInstance.setOperatorLoginName((String) context.getAttribute("operatorLoginName"));
                 
                 return logInstance;
             }

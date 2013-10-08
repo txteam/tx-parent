@@ -45,6 +45,12 @@ public class TXBaseServiceLog implements TXServiceLog {
     /** 业务日志消息体 */
     private String message;
     
+    /** 操作员登录名 */
+    private String operatorLoginName;
+    
+    /** 操作员名 */
+    private String operatorName;
+    
     /** <默认构造函数> */
     public TXBaseServiceLog() {
     }
@@ -158,5 +164,33 @@ public class TXBaseServiceLog implements TXServiceLog {
      */
     public void setCreateDate(Date createDate) {
         this.createDate = createDate;
+    }
+
+    /**
+     * @return 返回 operatorLoginName
+     */
+    public String getOperatorLoginName() {
+        return operatorLoginName;
+    }
+
+    /**
+     * @param 对operatorLoginName进行赋值
+     */
+    public void setOperatorLoginName(String operatorLoginName) {
+        this.operatorLoginName = operatorLoginName;
+    }
+
+    /**
+     * @return 返回 operatorName
+     */
+    public String getOperatorName() {
+        return operatorName;
+    }
+
+    /**
+     * @param 对operatorName进行赋值
+     */
+    public void setOperatorName(String operatorName) {
+        this.operatorName = operatorName;
     }
 }

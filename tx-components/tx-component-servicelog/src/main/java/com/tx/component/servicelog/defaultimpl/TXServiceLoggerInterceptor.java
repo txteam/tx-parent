@@ -12,6 +12,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.ibatis.reflection.MetaObject;
+
 import com.tx.component.servicelog.context.ServiceLoggerSessionContext;
 import com.tx.component.servicelog.interceptor.BaseServiceLoggerInterceptor;
 
@@ -37,7 +39,77 @@ public class TXServiceLoggerInterceptor extends BaseServiceLoggerInterceptor {
         attributes.put("vcid", getVcid());
         attributes.put("organizationId", getOrganizationId());
         attributes.put("operatorId", getOperatorId());
+        setOperatorInfo(attributes);
+        //setOrganizationInfo(attributes);
         return attributes;
+    }
+    
+    //    /**
+    //     * 获取操作员id
+    //     *<功能详细描述>
+    //     * @return [参数说明]
+    //     * 
+    //     * @return String [返回类型说明]
+    //     * @exception throws [异常类型] [异常说明]
+    //     * @see [类、类#方法、类#成员]
+    //    */
+    //    private void setOrganizationInfo(Map<String, Object> attributes) {
+    //        ServiceLoggerSessionContext context = ServiceLoggerSessionContext.getContext();
+    //        
+    //        if (context.getRequest() == null
+    //                || context.getRequest().getSession(false) == null) {
+    //            attributes.put("organizationName", "");
+    //        } else {
+    //            HttpSession session = context.getRequest().getSession(false);
+    //            
+    //            Object operatorObj = session.getAttribute("organization");
+    //            if (operatorObj != null) {
+    //                MetaObject metaObject = MetaObject.forObject(operatorObj);
+    //                Object organizationName = metaObject.getValue("name");
+    //                
+    //                attributes.put("organizationName",
+    //                        organizationName == null ? ""
+    //                                : (String) organizationName);
+    //            } else {
+    //                attributes.put("organizationName", "");
+    //            }
+    //        }
+    //    }
+    
+    /**
+     * 获取操作员id
+     *<功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    private void setOperatorInfo(Map<String, Object> attributes) {
+        ServiceLoggerSessionContext context = ServiceLoggerSessionContext.getContext();
+        
+        if (context.getRequest() == null
+                || context.getRequest().getSession(false) == null) {
+            attributes.put("operatorLoginName", "");
+            attributes.put("operatorName", "");
+        } else {
+            HttpSession session = context.getRequest().getSession(false);
+            
+            Object operatorObj = session.getAttribute("operator");
+            if (operatorObj != null) {
+                MetaObject metaObject = MetaObject.forObject(operatorObj);
+                Object loginName = metaObject.getValue("loginName");
+                Object userName = metaObject.getValue("userName");
+                
+                attributes.put("operatorLoginName", loginName == null ? ""
+                        : (String) loginName);
+                attributes.put("operatorName", userName == null ? ""
+                        : (String) userName);
+            } else {
+                attributes.put("operatorLoginName", "");
+                attributes.put("operatorName", "");
+            }
+        }
     }
     
     /**
