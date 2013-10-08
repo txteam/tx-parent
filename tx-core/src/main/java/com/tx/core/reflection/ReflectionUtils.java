@@ -158,7 +158,6 @@ public class ReflectionUtils {
         //Class<?> firstParameterType = null;
         
         //如果对应方法返回类型为空，且入参为一个
-        System.out.println();
         if (!Void.TYPE.equals(returnType)
                 || method.getParameterTypes().length != 1) {
             return false;
