@@ -7,10 +7,13 @@
 package com.tx.component.servicelog.defaultimpl;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.util.ClassUtils;
 
 import com.tx.core.dbscript.model.DataSourceTypeEnum;
@@ -33,6 +36,8 @@ public class TXServiceLogViewHelper {
     
     private static String controllerTemplateFilePath = "com/tx/component/servicelog/defaultimpl/serviceLogController.ftl";
     
+    private static String jspTemplateFilePath = "com/tx/component/servicelog/defaultimpl/queryServiceLogPagedList.ftl";
+    
     /**
      * 生成对应日志对象的脚本
      *<功能详细描述>
@@ -54,24 +59,61 @@ public class TXServiceLogViewHelper {
         JpaMetaClass<?> jpaMetaClass = JpaMetaClass.forClass(serviceLogType);
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("jpaMetaClass", jpaMetaClass);
-        //params.put("StringUtils", StringUtils.class);
+        
+        Field[] fields = serviceLogType.getDeclaredFields();
+        List<String> classTopGetters = new ArrayList<String>();
+        if(fields != null){
+            Set<String> getterNames = jpaMetaClass.getGetterNames();
+            for(Field fieldTemp : fields){
+                String fieldName = fieldTemp.getName();
+                if(getterNames.contains(fieldName)){
+                    classTopGetters.add(fieldName);
+                }
+            }
+        }
+        params.put("classTopGetters", classTopGetters);
         
         //生成controller
         generateController(resultFolderPath, jpaMetaClass, params);
+        //生成jsp
+        generateQueryJSP(resultFolderPath, jpaMetaClass, params);
     }
-
     
-     /** 
-      *<功能简述>
-      *<功能详细描述>
-      * @param resultFolderPath
-      * @param jpaMetaClass
-      * @param params [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-      */
+    /** 
+     * 生成查询jsp页面
+     *<功能详细描述>
+     * @param resultFolderPath
+     * @param jpaMetaClass
+     * @param params [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    private static void generateQueryJSP(String resultFolderPath,
+            JpaMetaClass<?> jpaMetaClass, Map<String, Object> params) {
+        String outFilePath = resultFolderPath + "/main/webapp/WEB-INF/view/"
+                + jpaMetaClass.getModulePackageSimpleName() + "/query"
+                + jpaMetaClass.getEntitySimpleName() + "PagedList.jsp";
+        
+        FreeMarkerUtils.fprint(loadTemplateClass,
+                jspTemplateFilePath,
+                params,
+                outFilePath,
+                "UTF-8");
+    }
+    
+    /** 
+     * controller生成器
+     *<功能详细描述>
+     * @param resultFolderPath
+     * @param jpaMetaClass
+     * @param params [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
     private static void generateController(String resultFolderPath,
             JpaMetaClass<?> jpaMetaClass, Map<String, Object> params) {
         String filePath = ClassUtils.convertClassNameToResourcePath(jpaMetaClass.getEntityTypeName())
@@ -112,5 +154,27 @@ public class TXServiceLogViewHelper {
         AssertUtils.notNull(constructor,
                 "业务日志类：{},必须具有一个无参构造函数",
                 new Object[] { serviceLogType });
+    }
+    
+    /**
+     * @param 对loadTemplateClass进行赋值
+     */
+    public static void setLoadTemplateClass(Class<?> loadTemplateClass) {
+        TXServiceLogViewHelper.loadTemplateClass = loadTemplateClass;
+    }
+    
+    /**
+     * @param 对controllerTemplateFilePath进行赋值
+     */
+    public static void setControllerTemplateFilePath(
+            String controllerTemplateFilePath) {
+        TXServiceLogViewHelper.controllerTemplateFilePath = controllerTemplateFilePath;
+    }
+    
+    /**
+     * @param 对jspTemplateFilePath进行赋值
+     */
+    public static void setJspTemplateFilePath(String jspTemplateFilePath) {
+        TXServiceLogViewHelper.jspTemplateFilePath = jspTemplateFilePath;
     }
 }

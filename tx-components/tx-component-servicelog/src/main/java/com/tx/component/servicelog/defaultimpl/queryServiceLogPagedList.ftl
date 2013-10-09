@@ -6,13 +6,13 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>queryLoginLog</title>
+<title>query${jpaMetaClass.entitySimpleName}</title>
 <%@include file="../includes/commonHead.jsp" %>
 <script type="text/javascript" >
 var serviceLogTable = null;
 $(document).ready(function(){
 	serviceLogTable = $('#serviceLogTable').datagrid({
-		url : '${contextPath}/servicelog/mainframe/loginLog/queryLoginLogPagedList.action',
+		url : '${r"${contextPath}"}/servicelog/${jpaMetaClass.modulePackageSimpleName}/${StringUtils.uncapitalize('${jpaMetaClass.entitySimpleName}')}/query${jpaMetaClass.entitySimpleName}PagedList.action',
 		fit : true,
 		fitColumns : true,
 		border : false,
@@ -73,46 +73,38 @@ $(document).ready(function(){
 		},{
 			field : 'organizationId',
 			title : '组织',
-			width : 100
+			width : 100,
+			hidden : true
 		}] ],
 		columns : [[ {
 			field : 'message',
 			title : '日志信息',
 			width : 200
-		}, {
-			field : 'loginType',
-			title : '登录类型',
-			width : 150,
-			formatter: function(cellvalue, options, rowObject){
-				var loginType = rowObject['loginType'];
-	   			if(loginType == '1'){
-	   				return '注销';
-	   			}else{
-	   				return '登录';
-	   			}
-			}
-		}, {
-			field : 'typeId',
-			title : 'BUG类型ID',
-			width : 150,
-			hidden : true
 		}
+<#list classTopGetters as getterTemp>
+		,{
+			field : '${getterTemp}',
+			title : '${getterTemp}',
+			width : 150
+		}
+</#list>		
 		]],
 		toolbar : '#toolbar',
 		onLoadSuccess : function() {
-			$('#searchForm table').show();
+			//$('#queryForm table').show();
 			parent.$.messager.progress('close');
-
 			$(this).datagrid('tooltip');
 		},
 		onRowContextMenu : function(e, rowIndex, rowData) {
 			e.preventDefault();
-			$(this).datagrid('unselectAll');
-			$(this).datagrid('selectRow', rowIndex);
+			//$(this).datagrid('unselectAll');
+			//$(this).datagrid('selectRow', rowIndex);
+			/*
 			$('#menu').menu('show', {
 				left : e.pageX,
 				top : e.pageY
 			});
+			*/
 		}
 	});
 	
@@ -131,17 +123,17 @@ $(document).ready(function(){
 		<form id="queryForm" class="form">
 			<table class="table table-hover table-condensed">
 				<tr>
-					<th>开始时间</th>
-					<td>
-						<input id="minCreateDate" name="minCreateDate" readonly="readonly"
-							placeholder="点击选择时间" onclick="WdatePicker({readOnly:true,dateFmt:'yyyy-MM-dd HH:mm:ss',maxDate:'#F{$dp.$D(\'maxCreateDate\')}' })" />
-					</td>
-					<th>结束时间</th>
-					<td>
-						<input id="maxCreateDate" name="maxCreateDate" readonly="readonly"
-							placeholder="点击选择时间" onclick="WdatePicker({readOnly:true,dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:'#F{$dp.$D(\'minCreateDate\')}'})" />
-					</td>
-				</tr>
+						<th>开始时间</th>
+						<td><input id="minCreateDate" name="minCreateDate"
+							readonly="readonly" placeholder="点击选择时间"
+							onclick="WdatePicker({readOnly:true,dateFmt:'yyyy-MM-dd HH:mm:ss',maxDate:'#F{$dp.$D(\'maxCreateDate\')}' })" />
+						</td>
+						<th>结束时间</th>
+						<td><input id="maxCreateDate" name="maxCreateDate"
+							readonly="readonly" placeholder="点击选择时间"
+							onclick="WdatePicker({readOnly:true,dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:'#F{$dp.$D(\'minCreateDate\')}'})" />
+						</td>
+					</tr>
 				<tr>
 					<td colspan="4" class="button operRow">
 						<a id="queryBtn" href="#" class="easyui-linkbutton">查询</a>
@@ -156,6 +148,6 @@ $(document).ready(function(){
 </div> 
 
 <div id="toolbar" style="display: none;"> 
-	<a onclick="" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'transmit'">刷新</a>
+	<a onclick="serviceLogTable.datagrid('reload');return false;" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'transmit'">刷新</a>
 </div>
 </body>

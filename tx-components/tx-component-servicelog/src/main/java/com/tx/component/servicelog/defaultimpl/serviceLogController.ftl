@@ -42,9 +42,9 @@ public class ${jpaMetaClass.entitySimpleName}Controller {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    @RequestMapping("/toQuery${jpaMetaClass.entitySimpleName}")
-    public String toQuery${jpaMetaClass.entitySimpleName}() {
-        return "/mainframe/query${jpaMetaClass.entitySimpleName}";
+    @RequestMapping("/toQuery${jpaMetaClass.entitySimpleName}PagedList")
+    public String toQuery${jpaMetaClass.entitySimpleName}PagedList() {
+        return "/mainframe/query${jpaMetaClass.entitySimpleName}PagedList";
     }
     
     /**
