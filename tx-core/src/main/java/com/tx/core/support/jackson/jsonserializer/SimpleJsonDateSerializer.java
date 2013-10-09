@@ -26,6 +26,8 @@ import org.codehaus.jackson.map.SerializerProvider;
  */
 public class SimpleJsonDateSerializer extends JsonSerializer<Date> {
     
+    private static String dateFormatter = "yyyy-MM-dd";
+    
     /**
      * @param value
      * @param jgen
@@ -37,7 +39,14 @@ public class SimpleJsonDateSerializer extends JsonSerializer<Date> {
     public void serialize(Date value, JsonGenerator jgen,
             SerializerProvider provider) throws IOException,
             JsonProcessingException {
-        String formattedDate = DateFormatUtils.format(value, "yyyy-MM-dd");
+        String formattedDate = DateFormatUtils.format(value, dateFormatter);
         jgen.writeString(formattedDate);
+    }
+    
+    /**
+     * @param 对dateFormatter进行赋值
+     */
+    public static void setDateFormatter(String dateFormatter) {
+        SimpleJsonDateSerializer.dateFormatter = dateFormatter;
     }
 }

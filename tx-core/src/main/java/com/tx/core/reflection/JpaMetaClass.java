@@ -504,6 +504,14 @@ public class JpaMetaClass<T> {
         this.entitySimpleName = this.type.getSimpleName();
         this.tableName = this.entitySimpleName;
         
+        //将类型截取掉
+        this.modulePackageName = StringUtils.substringBeforeLast(this.type.getName(), ".");
+        //将所在包
+        this.modulePackageName = StringUtils.substringBeforeLast(this.modulePackageName, ".");
+        //截取最后一个包名作为模块名
+        String[] packages = StringUtils.splitByWholeSeparator(this.modulePackageName, ".");
+        this.modulePackageSimpleName = packages[packages.length - 1];
+        
         //获取jpa注解
         org.hibernate.annotations.Entity hiberEntityAnn = this.type.getAnnotation(org.hibernate.annotations.Entity.class);
         if (hiberEntityAnn != null) {

@@ -20,6 +20,10 @@ import com.tx.core.generator.JpaEntityFreeMarkerGenerator;
  */
 public class TXServiceLogDBScriptHelper {
     
+    private static Class<?> loadTemplateClass = TXServiceLogDBScriptHelper.class;
+    
+    private static String dbScriptTemplateFilePath = "com/tx/component/servicelog/defaultimpl/dbscript.ftl";
+    
     /**
       * 生成对应日志对象的脚本
       *<功能详细描述>
@@ -35,8 +39,8 @@ public class TXServiceLogDBScriptHelper {
     public static String generateDBScriptContent(Class<?> serviceLogType,
             DataSourceTypeEnum dataSourceType, String encode) {
         JpaEntityFreeMarkerGenerator factory = new JpaEntityFreeMarkerGenerator();
-        factory.setLoadTemplateClass(TXServiceLogDBScriptHelper.class);
-        factory.setDbScriptTemplateFilePath("com/tx/component/servicelog/defaultimpl/dbscript.ftl");
+        factory.setLoadTemplateClass(loadTemplateClass);
+        factory.setDbScriptTemplateFilePath(dbScriptTemplateFilePath);
         
         //生成后在自己指定的文件夹中去找即可
         String script = factory.generateScriptContent(serviceLogType,
@@ -44,5 +48,20 @@ public class TXServiceLogDBScriptHelper {
                 encode);
         
         return script;
+    }
+    
+    /**
+     * @param 对loadTemplateClass进行赋值
+     */
+    public static void setLoadTemplateClass(Class<?> loadTemplateClass) {
+        TXServiceLogDBScriptHelper.loadTemplateClass = loadTemplateClass;
+    }
+    
+    /**
+     * @param 对dbScriptTemplateFilePath进行赋值
+     */
+    public static void setDbScriptTemplateFilePath(
+            String dbScriptTemplateFilePath) {
+        TXServiceLogDBScriptHelper.dbScriptTemplateFilePath = dbScriptTemplateFilePath;
     }
 }

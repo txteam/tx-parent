@@ -4,7 +4,9 @@
  * 修改时间:  2013-9-27
  * <修改描述:>
  */
-package com.tx.core.reflection;
+package com.tx.core.reflection.model;
+
+import javax.persistence.Id;
 
 import org.apache.ibatis.reflection.MetaClass;
 
@@ -20,6 +22,23 @@ import org.apache.ibatis.reflection.MetaClass;
   */
 public class TestGetSet {
     
+    @Id
+    private String id;
+    
+    /**
+     * @return 返回 id
+     */
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * @param 对id进行赋值
+     */
+    public void setId(String id) {
+        this.id = id;
+    }
+
     private boolean isabc;
     
     private boolean isIsisAbc;

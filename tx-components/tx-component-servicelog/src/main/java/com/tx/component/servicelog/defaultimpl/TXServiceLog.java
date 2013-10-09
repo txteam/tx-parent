@@ -8,11 +8,8 @@ package com.tx.component.servicelog.defaultimpl;
 
 import java.util.Date;
 
-import org.codehaus.jackson.map.annotate.JsonSerialize;
-
 import com.tx.core.jdbc.sqlsource.annotation.QueryConditionGreaterOrEqual;
 import com.tx.core.jdbc.sqlsource.annotation.QueryConditionLess;
-import com.tx.core.support.jackson.jsonserializer.JsonDateSerializer;
 
 /**
  * 业务日志模型<br/>
@@ -126,7 +123,7 @@ public interface TXServiceLog {
      */
     @QueryConditionGreaterOrEqual(key="minCreateDate")
     @QueryConditionLess(key="maxCreateDate")
-    @JsonSerialize(using=JsonDateSerializer.class)
+    //@JsonSerialize(using=JsonDateSerializer.class)
     public Date getCreateDate();
     
     /**

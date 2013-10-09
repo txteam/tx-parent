@@ -1,10 +1,10 @@
 /*
- * 描          述:  业务日志ServiceLog:${entitySimpleName}
+ * 描          述:  业务日志ServiceLog:${jpaMetaClass.entitySimpleName}
  * 修  改   人:  
  * 修改时间:  
  * <修改描述:>
  */
-package ${modulePackageName}.servicelog.controller;
+package ${jpaMetaClass.modulePackageName}.servicelog.controller;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import ${modulePackageName}.servicelog.${entitySimpleName};
+import ${jpaMetaClass.modulePackageName}.servicelog.${jpaMetaClass.entitySimpleName};
 import com.tx.component.servicelog.context.ServiceLoggerContext;
 import com.tx.core.paged.model.PagedList;
 
@@ -27,8 +27,8 @@ import com.tx.core.paged.model.PagedList;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-@Controller("loginLogController")
-@RequestMapping("/servicelog/${moduleSimpleName}/${entitySimpleName}")
+@Controller("${org.apache.commons.lang.StringUtils.uncapitalize('${jpaMetaClass.entitySimpleName}')}Controller")
+@RequestMapping("/servicelog/${jpaMetaClass.moduleSimpleName}/${org.apache.commons.lang.StringUtils.uncapitalize('${jpaMetaClass.entitySimpleName}')}")
 public class ${entitySimpleName}Controller {
     
     /**
