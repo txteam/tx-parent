@@ -8,9 +8,6 @@ package com.tx.component.servicelog.defaultimpl;
 
 import java.util.Date;
 
-import com.tx.core.jdbc.sqlsource.annotation.QueryConditionGreaterOrEqual;
-import com.tx.core.jdbc.sqlsource.annotation.QueryConditionLess;
-
 /**
  * 业务日志模型<br/>
  *     业务日志主要目的为
@@ -121,8 +118,6 @@ public interface TXServiceLog {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    @QueryConditionGreaterOrEqual(key="minCreateDate")
-    @QueryConditionLess(key="maxCreateDate")
     //@JsonSerialize(using=JsonDateSerializer.class)
     public Date getCreateDate();
     

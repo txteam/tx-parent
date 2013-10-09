@@ -17,14 +17,18 @@ import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.tx.core.exceptions.io.ResourceAccessException;
 
+import freemarker.ext.beans.BeansWrapper;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import freemarker.template.TemplateHashModel;
+import freemarker.template.TemplateModelException;
 
 /**
  * freeMarker工具类
@@ -42,6 +46,22 @@ public class FreeMarkerUtils {
     
     /** 模版缓存 */
     private static Map<String, Template> templateCache = new HashMap<String, Template>();
+    
+    // 指定要在ftl页面使用的静态包名  
+    public static TemplateHashModel useStaticPackage(String packageName) {
+        BeansWrapper wrapper = BeansWrapper.getDefaultInstance();
+        TemplateHashModel staticModels = wrapper.getStaticModels();
+        TemplateHashModel fileStatics = null;
+        try {
+            fileStatics = (TemplateHashModel) staticModels.get(packageName);
+        } catch (TemplateModelException e) {
+        }
+        return fileStatics;
+    }
+    
+    private static void rootFilter(Map<String, Object> params){
+        params.put("StringUtils", useStaticPackage(StringUtils.class.getName()));
+    }
     
     /**
       * 获取模板
@@ -101,6 +121,9 @@ public class FreeMarkerUtils {
             out = new FileWriter(newFile);
             
             Template temp = getTemplateByTemplateClassPath(loadClass, filePath);
+            
+            rootFilter(root);
+            
             temp.process(root, out);
         } catch (IOException e) {
             logger.error(e.toString(), e);
@@ -139,6 +162,9 @@ public class FreeMarkerUtils {
             out = new OutputStreamWriter(new FileOutputStream(newFile), encode);
             
             Template temp = getTemplateByTemplateClassPath(loadClass, filePath);
+            
+            rootFilter(root);
+            
             temp.process(root, out);
         } catch (IOException e) {
             logger.error(e.toString(), e);
@@ -170,6 +196,9 @@ public class FreeMarkerUtils {
         try {
             Template temp = getTemplateByTemplateClassPath(loadClass,
                     templateFilePath);
+            
+            rootFilter(root);
+            
             temp.process(root, out);
             
             String scriptContent = out.getBuffer().toString();

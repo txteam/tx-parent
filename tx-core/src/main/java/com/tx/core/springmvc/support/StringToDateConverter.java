@@ -10,6 +10,7 @@ import java.text.ParseException;
 import java.util.Date;
 
 import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.convert.converter.Converter;
 
 /**
@@ -34,6 +35,9 @@ public class StringToDateConverter implements Converter<String, Date> {
      */
     @Override
     public Date convert(String source) {
+        if(StringUtils.isBlank(source)){
+            return null;
+        }
         Date changeDate = null;
         try {
             changeDate = DateUtils.parseDate(source, commonDatePattern);

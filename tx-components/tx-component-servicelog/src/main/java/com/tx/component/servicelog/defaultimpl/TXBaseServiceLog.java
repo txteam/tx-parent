@@ -12,6 +12,9 @@ import javax.persistence.Id;
 
 import org.slf4j.helpers.MessageFormatter;
 
+import com.tx.core.jdbc.sqlsource.annotation.QueryConditionGreaterOrEqual;
+import com.tx.core.jdbc.sqlsource.annotation.QueryConditionLess;
+
 /**
  * 基础业务日志类
  * <功能详细描述>
@@ -40,6 +43,8 @@ public class TXBaseServiceLog implements TXServiceLog {
     private String clientIpAddress;
     
     /** 业务日志记录时间 */
+    @QueryConditionGreaterOrEqual(key="minCreateDate")
+    @QueryConditionLess(key="maxCreateDate")
     private Date createDate;
     
     /** 业务日志消息体 */

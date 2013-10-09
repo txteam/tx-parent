@@ -10,6 +10,7 @@ import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.util.ClassUtils;
 
 import com.tx.core.dbscript.model.DataSourceTypeEnum;
@@ -53,12 +54,31 @@ public class TXServiceLogViewHelper {
         JpaMetaClass<?> jpaMetaClass = JpaMetaClass.forClass(serviceLogType);
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("jpaMetaClass", jpaMetaClass);
+        //params.put("StringUtils", StringUtils.class);
         
+        //生成controller
+        generateController(resultFolderPath, jpaMetaClass, params);
+    }
+
+    
+     /** 
+      *<功能简述>
+      *<功能详细描述>
+      * @param resultFolderPath
+      * @param jpaMetaClass
+      * @param params [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+      */
+    private static void generateController(String resultFolderPath,
+            JpaMetaClass<?> jpaMetaClass, Map<String, Object> params) {
         String filePath = ClassUtils.convertClassNameToResourcePath(jpaMetaClass.getEntityTypeName())
                 + "/../servicelog/controller";
         filePath = org.springframework.util.StringUtils.cleanPath(filePath);
         String outFilePath = resultFolderPath + "/main/java/" + filePath + "/"
-                + jpaMetaClass.getEntitySimpleName() + ".java";
+                + jpaMetaClass.getEntitySimpleName() + "Controller.java";
         
         FreeMarkerUtils.fprint(loadTemplateClass,
                 controllerTemplateFilePath,
