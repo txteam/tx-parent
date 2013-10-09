@@ -11,12 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.sql.DataSource;
-
-import net.sf.ehcache.CacheManager;
-
 import org.apache.ibatis.reflection.MetaObject;
-import org.hibernate.dialect.Dialect;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SingleColumnRowMapper;

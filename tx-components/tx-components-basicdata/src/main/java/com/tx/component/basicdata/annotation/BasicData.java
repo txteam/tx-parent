@@ -7,6 +7,7 @@
 package com.tx.component.basicdata.annotation;
 
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
@@ -25,41 +26,8 @@ import com.tx.component.basicdata.executor.SqlSourceBasicDataExecutor;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE })
+@Inherited
 public @interface BasicData {
-    
-    /**
-      * 基础数据所属模块名
-      *<功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return String [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    public String module() default "";
-    
-    /**
-      * 基础数据类型别名<br/>
-      *<功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return String [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    public String name() default "";
-    
-    /**
-      * 获取到基础数据的唯一关键字 
-      * 如果不指定则为类的entityName(含包名)
-      *<功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return String [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    public String key() default "";
     
     /**
       * 对象是否需要缓存<br/>
