@@ -25,6 +25,24 @@ public interface BasicDataExecutorPlugin extends InvocationHandler, Ordered {
     
     String METHOD_NAME_EXECUTE = "execute";
     
+    String METHOD_NAME_GETMULTIVALUEMAP = "getMultiValueMap";
+    
+    String METHOD_NAME_FIND = "find";
+    
+    String METHOD_NAME_LIST = "list";
+    
+    String METHOD_NAME_QUERY = "query";
+    
+    String METHOD_NAME_QUERYPAGEDLIST = "queryPagedList";
+    
+    String METHOD_NAME_COUNT = "count";
+    
+    String METHOD_NAME_INSERT = "insert";
+    
+    String METHOD_NAME_DELETE = "delete";
+    
+    String METHOD_NAME_UPDATE = "update";
+    
     /**
       * 是否支持当前类型
       *<功能详细描述>
@@ -47,7 +65,8 @@ public interface BasicDataExecutorPlugin extends InvocationHandler, Ordered {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public BasicDataExecutorPlugin plugin(BasicDataExecutor<?> basicDataExecutor);
+    public BasicDataExecutorPlugin plugin(
+            BasicDataExecutor<?> basicDataExecutor, Class<?> type);
     
     /**
       * 设置当前插件对应的执行器对象 
@@ -59,4 +78,15 @@ public interface BasicDataExecutorPlugin extends InvocationHandler, Ordered {
       * @see [类、类#方法、类#成员]
      */
     public void setBasicDataExecutor(BasicDataExecutor<?> basicDataExecutor);
+    
+    /**
+      * 设置当前类型<br/> 
+      *<功能详细描述>
+      * @param type [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public void setType(Class<?> type);
 }

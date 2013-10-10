@@ -11,6 +11,7 @@ import org.springframework.core.Ordered;
 import com.tx.component.basicdata.executor.BasicDataExecutor;
 import com.tx.core.exceptions.logic.CloneException;
 import com.tx.core.exceptions.util.ExceptionWrapperUtils;
+import com.tx.core.reflection.JpaMetaClass;
 
 /**
  * 基础数据执行器插件基类<br/>
@@ -26,6 +27,10 @@ public abstract class BaseBasicDataExecutorPlugin implements
     
     private BasicDataExecutor<?> basicDataExecutor;
     
+    private Class<?> type;
+    
+    private JpaMetaClass<?> jpaMetaClass;
+    
     /** <默认构造函数> */
     public BaseBasicDataExecutorPlugin() {
     }
@@ -35,10 +40,11 @@ public abstract class BaseBasicDataExecutorPlugin implements
      * @return
      */
     @Override
-    public BasicDataExecutorPlugin plugin(BasicDataExecutor<?> basicDataExecutor) {
+    public BasicDataExecutorPlugin plugin(BasicDataExecutor<?> basicDataExecutor,Class<?> type) {
         try {
             BasicDataExecutorPlugin newPlugin = (BasicDataExecutorPlugin)this.clone();
             newPlugin.setBasicDataExecutor(basicDataExecutor);
+            newPlugin.setType(type);
             return newPlugin;
         } catch (CloneNotSupportedException e) {
             throw ExceptionWrapperUtils.wrapperSILException(CloneException.class, "克隆基础数据执行器插件异常", e);
@@ -48,7 +54,7 @@ public abstract class BaseBasicDataExecutorPlugin implements
     /**
      * @return 返回 basicDataExecutor
      */
-    public BasicDataExecutor<?> getBasicDataExecutor() {
+    protected BasicDataExecutor<?> getBasicDataExecutor() {
         return basicDataExecutor;
     }
 
@@ -57,5 +63,27 @@ public abstract class BaseBasicDataExecutorPlugin implements
      */
     public void setBasicDataExecutor(BasicDataExecutor<?> basicDataExecutor) {
         this.basicDataExecutor = basicDataExecutor;
-    }    
+    }
+
+    /**
+     * @return 返回 type
+     */
+    protected Class<?> getType() {
+        return type;
+    }
+
+    /**
+     * @param 对type进行赋值
+     */
+    public void setType(Class<?> type) {
+        this.type = type;
+        this.jpaMetaClass = JpaMetaClass.forClass(type);
+    }
+
+    /**
+     * @return 返回 jpaMetaClass
+     */
+    protected JpaMetaClass<?> getJpaMetaClass() {
+        return jpaMetaClass;
+    }
 }

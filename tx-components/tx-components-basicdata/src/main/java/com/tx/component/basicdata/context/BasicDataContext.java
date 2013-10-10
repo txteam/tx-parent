@@ -125,7 +125,7 @@ public class BasicDataContext extends BasicDataContextConfigurator implements
             for (BasicDataExecutorPlugin pluginTemp : plugins) {
                 resExecutor = (BasicDataExecutor<TYPE>) Proxy.newProxyInstance(BasicDataContext.class.getClassLoader(),
                         new Class<?>[] { BasicDataExecutor.class },
-                        pluginTemp.plugin(resExecutor));
+                        pluginTemp.plugin(resExecutor,type));
             }
         }
         return resExecutor;

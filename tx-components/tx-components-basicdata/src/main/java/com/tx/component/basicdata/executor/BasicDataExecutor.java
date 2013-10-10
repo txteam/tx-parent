@@ -35,7 +35,7 @@ public interface BasicDataExecutor<T> {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public void execute(String process);
+    public Object execute(String process, Object... args);
     
     /**
       * 根据list获取结果集后，更具getterName得到一个MultiValueMap

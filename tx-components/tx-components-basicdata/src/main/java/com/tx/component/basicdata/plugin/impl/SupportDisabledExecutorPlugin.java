@@ -7,8 +7,10 @@
 package com.tx.component.basicdata.plugin.impl;
 
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import com.tx.component.basicdata.executor.BasicDataExecutor;
 import com.tx.component.basicdata.plugin.BaseBasicDataExecutorPlugin;
 import com.tx.core.exceptions.util.AssertUtils;
 
@@ -22,7 +24,7 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @since  [产品/模块版本]
  */
 public class SupportDisabledExecutorPlugin extends BaseBasicDataExecutorPlugin {
-
+    
     /**
      * @return
      */
@@ -42,15 +44,72 @@ public class SupportDisabledExecutorPlugin extends BaseBasicDataExecutorPlugin {
     public Object invoke(Object proxy, Method method, Object[] args)
             throws Throwable {
         String methodName = method.getName();
-        if(METHOD_NAME_EXECUTE.equals(methodName)){
-            String process = (String)args[0];
-            if("disable".equals(process)){
-                
-                //getBasicDataExecutor().update(params);
-            }
+        Object resObj = null;
+        if (METHOD_NAME_EXECUTE.equals(methodName)) {
+            String process = (String) args[0];
+            if ("disable".equals(process)) {
+                resObj = disable(args);
+            } else if ("enable".equals(process)) {
+                resObj = enable(args);
+            } 
+        }else if(METHOD_NAME_LIST.equals(methodName)){
+            resObj = listValid();
+        }else{
+            resObj = method.invoke(getBasicDataExecutor(), args);
         }
         
-        return null;
+        System.out.println(resObj);
+        System.out.println(resObj != null ? resObj.getClass() : "null");
+        return resObj;
+    }
+    
+    /**
+      * 查询所有有效的数据
+      *<功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return List [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    @SuppressWarnings("rawtypes")
+    public List listValid(){
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("valid", true);
+        List res = getBasicDataExecutor().query(params);
+        return res;
+    }
+    
+    /**
+      * 禁用
+      *<功能详细描述> [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    private boolean disable(Object[] args) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("valid", false);
+        params.put(getJpaMetaClass().getPkGetterName(), args[0]);
+        return getBasicDataExecutor().update(params);
+        
+    }
+    
+    /**
+      * 启用
+      *<功能详细描述>
+      * @param args [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    private boolean enable(Object[] args) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("valid", true);
+        params.put(getJpaMetaClass().getPkGetterName(), args[0]);
+        return getBasicDataExecutor().update(params);
     }
     
     /**
@@ -60,11 +119,9 @@ public class SupportDisabledExecutorPlugin extends BaseBasicDataExecutorPlugin {
     @Override
     public <T> boolean isSupportType(Class<T> type) {
         AssertUtils.notNull(type, "type is null");
-        
         if (SupportDisabled.class.isAssignableFrom(type)) {
             return true;
         }
         return false;
     }
-    
 }

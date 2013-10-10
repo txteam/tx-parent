@@ -59,10 +59,10 @@ public abstract class BaseBasicDataExecutor<T> implements BasicDataExecutor<T> {
      * @param processName
      */
     @Override
-    public void execute(String process) {
-        
+    public Object execute(String process, Object... args) {
+        return null;
     }
-
+    
     /** <默认构造函数> */
     public BaseBasicDataExecutor(Class<T> type,
             BasicDataContextConfigurator configurator) {
@@ -257,8 +257,8 @@ public abstract class BaseBasicDataExecutor<T> implements BasicDataExecutor<T> {
             }
         }
         if (isCacheEnable()) {
-            this.cache.put(new Element(generateCacheKey("getMultiValueMap", getterName),
-                    resMultiValueMap));
+            this.cache.put(new Element(generateCacheKey("getMultiValueMap",
+                    getterName), resMultiValueMap));
         }
         return resMultiValueMap;
     }

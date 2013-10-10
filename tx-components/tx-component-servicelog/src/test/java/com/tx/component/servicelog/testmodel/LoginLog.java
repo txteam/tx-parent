@@ -24,23 +24,23 @@ public class LoginLog extends TXBaseServiceLog {
     
     /** 登录类型 0:登入 1：登出 */
     private String type = "0";
-
+    
     /** <默认构造函数> */
     public LoginLog() {
     }
-
+    
     /** <默认构造函数> */
     public LoginLog(String type) {
         super("0".equals(type) ? "登录" : "退出");
     }
-
+    
     /**
      * @return 返回 type
      */
     public String getType() {
         return type;
     }
-
+    
     /**
      * @param 对type进行赋值
      */

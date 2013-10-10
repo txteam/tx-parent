@@ -89,6 +89,8 @@ public class BaseTestBasicModelExecutorTest {
         executor1.getMultiValueMap("code").containsKey("001");
         executor1.getMultiValueMap("code").containsKey("002");
         
+        executor1.execute("disable",newObj.getId());
+        
         executor1.delete( executor1.getMultiValueMap("code").getFirst("001").getId());
         
         executor1.getMultiValueMap("code").containsKey("002");

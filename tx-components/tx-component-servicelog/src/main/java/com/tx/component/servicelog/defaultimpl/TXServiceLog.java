@@ -121,7 +121,8 @@ public interface TXServiceLog {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-
+    @QueryConditionGreaterOrEqual(key="minCreateDate")
+    @QueryConditionLess(key="maxCreateDate")
     //@JsonSerialize(using=JsonDateSerializer.class)
     public Date getCreateDate();
     

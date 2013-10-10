@@ -62,7 +62,7 @@ public class BasicDataContextConfigurator implements InitializingBean {
     private List<BasicDataExecutorPlugin> plugins;
     
     /** 基础数据执行器插件注册器 */
-    private BasicDataExecutorPluginRegistry basicDataExecutorPluginRegistry;
+    private BasicDataExecutorPluginRegistry basicDataExecutorPluginRegistry = new BasicDataExecutorPluginRegistry();
     
     /**
      * @throws Exception
@@ -163,19 +163,47 @@ public class BasicDataContextConfigurator implements InitializingBean {
             boolean stopOnBuildBasicDataExecutorWhenStartup) {
         this.stopOnBuildBasicDataExecutorWhenStartup = stopOnBuildBasicDataExecutorWhenStartup;
     }
-
+    
     /**
      * @return 返回 basicDataExecutorPluginRegistry
      */
     public BasicDataExecutorPluginRegistry getBasicDataExecutorPluginRegistry() {
         return basicDataExecutorPluginRegistry;
     }
-
+    
     /**
      * @param 对basicDataExecutorPluginRegistry进行赋值
      */
     protected void setBasicDataExecutorPluginRegistry(
             BasicDataExecutorPluginRegistry basicDataExecutorPluginRegistry) {
         this.basicDataExecutorPluginRegistry = basicDataExecutorPluginRegistry;
+    }
+
+    /**
+     * @return 返回 pluginBasePackages
+     */
+    public String getPluginBasePackages() {
+        return pluginBasePackages;
+    }
+
+    /**
+     * @param 对pluginBasePackages进行赋值
+     */
+    public void setPluginBasePackages(String pluginBasePackages) {
+        this.pluginBasePackages = pluginBasePackages;
+    }
+
+    /**
+     * @return 返回 plugins
+     */
+    public List<BasicDataExecutorPlugin> getPlugins() {
+        return plugins;
+    }
+
+    /**
+     * @param 对plugins进行赋值
+     */
+    public void setPlugins(List<BasicDataExecutorPlugin> plugins) {
+        this.plugins = plugins;
     }
 }

@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 
+import org.apache.commons.lang.ClassUtils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
@@ -104,6 +105,7 @@ public class ClassReflector<T> {
                     continue;
                 }
                 
+                this.fieldMapping.add(fieldName, fieldTemp);
                 this.fieldNames.add(fieldName);
                 this.fieldTypeMapping.put(fieldName, fieldTemp.getType());
                 
@@ -146,7 +148,8 @@ public class ClassReflector<T> {
         }
         
         //将接口中Method写入
-        Class<?>[] interfaceClasses = type.getInterfaces();
+        @SuppressWarnings("unchecked")
+        List<Class<?>> interfaceClasses = ClassUtils.getAllInterfaces(type);
         for(Class<?> interfaceClassTemp : interfaceClasses) {
             Method[] methods = interfaceClassTemp.getMethods();
             for (Method methodTemp : methods) {
@@ -175,7 +178,6 @@ public class ClassReflector<T> {
                     }
                 }
             }
-            searchType = searchType.getSuperclass();
         }
     }
     
