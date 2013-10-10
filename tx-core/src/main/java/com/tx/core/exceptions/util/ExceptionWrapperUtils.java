@@ -56,7 +56,7 @@ public class ExceptionWrapperUtils {
         
         T exception = null;
         try {
-            exception = cons.newInstance(message, (Object[])parameters);
+            exception = cons.newInstance(message, (Object[]) parameters);
         } catch (IllegalArgumentException e) {
             throw new ReflectionException(
                     MessageFormatter.format("SILException:{} IllegalArgumentException:{}.",
@@ -94,7 +94,7 @@ public class ExceptionWrapperUtils {
     public static <T extends SILException> SILException wrapperSILException(
             Class<T> exceptionType, String message, Throwable sourceError,
             Object[]... parameters) {
-        Constructor<T> cons;
+        Constructor<T> cons = null;
         try {
             cons = exceptionType.getConstructor(String.class, Throwable.class);
         } catch (SecurityException e) {
@@ -166,6 +166,8 @@ public class ExceptionWrapperUtils {
     public static SILException wrapperIOException(IOException ioException,
             String message, Object[] parameters) {
         AssertUtils.notNull(ioException, "ioException not be null");
-        return new ResourceAccessException(MessageFormatter.arrayFormat(message, parameters).getMessage(),ioException);
+        return new ResourceAccessException(
+                MessageFormatter.arrayFormat(message, parameters).getMessage(),
+                ioException);
     }
 }

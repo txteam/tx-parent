@@ -83,8 +83,12 @@ public class JdbcUtils {
       * @see [类、类#方法、类#成员]
      */
     public static int getSqlTypeByJavaType(Class<?> type) {
+        if(type.isEnum()){
+            return Types.VARCHAR;
+        }
+        
         AssertUtils.isTrue(SIMPLE_TYPE_2_TYPES_MAP.containsKey(type),
-                "unsupport type:{}. not simple type.");
+                "unsupport type:{}. not simple type.",new Object[]{type});
         
         return SIMPLE_TYPE_2_TYPES_MAP.get(type);
     }
@@ -100,8 +104,12 @@ public class JdbcUtils {
       * @see [类、类#方法、类#成员]
      */
     public static JdbcType getJdbcTypeByJavaType(Class<?> type) {
+        if(type.isEnum()){
+            return JdbcType.forCode(Types.VARCHAR);
+        }
+        
         AssertUtils.isTrue(SIMPLE_TYPE_2_TYPES_MAP.containsKey(type),
-                "unsupport type:{}. not simple type.");
+                "unsupport type:{}. not simple type.",new Object[]{type});
         
         JdbcType jdbcType = JdbcType.forCode(SIMPLE_TYPE_2_TYPES_MAP.get(type));
         return jdbcType;
@@ -124,11 +132,13 @@ public class JdbcUtils {
     public static void setPreparedStatementValueForSimpleType(
             PreparedStatement ps, int parameterIndex, Object value,
             Class<?> type) throws SQLException {
-        AssertUtils.isTrue(SIMPLE_TYPE_2_TYPES_MAP.containsKey(type),
-                "type:{} is not simple type",
-                new Object[] { type });
-        
         if (value == null) {
+            if(!type.isEnum()){
+                AssertUtils.isTrue(SIMPLE_TYPE_2_TYPES_MAP.containsKey(type),
+                        "type:{} is not simple type",
+                        new Object[] { type });
+            }
+            
             ps.setNull(parameterIndex, getSqlTypeByJavaType(type));
             return;
         }
@@ -140,7 +150,7 @@ public class JdbcUtils {
         typeHandler.setParameter(ps,
                 parameterIndex,
                 value,
-                JdbcType.forCode(SIMPLE_TYPE_2_TYPES_MAP.get(type)));
+                getJdbcTypeByJavaType(type));
     }
     
     /**

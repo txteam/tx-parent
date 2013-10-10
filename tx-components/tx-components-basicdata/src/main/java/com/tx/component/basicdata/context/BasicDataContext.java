@@ -33,6 +33,7 @@ public class BasicDataContext extends BasicDataExecutorFactory implements
      */
     @Override
     public void afterPropertiesSet() throws Exception {
+        super.afterPropertiesSet();
         BasicDataContext.context = this;
     }
     

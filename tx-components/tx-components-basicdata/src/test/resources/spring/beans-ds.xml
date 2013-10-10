@@ -25,6 +25,7 @@
 	
 	<jdbc:embedded-database id="h2DataSource" type="H2">
 		<jdbc:script location="classpath:com/tx/component/basicdata/testmodel/auth_base_1.0.0.sql"/>
+		<jdbc:script location="classpath:com/tx/component/basicdata/model/TEST_BASICDATA.sql"/>
 	</jdbc:embedded-database>
 
 	<!-- jdbc:h2:mem:webdemo -->

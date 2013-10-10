@@ -157,7 +157,13 @@ public class SqlSourceBuilder {
         Set<String> getterNames = classReflector.getGetterNames();
         for (String getterNameTemp : getterNames) {
             Class<?> getterType = classReflector.getGetterType(getterNameTemp);
-            JdbcType getterJdbcType = JdbcUtils.getJdbcTypeByJavaType(getterType);
+            JdbcType getterJdbcType = null;
+            try {
+                getterJdbcType = JdbcUtils.getJdbcTypeByJavaType(getterType);
+            } catch (Exception e) {
+                //如果为不支持的类型则跳过
+                continue;
+            }
             String columnName = simpleSqlSource.getColumnNameByGetterName(getterNameTemp);
             
             //如果存在queryCondition条件

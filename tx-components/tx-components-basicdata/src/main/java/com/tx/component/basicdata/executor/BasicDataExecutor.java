@@ -9,6 +9,8 @@ package com.tx.component.basicdata.executor;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.util.MultiValueMap;
+
 import com.tx.core.paged.model.PagedList;
 
 /**
@@ -24,31 +26,16 @@ import com.tx.core.paged.model.PagedList;
 public interface BasicDataExecutor<T> {
     
     /**
-     * 判断基础数据是否包含指定数据<br/>
-     *<功能详细描述>
-     * @param obj
-     * @return [参数说明]
-     * 
-     * @return boolean [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-    */
-    public boolean contains(String pk);
-    
-    /**
-     * 根据主键获取对象
-     *     与find不同的是，get的使用方法为
-     *     首先用list获取所有对象，然后建立一个map映射后
-     *     再通过该map.get出对象
-     *<功能详细描述>
-     * @param findCondition
-     * @return [参数说明]
-     * 
-     * @return T [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-    */
-    public T get(String pk);
+      * 根据list获取结果集后，更具getterName得到一个MultiValueMap
+      *<功能详细描述>
+      * @param getterName
+      * @return [参数说明]
+      * 
+      * @return MultiValueMap [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public MultiValueMap<Object, T> getMultiValueMap(String getterName);
     
     /**
       * 根据条件查询指定对象

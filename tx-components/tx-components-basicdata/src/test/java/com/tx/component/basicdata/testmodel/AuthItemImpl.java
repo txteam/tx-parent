@@ -19,6 +19,7 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.tx.component.basicdata.annotation.BasicData;
 import com.tx.core.jdbc.sqlsource.annotation.QueryConditionEqual;
 import com.tx.core.jdbc.sqlsource.annotation.QueryConditionLikeAfter;
 import com.tx.core.jdbc.sqlsource.annotation.UpdateAble;
@@ -34,6 +35,7 @@ import com.tx.core.util.ObjectUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
+@BasicData()
 @Entity
 @Table(name = "auth_authitem")
 public class AuthItemImpl implements AuthItem {

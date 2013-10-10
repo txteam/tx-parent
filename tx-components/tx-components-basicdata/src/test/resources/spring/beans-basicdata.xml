@@ -11,13 +11,16 @@
 	<bean id="basicDataContext" 
 		class="com.tx.component.basicdata.context.BasicDataContextFactory">
 		<property name="cacheManager">
-			<ref bean=""/>
+			<ref bean="ehcacheManager"/>
 		</property>
 		<property name="dataSource">
-			<ref bean=""/>
+			<ref bean="dataSource"/>
 		</property>
-		<property name="packageNames">
+		<property name="basePackages">
+			<value>com.tx.webdemo,com.tx.component</value>
 		</property>
+		<property name="dataSourceType" value="H2"></property>
+		<property name="loadExecutorOnStartup" value="true"></property>
 	</bean>
 	
 </beans>

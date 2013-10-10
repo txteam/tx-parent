@@ -12,7 +12,6 @@ import java.util.Map;
 
 import org.apache.commons.lang3.EnumUtils;
 
-import com.tx.component.basicdata.annotation.BasicData;
 import com.tx.component.basicdata.context.BasicDataContextConfigurator;
 import com.tx.core.exceptions.logic.UnsupportedOperationException;
 import com.tx.core.paged.model.PagedList;
@@ -39,29 +38,17 @@ public class EnumBasicDataExecutor<T extends Enum<T>> extends
         throw new UnsupportedOperationException("枚举类基础数据不可能调用到的业务逻辑");
     }
     
-    public EnumBasicDataExecutor(Class<T> type, BasicData basicDataAnnotation,
+    public EnumBasicDataExecutor(Class<T> type,
             BasicDataContextConfigurator configurator) {
-        super(type, basicDataAnnotation, configurator);
+        super(type, configurator);
     }
     
     /**
-     * @param obj
      * @return
      */
     @Override
-    protected String getKeyValue(T obj) {
-        return obj.toString();
-    }
-    
-    /**
-     * 重写基类中的get方法,实现不依赖list实现<br/>
-     * @param pk
-     * @return
-     */
-    @Override
-    public T get(String pk) {
-        T res = EnumUtils.getEnum(getType(), pk);
-        return res;
+    protected boolean isCacheEnable() {
+        return false;
     }
     
     /**

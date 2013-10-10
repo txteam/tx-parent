@@ -10,11 +10,8 @@ import javax.sql.DataSource;
 
 import net.sf.ehcache.CacheManager;
 
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.core.Ordered;
-import org.springframework.core.PriorityOrdered;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.tx.core.dbscript.model.DataSourceTypeEnum;
 
@@ -27,17 +24,18 @@ import com.tx.core.dbscript.model.DataSourceTypeEnum;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class BasicDataContextConfigurator implements BeanFactoryPostProcessor,
-        PriorityOrdered {
+public class BasicDataContextConfigurator {
     
-    /** bean工厂PostProcessor顺序 */
-    private int order = Ordered.LOWEST_PRECEDENCE;
+    protected Logger logger = LoggerFactory.getLogger(getClass());
     
     /** 是否在启动期间就加载基础数据执行器 */
     private boolean loadExecutorOnStartup = true;
     
+    /** 在启动期间如果构建基础数据查询器异常是否停止 */
+    private boolean stopOnBuildBasicDataExecutorWhenStartup = false;
+    
     /** 基础数据所在扫描包 */
-    private String basePackage;
+    private String basePackages;
     
     /** 数据源 */
     private DataSource dataSource;
@@ -48,25 +46,25 @@ public class BasicDataContextConfigurator implements BeanFactoryPostProcessor,
     /** 缓存 */
     private CacheManager cacheManager;
     
-    /**
-     * @return
-     */
-    @Override
-    public int getOrder() {
-        return this.order;
-    }
-    
-    /**
-     * @param beanFactory
-     * @throws BeansException
-     */
-    @Override
-    public void postProcessBeanFactory(
-            ConfigurableListableBeanFactory beanFactory) throws BeansException {
-        if(this.loadExecutorOnStartup){
-            loadExecutorOnStartup();
-        }
-    }
+    //    /**
+    //     * @return
+    //     */
+    //    @Override
+    //    public int getOrder() {
+    //        return this.order;
+    //    }
+    //    
+    //    /**
+    //     * @param beanFactory
+    //     * @throws BeansException
+    //     */
+    //    @Override
+    //    public void postProcessBeanFactory(
+    //            ConfigurableListableBeanFactory beanFactory) throws BeansException {
+    //        if(this.loadExecutorOnStartup){
+    //            loadExecutorOnStartup();
+    //        }
+    //    }
     
     /**
       * 在启动期间装载基础数据执行器
@@ -83,15 +81,15 @@ public class BasicDataContextConfigurator implements BeanFactoryPostProcessor,
     /**
      * @return 返回 basePackage
      */
-    public String getBasePackage() {
-        return basePackage;
+    public String getBasePackages() {
+        return basePackages;
     }
     
     /**
      * @param 对basePackage进行赋值
      */
-    public void setBasePackage(String basePackage) {
-        this.basePackage = basePackage;
+    public void setBasePackages(String basePackages) {
+        this.basePackages = basePackages;
     }
     
     /**
@@ -106,13 +104,6 @@ public class BasicDataContextConfigurator implements BeanFactoryPostProcessor,
      */
     public void setDataSourceType(DataSourceTypeEnum dataSourceType) {
         this.dataSourceType = dataSourceType;
-    }
-    
-    /**
-     * @param 对order进行赋值
-     */
-    public void setOrder(int order) {
-        this.order = order;
     }
     
     /**
@@ -155,5 +146,20 @@ public class BasicDataContextConfigurator implements BeanFactoryPostProcessor,
      */
     public void setLoadExecutorOnStartup(boolean loadExecutorOnStartup) {
         this.loadExecutorOnStartup = loadExecutorOnStartup;
+    }
+    
+    /**
+     * @return 返回 stopOnBuildBasicDataExecutorWhenStartup
+     */
+    public boolean isStopOnBuildBasicDataExecutorWhenStartup() {
+        return stopOnBuildBasicDataExecutorWhenStartup;
+    }
+    
+    /**
+     * @param 对stopOnBuildBasicDataExecutorWhenStartup进行赋值
+     */
+    public void setStopOnBuildBasicDataExecutorWhenStartup(
+            boolean stopOnBuildBasicDataExecutorWhenStartup) {
+        this.stopOnBuildBasicDataExecutorWhenStartup = stopOnBuildBasicDataExecutorWhenStartup;
     }
 }

@@ -61,6 +61,7 @@
 
 
 	<!-- spring框架打印日志级别 -->
+	<logger name="com.tx.component.basicdata.executor.BaseBasicDataExecutor" level="DEBUG" />
 	<logger name="org.springframework" level="ERROR" />
 	<!-- springMVC答应日志级别 -->
 	<logger name="org.springframework.web" level="ERROR" />

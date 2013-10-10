@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
@@ -38,13 +37,29 @@ public class SqlSourceBasicDataExecutor<T> extends BaseBasicDataExecutor<T> {
     
     private SqlSourceBuilder simpleSqlSourceBuilder = new SqlSourceBuilder();
     
+    private boolean cacheEnable;
+    
     public SqlSourceBasicDataExecutor(Class<T> type,
-            BasicData basicDataAnnotation,
             BasicDataContextConfigurator configurator) {
-        super(type, basicDataAnnotation, configurator);
+        super(type, configurator);
         
         this.simpleSqlSource = simpleSqlSourceBuilder.build(type,
                 configurator.getDataSourceType().getDialect());
+        
+        if (type.isAnnotationPresent(BasicData.class)) {
+            BasicData basicDataAnno = type.getAnnotation(BasicData.class);
+            this.cacheEnable = basicDataAnno.isCache();
+        } else {
+            this.cacheEnable = true;
+        }
+    }
+    
+    /**
+     * @return
+     */
+    @Override
+    protected boolean isCacheEnable() {
+        return cacheEnable;
     }
     
     /**
@@ -54,10 +69,10 @@ public class SqlSourceBasicDataExecutor<T> extends BaseBasicDataExecutor<T> {
      */
     @Override
     protected String generateCacheKey(String method, Object... params) {
-        if ("get".equals(method)) {
-            return "cachekey_for_get";
+        if ("getMultiValueMap".equals(method)) {
+            return "cachekey_for_getMultiValueMap_" + params[0];
         } else if ("find".equals(method)) {
-            return "cachekey_for_find_" + params[0].hashCode();
+            return "cachekey_for_find_" + params[0];
         } else if ("query".equals(method)) {
             int hashCode = "query".hashCode();
             if (params[0] != null) {
@@ -114,17 +129,6 @@ public class SqlSourceBasicDataExecutor<T> extends BaseBasicDataExecutor<T> {
             String resKey = method + hashCode;
             return resKey;
         }
-    }
-    
-    /**
-     * @param obj
-     * @return
-     */
-    @Override
-    protected String getKeyValue(T obj) {
-        MetaObject metaObject = MetaObject.forObject(obj);
-        String value = (String) metaObject.getValue(simpleSqlSource.getPkName());
-        return value;
     }
     
     /**

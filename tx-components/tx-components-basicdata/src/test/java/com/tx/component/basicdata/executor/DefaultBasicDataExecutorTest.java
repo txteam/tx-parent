@@ -17,6 +17,7 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.tx.component.basicdata.context.BasicDataContext;
 import com.tx.component.basicdata.testmodel.AuthItemImpl;
 import com.tx.core.util.UUIDUtils;
 
@@ -30,17 +31,19 @@ import com.tx.core.util.UUIDUtils;
  * @since  [产品/模块版本]
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:spring/beans-aop.xml",
-        "classpath:spring/beans-cache.xml", "classpath:spring/beans-ds.xml",
-        "classpath:spring/beans-tx.xml" })
+@ContextConfiguration(locations = { 
+        "classpath:spring/beans-aop.xml",
+        "classpath:spring/beans-cache.xml", 
+        "classpath:spring/beans-ds.xml",
+        "classpath:spring/beans-tx.xml",
+        "classpath:spring/beans-basicdata.xml" })
 public class DefaultBasicDataExecutorTest {
     
-    private SqlSourceBasicDataExecutor<AuthItemImpl> executor;
+    private BasicDataExecutor<AuthItemImpl> executor;
     
     @Before
     public void before() {
-//        executor = new SqlSourceBasicDataExecutor<AuthItemImpl>(
-//                AuthItemImpl.class, true, dialect, dataSource, cacheManager);
+        executor = BasicDataContext.getExecutor(AuthItemImpl.class);
     }
     
     @Test

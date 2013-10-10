@@ -6,7 +6,7 @@
  */
 package com.tx.component.basicdata.executor;
 
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -16,11 +16,16 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
+import org.apache.ibatis.reflection.MetaClass;
+import org.apache.ibatis.reflection.MetaObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.support.TransactionSynchronizationAdapter;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
-import com.tx.component.basicdata.annotation.BasicData;
 import com.tx.component.basicdata.context.BasicDataContextConfigurator;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.paged.model.PagedList;
@@ -36,6 +41,8 @@ import com.tx.core.paged.model.PagedList;
  */
 public abstract class BaseBasicDataExecutor<T> implements BasicDataExecutor<T> {
     
+    private Logger logger = LoggerFactory.getLogger(BaseBasicDataExecutor.class);
+    
     /** jdbcTemplate */
     private JdbcTemplate jdbcTemplate;
     
@@ -45,49 +52,52 @@ public abstract class BaseBasicDataExecutor<T> implements BasicDataExecutor<T> {
     /** 缓存实体 */
     private Cache cache;
     
-    /** 是否开启缓存 */
-    private boolean cacheEnable;
-    
     /** 执行器对应类型  */
     private Class<T> type;
     
     /** <默认构造函数> */
-    public BaseBasicDataExecutor(Class<T> type, BasicData basicDataAnnotation,
+    public BaseBasicDataExecutor(Class<T> type,
             BasicDataContextConfigurator configurator) {
         AssertUtils.notNull(type, "type is null.");
         
         this.type = type;
-        this.cacheEnable = basicDataAnnotation.isCache();
         this.cacheName = "basicdata_cache_" + type.getName();
         
-        if (!type.isEnum()) {
-            AssertUtils.notNull(configurator, "configurator is null.");
-            AssertUtils.notNull(configurator.getDataSource(),
-                    "configurator.getDataSource() is null.");
-            AssertUtils.notNull(configurator.getDataSourceType(),
-                    "configurator.getDataSourceType() is null.");
-            
-            DataSource dataSource = configurator.getDataSource();
-            if (dataSource != null) {
-                this.jdbcTemplate = new JdbcTemplate(dataSource);
-            }
-            if (cacheEnable) {
-                AssertUtils.notNull(configurator.getCacheManager(),
-                        "cacheManager is null.");
-                
-                CacheManager cacheManager = null;
-                if (configurator.getCacheManager() == null) {
-                    cacheManager = CacheManager.create();
-                }
-                if (!cacheManager.cacheExists(this.cacheName)) {
-                    cacheManager.addCache(this.cacheName);
-                }
-                this.cache = cacheManager.getCache(this.cacheName);
-            }
-        } else {
-            this.cacheEnable = false;
+        AssertUtils.notNull(configurator, "configurator is null.");
+        AssertUtils.notNull(configurator.getDataSource(),
+                "configurator.getDataSource() is null.");
+        AssertUtils.notNull(configurator.getDataSourceType(),
+                "configurator.getDataSourceType() is null.");
+        
+        DataSource dataSource = configurator.getDataSource();
+        if (dataSource != null) {
+            this.jdbcTemplate = new JdbcTemplate(dataSource);
         }
+        AssertUtils.notNull(configurator.getCacheManager(),
+                "cacheManager is null.");
+        
+        CacheManager cacheManager = null;
+        if (configurator.getCacheManager() == null) {
+            cacheManager = CacheManager.create();
+        } else {
+            cacheManager = configurator.getCacheManager();
+        }
+        if (!cacheManager.cacheExists(this.cacheName)) {
+            cacheManager.addCache(this.cacheName);
+        }
+        this.cache = cacheManager.getCache(this.cacheName);
     }
+    
+    /**
+      * 是否缓存
+      *<功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return boolean [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    protected abstract boolean isCacheEnable();
     
     /**
       * 生成缓存唯一键
@@ -112,7 +122,10 @@ public abstract class BaseBasicDataExecutor<T> implements BasicDataExecutor<T> {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    protected abstract String getKeyValue(T obj);
+    protected Object getValue(T obj, String getterName) {
+        MetaObject metaObject = MetaObject.forObject(obj);
+        return metaObject.getValue(getterName);
+    }
     
     /**
       * 根据对象信息查询对应对象<br/>
@@ -199,46 +212,47 @@ public abstract class BaseBasicDataExecutor<T> implements BasicDataExecutor<T> {
     protected abstract int doDelete(String pk);
     
     /**
-     * @param pk
+     * @param getterName
      * @return
      */
     @Override
-    public boolean contains(String pk) {
-        T t = get(pk);
-        if (t == null) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-    
-    /**
-     * @param pk
-     * @return
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public T get(String pk) {
-        if (this.cacheEnable) {
-            Element getEl = this.cache.get(generateCacheKey("get"));
+    public MultiValueMap<Object, T> getMultiValueMap(String getterName) {
+        List<String> getterNameList = Arrays.asList(MetaClass.forClass(this.type)
+                .getGetterNames());
+        AssertUtils.isTrue(getterNameList.contains(getterName),
+                "type:{} has not getterName:{}",
+                new Object[] { this.type, getterName });
+        
+        if (isCacheEnable()) {
+            String cacheKey = generateCacheKey("getMultiValueMap", getterName);
+            
+            Element getEl = this.cache.get(cacheKey);
             if (getEl != null) {
-                Object obj = getEl.getObjectKey();
-                Map<String, T> cacheListMap = (Map<String, T>) obj;
-                return cacheListMap.get(pk);
+                logger.debug("getMultiValueMap cacheEnable:true cacheKey:{}. cache exist.",
+                        cacheKey);
+                
+                Object obj = getEl.getObjectValue();
+                @SuppressWarnings("unchecked")
+                MultiValueMap<Object, T> cacheListMap = (MultiValueMap<Object, T>) obj;
+                return cacheListMap;
             }
+            logger.debug("getMultiValueMap cacheEnable:true cacheKey:{}. cache not exist.",
+                    cacheKey);
         }
+        
         List<T> listResult = list();
-        Map<String, T> cacheListMap = new HashMap<String, T>();
+        @SuppressWarnings({ "rawtypes", "unchecked" })
+        MultiValueMap<Object, T> resMultiValueMap = new LinkedMultiValueMap();
         if (listResult != null) {
             for (T temp : listResult) {
-                cacheListMap.put(getKeyValue(temp), temp);
+                resMultiValueMap.add(getValue(temp, getterName), temp);
             }
         }
-        if (this.cacheEnable) {
-            this.cache.put(new Element(generateCacheKey("get"), cacheListMap));
+        if (isCacheEnable()) {
+            this.cache.put(new Element(generateCacheKey("getMultiValueMap", getterName),
+                    resMultiValueMap));
         }
-        T res = cacheListMap.get(pk);
-        return res;
+        return resMultiValueMap;
     }
     
     /**
@@ -248,15 +262,20 @@ public abstract class BaseBasicDataExecutor<T> implements BasicDataExecutor<T> {
     @SuppressWarnings("unchecked")
     @Override
     public T find(String pk) {
-        if (this.cacheEnable) {
-            Element getEl = this.cache.get(generateCacheKey("find", pk));
+        if (isCacheEnable()) {
+            String cacheKey = generateCacheKey("find", pk);
+            Element getEl = this.cache.get(cacheKey);
             if (getEl != null) {
-                Object obj = getEl.getObjectKey();
+                logger.debug("find cacheEnable:true cacheKey:{}. cache exist.",
+                        cacheKey);
+                Object obj = getEl.getObjectValue();
                 return (T) obj;
             }
+            logger.debug("find cacheEnable:true cacheKey:{}. cache not exist.",
+                    cacheKey);
         }
         T res = doFind(pk);
-        if (this.cacheEnable && res != null) {
+        if (isCacheEnable() && res != null) {
             this.cache.put(new Element(generateCacheKey("find", pk), res));
         }
         return res;
@@ -268,15 +287,20 @@ public abstract class BaseBasicDataExecutor<T> implements BasicDataExecutor<T> {
     @SuppressWarnings("unchecked")
     @Override
     public List<T> list() {
-        if (this.cacheEnable) {
-            Element getEl = this.cache.get(generateCacheKey("list"));
+        if (isCacheEnable()) {
+            String cacheKey = generateCacheKey("list");
+            Element getEl = this.cache.get(cacheKey);
             if (getEl != null) {
-                Object obj = getEl.getObjectKey();
+                logger.debug("list cacheEnable:true cacheKey:{}. cache exist.",
+                        cacheKey);
+                Object obj = getEl.getObjectValue();
                 return (List<T>) obj;
             }
+            logger.debug("list cacheEnable:true cacheKey:{}. cache not exist.",
+                    cacheKey);
         }
         List<T> resList = doQuery(null);
-        if (this.cacheEnable && resList != null) {
+        if (isCacheEnable() && resList != null) {
             this.cache.put(new Element(generateCacheKey("list"), resList));
         }
         
@@ -290,18 +314,52 @@ public abstract class BaseBasicDataExecutor<T> implements BasicDataExecutor<T> {
     @SuppressWarnings("unchecked")
     @Override
     public List<T> query(Map<String, Object> params) {
-        if (this.cacheEnable) {
-            Element getEl = this.cache.get(generateCacheKey("query",params));
+        if (isCacheEnable()) {
+            String cacheKey = generateCacheKey("query", params);
+            Element getEl = this.cache.get(cacheKey);
             if (getEl != null) {
-                Object obj = getEl.getObjectKey();
+                logger.debug("query cacheEnable:true cacheKey:{}. cache exist.",
+                        cacheKey);
+                
+                Object obj = getEl.getObjectValue();
                 return (List<T>) obj;
             }
+            logger.debug("query cacheEnable:true cacheKey:{}. cache not exist.",
+                    cacheKey);
         }
         List<T> resList = doQuery(params);
-        if (this.cacheEnable && resList != null) {
-            this.cache.put(new Element(generateCacheKey("query",params), resList));
+        if (isCacheEnable() && resList != null) {
+            this.cache.put(new Element(generateCacheKey("query", params),
+                    resList));
         }
         return resList;
+    }
+    
+    /**
+     * @param params
+     * @return
+     */
+    @Override
+    public int count(Map<String, Object> params) {
+        if (isCacheEnable()) {
+            String cacheKey = generateCacheKey("count", params);
+            Element getEl = this.cache.get(cacheKey);
+            if (getEl != null) {
+                logger.debug("count cacheEnable:true cacheKey:{}. cache exist.",
+                        cacheKey);
+                
+                Object obj = getEl.getObjectValue();
+                return (Integer) obj;
+            }
+            logger.debug("count cacheEnable:true cacheKey:{}. cache not exist.",
+                    cacheKey);
+        }
+        int resCount = doCount(params);
+        if (isCacheEnable()) {
+            this.cache.put(new Element(generateCacheKey("count", params),
+                    resCount));
+        }
+        return resCount;
     }
     
     /**
@@ -315,16 +373,6 @@ public abstract class BaseBasicDataExecutor<T> implements BasicDataExecutor<T> {
             int pageIndex, int pageSize) {
         PagedList<T> res = doQueryPagedList(params, pageIndex, pageSize);
         return res;
-    }
-    
-    /**
-     * @param params
-     * @return
-     */
-    @Override
-    public int count(Map<String, Object> params) {
-        int resCount = doCount(params);
-        return resCount;
     }
     
     /**
@@ -368,7 +416,7 @@ public abstract class BaseBasicDataExecutor<T> implements BasicDataExecutor<T> {
      */
     private void clearCache() {
         //如果无需缓存
-        if (!this.cacheEnable) {
+        if (!isCacheEnable()) {
             return;
         }
         //如果缓存开启
@@ -379,11 +427,15 @@ public abstract class BaseBasicDataExecutor<T> implements BasicDataExecutor<T> {
                 @Override
                 public void afterCommit() {
                     finalCache.removeAll();
+                    
+                    logger.debug("clearCache cacheName:{}.",
+                            finalCache.getName());
                 }
             });
         } else {
             //如果在非事务中执行
             finalCache.removeAll();
+            logger.debug("clearCache cacheName:{}.", finalCache.getName());
         }
     }
     
