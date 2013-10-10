@@ -23,6 +23,7 @@ import com.tx.core.jdbc.sqlsource.annotation.QueryConditionEqual;
 import com.tx.core.jdbc.sqlsource.annotation.QueryConditionGreater;
 import com.tx.core.jdbc.sqlsource.annotation.QueryConditionGreaterOrEqual;
 import com.tx.core.jdbc.sqlsource.annotation.QueryConditionLess;
+import com.tx.core.jdbc.sqlsource.annotation.QueryConditionLessOrEqual;
 import com.tx.core.jdbc.sqlsource.annotation.QueryConditionLike;
 import com.tx.core.jdbc.sqlsource.annotation.QueryConditionLikeAfter;
 import com.tx.core.jdbc.sqlsource.annotation.QueryConditionLikeBefore;
@@ -315,10 +316,10 @@ public class SqlSourceBuilder {
             //如果存在<=条件
             if (ReflectionUtils.isHasAnnotationForGetter(type,
                     getterNameTemp,
-                    QueryConditionLess.class)) {
-                QueryConditionLess anno = ReflectionUtils.getGetterAnnotation(type,
+                    QueryConditionLessOrEqual.class)) {
+                QueryConditionLessOrEqual anno = ReflectionUtils.getGetterAnnotation(type,
                         getterNameTemp,
-                        QueryConditionLess.class);
+                        QueryConditionLessOrEqual.class);
                 String keyTemp = StringUtils.isBlank(anno.key()) ? getterNameTemp
                         : anno.key();
                 

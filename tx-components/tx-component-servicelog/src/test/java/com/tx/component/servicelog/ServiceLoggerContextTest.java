@@ -64,8 +64,6 @@ public class ServiceLoggerContextTest {
 //            System.out.println(getterNameTemp);
 //        }
         
-        
-        
         String script = TXServiceLogDBScriptHelper.generateDBScriptContent(LoginLog.class,
                 DataSourceTypeEnum.ORACLE,
                 "GBK");

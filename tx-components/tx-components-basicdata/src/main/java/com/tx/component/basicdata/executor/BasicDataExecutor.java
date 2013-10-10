@@ -26,6 +26,18 @@ import com.tx.core.paged.model.PagedList;
 public interface BasicDataExecutor<T> {
     
     /**
+      * 执行操作<br/>
+      *     用以透传入插件中<br/>
+      *<功能详细描述>
+      * @param processName [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public void execute(String process);
+    
+    /**
       * 根据list获取结果集后，更具getterName得到一个MultiValueMap
       *<功能详细描述>
       * @param getterName

@@ -7,6 +7,7 @@
 package com.tx.core.reflection;
 
 import java.lang.annotation.Annotation;
+import java.lang.annotation.Inherited;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -410,12 +411,27 @@ public class ReflectionUtils {
         ClassReflector reflector = ClassReflector.forClass(type);
         
         A res = null;
-        Method getterMethod = reflector.getGetterMethod(getterName);
-        if (getterMethod != null) {
-            res = getterMethod.getAnnotation(annotationType);
-        }
-        if (res != null) {
-            return res;
+        //如果注解是可被继承的则查找其父类及接口的方法
+        if (annotationType.isAnnotationPresent(Inherited.class)) {
+            @SuppressWarnings("unchecked")
+            List<Method> getterMethodList = reflector.getGetterMethodList(getterName);
+            if (getterMethodList != null) {
+                for (Method getterMethodTemp : getterMethodList) {
+                    res = getterMethodTemp.getAnnotation(annotationType);
+                    
+                    if (res != null) {
+                        return res;
+                    }
+                }
+            }
+        } else {
+            Method getterMethod = reflector.getGetterMethod(getterName);
+            if (getterMethod != null) {
+                res = getterMethod.getAnnotation(annotationType);
+            }
+            if (res != null) {
+                return res;
+            }
         }
         
         Field field = reflector.getFiled(getterName);

@@ -6,13 +6,20 @@
  */
 package com.tx.component.basicdata.context;
 
+import java.util.List;
+
 import javax.sql.DataSource;
 
 import net.sf.ehcache.CacheManager;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 
+import com.tx.component.basicdata.plugin.BasicDataExecutorPlugin;
+import com.tx.component.basicdata.plugin.BasicDataExecutorPluginRegistry;
 import com.tx.core.dbscript.model.DataSourceTypeEnum;
 
 /**
@@ -24,7 +31,7 @@ import com.tx.core.dbscript.model.DataSourceTypeEnum;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class BasicDataContextConfigurator {
+public class BasicDataContextConfigurator implements InitializingBean {
     
     protected Logger logger = LoggerFactory.getLogger(getClass());
     
@@ -46,36 +53,30 @@ public class BasicDataContextConfigurator {
     /** 缓存 */
     private CacheManager cacheManager;
     
-    //    /**
-    //     * @return
-    //     */
-    //    @Override
-    //    public int getOrder() {
-    //        return this.order;
-    //    }
-    //    
-    //    /**
-    //     * @param beanFactory
-    //     * @throws BeansException
-    //     */
-    //    @Override
-    //    public void postProcessBeanFactory(
-    //            ConfigurableListableBeanFactory beanFactory) throws BeansException {
-    //        if(this.loadExecutorOnStartup){
-    //            loadExecutorOnStartup();
-    //        }
-    //    }
+    /**
+     * 插件基础包
+     */
+    private String pluginBasePackages;
+    
+    /** 基础数据执行器插件 */
+    private List<BasicDataExecutorPlugin> plugins;
+    
+    /** 基础数据执行器插件注册器 */
+    private BasicDataExecutorPluginRegistry basicDataExecutorPluginRegistry;
     
     /**
-      * 在启动期间装载基础数据执行器
-      *<功能详细描述> [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * @throws Exception
      */
-    protected void loadExecutorOnStartup() {
-        //在启动期间装载基础数据执行器
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        if (!CollectionUtils.isEmpty(plugins)) {
+            for (BasicDataExecutorPlugin pluginTemp : plugins) {
+                basicDataExecutorPluginRegistry.register(pluginTemp);
+            }
+        }
+        if (!StringUtils.isBlank(pluginBasePackages)) {
+            basicDataExecutorPluginRegistry.register(pluginBasePackages);
+        }
     }
     
     /**
@@ -161,5 +162,20 @@ public class BasicDataContextConfigurator {
     public void setStopOnBuildBasicDataExecutorWhenStartup(
             boolean stopOnBuildBasicDataExecutorWhenStartup) {
         this.stopOnBuildBasicDataExecutorWhenStartup = stopOnBuildBasicDataExecutorWhenStartup;
+    }
+
+    /**
+     * @return 返回 basicDataExecutorPluginRegistry
+     */
+    public BasicDataExecutorPluginRegistry getBasicDataExecutorPluginRegistry() {
+        return basicDataExecutorPluginRegistry;
+    }
+
+    /**
+     * @param 对basicDataExecutorPluginRegistry进行赋值
+     */
+    protected void setBasicDataExecutorPluginRegistry(
+            BasicDataExecutorPluginRegistry basicDataExecutorPluginRegistry) {
+        this.basicDataExecutorPluginRegistry = basicDataExecutorPluginRegistry;
     }
 }

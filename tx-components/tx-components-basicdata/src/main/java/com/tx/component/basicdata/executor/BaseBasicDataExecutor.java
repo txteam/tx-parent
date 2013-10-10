@@ -55,6 +55,14 @@ public abstract class BaseBasicDataExecutor<T> implements BasicDataExecutor<T> {
     /** 执行器对应类型  */
     private Class<T> type;
     
+    /**
+     * @param processName
+     */
+    @Override
+    public void execute(String process) {
+        
+    }
+
     /** <默认构造函数> */
     public BaseBasicDataExecutor(Class<T> type,
             BasicDataContextConfigurator configurator) {
@@ -282,32 +290,6 @@ public abstract class BaseBasicDataExecutor<T> implements BasicDataExecutor<T> {
     }
     
     /**
-     * @return
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public List<T> list() {
-        if (isCacheEnable()) {
-            String cacheKey = generateCacheKey("list");
-            Element getEl = this.cache.get(cacheKey);
-            if (getEl != null) {
-                logger.debug("list cacheEnable:true cacheKey:{}. cache exist.",
-                        cacheKey);
-                Object obj = getEl.getObjectValue();
-                return (List<T>) obj;
-            }
-            logger.debug("list cacheEnable:true cacheKey:{}. cache not exist.",
-                    cacheKey);
-        }
-        List<T> resList = doQuery(null);
-        if (isCacheEnable() && resList != null) {
-            this.cache.put(new Element(generateCacheKey("list"), resList));
-        }
-        
-        return resList;
-    }
-    
-    /**
      * @param params
      * @return
      */
@@ -360,6 +342,16 @@ public abstract class BaseBasicDataExecutor<T> implements BasicDataExecutor<T> {
                     resCount));
         }
         return resCount;
+    }
+    
+    /**
+     * @return
+     */
+    @Override
+    public List<T> list() {
+        List<T> resList = doQuery(null);
+        
+        return resList;
     }
     
     /**
