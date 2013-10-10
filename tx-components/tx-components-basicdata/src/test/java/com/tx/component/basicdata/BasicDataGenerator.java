@@ -23,11 +23,13 @@ import com.tx.core.reflection.JpaMetaClass;
 public class BasicDataGenerator {
     
     public static void main(String[] args) {
-        Class<?> serviceLogType = BaseTestBasicModel.class;
-        String resultFolderPath = "d:/servicelog";
+        Class<?> basicDataType = BaseTestBasicModel.class;
+        @SuppressWarnings("unused")
+        String resultFolderPath = "d:/basicdata";
         
-        JpaMetaClass<?> jpaMetaClass = JpaMetaClass.forClass(serviceLogType);
-        String dbScript = BasicDataDBScriptGenerator.generateDBScriptContent(serviceLogType,
+        @SuppressWarnings("unused")
+        JpaMetaClass<?> jpaMetaClass = JpaMetaClass.forClass(basicDataType);
+        String dbScript = BasicDataDBScriptGenerator.generateDBScriptContent(basicDataType,
                 DataSourceTypeEnum.ORACLE,
                 "UTF-8");
         
