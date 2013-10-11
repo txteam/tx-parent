@@ -275,7 +275,7 @@ public class AuthContext implements ApplicationContextAware, InitializingBean {
         
         Map<String, AuthItem> tempAuthItemMapping = new HashMap<String, AuthItem>();
         //一句加载器order值进行排序，根据优先级进行加载
-        Collections.sort(authLoaders, new OrderComparator());
+        Collections.sort(authLoaders, OrderComparator.INSTANCE);
         for (AuthLoader authLoaderTemp : authLoaders) {
             //加载权限项
             Set<AuthItem> authItemSet = authLoaderTemp.loadAuthItems();
@@ -283,7 +283,13 @@ public class AuthContext implements ApplicationContextAware, InitializingBean {
             for (AuthItem authItem : authItemSet) {
                 //加载权限并设置加载的权限项目的系统id
                 authItem.setSystemId(this.systemId);
-                tempAuthItemMapping.put(authItem.getId(), authItem);
+                
+                //高优先级的加载器加载权限有效，低优先级权限加载器，加载的权限项目，将被忽略
+                if(!tempAuthItemMapping.containsKey(authItem.getId())){
+                    tempAuthItemMapping.put(authItem.getId(), authItem);
+                }else{
+                    System.out.println(authItem.getId());
+                }
             }
         }
         

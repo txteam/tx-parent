@@ -12,6 +12,8 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.springframework.core.Ordered;
+
 import com.tx.component.auth.context.AuthTypeItemContext;
 import com.tx.component.auth.context.loader.AuthLoader;
 import com.tx.component.auth.model.AuthItem;
@@ -38,7 +40,7 @@ public class DBAuthLoader implements AuthLoader{
     private AuthItemImplService authItemService;
     
     /** 加载顺序 */
-    private int order = Integer.MAX_VALUE;
+    private int order = Ordered.HIGHEST_PRECEDENCE;
 
     /**
      * 从数据库中加载权限项

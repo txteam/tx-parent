@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.core.Ordered;
 import org.springframework.core.io.Resource;
 
 import com.tx.component.auth.context.AuthTypeItemContext;
@@ -86,7 +87,7 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
     private String[] authConfigLocaions = new String[] { "classpath*:authcontext/*_auth_config.xml" };
     
     /** 加载器运行顺序 */
-    private int order = Integer.MAX_VALUE - 1;
+    private int order = Ordered.HIGHEST_PRECEDENCE + 1;
     
     /**
      * @param applicationContext
