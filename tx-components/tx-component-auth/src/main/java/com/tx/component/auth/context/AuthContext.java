@@ -285,10 +285,23 @@ public class AuthContext implements ApplicationContextAware, InitializingBean {
                 authItem.setSystemId(this.systemId);
                 
                 //高优先级的加载器加载权限有效，低优先级权限加载器，加载的权限项目，将被忽略
-                if(!tempAuthItemMapping.containsKey(authItem.getId())){
+                if (!tempAuthItemMapping.containsKey(authItem.getId())) {
                     tempAuthItemMapping.put(authItem.getId(), authItem);
-                }else{
-                    System.out.println(authItem.getId());
+                } else {
+                    //如果低优先级加载器加载的权限项目name,parentId指定了值，而先前的未指定的情况时
+                    //用新的覆盖旧的，如果旧值存在，则忽略新值
+                    AuthItem realItemTemp = tempAuthItemMapping.get(authItem.getId());
+                    if (realItemTemp instanceof AuthItemImpl) {
+                        AuthItemImpl realItemImplTemp = (AuthItemImpl) realItemTemp;
+                        if (StringUtils.isEmpty(realItemImplTemp.getName())
+                                || realItemImplTemp.getId()
+                                        .equals(realItemImplTemp.getName())) {
+                            realItemImplTemp.setName(authItem.getName());
+                        }
+                        if (StringUtils.isEmpty(realItemImplTemp.getParentId())) {
+                            realItemImplTemp.setParentId(authItem.getParentId());
+                        }
+                    }
                 }
             }
         }

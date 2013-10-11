@@ -6,13 +6,13 @@
  */
 package com.tx.component.auth.springmvc;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang3.StringUtils;
-import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
-import org.springframework.core.Ordered;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.tx.component.auth.annotation.CheckOperateAuth;
 import com.tx.component.auth.context.AuthContext;
@@ -27,37 +27,64 @@ import com.tx.core.exceptions.logic.NoAuthorityAccessException;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-@Aspect
-public class ControllerCheckOperateAuthInterceptor implements Ordered {
+public class ControllerCheckOperateAuthInterceptor implements
+        HandlerInterceptor {
     
     /**
+     * @param request
+     * @param response
+     * @param handler
      * @return
+     * @throws Exception
      */
     @Override
-    public int getOrder() {
-        return Ordered.HIGHEST_PRECEDENCE;
+    public boolean preHandle(HttpServletRequest request,
+            HttpServletResponse response, Object handler) throws Exception {
+        if (handler instanceof HandlerMethod
+                && ((HandlerMethod) handler).getMethod()
+                        .isAnnotationPresent(CheckOperateAuth.class)) {
+            HandlerMethod handlerMethod = ((HandlerMethod) handler);
+            CheckOperateAuth checkOperateAuthAnno = handlerMethod.getMethod()
+                    .getAnnotation(CheckOperateAuth.class);
+            String authKey = checkOperateAuthAnno.key();
+            if (StringUtils.isEmpty(authKey)) {
+                return true;
+            }
+            
+            //如果无权限抛出异常
+            if(!AuthContext.getContext().hasAuth(authKey)){
+                throw new NoAuthorityAccessException("Controller class:{} method:{} needAuth:{}",
+                        new Object[]{handlerMethod.getBean().getClass(),handlerMethod.getMethod(),authKey});
+            }
+        }
+        return true;
     }
     
     /**
-     * 
+     * @param request
+     * @param response
+     * @param handler
+     * @param modelAndView
+     * @throws Exception
      */
-    @Before("execution(public * *(..)) &&"
-            + "@target(controllerAnno) &&"
-            + "@annotation(requestMappingAnno) &&"
-            + "@annotation(checkOperateAuthAnno)")
-    public void doBasicProfiling(
-            Controller controllerAnno,
-            RequestMapping requestMappingAnno,
-            CheckOperateAuth checkOperateAuthAnno) throws Throwable {
-        String authKey = checkOperateAuthAnno.key();
-        if (!StringUtils.isEmpty(authKey)) {
-            if (AuthContext.getContext().hasAuth(authKey)) {
-                throw new NoAuthorityAccessException(
-                        "无权限访问：controller:{} requestMapping:{} authKey:{}",
-                        new Object[] { "",
-                                requestMappingAnno.value(), authKey });
-            }
-        }
+    @Override
+    public void postHandle(HttpServletRequest request,
+            HttpServletResponse response, Object handler,
+            ModelAndView modelAndView) throws Exception {
+        
     }
     
+    /**
+     * @param request
+     * @param response
+     * @param handler
+     * @param ex
+     * @throws Exception
+     */
+    @Override
+    public void afterCompletion(HttpServletRequest request,
+            HttpServletResponse response, Object handler, Exception ex)
+            throws Exception {
+        
+    }    
 }
