@@ -11,7 +11,7 @@ import java.util.List;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
-import com.tx.component.config.model.ConfigProperty222;
+import com.tx.component.config.model.ConfigProperty;
 import com.tx.core.tree.model.TreeAble;
 
 
@@ -77,7 +77,7 @@ public class ConfigPropertiesSetting implements TreeAble<List<ConfigPropertiesSe
     private String defaultValue = "";
     
     /** 状态 0有效，1无效 */
-    private String status = ConfigProperty222.STATUS_VALID;
+    private String status = ConfigProperty.STATUS_VALID;
     
     /**
      * @return 返回 id

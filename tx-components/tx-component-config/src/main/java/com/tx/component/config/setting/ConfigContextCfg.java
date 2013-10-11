@@ -65,28 +65,28 @@ public class ConfigContextCfg {
     public void setRepeatAble(boolean repeatAble) {
         this.repeatAble = repeatAble;
     }
-
+    
     /**
      * @return 返回 configResources
      */
     public Set<ConfigResource> getConfigResources() {
         return configResources;
     }
-
+    
     /**
      * @param 对configResources进行赋值
      */
     public void setConfigResources(Set<ConfigResource> configResources) {
         this.configResources = configResources;
     }
-
+    
     /**
      * @return 返回 configResourcePersisterPackage
      */
     public String getConfigResourcePersisterPackage() {
         return configResourcePersisterPackage;
     }
-
+    
     /**
      * @param 对configResourcePersisterPackage进行赋值
      */
