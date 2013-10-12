@@ -48,6 +48,7 @@ public class DefaultBasicDataExecutorTest {
     
     @Test
     public void testInsert() {
+        
         String id = UUIDUtils.generateUUID();
         
         AuthItemImpl newAuth = new AuthItemImpl();
