@@ -37,7 +37,7 @@ public class SimpleHandlerExceptionResolver extends
     public ModelAndView resolveException(HttpServletRequest request,
             HttpServletResponse response, Object handler, Exception ex) {
         if (ex == null) {
-            super.resolveException(request, response, handler, ex);
+            return super.resolveException(request, response, handler, ex);
         }
         //如果异常不为空：则日志显示异常
         //日志显示Exception信息
