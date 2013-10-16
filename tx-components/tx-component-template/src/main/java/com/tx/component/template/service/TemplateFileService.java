@@ -4,15 +4,11 @@
  * 修改时间:  2013-10-14
  * <修改描述:>
  */
-package com.tx.component.template.dao;
-
-import java.util.Map;
-
-import com.tx.component.template.model.TemplateTable;
+package com.tx.component.template.service;
 
 
  /**
-  * 模板数据持久层
+  * <功能简述>
   * <功能详细描述>
   * 
   * @author  brady
@@ -20,7 +16,6 @@ import com.tx.component.template.model.TemplateTable;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
   */
-public interface TemplateDataDao {
+public class TemplateFileService {
     
-    public String insert(TemplateTable templateTable,Map<String, Object> rowMap);
 }

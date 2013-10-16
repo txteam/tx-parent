@@ -23,6 +23,10 @@
 			<groupId>com.tx</groupId>
 			<artifactId>tx-core</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.tx</groupId>
+			<artifactId>tx-component-servicelog</artifactId>
+		</dependency>
 
 		<!-- commons -->
 		<dependency>
@@ -180,9 +184,19 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
+			<groupId>freemarker</groupId>
+			<artifactId>freemarker</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<optional>true</optional>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

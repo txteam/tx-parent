@@ -1,55 +1,82 @@
 /*
  * 描          述:  <描述>
  * 修  改   人:  brady
- * 修改时间:  2013-7-9
+ * 修改时间:  2013-10-12
  * <修改描述:>
  */
 package com.tx.component.template.model;
 
+import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
-import javax.persistence.Entity;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
+import org.apache.commons.collections.CollectionUtils;
 
- /**
-  * 模板表管理<br/>
-  * <功能详细描述>
-  * 
-  * @author  brady
-  * @version  [版本号, 2013-7-9]
-  * @see  [相关类/方法]
-  * @since  [产品/模块版本]
-  */
-@Entity
-@Table(name="t_tp_table")
-public class TemplateTable extends TemplateEngineBaseModel{
+import com.tx.component.template.basicdata.TemplateTableStatusEnum;
+import com.tx.component.template.basicdata.TemplateTableType;
+
+/**
+ * 模板表<br/>
+ * <功能详细描述>
+ * 
+ * @author  brady
+ * @version  [版本号, 2013-10-12]
+ * @see  [相关类/方法]
+ * @since  [产品/模块版本]
+ */
+@Table(name="TEMPLATE_TABLE")
+public class TemplateTable implements Serializable {
     
     /** 注释内容 */
-    private static final long serialVersionUID = -5673765290724868175L;
+    private static final long serialVersionUID = 8275499359664274226L;
 
-    /** 模板表唯一键 */
+    /** 模板表id:具体的一张模板表，id唯一对应唯一的tableName */
     private String id;
     
-    /** 模板表名：可为中文 */
-    private String name;
-    
-    /** 模板表明：前缀字符控制在10以内 */
-    private String prefixTableName = "t_tp_ins_";
-    
-    /** 模板表：表名：字符（长度16）唯一键  */
+    /** 与id一起同为模板表的唯一键 */
     private String tableName;
     
-    /** 模板表描述 */
-    private String description;
+    /** 所属系统id:与name,tableType一起作为联合唯一键 */
+    private String systemId;
     
-    /** 模板创建时间 */
+    /** 模板名，与tableType为模板表的联合唯一键，名字一旦确定不能进行修改 */
+    private String name;
+    
+    /** 模板表类型：主表，备份表，历史表... */
+    private TemplateTableType tableType;
+    
+    /** 模板表状态 */
+    private TemplateTableStatusEnum tableStatus = TemplateTableStatusEnum.配置态;
+    
+    /** 
+     * 模板表字段集
+     * 每个模板表都有独立的一整套表字段
+     * 模板表中公共字段并不影响该字段
+     * 仅在模板表创建初期（创建时，配置态），将由公共字段拷贝一份增加到当前表字段中 
+     */
+    @OneToMany
+    private Set<TemplateColumn> columns;
+    
+    @Transient
+    private Set<String> columnNames;
+    
+    /** 创建人 */
+    private String createOperatorId;
+    
+    /** 创建时间 */
     private Date createDate;
     
-    /** 模板表最后更新时间 */
+    /** 最后更新时间 */
     private Date lastUpdateDate;
     
+    /** 模板表备注描述 */
+    private String remark;
+
     /**
      * @return 返回 id
      */
@@ -62,20 +89,6 @@ public class TemplateTable extends TemplateEngineBaseModel{
      */
     public void setId(String id) {
         this.id = id;
-    }
-
-    /**
-     * @return 返回 name
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * @param 对name进行赋值
-     */
-    public void setName(String name) {
-        this.name = name;
     }
 
     /**
@@ -93,17 +106,100 @@ public class TemplateTable extends TemplateEngineBaseModel{
     }
 
     /**
-     * @return 返回 description
+     * @return 返回 systemId
      */
-    public String getDescription() {
-        return description;
+    public String getSystemId() {
+        return systemId;
     }
 
     /**
-     * @param 对description进行赋值
+     * @param 对systemId进行赋值
      */
-    public void setDescription(String description) {
-        this.description = description;
+    public void setSystemId(String systemId) {
+        this.systemId = systemId;
+    }
+
+    /**
+     * @return 返回 name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * @param 对name进行赋值
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * @return 返回 tableType
+     */
+    public TemplateTableType getTableType() {
+        return tableType;
+    }
+
+    /**
+     * @param 对tableType进行赋值
+     */
+    public void setTableType(TemplateTableType tableType) {
+        this.tableType = tableType;
+    }
+
+    /**
+     * @return 返回 tableStatus
+     */
+    public TemplateTableStatusEnum getTableStatus() {
+        return tableStatus;
+    }
+
+    /**
+     * @param 对tableStatus进行赋值
+     */
+    public void setTableStatus(TemplateTableStatusEnum tableStatus) {
+        this.tableStatus = tableStatus;
+    }
+
+    /**
+     * @return 返回 columns
+     */
+    public Set<TemplateColumn> getColumns() {
+        return columns;
+    }
+
+    /**
+     * @param 对columns进行赋值
+     */
+    public void setColumns(Set<TemplateColumn> columns) {
+        this.columns = columns;
+        this.columnNames = new HashSet<String>();
+        if(!CollectionUtils.isEmpty(columns)){
+            for(TemplateColumn columnTemp : columns){
+                this.columnNames.add(columnTemp.getColumnName());
+            }
+        }
+    }
+    
+    /**
+     * @return 返回 columnNames
+     */
+    public Set<String> getColumnNames() {
+        return columnNames;
+    }
+
+    /**
+     * @return 返回 createOperatorId
+     */
+    public String getCreateOperatorId() {
+        return createOperatorId;
+    }
+
+    /**
+     * @param 对createOperatorId进行赋值
+     */
+    public void setCreateOperatorId(String createOperatorId) {
+        this.createOperatorId = createOperatorId;
     }
 
     /**
@@ -135,16 +231,16 @@ public class TemplateTable extends TemplateEngineBaseModel{
     }
 
     /**
-     * @return 返回 prefixTableName
+     * @return 返回 remark
      */
-    public String getPrefixTableName() {
-        return prefixTableName;
+    public String getRemark() {
+        return remark;
     }
 
     /**
-     * @param 对prefixTableName进行赋值
+     * @param 对remark进行赋值
      */
-    public void setPrefixTableName(String prefixTableName) {
-        this.prefixTableName = prefixTableName;
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
 }
