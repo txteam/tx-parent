@@ -15,7 +15,6 @@ import javax.sql.DataSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.core.io.Resource;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -35,8 +34,7 @@ import com.tx.component.config.support.ConfigContextPropertiesPersister;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public class ConfigContextConfigurator extends PropertyPlaceholderConfigurer
-        implements InitializingBean {
+public class ConfigContextConfigurator extends PropertyPlaceholderConfigurer {
     
     private static final String XML_SUFFIX = ".xml";
     

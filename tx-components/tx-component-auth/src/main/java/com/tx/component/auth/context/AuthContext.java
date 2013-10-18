@@ -28,6 +28,7 @@ import org.apache.commons.collections.ListUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.xfire.aegis.type.mtom.DataSourceType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -42,7 +43,7 @@ import com.tx.component.auth.context.adminchecker.AdminChecker;
 import com.tx.component.auth.context.authchecker.AuthChecker;
 import com.tx.component.auth.context.authchecker.impl.DefaultAuthChecker;
 import com.tx.component.auth.context.loader.AuthLoader;
-import com.tx.component.auth.dbscript.DataSourceType;
+import com.tx.component.auth.dbscript.AuthContextDBScriptHelper;
 import com.tx.component.auth.exceptions.AuthContextInitException;
 import com.tx.component.auth.model.AuthItem;
 import com.tx.component.auth.model.AuthItemImpl;
@@ -51,6 +52,7 @@ import com.tx.component.auth.model.AuthItemRefImpl;
 import com.tx.component.auth.service.AuthItemImplService;
 import com.tx.component.auth.service.AuthItemRefImplService;
 import com.tx.core.dbscript.executor.DBScriptAutoExecutor;
+import com.tx.core.dbscript.model.DataSourceTypeEnum;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.exceptions.util.ExceptionWrapperUtils;
 import com.tx.core.support.cache.map.EhcacheMap;
@@ -111,7 +113,7 @@ public class AuthContext implements ApplicationContextAware, InitializingBean {
     private String tableSuffix;
     
     /** 数据源类型 */
-    private DataSourceType dataSourceType = DataSourceType.H2;
+    private DataSourceTypeEnum dataSourceType;
     
     /** 数据源 */
     private DataSource dataSource;
@@ -225,7 +227,7 @@ public class AuthContext implements ApplicationContextAware, InitializingBean {
      * @see [类、类#方法、类#成员]
      */
     private String loadDBScript() {
-        String dbScriptBasePath = dataSourceType.getBasePath();
+        String dbScriptBasePath = AuthContextDBScriptHelper.getDBScriptBasePath(this.dataSourceType);
         String dbScriptPath = org.springframework.util.StringUtils.cleanPath("classpath:"
                 + dbScriptBasePath + "auth_base_1.0.0.sql");
         logger.info("load authcontext init dbscript from path:{}", dbScriptPath);
@@ -1241,7 +1243,7 @@ public class AuthContext implements ApplicationContextAware, InitializingBean {
     /**
      * @param 对dataSourceType进行赋值
      */
-    public void setDataSourceType(DataSourceType dataSourceType) {
+    public void setDataSourceType(DataSourceTypeEnum dataSourceType) {
         this.dataSourceType = dataSourceType;
     }
     

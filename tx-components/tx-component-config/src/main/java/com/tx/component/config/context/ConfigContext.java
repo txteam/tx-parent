@@ -16,7 +16,7 @@ package com.tx.component.config.context;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class ConfigContext {
+public class ConfigContext extends ConfigContextConfigurator{
     
     /** 是否处于开发模式  开发模式中 getValue 将优先获取 developValue */
     private boolean isDevelop = false;
@@ -26,7 +26,7 @@ public class ConfigContext {
     
     private static ConfigContext context;
     
-    private ConfigContext() {
+    protected ConfigContext() {
         super();
     }
     
