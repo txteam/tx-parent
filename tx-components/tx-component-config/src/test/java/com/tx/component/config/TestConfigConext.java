@@ -4,7 +4,7 @@
  * 修改时间:  2012-10-23
  * <修改描述:>
  */
-package test.com.tx.component.config;
+package com.tx.component.config;
 
 import com.tx.component.config.model.ConfigPropertyItem;
 import com.tx.component.config.support.ConfigResourcePropertiesPersister;

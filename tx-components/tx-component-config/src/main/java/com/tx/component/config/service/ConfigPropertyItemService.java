@@ -10,27 +10,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-import javax.transaction.TransactionManager;
-
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import com.tx.component.config.context.ConfigContextConfigurator;
 import com.tx.component.config.dao.ConfigPropertyItemDao;
 import com.tx.component.config.model.ConfigPropertyItem;
 import com.tx.component.config.util.UUIDUtils;
 import com.tx.core.exceptions.argument.NullArgException;
-import com.tx.core.paged.model.PagedList;
 
 /**
  * ConfigPropertyItem的业务层

@@ -18,7 +18,7 @@ package com.tx.component.config.model;
  * @since  [产品/模块版本]
  */
 public interface ConfigProperty {
-
+    
     String STATUS_VALID = "0";
     
     String STATUS_INVALID = "1";
@@ -27,30 +27,30 @@ public interface ConfigProperty {
      * @return 返回 name 配置名
      */
     public String getName();
-
+    
     /**
      * @return 返回 key 关键字
      */
     public String getKey();
-
+    
     /**
      * @return 返回 value 配置属值
      */
     public String getValue();
-
+    
     /**
      * @return 返回 description 配置描述信息
      */
     public String getDescription();
     
     /**
-      *<获取配置属性状态>
-      *<功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return String [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
+     * 获取配置属性状态
+     *<功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
     public String getStatus();
 }
