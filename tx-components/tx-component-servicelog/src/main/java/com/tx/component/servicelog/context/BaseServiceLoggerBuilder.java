@@ -7,6 +7,7 @@
 package com.tx.component.servicelog.context;
 
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import com.tx.component.servicelog.exception.UnsupportServiceLoggerTypeException;
 import com.tx.component.servicelog.logger.ServiceLogDecorate;
@@ -34,7 +35,8 @@ public abstract class BaseServiceLoggerBuilder implements ServiceLoggerBuilder {
      */
     @Override
     public <T> ServiceLogger<T> build(Class<T> srcObjType,
-            DataSourceTypeEnum dataSourceType, JdbcTemplate jdbcTemplate) {
+            DataSourceTypeEnum dataSourceType, JdbcTemplate jdbcTemplate,
+            PlatformTransactionManager platformTransactionManager) {
         //查看是否支持对应类型的业务日志容器<br/>
         if (!isSupport(srcObjType, dataSourceType)) {
             throw new UnsupportServiceLoggerTypeException(
@@ -44,7 +46,8 @@ public abstract class BaseServiceLoggerBuilder implements ServiceLoggerBuilder {
         //构建业务日志持久器
         ServiceLogPersister serviceLogPersister = buildServiceLogPersister(srcObjType,
                 dataSourceType,
-                jdbcTemplate);
+                jdbcTemplate,
+                platformTransactionManager);
         //构建业务日志装饰器
         ServiceLogDecorate<T> serviceLogDecorate = buildServiceLogDecorate(srcObjType);
         //构建业务日志查询器
@@ -85,7 +88,8 @@ public abstract class BaseServiceLoggerBuilder implements ServiceLoggerBuilder {
      */
     protected abstract ServiceLogPersister buildServiceLogPersister(
             Class<?> srcObjType, DataSourceTypeEnum dataSourceType,
-            JdbcTemplate jdbcTemplate);
+            JdbcTemplate jdbcTemplate,
+            PlatformTransactionManager platformTransactionManager);
     
     /**
       * 构建业务日志实例装饰器<br/>

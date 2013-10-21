@@ -6,6 +6,8 @@
  */
 package com.tx.component.basicdata.context;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Proxy;
 import java.util.HashMap;
@@ -16,6 +18,10 @@ import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.tx.component.basicdata.annotation.BasicData;
 import com.tx.component.basicdata.executor.BasicDataExecutor;
@@ -93,12 +99,18 @@ public class BasicDataContext extends BasicDataContextConfigurator implements
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
+    @SuppressWarnings("unchecked")
     private static <TYPE> BasicDataExecutor<TYPE> buildBasicDataExecutor(
             Class<TYPE> type) {
         BasicDataExecutor<TYPE> executorTemp = basicDataExecutorFactory.getExecutor(type);
         
         //插件化基础数据
         BasicDataExecutor<TYPE> resExecutor = plugin(type, executorTemp);
+        
+        resExecutor = (BasicDataExecutor<TYPE>) Proxy.newProxyInstance(BasicDataContext.class.getClassLoader(),
+                new Class<?>[] { BasicDataExecutor.class },
+                new TxManangerInvocationHandler(resExecutor,
+                        context.getPlatformTransactionManager()));
         
         return resExecutor;
     }
@@ -125,7 +137,7 @@ public class BasicDataContext extends BasicDataContextConfigurator implements
             for (BasicDataExecutorPlugin pluginTemp : plugins) {
                 resExecutor = (BasicDataExecutor<TYPE>) Proxy.newProxyInstance(BasicDataContext.class.getClassLoader(),
                         new Class<?>[] { BasicDataExecutor.class },
-                        pluginTemp.plugin(resExecutor,type));
+                        pluginTemp.plugin(resExecutor, type));
             }
         }
         return resExecutor;
@@ -185,6 +197,58 @@ public class BasicDataContext extends BasicDataContextConfigurator implements
                     continue;
                 }
             }
+        }
+    }
+    
+    /**
+      * 
+      * <功能详细描述>
+      * 
+      * @author  brady
+      * @version  [版本号, 2013-10-21]
+      * @see  [相关类/方法]
+      * @since  [产品/模块版本]
+     */
+    private static class TxManangerInvocationHandler implements
+            InvocationHandler {
+        
+        private BasicDataExecutor<?> basicDataExecutor;
+        
+        private PlatformTransactionManager txManager;
+        
+        /** <默认构造函数> */
+        public TxManangerInvocationHandler(
+                BasicDataExecutor<?> basicDataExecutor,
+                PlatformTransactionManager txManager) {
+            super();
+            this.basicDataExecutor = basicDataExecutor;
+            this.txManager = txManager;
+        }
+        
+        /**
+         * @param proxy
+         * @param method
+         * @param args
+         * @return
+         * @throws Throwable
+         */
+        @Override
+        public Object invoke(Object proxy, Method method, Object[] args)
+                throws Throwable {
+            DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+            def.setName("basicdataTxName");
+            def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+            TransactionStatus status = txManager.getTransaction(def);
+            
+            Object resObj = null;
+            try {
+                resObj = method.invoke(basicDataExecutor, args);
+            } catch (Exception e) {
+                txManager.rollback(status);
+                throw e;
+            }
+            txManager.commit(status);
+            return resObj;
         }
     }
 }

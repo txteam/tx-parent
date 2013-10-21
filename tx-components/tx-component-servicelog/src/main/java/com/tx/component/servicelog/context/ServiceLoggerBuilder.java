@@ -7,6 +7,7 @@
 package com.tx.component.servicelog.context;
 
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import com.tx.component.servicelog.logger.ServiceLogger;
 import com.tx.core.dbscript.model.DataSourceTypeEnum;
@@ -36,6 +37,6 @@ public interface ServiceLoggerBuilder {
       * @see [类、类#方法、类#成员]
      */
     <T> ServiceLogger<T> build(Class<T> srcObjType,
-            DataSourceTypeEnum dataSourceType, JdbcTemplate jdbcTemplate);
+            DataSourceTypeEnum dataSourceType, JdbcTemplate jdbcTemplate,PlatformTransactionManager platformTransactionManager);
     
 }

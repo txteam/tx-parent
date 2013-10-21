@@ -43,7 +43,8 @@ public class ServiceLoggerFactory extends ServiceLoggerConfigurator {
         } else {
             resLogger = serviceLoggerBuilder.build(srcObjType,
                     dataSourceType,
-                    jdbcTemplate);
+                    jdbcTemplate,
+                    platformTransactionManager);
             serviceLoggerMapping.put(srcObjType, resLogger);
         }
         

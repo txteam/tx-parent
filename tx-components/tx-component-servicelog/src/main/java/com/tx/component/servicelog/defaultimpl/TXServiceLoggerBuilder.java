@@ -12,10 +12,15 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.tx.component.servicelog.context.BaseServiceLoggerBuilder;
 import com.tx.component.servicelog.context.ServiceLoggerSessionContext;
@@ -72,15 +77,28 @@ public class TXServiceLoggerBuilder extends BaseServiceLoggerBuilder {
      */
     @Override
     protected ServiceLogPersister buildServiceLogPersister(Class<?> srcObjType,
-            DataSourceTypeEnum dataSourceType, final JdbcTemplate jdbcTemplate) {
+            DataSourceTypeEnum dataSourceType, final JdbcTemplate jdbcTemplate,
+            final PlatformTransactionManager txManager) {
         final SqlSource<?> sqlSource = sqlSourceBuilder.build(srcObjType,
                 dataSourceType.getDialect());
         
         ServiceLogPersister txLogPersister = new ServiceLogPersister() {
+            
             @Override
             public void persist(Object logInstance) {
-                jdbcTemplate.update(sqlSource.insertSql(),
-                        sqlSource.getInsertSetter(logInstance));
+                DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+                def.setName("serviceLoggerTxName");
+                def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+                TransactionStatus status = txManager.getTransaction(def);
+
+                try {
+                    jdbcTemplate.update(sqlSource.insertSql(),
+                            sqlSource.getInsertSetter(logInstance));
+                } catch (DataAccessException e) {
+                    txManager.rollback(status);
+                    throw e;
+                }
+                txManager.commit(status);
             }
         };
         return txLogPersister;
@@ -145,7 +163,8 @@ public class TXServiceLoggerBuilder extends BaseServiceLoggerBuilder {
      * @return
      */
     @Override
-    protected <T> ServiceLogDecorate<T> buildServiceLogDecorate(Class<T> srcObjType) {
+    protected <T> ServiceLogDecorate<T> buildServiceLogDecorate(
+            Class<T> srcObjType) {
         
         ServiceLogDecorate<T> serviceLogDecorate = new ServiceLogDecorate<T>() {
             

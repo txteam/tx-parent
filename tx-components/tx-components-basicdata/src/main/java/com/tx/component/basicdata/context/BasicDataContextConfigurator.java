@@ -17,6 +17,8 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import com.tx.component.basicdata.plugin.BasicDataExecutorPlugin;
 import com.tx.component.basicdata.plugin.BasicDataExecutorPluginRegistry;
@@ -47,6 +49,9 @@ public class BasicDataContextConfigurator implements InitializingBean {
     /** 数据源 */
     private DataSource dataSource;
     
+    /** 事务处理器 */
+    private PlatformTransactionManager platformTransactionManager;
+    
     /** 数据源类型 */
     private DataSourceTypeEnum dataSourceType;
     
@@ -76,6 +81,10 @@ public class BasicDataContextConfigurator implements InitializingBean {
         }
         if (!StringUtils.isBlank(pluginBasePackages)) {
             basicDataExecutorPluginRegistry.register(pluginBasePackages);
+        }
+        if (platformTransactionManager == null) {
+            platformTransactionManager = new DataSourceTransactionManager(
+                    this.dataSource);
         }
     }
     
@@ -178,32 +187,47 @@ public class BasicDataContextConfigurator implements InitializingBean {
             BasicDataExecutorPluginRegistry basicDataExecutorPluginRegistry) {
         this.basicDataExecutorPluginRegistry = basicDataExecutorPluginRegistry;
     }
-
+    
     /**
      * @return 返回 pluginBasePackages
      */
     public String getPluginBasePackages() {
         return pluginBasePackages;
     }
-
+    
     /**
      * @param 对pluginBasePackages进行赋值
      */
     public void setPluginBasePackages(String pluginBasePackages) {
         this.pluginBasePackages = pluginBasePackages;
     }
-
+    
     /**
      * @return 返回 plugins
      */
     public List<BasicDataExecutorPlugin> getPlugins() {
         return plugins;
     }
-
+    
     /**
      * @param 对plugins进行赋值
      */
     public void setPlugins(List<BasicDataExecutorPlugin> plugins) {
         this.plugins = plugins;
+    }
+    
+    /**
+     * @return 返回 platformTransactionManager
+     */
+    public PlatformTransactionManager getPlatformTransactionManager() {
+        return platformTransactionManager;
+    }
+    
+    /**
+     * @param 对platformTransactionManager进行赋值
+     */
+    public void setPlatformTransactionManager(
+            PlatformTransactionManager platformTransactionManager) {
+        this.platformTransactionManager = platformTransactionManager;
     }
 }

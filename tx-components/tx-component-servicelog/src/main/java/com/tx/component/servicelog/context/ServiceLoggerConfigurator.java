@@ -4,6 +4,8 @@ import javax.sql.DataSource;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import com.tx.core.dbscript.model.DataSourceTypeEnum;
 import com.tx.core.exceptions.util.AssertUtils;
@@ -26,6 +28,9 @@ public class ServiceLoggerConfigurator implements InitializingBean {
     /** 数据源 */
     protected static DataSource dataSource;
     
+    /** 事务管理器 */
+    protected static PlatformTransactionManager platformTransactionManager;
+    
     /** jdbcTemplate */
     protected static JdbcTemplate jdbcTemplate;
     
@@ -38,6 +43,9 @@ public class ServiceLoggerConfigurator implements InitializingBean {
         AssertUtils.notNull(dataSourceType, "dataSourceType is null");
         
         jdbcTemplate = new JdbcTemplate(dataSource);
+        if(platformTransactionManager == null){
+            platformTransactionManager = new DataSourceTransactionManager(dataSource);
+        }
     }
     
     /**
@@ -59,5 +67,13 @@ public class ServiceLoggerConfigurator implements InitializingBean {
      */
     public void setDataSource(DataSource dataSource) {
         ServiceLoggerConfigurator.dataSource = dataSource;
+    }
+
+    /**
+     * @param 对platformTransactionManager进行赋值
+     */
+    public static void setPlatformTransactionManager(
+            PlatformTransactionManager platformTransactionManager) {
+        ServiceLoggerConfigurator.platformTransactionManager = platformTransactionManager;
     }
 }
