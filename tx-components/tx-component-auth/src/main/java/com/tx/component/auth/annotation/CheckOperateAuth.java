@@ -61,4 +61,15 @@ public @interface CheckOperateAuth {
       * @see [类、类#方法、类#成员]
      */
     String description() default "";
+    
+    /**
+      * 是否可配置，对应权限是否可赋给超级管理员以外的人员 
+      *<功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return boolean [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    boolean configAble() default true;
 }

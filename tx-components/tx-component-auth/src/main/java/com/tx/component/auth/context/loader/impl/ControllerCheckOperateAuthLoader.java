@@ -151,7 +151,8 @@ public class ControllerCheckOperateAuthLoader implements AuthLoader {
         authItem.setAuthType(AuthTypeItemContext.getContext()
                 .registeAuthTypeItem("AUTHTYPE_OPERATE", "操作权限", "", true, true)
                 .getAuthType());
-        authItem.setConfigAble(true);
+        //对应权限是否可赋予超级管理员以外的人员
+        authItem.setConfigAble(checkOperateAuthAnno.configAble());
         authItem.setDescription(MessageFormatter.arrayFormat("控制器[{}.{}]的操作权限",
                 new Object[] { beanSimpleName, methodName }).getMessage());
         
