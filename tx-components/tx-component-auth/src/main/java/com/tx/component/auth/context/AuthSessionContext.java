@@ -148,7 +148,10 @@ public abstract class AuthSessionContext {
         MultiValueMap<String, AuthItemRef> authItemRefMap = (MultiValueMap<String, AuthItemRef>) currentSessionContext.get()
                 .getSession()
                 .getAttribute(SESSION_KEY_CURRENT_OPERATOR_AUTHREF_MULTIVALUEMAP);
-        List<AuthItemRef> authItemRefList = authItemRefMap.get(authItemId);
+        List<AuthItemRef> authItemRefList = null;
+        if (authItemRefMap != null) {
+            authItemRefList = authItemRefMap.get(authItemId);
+        }
         return authItemRefList;
     }
     
