@@ -293,6 +293,10 @@ public class MyBatisDaoSupport implements InitializingBean {
     public <T> PagedList<T> queryPagedList(String statement, Object parameter,
             int pageIndex, int pageSize) {
         PagedList<T> result = new PagedList<T>();
+        AssertUtils.isTrue(pageIndex > 0,
+                "pageIndex must be integer.but pageIndex now:{}",
+                new Object[] { pageIndex });
+        
         result.setPageIndex(pageIndex);
         result.setPageSize(pageSize);
         
@@ -608,9 +612,7 @@ public class MyBatisDaoSupport implements InitializingBean {
         int startFlushRowIndex = 0;
         for (int index = 0; index < objectList.size(); index++) {
             // 插入对象
-            insertForBatch(statement,
-                    objectList.get(index),
-                    null);
+            insertForBatch(statement, objectList.get(index), null);
             if ((index > 0 && index % doFlushSize == 0)
                     || index == objectList.size() - 1) {
                 try {
@@ -711,9 +713,7 @@ public class MyBatisDaoSupport implements InitializingBean {
         int startFlushRowIndex = 0;
         for (int index = 0; index < objectList.size(); index++) {
             // 插入对象
-            insertForBatch(statement,
-                    objectList.get(index),
-                    keyPropertyName);
+            insertForBatch(statement, objectList.get(index), keyPropertyName);
             if ((index > 0 && index % doFlushSize == 0)
                     || index == objectList.size() - 1) {
                 try {
@@ -1126,8 +1126,7 @@ public class MyBatisDaoSupport implements InitializingBean {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public void deleteForBatch(String statement,
-            Object parameter) {
+    public void deleteForBatch(String statement, Object parameter) {
         if (parameter != null) {
             this.batchSqlSessionTemplate.delete(statement, parameter);
         } else {

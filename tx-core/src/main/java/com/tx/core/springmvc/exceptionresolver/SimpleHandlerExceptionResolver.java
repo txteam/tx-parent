@@ -78,7 +78,7 @@ public class SimpleHandlerExceptionResolver extends
         } else if(e instanceof IllegalArgumentException){
             message = "系统内部错误：参数异常";
         }else {
-            message =  "系统内部错误：" + e.toString();
+            message = "系统内部错误：" + e.toString();
         }
         return message;
     }
