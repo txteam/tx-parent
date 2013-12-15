@@ -9,6 +9,7 @@ package com.tx.core.springmvc.exceptionresolver;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
@@ -29,8 +30,10 @@ import com.tx.core.exceptions.SILException;
 public class SimpleHandlerExceptionResolver extends
         SimpleMappingExceptionResolver {
     
+    /** 日志记录 */
     private static Logger logger = LoggerFactory.getLogger(SimpleHandlerExceptionResolver.class);
     
+    /** ajaxError显示视图逻辑 */
     private String ajaxErrorView = "error/ajaxError";
     
     @Override
@@ -39,16 +42,25 @@ public class SimpleHandlerExceptionResolver extends
         if (ex == null) {
             return super.resolveException(request, response, handler, ex);
         }
+        
         //如果异常不为空：则日志显示异常
         //日志显示Exception信息
         logger.error(ex.toString(), ex);
         if (isAjax(request)) {
             String errorMessage = getExceptionMessage(ex);
+            String viewName = determineViewName(ex, request);
+            if (StringUtils.isEmpty(viewName)) {
+                viewName = ajaxErrorView;
+            }
             
-            ModelAndView ajaxErrorMV = new ModelAndView(ajaxErrorView);
+            ModelAndView ajaxErrorMV = new ModelAndView(viewName);
+            Integer statusCode = determineStatusCode(request, viewName);
+            if (statusCode == null) {
+                statusCode = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+            }
+            
             ajaxErrorMV.addObject("errorMessage", errorMessage);
-            
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.setStatus(statusCode);
             
             return ajaxErrorMV;
         } else {
@@ -71,13 +83,13 @@ public class SimpleHandlerExceptionResolver extends
         if (e instanceof SILException) {
             SILException sile = (SILException) e;
             message = sile.getErrorMessage();
-        } else if(e instanceof DataAccessException){
+        } else if (e instanceof DataAccessException) {
             message = "系统内部错误：数据处理异常";
-        } else if(e instanceof IllegalArgumentException){
+        } else if (e instanceof IllegalArgumentException) {
             message = "系统内部错误：参数异常";
-        } else if(e instanceof IllegalArgumentException){
+        } else if (e instanceof IllegalArgumentException) {
             message = "系统内部错误：参数异常";
-        }else {
+        } else {
             message = "系统内部错误：" + e.toString();
         }
         return message;
