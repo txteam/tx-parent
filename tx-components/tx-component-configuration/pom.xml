@@ -19,7 +19,7 @@
 			<groupId>com.tx</groupId>
 			<artifactId>tx-core</artifactId>
 		</dependency>
-		
+
 		<!-- commons -->
 		<dependency>
 			<groupId>commons-beanutils</groupId>
@@ -311,6 +311,10 @@
 		</dependency>
 
 		<!-- jdbc -->
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>druid</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>postgresql</groupId>
 			<artifactId>postgresql</artifactId>
