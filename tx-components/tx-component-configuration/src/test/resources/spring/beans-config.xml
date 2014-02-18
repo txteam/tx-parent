@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context-3.1.xsd       
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+	<bean id="configContext"
+		class="com.tx.component.configuration.context.ConfigContextFactory">
+		<property name="develop" value="false"></property>
+		<property name="configPropertiesPersisterList">
+			<list>
+				<bean id="localConfigPropertiesPersister"
+					class="com.tx.component.configuration.persister.LocalConfigPropertiesPersister">
+					<property name="location">
+						<value>classpath:config/local/*.xml</value>
+					</property>
+				</bean>
+				<bean id="globalConfigPropertiesPersister"
+					class="com.tx.component.configuration.persister.GlobalConfigPropertiesPersister">
+					<property name="dbScriptExecutorContext">
+						<ref bean="dbScriptExecutorContext" />
+					</property>
+					<property name="dataSource">
+						<ref bean="dataSource" />
+					</property>
+					<property name="systemId" value="test"></property>
+					<property name="location">
+						<value>classpath:config/global/*.xml</value>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="configContextPlaceholderConfigurer" 
+		class="com.tx.component.configuration.context.ConfigContextPlaceholderConfigurer">
+		<property name="order" value="2147483647"></property>
+		<property name="configContext">
+			<ref bean="configContext"/>
+		</property>
+	</bean>
+
+
+</beans>

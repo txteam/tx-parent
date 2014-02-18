@@ -41,6 +41,7 @@ import com.tx.core.exceptions.util.ExceptionWrapperUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
+@Deprecated
 public class DBScriptAutoExecutor implements InitializingBean, DisposableBean,
         ApplicationContextAware {
     

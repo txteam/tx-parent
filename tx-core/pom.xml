@@ -40,7 +40,7 @@
 			<groupId>commons-beanutils</groupId>
 			<artifactId>commons-beanutils</artifactId>
 		</dependency>
-						
+
 		<!-- commons optional -->
 		<dependency>
 			<groupId>org.apache.commons</groupId>
@@ -271,6 +271,10 @@
 		<dependency>
 			<groupId>com.thoughtworks.xstream</groupId>
 			<artifactId>xstream</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jsoup</groupId>
+			<artifactId>jsoup</artifactId>
 		</dependency>
 
 		<!-- dom4j -->

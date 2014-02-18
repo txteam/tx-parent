@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration scan="true" scanPeriod="600 seconds">
 
-	<property name="contentName" value="webdemo" />
+	<property name="contentName" value="tx-core" />
 	<property name="commonPattern" value=" [%thread] %-5level %logger{36} - %msg%n" />
 	<property name="logfile" value="d:/logs/webdemo" />
 	<property name="maxLogFileSize" value="10MB"></property>

@@ -1,0 +1,166 @@
+/*
+ * 描          述:  <描述>
+ * 修  改   人:  wanxin
+ * 修改时间:  2013-8-8
+ * <修改描述:>
+ */
+package com.tx.component.configuration.context;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.tx.component.configuration.model.ConfigProperty;
+import com.tx.component.configuration.model.ConfigPropertyGroup;
+import com.tx.component.configuration.persister.ConfigPropertiesPersister;
+import com.tx.core.exceptions.util.AssertUtils;
+
+/**
+ * 配置容器<br/>
+ * 
+ * @author  wanxin
+ * @version  [版本号, 2013-8-8]
+ * @see  [相关类/方法]
+ * @since  [产品/模块版本]
+ */
+public class ConfigContext extends ConfigContextConfigurator {
+    
+    /** 配置容器的唯一实例 */
+    private static ConfigContext context;
+    
+    /** 配置属性映射 */
+    private Map<String, ConfigProperty> configPropertyMapping = new HashMap<String, ConfigProperty>();
+    
+    /** 配置属性组列表 */
+    private List<ConfigPropertyGroup> configPropertyGroupList = new ArrayList<ConfigPropertyGroup>();
+    
+    /**
+     * <默认构造函数>
+     */
+    protected ConfigContext() {
+        super();
+    }
+    
+    /**
+     * @throws Exception
+     */
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        super.afterPropertiesSet();
+        
+        /**
+         * 让配置属性持久器加载配置数据<br/>
+         */
+        if (this.configPropertiesPersisterList != null) {
+            for (ConfigPropertiesPersister configPropertiesPersister : this.configPropertiesPersisterList) {
+                configPropertiesPersister.load(this);
+            }
+        }
+    }
+    
+    /**
+      *获取配置容器的唯一实例<br/>
+      *<功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return ConfigContext [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public static ConfigContext getContext() {
+        synchronized (ConfigContext.class) {
+            if (context == null) {
+                context = new ConfigContext();
+            }
+        }
+        return context;
+    }
+    
+    /**
+      * 添加配置属性到配置容器<br/>
+      *<功能详细描述>
+      * @param configProperty [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public void addConfigProperty(ConfigProperty configProperty) {
+        AssertUtils.notNull(configProperty, "configProperty is null.");
+        String configPropertyKey = configProperty.getKey();
+        //如果设置为不可以重复，则校验是否已经存在相同key的配置属性
+        if (!this.isRepeatAble()) {
+            AssertUtils.notTrue(this.configPropertyMapping.containsKey(configPropertyKey),
+                    "configProperty is repeat.key:{}",
+                    new Object[] { configPropertyKey });
+        }
+        this.configPropertyMapping.put(configPropertyKey, configProperty);
+    }
+    
+    /**
+      * 配置属性组<br/>
+      *<功能详细描述>
+      * @param configPropertyGroup [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public void addConfigPropertyGroup(ConfigPropertyGroup configPropertyGroup) {
+        AssertUtils.notNull(configPropertyGroup, "configPropertyGroup is null.");
+        if (!this.isRepeatAble()) {
+            AssertUtils.notTrue(this.configPropertyGroupList.contains(configPropertyGroup),
+                    "configPropertyGroup is repeat.configPropertyGroup:{}",
+                    new Object[] { configPropertyGroup });
+        }
+        this.configPropertyGroupList.add(configPropertyGroup);
+    }
+    
+    /** 
+      * 根据key获取对应的配置属性实例<br/>
+      *<功能详细描述>
+      * @param key
+      * @return [参数说明]
+      * 
+      * @return ConfigProperty [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public ConfigProperty getConfigPropertyByKey(String key) {
+        ConfigProperty configProperty = this.configPropertyMapping.get(key);
+        AssertUtils.notNull(configProperty,
+                "configProperty is null. key :{}",
+                new Object[] { key });
+        return configProperty;
+    }
+    
+    /**
+      * 获取配置属性的实际值<br/>
+      *<功能详细描述>
+      * @param key
+      * @return [参数说明]
+      * 
+      * @return String [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public String getConfigPropertyValueByKey(String key) {
+        ConfigProperty configProperty = getConfigPropertyByKey(key);
+        return configProperty.getValue();
+    }
+    
+    /**
+      * 获取所有配置属性key2value的映射
+      *<功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return Map<String,String> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public Map<String, String> getAllConfigPropertyKey2ValueMap() {
+        
+        return null;
+    }
+}

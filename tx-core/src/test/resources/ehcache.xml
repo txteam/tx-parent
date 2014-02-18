@@ -4,32 +4,16 @@
 	monitoring="autodetect" dynamicConfig="true">
 	<diskStore path="java.io.tmpdir/core"/>
 
-	<cacheManagerPeerProviderFactory
-		class="net.sf.ehcache.distribution.jgroups.JGroupsCacheManagerPeerProviderFactory"
-		properties="connect=UDP(mcast_addr=231.12.21.132;mcast_port=45566;):PING:
-		MERGE2:FD_SOCK:VERIFY_SUSPECT:pbcast.NAKACK:UNICAST:pbcast.STABLE:FRAG:pbcast.GMS"
-		propertySeparator="::"
-		/>
-		      
-	<!-- 系统默认缓存 -->
-	<!-- mybatis默认的存储将使用到该配置 -->
-	<!-- 仅同步clear事件，初始化数据不进行同步 -->
-	<defaultCache 
-		maxElementsInMemory="500" 
-		maxElementsOnDisk="0"
-		overflowToDisk="true" 
-		eternal="true" 
-		diskPersistent="false"
-		diskSpoolBufferSizeMB="30" 
-		diskExpiryThreadIntervalSeconds="120"
-		memoryStoreEvictionPolicy="LRU">
-		<cacheEventListenerFactory
-			class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-			properties="replicateAsynchronously=true,
-				replicatePuts=false,
-	      		replicateUpdates=false,
-	      		replicateRemovals=true,
-	      		replicateUpdatesViaCopy=false" />
-	</defaultCache>
-	
+    <defaultCache
+            maxElementsInMemory="10000"
+            eternal="false"
+            timeToIdleSeconds="120"
+            timeToLiveSeconds="120"
+            overflowToDisk="true"
+            diskSpoolBufferSizeMB="10"
+            maxElementsOnDisk="10000000"
+            diskPersistent="false"
+            diskExpiryThreadIntervalSeconds="120"
+            memoryStoreEvictionPolicy="LRU"
+            />
 </ehcache>
