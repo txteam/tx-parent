@@ -64,7 +64,7 @@ public class ConfigPropertyItemDaoImpl implements ConfigPropertyItemDao {
         sb.append("INSERT INTO CORE_CONFIG_CONTEXT(");
         sb.append("ID,");
         sb.append("SYSTEMID,");
-        sb.append("KEY,");
+        sb.append("KEYNAME,");
         sb.append("NAME,");
         sb.append("DESCRIPTION,");
         sb.append("CREATEDATE,");
@@ -105,7 +105,7 @@ public class ConfigPropertyItemDaoImpl implements ConfigPropertyItemDao {
     public void update(final ConfigPropertyItem configPropertyItem) {
         StringBuilder sb = new StringBuilder(TxConstants.INITIAL_STR_LENGTH);
         sb.append("UPDATE CORE_CONFIG_CONTEXT SET ");
-        sb.append("KEY = ?");
+        sb.append("KEYNAME = ?");
         sb.append("NAME = ?");
         sb.append("DESCRIPTION = ?");
         sb.append("LASTUPDATEDATE = ?");
@@ -144,16 +144,16 @@ public class ConfigPropertyItemDaoImpl implements ConfigPropertyItemDao {
     @Override
     public List<ConfigPropertyItem> queryConfigPropertyItemList() {
         StringBuilder sb = new StringBuilder(TxConstants.INITIAL_STR_LENGTH);
-        sb.append("SELECT ID,");
-        sb.append("SYSTEMID,");
-        sb.append("KEY,");
-        sb.append("NAME,");
-        sb.append("DESCRIPTION,");
-        sb.append("CREATEDATE,");
-        sb.append("LASTUPDATEDATE,");
-        sb.append("VALIDATEEXPRESSION");
-        sb.append(" FROM CORE_CONFIG_CONTEXT");
-        sb.append(" WHERE SYSTEMID = ?");
+        sb.append("SELECT TC.ID,");
+        sb.append("TC.SYSTEMID,");
+        sb.append("TC.KEYNAME,");
+        sb.append("TC.NAME,");
+        sb.append("TC.DESCRIPTION,");
+        sb.append("TC.CREATEDATE,");
+        sb.append("TC.LASTUPDATEDATE,");
+        sb.append("TC.VALIDATEEXPRESSION");
+        sb.append(" FROM CORE_CONFIG_CONTEXT TC");
+        sb.append(" WHERE TC.SYSTEMID = ?");
         List<ConfigPropertyItem> resList = this.jdbcTemplate.query(sb.toString(),
                 new Object[] { systemId },
                 new RowMapper<ConfigPropertyItem>() {

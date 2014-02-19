@@ -10,7 +10,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
+import org.apache.commons.collections.MapUtils;
+
+import com.tx.component.configuration.exception.NotExistException;
 import com.tx.component.configuration.model.ConfigProperty;
 import com.tx.component.configuration.model.ConfigPropertyGroup;
 import com.tx.component.configuration.persister.ConfigPropertiesPersister;
@@ -160,7 +164,68 @@ public class ConfigContext extends ConfigContextConfigurator {
       * @see [类、类#方法、类#成员]
      */
     public Map<String, String> getAllConfigPropertyKey2ValueMap() {
-        
-        return null;
+        Map<String, String> resMap = new HashMap<String, String>();
+        for (Entry<String, ConfigProperty> entryTemp : this.configPropertyMapping.entrySet()) {
+            resMap.put(entryTemp.getKey(), entryTemp.getValue().getValue());
+        }
+        return resMap;
+    }
+    
+    /**
+      * 更新属性值<br/>
+      *<功能详细描述>
+      * @param key
+      * @param value [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public void update(String key, String value) {
+        if (!this.configPropertyMapping.containsKey(key)) {
+            throw new NotExistException("configProperty key:{} not exsit.",
+                    new Object[] { key });
+        }
+        this.configPropertyMapping.get(key).update(value);
+    }
+    
+    /**
+      * 获取所有的配置属性分组<br/>
+      *<功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return List<ConfigPropertyGroup> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public List<ConfigPropertyGroup> getAllConfigPropertyGroup(){
+        return this.configPropertyGroupList;
+    }
+    
+    /**
+      * 获取所有的配置属性映射<br/> 
+      *<功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return Map<String,ConfigProperty> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    @SuppressWarnings("unchecked")
+    public Map<String, ConfigProperty> getAllConfigPropertyMap(){
+        return (Map<String, ConfigProperty>)MapUtils.unmodifiableMap(this.configPropertyMapping);
+    }
+    
+    /**
+      * 获取所有配置属性列表<br/>
+      *<功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return List<ConfigProperty> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public List<ConfigProperty> getAllConfigProperty(){
+        return new ArrayList<ConfigProperty>(this.configPropertyMapping.values());
     }
 }

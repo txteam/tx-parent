@@ -29,6 +29,8 @@ import org.hibernate.dialect.Dialect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.tx.core.dbscript.model.DataSourceTypeEnum;
+
 /**
  * <数据库分页容器处理器>
  * <功能详细描述>
@@ -44,6 +46,8 @@ public class PagedDiclectStatementHandlerInterceptor implements Interceptor {
     private Logger logger = LoggerFactory.getLogger(PagedDiclectStatementHandlerInterceptor.class);
     
     private Dialect dialect;
+    
+    private DataSourceTypeEnum dataSourceType;
     
     /**
      * 物理分页插件拦截
@@ -249,5 +253,13 @@ public class PagedDiclectStatementHandlerInterceptor implements Interceptor {
      */
     public void setDialect(Dialect dialect) {
         this.dialect = dialect;
+    }
+
+    /**
+     * @param 对dataSourceType进行赋值
+     */
+    public void setDataSourceType(DataSourceTypeEnum dataSourceType) {
+        this.dataSourceType = dataSourceType;
+        this.dialect = this.dataSourceType.getDialect();
     }
 }

@@ -135,4 +135,71 @@
 			comment on column auth_authitem${tableSuffix}.valid is '是否有效  0:无效 1：有效';
 		</defaultUpdateTableScript>
 	</dataSourceScript>
+	
+	<dataSourceScript dataSourceType="MYSQL">
+		<createTableScript>
+			--****************************************************************************
+			-- 权限项表t_auth_authitem
+			--****************************************************************************
+			create table auth_authitem${tableSuffix}
+			(
+			  id varchar(64) not null,				--权限项唯一键key 
+			  systemid varchar(64) not null,       --系统唯一键id
+			  parentId varchar(64),				--父级权限id
+			  name varchar(256),					--权限项名 
+			  description varchar(1024),			--权限项目描述
+			  authType varchar(64) not null, 		--权限类型
+			  viewAble smallint(1) default 1,			--是否可见
+			  editAble smallint(1) default 1,			--是否可编辑
+			  valid smallint(1) default 1,
+			  primary key(id,systemid)
+			);
+			create index idx_auth_authitem_01 on auth_authitem${tableSuffix}(parentId);
+			comment on table auth_authitem${tableSuffix} is '权限项表信息表';
+			comment on column auth_authitem${tableSuffix}.systemid is '权限项所属系统唯一键';
+			comment on column auth_authitem${tableSuffix}.id is '权限项唯一键key ';
+			comment on column auth_authitem${tableSuffix}.parentId is '父级权限id';
+			comment on column auth_authitem${tableSuffix}.name is '权限项名 ';
+			comment on column auth_authitem${tableSuffix}.description is '权限项目描述';
+			comment on column auth_authitem${tableSuffix}.authType is '权限类型';
+			comment on column auth_authitem${tableSuffix}.viewAble is '是否可见 0:不可见 1：可见';
+			comment on column auth_authitem${tableSuffix}.editAble is '是否可编辑 0:不可编辑 1：可编辑';
+			comment on column auth_authitem${tableSuffix}.valid is '是否有效  0:无效 1：有效';
+		</createTableScript>
+		
+		<defaultUpdateTableScript>
+			CREATE TABLE auth_authitem${tableSuffix}_BAK
+				 AS SELECT * FROM auth_authitem${tableSuffix};
+				 
+			DROP TABLE auth_authitem${tableSuffix};
+			
+			--****************************************************************************
+			-- 权限项表t_auth_authitem
+			--****************************************************************************
+			create table auth_authitem${tableSuffix}
+			(
+			  id varchar(64) not null,				--权限项唯一键key 
+			  systemid varchar(64) not null,       --系统唯一键id
+			  parentId varchar(64),				--父级权限id
+			  name varchar(256),					--权限项名 
+			  description varchar(1024),			--权限项目描述
+			  authType varchar(64) not null, 		--权限类型
+			  viewAble smallint(1) default 1,			--是否可见
+			  editAble smallint(1) default 1,			--是否可编辑
+			  valid smallint(1) default 1,
+			  primary key(id,systemid)
+			);
+			create index idx_auth_authitem_01 on auth_authitem${tableSuffix}(parentId);
+			comment on table auth_authitem${tableSuffix} is '权限项表信息表';
+			comment on column auth_authitem${tableSuffix}.systemid is '权限项所属系统唯一键';
+			comment on column auth_authitem${tableSuffix}.id is '权限项唯一键key ';
+			comment on column auth_authitem${tableSuffix}.parentId is '父级权限id';
+			comment on column auth_authitem${tableSuffix}.name is '权限项名 ';
+			comment on column auth_authitem${tableSuffix}.description is '权限项目描述';
+			comment on column auth_authitem${tableSuffix}.authType is '权限类型';
+			comment on column auth_authitem${tableSuffix}.viewAble is '是否可见 0:不可见 1：可见';
+			comment on column auth_authitem${tableSuffix}.editAble is '是否可编辑 0:不可编辑 1：可编辑';
+			comment on column auth_authitem${tableSuffix}.valid is '是否有效  0:无效 1：有效';
+		</defaultUpdateTableScript>
+	</dataSourceScript>
 </tableDefinition>

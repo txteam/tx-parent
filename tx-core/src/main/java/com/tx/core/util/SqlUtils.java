@@ -69,6 +69,7 @@ public class SqlUtils {
     }
     
     public static void main(String[] args) {
+        /*
         String sqlContent = "create table \n (id_ " +
         		"varchar2(32));\n create index xxx;\n/ " +
         		"insert into (id) valuse ('absdsdf;dsfasd;asdf');\n " +
@@ -91,5 +92,8 @@ public class SqlUtils {
         System.out.println(sqlFun.render(null, arg, null));
         System.out.println(or.getFunctions().get("concat").render(null, arg, null));
         System.out.println(hr.getFunctions().get("concat").render(null, arg, null));
+        */
+        String sqlContent = "select key from test";
+        System.out.println(SqlUtils.escapeSql(sqlContent));
     }
 }

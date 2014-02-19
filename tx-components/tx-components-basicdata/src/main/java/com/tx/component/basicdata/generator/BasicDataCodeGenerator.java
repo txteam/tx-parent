@@ -9,8 +9,6 @@ package com.tx.component.basicdata.generator;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.tx.core.dbscript.model.DataSourceTypeEnum;
 import com.tx.core.generator.JpaEntityFreeMarkerGenerator;
 import com.tx.core.jdbc.sqlsource.SqlSource;
