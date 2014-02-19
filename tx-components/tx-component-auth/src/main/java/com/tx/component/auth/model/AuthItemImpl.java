@@ -84,6 +84,9 @@ public class AuthItemImpl implements AuthItem {
     /** 是否可编辑 */
     private boolean editAble = false;
     
+    /** 是否是虚拟权限，即不是真正的权限项 */
+    private boolean virtual = false;
+    
     /** <默认构造函数> */
     public AuthItemImpl() {
         super();
@@ -357,6 +360,20 @@ public class AuthItemImpl implements AuthItem {
         this.editAble = editAble;
     }
     
+    /**
+     * @return 返回 virtual
+     */
+    public boolean isVirtual() {
+        return virtual;
+    }
+
+    /**
+     * @param 对virtual进行赋值
+     */
+    public void setVirtual(boolean virtual) {
+        this.virtual = virtual;
+    }
+
     /**
      * @param obj
      * @return

@@ -110,4 +110,15 @@ public interface AuthItem extends TreeAble<List<AuthItem>, AuthItem>,
      */
     boolean isValid();
     
+    /**
+      * 是否为虚拟权限
+      *<功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return boolean [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public boolean isVirtual();
+    
 }

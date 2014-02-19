@@ -14,7 +14,7 @@
 	<bean id="authItemCache" 
 		class="org.springframework.cache.ehcache.EhCacheFactoryBean">
 		<property name="cacheManager">
-			<ref bean="identicalEhcacheManager"/>
+			<ref bean="ehcacheManager"/>
 		</property>
 	</bean>	
 
@@ -25,13 +25,12 @@
 		<property name="defaultAuthChecker">
 			<bean class="com.tx.component.auth.context.authchecker.impl.DefaultAuthChecker"></bean>
 		</property>
-		<property name="dataSource">
-			<ref bean="dataSource"/>
-		</property>
-		<property name="dataSourceType" value="H2"/>
 		<property name="systemId" value="testauth"/>
 		<property name="tableSuffix" value="_test"/>
 		<property name="databaseSchemaUpdate" value="true"></property>
+		<property name="dbScriptExecutorContext">
+			<ref bean="dbScriptExecutorContext"/>
+		</property>
 	</bean>
 	
 	<bean class="com.tx.component.auth.context.loader.impl.XmlAuthLoader"></bean>

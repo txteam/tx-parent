@@ -10,6 +10,26 @@
 		http://www.springframework.org/schema/beans 
 		http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
 
+	<bean id="config" class="com.tx.core.util.PropertiesReader">
+		<property name="location">
+			<value>classpath:context/datasource_config.xml</value>
+		</property>
+	</bean>
+
+	<bean id="dbScriptExecutorContext" class="com.tx.core.dbscript.context.DBScriptExecutorContext">
+		<property name="continueOnError" value="true"></property>
+		<property name="dataSource">
+			<ref bean="dataSource" />
+		</property>
+		<property name="dataSourceType"
+			value="#{config.getValue('dataSource.dataSourceType')}"></property>
+		<!-- <property name="dataSourceType" value="${dataSource.dataSourceType}"></property> -->
+		<property name="enable" value="true"></property>
+		<property name="ignoreFailedDrops" value="true"></property>
+		<property name="sqlScriptEncoding" value="UTF-8"></property>
+		<property name="updateNotExistTableInContext" value="true"></property>
+	</bean>
+
 	<!-- 统一的mybatis异常转换器 -->
 	<bean id="myBatisExceptionTranslator" class="org.mybatis.spring.MyBatisExceptionTranslator">
 		<constructor-arg name="dataSource">

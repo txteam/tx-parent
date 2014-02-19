@@ -60,6 +60,9 @@ public class GlobalConfigPropertiesPersister extends
     /** 配置属性项映射实例 */
     private Map<String, ConfigPropertyItem> configPropertyItemMapping = new HashMap<String, ConfigPropertyItem>();
     
+    /** 是否自动执行创建表脚本 */
+    private boolean databaseSchemaUpdate = true;
+    
     /**
      * @throws Exception
      */
@@ -68,11 +71,12 @@ public class GlobalConfigPropertiesPersister extends
         AssertUtils.notNull(this.dataSource, "dataSource is null.");
         AssertUtils.notEmpty(this.systemId, "systemId is empty.");
         
+        if (this.databaseSchemaUpdate && dbScriptExecutorContext != null) {
+            dbScriptExecutorContext.createOrUpdateTable(configPropertyItemTableDefinition);
+        }
         /** 配置属性项持久层 */
         this.configPropertyItemDao = new ConfigPropertyItemDaoImpl(dataSource,
                 systemId);
-        //自动创建配置属性表<br/>
-        dbScriptExecutorContext.createOrUpdateTable(configPropertyItemTableDefinition);
         super.afterPropertiesSet();
     }
     
@@ -277,9 +281,10 @@ public class GlobalConfigPropertiesPersister extends
     @Override
     protected void afterPropertyConfigsLoaded() {
         @SuppressWarnings("unchecked")
-        List<String> keys = (List<String>)this.cache.getKeys();
-        for(String key : keys){
-            logger.info("   加载全局系统参数:  {}={}",new Object[]{key,this.cache.get(key).getValue()});
+        List<String> keys = (List<String>) this.cache.getKeys();
+        for (String key : keys) {
+            logger.info("   加载全局系统参数:  {}={}", new Object[] { key,
+                    this.cache.get(key).getValue() });
         }
     }
     
@@ -303,18 +308,25 @@ public class GlobalConfigPropertiesPersister extends
             DBScriptExecutorContext dbScriptExecutorContext) {
         this.dbScriptExecutorContext = dbScriptExecutorContext;
     }
-
+    
     /**
      * @param 对dataSource进行赋值
      */
     public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
     }
-
+    
     /**
      * @param 对systemId进行赋值
      */
     public void setSystemId(String systemId) {
         this.systemId = systemId;
+    }
+    
+    /**
+     * @param 对databaseSchemaUpdate进行赋值
+     */
+    public void setDatabaseSchemaUpdate(boolean databaseSchemaUpdate) {
+        this.databaseSchemaUpdate = databaseSchemaUpdate;
     }
 }

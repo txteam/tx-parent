@@ -7,11 +7,15 @@
 package com.tx.core.dbscript;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.DefaultResourceLoader;
@@ -39,6 +43,12 @@ import com.tx.core.util.XstreamUtils;
  */
 public class XMLTableDefinition implements TableDefinition, InitializingBean {
     
+    /** 默认的前置占位符 */
+    public static final java.lang.String DEFAULT_PLACEHOLDER_PREFIX = "${";
+    
+    /** 默认的后置占位符 */
+    public static final java.lang.String DEFAULT_PLACEHOLDER_SUFFIX = "}";
+    
     /** tableDefintionConfig解析器 */
     private static XStream TableDefinitionConfigXstream = XstreamUtils.getXstream(TableDefinitionConfig.class);
     
@@ -51,6 +61,17 @@ public class XMLTableDefinition implements TableDefinition, InitializingBean {
     /** 表定义配置 */
     private TableDefinitionConfig tableDefinitionConfig;
     
+    /**
+     * 支持全文替换的数据
+     */
+    private Map<String, String> replaceDataMap = new HashMap<String, String>();
+    
+    /** 前置占位符 */
+    private String prefixPlaceHolder = DEFAULT_PLACEHOLDER_PREFIX;
+    
+    /** 后置占位符 */
+    private String suffixPlaceHolder = DEFAULT_PLACEHOLDER_SUFFIX;
+    
     /** <默认构造函数> */
     public XMLTableDefinition() {
     }
@@ -58,6 +79,17 @@ public class XMLTableDefinition implements TableDefinition, InitializingBean {
     /** <默认构造函数> */
     public XMLTableDefinition(String location) {
         this.location = location;
+        //解析
+        this.afterPropertiesSet();
+    }
+    
+    /** <默认构造函数> */
+    public XMLTableDefinition(String location,
+            Map<String, String> replaceDataMap) {
+        this.location = location;
+        if (!MapUtils.isEmpty(replaceDataMap)) {
+            this.replaceDataMap.putAll(replaceDataMap);
+        }
         //解析
         this.afterPropertiesSet();
     }
@@ -73,13 +105,41 @@ public class XMLTableDefinition implements TableDefinition, InitializingBean {
         AssertUtils.isExist(scriptResourceTemp,
                 "scriptResource:{} is not exist.",
                 new Object[] { scriptResourceTemp });
+        
+        InputStream in = null;
         try {
-            this.tableDefinitionConfig = (TableDefinitionConfig) TableDefinitionConfigXstream.fromXML(scriptResourceTemp.getFile());
+            in = scriptResourceTemp.getInputStream();
+            String context = IOUtils.toString(in);
+            context = replaceContext(context, this.replaceDataMap);
+            this.tableDefinitionConfig = (TableDefinitionConfig) TableDefinitionConfigXstream.fromXML(context);
         } catch (IOException e) {
             throw ExceptionWrapperUtils.wrapperIOException(e,
                     "parse resource:{} exception.{}",
                     new Object[] { scriptResourceTemp, e });
+        } finally {
+            IOUtils.closeQuietly(in);
         }
+    }
+    
+    /**
+      * 利用指定数据替换文本<br/>
+      *<功能详细描述>
+      * @param sourceContext
+      * @param replaceMap
+      * @return [参数说明]
+      * 
+      * @return String [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    private String replaceContext(String sourceContext,Map<String, String> replaceMap){
+        String resContext = sourceContext;
+        for(Entry<String, String> entryTemp : replaceMap.entrySet()){
+            String searchString = this.prefixPlaceHolder + entryTemp.getKey().trim() + this.suffixPlaceHolder;
+            String replacement = entryTemp.getValue();
+            resContext = StringUtils.replace(resContext, searchString, replacement);
+        }
+        return resContext;
     }
     
     /**
@@ -302,5 +362,47 @@ public class XMLTableDefinition implements TableDefinition, InitializingBean {
     public void setTableDefinitionConfig(
             TableDefinitionConfig tableDefinitionConfig) {
         this.tableDefinitionConfig = tableDefinitionConfig;
+    }
+
+    /**
+     * @return 返回 prefixPlaceHolder
+     */
+    public String getPrefixPlaceHolder() {
+        return prefixPlaceHolder;
+    }
+
+    /**
+     * @param 对prefixPlaceHolder进行赋值
+     */
+    public void setPrefixPlaceHolder(String prefixPlaceHolder) {
+        this.prefixPlaceHolder = prefixPlaceHolder;
+    }
+
+    /**
+     * @return 返回 suffixPlaceHolder
+     */
+    public String getSuffixPlaceHolder() {
+        return suffixPlaceHolder;
+    }
+
+    /**
+     * @param 对suffixPlaceHolder进行赋值
+     */
+    public void setSuffixPlaceHolder(String suffixPlaceHolder) {
+        this.suffixPlaceHolder = suffixPlaceHolder;
+    }
+
+    /**
+     * @return 返回 replaceDataMap
+     */
+    public Map<String, String> getReplaceDataMap() {
+        return replaceDataMap;
+    }
+
+    /**
+     * @param 对replaceDataMap进行赋值
+     */
+    public void setReplaceDataMap(Map<String, String> replaceDataMap) {
+        this.replaceDataMap = replaceDataMap;
     }
 }

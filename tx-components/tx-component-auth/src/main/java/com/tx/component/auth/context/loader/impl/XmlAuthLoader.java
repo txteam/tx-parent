@@ -66,6 +66,9 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
     /** 节点isEditAble */
     private final static String AUTH_ELEMENT_ATTR_ISEDITABLE = "editAble";
     
+    /** 节点isEditAble */
+    private final static String AUTH_ELEMENT_ATTR_ISVIRTUAL = "virtual";
+    
     /** 节点id */
     private final static String ELEMENT_ATTR_ID = "key";
     
@@ -250,6 +253,8 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
             Boolean isViewAbleObj = BooleanUtils.toBooleanObject(authElTemp.attributeValue(ELEMENT_ATTR_ISVIEWABLE));
             Boolean isEditAbleObj = BooleanUtils.toBooleanObject(authElTemp.attributeValue(AUTH_ELEMENT_ATTR_ISEDITABLE));
             Boolean isConfigAbleObj = BooleanUtils.toBooleanObject(authElTemp.attributeValue(ELEMENT_ATTR_ISCONFIGABLE));
+            Boolean isVirtualObj = BooleanUtils.toBooleanObject(authElTemp.attributeValue(AUTH_ELEMENT_ATTR_ISVIRTUAL));
+            
             
             boolean isValid = isValidObj != null ? isValidObj.booleanValue()
                     : true;
@@ -259,6 +264,8 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
                     : false;
             boolean isConfigAble = isConfigAbleObj != null ? isConfigAbleObj.booleanValue()
                     : true;
+            boolean isVirtual = isVirtualObj != null ? isVirtualObj.booleanValue()
+                    : false;
             
             String authType = authElTemp.attributeValue(AUTH_ELEMENT_ATTR_AUTHTYPE);
             if(StringUtils.isEmpty(authType)){
@@ -284,7 +291,8 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
                         isValid,
                         isViewAble,
                         isEditAble,
-                        isConfigAble);
+                        isConfigAble,
+                        isVirtual);
             }
             authItemMap.put(id, newAuthItem);
             
@@ -320,7 +328,7 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
     private AuthItemImpl createChildAuthItem(AuthItem parentAuthItem,
             String id, String authType, String name, String description,
             boolean isValid, boolean isViewAble, boolean isEditAble,
-            boolean isConfigAble) {
+            boolean isConfigAble,boolean isVirtual) {
         //创建权限实体
         AuthItemImpl authItem = new AuthItemImpl();
         authItem.setId(id);
@@ -341,6 +349,7 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
         authItem.setViewAble(isViewAble);
         authItem.setEditAble(isEditAble);
         authItem.setConfigAble(isConfigAble);
+        authItem.setVirtual(isVirtual);
         
         //断言新生成的权限项，权限类型不能为空
         AssertUtils.notEmpty(authItem.getAuthType(),

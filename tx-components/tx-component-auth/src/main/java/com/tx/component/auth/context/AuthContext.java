@@ -6,8 +6,6 @@
  */
 package com.tx.component.auth.context;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -19,14 +17,12 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.annotation.Resource;
-import javax.sql.DataSource;
 
 import net.sf.ehcache.Cache;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.ListUtils;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.xfire.aegis.type.mtom.DataSourceType;
 import org.slf4j.Logger;
@@ -43,7 +39,6 @@ import com.tx.component.auth.context.adminchecker.AdminChecker;
 import com.tx.component.auth.context.authchecker.AuthChecker;
 import com.tx.component.auth.context.authchecker.impl.DefaultAuthChecker;
 import com.tx.component.auth.context.loader.AuthLoader;
-import com.tx.component.auth.dbscript.AuthContextDBScriptHelper;
 import com.tx.component.auth.exceptions.AuthContextInitException;
 import com.tx.component.auth.model.AuthItem;
 import com.tx.component.auth.model.AuthItemImpl;
@@ -51,10 +46,10 @@ import com.tx.component.auth.model.AuthItemRef;
 import com.tx.component.auth.model.AuthItemRefImpl;
 import com.tx.component.auth.service.AuthItemImplService;
 import com.tx.component.auth.service.AuthItemRefImplService;
-import com.tx.core.dbscript.executor.DBScriptAutoExecutor;
-import com.tx.core.dbscript.model.DataSourceTypeEnum;
+import com.tx.core.dbscript.TableDefinition;
+import com.tx.core.dbscript.XMLTableDefinition;
+import com.tx.core.dbscript.context.DBScriptExecutorContext;
 import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.exceptions.util.ExceptionWrapperUtils;
 import com.tx.core.support.cache.map.EhcacheMap;
 
 /**
@@ -112,14 +107,15 @@ public class AuthContext implements ApplicationContextAware, InitializingBean {
     /** 表后缀名 */
     private String tableSuffix;
     
-    /** 数据源类型 */
-    private DataSourceTypeEnum dataSourceType;
-    
-    /** 数据源 */
-    private DataSource dataSource;
-    
     /** 数据库脚本是否自动执行 */
     private boolean databaseSchemaUpdate = false;
+    
+    /** 数据脚本自动执行器 */
+    private DBScriptExecutorContext dbScriptExecutorContext;
+    
+    private static final String authItemTableDefinitionLocation = "classpath:/com/tx/component/auth/script/auth_authitem_table.xml";
+    
+    private static final String authRefDefinitionLocation = "classpath:/com/tx/component/auth/script/auth_authref_table.xml";
     
     /* 自动注入部分属性 */
     
@@ -176,15 +172,14 @@ public class AuthContext implements ApplicationContextAware, InitializingBean {
         }
         
         logger.info("初始化权限容器表结构.表后缀名为：{}...", this.tableSuffix);
-        if (databaseSchemaUpdate) {
-            String dbScriptContext = loadDBScript();
-            dbScriptContext = StringUtils.replace(dbScriptContext,
-                    "${tableSuffix}",
-                    this.tableSuffix);
-            logger.debug(" 自动初始化权限容器表结构,dbScriptContext：\n{}", dbScriptContext);
-            DBScriptAutoExecutor dbExecutor = new DBScriptAutoExecutor(
-                    dataSource, dbScriptContext, databaseSchemaUpdate);
-            dbExecutor.execute();
+        if (databaseSchemaUpdate && dbScriptExecutorContext != null) {
+            Map<String, String> replaceDataMap = new HashMap<String, String>();
+            replaceDataMap.put("tableSuffix", this.tableSuffix);
+            TableDefinition authItemTableDefinition = new XMLTableDefinition(authItemTableDefinitionLocation, replaceDataMap);
+            TableDefinition authRefTableDefinition = new XMLTableDefinition(authRefDefinitionLocation, replaceDataMap);
+            this.dbScriptExecutorContext.createOrUpdateTable(authItemTableDefinition);
+            this.dbScriptExecutorContext.createOrUpdateTable(authRefTableDefinition);
+            
             logger.info(" 自动初始化权限容器表结构完成.表后缀名为：{}...", this.tableSuffix);
         }
         
@@ -215,48 +210,6 @@ public class AuthContext implements ApplicationContextAware, InitializingBean {
         //使系统context指向实体本身
         authContext = this;
         logger.info("初始化权限容器end...");
-    }
-    
-    /** 
-     * 加载脚本
-     *<功能详细描述> [参数说明]
-     * 
-     * @return void [返回类型说明]
-    * @throws IOException 
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    private String loadDBScript() {
-        String dbScriptBasePath = AuthContextDBScriptHelper.getDBScriptBasePath(this.dataSourceType);
-        String dbScriptPath = org.springframework.util.StringUtils.cleanPath("classpath:"
-                + dbScriptBasePath + "auth_base_1.0.0.sql");
-        logger.info("load authcontext init dbscript from path:{}", dbScriptPath);
-        org.springframework.core.io.Resource dbScriptResource = this.applicationContext.getResource(dbScriptPath);
-        if (!dbScriptResource.exists()) {
-            dbScriptPath = org.springframework.util.StringUtils.cleanPath("classpath*:"
-                    + dbScriptBasePath + "auth_base_1.0.0.sql");
-            logger.info("load authcontext init dbscript from path:{}",
-                    dbScriptPath);
-            dbScriptResource = this.applicationContext.getResource(dbScriptPath);
-        }
-        
-        //        URL dbScriptURL = DataSourceType.class.getResource(dataSourceType.getBasePath() + "auth_base_1.0.0.sql");
-        //        org.springframework.core.io.Resource dbScriptResource = new UrlResource(
-        //                dbScriptURL);
-        AssertUtils.isExist(dbScriptResource,
-                "dbScriptResource is not exist.path:{}",
-                dbScriptPath);
-        InputStream in = null;
-        
-        try {
-            in = dbScriptResource.getInputStream();
-            return IOUtils.toString(dbScriptResource.getInputStream());
-        } catch (IOException e) {
-            throw ExceptionWrapperUtils.wrapperIOException(e,
-                    "read dbScriptResource error.");
-        } finally {
-            IOUtils.closeQuietly(in);
-        }
     }
     
     /**
@@ -1241,26 +1194,27 @@ public class AuthContext implements ApplicationContextAware, InitializingBean {
     }
     
     /**
-     * @param 对dataSourceType进行赋值
-     */
-    public void setDataSourceType(DataSourceTypeEnum dataSourceType) {
-        this.dataSourceType = dataSourceType;
-    }
-    
-    /**
-     * @param 对dataSource进行赋值
-     */
-    public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
-    
-    /**
      * @param 对databaseSchemaUpdate进行赋值
      */
     public void setDatabaseSchemaUpdate(boolean databaseSchemaUpdate) {
         this.databaseSchemaUpdate = databaseSchemaUpdate;
     }
     
+    /**
+     * @return 返回 dbScriptExecutorContext
+     */
+    public DBScriptExecutorContext getDbScriptExecutorContext() {
+        return dbScriptExecutorContext;
+    }
+
+    /**
+     * @param 对dbScriptExecutorContext进行赋值
+     */
+    public void setDbScriptExecutorContext(
+            DBScriptExecutorContext dbScriptExecutorContext) {
+        this.dbScriptExecutorContext = dbScriptExecutorContext;
+    }
+
     public static void main(String[] args) {
         System.out.println(DataSourceType.class.getResource("./h2/auth_base_1.0.0.sql"));
     }

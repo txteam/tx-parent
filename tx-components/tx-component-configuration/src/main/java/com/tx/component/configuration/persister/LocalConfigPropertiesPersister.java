@@ -90,7 +90,7 @@ public class LocalConfigPropertiesPersister extends
         @SuppressWarnings("unchecked")
         List<String> keys = (List<String>)this.cache.getKeys();
         for(String key : keys){
-            logger.info("   加载全局系统参数:  {}={}",new Object[]{key,this.cache.get(key).getValue()});
+            logger.info("   加载本地系统参数:  {}={}",new Object[]{key,this.cache.get(key).getValue()});
         }
     }
 
