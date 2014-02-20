@@ -169,7 +169,7 @@ public class TableCreator {
     protected boolean isExist(TableDefinition tableDefinition) {
         boolean isExistFlag = false;
         try {
-            this.jdbcTemplate.update("SELECT COUNT(1) FROM "
+            this.jdbcTemplate.queryForInt("SELECT COUNT(1) FROM "
                     + tableDefinition.tableName());
             isExistFlag = true;
         } catch (DataAccessException e) {
