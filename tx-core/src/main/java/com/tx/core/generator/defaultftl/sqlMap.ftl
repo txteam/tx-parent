@@ -130,10 +130,10 @@
 	<!-- auto generate default delete -->
 	<delete id="${delete.id}" 
 		parameterType="${delete.parameterType}">
-		DELETE FROM ${delete.tableName} ${delete.simpleTableName} WHERE
+		DELETE FROM ${delete.tableName}  WHERE
 		<trim prefixOverrides="AND | OR">
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(${delete.idPropertyName})">  
-	            AND ${delete.simpleTableName}.${delete.idColumnName} = ${r"#{"}${delete.idPropertyName}${r"}"}
+	            AND ${delete.idColumnName} = ${r"#{"}${delete.idPropertyName}${r"}"}
 	        </if>
 		</trim>
 	</delete>

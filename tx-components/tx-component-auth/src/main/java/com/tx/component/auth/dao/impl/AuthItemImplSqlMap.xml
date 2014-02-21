@@ -139,9 +139,9 @@
 	<!-- auto generate default delete -->
 	<delete id="deleteAuthItemImpl" 
 		parameterType="java.util.Map">
-		DELETE FROM AUTH_AUTHITEM${tableSuffix} TAII 
-		 WHERE TAII.ID = #{authItem.id}
-		   AND TAII.SYSTEMID = #{authItem.systemId}
+		DELETE FROM AUTH_AUTHITEM${tableSuffix} 
+		 WHERE ID = #{authItem.id}
+		   AND SYSTEMID = #{authItem.systemId}
 	</delete>
 
 	<!-- auto generate default update -->

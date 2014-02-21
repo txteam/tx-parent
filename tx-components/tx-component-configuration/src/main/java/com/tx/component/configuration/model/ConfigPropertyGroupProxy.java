@@ -56,7 +56,7 @@ public class ConfigPropertyGroupProxy implements ConfigPropertyGroup {
      */
     @Override
     public String getParentName() {
-        return this.parentConfigGroupParse.getName();
+        return this.parentConfigGroupParse == null ? "" : this.parentConfigGroupParse.getName();
     }
     
     /**

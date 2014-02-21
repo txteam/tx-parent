@@ -52,6 +52,7 @@ public class ConfigContext extends ConfigContextConfigurator {
     @Override
     public void afterPropertiesSet() throws Exception {
         super.afterPropertiesSet();
+        context = this;
         
         /**
          * 让配置属性持久器加载配置数据<br/>
@@ -73,11 +74,7 @@ public class ConfigContext extends ConfigContextConfigurator {
       * @see [类、类#方法、类#成员]
      */
     public static ConfigContext getContext() {
-        synchronized (ConfigContext.class) {
-            if (context == null) {
-                context = new ConfigContext();
-            }
-        }
+        AssertUtils.notNull(context,"context is null.use it when before init.");
         return context;
     }
     

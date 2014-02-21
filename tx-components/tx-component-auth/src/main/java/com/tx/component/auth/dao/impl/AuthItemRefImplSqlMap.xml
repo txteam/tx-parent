@@ -188,23 +188,23 @@
 	<!-- auto generate default delete -->
 	<delete id="deleteAuthItemRefImpl" 
 		parameterType="java.util.Map">
-		DELETE FROM AUTH_AUTHREF${tableSuffix} TAIRI WHERE
+		DELETE FROM AUTH_AUTHREF${tableSuffix} WHERE
 		<trim prefixOverrides="AND | OR">
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authItemRef.refId)">  
-	            AND TAIRI.REFID = #{authItemRef.refId}
+	            AND REFID = #{authItemRef.refId}
 	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authItemRef.authRefType)">  
-	            AND TAIRI.AUTHREFTYPE = #{authItemRef.authRefType} 
+	            AND AUTHREFTYPE = #{authItemRef.authRefType} 
 	        </if>
 	        <if test="authItemRef.authItem != null">
 				<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authItemRef.authItem.id)">  
-		            AND TAIRI.AUTHID = #{authItemRef.authItem.id}
+		            AND AUTHID = #{authItemRef.authItem.id}
 		        </if>
 		        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authItemRef.authItem.authType)">  
-		            AND TAIRI.AUTHTYPE = #{authItemRef.authItem.authType,javaType=java.lang.String}
+		            AND AUTHTYPE = #{authItemRef.authItem.authType,javaType=java.lang.String}
 		        </if>
 		        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authItemRef.authItem.systemId)">  
-		            AND TAIRI.SYSTEMID = #{authItemRef.authItem.systemId,javaType=java.lang.String}
+		            AND SYSTEMID = #{authItemRef.authItem.systemId,javaType=java.lang.String}
 		        </if>
 	        </if>
 		</trim>
