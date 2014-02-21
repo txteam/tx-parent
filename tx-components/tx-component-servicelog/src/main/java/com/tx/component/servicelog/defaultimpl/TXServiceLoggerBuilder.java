@@ -141,14 +141,17 @@ public class TXServiceLoggerBuilder extends BaseServiceLoggerBuilder {
                 if (count == 0) {
                     return result;
                 }
+                int offset = pageSize * (pageIndex - 1);
+                int limit = pageSize * pageIndex;
+                limit = limit > count ? count : limit;
                 
                 //查询指定索引条数
                 List<T> resList = jdbcTemplate.query(sqlSource.queryPagedSql(params,
                         pageIndex,
                         pageSize),
                         sqlSource.getPagedQueryCondtionSetter(params,
-                                pageIndex,
-                                pageSize),
+                                offset,
+                                limit),
                         sqlSource.getSelectRowMapper());
                 result.setList(resList);
                 

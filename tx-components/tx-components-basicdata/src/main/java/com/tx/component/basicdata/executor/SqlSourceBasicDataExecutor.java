@@ -163,13 +163,16 @@ public class SqlSourceBasicDataExecutor<T> extends BaseBasicDataExecutor<T> {
         if (count == 0) {
             return result;
         }
+        int offset = pageSize * (pageIndex - 1);
+        int limit = pageSize * pageIndex;
+        limit = limit > count ? count : limit;
         
         List<T> resList = getJdbcTemplate().query(simpleSqlSource.queryPagedSql(params,
                 pageIndex,
                 pageSize),
                 simpleSqlSource.getPagedQueryCondtionSetter(params,
-                        pageIndex,
-                        pageSize),
+                        offset,
+                        limit),
                 simpleSqlSource.getSelectRowMapper());
         result.setList(resList);
         

@@ -116,6 +116,7 @@ public class PagedDiclectStatementHandlerInterceptor implements Interceptor {
         boolean isBindOnFirst = dialect.bindLimitParametersFirst();//是否绑定在前
         boolean isSupportsLimit = dialect.supportsLimit();//是否支持limit
         boolean isSupportsLimitOffset = dialect.supportsLimitOffset();//是否支持offset
+        boolean isUseMaxForLimit = dialect.useMaxForLimit();
         //根据rowBounds判断是否需要进行物理分页
         //是否指定了分页条数
         if (rowBounds == null
@@ -136,7 +137,9 @@ public class PagedDiclectStatementHandlerInterceptor implements Interceptor {
         boundSql.setAdditionalParameter("_offset",
                 Integer.valueOf(rowBounds.getOffset()));
         boundSql.setAdditionalParameter("_limit",
-                Integer.valueOf(rowBounds.getLimit()));
+                isUseMaxForLimit ? Integer.valueOf(rowBounds.getLimit())
+                        : Integer.valueOf(rowBounds.getLimit()
+                                - rowBounds.getOffset()));
         
         String sql = boundSql.getSql();
         //利用hibernate方言类生成新的分页语句
@@ -254,7 +257,7 @@ public class PagedDiclectStatementHandlerInterceptor implements Interceptor {
     public void setDialect(Dialect dialect) {
         this.dialect = dialect;
     }
-
+    
     /**
      * @param 对dataSourceType进行赋值
      */

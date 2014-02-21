@@ -708,10 +708,8 @@ public class SqlSource<T> implements Serializable, Cloneable {
      * @see [类、类#方法、类#成员]
     */
     public PreparedStatementSetter getPagedQueryCondtionSetter(Object obj,
-            int pageIndex, int pageSize) {
+            int offset, int limit) {
         final MetaObject metaObject = MetaObject.forObject(obj);
-        final int offset = pageSize * (pageIndex - 1);
-        final int limit = pageSize * pageIndex;
         
         //如果支持isSupportsLimitOffset并且当前需要偏移值
         //final boolean isSupportsVariableLimit = dialect.supportsVariableLimit();//是否支持物理分页
@@ -721,6 +719,9 @@ public class SqlSource<T> implements Serializable, Cloneable {
         final boolean bindLimitParametersInReverseOrder = dialect.bindLimitParametersInReverseOrder();
         final boolean isNeedSetOffset = isSupportsLimitOffset
                 && (offset > 0 || dialect.forceLimitUsage());
+        final boolean isUseMaxForLimit = dialect.useMaxForLimit();
+        final int trueOffset = offset;
+        final int trueLimit = isUseMaxForLimit ? limit : limit - offset;
         
         PreparedStatementSetter res = new PreparedStatementSetter() {
             @Override
@@ -729,17 +730,17 @@ public class SqlSource<T> implements Serializable, Cloneable {
                 if (isBindOnFirst) {
                     if (bindLimitParametersInReverseOrder) {
                         if (isSupportsLimit) {
-                            ps.setInt(i++, limit);
+                            ps.setInt(i++, trueLimit);
                         }
                         if (isNeedSetOffset) {
-                            ps.setInt(i++, offset);
+                            ps.setInt(i++, trueOffset);
                         }
                     } else {
                         if (isNeedSetOffset) {
-                            ps.setInt(i++, offset);
+                            ps.setInt(i++, trueOffset);
                         }
                         if (isSupportsLimit) {
-                            ps.setInt(i++, limit);
+                            ps.setInt(i++, trueLimit);
                         }
                     }
                 }
@@ -758,17 +759,17 @@ public class SqlSource<T> implements Serializable, Cloneable {
                 if (!isBindOnFirst) {
                     if (bindLimitParametersInReverseOrder) {
                         if (isSupportsLimit) {
-                            ps.setInt(i++, limit);
+                            ps.setInt(i++, trueLimit);
                         }
                         if (isNeedSetOffset) {
-                            ps.setInt(i++, offset);
+                            ps.setInt(i++, trueOffset);
                         }
                     } else {
                         if (isNeedSetOffset) {
-                            ps.setInt(i++, offset);
+                            ps.setInt(i++, trueOffset);
                         }
                         if (isSupportsLimit) {
-                            ps.setInt(i++, limit);
+                            ps.setInt(i++, trueLimit);
                         }
                     }
                 }
