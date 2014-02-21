@@ -9,6 +9,7 @@ package com.tx.component.servicelog.defaultimpl;
 import java.util.Date;
 
 import javax.persistence.Id;
+import javax.persistence.OrderBy;
 
 import org.slf4j.helpers.MessageFormatter;
 
@@ -40,6 +41,7 @@ public class TXBaseServiceLog implements TXServiceLog {
     private String clientIpAddress;
     
     /** 业务日志记录时间 */
+    @OrderBy("createDate desc")
     private Date createDate;
     
     /** 业务日志消息体 */
