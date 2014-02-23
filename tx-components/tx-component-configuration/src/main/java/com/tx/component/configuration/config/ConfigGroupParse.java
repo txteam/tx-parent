@@ -36,12 +36,13 @@ public class ConfigGroupParse {
     @XStreamImplicit(itemFieldName = "configGroup")
     private List<ConfigGroupParse> configGroups;
     
-    /** 配置属性组是否可见 */
+    /** 配置属性组是否可见:默认为可见的 */
     @XStreamAsAttribute
-    private boolean viewAble = true;
+    private Boolean viewAble = true;
     
-    /** 是否有效，如果valid = false viewAble无论为何值均当做viewAble = false处理 */
-    private boolean valid = true;
+    /** 是否有效，如果valid = false viewAble无论为何值均当做viewAble = false处理  默认为有效的*/
+    @XStreamAsAttribute
+    private Boolean valid = true;
 
     /**
      * @return 返回 name
@@ -72,20 +73,6 @@ public class ConfigGroupParse {
     }
 
     /**
-     * @return 返回 viewAble
-     */
-    public boolean isViewAble() {
-        return viewAble;
-    }
-
-    /**
-     * @param 对viewAble进行赋值
-     */
-    public void setViewAble(boolean viewAble) {
-        this.viewAble = viewAble;
-    }
-
-    /**
      * @return 返回 configGroups
      */
     public List<ConfigGroupParse> getConfigGroups() {
@@ -100,10 +87,24 @@ public class ConfigGroupParse {
     }
 
     /**
+     * @return 返回 viewAble
+     */
+    public boolean isViewAble() {
+        return viewAble == null ? true : viewAble;
+    }
+
+    /**
+     * @param 对viewAble进行赋值
+     */
+    public void setViewAble(boolean viewAble) {
+        this.viewAble = viewAble;
+    }
+
+    /**
      * @return 返回 valid
      */
     public boolean isValid() {
-        return valid;
+        return valid == null ? true : valid;
     }
 
     /**

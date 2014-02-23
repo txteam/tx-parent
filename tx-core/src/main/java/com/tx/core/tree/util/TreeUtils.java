@@ -43,7 +43,7 @@ public class TreeUtils {
             return null;
         }
         List<TreeAbleProxy<T>> resCollection = generatorTreeAbleProxyCollection(objectList, adapter);
-        return changToTree(resCollection);
+        return changeToTree(resCollection);
     }
     
     /**
@@ -65,7 +65,7 @@ public class TreeUtils {
             return null;
         }
         List<TreeAbleProxy<T>> resCollection = generatorTreeAbleProxyCollection(objectList, adapter);
-        return changToTree(resCollection, maxLevelIndex);
+        return changeToTree(resCollection, maxLevelIndex);
     }
     
     /**
@@ -103,9 +103,9 @@ public class TreeUtils {
      * @see [类、类#方法、类#成员]
     */
     @SuppressWarnings("rawtypes")
-    public static <C extends Collection<T>, T extends TreeAble> C changToTree(
+    public static <C extends Collection<T>, T extends TreeAble> C changeToTree(
             C treeAbleCollection) {
-        return changToTree(treeAbleCollection, -1);
+        return changeToTree(treeAbleCollection, -1);
     }
     
     /**
@@ -123,7 +123,7 @@ public class TreeUtils {
       * @see [类、类#方法、类#成员]
      */
     @SuppressWarnings("rawtypes")
-    public static <C extends Collection<T>, T extends TreeAble> C changToTree(
+    public static <C extends Collection<T>, T extends TreeAble> C changeToTree(
             C treeAbleCollection, int maxLevelIndex) {
         //判断入参是否合法
         if (treeAbleCollection == null || treeAbleCollection.size() == 0) {
@@ -186,7 +186,7 @@ public class TreeUtils {
      * @see [类、类#方法、类#成员]
     */
     @SuppressWarnings("rawtypes")
-    public static <C extends Collection<T>, T extends TreeAble> C changToTree(
+    public static <C extends Collection<T>, T extends TreeAble> C changeToTree(
             C treeAbleCollection, C parentNodeCollection) {
         return changToTree(treeAbleCollection, parentNodeCollection, -1);
     }

@@ -53,6 +53,17 @@ public interface ConfigProperty {
     public String getValue();
     
     /**
+      * 获取验证表达式<br>
+      *<功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return String [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public String getValidateExpression();
+    
+    /**
       * 获取配置的描述信息<br/>
       *<功能详细描述>
       * @return [参数说明]
@@ -107,6 +118,17 @@ public interface ConfigProperty {
       * @see [类、类#方法、类#成员]
      */
     public String getConfigPropertyGroupName();
+    
+    /**
+      * 获取配置属性类型
+      *<功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return ConfigPropertyTypeEnum [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public ConfigPropertyTypeEnum getConfigPropertyType();
     
     /**
       * 更新配置属性<br/>

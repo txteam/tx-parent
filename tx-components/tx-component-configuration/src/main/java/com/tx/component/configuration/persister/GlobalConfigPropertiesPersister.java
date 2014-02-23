@@ -13,6 +13,8 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.lang3.StringUtils;
+
 import net.sf.ehcache.Element;
 
 import com.tx.component.configuration.config.ConfigGroupParse;
@@ -22,12 +24,14 @@ import com.tx.component.configuration.exception.NotExistException;
 import com.tx.component.configuration.model.ConfigProperty;
 import com.tx.component.configuration.model.ConfigPropertyItem;
 import com.tx.component.configuration.model.ConfigPropertyProxy;
+import com.tx.component.configuration.model.ConfigPropertyTypeEnum;
 import com.tx.component.configuration.persister.dao.ConfigPropertyItemDao;
 import com.tx.component.configuration.persister.dao.impl.ConfigPropertyItemDaoImpl;
 import com.tx.core.dbscript.TableDefinition;
 import com.tx.core.dbscript.XMLTableDefinition;
 import com.tx.core.dbscript.context.DBScriptExecutorContext;
 import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.util.UUIDUtils;
 
 /**
  * 全局配置属性持久器<br/>
@@ -81,6 +85,14 @@ public class GlobalConfigPropertiesPersister extends
     }
     
     /**
+     * @return
+     */
+    @Override
+    protected ConfigPropertyTypeEnum configPropertyType() {
+        return ConfigPropertyTypeEnum.全局配置项;
+    }
+
+    /**
      * @param configContext
      * @param configPropertyParse
      * @param configGroupParse
@@ -91,7 +103,7 @@ public class GlobalConfigPropertiesPersister extends
             ConfigPropertyParse configPropertyParse,
             ConfigGroupParse configGroupParse) {
         ConfigProperty configProperty = new ConfigPropertyProxy(configContext,
-                this, configGroupParse, configPropertyParse);
+                this,configPropertyType(), configGroupParse, configPropertyParse);
         
         //如果在持久表中不存在，则自动创建
         if (!this.configPropertyItemMapping.containsKey(configPropertyParse.getKey())) {
@@ -147,6 +159,7 @@ public class GlobalConfigPropertiesPersister extends
         //使用书库表中的值
         configPropertyItem.setCreateDate(nowConfigPropertyItem.getCreateDate());
         configPropertyItem.setValue(nowConfigPropertyItem.getValue());
+        configPropertyItem.setId(nowConfigPropertyItem.getId());
         
         this.configPropertyItemDao.update(configPropertyItem);
         return configPropertyItem;
@@ -161,15 +174,19 @@ public class GlobalConfigPropertiesPersister extends
     }
     
     /**
-     * @param configProperty
+     * @param key
+     * @param value
      */
     @Override
-    public synchronized void updateConfigProperty(ConfigProperty configProperty) {
-        ConfigPropertyItem configPropertyItem = this.configPropertyItemMapping.get(configProperty.getKey());
+    public synchronized void updateConfigProperty(String key, String value) {
+        AssertUtils.notEmpty(key, "key is empty.");
+        AssertUtils.notEmpty(value, "value is empty.");
+        
+        ConfigPropertyItem configPropertyItem = this.configPropertyItemMapping.get(key);
         AssertUtils.notNull(configPropertyItem, "configPropertyItem is null.");
         AssertUtils.notEmpty(configPropertyItem.getId(),
                 "configPropertyItem.id is empty.");
-        configPropertyItem.setValue(configProperty.getValue());
+        configPropertyItem.setValue(value);
         this.configPropertyItemDao.update(configPropertyItem);
         this.cache.removeAll();
     }
@@ -185,16 +202,18 @@ public class GlobalConfigPropertiesPersister extends
     private synchronized void reBuildConfigPropertyValueCache() {
         logger.info("重新构建配置属性值缓存.");
         
-        configPropertyItemMapping.clear();
+        Map<String, ConfigPropertyItem> newMap = new HashMap<String, ConfigPropertyItem>();
         List<ConfigPropertyItem> configPropertyItems = this.configPropertyItemDao.queryConfigPropertyItemList();
         for (ConfigPropertyItem configPropertyTemp : configPropertyItems) {
-            configPropertyItemMapping.put(configPropertyTemp.getKey(),
-                    configPropertyTemp);
+            newMap.put(configPropertyTemp.getKey(), configPropertyTemp);
             
             //压栈入缓存中
             this.cache.put(new Element(configPropertyTemp.getKey(),
                     configPropertyTemp.getValue()));
         }
+        Map<String, ConfigPropertyItem> oldMap = configPropertyItemMapping;
+        configPropertyItemMapping = newMap;
+        oldMap.clear();
     }
     
     /**
@@ -234,14 +253,14 @@ public class GlobalConfigPropertiesPersister extends
         AssertUtils.notNull(nowConfigPropertyItem,
                 "nowConfigPropertyItem is null");
         
-        if (!nowConfigPropertyItem.getDescription()
-                .equals(configPropertyParse.getDescription())) {
+        if (!StringUtils.equals(nowConfigPropertyItem.getDescription(),
+                configPropertyParse.getDescription())) {
             return true;
-        } else if (nowConfigPropertyItem.getName()
-                .equals(configPropertyParse.getName())) {
+        } else if (StringUtils.equals(nowConfigPropertyItem.getName(),
+                configPropertyParse.getName())) {
             return true;
-        } else if (nowConfigPropertyItem.getValidateExpression()
-                .equals(configPropertyParse.getValidateExpression())) {
+        } else if (StringUtils.equals(nowConfigPropertyItem.getValidateExpression(),
+                configPropertyParse.getValidateExpression())) {
             return true;
         } else {
             return false;
@@ -262,6 +281,7 @@ public class GlobalConfigPropertiesPersister extends
             ConfigPropertyParse configPropertyParse) {
         Date now = new Date();
         ConfigPropertyItem configPropertyItem = new ConfigPropertyItem();
+        configPropertyItem.setId(UUIDUtils.generateUUID());
         configPropertyItem.setCreateDate(now);
         configPropertyItem.setLastUpdateDate(now);
         configPropertyItem.setDescription(configPropertyParse.getDescription());

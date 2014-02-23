@@ -19,6 +19,17 @@ import java.util.List;
   * @since  [产品/模块版本]
   */
 public interface ConfigPropertyGroup {
+    
+    /**
+     * 获取配置属性类型
+     *<功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return ConfigPropertyTypeEnum [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+   public ConfigPropertyTypeEnum getConfigPropertyType();
 
     /**
       * 配置属性分组名<br/>

@@ -23,11 +23,11 @@ public class ConfigPropertyParse {
     
     /** 状态:true可见 false不可见 */
     @XStreamAsAttribute
-    private boolean viewAble = true;
+    private Boolean viewAble = true;
     
     /** 是否支持动态配置 */
     @XStreamAsAttribute
-    private boolean dynamic = false;
+    private Boolean editAble = false;
     
     /** 配置资源名 */
     @XStreamAsAttribute
@@ -106,20 +106,6 @@ public class ConfigPropertyParse {
     }
     
     /**
-     * @return 返回 viewAble
-     */
-    public boolean isViewAble() {
-        return viewAble;
-    }
-    
-    /**
-     * @param 对viewAble进行赋值
-     */
-    public void setViewAble(boolean viewAble) {
-        this.viewAble = viewAble;
-    }
-    
-    /**
      * @return 返回 validateExpression
      */
     public String getValidateExpression() {
@@ -134,16 +120,30 @@ public class ConfigPropertyParse {
     }
 
     /**
-     * @return 返回 dynamic
+     * @return 返回 editAble
      */
-    public boolean isDynamic() {
-        return dynamic;
+    public boolean isEditAble() {
+        return editAble == null ? false : editAble;
     }
 
     /**
-     * @param 对dynamic进行赋值
+     * @param 对editAble进行赋值
      */
-    public void setDynamic(boolean dynamic) {
-        this.dynamic = dynamic;
+    public void setEditAble(boolean editAble) {
+        this.editAble = editAble;
+    }
+    
+    /**
+     * @return 返回 viewAble
+     */
+    public boolean isViewAble() {
+        return viewAble == null ? true : viewAble;
+    }
+    
+    /**
+     * @param 对viewAble进行赋值
+     */
+    public void setViewAble(boolean viewAble) {
+        this.viewAble = viewAble;
     }
 }

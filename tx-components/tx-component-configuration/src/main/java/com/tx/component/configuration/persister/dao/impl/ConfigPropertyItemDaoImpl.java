@@ -23,7 +23,6 @@ import com.tx.component.configuration.model.ConfigPropertyItem;
 import com.tx.component.configuration.persister.dao.ConfigPropertyItemDao;
 import com.tx.core.TxConstants;
 import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.util.UUIDUtils;
 
 /**
  * 配置属性数据库持久层<br/>
@@ -65,12 +64,13 @@ public class ConfigPropertyItemDaoImpl implements ConfigPropertyItemDao {
         sb.append("ID,");
         sb.append("SYSTEMID,");
         sb.append("KEYNAME,");
+        sb.append("VALUE,");
         sb.append("NAME,");
         sb.append("DESCRIPTION,");
         sb.append("CREATEDATE,");
         sb.append("LASTUPDATEDATE,");
         sb.append("VALIDATEEXPRESSION");
-        sb.append(") VALUES(?,?,?,?,?,?,?,?)");
+        sb.append(") VALUES(?,?,?,?,?,?,?,?,?)");
         
         final String finalSystemId = this.systemId;
         final Date now = new Date();
@@ -84,9 +84,10 @@ public class ConfigPropertyItemDaoImpl implements ConfigPropertyItemDao {
             public void setValues(PreparedStatement ps) throws SQLException {
                 int index = 0;
                 
-                ps.setString(++index, UUIDUtils.generateUUID());
+                ps.setString(++index, configPropertyItem.getId());
                 ps.setString(++index, finalSystemId);
                 ps.setString(++index, configPropertyItem.getKey());
+                ps.setString(++index, configPropertyItem.getValue());
                 ps.setString(++index, configPropertyItem.getName());
                 ps.setString(++index, configPropertyItem.getDescription());
                 ps.setTimestamp(++index, new Timestamp(now.getTime()));
@@ -105,10 +106,11 @@ public class ConfigPropertyItemDaoImpl implements ConfigPropertyItemDao {
     public void update(final ConfigPropertyItem configPropertyItem) {
         StringBuilder sb = new StringBuilder(TxConstants.INITIAL_STR_LENGTH);
         sb.append("UPDATE CORE_CONFIG_CONTEXT SET ");
-        sb.append("KEYNAME = ?");
-        sb.append("NAME = ?");
-        sb.append("DESCRIPTION = ?");
-        sb.append("LASTUPDATEDATE = ?");
+        sb.append("KEYNAME = ?,");
+        sb.append("VALUE = ?,");
+        sb.append("NAME = ?,");
+        sb.append("DESCRIPTION = ?,");
+        sb.append("LASTUPDATEDATE = ?,");
         sb.append("VALIDATEEXPRESSION = ?");
         sb.append(" WHERE ID = ? AND SYSTEMID= ?");
         
@@ -125,6 +127,7 @@ public class ConfigPropertyItemDaoImpl implements ConfigPropertyItemDao {
                 int index = 0;
                 
                 ps.setString(++index, configPropertyItem.getKey());
+                ps.setString(++index, configPropertyItem.getValue());
                 ps.setString(++index, configPropertyItem.getName());
                 ps.setString(++index, configPropertyItem.getDescription());
                 ps.setTimestamp(++index, new Timestamp(now.getTime()));
@@ -147,6 +150,7 @@ public class ConfigPropertyItemDaoImpl implements ConfigPropertyItemDao {
         sb.append("SELECT TC.ID,");
         sb.append("TC.SYSTEMID,");
         sb.append("TC.KEYNAME,");
+        sb.append("TC.VALUE,");
         sb.append("TC.NAME,");
         sb.append("TC.DESCRIPTION,");
         sb.append("TC.CREATEDATE,");
@@ -168,8 +172,15 @@ public class ConfigPropertyItemDaoImpl implements ConfigPropertyItemDao {
                     public ConfigPropertyItem mapRow(ResultSet rs, int rowNum)
                             throws SQLException {
                         ConfigPropertyItem res = new ConfigPropertyItem();
-                        //rs.getString(systemId);
-                        rs.getDate("CREATEDATE");
+                        res.setId(rs.getString("ID"));
+                        res.setSystemId(rs.getString("SYSTEMID"));
+                        res.setName(rs.getString("NAME"));
+                        res.setKey(rs.getString("KEYNAME"));
+                        res.setValue(rs.getString("VALUE"));
+                        res.setDescription(rs.getString("DESCRIPTION"));
+                        res.setCreateDate(rs.getDate("CREATEDATE"));
+                        res.setLastUpdateDate(rs.getDate("LASTUPDATEDATE"));
+                        res.setValidateExpression(rs.getString("DESCRIPTION"));
                         return res;
                     }
                 });

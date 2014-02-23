@@ -17,6 +17,7 @@ import com.tx.component.configuration.exception.NotExistException;
 import com.tx.component.configuration.exception.UnModifyAbleException;
 import com.tx.component.configuration.model.ConfigProperty;
 import com.tx.component.configuration.model.ConfigPropertyProxy;
+import com.tx.component.configuration.model.ConfigPropertyTypeEnum;
 
 /**
  * 基础配置属性解析器
@@ -29,6 +30,14 @@ import com.tx.component.configuration.model.ConfigPropertyProxy;
  */
 public class LocalConfigPropertiesPersister extends
         BaseConfigPropertiesPersister {
+    
+    /**
+     * @return
+     */
+    @Override
+    protected ConfigPropertyTypeEnum configPropertyType() {
+        return ConfigPropertyTypeEnum.本地配置项;
+    }
     
     /**
      * 构建配置属性实例<br/>
@@ -46,7 +55,8 @@ public class LocalConfigPropertiesPersister extends
             ConfigGroupParse configGroupParse) {
         //构建配置属性<br/>
         ConfigProperty configProperty = new ConfigPropertyProxy(configContext,
-                this, configGroupParse, configPropertyParse);
+                this, configPropertyType(), configGroupParse,
+                configPropertyParse);
         //压栈入缓存中
         this.cache.put(new Element(configPropertyParse.getKey(),
                 configPropertyParse.getValue()));
@@ -75,10 +85,11 @@ public class LocalConfigPropertiesPersister extends
     }
     
     /**
-     * @param configProperty
+     * @param key
+     * @param value
      */
     @Override
-    public void updateConfigProperty(ConfigProperty configProperty) {
+    public void updateConfigProperty(String key, String value) {
         throw new UnModifyAbleException("本地配置属性不支持更新");
     }
     
@@ -88,12 +99,13 @@ public class LocalConfigPropertiesPersister extends
     @Override
     protected void afterPropertyConfigsLoaded() {
         @SuppressWarnings("unchecked")
-        List<String> keys = (List<String>)this.cache.getKeys();
-        for(String key : keys){
-            logger.info("   加载本地系统参数:  {}={}",new Object[]{key,this.cache.get(key).getValue()});
+        List<String> keys = (List<String>) this.cache.getKeys();
+        for (String key : keys) {
+            logger.info("   加载本地系统参数:  {}={}", new Object[] { key,
+                    this.cache.get(key).getValue() });
         }
     }
-
+    
     /**
      * 
      */

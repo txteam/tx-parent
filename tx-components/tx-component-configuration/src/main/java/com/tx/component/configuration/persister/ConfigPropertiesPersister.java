@@ -7,7 +7,6 @@
 package com.tx.component.configuration.persister;
 
 import com.tx.component.configuration.context.ConfigContext;
-import com.tx.component.configuration.model.ConfigProperty;
 
 /**
  * 配置属性持久接口<br/>
@@ -57,11 +56,12 @@ public interface ConfigPropertiesPersister {
     /**
       * 更新配置容器中配置属性值<br/> 
       *<功能详细描述>
-      * @param configProperty [参数说明]
+      * @param key
+      * @param value [参数说明]
       * 
       * @return void [返回类型说明]
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public void updateConfigProperty(ConfigProperty configProperty);
+    public void updateConfigProperty(String key,String value);
 }

@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.tx.component.configuration.config.ConfigGroupParse;
+import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.util.ObjectUtils;
 
 /**
@@ -35,12 +36,29 @@ public class ConfigPropertyGroupProxy implements ConfigPropertyGroup {
     /** 子集配置属性组列表 */
     private List<ConfigPropertyGroup> configPropertyGroupList = new ArrayList<ConfigPropertyGroup>();
     
+    /** 配置属性类型 */
+    private ConfigPropertyTypeEnum configPropertyType;
+    
     /** <默认构造函数> */
-    public ConfigPropertyGroupProxy(ConfigGroupParse parentConfigGroupParse,
+    public ConfigPropertyGroupProxy(ConfigPropertyTypeEnum configPropertyType,
+            ConfigGroupParse parentConfigGroupParse,
             ConfigGroupParse configGroupParse) {
         super();
+        //校验构建参数不能为空<br/>
+        AssertUtils.notNull(configPropertyType,
+                "build ConfigPropertyGroupProxy exception:this.configPropertyType is null.");
+        AssertUtils.notNull(configGroupParse,
+                "build ConfigPropertyProxy exception:this.configGroupParse is null.");
         this.parentConfigGroupParse = parentConfigGroupParse;
         this.configGroupParse = configGroupParse;
+    }
+    
+    /**
+     * @return
+     */
+    @Override
+    public ConfigPropertyTypeEnum getConfigPropertyType() {
+        return this.configPropertyType;
     }
     
     /**
@@ -56,7 +74,8 @@ public class ConfigPropertyGroupProxy implements ConfigPropertyGroup {
      */
     @Override
     public String getParentName() {
-        return this.parentConfigGroupParse == null ? "" : this.parentConfigGroupParse.getName();
+        return this.parentConfigGroupParse == null ? ""
+                : this.parentConfigGroupParse.getName();
     }
     
     /**

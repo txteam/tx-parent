@@ -34,6 +34,7 @@ import com.tx.component.configuration.context.ConfigContext;
 import com.tx.component.configuration.model.ConfigProperty;
 import com.tx.component.configuration.model.ConfigPropertyGroup;
 import com.tx.component.configuration.model.ConfigPropertyGroupProxy;
+import com.tx.component.configuration.model.ConfigPropertyTypeEnum;
 import com.tx.core.exceptions.util.ExceptionWrapperUtils;
 import com.tx.core.util.XstreamUtils;
 
@@ -250,7 +251,7 @@ public abstract class BaseConfigPropertiesPersister implements
             ConfigGroupParse parentConfigGroupParse,
             ConfigGroupParse configGroupParse) {
         ConfigPropertyGroup configPropertyGroup = new ConfigPropertyGroupProxy(
-                parentConfigGroupParse, configGroupParse);
+                configPropertyType(), parentConfigGroupParse, configGroupParse);
         return configPropertyGroup;
     }
     
@@ -271,6 +272,16 @@ public abstract class BaseConfigPropertiesPersister implements
             ConfigGroupParse configGroupParse);
     
     /**
+     * 属性配置加载
+     *<功能详细描述> [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    protected abstract ConfigPropertyTypeEnum configPropertyType();
+    
+    /**
       * 属性配置加载
       *<功能详细描述> [参数说明]
       * 
@@ -289,21 +300,21 @@ public abstract class BaseConfigPropertiesPersister implements
       * @see [类、类#方法、类#成员]
      */
     protected abstract void afterPropertyConfigsLoaded();
-
+    
     /**
      * @param 对location进行赋值
      */
     public void setLocation(String location) {
         this.location = location;
     }
-
+    
     /**
      * @param 对cacheManager进行赋值
      */
     public void setCacheManager(CacheManager cacheManager) {
         this.cacheManager = cacheManager;
     }
-
+    
     /**
      * @param 对cache进行赋值
      */

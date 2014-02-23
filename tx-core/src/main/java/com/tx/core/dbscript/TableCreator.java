@@ -126,9 +126,7 @@ public class TableCreator {
             
             if (context.isExistInContext(tableDefinition.tableName())) {
                 DBScriptContext dbScriptContextTemp = context.findDBScriptContextByTableName(tableDefinition.tableName());
-                context.deleteById(dbScriptContextTemp.getId());
-                dbScriptContext.setCreateDate(dbScriptContextTemp.getCreateDate());
-                if (!dbScriptContext.getTableVersion()
+                if (!dbScriptContextTemp.getTableVersion()
                         .equals(tableDefinition.tableVersion())) {
                     logger.info("     检测到：表'{}'版需进行升级.{}->{}",
                             new Object[] { tableDefinition.tableName(),
@@ -138,21 +136,27 @@ public class TableCreator {
                     doUpdateTable(dbScriptContext.getTableVersion(),
                             tableDefinition);
                     dbScriptContext.setCreateDate(dbScriptContext.getCreateDate());
-                    context.deleteById(dbScriptContext.getId());
+                    //删除原表中容器对其的管理
+                    context.deleteById(dbScriptContextTemp.getId());
+                    context.insert(dbScriptContext);
                     logger.info("结束：升级表:{}成功.",
                             new Object[] { tableDefinition.tableName() });
                 } else {
-                    logger.info("结束： 检测到：表'{}'版本一致无需进行升级.");
+                    logger.info("结束： 检测到：表'{}'版本'{}'一致无需进行升级.",
+                            new Object[] { tableDefinition.tableName(),
+                                    tableDefinition.tableVersion() });
                 }
             } else {
+                logger.warn("     在容器中并未检测到原表信息。");
                 if (this.updateNotExistTableInContext) {
                     logger.warn("     在容器中并未检测到原表版本，容器现配置强制对原表进行一次默认升级.如无需升级，请关闭updateNotExistTableInContext值为false");
                     doUpdateTable(null, tableDefinition);
                     logger.info("结束：升级表:{}成功.",
                             new Object[] { tableDefinition.tableName() });
                 }
+                context.insert(dbScriptContext);
             }
-            context.insert(dbScriptContext);
+            
         }
     }
     

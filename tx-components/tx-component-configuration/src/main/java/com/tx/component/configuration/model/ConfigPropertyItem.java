@@ -7,6 +7,7 @@
 package com.tx.component.configuration.model;
 
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Id;
@@ -21,8 +22,11 @@ import javax.persistence.Id;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class ConfigPropertyItem{
+public class ConfigPropertyItem implements Serializable{
     
+    /** 注释内容 */
+    private static final long serialVersionUID = 887600460642190895L;
+
     /** 数据库存储唯一键 */
     @Id
     private String id;

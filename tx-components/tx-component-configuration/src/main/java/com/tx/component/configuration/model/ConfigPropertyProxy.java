@@ -6,6 +6,8 @@
  */
 package com.tx.component.configuration.model;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.tx.component.configuration.config.ConfigGroupParse;
 import com.tx.component.configuration.config.ConfigPropertyParse;
 import com.tx.component.configuration.context.ConfigContext;
@@ -36,25 +38,41 @@ public class ConfigPropertyProxy implements ConfigProperty {
     /** 配置属性解析类 */
     protected ConfigPropertyParse configPropertyParse;
     
+    /** 配置属性类型 */
+    private ConfigPropertyTypeEnum configPropertyType;
+    
     /** <默认构造函数> */
     public ConfigPropertyProxy(ConfigContext configContext,
             ConfigPropertiesPersister configPropertiesPersister,
+            ConfigPropertyTypeEnum configPropertyType,
             ConfigGroupParse configGroupParse,
             ConfigPropertyParse configPropertyParse) {
         super();
         //校验构建参数不能为空<br/>
+        AssertUtils.notNull(configPropertyType,
+                "build ConfigPropertyProxy exception:this.configPropertyType is null.");
         AssertUtils.notNull(configContext,
                 "build ConfigPropertyProxy exception:this.configContext is null.");
         AssertUtils.notNull(configPropertiesPersister,
                 "build ConfigPropertyProxy exception:this.configPropertiesPersister is null.");
         AssertUtils.notNull(configPropertyParse,
                 "build ConfigPropertyProxy exception:this.configPropertyParse is null.");
+        
+        this.configPropertyType = configPropertyType;
         this.configContext = configContext;
         this.configPropertiesPersister = configPropertiesPersister;
         this.configPropertyParse = configPropertyParse;
         
         this.configGroupParse = configGroupParse;
         
+    }
+    
+    /**
+     * @return
+     */
+    @Override
+    public ConfigPropertyTypeEnum getConfigPropertyType() {
+        return this.configPropertyType;
     }
     
     /**
@@ -68,11 +86,7 @@ public class ConfigPropertyProxy implements ConfigProperty {
             return false;
         }
         //如果在新的配置属性文件中不存在对应的配置属性，则显示该配置属性无效
-        if (configPropertyParse == null) {
-            return false;
-        } else {
-            return true;
-        }
+        return true;
     }
     
     /**
@@ -81,7 +95,7 @@ public class ConfigPropertyProxy implements ConfigProperty {
     @Override
     public boolean isModifyAble() {
         //如果配置属性无效，则也显示对应属性不可编辑
-        if (isValid()) {
+        if (!isValid()) {
             return false;
         }
         //如果配置属性组不可见，则显示该配置属性组不可编辑
@@ -92,7 +106,23 @@ public class ConfigPropertyProxy implements ConfigProperty {
         if (!configPropertiesPersister.isSupportModifyAble()) {
             return false;
         } else {
-            return true;
+            return this.configPropertyParse.isEditAble();
+        }
+    }
+    
+    /**
+     * @return
+     */
+    @Override
+    public String getValidateExpression() {
+        if (!isModifyAble()) {
+            return "";
+        }
+        if (StringUtils.isBlank(this.configPropertyParse.getValidateExpression())) {
+            return getName() + ":required";
+        } else {
+            String relValidateExpression = this.configPropertyParse.getValidateExpression();
+            return relValidateExpression;
         }
     }
     
@@ -102,7 +132,7 @@ public class ConfigPropertyProxy implements ConfigProperty {
     @Override
     public boolean isViewAble() {
         //如果属性无效，则对应属性不可见
-        if (isValid()) {
+        if (!isValid()) {
             return false;
         }
         //如果所属组不可见，则属性不可见
@@ -161,7 +191,7 @@ public class ConfigPropertyProxy implements ConfigProperty {
         if (!isModifyAble()) {
             throw new UnModifyAbleException("属性不可编辑.");
         }
-        this.configPropertiesPersister.updateConfigProperty(this);
+        this.configPropertiesPersister.updateConfigProperty(getKey(), newValue);
     }
     
     /**
