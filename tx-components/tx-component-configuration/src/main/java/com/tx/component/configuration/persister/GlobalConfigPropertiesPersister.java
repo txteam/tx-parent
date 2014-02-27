@@ -14,6 +14,12 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import net.sf.ehcache.Element;
 
@@ -51,6 +57,9 @@ public class GlobalConfigPropertiesPersister extends
     /** 数据源实例 */
     private DataSource dataSource;
     
+    /** 事务管理器 */
+    private PlatformTransactionManager platformTransactionManager;
+    
     /** 系统id */
     private String systemId = "";
     
@@ -75,6 +84,10 @@ public class GlobalConfigPropertiesPersister extends
         AssertUtils.notNull(this.dataSource, "dataSource is null.");
         AssertUtils.notEmpty(this.systemId, "systemId is empty.");
         
+        if (this.platformTransactionManager == null) {
+            this.platformTransactionManager = new DataSourceTransactionManager(
+                    dataSource);
+        }
         if (this.databaseSchemaUpdate && dbScriptExecutorContext != null) {
             dbScriptExecutorContext.createOrUpdateTable(configPropertyItemTableDefinition);
         }
@@ -91,7 +104,7 @@ public class GlobalConfigPropertiesPersister extends
     protected ConfigPropertyTypeEnum configPropertyType() {
         return ConfigPropertyTypeEnum.全局配置项;
     }
-
+    
     /**
      * @param configContext
      * @param configPropertyParse
@@ -103,7 +116,8 @@ public class GlobalConfigPropertiesPersister extends
             ConfigPropertyParse configPropertyParse,
             ConfigGroupParse configGroupParse) {
         ConfigProperty configProperty = new ConfigPropertyProxy(configContext,
-                this,configPropertyType(), configGroupParse, configPropertyParse);
+                this, configPropertyType(), configGroupParse,
+                configPropertyParse);
         
         //如果在持久表中不存在，则自动创建
         if (!this.configPropertyItemMapping.containsKey(configPropertyParse.getKey())) {
@@ -187,7 +201,20 @@ public class GlobalConfigPropertiesPersister extends
         AssertUtils.notEmpty(configPropertyItem.getId(),
                 "configPropertyItem.id is empty.");
         configPropertyItem.setValue(value);
-        this.configPropertyItemDao.update(configPropertyItem);
+        
+        DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+        def.setName("globalConfigPersisterTxName");
+        def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+        TransactionStatus status = this.platformTransactionManager.getTransaction(def);
+        
+        try {
+            this.configPropertyItemDao.update(configPropertyItem);
+        } catch (DataAccessException e) {
+            this.platformTransactionManager.rollback(status);
+            throw e;
+        }
+        this.platformTransactionManager.commit(status);
+        
         this.cache.removeAll();
     }
     
@@ -348,5 +375,13 @@ public class GlobalConfigPropertiesPersister extends
      */
     public void setDatabaseSchemaUpdate(boolean databaseSchemaUpdate) {
         this.databaseSchemaUpdate = databaseSchemaUpdate;
+    }
+    
+    /**
+     * @param 对txManager进行赋值
+     */
+    public void setPlatformTransactionManager(
+            PlatformTransactionManager platformTransactionManager) {
+        this.platformTransactionManager = platformTransactionManager;
     }
 }

@@ -6,21 +6,30 @@
  */
 package com.tx.component.auth.dao.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
-
-import javax.annotation.Resource;
+import java.util.Map.Entry;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.springframework.stereotype.Component;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementSetter;
+import org.springframework.jdbc.core.RowMapper;
 
 import com.tx.component.auth.dao.AuthItemRefImplDao;
+import com.tx.component.auth.model.AuthItem;
+import com.tx.component.auth.model.AuthItemImpl;
 import com.tx.component.auth.model.AuthItemRefImpl;
-import com.tx.core.mybatis.model.Order;
-import com.tx.core.mybatis.support.MyBatisDaoSupport;
-import com.tx.core.paged.model.PagedList;
+import com.tx.core.TxConstants;
+import com.tx.core.exceptions.SILException;
+import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.util.ObjectUtils;
+import com.tx.core.util.UUIDUtils;
 
 /**
  * AuthItemRefImpl持久层
@@ -31,47 +40,140 @@ import com.tx.core.paged.model.PagedList;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-@Component("authItemRefImplDao")
 public class AuthItemRefImplDaoImpl implements AuthItemRefImplDao {
     
-    @Resource(name = "myBatisDaoSupport")
-    private MyBatisDaoSupport myBatisDaoSupport;
+    /** jdbcTemplate 句柄 */
+    private JdbcTemplate jdbcTemplate;
     
     /**
-     * @param condition
+     * <默认构造函数>
      */
-    @Override
-    public void insertAuthItemRefImpl(AuthItemRefImpl condition,
-            String tableSuffix) {
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("authItemRef", condition);
-        params.put("tableSuffix", tableSuffix);
-        
-        this.myBatisDaoSupport.insertUseUUID("authItemRefImpl.insertAuthItemRefImpl",
-                params,
-                "authItemRef.id");
+    public AuthItemRefImplDaoImpl(JdbcTemplate jdbcTemplate) {
+        super();
+        AssertUtils.notNull(jdbcTemplate, "jdbcTemplate is null.");
+        this.jdbcTemplate = jdbcTemplate;
     }
     
     /**
      * @param condition
      */
     @Override
-    public void batchInsertAuthItemRefImpl(List<AuthItemRefImpl> condition,
+    public void insertAuthItemRefImpl(final AuthItemRefImpl authItemRef,
             String tableSuffix) {
+        authItemRef.setId(UUIDUtils.generateUUID());
+        
+        StringBuilder sb = new StringBuilder(TxConstants.INITIAL_STR_LENGTH);
+        sb.append("INSERT INTO AUTH_AUTHREF").append(tableSuffix).append("(");
+        sb.append("ID,");
+        sb.append("REFID,");
+        sb.append("AUTHREFTYPE,");
+        sb.append("AUTHID,");
+        sb.append("SYSTEMID,");
+        sb.append("AUTHTYPE,");
+        sb.append("VALIDDEPENDENDDATE,");
+        sb.append("CREATEOPERID,");
+        sb.append("ENDDATE,");
+        sb.append("CREATEDATE");
+        sb.append(")");
+        sb.append("VALUES(");
+        sb.append("?,?,?,?,?,?,?,?,?,?");
+        sb.append(")");
+        
+        this.jdbcTemplate.update(sb.toString(), new PreparedStatementSetter() {
+            
+            @Override
+            public void setValues(PreparedStatement ps) throws SQLException {
+                int parameterIndex = 0;
+                ps.setString(++parameterIndex, authItemRef.getId());
+                ps.setString(++parameterIndex, authItemRef.getRefId());
+                ps.setString(++parameterIndex, authItemRef.getAuthRefType());
+                ps.setString(++parameterIndex, authItemRef.getAuthItem()
+                        .getId());
+                ps.setString(++parameterIndex, authItemRef.getAuthItem()
+                        .getSystemId());
+                ps.setString(++parameterIndex, authItemRef.getAuthItem()
+                        .getAuthType());
+                ps.setBoolean(++parameterIndex,
+                        authItemRef.isValidDependEndDate());
+                ps.setString(++parameterIndex, authItemRef.getCreateOperId());
+                ps.setTimestamp(++parameterIndex,
+                        authItemRef.getEndDate() == null ? null
+                                : new Timestamp(authItemRef.getEndDate()
+                                        .getTime()));
+                ps.setTimestamp(++parameterIndex,
+                        authItemRef.getCreateDate() == null ? null
+                                : new Timestamp(authItemRef.getCreateDate()
+                                        .getTime()));
+            }
+        });
+    }
+    
+    /**
+     * @param condition
+     */
+    @Override
+    public void batchInsertAuthItemRefImpl(
+            final List<AuthItemRefImpl> condition, String tableSuffix) {
         if (CollectionUtils.isEmpty(condition)) {
             return;
         }
-        List<Map<String, Object>> paramsList = new ArrayList<Map<String, Object>>();
-        for (AuthItemRefImpl authRefTemp : condition) {
-            Map<String, Object> params = new HashMap<String, Object>();
-            params.put("authItemRef", authRefTemp);
-            params.put("tableSuffix", tableSuffix);
-            paramsList.add(params);
-        }
-        this.myBatisDaoSupport.batchInsertUseUUID("authItemRefImpl.insertAuthItemRefImpl",
-                paramsList,
-                "authItemRef.id",
-                true);
+        StringBuilder sb = new StringBuilder(TxConstants.INITIAL_STR_LENGTH);
+        sb.append("INSERT INTO AUTH_AUTHREF").append(tableSuffix).append("(");
+        sb.append("ID,");
+        sb.append("REFID,");
+        sb.append("AUTHREFTYPE,");
+        sb.append("AUTHID,");
+        sb.append("SYSTEMID,");
+        sb.append("AUTHTYPE,");
+        sb.append("VALIDDEPENDENDDATE,");
+        sb.append("CREATEOPERID,");
+        sb.append("ENDDATE,");
+        sb.append("CREATEDATE");
+        sb.append(")");
+        sb.append("VALUES(");
+        sb.append("?,?,?,?,?,?,?,?,?,?");
+        sb.append(")");
+        
+        this.jdbcTemplate.batchUpdate(sb.toString(),
+                new BatchPreparedStatementSetter() {
+                    @Override
+                    public void setValues(PreparedStatement ps, int index)
+                            throws SQLException {
+                        AuthItemRefImpl authItemRef = condition.get(index);
+                        authItemRef.setId(UUIDUtils.generateUUID());
+                        
+                        int parameterIndex = 0;
+                        ps.setString(++parameterIndex, authItemRef.getId());
+                        ps.setString(++parameterIndex, authItemRef.getRefId());
+                        ps.setString(++parameterIndex,
+                                authItemRef.getAuthRefType());
+                        ps.setString(++parameterIndex,
+                                authItemRef.getAuthItem().getId());
+                        ps.setString(++parameterIndex,
+                                authItemRef.getAuthItem().getSystemId());
+                        ps.setString(++parameterIndex,
+                                authItemRef.getAuthItem().getAuthType());
+                        ps.setBoolean(++parameterIndex,
+                                authItemRef.isValidDependEndDate());
+                        ps.setString(++parameterIndex,
+                                authItemRef.getCreateOperId());
+                        ps.setTimestamp(++parameterIndex,
+                                authItemRef.getEndDate() == null ? null
+                                        : new Timestamp(
+                                                authItemRef.getEndDate()
+                                                        .getTime()));
+                        ps.setTimestamp(++parameterIndex,
+                                authItemRef.getCreateDate() == null ? null
+                                        : new Timestamp(
+                                                authItemRef.getCreateDate()
+                                                        .getTime()));
+                    }
+                    
+                    @Override
+                    public int getBatchSize() {
+                        return condition.size();
+                    }
+                });
     }
     
     /**
@@ -79,14 +181,72 @@ public class AuthItemRefImplDaoImpl implements AuthItemRefImplDao {
      * @return
      */
     @Override
-    public int deleteAuthItemRefImpl(AuthItemRefImpl condition,
+    public int deleteAuthItemRefImpl(final AuthItemRefImpl condition,
             String tableSuffix) {
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("authItemRef", condition);
-        params.put("tableSuffix", tableSuffix);
+        AssertUtils.notNull(condition, "deleteCondition is null.");
         
-        return this.myBatisDaoSupport.delete("authItemRefImpl.deleteAuthItemRefImpl",
-                params);
+        StringBuilder sb = new StringBuilder(TxConstants.INITIAL_STR_LENGTH);
+        sb.append("DELETE FROM AUTH_AUTHREF")
+                .append(tableSuffix)
+                .append(" WHERE ");
+        StringBuilder conditionSb = new StringBuilder(
+                TxConstants.INITIAL_STR_LENGTH);
+        if (!StringUtils.isEmpty(condition.getRefId())) {
+            conditionSb.append(" AND REFID = ?");
+        }
+        if (!StringUtils.isEmpty(condition.getAuthRefType())) {
+            conditionSb.append(" AND AUTHREFTYPE = ? ");
+        }
+        if (condition.getAuthItem() != null) {
+            AuthItem authItem = condition.getAuthItem();
+            if (!StringUtils.isEmpty(authItem.getId())) {
+                conditionSb.append(" AND AUTHID = ?");
+            }
+            if (!StringUtils.isEmpty(authItem.getAuthType())) {
+                conditionSb.append(" AND AUTHTYPE = ?");
+            }
+            if (!StringUtils.isEmpty(authItem.getSystemId())) {
+                conditionSb.append(" AND SYSTEMID = ?");
+            }
+        }
+        sb.append(conditionSb.substring(4));
+        
+        int resInt = this.jdbcTemplate.update(sb.toString(),
+                new PreparedStatementSetter() {
+                    
+                    /**
+                     * @param ps
+                     * @throws SQLException
+                     */
+                    @Override
+                    public void setValues(PreparedStatement ps)
+                            throws SQLException {
+                        int parameterIndex = 0;
+                        if (!StringUtils.isEmpty(condition.getRefId())) {
+                            ps.setString(++parameterIndex, condition.getRefId());
+                        }
+                        if (!StringUtils.isEmpty(condition.getAuthRefType())) {
+                            ps.setString(++parameterIndex,
+                                    condition.getAuthRefType());
+                        }
+                        if (condition.getAuthItem() != null) {
+                            AuthItem authItem = condition.getAuthItem();
+                            if (!StringUtils.isEmpty(authItem.getId())) {
+                                ps.setString(++parameterIndex, authItem.getId());
+                            }
+                            if (!StringUtils.isEmpty(authItem.getAuthType())) {
+                                ps.setString(++parameterIndex,
+                                        authItem.getAuthType());
+                            }
+                            if (!StringUtils.isEmpty(authItem.getSystemId())) {
+                                ps.setString(++parameterIndex,
+                                        authItem.getSystemId());
+                            }
+                        }
+                    }
+                    
+                });
+        return resInt;
     }
     
     /**
@@ -94,36 +254,44 @@ public class AuthItemRefImplDaoImpl implements AuthItemRefImplDao {
      */
     @Override
     public void batchDeleteAuthItemRefImpl(
-            List<AuthItemRefImpl> authItemRefImplList, String tableSuffix) {
+            final List<AuthItemRefImpl> authItemRefImplList, String tableSuffix) {
         if (CollectionUtils.isEmpty(authItemRefImplList)) {
             return;
         }
-        List<Map<String, Object>> paramsList = new ArrayList<Map<String, Object>>();
-        for (AuthItemRefImpl authRefTemp : authItemRefImplList) {
-            Map<String, Object> params = new HashMap<String, Object>();
-            params.put("authItemRef", authRefTemp);
-            params.put("tableSuffix", tableSuffix);
-            paramsList.add(params);
-        }
         
-        this.myBatisDaoSupport.batchDelete("authItemRefImpl.deleteAuthItemRefImpl",
-                paramsList,
-                true);
-    }
-    
-    /**
-     * @param condition
-     * @return
-     */
-    @Override
-    public AuthItemRefImpl findAuthItemRefImpl(AuthItemRefImpl condition,
-            String tableSuffix) {
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("authItemRef", condition);
-        params.put("tableSuffix", tableSuffix);
+        StringBuilder sb = new StringBuilder(TxConstants.INITIAL_STR_LENGTH);
+        sb.append("DELETE FROM AUTH_AUTHREF")
+                .append(tableSuffix)
+                .append(" WHERE ");
+        sb.append(" REFID = ?");
+        sb.append(" AND AUTHREFTYPE = ?");
+        sb.append(" AND AUTHID = ?");
+        sb.append(" AND AUTHTYPE = ?");
+        sb.append(" AND SYSTEMID = ?");
         
-        return this.myBatisDaoSupport.<AuthItemRefImpl> find("authItemRefImpl.findAuthItemRefImpl",
-                params);
+        this.jdbcTemplate.batchUpdate(sb.toString(),
+                new BatchPreparedStatementSetter() {
+                    
+                    @Override
+                    public void setValues(PreparedStatement ps, int i)
+                            throws SQLException {
+                        int parameterIndex = 0;
+                        AuthItemRefImpl condition = authItemRefImplList.get(i);
+                        
+                        ps.setString(++parameterIndex, condition.getRefId());
+                        ps.setString(++parameterIndex,
+                                condition.getAuthRefType());
+                        AuthItem authItem = condition.getAuthItem();
+                        ps.setString(++parameterIndex, authItem.getId());
+                        ps.setString(++parameterIndex, authItem.getAuthType());
+                        ps.setString(++parameterIndex, authItem.getSystemId());
+                    }
+                    
+                    @Override
+                    public int getBatchSize() {
+                        return authItemRefImplList.size();
+                    }
+                });
     }
     
     /**
@@ -132,99 +300,196 @@ public class AuthItemRefImplDaoImpl implements AuthItemRefImplDao {
      */
     @Override
     public List<AuthItemRefImpl> queryAuthItemRefImplList(
-            Map<String, Object> params, String tableSuffix) {
-        if(params == null){
-            params = new HashMap<String, Object>();
+            final Map<String, Object> params, String tableSuffix) {
+        StringBuilder sb = new StringBuilder(TxConstants.INITIAL_STR_LENGTH);
+        sb.append("SELECT ");
+        sb.append("ID,");
+        sb.append("REFID,");
+        sb.append("AUTHREFTYPE,");
+        sb.append("AUTHID,");
+        sb.append("SYSTEMID,");
+        sb.append("AUTHTYPE,");
+        sb.append("VALIDDEPENDENDDATE,");
+        sb.append("CREATEOPERID,");
+        sb.append("ENDDATE,");
+        sb.append("CREATEDATE");
+        sb.append(" FROM AUTH_AUTHREF").append(tableSuffix).append(" TAIRI");
+        
+        StringBuilder conditionSb = new StringBuilder(
+                TxConstants.INITIAL_STR_LENGTH);
+        if (!ObjectUtils.isEmpty(params.get("id"))) {
+            conditionSb.append(" AND TAIRI.ID = ?");
         }
-        params.put("tableSuffix", tableSuffix);
-        return this.myBatisDaoSupport.<AuthItemRefImpl> queryList("authItemRefImpl.queryAuthItemRefImpl",
-                params);
-    }
-    
-    /**
-     * @param params
-     * @param orderList
-     * @return
-     */
-    @Override
-    public List<AuthItemRefImpl> queryAuthItemRefImplList(
-            Map<String, Object> params, List<Order> orderList,
-            String tableSuffix) {
-        if(params == null){
-            params = new HashMap<String, Object>();
+        if (!ObjectUtils.isEmpty(params.get("authType"))) {
+            conditionSb.append(" AND TAIRI.AUTHTYPE = ?");
         }
-        params.put("tableSuffix", tableSuffix);
-        return this.myBatisDaoSupport.<AuthItemRefImpl> queryList("authItemRefImpl.queryAuthItemRefImpl",
-                params,
-                orderList);
-    }
-    
-    /**
-     * @param params
-     * @return
-     */
-    @Override
-    public int countAuthItemRefImpl(Map<String, Object> params,
-            String tableSuffix) {
-        if(params == null){
-            params = new HashMap<String, Object>();
+        if (!ObjectUtils.isEmpty(params.get("systemId"))) {
+            conditionSb.append(" AND TAIRI.SYSTEMID = ?");
         }
-        params.put("tableSuffix", tableSuffix);
-        return this.myBatisDaoSupport.<Integer> find("authItemRefImpl.queryAuthItemRefImplCount",
-                params);
-    }
-    
-    /**
-     * @param params
-     * @param pageIndex
-     * @param pageSize
-     * @return
-     */
-    @Override
-    public PagedList<AuthItemRefImpl> queryAuthItemRefImplPagedList(
-            Map<String, Object> params, int pageIndex, int pageSize,
-            String tableSuffix) {
-        if(params == null){
-            params = new HashMap<String, Object>();
+        if (!ObjectUtils.isEmpty(params.get("authItemId"))) {
+            conditionSb.append(" AND TAIRI.AUTHID = ?");
         }
-        params.put("tableSuffix", tableSuffix);
-        return this.myBatisDaoSupport.<AuthItemRefImpl> queryPagedList("authItemRefImpl.queryAuthItemRefImpl",
-                params,
-                pageIndex,
-                pageSize);
-    }
-    
-    /**
-     * @param params
-     * @param pageIndex
-     * @param pageSize
-     * @param orderList
-     * @return
-     */
-    @Override
-    public PagedList<AuthItemRefImpl> queryAuthItemRefImplPagedList(
-            Map<String, Object> params, int pageIndex, int pageSize,
-            List<Order> orderList, String tableSuffix) {
-        if(params == null){
-            params = new HashMap<String, Object>();
+        if (!ObjectUtils.isEmpty(params.get("refType2RefIdMap"))) {
+            conditionSb.append(" AND (");
+            @SuppressWarnings("unchecked")
+            Map<String, String> refType2RefIdMap = (Map<String, String>) params.get("refType2RefIdMap");
+            int entryIndex = 0;
+            for (@SuppressWarnings("unused")
+            Entry<String, String> entryTemp : refType2RefIdMap.entrySet()) {
+                if (entryIndex > 0) {
+                    conditionSb.append(" OR ");
+                }
+                conditionSb.append(" (TAIRI.AUTHREFTYPE = ? AND TAIRI.REFID = ?) ");
+            }
+            conditionSb.append(" ) ");
         }
-        params.put("tableSuffix", tableSuffix);
-        return this.myBatisDaoSupport.<AuthItemRefImpl> queryPagedList("authItemRefImpl.queryAuthItemRefImpl",
-                params,
-                pageIndex,
-                pageSize,
-                orderList);
+        if (!ObjectUtils.isEmpty(params.get("authRefType"))) {
+            conditionSb.append(" AND TAIRI.AUTHREFTYPE = ?");
+        }
+        if (!ObjectUtils.isEmpty(params.get("refId"))) {
+            conditionSb.append(" AND TAIRI.REFID = ?");
+        }
+        if (params.get("authItem") != null) {
+            AuthItem authItem = (AuthItem) params.get("authItem");
+            if (!ObjectUtils.isEmpty(authItem.getId())) {
+                conditionSb.append(" AND TAIRI.AUTHID = ?");
+            }
+            if (!ObjectUtils.isEmpty(authItem.getSystemId())) {
+                conditionSb.append(" AND TAIRI.SYSTEMID = ?");
+            }
+            if (!ObjectUtils.isEmpty(authItem.getAuthType())) {
+                conditionSb.append(" AND TAIRI.AUTHTYPE = ?");
+            }
+        }
+        
+        if (!StringUtils.isEmpty(conditionSb)) {
+            sb.append(" WHERE ").append(conditionSb.substring(4));
+        }
+        
+        List<AuthItemRefImpl> authItemRefList = this.jdbcTemplate.query(sb.toString(),
+                new PreparedStatementSetter() {
+                    
+                    @Override
+                    public void setValues(PreparedStatement ps)
+                            throws SQLException {
+                        int parameterIndex = 0;
+                        if (!ObjectUtils.isEmpty(params.get("id"))) {
+                            ps.setString(++parameterIndex,
+                                    (String) params.get("id"));
+                        }
+                        if (!ObjectUtils.isEmpty(params.get("authType"))) {
+                            ps.setString(++parameterIndex,
+                                    (String) params.get("authType"));
+                        }
+                        if (!ObjectUtils.isEmpty(params.get("systemId"))) {
+                            ps.setString(++parameterIndex,
+                                    (String) params.get("systemId"));
+                        }
+                        if (!ObjectUtils.isEmpty(params.get("authItemId"))) {
+                            ps.setString(++parameterIndex,
+                                    (String) params.get("authItemId"));
+                        }
+                        if (!ObjectUtils.isEmpty(params.get("refType2RefIdMap"))) {
+                            @SuppressWarnings("unchecked")
+                            Map<String, String> refType2RefIdMap = (Map<String, String>) params.get("refType2RefIdMap");
+                            for (Entry<String, String> entryTemp : refType2RefIdMap.entrySet()) {
+                                ps.setString(++parameterIndex,
+                                        entryTemp.getKey());
+                                ps.setString(++parameterIndex,
+                                        entryTemp.getValue());
+                            }
+                        }
+                        if (!ObjectUtils.isEmpty(params.get("authRefType"))) {
+                            ps.setString(++parameterIndex,
+                                    (String) params.get("authRefType"));
+                        }
+                        if (!ObjectUtils.isEmpty(params.get("refId"))) {
+                            ps.setString(++parameterIndex,
+                                    (String) params.get("refId"));
+                        }
+                        if (params.get("authItem") != null) {
+                            AuthItem authItem = (AuthItem) params.get("authItem");
+                            if (!ObjectUtils.isEmpty(authItem.getId())) {
+                                ps.setString(++parameterIndex, authItem.getId());
+                            }
+                            if (!ObjectUtils.isEmpty(authItem.getSystemId())) {
+                                ps.setString(++parameterIndex,
+                                        authItem.getSystemId());
+                            }
+                            if (!ObjectUtils.isEmpty(authItem.getAuthType())) {
+                                ps.setString(++parameterIndex,
+                                        authItem.getAuthType());
+                            }
+                        }
+                    }
+                },
+                authItemRefImplRowMapper);
+        
+        return authItemRefList;
     }
     
     /**
      * @param updateRowMap
+     * @param tableSuffix
      * @return
      */
     @Override
     public int updateAuthItemRefImpl(Map<String, Object> updateRowMap,
             String tableSuffix) {
-        updateRowMap.put("tableSuffix", tableSuffix);
-        return this.myBatisDaoSupport.update("authItemRefImpl.updateAuthItemRefImpl",
-                updateRowMap);
+        /*
+        UPDATE AUTH_AUTHREF${tableSuffix} TAIRI
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="_parameter.containsKey('validDependEndDate')">
+                VALIDDEPENDENDDATE = #{validDependEndDate,javaType=boolean},
+            </if>
+            <if test="_parameter.containsKey('endDate')">
+                ENDDATE = #{endDate,javaType=java.util.Date},
+            </if>
+        </trim>
+        WHERE
+        <trim prefixOverrides="AND | OR">
+            <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authItemRef.id)">  
+                AND TAIRI.id = #{authItemRef.refId}
+            </if>
+            <if test="@com.tx.core.util.OgnlUtils@isEmpty(authItemRef.id)">  
+                AND TAIRI.REFID = #{authItemRef.refId}
+                AND TAIRI.AUTHREFTYPE = #{authItemRef.authRefType} 
+                AND TAIRI.AUTHID = #{authItemRef.authItem.id}
+                AND TAIRI.SYSTEMID = #{authItemRef.authItem.systemId}
+                AND TAIRI.AUTHTYPE = #{authItemRef.authItem.authType}
+            </if>
+        </trim>
+        */
+        throw new SILException("暂不支持的功能，未来如果需要更新权限引用时，再进行添加：如：更新权限引用的过期时间。");
     }
+    
+    /**
+     * 权限引用实例与查询结果映射关系
+     */
+    private static final RowMapper<AuthItemRefImpl> authItemRefImplRowMapper = new RowMapper<AuthItemRefImpl>() {
+        
+        /**
+         * @param rs
+         * @param rowNum
+         * @return
+         * @throws SQLException
+         */
+        @Override
+        public AuthItemRefImpl mapRow(ResultSet rs, int rowNum)
+                throws SQLException {
+            AuthItemRefImpl res = new AuthItemRefImpl();
+            res.setId(rs.getString("ID"));
+            String authItemId = rs.getString("AUTHID");
+            String systemId = rs.getString("SYSTEMID");
+            String authType = rs.getString("AUTHTYPE");
+            res.setAuthItem(new AuthItemImpl(authItemId, systemId, authType));
+            res.setAuthRefType(rs.getString("AUTHREFTYPE"));
+            res.setCreateOperId(rs.getString("CREATEOPERID"));
+            res.setRefId(rs.getString("REFID"));
+            res.setValidDependEndDate(rs.getBoolean("VALIDDEPENDENDDATE"));
+            res.setEndDate(rs.getTimestamp("ENDDATE"));
+            res.setCreateDate(rs.getTimestamp("CREATEDATE"));
+            return res;
+        }
+    };
 }

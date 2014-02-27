@@ -90,7 +90,7 @@ public class TXServiceLoggerBuilder extends BaseServiceLoggerBuilder {
                 def.setName("serviceLoggerTxName");
                 def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
                 TransactionStatus status = txManager.getTransaction(def);
-
+                
                 try {
                     jdbcTemplate.update(sqlSource.insertSql(),
                             sqlSource.getInsertSetter(logInstance));

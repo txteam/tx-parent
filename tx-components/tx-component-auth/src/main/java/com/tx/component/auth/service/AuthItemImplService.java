@@ -10,14 +10,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.tx.component.auth.dao.AuthItemImplDao;
+import com.tx.component.auth.dao.impl.AuthItemImplDaoImpl;
 import com.tx.component.auth.model.AuthItemImpl;
 import com.tx.core.exceptions.util.AssertUtils;
 
@@ -30,17 +31,29 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-@Component("authItemImplService")
 public class AuthItemImplService {
     
-    @SuppressWarnings("unused")
-    private Logger logger = LoggerFactory.getLogger(AuthItemImplService.class);
+    /** 事务管理器 */
+    private PlatformTransactionManager txManager;
     
-    @Resource(name = "authItemImplDao")
+    /** 权限引用业务层 */
+    private AuthItemRefImplService authItemRefService;
+    
+    /** 权限项持久层 */
     private AuthItemImplDao authItemDao;
     
-    @Resource(name = "authItemRefImplService")
-    private AuthItemRefImplService authItemRefService;
+    /**
+     * <默认构造函数>
+     */
+    public AuthItemImplService(PlatformTransactionManager txManager,
+            JdbcTemplate jdbcTemplate, AuthItemRefImplService authItemRefService) {
+        super();
+        AssertUtils.notNull(txManager, "txManager is null.");
+        AssertUtils.notNull(jdbcTemplate, "jdbcTemplate is null.");
+        this.txManager = txManager;
+        
+        this.authItemDao = new AuthItemImplDaoImpl(jdbcTemplate);
+    }
     
     /**
       * 查找权限项目实例
@@ -76,16 +89,18 @@ public class AuthItemImplService {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-   public List<AuthItemImpl> queryAllAuthItemListBySystemId(String systemId, String tableSuffix) {
-       AssertUtils.notEmpty(systemId, "systemId is empty.");
-       
-       Map<String, Object> params = new HashMap<String, Object>();
-       params.put("systemId", systemId);
-       //查询权限项集合
-       List<AuthItemImpl> resList = this.authItemDao.queryAuthItemImplList(params,tableSuffix);
-       
-       return resList;
-   }
+    public List<AuthItemImpl> queryAllAuthItemListBySystemId(String systemId,
+            String tableSuffix) {
+        AssertUtils.notEmpty(systemId, "systemId is empty.");
+        
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("systemId", systemId);
+        //查询权限项集合
+        List<AuthItemImpl> resList = this.authItemDao.queryAuthItemImplList(params,
+                tableSuffix);
+        
+        return resList;
+    }
     
     /**
       * 查询AuthItem实体列表<br/>
@@ -97,7 +112,8 @@ public class AuthItemImplService {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public List<AuthItemImpl> queryAuthItemListByAuthType(String authType,String systemId, String tableSuffix) {
+    public List<AuthItemImpl> queryAuthItemListByAuthType(String authType,
+            String systemId, String tableSuffix) {
         AssertUtils.notEmpty(systemId, "systemId is empty.");
         AssertUtils.notEmpty(authType, "authType is empty.");
         
@@ -107,7 +123,8 @@ public class AuthItemImplService {
         params.put("systemId", systemId);
         
         //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
-        List<AuthItemImpl> resList = this.authItemDao.queryAuthItemImplList(params,tableSuffix);
+        List<AuthItemImpl> resList = this.authItemDao.queryAuthItemImplList(params,
+                tableSuffix);
         
         return resList;
     }
@@ -123,7 +140,6 @@ public class AuthItemImplService {
       * @exception throws 可能存在数据库访问异常DataAccessException
       * @see [类、类#方法、类#成员]
      */
-    @Transactional
     public void insertAuthItemImpl(AuthItemImpl authItemImpl, String systemId,
             String tableSuffix) {
         AssertUtils.notNull(authItemImpl, "authItem is null.");
@@ -134,7 +150,18 @@ public class AuthItemImplService {
         //setSystemId
         authItemImpl.setSystemId(systemId);
         
-        this.authItemDao.insertAuthItemImpl(authItemImpl, tableSuffix);
+        DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+        def.setName("authItemImplServiceTxName");
+        def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+        TransactionStatus status = this.txManager.getTransaction(def);
+        
+        try {
+            this.authItemDao.insertAuthItemImpl(authItemImpl, tableSuffix);
+        } catch (DataAccessException e) {
+            this.txManager.rollback(status);
+            throw e;
+        }
+        this.txManager.commit(status);
     }
     
     /**
@@ -149,7 +176,6 @@ public class AuthItemImplService {
       * @exception throws 可能存在数据库访问异常DataAccessException
       * @see [类、类#方法、类#成员]
      */
-    @Transactional
     public void deleteById(String authItemId, String systemId,
             String tableSuffix) {
         AssertUtils.notEmpty(systemId, "systemId is empty.");
@@ -159,8 +185,21 @@ public class AuthItemImplService {
         condition.setId(authItemId);
         condition.setSystemId(systemId);
         
-        this.authItemDao.deleteAuthItemImpl(condition, tableSuffix);
-        this.authItemRefService.deleteByAuthItemId(authItemId,systemId,tableSuffix);
+        DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+        def.setName("authItemImplServiceTxName");
+        def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+        TransactionStatus status = this.txManager.getTransaction(def);
+        
+        try {
+            this.authItemDao.deleteAuthItemImpl(condition, tableSuffix);
+            this.authItemRefService.deleteByAuthItemId(authItemId,
+                    systemId,
+                    tableSuffix);
+        } catch (DataAccessException e) {
+            this.txManager.rollback(status);
+            throw e;
+        }
+        this.txManager.commit(status);
     }
     
     /**
@@ -173,7 +212,6 @@ public class AuthItemImplService {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    @Transactional
     public boolean updateById(AuthItemImpl authItemImpl, String systemId,
             String tableSuffix) {
         AssertUtils.notNull(authItemImpl, "authItem is null");
@@ -194,8 +232,20 @@ public class AuthItemImplService {
         updateRowMap.put("name", authItemImpl.getName());
         updateRowMap.put("authType", authItemImpl.getAuthType());
         
-        int updateRowCount = this.authItemDao.updateAuthItemImpl(updateRowMap,
-                tableSuffix);
+        DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+        def.setName("authItemImplServiceTxName");
+        def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+        TransactionStatus status = this.txManager.getTransaction(def);
+        
+        int updateRowCount = 0;
+        try {
+            updateRowCount = this.authItemDao.updateAuthItemImpl(updateRowMap,
+                    tableSuffix);
+        } catch (DataAccessException e) {
+            this.txManager.rollback(status);
+            throw e;
+        }
+        this.txManager.commit(status);
         
         //如果需要大于1时，抛出异常并回滚，需要在这里修改
         return updateRowCount >= 1;
@@ -211,7 +261,6 @@ public class AuthItemImplService {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    @Transactional
     public AuthItemImpl saveAuthItemImplByAuthItemRowMap(
             Map<String, Object> authItemRowMap, String systemId,
             String tableSuffix) {
@@ -226,12 +275,24 @@ public class AuthItemImplService {
         AuthItemImpl authItem = findAuthItemImplById(authItemId,
                 systemId,
                 tableSuffix);
-        if (authItem != null) {
-            this.authItemDao.updateAuthItemImpl(authItemRowMap, tableSuffix);
-        } else {
-            authItem = new AuthItemImpl(authItemRowMap);
-            insertAuthItemImpl(authItem,systemId,tableSuffix);
+        
+        DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+        def.setName("authItemImplServiceTxName");
+        def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+        TransactionStatus status = this.txManager.getTransaction(def);
+        
+        try {
+            if (authItem != null) {
+                this.authItemDao.updateAuthItemImpl(authItemRowMap, tableSuffix);
+            } else {
+                authItem = new AuthItemImpl(authItemRowMap);
+                insertAuthItemImpl(authItem, systemId, tableSuffix);
+            }
+        } catch (DataAccessException e) {
+            this.txManager.rollback(status);
+            throw e;
         }
+        this.txManager.commit(status);
         
         return authItem;
     }

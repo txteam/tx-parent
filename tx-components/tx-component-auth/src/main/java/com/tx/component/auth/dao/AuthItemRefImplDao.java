@@ -9,8 +9,6 @@ package com.tx.component.auth.dao;
 import java.util.List;
 import java.util.Map;
 
-import com.tx.core.mybatis.model.Order;
-import com.tx.core.paged.model.PagedList;
 import com.tx.component.auth.model.AuthItemRefImpl;
 
 /**
@@ -78,21 +76,6 @@ public interface AuthItemRefImplDao {
             List<AuthItemRefImpl> authItemRefImplList, String tableSuffix);
     
     /**
-      * 查询AuthItemRefImpl实体
-      * auto generate
-      * <功能详细描述>
-      * @param condition
-      * @return [参数说明]
-      * 
-      * @return AuthItemRefImpl [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    //auto generate
-    public AuthItemRefImpl findAuthItemRefImpl(AuthItemRefImpl condition,
-            String tableSuffix);
-    
-    /**
       * 根据条件查询AuthItemRefImpl列表
       * auto generate
       * <功能详细描述>
@@ -108,74 +91,6 @@ public interface AuthItemRefImplDao {
             Map<String, Object> params, String tableSuffix);
     
     /**
-      * 根据指定查询条件以及排序列查询AuthItemRefImpl列表
-      * auto generate
-      * <功能详细描述>
-      * @param params
-      * @param orderList
-      * @return [参数说明]
-      * 
-      * @return List<AuthItemRefImpl> [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    //auto generate
-    public List<AuthItemRefImpl> queryAuthItemRefImplList(
-            Map<String, Object> params, List<Order> orderList,
-            String tableSuffix);
-    
-    /**
-      * 根据条件查询AuthItemRefImpl列表总数
-      * auto generated
-      * <功能详细描述>
-      * @param params
-      * @return [参数说明]
-      * 
-      * @return int [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    public int countAuthItemRefImpl(Map<String, Object> params,
-            String tableSuffix);
-    
-    /**
-      * 分页查询AuthItemRefImpl列表
-      * auto generate
-      * <功能详细描述>
-      * @param params
-      * @param pageIndex
-      * @param pageSize
-      * @return [参数说明]
-      * 
-      * @return PagedList<AuthItemRefImpl> [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    //auto generate
-    public PagedList<AuthItemRefImpl> queryAuthItemRefImplPagedList(
-            Map<String, Object> params, int pageIndex, int pageSize,
-            String tableSuffix);
-    
-    /**
-      * 分页查询AuthItemRefImpl列表，传入排序字段
-      * auto generate
-      * <功能详细描述>
-      * @param params
-      * @param pageIndex
-      * @param pageSize
-      * @param orderList
-      * @return [参数说明]
-      * 
-      * @return PagedList<AuthItemRefImpl> [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    //auto generate
-    public PagedList<AuthItemRefImpl> queryAuthItemRefImplPagedList(
-            Map<String, Object> params, int pageIndex, int pageSize,
-            List<Order> orderList, String tableSuffix);
-    
-    /**
       * 更新AuthItemRefImpl实体，
       * auto generate
       * 1、传入AuthItemRefImpl中主键不能为空
@@ -189,16 +104,4 @@ public interface AuthItemRefImplDao {
      */
     public int updateAuthItemRefImpl(Map<String, Object> updateRowMap,
             String tableSuffix);
-    
-    //    /**
-    //      * 批量更新权限项引用
-    //      * <功能详细描述>
-    //      * @param updateRowMapList [参数说明]
-    //      * 
-    //      * @return void [返回类型说明]
-    //      * @exception throws [异常类型] [异常说明]
-    //      * @see [类、类#方法、类#成员]
-    //     */
-    //    public void batchUpdateAuthItemRefImpl(
-    //            List<Map<String, Object>> updateRowMapList, String tableSuffix);
 }

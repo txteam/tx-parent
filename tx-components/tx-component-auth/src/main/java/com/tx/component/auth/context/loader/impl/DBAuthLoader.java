@@ -10,8 +10,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.annotation.Resource;
-
 import org.springframework.core.Ordered;
 
 import com.tx.component.auth.context.AuthTypeItemContext;
@@ -36,11 +34,24 @@ public class DBAuthLoader implements AuthLoader{
     
     private String systemId;
     
-    @Resource(name = "authItemImplService")
     private AuthItemImplService authItemService;
     
     /** 加载顺序 */
     private int order = Ordered.HIGHEST_PRECEDENCE;
+    
+    /** <默认构造函数> */
+    public DBAuthLoader() {
+        super();
+    }
+    
+    /** <默认构造函数> */
+    public DBAuthLoader(String tableSuffix, String systemId,
+            AuthItemImplService authItemService) {
+        super();
+        this.tableSuffix = tableSuffix;
+        this.systemId = systemId;
+        this.authItemService = authItemService;
+    }
 
     /**
      * 从数据库中加载权限项

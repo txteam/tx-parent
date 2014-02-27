@@ -9,8 +9,6 @@ package com.tx.component.auth.dao;
 import java.util.List;
 import java.util.Map;
 
-import com.tx.core.mybatis.model.Order;
-import com.tx.core.paged.model.PagedList;
 import com.tx.component.auth.model.AuthItemImpl;
 
 /**
@@ -82,75 +80,6 @@ public interface AuthItemImplDao {
      */
     //auto generate
     public List<AuthItemImpl> queryAuthItemImplList(Map<String, Object> params, String tableSuffix);
-    
-    /**
-      * 根据指定查询条件以及排序列查询AuthItemImpl列表
-      * auto generate
-      *<功能详细描述>
-      * @param params
-      * @param orderList
-      * @param tableSuffix
-      * @return [参数说明]
-      * 
-      * @return List<AuthItemImpl> [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    //auto generate
-    public List<AuthItemImpl> queryAuthItemImplList(Map<String, Object> params,
-            List<Order> orderList,String tableSuffix);
-    
-    /**
-      * 根据条件查询AuthItemImpl列表总数
-      * auto generated
-      *<功能详细描述>
-      * @param params
-      * @param tableSuffix
-      * @return [参数说明]
-      * 
-      * @return int [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    public int countAuthItemImpl(Map<String, Object> params, String tableSuffix);
-    
-    /**
-      * 分页查询AuthItemImpl列表
-      * auto generate
-      *<功能详细描述>
-      * @param params
-      * @param pageIndex
-      * @param pageSize
-      * @param tableSuffix
-      * @return [参数说明]
-      * 
-      * @return PagedList<AuthItemImpl> [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    //auto generate
-    public PagedList<AuthItemImpl> queryAuthItemImplPagedList(
-            Map<String, Object> params, int pageIndex, int pageSize,String tableSuffix);
-    
-    /**
-      * 分页查询AuthItemImpl列表，传入排序字段
-      * auto generate
-      *<功能详细描述>
-      * @param params
-      * @param pageIndex
-      * @param orderList
-      * @param systemId
-      * @param tableSuffix
-      * @return [参数说明]
-      * 
-      * @return PagedList<AuthItemImpl> [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    //auto generate
-    public PagedList<AuthItemImpl> queryAuthItemImplPagedList(
-            Map<String, Object> params, int pageIndex, int pageSize,
-            List<Order> orderList, String tableSuffix);
     
     /**
       * 更新AuthItemImpl实体，

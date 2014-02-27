@@ -39,7 +39,9 @@ public class SimplePersistenceRuleDaoImpl implements SimplePersistenceRuleDao {
      */
     @Override
     public void insertSimplePersistenceRule(SimplePersistenceRule condition) {
-        this.myBatisDaoSupport.insertUseUUID("simplePersistenceRule.insertSimplePersistenceRule", condition, "id");
+        this.myBatisDaoSupport.insertUseUUID("simplePersistenceRule.insertSimplePersistenceRule",
+                condition,
+                "id");
     }
     
     /**
@@ -48,7 +50,8 @@ public class SimplePersistenceRuleDaoImpl implements SimplePersistenceRuleDao {
      */
     @Override
     public int deleteSimplePersistenceRule(SimplePersistenceRule condition) {
-        return this.myBatisDaoSupport.delete("simplePersistenceRule.deleteSimplePersistenceRule", condition);
+        return this.myBatisDaoSupport.delete("simplePersistenceRule.deleteSimplePersistenceRule",
+                condition);
     }
     
     /**
@@ -56,8 +59,10 @@ public class SimplePersistenceRuleDaoImpl implements SimplePersistenceRuleDao {
      * @return
      */
     @Override
-    public SimplePersistenceRule findSimplePersistenceRule(SimplePersistenceRule condition) {
-        return this.myBatisDaoSupport.<SimplePersistenceRule> find("simplePersistenceRule.findSimplePersistenceRule", condition);
+    public SimplePersistenceRule findSimplePersistenceRule(
+            SimplePersistenceRule condition) {
+        return this.myBatisDaoSupport.<SimplePersistenceRule> find("simplePersistenceRule.findSimplePersistenceRule",
+                condition);
     }
     
     /**
@@ -65,7 +70,8 @@ public class SimplePersistenceRuleDaoImpl implements SimplePersistenceRuleDao {
      * @return
      */
     @Override
-    public List<SimplePersistenceRule> querySimplePersistenceRuleList(Map<String, Object> params) {
+    public List<SimplePersistenceRule> querySimplePersistenceRuleList(
+            Map<String, Object> params) {
         return this.myBatisDaoSupport.<SimplePersistenceRule> queryList("simplePersistenceRule.querySimplePersistenceRule",
                 params);
     }
@@ -76,8 +82,8 @@ public class SimplePersistenceRuleDaoImpl implements SimplePersistenceRuleDao {
      * @return
      */
     @Override
-    public List<SimplePersistenceRule> querySimplePersistenceRuleList(Map<String, Object> params,
-            List<Order> orderList) {
+    public List<SimplePersistenceRule> querySimplePersistenceRuleList(
+            Map<String, Object> params, List<Order> orderList) {
         return this.myBatisDaoSupport.<SimplePersistenceRule> queryList("simplePersistenceRule.querySimplePersistenceRule",
                 params,
                 orderList);
@@ -100,8 +106,8 @@ public class SimplePersistenceRuleDaoImpl implements SimplePersistenceRuleDao {
      * @return
      */
     @Override
-    public PagedList<SimplePersistenceRule> querySimplePersistenceRulePagedList(Map<String, Object> params,
-            int pageIndex, int pageSize) {
+    public PagedList<SimplePersistenceRule> querySimplePersistenceRulePagedList(
+            Map<String, Object> params, int pageIndex, int pageSize) {
         return this.myBatisDaoSupport.<SimplePersistenceRule> queryPagedList("simplePersistenceRule.querySimplePersistenceRule",
                 params,
                 pageIndex,
@@ -116,8 +122,9 @@ public class SimplePersistenceRuleDaoImpl implements SimplePersistenceRuleDao {
      * @return
      */
     @Override
-    public PagedList<SimplePersistenceRule> querySimplePersistenceRulePagedList(Map<String, Object> params,
-            int pageIndex, int pageSize, List<Order> orderList) {
+    public PagedList<SimplePersistenceRule> querySimplePersistenceRulePagedList(
+            Map<String, Object> params, int pageIndex, int pageSize,
+            List<Order> orderList) {
         return this.myBatisDaoSupport.<SimplePersistenceRule> queryPagedList("simplePersistenceRule.querySimplePersistenceRule",
                 params,
                 pageIndex,
@@ -131,6 +138,7 @@ public class SimplePersistenceRuleDaoImpl implements SimplePersistenceRuleDao {
      */
     @Override
     public int updateSimplePersistenceRule(Map<String, Object> updateRowMap) {
-        return this.myBatisDaoSupport.update("simplePersistenceRule.updateSimplePersistenceRule", updateRowMap);
+        return this.myBatisDaoSupport.update("simplePersistenceRule.updateSimplePersistenceRule",
+                updateRowMap);
     }
 }

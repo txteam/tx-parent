@@ -11,10 +11,6 @@ import java.util.List;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.dialect.H2Dialect;
-import org.hibernate.dialect.MySQL5InnoDBDialect;
-import org.hibernate.dialect.Oracle9iDialect;
-import org.hibernate.dialect.function.SQLFunction;
 
 /**
  * sql工具类
@@ -66,34 +62,5 @@ public class SqlUtils {
             }
         }
         return resList;
-    }
-    
-    public static void main(String[] args) {
-        /*
-        String sqlContent = "create table \n (id_ " +
-        		"varchar2(32));\n create index xxx;\n/ " +
-        		"insert into (id) valuse ('absdsdf;dsfasd;asdf');\n " +
-        		"insert into(id) values('test');";
-        
-        List<String> res = splitSqlScript(sqlContent);
-        for (String temp : res) {
-            System.out.print("   newSql:");
-            System.out.println(temp);
-        }
-        
-        MySQL5InnoDBDialect dia = new MySQL5InnoDBDialect();
-        Oracle9iDialect or = new Oracle9iDialect();
-        H2Dialect hr = new H2Dialect();
-        SQLFunction sqlFun = dia.getFunctions().get("concat");
-        List<String> arg = new ArrayList<String>();
-        arg.add("abc");
-        arg.add("?");
-        arg.add("bcd");
-        System.out.println(sqlFun.render(null, arg, null));
-        System.out.println(or.getFunctions().get("concat").render(null, arg, null));
-        System.out.println(hr.getFunctions().get("concat").render(null, arg, null));
-        */
-        String sqlContent = "select key from test";
-        System.out.println(SqlUtils.escapeSql(sqlContent));
     }
 }

@@ -17,6 +17,7 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.dom4j.Document;
@@ -92,6 +93,22 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
     /** 加载器运行顺序 */
     private int order = Ordered.HIGHEST_PRECEDENCE + 1;
     
+    /** <默认构造函数> */
+    public XmlAuthLoader() {
+        super();
+    }
+
+    /** <默认构造函数> */
+    public XmlAuthLoader(ApplicationContext applicationContext,
+            String[] authConfigLocaions) {
+        super();
+        if(!ArrayUtils.isEmpty(authConfigLocaions)){
+            this.authConfigLocaions = authConfigLocaions;
+        }
+        this.applicationContext = applicationContext;
+        
+    }
+
     /**
      * @param applicationContext
      * @throws BeansException

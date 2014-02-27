@@ -6,53 +6,92 @@
  */
 package com.tx.component.auth.dao.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Component;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementSetter;
+import org.springframework.jdbc.core.RowMapper;
 
 import com.tx.component.auth.dao.AuthItemImplDao;
 import com.tx.component.auth.model.AuthItemImpl;
-import com.tx.core.mybatis.model.Order;
-import com.tx.core.mybatis.support.MyBatisDaoSupport;
-import com.tx.core.paged.model.PagedList;
+import com.tx.core.TxConstants;
+import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.util.ObjectUtils;
+import com.tx.core.util.UUIDUtils;
 
 /**
  * AuthItemImpl持久层
- * <功能详细描述>
  * 
  * @author  
  * @version  [版本号, 2012-12-11]
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-@Component("authItemImplDao")
 public class AuthItemImplDaoImpl implements AuthItemImplDao {
     
-    @Resource(name = "myBatisDaoSupport")
-    private MyBatisDaoSupport myBatisDaoSupport;
+    /** jdbcTemplate 句柄 */
+    private JdbcTemplate jdbcTemplate;
+    
+    /**
+     * <默认构造函数>
+     */
+    public AuthItemImplDaoImpl(JdbcTemplate jdbcTemplate) {
+        super();
+        AssertUtils.notNull(jdbcTemplate, "jdbcTemplate is null.");
+        this.jdbcTemplate = jdbcTemplate;
+    }
     
     /**
      * @param condition
      */
     @Override
-    public void insertAuthItemImpl(AuthItemImpl condition, String tableSuffix) {
+    public void insertAuthItemImpl(final AuthItemImpl condition,
+            String tableSuffix) {
+        StringBuilder sb = new StringBuilder(TxConstants.INITIAL_STR_LENGTH);
+        sb.append("INSERT INTO AUTH_AUTHITEM").append(tableSuffix).append("(");
+        sb.append("ID,");
+        sb.append("PARENTID,");
+        sb.append("SYSTEMID,");
+        sb.append("VALID,");
+        sb.append("EDITABLE,");
+        sb.append("VIEWABLE,");
+        sb.append("NAME,");
+        sb.append("DESCRIPTION,");
+        sb.append("AUTHTYPE");
+        sb.append(")");
+        sb.append("VALUES(");
+        sb.append("?,?,?,?,?,?,?,?,?");
+        sb.append(")");
+        
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("authItem", condition);
         params.put("tableSuffix", tableSuffix);
         
         if (StringUtils.isEmpty(condition.getId())) {
-            this.myBatisDaoSupport.insertUseUUID("authItemImpl.insertAuthItemImpl",
-                    params,
-                    "authItem.id");
-        } else {
-            this.myBatisDaoSupport.insert("authItemImpl.insertAuthItemImpl",
-                    params);
+            condition.setId(UUIDUtils.generateUUID());
         }
+        
+        this.jdbcTemplate.update(sb.toString(), new PreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement ps) throws SQLException {
+                int parameterIndex = 0;
+                ps.setString(++parameterIndex, condition.getId());
+                ps.setString(++parameterIndex, condition.getParentId());
+                ps.setString(++parameterIndex, condition.getSystemId());
+                ps.setBoolean(++parameterIndex, condition.isValid());
+                ps.setBoolean(++parameterIndex, condition.isEditAble());
+                ps.setBoolean(++parameterIndex, condition.isViewAble());
+                ps.setString(++parameterIndex, condition.getName());
+                ps.setString(++parameterIndex, condition.getDescription());
+                ps.setString(++parameterIndex, condition.getAuthType());
+            }
+        });
     }
     
     /**
@@ -60,13 +99,26 @@ public class AuthItemImplDaoImpl implements AuthItemImplDao {
      * @return
      */
     @Override
-    public int deleteAuthItemImpl(AuthItemImpl condition, String tableSuffix) {
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("authItem", condition);
-        params.put("tableSuffix", tableSuffix);
+    public int deleteAuthItemImpl(final AuthItemImpl condition,
+            String tableSuffix) {
+        StringBuilder sb = new StringBuilder(TxConstants.INITIAL_STR_LENGTH);
+        sb.append("DELETE FROM AUTH_AUTHITEM").append(tableSuffix);
+        sb.append(" WHERE ID = ?");
+        sb.append(" AND SYSTEMID = ?");
         
-        return this.myBatisDaoSupport.delete("authItemImpl.deleteAuthItemImpl",
-                params);
+        int resInt = this.jdbcTemplate.update(sb.toString(),
+                new PreparedStatementSetter() {
+                    
+                    @Override
+                    public void setValues(PreparedStatement ps)
+                            throws SQLException {
+                        int parameterIndex = 0;
+                        ps.setString(++parameterIndex, condition.getId());
+                        ps.setString(++parameterIndex, condition.getSystemId());
+                    }
+                });
+        
+        return resInt;
     }
     
     /**
@@ -76,12 +128,24 @@ public class AuthItemImplDaoImpl implements AuthItemImplDao {
     @Override
     public AuthItemImpl findAuthItemImpl(AuthItemImpl condition,
             String tableSuffix) {
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("authItem", condition);
-        params.put("tableSuffix", tableSuffix);
+        StringBuilder sb = new StringBuilder(TxConstants.INITIAL_STR_LENGTH);
+        sb.append("SELECT ");
+        sb.append("ID,");
+        sb.append("PARENTID,");
+        sb.append("SYSTEMID,");
+        sb.append("VALID,");
+        sb.append("EDITABLE,");
+        sb.append("VIEWABLE,");
+        sb.append("NAME,");
+        sb.append("DESCRIPTION,");
+        sb.append("AUTHTYPE");
+        sb.append(" FROM AUTH_AUTHITEM").append(tableSuffix).append(" TAII");
+        sb.append(" WHERE TAII.ID = ? AND TAII.SYSTEMID = ?");
         
-        return this.myBatisDaoSupport.<AuthItemImpl> find("authItemImpl.findAuthItemImpl",
-                params);
+        AuthItemImpl res = this.jdbcTemplate.queryForObject(sb.toString(),
+                new Object[] { condition.getId(), condition.getSystemId() },
+                authItemRowMapper);
+        return res;
     }
     
     /**
@@ -89,102 +153,88 @@ public class AuthItemImplDaoImpl implements AuthItemImplDao {
      * @return
      */
     @Override
-    public List<AuthItemImpl> queryAuthItemImplList(Map<String, Object> params,
-            String tableSuffix) {
-        if (params != null) {
-            params.put("tableSuffix", tableSuffix);
-        } else {
-            params = new HashMap<String, Object>();
-            params.put("tableSuffix", tableSuffix);
+    public List<AuthItemImpl> queryAuthItemImplList(
+            final Map<String, Object> params, String tableSuffix) {
+        StringBuilder sb = new StringBuilder(TxConstants.INITIAL_STR_LENGTH);
+        sb.append("SELECT ");
+        sb.append("ID,");
+        sb.append("PARENTID,");
+        sb.append("SYSTEMID,");
+        sb.append("VALID,");
+        sb.append("EDITABLE,");
+        sb.append("VIEWABLE,");
+        sb.append("NAME,");
+        sb.append("DESCRIPTION,");
+        sb.append("AUTHTYPE");
+        sb.append(" FROM AUTH_AUTHITEM").append(tableSuffix).append(" TAII ");
+        
+        StringBuilder conditionSb = new StringBuilder(
+                TxConstants.INITIAL_STR_LENGTH);
+        if (!ObjectUtils.isEmpty(params.get("id"))) {
+            conditionSb.append(" AND TAII.ID = ?");
+        }
+        if (!ObjectUtils.isEmpty(params.get("systemId"))) {
+            conditionSb.append(" AND TAII.SYSTEMID = ?");
+        }
+        if (!ObjectUtils.isEmpty(params.get("valid"))) {
+            conditionSb.append(" AND TAII.VALID = ?");
+        }
+        if (!ObjectUtils.isEmpty(params.get("parentId"))) {
+            conditionSb.append(" AND TAII.PARENTID = ?");
+        }
+        if (!ObjectUtils.isEmpty(params.get("editAble"))) {
+            conditionSb.append(" AND TAII.EDITABLE = ?");
+        }
+        if (!ObjectUtils.isEmpty(params.get("viewAble"))) {
+            conditionSb.append(" AND TAII.VIEWABLE = ?");
+        }
+        if (!ObjectUtils.isEmpty(params.get("authType"))) {
+            conditionSb.append(" AND TAII.AUTHTYPE = ?");
         }
         
-        return this.myBatisDaoSupport.<AuthItemImpl> queryList("authItemImpl.queryAuthItemImpl",
-                params);
-    }
-    
-    /**
-     * @param params
-     * @param orderList
-     * @return
-     */
-    @Override
-    public List<AuthItemImpl> queryAuthItemImplList(Map<String, Object> params,
-            List<Order> orderList, String tableSuffix) {
-        if (params != null) {
-            params.put("tableSuffix", tableSuffix);
-        } else {
-            params = new HashMap<String, Object>();
-            params.put("tableSuffix", tableSuffix);
+        if (!StringUtils.isEmpty(conditionSb)) {
+            sb.append(" WHERE ").append(conditionSb.substring(4));
         }
         
-        return this.myBatisDaoSupport.<AuthItemImpl> queryList("authItemImpl.queryAuthItemImpl",
-                params,
-                orderList);
-    }
-    
-    /**
-     * @param params
-     * @return
-     */
-    @Override
-    public int countAuthItemImpl(Map<String, Object> params, String tableSuffix) {
-        if (params != null) {
-            params.put("tableSuffix", tableSuffix);
-        } else {
-            params = new HashMap<String, Object>();
-            params.put("tableSuffix", tableSuffix);
-        }
+        List<AuthItemImpl> resList = this.jdbcTemplate.query(sb.toString(),
+                new PreparedStatementSetter() {
+                    
+                    @Override
+                    public void setValues(PreparedStatement ps)
+                            throws SQLException {
+                        int parameterIndex = 0;
+                        if (!ObjectUtils.isEmpty(params.get("id"))) {
+                            ps.setString(++parameterIndex,
+                                    (String) params.get("id"));
+                        }
+                        if (!ObjectUtils.isEmpty(params.get("systemId"))) {
+                            ps.setString(++parameterIndex,
+                                    (String) params.get("systemId"));
+                        }
+                        if (!ObjectUtils.isEmpty(params.get("valid"))) {
+                            ps.setBoolean(++parameterIndex,
+                                    (Boolean) params.get("valid"));
+                        }
+                        if (!ObjectUtils.isEmpty(params.get("parentId"))) {
+                            ps.setString(++parameterIndex,
+                                    (String) params.get("parentId"));
+                        }
+                        if (!ObjectUtils.isEmpty(params.get("editAble"))) {
+                            ps.setBoolean(++parameterIndex,
+                                    (Boolean) params.get("editAble"));
+                        }
+                        if (!ObjectUtils.isEmpty(params.get("viewAble"))) {
+                            ps.setBoolean(++parameterIndex,
+                                    (Boolean) params.get("viewAble"));
+                        }
+                        if (!ObjectUtils.isEmpty(params.get("authType"))) {
+                            ps.setString(++parameterIndex,
+                                    (String) params.get("authType"));
+                        }
+                    }
+                }, authItemRowMapper);
         
-        return this.myBatisDaoSupport.<Integer> find("authItemImpl.queryAuthItemImplCount",
-                params);
-    }
-    
-    /**
-     * @param params
-     * @param pageIndex
-     * @param pageSize
-     * @return
-     */
-    @Override
-    public PagedList<AuthItemImpl> queryAuthItemImplPagedList(
-            Map<String, Object> params, int pageIndex, int pageSize,
-            String tableSuffix) {
-        if (params != null) {
-            params.put("tableSuffix", tableSuffix);
-        } else {
-            params = new HashMap<String, Object>();
-            params.put("tableSuffix", tableSuffix);
-        }
-        
-        return this.myBatisDaoSupport.<AuthItemImpl> queryPagedList("authItemImpl.queryAuthItemImpl",
-                params,
-                pageIndex,
-                pageSize);
-    }
-    
-    /**
-     * @param params
-     * @param pageIndex
-     * @param pageSize
-     * @param orderList
-     * @return
-     */
-    @Override
-    public PagedList<AuthItemImpl> queryAuthItemImplPagedList(
-            Map<String, Object> params, int pageIndex, int pageSize,
-            List<Order> orderList, String tableSuffix) {
-        if (params != null) {
-            params.put("tableSuffix", tableSuffix);
-        } else {
-            params = new HashMap<String, Object>();
-            params.put("tableSuffix", tableSuffix);
-        }
-        
-        return this.myBatisDaoSupport.<AuthItemImpl> queryPagedList("authItemImpl.queryAuthItemImpl",
-                params,
-                pageIndex,
-                pageSize,
-                orderList);
+        return resList;
     }
     
     /**
@@ -192,11 +242,100 @@ public class AuthItemImplDaoImpl implements AuthItemImplDao {
      * @return
      */
     @Override
-    public int updateAuthItemImpl(Map<String, Object> updateRowMap,
+    public int updateAuthItemImpl(final Map<String, Object> updateRowMap,
             String tableSuffix) {
-        updateRowMap.put("tableSuffix", tableSuffix);
+        StringBuilder sb = new StringBuilder(TxConstants.INITIAL_STR_LENGTH);
+        sb.append(" UPDATE AUTH_AUTHITEM").append(tableSuffix).append(" SET ");
+        sb.append("ID,");
+        sb.append("PARENTID,");
+        sb.append("SYSTEMID,");
+        sb.append("VALID,");
+        sb.append("EDITABLE,");
+        sb.append("VIEWABLE,");
+        sb.append("NAME,");
+        sb.append("DESCRIPTION,");
+        sb.append("AUTHTYPE");
+        if (!ObjectUtils.isEmpty(updateRowMap.get("valid"))) {
+            sb.append(" VALID = ?,");
+        }
+        if (!ObjectUtils.isEmpty(updateRowMap.get("parentId"))) {
+            sb.append(" PARENTID = ?,");
+        }
+        if (!ObjectUtils.isEmpty(updateRowMap.get("description"))) {
+            sb.append(" DESCRIPTION = ?,");
+        }
+        if (!ObjectUtils.isEmpty(updateRowMap.get("editAble"))) {
+            sb.append(" EDITABLE = ?,");
+        }
+        if (!ObjectUtils.isEmpty(updateRowMap.get("viewAble"))) {
+            sb.append(" VIEWABLE = ?,");
+        }
+        if (!ObjectUtils.isEmpty(updateRowMap.get("name"))) {
+            sb.append(" NAME = ?,");
+        }
+        if (!ObjectUtils.isEmpty(updateRowMap.get("authType"))) {
+            sb.append(" AUTHTYPE = ?,");
+        }
+        sb.append(" WHERE TAII.ID = ? AND TAII.SYSTEMID = ? ");
         
-        return this.myBatisDaoSupport.update("authItemImpl.updateAuthItemImpl",
-                updateRowMap);
+        int resInt = this.jdbcTemplate.update(sb.toString(), new PreparedStatementSetter() {
+            
+            @Override
+            public void setValues(PreparedStatement ps) throws SQLException {
+                int parameterIndex = 0;
+                if (!ObjectUtils.isEmpty(updateRowMap.get("valid"))) {
+                    ps.setBoolean(++parameterIndex,
+                            (Boolean) updateRowMap.get("valid"));
+                }
+                if (!ObjectUtils.isEmpty(updateRowMap.get("parentId"))) {
+                    ps.setString(++parameterIndex,
+                            (String) updateRowMap.get("parentId"));
+                }
+                if (!ObjectUtils.isEmpty(updateRowMap.get("description"))) {
+                    ps.setString(++parameterIndex,
+                            (String) updateRowMap.get("description"));
+                }
+                if (!ObjectUtils.isEmpty(updateRowMap.get("editAble"))) {
+                    ps.setBoolean(++parameterIndex,
+                            (Boolean) updateRowMap.get("editAble"));
+                }
+                if (!ObjectUtils.isEmpty(updateRowMap.get("viewAble"))) {
+                    ps.setBoolean(++parameterIndex,
+                            (Boolean) updateRowMap.get("viewAble"));
+                }
+                if (!ObjectUtils.isEmpty(updateRowMap.get("name"))) {
+                    ps.setString(++parameterIndex,
+                            (String) updateRowMap.get("name"));
+                }
+                if (!ObjectUtils.isEmpty(updateRowMap.get("authType"))) {
+                    ps.setString(++parameterIndex,
+                            (String) updateRowMap.get("authType"));
+                }
+                ps.setString(++parameterIndex,
+                        (String) updateRowMap.get("id"));
+                ps.setString(++parameterIndex,
+                        (String) updateRowMap.get("systemId"));
+            }
+        });
+        
+        return resInt;
     }
+    
+    private static RowMapper<AuthItemImpl> authItemRowMapper = new RowMapper<AuthItemImpl>() {
+        @Override
+        public AuthItemImpl mapRow(ResultSet rs, int rowNum)
+                throws SQLException {
+            AuthItemImpl res = new AuthItemImpl();
+            res.setId(rs.getString("ID"));
+            res.setParentId(rs.getString("PARENTID"));
+            res.setSystemId(rs.getString("SYSTEMID"));
+            res.setDescription(rs.getString("DESCRIPTION"));
+            res.setName(rs.getString("NAME"));
+            res.setValid(rs.getBoolean("VALID"));
+            res.setEditAble(rs.getBoolean("EDITABLE"));
+            res.setViewAble(rs.getBoolean("VIEWABLE"));
+            res.setAuthType(rs.getString("AUTHTYPE"));
+            return res;
+        }
+    };
 }

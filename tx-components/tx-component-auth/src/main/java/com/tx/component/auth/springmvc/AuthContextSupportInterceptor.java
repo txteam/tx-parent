@@ -6,7 +6,6 @@
  */
 package com.tx.component.auth.springmvc;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -30,7 +29,6 @@ public class AuthContextSupportInterceptor implements HandlerInterceptor {
     
     private String authContextKey = "authContext";
     
-    @Resource(name = "authContext")
     private AuthContext authContext;
     
     /**
@@ -88,5 +86,19 @@ public class AuthContextSupportInterceptor implements HandlerInterceptor {
      */
     public void setAuthContextKey(String authContextKey) {
         this.authContextKey = authContextKey;
+    }
+
+    /**
+     * @return 返回 authContext
+     */
+    public AuthContext getAuthContext() {
+        return authContext;
+    }
+
+    /**
+     * @param 对authContext进行赋值
+     */
+    public void setAuthContext(AuthContext authContext) {
+        this.authContext = authContext;
     }
 }

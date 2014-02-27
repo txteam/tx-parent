@@ -12,18 +12,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.ListUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.tx.component.auth.context.AuthContext;
 import com.tx.component.auth.context.AuthSessionContext;
 import com.tx.component.auth.dao.AuthItemRefImplDao;
+import com.tx.component.auth.dao.impl.AuthItemRefImplDaoImpl;
 import com.tx.component.auth.model.AuthItem;
 import com.tx.component.auth.model.AuthItemImpl;
 import com.tx.component.auth.model.AuthItemRefImpl;
@@ -39,15 +40,26 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-//TODO: 业务日志功能添加后，权限变更需要加入权限变更业务日志
-@Component("authItemRefImplService")
 public class AuthItemRefImplService {
     
-    @SuppressWarnings("unused")
-    private Logger logger = LoggerFactory.getLogger(AuthItemRefImplService.class);
+    /** 事务管理器 */
+    private PlatformTransactionManager txManager;
     
-    @Resource(name = "authItemRefImplDao")
+    /** 权限引用项持久层 */
     private AuthItemRefImplDao authItemRefImplDao;
+    
+    /**
+     * <默认构造函数>
+     */
+    public AuthItemRefImplService(PlatformTransactionManager txManager,
+            JdbcTemplate jdbcTemplate) {
+        super();
+        AssertUtils.notNull(txManager, "txManager is null.");
+        AssertUtils.notNull(jdbcTemplate, "jdbcTemplate is null.");
+        this.txManager = txManager;
+        
+        this.authItemRefImplDao = new AuthItemRefImplDaoImpl(jdbcTemplate);
+    }
     
     /**
       * 根据具体的权限引用类型以及引用id查询权限引用集合<br/>
@@ -211,7 +223,6 @@ public class AuthItemRefImplService {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    @Transactional
     public void addAuthItemOfAuthRefList(String authRefType, String authItemId,
             List<String> addRefIdList, String systemId, String tableSuffix) {
         AssertUtils.notEmpty(authRefType, "authRefType is empty");
@@ -221,8 +232,6 @@ public class AuthItemRefImplService {
             addRefIdList = new ArrayList<String>();
         }
         
-        //这里应该先判断一下当前人员是否拥有对应的权限
-        //TODO:
         List<String> srcAuthRefIds = new ArrayList<String>();
         List<AuthItemRefImpl> authItemRefImplList = queryAuthItemRefListByRefTypeAndAuthItemId(authRefType,
                 authItemId,
@@ -238,11 +247,22 @@ public class AuthItemRefImplService {
         List<String> needInsertRefIds = ListUtils.subtract(addRefIdList,
                 srcAuthRefIds);
         
-        batchInsertAuthItemRefByRefIds(authRefType,
-                authItemId,
-                needInsertRefIds,
-                systemId,
-                tableSuffix);
+        DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+        def.setName("authItemRefImplServiceTxName");
+        def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+        TransactionStatus status = this.txManager.getTransaction(def);
+        
+        try {
+            batchInsertAuthItemRefByRefIds(authRefType,
+                    authItemId,
+                    needInsertRefIds,
+                    systemId,
+                    tableSuffix);
+        } catch (DataAccessException e) {
+            this.txManager.rollback(status);
+            throw e;
+        }
+        this.txManager.commit(status);
     }
     
     /**
@@ -257,7 +277,6 @@ public class AuthItemRefImplService {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    @Transactional
     public void deleteAuthItemOfAuthRefList(String authRefType,
             String authItemId, List<String> deleteRefIdList, String systemId,
             String tableSuffix) {
@@ -268,8 +287,6 @@ public class AuthItemRefImplService {
             deleteRefIdList = new ArrayList<String>();
         }
         
-        //这里应该先判断一下当前人员是否拥有对应的权限
-        //TODO:
         List<String> srcAuthRefIds = new ArrayList<String>();
         List<AuthItemRefImpl> authItemRefImplList = queryAuthItemRefListByRefTypeAndAuthItemId(authRefType,
                 authItemId,
@@ -285,11 +302,22 @@ public class AuthItemRefImplService {
         List<String> needDeleteRefIds = ListUtils.subtract(srcAuthRefIds,
                 deleteRefIdList);
         
-        batchInsertAuthItemRefByRefIds(authRefType,
-                authItemId,
-                needDeleteRefIds,
-                systemId,
-                tableSuffix);
+        DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+        def.setName("authItemRefImplServiceTxName");
+        def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+        TransactionStatus status = this.txManager.getTransaction(def);
+        
+        try {
+            batchInsertAuthItemRefByRefIds(authRefType,
+                    authItemId,
+                    needDeleteRefIds,
+                    systemId,
+                    tableSuffix);
+        } catch (DataAccessException e) {
+            this.txManager.rollback(status);
+            throw e;
+        }
+        this.txManager.commit(status);
     }
     
     /**
@@ -304,7 +332,6 @@ public class AuthItemRefImplService {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    @Transactional
     public void saveAuthItemOfAuthRefList(String authRefType,
             String authItemId, List<String> refIdList, String systemId,
             String tableSuffix) {
@@ -315,8 +342,6 @@ public class AuthItemRefImplService {
             refIdList = new ArrayList<String>();
         }
         
-        //这里应该先判断一下当前人员是否拥有对应的权限
-        //TODO:
         List<String> srcAuthRefIds = new ArrayList<String>();
         List<AuthItemRefImpl> authItemRefImplList = queryAuthItemRefListByRefTypeAndAuthItemId(authRefType,
                 authItemId,
@@ -335,16 +360,27 @@ public class AuthItemRefImplService {
         List<String> needInsertRefIds = ListUtils.subtract(refIdList,
                 srcAuthRefIds);
         
-        batchDeleteAuthItemRefByRefIds(authRefType,
-                authItemId,
-                needDeleteRefIds,
-                systemId,
-                tableSuffix);
-        batchInsertAuthItemRefByRefIds(authRefType,
-                authItemId,
-                needInsertRefIds,
-                systemId,
-                tableSuffix);
+        DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+        def.setName("authItemRefImplServiceTxName");
+        def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+        TransactionStatus status = this.txManager.getTransaction(def);
+        
+        try {
+            batchDeleteAuthItemRefByRefIds(authRefType,
+                    authItemId,
+                    needDeleteRefIds,
+                    systemId,
+                    tableSuffix);
+            batchInsertAuthItemRefByRefIds(authRefType,
+                    authItemId,
+                    needInsertRefIds,
+                    systemId,
+                    tableSuffix);
+        } catch (DataAccessException e) {
+            this.txManager.rollback(status);
+            throw e;
+        }
+        this.txManager.commit(status);
     }
     
     //    /**
@@ -359,7 +395,6 @@ public class AuthItemRefImplService {
     //      * @exception throws [异常类型] [异常说明]
     //      * @see [类、类#方法、类#成员]
     //     */
-    //    @Transactional
     //    public void saveAuthItemOfAuthRefList(String authType, String authRefType,
     //            String authItemId, List<String> refIdList, String systemId,
     //            String tableSuffix) {
@@ -371,8 +406,6 @@ public class AuthItemRefImplService {
     //            refIdList = new ArrayList<String>();
     //        }
     //        
-    //        //这里应该先判断一下当前人员是否拥有对应的权限
-    //        //TODO:
     //        List<String> srcAuthRefIds = new ArrayList<String>();
     //        List<AuthItemRefImpl> authItemRefImplList = queryAuthItemRefListByRefTypeAndAuthItemId(authRefType,
     //                authItemId,
@@ -416,7 +449,6 @@ public class AuthItemRefImplService {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    @Transactional
     public void saveAuthRefOfAuthItemList(String authRefType, String refId,
             List<String> authItemIds, String systemId, String tableSuffix) {
         AssertUtils.notEmpty(authRefType, "authRefType is empty");
@@ -426,9 +458,6 @@ public class AuthItemRefImplService {
         if (authItemIds == null) {
             authItemIds = new ArrayList<String>();
         }
-        
-        //为了安全应该先过滤掉当前人员不存在，或仅仅是临时权限的权限项
-        //TODO:XXX
         
         //存储前,获取原有的权限引用
         List<String> srcAuthItemIds = new ArrayList<String>();
@@ -450,16 +479,27 @@ public class AuthItemRefImplService {
         List<String> needInsertAuthItemIds = ListUtils.subtract(authItemIds,
                 srcAuthItemIds);
         
-        batchDeleteAuthItemRefByAuthItemIds(authRefType,
-                refId,
-                needDeleteAuthItemIds,
-                systemId,
-                tableSuffix);
-        batchInsertAuthItemRefByAuthItemIds(authRefType,
-                refId,
-                needInsertAuthItemIds,
-                systemId,
-                tableSuffix);
+        DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+        def.setName("authItemRefImplServiceTxName");
+        def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+        TransactionStatus status = this.txManager.getTransaction(def);
+        
+        try {
+            batchDeleteAuthItemRefByAuthItemIds(authRefType,
+                    refId,
+                    needDeleteAuthItemIds,
+                    systemId,
+                    tableSuffix);
+            batchInsertAuthItemRefByAuthItemIds(authRefType,
+                    refId,
+                    needInsertAuthItemIds,
+                    systemId,
+                    tableSuffix);
+        } catch (DataAccessException e) {
+            this.txManager.rollback(status);
+            throw e;
+        }
+        this.txManager.commit(status);
     }
     
     /**
@@ -475,7 +515,6 @@ public class AuthItemRefImplService {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    @Transactional
     public void saveAuthRefOfAuthItemList(String authType, String authRefType,
             String refId, List<String> authItemIds, String systemId,
             String tableSuffix) {
@@ -486,9 +525,6 @@ public class AuthItemRefImplService {
         if (authItemIds == null) {
             authItemIds = new ArrayList<String>();
         }
-        
-        //为了安全应该先过滤掉当前人员不存在，或仅仅是临时权限的权限项
-        //TODO:XXX
         
         //存储前,获取原有的权限引用
         List<String> srcAuthItemIds = new ArrayList<String>();
@@ -510,17 +546,28 @@ public class AuthItemRefImplService {
         List<String> needInsertAuthItemIds = ListUtils.subtract(authItemIds,
                 srcAuthItemIds);
         
-        batchDeleteAuthItemRefByAuthItemIds(authType,
-                authRefType,
-                refId,
-                needDeleteAuthItemIds,
-                systemId,
-                tableSuffix);
-        batchInsertAuthItemRefByAuthItemIds(authRefType,
-                refId,
-                needInsertAuthItemIds,
-                systemId,
-                tableSuffix);
+        DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+        def.setName("authItemRefImplServiceTxName");
+        def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+        TransactionStatus status = this.txManager.getTransaction(def);
+        
+        try {
+            batchDeleteAuthItemRefByAuthItemIds(authType,
+                    authRefType,
+                    refId,
+                    needDeleteAuthItemIds,
+                    systemId,
+                    tableSuffix);
+            batchInsertAuthItemRefByAuthItemIds(authRefType,
+                    refId,
+                    needInsertAuthItemIds,
+                    systemId,
+                    tableSuffix);
+        } catch (DataAccessException e) {
+            this.txManager.rollback(status);
+            throw e;
+        }
+        this.txManager.commit(status);
     }
     
     /**
@@ -555,13 +602,9 @@ public class AuthItemRefImplService {
             authItemRef.setAuthItem(new AuthItemImpl(authItemIdTemp, systemId));
             authItemRefList.add(authItemRef);
         }
+        
         this.authItemRefImplDao.batchDeleteAuthItemRefImpl(authItemRefList,
                 tableSuffix);
-        
-        //TODO:记录相关业务日志
-        //        serviceLogger.info(" {}于 {} 删除类型为{}的日志引用{}.", new String[] { userId,
-        //                DateFormatUtils.format(new Date(), "yyyy-MM-dd HH:mm:ss"),
-        //                authRefType, ArrayUtils.toString(newAuthIds) });
     }
     
     /**
@@ -598,11 +641,6 @@ public class AuthItemRefImplService {
         }
         this.authItemRefImplDao.batchDeleteAuthItemRefImpl(authItemRefList,
                 tableSuffix);
-        
-        //TODO:记录相关业务日志
-        //        serviceLogger.info(" {}于 {} 删除类型为{}的日志引用{}.", new String[] { userId,
-        //                DateFormatUtils.format(new Date(), "yyyy-MM-dd HH:mm:ss"),
-        //                authRefType, ArrayUtils.toString(newAuthIds) });
     }
     
     /**
@@ -636,11 +674,6 @@ public class AuthItemRefImplService {
         }
         this.authItemRefImplDao.batchDeleteAuthItemRefImpl(authItemRefList,
                 tableSuffix);
-        
-        //TODO:记录相关业务日志
-        //        serviceLogger.info(" {}于 {} 删除类型为{}的日志引用{}.", new String[] { userId,
-        //                DateFormatUtils.format(new Date(), "yyyy-MM-dd HH:mm:ss"),
-        //                authRefType, ArrayUtils.toString(newAuthIds) });
     }
     
     //    /**
@@ -677,10 +710,6 @@ public class AuthItemRefImplService {
     //        this.authItemRefImplDao.batchDeleteAuthItemRefImpl(authItemRefList,
     //                tableSuffix);
     //        
-    //        //TODO:记录相关业务日志
-    //        //        serviceLogger.info(" {}于 {} 删除类型为{}的日志引用{}.", new String[] { userId,
-    //        //                DateFormatUtils.format(new Date(), "yyyy-MM-dd HH:mm:ss"),
-    //        //                authRefType, ArrayUtils.toString(newAuthIds) });
     //    }
     
     /**
@@ -732,9 +761,6 @@ public class AuthItemRefImplService {
         
         this.authItemRefImplDao.batchInsertAuthItemRefImpl(authItemRefList,
                 tableSuffix);
-        //        serviceLogger.info(" {}于 {} 新增类型为{}的日志引用{}.", new String[] { userId,
-        //                DateFormatUtils.format(new Date(), "yyyy-MM-dd HH:mm:ss"),
-        //                authRefType, ArrayUtils.toString(newAuthIds) });
     }
     
     /**
@@ -783,9 +809,6 @@ public class AuthItemRefImplService {
         
         this.authItemRefImplDao.batchInsertAuthItemRefImpl(authItemRefList,
                 tableSuffix);
-        //        serviceLogger.info(" {}于 {} 新增类型为{}的日志引用{}.", new String[] { userId,
-        //                DateFormatUtils.format(new Date(), "yyyy-MM-dd HH:mm:ss"),
-        //                authRefType, ArrayUtils.toString(newAuthIds) });
     }
     
     /**
@@ -800,7 +823,6 @@ public class AuthItemRefImplService {
       * @exception throws 可能存在数据库访问异常DataAccessException
       * @see [类、类#方法、类#成员]
      */
-    @Transactional
     public int deleteByAuthItemId(String authItemId, String systemId,
             String tableSuffix) {
         AssertUtils.notEmpty(authItemId, "authItemId is empty.");
@@ -808,8 +830,22 @@ public class AuthItemRefImplService {
         
         AuthItemRefImpl condition = new AuthItemRefImpl();
         condition.setAuthItem(new AuthItemImpl(authItemId, systemId));
-        return this.authItemRefImplDao.deleteAuthItemRefImpl(condition,
-                tableSuffix);
+        
+        DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+        def.setName("authItemRefImplServiceTxName");
+        def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+        TransactionStatus status = this.txManager.getTransaction(def);
+        
+        int resInt = 0;
+        try {
+            resInt = this.authItemRefImplDao.deleteAuthItemRefImpl(condition,
+                    tableSuffix);
+        } catch (DataAccessException e) {
+            this.txManager.rollback(status);
+            throw e;
+        }
+        this.txManager.commit(status);
+        return resInt;
     }
     
     //    /**
@@ -822,7 +858,6 @@ public class AuthItemRefImplService {
     //      * @exception throws [异常类型] [异常说明]
     //      * @see [类、类#方法、类#成员]
     //     */
-    //    @Transactional
     //    public boolean updateByRefId(AuthItemRef authItemRefImpl, String systemId,
     //            String tableSuffix) {
     //        AssertUtils.notNull(authItemRefImpl, "");
