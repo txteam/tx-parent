@@ -32,6 +32,7 @@ import com.tx.component.auth.model.AuthItem;
 import com.tx.component.auth.model.AuthItemImpl;
 import com.tx.component.auth.service.AuthItemImplService;
 import com.tx.component.auth.service.AuthItemRefImplService;
+import com.tx.component.auth.service.NotTempAuthItemRefImplService;
 import com.tx.core.dbscript.TableDefinition;
 import com.tx.core.dbscript.XMLTableDefinition;
 import com.tx.core.exceptions.util.AssertUtils;
@@ -80,6 +81,9 @@ public class AuthContextBuilder extends AuthContextConfigurator implements
     /** 权限引用项业务层 */
     protected AuthItemRefImplService authItemRefService;
     
+    /** 非临时权限引用处理业务层 */
+    protected NotTempAuthItemRefImplService notTempAuthItemRefImplService;
+    
     /**
      * InitializingBean接口的实现，用以在容器参数设置完成后加载相关权限
      * @throws Exception
@@ -107,9 +111,13 @@ public class AuthContextBuilder extends AuthContextConfigurator implements
         this.authItemService = new AuthItemImplService(
                 this.platformTransactionManager, this.jdbcTemplate,
                 this.authItemRefService);
+        this.notTempAuthItemRefImplService = new NotTempAuthItemRefImplService(
+                this.platformTransactionManager, this.jdbcTemplate);
         this.authLoaderList = new ArrayList<AuthLoader>();
-        this.authLoaderList.add(new DBAuthLoader(this.tableSuffix, this.systemId, this.authItemService));
-        this.authLoaderList.add(new XmlAuthLoader(this.applicationContext, this.authConfigLocaions));      
+        this.authLoaderList.add(new DBAuthLoader(this.tableSuffix,
+                this.systemId, this.authItemService));
+        this.authLoaderList.add(new XmlAuthLoader(this.applicationContext,
+                this.authConfigLocaions));
         
         //如果没有设置默认的权限检查器
         if (this.defaultAuthChecker == null) {

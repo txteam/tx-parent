@@ -196,8 +196,8 @@ public abstract class AuthSessionContext {
             List<AuthItemRef> authItemRefListTemp = entryTemp.getValue();
             if (!CollectionUtils.isEmpty(authItemRefListTemp)) {
                 for (AuthItemRef authItemRefTemp : authItemRefListTemp) {
-                    if (!authItemRefTemp.isValidDependEndDate()) {
-                        //只压入不依赖结束时间（永久类型）的权限
+                    if (!authItemRefTemp.isTemp()) {
+                        //只压入非临时权限
                         authItemList.add(authItemTemp);
                     }
                 }

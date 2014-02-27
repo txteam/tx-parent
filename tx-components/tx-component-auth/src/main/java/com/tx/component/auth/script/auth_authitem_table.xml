@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tableDefinition>
 	<tableName>auth_authitem${tableSuffix}</tableName>
-	<tableVersion>1.0.0</tableVersion>
+	<tableVersion>1.1.0</tableVersion>
 	
 	<dataSourceScript dataSourceType="H2">
 		<createTableScript>

@@ -68,7 +68,37 @@ public interface AuthItemRef extends Serializable{
     Date getEndDate();
     
     /**
-     * @return 返回 isValidDependEndDate
+      * 返回权限引用项生效时间
+      * when isTemp() == true 有效
+      *<功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return Date [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
      */
-    boolean isValidDependEndDate();
+    Date getEffectiveDate();
+    
+    /**
+     * 返回权限引用项生效时间
+     * when isTemp() == true 有效
+     *<功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return Date [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+   Date getInvalidDate();
+   
+   /**
+     * 是否是临时权限引用
+     *<功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+   Boolean isTemp();
 }

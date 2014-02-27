@@ -45,19 +45,23 @@ public class ObjectUtils {
       * @see [类、类#方法、类#成员]
      */
     @SuppressWarnings("unchecked")
-    public static <T> T newInstance(Class<T> type,Object... objects){
+    public static <T> T newInstance(Class<T> type, Object... objects) {
         T res = null;
         try {
-            res = (T)ConstructorUtils.invokeConstructor(type, objects);
+            res = (T) ConstructorUtils.invokeConstructor(type, objects);
             return res;
         } catch (NoSuchMethodException e) {
-            throw new ReflectionException("invokeConstructor create newInstance error.", e);
+            throw new ReflectionException(
+                    "invokeConstructor create newInstance error.", e);
         } catch (IllegalAccessException e) {
-            throw new ReflectionException("invokeConstructor create newInstance error.", e);
+            throw new ReflectionException(
+                    "invokeConstructor create newInstance error.", e);
         } catch (InvocationTargetException e) {
-            throw new ReflectionException("invokeConstructor create newInstance error.", e);
+            throw new ReflectionException(
+                    "invokeConstructor create newInstance error.", e);
         } catch (InstantiationException e) {
-            throw new ReflectionException("invokeConstructor create newInstance error.", e);
+            throw new ReflectionException(
+                    "invokeConstructor create newInstance error.", e);
         }
     }
     
@@ -84,6 +88,8 @@ public class ObjectUtils {
             return MapUtils.isEmpty((Map<?, ?>) obj);
         } else if (obj instanceof Object[]) {
             return ArrayUtils.isEmpty((Object[]) obj);
+        } else if (obj instanceof Boolean) {
+            return ((Boolean) obj).booleanValue();
         } else {
             return false;
         }

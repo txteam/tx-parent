@@ -35,20 +35,25 @@ public abstract class BaseAuthChecker implements AuthChecker {
      * @return
      */
     @Override
-    public boolean isHasAuth(List<AuthItemRef> authItemRefList, Object... objects) {
+    public boolean isHasAuth(List<AuthItemRef> authItemRefList,
+            Object... objects) {
         if (!CollectionUtils.isEmpty(authItemRefList)) {
             Date now = new Date();
             List<AuthItemRef> validAuthItemRefList = new ArrayList<AuthItemRef>();
             for (AuthItemRef authItemRefTemp : authItemRefList) {
-                if (!authItemRefTemp.isValidDependEndDate()
-                        || (authItemRefTemp.isValidDependEndDate()
-                                && authItemRefTemp.getEndDate() != null && now.compareTo(authItemRefTemp.getEndDate()) > 0)) {
+                if (!authItemRefTemp.isTemp()) {
                     validAuthItemRefList.add(authItemRefTemp);
+                } else {
+                    if (now.compareTo(authItemRefTemp.getEffectiveDate()) >= 0
+                            && now.compareTo(authItemRefTemp.getInvalidDate()) <= 0) {
+                        validAuthItemRefList.add(authItemRefTemp);
+                    } else {
+                        continue;
+                    }
                 }
             }
-            
-            return judgeIsHasAuth(validAuthItemRefList,objects);
-        }else{
+            return judgeIsHasAuth(validAuthItemRefList, objects);
+        } else {
             return false;
         }
     }
@@ -64,6 +69,6 @@ public abstract class BaseAuthChecker implements AuthChecker {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    protected abstract boolean judgeIsHasAuth(List<AuthItemRef> authItemRefList,
-            Object... objects);
+    protected abstract boolean judgeIsHasAuth(
+            List<AuthItemRef> authItemRefList, Object... objects);
 }

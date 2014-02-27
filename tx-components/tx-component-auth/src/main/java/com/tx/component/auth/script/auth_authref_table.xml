@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tableDefinition>
 	<tableName>auth_authref${tableSuffix}</tableName>
-	<tableVersion>1.0.0</tableVersion>
+	<tableVersion>1.1.0</tableVersion>
 	
 	<dataSourceScript dataSourceType="H2">
 		<createTableScript>
@@ -16,18 +16,21 @@
 			  systemid varchar2(64) not null,
 			  authType varchar2(64) not null,
 			  createdate date default sysdate not null,
-			  enddate date,
-			  createoperid varchar2(64) not null,
-			  validDependEndDate number(1) default 0,
+			  enddate timestamp,
+			  effectiveDate timestamp,
+			  invalidDate timestamp,
+			  createoperid varchar2(64),
+			  temp number(1) not null default 0,
 			  primary key(id)
 			);
-			create unique index idx_auth_authref_00 on auth_authref${tableSuffix}(refid,authreftype,authid,systemid,authType);
-			create index idx_auth_authref_01 on auth_authref${tableSuffix}(refid,authreftype);
+			create unique index idx_auth_authref_00 on auth_authref${tableSuffix}(refid,authreftype,authid,systemid,authType,temp);
+			create index idx_auth_authref_01 on auth_authref${tableSuffix}(systemid,refid);
 			create index idx_auth_authref_02 on auth_authref${tableSuffix}(systemid,refid,authreftype);
 			create index idx_auth_authref_03 on auth_authref${tableSuffix}(systemid,authid);
-			create index idx_auth_authref_04 on auth_authref${tableSuffix}(systemid,authreftype);
-			create index idx_auth_authref_05 on auth_authref${tableSuffix}(authreftype);
-			create index idx_auth_authref_06 on auth_authref${tableSuffix}(enddate);
+			create index idx_auth_authref_04 on auth_authref${tableSuffix}(systemid,authid,authreftype);
+			create index idx_auth_authref_05 on auth_authref${tableSuffix}(systemid,authreftype);
+			create index idx_auth_authref_06 on auth_authref${tableSuffix}(effectiveDate);
+			create index idx_auth_authref_07 on auth_authref${tableSuffix}(invalidDate);
 			comment on table auth_authref${tableSuffix} is '权限关联项信息表';
 			comment on column auth_authref${tableSuffix}.authid is '权限id';
 			comment on column auth_authref${tableSuffix}.authType is '权限关联项的权限项类型';
@@ -36,7 +39,6 @@
 			comment on column auth_authref${tableSuffix}.createdate is '权限关联项创建时间';
 			comment on column auth_authref${tableSuffix}.enddate is '权限关联项目失效时间';
 			comment on column auth_authref${tableSuffix}.createoperid is '权限授予人';
-			comment on column auth_authref${tableSuffix}.validDependEndDate is '有效性是否依赖结束时间';
 		</createTableScript>
 		
 		<defaultUpdateTableScript>
@@ -54,18 +56,21 @@
 			  systemid varchar2(64) not null,
 			  authType varchar2(64) not null,
 			  createdate date default sysdate not null,
-			  enddate date,
-			  createoperid varchar2(64) not null,
-			  validDependEndDate number(1) default 0,
+			  enddate timestamp,
+			  effectiveDate timestamp,
+			  invalidDate timestamp,
+			  createoperid varchar2(64),
+			  temp number(1) not null default 0,
 			  primary key(id)
 			);
-			create unique index idx_auth_authref_00 on auth_authref${tableSuffix}(refid,authreftype,authid,systemid,authType);
-			create index idx_auth_authref_01 on auth_authref${tableSuffix}(refid,authreftype);
+			create unique index idx_auth_authref_00 on auth_authref${tableSuffix}(refid,authreftype,authid,systemid,authType,temp);
+			create index idx_auth_authref_01 on auth_authref${tableSuffix}(systemid,refid);
 			create index idx_auth_authref_02 on auth_authref${tableSuffix}(systemid,refid,authreftype);
 			create index idx_auth_authref_03 on auth_authref${tableSuffix}(systemid,authid);
-			create index idx_auth_authref_04 on auth_authref${tableSuffix}(systemid,authreftype);
-			create index idx_auth_authref_05 on auth_authref${tableSuffix}(authreftype);
-			create index idx_auth_authref_06 on auth_authref${tableSuffix}(enddate);
+			create index idx_auth_authref_04 on auth_authref${tableSuffix}(systemid,authid,authreftype);
+			create index idx_auth_authref_05 on auth_authref${tableSuffix}(systemid,authreftype);
+			create index idx_auth_authref_06 on auth_authref${tableSuffix}(effectiveDate);
+			create index idx_auth_authref_07 on auth_authref${tableSuffix}(invalidDate);
 			comment on table auth_authref${tableSuffix} is '权限关联项信息表';
 			comment on column auth_authref${tableSuffix}.authid is '权限id';
 			comment on column auth_authref${tableSuffix}.authType is '权限关联项的权限项类型';
@@ -74,7 +79,6 @@
 			comment on column auth_authref${tableSuffix}.createdate is '权限关联项创建时间';
 			comment on column auth_authref${tableSuffix}.enddate is '权限关联项目失效时间';
 			comment on column auth_authref${tableSuffix}.createoperid is '权限授予人';
-			comment on column auth_authref${tableSuffix}.validDependEndDate is '有效性是否依赖结束时间';
 		</defaultUpdateTableScript>
 	</dataSourceScript>
 	
@@ -92,17 +96,20 @@
 			  authType varchar2(64) not null,
 			  createdate date default sysdate not null,
 			  enddate date,
-			  createoperid varchar2(64) not null,
-			  validDependEndDate number(1) default 0,
+			  effectiveDate date,
+			  invalidDate date,
+			  createoperid varchar2(64),
+			  temp number(1) not null default 0,
 			  primary key(id)
 			);
-			create unique index idx_auth_authref_00 on auth_authref${tableSuffix}(refid,authreftype,authid,systemid,authType);
-			create index idx_auth_authref_01 on auth_authref${tableSuffix}(refid,authreftype);
+			create unique index idx_auth_authref_00 on auth_authref${tableSuffix}(refid,authreftype,authid,systemid,authType,temp);
+			create index idx_auth_authref_01 on auth_authref${tableSuffix}(systemid,refid);
 			create index idx_auth_authref_02 on auth_authref${tableSuffix}(systemid,refid,authreftype);
 			create index idx_auth_authref_03 on auth_authref${tableSuffix}(systemid,authid);
-			create index idx_auth_authref_04 on auth_authref${tableSuffix}(systemid,authreftype);
-			create index idx_auth_authref_05 on auth_authref${tableSuffix}(authreftype);
-			create index idx_auth_authref_06 on auth_authref${tableSuffix}(enddate);
+			create index idx_auth_authref_04 on auth_authref${tableSuffix}(systemid,authid,authreftype);
+			create index idx_auth_authref_05 on auth_authref${tableSuffix}(systemid,authreftype);
+			create index idx_auth_authref_06 on auth_authref${tableSuffix}(effectiveDate);
+			create index idx_auth_authref_07 on auth_authref${tableSuffix}(invalidDate);
 			comment on table auth_authref${tableSuffix} is '权限关联项信息表';
 			comment on column auth_authref${tableSuffix}.authid is '权限id';
 			comment on column auth_authref${tableSuffix}.authType is '权限关联项的权限项类型';
@@ -111,7 +118,6 @@
 			comment on column auth_authref${tableSuffix}.createdate is '权限关联项创建时间';
 			comment on column auth_authref${tableSuffix}.enddate is '权限关联项目失效时间';
 			comment on column auth_authref${tableSuffix}.createoperid is '权限授予人';
-			comment on column auth_authref${tableSuffix}.validDependEndDate is '有效性是否依赖结束时间';
 		</createTableScript>
 		
 		<defaultUpdateTableScript>
@@ -130,17 +136,20 @@
 			  authType varchar2(64) not null,
 			  createdate date default sysdate not null,
 			  enddate date,
-			  createoperid varchar2(64) not null,
-			  validDependEndDate number(1) default 0,
+			  effectiveDate date,
+			  invalidDate date,
+			  createoperid varchar2(64),
+			  temp number(1) not null default 0,
 			  primary key(id)
 			);
-			create unique index idx_auth_authref_00 on auth_authref${tableSuffix}(refid,authreftype,authid,systemid,authType);
-			create index idx_auth_authref_01 on auth_authref${tableSuffix}(refid,authreftype);
+			create unique index idx_auth_authref_00 on auth_authref${tableSuffix}(refid,authreftype,authid,systemid,authType,temp);
+			create index idx_auth_authref_01 on auth_authref${tableSuffix}(systemid,refid);
 			create index idx_auth_authref_02 on auth_authref${tableSuffix}(systemid,refid,authreftype);
 			create index idx_auth_authref_03 on auth_authref${tableSuffix}(systemid,authid);
-			create index idx_auth_authref_04 on auth_authref${tableSuffix}(systemid,authreftype);
-			create index idx_auth_authref_05 on auth_authref${tableSuffix}(authreftype);
-			create index idx_auth_authref_06 on auth_authref${tableSuffix}(enddate);
+			create index idx_auth_authref_04 on auth_authref${tableSuffix}(systemid,authid,authreftype);
+			create index idx_auth_authref_05 on auth_authref${tableSuffix}(systemid,authreftype);
+			create index idx_auth_authref_06 on auth_authref${tableSuffix}(effectiveDate);
+			create index idx_auth_authref_07 on auth_authref${tableSuffix}(invalidDate);
 			comment on table auth_authref${tableSuffix} is '权限关联项信息表';
 			comment on column auth_authref${tableSuffix}.authid is '权限id';
 			comment on column auth_authref${tableSuffix}.authType is '权限关联项的权限项类型';
@@ -149,15 +158,11 @@
 			comment on column auth_authref${tableSuffix}.createdate is '权限关联项创建时间';
 			comment on column auth_authref${tableSuffix}.enddate is '权限关联项目失效时间';
 			comment on column auth_authref${tableSuffix}.createoperid is '权限授予人';
-			comment on column auth_authref${tableSuffix}.validDependEndDate is '有效性是否依赖结束时间';
 		</defaultUpdateTableScript>
 	</dataSourceScript>
 	
 	<dataSourceScript dataSourceType="MYSQL">
 		<createTableScript>
-			--****************************************************************************
-			-- 权限引用表t_auth_authref
-			--****************************************************************************
 			create table auth_authref${tableSuffix}(
 			  id varchar(64) not null,
 			  refid  varchar(64) not null,
@@ -167,35 +172,26 @@
 			  authType varchar(64) not null,
 			  createdate timestamp default now() not null,
 			  enddate timestamp,
-			  createoperid varchar(64) not null,
-			  validDependEndDate smallint(1) default 0,
+			  effectiveDate timestamp,
+			  invalidDate timestamp,
+			  createoperid varchar(64),
+			  temp smallint not null default 0,
 			  primary key(id)
 			);
-			create unique index idx_auth_authref_00 on auth_authref${tableSuffix}(refid,authreftype,authid,systemid,authType);
-			create index idx_auth_authref_01 on auth_authref${tableSuffix}(refid,authreftype);
+			create unique index idx_auth_authref_00 on auth_authref${tableSuffix}(refid,authreftype,authid,systemid,authType,temp);
+			create index idx_auth_authref_01 on auth_authref${tableSuffix}(systemid,refid);
 			create index idx_auth_authref_02 on auth_authref${tableSuffix}(systemid,refid,authreftype);
 			create index idx_auth_authref_03 on auth_authref${tableSuffix}(systemid,authid);
-			create index idx_auth_authref_04 on auth_authref${tableSuffix}(systemid,authreftype);
-			create index idx_auth_authref_05 on auth_authref${tableSuffix}(authreftype);
-			create index idx_auth_authref_06 on auth_authref${tableSuffix}(enddate);
-			comment on table auth_authref${tableSuffix} is '权限关联项信息表';
-			comment on column auth_authref${tableSuffix}.authid is '权限id';
-			comment on column auth_authref${tableSuffix}.authType is '权限关联项的权限项类型';
-			comment on column auth_authref${tableSuffix}.refId is '关联项id可以为角色id,用户id等';
-			comment on column auth_authref${tableSuffix}.authreftype is '权限关联项类型 AUTHREFTYPE_OPERATOR AUTHREFTYPE_OPERATOR_TEMP AUTHREFTYPE_ROLE';
-			comment on column auth_authref${tableSuffix}.createdate is '权限关联项创建时间';
-			comment on column auth_authref${tableSuffix}.enddate is '权限关联项目失效时间';
-			comment on column auth_authref${tableSuffix}.createoperid is '权限授予人';
-			comment on column auth_authref${tableSuffix}.validDependEndDate is '有效性是否依赖结束时间';
+			create index idx_auth_authref_04 on auth_authref${tableSuffix}(systemid,authid,authreftype);
+			create index idx_auth_authref_05 on auth_authref${tableSuffix}(systemid,authreftype);
+			create index idx_auth_authref_06 on auth_authref${tableSuffix}(effectiveDate);
+			create index idx_auth_authref_07 on auth_authref${tableSuffix}(invalidDate);
 		</createTableScript>
 		
 		<defaultUpdateTableScript>
 			CREATE TABLE auth_authref${tableSuffix}_BAK
 				 AS SELECT * FROM auth_authref${tableSuffix};
 			DROP TABLE auth_authref${tableSuffix};
-			--****************************************************************************
-			-- 权限引用表t_auth_authref
-			--****************************************************************************
 			create table auth_authref${tableSuffix}(
 			  id varchar(64) not null,
 			  refid  varchar(64) not null,
@@ -205,26 +201,20 @@
 			  authType varchar(64) not null,
 			  createdate timestamp default now() not null,
 			  enddate timestamp,
-			  createoperid varchar(64) not null,
-			  validDependEndDate smallint(1) default 0,
+			  effectiveDate timestamp,
+			  invalidDate timestamp,
+			  createoperid varchar(64),
+			  temp smallint not null default 0,
 			  primary key(id)
 			);
-			create unique index idx_auth_authref_00 on auth_authref${tableSuffix}(refid,authreftype,authid,systemid,authType);
-			create index idx_auth_authref_01 on auth_authref${tableSuffix}(refid,authreftype);
+			create unique index idx_auth_authref_00 on auth_authref${tableSuffix}(refid,authreftype,authid,systemid,authType,temp);
+			create index idx_auth_authref_01 on auth_authref${tableSuffix}(systemid,refid);
 			create index idx_auth_authref_02 on auth_authref${tableSuffix}(systemid,refid,authreftype);
 			create index idx_auth_authref_03 on auth_authref${tableSuffix}(systemid,authid);
-			create index idx_auth_authref_04 on auth_authref${tableSuffix}(systemid,authreftype);
-			create index idx_auth_authref_05 on auth_authref${tableSuffix}(authreftype);
-			create index idx_auth_authref_06 on auth_authref${tableSuffix}(enddate);
-			comment on table auth_authref${tableSuffix} is '权限关联项信息表';
-			comment on column auth_authref${tableSuffix}.authid is '权限id';
-			comment on column auth_authref${tableSuffix}.authType is '权限关联项的权限项类型';
-			comment on column auth_authref${tableSuffix}.refId is '关联项id可以为角色id,用户id等';
-			comment on column auth_authref${tableSuffix}.authreftype is '权限关联项类型 AUTHREFTYPE_OPERATOR AUTHREFTYPE_OPERATOR_TEMP AUTHREFTYPE_ROLE';
-			comment on column auth_authref${tableSuffix}.createdate is '权限关联项创建时间';
-			comment on column auth_authref${tableSuffix}.enddate is '权限关联项目失效时间';
-			comment on column auth_authref${tableSuffix}.createoperid is '权限授予人';
-			comment on column auth_authref${tableSuffix}.validDependEndDate is '有效性是否依赖结束时间';
+			create index idx_auth_authref_04 on auth_authref${tableSuffix}(systemid,authid,authreftype);
+			create index idx_auth_authref_05 on auth_authref${tableSuffix}(systemid,authreftype);
+			create index idx_auth_authref_06 on auth_authref${tableSuffix}(effectiveDate);
+			create index idx_auth_authref_07 on auth_authref${tableSuffix}(invalidDate);
 		</defaultUpdateTableScript>
 	</dataSourceScript>
 </tableDefinition>

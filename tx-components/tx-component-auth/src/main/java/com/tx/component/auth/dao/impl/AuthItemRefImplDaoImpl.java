@@ -70,13 +70,15 @@ public class AuthItemRefImplDaoImpl implements AuthItemRefImplDao {
         sb.append("AUTHID,");
         sb.append("SYSTEMID,");
         sb.append("AUTHTYPE,");
-        sb.append("VALIDDEPENDENDDATE,");
+        sb.append("TEMP,");
         sb.append("CREATEOPERID,");
+        sb.append("EFFECTIVEDATE,");
+        sb.append("INVALIDDATE,");
         sb.append("ENDDATE,");
         sb.append("CREATEDATE");
         sb.append(")");
         sb.append("VALUES(");
-        sb.append("?,?,?,?,?,?,?,?,?,?");
+        sb.append("?,?,?,?,?,?,?,?,?,?,?,?");
         sb.append(")");
         
         this.jdbcTemplate.update(sb.toString(), new PreparedStatementSetter() {
@@ -93,9 +95,16 @@ public class AuthItemRefImplDaoImpl implements AuthItemRefImplDao {
                         .getSystemId());
                 ps.setString(++parameterIndex, authItemRef.getAuthItem()
                         .getAuthType());
-                ps.setBoolean(++parameterIndex,
-                        authItemRef.isValidDependEndDate());
+                ps.setBoolean(++parameterIndex, authItemRef.isTemp());
                 ps.setString(++parameterIndex, authItemRef.getCreateOperId());
+                ps.setTimestamp(++parameterIndex,
+                        authItemRef.getEffectiveDate() == null ? null
+                                : new Timestamp(authItemRef.getEffectiveDate()
+                                        .getTime()));
+                ps.setTimestamp(++parameterIndex,
+                        authItemRef.getInvalidDate() == null ? null
+                                : new Timestamp(authItemRef.getInvalidDate()
+                                        .getTime()));
                 ps.setTimestamp(++parameterIndex,
                         authItemRef.getEndDate() == null ? null
                                 : new Timestamp(authItemRef.getEndDate()
@@ -125,13 +134,15 @@ public class AuthItemRefImplDaoImpl implements AuthItemRefImplDao {
         sb.append("AUTHID,");
         sb.append("SYSTEMID,");
         sb.append("AUTHTYPE,");
-        sb.append("VALIDDEPENDENDDATE,");
+        sb.append("TEMP,");
         sb.append("CREATEOPERID,");
+        sb.append("EFFECTIVEDATE,");
+        sb.append("INVALIDDATE,");
         sb.append("ENDDATE,");
         sb.append("CREATEDATE");
         sb.append(")");
         sb.append("VALUES(");
-        sb.append("?,?,?,?,?,?,?,?,?,?");
+        sb.append("?,?,?,?,?,?,?,?,?,?,?,?");
         sb.append(")");
         
         this.jdbcTemplate.batchUpdate(sb.toString(),
@@ -153,10 +164,19 @@ public class AuthItemRefImplDaoImpl implements AuthItemRefImplDao {
                                 authItemRef.getAuthItem().getSystemId());
                         ps.setString(++parameterIndex,
                                 authItemRef.getAuthItem().getAuthType());
-                        ps.setBoolean(++parameterIndex,
-                                authItemRef.isValidDependEndDate());
+                        ps.setBoolean(++parameterIndex, authItemRef.isTemp());
                         ps.setString(++parameterIndex,
                                 authItemRef.getCreateOperId());
+                        ps.setTimestamp(++parameterIndex,
+                                authItemRef.getEffectiveDate() == null ? null
+                                        : new Timestamp(
+                                                authItemRef.getEffectiveDate()
+                                                        .getTime()));
+                        ps.setTimestamp(++parameterIndex,
+                                authItemRef.getInvalidDate() == null ? null
+                                        : new Timestamp(
+                                                authItemRef.getInvalidDate()
+                                                        .getTime()));
                         ps.setTimestamp(++parameterIndex,
                                 authItemRef.getEndDate() == null ? null
                                         : new Timestamp(
@@ -189,8 +209,11 @@ public class AuthItemRefImplDaoImpl implements AuthItemRefImplDao {
         sb.append("DELETE FROM AUTH_AUTHREF")
                 .append(tableSuffix)
                 .append(" WHERE ");
-        StringBuilder conditionSb = new StringBuilder(
-                TxConstants.INITIAL_STR_LENGTH);
+        
+        StringBuilder conditionSb = new StringBuilder(TxConstants.INITIAL_STR_LENGTH);
+        if (condition.isTemp() !=  null) {
+            conditionSb.append(" TEMP = ?");
+        }
         if (!StringUtils.isEmpty(condition.getRefId())) {
             conditionSb.append(" AND REFID = ?");
         }
@@ -222,6 +245,9 @@ public class AuthItemRefImplDaoImpl implements AuthItemRefImplDao {
                     public void setValues(PreparedStatement ps)
                             throws SQLException {
                         int parameterIndex = 0;
+                        if (condition.isTemp() !=  null) {
+                            ps.setBoolean(++parameterIndex, condition.isTemp());
+                        }
                         if (!StringUtils.isEmpty(condition.getRefId())) {
                             ps.setString(++parameterIndex, condition.getRefId());
                         }
@@ -263,7 +289,8 @@ public class AuthItemRefImplDaoImpl implements AuthItemRefImplDao {
         sb.append("DELETE FROM AUTH_AUTHREF")
                 .append(tableSuffix)
                 .append(" WHERE ");
-        sb.append(" REFID = ?");
+        sb.append(" TEMP = ?");
+        sb.append(" AND REFID = ?");
         sb.append(" AND AUTHREFTYPE = ?");
         sb.append(" AND AUTHID = ?");
         sb.append(" AND AUTHTYPE = ?");
@@ -275,9 +302,10 @@ public class AuthItemRefImplDaoImpl implements AuthItemRefImplDao {
                     @Override
                     public void setValues(PreparedStatement ps, int i)
                             throws SQLException {
-                        int parameterIndex = 0;
                         AuthItemRefImpl condition = authItemRefImplList.get(i);
                         
+                        int parameterIndex = 0;
+                        ps.setBoolean(++parameterIndex, condition.isTemp());
                         ps.setString(++parameterIndex, condition.getRefId());
                         ps.setString(++parameterIndex,
                                 condition.getAuthRefType());
@@ -309,14 +337,19 @@ public class AuthItemRefImplDaoImpl implements AuthItemRefImplDao {
         sb.append("AUTHID,");
         sb.append("SYSTEMID,");
         sb.append("AUTHTYPE,");
-        sb.append("VALIDDEPENDENDDATE,");
+        sb.append("TEMP,");
         sb.append("CREATEOPERID,");
+        sb.append("EFFECTIVEDATE,");
+        sb.append("INVALIDDATE,");
         sb.append("ENDDATE,");
         sb.append("CREATEDATE");
         sb.append(" FROM AUTH_AUTHREF").append(tableSuffix).append(" TAIRI");
         
         StringBuilder conditionSb = new StringBuilder(
                 TxConstants.INITIAL_STR_LENGTH);
+        if (!ObjectUtils.isEmpty(params.get("temp"))) {
+            conditionSb.append(" AND TAIRI.TEMP = ?");
+        }
         if (!ObjectUtils.isEmpty(params.get("id"))) {
             conditionSb.append(" AND TAIRI.ID = ?");
         }
@@ -373,6 +406,10 @@ public class AuthItemRefImplDaoImpl implements AuthItemRefImplDao {
                     public void setValues(PreparedStatement ps)
                             throws SQLException {
                         int parameterIndex = 0;
+                        if (!ObjectUtils.isEmpty(params.get("temp"))) {
+                            ps.setBoolean(++parameterIndex,
+                                    (Boolean) params.get("temp"));
+                        }
                         if (!ObjectUtils.isEmpty(params.get("id"))) {
                             ps.setString(++parameterIndex,
                                     (String) params.get("id"));
@@ -486,9 +523,11 @@ public class AuthItemRefImplDaoImpl implements AuthItemRefImplDao {
             res.setAuthRefType(rs.getString("AUTHREFTYPE"));
             res.setCreateOperId(rs.getString("CREATEOPERID"));
             res.setRefId(rs.getString("REFID"));
-            res.setValidDependEndDate(rs.getBoolean("VALIDDEPENDENDDATE"));
+            res.setTemp(rs.getBoolean("TEMP"));
             res.setEndDate(rs.getTimestamp("ENDDATE"));
             res.setCreateDate(rs.getTimestamp("CREATEDATE"));
+            res.setEffectiveDate(rs.getTimestamp("EFFECTIVEDATE"));
+            res.setInvalidDate(rs.getTimestamp("INVALIDDATE"));
             return res;
         }
     };

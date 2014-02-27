@@ -79,14 +79,17 @@ public class AuthItemRefImpl implements AuthItemRef {
     /** 权限引用项的创建(授予)时间 */
     private Date createDate;
     
-    /** 权限引用项的失效时间 */
+    /** 权限引用项结束时间  */
     private Date endDate;
     
-    /**
-     * 是否支持根据权限引用的引用的结束时间<br/>
-     * 判断权限是否需要根据结束时间验证其有效性
-     */
-    private boolean validDependEndDate = false;
+    /** 生效时间 */
+    private Date effectiveDate;
+    
+    /** 系统自动判定的无效时间:系统在查询具体是否存在引用过程中将根据该时间动态计算 */
+    private Date invalidDate;
+    
+    /** 是否是临时权限 */
+    private Boolean temp;
     
     /**
      * @return
@@ -110,14 +113,14 @@ public class AuthItemRefImpl implements AuthItemRef {
     public String getId() {
         return id;
     }
-
+    
     /**
      * @param 对id进行赋值
      */
     public void setId(String id) {
         this.id = id;
     }
-
+    
     /**
      * @return 返回 authItemImpl
      */
@@ -217,17 +220,45 @@ public class AuthItemRefImpl implements AuthItemRef {
     }
     
     /**
-     * @return 返回 validDependEndDate
+     * @return 返回 effectiveDate
      */
-    public boolean isValidDependEndDate() {
-        return validDependEndDate;
+    public Date getEffectiveDate() {
+        return effectiveDate;
     }
     
     /**
-     * @param 对validDependEndDate进行赋值
+     * @param 对effectiveDate进行赋值
      */
-    public void setValidDependEndDate(boolean validDependEndDate) {
-        this.validDependEndDate = validDependEndDate;
+    public void setEffectiveDate(Date effectiveDate) {
+        this.effectiveDate = effectiveDate;
+    }
+    
+    /**
+     * @return 返回 invalidDate
+     */
+    public Date getInvalidDate() {
+        return invalidDate;
+    }
+    
+    /**
+     * @param 对invalidDate进行赋值
+     */
+    public void setInvalidDate(Date invalidDate) {
+        this.invalidDate = invalidDate;
+    }
+    
+    /**
+     * @return 返回 temp
+     */
+    public Boolean isTemp() {
+        return temp;
+    }
+    
+    /**
+     * @param 对temp进行赋值
+     */
+    public void setTemp(Boolean temp) {
+        this.temp = temp;
     }
     
     /**
@@ -241,7 +272,8 @@ public class AuthItemRefImpl implements AuthItemRef {
                 "id",
                 "authItem",
                 "authRefType",
-                "refId");
+                "refId",
+                "temp");
         return flag;
     }
     
@@ -255,7 +287,8 @@ public class AuthItemRefImpl implements AuthItemRef {
                 "id",
                 "authItem",
                 "authRefType",
-                "refId");
+                "refId",
+                "temp");
         return hashCode;
     }
     

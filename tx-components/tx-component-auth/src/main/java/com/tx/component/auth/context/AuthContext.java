@@ -159,7 +159,7 @@ public class AuthContext extends AuthContextBuilder {
                 newAuthItemRefTemp.setAuthRefType(adminRefType);
                 newAuthItemRefTemp.setRefId(adminRefId);
                 //是否是临时权限
-                newAuthItemRefTemp.setValidDependEndDate(false);
+                newAuthItemRefTemp.setTemp(false);
                 
                 //构建的超级管理员的权限引用
                 authItemRefList.add(newAuthItemRefTemp);
@@ -583,31 +583,11 @@ public class AuthContext extends AuthContextBuilder {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    public void addAuthItemOfAuthRefIdList(String authRefType,
-            String authItemId, List<String> addRefIdList) {
-        this.authItemRefService.addAuthItemOfAuthRefList(authRefType,
+    public void saveAuthItemOfAuthRefIdList(String authRefType,
+            String authItemId, List<String> addRefIdList,List<String> deleteRefIdList) {
+        this.notTempAuthItemRefImplService.saveAuthItemOfAuthRefList(authRefType,
                 authItemId,
                 addRefIdList,
-                this.systemId,
-                this.tableSuffix);
-    }
-    
-    /**
-      *  删除某一权限 的：对应权限引用类型的新的权限引用id集合
-      *      系统会自动过滤掉原不村子啊的权限引用，仅对减少的权限引用进行减少
-      *<功能详细描述>
-      * @param authRefType
-      * @param authItemId
-      * @param deleteRefIdList [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    public void deleteAuthItemOfAuthRefIdList(String authRefType,
-            String authItemId, List<String> deleteRefIdList) {
-        this.authItemRefService.deleteAuthItemOfAuthRefList(authRefType,
-                authItemId,
                 deleteRefIdList,
                 this.systemId,
                 this.tableSuffix);
@@ -626,7 +606,7 @@ public class AuthContext extends AuthContextBuilder {
      */
     public void saveAuthItemOfAuthRefIdList(String authRefType,
             String authItemId, List<String> refIdList) {
-        this.authItemRefService.saveAuthItemOfAuthRefList(authRefType,
+        this.notTempAuthItemRefImplService.saveAuthItemOfAuthRefList(authRefType,
                 authItemId,
                 refIdList,
                 this.systemId,
@@ -667,7 +647,7 @@ public class AuthContext extends AuthContextBuilder {
      */
     public void saveAuthRefOfAuthItemIdList(String authRefType, String refId,
             List<String> authItemIdList) {
-        this.authItemRefService.saveAuthRefOfAuthItemList(authRefType,
+        this.notTempAuthItemRefImplService.saveAuthRefOfAuthItemList(authRefType,
                 refId,
                 authItemIdList,
                 this.systemId,
@@ -687,7 +667,7 @@ public class AuthContext extends AuthContextBuilder {
     */
     public void saveAuthRefOfAuthItemIdList(String authType,
             String authRefType, String refId, List<String> authItemIdList) {
-        this.authItemRefService.saveAuthRefOfAuthItemList(authType,
+        this.notTempAuthItemRefImplService.saveAuthRefOfAuthItemList(authType,
                 authRefType,
                 refId,
                 authItemIdList,
@@ -708,7 +688,7 @@ public class AuthContext extends AuthContextBuilder {
      */
     public List<AuthItemRef> queryAuthItemRefListByAuthRefTypeAndRefId(
             String authRefType, String refId) {
-        List<AuthItemRefImpl> authItemRefImplList = this.authItemRefService.queryAuthItemRefListByRefTypeAndRefId(authRefType,
+        List<AuthItemRefImpl> authItemRefImplList = this.notTempAuthItemRefImplService.queryAuthItemRefListByRefTypeAndRefId(authRefType,
                 refId,
                 this.systemId,
                 this.tableSuffix);
@@ -730,7 +710,7 @@ public class AuthContext extends AuthContextBuilder {
      */
     public List<AuthItemRef> queryAuthItemRefListByAuthRefTypeAndAuthItemId(
             String authRefType, String authItemId) {
-        List<AuthItemRefImpl> authItemRefImplList = this.authItemRefService.queryAuthItemRefListByRefTypeAndAuthItemId(authRefType,
+        List<AuthItemRefImpl> authItemRefImplList = this.notTempAuthItemRefImplService.queryAuthItemRefListByRefTypeAndAuthItemId(authRefType,
                 authItemId,
                 this.systemId,
                 this.tableSuffix);

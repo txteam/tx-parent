@@ -147,54 +147,12 @@ public class AuthItemImpl implements AuthItem {
     }
     
     /** <默认构造函数> */
-    public AuthItemImpl(String id, String sytemId) {
-        super();
-        this.id = id;
-        this.systemId = sytemId;
-    }
-    
-    /** <默认构造函数> */
     public AuthItemImpl(String id, String systemId, String authType) {
         super();
         this.id = id;
         this.systemId = systemId;
         this.authType = authType;
     }
-    
-//    /** <默认构造函数> */
-//    public AuthItemImpl(String id, String systemId, String parentId,
-//            String name, String description, String authType, boolean valid,
-//            boolean configAble, boolean viewAble) {
-//        super();
-//        this.id = id;
-//        this.parentId = parentId;
-//        this.systemId = systemId;
-//        this.name = name;
-//        this.description = description;
-//        this.authType = authType;
-//        this.valid = valid;
-//        this.configAble = configAble;
-//        this.viewAble = viewAble;
-//    }
-//    
-//    /** <默认构造函数> */
-//    public AuthItemImpl(String id, String systemId, String parentId,
-//            String name, String description, String authType,
-//            List<AuthItem> childs, boolean valid, boolean configAble,
-//            boolean viewAble, boolean editAble) {
-//        super();
-//        this.id = id;
-//        this.systemId = systemId;
-//        this.parentId = parentId;
-//        this.name = name;
-//        this.description = description;
-//        this.authType = authType;
-//        this.childs = childs;
-//        this.valid = valid;
-//        this.configAble = configAble;
-//        this.viewAble = viewAble;
-//        this.editAble = editAble;
-//    }
     
     /**
      * @return
