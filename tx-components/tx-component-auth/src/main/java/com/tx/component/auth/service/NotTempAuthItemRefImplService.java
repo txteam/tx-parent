@@ -214,9 +214,11 @@ public class NotTempAuthItemRefImplService {
                 authItemId,
                 systemId,
                 tableSuffix);
+        Map<String, AuthItemRefImpl> dbAuthItemRefMap = new HashMap<String, AuthItemRefImpl>();
         if (authItemRefImplList != null) {
             for (AuthItemRefImpl refTemp : authItemRefImplList) {
                 srcAuthRefIds.add(refTemp.getRefId());
+                dbAuthItemRefMap.put(refTemp.getRefId(), refTemp);
             }
         }
         
@@ -226,6 +228,13 @@ public class NotTempAuthItemRefImplService {
         @SuppressWarnings("unchecked")
         List<String> needDeleteRefIds = ListUtils.intersection(srcAuthRefIds,
                 deleteRefIdList);
+        //生成需要插入权限引用历史表的数据
+        List<AuthItemRefImpl> needInsertToHis = new ArrayList<AuthItemRefImpl>();
+        for (String needDeleteRefIdTemp : needDeleteRefIds) {
+            if (dbAuthItemRefMap.containsKey(needDeleteRefIdTemp)) {
+                needInsertToHis.add(dbAuthItemRefMap.get(needDeleteRefIdTemp));
+            }
+        }
         
         DefaultTransactionDefinition def = new DefaultTransactionDefinition();
         def.setName("authItemRefImplServiceTxName");
@@ -233,14 +242,15 @@ public class NotTempAuthItemRefImplService {
         TransactionStatus status = this.txManager.getTransaction(def);
         
         try {
-            batchInsertAuthItemRefByRefIds(authRefType,
-                    authItemId,
-                    needInsertRefIds,
-                    systemId,
-                    tableSuffix);
+            batchInsertAuthItemRefToHis(needInsertToHis, tableSuffix);
             batchDeleteAuthItemRefByRefIds(authRefType,
                     authItemId,
                     needDeleteRefIds,
+                    systemId,
+                    tableSuffix);
+            batchInsertAuthItemRefByRefIds(authRefType,
+                    authItemId,
+                    needInsertRefIds,
                     systemId,
                     tableSuffix);
         } catch (DataAccessException e) {
@@ -277,11 +287,14 @@ public class NotTempAuthItemRefImplService {
                 authItemId,
                 systemId,
                 tableSuffix);
+        Map<String, AuthItemRefImpl> dbAuthItemRefMap = new HashMap<String, AuthItemRefImpl>();
         if (authItemRefImplList != null) {
             for (AuthItemRefImpl refTemp : authItemRefImplList) {
                 srcAuthRefIds.add(refTemp.getRefId());
+                dbAuthItemRefMap.put(refTemp.getRefId(), refTemp);
             }
         }
+
         
         @SuppressWarnings("unchecked")
         List<String> needDeleteRefIds = ListUtils.subtract(srcAuthRefIds,
@@ -289,6 +302,13 @@ public class NotTempAuthItemRefImplService {
         @SuppressWarnings("unchecked")
         List<String> needInsertRefIds = ListUtils.subtract(refIdList,
                 srcAuthRefIds);
+        //生成需要插入权限引用历史表的数据
+        List<AuthItemRefImpl> needInsertToHis = new ArrayList<AuthItemRefImpl>();
+        for (String needDeleteRefIdTemp : needDeleteRefIds) {
+            if (dbAuthItemRefMap.containsKey(needDeleteRefIdTemp)) {
+                needInsertToHis.add(dbAuthItemRefMap.get(needDeleteRefIdTemp));
+            }
+        }
         
         DefaultTransactionDefinition def = new DefaultTransactionDefinition();
         def.setName("authItemRefImplServiceTxName");
@@ -296,6 +316,7 @@ public class NotTempAuthItemRefImplService {
         TransactionStatus status = this.txManager.getTransaction(def);
         
         try {
+            batchInsertAuthItemRefToHis(needInsertToHis, tableSuffix);
             batchDeleteAuthItemRefByRefIds(authRefType,
                     authItemId,
                     needDeleteRefIds,
@@ -341,9 +362,11 @@ public class NotTempAuthItemRefImplService {
                 refId,
                 systemId,
                 tableSuffix);
+        Map<String, AuthItemRefImpl> dbAuthItemRefMap = new HashMap<String, AuthItemRefImpl>();
         if (authItemRefImplList != null) {
             for (AuthItemRefImpl refTemp : authItemRefImplList) {
                 srcAuthItemIds.add(refTemp.getAuthItem().getId());
+                dbAuthItemRefMap.put(refTemp.getAuthItem().getId(), refTemp);
             }
         }
         
@@ -354,6 +377,13 @@ public class NotTempAuthItemRefImplService {
         @SuppressWarnings("unchecked")
         List<String> needInsertAuthItemIds = ListUtils.subtract(authItemIds,
                 srcAuthItemIds);
+        //生成需要插入权限引用历史表的数据
+        List<AuthItemRefImpl> needInsertToHis = new ArrayList<AuthItemRefImpl>();
+        for (String needDeleteAuthItemIdTemp : needDeleteAuthItemIds) {
+            if (dbAuthItemRefMap.containsKey(needDeleteAuthItemIdTemp)) {
+                needInsertToHis.add(dbAuthItemRefMap.get(needDeleteAuthItemIdTemp));
+            }
+        }
         
         DefaultTransactionDefinition def = new DefaultTransactionDefinition();
         def.setName("authItemRefImplServiceTxName");
@@ -361,6 +391,7 @@ public class NotTempAuthItemRefImplService {
         TransactionStatus status = this.txManager.getTransaction(def);
         
         try {
+            batchInsertAuthItemRefToHis(needInsertToHis, tableSuffix);
             batchDeleteAuthItemRefByAuthItemIds(authRefType,
                     refId,
                     needDeleteAuthItemIds,
@@ -409,9 +440,11 @@ public class NotTempAuthItemRefImplService {
                 refId,
                 systemId,
                 tableSuffix);
+        Map<String, AuthItemRefImpl> dbAuthItemRefMap = new HashMap<String, AuthItemRefImpl>();
         if (authItemRefImplList != null) {
             for (AuthItemRefImpl refTemp : authItemRefImplList) {
                 srcAuthItemIds.add(refTemp.getAuthItem().getId());
+                dbAuthItemRefMap.put(refTemp.getAuthItem().getId(), refTemp);
             }
         }
         
@@ -422,6 +455,13 @@ public class NotTempAuthItemRefImplService {
         @SuppressWarnings("unchecked")
         List<String> needInsertAuthItemIds = ListUtils.subtract(authItemIds,
                 srcAuthItemIds);
+        //生成需要插入权限引用历史表的数据
+        List<AuthItemRefImpl> needInsertToHis = new ArrayList<AuthItemRefImpl>();
+        for (String needDeleteAuthItemIdTemp : needDeleteAuthItemIds) {
+            if (dbAuthItemRefMap.containsKey(needDeleteAuthItemIdTemp)) {
+                needInsertToHis.add(dbAuthItemRefMap.get(needDeleteAuthItemIdTemp));
+            }
+        }
         
         DefaultTransactionDefinition def = new DefaultTransactionDefinition();
         def.setName("authItemRefImplServiceTxName");
@@ -429,6 +469,7 @@ public class NotTempAuthItemRefImplService {
         TransactionStatus status = this.txManager.getTransaction(def);
         
         try {
+            batchInsertAuthItemRefToHis(needInsertToHis, tableSuffix);
             batchDeleteAuthItemRefByAuthItemIds(authRefType,
                     refId,
                     needDeleteAuthItemIds,
@@ -618,6 +659,23 @@ public class NotTempAuthItemRefImplService {
         }
         
         this.authItemRefImplDao.batchInsertAuthItemRefImpl(authItemRefList,
+                tableSuffix);
+    }
+    
+    /**
+      * 批量插入权限项引用到权限项引用历史表<br/>
+      *<功能详细描述>
+      * @param needInsertToHisAuthItemRefImpls
+      * @param tableSuffix [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    private void batchInsertAuthItemRefToHis(
+            List<AuthItemRefImpl> needInsertToHisAuthItemRefImpls,
+            String tableSuffix) {
+        this.authItemRefImplDao.batchInsertAuthItemRefImplToHis(needInsertToHisAuthItemRefImpls,
                 tableSuffix);
     }
 }

@@ -23,6 +23,18 @@ import com.tx.component.auth.model.AuthItemRefImpl;
 public interface AuthItemRefImplDao {
     
     /**
+     * 批量插入权限项引用
+     * <功能详细描述>
+     * @param condition [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    public void batchInsertAuthItemRefImplToHis(
+            List<AuthItemRefImpl> condition, String tableSuffix);
+    
+    /**
       * 插入AuthItemRefImpl对象实体
       * 1、auto generate
       * <功能详细描述>

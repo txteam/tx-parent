@@ -56,6 +56,9 @@ public class AuthContextBuilder extends AuthContextConfigurator implements
     /** 权限引用表定义文件路径 */
     private static final String authRefDefinitionLocation = "classpath:/com/tx/component/auth/script/auth_authref_table.xml";
     
+    /** 权限引用表定义文件路径 */
+    private static final String authRefHisDefinitionLocation = "classpath:/com/tx/component/auth/script/auth_authref_his_table.xml";
+    
     /** 权限加载器 */
     protected List<AuthLoader> authLoaderList;
     
@@ -132,8 +135,12 @@ public class AuthContextBuilder extends AuthContextConfigurator implements
                     authItemTableDefinitionLocation, replaceDataMap);
             TableDefinition authRefTableDefinition = new XMLTableDefinition(
                     authRefDefinitionLocation, replaceDataMap);
+            TableDefinition authRefHisTableDefinition = new XMLTableDefinition(
+                    authRefHisDefinitionLocation, replaceDataMap);
+            
             this.dbScriptExecutorContext.createOrUpdateTable(authItemTableDefinition);
             this.dbScriptExecutorContext.createOrUpdateTable(authRefTableDefinition);
+            this.dbScriptExecutorContext.createOrUpdateTable(authRefHisTableDefinition);
             
             logger.info(" 自动初始化权限容器表结构完成.表后缀名为：{}...", this.tableSuffix);
         }

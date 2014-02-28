@@ -10,6 +10,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -119,6 +120,84 @@ public class AuthItemRefImplDaoImpl implements AuthItemRefImplDao {
     
     /**
      * @param condition
+     * @param tableSuffix
+     */
+    @Override
+    public void batchInsertAuthItemRefImplToHis(
+            final List<AuthItemRefImpl> condition, String tableSuffix) {
+        if (CollectionUtils.isEmpty(condition)) {
+            return;
+        }
+        StringBuilder sb = new StringBuilder(TxConstants.INITIAL_STR_LENGTH);
+        sb.append("INSERT INTO AUTH_AUTHREF_HIS")
+                .append(tableSuffix)
+                .append("(");
+        sb.append("ID,");
+        sb.append("REFID,");
+        sb.append("AUTHREFTYPE,");
+        sb.append("AUTHID,");
+        sb.append("SYSTEMID,");
+        sb.append("AUTHTYPE,");
+        sb.append("TEMP,");
+        sb.append("CREATEOPERID,");
+        sb.append("EFFECTIVEDATE,");
+        sb.append("INVALIDDATE,");
+        sb.append("ENDDATE,");
+        sb.append("CREATEDATE");
+        sb.append(")");
+        sb.append("VALUES(");
+        sb.append("?,?,?,?,?,?,?,?,?,?,?,?");
+        sb.append(")");
+        
+        this.jdbcTemplate.batchUpdate(sb.toString(),
+                new BatchPreparedStatementSetter() {
+                    @Override
+                    public void setValues(PreparedStatement ps, int index)
+                            throws SQLException {
+                        AuthItemRefImpl authItemRef = condition.get(index);
+                        
+                        int parameterIndex = 0;
+                        ps.setString(++parameterIndex, authItemRef.getId());
+                        ps.setString(++parameterIndex, authItemRef.getRefId());
+                        ps.setString(++parameterIndex,
+                                authItemRef.getAuthRefType());
+                        ps.setString(++parameterIndex,
+                                authItemRef.getAuthItem().getId());
+                        ps.setString(++parameterIndex,
+                                authItemRef.getAuthItem().getSystemId());
+                        ps.setString(++parameterIndex,
+                                authItemRef.getAuthItem().getAuthType());
+                        ps.setBoolean(++parameterIndex, authItemRef.isTemp());
+                        ps.setString(++parameterIndex,
+                                authItemRef.getCreateOperId());
+                        ps.setTimestamp(++parameterIndex,
+                                authItemRef.getEffectiveDate() == null ? null
+                                        : new Timestamp(
+                                                authItemRef.getEffectiveDate()
+                                                        .getTime()));
+                        ps.setTimestamp(++parameterIndex,
+                                authItemRef.getInvalidDate() == null ? null
+                                        : new Timestamp(
+                                                authItemRef.getInvalidDate()
+                                                        .getTime()));
+                        ps.setTimestamp(++parameterIndex, new Timestamp(
+                                (new Date()).getTime()));
+                        ps.setTimestamp(++parameterIndex,
+                                authItemRef.getCreateDate() == null ? null
+                                        : new Timestamp(
+                                                authItemRef.getCreateDate()
+                                                        .getTime()));
+                    }
+                    
+                    @Override
+                    public int getBatchSize() {
+                        return condition.size();
+                    }
+                });
+    }
+    
+    /**
+     * @param condition
      */
     @Override
     public void batchInsertAuthItemRefImpl(
@@ -210,8 +289,9 @@ public class AuthItemRefImplDaoImpl implements AuthItemRefImplDao {
                 .append(tableSuffix)
                 .append(" WHERE ");
         
-        StringBuilder conditionSb = new StringBuilder(TxConstants.INITIAL_STR_LENGTH);
-        if (condition.isTemp() !=  null) {
+        StringBuilder conditionSb = new StringBuilder(
+                TxConstants.INITIAL_STR_LENGTH);
+        if (condition.isTemp() != null) {
             conditionSb.append(" TEMP = ?");
         }
         if (!StringUtils.isEmpty(condition.getRefId())) {
@@ -245,7 +325,7 @@ public class AuthItemRefImplDaoImpl implements AuthItemRefImplDao {
                     public void setValues(PreparedStatement ps)
                             throws SQLException {
                         int parameterIndex = 0;
-                        if (condition.isTemp() !=  null) {
+                        if (condition.isTemp() != null) {
                             ps.setBoolean(++parameterIndex, condition.isTemp());
                         }
                         if (!StringUtils.isEmpty(condition.getRefId())) {
