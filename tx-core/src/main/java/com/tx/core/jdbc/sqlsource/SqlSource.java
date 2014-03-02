@@ -888,6 +888,48 @@ public class SqlSource<T> implements Serializable, Cloneable {
     }
     
     /**
+     * @return 返回 tableName
+     */
+    public String getTableName() {
+        return tableName;
+    }
+
+    /**
+     * @return 返回 getter2columnNameMapping
+     */
+    public LinkedHashMap<String, String> getGetter2columnNameMapping() {
+        return getter2columnNameMapping;
+    }
+
+    /**
+     * @return 返回 getter2JavaTypeMapping
+     */
+    public LinkedHashMap<String, Class<?>> getGetter2JavaTypeMapping() {
+        return getter2JavaTypeMapping;
+    }
+
+    /**
+     * @return 返回 queryConditionProperty2SqlMapping
+     */
+    public LinkedHashMap<String, String> getQueryConditionProperty2SqlMapping() {
+        return queryConditionProperty2SqlMapping;
+    }
+
+    /**
+     * @return 返回 queryConditionProperty2TypeMapping
+     */
+    public LinkedHashMap<String, JdbcType> getQueryConditionProperty2TypeMapping() {
+        return queryConditionProperty2TypeMapping;
+    }
+
+    /**
+     * @return 返回 updateAblePropertyNames
+     */
+    public Set<String> getUpdateAblePropertyNames() {
+        return updateAblePropertyNames;
+    }
+
+    /**
      * @return
      * @throws CloneNotSupportedException
      */

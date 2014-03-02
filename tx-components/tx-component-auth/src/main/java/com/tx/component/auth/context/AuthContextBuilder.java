@@ -197,6 +197,13 @@ public class AuthContextBuilder extends AuthContextConfigurator implements
             Set<AuthItem> authItemSet = authLoaderTemp.loadAuthItems();
             
             for (AuthItem authItem : authItemSet) {
+                AssertUtils.notNull(authItem, "authItem is null.");
+                AssertUtils.notEmpty(authItem.getId(), "authItem.id is empty.");
+                AssertUtils.notTrue(authItem.getId()
+                        .equals(authItem.getParentId()),
+                        "authItem.id equals authItem.parentId.authItem.id:{},parentId:{}",
+                        authItem.getId(),authItem.getParentId());
+                
                 //加载权限并设置加载的权限项目的系统id
                 authItem.setSystemId(this.systemId);
                 

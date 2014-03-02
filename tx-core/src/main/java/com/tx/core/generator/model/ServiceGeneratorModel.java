@@ -6,18 +6,29 @@
  */
 package com.tx.core.generator.model;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
+import org.hibernate.dialect.Dialect;
+import org.springframework.util.ClassUtils;
 
- /**
-  * <功能简述>
-  * <功能详细描述>
-  * 
-  * @author  brady
-  * @version  [版本号, 2012-12-11]
-  * @see  [相关类/方法]
-  * @since  [产品/模块版本]
-  */
+import com.tx.core.generator.GeneratorUtils;
+import com.tx.core.jdbc.sqlsource.SqlSource;
+import com.tx.core.reflection.JpaMetaClass;
+
+/**
+ * <功能简述>
+ * <功能详细描述>
+ * 
+ * @author  brady
+ * @version  [版本号, 2012-12-11]
+ * @see  [相关类/方法]
+ * @since  [产品/模块版本]
+ */
 public class ServiceGeneratorModel {
     
     private String basePackage;
@@ -31,84 +42,129 @@ public class ServiceGeneratorModel {
     private String idPropertyName;
     
     private List<SqlMapColumn> sqlMapColumnList;
-
+    
+    private Map<String, String> queryConditionName2TypeNameMapping = new HashMap<String, String>();
+    
+    private Set<String> extentionTypeNames = new HashSet<String>();
+    
+    public ServiceGeneratorModel() {
+        super();
+    }
+    
+    /** <默认构造函数> */
+    public ServiceGeneratorModel(JpaMetaClass<?> jpaMetaClass,
+            SqlSource<?> sqlSource, Dialect dialect) {
+        super();
+        String basePath = ClassUtils.convertClassNameToResourcePath(jpaMetaClass.getEntityTypeName())
+                + "/../..";
+        basePath = org.springframework.util.StringUtils.cleanPath(basePath);
+        
+        this.basePackage = ClassUtils.convertResourcePathToClassName(basePath);
+        
+        this.entitySimpleName = jpaMetaClass.getEntitySimpleName();
+        this.lowerCaseEntitySimpleName = StringUtils.uncapitalize(jpaMetaClass.getEntitySimpleName());
+        this.upCaseIdPropertyName = StringUtils.capitalize(jpaMetaClass.getPkGetterName());
+        this.idPropertyName = sqlSource.getPkName();
+        this.sqlMapColumnList = GeneratorUtils.generateSqlMapColumnList(jpaMetaClass);
+        
+        Set<String> queryConditionGetterNameSet = sqlSource.getQueryConditionProperty2TypeMapping().keySet();
+        Map<String, Class<?>> getter2JavaTypeMapping = sqlSource.getGetter2JavaTypeMapping();
+        for(String getterNameTemp : queryConditionGetterNameSet){
+            if(!getter2JavaTypeMapping.containsKey(getterNameTemp)){
+                continue;
+            }
+            Class<?> queryConditionType = getter2JavaTypeMapping.get(getterNameTemp);
+            String typeName = queryConditionType.getName();
+            if(!typeName.startsWith("java.lang") 
+                    && !"java.util.List".equals(typeName)
+                    && !"java.util.HashMap".equals(typeName)
+                    && !"java.util.Map".equals(typeName)){
+                extentionTypeNames.add(typeName);
+                
+            }
+            this.queryConditionName2TypeNameMapping.put("getterNameTemp", queryConditionType.getSimpleName());
+        }
+        
+        //Set<String> updatePropertyNameSet = sqlSource.getUpdateAblePropertyNames();
+    }
+    
     /**
      * @return 返回 basePackage
      */
     public String getBasePackage() {
         return basePackage;
     }
-
+    
     /**
      * @param 对basePackage进行赋值
      */
     public void setBasePackage(String basePackage) {
         this.basePackage = basePackage;
     }
-
+    
     /**
      * @return 返回 entitySimpleName
      */
     public String getEntitySimpleName() {
         return entitySimpleName;
     }
-
+    
     /**
      * @param 对entitySimpleName进行赋值
      */
     public void setEntitySimpleName(String entitySimpleName) {
         this.entitySimpleName = entitySimpleName;
     }
-
+    
     /**
      * @return 返回 lowerCaseEntitySimpleName
      */
     public String getLowerCaseEntitySimpleName() {
         return lowerCaseEntitySimpleName;
     }
-
+    
     /**
      * @param 对lowerCaseEntitySimpleName进行赋值
      */
     public void setLowerCaseEntitySimpleName(String lowerCaseEntitySimpleName) {
         this.lowerCaseEntitySimpleName = lowerCaseEntitySimpleName;
     }
-
+    
     /**
      * @return 返回 upCaseIdPropertyName
      */
     public String getUpCaseIdPropertyName() {
         return upCaseIdPropertyName;
     }
-
+    
     /**
      * @param 对upCaseIdPropertyName进行赋值
      */
     public void setUpCaseIdPropertyName(String upCaseIdPropertyName) {
         this.upCaseIdPropertyName = upCaseIdPropertyName;
     }
-
+    
     /**
      * @return 返回 idPropertyName
      */
     public String getIdPropertyName() {
         return idPropertyName;
     }
-
+    
     /**
      * @param 对idPropertyName进行赋值
      */
     public void setIdPropertyName(String idPropertyName) {
         this.idPropertyName = idPropertyName;
     }
-
+    
     /**
      * @return 返回 sqlMapColumnList
      */
     public List<SqlMapColumn> getSqlMapColumnList() {
         return sqlMapColumnList;
     }
-
+    
     /**
      * @param 对sqlMapColumnList进行赋值
      */

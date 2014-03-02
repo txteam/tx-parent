@@ -37,10 +37,6 @@ public class ${service.entitySimpleName}Service {
     @SuppressWarnings("unused")
     private Logger logger = LoggerFactory.getLogger(${service.entitySimpleName}Service.class);
     
-    @SuppressWarnings("unused")
-    //@Resource(name = "serviceLogger")
-    private Logger serviceLogger;
-    
     @Resource(name = "${service.lowerCaseEntitySimpleName}Dao")
     private ${service.entitySimpleName}Dao ${service.lowerCaseEntitySimpleName}Dao;
     
@@ -57,9 +53,11 @@ public class ${service.entitySimpleName}Service {
     */
     @Transactional
     public void insert${service.entitySimpleName}(${service.entitySimpleName} ${service.lowerCaseEntitySimpleName}) {
-        //TODO:验证参数是否合法，必填字段是否填写，
+        //TODO:验证参数是否合法
         AssertUtils.notNull(${service.lowerCaseEntitySimpleName}, "${service.lowerCaseEntitySimpleName} is null.");
         AssertUtils.notEmpty(${service.lowerCaseEntitySimpleName}.get${service.upCaseIdPropertyName}(), "${service.lowerCaseEntitySimpleName}.${service.idPropertyName} is empty.");
+        
+        //TODO: 设置默认数据
         
         this.${service.lowerCaseEntitySimpleName}Dao.insert${service.entitySimpleName}(${service.lowerCaseEntitySimpleName});
     }
@@ -101,7 +99,9 @@ public class ${service.entitySimpleName}Service {
         
         ${service.entitySimpleName} condition = new ${service.entitySimpleName}();
         condition.set${service.upCaseIdPropertyName}(${service.idPropertyName});
-        return this.${service.lowerCaseEntitySimpleName}Dao.find${service.entitySimpleName}(condition);
+        
+        ${service.entitySimpleName} res = this.${service.lowerCaseEntitySimpleName}Dao.find${service.entitySimpleName}(condition);
+        return res;
     }
     
     /**

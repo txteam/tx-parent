@@ -8,11 +8,18 @@ package com.tx.component.basicdata.generator;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+
+import org.hibernate.dialect.Dialect;
 
 import com.tx.core.dbscript.model.DataSourceTypeEnum;
 import com.tx.core.generator.JpaEntityFreeMarkerGenerator;
+import com.tx.core.generator.model.DBScriptMapper;
 import com.tx.core.jdbc.sqlsource.SqlSource;
 import com.tx.core.jdbc.sqlsource.SqlSourceBuilder;
+import com.tx.core.reflection.JpaColumnInfo;
+import com.tx.core.reflection.JpaMetaClass;
+import com.tx.core.util.JdbcUtils;
 
 /**
  * 基础数据代码自动生成器<br/>
@@ -60,16 +67,24 @@ public class BasicDataCodeGenerator {
      */
     public static <T> void generate(Class<T> basicDataType, String codeEncode,
             DataSourceTypeEnum dataSourceType, String dbEncode) {
+        JpaMetaClass<T> jpaMetaClass = JpaMetaClass.forClass(basicDataType);
         SqlSource<T> sqlSource = sqlSourceBuilder.build(basicDataType,
                 dataSourceType.getDialect());
         
-        Map<String, Object> buildData = new HashMap<String, Object>();
-        buildData.put("typeSimpleName", basicDataType.getSimpleName());
-        buildData.put("typeName", basicDataType.getName());
-        //StringUtils.uncapitalise(str)
-        
         //生成脚本
-        generateDBScriptContent(basicDataType, dataSourceType, dbEncode);
+        String scriptContext = generateDBScript(jpaMetaClass,
+                sqlSource,
+                dataSourceType,
+                dbEncode);
+        //生成sqlMap
+        
+        //生成Dao、DaoImpl
+        
+        //生成Service
+        
+        //生成Controller
+        
+        //生成queryPage,addPage,updatePage
     }
     
     /**
@@ -84,18 +99,11 @@ public class BasicDataCodeGenerator {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    private static String generateDBScriptContent(Class<?> basicDataType,
+    private static <T> String generateDBScript(
+            JpaMetaClass<T> jpaMetaClass, SqlSource<T> sqlSource,
             DataSourceTypeEnum dataSourceType, String encode) {
-        JpaEntityFreeMarkerGenerator factory = new JpaEntityFreeMarkerGenerator();
-        factory.setLoadTemplateClass(loadTemplateClass);
-        factory.setDbScriptTemplateFilePath(dbScriptTemplateFilePath);
         
-        //生成后在自己指定的文件夹中去找即可
-        String script = factory.generateScriptContent(basicDataType,
-                dataSourceType,
-                encode);
-        
-        return script;
+        return null;
     }
     
     /**

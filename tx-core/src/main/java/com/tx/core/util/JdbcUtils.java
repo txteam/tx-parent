@@ -11,6 +11,7 @@ import java.math.BigInteger;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.Date;
@@ -57,9 +58,11 @@ public class JdbcUtils {
         SIMPLE_TYPE_2_TYPES_MAP.put(Boolean.class, Types.BIT);
         SIMPLE_TYPE_2_TYPES_MAP.put(byte.class, Types.TINYINT);
         SIMPLE_TYPE_2_TYPES_MAP.put(Byte.class, Types.TINYINT);
+        
         SIMPLE_TYPE_2_TYPES_MAP.put(Date.class, Types.TIMESTAMP);
-        SIMPLE_TYPE_2_TYPES_MAP.put(java.sql.Date.class, Types.TIMESTAMP);
+        SIMPLE_TYPE_2_TYPES_MAP.put(java.sql.Date.class, Types.DATE);
         SIMPLE_TYPE_2_TYPES_MAP.put(Timestamp.class, Types.TIMESTAMP);
+        SIMPLE_TYPE_2_TYPES_MAP.put(Time.class, Types.TIME);
         
         SIMPLE_TYPE_2_TYPES_MAP.put(char.class, Types.CHAR);
         SIMPLE_TYPE_2_TYPES_MAP.put(Character.class, Types.CHAR);

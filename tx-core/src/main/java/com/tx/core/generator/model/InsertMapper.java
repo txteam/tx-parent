@@ -9,6 +9,11 @@ package com.tx.core.generator.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.dialect.Dialect;
+
+import com.tx.core.generator.GeneratorUtils;
+import com.tx.core.jdbc.sqlsource.SqlSource;
+import com.tx.core.reflection.JpaMetaClass;
 
 /**
  * 插入的映射器描述
@@ -32,89 +37,103 @@ public class InsertMapper {
     private String tableName;
     
     private List<SqlMapColumn> sqlMapColumnList = new ArrayList<SqlMapColumn>();
-
+    
+    public InsertMapper() {
+        super();
+    }
+    
+    public InsertMapper(JpaMetaClass<?> jpaMetaClass, SqlSource<?> sqlSource,
+            Dialect dialect) {
+        super();
+        this.id = "delete" + jpaMetaClass.getEntitySimpleName();
+        this.parameterType = jpaMetaClass.getEntityTypeName();
+        this.isUseSelectKey = false;
+        this.tableName = sqlSource.getTableName().toUpperCase();
+        this.sqlMapColumnList = GeneratorUtils.generateSqlMapColumnList(jpaMetaClass);
+    }
+    
     /**
      * @return 返回 isUseSelectKey
      */
     public boolean isUseSelectKey() {
         return isUseSelectKey;
     }
-
+    
     /**
      * @param 对isUseSelectKey进行赋值
      */
     public void setUseSelectKey(boolean isUseSelectKey) {
         this.isUseSelectKey = isUseSelectKey;
     }
-
+    
     /**
      * @return 返回 id
      */
     public String getId() {
         return id;
     }
-
+    
     /**
      * @param 对id进行赋值
      */
     public void setId(String id) {
         this.id = id;
     }
-
+    
     /**
      * @return 返回 parameterType
      */
     public String getParameterType() {
         return parameterType;
     }
-
+    
     /**
      * @param 对parameterType进行赋值
      */
     public void setParameterType(String parameterType) {
         this.parameterType = parameterType;
     }
-
+    
     /**
      * @return 返回 selectKey
      */
     public SqlMapSelectKey getSelectKey() {
         return selectKey;
     }
-
+    
     /**
      * @param 对selectKey进行赋值
      */
     public void setSelectKey(SqlMapSelectKey selectKey) {
         this.selectKey = selectKey;
     }
-
+    
     /**
      * @return 返回 tableName
      */
     public String getTableName() {
         return tableName;
     }
-
+    
     /**
      * @param 对tableName进行赋值
      */
     public void setTableName(String tableName) {
         this.tableName = tableName;
     }
-
+    
     /**
      * @return 返回 sqlMapColumnList
      */
     public List<SqlMapColumn> getSqlMapColumnList() {
         return sqlMapColumnList;
     }
-
+    
     /**
      * @param 对sqlMapColumnList进行赋值
      */
     public void setSqlMapColumnList(List<SqlMapColumn> sqlMapColumnList) {
         this.sqlMapColumnList = sqlMapColumnList;
     }
-
+    
 }

@@ -9,8 +9,16 @@ package com.tx.core.generator.model;
 import java.sql.Types;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
+import org.hibernate.dialect.Dialect;
 import org.hibernate.dialect.MySQL5InnoDBDialect;
+
+import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.jdbc.sqlsource.SqlSource;
+import com.tx.core.reflection.JpaColumnInfo;
+import com.tx.core.reflection.JpaMetaClass;
+import com.tx.core.util.JdbcUtils;
 
 /**
  * 数据脚本映射<br/>
@@ -34,6 +42,32 @@ public class DBScriptMapper {
     
     /** 字段对应注释 */
     private Map<String, String> columnName2CommentMapping = new HashMap<String, String>();
+    
+    public DBScriptMapper() {
+        super();
+    }
+    
+    public DBScriptMapper(JpaMetaClass<?> jpaMetaClass, SqlSource<?> sqlSource,
+            Dialect dialect) {
+        super();
+        this.tableName = sqlSource.getTableName().toUpperCase();
+        this.pkColumnName = sqlSource.getColumnNameByGetterName(sqlSource.getPkName());
+        
+        Map<String, String> getterName2ColumnNameMapping = sqlSource.getGetter2columnNameMapping();
+        Map<String, JpaColumnInfo> getterName2ColumnInfoMapping = jpaMetaClass.getGetter2columnInfoMapping();
+        
+        for (Entry<String, String> entryTemp : getterName2ColumnNameMapping.entrySet()) {
+            String columnName = entryTemp.getValue();
+            AssertUtils.isTrue(getterName2ColumnInfoMapping.containsKey(entryTemp.getKey()),
+                    "columnInfo null.");
+            JpaColumnInfo columnInfo = getterName2ColumnInfoMapping.get(entryTemp.getKey());
+            this.columnName2TypeNameMapping.put(columnName,
+                    dialect.getTypeName(JdbcUtils.getSqlTypeByJavaType(columnInfo.getRealGetterType()),
+                            columnInfo.getLength(),
+                            columnInfo.getPrecision(),
+                            columnInfo.getScale()));
+        }
+    }
     
     /**
      * @return 返回 tableName
@@ -99,7 +133,6 @@ public class DBScriptMapper {
         System.out.println(d.getTypeName(Types.BIT));
         System.out.println(d.getTypeName(Types.CHAR));
         System.out.println(d.getTypeName(Types.VARCHAR, 40, 0, 0));
-        
         System.out.println(d.getTypeName(Types.INTEGER, 100, 100, 32));
     }
 }

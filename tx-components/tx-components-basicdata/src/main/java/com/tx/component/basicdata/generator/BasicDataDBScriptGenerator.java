@@ -22,7 +22,7 @@ public class BasicDataDBScriptGenerator {
     
     private static Class<?> loadTemplateClass = BasicDataDBScriptGenerator.class;
     
-    private static String dbScriptTemplateFilePath = "com/tx/component/basicdata/generator/dbscript.ftl";
+    private static String dbScriptTemplateFilePath = "com/tx/component/basicdata/generator/defaultftl/dbscript.ftl";
     
     /**
       * 生成对应日志对象的脚本

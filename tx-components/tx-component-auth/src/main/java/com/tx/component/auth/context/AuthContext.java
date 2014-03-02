@@ -583,8 +583,51 @@ public class AuthContext extends AuthContextBuilder {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
+    public void addAuthItemOfAuthRefIdList(String authRefType,
+            String authItemId, List<String> addRefIdList) {
+        this.notTempAuthItemRefImplService.addAuthItemOfAuthRefList(authRefType,
+                authItemId,
+                addRefIdList,
+                this.systemId,
+                this.tableSuffix);
+    }
+    
+    /**
+     * 增加某一权限 的：对应权限引用类型的新的权限引用id集合
+     *     系统会自动过滤掉原已经存在的权限引用，仅对新增的权限引用进行增加
+     * <功能详细描述>
+     * @param authRefType
+     * @param authItemId
+     * @param refIdList [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    public void deleteAuthItemOfAuthRefIdList(String authRefType,
+            String authItemId, List<String> deleteRefIdList) {
+        this.notTempAuthItemRefImplService.deleteAuthItemOfAuthRefList(authRefType,
+                authItemId,
+                deleteRefIdList,
+                this.systemId,
+                this.tableSuffix);
+    }
+    
+    /**
+     * 增加某一权限 的：对应权限引用类型的新的权限引用id集合
+     *     系统会自动过滤掉原已经存在的权限引用，仅对新增的权限引用进行增加
+     * <功能详细描述>
+     * @param authRefType
+     * @param authItemId
+     * @param refIdList [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
     public void saveAuthItemOfAuthRefIdList(String authRefType,
-            String authItemId, List<String> addRefIdList,List<String> deleteRefIdList) {
+            String authItemId, List<String> addRefIdList,
+            List<String> deleteRefIdList) {
         this.notTempAuthItemRefImplService.saveAuthItemOfAuthRefList(authRefType,
                 authItemId,
                 addRefIdList,

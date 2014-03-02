@@ -45,32 +45,7 @@ import com.tx.core.util.JdbcUtils;
  */
 public class JpaEntityFreeMarkerGenerator {
     
-    /** 默认的字段比较器，用以排序 */
-    private static final Comparator<SqlMapColumn> columnComparator = new Comparator<SqlMapColumn>() {
-        /**
-         * @param o1
-         * @param o2
-         * @return
-         */
-        @Override
-        public int compare(SqlMapColumn o1, SqlMapColumn o2) {
-            if (o1.isId()) {
-                return -1;
-            }
-            if (o2.isId()) {
-                return 1;
-            }
-            if (o1.getClass().getName().length()
-                    - o2.getClass().getName().length() > 0) {
-                return 1;
-            } else if (o1.getClass().getName().length()
-                    - o2.getClass().getName().length() < 0) {
-                return -1;
-            } else {
-                return 0;
-            }
-        }
-    };
+
     
     private Class<?> loadTemplateClass = JpaEntityFreeMarkerGenerator.class;
     
@@ -258,7 +233,7 @@ public class JpaEntityFreeMarkerGenerator {
         model.setEntitySimpleName(jpaMetaClass.getEntitySimpleName());
         model.setIdPropertyName(jpaMetaClass.getPkGetterName());
         model.setLowerCaseEntitySimpleName(org.apache.commons.lang.StringUtils.uncapitalize(jpaMetaClass.getEntitySimpleName()));
-        model.setSqlMapColumnList(generateSqlMapColumnList(jpaMetaClass));
+        model.setSqlMapColumnList(GeneratorUtils.generateSqlMapColumnList(jpaMetaClass));
         model.setUpCaseIdPropertyName(StringUtils.capitalize(jpaMetaClass.getPkGetterName()));
         
         Map<String, Object> data = new HashMap<String, Object>();
@@ -386,7 +361,7 @@ public class JpaEntityFreeMarkerGenerator {
         updateMapper.setSimpleTableName(jpaMetaClass.getSimpleTableName()
                 .toUpperCase());
         updateMapper.setTableName(jpaMetaClass.getTableName());
-        updateMapper.setSqlMapColumnList(generateSqlMapColumnList(jpaMetaClass));
+        updateMapper.setSqlMapColumnList(GeneratorUtils.generateSqlMapColumnList(jpaMetaClass));
         
         return updateMapper;
     }
@@ -424,7 +399,7 @@ public class JpaEntityFreeMarkerGenerator {
                 .toUpperCase());
         selectMapper.setTableName(jpaMetaClass.getTableName().toUpperCase());
         
-        selectMapper.setSqlMapColumnList(generateSqlMapColumnList(jpaMetaClass));
+        selectMapper.setSqlMapColumnList(GeneratorUtils.generateSqlMapColumnList(jpaMetaClass));
         
         return selectMapper;
     }
@@ -480,7 +455,7 @@ public class JpaEntityFreeMarkerGenerator {
         
         //字段
         insertMapper.getSqlMapColumnList()
-                .addAll(generateSqlMapColumnList(jpaMetaClass));
+                .addAll(GeneratorUtils.generateSqlMapColumnList(jpaMetaClass));
         
         return insertMapper;
     }
@@ -501,56 +476,7 @@ public class JpaEntityFreeMarkerGenerator {
         return mapper;
     }
     
-    /** 
-      * 生成字段列表
-      *<功能详细描述>
-      * @param jpaMetaClass
-      * @return [参数说明]
-      * 
-      * @return List<SqlMapColumn> [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    private <TYPE> List<SqlMapColumn> generateSqlMapColumnList(
-            JpaMetaClass<TYPE> jpaMetaClass) {
-        List<SqlMapColumn> columnList = new ArrayList<SqlMapColumn>();
-        //生成对应需要的列关系
-        //Set<String> getterNameList = jpaMetaClass.getGetterNames();
-        //Set<String> setterNameList = jpaMetaClass.getSetterNames();
-        String idPropertyName = jpaMetaClass.getPkGetterName();
-        
-        for (Entry<String, JpaColumnInfo> entryTemp : jpaMetaClass.getGetter2columnInfoMapping()
-                .entrySet()) {
-            String getterName = entryTemp.getKey();
-            JpaColumnInfo jpaColumnInfo = entryTemp.getValue();
-            
-            SqlMapColumn columnTemp = null;
-            if (jpaColumnInfo.isSimpleType()) {
-                columnTemp = new SqlMapColumn(true,
-                        jpaColumnInfo.getGetterName(),
-                        jpaColumnInfo.getColumnName(),
-                        jpaColumnInfo.getRealGetterType(), null);
-            } else {
-                columnTemp = new SqlMapColumn(false,
-                        jpaColumnInfo.getGetterName(),
-                        jpaColumnInfo.getColumnName(),
-                        jpaColumnInfo.getRealGetterType(),
-                        jpaColumnInfo.getForeignKeyGetterName());
-            }
-            
-            if (idPropertyName.equals(getterName)) {
-                columnTemp.setId(true);
-            }
-            
-            columnTemp.setGetterMethodSimpleName(ReflectionUtils.getGetMethodNameByGetterNameAndType(jpaColumnInfo.getGetterName(),
-                    jpaColumnInfo.getGetterType()));
-            
-            columnList.add(columnTemp);
-        }
-        
-        Collections.sort(columnList, columnComparator);
-        return columnList;
-    }
+
     
     /**
      * @param 对sqlMapTemplateFilePath进行赋值

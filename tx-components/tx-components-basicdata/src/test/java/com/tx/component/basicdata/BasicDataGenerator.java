@@ -6,9 +6,16 @@
  */
 package com.tx.component.basicdata;
 
+import java.util.Map;
+
+import org.apache.commons.collections.MapUtils;
+
 import com.tx.component.basicdata.generator.BasicDataDBScriptGenerator;
 import com.tx.component.basicdata.testmodel.BaseTestBasicModel;
 import com.tx.core.dbscript.model.DataSourceTypeEnum;
+import com.tx.core.generator.GeneratorUtils;
+import com.tx.core.jdbc.sqlsource.SqlSource;
+import com.tx.core.jdbc.sqlsource.SqlSourceBuilder;
 import com.tx.core.reflection.JpaMetaClass;
 
 /**
@@ -23,26 +30,30 @@ import com.tx.core.reflection.JpaMetaClass;
 public class BasicDataGenerator {
     
     public static void main(String[] args) {
-        Class<?> basicDataType = BaseTestBasicModel.class;
+        Class<BaseTestBasicModel> basicDataType = BaseTestBasicModel.class;
         @SuppressWarnings("unused")
         String resultFolderPath = "d:/basicdata";
         
         @SuppressWarnings("unused")
-        JpaMetaClass<?> jpaMetaClass = JpaMetaClass.forClass(basicDataType);
+        JpaMetaClass<BaseTestBasicModel> jpaMetaClass = JpaMetaClass.forClass(basicDataType);
         String dbScript = BasicDataDBScriptGenerator.generateDBScriptContent(basicDataType,
-                DataSourceTypeEnum.ORACLE,
+                DataSourceTypeEnum.MYSQL,
                 "UTF-8");
-        
+        SqlSource<BaseTestBasicModel> sqlSource = (new SqlSourceBuilder()).build(basicDataType,
+                DataSourceTypeEnum.MYSQL.getDialect());
         System.out.println(dbScript);
-//        System.out.println("toQueryAction: /servicelog/"
-//                + jpaMetaClass.getModulePackageSimpleName() + "/"
-//                + StringUtils.uncapitalize(jpaMetaClass.getEntitySimpleName())
-//                + "/toQuery" + jpaMetaClass.getEntitySimpleName()
-//                + "PagedList.action");
-//        System.out.println("queryAction: /servicelog/"
-//                + jpaMetaClass.getModulePackageSimpleName() + "/"
-//                + StringUtils.uncapitalize(jpaMetaClass.getEntitySimpleName())
-//                + "/query" + jpaMetaClass.getEntitySimpleName()
-//                + "PagedList.action");
+        
+        Map<String, String> resMap = GeneratorUtils.generateQueryConditionMap(jpaMetaClass, sqlSource);
+        MapUtils.verbosePrint(System.out, "1", resMap);
+        //        System.out.println("toQueryAction: /servicelog/"
+        //                + jpaMetaClass.getModulePackageSimpleName() + "/"
+        //                + StringUtils.uncapitalize(jpaMetaClass.getEntitySimpleName())
+        //                + "/toQuery" + jpaMetaClass.getEntitySimpleName()
+        //                + "PagedList.action");
+        //        System.out.println("queryAction: /servicelog/"
+        //                + jpaMetaClass.getModulePackageSimpleName() + "/"
+        //                + StringUtils.uncapitalize(jpaMetaClass.getEntitySimpleName())
+        //                + "/query" + jpaMetaClass.getEntitySimpleName()
+        //                + "PagedList.action");
     }
 }

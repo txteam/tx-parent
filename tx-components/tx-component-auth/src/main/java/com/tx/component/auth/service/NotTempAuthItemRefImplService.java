@@ -196,6 +196,125 @@ public class NotTempAuthItemRefImplService {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
+    public void addAuthItemOfAuthRefList(String authRefType, String authItemId,
+            List<String> addRefIdList, String systemId, String tableSuffix) {
+        AssertUtils.notEmpty(authRefType, "authRefType is empty");
+        AssertUtils.notEmpty(authItemId, "authItemId is empty");
+        AssertUtils.notEmpty(systemId, "systemId is empty");
+        if (addRefIdList == null) {
+            addRefIdList = new ArrayList<String>();
+        }
+        
+        List<String> srcAuthRefIds = new ArrayList<String>();
+        List<AuthItemRefImpl> authItemRefImplList = queryAuthItemRefListByRefTypeAndAuthItemId(authRefType,
+                authItemId,
+                systemId,
+                tableSuffix);
+        if (authItemRefImplList != null) {
+            for (AuthItemRefImpl refTemp : authItemRefImplList) {
+                srcAuthRefIds.add(refTemp.getRefId());
+            }
+        }
+        
+        @SuppressWarnings("unchecked")
+        List<String> needInsertRefIds = ListUtils.subtract(addRefIdList,
+                srcAuthRefIds);
+        
+        DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+        def.setName("authItemRefImplServiceTxName");
+        def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+        TransactionStatus status = this.txManager.getTransaction(def);
+        
+        try {
+            batchInsertAuthItemRefByRefIds(authRefType,
+                    authItemId,
+                    needInsertRefIds,
+                    systemId,
+                    tableSuffix);
+        } catch (DataAccessException e) {
+            this.txManager.rollback(status);
+            throw e;
+        }
+        this.txManager.commit(status);
+    }
+    
+    /**
+     * 增加权限项目引用
+     *     需要传入，引用类型，权限项ID，引用id集合
+     * <功能详细描述>
+     * @param authRefType
+     * @param authId
+     * @param refIdList [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    public void deleteAuthItemOfAuthRefList(String authRefType,
+            String authItemId, List<String> deleteRefIdList, String systemId,
+            String tableSuffix) {
+        AssertUtils.notEmpty(authRefType, "authRefType is empty");
+        AssertUtils.notEmpty(authItemId, "authItemId is empty");
+        AssertUtils.notEmpty(systemId, "systemId is empty");
+        if (deleteRefIdList == null) {
+            deleteRefIdList = new ArrayList<String>();
+        }
+        
+        List<String> srcAuthRefIds = new ArrayList<String>();
+        List<AuthItemRefImpl> authItemRefImplList = queryAuthItemRefListByRefTypeAndAuthItemId(authRefType,
+                authItemId,
+                systemId,
+                tableSuffix);
+        Map<String, AuthItemRefImpl> dbAuthItemRefMap = new HashMap<String, AuthItemRefImpl>();
+        if (authItemRefImplList != null) {
+            for (AuthItemRefImpl refTemp : authItemRefImplList) {
+                srcAuthRefIds.add(refTemp.getRefId());
+                dbAuthItemRefMap.put(refTemp.getRefId(), refTemp);
+            }
+        }
+        
+        @SuppressWarnings("unchecked")
+        List<String> needDeleteRefIds = ListUtils.intersection(srcAuthRefIds,
+                deleteRefIdList);
+        //生成需要插入权限引用历史表的数据
+        List<AuthItemRefImpl> needInsertToHis = new ArrayList<AuthItemRefImpl>();
+        for (String needDeleteRefIdTemp : needDeleteRefIds) {
+            if (dbAuthItemRefMap.containsKey(needDeleteRefIdTemp)) {
+                needInsertToHis.add(dbAuthItemRefMap.get(needDeleteRefIdTemp));
+            }
+        }
+        
+        DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+        def.setName("authItemRefImplServiceTxName");
+        def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+        TransactionStatus status = this.txManager.getTransaction(def);
+        
+        try {
+            batchInsertAuthItemRefToHis(needInsertToHis, tableSuffix);
+            batchDeleteAuthItemRefByRefIds(authRefType,
+                    authItemId,
+                    needDeleteRefIds,
+                    systemId,
+                    tableSuffix);
+        } catch (DataAccessException e) {
+            this.txManager.rollback(status);
+            throw e;
+        }
+        this.txManager.commit(status);
+    }
+    
+    /**
+     * 增加权限项目引用
+     *     需要传入，引用类型，权限项ID，引用id集合
+     * <功能详细描述>
+     * @param authRefType
+     * @param authId
+     * @param refIdList [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
     public void saveAuthItemOfAuthRefList(String authRefType,
             String authItemId, List<String> addRefIdList,
             List<String> deleteRefIdList, String systemId, String tableSuffix) {
@@ -294,7 +413,6 @@ public class NotTempAuthItemRefImplService {
                 dbAuthItemRefMap.put(refTemp.getRefId(), refTemp);
             }
         }
-
         
         @SuppressWarnings("unchecked")
         List<String> needDeleteRefIds = ListUtils.subtract(srcAuthRefIds,
