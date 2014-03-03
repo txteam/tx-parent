@@ -43,8 +43,13 @@ public class ServiceGeneratorModel {
     
     private List<SqlMapColumn> sqlMapColumnList;
     
+    /** 查询条件名与类型映射 */
     private Map<String, String> queryConditionName2TypeNameMapping = new HashMap<String, String>();
     
+    /** 可更新字段的键值关系 */
+    private Map<String, String> updateKey2ValueMapping = new HashMap<String, String>();
+    
+    /** 扩展类型名集合 */
     private Set<String> extentionTypeNames = new HashSet<String>();
     
     public ServiceGeneratorModel() {
@@ -58,7 +63,6 @@ public class ServiceGeneratorModel {
         String basePath = ClassUtils.convertClassNameToResourcePath(jpaMetaClass.getEntityTypeName())
                 + "/../..";
         basePath = org.springframework.util.StringUtils.cleanPath(basePath);
-        
         this.basePackage = ClassUtils.convertResourcePathToClassName(basePath);
         
         this.entitySimpleName = jpaMetaClass.getEntitySimpleName();
@@ -67,25 +71,50 @@ public class ServiceGeneratorModel {
         this.idPropertyName = sqlSource.getPkName();
         this.sqlMapColumnList = GeneratorUtils.generateSqlMapColumnList(jpaMetaClass);
         
-        Set<String> queryConditionGetterNameSet = sqlSource.getQueryConditionProperty2TypeMapping().keySet();
+        Set<String> queryConditionGetterNameSet = sqlSource.getQueryConditionProperty2TypeMapping()
+                .keySet();
         Map<String, Class<?>> getter2JavaTypeMapping = sqlSource.getGetter2JavaTypeMapping();
-        for(String getterNameTemp : queryConditionGetterNameSet){
-            if(!getter2JavaTypeMapping.containsKey(getterNameTemp)){
+        for (String getterNameTemp : queryConditionGetterNameSet) {
+            if (!getter2JavaTypeMapping.containsKey(getterNameTemp)) {
                 continue;
             }
             Class<?> queryConditionType = getter2JavaTypeMapping.get(getterNameTemp);
             String typeName = queryConditionType.getName();
-            if(!typeName.startsWith("java.lang") 
+            if (typeName.indexOf("java.lang") < 0
                     && !"java.util.List".equals(typeName)
                     && !"java.util.HashMap".equals(typeName)
-                    && !"java.util.Map".equals(typeName)){
+                    && !"java.util.Map".equals(typeName)
+                    && !com.tx.core.util.ClassUtils.isCommonSimpleClass(typeName)) {
                 extentionTypeNames.add(typeName);
-                
             }
-            this.queryConditionName2TypeNameMapping.put("getterNameTemp", queryConditionType.getSimpleName());
+            this.queryConditionName2TypeNameMapping.put(getterNameTemp,
+                    queryConditionType.getSimpleName());
         }
         
-        //Set<String> updatePropertyNameSet = sqlSource.getUpdateAblePropertyNames();
+        Set<String> updatePropertyNameSet = sqlSource.getUpdateAblePropertyNames();
+        for (String updateAblePropertyNameTemp : updatePropertyNameSet) {
+            if (!getter2JavaTypeMapping.containsKey(updateAblePropertyNameTemp)) {
+                continue;
+            }
+            Class<?> conditionType = getter2JavaTypeMapping.get(updateAblePropertyNameTemp);
+            String typeName = conditionType.getName();
+            //            if (typeName.indexOf("java.lang") < 0
+            //                    && !"java.util.List".equals(typeName)
+            //                    && !"java.util.HashMap".equals(typeName)
+            //                    && !"java.util.Map".equals(typeName)
+            //                    && !com.tx.core.util.ClassUtils.isCommonSimpleClass(typeName)) {
+            //                extentionTypeNames.add(typeName);
+            //            }
+            if (boolean.class.equals(typeName)) {
+                updateKey2ValueMapping.put(updateAblePropertyNameTemp, "is"
+                        + StringUtils.capitalize(updateAblePropertyNameTemp)
+                        + "()");
+            } else {
+                updateKey2ValueMapping.put(updateAblePropertyNameTemp, "get"
+                        + StringUtils.capitalize(updateAblePropertyNameTemp)
+                        + "()");
+            }
+        }
     }
     
     /**
@@ -170,5 +199,49 @@ public class ServiceGeneratorModel {
      */
     public void setSqlMapColumnList(List<SqlMapColumn> sqlMapColumnList) {
         this.sqlMapColumnList = sqlMapColumnList;
+    }
+    
+    /**
+     * @return 返回 queryConditionName2TypeNameMapping
+     */
+    public Map<String, String> getQueryConditionName2TypeNameMapping() {
+        return queryConditionName2TypeNameMapping;
+    }
+    
+    /**
+     * @param 对queryConditionName2TypeNameMapping进行赋值
+     */
+    public void setQueryConditionName2TypeNameMapping(
+            Map<String, String> queryConditionName2TypeNameMapping) {
+        this.queryConditionName2TypeNameMapping = queryConditionName2TypeNameMapping;
+    }
+    
+    /**
+     * @return 返回 updateKey2ValueMapping
+     */
+    public Map<String, String> getUpdateKey2ValueMapping() {
+        return updateKey2ValueMapping;
+    }
+    
+    /**
+     * @param 对updateKey2ValueMapping进行赋值
+     */
+    public void setUpdateKey2ValueMapping(
+            Map<String, String> updateKey2ValueMapping) {
+        this.updateKey2ValueMapping = updateKey2ValueMapping;
+    }
+    
+    /**
+     * @return 返回 extentionTypeNames
+     */
+    public Set<String> getExtentionTypeNames() {
+        return extentionTypeNames;
+    }
+    
+    /**
+     * @param 对extentionTypeNames进行赋值
+     */
+    public void setExtentionTypeNames(Set<String> extentionTypeNames) {
+        this.extentionTypeNames = extentionTypeNames;
     }
 }

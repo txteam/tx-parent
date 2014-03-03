@@ -8,6 +8,7 @@ package com.tx.component.basicdata.testmodel;
 
 import javax.persistence.Table;
 
+import com.tx.component.basicdata.model.BaseTestBasicModel;
 import com.tx.core.jdbc.sqlsource.annotation.QueryCondition;
 
 

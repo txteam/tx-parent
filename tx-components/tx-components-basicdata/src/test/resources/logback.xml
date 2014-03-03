@@ -14,7 +14,7 @@
 	<appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
 		<!-- encoder 默认配置为PatternLayoutEncoder -->
 		<encoder>
-			<pattern>${date}${commonPattern}</pattern>
+			<pattern>%msg%n</pattern>
 		</encoder>
 	</appender>
 	

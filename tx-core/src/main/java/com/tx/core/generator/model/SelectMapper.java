@@ -6,8 +6,10 @@
  */
 package com.tx.core.generator.model;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.dialect.Dialect;
@@ -47,6 +49,8 @@ public class SelectMapper {
     
     private Map<String, String> queryConditionMap;
     
+    private Set<String> otherCondition = new HashSet<String>();
+    
     public SelectMapper() {
         super();
     }
@@ -61,8 +65,9 @@ public class SelectMapper {
         
         this.tableName = sqlSource.getTableName().toUpperCase();
         this.simpleTableName = jpaMetaClass.getSimpleTableName().toUpperCase();
-        this.idColumnName = sqlSource.getColumnNameByGetterName(idPropertyName).toUpperCase();
         this.idPropertyName = sqlSource.getPkName();
+        this.idColumnName = sqlSource.getColumnNameByGetterName(idPropertyName).toUpperCase();
+        this.otherCondition.addAll(sqlSource.getOtherCondition());
         
         this.queryConditionMap = GeneratorUtils.generateQueryConditionMap(jpaMetaClass, sqlSource);
         this.sqlMapColumnList = GeneratorUtils.generateSqlMapColumnList(jpaMetaClass);
@@ -206,5 +211,19 @@ public class SelectMapper {
      */
     public void setQueryConditionMap(Map<String, String> queryConditionMap) {
         this.queryConditionMap = queryConditionMap;
+    }
+
+    /**
+     * @return 返回 otherCondition
+     */
+    public Set<String> getOtherCondition() {
+        return otherCondition;
+    }
+
+    /**
+     * @param 对otherCondition进行赋值
+     */
+    public void setOtherCondition(Set<String> otherCondition) {
+        this.otherCondition = otherCondition;
     }
 }

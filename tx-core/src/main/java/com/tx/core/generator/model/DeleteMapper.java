@@ -48,7 +48,7 @@ public class DeleteMapper {
                 .toUpperCase();
         this.idPropertyName = sqlSource.getPkName();
         this.simpleTableName = jpaMetaClass.getSimpleTableName().toUpperCase();
-        this.tableName = sqlSource.getTableName();
+        this.tableName = sqlSource.getTableName().toUpperCase();
     }
     
     /**

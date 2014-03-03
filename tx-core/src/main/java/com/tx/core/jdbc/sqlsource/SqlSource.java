@@ -930,6 +930,13 @@ public class SqlSource<T> implements Serializable, Cloneable {
     }
 
     /**
+     * @return 返回 otherCondition
+     */
+    public Set<String> getOtherCondition() {
+        return otherCondition;
+    }
+
+    /**
      * @return
      * @throws CloneNotSupportedException
      */

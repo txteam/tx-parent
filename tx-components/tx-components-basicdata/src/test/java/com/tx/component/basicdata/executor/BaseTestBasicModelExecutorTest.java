@@ -15,7 +15,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.tx.component.basicdata.context.BasicDataContext;
-import com.tx.component.basicdata.testmodel.BaseTest1111;
+import com.tx.component.basicdata.model.TestBasicData;
 import com.tx.component.basicdata.testmodel.BaseTest2222;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.util.UUIDUtils;
@@ -39,13 +39,13 @@ import com.tx.core.util.UUIDUtils;
         "classpath:spring/beans-basicdata.xml" })
 public class BaseTestBasicModelExecutorTest {
     
-    private BasicDataExecutor<BaseTest1111> executor1;
+    private BasicDataExecutor<TestBasicData> executor1;
     
     private BasicDataExecutor<BaseTest2222> executor2;
     
     @Before
     public void before() {
-        executor1 = BasicDataContext.getExecutor(BaseTest1111.class);
+        executor1 = BasicDataContext.getExecutor(TestBasicData.class);
         
         executor2 = BasicDataContext.getExecutor(BaseTest2222.class);
     }
@@ -53,7 +53,7 @@ public class BaseTestBasicModelExecutorTest {
     @Test
     public void testExecutor1() {
 
-        BaseTest1111 newObj = new BaseTest1111();
+        TestBasicData newObj = new TestBasicData();
         newObj.setId(UUIDUtils.generateUUID());
         newObj.setCode("001");
         newObj.setName("1-1");
@@ -63,7 +63,7 @@ public class BaseTestBasicModelExecutorTest {
         
         executor1.insert(newObj);
         
-        BaseTest1111 newObj2 = new BaseTest1111();
+        TestBasicData newObj2 = new TestBasicData();
         newObj2.setId(UUIDUtils.generateUUID());
         newObj2.setCode("002");
         newObj2.setName("1-1");

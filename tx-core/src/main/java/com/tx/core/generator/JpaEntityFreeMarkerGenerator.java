@@ -6,11 +6,7 @@
  */
 package com.tx.core.generator;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -25,12 +21,10 @@ import com.tx.core.generator.model.DeleteMapper;
 import com.tx.core.generator.model.InsertMapper;
 import com.tx.core.generator.model.SelectMapper;
 import com.tx.core.generator.model.ServiceGeneratorModel;
-import com.tx.core.generator.model.SqlMapColumn;
 import com.tx.core.generator.model.SqlMapMapper;
 import com.tx.core.generator.model.UpdateMapper;
 import com.tx.core.reflection.JpaColumnInfo;
 import com.tx.core.reflection.JpaMetaClass;
-import com.tx.core.reflection.ReflectionUtils;
 import com.tx.core.util.FreeMarkerUtils;
 import com.tx.core.util.JdbcUtils;
 

@@ -2,13 +2,11 @@
 <!DOCTYPE mapper 
 	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-	
-<!-- basicData generate -->
-<mapper namespace="${@org.apache.commons.lang.StringUtils@uncapitalise((${typeSimpleName})}">
+<mapper namespace="${mapper.namespace}">
 
 	<!-- auto generate default resultMap -->
-	<resultMap id="${@org.apache.commons.lang.StringUtils@uncapitalise((${typeSimpleName})}Map" 
-		type="${typeName}">
+	<resultMap id="${select.resultMapId}" 
+		type="${select.parameterType}">
 <#list insert.sqlMapColumnList as column>
 <#if !column.isSimpleType()>
 		<result column="${column.propertyName}_${column.joinPropertyName}" property="${column.propertyName}.${column.joinPropertyName}"/>
@@ -21,7 +19,7 @@
 		parameterType="${select.parameterType}"
 		resultMap="${select.resultMapId}">
 		SELECT 
-<#list insert.sqlMapColumnList as column>
+<#list select.sqlMapColumnList as column>
 <#if column.isSimpleType()>
 				${select.simpleTableName}.${column.columnName}<#if !column.isSameName()> AS ${column.propertyName}</#if><#if column_has_next>,</#if>
 <#else>
@@ -34,6 +32,9 @@
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(${select.idPropertyName})">  
 	            AND ${select.simpleTableName}.${select.idColumnName} = ${r"#{"}${select.idPropertyName}${r"}"}
 	        </if>
+<#list select.otherCondition as condition>
+			AND ${select.simpleTableName}.${condition}
+</#list>
 		</trim>
 	</select>
 	
@@ -42,7 +43,7 @@
 		parameterType="java.util.Map"
 		resultMap="${select.resultMapId}">
 		SELECT 
-<#list insert.sqlMapColumnList as column>
+<#list select.sqlMapColumnList as column>
 <#if column.isSimpleType()>
 				${select.simpleTableName}.${column.columnName}<#if !column.isSameName()> AS ${column.propertyName}</#if><#if column_has_next>,</#if>
 <#else>
@@ -51,18 +52,16 @@
 </#list>
 		  FROM ${select.tableName} ${select.simpleTableName}
 		<trim prefix="WHERE" prefixOverrides="AND | OR">
-<#list insert.sqlMapColumnList as column>
-<#if column.isSimpleType()>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(${column.propertyName})">  
-	            AND ${select.simpleTableName}.${column.columnName} = ${r"#{"}${column.propertyName},javaType=${column.javaType.name}${r"}"}
+<#list select.queryConditionMap?keys as key>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(${key})">  
+	            AND ${select.simpleTableName}.${select.queryConditionMap[key]}
 	        </if>
-<#else>
-			<if test="${column.propertyName} != null">
-				<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(${column.propertyName}.${column.joinPropertyName})">  
-		            AND ${select.simpleTableName}.${column.columnName} = ${r"#{"}${column.propertyName}.${column.joinPropertyName},javaType=${column.javaType.name}${r"}"}
-		        </if>
-	        </if>
-</#if>
+</#list>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(exclude${select.idPropertyName?cap_first})">
+				${r"<![CDATA[ "}AND ${select.simpleTableName}.${select.idColumnName} ${r"<>"} ${r"#{exclude"}${select.idPropertyName?cap_first}${r",javaType=java.lang.String} ]]>"}
+			</if>
+<#list select.otherCondition as condition>
+			AND ${select.simpleTableName}.${condition}
 </#list>
 		</trim>
 		<choose>  
@@ -70,7 +69,7 @@
 	            ORDER BY ${r"#{"}orderSql${r"}"}
 	        </when>
 	        <otherwise>  
-	            <!-- //TODO:ADD DEFAULT ORDER COLUMN OR DONOTHING! -->
+	            ORDER BY ${select.idColumnName}
 	        </otherwise>  
 	    </choose>
 	</select>
@@ -82,18 +81,16 @@
 		SELECT COUNT(1)
 		  FROM ${select.tableName} ${select.simpleTableName}
 		<trim prefix="WHERE" prefixOverrides="AND | OR">
-<#list insert.sqlMapColumnList as column>
-<#if column.isSimpleType()>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(${column.propertyName})">  
-	            AND ${select.simpleTableName}.${column.columnName} = ${r"#{"}${column.propertyName},javaType=${column.javaType.name}${r"}"}
+<#list select.queryConditionMap?keys as key>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(${key})">  
+	            AND ${select.simpleTableName}.${select.queryConditionMap[key]}
 	        </if>
-<#else>
-			<if test="${column.propertyName} != null">
-				<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(${column.propertyName}.${column.joinPropertyName})">  
-		            AND ${select.simpleTableName}.${column.columnName} = ${r"#{"}${column.propertyName}.${column.joinPropertyName},javaType=${column.javaType.name}${r"}"}
-		        </if>
-	        </if>
-</#if>
+</#list>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(exclude${select.idPropertyName?cap_first})">
+				${r"<![CDATA[ "}AND ${select.simpleTableName}.${select.idColumnName} ${r"<>"} ${r"#{exclude"}${select.idPropertyName?cap_first}${r",javaType=java.lang.String} ]]>"}
+			</if>
+<#list select.otherCondition as condition>
+			AND ${select.simpleTableName}.${condition}
 </#list>
 		</trim>
 	</select>
@@ -132,10 +129,10 @@
 	<!-- auto generate default delete -->
 	<delete id="${delete.id}" 
 		parameterType="${delete.parameterType}">
-		DELETE FROM ${delete.tableName} ${delete.simpleTableName} WHERE
+		DELETE FROM ${delete.tableName}  WHERE
 		<trim prefixOverrides="AND | OR">
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(${delete.idPropertyName})">  
-	            AND ${delete.simpleTableName}.${delete.idColumnName} = ${r"#{"}${delete.idPropertyName}${r"}"}
+	            AND ${delete.idColumnName} = ${r"#{"}${delete.idPropertyName}${r"}"}
 	        </if>
 		</trim>
 	</delete>
@@ -168,3 +165,7 @@
 	</update>  
 
 </mapper>
+<!--
+sqlMap生成描述:
+${parseMessage}
+-->

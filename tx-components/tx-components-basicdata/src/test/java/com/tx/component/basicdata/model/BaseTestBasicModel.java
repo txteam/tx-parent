@@ -4,7 +4,7 @@
  * 修改时间:  2013-10-10
  * <修改描述:>
  */
-package com.tx.component.basicdata.testmodel;
+package com.tx.component.basicdata.model;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -15,6 +15,7 @@ import javax.persistence.Table;
 
 import com.tx.component.basicdata.annotation.BasicData;
 import com.tx.component.basicdata.plugin.impl.SupportDisabled;
+import com.tx.component.basicdata.testmodel.BasicTypeEnum;
 import com.tx.core.jdbc.sqlsource.annotation.QueryConditionEqual;
 import com.tx.core.jdbc.sqlsource.annotation.QueryConditionLike;
 import com.tx.core.jdbc.sqlsource.annotation.UpdateAble;

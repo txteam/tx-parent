@@ -11,7 +11,7 @@ import java.util.Map;
 import org.apache.commons.collections.MapUtils;
 
 import com.tx.component.basicdata.generator.BasicDataDBScriptGenerator;
-import com.tx.component.basicdata.testmodel.BaseTestBasicModel;
+import com.tx.component.basicdata.model.BaseTestBasicModel;
 import com.tx.core.dbscript.model.DataSourceTypeEnum;
 import com.tx.core.generator.GeneratorUtils;
 import com.tx.core.jdbc.sqlsource.SqlSource;

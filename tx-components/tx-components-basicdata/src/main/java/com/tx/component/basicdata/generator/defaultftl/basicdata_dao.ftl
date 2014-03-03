@@ -4,7 +4,7 @@
  * 修改时间:  
  * <修改描述:>
  */
-package ${dao.basePackage};
+package ${dao.basePackage}.dao;
 
 import java.util.List;
 import java.util.Map;
