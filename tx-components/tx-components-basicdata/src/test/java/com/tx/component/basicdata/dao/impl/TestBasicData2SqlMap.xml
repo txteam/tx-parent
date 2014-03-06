@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper 
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="testBasicData2">
+
+	<!-- auto generate default resultMap -->
+	<resultMap id="testBasicData2Map" 
+		type="com.tx.component.basicdata.model.TestBasicData2">
+	</resultMap>
+	
+	<!-- auto generate default find -->
+	<select id="findTestBasicData2" 
+		parameterType="com.tx.component.basicdata.model.TestBasicData2"
+		resultMap="testBasicData2Map">
+		SELECT 
+				TTBD.CODE,
+				TTBD.VALID,
+				TTBD.REMARK,
+				TTBD.NAME,
+				TTBD.TYPE_ AS type,
+				TTBD.CREATEDATE,
+				TTBD.LASTUPDATEDATE
+		  FROM TESTBASICDATA2 TTBD
+		 WHERE
+		<trim prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(code)">  
+	            AND TTBD.CODE = #{code}
+	        </if>
+		</trim>
+	</select>
+	
+	<!-- auto generate default query -->
+	<select id="queryTestBasicData2" 
+		parameterType="java.util.Map"
+		resultMap="testBasicData2Map">
+		SELECT 
+				TTBD.CODE,
+				TTBD.VALID,
+				TTBD.REMARK,
+				TTBD.NAME,
+				TTBD.TYPE_ AS type,
+				TTBD.CREATEDATE,
+				TTBD.LASTUPDATEDATE
+		  FROM TESTBASICDATA2 TTBD
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(code)">  
+	            AND TTBD.CODE = #{code,jdbcType=VARCHAR}
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(name)">  
+	            AND TTBD.NAME LIKE concat('%', #{name,jdbcType=VARCHAR}, '%')
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(excludeCode)">
+				<![CDATA[ AND TTBD.CODE <> #{excludeCode,javaType=java.lang.String} ]]>
+			</if>
+		</trim>
+		<choose>  
+	        <when test="@com.tx.core.util.OgnlUtils@isNotEmpty(orderSql)">  
+	            ORDER BY #{orderSql}
+	        </when>
+	        <otherwise>  
+	            ORDER BY CODE
+	        </otherwise>  
+	    </choose>
+	</select>
+	
+		<!-- auto generate default count -->
+	<select id="queryTestBasicData2Count" 
+		parameterType="java.util.Map"
+		resultType="java.lang.Integer">
+		SELECT COUNT(1)
+		  FROM TESTBASICDATA2 TTBD
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(code)">  
+	            AND TTBD.CODE = #{code,jdbcType=VARCHAR}
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(name)">  
+	            AND TTBD.NAME LIKE concat('%', #{name,jdbcType=VARCHAR}, '%')
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(excludeCode)">
+				<![CDATA[ AND TTBD.CODE <> #{excludeCode,javaType=java.lang.String} ]]>
+			</if>
+		</trim>
+	</select>
+    
+    <!-- auto generate default insert -->
+    <insert id="deleteTestBasicData2" 
+		parameterType="com.tx.component.basicdata.model.TestBasicData2">
+		INSERT INTO TESTBASICDATA2
+		(
+			CODE,
+			VALID,
+			REMARK,
+			NAME,
+			TYPE_,
+			CREATEDATE,
+			LASTUPDATEDATE
+		)
+		VALUES
+		(
+			#{code},
+			#{valid},
+			#{remark},
+			#{name},
+			#{type},
+			#{createDate},
+			#{lastUpdateDate}
+		)
+	</insert>
+	
+	<!-- auto generate default delete -->
+	<delete id="deleteTestBasicData2" 
+		parameterType="com.tx.component.basicdata.model.TestBasicData2">
+		DELETE FROM TESTBASICDATA2  WHERE
+		<trim prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(code)">  
+	            AND CODE = #{code}
+	        </if>
+		</trim>
+	</delete>
+
+	<!-- auto generate default update -->
+	<update id="updateTestBasicData2"
+	    parameterType="java.util.Map">  
+	    UPDATE TESTBASICDATA2 TTBD
+	    <trim prefix="SET" suffixOverrides=",">
+			<if test="_parameter.containsKey('valid')">
+	    		VALID = #{valid,javaType=boolean},
+	    	</if>	
+			<if test="_parameter.containsKey('remark')">
+	    		REMARK = #{remark,javaType=java.lang.String},
+	    	</if>	
+			<if test="_parameter.containsKey('name')">
+	    		NAME = #{name,javaType=java.lang.String},
+	    	</if>	
+			<if test="_parameter.containsKey('type')">
+	    		TYPE_ = #{type,javaType=com.tx.component.basicdata.testmodel.BasicTypeEnum},
+	    	</if>	
+			<if test="_parameter.containsKey('createDate')">
+	    		CREATEDATE = #{createDate,javaType=java.util.Date},
+	    	</if>	
+			<if test="_parameter.containsKey('lastUpdateDate')">
+	    		LASTUPDATEDATE = #{lastUpdateDate,javaType=java.util.Date},
+	    	</if>	
+	    </trim>
+	    WHERE TTBD.CODE = #{code} 
+	</update>  
+
+</mapper>
+<!--
+sqlMap生成描述:
+
+-->

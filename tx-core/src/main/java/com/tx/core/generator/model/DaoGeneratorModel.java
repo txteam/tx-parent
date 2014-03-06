@@ -9,7 +9,6 @@ package com.tx.core.generator.model;
 import org.hibernate.dialect.Dialect;
 import org.springframework.util.ClassUtils;
 
-import com.tx.core.jdbc.sqlsource.SqlSource;
 import com.tx.core.reflection.JpaMetaClass;
 
 /**
@@ -37,8 +36,7 @@ public class DaoGeneratorModel {
     }
     
     /** <默认构造函数> */
-    public DaoGeneratorModel(JpaMetaClass<?> jpaMetaClass,
-            SqlSource<?> sqlSource, Dialect dialect) {
+    public DaoGeneratorModel(JpaMetaClass<?> jpaMetaClass, Dialect dialect) {
         super();
         String basePath = ClassUtils.convertClassNameToResourcePath(jpaMetaClass.getEntityTypeName())
                 + "/../..";

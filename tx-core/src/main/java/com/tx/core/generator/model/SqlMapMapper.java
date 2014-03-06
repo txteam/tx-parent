@@ -6,9 +6,6 @@
  */
 package com.tx.core.generator.model;
 
-import org.hibernate.dialect.Dialect;
-
-import com.tx.core.jdbc.sqlsource.SqlSource;
 import com.tx.core.reflection.JpaMetaClass;
 
 /**
@@ -31,8 +28,7 @@ public class SqlMapMapper {
     }
     
     /** <默认构造函数> */
-    public SqlMapMapper(JpaMetaClass<?> jpaMetaClass, SqlSource<?> sqlSource,
-            Dialect dialect) {
+    public SqlMapMapper(JpaMetaClass<?> jpaMetaClass) {
         super();
         this.namespace = org.apache.commons.lang.StringUtils.uncapitalize(jpaMetaClass.getEntitySimpleName());
     }

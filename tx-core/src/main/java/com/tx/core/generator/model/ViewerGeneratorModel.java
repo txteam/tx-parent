@@ -10,8 +10,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.dialect.Dialect;
@@ -30,7 +30,7 @@ import com.tx.core.reflection.JpaMetaClass;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class ServiceGeneratorModel {
+public class ViewerGeneratorModel {
     
     private String basePackage;
     
@@ -53,12 +53,12 @@ public class ServiceGeneratorModel {
     /** 扩展类型名集合 */
     private Set<String> extentionTypeNames = new HashSet<String>();
     
-    public ServiceGeneratorModel() {
+    public ViewerGeneratorModel() {
         super();
     }
     
     /** <默认构造函数> */
-    public ServiceGeneratorModel(JpaMetaClass<?> jpaMetaClass,
+    public ViewerGeneratorModel(JpaMetaClass<?> jpaMetaClass,
             SqlSource<?> sqlSource, Dialect dialect) {
         super();
         String basePath = ClassUtils.convertClassNameToResourcePath(jpaMetaClass.getEntityTypeName())

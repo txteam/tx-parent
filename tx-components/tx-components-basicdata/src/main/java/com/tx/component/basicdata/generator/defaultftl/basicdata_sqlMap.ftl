@@ -140,7 +140,7 @@
 	<!-- auto generate default update -->
 	<update id="${update.id}"
 	    parameterType="java.util.Map">  
-	    UPDATE ${update.tableName} ${update.simpleTableName}
+	    UPDATE ${update.tableName} 
 	    <trim prefix="SET" suffixOverrides=",">
 <#list update.sqlMapColumnList as column>
 <#if !column.isId()>

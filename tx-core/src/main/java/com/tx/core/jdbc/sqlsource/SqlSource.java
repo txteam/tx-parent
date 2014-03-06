@@ -27,7 +27,11 @@ import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
 
 import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.jdbc.model.Getter2ColumnInfo;
+import com.tx.core.jdbc.model.QueryConditionInfo;
+import com.tx.core.jdbc.model.QueryConditionTypeEnum;
 import com.tx.core.reflection.ClassReflector;
+import com.tx.core.reflection.JpaMetaClass;
 import com.tx.core.util.JdbcUtils;
 import com.tx.core.util.ObjectUtils;
 
@@ -72,10 +76,19 @@ public class SqlSource<T> implements Serializable, Cloneable {
     private final LinkedHashMap<String, String> otherColumn2expressionMapping = new LinkedHashMap<String, String>();
     
     /** 可查询的属性名 */
-    private final LinkedHashMap<String, String> queryConditionProperty2SqlMapping = new LinkedHashMap<String, String>();
+    private final LinkedHashMap<String, String> queryConditionKey2SqlMapping = new LinkedHashMap<String, String>();
     
-    /** 可查询的属性名 */
-    private final LinkedHashMap<String, JdbcType> queryConditionProperty2TypeMapping = new LinkedHashMap<String, JdbcType>();
+    /** 可查询的属性JDBC类型 */
+    private final LinkedHashMap<String, JdbcType> queryConditionKey2JdbcTypeMapping = new LinkedHashMap<String, JdbcType>();
+    
+    /** 可查询属性的java类型 */
+    private final LinkedHashMap<String, Class<?>> queryConditionKey2JavaTypeMapping = new LinkedHashMap<String, Class<?>>();
+    
+    /** 查询条件信息key与信息映射 */
+    private final LinkedHashMap<String, QueryConditionInfo> queryConditionKey2ConditionInfoMapping = new LinkedHashMap<String, QueryConditionInfo>();
+    
+    /** getter名与getterColumnInfo间的映射关系 */
+    private final LinkedHashMap<String, Getter2ColumnInfo> getter2getterColumnInfo = new LinkedHashMap<String, Getter2ColumnInfo>();
     
     /** 添加排序条件 */
     private final List<String> orderList = new ArrayList<String>();
@@ -172,6 +185,25 @@ public class SqlSource<T> implements Serializable, Cloneable {
     }
     
     /**
+      * 添加getter2ColumnInfo的映射 
+      *<功能详细描述>
+      * @param jpaMetaClass
+      * @param getterName [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public void addGetter2GetterColumnInfoMapping(JpaMetaClass<?> jpaMetaClass,
+            String getterName) {
+        AssertUtils.notEmpty(getterName, "getterName is empty.");
+        AssertUtils.notNull(jpaMetaClass, "jpaMetaClass is empty.");
+        
+        this.getter2getterColumnInfo.put(getterName, new Getter2ColumnInfo(
+                jpaMetaClass, getterName));
+    }
+    
+    /**
      * @param 对property2columnNameMapping进行赋值
      */
     public void addGetter2columnMapping(String getterName, String columnName,
@@ -206,16 +238,23 @@ public class SqlSource<T> implements Serializable, Cloneable {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public void addQueryConditionProperty2SqlMapping(String propertyName,
-            String conditionExpression, JdbcType jdbcType) {
-        AssertUtils.notEmpty(propertyName, "propertyName is empty.");
+    public void addQueryConditionKey2SqlMapping(
+            QueryConditionTypeEnum queryConditionType, String key,
+            String conditionExpression, JdbcType jdbcType, Class<?> javaType) {
+        AssertUtils.notEmpty(key, "key is empty.");
         AssertUtils.notEmpty(conditionExpression,
                 "conditionExpression is empty.");
         AssertUtils.notNull(jdbcType, "jdbcType is empty.");
         
-        this.queryConditionProperty2SqlMapping.put(propertyName,
-                conditionExpression);
-        this.queryConditionProperty2TypeMapping.put(propertyName, jdbcType);
+        this.queryConditionKey2SqlMapping.put(key, conditionExpression);
+        this.queryConditionKey2JdbcTypeMapping.put(key, jdbcType);
+        this.queryConditionKey2JavaTypeMapping.put(key, javaType);
+        
+        if (queryConditionType != null) {
+            this.queryConditionKey2ConditionInfoMapping.put(key,
+                    new QueryConditionInfo(queryConditionType, key, javaType,
+                            jdbcType));
+        }
     }
     
     /**
@@ -539,9 +578,9 @@ public class SqlSource<T> implements Serializable, Cloneable {
         
         if (!ObjectUtils.isEmpty(obj)) {
             MetaObject metaObject = MetaObject.forObject(obj);
-            for (Entry<String, String> entryTemp : queryConditionProperty2SqlMapping.entrySet()) {
-                String queryPropertyName = entryTemp.getKey();
-                Object valueObj = metaObject.getValue(queryPropertyName);
+            for (Entry<String, String> entryTemp : queryConditionKey2SqlMapping.entrySet()) {
+                String queryKeyName = entryTemp.getKey();
+                Object valueObj = metaObject.getValue(queryKeyName);
                 if (ObjectUtils.isEmpty(valueObj)) {
                     continue;
                 }
@@ -584,9 +623,9 @@ public class SqlSource<T> implements Serializable, Cloneable {
         
         if (!ObjectUtils.isEmpty(obj)) {
             MetaObject metaObject = MetaObject.forObject(obj);
-            for (Entry<String, String> entryTemp : queryConditionProperty2SqlMapping.entrySet()) {
-                String queryPropertyName = entryTemp.getKey();
-                Object valueObj = metaObject.getValue(queryPropertyName);
+            for (Entry<String, String> entryTemp : queryConditionKey2SqlMapping.entrySet()) {
+                String queryKeyName = entryTemp.getKey();
+                Object valueObj = metaObject.getValue(queryKeyName);
                 if (ObjectUtils.isEmpty(valueObj)) {
                     continue;
                 }
@@ -620,13 +659,13 @@ public class SqlSource<T> implements Serializable, Cloneable {
                 @Override
                 public void setValues(PreparedStatement ps) throws SQLException {
                     int i = 1;
-                    for (Entry<String, String> entryTemp : queryConditionProperty2SqlMapping.entrySet()) {
-                        String queryPropertyName = entryTemp.getKey();
-                        Object valueObj = metaObject.getValue(queryPropertyName);
+                    for (Entry<String, String> entryTemp : queryConditionKey2SqlMapping.entrySet()) {
+                        String queryKeyName = entryTemp.getKey();
+                        Object valueObj = metaObject.getValue(queryKeyName);
                         if (ObjectUtils.isEmpty(valueObj)) {
                             continue;
                         }
-                        JdbcType jdbcType = queryConditionProperty2TypeMapping.get(queryPropertyName);
+                        JdbcType jdbcType = queryConditionKey2JdbcTypeMapping.get(queryKeyName);
                         JdbcUtils.setPreparedStatementValueForSimpleType(ps,
                                 i,
                                 valueObj,
@@ -659,13 +698,13 @@ public class SqlSource<T> implements Serializable, Cloneable {
     public LinkedHashMap<String, Object> getQueryCondtionParamMaps(Object obj) {
         final MetaObject metaObject = MetaObject.forObject(obj);
         final LinkedHashMap<String, Object> resMap = new LinkedHashMap<String, Object>();
-        for (Entry<String, String> entryTemp : queryConditionProperty2SqlMapping.entrySet()) {
-            String queryPropertyName = entryTemp.getKey();
-            Object valueObj = metaObject.getValue(queryPropertyName);
+        for (Entry<String, String> entryTemp : queryConditionKey2SqlMapping.entrySet()) {
+            String queryKeyName = entryTemp.getKey();
+            Object valueObj = metaObject.getValue(queryKeyName);
             if (ObjectUtils.isEmpty(valueObj)) {
                 continue;
             }
-            resMap.put(queryPropertyName, valueObj);
+            resMap.put(queryKeyName, valueObj);
         }
         return resMap;
     }
@@ -744,13 +783,13 @@ public class SqlSource<T> implements Serializable, Cloneable {
                         }
                     }
                 }
-                for (Entry<String, String> entryTemp : queryConditionProperty2SqlMapping.entrySet()) {
-                    String queryPropertyName = entryTemp.getKey();
-                    Object valueObj = metaObject.getValue(queryPropertyName);
+                for (Entry<String, String> entryTemp : queryConditionKey2SqlMapping.entrySet()) {
+                    String queryKeyName = entryTemp.getKey();
+                    Object valueObj = metaObject.getValue(queryKeyName);
                     if (ObjectUtils.isEmpty(valueObj)) {
                         continue;
                     }
-                    JdbcType jdbcType = queryConditionProperty2TypeMapping.get(queryPropertyName);
+                    JdbcType jdbcType = queryConditionKey2JdbcTypeMapping.get(queryKeyName);
                     JdbcUtils.setPreparedStatementValueForSimpleType(ps,
                             i++,
                             valueObj,
@@ -893,49 +932,63 @@ public class SqlSource<T> implements Serializable, Cloneable {
     public String getTableName() {
         return tableName;
     }
-
+    
     /**
      * @return 返回 getter2columnNameMapping
      */
     public LinkedHashMap<String, String> getGetter2columnNameMapping() {
         return getter2columnNameMapping;
     }
-
+    
     /**
      * @return 返回 getter2JavaTypeMapping
      */
     public LinkedHashMap<String, Class<?>> getGetter2JavaTypeMapping() {
         return getter2JavaTypeMapping;
     }
-
+    
     /**
      * @return 返回 queryConditionProperty2SqlMapping
      */
-    public LinkedHashMap<String, String> getQueryConditionProperty2SqlMapping() {
-        return queryConditionProperty2SqlMapping;
+    public LinkedHashMap<String, String> getQueryConditionKey2SqlMapping() {
+        return queryConditionKey2SqlMapping;
     }
-
+    
     /**
      * @return 返回 queryConditionProperty2TypeMapping
      */
-    public LinkedHashMap<String, JdbcType> getQueryConditionProperty2TypeMapping() {
-        return queryConditionProperty2TypeMapping;
+    public LinkedHashMap<String, JdbcType> getQueryConditionKey2JdbcTypeMapping() {
+        return queryConditionKey2JdbcTypeMapping;
     }
-
+    
+    /**
+     * @return 返回 queryConditionKey2ConditionInfoMapping
+     */
+    public LinkedHashMap<String, QueryConditionInfo> getQueryConditionKey2ConditionInfoMapping() {
+        return this.queryConditionKey2ConditionInfoMapping;
+    }
+    
+    /**
+     * @return 返回 queryConditionKey2JavaTypeMapping
+     */
+    public LinkedHashMap<String, Class<?>> getQueryConditionKey2JavaTypeMapping() {
+        return queryConditionKey2JavaTypeMapping;
+    }
+    
     /**
      * @return 返回 updateAblePropertyNames
      */
     public Set<String> getUpdateAblePropertyNames() {
         return updateAblePropertyNames;
     }
-
+    
     /**
      * @return 返回 otherCondition
      */
     public Set<String> getOtherCondition() {
         return otherCondition;
     }
-
+    
     /**
      * @return
      * @throws CloneNotSupportedException

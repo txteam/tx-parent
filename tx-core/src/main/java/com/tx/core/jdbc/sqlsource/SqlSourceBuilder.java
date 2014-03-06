@@ -18,6 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.type.JdbcType;
 import org.hibernate.dialect.Dialect;
 
+import com.tx.core.jdbc.model.QueryConditionTypeEnum;
 import com.tx.core.jdbc.sqlsource.annotation.QueryCondition;
 import com.tx.core.jdbc.sqlsource.annotation.QueryConditionEqual;
 import com.tx.core.jdbc.sqlsource.annotation.QueryConditionGreater;
@@ -27,6 +28,7 @@ import com.tx.core.jdbc.sqlsource.annotation.QueryConditionLessOrEqual;
 import com.tx.core.jdbc.sqlsource.annotation.QueryConditionLike;
 import com.tx.core.jdbc.sqlsource.annotation.QueryConditionLikeAfter;
 import com.tx.core.jdbc.sqlsource.annotation.QueryConditionLikeBefore;
+import com.tx.core.jdbc.sqlsource.annotation.QueryConditionUnEqual;
 import com.tx.core.jdbc.sqlsource.annotation.UpdateAble;
 import com.tx.core.reflection.ClassReflector;
 import com.tx.core.reflection.JpaColumnInfo;
@@ -158,14 +160,20 @@ public class SqlSourceBuilder {
         Set<String> getterNames = classReflector.getGetterNames();
         for (String getterNameTemp : getterNames) {
             Class<?> getterType = classReflector.getGetterType(getterNameTemp);
-            JdbcType getterJdbcType = null;
-            try {
-                getterJdbcType = JdbcUtils.getJdbcTypeByJavaType(getterType);
-            } catch (Exception e) {
-                //如果为不支持的类型则跳过
+            if(void.class.equals(getterType)){
                 continue;
             }
             String columnName = simpleSqlSource.getColumnNameByGetterName(getterNameTemp);
+            String queryConditionKey = getterNameTemp;
+            Class<?> queryConditionKeyType = getterType;
+            //如果为不直接支持的类型
+            if (!JdbcUtils.isSupportedSimpleType(getterType)) {
+                JpaMetaClass<?> getterTypeJpaMetaClass = JpaMetaClass.forClass(getterType);
+                queryConditionKey = queryConditionKey
+                        + StringUtils.capitalize(getterTypeJpaMetaClass.getPkGetterName());
+                queryConditionKeyType = getterTypeJpaMetaClass.getPkGetterType();
+            }
+            JdbcType queryConditionKeyJdbcType = JdbcUtils.getJdbcTypeByJavaType(queryConditionKeyType);
             
             //如果存在queryCondition条件
             if (ReflectionUtils.isHasAnnotationForGetter(type,
@@ -177,9 +185,11 @@ public class SqlSourceBuilder {
                 if (StringUtils.isBlank(qcAnnoTemp.key())) {
                     simpleSqlSource.addOtherCondition(qcAnnoTemp.condition());
                 } else {
-                    simpleSqlSource.addQueryConditionProperty2SqlMapping(qcAnnoTemp.key(),
+                    simpleSqlSource.addQueryConditionKey2SqlMapping(null,
+                            qcAnnoTemp.key(),
                             qcAnnoTemp.condition(),
-                            getterJdbcType);
+                            queryConditionKeyJdbcType,
+                            queryConditionKeyType);
                 }
             }
             
@@ -189,11 +199,29 @@ public class SqlSourceBuilder {
                 QueryConditionEqual anno = ReflectionUtils.getGetterAnnotation(type,
                         getterNameTemp,
                         QueryConditionEqual.class);
-                String keyTemp = StringUtils.isBlank(anno.key()) ? getterNameTemp
+                String keyTemp = StringUtils.isBlank(anno.key()) ? queryConditionKey
                         : anno.key();
-                simpleSqlSource.addQueryConditionProperty2SqlMapping(keyTemp,
+                simpleSqlSource.addQueryConditionKey2SqlMapping(QueryConditionTypeEnum.EQUAL,
+                        keyTemp,
                         MessageUtils.createMessage("{} = ?", columnName),
-                        getterJdbcType);
+                        queryConditionKeyJdbcType,
+                        queryConditionKeyType);
+                
+            }
+            
+            if (ReflectionUtils.isHasAnnotationForGetter(type,
+                    getterNameTemp,
+                    QueryConditionUnEqual.class)) {
+                QueryConditionUnEqual anno = ReflectionUtils.getGetterAnnotation(type,
+                        getterNameTemp,
+                        QueryConditionUnEqual.class);
+                String keyTemp = StringUtils.isBlank(anno.key()) ? queryConditionKey
+                        : anno.key();
+                simpleSqlSource.addQueryConditionKey2SqlMapping(QueryConditionTypeEnum.UNEQUAL,
+                        keyTemp,
+                        MessageUtils.createMessage("{} <> ?", columnName),
+                        queryConditionKeyJdbcType,
+                        queryConditionKeyType);
             }
             
             //如果存在like条件
@@ -203,7 +231,7 @@ public class SqlSourceBuilder {
                 QueryConditionLike anno = ReflectionUtils.getGetterAnnotation(type,
                         getterNameTemp,
                         QueryConditionLike.class);
-                String keyTemp = StringUtils.isBlank(anno.key()) ? getterNameTemp
+                String keyTemp = StringUtils.isBlank(anno.key()) ? queryConditionKey
                         : anno.key();
                 List<String> concatArgs = new ArrayList<String>();
                 concatArgs.add("'%'");
@@ -213,11 +241,13 @@ public class SqlSourceBuilder {
                         .getFunctions()
                         .get("concat")
                         .render(null, concatArgs, null);
-                simpleSqlSource.addQueryConditionProperty2SqlMapping(keyTemp,
+                simpleSqlSource.addQueryConditionKey2SqlMapping(QueryConditionTypeEnum.LIKE,
+                        keyTemp,
                         MessageUtils.createMessage("{} LIKE {}",
                                 columnName,
                                 valueStr),
-                        getterJdbcType);
+                        queryConditionKeyJdbcType,
+                        queryConditionKeyType);
             }
             
             //如果存在like后条件
@@ -227,7 +257,7 @@ public class SqlSourceBuilder {
                 QueryConditionLikeAfter anno = ReflectionUtils.getGetterAnnotation(type,
                         getterNameTemp,
                         QueryConditionLikeAfter.class);
-                String keyTemp = StringUtils.isBlank(anno.key()) ? getterNameTemp
+                String keyTemp = StringUtils.isBlank(anno.key()) ? queryConditionKey
                         : anno.key();
                 
                 List<String> concatArgs = new ArrayList<String>();
@@ -237,11 +267,13 @@ public class SqlSourceBuilder {
                         .getFunctions()
                         .get("concat")
                         .render(null, concatArgs, null);
-                simpleSqlSource.addQueryConditionProperty2SqlMapping(keyTemp,
+                simpleSqlSource.addQueryConditionKey2SqlMapping(QueryConditionTypeEnum.LIKE_AFTER,
+                        keyTemp,
                         MessageUtils.createMessage("{} LIKE {}",
                                 columnName,
                                 valueStr),
-                        getterJdbcType);
+                        queryConditionKeyJdbcType,
+                        queryConditionKeyType);
             }
             
             //如果存在like后条件
@@ -251,7 +283,7 @@ public class SqlSourceBuilder {
                 QueryConditionLikeBefore anno = ReflectionUtils.getGetterAnnotation(type,
                         getterNameTemp,
                         QueryConditionLikeBefore.class);
-                String keyTemp = StringUtils.isBlank(anno.key()) ? getterNameTemp
+                String keyTemp = StringUtils.isBlank(anno.key()) ? queryConditionKey
                         : anno.key();
                 
                 List<String> concatArgs = new ArrayList<String>();
@@ -261,11 +293,13 @@ public class SqlSourceBuilder {
                         .getFunctions()
                         .get("concat")
                         .render(null, concatArgs, null);
-                simpleSqlSource.addQueryConditionProperty2SqlMapping(keyTemp,
+                simpleSqlSource.addQueryConditionKey2SqlMapping(QueryConditionTypeEnum.LIKE_BEFORE,
+                        keyTemp,
                         MessageUtils.createMessage("{} LIKE {}",
                                 columnName,
                                 valueStr),
-                        getterJdbcType);
+                        queryConditionKeyJdbcType,
+                        queryConditionKeyType);
             }
             
             //如果存在>条件
@@ -275,12 +309,14 @@ public class SqlSourceBuilder {
                 QueryConditionGreater anno = ReflectionUtils.getGetterAnnotation(type,
                         getterNameTemp,
                         QueryConditionGreater.class);
-                String keyTemp = StringUtils.isBlank(anno.key()) ? getterNameTemp
+                String keyTemp = StringUtils.isBlank(anno.key()) ? queryConditionKey
                         : anno.key();
                 
-                simpleSqlSource.addQueryConditionProperty2SqlMapping(keyTemp,
+                simpleSqlSource.addQueryConditionKey2SqlMapping(QueryConditionTypeEnum.GREATER,
+                        keyTemp,
                         MessageUtils.createMessage("{} > ?", columnName),
-                        getterJdbcType);
+                        queryConditionKeyJdbcType,
+                        queryConditionKeyType);
             }
             
             //如果存在>=条件
@@ -290,12 +326,14 @@ public class SqlSourceBuilder {
                 QueryConditionGreaterOrEqual anno = ReflectionUtils.getGetterAnnotation(type,
                         getterNameTemp,
                         QueryConditionGreaterOrEqual.class);
-                String keyTemp = StringUtils.isBlank(anno.key()) ? getterNameTemp
+                String keyTemp = StringUtils.isBlank(anno.key()) ? queryConditionKey
                         : anno.key();
                 
-                simpleSqlSource.addQueryConditionProperty2SqlMapping(keyTemp,
+                simpleSqlSource.addQueryConditionKey2SqlMapping(QueryConditionTypeEnum.GREATER_OR_EQUAL,
+                        keyTemp,
                         MessageUtils.createMessage("{} >= ?", columnName),
-                        getterJdbcType);
+                        queryConditionKeyJdbcType,
+                        queryConditionKeyType);
             }
             
             //如果存在<条件
@@ -305,12 +343,14 @@ public class SqlSourceBuilder {
                 QueryConditionLess anno = ReflectionUtils.getGetterAnnotation(type,
                         getterNameTemp,
                         QueryConditionLess.class);
-                String keyTemp = StringUtils.isBlank(anno.key()) ? getterNameTemp
+                String keyTemp = StringUtils.isBlank(anno.key()) ? queryConditionKey
                         : anno.key();
                 
-                simpleSqlSource.addQueryConditionProperty2SqlMapping(keyTemp,
+                simpleSqlSource.addQueryConditionKey2SqlMapping(QueryConditionTypeEnum.LESS,
+                        keyTemp,
                         MessageUtils.createMessage("{} < ?", columnName),
-                        getterJdbcType);
+                        queryConditionKeyJdbcType,
+                        queryConditionKeyType);
             }
             
             //如果存在<=条件
@@ -320,12 +360,14 @@ public class SqlSourceBuilder {
                 QueryConditionLessOrEqual anno = ReflectionUtils.getGetterAnnotation(type,
                         getterNameTemp,
                         QueryConditionLessOrEqual.class);
-                String keyTemp = StringUtils.isBlank(anno.key()) ? getterNameTemp
+                String keyTemp = StringUtils.isBlank(anno.key()) ? queryConditionKey
                         : anno.key();
                 
-                simpleSqlSource.addQueryConditionProperty2SqlMapping(keyTemp,
+                simpleSqlSource.addQueryConditionKey2SqlMapping(QueryConditionTypeEnum.LESS_OR_EQUAL,
+                        keyTemp,
                         MessageUtils.createMessage("{} <= ?", columnName),
-                        getterJdbcType);
+                        queryConditionKeyJdbcType,
+                        queryConditionKeyType);
             }
         }
     }
@@ -377,6 +419,8 @@ public class SqlSourceBuilder {
             simpleSqlSource.addGetter2columnMapping(jpaColumnInfo.getRealGetterName(),
                     jpaColumnInfo.getColumnName(),
                     jpaColumnInfo.getRealGetterType());
+            simpleSqlSource.addGetter2GetterColumnInfoMapping(jpaMetaClass,
+                    entryTemp.getKey());
         }
     }
 }

@@ -8,10 +8,7 @@ package com.tx.core.generator.model;
 
 import java.util.List;
 
-import org.hibernate.dialect.Dialect;
-
 import com.tx.core.generator.GeneratorUtils;
-import com.tx.core.jdbc.sqlsource.SqlSource;
 import com.tx.core.reflection.JpaMetaClass;
 
 /**
@@ -45,15 +42,17 @@ public class UpdateMapper {
     }
     
     /** <默认构造函数> */
-    public UpdateMapper(JpaMetaClass<?> jpaMetaClass, SqlSource<?> sqlSource,
-            Dialect dialect) {
+    public UpdateMapper(JpaMetaClass<?> jpaMetaClass) {
         super();
         this.id = "update" + jpaMetaClass.getEntitySimpleName();
         
-        this.idPropertyName = sqlSource.getPkName();
-        this.idColumnName = sqlSource.getColumnNameByGetterName(this.idPropertyName);
+        this.idPropertyName = jpaMetaClass.getPkGetterName();
+        this.idColumnName = jpaMetaClass.getGetter2columnInfoMapping()
+                .get(this.idPropertyName)
+                .getColumnName()
+                .toUpperCase();
         this.simpleTableName = jpaMetaClass.getSimpleTableName().toUpperCase();
-        this.tableName = sqlSource.getTableName().toUpperCase();
+        this.tableName = jpaMetaClass.getTableName().toUpperCase();
         this.sqlMapColumnList = GeneratorUtils.generateSqlMapColumnList(jpaMetaClass);
     }
     
@@ -140,18 +139,19 @@ public class UpdateMapper {
     public void setIdPropertyName(String idPropertyName) {
         this.idPropertyName = idPropertyName;
     }
-
+    
     /**
      * @return 返回 updateSqlMapColumnList
      */
     public List<SqlMapColumn> getUpdateSqlMapColumnList() {
         return updateSqlMapColumnList;
     }
-
+    
     /**
      * @param 对updateSqlMapColumnList进行赋值
      */
-    public void setUpdateSqlMapColumnList(List<SqlMapColumn> updateSqlMapColumnList) {
+    public void setUpdateSqlMapColumnList(
+            List<SqlMapColumn> updateSqlMapColumnList) {
         this.updateSqlMapColumnList = updateSqlMapColumnList;
     }
 }

@@ -6,9 +6,6 @@
  */
 package com.tx.core.generator.model;
 
-import org.hibernate.dialect.Dialect;
-
-import com.tx.core.jdbc.sqlsource.SqlSource;
 import com.tx.core.reflection.JpaMetaClass;
 
 /**
@@ -38,17 +35,19 @@ public class DeleteMapper {
         super();
     }
     
-    public DeleteMapper(JpaMetaClass<?> jpaMetaClass, SqlSource<?> sqlSource,
-            Dialect dialect) {
+    public DeleteMapper(JpaMetaClass<?> jpaMetaClass) {
         super();
         this.id = "delete" + jpaMetaClass.getEntitySimpleName();
         this.parameterType = jpaMetaClass.getEntityTypeName();
         
-        this.idColumnName = sqlSource.getColumnNameByGetterName(sqlSource.getPkName())
+        this.idPropertyName = jpaMetaClass.getPkGetterName();
+        this.idColumnName = jpaMetaClass.getGetter2columnInfoMapping()
+                .get(this.idPropertyName)
+                .getColumnName()
                 .toUpperCase();
-        this.idPropertyName = sqlSource.getPkName();
+        
         this.simpleTableName = jpaMetaClass.getSimpleTableName().toUpperCase();
-        this.tableName = sqlSource.getTableName().toUpperCase();
+        this.tableName = jpaMetaClass.getTableName().toUpperCase();
     }
     
     /**

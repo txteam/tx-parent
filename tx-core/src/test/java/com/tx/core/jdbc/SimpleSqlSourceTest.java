@@ -14,6 +14,7 @@ import org.apache.commons.lang.time.DateUtils;
 import org.apache.ibatis.type.JdbcType;
 import org.hibernate.dialect.MySQL5InnoDBDialect;
 
+import com.tx.core.jdbc.model.QueryConditionTypeEnum;
 import com.tx.core.jdbc.sqlsource.SqlSource;
 
 
@@ -50,15 +51,15 @@ public class SimpleSqlSourceTest {
             System.out.println(simpleSqlMapMapper.deleteSql());
             System.out.println(simpleSqlMapMapper.findSql());
             
-            simpleSqlMapMapper.addQueryConditionProperty2SqlMapping("aaa",
+            simpleSqlMapMapper.addQueryConditionKey2SqlMapping(QueryConditionTypeEnum.EQUAL,"aaa",
                     "AAA = ?",
-                    JdbcType.VARCHAR);
-            simpleSqlMapMapper.addQueryConditionProperty2SqlMapping("minCCC",
+                    JdbcType.VARCHAR,String.class);
+            simpleSqlMapMapper.addQueryConditionKey2SqlMapping(QueryConditionTypeEnum.GREATER,"minCCC",
                     "CCC > ?",
-                    JdbcType.TIMESTAMP);
-            simpleSqlMapMapper.addQueryConditionProperty2SqlMapping("maxCCC",
+                    JdbcType.TIMESTAMP,Date.class);
+            simpleSqlMapMapper.addQueryConditionKey2SqlMapping(QueryConditionTypeEnum.LESS,"maxCCC",
                     "CCC < ?",
-                    JdbcType.TIMESTAMP);
+                    JdbcType.TIMESTAMP,Date.class);
             
             Map<String, Object> params = new HashMap<String, Object>();
             params.put("aaa", "111");

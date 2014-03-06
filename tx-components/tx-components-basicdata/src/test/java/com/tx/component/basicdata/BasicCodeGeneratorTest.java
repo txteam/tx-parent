@@ -19,7 +19,7 @@ import com.tx.core.dbscript.model.DataSourceTypeEnum;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class BasicCodeGenerator {
+public class BasicCodeGeneratorTest {
     
     public static void main(String[] args) {
         Class<?> basicDataType = TestBasicData.class;
@@ -28,7 +28,8 @@ public class BasicCodeGenerator {
         BasicDataCodeGenerator.generate(basicDataType,
                 DataSourceTypeEnum.MYSQL,
                 codeBaseFolder,
-                new String[] { "name", "code" },
+                new String[][] { new String[] { "name" },
+                        new String[] { "name", "code" } },
                 "valid");
         
         System.out.println("success");

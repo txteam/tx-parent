@@ -14,8 +14,6 @@ import java.util.Map.Entry;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.dialect.MySQL5InnoDBDialect;
 
-import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.jdbc.sqlsource.SqlSource;
 import com.tx.core.reflection.JpaColumnInfo;
 import com.tx.core.reflection.JpaMetaClass;
 import com.tx.core.util.JdbcUtils;
@@ -47,21 +45,19 @@ public class DBScriptMapper {
         super();
     }
     
-    public DBScriptMapper(JpaMetaClass<?> jpaMetaClass, SqlSource<?> sqlSource,
-            Dialect dialect) {
+    public DBScriptMapper(JpaMetaClass<?> jpaMetaClass, Dialect dialect) {
         super();
-        this.tableName = sqlSource.getTableName().toUpperCase();
-        this.pkColumnName = sqlSource.getColumnNameByGetterName(sqlSource.getPkName());
+        this.tableName = jpaMetaClass.getTableName().toUpperCase();
+        this.pkColumnName = jpaMetaClass.getGetter2columnInfoMapping()
+                .get(jpaMetaClass.getPkGetterName())
+                .getColumnName()
+                .toUpperCase();
         
-        Map<String, String> getterName2ColumnNameMapping = sqlSource.getGetter2columnNameMapping();
-        Map<String, JpaColumnInfo> getterName2ColumnInfoMapping = jpaMetaClass.getGetter2columnInfoMapping();
-        
-        for (Entry<String, String> entryTemp : getterName2ColumnNameMapping.entrySet()) {
-            String columnName = entryTemp.getValue();
-            AssertUtils.isTrue(getterName2ColumnInfoMapping.containsKey(entryTemp.getKey()),
-                    "columnInfo null.");
-            JpaColumnInfo columnInfo = getterName2ColumnInfoMapping.get(entryTemp.getKey());
-            this.columnName2TypeNameMapping.put(columnName,
+        for (Entry<String, JpaColumnInfo> entryTemp : jpaMetaClass.getGetter2columnInfoMapping()
+                .entrySet()) {
+            JpaColumnInfo columnInfo = entryTemp.getValue();
+            
+            this.columnName2TypeNameMapping.put(entryTemp.getKey(),
                     dialect.getTypeName(JdbcUtils.getSqlTypeByJavaType(columnInfo.getRealGetterType()),
                             columnInfo.getLength(),
                             columnInfo.getPrecision(),

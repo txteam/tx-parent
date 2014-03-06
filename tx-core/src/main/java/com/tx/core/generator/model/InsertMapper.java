@@ -9,10 +9,7 @@ package com.tx.core.generator.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hibernate.dialect.Dialect;
-
 import com.tx.core.generator.GeneratorUtils;
-import com.tx.core.jdbc.sqlsource.SqlSource;
 import com.tx.core.reflection.JpaMetaClass;
 
 /**
@@ -42,13 +39,12 @@ public class InsertMapper {
         super();
     }
     
-    public InsertMapper(JpaMetaClass<?> jpaMetaClass, SqlSource<?> sqlSource,
-            Dialect dialect) {
+    public InsertMapper(JpaMetaClass<?> jpaMetaClass) {
         super();
         this.id = "delete" + jpaMetaClass.getEntitySimpleName();
         this.parameterType = jpaMetaClass.getEntityTypeName();
         this.isUseSelectKey = false;
-        this.tableName = sqlSource.getTableName().toUpperCase();
+        this.tableName = jpaMetaClass.getTableName().toUpperCase();
         this.sqlMapColumnList = GeneratorUtils.generateSqlMapColumnList(jpaMetaClass);
     }
     

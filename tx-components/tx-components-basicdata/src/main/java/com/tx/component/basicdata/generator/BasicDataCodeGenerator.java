@@ -8,16 +8,20 @@ package com.tx.component.basicdata.generator;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.dialect.Dialect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.ClassUtils;
 
 import com.tx.core.dbscript.model.DataSourceTypeEnum;
+import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.generator.model.DBScriptMapper;
 import com.tx.core.generator.model.DaoGeneratorModel;
 import com.tx.core.generator.model.DeleteMapper;
@@ -59,13 +63,14 @@ public class BasicDataCodeGenerator {
     
     private static String serviceTemplateFilePath = "com/tx/component/basicdata/generator/defaultftl/basicdata_service.ftl";
     
-    private static String serviceTestTemplateFilePath = "com/tx/component/basicdata/generator/defaultftl/basicdata_serviceTest.ftl";
-    
     /**
-      * 生成基础数据代码<br/>
+      *  生成基础数据代码<br/>
       *<功能详细描述>
-      * @param basicDataType
-      * @param dataSourceType [参数说明]
+      * @param basicDataType 数据库类型
+      * @param dataSourceType
+      * @param codeBaseFolder
+      * @param uniqueGetterNames
+      * @param validGetterName [参数说明]
       * 
       * @return void [返回类型说明]
       * @exception throws [异常类型] [异常说明]
@@ -73,14 +78,15 @@ public class BasicDataCodeGenerator {
      */
     public static void generate(Class<?> basicDataType,
             DataSourceTypeEnum dataSourceType, String codeBaseFolder,
-            String[] uniqueGetterNames, String validGetterName) {
-        generate(basicDataType,
-                "UTF-8",
-                dataSourceType,
+            String[][] uniqueGetterNames, String validGetterName) {
+        generate("UTF-8",
                 "GBK",
+                basicDataType,
+                dataSourceType,
                 codeBaseFolder,
                 uniqueGetterNames,
-                validGetterName);
+                validGetterName,
+                false);
     }
     
     /**
@@ -95,19 +101,51 @@ public class BasicDataCodeGenerator {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public static <T> void generate(Class<T> basicDataType, String codeEncode,
-            DataSourceTypeEnum dataSourceType, String dbEncode,
-            String codeBaseFolder, String[] uniqueGetterNames,
-            String validGetterName) {
+    public static <T> void generate(String codeEncode, String dbEncode,
+            Class<T> basicDataType, DataSourceTypeEnum dataSourceType,
+            String codeBaseFolder, String[][] uniqueGetterNames,
+            String validPropertyName, boolean queryPageIsPagedList) {
         try {
             FileUtils.cleanDirectory(new File(codeBaseFolder));
         } catch (IOException e) {
             e.printStackTrace();
         }
         
+        AssertUtils.notTrue(Modifier.isInterface(basicDataType.getClass()
+                .getModifiers())
+                || Modifier.isAbstract(basicDataType.getClass().getModifiers()),
+                "指定的基础数据类型不能为接口或抽象类。class:{}",
+                new Object[] { basicDataType.getClass() });
+        logger.info("校验:指定类费接口，非抽象类：---------------------通过");
         JpaMetaClass<T> jpaMetaClass = JpaMetaClass.forClass(basicDataType);
         SqlSource<T> sqlSource = sqlSourceBuilder.build(basicDataType,
                 dataSourceType.getDialect());
+        //校验类型是否合法
+        //校验对应的类不是接口或抽象类
+        //校验对象是否存在可更新字段
+        AssertUtils.notTrue(CollectionUtils.isEmpty(sqlSource.getUpdateAblePropertyNames()),
+                "指定的基础数据类型不含有可更新的字段。class:{}",
+                new Object[] { basicDataType.getClass() });
+        logger.info("校验:指定类存在可更新字段：-----------------------通过");
+        
+        //校验对象是否存在主键设置
+        AssertUtils.notEmpty(sqlSource.getPkName(),
+                "指定的基础数据类型未指定主键字段。class:{}",
+                new Object[] { basicDataType.getClass() });
+        logger.info("校验:指定类主键设定存在：-------------------------通过");
+        //TODO:校验对象属性是否合法不能有sql关键字
+        //TODO:校验设定的uniqueGetterName存在equals判断条件
+        //TODO:校验设定的uniqueGetterName不是主键（允许是主键与其他字段一起的联合唯一索引）
+        //TODO:校验设定的validPropertyName如果不为空时，对象中对应属性应存在equals查询条件，并且对应字段应当能够被更新,并且对应属性为boolean其他类型标识暂不支持
+        
+        //校验validPropertyName为可更新字段
+        if (StringUtils.isEmpty(validPropertyName)) {
+            AssertUtils.isTrue(sqlSource.getUpdateAblePropertyNames()
+                    .contains(validPropertyName),
+                    "validPropertyName:{} 不存在或未配置该字段可更新。可在对应实体上添加@UpdateAble注解.",
+                    new String[] { validPropertyName });
+            logger.info("校验:指定类属性{}为是否有效标志,校验改属性是否配置为可更新：--------------------通过");
+        }
         
         //生成脚本
         logger.info("开始生成脚本:");
@@ -127,11 +165,14 @@ public class BasicDataCodeGenerator {
         logger.info("开始生成Dao/DaoImpl:");
         generateDao(jpaMetaClass, sqlSource, dataSourceType, codeBaseFolder);
         //生成Service
-        logger.info("开始生成Service/ServiceTest:");
-        generateService(jpaMetaClass, sqlSource, dataSourceType, codeBaseFolder);
-        //生成Controller
+        logger.info("开始生成Service");
+        generateService(jpaMetaClass,
+                sqlSource,
+                dataSourceType,
+                codeBaseFolder,
+                validPropertyName);
+        // 生成Controller 、queryList、queryPagedList、add、update
         
-        //生成queryPage,addPage,updatePage
     }
     
     /**
@@ -146,12 +187,13 @@ public class BasicDataCodeGenerator {
     */
     public static <T> void generateService(JpaMetaClass<T> jpaMetaClass,
             SqlSource<T> sqlSource, DataSourceTypeEnum dataSourceType,
-            String codeBaseFolder) {
+            String codeBaseFolder, String validPropertyName) {
         ServiceGeneratorModel serviceModel = new ServiceGeneratorModel(
                 jpaMetaClass, sqlSource, dataSourceType.getDialect());
         
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("service", serviceModel);
+        data.put("validPropertyName", validPropertyName);
         
         String basePath = ClassUtils.convertClassNameToResourcePath(jpaMetaClass.getEntityTypeName())
                 + "/../..";
@@ -161,12 +203,6 @@ public class BasicDataCodeGenerator {
                 data,
                 codeBaseFolder + "/main/java/" + basePath + "/service/"
                         + jpaMetaClass.getEntitySimpleName() + "Service.java");
-        FreeMarkerUtils.fprint(loadTemplateClass,
-                serviceTestTemplateFilePath,
-                data,
-                codeBaseFolder + "/test/java/" + basePath + "/"
-                        + jpaMetaClass.getEntitySimpleName()
-                        + "ServiceTest.java");
     }
     
     /**
@@ -183,7 +219,7 @@ public class BasicDataCodeGenerator {
             SqlSource<T> sqlSource, DataSourceTypeEnum dataSourceType,
             String codeBaseFolder) {
         DaoGeneratorModel daoModel = new DaoGeneratorModel(jpaMetaClass,
-                sqlSource, dataSourceType.getDialect());
+                dataSourceType.getDialect());
         
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("dao", daoModel);
@@ -216,12 +252,11 @@ public class BasicDataCodeGenerator {
     public static <T> void generateSqlMap(JpaMetaClass<T> jpaMetaClass,
             SqlSource<T> sqlSource, DataSourceTypeEnum dataSourceType,
             String codeBaseFolder) {
-        Dialect dialect = dataSourceType.getDialect();
-        SqlMapMapper mapper = new SqlMapMapper(jpaMetaClass, sqlSource, dialect);
-        InsertMapper insert = new InsertMapper(jpaMetaClass, sqlSource, dialect);
-        DeleteMapper delete = new DeleteMapper(jpaMetaClass, sqlSource, dialect);
-        SelectMapper select = new SelectMapper(jpaMetaClass, sqlSource, dialect);
-        UpdateMapper update = new UpdateMapper(jpaMetaClass, sqlSource, dialect);
+        SqlMapMapper mapper = new SqlMapMapper(jpaMetaClass);
+        InsertMapper insert = new InsertMapper(jpaMetaClass);
+        DeleteMapper delete = new DeleteMapper(jpaMetaClass);
+        SelectMapper select = new SelectMapper(jpaMetaClass, sqlSource);
+        UpdateMapper update = new UpdateMapper(jpaMetaClass);
         
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("parseMessage", "");
@@ -263,7 +298,7 @@ public class BasicDataCodeGenerator {
         Map<String, Object> data = new HashMap<String, Object>();
         
         DBScriptMapper dbScriptMapper = new DBScriptMapper(jpaMetaClass,
-                sqlSource, DataSourceTypeEnum.MySQL5InnoDBDialect.getDialect());
+                DataSourceTypeEnum.MySQL5InnoDBDialect.getDialect());
         data.put("dbScriptMapper", dbScriptMapper);
         
         String[] arrs = jpaMetaClass.getEntityTypeName().split("\\.");
@@ -277,7 +312,7 @@ public class BasicDataCodeGenerator {
         logger.info("mysql脚本存放路径:{}", codeBaseFolder + "/mysql/01basisScript/"
                 + packageName + "/" + sqlSource.getTableName().toUpperCase()
                 + ".sql");
-        dbScriptMapper = new DBScriptMapper(jpaMetaClass, sqlSource,
+        dbScriptMapper = new DBScriptMapper(jpaMetaClass,
                 DataSourceTypeEnum.ORACLE10G.getDialect());
         data.put("dbScriptMapper", dbScriptMapper);
         FreeMarkerUtils.fprint(loadTemplateClass,
@@ -310,7 +345,7 @@ public class BasicDataCodeGenerator {
         Map<String, Object> data = new HashMap<String, Object>();
         
         DBScriptMapper dbScriptMapper = new DBScriptMapper(jpaMetaClass,
-                sqlSource, dialect);
+                dialect);
         data.put("dbScriptMapper", dbScriptMapper);
         
         String content = FreeMarkerUtils.generateContent(loadTemplateClass,

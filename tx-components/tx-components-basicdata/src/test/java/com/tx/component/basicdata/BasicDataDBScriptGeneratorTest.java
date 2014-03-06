@@ -27,7 +27,7 @@ import com.tx.core.reflection.JpaMetaClass;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class BasicDataGenerator {
+public class BasicDataDBScriptGeneratorTest {
     
     public static void main(String[] args) {
         Class<BaseTestBasicModel> basicDataType = BaseTestBasicModel.class;

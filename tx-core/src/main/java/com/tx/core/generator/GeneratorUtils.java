@@ -19,6 +19,8 @@ import org.h2.util.StringUtils;
 
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.generator.model.SqlMapColumn;
+import com.tx.core.jdbc.model.QueryConditionInfo;
+import com.tx.core.jdbc.model.QueryConditionTypeEnum;
 import com.tx.core.jdbc.sqlsource.SqlSource;
 import com.tx.core.reflection.JpaColumnInfo;
 import com.tx.core.reflection.JpaMetaClass;
@@ -50,17 +52,27 @@ public class GeneratorUtils {
             JpaMetaClass<?> jpaMetaClass, SqlSource<?> sqlSource) {
         Map<String, String> resMap = new HashMap<String, String>();
         
-        Map<String, String> queryConditionSqlMapping = sqlSource.getQueryConditionProperty2SqlMapping();
-        Map<String, JdbcType> queryConditionTypeMapping = sqlSource.getQueryConditionProperty2TypeMapping();
+        Map<String, String> queryConditionSqlMapping = sqlSource.getQueryConditionKey2SqlMapping();
+        Map<String, JdbcType> queryConditionTypeMapping = sqlSource.getQueryConditionKey2JdbcTypeMapping();
+        Map<String, QueryConditionInfo> queryConditionInfoMapping = sqlSource.getQueryConditionKey2ConditionInfoMapping();
         
-        for(Entry<String, String> entryTemp : queryConditionSqlMapping.entrySet()){
-            String getterName = entryTemp.getKey();
-            JdbcType jdbcType = queryConditionTypeMapping.get(getterName);
-            AssertUtils.notNull(jdbcType,"jdbcType is null.");
-            String replaceValue = "#{" + getterName + ",jdbcType=" + jdbcType.toString() + "}";
-            String queryCondition = StringUtils.replaceAll(entryTemp.getValue(), "?", replaceValue);
+        for (Entry<String, String> entryTemp : queryConditionSqlMapping.entrySet()) {
             
-            resMap.put(getterName, queryCondition);
+            String queryConditionKey = entryTemp.getKey();
+            QueryConditionInfo queryConditionInfoTemp = queryConditionInfoMapping.get(queryConditionKey);;
+            JdbcType jdbcType = queryConditionTypeMapping.get(queryConditionKey);
+            AssertUtils.notNull(jdbcType, "jdbcType is null.");
+            String replaceValue = "#{" + queryConditionKey + ",jdbcType="
+                    + jdbcType.toString() + "}";
+            String queryCondition = StringUtils.replaceAll(entryTemp.getValue(),
+                    "?",
+                    replaceValue);
+            if(queryConditionInfoTemp != null){
+                if(QueryConditionTypeEnum.UNEQUAL.equals(queryConditionInfoTemp.getQueryConditionType())){
+                    queryCondition = "<![CDATA[ " + queryCondition + " ]]>";
+                }
+            }
+            resMap.put(queryConditionKey, queryCondition);
         }
         return resMap;
     }

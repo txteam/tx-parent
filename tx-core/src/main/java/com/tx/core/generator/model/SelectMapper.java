@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.dialect.Dialect;
 
 import com.tx.core.generator.GeneratorUtils;
 import com.tx.core.jdbc.sqlsource.SqlSource;
@@ -55,22 +54,24 @@ public class SelectMapper {
         super();
     }
     
-    public SelectMapper(JpaMetaClass<?> jpaMetaClass, SqlSource<?> sqlSource,
-            Dialect dialect) {
+    public SelectMapper(JpaMetaClass<?> jpaMetaClass, SqlSource<?> sqlSource) {
         super();
-        this.resultMapId = StringUtils.uncapitalize(jpaMetaClass.getEntitySimpleName()) + "Map";
+        this.resultMapId = StringUtils.uncapitalize(jpaMetaClass.getEntitySimpleName())
+                + "Map";
         this.parameterType = jpaMetaClass.getEntityTypeName();
         this.findId = "find" + jpaMetaClass.getEntitySimpleName();
         this.queryId = "query" + jpaMetaClass.getEntitySimpleName();
         
-        this.tableName = sqlSource.getTableName().toUpperCase();
+        this.tableName = jpaMetaClass.getTableName().toUpperCase();
         this.simpleTableName = jpaMetaClass.getSimpleTableName().toUpperCase();
-        this.idPropertyName = sqlSource.getPkName();
-        this.idColumnName = sqlSource.getColumnNameByGetterName(idPropertyName).toUpperCase();
-        this.otherCondition.addAll(sqlSource.getOtherCondition());
-        
-        this.queryConditionMap = GeneratorUtils.generateQueryConditionMap(jpaMetaClass, sqlSource);
+        this.idPropertyName = jpaMetaClass.getPkGetterName();
+        this.idColumnName = jpaMetaClass.getGetter2columnInfoMapping().get(this.idPropertyName).getColumnName().toUpperCase();
         this.sqlMapColumnList = GeneratorUtils.generateSqlMapColumnList(jpaMetaClass);
+        
+        this.otherCondition.addAll(sqlSource.getOtherCondition());
+        this.queryConditionMap = GeneratorUtils.generateQueryConditionMap(jpaMetaClass,
+                sqlSource);
+        
     }
     
     /**
@@ -198,28 +199,28 @@ public class SelectMapper {
     public void setIdPropertyName(String idPropertyName) {
         this.idPropertyName = idPropertyName;
     }
-
+    
     /**
      * @return 返回 queryConditionMap
      */
     public Map<String, String> getQueryConditionMap() {
         return queryConditionMap;
     }
-
+    
     /**
      * @param 对queryConditionMap进行赋值
      */
     public void setQueryConditionMap(Map<String, String> queryConditionMap) {
         this.queryConditionMap = queryConditionMap;
     }
-
+    
     /**
      * @return 返回 otherCondition
      */
     public Set<String> getOtherCondition() {
         return otherCondition;
     }
-
+    
     /**
      * @param 对otherCondition进行赋值
      */
