@@ -26,6 +26,6 @@
 		<module>tx-component-rule</module>
 		<module>tx-component-workflow</module>
 		<module>tx-component-template</module>
-		<module>tx-components-basicdata</module>
+		<module>tx-component-basicdata</module>
 	</modules>
 </project>
