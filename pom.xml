@@ -48,11 +48,6 @@
 			</dependency>
 			<dependency>
 				<groupId>com.tx</groupId>
-				<artifactId>tx-component-calendar</artifactId>
-				<version>${tx-version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.tx</groupId>
 				<artifactId>tx-component-mainframe</artifactId>
 				<version>${tx-version}</version>
 			</dependency>
@@ -74,6 +69,11 @@
 			<dependency>
 				<groupId>com.tx</groupId>
 				<artifactId>tx-component-workflow</artifactId>
+				<version>${tx-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.tx</groupId>
+				<artifactId>tx-component-basicdata</artifactId>
 				<version>${tx-version}</version>
 			</dependency>
 

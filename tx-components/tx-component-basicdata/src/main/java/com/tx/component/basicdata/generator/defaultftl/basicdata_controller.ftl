@@ -36,7 +36,7 @@ import com.tx.core.paged.model.PagedList;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-//TODO:指定自动生成的权限上级权限,以及对应的权限名称
+//FIXME:指定自动生成的权限上级权限,以及对应的权限名称
 @CheckOperateAuth(key = "${view.lowerCaseEntitySimpleName}_manage", name = "${view.lowerCaseEntitySimpleName}管理")
 @Controller("${view.lowerCaseEntitySimpleName}Controller")
 @RequestMapping("/${view.lowerCaseEntitySimpleName}")
@@ -142,10 +142,10 @@ public class ${view.entitySimpleName}Controller {
         
         Map<String, String> resMap = new HashMap<String, String>();
         if (!flag) {
-        	//TODO:修改验证重复成功提示信息
+        	//FIXME:修改验证重复成功提示信息
             resMap.put("ok", "可用的${view.lowerCaseEntitySimpleName} <#list uniqueGetterNames as uniqueGetterName>${uniqueGetterName}<#if uniqueGetterName_has_next>,</#if></#list>");
         } else {
-        	//TODO:修改验证重复失败提示信息
+        	//FIXME:修改验证重复失败提示信息
             resMap.put("error", "已经存在的${view.lowerCaseEntitySimpleName} <#list uniqueGetterNames as uniqueGetterName>${uniqueGetterName}<#if uniqueGetterName_has_next>,</#if></#list>");
         }
         return resMap;
@@ -195,7 +195,7 @@ public class ${view.entitySimpleName}Controller {
       * @see [类、类#方法、类#成员]
      */
     @ResponseBody
-    @RequestMapping("/query${view.entitySimpleName}ListIncludeInvalid")
+    @RequestMapping("/query${view.entitySimpleName}ListIncludeAppoint")
     public List<${view.entitySimpleName}> query${view.entitySimpleName}ListIncludeAppoint${view.upCaseIdPropertyName}(
     		@RequestParam MultiValueMap<String, String> request,
 <#list view.queryConditionName2TypeNameMapping?keys as key>
@@ -324,7 +324,7 @@ public class ${view.entitySimpleName}Controller {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    //TODO:修改删增加权限名称
+    //FIXME:修改删增加权限名称
     @CheckOperateAuth(key = "add_${view.lowerCaseEntitySimpleName}", name = "增加${view.entitySimpleName}")
     @RequestMapping("/add${view.entitySimpleName}")
     @ResponseBody
@@ -343,7 +343,7 @@ public class ${view.entitySimpleName}Controller {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    //TODO:修改删编辑权限名称
+    //FIXME:修改删编辑权限名称
     @CheckOperateAuth(key = "update_${view.lowerCaseEntitySimpleName}", name = "编辑${view.entitySimpleName}")
     @RequestMapping("/update${view.entitySimpleName}")
     @ResponseBody
@@ -363,7 +363,7 @@ public class ${view.entitySimpleName}Controller {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    //TODO:修改删除权限名称
+    //FIXME:修改删除权限名称
     @CheckOperateAuth(key = "delete_${view.lowerCaseEntitySimpleName}", name = "删除${view.entitySimpleName}")
     @ResponseBody
     @RequestMapping("/delete${view.entitySimpleName}By${view.upCaseIdPropertyName}")
@@ -382,7 +382,7 @@ public class ${view.entitySimpleName}Controller {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    //TODO:修改禁用权限名称
+    //FIXME:修改禁用权限名称
     @CheckOperateAuth(key = "disable_${view.lowerCaseEntitySimpleName}", name = "禁用${view.entitySimpleName}")
     @ResponseBody
     @RequestMapping("/disable${view.entitySimpleName}By${view.upCaseIdPropertyName}")
@@ -401,7 +401,7 @@ public class ${view.entitySimpleName}Controller {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    //TODO:修改启用权限名称
+    //FIXME:修改启用权限名称
     @CheckOperateAuth(key = "enable_${view.lowerCaseEntitySimpleName}", name = "启用${view.entitySimpleName}")
     @ResponseBody
     @RequestMapping("/enable${view.entitySimpleName}By${view.upCaseIdPropertyName}")

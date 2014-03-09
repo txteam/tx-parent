@@ -20,25 +20,28 @@ $(document).ready(function(){
 	        DialogUtils.progress({
 	            text : '数据提交中，请等待....'
 	    	});
-			$('#postForm').ajaxSubmit({
-			    url:"${r"${contextPath }"}/post/updatePost.action",
+			$('#${view.lowerCaseEntitySimpleName}Form').ajaxSubmit({
+			    url:"${r"${contextPath }"}/${view.lowerCaseEntitySimpleName}/update${view.entitySimpleName}.action",
 			    success: function(data) {
 			    	DialogUtils.progress('close');
 					if(data){
-						parent.DialogUtils.tip("修改职位信息成功");
-						parent.DialogUtils.closeDialogById("updatePost");
+						parent.DialogUtils.tip("修改${view.lowerCaseEntitySimpleName}成功");
+						parent.DialogUtils.closeDialogById("update${view.entitySimpleName}");
+					}else{
+						parent.DialogUtils.tip("修改${view.lowerCaseEntitySimpleName}失败");
 					}
 			    } 
 			});
 			return false;
 	    }
 	});
-	
-    //提交
-	$("#addBtn").click(function(){
-		$('#${view.lowerCaseEntitySimpleName}Form').submit();
-	});
 });
+function submitFun(){
+	$('#${view.lowerCaseEntitySimpleName}Form').submit();
+}
+function cancelFun(){
+	parent.DialogUtils.closeDialogById("update${view.entitySimpleName}");
+}
 </script>
 </head>
 <body>
@@ -48,31 +51,36 @@ $(document).ready(function(){
 			modelAttribute="${view.lowerCaseEntitySimpleName}">
 			<form:hidden path="id"></form:hidden>
 			<table class="common_table">
+<#list fieldViewMapping?values as fieldView>
+<#if !fieldView.id>
+<#if fieldView.updateAble>
+<#if fieldView.simpleType>
 				<tr>
-					<th class="narrow">名称:<span class="tRed">*</span></th>
-					<td>
-						<form:input path="name"
-							data-rule="名称:required;" 
-							data-tip="必填"/>
+					<!--//TODO:修改字段是否必填,修改其中文名-->
+					<th class="narrow" width="20%">${fieldView.fieldName}:<#if fieldView.isRequired()><span class="tRed">*</span></#if></th>
+					<td width="80%">
+						<form:input path="${fieldView.fieldName}" cssClass="text" <#if fieldView.validateExpression?exists>
+							data-rule="编号:${fieldView.validateExpression}" 
+						</#if>/>
 					</td>
 				</tr>
+<#else>
 				<tr>
-					<th class="narrow">编号<span class="tRed">*</span></th>
-					<td>
-						<form:input path="code" cssClass="text"
-							data-rule="编号:required;digits;remote[get:${r"${contextPath }"}/${view.lowerCaseEntitySimpleName}/postCodeIsExist.action, code, id]" 
-							data-tip="不能重复的数字"/>
+					<!--//TODO:修改字段是否必填,修改其中文名-->
+					<th class="narrow" width="20%">${fieldView.fieldName}.${fieldView.foreignKeyFieldName}</th>
+					<td width="80%">
+						//TODO:修改其显示逻辑
+						<form:input path="${fieldView.fieldName}" cssClass="text"/>
 					</td>
 				</tr>
-				<tr>
-					<th>备注</th>
-					<td colspan="3">
-						<form:textarea path="remark" class="longText"/>
-					</td>
-				</tr>
+</#if>
+</#if>
+</#if>
+</#list>
 				<tr>
 					<td class="rightOperRow" colspan="4" style="padding-right: 50px">
-						<a id="addBtn" href="#" class="easyui-linkbutton">提交</a>  	
+						<a id="submitBtn" onclick="submitFun();return false;" href="#" class="easyui-linkbutton">提交</a>  
+						<a id="cancelBtn" onclick="cancelFun();return false;" href="#" class="easyui-linkbutton">取消</a>	
 					</td>
 				</tr>
 			</table>

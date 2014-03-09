@@ -23,9 +23,11 @@ import org.springframework.util.ClassUtils;
 
 import com.tx.core.dbscript.model.DataSourceTypeEnum;
 import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.generator.GeneratorUtils;
 import com.tx.core.generator.model.DBScriptMapper;
 import com.tx.core.generator.model.DaoGeneratorModel;
 import com.tx.core.generator.model.DeleteMapper;
+import com.tx.core.generator.model.FieldView;
 import com.tx.core.generator.model.InsertMapper;
 import com.tx.core.generator.model.SelectMapper;
 import com.tx.core.generator.model.ServiceGeneratorModel;
@@ -69,8 +71,6 @@ public class BasicDataCodeGenerator {
     private static String controllerTemplateFilePath = "com/tx/component/basicdata/generator/defaultftl/basicdata_controller.ftl";
     
     private static String queryListTemplateFilePath = "com/tx/component/basicdata/generator/defaultftl/basicdata_queryList.jsp.ftl";
-    
-    private static String queryPagedListTemplateFilePath = "com/tx/component/basicdata/generator/defaultftl/basicdata_queryPagedList.jsp.ftl";
     
     private static String addTemplateFilePath = "com/tx/component/basicdata/generator/defaultftl/basicdata_add.jsp.ftl";
     
@@ -223,6 +223,15 @@ public class BasicDataCodeGenerator {
         logger.info("   \t 5、打开生成的Controller文件，处理其中存在//TODO:的逻辑");
         logger.info("   \t 6、修改生成的数据库脚本，并运行。");
         logger.info("   \t 7、根据提示信息：添加对应菜单项。");
+        logger.info("   \t\n<menu id=\"{}_config\" text=\"{}管理\" \n"
+                + "\tauthKey=\"{}_manage\" \n"
+                + "\thref=\"/postType/toQuery{}List.action\" \n"
+                + "\ttarget=\"mainTabs\"></menu> \n",
+                new Object[] {
+                        StringUtils.uncapitalize(jpaMetaClass.getEntitySimpleName()),
+                        StringUtils.uncapitalize(jpaMetaClass.getEntitySimpleName()),
+                        StringUtils.uncapitalize(jpaMetaClass.getEntitySimpleName()),
+                        StringUtils.uncapitalize(jpaMetaClass.getEntitySimpleName()) });
         logger.info("   \t 8、启动项目验证是否启动正确。");
         logger.info("   \t 9、点击对应菜单项目，进入查询页面。打开对应查询页面修改其中存在//TODO:的逻辑，并查看效果");
         logger.info("   \t 10、新增、修改、删除等操作。并调整新增、修改页面排版。");
@@ -249,10 +258,16 @@ public class BasicDataCodeGenerator {
         String[] entityTypeNameArray = jpaMetaClass.getEntityTypeName()
                 .split("\\.");
         String packageName = entityTypeNameArray[entityTypeNameArray.length - 3];
+        Map<String, FieldView> fieldViewMapping = GeneratorUtils.generateFieldViewMapping(jpaMetaClass,
+                sqlSource,
+                uniqueGetterNamesArray);
+        
         data.put("view", viewModel);
         data.put("validPropertyName", validPropertyName);
         data.put("uniqueGetterNamesArray", uniqueGetterNamesArray);
         data.put("packageName", packageName);
+        data.put("fieldViewMapping", fieldViewMapping);
+        data.put("isPagedList", queryPageIsPagedList);
         
         String basePath = ClassUtils.convertClassNameToResourcePath(jpaMetaClass.getEntityTypeName())
                 + "/../..";
@@ -266,7 +281,7 @@ public class BasicDataCodeGenerator {
         
         if (queryPageIsPagedList) {
             FreeMarkerUtils.fprint(loadTemplateClass,
-                    queryPagedListTemplateFilePath,
+                    queryListTemplateFilePath,
                     data,
                     codeBaseFolder + "/main/webapp/WEB-INF/view/" + packageName
                             + "/query" + jpaMetaClass.getEntitySimpleName()
@@ -483,6 +498,13 @@ public class BasicDataCodeGenerator {
     }
     
     /**
+     * @param 对sqlSourceBuilder进行赋值
+     */
+    public static void setSqlSourceBuilder(SqlSourceBuilder sqlSourceBuilder) {
+        BasicDataCodeGenerator.sqlSourceBuilder = sqlSourceBuilder;
+    }
+    
+    /**
      * @param 对loadTemplateClass进行赋值
      */
     public static void setLoadTemplateClass(Class<?> loadTemplateClass) {
@@ -495,5 +517,63 @@ public class BasicDataCodeGenerator {
     public static void setDbScriptTemplateFilePath(
             String dbScriptTemplateFilePath) {
         BasicDataCodeGenerator.dbScriptTemplateFilePath = dbScriptTemplateFilePath;
+    }
+    
+    /**
+     * @param 对sqlMapTemplateFilePath进行赋值
+     */
+    public static void setSqlMapTemplateFilePath(String sqlMapTemplateFilePath) {
+        BasicDataCodeGenerator.sqlMapTemplateFilePath = sqlMapTemplateFilePath;
+    }
+    
+    /**
+     * @param 对daoTemplateFilePath进行赋值
+     */
+    public static void setDaoTemplateFilePath(String daoTemplateFilePath) {
+        BasicDataCodeGenerator.daoTemplateFilePath = daoTemplateFilePath;
+    }
+    
+    /**
+     * @param 对daoImplTemplateFilePath进行赋值
+     */
+    public static void setDaoImplTemplateFilePath(String daoImplTemplateFilePath) {
+        BasicDataCodeGenerator.daoImplTemplateFilePath = daoImplTemplateFilePath;
+    }
+    
+    /**
+     * @param 对serviceTemplateFilePath进行赋值
+     */
+    public static void setServiceTemplateFilePath(String serviceTemplateFilePath) {
+        BasicDataCodeGenerator.serviceTemplateFilePath = serviceTemplateFilePath;
+    }
+    
+    /**
+     * @param 对controllerTemplateFilePath进行赋值
+     */
+    public static void setControllerTemplateFilePath(
+            String controllerTemplateFilePath) {
+        BasicDataCodeGenerator.controllerTemplateFilePath = controllerTemplateFilePath;
+    }
+    
+    /**
+     * @param 对queryListTemplateFilePath进行赋值
+     */
+    public static void setQueryListTemplateFilePath(
+            String queryListTemplateFilePath) {
+        BasicDataCodeGenerator.queryListTemplateFilePath = queryListTemplateFilePath;
+    }
+    
+    /**
+     * @param 对addTemplateFilePath进行赋值
+     */
+    public static void setAddTemplateFilePath(String addTemplateFilePath) {
+        BasicDataCodeGenerator.addTemplateFilePath = addTemplateFilePath;
+    }
+    
+    /**
+     * @param 对updateTemplateFilePath进行赋值
+     */
+    public static void setUpdateTemplateFilePath(String updateTemplateFilePath) {
+        BasicDataCodeGenerator.updateTemplateFilePath = updateTemplateFilePath;
     }
 }

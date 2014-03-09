@@ -161,7 +161,7 @@
 </#if>
 </#list>
 	    </trim>
-	    WHERE ${update.simpleTableName}.${update.idColumnName} = ${r"#{"}${update.idPropertyName}${r"}"} 
+	    WHERE ${update.idColumnName} = ${r"#{"}${update.idPropertyName}${r"}"} 
 	</update>  
 
 </mapper>

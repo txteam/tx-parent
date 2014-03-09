@@ -141,7 +141,7 @@
 	<!-- auto generate default update -->
 	<update id="${update.id}"
 	    parameterType="java.util.Map">  
-	    UPDATE ${update.tableName} ${update.simpleTableName}
+	    UPDATE ${update.tableName}
 	    <trim prefix="SET" suffixOverrides=",">
 <#list update.sqlMapColumnList as column>
 <#if !column.isId()>
@@ -162,7 +162,7 @@
 </#if>
 </#list>
 	    </trim>
-	    WHERE ${update.simpleTableName}.${update.idColumnName} = ${r"#{"}${update.idPropertyName}${r"}"} 
+	    WHERE ${update.idColumnName} = ${r"#{"}${update.idPropertyName}${r"}"} 
 	</update>  
 
 </mapper>

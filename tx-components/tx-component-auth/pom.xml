@@ -10,7 +10,6 @@
 
 	<artifactId>tx-component-auth</artifactId>
 	<packaging>jar</packaging>
-
 	<name>tx-component-auth</name>
 	<url>http://maven.apache.org</url>
 

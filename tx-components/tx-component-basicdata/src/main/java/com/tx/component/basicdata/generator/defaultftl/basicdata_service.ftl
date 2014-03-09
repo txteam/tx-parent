@@ -58,11 +58,11 @@ public class ${service.entitySimpleName}Service {
     */
     @Transactional
     public void insert${service.entitySimpleName}(${service.entitySimpleName} ${service.lowerCaseEntitySimpleName}) {
-        //验证参数是否合法
+        //FIXME:验证参数是否合法
         AssertUtils.notNull(${service.lowerCaseEntitySimpleName}, "${service.lowerCaseEntitySimpleName} is null.");
-        AssertUtils.notEmpty(${service.lowerCaseEntitySimpleName}.get${service.upCaseIdPropertyName}(), "${service.lowerCaseEntitySimpleName}.${service.idPropertyName} is empty.");
         
-        //TODO:为添加的数据需要填入默认值的字段填入默认值
+        
+        //FIXME:为添加的数据需要填入默认值的字段填入默认值
         
         
         //调用数据持久层对实体进行持久化操作
@@ -375,7 +375,7 @@ public class ${service.entitySimpleName}Service {
      */
     @Transactional
     public boolean updateBy${service.upCaseIdPropertyName}(${service.entitySimpleName} ${service.lowerCaseEntitySimpleName}) {
-        //验证参数是否合法，必填字段是否填写，
+        //FIXME:验证参数是否合法，必填字段是否填写，
         AssertUtils.notNull(${service.lowerCaseEntitySimpleName}, "${service.lowerCaseEntitySimpleName} is null.");
         AssertUtils.notEmpty(${service.lowerCaseEntitySimpleName}.get${service.upCaseIdPropertyName}(), "${service.lowerCaseEntitySimpleName}.${service.idPropertyName} is empty.");
         
@@ -384,7 +384,7 @@ public class ${service.entitySimpleName}Service {
         Map<String, Object> updateRowMap = new HashMap<String, Object>();
         updateRowMap.put("${service.idPropertyName}", ${service.lowerCaseEntitySimpleName}.get${service.upCaseIdPropertyName}());
         
-        //TODO:需要更新的字段
+        //FIXME:需要更新的字段
 <#list service.updateAbleName2SqlMapColumnMapping?values as column>
 <#if !column.isId()>
 <#if column.isSimpleType()>
@@ -397,7 +397,7 @@ public class ${service.entitySimpleName}Service {
 </#list>
         int updateRowCount = this.${service.lowerCaseEntitySimpleName}Dao.update${service.entitySimpleName}(updateRowMap);
         
-        //TODO:如果需要大于1时，抛出异常并回滚，需要在这里修改
+        //如果需要大于1时，抛出异常并回滚，需要在这里修改
         return updateRowCount >= 1;
     }
     

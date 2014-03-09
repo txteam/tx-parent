@@ -6,18 +6,24 @@
  */
 package com.tx.core.generator;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.ibatis.type.JdbcType;
-import org.h2.util.StringUtils;
 
+import com.tx.core.TxConstants;
 import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.generator.model.FieldView;
 import com.tx.core.generator.model.SqlMapColumn;
 import com.tx.core.jdbc.sqlsource.SqlSource;
 import com.tx.core.reflection.JpaColumnInfo;
@@ -34,6 +40,93 @@ import com.tx.core.reflection.ReflectionUtils;
  * @since  [产品/模块版本]
  */
 public class GeneratorUtils {
+    
+    /**
+      * 生成页面显示行信息
+      *<功能详细描述>
+      * @param jpaMetaClass
+      * @param sqlSource
+      * @param uniqueGetterNamesArray
+      * @return [参数说明]
+      * 
+      * @return Map<String,FieldView> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public static Map<String, FieldView> generateFieldViewMapping(
+            JpaMetaClass<?> jpaMetaClass, SqlSource<?> sqlSource,
+            String[][] uniqueGetterNamesArray) {
+        Map<String, FieldView> fieldViewMap = new HashMap<String, FieldView>();
+        String pkFieldName = jpaMetaClass.getPkGetterName();
+        Set<String> updateAbleGetterSet = sqlSource.getUpdateAblePropertyNames();
+        Map<String, String[]> uniqueGetterNameMap = new HashMap<String, String[]>();
+        
+        if (!ArrayUtils.isEmpty(uniqueGetterNamesArray)) {
+            for (String[] temp : uniqueGetterNamesArray) {
+                if (ArrayUtils.isEmpty(temp)) {
+                    continue;
+                }
+                for (String uniqueGetterNameTemp : temp) {
+                    if (!StringUtils.isEmpty(uniqueGetterNameTemp)) {
+                        uniqueGetterNameMap.put(uniqueGetterNameTemp, temp);
+                    }
+                }
+            }
+        }
+        String entitySimpleName = jpaMetaClass.getEntitySimpleName();
+        String uncapitalizeEntitySimpleName = StringUtils.uncapitalize(entitySimpleName);
+        
+        for (Entry<String, JpaColumnInfo> entryTemp : jpaMetaClass.getGetter2columnInfoMapping()
+                .entrySet()) {
+            FieldView fieldView = new FieldView();
+            JpaColumnInfo jpaColumnInfo = entryTemp.getValue();
+            
+            fieldView.setDate(Date.class.equals(jpaColumnInfo.getGetterType())
+                    || Timestamp.class.equals(jpaColumnInfo.getGetterType())
+                    || java.sql.Date.class.equals(jpaColumnInfo.getGetterType()));
+            fieldView.setId(pkFieldName.equals(entryTemp.getKey()));
+            fieldView.setFieldName(entryTemp.getKey());
+            if (!jpaColumnInfo.isSimpleType()) {
+                fieldView.setSimpleType(false);
+                fieldView.setForeignKeyFieldName(jpaColumnInfo.getForeignKeyGetterName());
+            } else {
+                fieldView.setSimpleType(true);
+            }
+            fieldView.setJavaType(jpaColumnInfo.getGetterType());
+            fieldView.setRequired(false);
+            fieldView.setUpdateAble(updateAbleGetterSet.contains(entryTemp.getKey()));
+            if (uniqueGetterNameMap.containsKey(entryTemp.getKey())) {
+                fieldView.setRequired(true);
+                StringBuilder validateMethodNameSb = new StringBuilder(
+                        TxConstants.INITIAL_STR_LENGTH);
+                validateMethodNameSb.append("validate");
+                int index = 0;
+                String[] uniqueGetterNames = uniqueGetterNameMap.get(entryTemp.getKey());
+                for (String temp : uniqueGetterNames) {
+                    validateMethodNameSb.append(StringUtils.capitalize(temp));
+                    if (++index < uniqueGetterNames.length) {
+                        validateMethodNameSb.append("And");
+                    }
+                }
+                validateMethodNameSb.append("IsExist.action, ");
+                for (String temp : uniqueGetterNames) {
+                    validateMethodNameSb.append(temp);
+                    if (++index < uniqueGetterNames.length) {
+                        validateMethodNameSb.append(", ");
+                    }
+                }
+                validateMethodNameSb.append(", ").append(pkFieldName);
+                fieldView.setValidateExpression("required;;remote[${contextPath}/"
+                        + uncapitalizeEntitySimpleName
+                        + "/"
+                        + validateMethodNameSb.toString() + "]");
+            }
+            
+            fieldViewMap.put(entryTemp.getKey(), fieldView);
+        }
+        
+        return fieldViewMap;
+    }
     
     /**
       * 生成查询条件映射<br/>
@@ -62,7 +155,7 @@ public class GeneratorUtils {
             AssertUtils.notNull(jdbcType, "jdbcType is null.");
             String replaceValue = "#{" + queryConditionKey + ",jdbcType="
                     + jdbcType.toString() + "}";
-            String queryCondition = StringUtils.replaceAll(entryTemp.getValue(),
+            String queryCondition = StringUtils.replace(entryTemp.getValue(),
                     "?",
                     replaceValue);
             /*

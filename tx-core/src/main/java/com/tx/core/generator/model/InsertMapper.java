@@ -41,7 +41,7 @@ public class InsertMapper {
     
     public InsertMapper(JpaMetaClass<?> jpaMetaClass) {
         super();
-        this.id = "delete" + jpaMetaClass.getEntitySimpleName();
+        this.id = "insert" + jpaMetaClass.getEntitySimpleName();
         this.parameterType = jpaMetaClass.getEntityTypeName();
         this.isUseSelectKey = false;
         this.tableName = jpaMetaClass.getTableName().toUpperCase();
