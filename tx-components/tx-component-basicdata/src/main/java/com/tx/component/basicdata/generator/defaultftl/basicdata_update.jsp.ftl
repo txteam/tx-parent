@@ -60,7 +60,7 @@ function cancelFun(){
 					<th class="narrow" width="20%">${fieldView.fieldName}:<#if fieldView.isRequired()><span class="tRed">*</span></#if></th>
 					<td width="80%">
 						<form:input path="${fieldView.fieldName}" cssClass="text" <#if fieldView.validateExpression?exists>
-							data-rule="编号:${fieldView.validateExpression}" 
+							data-rule="${fieldView.fieldName}:${fieldView.validateExpression}" 
 						</#if>/>
 					</td>
 				</tr>
