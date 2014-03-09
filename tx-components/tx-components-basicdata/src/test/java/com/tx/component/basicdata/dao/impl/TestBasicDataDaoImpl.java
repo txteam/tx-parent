@@ -39,9 +39,7 @@ public class TestBasicDataDaoImpl implements TestBasicDataDao {
      */
     @Override
     public void insertTestBasicData(TestBasicData condition) {
-        this.myBatisDaoSupport.insertUseUUID("testBasicData.insertTestBasicData",
-                condition,
-                "id");
+        this.myBatisDaoSupport.insertUseUUID("testBasicData.insertTestBasicData", condition, "id");
     }
     
     /**
@@ -50,8 +48,7 @@ public class TestBasicDataDaoImpl implements TestBasicDataDao {
      */
     @Override
     public int deleteTestBasicData(TestBasicData condition) {
-        return this.myBatisDaoSupport.delete("testBasicData.deleteTestBasicData",
-                condition);
+        return this.myBatisDaoSupport.delete("testBasicData.deleteTestBasicData", condition);
     }
     
     /**
@@ -60,8 +57,7 @@ public class TestBasicDataDaoImpl implements TestBasicDataDao {
      */
     @Override
     public TestBasicData findTestBasicData(TestBasicData condition) {
-        return this.myBatisDaoSupport.<TestBasicData> find("testBasicData.findTestBasicData",
-                condition);
+        return this.myBatisDaoSupport.<TestBasicData> find("testBasicData.findTestBasicData", condition);
     }
     
     /**
@@ -80,8 +76,8 @@ public class TestBasicDataDaoImpl implements TestBasicDataDao {
      * @return
      */
     @Override
-    public List<TestBasicData> queryTestBasicDataList(
-            Map<String, Object> params, List<Order> orderList) {
+    public List<TestBasicData> queryTestBasicDataList(Map<String, Object> params,
+            List<Order> orderList) {
         return this.myBatisDaoSupport.<TestBasicData> queryList("testBasicData.queryTestBasicData",
                 params,
                 orderList);
@@ -104,8 +100,8 @@ public class TestBasicDataDaoImpl implements TestBasicDataDao {
      * @return
      */
     @Override
-    public PagedList<TestBasicData> queryTestBasicDataPagedList(
-            Map<String, Object> params, int pageIndex, int pageSize) {
+    public PagedList<TestBasicData> queryTestBasicDataPagedList(Map<String, Object> params,
+            int pageIndex, int pageSize) {
         return this.myBatisDaoSupport.<TestBasicData> queryPagedList("testBasicData.queryTestBasicData",
                 params,
                 pageIndex,
@@ -120,9 +116,8 @@ public class TestBasicDataDaoImpl implements TestBasicDataDao {
      * @return
      */
     @Override
-    public PagedList<TestBasicData> queryTestBasicDataPagedList(
-            Map<String, Object> params, int pageIndex, int pageSize,
-            List<Order> orderList) {
+    public PagedList<TestBasicData> queryTestBasicDataPagedList(Map<String, Object> params,
+            int pageIndex, int pageSize, List<Order> orderList) {
         return this.myBatisDaoSupport.<TestBasicData> queryPagedList("testBasicData.queryTestBasicData",
                 params,
                 pageIndex,
@@ -136,7 +131,6 @@ public class TestBasicDataDaoImpl implements TestBasicDataDao {
      */
     @Override
     public int updateTestBasicData(Map<String, Object> updateRowMap) {
-        return this.myBatisDaoSupport.update("testBasicData.updateTestBasicData",
-                updateRowMap);
+        return this.myBatisDaoSupport.update("testBasicData.updateTestBasicData", updateRowMap);
     }
 }

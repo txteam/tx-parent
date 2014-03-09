@@ -92,8 +92,8 @@ public interface TestBasicDataDao {
       * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public List<TestBasicData> queryTestBasicDataList(
-            Map<String, Object> params, List<Order> orderList);
+    public List<TestBasicData> queryTestBasicDataList(Map<String, Object> params,
+            List<Order> orderList);
     
     /**
       * 根据条件查询TestBasicData列表总数
@@ -122,8 +122,8 @@ public interface TestBasicDataDao {
       * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public PagedList<TestBasicData> queryTestBasicDataPagedList(
-            Map<String, Object> params, int pageIndex, int pageSize);
+    public PagedList<TestBasicData> queryTestBasicDataPagedList(Map<String, Object> params,
+            int pageIndex, int pageSize);
     
     /**
       * 分页查询TestBasicData列表，传入排序字段
@@ -140,9 +140,9 @@ public interface TestBasicDataDao {
       * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public PagedList<TestBasicData> queryTestBasicDataPagedList(
-            Map<String, Object> params, int pageIndex, int pageSize,
-            List<Order> orderList);
+    public PagedList<TestBasicData> queryTestBasicDataPagedList(Map<String, Object> params,
+            int pageIndex, int pageSize, List<Order> orderList);
+    
     
     /**
       * 更新TestBasicData实体，

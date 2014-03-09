@@ -50,6 +50,9 @@ public class ServiceGeneratorModel {
     /** 可更新字段的键值关系 */
     private Map<String, String> updateKey2ValueMapping = new HashMap<String, String>();
     
+    /** 可更新字段映射 */
+    private Map<String, SqlMapColumn> updateAbleName2SqlMapColumnMapping = new HashMap<String, SqlMapColumn>();
+    
     /** 扩展类型名集合 */
     private Set<String> extentionTypeNames = new HashSet<String>();
     
@@ -71,6 +74,10 @@ public class ServiceGeneratorModel {
         this.upCaseIdPropertyName = StringUtils.capitalize(jpaMetaClass.getPkGetterName());
         this.idPropertyName = sqlSource.getPkName();
         this.sqlMapColumnList = GeneratorUtils.generateSqlMapColumnList(jpaMetaClass);
+        Map<String, SqlMapColumn> sqlMapColumnMap = new HashMap<String, SqlMapColumn>();
+        for(SqlMapColumn sqlMapColumnTemp : this.sqlMapColumnList){
+            sqlMapColumnMap.put(sqlMapColumnTemp.getPropertyName(), sqlMapColumnTemp);
+        }
         
         Map<String, Class<?>> key2JavaTypeMapping = sqlSource.getQueryConditionKey2JavaTypeMapping();
         for (Entry<String, Class<?>> key2JavaTypeEntryTemp : key2JavaTypeMapping.entrySet()) {
@@ -92,9 +99,10 @@ public class ServiceGeneratorModel {
         Set<String> updatePropertyNameSet = sqlSource.getUpdateAblePropertyNames();
         for (String updateAblePropertyNameTemp : updatePropertyNameSet) {
             Class<?> updateAblePropertyType = jpaMetaClass.getGetterType(updateAblePropertyNameTemp);
-            if (updateAblePropertyType == null) {
+            if (updateAblePropertyType == null && updateAbleName2SqlMapColumnMapping.containsKey(updateAblePropertyNameTemp)) {
                 continue;
             }
+            updateAbleName2SqlMapColumnMapping.put(updateAblePropertyNameTemp, sqlMapColumnMap.get(updateAblePropertyNameTemp));
             String typeName = updateAblePropertyType.getName();
             if (boolean.class.equals(typeName)) {
                 updateKey2ValueMapping.put(updateAblePropertyNameTemp, "is"
@@ -234,5 +242,20 @@ public class ServiceGeneratorModel {
      */
     public void setExtentionTypeNames(Set<String> extentionTypeNames) {
         this.extentionTypeNames = extentionTypeNames;
+    }
+
+    /**
+     * @return 返回 updateAbleName2SqlMapColumnMapping
+     */
+    public Map<String, SqlMapColumn> getUpdateAbleName2SqlMapColumnMapping() {
+        return updateAbleName2SqlMapColumnMapping;
+    }
+
+    /**
+     * @param 对updateAbleName2SqlMapColumnMapping进行赋值
+     */
+    public void setUpdateAbleName2SqlMapColumnMapping(
+            Map<String, SqlMapColumn> updateAbleName2SqlMapColumnMapping) {
+        this.updateAbleName2SqlMapColumnMapping = updateAbleName2SqlMapColumnMapping;
     }
 }

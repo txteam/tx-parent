@@ -385,7 +385,7 @@ public class ${service.entitySimpleName}Service {
         updateRowMap.put("${service.idPropertyName}", ${service.lowerCaseEntitySimpleName}.get${service.upCaseIdPropertyName}());
         
         //TODO:需要更新的字段
-<#list service.sqlMapColumnList as column>
+<#list service.updateAbleName2SqlMapColumnMapping?values as column>
 <#if !column.isId()>
 <#if column.isSimpleType()>
 		updateRowMap.put("${column.propertyName}", ${service.lowerCaseEntitySimpleName}.${column.getterMethodSimpleName}());	

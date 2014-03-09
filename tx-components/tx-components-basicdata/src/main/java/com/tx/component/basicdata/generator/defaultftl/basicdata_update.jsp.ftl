@@ -21,7 +21,7 @@ $(document).ready(function(){
 	            text : '数据提交中，请等待....'
 	    	});
 			$('#postForm').ajaxSubmit({
-			    url:"${contextPath}/post/updatePost.action",
+			    url:"${r"${contextPath }"}/post/updatePost.action",
 			    success: function(data) {
 			    	DialogUtils.progress('close');
 					if(data){
@@ -60,31 +60,8 @@ $(document).ready(function(){
 					<th class="narrow">编号<span class="tRed">*</span></th>
 					<td>
 						<form:input path="code" cssClass="text"
-							data-rule="编号:required;digits;remote[get:${contextPath }/${view.lowerCaseEntitySimpleName}/postCodeIsExist.action, code, id]" 
+							data-rule="编号:required;digits;remote[get:${r"${contextPath }"}/${view.lowerCaseEntitySimpleName}/postCodeIsExist.action, code, id]" 
 							data-tip="不能重复的数字"/>
-					</td>
-				</tr>
-				<tr>
-					<th class="narrow">所属组织<span class="tRed">*</span></th>
-					<td>
-						<input id="organizationId" name="organization.id" type="hidden"
-							value="${post.organization.id }"
-							readonly="readonly"/>
-						<input id="organizationName" name="organization.name"
-							value="${post.organization.name }" 
-							data-rule="所属组织:required;"
-							class="selectInput" readonly="readonly"/>
-					</td>
-				</tr>
-				<tr>
-					<th class="narrow">上级职位</th>
-					<td>
-						<input id="parentId" name="parentId" type="hidden" 
-							value="${parentPost.id }"
-							readonly="readonly"/>
-						<input id="parentName" name="parentName" class="linkInput" 
-							value="${parentPost.name }"
-							readonly="readonly"/>
 					</td>
 				</tr>
 				<tr>

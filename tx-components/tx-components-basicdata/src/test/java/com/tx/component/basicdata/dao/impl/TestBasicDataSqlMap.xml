@@ -28,6 +28,7 @@
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
 	            AND TTBD.ID = #{id}
 	        </if>
+			AND TTBD.TYPE_ = '类型一'
 		</trim>
 	</select>
 	
@@ -47,17 +48,24 @@
 		  FROM TEST_BASICDATA TTBD
 		<trim prefix="WHERE" prefixOverrides="AND | OR">
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(valid)">  
-	            AND TTBD.VALID = #{valid,jdbcType=BIT}
+	            <![CDATA[ AND TTBD.VALID = #{valid,jdbcType=BIT} ]]>
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(code)">  
-	            AND TTBD.CODE = #{code,jdbcType=VARCHAR}
+	            <![CDATA[ AND TTBD.CODE = #{code,jdbcType=VARCHAR} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(maxCreateDate)">  
+	            <![CDATA[ AND TTBD.CREATEDATE < #{maxCreateDate,jdbcType=TIMESTAMP} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(minCreateDate)">  
+	            <![CDATA[ AND TTBD.CREATEDATE >= #{minCreateDate,jdbcType=TIMESTAMP} ]]>
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(name)">  
-	            AND TTBD.NAME LIKE concat('%', #{name,jdbcType=VARCHAR}, '%')
+	            <![CDATA[ AND TTBD.NAME LIKE concat('%', #{name,jdbcType=VARCHAR}, '%') ]]>
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(excludeId)">
 				<![CDATA[ AND TTBD.ID <> #{excludeId,javaType=java.lang.String} ]]>
 			</if>
+			AND TTBD.TYPE_ = '类型一'
 		</trim>
 		<choose>  
 	        <when test="@com.tx.core.util.OgnlUtils@isNotEmpty(orderSql)">  
@@ -77,17 +85,24 @@
 		  FROM TEST_BASICDATA TTBD
 		<trim prefix="WHERE" prefixOverrides="AND | OR">
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(valid)">  
-	            AND TTBD.VALID = #{valid,jdbcType=BIT}
+	            <![CDATA[ AND TTBD.VALID = #{valid,jdbcType=BIT} ]]>
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(code)">  
-	            AND TTBD.CODE = #{code,jdbcType=VARCHAR}
+	            <![CDATA[ AND TTBD.CODE = #{code,jdbcType=VARCHAR} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(maxCreateDate)">  
+	            <![CDATA[ AND TTBD.CREATEDATE < #{maxCreateDate,jdbcType=TIMESTAMP} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(minCreateDate)">  
+	            <![CDATA[ AND TTBD.CREATEDATE >= #{minCreateDate,jdbcType=TIMESTAMP} ]]>
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(name)">  
-	            AND TTBD.NAME LIKE concat('%', #{name,jdbcType=VARCHAR}, '%')
+	            <![CDATA[ AND TTBD.NAME LIKE concat('%', #{name,jdbcType=VARCHAR}, '%') ]]>
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(excludeId)">
 				<![CDATA[ AND TTBD.ID <> #{excludeId,javaType=java.lang.String} ]]>
 			</if>
+			AND TTBD.TYPE_ = '类型一'
 		</trim>
 	</select>
     
@@ -132,7 +147,7 @@
 	<!-- auto generate default update -->
 	<update id="updateTestBasicData"
 	    parameterType="java.util.Map">  
-	    UPDATE TEST_BASICDATA TTBD
+	    UPDATE TEST_BASICDATA 
 	    <trim prefix="SET" suffixOverrides=",">
 			<if test="_parameter.containsKey('valid')">
 	    		VALID = #{valid,javaType=boolean},

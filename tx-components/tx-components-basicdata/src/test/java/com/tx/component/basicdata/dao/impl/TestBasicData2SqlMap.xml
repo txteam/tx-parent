@@ -45,10 +45,10 @@
 		  FROM TESTBASICDATA2 TTBD
 		<trim prefix="WHERE" prefixOverrides="AND | OR">
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(code)">  
-	            AND TTBD.CODE = #{code,jdbcType=VARCHAR}
+	            <![CDATA[ AND TTBD.CODE = #{code,jdbcType=VARCHAR} ]]>
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(name)">  
-	            AND TTBD.NAME LIKE concat('%', #{name,jdbcType=VARCHAR}, '%')
+	            <![CDATA[ AND TTBD.NAME LIKE concat('%', #{name,jdbcType=VARCHAR}, '%') ]]>
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(excludeCode)">
 				<![CDATA[ AND TTBD.CODE <> #{excludeCode,javaType=java.lang.String} ]]>
@@ -72,10 +72,10 @@
 		  FROM TESTBASICDATA2 TTBD
 		<trim prefix="WHERE" prefixOverrides="AND | OR">
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(code)">  
-	            AND TTBD.CODE = #{code,jdbcType=VARCHAR}
+	            <![CDATA[ AND TTBD.CODE = #{code,jdbcType=VARCHAR} ]]>
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(name)">  
-	            AND TTBD.NAME LIKE concat('%', #{name,jdbcType=VARCHAR}, '%')
+	            <![CDATA[ AND TTBD.NAME LIKE concat('%', #{name,jdbcType=VARCHAR}, '%') ]]>
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(excludeCode)">
 				<![CDATA[ AND TTBD.CODE <> #{excludeCode,javaType=java.lang.String} ]]>
@@ -122,7 +122,7 @@
 	<!-- auto generate default update -->
 	<update id="updateTestBasicData2"
 	    parameterType="java.util.Map">  
-	    UPDATE TESTBASICDATA2 TTBD
+	    UPDATE TESTBASICDATA2 
 	    <trim prefix="SET" suffixOverrides=",">
 			<if test="_parameter.containsKey('valid')">
 	    		VALID = #{valid,javaType=boolean},

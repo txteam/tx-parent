@@ -8,6 +8,7 @@ package com.tx.component.basicdata;
 
 import com.tx.component.basicdata.generator.BasicDataCodeGenerator;
 import com.tx.component.basicdata.model.TestBasicData;
+import com.tx.component.basicdata.model.TestBasicData2;
 import com.tx.core.dbscript.model.DataSourceTypeEnum;
 
 /**
@@ -21,7 +22,7 @@ import com.tx.core.dbscript.model.DataSourceTypeEnum;
  */
 public class BasicCodeGeneratorTest {
     
-    public static void main(String[] args) {
+    public static void main1(String[] args) {
         Class<?> basicDataType = TestBasicData.class;
         String codeBaseFolder = "d:/basicdata";
         
@@ -30,7 +31,22 @@ public class BasicCodeGeneratorTest {
                 codeBaseFolder,
                 new String[][] { new String[] { "name" },
                         new String[] { "name", "code" } },
-                "valid");
+                "valid",
+                false);
+        
+        System.out.println("success");
+    }
+    
+    public static void main(String[] args) {
+        Class<?> basicDataType = TestBasicData2.class;
+        String codeBaseFolder = "d:/basicdata";
+        
+        BasicDataCodeGenerator.generate(basicDataType,
+                DataSourceTypeEnum.MYSQL,
+                codeBaseFolder,
+                new String[][] { new String[] { "name" } },
+                "valid",
+                true);
         
         System.out.println("success");
     }

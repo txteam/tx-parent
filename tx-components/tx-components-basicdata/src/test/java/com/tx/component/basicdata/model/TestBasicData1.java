@@ -28,7 +28,7 @@ import com.tx.core.jdbc.sqlsource.annotation.UpdateAble;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
   */
-public class TestBasicData2 {
+public class TestBasicData1 {
     
     @Id
     @QueryConditionEqual

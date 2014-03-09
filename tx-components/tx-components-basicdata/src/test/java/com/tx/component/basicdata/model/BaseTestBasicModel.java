@@ -17,6 +17,8 @@ import com.tx.component.basicdata.annotation.BasicData;
 import com.tx.component.basicdata.plugin.impl.SupportDisabled;
 import com.tx.component.basicdata.testmodel.BasicTypeEnum;
 import com.tx.core.jdbc.sqlsource.annotation.QueryConditionEqual;
+import com.tx.core.jdbc.sqlsource.annotation.QueryConditionGreaterOrEqual;
+import com.tx.core.jdbc.sqlsource.annotation.QueryConditionLess;
 import com.tx.core.jdbc.sqlsource.annotation.QueryConditionLike;
 import com.tx.core.jdbc.sqlsource.annotation.UpdateAble;
 
@@ -50,6 +52,8 @@ public abstract class BaseTestBasicModel implements SupportDisabled,
     @UpdateAble
     private String remark;
     
+    @QueryConditionGreaterOrEqual(key="minCreateDate")
+    @QueryConditionLess(key="maxCreateDate")
     private Date createDate;
     
     @UpdateAble

@@ -18,6 +18,7 @@ import org.hibernate.dialect.Dialect;
 import org.springframework.util.ClassUtils;
 
 import com.tx.core.generator.GeneratorUtils;
+import com.tx.core.jdbc.model.QueryConditionInfo;
 import com.tx.core.jdbc.sqlsource.SqlSource;
 import com.tx.core.reflection.JpaMetaClass;
 
@@ -47,8 +48,14 @@ public class ViewerGeneratorModel {
     /** 查询条件名与类型映射 */
     private Map<String, String> queryConditionName2TypeNameMapping = new HashMap<String, String>();
     
+    /** 查询条件名与ConditionInfo的映射 */
+    private Map<String, QueryConditionInfo> queryConditionName2ConditionInfoMapping = new HashMap<String, QueryConditionInfo>();
+    
     /** 可更新字段的键值关系 */
     private Map<String, String> updateKey2ValueMapping = new HashMap<String, String>();
+    
+    /** 可更新字段映射 */
+    private Map<String, SqlMapColumn> updateAbleName2SqlMapColumnMapping = new HashMap<String, SqlMapColumn>();
     
     /** 扩展类型名集合 */
     private Set<String> extentionTypeNames = new HashSet<String>();
@@ -71,8 +78,14 @@ public class ViewerGeneratorModel {
         this.upCaseIdPropertyName = StringUtils.capitalize(jpaMetaClass.getPkGetterName());
         this.idPropertyName = sqlSource.getPkName();
         this.sqlMapColumnList = GeneratorUtils.generateSqlMapColumnList(jpaMetaClass);
+        Map<String, SqlMapColumn> sqlMapColumnMap = new HashMap<String, SqlMapColumn>();
+        for (SqlMapColumn sqlMapColumnTemp : this.sqlMapColumnList) {
+            sqlMapColumnMap.put(sqlMapColumnTemp.getPropertyName(),
+                    sqlMapColumnTemp);
+        }
         
         Map<String, Class<?>> key2JavaTypeMapping = sqlSource.getQueryConditionKey2JavaTypeMapping();
+        Map<String, QueryConditionInfo> key2QueryConditionInfoMapping = sqlSource.getQueryConditionKey2ConditionInfoMapping();
         for (Entry<String, Class<?>> key2JavaTypeEntryTemp : key2JavaTypeMapping.entrySet()) {
             Class<?> queryConditionType = key2JavaTypeEntryTemp.getValue();
             String typeName = queryConditionType.getName();
@@ -87,14 +100,19 @@ public class ViewerGeneratorModel {
             }
             this.queryConditionName2TypeNameMapping.put(key2JavaTypeEntryTemp.getKey(),
                     queryConditionType.getSimpleName());
+            this.queryConditionName2ConditionInfoMapping.put(key2JavaTypeEntryTemp.getKey(),
+                    key2QueryConditionInfoMapping.get(key2JavaTypeEntryTemp.getKey()));
         }
         
         Set<String> updatePropertyNameSet = sqlSource.getUpdateAblePropertyNames();
         for (String updateAblePropertyNameTemp : updatePropertyNameSet) {
             Class<?> updateAblePropertyType = jpaMetaClass.getGetterType(updateAblePropertyNameTemp);
-            if (updateAblePropertyType == null) {
+            if (updateAblePropertyType == null
+                    && updateAbleName2SqlMapColumnMapping.containsKey(updateAblePropertyNameTemp)) {
                 continue;
             }
+            this.updateAbleName2SqlMapColumnMapping.put(updateAblePropertyNameTemp,
+                    sqlMapColumnMap.get(updateAblePropertyNameTemp));
             String typeName = updateAblePropertyType.getName();
             if (boolean.class.equals(typeName)) {
                 updateKey2ValueMapping.put(updateAblePropertyNameTemp, "is"
@@ -234,5 +252,35 @@ public class ViewerGeneratorModel {
      */
     public void setExtentionTypeNames(Set<String> extentionTypeNames) {
         this.extentionTypeNames = extentionTypeNames;
+    }
+    
+    /**
+     * @return 返回 queryConditionName2ConditionInfoMapping
+     */
+    public Map<String, QueryConditionInfo> getQueryConditionName2ConditionInfoMapping() {
+        return queryConditionName2ConditionInfoMapping;
+    }
+    
+    /**
+     * @param 对queryConditionName2ConditionInfoMapping进行赋值
+     */
+    public void setQueryConditionName2ConditionInfoMapping(
+            Map<String, QueryConditionInfo> queryConditionName2ConditionInfoMapping) {
+        this.queryConditionName2ConditionInfoMapping = queryConditionName2ConditionInfoMapping;
+    }
+    
+    /**
+     * @return 返回 updateAbleName2SqlMapColumnMapping
+     */
+    public Map<String, SqlMapColumn> getUpdateAbleName2SqlMapColumnMapping() {
+        return updateAbleName2SqlMapColumnMapping;
+    }
+    
+    /**
+     * @param 对updateAbleName2SqlMapColumnMapping进行赋值
+     */
+    public void setUpdateAbleName2SqlMapColumnMapping(
+            Map<String, SqlMapColumn> updateAbleName2SqlMapColumnMapping) {
+        this.updateAbleName2SqlMapColumnMapping = updateAbleName2SqlMapColumnMapping;
     }
 }

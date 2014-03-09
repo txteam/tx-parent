@@ -19,8 +19,6 @@ import org.h2.util.StringUtils;
 
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.generator.model.SqlMapColumn;
-import com.tx.core.jdbc.model.QueryConditionInfo;
-import com.tx.core.jdbc.model.QueryConditionTypeEnum;
 import com.tx.core.jdbc.sqlsource.SqlSource;
 import com.tx.core.reflection.JpaColumnInfo;
 import com.tx.core.reflection.JpaMetaClass;
@@ -54,12 +52,12 @@ public class GeneratorUtils {
         
         Map<String, String> queryConditionSqlMapping = sqlSource.getQueryConditionKey2SqlMapping();
         Map<String, JdbcType> queryConditionTypeMapping = sqlSource.getQueryConditionKey2JdbcTypeMapping();
-        Map<String, QueryConditionInfo> queryConditionInfoMapping = sqlSource.getQueryConditionKey2ConditionInfoMapping();
+        //Map<String, QueryConditionInfo> queryConditionInfoMapping = sqlSource.getQueryConditionKey2ConditionInfoMapping();
         
         for (Entry<String, String> entryTemp : queryConditionSqlMapping.entrySet()) {
             
             String queryConditionKey = entryTemp.getKey();
-            QueryConditionInfo queryConditionInfoTemp = queryConditionInfoMapping.get(queryConditionKey);;
+            //QueryConditionInfo queryConditionInfoTemp = queryConditionInfoMapping.get(queryConditionKey);;
             JdbcType jdbcType = queryConditionTypeMapping.get(queryConditionKey);
             AssertUtils.notNull(jdbcType, "jdbcType is null.");
             String replaceValue = "#{" + queryConditionKey + ",jdbcType="
@@ -67,11 +65,17 @@ public class GeneratorUtils {
             String queryCondition = StringUtils.replaceAll(entryTemp.getValue(),
                     "?",
                     replaceValue);
+            /*
             if(queryConditionInfoTemp != null){
-                if(QueryConditionTypeEnum.UNEQUAL.equals(queryConditionInfoTemp.getQueryConditionType())){
+                if(QueryConditionTypeEnum.UNEQUAL.equals(queryConditionInfoTemp.getQueryConditionType())
+                        || QueryConditionTypeEnum.GREATER.equals(queryConditionInfoTemp.getQueryConditionType())
+                        || QueryConditionTypeEnum.GREATER_OR_EQUAL.equals(queryConditionInfoTemp.getQueryConditionType())
+                        || QueryConditionTypeEnum.LESS.equals(queryConditionInfoTemp.getQueryConditionType())
+                        || QueryConditionTypeEnum.LESS_OR_EQUAL.equals(queryConditionInfoTemp.getQueryConditionType())){
                     queryCondition = "<![CDATA[ " + queryCondition + " ]]>";
                 }
             }
+            */
             resMap.put(queryConditionKey, queryCondition);
         }
         return resMap;

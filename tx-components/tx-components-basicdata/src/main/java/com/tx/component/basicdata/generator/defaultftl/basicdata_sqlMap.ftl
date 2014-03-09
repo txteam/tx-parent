@@ -54,7 +54,7 @@
 		<trim prefix="WHERE" prefixOverrides="AND | OR">
 <#list select.queryConditionMap?keys as key>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(${key})">  
-	            AND ${select.simpleTableName}.${select.queryConditionMap[key]}
+	            ${r"<![CDATA[ "}AND ${select.simpleTableName}.${select.queryConditionMap[key]}${r" ]]>"}
 	        </if>
 </#list>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(exclude${select.idPropertyName?cap_first})">
@@ -83,7 +83,7 @@
 		<trim prefix="WHERE" prefixOverrides="AND | OR">
 <#list select.queryConditionMap?keys as key>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(${key})">  
-	            AND ${select.simpleTableName}.${select.queryConditionMap[key]}
+	            ${r"<![CDATA[ "}AND ${select.simpleTableName}.${select.queryConditionMap[key]}${r" ]]>"}
 	        </if>
 </#list>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(exclude${select.idPropertyName?cap_first})">

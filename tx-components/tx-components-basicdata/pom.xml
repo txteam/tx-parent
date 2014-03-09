@@ -209,6 +209,11 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>com.tx</groupId>
+			<artifactId>tx-component-auth</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
 			<scope>test</scope>

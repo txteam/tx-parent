@@ -21,7 +21,7 @@ $(document).ready(function(){
 	        	text : '数据提交中，请等待....'
 	        });
 			$('#operatorForm').ajaxSubmit({
-			    url:"${contextPath}/${view.lowerCaseEntitySimpleName}/add${view.entitySimpleName}.action",
+			    url:"${r"${contextPath }"}/${view.lowerCaseEntitySimpleName}/add${view.entitySimpleName}.action",
 			    success: function(data) {
 			    	DialogUtils.progress('close');
 					if(data){
@@ -52,7 +52,7 @@ $(document).ready(function(){
 					<th class="narrow" width="20%">登录名:<span class="tRed">*</span></th>
 					<td width="30%">
 						<form:input path="loginName"
-							data-rule="登录名:required;remote[get:${contextPath }/${view.lowerCaseEntitySimpleName}/loginNameIsExist.action, loginName]"
+							data-rule="登录名:required;remote[get:${r"${contextPath }"}/${view.lowerCaseEntitySimpleName}/loginNameIsExist.action, loginName]"
 							data-tip="必填"/>
 					</td>
 				</tr>

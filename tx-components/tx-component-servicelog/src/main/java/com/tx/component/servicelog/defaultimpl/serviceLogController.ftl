@@ -63,7 +63,7 @@ public class ${jpaMetaClass.entitySimpleName}Controller {
             @RequestParam(value = "minCreateDate", required = false) Date minCreateDate,
             @RequestParam(value = "maxCreateDate", required = false) Date maxCreateDate,
             @RequestParam(value = "pageNumber", required = false, defaultValue = "1") int pageIndex,
-            @RequestParam(value = "pageSize", required = false, defaultValue = "1") int pageSize) {
+            @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize) {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("minCreateDate", minCreateDate);
         params.put("maxCreateDate", maxCreateDate);
