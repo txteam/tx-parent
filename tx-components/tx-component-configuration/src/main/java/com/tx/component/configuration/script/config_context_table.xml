@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tableDefinition>
 	<tableName>CORE_CONFIG_CONTEXT</tableName>
-	<tableVersion>1.0.1</tableVersion>
+	<tableVersion>1.0.2</tableVersion>
 	
 	<dataSourceScript dataSourceType="H2">
 		<createTableScript>

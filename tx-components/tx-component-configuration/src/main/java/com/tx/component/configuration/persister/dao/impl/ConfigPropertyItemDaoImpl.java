@@ -180,7 +180,7 @@ public class ConfigPropertyItemDaoImpl implements ConfigPropertyItemDao {
                         res.setDescription(rs.getString("DESCRIPTION"));
                         res.setCreateDate(rs.getDate("CREATEDATE"));
                         res.setLastUpdateDate(rs.getDate("LASTUPDATEDATE"));
-                        res.setValidateExpression(rs.getString("DESCRIPTION"));
+                        res.setValidateExpression(rs.getString("VALIDATEEXPRESSION"));
                         return res;
                     }
                 });

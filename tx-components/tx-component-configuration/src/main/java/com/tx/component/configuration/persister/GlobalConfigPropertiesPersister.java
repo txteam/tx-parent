@@ -283,10 +283,10 @@ public class GlobalConfigPropertiesPersister extends
         if (!StringUtils.equals(nowConfigPropertyItem.getDescription(),
                 configPropertyParse.getDescription())) {
             return true;
-        } else if (StringUtils.equals(nowConfigPropertyItem.getName(),
+        } else if (!StringUtils.equals(nowConfigPropertyItem.getName(),
                 configPropertyParse.getName())) {
             return true;
-        } else if (StringUtils.equals(nowConfigPropertyItem.getValidateExpression(),
+        } else if (!StringUtils.equals(nowConfigPropertyItem.getValidateExpression(),
                 configPropertyParse.getValidateExpression())) {
             return true;
         } else {
