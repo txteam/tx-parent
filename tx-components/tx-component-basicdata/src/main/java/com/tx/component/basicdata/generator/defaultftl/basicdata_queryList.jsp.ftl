@@ -144,7 +144,9 @@ $(document).ready(function(){
 		]],
 		toolbar : '#toolbar',
 		onDblClickRow : function(index, row){
-			editFun(row[idFieldName], row[nameFieldName]);
+			if($.canUpdate){
+				editFun(row[idFieldName], row[nameFieldName]);
+			}
 		},
 		onClickRow : function(index, row){
 			$editALink.linkbutton('enable');
