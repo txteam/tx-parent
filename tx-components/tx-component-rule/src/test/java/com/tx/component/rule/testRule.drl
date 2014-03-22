@@ -1,12 +1,32 @@
-//created on: 2013-1-20
-package test
+package test;
 
-rule "A stand alone rule"
+function boolean testJavaCode(){
+    if(loanBill==null||clientinfoList.size()==0){
+    	return false;
+    
+    }
+}
+
+global List result;
+
+rule "客户年龄+期限大于等于60"
 
     when
-        //conditions
+       $fact : Map()
+       //获取值
+       $clientinfoList : List()  from $fact["clientinfoList"]
+       $loanBill : LoanBill() from $fact["loanBill"]
+       $creditProduct : CreditProduct() from $fact["creditProduct"]
+       $currentRatifyRuleCfgItem : ExamineRatifyRuleCfgItem() from $fact["examineRatifyRuleCfgItem"]
+       
+       //判断年龄
+       eval(condition($clientinfoList,$loanBill)) 
     then
-        //actions
-
+    	//如果返回结果中，result  List为空则先进行创建
+    	if(result == null){
+    		result = new ArrayList();
+    		drools.getKnowledgeRuntime().setGlobal("result",result);
+    	}
+    	
+		result.add($currentRatifyRuleCfgItem);
 end
-

@@ -68,7 +68,7 @@
 	            ORDER BY ${r"#{"}orderSql${r"}"}
 	        </when>
 	        <otherwise>  
-	            <!-- //TODO:ADD DEFAULT ORDER COLUMN OR DONOTHING! -->
+	            ORDER BY ${select.idColumnName}
 	        </otherwise>  
 	    </choose>
 	</select>

@@ -10,33 +10,32 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Resource;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.context.ApplicationContextAware;
+import org.springframework.cache.ehcache.EhCacheCache;
 import org.springframework.core.OrderComparator;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 
 import com.tx.component.auth.context.adminchecker.AdminChecker;
 import com.tx.component.auth.context.authchecker.AuthChecker;
 import com.tx.component.auth.context.authchecker.impl.DefaultAuthChecker;
 import com.tx.component.auth.context.loader.AuthLoader;
-import com.tx.component.auth.context.loader.impl.DBAuthLoader;
-import com.tx.component.auth.context.loader.impl.XmlAuthLoader;
 import com.tx.component.auth.model.AuthItem;
 import com.tx.component.auth.model.AuthItemImpl;
-import com.tx.component.auth.service.AuthItemImplService;
-import com.tx.component.auth.service.AuthItemRefImplService;
-import com.tx.component.auth.service.NotTempAuthItemRefImplService;
+import com.tx.component.auth.persister.AuthItemPersister;
+import com.tx.component.auth.persister.service.AuthItemImplService;
+import com.tx.component.auth.persister.service.AuthItemRefImplService;
+import com.tx.component.auth.persister.service.NotTempAuthItemRefImplService;
 import com.tx.core.dbscript.TableDefinition;
 import com.tx.core.dbscript.XMLTableDefinition;
 import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.support.cache.map.EhcacheMap;
+import com.tx.core.support.cache.LazyCacheValueFactory;
+import com.tx.core.support.cache.TransactionAwareLazyEhCacheMap;
 
 /**
  * 权限容器构建器<br/>
@@ -47,8 +46,7 @@ import com.tx.core.support.cache.map.EhcacheMap;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class AuthContextBuilder extends AuthContextConfigurator implements
-        InitializingBean, ApplicationContextAware {
+public class AuthContextBuilder extends AuthContextConfigurator {
     
     /** 权限表定义文件路径 */
     private static final String authItemTableDefinitionLocation = "classpath:/com/tx/component/auth/script/auth_authitem_table.xml";
@@ -60,7 +58,7 @@ public class AuthContextBuilder extends AuthContextConfigurator implements
     private static final String authRefHisDefinitionLocation = "classpath:/com/tx/component/auth/script/auth_authref_his_table.xml";
     
     /** 权限加载器 */
-    protected List<AuthLoader> authLoaderList;
+    private List<AuthLoader> authLoaderList;
     
     /**
      * 权限检查器映射，以权限
@@ -78,13 +76,19 @@ public class AuthContextBuilder extends AuthContextConfigurator implements
      */
     protected Map<String, AuthItem> authItemMapping;
     
+    @Resource(name = "authItemPersister")
+    private AuthItemPersister authItemPersister;
+    
     /** 权限项业务层 */
-    protected AuthItemImplService authItemService;
+    @Resource(name = "authItemImplService")
+    protected AuthItemImplService authItemImplService;
     
     /** 权限引用项业务层 */
-    protected AuthItemRefImplService authItemRefService;
+    @Resource(name = "authItemRefImplService")
+    protected AuthItemRefImplService authItemRefImplService;
     
     /** 非临时权限引用处理业务层 */
+    @Resource(name = "notTempAuthItemRefImplService")
     protected NotTempAuthItemRefImplService notTempAuthItemRefImplService;
     
     /**
@@ -94,40 +98,68 @@ public class AuthContextBuilder extends AuthContextConfigurator implements
     @Override
     public void afterPropertiesSet() throws Exception {
         logger.info("初始化权限容器start...");
-        if (this.dataSource == null) {
-            AssertUtils.notNull(this.jdbcTemplate,
-                    "dataSource or jdbcTemplate is null");
-            AssertUtils.notNull(this.platformTransactionManager,
-                    "platformTransactionManager or jdbcTemplate is null");
-        } else {
-            if (this.jdbcTemplate == null) {
-                this.jdbcTemplate = new JdbcTemplate(this.dataSource);
-            }
-            if (this.platformTransactionManager == null) {
-                this.platformTransactionManager = new DataSourceTransactionManager(
-                        this.dataSource);
-            }
-        }
+        logger.info("初始化权限容器表结构.表后缀名为：{}...", this.tableSuffix);
+        databaseSchemaUpdate();
         
-        this.authItemRefService = new AuthItemRefImplService(
-                this.platformTransactionManager, this.jdbcTemplate);
-        this.authItemService = new AuthItemImplService(
-                this.platformTransactionManager, this.jdbcTemplate,
-                this.authItemRefService);
-        this.notTempAuthItemRefImplService = new NotTempAuthItemRefImplService(
-                this.platformTransactionManager, this.jdbcTemplate);
-        this.authLoaderList = new ArrayList<AuthLoader>();
-        this.authLoaderList.add(new DBAuthLoader(this.tableSuffix,
-                this.systemId, this.authItemService));
-        this.authLoaderList.add(new XmlAuthLoader(this.applicationContext,
-                this.authConfigLocaions));
-        
+        super.afterPropertiesSet();
         //如果没有设置默认的权限检查器
         if (this.defaultAuthChecker == null) {
             this.defaultAuthChecker = new DefaultAuthChecker();
         }
         
-        logger.info("初始化权限容器表结构.表后缀名为：{}...", this.tableSuffix);
+        //加载超级管理员认证器
+        Collection<AdminChecker> adminCheckers = this.applicationContext.getBeansOfType(AdminChecker.class)
+                .values();
+        loadAdminChecker(adminCheckers);
+        //加载权限检查器
+        logger.info("      加载权限检查器...");
+        //读取系统中注册的权限检查器
+        Collection<AuthChecker> authCheckers = this.applicationContext.getBeansOfType(AuthChecker.class)
+                .values();
+        loadAuthChecker(authCheckers);
+        
+        //向容器中注册加载器
+        logger.info("      加载权限项加载器...");
+        //读取系统中注册的加载器
+        Collection<AuthLoader> authLoaders = this.applicationContext.getBeansOfType(AuthLoader.class)
+                .values();
+        loadAuthLoader(authLoaders);
+        
+        logger.info("      加载权限项...");
+        this.authItemMapping = loadAuthItems(this.authLoaderList);
+        
+        logger.info("初始化权限容器end...");
+    }
+    
+    /**
+      * 加载权限项加载器<br/>
+      *<功能详细描述>
+      * @param authLoaders [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    private void loadAuthLoader(Collection<AuthLoader> authLoaders) {
+        this.authLoaderList = new ArrayList<AuthLoader>();
+        
+        if (CollectionUtils.isEmpty(authLoaders)) {
+            return;
+        }
+        for (AuthLoader authLoaderTemp : authLoaders) {
+            this.authLoaderList.add(authLoaderTemp);
+        }
+    }
+    
+    /** 
+     * 执行脚本自动升级
+     *<功能详细描述> [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    private void databaseSchemaUpdate() {
         if (databaseSchemaUpdate && dbScriptExecutorContext != null) {
             Map<String, String> replaceDataMap = new HashMap<String, String>();
             replaceDataMap.put("tableSuffix", this.tableSuffix);
@@ -144,33 +176,6 @@ public class AuthContextBuilder extends AuthContextConfigurator implements
             
             logger.info(" 自动初始化权限容器表结构完成.表后缀名为：{}...", this.tableSuffix);
         }
-        
-        //加载超级管理员认证器
-        Collection<AdminChecker> adminCheckers = this.applicationContext.getBeansOfType(AdminChecker.class)
-                .values();
-        loadAdminChecker(adminCheckers);
-        //加载权限检查器
-        logger.info("      加载权限检查器...");
-        
-        //读取系统中注册的权限检查器
-        Collection<AuthChecker> authCheckers = this.applicationContext.getBeansOfType(AuthChecker.class)
-                .values();
-        loadAuthChecker(authCheckers);
-        
-        //向容器中注册加载器
-        logger.info("      加载权限项加载器...");
-        //读取系统中注册的加载器
-        Collection<AuthLoader> authLoaders = this.applicationContext.getBeansOfType(AuthLoader.class)
-                .values();
-        this.authLoaderList.addAll(authLoaders);
-        if (this.cache != null) {
-            this.authItemMapping = new EhcacheMap<String, AuthItem>(this.cache);
-        } else {
-            this.authItemMapping = new HashMap<String, AuthItem>();
-        }
-        loadAuthItems(this.authLoaderList);
-        
-        logger.info("初始化权限容器end...");
     }
     
     /**
@@ -182,12 +187,8 @@ public class AuthContextBuilder extends AuthContextConfigurator implements
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    protected void loadAuthItems(List<AuthLoader> authLoaders) {
-        //权限项映射
-        if (authLoaders == null || authLoaders.size() == 0) {
-            logger.warn("AuthContext init.AuthLoader is empty.");
-            return;
-        }
+    protected Map<String, AuthItem> loadAuthItems(List<AuthLoader> authLoaders) {
+        Map<String, AuthItem> resMap = null;
         
         Map<String, AuthItem> tempAuthItemMapping = new HashMap<String, AuthItem>();
         //一句加载器order值进行排序，根据优先级进行加载
@@ -202,11 +203,11 @@ public class AuthContextBuilder extends AuthContextConfigurator implements
                 AssertUtils.notTrue(authItem.getId()
                         .equals(authItem.getParentId()),
                         "authItem.id equals authItem.parentId.authItem.id:{},parentId:{}",
-                        authItem.getId(),authItem.getParentId());
+                        authItem.getId(),
+                        authItem.getParentId());
                 
                 //加载权限并设置加载的权限项目的系统id
                 authItem.setSystemId(this.systemId);
-                
                 //高优先级的加载器加载权限有效，低优先级权限加载器，加载的权限项目，将被忽略
                 if (!tempAuthItemMapping.containsKey(authItem.getId())) {
                     tempAuthItemMapping.put(authItem.getId(), authItem);
@@ -229,20 +230,39 @@ public class AuthContextBuilder extends AuthContextConfigurator implements
             }
         }
         
-        //移除原存在，现在不存在的
-        Set<String> needRemoveKeySet = new HashSet<String>();
-        for (String authItemKeyTemp : authItemMapping.keySet()) {
-            if (!tempAuthItemMapping.containsKey(authItemKeyTemp)) {
-                needRemoveKeySet.add(authItemKeyTemp);
-            }
-        }
+        AssertUtils.notNull(ehcache, "ehcache is null.");
+        final AuthItemPersister finalauthItemPersister = this.authItemPersister;
+        resMap = new TransactionAwareLazyEhCacheMap<AuthItem>(
+                tempAuthItemMapping, new EhCacheCache(ehcache),
+                new LazyCacheValueFactory<String, AuthItem>() {
+                    
+                    @Override
+                    public AuthItem find(String authItemId) {
+                        AuthItem authItemTemp = finalauthItemPersister.findAuthItem(authItemId);
+                        if (authItemTemp != null) {
+                            return authItemTemp;
+                        } else {
+                            return null;
+                        }
+                    }
+                    
+                    @Override
+                    public Map<String, AuthItem> listMap() {
+                        Map<String, AuthItem> resMap = new HashMap<String, AuthItem>();
+                        Set<AuthItem> authItemSetTemp = finalauthItemPersister.listAuthItem();
+                        if (!CollectionUtils.isEmpty(authItemSetTemp)) {
+                            for (AuthItem authItemTemp : authItemSetTemp) {
+                                resMap.put(authItemTemp.getId(), authItemTemp);
+                            }
+                        }
+                        return resMap;
+                    }
+                    
+                }, false);
+        //强制将lazy中list加载一次
+        resMap.entrySet();
         
-        //进行添加或更新
-        authItemMapping.putAll(tempAuthItemMapping);
-        //进行实际的移除
-        for (String needRemoveKey : needRemoveKeySet) {
-            authItemMapping.remove(needRemoveKey);
-        }
+        return resMap;
     }
     
     /**

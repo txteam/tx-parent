@@ -4,16 +4,29 @@
          updateCheck="false" 
          monitoring="autodetect"
          dynamicConfig="true">
-    <!--设置缓存文件保存路径-->
     <diskStore path="java.io.tmpdir"/>
-
-	<cache name="los.cache" 
-		maxElementsInMemory="10000"
-		eternal="false"
-		overflowToDisk="true"
-		timeToIdleSeconds="600"
-		timeToLiveSeconds="600"
-		diskPersistent="false" 
-		diskExpiryThreadIntervalSeconds="120">
-	</cache>
+    
+    <cacheManagerPeerProviderFactory
+        class="net.sf.ehcache.distribution.RMICacheManagerPeerProviderFactory"
+        properties="peerDiscovery=automatic, multicastGroupAddress=230.0.0.1, multicastGroupPort=4446,timeToLive=255"/> 
+	<cacheManagerPeerListenerFactory
+        class="net.sf.ehcache.distribution.RMICacheManagerPeerListenerFactory"/>
+    
+    <defaultCache
+            maxElementsInMemory="1000"
+            maxElementsOnDisk="0"
+            overflowToDisk="true"
+            diskPersistent="false"
+            diskExpiryThreadIntervalSeconds="120"
+            eternal="false"
+            timeToIdleSeconds="3600"
+            timeToLiveSeconds="3600"
+            memoryStoreEvictionPolicy="LRU">
+           	<cacheEventListenerFactory class="net.sf.ehcache.distribution.RMICacheReplicatorFactory" 
+           		properties="replicateAsynchronously=false,
+           			replicatePuts=false,
+           			replicateUpdates=false,
+           			replicateUpdatesViaCopy= false, 
+           			replicateRemovals=true"/>
+	</defaultCache>
 </ehcache>

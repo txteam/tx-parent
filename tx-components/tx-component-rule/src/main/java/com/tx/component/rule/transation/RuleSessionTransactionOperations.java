@@ -8,16 +8,15 @@ package com.tx.component.rule.transation;
 
 import java.util.Map;
 
-
- /**
-  * 规则会话事务执行器
-  * <功能详细描述>
-  * 
-  * @author  brady
-  * @version  [版本号, 2013-3-29]
-  * @see  [相关类/方法]
-  * @since  [产品/模块版本]
-  */
+/**
+ * 规则会话事务执行器
+ * <功能详细描述>
+ * 
+ * @author  brady
+ * @version  [版本号, 2013-3-29]
+ * @see  [相关类/方法]
+ * @since  [产品/模块版本]
+ */
 public interface RuleSessionTransactionOperations {
     
     /**
@@ -31,5 +30,6 @@ public interface RuleSessionTransactionOperations {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    void execute(RuleSessionTransactionCallback action,Map<String, Object> global) throws Throwable;
+    void execute(RuleSessionTransactionCallback action,
+            Map<? extends String, ? extends Object> global) throws Throwable;
 }

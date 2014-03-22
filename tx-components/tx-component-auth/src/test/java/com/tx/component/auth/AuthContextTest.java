@@ -33,9 +33,12 @@ import com.tx.component.auth.model.AuthItemRef;
  * @since  [产品/模块版本]
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:spring/beans-aop.xml",
-        "classpath:spring/beans-cache.xml", "classpath:spring/beans-ds.xml",
-        "classpath:spring/beans-tx.xml", "classpath:spring/beans-auth.xml" })
+@ContextConfiguration(locations = { 
+        "classpath:spring/beans-aop.xml",
+        "classpath:spring/beans-cache.xml", 
+        "classpath:spring/beans-ds.xml",
+        "classpath:spring/beans-tx.xml", 
+        "classpath:spring/beans-auth.xml" })
 public class AuthContextTest {
     
     @Resource(name = "authContext")

@@ -10,10 +10,12 @@ import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
-import com.tx.component.rule.method.annotation.RuleMethod;
-import com.tx.component.rule.method.annotation.RuleMethodClass;
-import com.tx.component.rule.method.annotation.RuleMethodParam;
-import com.tx.component.rule.method.annotation.RuleMethodResult;
+import com.tx.component.rule.loader.java.annotation.RuleClassMapping;
+import com.tx.component.rule.loader.java.annotation.RuleMethodMapping;
+import com.tx.component.rule.loader.java.annotation.RuleRequestParam;
+import com.tx.component.rule.loader.java.annotation.RuleResultBody;
+import com.tx.component.rule.loader.java.annotation.RuleResultParam;
+import com.tx.component.rule.method.model.TestPojo;
 
 /**
  * <功能简述>
@@ -25,7 +27,7 @@ import com.tx.component.rule.method.annotation.RuleMethodResult;
  * @since  [产品/模块版本]
  */
 @Component("MethodRule1")
-@RuleMethodClass
+@RuleClassMapping
 public class MethodRule1 {
     
     /**
@@ -36,25 +38,26 @@ public class MethodRule1 {
     }
     
     //返回值的使用
-    @RuleMethod(rule = "method.rule1", serviceType = "test")
-    public StringBuffer rule1ReturnString(@RuleMethodParam Map<String, ?> facts) {
+    @RuleMethodMapping(value = "method.rule1", serviceType = "test")
+    public StringBuffer rule1ReturnString(@RuleRequestParam Map<String, ?> facts) {
         System.out.println("method.rule1ReturnString: MethodRule1.rule1ReturnString.");
         System.out.println("facts.size:" + facts == null ? 0 : facts.size());
         return new StringBuffer("rule1ReturnString");
     }
     
-    @RuleMethod(rule = "method.rule2", serviceType = "test")
-    public void rule2ReturnVoid(@RuleMethodParam Map<String, ?> facts,
-            @RuleMethodResult StringBuffer result) {
+    @RuleMethodMapping(value = "method.rule2", serviceType = "test")
+    public void rule2ReturnVoid(@RuleRequestParam Map<String, ?> facts,
+            @RuleResultParam StringBuffer result) {
         System.out.println("method.rule1ReturnString: MethodRule1.rule1ReturnString.");
         System.out.println("facts.size:" + facts == null ? 0 : facts.size());
         
         result.append("rule2ReturnVoid");
     }
     
-    @RuleMethod(rule = "method.rule3", serviceType = "test")
+    @RuleResultBody
+    @RuleMethodMapping(value = "method.rule3", serviceType = "test")
     public TestPojo rule3ReturnTestPojo(TestPojo testPojo,
-            @RuleMethodParam("test") String test) {
+            @RuleRequestParam("test") String test) {
         System.out.println("method.rule1ReturnString: MethodRule1.rule1ReturnString.");
         System.out.println(testPojo + " : " + test);
         
@@ -63,10 +66,10 @@ public class MethodRule1 {
         return resTestPojo;
     }
     
-    @RuleMethod(rule = "method.rule4", serviceType = "test")
+    @RuleMethodMapping(value = "method.rule4", serviceType = "test")
     public void rule4ReturnVoid(TestPojo testPojo,
-            @RuleMethodParam("test") String test,
-            @RuleMethodResult TestPojo resTestPojo) {
+            @RuleRequestParam("test") String test,
+            @RuleResultParam TestPojo resTestPojo) {
         System.out.println("method.rule1ReturnString: MethodRule1.rule1ReturnString.");
         System.out.println(testPojo + " : " + test);
         

@@ -9,6 +9,9 @@ package com.tx.component.rule.support;
 import java.util.List;
 import java.util.Map;
 
+import com.tx.component.rule.session.RuleSession;
+import com.tx.component.rule.session.CallbackHandler;
+
 /**
  * 规则回话<br/>
  * 规则回话接口，用以描述各种规则会话<br/>
@@ -23,140 +26,37 @@ import java.util.Map;
 public interface RuleSessionSupport {
     
     /**
-      * 解析列表规则结果（推导结论或推论事实）<br/>
-      * @param rule 规则名
-      * @param fact 事实集
-      * @param global 全局参数，在规则执行期间能够通过线程取到，将在规则执行完成后进行销毁
-      * @return [参数说明]
-      * 
-      * @return List<T> [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    public <T> List<T> evaluateList(String rule, Map<String, ?> fact,
-            Map<String, ?> global);
-    
-    /**
-     * 解析列表规则结果（推导结论或推论事实）<br/>
-     * @param rule 规则名
-     * @param facts 事实集
-     * @param global 全局参数，在规则执行期间能够通过线程取到，将在规则执行完成后进行销毁
-     * @return [参数说明]
-     * 
-     * @return List<T> [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-    */
-    public <T> List<T> evaluateList(String rule, List<Map<String, ?>> facts,
-            Map<String, ?> global);
-    
-    /**
-      * 解析列表规则结果（推导结论或推论事实）<br/>
-      * @param rule 规则名
-      * @param fact 事实
-      * @param global 全局参数，在规则执行期间能够通过线程取到，将在规则执行完成后进行销毁
-      * @return [参数说明]
-      * 
-      * @return Map<String,T> [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    public <T> Map<String, T> evaluateMap(String rule, Map<String, ?> fact,
-            Map<String, ?> global);
-    
-    /**
-     * 解析列表规则结果（推导结论或推论事实）<br/>
-     * @param rule 规则名
-     * @param facts 事实集
-     * @param global 全局参数，在规则执行期间能够通过线程取到，将在规则执行完成后进行销毁
-     * @return [参数说明]
-     * 
-     * @return Map<String,T> [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-    */
-    public <T> Map<String, T> evaluateMap(String rule,
-            List<Map<String, ?>> facts, Map<String, ?> global);
-    
-    /**
-      * 解析列表规则结果（推导结论或推论事实）<br/>
-      * @param rule 规则名
-      * @param fact 事实
-      * @param global 全局参数，在规则执行期间能够通过线程取到，将在规则执行完成后进行销毁
-      * @return [参数说明]
-      * 
-      * @return Map<String,T> [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    public <T> T evaluateObject(String rule, Map<String, ?> fact,
-            Map<String, ?> global);
-    
-    /**
-     * 解析列表规则结果（推导结论或推论事实）<br/>
-     * @param rule 规则名
-     * @param facts 事实集
-     * @param global 全局参数，在规则执行期间能够通过线程取到，将在规则执行完成后进行销毁
-     * @return [参数说明]
-     * 
-     * @return Map<String,T> [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-    */
-    public <T> T evaluateObject(String rule, List<Map<String, ?>> facts,
-            Map<String, ?> global);
-    
-    /**
-      * 解析列表规则结果（推导结论或推论事实）<br/>
-      * @param rule 规则名
-      * @param fact 事实
-      * @param global 全局参数，在规则执行期间能够通过线程取到，将在规则执行完成后进行销毁
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    public void evaluate(String rule, Map<String, ?> fact, Map<String, ?> global);
-    
-    /**
-     * 解析列表规则结果（推导结论或推论事实）<br/>
-     * @param rule 规则名
-     * @param facts 事实集
-     * @param global 全局参数，在规则执行期间能够通过线程取到，将在规则执行完成后进行销毁
-     * 
-     * @return void [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-    */
-    public void evaluate(String rule, List<Map<String, ?>> facts,
-            Map<String, ?> global);
-    
-    /**
       * 解析列表规则结果（推导结论或推论事实）触发某规则执行<br/>
       * <功能详细描述>
-      * @param ruleSession 规则会话，需要自信实现相关会话逻辑
-      * @param fact 事实
-      * @param global [参数说明]
+      * @param ruleSession
+      *<功能详细描述>
+      * @param ruleSession
+      * @param fact
+      * @param global
+      * @param resultHandle
+      * @return [参数说明]
       * 
       * @return void [返回类型说明]
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public void evaluate(RuleSession ruleSession, Map<String, ?> fact,
-            Map<String, ?> global);
+    public <R> void evaluate(RuleSession ruleSession, Map<String, Object> fact,
+            Map<String, Object> global, CallbackHandler<R> resultHandle);
     
     /**
       * 解析列表规则结果（推导结论或推论事实）触发某规则执行<br/>
-      * 事实集
+      *<功能详细描述>
       * @param ruleSession
       * @param facts
-      * @param global [参数说明]
+      * @param global
+      * @param resultHandle [参数说明]
       * 
       * @return void [返回类型说明]
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public void evaluate(RuleSession ruleSession, List<Map<String, ?>> facts,
-            Map<String, ?> global);
+    public <R> void evaluateAll(RuleSession ruleSession,
+            List<Map<String, Object>> facts, Map<String, Object> global,
+            CallbackHandler<R> resultHandle);
     
 }

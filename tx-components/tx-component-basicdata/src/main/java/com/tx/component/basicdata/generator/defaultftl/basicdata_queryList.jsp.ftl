@@ -167,6 +167,7 @@ $(document).ready(function(){
 </#if>
 		},
 		onLoadSuccess : function() {
+			$(this).datagrid('unselectAll');
 			$(this).datagrid('tooltip');
 			
 			$editALink.linkbutton('disable');

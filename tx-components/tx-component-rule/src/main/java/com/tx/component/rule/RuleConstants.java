@@ -18,6 +18,6 @@ package com.tx.component.rule;
 public class RuleConstants {
     
     /** 规则约定常量 */
-    public static final String RULE_PROMISE_CONSTANT_RESULT = "result";
+    public static final String RULE_EVALUATE_RESULT = "result";
     
 }

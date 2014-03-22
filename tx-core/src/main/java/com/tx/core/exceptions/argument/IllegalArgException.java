@@ -48,4 +48,9 @@ public class IllegalArgException extends SILException {
     public IllegalArgException(String message) {
         super(message);
     }
+
+    /** <默认构造函数> */
+    public IllegalArgException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

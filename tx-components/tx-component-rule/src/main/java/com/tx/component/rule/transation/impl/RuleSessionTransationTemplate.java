@@ -8,8 +8,6 @@ package com.tx.component.rule.transation.impl;
 
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import com.tx.component.rule.context.RuleContext;
 import com.tx.component.rule.transation.RuleSessionContext;
 import com.tx.component.rule.transation.RuleSessionTransaction;
@@ -29,7 +27,7 @@ import com.tx.component.rule.transation.RuleSessionTransactionUtils;
 public class RuleSessionTransationTemplate implements
         RuleSessionTransactionOperations {
     
-    @Resource(name = "ruleContext")
+    
     private RuleContext ruleContext;
     
     /** <默认构造函数> */
@@ -37,18 +35,17 @@ public class RuleSessionTransationTemplate implements
         super();
         this.ruleContext = ruleContext;
     }
-
+    
     /**
      * @param action
      * @param global
      */
     @Override
     public void execute(RuleSessionTransactionCallback action,
-            Map<String, Object> global) throws Throwable{
+            Map<? extends String,? extends Object> global) throws Exception {
         
         //开启规则会话事务
         RuleSessionTransaction rsTrans = RuleSessionTransactionUtils.openRuleSessionTransation(ruleContext.getRuleSessionTransactionFactory());
-        
         
         try {
             //设置会话变量
@@ -57,10 +54,10 @@ public class RuleSessionTransationTemplate implements
             }
             
             //调用事务内执行方法
-            if(action != null){
+            if (action != null) {
                 action.doInTransaction();
             }
-        }finally{
+        } finally {
             //关闭规则会话事务
             RuleSessionTransactionUtils.closeRuleSessionTransation(rsTrans,
                     ruleContext.getRuleSessionTransactionFactory());

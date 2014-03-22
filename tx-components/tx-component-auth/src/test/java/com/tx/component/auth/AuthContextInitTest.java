@@ -28,9 +28,9 @@ import com.tx.core.exceptions.util.AssertUtils;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { 
         "classpath:spring/beans-aop.xml",
-        "classpath:spring/beans-cache.xml",
+        "classpath:spring/beans-cache.xml", 
         "classpath:spring/beans-ds.xml",
-        "classpath:spring/beans-tx.xml",
+        "classpath:spring/beans-tx.xml", 
         "classpath:spring/beans-auth.xml" })
 public class AuthContextInitTest {
     

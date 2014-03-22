@@ -16,8 +16,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.ListUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.transaction.support.TransactionSynchronizationAdapter;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.tx.component.auth.context.authchecker.AuthChecker;
 import com.tx.component.auth.exceptions.AuthContextInitException;
@@ -30,6 +29,7 @@ import com.tx.core.exceptions.util.AssertUtils;
 /**
  * 权限容器<br/>
  * 功能详细描述<br/>
+ *     下一版本，将把权限注册的相关逻辑抽取接口AuthRegister从AuthContext中移出<br/>
  * 
  * @author PengQingyang
  * @version [版本号, 2012-12-1]
@@ -73,20 +73,6 @@ public class AuthContext extends AuthContextBuilder {
         authContext = this;
         
         super.afterPropertiesSet();
-    }
-    
-    /**
-     * 重新加载权限配置
-     * <功能详细描述> [参数说明]
-     * 
-     * @return void [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-    */
-    public void reLoadAuthItems() {
-        logger.info("      重新加载权限项...start");
-        loadAuthItems(this.authLoaderList);
-        logger.info("      重新加载权限项...end");
     }
     
     /**
@@ -167,7 +153,7 @@ public class AuthContext extends AuthContextBuilder {
         } else {
             //如果不是超级管理员，根据引用表查询得到相关的权限引用
             authItemRefList = new ArrayList<AuthItemRef>();
-            List<AuthItemRefImpl> refImplList = this.authItemRefService.queryAuthItemRefListByRefType2RefIdMapping(refType2RefIdMapping,
+            List<AuthItemRefImpl> refImplList = this.authItemRefImplService.queryAuthItemRefListByRefType2RefIdMapping(refType2RefIdMapping,
                     this.systemId,
                     this.tableSuffix);
             if (refImplList != null) {
@@ -271,6 +257,7 @@ public class AuthContext extends AuthContextBuilder {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
+    @Transactional
     public AuthItem registeAuth(AuthItem authItem) {
         AssertUtils.notNull(authItem, "authItem is null");
         //参数合法性验证
@@ -334,6 +321,7 @@ public class AuthContext extends AuthContextBuilder {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
+    @Transactional
     public AuthItem registeAuth(String id, String parentId, String name,
             String description, String authType, boolean valid,
             boolean configAble, boolean viewAble, boolean editAble) {
@@ -393,6 +381,7 @@ public class AuthContext extends AuthContextBuilder {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
+    @Transactional
     public AuthItem registeAuth(String id, String name, String description,
             String authType, boolean valid) {
         //参数合法性验证
@@ -442,6 +431,7 @@ public class AuthContext extends AuthContextBuilder {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
+    @Transactional
     public AuthItem registeAuth(String name, String description, String authType) {
         //参数合法性验证
         AssertUtils.notEmpty(authType, "authType is empty.");
@@ -475,6 +465,7 @@ public class AuthContext extends AuthContextBuilder {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
+    @Transactional
     public AuthItem registeAuth(String name, String description,
             String authType, boolean isValid, boolean isConfigAble,
             boolean isEditAble, boolean isViewAble) {
@@ -515,22 +506,11 @@ public class AuthContext extends AuthContextBuilder {
                 .registeAuthTypeItem(authItemImpl.getAuthType());
         
         //持久化对应的权限项到数据库中
-        this.authItemService.insertAuthItemImpl(authItemImpl,
+        this.authItemImplService.insertAuthItemImpl(authItemImpl,
                 this.systemId,
                 this.tableSuffix);
         
-        if (TransactionSynchronizationManager.isSynchronizationActive()) {
-            //如果在事务逻辑中执行
-            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
-                @Override
-                public void afterCommit() {
-                    authItemMapping.put(authItemImpl.getId(), authItemImpl);
-                }
-            });
-        } else {
-            //如果在非事务中执行
-            authItemMapping.put(authItemImpl.getId(), authItemImpl);
-        }
+        authItemMapping.put(authItemImpl.getId(), authItemImpl);
         
         return authItemImpl;
     }
@@ -551,22 +531,11 @@ public class AuthContext extends AuthContextBuilder {
         AssertUtils.notEmpty((String) authItemRowMap.get("id"),
                 "authItemRowMap.id is empty.");
         
-        final AuthItemImpl authItemImpl = this.authItemService.saveAuthItemImplByAuthItemRowMap(authItemRowMap,
+        final AuthItemImpl authItemImpl = this.authItemImplService.saveAuthItemImplByAuthItemRowMap(authItemRowMap,
                 this.systemId,
                 this.tableSuffix);
         
-        if (TransactionSynchronizationManager.isSynchronizationActive()) {
-            //如果在事务逻辑中执行
-            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
-                @Override
-                public void afterCommit() {
-                    authItemMapping.put(authItemImpl.getId(), authItemImpl);
-                }
-            });
-        } else {
-            //如果在非事务中执行
-            authItemMapping.put(authItemImpl.getId(), authItemImpl);
-        }
+        authItemMapping.put(authItemImpl.getId(), authItemImpl);
         
         return authItemImpl;
     }
@@ -775,7 +744,7 @@ public class AuthContext extends AuthContextBuilder {
      */
     public List<AuthItemRef> queryAuthItemRefListByRefType2RefIdMapping(
             Map<String, String> refType2RefIdMapping) {
-        List<AuthItemRefImpl> authItemRefImplList = this.authItemRefService.queryAuthItemRefListByRefType2RefIdMapping(refType2RefIdMapping,
+        List<AuthItemRefImpl> authItemRefImplList = this.authItemRefImplService.queryAuthItemRefListByRefType2RefIdMapping(refType2RefIdMapping,
                 this.systemId,
                 this.tableSuffix);
         
@@ -819,6 +788,7 @@ public class AuthContext extends AuthContextBuilder {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
+    @Transactional
     public void unRegisteAuth(String authItemId) {
         AssertUtils.notEmpty(authItemId, "authItemId is empty.");
         
@@ -840,22 +810,11 @@ public class AuthContext extends AuthContextBuilder {
         AssertUtils.notEmpty(authItemId, "authItemId is empty.");
         
         //持久化对应的权限项到数据库中
-        this.authItemService.deleteById(authItemId,
+        this.authItemImplService.deleteById(authItemId,
                 this.systemId,
                 this.tableSuffix);
         
-        if (TransactionSynchronizationManager.isSynchronizationActive()) {
-            //如果在事务逻辑中执行
-            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
-                @Override
-                public void afterCommit() {
-                    authItemMapping.remove(authItemId);
-                }
-            });
-        } else {
-            //如果在非事务中执行
-            authItemMapping.remove(authItemId);
-        }
+        authItemMapping.remove(authItemId);
     }
     
     /**

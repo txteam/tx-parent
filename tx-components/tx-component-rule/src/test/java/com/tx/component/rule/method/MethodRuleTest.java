@@ -18,6 +18,10 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.tx.component.rule.RuleConstants;
+import com.tx.component.rule.method.model.ProcessRule;
+import com.tx.component.rule.method.model.TestPojo;
+import com.tx.component.rule.method.model.TestPojoDao;
 import com.tx.component.rule.support.RuleSessionTemplate;
 
 /**
@@ -31,12 +35,11 @@ import com.tx.component.rule.support.RuleSessionTemplate;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { 
-        "classpath:spring/beans-aop.xml",
         "classpath:spring/beans-ds.xml",
-        "classpath:spring/beans-tx.xml", 
+        "classpath:spring/beans-tx.xml",
         "classpath:spring/beans-cache.xml",
-        "classpath:spring/beans-rule.xml"})
-@ActiveProfiles("dev")
+        "classpath:spring/beans-rule.xml",
+        "classpath:spring/beans.xml" })
 public class MethodRuleTest {
     
     @Resource(name = "ruleSessionTemplate")
@@ -58,7 +61,8 @@ public class MethodRuleTest {
             global.put("globalKey1", "globalValue1:abc");
             
             //
-            List<ProcessRule> resList = ruleSessionTemplate.<ProcessRule> evaluateList("processLoanBill.minAgeRule",
+            global.put(RuleConstants.RULE_EVALUATE_RESULT, "globalValue1:abc");
+            List<ProcessRule> resList = ruleSessionTemplate.<ProcessRule> evaluateList("minAgeRule",
                     fact,
                     global);
             System.out.println(resList.size());

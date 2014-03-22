@@ -18,9 +18,9 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.tx.component.rule.method.ProcessRule;
-import com.tx.component.rule.method.TestPojo;
-import com.tx.component.rule.method.TestPojoDao;
+import com.tx.component.rule.method.model.ProcessRule;
+import com.tx.component.rule.method.model.TestPojo;
+import com.tx.component.rule.method.model.TestPojoDao;
 import com.tx.component.rule.support.RuleSessionTemplate;
 
 

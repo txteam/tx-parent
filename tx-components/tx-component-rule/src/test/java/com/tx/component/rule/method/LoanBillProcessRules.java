@@ -11,10 +11,13 @@ import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
-import com.tx.component.rule.method.annotation.RuleMethod;
-import com.tx.component.rule.method.annotation.RuleMethodClass;
-import com.tx.component.rule.method.annotation.RuleMethodParam;
-import com.tx.component.rule.method.annotation.RuleMethodResult;
+import com.tx.component.rule.loader.java.annotation.RuleClassMapping;
+import com.tx.component.rule.loader.java.annotation.RuleMethodMapping;
+import com.tx.component.rule.loader.java.annotation.RuleRequestParam;
+import com.tx.component.rule.loader.java.annotation.RuleResultParam;
+import com.tx.component.rule.method.model.ProcessRule;
+import com.tx.component.rule.method.model.TestPojo;
+import com.tx.component.rule.method.model.TestPojoDao;
 import com.tx.component.rule.transation.RuleSessionContext;
 
 /**
@@ -27,7 +30,7 @@ import com.tx.component.rule.transation.RuleSessionContext;
  * @since  [产品/模块版本]
  */
 @Component("LoanBillProcessRules")
-@RuleMethodClass
+@RuleClassMapping
 public class LoanBillProcessRules {
     
     /**
@@ -40,11 +43,13 @@ public class LoanBillProcessRules {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    @RuleMethod(rule = "minAgeRule", serviceType = "processLoanBill", name = "年龄不能小于18岁")
+    @RuleMethodMapping(value = "minAgeRule", serviceType = "processLoanBill", name = "年龄不能小于18岁")
     public void minAgeRule(TestPojo testPojo, TestPojoDao testPojoDao,
-            @RuleMethodParam Map<String, ?> facts,
-            @RuleMethodResult ArrayList<ProcessRule> violateProcessRuleList) {
-        Object globalValue1 = RuleSessionContext.getContext().getGlobals().get("globalKey1");
+            @RuleRequestParam Map<String, ?> facts,
+            @RuleResultParam ArrayList<ProcessRule> violateProcessRuleList) {
+        Object globalValue1 = RuleSessionContext.getContext()
+                .getGlobals()
+                .get("globalKey1");
         System.out.println(globalValue1);
         System.out.println(testPojo != null ? testPojo.getTest() : "null");
         System.out.println(testPojoDao != null ? testPojoDao.call() : "null");
@@ -53,7 +58,7 @@ public class LoanBillProcessRules {
     }
     
     /**
-      *<功能简述>
+      * 年龄不能大于60岁
       *<功能详细描述>
       * @param testPojo
       * @param facts
@@ -63,10 +68,10 @@ public class LoanBillProcessRules {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    @RuleMethod(rule = "maxAgeRule", serviceType = "processLoanBill", name = "年龄不能大于60岁")
+    @RuleMethodMapping(value = "maxAgeRule", serviceType = "processLoanBill", name = "年龄不能大于60岁")
     public void maxAgeRule(TestPojo testPojo,
-            @RuleMethodParam Map<String, ?> facts,
-            @RuleMethodResult ArrayList<ProcessRule> violateProcessRuleList) {
+            @RuleRequestParam Map<String, ?> facts,
+            @RuleResultParam ArrayList<ProcessRule> violateProcessRuleList) {
         //如果没有违背，则不压入，当然也可以把豁免的逻辑也放入规则中，
         //不同的产品可能存在，同一规则，在某产品中仅是提示，某产品中则直接拒绝的情况
         //当前获得的豁免可以一并放入传入的事实中

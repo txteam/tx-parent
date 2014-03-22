@@ -54,9 +54,10 @@ public class RuleSessionTransactionUtils {
       * @see [类、类#方法、类#成员]
      */
     private static RuleSessionTransaction doOpenRuleSessionTransation(
-            RuleSessionTransactionFactory rstFactory){
-        if(rstFactory == null){
-            throw new NullArgException("ruleSessionTransactionFactory is empty.");
+            RuleSessionTransactionFactory rstFactory) {
+        if (rstFactory == null) {
+            throw new NullArgException(
+                    "ruleSessionTransactionFactory is empty.");
         }
         
         //从当前线程中根据factory获取可能存在的transHolder
@@ -105,10 +106,11 @@ public class RuleSessionTransactionUtils {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public static void closeRuleSessionTransation(RuleSessionTransaction trans, RuleSessionTransactionFactory fac) {
+    public static void closeRuleSessionTransation(RuleSessionTransaction trans,
+            RuleSessionTransactionFactory fac) {
         doCloseRuleSessionTransation(trans, fac);
     }
-
+    
     /**
       * 关闭规则会话事务 
       * <功能详细描述>
@@ -119,7 +121,8 @@ public class RuleSessionTransactionUtils {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    private static void doCloseRuleSessionTransation(RuleSessionTransaction trans, RuleSessionTransactionFactory fac){
+    private static void doCloseRuleSessionTransation(
+            RuleSessionTransaction trans, RuleSessionTransactionFactory fac) {
         if (trans == null) {
             return;
         }
@@ -135,7 +138,7 @@ public class RuleSessionTransactionUtils {
         //如果传入事务与线程中绑定事务保持器持有的不同，则直接在此关闭
         trans.close();
     }
-
+    
     /**
      * Determine whether the given two Connections are equal, asking the target
      * Connection in case of a proxy. Used to detect equality even if the
@@ -146,7 +149,9 @@ public class RuleSessionTransactionUtils {
      * @return whether the given Connections are equal
      * @see #getTargetConnection
      */
-    private static boolean transationEquals(RuleSessionTransactionHolder transHolder, RuleSessionTransaction trans) {
+    private static boolean transationEquals(
+            RuleSessionTransactionHolder transHolder,
+            RuleSessionTransaction trans) {
         if (transHolder.isReleased()) {
             return false;
         }

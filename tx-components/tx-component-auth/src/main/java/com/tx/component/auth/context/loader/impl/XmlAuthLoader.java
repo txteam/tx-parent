@@ -97,6 +97,14 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
     public XmlAuthLoader() {
         super();
     }
+    
+    /** <默认构造函数> */
+    public XmlAuthLoader(String[] authConfigLocaions) {
+        super();
+        if(!ArrayUtils.isEmpty(authConfigLocaions)){
+            this.authConfigLocaions = authConfigLocaions;
+        }
+    }
 
     /** <默认构造函数> */
     public XmlAuthLoader(ApplicationContext applicationContext,
@@ -106,7 +114,6 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
             this.authConfigLocaions = authConfigLocaions;
         }
         this.applicationContext = applicationContext;
-        
     }
 
     /**

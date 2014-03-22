@@ -10,13 +10,6 @@
 		<property name="configLocation"
 			value="classpath:context/ehcache.xml"></property>
 		<property name="cacheManagerName"
-			value="demo.cache"></property>
+			value="testCacheManager"></property>
 	</bean>
-
-	<bean id="demoCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
-		<property name="eternal" value="true"></property>
-		<property name="cacheManager" ref="ehCacheManager"></property>
-	</bean>
-	<alias name="demoCache" alias="Cache" />
-	<alias name="demoCache" alias="cache" />
 </beans>
