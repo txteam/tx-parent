@@ -9,7 +9,10 @@ package com.tx.component.rule.context;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import com.tx.component.rule.exceptions.RuleContextInitException;
+import com.tx.component.rule.loader.RuleItem;
 import com.tx.component.rule.loader.RuleRegister;
 import com.tx.component.rule.loader.RuleStateEnum;
 import com.tx.component.rule.session.RuleSession;
@@ -138,74 +141,43 @@ public class RuleContext extends RuleContextBuilder {
         
     }
     
-    //    /**
-    //      * 将规则注册入规则容器中
-    //      * <功能详细描述>
-    //      * @param spRule [参数说明]
-    //      * 
-    //      * @return void [返回类型说明]
-    //      * @exception throws [异常类型] [异常说明]
-    //      * @see [类、类#方法、类#成员]
-    //     */
-    //    @Transactional
-    //    public Rule registeRule(RuleItem ruleItem) {
-    //        if (spRule == null || StringUtils.isEmpty(spRule.getRule())
-    //                || StringUtils.isEmpty(spRule.getServiceType())
-    //                || spRule.getRuleType() == null) {
-    //            throw new RuleRegisteException(
-    //                    "spRule or rule or serviceType or ruleType is null");
-    //        }
-    //        
-    //        RuleRegister<? extends Rule> ruleRegisterTemp = ruleRegisterMap.get(spRule.getRuleType());
-    //        if (ruleRegisterTemp == null) {
-    //            throw new RuleRegisteException(
-    //                    "ruleType:{} RuleRegister not exist.",
-    //                    new Object[] { spRule.getRuleType() });
-    //        }
-    //        
-    //        //调用对应注册器方法，将规则注册入容器中
-    //        final Rule realRule = ruleRegisterTemp.registe(spRule);
-    //        if (realRule != null) {
-    //            if (TransactionSynchronizationManager.isSynchronizationActive()) {
-    //                //如果在事务逻辑中执行
-    //                TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
-    //                    @Override
-    //                    public void afterCommit() {
-    //                        putInCache(realRule, true);
-    //                    }
-    //                });
-    //            } else {
-    //                //如果在非事务中执行
-    //                putInCache(realRule, true);
-    //            }
-    //        } else {
-    //            throw new RuleRegisteException(
-    //                    "ruleType:{} RuleRegister call registe return null realRule.",
-    //                    new Object[] { spRule.getRuleType() });
-    //        }
-    //        return realRule;
-    //    }
-    //    
-    //    /**
-    //      * 反注册规则
-    //      * <功能详细描述>
-    //      * @param rule [参数说明] serviceType.rule
-    //      * 
-    //      * @return void [返回类型说明]
-    //      * @exception throws [异常类型] [异常说明]
-    //      * @see [类、类#方法、类#成员]
-    //     */
-    //    public void unRegisteRule(String rule) {
-    //        Rule ruleImpl = getRule(rule);
-    //        if (ruleImpl == null) {
-    //            return;
-    //        }
-    //        
-    //        //删除持久化数据
-    //        this.simplePersistenceRuleService.deleteById(ruleImpl.getId());
-    //        
-    //        //从缓存中移除对应规则
-    //        removeFromCache(ruleImpl);
-    //    }
+    /**
+      * 将规则注册入规则容器中
+      * <功能详细描述>
+      * @param spRule [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    @Transactional
+    public Rule registerRule(RuleItem ruleItem) {
+        validateRuleItem(ruleItem);
+        final Rule realRule = buildRuleByRuleItem(ruleItem);
+        this.ruleMap.put(ruleItem.getKey(), realRule);
+        return null;
+    }
+    
+    /**
+      * 反注册规则
+      * <功能详细描述>
+      * @param rule [参数说明] serviceType.rule
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    @Transactional
+    public boolean unRegisterRule(String ruleKey) {
+        AssertUtils.notEmpty(ruleKey, "ruleKey is empty.");
+        Rule ruleImpl = getRuleByRuleKey(ruleKey);
+        if (ruleImpl == null) {
+            return false;
+        }
+        
+        boolean resFlag = this.ruleItemPersister.deleteRuleByRuleKey(ruleKey);
+        ruleMap.remove(ruleKey);
+        return resFlag;
+    }
     
 }

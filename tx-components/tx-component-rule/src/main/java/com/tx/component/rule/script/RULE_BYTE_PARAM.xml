@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tableDefinition>
+	<tableName>RULE_BYTE_PARAM</tableName>
+	<tableVersion>1.0.0</tableVersion>
+	
+	<dataSourceScript dataSourceType="H2">
+		<createTableScript>
+			CREATE TABLE RULE_BYTE_PARAM
+			(
+				ruleKey varchar(64) not null,
+				paramKey varchar(64) not null,
+				paramOrder int default 0 not null,
+				paramValue blob,
+				primary key(ruleId,paramKey,paramOrder)
+			);
+		</createTableScript>
+		
+		<defaultUpdateTableScript>
+			DROP TABLE RULE_BYTE_PARAM_BAK;
+			CREATE TABLE RULE_BYTE_PARAM_BAK
+				 AS SELECT * FROM RULE_BYTE_PARAM;
+			DROP TABLE RULE_BYTE_PARAM;
+			CREATE TABLE RULE_BYTE_PARAM
+			(
+				ruleKey varchar(64) not null,
+				paramKey varchar(64) not null,
+				paramOrder int default 0 not null,
+				paramValue blob,
+				primary key(ruleId,paramKey,paramOrder)
+			);
+		</defaultUpdateTableScript>
+	</dataSourceScript>
+	
+	<dataSourceScript dataSourceType="ORACLE">
+		<createTableScript>
+			CREATE TABLE RULE_BYTE_PARAM
+			(
+				ruleKey varchar2(64) not null,
+				paramKey varchar2(64) not null,
+				paramOrder int default 0 not null,
+				paramValue blob,
+				primary key(ruleId,paramKey,paramOrder)
+			);
+		</createTableScript>
+		
+		<defaultUpdateTableScript>
+			DROP TABLE RULE_BYTE_PARAM_BAK;
+			CREATE TABLE RULE_BYTE_PARAM_BAK
+				 AS SELECT * FROM RULE_BYTE_PARAM;
+			DROP TABLE RULE_BYTE_PARAM;
+			CREATE TABLE RULE_BYTE_PARAM
+			(
+				ruleKey varchar(64) not null,
+				paramKey varchar(64) not null,
+				paramOrder int default 0 not null,
+				paramValue blob,
+				primary key(ruleId,paramKey,paramOrder)
+			);
+		</defaultUpdateTableScript>
+	</dataSourceScript>
+	
+	<dataSourceScript dataSourceType="MYSQL">
+		<createTableScript>
+			CREATE TABLE RULE_BYTE_PARAM
+			(
+				ruleKey varchar(64) not null,
+				paramKey varchar(64) not null,
+				paramOrder int default 0 not null,
+				paramValue blob,
+				primary key(ruleId,paramKey,paramOrder)
+			);
+		</createTableScript>
+		
+		<defaultUpdateTableScript>
+			DROP TABLE RULE_BYTE_PARAM_BAK;
+			CREATE TABLE RULE_BYTE_PARAM_BAK
+				 AS SELECT * FROM RULE_BYTE_PARAM;
+			DROP TABLE RULE_BYTE_PARAM;
+			CREATE TABLE RULE_BYTE_PARAM
+			(
+				ruleKey varchar(64) not null,
+				paramKey varchar(64) not null,
+				paramOrder int default 0 not null,
+				paramValue blob,
+				primary key(ruleId,paramKey,paramOrder)
+			);
+		</defaultUpdateTableScript>
+	</dataSourceScript>
+</tableDefinition>

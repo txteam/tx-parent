@@ -50,6 +50,11 @@ public class NotTempAuthItemRefImplService {
     @Resource(name = "authItemRefImplDao")
     private AuthItemRefImplDao authItemRefImplDao;
     
+    /** <默认构造函数> */
+    public NotTempAuthItemRefImplService() {
+        super();
+    }
+
     /**
      * <默认构造函数>
      */

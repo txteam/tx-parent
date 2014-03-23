@@ -14,8 +14,10 @@ import com.tx.component.rule.loader.java.annotation.RuleClassMapping;
 import com.tx.component.rule.loader.java.annotation.RuleMethodMapping;
 import com.tx.component.rule.loader.java.annotation.RuleRequestParam;
 import com.tx.component.rule.loader.java.annotation.RuleResultBody;
-import com.tx.component.rule.loader.java.annotation.RuleResultParam;
 import com.tx.component.rule.method.model.TestPojo;
+import com.tx.component.rule.session.ValueWrapper;
+import com.tx.component.rule.session.ValueWrapperUtils;
+import com.tx.core.TxConstants;
 
 /**
  * <功能简述>
@@ -33,7 +35,7 @@ public class MethodRule1 {
     /**
      * <默认构造函数>
      */
-    public MethodRule1(){
+    public MethodRule1() {
         System.out.println("调用 MethodRule1 默认构造函数...");
     }
     
@@ -47,11 +49,15 @@ public class MethodRule1 {
     
     @RuleMethodMapping(value = "method.rule2", serviceType = "test")
     public void rule2ReturnVoid(@RuleRequestParam Map<String, ?> facts,
-            @RuleResultParam StringBuffer result) {
+            ValueWrapper<StringBuffer> result) {
         System.out.println("method.rule1ReturnString: MethodRule1.rule1ReturnString.");
         System.out.println("facts.size:" + facts == null ? 0 : facts.size());
         
-        result.append("rule2ReturnVoid");
+        StringBuffer resultRef = ValueWrapperUtils.getValue(result,
+                new StringBuffer(TxConstants.INITIAL_CONLLECTION_SIZE));
+        if (resultRef != null) {
+            resultRef.append(" rule2ReturnVoid ");
+        }
     }
     
     @RuleResultBody
@@ -69,11 +75,15 @@ public class MethodRule1 {
     @RuleMethodMapping(value = "method.rule4", serviceType = "test")
     public void rule4ReturnVoid(TestPojo testPojo,
             @RuleRequestParam("test") String test,
-            @RuleResultParam TestPojo resTestPojo) {
+            ValueWrapper<StringBuffer> result) {
         System.out.println("method.rule1ReturnString: MethodRule1.rule1ReturnString.");
         System.out.println(testPojo + " : " + test);
         
-        resTestPojo.setTest("rule4ReturnVoid");
+        StringBuffer resultRef = ValueWrapperUtils.getValue(result,
+                new StringBuffer(TxConstants.INITIAL_CONLLECTION_SIZE));
+        if (resultRef != null) {
+            resultRef.append(" rule2ReturnVoid ");
+        }
     }
     
 }

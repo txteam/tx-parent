@@ -126,7 +126,9 @@ public class RuleSessionContext {
      * @see [类、类#方法、类#成员]
      */
     public void setGlobals(Map<? extends String,? extends Object> globals) {
-        global.get().putAll(globals);
+        if(globals != null){
+            global.get().putAll(globals);
+        }
     }
     
     /**

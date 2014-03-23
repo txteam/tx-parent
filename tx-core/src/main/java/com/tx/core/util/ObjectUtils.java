@@ -10,6 +10,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Map;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.ArrayUtils;
@@ -32,6 +33,18 @@ import com.tx.core.reflection.exception.ReflectionException;
  * @since  [产品/模块版本]
  */
 public class ObjectUtils {
+    
+    public static <T> void populate(T obj,Map<String, Object> properties){
+        try {
+            BeanUtils.populate(obj, properties);
+        } catch (IllegalAccessException e) {
+            throw new ReflectionException(
+                    "invoke populate error.", e);
+        } catch (InvocationTargetException e) {
+            throw new ReflectionException(
+                    "invoke populate error.", e);
+        }
+    }
     
     /**
       * 根据传入的参数生成对象实例

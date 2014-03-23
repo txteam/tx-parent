@@ -30,13 +30,16 @@ public class EhCacheAutoCreatorCacheManager extends EhCacheCacheManager {
      */
     @Override
     public Cache getCache(String name) {
-        Cache res = super.getCache(name);
-        if(res == null){
-            getCacheManager().addCache(name);
-            Ehcache ehcache = getCacheManager().getCache(name);
-            res = new EhCacheCache(ehcache);
-            addCache(res);
+        Cache cache = super.getCache(name);
+        if (cache == null) {
+            Ehcache ehcache = getCacheManager().getEhcache(name);
+            if (ehcache == null) {
+                getCacheManager().addCache(name);
+                ehcache = getCacheManager().getCache(name);
+            }
+            cache = new EhCacheCache(ehcache);
+            addCache(cache);
         }
-        return res;
+        return cache;
     }
 }

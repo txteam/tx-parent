@@ -35,10 +35,10 @@
 	</bean>
 
 	<!-- authLoaders -->
-	<bean id="authLoader"
+	<bean id="controllerCheckOperateAuthLoader"
 		class="com.tx.component.auth.context.loader.impl.ControllerCheckOperateAuthLoader">
 		<property name="basePackages">
-			<value>com.tx.component,com.tx.webdemo</value>
+			<value>com.tx.component,com.tx.los</value>
 		</property>
 	</bean>
 

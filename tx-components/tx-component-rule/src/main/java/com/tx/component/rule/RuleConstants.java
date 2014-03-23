@@ -17,7 +17,6 @@ package com.tx.component.rule;
  */
 public class RuleConstants {
     
-    /** 规则约定常量 */
-    public static final String RULE_EVALUATE_RESULT = "result";
-    
+    /** 值环绕类型 */
+    public static final String RULE_EVALUATE_RESULT_VALUE_WRAPPER = "resultValueWrapper";
 }

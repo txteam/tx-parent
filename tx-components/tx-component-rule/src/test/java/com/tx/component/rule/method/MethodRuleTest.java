@@ -60,8 +60,6 @@ public class MethodRuleTest {
             Map<String, Object> global = new HashMap<String, Object>();
             global.put("globalKey1", "globalValue1:abc");
             
-            //
-            global.put(RuleConstants.RULE_EVALUATE_RESULT, "globalValue1:abc");
             List<ProcessRule> resList = ruleSessionTemplate.<ProcessRule> evaluateList("minAgeRule",
                     fact,
                     global);

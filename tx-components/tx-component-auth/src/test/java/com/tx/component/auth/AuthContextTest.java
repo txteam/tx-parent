@@ -66,12 +66,12 @@ public class AuthContextTest {
     
     @Test
     public void testRegisteAuth() {
-        Assert.assertNotNull(authContext.registeAuth("test1",
+        Assert.assertNotNull(authContext.registerAuth("test1",
                 "测试权限1",
                 "测试权限1",
                 AuthConstant.AUTHTYPE_OPERATE,
                 true));
-        Assert.assertNotNull(authContext.registeAuth("test2",
+        Assert.assertNotNull(authContext.registerAuth("test2",
                 "测试权限2",
                 "测试权限2",
                 AuthConstant.AUTHTYPE_OPERATE,

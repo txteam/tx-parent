@@ -9,6 +9,8 @@ package com.tx.component.rule.support;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +31,7 @@ import com.tx.component.rule.session.impl.DefaultRuleExceptionTranslator;
 import com.tx.component.rule.session.impl.SimpleCallbackHandler;
 import com.tx.component.rule.support.impl.DefaultRuleSessionSupport;
 import com.tx.component.rule.transation.impl.RuleSessionTransationTemplate;
+import com.tx.core.TxConstants;
 import com.tx.core.exceptions.util.AssertUtils;
 
 /**
@@ -130,7 +133,9 @@ public class RuleSessionTemplate implements InitializingBean {
             Map<String, Object> global) {
         AssertUtils.notEmpty(ruleKey, "ruleKey is empty.");
         RuleSession ruleSession = buildRuleSessionByRuleKey(ruleKey);
-        CallbackHandler<List<T>> listCallBackHandler = new SimpleCallbackHandler<List<T>>();
+        @SuppressWarnings("unchecked")
+        CallbackHandler<List<T>> listCallBackHandler = (CallbackHandler<List<T>>) SimpleCallbackHandler.newInstance(List.class,
+                new ArrayList<T>(TxConstants.INITIAL_CONLLECTION_SIZE));
         this.ruleSessionSupportProxy.<List<T>> evaluate(ruleSession,
                 fact,
                 global,
@@ -155,7 +160,9 @@ public class RuleSessionTemplate implements InitializingBean {
             List<Map<String, Object>> facts, Map<String, Object> global) {
         AssertUtils.notEmpty(ruleKey, "ruleKey is empty.");
         RuleSession ruleSession = buildRuleSessionByRuleKey(ruleKey);
-        CallbackHandler<List<T>> listCallBackHandler = new SimpleCallbackHandler<List<T>>();
+        @SuppressWarnings("unchecked")
+        CallbackHandler<List<T>> listCallBackHandler = (CallbackHandler<List<T>>) SimpleCallbackHandler.newInstance(List.class,
+                new ArrayList<T>(TxConstants.INITIAL_CONLLECTION_SIZE));
         this.ruleSessionSupportProxy.<List<T>> evaluateAll(ruleSession,
                 facts,
                 global,
@@ -174,7 +181,9 @@ public class RuleSessionTemplate implements InitializingBean {
             Map<String, Object> fact, Map<String, Object> global) {
         AssertUtils.notEmpty(ruleKey, "ruleKey is empty.");
         RuleSession ruleSession = buildRuleSessionByRuleKey(ruleKey);
-        CallbackHandler<Map<String, T>> mapCallBackHandler = new SimpleCallbackHandler<Map<String, T>>();
+        @SuppressWarnings("unchecked")
+        CallbackHandler<Map<String, T>> mapCallBackHandler = (CallbackHandler<Map<String, T>>) SimpleCallbackHandler.newInstance(Map.class,
+                new HashMap<String, T>(TxConstants.INITIAL_MAP_SIZE));
         this.ruleSessionSupportProxy.<Map<String, T>> evaluate(ruleSession,
                 fact,
                 global,
@@ -193,7 +202,9 @@ public class RuleSessionTemplate implements InitializingBean {
             List<Map<String, Object>> facts, Map<String, Object> global) {
         AssertUtils.notEmpty(ruleKey, "ruleKey is empty.");
         RuleSession ruleSession = buildRuleSessionByRuleKey(ruleKey);
-        CallbackHandler<Map<String, T>> mapCallBackHandler = new SimpleCallbackHandler<Map<String, T>>();
+        @SuppressWarnings("unchecked")
+        CallbackHandler<Map<String, T>> mapCallBackHandler = (CallbackHandler<Map<String, T>>) SimpleCallbackHandler.newInstance(Map.class,
+                new HashMap<String, T>(TxConstants.INITIAL_MAP_SIZE));
         this.ruleSessionSupportProxy.<Map<String, T>> evaluateAll(ruleSession,
                 facts,
                 global,
@@ -209,10 +220,12 @@ public class RuleSessionTemplate implements InitializingBean {
      * @return
      */
     public <T> T evaluateObject(String ruleKey,
-            List<Map<String, Object>> facts, Map<String, Object> global) {
+            List<Map<String, Object>> facts, Map<String, Object> global,
+            Class<T> type) {
         AssertUtils.notEmpty(ruleKey, "ruleKey is empty.");
         RuleSession ruleSession = buildRuleSessionByRuleKey(ruleKey);
-        CallbackHandler<T> objectCallBackHandler = new SimpleCallbackHandler<T>();
+        @SuppressWarnings("unchecked")
+        CallbackHandler<T> objectCallBackHandler = (CallbackHandler<T>) SimpleCallbackHandler.newInstance(type);
         this.ruleSessionSupportProxy.<T> evaluateAll(ruleSession,
                 facts,
                 global,
@@ -228,10 +241,11 @@ public class RuleSessionTemplate implements InitializingBean {
      * @return
      */
     public <T> T evaluateObject(String ruleKey, Map<String, Object> fact,
-            Map<String, Object> global) {
+            Map<String, Object> global, Class<T> type) {
         AssertUtils.notEmpty(ruleKey, "ruleKey is empty.");
         RuleSession ruleSession = buildRuleSessionByRuleKey(ruleKey);
-        CallbackHandler<T> objectCallBackHandler = new SimpleCallbackHandler<T>();
+        @SuppressWarnings("unchecked")
+        CallbackHandler<T> objectCallBackHandler = (CallbackHandler<T>) SimpleCallbackHandler.newInstance(type);
         this.ruleSessionSupportProxy.<T> evaluate(ruleSession,
                 fact,
                 global,

@@ -258,7 +258,7 @@ public class AuthContext extends AuthContextBuilder {
       * @see [类、类#方法、类#成员]
      */
     @Transactional
-    public AuthItem registeAuth(AuthItem authItem) {
+    public AuthItem registerAuth(AuthItem authItem) {
         AssertUtils.notNull(authItem, "authItem is null");
         //参数合法性验证
         //参数合法性验证
@@ -322,7 +322,7 @@ public class AuthContext extends AuthContextBuilder {
       * @see [类、类#方法、类#成员]
      */
     @Transactional
-    public AuthItem registeAuth(String id, String parentId, String name,
+    public AuthItem registerAuth(String id, String parentId, String name,
             String description, String authType, boolean valid,
             boolean configAble, boolean viewAble, boolean editAble) {
         //参数合法性验证
@@ -382,7 +382,7 @@ public class AuthContext extends AuthContextBuilder {
       * @see [类、类#方法、类#成员]
      */
     @Transactional
-    public AuthItem registeAuth(String id, String name, String description,
+    public AuthItem registerAuth(String id, String name, String description,
             String authType, boolean valid) {
         //参数合法性验证
         boolean isNeedNew = false;
@@ -432,7 +432,7 @@ public class AuthContext extends AuthContextBuilder {
       * @see [类、类#方法、类#成员]
      */
     @Transactional
-    public AuthItem registeAuth(String name, String description, String authType) {
+    public AuthItem registerAuth(String name, String description, String authType) {
         //参数合法性验证
         AssertUtils.notEmpty(authType, "authType is empty.");
         
@@ -466,7 +466,7 @@ public class AuthContext extends AuthContextBuilder {
      * @see [类、类#方法、类#成员]
     */
     @Transactional
-    public AuthItem registeAuth(String name, String description,
+    public AuthItem registerAuth(String name, String description,
             String authType, boolean isValid, boolean isConfigAble,
             boolean isEditAble, boolean isViewAble) {
         //参数合法性验证
@@ -789,7 +789,7 @@ public class AuthContext extends AuthContextBuilder {
       * @see [类、类#方法、类#成员]
      */
     @Transactional
-    public void unRegisteAuth(String authItemId) {
+    public void unRegisterAuth(String authItemId) {
         AssertUtils.notEmpty(authItemId, "authItemId is empty.");
         
         //卸载权限项

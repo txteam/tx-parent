@@ -45,6 +45,11 @@ public class AuthItemRefImplService {
     @Resource(name = "authItemRefImplDao")
     private AuthItemRefImplDao authItemRefImplDao;
     
+    /** <默认构造函数> */
+    public AuthItemRefImplService() {
+        super();
+    }
+
     /**
      * <默认构造函数>
      */

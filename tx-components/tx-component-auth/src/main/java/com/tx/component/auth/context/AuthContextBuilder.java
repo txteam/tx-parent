@@ -132,53 +132,6 @@ public class AuthContextBuilder extends AuthContextConfigurator {
     }
     
     /**
-      * 加载权限项加载器<br/>
-      *<功能详细描述>
-      * @param authLoaders [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    private void loadAuthLoader(Collection<AuthLoader> authLoaders) {
-        this.authLoaderList = new ArrayList<AuthLoader>();
-        
-        if (CollectionUtils.isEmpty(authLoaders)) {
-            return;
-        }
-        for (AuthLoader authLoaderTemp : authLoaders) {
-            this.authLoaderList.add(authLoaderTemp);
-        }
-    }
-    
-    /** 
-     * 执行脚本自动升级
-     *<功能详细描述> [参数说明]
-     * 
-     * @return void [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    private void databaseSchemaUpdate() {
-        if (databaseSchemaUpdate && dbScriptExecutorContext != null) {
-            Map<String, String> replaceDataMap = new HashMap<String, String>();
-            replaceDataMap.put("tableSuffix", this.tableSuffix);
-            TableDefinition authItemTableDefinition = new XMLTableDefinition(
-                    authItemTableDefinitionLocation, replaceDataMap);
-            TableDefinition authRefTableDefinition = new XMLTableDefinition(
-                    authRefDefinitionLocation, replaceDataMap);
-            TableDefinition authRefHisTableDefinition = new XMLTableDefinition(
-                    authRefHisDefinitionLocation, replaceDataMap);
-            
-            this.dbScriptExecutorContext.createOrUpdateTable(authItemTableDefinition);
-            this.dbScriptExecutorContext.createOrUpdateTable(authRefTableDefinition);
-            this.dbScriptExecutorContext.createOrUpdateTable(authRefHisTableDefinition);
-            
-            logger.info(" 自动初始化权限容器表结构完成.表后缀名为：{}...", this.tableSuffix);
-        }
-    }
-    
-    /**
      * 加载系统的权限项
      * 1、加载同时，检查对应的权限检查器是否存在，如果不存在，则抛出异常提示，对应权限检查器不存在
      * <功能详细描述> [参数说明]
@@ -187,7 +140,7 @@ public class AuthContextBuilder extends AuthContextConfigurator {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    protected Map<String, AuthItem> loadAuthItems(List<AuthLoader> authLoaders) {
+    private Map<String, AuthItem> loadAuthItems(List<AuthLoader> authLoaders) {
         Map<String, AuthItem> resMap = null;
         
         Map<String, AuthItem> tempAuthItemMapping = new HashMap<String, AuthItem>();
@@ -263,6 +216,53 @@ public class AuthContextBuilder extends AuthContextConfigurator {
         resMap.entrySet();
         
         return resMap;
+    }
+    
+    /**
+      * 加载权限项加载器<br/>
+      *<功能详细描述>
+      * @param authLoaders [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    private void loadAuthLoader(Collection<AuthLoader> authLoaders) {
+        this.authLoaderList = new ArrayList<AuthLoader>();
+        
+        if (CollectionUtils.isEmpty(authLoaders)) {
+            return;
+        }
+        for (AuthLoader authLoaderTemp : authLoaders) {
+            this.authLoaderList.add(authLoaderTemp);
+        }
+    }
+    
+    /** 
+     * 执行脚本自动升级
+     *<功能详细描述> [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    private void databaseSchemaUpdate() {
+        if (databaseSchemaUpdate && dbScriptExecutorContext != null) {
+            Map<String, String> replaceDataMap = new HashMap<String, String>();
+            replaceDataMap.put("tableSuffix", this.tableSuffix);
+            TableDefinition authItemTableDefinition = new XMLTableDefinition(
+                    authItemTableDefinitionLocation, replaceDataMap);
+            TableDefinition authRefTableDefinition = new XMLTableDefinition(
+                    authRefDefinitionLocation, replaceDataMap);
+            TableDefinition authRefHisTableDefinition = new XMLTableDefinition(
+                    authRefHisDefinitionLocation, replaceDataMap);
+            
+            this.dbScriptExecutorContext.createOrUpdateTable(authItemTableDefinition);
+            this.dbScriptExecutorContext.createOrUpdateTable(authRefTableDefinition);
+            this.dbScriptExecutorContext.createOrUpdateTable(authRefHisTableDefinition);
+            
+            logger.info(" 自动初始化权限容器表结构完成.表后缀名为：{}...", this.tableSuffix);
+        }
     }
     
     /**

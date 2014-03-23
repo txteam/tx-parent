@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tableDefinition>
+	<tableName>RULE_RULEITEM</tableName>
+	<tableVersion>1.0.0</tableVersion>
+	
+	<dataSourceScript dataSourceType="H2">
+		<createTableScript>
+			CREATE TABLE RULE_RULEITEM
+			(
+				rulekey	varchar(64) not null,
+				name varchar(64),
+				serviceType varchar(64) not null,
+				ruleType varchar(32) not null,
+				state varchar(32) not null,
+				createDate datetime not null,
+				lastUpdateDate datetime not null,
+				remark varchar(4000),
+				primary key(rulekey)
+			);
+			CREATE UNIQUE INDEX IDX_RULE_RULEITEM_01 ON RULE_RULEITEM(RULEKEY,RULETYPE,SERVICETYPE);
+		</createTableScript>
+		
+		<defaultUpdateTableScript>
+			DROP TABLE RULE_RULEITEM_BAK;
+			CREATE TABLE RULE_RULEITEM_BAK
+				 AS SELECT * FROM RULE_RULEITEM;
+			DROP TABLE RULE_RULEITEM_BAK;
+			CREATE TABLE RULE_RULEITEM
+			(
+				rulekey	varchar(64) not null,
+				name varchar(64),
+				serviceType varchar(64) not null,
+				ruleType varchar(32) not null,
+				state varchar(32) not null,
+				createDate datetime not null,
+				lastUpdateDate datetime not null,
+				remark varchar(4000),
+				primary key(rulekey)
+			);
+			CREATE UNIQUE INDEX IDX_RULE_RULEITEM_01 ON RULE_RULEITEM(RULEKEY,RULETYPE,SERVICETYPE);
+		</defaultUpdateTableScript>
+	</dataSourceScript>
+	
+	<dataSourceScript dataSourceType="ORACLE">
+		<createTableScript>
+			CREATE TABLE RULE_RULEITEM
+			(
+				rulekey	varchar2(64) not null,
+				name varchar2(64),
+				serviceType varchar2(64) not null,
+				ruleType varchar2(32) not null,
+				state varchar2(32) not null,
+				createDate date not null,
+				lastUpdateDate date not null,
+				remark varchar2(4000),
+				primary key(rulekey)
+			);
+			CREATE UNIQUE INDEX IDX_RULE_RULEITEM_01 ON RULE_RULEITEM(RULEKEY,RULETYPE,SERVICETYPE);
+		</createTableScript>
+		
+		<defaultUpdateTableScript>
+			DROP TABLE RULE_RULEITEM_BAK;
+			CREATE TABLE RULE_RULEITEM_BAK
+				 AS SELECT * FROM RULE_RULEITEM;
+			DROP TABLE RULE_RULEITEM_BAK;
+			CREATE TABLE RULE_RULEITEM
+			(
+				rulekey	varchar2(64) not null,
+				name varchar2(64),
+				serviceType varchar2(64) not null,
+				ruleType varchar2(32) not null,
+				state varchar2(32) not null,
+				createDate date not null,
+				lastUpdateDate date not null,
+				remark varchar2(4000),
+				primary key(rulekey)
+			);
+			CREATE UNIQUE INDEX IDX_RULE_RULEITEM_01 ON RULE_RULEITEM(RULEKEY,RULETYPE,SERVICETYPE);
+		</defaultUpdateTableScript>
+	</dataSourceScript>
+	
+	<dataSourceScript dataSourceType="MYSQL">
+		<createTableScript>
+			CREATE TABLE RULE_RULEITEM
+			(
+				rulekey	varchar(64) not null,
+				name varchar(64),
+				serviceType varchar(64) not null,
+				ruleType varchar(32) not null,
+				state varchar(32) not null,
+				createDate datetime not null,
+				lastUpdateDate datetime not null,
+				remark varchar(4000),
+				primary key(rulekey)
+			);
+			CREATE UNIQUE INDEX IDX_RULE_RULEITEM_01 ON RULE_RULEITEM(RULEKEY,RULETYPE,SERVICETYPE);
+		</createTableScript>
+		
+		<defaultUpdateTableScript>
+			DROP TABLE RULE_RULEITEM_BAK;
+			CREATE TABLE RULE_RULEITEM_BAK
+				 AS SELECT * FROM RULE_RULEITEM;
+			DROP TABLE RULE_RULEITEM_BAK;
+			CREATE TABLE RULE_RULEITEM
+			(
+				rulekey	varchar(64) not null,
+				name varchar(64),
+				serviceType varchar(64) not null,
+				ruleType varchar(32) not null,
+				state varchar(32) not null,
+				createDate datetime not null,
+				lastUpdateDate datetime not null,
+				remark varchar(4000),
+				primary key(rulekey)
+			);
+			CREATE UNIQUE INDEX IDX_RULE_RULEITEM_01 ON RULE_RULEITEM(RULEKEY,RULETYPE,SERVICETYPE);
+		</defaultUpdateTableScript>
+	</dataSourceScript>
+</tableDefinition>
