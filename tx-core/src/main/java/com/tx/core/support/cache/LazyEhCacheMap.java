@@ -279,7 +279,7 @@ public class LazyEhCacheMap<V> implements Map<String, V> {
     @Override
     public V get(Object key) {
         V value = null;
-        value = unModifyAbleLocalMap.get(key);
+        value = unModifyAbleLocalMap == null ? null :unModifyAbleLocalMap.get(key);
         if (value != null) {
             return value;
         }

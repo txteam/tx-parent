@@ -101,8 +101,6 @@ public class ObjectUtils {
             return MapUtils.isEmpty((Map<?, ?>) obj);
         } else if (obj instanceof Object[]) {
             return ArrayUtils.isEmpty((Object[]) obj);
-        } else if (obj instanceof Boolean) {
-            return ((Boolean) obj).booleanValue();
         } else {
             return false;
         }
