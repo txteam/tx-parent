@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.drools.base.MapGlobalResolver;
 import org.drools.runtime.Globals;
 import org.drools.runtime.StatefulKnowledgeSession;
@@ -74,8 +75,10 @@ public class DRLByteDroolsRuleSession extends
             beforeFireRule(callbackHandler, session);
             
             //插入事实
-            for (Map<? extends String, ? extends Object> fact : facts) {
-                session.insert(fact);
+            if(!CollectionUtils.isEmpty(facts)){
+                for (Map<? extends String, ? extends Object> fact : facts) {
+                    session.insert(fact);
+                }
             }
             
             //触发规则调用

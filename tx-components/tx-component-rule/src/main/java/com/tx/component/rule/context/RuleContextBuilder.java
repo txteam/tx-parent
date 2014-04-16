@@ -118,7 +118,7 @@ public class RuleContextBuilder extends RuleContextConfigurator implements
         logger.info("   初始化规则项....");
         loadRule();
         
-        logger.info("加载规则注册器...");
+        logger.info("初始化规则容器成功...");
     }
     
     /** 加载规则项 */

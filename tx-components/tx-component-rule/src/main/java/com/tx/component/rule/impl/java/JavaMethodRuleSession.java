@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.beanutils.MethodUtils;
 import org.drools.core.util.StringUtils;
 import org.springframework.core.MethodParameter;
 import org.springframework.util.LinkedMultiValueMap;

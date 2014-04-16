@@ -92,6 +92,7 @@ public class RuleContextConfigurator implements InitializingBean {
     @Bean(name = "xmlRuleItemConfigLoader")
     public XMLRuleItemConfigLoader xmlRuleItemConfigLoader() {
         XMLRuleItemConfigLoader xmlRuleItemConfigLoader = new XMLRuleItemConfigLoader();
+        xmlRuleItemConfigLoader.setConfigLocations(this.configLocations);
         return xmlRuleItemConfigLoader;
     }
     
@@ -127,6 +128,9 @@ public class RuleContextConfigurator implements InitializingBean {
     
     /** 数据库脚本是否自动执行 */
     protected boolean databaseSchemaUpdate = false;
+    
+    /** 配置资源集 */
+    private String configLocations;
     
     /** 数据脚本自动执行器 */
     protected DBScriptExecutorContext dbScriptExecutorContext;
@@ -243,5 +247,12 @@ public class RuleContextConfigurator implements InitializingBean {
     public void setRuleSessionTransactionFactory(
             RuleSessionTransactionFactory ruleSessionTransactionFactory) {
         this.ruleSessionTransactionFactory = ruleSessionTransactionFactory;
+    }
+
+    /**
+     * @param 对configLocations进行赋值
+     */
+    public void setConfigLocations(String configLocations) {
+        this.configLocations = configLocations;
     }
 }

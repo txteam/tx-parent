@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<rules_config>
-	<rule rule="drools_test1111" serviceType="test" ruleType="DROOLS_DRL_BYTE">
+<rule_config>
+	<rule key="drools_test" serviceType="test" ruleType="DROOLS_DRL_BYTE">
 		<byte key="DRL_BYTE">classpath:/test/test1.drl</byte>
 	</rule>
-</rules_config>
+</rule_config>

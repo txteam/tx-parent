@@ -121,7 +121,7 @@ public class XMLRuleItemConfigLoader extends BaseRuleItemLoader {
         ruleItem.setRuleType(ruleItemConfig.getRuleType());
         ruleItem.setName(ruleItemConfig.getName());
         //解析其中byte相关配置
-        if (CollectionUtils.isEmpty(ruleItemConfig.getByteList())) {
+        if (!CollectionUtils.isEmpty(ruleItemConfig.getByteList())) {
             for (ByteParam byteParam : ruleItemConfig.getByteList()) {
                 AssertUtils.notEmpty(byteParam.getKey(),
                         "key:{} paramKey is empty.");
@@ -129,7 +129,7 @@ public class XMLRuleItemConfigLoader extends BaseRuleItemLoader {
             }
         }
         //解析其中value相关配置
-        if (CollectionUtils.isEmpty(ruleItemConfig.getValueList())) {
+        if (!CollectionUtils.isEmpty(ruleItemConfig.getValueList())) {
             for (ValueParam valueParam : ruleItemConfig.getValueList()) {
                 AssertUtils.notEmpty(valueParam.getKey(),
                         "key:{} paramKey is empty.");

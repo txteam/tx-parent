@@ -26,6 +26,7 @@
 		<property name="ehcache">
 			<ref bean="ruleEhCache"/>
 		</property>
+		<property name="configLocations" value="classpath:/rulecontext/*.xml"></property>
 	</bean>
 	
 	<bean id="ruleSessionTemplate" class="com.tx.component.rule.support.RuleSessionTemplate">

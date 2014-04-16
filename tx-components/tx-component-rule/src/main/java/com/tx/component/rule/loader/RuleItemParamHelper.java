@@ -10,7 +10,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.apache.commons.lang.enums.EnumUtils;
+
+
+import org.apache.commons.lang3.EnumUtils;
 
 import com.tx.component.rule.context.Rule;
 import com.tx.core.exceptions.util.AssertUtils;
@@ -43,8 +45,8 @@ public abstract class RuleItemParamHelper {
         AssertUtils.isTrue(ruleItemParamEnumClass.isEnum(),
                 "ruleItemParamEnumClass is not Enum.");
         
-        @SuppressWarnings("unchecked")
-        Iterator<P> ite = EnumUtils.iterator(ruleItemParamEnumClass);
+        @SuppressWarnings({ "unchecked", "rawtypes" })
+        Iterator<P> ite = EnumUtils.getEnumList((Class<Enum>)ruleItemParamEnumClass).iterator();
         Set<RuleItemParam> resSet = new HashSet<RuleItemParam>();
         while (ite.hasNext()) {
             P pTemp = ite.next();
