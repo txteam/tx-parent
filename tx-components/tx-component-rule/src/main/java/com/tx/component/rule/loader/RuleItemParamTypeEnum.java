@@ -8,7 +8,7 @@ package com.tx.component.rule.loader;
 
 
  /**
-  * <功能简述>
+  * 
   * <功能详细描述>
   * 
   * @author  Administrator

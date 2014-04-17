@@ -14,7 +14,6 @@ import javax.annotation.Resource;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -62,8 +61,11 @@ public class TestDrools1 {
             Map<String, Object> global = new HashMap<String, Object>();
             global.put("globalKey1", "globalValue1:abc");
             
+            List<ProcessRule> resList = ruleSessionTemplate.<ProcessRule> evaluateList("helloworld",
+                    fact,
+                    global);
             //
-            List<ProcessRule> resList = ruleSessionTemplate.<ProcessRule> evaluateList("drools_test",
+            resList = ruleSessionTemplate.<ProcessRule> evaluateList("drools_test",
                     fact,
                     global);
             

@@ -3,4 +3,8 @@
 	<rule key="drools_test" serviceType="test" ruleType="DROOLS_DRL_BYTE">
 		<byte key="DRL_BYTE">classpath:/test/test1.drl</byte>
 	</rule>
+	
+	<rule key="helloworld" serviceType="test" ruleType="DROOLS_DRL_FILE">
+		<file key="DRL_FILE">classpath:/rulecontext/HelloWorld.drl</file>
+	</rule>
 </rule_config>

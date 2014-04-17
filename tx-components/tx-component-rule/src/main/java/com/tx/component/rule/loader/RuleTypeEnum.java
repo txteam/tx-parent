@@ -19,23 +19,31 @@ package com.tx.component.rule.loader;
  * @since  [产品/模块版本]
  */
 public enum RuleTypeEnum {
-    
     /**
      * 方法类型规则
      */
     JAVA_METHOD("JAVA方法类型规则"),
-
     /**
      * DROOLS规则
      */
-    DROOLS_DRL_BYTE("DRL_BYTE_DROOLS"),
+    DROOLS_DRL_BYTE("DROOLS_DRL_BYTE"),
     /**
      * DROOLS规则
      */
-    DROOLS_PKG_URL("DRL_URL_DROOLS");
+    DROOLS_DRL_FILE("DROOLS_DRL_FILE"),
+    /**
+     * 文件类型规则
+     */
+    DROOLS_FILES("DROOLS_FILES"),
+    /**
+     * DROOLS规则
+     */
+    DROOLS_PKG_URL("DROOLS_PKG_URL");
     
+    /** 规则类型名 */
     private String name;
     
+    /** 备注 */
     private String remark;
     
     /**

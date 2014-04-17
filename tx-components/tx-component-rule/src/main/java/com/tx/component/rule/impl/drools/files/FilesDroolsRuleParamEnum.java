@@ -1,26 +1,31 @@
 /*
  * 描          述:  <描述>
  * 修  改   人:  Administrator
- * 修改时间:  2014年3月17日
+ * 修改时间:  2014年4月17日
  * <修改描述:>
  */
-package com.tx.component.rule.impl.drools;
+package com.tx.component.rule.impl.drools.files;
 
 import com.tx.component.rule.loader.RuleItemParamEnumInterface;
 import com.tx.component.rule.loader.RuleItemParamTypeEnum;
 
 /**
- * 方法类型规则
+ * <功能简述>
  * <功能详细描述>
  * 
  * @author  Administrator
- * @version  [版本号, 2014年3月17日]
+ * @version  [版本号, 2014年4月17日]
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public enum DRLByteDroolsRuleParamEnum implements RuleItemParamEnumInterface<DRLByteDroolsRule> {
-    /** 对应规则项bean实例 */
-    DRL_BYTE(RuleItemParamTypeEnum.BYTE, false,true, null,"");
+public enum FilesDroolsRuleParamEnum implements
+        RuleItemParamEnumInterface<FilesDroolsRule> {
+    /** drl文件对象集合 */
+    DRLS(RuleItemParamTypeEnum.OBJECT, true, true, null, ""),
+    /** dsl文件对象集合 */
+    DSLS(RuleItemParamTypeEnum.OBJECT, true, true, null, ""),
+    /** xml文件对象集合 */
+    XMLS(RuleItemParamTypeEnum.OBJECT, true, true, null, "");
     
     /** 规则项目参数类型 */
     private RuleItemParamTypeEnum type;
@@ -38,8 +43,9 @@ public enum DRLByteDroolsRuleParamEnum implements RuleItemParamEnumInterface<DRL
     private boolean required;
     
     /** <默认构造函数> */
-    private DRLByteDroolsRuleParamEnum(RuleItemParamTypeEnum type, boolean multiple,boolean required,
-            String validateExpression, String errorMessage) {
+    private FilesDroolsRuleParamEnum(RuleItemParamTypeEnum type,
+            boolean multiple, boolean required, String validateExpression,
+            String errorMessage) {
         this.type = type;
         this.multiple = multiple;
         this.validateExpression = validateExpression;
@@ -77,7 +83,7 @@ public enum DRLByteDroolsRuleParamEnum implements RuleItemParamEnumInterface<DRL
     public String getErrorMessage() {
         return this.errorMessage;
     }
-
+    
     /**
      * @return 返回 required
      */

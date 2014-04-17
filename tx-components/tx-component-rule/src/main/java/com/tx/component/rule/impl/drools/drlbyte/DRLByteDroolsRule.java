@@ -4,13 +4,13 @@
  * 修改时间:  2013-1-24
  * <修改描述:>
  */
-package com.tx.component.rule.impl.drools;
+package com.tx.component.rule.impl.drools.drlbyte;
 
-import org.drools.KnowledgeBase;
 import org.drools.builder.ResourceType;
 import org.drools.io.ResourceFactory;
 
-import com.tx.component.rule.context.BaseRule;
+import com.tx.component.rule.impl.drools.BaseDroolsRule;
+import com.tx.component.rule.impl.drools.DroolsRuleHelper;
 import com.tx.component.rule.impl.drools.exception.DroolsKnowledgeBaseInitException;
 import com.tx.component.rule.loader.RuleItem;
 import com.tx.component.rule.loader.RuleItemByteParam;
@@ -26,29 +26,23 @@ import com.tx.component.rule.loader.RuleTypeEnum;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class DRLByteDroolsRule extends BaseRule {
+public class DRLByteDroolsRule extends BaseDroolsRule {
     
     /** 注释内容 */
     private static final long serialVersionUID = -6764646531144979549L;
-    
-    /** 规则状态枚举 */
-    private RuleStateEnum state;
-    
-    /** drools规则knowlegeBase */
-    private KnowledgeBase knowledgeBase;
     
     /**
      * 构造函数,根据二进制流构造drools规则
      */
     public DRLByteDroolsRule(RuleItem ruleItem) {
         super(ruleItem);
-        this.ruleItem = ruleItem;
         
         RuleItemByteParam byteParam = ruleItem.getByteParam(DRLByteDroolsRuleParamEnum.DRL_BYTE.toString());
-        if(byteParam == null){
+        if (byteParam == null) {
+            logger.warn("rule:{} fileObj is null.", ruleItem.getKey());
             state = RuleStateEnum.ERROR;
             ruleItem.setRemark("DRL_BYTE:RuleItemByteParam is null.");
-            return ;
+            return;
         }
         
         byte[] bytes = byteParam.getParamValue();
@@ -57,7 +51,8 @@ public class DRLByteDroolsRule extends BaseRule {
                     ResourceType.DRL);
             this.state = RuleStateEnum.OPERATION;
         } catch (DroolsKnowledgeBaseInitException e) {
-            logger.warn("knowledgeBuilderErrors: \n{}\n", e.getKnowledgeBuilderErrors());
+            logger.warn("knowledgeBuilderErrors: \n{}\n",
+                    e.getKnowledgeBuilderErrors());
             this.state = RuleStateEnum.ERROR;
             ruleItem.setRemark(e.getKnowledgeBuilderErrors().toString());
         }
@@ -71,25 +66,4 @@ public class DRLByteDroolsRule extends BaseRule {
         return RuleTypeEnum.DROOLS_DRL_BYTE;
     }
     
-    /**
-     * @return 返回 knowledgeBase
-     */
-    public KnowledgeBase getKnowledgeBase() {
-        return knowledgeBase;
-    }
-    
-    /**
-     * @param 对knowledgeBase进行赋值
-     */
-    public void setKnowledgeBase(KnowledgeBase knowledgeBase) {
-        this.knowledgeBase = knowledgeBase;
-    }
-    
-    /**
-     * @return
-     */
-    @Override
-    public RuleStateEnum getState() {
-        return this.state;
-    }
 }

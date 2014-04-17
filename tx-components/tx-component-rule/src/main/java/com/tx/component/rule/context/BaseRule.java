@@ -59,9 +59,7 @@ public abstract class BaseRule implements Rule{
      * @return
      */
     @Override
-    public RuleTypeEnum getRuleType() {
-        return this.ruleItem.getRuleType();
-    }
+    public abstract RuleTypeEnum getRuleType();
 
     /**
      * @return

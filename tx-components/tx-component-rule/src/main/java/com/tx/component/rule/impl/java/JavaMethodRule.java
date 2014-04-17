@@ -13,6 +13,7 @@ import org.springframework.web.method.HandlerMethod;
 import com.tx.component.rule.context.BaseRule;
 import com.tx.component.rule.loader.RuleItem;
 import com.tx.component.rule.loader.RuleStateEnum;
+import com.tx.component.rule.loader.RuleTypeEnum;
 import com.tx.core.exceptions.util.AssertUtils;
 
 /**
@@ -51,6 +52,14 @@ public class JavaMethodRule extends BaseRule {
         } else {
             this.state = RuleStateEnum.ERROR;
         }
+    }
+    
+    /**
+     * @return
+     */
+    @Override
+    public RuleTypeEnum getRuleType() {
+        return RuleTypeEnum.JAVA_METHOD;
     }
     
     /**

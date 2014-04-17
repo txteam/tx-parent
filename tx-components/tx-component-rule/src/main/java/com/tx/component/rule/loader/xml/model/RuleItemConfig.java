@@ -62,6 +62,12 @@ public class RuleItemConfig {
      */
     @XStreamImplicit(itemFieldName="value")
     private List<ValueParam> valueList;
+    
+    /**
+     * file类型参数
+     */
+    @XStreamImplicit(itemFieldName="file")
+    private List<FileParam> fileList;
 
     
     /**
@@ -146,5 +152,19 @@ public class RuleItemConfig {
      */
     public void setName(String name) {
         this.name = name;
+    }
+
+    /**
+     * @return 返回 fileList
+     */
+    public List<FileParam> getFileList() {
+        return fileList;
+    }
+
+    /**
+     * @param 对fileList进行赋值
+     */
+    public void setFileList(List<FileParam> fileList) {
+        this.fileList = fileList;
     }
 }

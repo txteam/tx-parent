@@ -4,10 +4,11 @@
  * 修改时间:  2013-4-1
  * <修改描述:>
  */
-package com.tx.component.rule.impl.drools;
+package com.tx.component.rule.impl.drools.drlbyte;
 
 import java.util.Set;
 
+import com.tx.component.rule.impl.drools.BaseDroolsRuleSession;
 import com.tx.component.rule.loader.RuleItem;
 import com.tx.component.rule.loader.RuleItemParam;
 import com.tx.component.rule.loader.RuleItemParamHelper;
@@ -26,7 +27,7 @@ import com.tx.component.rule.session.RuleSession;
  */
 public class DRLByteDroolsRuleRegister implements
         RuleRegister<DRLByteDroolsRule> {
-
+    
     /**
      * @return
      */
@@ -50,7 +51,7 @@ public class DRLByteDroolsRuleRegister implements
      */
     @Override
     public RuleSession buildRuleSession(DRLByteDroolsRule rule) {
-        DRLByteDroolsRuleSession ruleSession = new DRLByteDroolsRuleSession(
+        BaseDroolsRuleSession<DRLByteDroolsRule> ruleSession = new BaseDroolsRuleSession<DRLByteDroolsRule>(
                 rule);
         return ruleSession;
     }

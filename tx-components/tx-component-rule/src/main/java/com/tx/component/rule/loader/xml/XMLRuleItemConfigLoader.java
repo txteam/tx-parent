@@ -23,6 +23,7 @@ import com.thoughtworks.xstream.XStream;
 import com.tx.component.rule.loader.BaseRuleItemLoader;
 import com.tx.component.rule.loader.RuleItem;
 import com.tx.component.rule.loader.xml.model.ByteParam;
+import com.tx.component.rule.loader.xml.model.FileParam;
 import com.tx.component.rule.loader.xml.model.RuleItemConfig;
 import com.tx.component.rule.loader.xml.model.RulesConfig;
 import com.tx.component.rule.loader.xml.model.ValueParam;
@@ -137,6 +138,14 @@ public class XMLRuleItemConfigLoader extends BaseRuleItemLoader {
                         valueParam.getValue());
             }
         }
+        //解析其中file相关配置
+        if (!CollectionUtils.isEmpty(ruleItemConfig.getFileList())) {
+            for (FileParam fileParam : ruleItemConfig.getFileList()) {
+                AssertUtils.notEmpty(fileParam.getKey(),
+                        "key:{} paramKey is empty.");
+                parseFileParamConfig(fileParam.getKey(), ruleItem, fileParam);
+            }
+        }
         return ruleItem;
     }
     
@@ -179,6 +188,27 @@ public class XMLRuleItemConfigLoader extends BaseRuleItemLoader {
                             new Object[] { ruleKey, paramKey, charsetName })
                             .getMessage());
         }
+    }
+    
+    /** 
+     * 解析其中byte相关配置
+     *<功能详细描述>
+     * @param ruleKey
+     * @param ruleItem
+     * @param byteParam [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    private void parseFileParamConfig(String ruleKey, RuleItem ruleItem,
+            FileParam fileParam) {
+        String paramKey = fileParam.getKey();
+        AssertUtils.isExist(fileParam.getValue(),
+                "key:{} paramKey:{} byteParam not exist.",
+                ruleKey,
+                paramKey);
+        ruleItem.addObjectParam(paramKey, fileParam.getValue());
     }
     
     /**
@@ -229,16 +259,16 @@ public class XMLRuleItemConfigLoader extends BaseRuleItemLoader {
      */
     @Override
     public boolean equals(Object arg0) {
-        if(arg0 == null){
+        if (arg0 == null) {
             return false;
         }
-        if(XMLRuleItemConfigLoader.class.equals(arg0.getClass())){
+        if (XMLRuleItemConfigLoader.class.equals(arg0.getClass())) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
-
+    
     /**
      * @return
      */

@@ -20,7 +20,8 @@ import org.springframework.jdbc.support.lob.DefaultLobHandler;
 import org.springframework.jdbc.support.lob.LobHandler;
 import org.springframework.jdbc.support.lob.OracleLobHandler;
 
-import com.tx.component.rule.impl.drools.DRLByteDroolsRuleRegister;
+import com.tx.component.rule.impl.drools.drlbyte.DRLByteDroolsRuleRegister;
+import com.tx.component.rule.impl.drools.drlfile.DRLFileDroolsRuleRegister;
 import com.tx.component.rule.impl.java.JavaMethodRuleRegister;
 import com.tx.component.rule.loader.RuleItemPersister;
 import com.tx.component.rule.loader.java.JavaMethodRuleItemLoader;
@@ -100,6 +101,12 @@ public class RuleContextConfigurator implements InitializingBean {
     public DRLByteDroolsRuleRegister drlByteDroolsRuleRegister() {
         DRLByteDroolsRuleRegister drlByteDroolsRuleRegister = new DRLByteDroolsRuleRegister();
         return drlByteDroolsRuleRegister;
+    }
+    
+    @Bean(name = "drlFileDroolsRuleRegister")
+    public DRLFileDroolsRuleRegister drlFileDroolsRuleRegister(){
+        DRLFileDroolsRuleRegister drlFileDroolsRuleRegister = new DRLFileDroolsRuleRegister();
+        return drlFileDroolsRuleRegister;
     }
     
     @Bean(name = "javaMethodRuleRegister")

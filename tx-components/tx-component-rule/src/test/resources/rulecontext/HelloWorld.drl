@@ -1,0 +1,12 @@
+//created on: 2014-4-16
+//用以生成还款计划,通过传入的贷款账户的信息，以及贷款账户的相关费用项的设置返回还款计划
+package test;
+
+//生成还款计划中的本金相关的还款计划分项
+rule "管理费(AM)"
+    when
+        eval(true)
+    then
+    	System.out.println("断点");
+    	System.out.println("aaaaaaaaaaaaaaaaa");
+end

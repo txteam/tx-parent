@@ -29,13 +29,13 @@ import com.tx.component.rule.transation.RuleSessionContext;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class DRLByteDroolsRuleSession extends
-        BaseRuleSession<DRLByteDroolsRule> {
+public class BaseDroolsRuleSession<RULE extends BaseDroolsRule> extends
+        BaseRuleSession<RULE> {
     
     /**
      * drools规则<默认构造函数>
      */
-    public DRLByteDroolsRuleSession(DRLByteDroolsRule rule) {
+    public BaseDroolsRuleSession(RULE rule) {
         super(rule);
     }
     
@@ -75,7 +75,7 @@ public class DRLByteDroolsRuleSession extends
             beforeFireRule(callbackHandler, session);
             
             //插入事实
-            if(!CollectionUtils.isEmpty(facts)){
+            if (!CollectionUtils.isEmpty(facts)) {
                 for (Map<? extends String, ? extends Object> fact : facts) {
                     session.insert(fact);
                 }
