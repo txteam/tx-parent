@@ -53,7 +53,7 @@ public class JpaEntityFreeMarkerGenerator {
     
     private String serviceTestTemplateFilePath = "com/tx/core/generator/defaultftl/serviceTest.ftl";
     
-    private String dbScriptTemplateFilePath = "com/tx/core/generator/defaultftl/dbScript.ftl";
+    private String dbScriptTemplateFilePath = "com/tx/core/generator/defaultftl/dbscript.ftl";
     
     public void generate(Class<?> type, String resultFolderPath) {
         
