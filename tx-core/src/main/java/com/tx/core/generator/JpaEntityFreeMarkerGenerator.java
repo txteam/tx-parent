@@ -6,10 +6,13 @@
  */
 package com.tx.core.generator;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.cxf.common.util.StringUtils;
 import org.hibernate.dialect.Dialect;
 import org.springframework.util.ClassUtils;
@@ -39,8 +42,6 @@ import com.tx.core.util.JdbcUtils;
  */
 public class JpaEntityFreeMarkerGenerator {
     
-
-    
     private Class<?> loadTemplateClass = JpaEntityFreeMarkerGenerator.class;
     
     private String sqlMapTemplateFilePath = "com/tx/core/generator/defaultftl/sqlMap.ftl";
@@ -56,6 +57,12 @@ public class JpaEntityFreeMarkerGenerator {
     private String dbScriptTemplateFilePath = "com/tx/core/generator/defaultftl/dbscript.ftl";
     
     public void generate(Class<?> type, String resultFolderPath) {
+        File folder = new File(resultFolderPath);
+        try {
+            FileUtils.cleanDirectory(folder);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         
         //生成sqlMap
         generateSimpleSqlMap(type, resultFolderPath);
@@ -469,8 +476,6 @@ public class JpaEntityFreeMarkerGenerator {
         mapper.setNamespace(org.apache.commons.lang.StringUtils.uncapitalize(jpaMetaClass.getEntitySimpleName()));
         return mapper;
     }
-    
-
     
     /**
      * @param 对sqlMapTemplateFilePath进行赋值

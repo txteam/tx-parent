@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-import com.tx.core.exceptions.argument.NullArgException;
+import com.tx.core.exceptions.util.AssertUtils;
 
 /**
  * 规则会话工具类，用以支持当前事务的开启关闭<br/>
@@ -55,10 +55,7 @@ public class RuleSessionTransactionUtils {
      */
     private static RuleSessionTransaction doOpenRuleSessionTransation(
             RuleSessionTransactionFactory rstFactory) {
-        if (rstFactory == null) {
-            throw new NullArgException(
-                    "ruleSessionTransactionFactory is empty.");
-        }
+        AssertUtils.notNull(rstFactory,"ruleSessionTransactionFactory is null");
         
         //从当前线程中根据factory获取可能存在的transHolder
         RuleSessionTransactionHolder ruleSessionTransHolder = (RuleSessionTransactionHolder) TransactionSynchronizationManager.getResource(rstFactory);
