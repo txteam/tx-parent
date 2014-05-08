@@ -19,6 +19,10 @@ import org.hibernate.dialect.Dialect;
  */
 public enum DataSourceTypeEnum {
     /**
+     * sqlServer
+     */
+    SQLSERVER2008("sqlserver2008", DialectUtils.sqlServer2008Dialect),
+    /**
      * oracle
      */
     ORACLE("ORACLE", DialectUtils.oracle10gDialect),
@@ -74,14 +78,14 @@ public enum DataSourceTypeEnum {
     public void setName(String name) {
         this.name = name;
     }
-
+    
     /**
      * @return 返回 dialect
      */
     public Dialect getDialect() {
         return dialect;
     }
-
+    
     /**
      * @param 对dialect进行赋值
      */

@@ -11,6 +11,7 @@ import org.hibernate.dialect.MySQL5Dialect;
 import org.hibernate.dialect.MySQL5InnoDBDialect;
 import org.hibernate.dialect.Oracle10gDialect;
 import org.hibernate.dialect.Oracle9iDialect;
+import org.hibernate.dialect.SQLServer2008Dialect;
 
 
  /**
@@ -23,6 +24,8 @@ import org.hibernate.dialect.Oracle9iDialect;
   * @since  [产品/模块版本]
   */
 public abstract class DialectUtils {
+    
+    public static final SQLServer2008Dialect sqlServer2008Dialect = new SQLServer2008Dialect();
 
     public static final Oracle10gDialect oracle10gDialect = new Oracle10gDialect();
     

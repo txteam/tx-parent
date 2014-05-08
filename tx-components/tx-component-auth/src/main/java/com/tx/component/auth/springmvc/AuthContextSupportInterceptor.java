@@ -52,11 +52,12 @@ public class AuthContextSupportInterceptor implements HandlerInterceptor {
      * @param modelAndView
      * @throws Exception
      */
+    @SuppressWarnings("static-access")
     @Override
     public void postHandle(HttpServletRequest request,
             HttpServletResponse response, Object handler,
             ModelAndView modelAndView) throws Exception {
-        request.setAttribute(authContextKey, authContext);
+        request.setAttribute(authContextKey, authContext.getContext());
     }
     
     /**
@@ -66,12 +67,13 @@ public class AuthContextSupportInterceptor implements HandlerInterceptor {
      * @param ex
      * @throws Exception
      */
+    @SuppressWarnings("static-access")
     @Override
     public void afterCompletion(HttpServletRequest request,
             HttpServletResponse response, Object handler, Exception ex)
             throws Exception {
         AuthSessionContext.removeCurrentSessionFromThread();
-        request.setAttribute(authContextKey, authContext);
+        request.setAttribute(authContextKey, authContext.getContext());
     }
 
     /**
