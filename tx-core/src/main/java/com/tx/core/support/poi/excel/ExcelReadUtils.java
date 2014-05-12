@@ -4,7 +4,7 @@
  * 修改时间:  2013-5-24
  * <修改描述:>
  */
-package com.tx.core.support.poi.util;
+package com.tx.core.support.poi.excel;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,8 +14,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.time.DateFormatUtils;
-import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -26,8 +24,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
 import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.support.poi.CellReader;
-import com.tx.core.support.poi.CellRowMapper;
+import com.tx.core.support.poi.excel.cellreader.StringValueCellReader;
 
 /**
  * excel读取生成工具
@@ -41,48 +38,6 @@ import com.tx.core.support.poi.CellRowMapper;
 public class ExcelReadUtils {
     
     private static ResourceLoader resourceLoader = new DefaultResourceLoader();
-    
-    /**
-     * 默认的事件格式字符串
-     */
-    private static String defaultDateFormatterPattern = "yyyy-MM-dd HH:mm:ss";
-    
-    /**
-     * 默认的行读取器
-     */
-    private static CellReader<String> defaultStringValueCellReader = new CellReader<String>() {
-        
-        @Override
-        public String read(Cell cell, int cellNum) {
-            String res = null;
-            switch (cell.getCellType()) {
-                case Cell.CELL_TYPE_FORMULA:
-                    res = cell.getCellFormula();
-                    break;
-                
-                case Cell.CELL_TYPE_NUMERIC:
-                    if (HSSFDateUtil.isCellDateFormatted(cell)) {
-                        res = DateFormatUtils.format(cell.getDateCellValue(),
-                                defaultDateFormatterPattern);
-                    } else {
-                        res = String.valueOf(cell.getNumericCellValue());
-                    }
-                    break;
-                case Cell.CELL_TYPE_STRING:
-                    res = cell.getStringCellValue() != null ? cell.getStringCellValue()
-                            .trim()
-                            : "";
-                    break;
-                
-                case Cell.CELL_TYPE_BOOLEAN:
-                    res = cell.getBooleanCellValue() ? "true" : "false";
-                    break;
-                default:
-                    res = "";
-            }
-            return res;
-        }
-    };
     
     /**
      * 解析获取workbook实例
@@ -208,7 +163,7 @@ public class ExcelReadUtils {
     public static List<Map<String, String>> readSheet(final Sheet sheet,
             final String[] keys, int skips, CellReader<String> cellReader) {
         //行读取器
-        final CellReader<String> finalCellReader = cellReader == null ? defaultStringValueCellReader
+        final CellReader<String> finalCellReader = cellReader == null ? StringValueCellReader.INSTANCE
                 : cellReader;
         
         CellRowMapper<Map<String, String>> cellRowMapper = new CellRowMapper<Map<String, String>>() {

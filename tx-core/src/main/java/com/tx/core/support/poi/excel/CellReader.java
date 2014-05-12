@@ -4,7 +4,7 @@
  * 修改时间:  2013-5-27
  * <修改描述:>
  */
-package com.tx.core.support.poi;
+package com.tx.core.support.poi.excel;
 
 import org.apache.poi.ss.usermodel.Cell;
 
