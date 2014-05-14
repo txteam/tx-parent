@@ -8,7 +8,11 @@ package com.tx.core.support.poi.excel;
 
 import java.util.List;
 
-import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Row;
 
 /**
  * Excel写入工具类<br/>
@@ -20,8 +24,20 @@ import org.apache.poi.ss.usermodel.Sheet;
  */
 public class ExcelWriteUtils {
     
-    public static <T> void writeSheet(Sheet sheet, int skips,
-            List<T> objectList, CellRowReader<T> rowMapper) {
+    public static <T> void writeSheet(HSSFSheet sheet, int startRowIndex,
+            List<T> objectList, CellRowWriter<T> cellRowWriter, short rowHeight,
+            CellStyle cellStyle) {
         
+        int index = startRowIndex;
+        for(T obj : objectList){
+            //创建一行
+            HSSFRow row = sheet.createRow(index);  
+            //行高
+            row.setHeightInPoints(rowHeight);
+            //创建一个单元格 
+            HSSFCell cell = row.createCell(0); 
+            
+            index++;
+        }
     }
 }

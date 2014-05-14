@@ -22,16 +22,16 @@ public interface CellRowWriter<T> {
     
     /**
       * Cell单元格行内容写入<br/>
-      *<功能详细描述>
-      * @param obj
+      *     
       * @param row
-      * @param rowHeight
+      * @param obj
       * @param rowNum
+      * @param rowHeight
       * @param cellStyle [参数说明]
       * 
       * @return void [返回类型说明]
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    void write(T obj, Row row, int rowHeight, int rowNum, CellStyle cellStyle);
+    void write(Row row, T obj, int rowNum, int rowHeight, CellStyle cellStyle);
 }

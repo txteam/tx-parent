@@ -77,7 +77,7 @@ public class ExcelWriteUtilsTest {
             /** 
              * 单元格赋值 
              */  
-            cell.setCellValue(1);  
+            cell.setCellValue(1);
             /** 
              * 生成一个字体 
              */  

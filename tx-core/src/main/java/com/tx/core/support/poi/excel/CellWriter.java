@@ -7,6 +7,7 @@
 package com.tx.core.support.poi.excel;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 
 /**
  * Cell值写入器<br/>
@@ -30,5 +31,6 @@ public interface CellWriter<T> {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    T read(Cell cell, int rowNum, int cellNum, String key);
+    void write(Cell cell, T value, int cellType, int width,
+            CellStyle cellStyle, int rowNum, int cellNum);
 }
