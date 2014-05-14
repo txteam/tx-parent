@@ -9,13 +9,11 @@ package com.tx.core.support.poi.excel;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -24,7 +22,9 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
 import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.support.poi.excel.cellreader.StringValueCellReader;
+import com.tx.core.support.poi.excel.builder.CellRowReaderBuilder;
+import com.tx.core.support.poi.excel.rowmapper.MapCellRowReader;
+import com.tx.core.support.poi.excel.rowmapper.TypeCellRowReader;
 
 /**
  * excel读取生成工具
@@ -37,6 +37,7 @@ import com.tx.core.support.poi.excel.cellreader.StringValueCellReader;
  */
 public class ExcelReadUtils {
     
+    /** 资源读取器 */
     private static ResourceLoader resourceLoader = new DefaultResourceLoader();
     
     /**
@@ -121,99 +122,50 @@ public class ExcelReadUtils {
      */
     public static List<Map<String, String>> readSheet(final Sheet sheet,
             final String[] keys, int skips) {
-        List<Map<String, String>> resList = readSheet(sheet, keys, skips, null);
+        AssertUtils.notNull(sheet, "sheet is null.");
+        AssertUtils.notEmpty(keys, "keys is null.");
         
-        return resList;
-    }
-    
-    /**
-      * 读取excel数据并写入一个Map中<br/>
-      *<功能详细描述>
-      * @param sheet
-      * @param keys
-      * @param cellReader
-      * @return [参数说明]
-      * 
-      * @return List<Map<String,String>> [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    public static List<Map<String, String>> readSheet(final Sheet sheet,
-            final String[] keys, CellReader<String> cellReader) {
+        @SuppressWarnings("rawtypes")
+        CellRowReader cellRowReader = CellRowReaderBuilder.build(MapCellRowReader.class,
+                new Object[] { keys });
+        @SuppressWarnings("unchecked")
         List<Map<String, String>> resList = readSheet(sheet,
-                keys,
-                0,
-                cellReader);
-        
-        return resList;
-    }
-    
-    /**
-      * 读取excel数据并写入一个Map中<br/>
-      * <功能详细描述>
-      * @param sheet
-      * @param keys
-      * @param cellReader
-      * @return [参数说明]
-      * 
-      * @return List<Map<String,String>> [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    public static List<Map<String, String>> readSheet(final Sheet sheet,
-            final String[] keys, int skips, CellReader<String> cellReader) {
-        //行读取器
-        final CellReader<String> finalCellReader = cellReader == null ? StringValueCellReader.INSTANCE
-                : cellReader;
-        
-        CellRowMapper<Map<String, String>> cellRowMapper = new CellRowMapper<Map<String, String>>() {
-            /**
-             * @param row
-             * @param rowNum
-             * @return
-             */
-            @Override
-            public Map<String, String> mapRow(Row row, int rowNum) {
-                Map<String, String> res = new HashMap<String, String>();
-                int cellsLength = row.getPhysicalNumberOfCells();
-                for (int keyIndex = 0; keyIndex < keys.length; keyIndex++) {
-                    if (keyIndex >= cellsLength) {
-                        break;//直接跳出本次循环
-                    }
-                    Cell cell = row.getCell(keyIndex);
-                    if(cell == null){
-                        res.put(keys[keyIndex],
-                                "");
-                    }else{
-                        res.put(keys[keyIndex],
-                                finalCellReader.read(cell, keyIndex));
-                    }
-                }
-                
-                return res;
-            }
-        };
-        List<Map<String, String>> resList = ExcelReadUtils.<Map<String, String>> readSheet(sheet,
                 skips,
-                cellRowMapper);
+                cellRowReader,
+                true,
+                true,
+                true);
         
         return resList;
     }
     
     /**
-      * 读取sheet中数据,生成对象集合<br/>
+      * 读取行级数据<br/>
       *<功能详细描述>
       * @param sheet
-      * @param rowMapper
+      * @param type
+      * @param skips
       * @return [参数说明]
       * 
       * @return List<T> [返回类型说明]
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public static <T> List<T> readSheet(Sheet sheet, CellRowMapper<T> rowMapper) {
-        List<T> resList = ExcelReadUtils.<T> readSheet(sheet, 0, rowMapper);
+    public static <T> List<T> readSheet(final Sheet sheet, Class<T> type,
+            int skips) {
+        AssertUtils.notNull(type, "type is null.");
+        AssertUtils.notEmpty(sheet, "sheet is null.");
         
+        @SuppressWarnings("rawtypes")
+        CellRowReader cellRowReader = CellRowReaderBuilder.build(TypeCellRowReader.class,
+                new Object[] { type });
+        @SuppressWarnings("unchecked")
+        List<T> resList = readSheet(sheet,
+                skips,
+                cellRowReader,
+                true,
+                true,
+                true);
         return resList;
     }
     
@@ -229,9 +181,10 @@ public class ExcelReadUtils {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public static <T> List<T> readSheet(Sheet sheet, int skips,
-            CellRowMapper<T> rowMapper) {
-        AssertUtils.notNull(rowMapper, "rowMapper is null.");
+    private static <T> List<T> readSheet(Sheet sheet, int skips,
+            CellRowReader<T> cellRowReader, boolean ignoreError,
+            boolean ignoreBlank, boolean ignoreTypeUnmatch) {
+        AssertUtils.notNull(cellRowReader, "cellRowReader is null.");
         AssertUtils.notNull(sheet, "sheet is null.");
         
         //构造返回列表
@@ -244,11 +197,15 @@ public class ExcelReadUtils {
             }
             //获取到对应的行数据<br/>
             Row row = sheet.getRow(r);
-            if(row == null){
+            if (row == null) {
                 continue;
             }
             //构造对象实例
-            T tInsTemp = rowMapper.mapRow(row, r);
+            T tInsTemp = cellRowReader.read(row,
+                    r,
+                    ignoreError,
+                    ignoreBlank,
+                    ignoreTypeUnmatch);
             
             //添加到列表中
             resList.add(tInsTemp);

@@ -21,7 +21,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 public class ExcelWriteUtils {
     
     public static <T> void writeSheet(Sheet sheet, int skips,
-            List<T> objectList, CellRowMapper<T> rowMapper) {
+            List<T> objectList, CellRowReader<T> rowMapper) {
         
     }
 }

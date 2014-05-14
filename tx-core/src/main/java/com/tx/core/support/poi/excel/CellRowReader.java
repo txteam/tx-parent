@@ -20,7 +20,7 @@ import org.apache.poi.ss.usermodel.Row;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
   */
-public interface CellRowMapper<T> {
+public interface CellRowReader<T> {
     
     /**
       * excel中行数据如何映射到对象实体中
@@ -34,5 +34,5 @@ public interface CellRowMapper<T> {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    T mapRow(Row row, int rowNum);
+    T read(Row row, int rowNum,boolean ignoreError, boolean ignoreBlank, boolean ignoreTypeUnmatch);
 }
