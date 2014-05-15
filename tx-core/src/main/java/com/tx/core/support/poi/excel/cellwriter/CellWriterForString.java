@@ -36,6 +36,11 @@ public class CellWriterForString extends CellWriter<String>{
     @Override
     public void write(Cell cell, Object value, int cellType, int width,
             CellStyle cellStyle, int rowNum, int cellNum) {
+        if(value == null){
+            cell.setCellType(HSSFCell.CELL_TYPE_STRING);  
+            cell.setCellValue("");
+            return ;
+        }
         AssertUtils.isInstanceOf(String.class,
                 value,
                 "value is not String");

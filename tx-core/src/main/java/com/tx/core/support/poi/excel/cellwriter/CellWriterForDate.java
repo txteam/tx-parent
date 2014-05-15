@@ -39,7 +39,13 @@ public class CellWriterForDate extends CellWriter<Date>{
     @Override
     public void write(Cell cell, Object value, int cellType,
             int width, CellStyle cellStyle, int rowNum, int cellNum) {
-        AssertUtils.isInstanceOf(Date.class, value,"value is not BigDecimal");
+        if (value == null) {
+            cell.setCellType(HSSFCell.LAST_COLUMN_NUMBER);
+            cell.setCellValue("");
+            return;
+        }
+        
+        AssertUtils.isInstanceOf(Date.class, value,"value is not Date");
         
         Date dateValue = (Date)value;
         

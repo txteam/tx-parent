@@ -35,11 +35,19 @@ public class CellWriterForBigDecimal extends CellWriter<BigDecimal> {
      * @param cellNum
      */
     @Override
-    public void write(Cell cell, Object value, int cellType,
-            int width, CellStyle cellStyle, int rowNum, int cellNum) {
-        AssertUtils.isInstanceOf(BigDecimal.class, value,"value is not BigDecimal");
+    public void write(Cell cell, Object value, int cellType, int width,
+            CellStyle cellStyle, int rowNum, int cellNum) {
+        if (value == null) {
+            cell.setCellType(HSSFCell.LAST_COLUMN_NUMBER);
+            cell.setCellValue("");
+            return;
+        }
         
-        BigDecimal cellValue = (BigDecimal)value;
+        AssertUtils.isInstanceOf(BigDecimal.class,
+                value,
+                "value is not BigDecimal");
+        
+        BigDecimal cellValue = (BigDecimal) value;
         if (cellType < 0 || HSSFCell.CELL_TYPE_NUMERIC == cellType) {
             cell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
             cell.setCellValue(cellValue.toString());

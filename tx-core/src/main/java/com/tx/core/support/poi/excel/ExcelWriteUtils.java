@@ -58,6 +58,18 @@ public class ExcelWriteUtils {
                 null);
     }
     
+    /**
+      * 
+      *<功能详细描述>
+      * @param sheet
+      * @param startRowIndex
+      * @param objList
+      * @param type [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
     public static <T> void writeSheet(Sheet sheet, int startRowIndex,
             List<T> objList, Class<T> type) {
         AssertUtils.notNull(sheet, "sheet is null.");

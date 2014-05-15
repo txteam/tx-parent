@@ -35,9 +35,15 @@ public class CellWriterForInteger extends CellWriter<Integer> {
     @Override
     public void write(Cell cell, Object value, int cellType, int width,
             CellStyle cellStyle, int rowNum, int cellNum) {
+        if (value == null) {
+            cell.setCellType(HSSFCell.LAST_COLUMN_NUMBER);
+            cell.setCellValue("");
+            return;
+        }
+        
         AssertUtils.isInstanceOf(Integer.class,
                 value,
-                "value is not BigDecimal");
+                "value is not Integer");
         
         Integer integerValue = (Integer) value;
         if (cellType < 0) {
