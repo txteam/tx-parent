@@ -26,9 +26,6 @@ import com.tx.core.support.poi.excel.exception.ExcelReadException;
  */
 public class CellReader4BigDecimal implements CellReader<BigDecimal> {
     
-    /** 实例 */
-    public static final CellReader4BigDecimal INSTANCE = new CellReader4BigDecimal();
-    
     /** <默认构造函数> */
     public CellReader4BigDecimal() {
         super();

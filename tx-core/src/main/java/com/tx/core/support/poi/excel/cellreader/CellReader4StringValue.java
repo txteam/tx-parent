@@ -24,8 +24,6 @@ import com.tx.core.support.poi.excel.exception.ExcelReadException;
  */
 public class CellReader4StringValue implements CellReader<String> {
     
-    public static final CellReader4StringValue INSTANCE = new CellReader4StringValue();
-    
     /** <默认构造函数> */
     public CellReader4StringValue() {
         super();

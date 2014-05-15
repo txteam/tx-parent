@@ -43,14 +43,16 @@ public class ExcelReadUtilsTest {
             System.out.println(sheet.getFirstRowNum());
             System.out.println(sheet.getLastRowNum());
             List<Map<String, String>> resMapList = ExcelReadUtils.readSheet(sheet,
-                    new String[] { "column1", "column2", "column3","sum" });
+                    new String[] { "column1", "column2", "column3", "sum" });
             System.out.println("print map list.");
             for (Map<String, String> rowMap : resMapList) {
                 
                 MapUtils.debugPrint(System.out, "", rowMap);
             }
             
-            List<Test> testList = ExcelReadUtils.<Test> readSheet(sheet, Test.class , 0);
+            List<Test> testList = ExcelReadUtils.<Test> readSheet(sheet,
+                    Test.class,
+                    0);
             
             for (Test test : testList) {
                 System.out.println(test.toString());
@@ -71,7 +73,7 @@ public class ExcelReadUtilsTest {
         @ExcelCell(index = 2)
         String c3;
         
-        @ExcelCell(index = 3,cellType=Cell.CELL_TYPE_NUMERIC)
+        @ExcelCell(index = 3, cellType = Cell.CELL_TYPE_NUMERIC)
         String c4;
         
         public String getC1() {
@@ -97,23 +99,25 @@ public class ExcelReadUtilsTest {
         public void setC3(String c3) {
             this.c3 = c3;
         }
+        
         /**
          * @return 返回 c4
          */
         public String getC4() {
             return c4;
         }
-
+        
         /**
          * @param 对c4进行赋值
          */
         public void setC4(String c4) {
             this.c4 = c4;
         }
-
+        
         @Override
         public String toString() {
-            return "Test [c1=" + c1 + ", c2=" + c2 + ", c3=" + c3 + " c4=" + c4 + "]";
+            return "Test [c1=" + c1 + ", c2=" + c2 + ", c3=" + c3 + " c4=" + c4
+                    + "]";
         }
     }
     

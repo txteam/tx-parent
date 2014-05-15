@@ -4,7 +4,7 @@
  * 修改时间:  2014年5月14日
  * <修改描述:>
  */
-package com.tx.core.support.poi.excel.rowmapper;
+package com.tx.core.support.poi.excel.cellrowreader;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,8 +12,10 @@ import java.util.Map;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 
+import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.support.poi.excel.CellReader;
 import com.tx.core.support.poi.excel.CellRowReader;
+import com.tx.core.support.poi.excel.builder.CellReaderBuilder;
 import com.tx.core.support.poi.excel.cellreader.CellReader4StringValue;
 
 /**
@@ -29,17 +31,23 @@ public class MapCellRowReader implements CellRowReader<Map<String, String>> {
     
     private String[] keys = null;
     
-    private CellReader<String> cellReader = CellReader4StringValue.INSTANCE;
+    private CellReader<String> cellReader;
     
     /** <默认构造函数> */
     public MapCellRowReader(String[] keys) {
         super();
+        AssertUtils.notEmpty(keys,"keys is empty.");
+        
         this.keys = keys;
+        this.cellReader = CellReaderBuilder.build(CellReader4StringValue.class, String.class);
     }
     
     /** <默认构造函数> */
     public MapCellRowReader(String[] keys, CellReader<String> cellReader) {
         super();
+        AssertUtils.notEmpty(keys,"keys is empty.");
+        AssertUtils.notNull(cellReader,"cellReader is null.");
+        
         this.keys = keys;
         this.cellReader = cellReader;
     }

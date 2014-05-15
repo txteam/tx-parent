@@ -6,13 +6,19 @@
  */
 package com.tx.core.support.poi.excel.builder;
 
+import java.lang.reflect.Modifier;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.map.LRUMap;
 import org.apache.commons.lang.ArrayUtils;
 
 import com.tx.core.TxConstants;
+import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.support.poi.excel.CellWriter;
+import com.tx.core.util.ClassScanUtils;
 import com.tx.core.util.ObjectUtils;
 
 /**
@@ -25,6 +31,24 @@ import com.tx.core.util.ObjectUtils;
  * @since  [产品/模块版本]
  */
 public abstract class CellWriterBuilder {
+    
+    private static Map<Class<?>, CellWriter<?>> defaultWriterMapping = new HashMap<Class<?>, CellWriter<?>>();
+    
+    static {
+        @SuppressWarnings("rawtypes")
+        Set<Class<? extends CellWriter>> cellWriterClasses = ClassScanUtils.scanByParentClass(CellWriter.class,
+                "com.tx.core.support.poi.excel.cellwriter");
+        
+        if (!CollectionUtils.isEmpty(cellWriterClasses)) {
+            for (@SuppressWarnings("rawtypes")
+            Class<? extends CellWriter> cellWriterType : cellWriterClasses) {
+                @SuppressWarnings("rawtypes")
+                CellWriter writer = ObjectUtils.newInstance(cellWriterType);
+                defaultWriterMapping.put((Class<?>) writer.getRawType(), writer);
+            }
+            
+        }
+    }
     
     /** cell的读取器 */
     @SuppressWarnings({ "unchecked" })
@@ -73,17 +97,27 @@ public abstract class CellWriterBuilder {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public static CellWriter<?> build(
+    @SuppressWarnings("unchecked")
+    public static <T> CellWriter<T> build(
             @SuppressWarnings("rawtypes") Class<? extends CellWriter> writerType,
-            Object... objs) {
+            Class<T> type, Object... objs) {
+        AssertUtils.notNull(writerType, "writerType is null.");
+        
         String key = buildCacheKey(writerType, objs);
         CellWriter<?> writer = null;
         if (cellWriterCache.containsKey(key)) {
             writer = cellWriterCache.get(key);
+        } else if (writerType.isInterface()
+                || Modifier.isAbstract(writerType.getModifiers())) {
+            //如果指定的类型writerType为接口时，则type不能为空
+            AssertUtils.notNull(writerType, "type is null.");
+            
+            writer = defaultWriterMapping.get(type);
+            cellWriterCache.put(key, writer);
         } else {
             writer = ObjectUtils.newInstance(writerType);
             cellWriterCache.put(key, writer);
         }
-        return writer;
+        return (CellWriter<T>) writer;
     }
 }

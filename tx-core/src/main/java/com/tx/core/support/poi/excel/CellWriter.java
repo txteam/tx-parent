@@ -6,6 +6,7 @@
  */
 package com.tx.core.support.poi.excel;
 
+import org.apache.ibatis.type.TypeReference;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 
@@ -18,7 +19,7 @@ import org.apache.poi.ss.usermodel.CellStyle;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public interface CellWriter<T> {
+public abstract class CellWriter<T> extends TypeReference<T> {
     
     /**
       * 读取cell值<br/>
@@ -31,6 +32,6 @@ public interface CellWriter<T> {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    void write(Cell cell, T value, int cellType, int width,
-            CellStyle cellStyle, int rowNum, int cellNum);
+    public abstract void write(Cell cell, Object value, int cellType,
+            int width, CellStyle cellStyle, int rowNum, int cellNum);
 }

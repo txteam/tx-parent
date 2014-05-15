@@ -23,8 +23,8 @@ import org.springframework.core.io.ResourceLoader;
 
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.support.poi.excel.builder.CellRowReaderBuilder;
-import com.tx.core.support.poi.excel.rowmapper.MapCellRowReader;
-import com.tx.core.support.poi.excel.rowmapper.TypeCellRowReader;
+import com.tx.core.support.poi.excel.cellrowreader.MapCellRowReader;
+import com.tx.core.support.poi.excel.cellrowreader.TypeCellRowReader;
 
 /**
  * excel读取生成工具

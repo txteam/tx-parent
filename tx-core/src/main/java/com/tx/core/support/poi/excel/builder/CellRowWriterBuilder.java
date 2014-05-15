@@ -12,11 +12,11 @@ import org.apache.commons.collections.map.LRUMap;
 import org.apache.commons.lang.ArrayUtils;
 
 import com.tx.core.TxConstants;
-import com.tx.core.support.poi.excel.CellRowReader;
+import com.tx.core.support.poi.excel.CellRowWriter;
 import com.tx.core.util.ObjectUtils;
 
 /**
- * <功能简述>
+ * excel行写入器构建器
  * <功能详细描述>
  * 
  * @author  Administrator
@@ -24,11 +24,11 @@ import com.tx.core.util.ObjectUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public abstract class CellRowReaderBuilder {
+public abstract class CellRowWriterBuilder {
     
     /** cell的读取器 */
     @SuppressWarnings({ "unchecked" })
-    private static Map<String, CellRowReader<?>> cellRowReaderCache = (Map<String, CellRowReader<?>>) new LRUMap(
+    private static Map<String, CellRowWriter<?>> cellRowWriterCache = (Map<String, CellRowWriter<?>>) new LRUMap(
             255);
     
     /**
@@ -43,7 +43,7 @@ public abstract class CellRowReaderBuilder {
       * @see [类、类#方法、类#成员]
      */
     private static String buildCacheKey(
-            @SuppressWarnings("rawtypes") Class<? extends CellRowReader> cellRowReaderType,
+            @SuppressWarnings("rawtypes") Class<? extends CellRowWriter> cellRowWriterType,
             Object... objs) {
         StringBuilder sb = new StringBuilder(TxConstants.INITIAL_STR_LENGTH);
         long paramLength = ArrayUtils.isEmpty(objs) ? 0 : objs.length;
@@ -53,7 +53,7 @@ public abstract class CellRowReaderBuilder {
                 paramHashCodes += objTemp.hashCode();
             }
         }
-        sb.append(cellRowReaderType.getName())
+        sb.append(cellRowWriterType.getName())
                 .append("(")
                 .append("[")
                 .append(paramHashCodes)
@@ -74,17 +74,17 @@ public abstract class CellRowReaderBuilder {
      * @see [类、类#方法、类#成员]
     */
     @SuppressWarnings("rawtypes")
-    public static CellRowReader build(
-            Class<? extends CellRowReader> cellRowReaderType, Object[] objs) {
-        String key = buildCacheKey(cellRowReaderType, objs);
-        CellRowReader<?> cellRowReader = null;
-        if (cellRowReaderCache.containsKey(key)) {
-            cellRowReader = cellRowReaderCache.get(key);
+    public static CellRowWriter build(
+            Class<? extends CellRowWriter> cellRowWriterType, Object[] objs) {
+        String key = buildCacheKey(cellRowWriterType, objs);
+        CellRowWriter<?> cellRowWriter = null;
+        if (cellRowWriterCache.containsKey(key)) {
+            cellRowWriter = cellRowWriterCache.get(key);
         } else {
-            cellRowReader = ObjectUtils.newInstance(cellRowReaderType, objs);
-            cellRowReaderCache.put(key, cellRowReader);
+            cellRowWriter = ObjectUtils.newInstance(cellRowWriterType, objs);
+            cellRowWriterCache.put(key, cellRowWriter);
         }
-        return cellRowReader;
+        return cellRowWriter;
     }
     
 }

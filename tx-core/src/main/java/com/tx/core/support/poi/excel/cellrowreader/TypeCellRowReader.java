@@ -4,7 +4,7 @@
  * 修改时间:  2014年5月14日
  * <修改描述:>
  */
-package com.tx.core.support.poi.excel.rowmapper;
+package com.tx.core.support.poi.excel.cellrowreader;
 
 import java.util.HashMap;
 import java.util.List;
@@ -41,6 +41,7 @@ public class TypeCellRowReader<T> implements CellRowReader<T> {
     /** <默认构造函数> */
     public TypeCellRowReader(Class<T> type) {
         super();
+        AssertUtils.notNull(type, "type is empty.");
         this.type = type;
         
         MetaClass metaClass = MetaClass.forClass(type);

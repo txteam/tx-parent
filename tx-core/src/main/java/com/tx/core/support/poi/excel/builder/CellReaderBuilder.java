@@ -34,9 +34,8 @@ public abstract class CellReaderBuilder {
     private static Map<Class<?>, CellReader<?>> defaultReaderMapping = new HashMap<Class<?>, CellReader<?>>();
     
     static {
-        defaultReaderMapping.put(String.class, CellReader4StringValue.INSTANCE);
-        defaultReaderMapping.put(BigDecimal.class,
-                CellReader4BigDecimal.INSTANCE);
+        defaultReaderMapping.put(String.class, new CellReader4StringValue());
+        defaultReaderMapping.put(BigDecimal.class, new CellReader4BigDecimal());
     }
     
     /** cell的读取器 */
@@ -77,7 +76,7 @@ public abstract class CellReaderBuilder {
     }
     
     /**
-      * 
+      * cellReader构建器
       *<功能详细描述>
       * @param readerType
       * @return [参数说明]
@@ -86,27 +85,31 @@ public abstract class CellReaderBuilder {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public static CellReader<?> build(
+    @SuppressWarnings("unchecked")
+    public static <T> CellReader<T> build(
             @SuppressWarnings("rawtypes") Class<? extends CellReader> readerType,
-            Class<?> fieldType, Object... objs) {
+            Class<T> type, Object... objs) {
         AssertUtils.notNull(readerType, "readerType is null.");
-        AssertUtils.notNull(fieldType, "fieldType is null.");
         
         String key = buildCacheKey(readerType, objs);
         CellReader<?> reader = null;
         if (cellReaderCache.containsKey(key)) {
             reader = cellReaderCache.get(key);
         } else if (readerType.isInterface()) {
-            AssertUtils.isTrue(defaultReaderMapping.containsKey(fieldType),
-                    "readerType is null.and fieldType:{} unsupport default",
-                    new Object[] { fieldType });
+            //如果指定的类型readerType为接口时，则type不能为空
+            AssertUtils.notNull(type, "readerType is interface.type is null.");
             
-            reader = defaultReaderMapping.get(fieldType);
+            //提取默认的类型对应的reader
+            AssertUtils.isTrue(defaultReaderMapping.containsKey(type),
+                    "readerType is null.and fieldType:{} unsupport default",
+                    new Object[] { type });
+            
+            reader = defaultReaderMapping.get(type);
             cellReaderCache.put(key, reader);
         } else {
             reader = ObjectUtils.newInstance(readerType, objs);
             cellReaderCache.put(key, reader);
         }
-        return reader;
+        return (CellReader<T>)reader;
     }
 }

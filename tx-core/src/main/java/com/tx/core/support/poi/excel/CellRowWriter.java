@@ -8,6 +8,7 @@ package com.tx.core.support.poi.excel;
 
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 
 /**
  * excel行写入工具
@@ -33,5 +34,5 @@ public interface CellRowWriter<T> {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    void write(Row row, T obj, int rowNum, int rowHeight, CellStyle cellStyle);
+    void write(Sheet sheet,Row row, T obj, int rowNum, int rowHeight, CellStyle cellStyle);
 }

@@ -10,6 +10,7 @@ import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.support.poi.excel.CellReader;
 import com.tx.core.support.poi.excel.CellWriter;
 import com.tx.core.support.poi.excel.builder.CellReaderBuilder;
+import com.tx.core.support.poi.excel.builder.CellWriterBuilder;
 
 /**
  * <功能简述>
@@ -47,7 +48,6 @@ public class ExcelCellInfo<T> {
     private Class<T> fieldType;
     
     /** <默认构造函数> */
-    @SuppressWarnings("unchecked")
     public ExcelCellInfo(String fieldName, Class<T> fieldType,
             ExcelCell excelCellAnno) {
         super();
@@ -56,7 +56,9 @@ public class ExcelCellInfo<T> {
         
         this.excelCellAnno = excelCellAnno;
         this.fieldType = fieldType;
-        this.cellReader = (CellReader<T>) CellReaderBuilder.build(excelCellAnno.reader(),
+        this.cellReader = CellReaderBuilder.build(excelCellAnno.reader(),
+                fieldType);
+        this.cellWriter = CellWriterBuilder.build(excelCellAnno.writer(),
                 fieldType);
         this.index = excelCellAnno.index();
         this.width = excelCellAnno.width();
@@ -161,14 +163,14 @@ public class ExcelCellInfo<T> {
     public void setCellWriter(CellWriter<T> cellWriter) {
         this.cellWriter = cellWriter;
     }
-
+    
     /**
      * @return 返回 cellType
      */
     public int getCellType() {
         return cellType;
     }
-
+    
     /**
      * @param 对cellType进行赋值
      */
