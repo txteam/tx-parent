@@ -17,6 +17,7 @@ import java.util.Set;
 import javax.annotation.Resource;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.cache.ehcache.EhCacheCache;
 import org.springframework.core.OrderComparator;
@@ -148,7 +149,8 @@ public class AuthContextBuilder extends AuthContextConfigurator {
         Collections.sort(authLoaders, OrderComparator.INSTANCE);
         for (AuthLoader authLoaderTemp : authLoaders) {
             //加载权限项
-            Set<AuthItem> authItemSet = authLoaderTemp.loadAuthItems();
+            @SuppressWarnings("unchecked")
+            Set<AuthItem> authItemSet = authLoaderTemp.loadAuthItems((Map<String, AuthItem>) MapUtils.unmodifiableMap(tempAuthItemMapping));
             
             for (AuthItem authItem : authItemSet) {
                 AssertUtils.notNull(authItem, "authItem is null.");

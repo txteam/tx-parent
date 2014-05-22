@@ -130,7 +130,7 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
      * @return
      */
     @Override
-    public Set<AuthItem> loadAuthItems() {
+    public Set<AuthItem> loadAuthItems(Map<String, AuthItem> sourceAuthItemMapping) {
         Set<AuthItem> authItemSet = new HashSet<AuthItem>(
                 loadAuthItemConfig().values());
         return authItemSet;

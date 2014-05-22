@@ -58,7 +58,7 @@ public class ControllerCheckOperateAuthLoader implements AuthLoader {
      * @return
      */
     @Override
-    public Set<AuthItem> loadAuthItems() {
+    public Set<AuthItem> loadAuthItems(Map<String, AuthItem> sourceAuthItemMapping) {
         Set<Class<? extends Object>> controllerClasses = ClassScanUtils.scanByAnnotation(Controller.class,
                 StringUtils.splitByWholeSeparator(basePackages, ","));
         Map<String, AuthItem> authItemMapping = new HashMap<String, AuthItem>();

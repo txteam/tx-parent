@@ -6,6 +6,7 @@
  */
 package com.tx.component.auth.context.loader;
 
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.core.Ordered;
@@ -33,5 +34,5 @@ public interface AuthLoader extends Ordered{
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public Set<AuthItem> loadAuthItems();
+    public Set<AuthItem> loadAuthItems(Map<String, AuthItem> authItemMapping);
 }
