@@ -56,6 +56,26 @@ public class JpaEntityFreeMarkerGenerator {
     
     private String dbScriptTemplateFilePath = "com/tx/core/generator/defaultftl/dbscript.ftl";
     
+    public void generate(Class<?> type, String resultFolderPath,boolean cleanFolder) {
+        if(cleanFolder){
+            File folder = new File(resultFolderPath);
+            try {
+                FileUtils.cleanDirectory(folder);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        
+        //生成sqlMap
+        generateSimpleSqlMap(type, resultFolderPath);
+        
+        //生成Dao以及DaoImpl
+        generateDao(type, resultFolderPath);
+        
+        //生成Service
+        generateService(type, resultFolderPath);
+    }
+    
     public void generate(Class<?> type, String resultFolderPath) {
         File folder = new File(resultFolderPath);
         try {

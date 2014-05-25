@@ -6,9 +6,14 @@
  */
 package com.tx.component.rule.context;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
+import org.apache.commons.collections.ListUtils;
+import org.apache.commons.collections.MapUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.tx.component.rule.exceptions.RuleContextInitException;
@@ -17,6 +22,7 @@ import com.tx.component.rule.loader.RuleRegister;
 import com.tx.component.rule.loader.RuleStateEnum;
 import com.tx.component.rule.session.RuleSession;
 import com.tx.component.rule.transation.RuleSessionTransactionFactory;
+import com.tx.core.TxConstants;
 import com.tx.core.exceptions.util.AssertUtils;
 
 /**
@@ -178,6 +184,87 @@ public class RuleContext extends RuleContextBuilder {
         boolean resFlag = this.ruleItemPersister.deleteRuleByRuleKey(ruleKey);
         ruleMap.remove(ruleKey);
         return resFlag;
+    }
+    
+    /**
+      * 获取所有规则集合<br/> 
+      *<功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return List<Rule> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public List<Rule> getAllRuleList() {
+        @SuppressWarnings("unchecked")
+        List<Rule> ruleList = (List<Rule>) ListUtils.unmodifiableList(new ArrayList<>(
+                this.ruleMap.values()));
+        
+        return ruleList;
+    }
+    
+    /**
+      * 获取所有规则的Map集合<br/>
+      *<功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return Map<String,Rule> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public Map<String, Rule> getAllRuleMap() {
+        @SuppressWarnings("unchecked")
+        Map<String, Rule> resMap = MapUtils.unmodifiableMap(this.ruleMap);
+        return resMap;
+    }
+    
+    /**
+      * 根据业务类型获取对应的规则集合<br/>
+      *<功能详细描述>
+      * @param serviceType
+      * @return [参数说明]
+      * 
+      * @return List<Rule> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public List<Rule> getRuleListByServiceType(String serviceType) {
+        AssertUtils.notEmpty(serviceType, "serviceType is empty.");
+        
+        List<Rule> ruleList = new ArrayList<>(
+                TxConstants.INITIAL_CONLLECTION_SIZE);
+        for (Rule ruleTemp : this.ruleMap.values()) {
+            if (serviceType.equals(ruleTemp.getServiceType())) {
+                ruleList.add(ruleTemp);
+            }
+        }
+        @SuppressWarnings("unchecked")
+        List<Rule> resList = ListUtils.unmodifiableList(ruleList);
+        return resList;
+    }
+    
+    /**
+      * 获取指定业务类型的规则集<br/>
+      *<功能详细描述>
+      * @param serviceType
+      * @return [参数说明]
+      * 
+      * @return Map<String,Rule> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public Map<String, Rule> getRuleMapByServiceType(String serviceType) {
+        AssertUtils.notEmpty(serviceType, "serviceType is empty.");
+        
+        Map<String, Rule> ruleMap = new HashMap<>(TxConstants.INITIAL_MAP_SIZE);
+        for (Entry<String, Rule> entryTemp : this.ruleMap.entrySet()) {
+            if (serviceType.equals(entryTemp.getValue().getServiceType())) {
+                ruleMap.put(entryTemp.getKey(), entryTemp.getValue());
+            }
+        }
+        @SuppressWarnings("unchecked")
+        Map<String, Rule> resMap = MapUtils.unmodifiableMap(ruleMap);
+        return resMap;
     }
     
 }

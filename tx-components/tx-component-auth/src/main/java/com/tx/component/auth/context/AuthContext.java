@@ -107,6 +107,51 @@ public class AuthContext extends AuthContextBuilder {
     }
     
     /**
+      * 根据权限类型获取权限列表<br/>
+      *<功能详细描述>
+      * @param authType
+      * @return [参数说明]
+      * 
+      * @return List<AuthItem> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    @SuppressWarnings("unchecked")
+    public List<AuthItem> getAuthItemListByAuthType(String authType) {
+        AssertUtils.notEmpty(authType, "authType is empty.");
+        List<AuthItem> resList = new ArrayList<>();
+        
+        for (AuthItem authItemTemp : authItemMapping.values()) {
+            if (authType.equals(authItemTemp.getAuthType())) {
+                resList.add(authItemTemp);
+            }
+        }
+        return (List<AuthItem>) ListUtils.unmodifiableList(resList);
+    }
+    
+    /**
+      * 根据权限类型获取权限映射<br/>
+      * <功能详细描述>
+      * @param authType
+      * @return [参数说明]
+      * 
+      * @return Map<String,AuthItem> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public Map<String, AuthItem> getAuthItemMapByAuthType(String authType) {
+        AssertUtils.notEmpty(authType, "authType is empty.");
+        Map<String, AuthItem> resMap = new HashMap<>();
+        
+        for (Entry<String, AuthItem> entryTemp : authItemMapping.entrySet()) {
+            if (authType.equals(entryTemp.getValue().getAuthType())) {
+                resMap.put(entryTemp.getKey(), entryTemp.getValue());
+            }
+        }
+        return resMap;
+    }
+    
+    /**
       * 根据权限类型及引用id映射查询权限引用集合<br/>
       * <功能详细描述>
       * @param refType2RefIdMapping [参数说明]
@@ -432,7 +477,8 @@ public class AuthContext extends AuthContextBuilder {
       * @see [类、类#方法、类#成员]
      */
     @Transactional
-    public AuthItem registerAuth(String name, String description, String authType) {
+    public AuthItem registerAuth(String name, String description,
+            String authType) {
         //参数合法性验证
         AssertUtils.notEmpty(authType, "authType is empty.");
         

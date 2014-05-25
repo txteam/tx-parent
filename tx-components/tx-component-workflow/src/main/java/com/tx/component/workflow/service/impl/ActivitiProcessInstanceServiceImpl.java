@@ -1054,7 +1054,6 @@ public class ActivitiProcessInstanceServiceImpl implements InitializingBean,
     
     /**
      * 私有方法:获取当前实例的过程对象,入参为流程实例的过程对象 <br/>
-
      *<功能详细描述>
      * @param executionId
      * @return [参数说明]
