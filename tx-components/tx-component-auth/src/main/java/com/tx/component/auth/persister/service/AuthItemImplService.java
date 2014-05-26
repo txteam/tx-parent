@@ -209,10 +209,10 @@ public class AuthItemImplService {
         TransactionStatus status = this.txManager.getTransaction(def);
         
         try {
-            this.authItemDao.deleteAuthItemImpl(condition, tableSuffix);
             this.authItemRefService.deleteByAuthItemId(authItemId,
                     systemId,
                     tableSuffix);
+            this.authItemDao.deleteAuthItemImpl(condition, tableSuffix);
         } catch (DataAccessException e) {
             this.txManager.rollback(status);
             throw e;

@@ -266,15 +266,6 @@ public class AuthItemImplDaoImpl implements AuthItemImplDao {
             String tableSuffix) {
         StringBuilder sb = new StringBuilder(TxConstants.INITIAL_STR_LENGTH);
         sb.append(" UPDATE AUTH_AUTHITEM").append(tableSuffix).append(" SET ");
-        sb.append("ID,");
-        sb.append("PARENTID,");
-        sb.append("SYSTEMID,");
-        sb.append("VALID,");
-        sb.append("EDITABLE,");
-        sb.append("VIEWABLE,");
-        sb.append("NAME,");
-        sb.append("DESCRIPTION,");
-        sb.append("AUTHTYPE");
         if (!ObjectUtils.isEmpty(updateRowMap.get("valid"))) {
             sb.append(" VALID = ?,");
         }
