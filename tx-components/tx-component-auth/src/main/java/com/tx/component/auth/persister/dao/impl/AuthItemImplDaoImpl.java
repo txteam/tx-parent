@@ -287,7 +287,8 @@ public class AuthItemImplDaoImpl implements AuthItemImplDao {
         if (!ObjectUtils.isEmpty(updateRowMap.get("authType"))) {
             sb.append(" AUTHTYPE = ?,");
         }
-        sb.append(" WHERE TAII.ID = ? AND TAII.SYSTEMID = ? ");
+        sb.deleteCharAt(sb.length() - 1);
+        sb.append(" WHERE ID = ? AND SYSTEMID = ? ");
         
         int resInt = this.jdbcTemplate.update(sb.toString(), new PreparedStatementSetter() {
             
