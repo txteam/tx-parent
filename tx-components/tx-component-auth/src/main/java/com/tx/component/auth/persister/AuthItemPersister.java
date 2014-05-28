@@ -12,8 +12,6 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
-import org.springframework.core.Ordered;
-
 import com.tx.component.auth.context.AuthTypeItemContext;
 import com.tx.component.auth.model.AuthItem;
 import com.tx.component.auth.model.AuthItemImpl;
