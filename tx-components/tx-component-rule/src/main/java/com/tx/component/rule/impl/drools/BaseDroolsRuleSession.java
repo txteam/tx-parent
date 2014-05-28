@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.drools.base.MapGlobalResolver;
 import org.drools.runtime.Globals;
 import org.drools.runtime.StatefulKnowledgeSession;
@@ -51,7 +50,7 @@ public class BaseDroolsRuleSession<RULE extends BaseDroolsRule> extends
             beforeFireRule(callbackHandler, session);
             
             //插入事实
-            session.insert(fact);
+            session.insert(fact.values());
             //触发规则调用
             session.fireAllRules();
             
@@ -69,26 +68,11 @@ public class BaseDroolsRuleSession<RULE extends BaseDroolsRule> extends
     @Override
     public <R> void executeAll(List<Map<String, Object>> facts,
             CallbackHandler<R> callbackHandler) {
-        StatefulKnowledgeSession session = this.rule.getKnowledgeBase()
-                .newStatefulKnowledgeSession();
-        try {
-            beforeFireRule(callbackHandler, session);
-            
-            //插入事实
-            if (!CollectionUtils.isEmpty(facts)) {
-                for (Map<? extends String, ? extends Object> fact : facts) {
-                    session.insert(fact);
-                }
-            }
-            
-            //触发规则调用
-            session.fireAllRules();
-            
-            afterFireRule(session);
-        } finally {
-            if (session != null) {
-                session.dispose();
-            }
+        if (facts == null) {
+            return;
+        }
+        for (Map<String, Object> fact : facts) {
+            execute(fact, callbackHandler);
         }
     }
     

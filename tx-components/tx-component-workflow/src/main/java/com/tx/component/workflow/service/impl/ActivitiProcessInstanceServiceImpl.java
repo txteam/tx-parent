@@ -16,9 +16,6 @@ import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.impl.persistence.entity.ExecutionEntity;
-import org.activiti.engine.impl.persistence.entity.TaskEntity;
-import org.activiti.engine.impl.pvm.PvmTransition;
-import org.activiti.engine.impl.pvm.process.ActivityImpl;
 import org.activiti.engine.runtime.Execution;
 import org.activiti.engine.runtime.ExecutionQuery;
 import org.activiti.engine.runtime.ProcessInstance;
@@ -31,13 +28,12 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.tx.component.workflow.activiti5.ActivitiProcessDefinitionSupport;
-import com.tx.component.workflow.exceptions.WorkflowAccessException;
 import com.tx.component.workflow.model.ProTaskInstance;
 import com.tx.component.workflow.model.impl.ActivitiProTaskInstance;
 import com.tx.component.workflow.model.impl.ActivitiProcessInstance;
 import com.tx.component.workflow.service.ProcessInstanceService;
 import com.tx.core.exceptions.argument.NullArgException;
+import com.tx.core.exceptions.util.AssertUtils;
 
 /**
  * 流程实例业务层实例<br/>
@@ -54,9 +50,6 @@ public class ActivitiProcessInstanceServiceImpl implements InitializingBean,
     /** 日志记录器 */
     private static Logger logger = LoggerFactory.getLogger(ActivitiProcessInstanceServiceImpl.class);
     
-    @Resource(name = "activitiProcessDefinitionSupport")
-    private ActivitiProcessDefinitionSupport activitiProcessDefinitionSupport;
-    
     /** activiti流程引擎 */
     @Resource(name = "processEngine")
     private ProcessEngine processEngine;
@@ -67,16 +60,6 @@ public class ActivitiProcessInstanceServiceImpl implements InitializingBean,
     /** activiti 运行时任务方法服务 */
     private TaskService taskService;
     
-    /** 最大并发流程实例锁数，避免同一流程并发调用同一实例进行操作的情况 */
-    private int processInsLockNum = 256;
-    
-    /** 流程实例锁 */
-    private static Object[] processInsLocks;
-    
-    private int processDefLockNum = 256;
-    
-    private static Object[] processDefLocks;
-    
     /**
      * @throws Exception
      */
@@ -84,20 +67,6 @@ public class ActivitiProcessInstanceServiceImpl implements InitializingBean,
     public void afterPropertiesSet() throws Exception {
         this.taskService = processEngine.getTaskService();
         this.runtimeService = processEngine.getRuntimeService();
-        
-        //流程实例锁
-        processInsLocks = new Object[processInsLockNum <= 0 ? 256
-                : processInsLockNum];
-        for (int i = 0; i < (processInsLockNum <= 0 ? 256 : processInsLockNum); i++) {
-            processInsLocks[i] = new Object();
-        }
-        
-        //流程定义处理
-        processDefLocks = new Object[processDefLockNum <= 0 ? 256
-                : processDefLockNum];
-        for (int i = 0; i < (processDefLockNum <= 0 ? 256 : processDefLockNum); i++) {
-            processDefLocks[i] = new Object();
-        }
     }
     
     /**
@@ -579,20 +548,16 @@ public class ActivitiProcessInstanceServiceImpl implements InitializingBean,
     @Transactional
     public void complete(String processInstanceId,
             Map<String, Object> taskVaribals) {
-        if (StringUtils.isEmpty(processInstanceId)) {
-            throw new NullArgException(
-                    "ProcessInstanceServic.complete processInstanceId is empty.");
-        }
-        synchronized (getLockByProInsId(processInstanceId)) {
-            //由流程实例id获取任务实例，如果存在并行任务，调用该方法将抛出异常
-            Task task = getTaskByProInsId(processInstanceId);
-            
-            //完成并行任务
-            if (taskVaribals != null) {
-                this.taskService.complete(task.getId(), taskVaribals);
-            } else {
-                this.taskService.complete(task.getId());
-            }
+        AssertUtils.notEmpty(processInstanceId, "processInstanceId is empty.");
+        
+        //由流程实例id获取任务实例，如果存在并行任务，调用该方法将抛出异常
+        Task task = getTaskByProInsId(processInstanceId);
+        
+        //完成并行任务
+        if (taskVaribals != null) {
+            this.taskService.complete(task.getId(), taskVaribals);
+        } else {
+            this.taskService.complete(task.getId());
         }
     }
     
@@ -612,267 +577,159 @@ public class ActivitiProcessInstanceServiceImpl implements InitializingBean,
     @Transactional
     public void complete(String processInstanceId, String currentTaskDefKey,
             Map<String, Object> taskVaribals) {
-        if (StringUtils.isEmpty(processInstanceId)
-                || StringUtils.isEmpty(currentTaskDefKey)) {
-            throw new NullArgException(
-                    "ProcessInstanceServic.complete processInstanceId or currentTaskDefKey is empty.");
-        }
-        synchronized (getLockByProInsId(processInstanceId)) {
-            //完成当前任务实例id
-            Task task = getTaskByProInsIdAndTaskDefKey(processInstanceId,
-                    currentTaskDefKey);
-            //完成并行任务
-            if (taskVaribals != null) {
-                this.taskService.complete(task.getId(), taskVaribals);
-            } else {
-                this.taskService.complete(task.getId());
-            }
-        }
-    }
-    
-    /**
-     * 将流程流转入指定操作名的方向
-     *     1、如果当前流程存在并行流程，调用该方法可能会发生异常
-     * @param processInstanceId
-     * @param transitionName
-     * @param taskVaribals
-     */
-    @Override
-    @Transactional
-    public void process(String processInstanceId, String transitionName,
-            Map<String, Object> taskVaribals) {
-        if (StringUtils.isEmpty(processInstanceId)
-                || StringUtils.isEmpty(transitionName)) {
-            throw new NullArgException(
-                    "ProcessInstanceServic.process processInstanceId or transitionName is empty.");
-        }
-        synchronized (getLockByProInsId(processInstanceId)) {
-            //获取流程当前任务
-            TaskEntity task = (TaskEntity) getTaskByProInsId(processInstanceId);
-            //获取当前的activity实例
-            //ActivityImpl currentExecutionActivity = getExecutionByExecutionId(task.getExecutionId()).getActivity();
-            ActivityImpl currentTaskActivity = activitiProcessDefinitionSupport.getActivityById(task.getProcessDefinitionId(),
-                    task.getTaskDefinitionKey());
-            synchronized (getLockByProDefId(task.getProcessDefinitionId(),
-                    task.getTaskDefinitionKey())) {
-                turnByTransitionName(processInstanceId,
-                        transitionName,
-                        task,
-                        currentTaskActivity,
-                        taskVaribals);
-            }
-        }
-    }
-    
-    /**
-      * 将流程流转入指定操作名的方向
-      * @param processInstanceId
-      * @param currentTaskDefKey
-      * @param transitionName 
-      * @return [参数说明]
-      * 
-      * @return String [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    @Override
-    @Transactional
-    public void process(String processInstanceId, String currentTaskDefKey,
-            String transitionName, Map<String, Object> taskVaribals) {
-        if (StringUtils.isEmpty(processInstanceId)
-                || StringUtils.isEmpty(currentTaskDefKey)) {
-            throw new NullArgException(
-                    "ProcessInstanceServic.process processInstanceId or currentTaskDefKey is empty.");
-        }
-        synchronized (getLockByProInsId(processInstanceId)) {
-            //获取流程当前任务
-            TaskEntity task = (TaskEntity) getTaskByProInsIdAndTaskDefKey(processInstanceId,
-                    currentTaskDefKey);
-            //获取当前的activity实例
-            //ActivityImpl currentExecutionActivity = getExecutionByExecutionId(task.getExecutionId()).getActivity();
-            ActivityImpl currentTaskActivity = activitiProcessDefinitionSupport.getActivityById(task.getProcessDefinitionId(),
-                    task.getTaskDefinitionKey());
-            synchronized (getLockByProDefId(task.getProcessDefinitionId(),
-                    task.getTaskDefinitionKey())) {
-                turnByTransitionName(processInstanceId,
-                        transitionName,
-                        task,
-                        currentTaskActivity,
-                        taskVaribals);
-            }
-        }
-    }
-    
-    /** 
-     * 将流程根据指定操作进行流转
-     * @param processInstanceId
-     * @param transitionName
-     * @param task
-     * @param currentActivity
-     * @param taskVaribals [参数说明]
-     * 
-     * @return void [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    private void turnByTransitionName(String processInstanceId,
-            String transitionName, TaskEntity task,
-            ActivityImpl currentActivity, Map<String, Object> taskVaribals) {
-        //获取当前流程实例的可流向操作
-        List<PvmTransition> outGoingTransitionList = currentActivity.getOutgoingTransitions();
-        //跳转到匹配的操作名节点方向
-        //备份原节点所有流向
-        List<PvmTransition> bakOutGoingTransitionList = new ArrayList<PvmTransition>();
-        bakOutGoingTransitionList.addAll(outGoingTransitionList);
-        List<PvmTransition> newTransitionList = new ArrayList<PvmTransition>();
-        for (PvmTransition transition : outGoingTransitionList) {
-            //根据操作名进行进行流程流转
-            //同操作名的pvmTransition保留，由condition自行进行判断
-            if (transitionName.equals(transition.getProperty("name"))) {
-                newTransitionList.add(transition);
-            }
-        }
-        if (newTransitionList.size() == 0) {
-            //如果不存在指定名称的操作
-            throw new WorkflowAccessException(
-                    "ProcessInstanceServic.process:{} transition:{} not exist.",
-                    new Object[]{processInstanceId, transitionName} );
-        }
-        
-        //清空原流向集合
-        outGoingTransitionList.clear();
-        //写入新的流向集合
-        outGoingTransitionList.addAll(newTransitionList);
-        //执行流向
+        AssertUtils.notEmpty(processInstanceId,"processInstanceId is empty.");
+        AssertUtils.notEmpty(currentTaskDefKey,"currentTaskDefKey is empty.");
+
+        //完成当前任务实例id
+        Task task = getTaskByProInsIdAndTaskDefKey(processInstanceId,
+                currentTaskDefKey);
+        //完成并行任务
         if (taskVaribals != null) {
             this.taskService.complete(task.getId(), taskVaribals);
         } else {
             this.taskService.complete(task.getId());
         }
-        //清空新的流向
-        outGoingTransitionList.clear();
-        //写入原来流向
-        outGoingTransitionList.addAll(bakOutGoingTransitionList);
     }
     
-    /**
-     * @param processInstanceId
-     * @param transitionId
-     * @param taskVaribals
-     */
-    @Override
-    public void processById(String processInstanceId, String transitionId,
-            Map<String, Object> taskVaribals) {
-        if (StringUtils.isEmpty(processInstanceId)
-                || StringUtils.isEmpty(transitionId)) {
-            throw new NullArgException(
-                    "ProcessInstanceServic.process processInstanceId or transitionId is empty.");
-        }
-        synchronized (getLockByProInsId(processInstanceId)) {
-            //获取流程当前任务
-            TaskEntity task = (TaskEntity) getTaskByProInsId(processInstanceId);
-            //获取当前的activity实例
-            //ActivityImpl currentExecutionActivity = getExecutionByExecutionId(task.getExecutionId()).getActivity();
-            
-            ActivityImpl currentTaskActivity = activitiProcessDefinitionSupport.getActivityById(task.getProcessDefinitionId(),
-                    task.getTaskDefinitionKey());
-            synchronized (getLockByProDefId(task.getProcessDefinitionId(),
-                    task.getTaskDefinitionKey())) {
-                turnByTransitionId(processInstanceId,
-                        transitionId,
-                        task,
-                        currentTaskActivity,
-                        taskVaribals);
-            }
-        }
-    }
-    
-    /**
-     * @param processInstanceId
-     * @param currentTaskDefKey
-     * @param transitionId
-     * @param taskVaribals
-     */
-    @Override
-    public void processById(String processInstanceId, String currentTaskDefKey,
-            String transitionId, Map<String, Object> taskVaribals) {
-        if (StringUtils.isEmpty(processInstanceId)
-                || StringUtils.isEmpty(currentTaskDefKey)
-                || StringUtils.isEmpty(transitionId)) {
-            throw new NullArgException(
-                    "ProcessInstanceServic.process processInstanceId or currentTaskDefKey or transitionId is empty.");
-        }
-        synchronized (getLockByProInsId(processInstanceId)) {
-            //获取流程当前任务
-            TaskEntity task = (TaskEntity) getTaskByProInsIdAndTaskDefKey(processInstanceId,
-                    currentTaskDefKey);
-            //获取当前的activity实例
-            //ActivityImpl currentExecutionActivity = getExecutionByExecutionId(task.getExecutionId()).getActivity();
-            
-            ActivityImpl currentTaskActivity = activitiProcessDefinitionSupport.getActivityById(task.getProcessDefinitionId(),
-                    task.getTaskDefinitionKey());
-            synchronized (getLockByProDefId(task.getProcessDefinitionId(),
-                    task.getTaskDefinitionKey())) {
-                turnByTransitionId(processInstanceId,
-                        transitionId,
-                        task,
-                        currentTaskActivity,
-                        taskVaribals);
-            }
-        }
-    }
-    
-    /** 
-     * 将流程根据指定操作进行流转
-     * @param processInstanceId
-     * @param transitionId
-     * @param task
-     * @param currentActivity
-     * @param taskVaribals [参数说明]
-     * 
-     * @return void [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    private void turnByTransitionId(String processInstanceId,
-            String transitionId, TaskEntity task, ActivityImpl currentActivity,
-            Map<String, Object> taskVaribals) {
-        //获取当前流程实例的可流向操作
-        List<PvmTransition> outGoingTransitionList = currentActivity.getOutgoingTransitions();
-        //跳转到匹配的操作名节点方向
-        //备份原节点所有流向
-        List<PvmTransition> bakOutGoingTransitionList = new ArrayList<PvmTransition>();
-        bakOutGoingTransitionList.addAll(outGoingTransitionList);
-        List<PvmTransition> newTransitionList = new ArrayList<PvmTransition>();
-        for (PvmTransition transition : outGoingTransitionList) {
-            //根据操作名进行进行流程流转
-            //同操作名的pvmTransition保留，由condition自行进行判断
-            if (transitionId.equals(transition.getId())) {
-                newTransitionList.add(transition);
-            }
-        }
-        if (newTransitionList.size() == 0) {
-            //如果不存在指定名称的操作
-            throw new WorkflowAccessException(
-                    "ProcessInstanceServic.process:{} transition:{} not exist.",
-                    new Object[]{processInstanceId, transitionId});
-        }
-        
-        //清空原流向集合
-        outGoingTransitionList.clear();
-        //写入新的流向集合
-        outGoingTransitionList.addAll(newTransitionList);
-        //执行流向
-        if (taskVaribals != null) {
-            this.taskService.complete(task.getId(), taskVaribals);
-        } else {
-            this.taskService.complete(task.getId());
-        }
-        //清空新的流向
-        outGoingTransitionList.clear();
-        //写入原来流向
-        outGoingTransitionList.addAll(bakOutGoingTransitionList);
-    }
+//    /**
+//     * 将流程流转入指定操作名的方向
+//     *     1、如果当前流程存在并行流程，调用该方法可能会发生异常
+//     * @param processInstanceId
+//     * @param transitionName
+//     * @param taskVaribals
+//     */
+//    @Override
+//    @Transactional
+//    public void process(String processInstanceId, String transitionName,
+//            Map<String, Object> taskVaribals) {
+//        if (StringUtils.isEmpty(processInstanceId)
+//                || StringUtils.isEmpty(transitionName)) {
+//            throw new NullArgException(
+//                    "ProcessInstanceServic.process processInstanceId or transitionName is empty.");
+//        }
+//        synchronized (getLockByProInsId(processInstanceId)) {
+//            //获取流程当前任务
+//            TaskEntity task = (TaskEntity) getTaskByProInsId(processInstanceId);
+//            //获取当前的activity实例
+//            //ActivityImpl currentExecutionActivity = getExecutionByExecutionId(task.getExecutionId()).getActivity();
+//            ActivityImpl currentTaskActivity = activitiProcessDefinitionSupport.getActivityById(task.getProcessDefinitionId(),
+//                    task.getTaskDefinitionKey());
+//            synchronized (getLockByProDefId(task.getProcessDefinitionId(),
+//                    task.getTaskDefinitionKey())) {
+//                turnByTransitionName(processInstanceId,
+//                        transitionName,
+//                        task,
+//                        currentTaskActivity,
+//                        taskVaribals);
+//            }
+//        }
+//    }
+//    
+//    /**
+//      * 将流程流转入指定操作名的方向
+//      * @param processInstanceId
+//      * @param currentTaskDefKey
+//      * @param transitionName 
+//      * @return [参数说明]
+//      * 
+//      * @return String [返回类型说明]
+//      * @exception throws [异常类型] [异常说明]
+//      * @see [类、类#方法、类#成员]
+//     */
+//    @Override
+//    @Transactional
+//    public void process(String processInstanceId, String currentTaskDefKey,
+//            String transitionName, Map<String, Object> taskVaribals) {
+//        if (StringUtils.isEmpty(processInstanceId)
+//                || StringUtils.isEmpty(currentTaskDefKey)) {
+//            throw new NullArgException(
+//                    "ProcessInstanceServic.process processInstanceId or currentTaskDefKey is empty.");
+//        }
+//        synchronized (getLockByProInsId(processInstanceId)) {
+//            //获取流程当前任务
+//            TaskEntity task = (TaskEntity) getTaskByProInsIdAndTaskDefKey(processInstanceId,
+//                    currentTaskDefKey);
+//            //获取当前的activity实例
+//            //ActivityImpl currentExecutionActivity = getExecutionByExecutionId(task.getExecutionId()).getActivity();
+//            ActivityImpl currentTaskActivity = activitiProcessDefinitionSupport.getActivityById(task.getProcessDefinitionId(),
+//                    task.getTaskDefinitionKey());
+//            synchronized (getLockByProDefId(task.getProcessDefinitionId(),
+//                    task.getTaskDefinitionKey())) {
+//                turnByTransitionName(processInstanceId,
+//                        transitionName,
+//                        task,
+//                        currentTaskActivity,
+//                        taskVaribals);
+//            }
+//        }
+//    }
+//    
+//    /**
+//     * @param processInstanceId
+//     * @param transitionId
+//     * @param taskVaribals
+//     */
+//    @Override
+//    public void processById(String processInstanceId, String transitionId,
+//            Map<String, Object> taskVaribals) {
+//        if (StringUtils.isEmpty(processInstanceId)
+//                || StringUtils.isEmpty(transitionId)) {
+//            throw new NullArgException(
+//                    "ProcessInstanceServic.process processInstanceId or transitionId is empty.");
+//        }
+//        synchronized (getLockByProInsId(processInstanceId)) {
+//            //获取流程当前任务
+//            TaskEntity task = (TaskEntity) getTaskByProInsId(processInstanceId);
+//            //获取当前的activity实例
+//            //ActivityImpl currentExecutionActivity = getExecutionByExecutionId(task.getExecutionId()).getActivity();
+//            
+//            ActivityImpl currentTaskActivity = activitiProcessDefinitionSupport.getActivityById(task.getProcessDefinitionId(),
+//                    task.getTaskDefinitionKey());
+//            synchronized (getLockByProDefId(task.getProcessDefinitionId(),
+//                    task.getTaskDefinitionKey())) {
+//                turnByTransitionId(processInstanceId,
+//                        transitionId,
+//                        task,
+//                        currentTaskActivity,
+//                        taskVaribals);
+//            }
+//        }
+//    }
+//    
+//    /**
+//     * @param processInstanceId
+//     * @param currentTaskDefKey
+//     * @param transitionId
+//     * @param taskVaribals
+//     */
+//    @Override
+//    public void processById(String processInstanceId, String currentTaskDefKey,
+//            String transitionId, Map<String, Object> taskVaribals) {
+//        if (StringUtils.isEmpty(processInstanceId)
+//                || StringUtils.isEmpty(currentTaskDefKey)
+//                || StringUtils.isEmpty(transitionId)) {
+//            throw new NullArgException(
+//                    "ProcessInstanceServic.process processInstanceId or currentTaskDefKey or transitionId is empty.");
+//        }
+//        synchronized (getLockByProInsId(processInstanceId)) {
+//            //获取流程当前任务
+//            TaskEntity task = (TaskEntity) getTaskByProInsIdAndTaskDefKey(processInstanceId,
+//                    currentTaskDefKey);
+//            //获取当前的activity实例
+//            //ActivityImpl currentExecutionActivity = getExecutionByExecutionId(task.getExecutionId()).getActivity();
+//            
+//            ActivityImpl currentTaskActivity = activitiProcessDefinitionSupport.getActivityById(task.getProcessDefinitionId(),
+//                    task.getTaskDefinitionKey());
+//            synchronized (getLockByProDefId(task.getProcessDefinitionId(),
+//                    task.getTaskDefinitionKey())) {
+//                turnByTransitionId(processInstanceId,
+//                        transitionId,
+//                        task,
+//                        currentTaskActivity,
+//                        taskVaribals);
+//            }
+//        }
+//    }
     
     /**
      * 获取指定流程实例的当前流程环节<br/>
@@ -893,7 +750,7 @@ public class ActivitiProcessInstanceServiceImpl implements InitializingBean,
         
         List<ProTaskInstance> res = new ArrayList<ProTaskInstance>();
         List<Task> taskList = getTaskListByProInsId(processInstanceId);
-        for(Task taskTemp : taskList){
+        for (Task taskTemp : taskList) {
             res.add(new ActivitiProTaskInstance(taskTemp));
         }
         return res;
@@ -932,11 +789,12 @@ public class ActivitiProcessInstanceServiceImpl implements InitializingBean,
             throw new NullArgException(
                     "ProcessInstanceServic.complete processInstanceId is empty.");
         }
-        Task task = getTaskByProInsIdAndTaskDefKey(processInstanceId, currentTaskDefKey);
+        Task task = getTaskByProInsIdAndTaskDefKey(processInstanceId,
+                currentTaskDefKey);
         ProTaskInstance res = new ActivitiProTaskInstance(task);
         return res;
     }
-
+    
     /**
       * 根据流程实例id以及任务定义key找到对应的task实例
       *
@@ -1068,41 +926,4 @@ public class ActivitiProcessInstanceServiceImpl implements InitializingBean,
         return (ExecutionEntity) exeQuery.singleResult();
     }
     
-    /**
-      * 由流程实例id获取锁对象
-      * <功能详细描述>
-      * @param proInsId
-      * @return [参数说明]
-      * 
-      * @return Object [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    private Object getLockByProInsId(String proInsId) {
-        int proInsIdHashCode = proInsId.hashCode();
-        int proInsLockIndex = proInsIdHashCode
-                % (processInsLockNum <= 0 ? 256 : processInsLockNum);
-        proInsLockIndex = Math.abs(proInsLockIndex);
-        return processInsLocks[proInsLockIndex];
-    }
-    
-    /**
-     * 由流程实例id获取锁对象
-     * <功能详细描述>
-     * @param proInsId
-     * @return [参数说明]
-     * 
-     * @return Object [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-    */
-    private Object getLockByProDefId(String proDefId,
-            String currentTaskDefinitionKey) {
-        int proDefIdHashCode = proDefId.hashCode()
-                + currentTaskDefinitionKey.hashCode();
-        int proDefLockIndex = proDefIdHashCode
-                % (processDefLockNum <= 0 ? 256 : processDefLockNum);
-        proDefLockIndex = Math.abs(proDefLockIndex);
-        return processDefLocks[proDefLockIndex];
-    }
 }

@@ -453,66 +453,66 @@ public interface ProcessInstanceService {
     void complete(String processInstanceId, String currentTaskDefKey,
             Map<String, Object> taskVaribals);
     
-    /**
-     * 将流程流转入指定操作名的方向
-     *     1、如果当前流程存在并行流程，调用该方法可能会发生异常
-     * <功能详细描述>
-     * @param processInstanceId(流程实例id)
-     * @return [参数说明]
-     * 
-     * @return ProTransitionDefinition [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-    */
-    void process(String processInstanceId, String transitionName,
-            Map<String, Object> taskVaribals);
-    
-    /**
-      * 将流程流转入指定操作id的方向
-      *     1、如果当前流程存在并行流程，调用该方法可能会发生异常
-      *<功能详细描述>
-      * @param processInstanceId
-      * @param transitionId
-      * @param taskVaribals [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    void processById(String processInstanceId, String transitionId,
-            Map<String, Object> taskVaribals);
-    
-    /**
-      * 将流程流转入指定操作名的方向
-      *     1、如果当前流程存在并行流程，调用该方法可能会发生异常
-      * <功能详细描述>
-      * @param processInstanceId
-      * @param currentTaskDefKey
-      * @param transitionName 
-      * @return [参数说明]
-      * 
-      * @return String [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    void process(String processInstanceId, String currentTaskDefKey,
-            String transitionName, Map<String, Object> taskVaribals);
-    
-    /**
-     * 将流程流转入指定操作名的方向
-     *     1、如果当前流程存在并行流程，调用该方法可能会发生异常
-     * <功能详细描述>
-     * @param processInstanceId
-     * @param currentTaskDefKey
-     * @param transitionId 
-     * @return [参数说明]
-     * 
-     * @return String [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-    */
-    void processById(String processInstanceId, String currentTaskDefKey,
-            String transitionId, Map<String, Object> taskVaribals);
+//    /**
+//     * 将流程流转入指定操作名的方向
+//     *     1、如果当前流程存在并行流程，调用该方法可能会发生异常
+//     * <功能详细描述>
+//     * @param processInstanceId(流程实例id)
+//     * @return [参数说明]
+//     * 
+//     * @return ProTransitionDefinition [返回类型说明]
+//     * @exception throws [异常类型] [异常说明]
+//     * @see [类、类#方法、类#成员]
+//    */
+//    void process(String processInstanceId, String transitionName,
+//            Map<String, Object> taskVaribals);
+//    
+//    /**
+//      * 将流程流转入指定操作id的方向
+//      *     1、如果当前流程存在并行流程，调用该方法可能会发生异常
+//      *<功能详细描述>
+//      * @param processInstanceId
+//      * @param transitionId
+//      * @param taskVaribals [参数说明]
+//      * 
+//      * @return void [返回类型说明]
+//      * @exception throws [异常类型] [异常说明]
+//      * @see [类、类#方法、类#成员]
+//     */
+//    void processById(String processInstanceId, String transitionId,
+//            Map<String, Object> taskVaribals);
+//    
+//    /**
+//      * 将流程流转入指定操作名的方向
+//      *     1、如果当前流程存在并行流程，调用该方法可能会发生异常
+//      * <功能详细描述>
+//      * @param processInstanceId
+//      * @param currentTaskDefKey
+//      * @param transitionName 
+//      * @return [参数说明]
+//      * 
+//      * @return String [返回类型说明]
+//      * @exception throws [异常类型] [异常说明]
+//      * @see [类、类#方法、类#成员]
+//     */
+//    void process(String processInstanceId, String currentTaskDefKey,
+//            String transitionName, Map<String, Object> taskVaribals);
+//    
+//    /**
+//     * 将流程流转入指定操作名的方向
+//     *     1、如果当前流程存在并行流程，调用该方法可能会发生异常
+//     * <功能详细描述>
+//     * @param processInstanceId
+//     * @param currentTaskDefKey
+//     * @param transitionId 
+//     * @return [参数说明]
+//     * 
+//     * @return String [返回类型说明]
+//     * @exception throws [异常类型] [异常说明]
+//     * @see [类、类#方法、类#成员]
+//    */
+//    void processById(String processInstanceId, String currentTaskDefKey,
+//            String transitionId, Map<String, Object> taskVaribals);
     
     //TODO: 支持process By transition And taskDefKey 因当前节是可以知道下一个可触及的任务节点的流向的
     //TODO: 支持reject,cancel
