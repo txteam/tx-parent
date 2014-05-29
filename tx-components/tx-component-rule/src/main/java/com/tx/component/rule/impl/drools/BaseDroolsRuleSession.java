@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.drools.base.MapGlobalResolver;
 import org.drools.runtime.Globals;
 import org.drools.runtime.StatefulKnowledgeSession;
@@ -50,7 +51,11 @@ public class BaseDroolsRuleSession<RULE extends BaseDroolsRule> extends
             beforeFireRule(callbackHandler, session);
             
             //插入事实
-            session.insert(fact.values());
+            if(!CollectionUtils.isEmpty(fact.values())){
+                for(Object factTemp : fact.values()){
+                    session.insert(factTemp);
+                }
+            }
             //触发规则调用
             session.fireAllRules();
             
