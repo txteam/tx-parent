@@ -27,6 +27,19 @@ import com.tx.component.workflow.model.ProcessDiagramResource;
 public interface ProcessDefinitionService {
     
     /**
+      * 根据指定的bpmn类路径以及png类路径加载流程定义
+      *<功能详细描述>
+      * @param bpmnClassPath
+      * @param pngClassPath
+      * @return [参数说明]
+      * 
+      * @return ProcessDefinition [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    ProcessDefinition deploy(String bpmnClassPath,String pngClassPath);
+    
+    /**
      * 根据指定名，以及输入流部署对应的流程
      * @param key
      * @param inputStream [参数说明]

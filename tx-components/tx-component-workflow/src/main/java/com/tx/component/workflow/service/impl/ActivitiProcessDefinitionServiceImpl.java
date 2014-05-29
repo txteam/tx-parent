@@ -32,6 +32,7 @@ import com.tx.component.workflow.model.impl.ActivitiProTransitionDefinition;
 import com.tx.component.workflow.model.impl.ActivitiProcessDefinition;
 import com.tx.component.workflow.service.ProcessDefinitionService;
 import com.tx.core.exceptions.argument.NullArgException;
+import com.tx.core.exceptions.util.AssertUtils;
 
 /**
  * 流程部署业务层<br/>
@@ -43,7 +44,6 @@ import com.tx.core.exceptions.argument.NullArgException;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-@Component("processDefinitionService")
 public class ActivitiProcessDefinitionServiceImpl implements
         ProcessDefinitionService {
     
@@ -62,6 +62,21 @@ public class ActivitiProcessDefinitionServiceImpl implements
         return res;
     }
     
+    /**
+     * @param bpmnClassPath
+     * @param pngClassPath
+     * @return
+     */
+    @Override
+    public com.tx.component.workflow.model.ProcessDefinition deploy(
+            String bpmnClassPath, String pngClassPath) {
+        AssertUtils.notEmpty(bpmnClassPath,"bpmnClassPath is empty.");
+        AssertUtils.notEmpty(pngClassPath,"pngClassPath is empty.");
+        
+        
+        return null;
+    }
+
     /**
      * 根据指定名，以及资源名,以及输入流部署对应的流程
      * @param deployName

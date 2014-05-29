@@ -27,7 +27,6 @@ import org.springframework.beans.factory.InitializingBean;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-@Resource(name = "workflowContext")
 public class WorkflowContext implements InitializingBean{
     
     @SuppressWarnings("unused")

@@ -47,7 +47,6 @@ import com.tx.core.exceptions.argument.NullArgException;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-@Component("activitiProcessDefinitionSupport")
 public class CacheActiviti5ProcessDefSupport extends
         DefaultActiviti5ProcessDefSupport implements InitializingBean,
         ApplicationContextAware {
