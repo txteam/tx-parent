@@ -129,16 +129,17 @@ public class RuleSessionTemplate implements InitializingBean {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public <T> List<T> evaluateList(String ruleKey, Map<String, Object> fact,
-            Map<String, Object> global) {
+    @SuppressWarnings("unchecked")
+    public <T> List<T> evaluateList(String ruleKey, Map<String, ?> fact,
+            Map<String, ?> global) {
         AssertUtils.notEmpty(ruleKey, "ruleKey is empty.");
         RuleSession ruleSession = buildRuleSessionByRuleKey(ruleKey);
-        @SuppressWarnings("unchecked")
+        
         CallbackHandler<List<T>> listCallBackHandler = (CallbackHandler<List<T>>) SimpleCallbackHandler.newInstance(List.class,
                 new ArrayList<T>(TxConstants.INITIAL_CONLLECTION_SIZE));
         this.ruleSessionSupportProxy.<List<T>> evaluate(ruleSession,
-                fact,
-                global,
+                (Map<String, Object>)fact,
+                (Map<String, Object>)global,
                 listCallBackHandler);
         List<T> resList = listCallBackHandler.getValue();
         return resList;
@@ -177,16 +178,17 @@ public class RuleSessionTemplate implements InitializingBean {
      * @param global
      * @return
      */
+    @SuppressWarnings("unchecked")
     public <T> Map<String, T> evaluateMap(String ruleKey,
-            Map<String, Object> fact, Map<String, Object> global) {
+            Map<String, ?> fact, Map<String, ?> global) {
         AssertUtils.notEmpty(ruleKey, "ruleKey is empty.");
         RuleSession ruleSession = buildRuleSessionByRuleKey(ruleKey);
-        @SuppressWarnings("unchecked")
+        
         CallbackHandler<Map<String, T>> mapCallBackHandler = (CallbackHandler<Map<String, T>>) SimpleCallbackHandler.newInstance(Map.class,
                 new HashMap<String, T>(TxConstants.INITIAL_MAP_SIZE));
         this.ruleSessionSupportProxy.<Map<String, T>> evaluate(ruleSession,
-                fact,
-                global,
+                (Map<String, Object>)fact,
+                (Map<String, Object>)global,
                 mapCallBackHandler);
         Map<String, T> resMap = mapCallBackHandler.getValue();
         return resMap;
@@ -240,15 +242,16 @@ public class RuleSessionTemplate implements InitializingBean {
      * @param global
      * @return
      */
-    public <T> T evaluateObject(String ruleKey, Map<String, Object> fact,
-            Map<String, Object> global, Class<T> type) {
+    @SuppressWarnings("unchecked")
+    public <T> T evaluateObject(String ruleKey, Map<String, ?> fact,
+            Map<String, ?> global, Class<T> type) {
         AssertUtils.notEmpty(ruleKey, "ruleKey is empty.");
         RuleSession ruleSession = buildRuleSessionByRuleKey(ruleKey);
-        @SuppressWarnings("unchecked")
+        
         CallbackHandler<T> objectCallBackHandler = (CallbackHandler<T>) SimpleCallbackHandler.newInstance(type);
         this.ruleSessionSupportProxy.<T> evaluate(ruleSession,
-                fact,
-                global,
+                (Map<String, Object>)fact,
+                (Map<String, Object>)global,
                 objectCallBackHandler);
         T resMap = objectCallBackHandler.getValue();
         return resMap;
@@ -259,13 +262,14 @@ public class RuleSessionTemplate implements InitializingBean {
      * @param fact
      * @param global
      */
-    public void evaluate(String ruleKey, Map<String, Object> fact,
-            Map<String, Object> global, CallbackHandler<?> callbackHandler) {
+    @SuppressWarnings("unchecked")
+    public void evaluate(String ruleKey, Map<String, ?> fact,
+            Map<String, ?> global, CallbackHandler<?> callbackHandler) {
         AssertUtils.notEmpty(ruleKey, "ruleKey is empty.");
         RuleSession ruleSession = buildRuleSessionByRuleKey(ruleKey);
         this.ruleSessionSupportProxy.evaluate(ruleSession,
-                fact,
-                global,
+                (Map<String, Object>)fact,
+                (Map<String, Object>)global,
                 callbackHandler);
     }
     
