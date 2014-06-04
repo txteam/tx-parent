@@ -66,8 +66,8 @@ public class TestWFBase{
     */
    private static DataSource getLosDataSource() {
        DriverManagerDataSource dmd = new DriverManagerDataSource(
-               "jdbc:oracle:thin:@172.16.18.10:1521:bdlms", "zlk1113", "zlk1113");
-       dmd.setDriverClassName("oracle.jdbc.driver.OracleDriver");
+               "jdbc:mysql://192.168.1.1:3306/lms?characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull", "lms", "zzxx1122");
+       dmd.setDriverClassName("com.mysql.jdbc.Driver");
        return dmd;
    }
    

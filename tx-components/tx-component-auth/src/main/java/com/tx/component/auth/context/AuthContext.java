@@ -24,6 +24,7 @@ import com.tx.component.auth.model.AuthItem;
 import com.tx.component.auth.model.AuthItemImpl;
 import com.tx.component.auth.model.AuthItemRef;
 import com.tx.component.auth.model.AuthItemRefImpl;
+import com.tx.core.TxConstants;
 import com.tx.core.exceptions.util.AssertUtils;
 
 /**
@@ -85,8 +86,12 @@ public class AuthContext extends AuthContextBuilder {
       * @see [类、类#方法、类#成员]
      */
     public Map<String, AuthItem> getAllAuthItemMapping() {
-        @SuppressWarnings("unchecked")
-        Map<String, AuthItem> resMap = MapUtils.unmodifiableMap(authItemMapping);
+        Map<String, AuthItem> resMap = new HashMap<>(
+                TxConstants.INITIAL_MAP_SIZE);
+        
+        for (Entry<String, AuthItem> entryTemp : authItemMapping.entrySet()) {
+            resMap.put(entryTemp.getKey(), entryTemp.getValue());
+        }
         return resMap;
     }
     
@@ -100,9 +105,14 @@ public class AuthContext extends AuthContextBuilder {
       * @see [类、类#方法、类#成员]
      */
     public List<AuthItem> getAllAuthItemList() {
+        List<AuthItem> authItemList = new ArrayList<>(
+                TxConstants.INITIAL_CONLLECTION_SIZE);
+        
+        for (AuthItem authItemTemp : authItemMapping.values()) {
+            authItemList.add(authItemTemp);
+        }
         @SuppressWarnings("unchecked")
-        List<AuthItem> resList = ListUtils.unmodifiableList(new ArrayList<AuthItem>(
-                authItemMapping.values()));
+        List<AuthItem> resList = ListUtils.unmodifiableList(authItemList);
         return resList;
     }
     
@@ -119,7 +129,8 @@ public class AuthContext extends AuthContextBuilder {
     @SuppressWarnings("unchecked")
     public List<AuthItem> getAuthItemListByAuthType(String authType) {
         AssertUtils.notEmpty(authType, "authType is empty.");
-        List<AuthItem> resList = new ArrayList<>();
+        List<AuthItem> resList = new ArrayList<>(
+                TxConstants.INITIAL_CONLLECTION_SIZE);
         
         for (AuthItem authItemTemp : authItemMapping.values()) {
             if (authType.equals(authItemTemp.getAuthType())) {
@@ -141,7 +152,8 @@ public class AuthContext extends AuthContextBuilder {
      */
     public Map<String, AuthItem> getAuthItemMapByAuthType(String authType) {
         AssertUtils.notEmpty(authType, "authType is empty.");
-        Map<String, AuthItem> resMap = new HashMap<>();
+        Map<String, AuthItem> resMap = new HashMap<>(
+                TxConstants.INITIAL_MAP_SIZE);
         
         for (Entry<String, AuthItem> entryTemp : authItemMapping.entrySet()) {
             if (authType.equals(entryTemp.getValue().getAuthType())) {
