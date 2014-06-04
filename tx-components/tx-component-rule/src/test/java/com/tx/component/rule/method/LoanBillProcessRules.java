@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.tx.component.rule.loader.java.annotation.RuleClassMapping;
 import com.tx.component.rule.loader.java.annotation.RuleMethodMapping;
