@@ -10,10 +10,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.tx.component.rule.loader.java.annotation.RuleClassMapping;
 import com.tx.component.rule.loader.java.annotation.RuleMethodMapping;
 import com.tx.component.rule.loader.java.annotation.RuleRequestParam;
+import com.tx.component.rule.loader.java.annotation.RuleResultBody;
 import com.tx.component.rule.method.model.ProcessRule;
 import com.tx.component.rule.method.model.TestPojo;
 import com.tx.component.rule.method.model.TestPojoDao;
@@ -33,6 +35,13 @@ import com.tx.component.rule.transation.RuleSessionContext;
 @Component("LoanBillProcessRules")
 @RuleClassMapping
 public class LoanBillProcessRules {
+    
+    @RuleMethodMapping(value = "test", serviceType = "processLoanBill", name = "测试")
+    @RuleResultBody
+    public boolean test() {
+        
+        return true;
+    }
     
     /**
       *<功能简述>

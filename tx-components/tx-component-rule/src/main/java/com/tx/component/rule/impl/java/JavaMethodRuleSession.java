@@ -7,7 +7,6 @@
 package com.tx.component.rule.impl.java;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -69,27 +68,15 @@ public class JavaMethodRuleSession extends BaseRuleSession<JavaMethodRule> {
                 .invoke(methodHandle.getBean(), args);
         
         //判断返回值类型
-        MethodParameter returnType = methodHandle.getReturnType();
+        //MethodParameter returnType = methodHandle.getReturnType();
         if (!methodHandle.isVoid()
-                && returnType.getParameterAnnotation(RuleResultBody.class) != null
-                && resultHandle != null) {
+                && methodHandle.getMethodAnnotation(RuleResultBody.class) != null) {
+            AssertUtils.notNull(resultHandle, "resultHandle is null.");
+            AssertUtils.isTrue(resultHandle.getRowType().isInstance(returnObj),
+                    "result is not instanceOf type:{}",
+                    new Object[] { resultHandle.getRowType() });
+            
             resultHandle.setValue((T) returnObj);
-        }
-    }
-    
-    /**
-     * @param fact
-     * @param resultHandle
-     * @throws Exception
-     */
-    @Override
-    public <T> void executeAll(List<Map<String, Object>> facts,
-            CallbackHandler<T> resultHandle) throws Exception {
-        if (facts == null) {
-            return;
-        }
-        for (Map<String, Object> fact : facts) {
-            execute(fact, resultHandle);
         }
     }
     

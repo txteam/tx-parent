@@ -6,7 +6,6 @@
  */
 package com.tx.component.rule.impl.drools;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -64,20 +63,6 @@ public class BaseDroolsRuleSession<RULE extends BaseDroolsRule> extends
             if (session != null) {
                 session.dispose();
             }
-        }
-    }
-    
-    /**
-     * @param facts
-     */
-    @Override
-    public <R> void executeAll(List<Map<String, Object>> facts,
-            CallbackHandler<R> callbackHandler) {
-        if (facts == null) {
-            return;
-        }
-        for (Map<String, Object> fact : facts) {
-            execute(fact, callbackHandler);
         }
     }
     

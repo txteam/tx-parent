@@ -7,19 +7,15 @@
 package com.tx.component.rule.method;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.tx.component.rule.RuleConstants;
-import com.tx.component.rule.method.model.ProcessRule;
 import com.tx.component.rule.method.model.TestPojo;
 import com.tx.component.rule.method.model.TestPojoDao;
 import com.tx.component.rule.support.RuleSessionTemplate;
@@ -60,16 +56,40 @@ public class MethodRuleTest {
             Map<String, Object> global = new HashMap<String, Object>();
             global.put("globalKey1", "globalValue1:abc");
             
-            List<ProcessRule> resList = ruleSessionTemplate.<ProcessRule> evaluateList("minAgeRule",
+            boolean res = ruleSessionTemplate.<Boolean> evaluateObject("test",
                     fact,
-                    global);
-            System.out.println(resList.size());
-            resList = ruleSessionTemplate.<ProcessRule> evaluateList("maxAgeRule",
-                    fact,
-                    global);
-            System.out.println(resList.size());
+                    global,Boolean.class);
+            System.out.println(res);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+    
+//    @Test
+//    public void testRuleConstants1() {
+//        try {
+//            //
+//            TestPojo testPojo = new TestPojo();
+//            testPojo.setTest("test:abc");
+//            TestPojoDao testPojoDao = new TestPojoDao();
+//            Map<String, Object> fact = new HashMap<String, Object>();
+//            fact.put("testPojo", testPojo);
+//            fact.put("testPojoDao", testPojoDao);
+//            
+//            //
+//            Map<String, Object> global = new HashMap<String, Object>();
+//            global.put("globalKey1", "globalValue1:abc");
+//            
+//            List<ProcessRule> resList = ruleSessionTemplate.<ProcessRule> evaluateList("minAgeRule",
+//                    fact,
+//                    global);
+//            System.out.println(resList.size());
+//            resList = ruleSessionTemplate.<ProcessRule> evaluateList("maxAgeRule",
+//                    fact,
+//                    global);
+//            System.out.println(resList.size());
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 }

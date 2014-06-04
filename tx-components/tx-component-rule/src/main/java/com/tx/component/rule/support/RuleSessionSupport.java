@@ -6,11 +6,10 @@
  */
 package com.tx.component.rule.support;
 
-import java.util.List;
 import java.util.Map;
 
-import com.tx.component.rule.session.RuleSession;
 import com.tx.component.rule.session.CallbackHandler;
+import com.tx.component.rule.session.RuleSession;
 
 /**
  * 规则回话<br/>
@@ -42,21 +41,5 @@ public interface RuleSessionSupport {
      */
     public <R> void evaluate(RuleSession ruleSession, Map<String, Object> fact,
             Map<String, Object> global, CallbackHandler<R> resultHandle);
-    
-    /**
-      * 解析列表规则结果（推导结论或推论事实）触发某规则执行<br/>
-      *<功能详细描述>
-      * @param ruleSession
-      * @param facts
-      * @param global
-      * @param resultHandle [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    public <R> void evaluateAll(RuleSession ruleSession,
-            List<Map<String, Object>> facts, Map<String, Object> global,
-            CallbackHandler<R> resultHandle);
     
 }

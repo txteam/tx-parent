@@ -145,33 +145,6 @@ public class RuleSessionTemplate implements InitializingBean {
         return resList;
     }
     
-//    /**
-//      * 根据传入的事实以及规则运行时环境，解析规则运行结果,结果类型为List<T><br/> 
-//      *<功能详细描述>
-//      * @param ruleKey
-//      * @param facts
-//      * @param global
-//      * @return [参数说明]
-//      * 
-//      * @return List<T> [返回类型说明]
-//      * @exception throws [异常类型] [异常说明]
-//      * @see [类、类#方法、类#成员]
-//     */
-//    public <T> List<T> evaluateList(String ruleKey,
-//            List<Map<String, Object>> facts, Map<String, Object> global) {
-//        AssertUtils.notEmpty(ruleKey, "ruleKey is empty.");
-//        RuleSession ruleSession = buildRuleSessionByRuleKey(ruleKey);
-//        @SuppressWarnings("unchecked")
-//        CallbackHandler<List<T>> listCallBackHandler = (CallbackHandler<List<T>>) SimpleCallbackHandler.newInstance(List.class,
-//                new ArrayList<T>(TxConstants.INITIAL_CONLLECTION_SIZE));
-//        this.ruleSessionSupportProxy.<List<T>> evaluateAll(ruleSession,
-//                facts,
-//                global,
-//                listCallBackHandler);
-//        List<T> resList = listCallBackHandler.getValue();
-//        return resList;
-//    }
-    
     /**
      * @param rule
      * @param fact
@@ -193,48 +166,6 @@ public class RuleSessionTemplate implements InitializingBean {
         Map<String, T> resMap = mapCallBackHandler.getValue();
         return resMap;
     }
-    
-//    /**
-//     * @param rule
-//     * @param facts
-//     * @param global
-//     * @return
-//     */
-//    public <T> Map<String, T> evaluateMap(String ruleKey,
-//            List<Map<String, Object>> facts, Map<String, Object> global) {
-//        AssertUtils.notEmpty(ruleKey, "ruleKey is empty.");
-//        RuleSession ruleSession = buildRuleSessionByRuleKey(ruleKey);
-//        @SuppressWarnings("unchecked")
-//        CallbackHandler<Map<String, T>> mapCallBackHandler = (CallbackHandler<Map<String, T>>) SimpleCallbackHandler.newInstance(Map.class,
-//                new HashMap<String, T>(TxConstants.INITIAL_MAP_SIZE));
-//        this.ruleSessionSupportProxy.<Map<String, T>> evaluateAll(ruleSession,
-//                facts,
-//                global,
-//                mapCallBackHandler);
-//        Map<String, T> resMap = mapCallBackHandler.getValue();
-//        return resMap;
-//    }
-    
-//    /**
-//     * @param rule
-//     * @param facts
-//     * @param global
-//     * @return
-//     */
-//    public <T> T evaluateObject(String ruleKey,
-//            List<Map<String, Object>> facts, Map<String, Object> global,
-//            Class<T> type) {
-//        AssertUtils.notEmpty(ruleKey, "ruleKey is empty.");
-//        RuleSession ruleSession = buildRuleSessionByRuleKey(ruleKey);
-//        @SuppressWarnings("unchecked")
-//        CallbackHandler<T> objectCallBackHandler = (CallbackHandler<T>) SimpleCallbackHandler.newInstance(type);
-//        this.ruleSessionSupportProxy.<T> evaluateAll(ruleSession,
-//                facts,
-//                global,
-//                objectCallBackHandler);
-//        T resMap = objectCallBackHandler.getValue();
-//        return resMap;
-//    }
     
     /**
      * @param rule
@@ -272,21 +203,6 @@ public class RuleSessionTemplate implements InitializingBean {
                 (Map<String, Object>)global,
                 callbackHandler);
     }
-    
-//    /**
-//     * @param rule
-//     * @param facts
-//     * @param global
-//     */
-//    public void evaluate(String ruleKey, List<Map<String, Object>> facts,
-//            Map<String, Object> global, CallbackHandler<?> callbackHandler) {
-//        AssertUtils.notEmpty(ruleKey, "ruleKey is empty.");
-//        RuleSession ruleSession = buildRuleSessionByRuleKey(ruleKey);
-//        this.ruleSessionSupportProxy.evaluateAll(ruleSession,
-//                facts,
-//                global,
-//                callbackHandler);
-//    }
     
     /**
       * 规则会话实际代理执行句柄，将执行的方法转换为实际RuleSession的调用<br/>

@@ -6,13 +6,12 @@
  */
 package com.tx.component.rule.support.impl;
 
-import java.util.List;
 import java.util.Map;
 
 import com.tx.component.rule.loader.RuleStateEnum;
+import com.tx.component.rule.session.CallbackHandler;
 import com.tx.component.rule.session.RuleExceptionTranslator;
 import com.tx.component.rule.session.RuleSession;
-import com.tx.component.rule.session.CallbackHandler;
 import com.tx.component.rule.support.RuleSessionSupport;
 import com.tx.component.rule.transation.RuleSessionTransactionCallback;
 import com.tx.component.rule.transation.impl.RuleSessionTransationTemplate;
@@ -68,36 +67,6 @@ public class DefaultRuleSessionSupport implements RuleSessionSupport {
                 @Override
                 public void doInTransaction() throws Exception {
                     ruleSession.execute(fact, callbackHandler);
-                }
-            },
-                    global);
-        } catch (Exception e) {
-            throw this.ruleExceptionTranslator.translate(ruleSession, e);
-        }
-    }
-    
-    /**
-     * @param ruleSession
-     * @param facts
-     * @param global
-     */
-    @Override
-    public <R> void evaluateAll(final RuleSession ruleSession,
-            final List<Map<String, Object>> facts, Map<String, Object> global,
-            final CallbackHandler<R> callbackHandler) {
-        //参数验证
-        AssertUtils.notNull(ruleSession, "ruleSession is null.");
-        AssertUtils.isTrue(RuleStateEnum.OPERATION.equals(ruleSession.getRule()
-                .getState()),
-                "ruleSession.rule.state must be operation.ruleKey:{} state:{}",
-                new Object[] { ruleSession.getRule().getKey(),
-                        ruleSession.getRule().getState() });
-        
-        try {
-            ruleSessionTransationTemplate.execute(new RuleSessionTransactionCallback() {
-                @Override
-                public void doInTransaction() throws Exception {
-                    ruleSession.executeAll(facts, callbackHandler);
                 }
             },
                     global);
