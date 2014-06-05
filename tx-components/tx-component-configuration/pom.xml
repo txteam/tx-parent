@@ -157,27 +157,20 @@
 			<artifactId>jaxen</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>xml-apis</groupId>
-			<artifactId>xml-apis</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>xerces</groupId>
 			<artifactId>xercesImpl</artifactId>
 		</dependency>
 
 		<!-- aop -->
 		<dependency>
-			<!-- aop�����ƶ���aop�淶 -->
 			<groupId>aopalliance</groupId>
 			<artifactId>aopalliance</artifactId>
 		</dependency>
 		<dependency>
-			<!-- aop aspectjʵ�� -->
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjrt</artifactId>
 		</dependency>
 		<dependency>
-			<!-- aop aspectjʵ�� -->
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjweaver</artifactId>
 		</dependency>
