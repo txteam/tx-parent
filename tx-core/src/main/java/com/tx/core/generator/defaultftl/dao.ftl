@@ -49,7 +49,7 @@ public interface ${dao.simpleEntityTypeName}Dao {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public void batchUpdate${dao.simpleEntityTypeName}(List<Map<String,${dao.simpleEntityTypeName}>> updateRowMapList);
+    public void batchUpdate${dao.simpleEntityTypeName}(List<Map<String,Object>> updateRowMapList);
     
     /**
       * 插入${dao.simpleEntityTypeName}对象实体

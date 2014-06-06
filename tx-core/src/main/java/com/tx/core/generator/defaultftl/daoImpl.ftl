@@ -46,7 +46,7 @@ public class ${dao.simpleEntityTypeName}DaoImpl implements ${dao.simpleEntityTyp
      * @param condition
      */
     @Override
-    public void batchUpdate${dao.simpleEntityTypeName}(List<Map<String,${dao.simpleEntityTypeName}>> updateRowMapList){
+    public void batchUpdate${dao.simpleEntityTypeName}(List<Map<String,Object>> updateRowMapList){
         this.myBatisDaoSupport.batchUpdate("${dao.lowerCaseEntityTypeName}.update${dao.simpleEntityTypeName}", updateRowMapList,true);
     }
     
