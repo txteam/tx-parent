@@ -17,6 +17,7 @@ import org.apache.commons.collections.ListUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.MultiValueMap;
 
 import com.tx.component.auth.context.authchecker.AuthChecker;
 import com.tx.component.auth.exceptions.AuthContextInitException;
@@ -172,7 +173,7 @@ public class AuthContext extends AuthContextBuilder {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public void login(Map<String, String> refType2RefIdMapping) {
+    public void login(MultiValueMap<String, String> refType2RefIdMapping) {
         AssertUtils.notEmpty(refType2RefIdMapping,
                 "refType2RefIdMapping is empty");
         
@@ -182,13 +183,12 @@ public class AuthContext extends AuthContextBuilder {
         String adminRefType = null;
         String adminRefId = null;
         if (!MapUtils.isEmpty(adminCheckerMapping)) {
-            for (Entry<String, String> refType2RefIdEntry : refType2RefIdMapping.entrySet()) {
+            for (Entry<String, List<String>> refType2RefIdEntry : refType2RefIdMapping.entrySet()) {
                 if (adminCheckerMapping.get(refType2RefIdEntry.getKey()) != null
                         && adminCheckerMapping.get(refType2RefIdEntry.getKey())
-                                .isSuperAdmin(refType2RefIdEntry.getValue())) {
+                                .isSuperAdmin(refType2RefIdEntry.getValue()
+                                        .get(0))) {
                     isSuperAdmin = true;
-                    adminRefType = refType2RefIdEntry.getKey();
-                    adminRefId = refType2RefIdEntry.getValue();
                 }
             }
         }
@@ -218,6 +218,7 @@ public class AuthContext extends AuthContextBuilder {
                     loadAuthItemRef(refImplTemp);
                 }
             }
+            authItemRefList.addAll(refImplList);
         }
         
         //将权限引用写入容器
@@ -275,6 +276,9 @@ public class AuthContext extends AuthContextBuilder {
      * @see [类、类#方法、类#成员]
      */
     public boolean hasAuth(String authKey, Object... objects) {
+        if (!authItemMapping.containsKey(authKey)) {
+            return true;
+        }
         //检查对应权限的权限类型是否正确
         AuthItem authItem = authItemMapping.get(authKey);
         if (authItem == null) {
@@ -801,7 +805,7 @@ public class AuthContext extends AuthContextBuilder {
       * @see [类、类#方法、类#成员]
      */
     public List<AuthItemRef> queryAuthItemRefListByRefType2RefIdMapping(
-            Map<String, String> refType2RefIdMapping) {
+            MultiValueMap<String, String> refType2RefIdMapping) {
         List<AuthItemRefImpl> authItemRefImplList = this.authItemRefImplService.queryAuthItemRefListByRefType2RefIdMapping(refType2RefIdMapping,
                 this.systemId,
                 this.tableSuffix);

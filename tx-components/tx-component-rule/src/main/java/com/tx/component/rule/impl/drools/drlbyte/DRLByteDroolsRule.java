@@ -6,6 +6,10 @@
  */
 package com.tx.component.rule.impl.drools.drlbyte;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+
 import org.drools.builder.ResourceType;
 import org.drools.io.ResourceFactory;
 
@@ -16,6 +20,7 @@ import com.tx.component.rule.loader.RuleItem;
 import com.tx.component.rule.loader.RuleItemByteParam;
 import com.tx.component.rule.loader.RuleStateEnum;
 import com.tx.component.rule.loader.RuleTypeEnum;
+import com.tx.core.exceptions.util.ExceptionWrapperUtils;
 
 /**
  * drools规则<br/>
@@ -33,6 +38,7 @@ public class DRLByteDroolsRule extends BaseDroolsRule {
     
     /**
      * 构造函数,根据二进制流构造drools规则
+     * @throws  
      */
     public DRLByteDroolsRule(RuleItem ruleItem) {
         super(ruleItem);
@@ -47,6 +53,9 @@ public class DRLByteDroolsRule extends BaseDroolsRule {
         
         byte[] bytes = byteParam.getParamValue();
         try {
+            this.knowledgeBase = DroolsRuleHelper.newKnowledgeBase(ResourceFactory.newReaderResource(new InputStreamReader(
+                    new ByteArrayInputStream(bytes), "UTF-8")),
+                    ResourceType.DRL);
             this.knowledgeBase = DroolsRuleHelper.newKnowledgeBase(ResourceFactory.newByteArrayResource(bytes),
                     ResourceType.DRL);
             this.state = RuleStateEnum.OPERATION;
@@ -55,6 +64,8 @@ public class DRLByteDroolsRule extends BaseDroolsRule {
                     e.getKnowledgeBuilderErrors());
             this.state = RuleStateEnum.ERROR;
             ruleItem.setRemark(e.getKnowledgeBuilderErrors().toString());
+        } catch (UnsupportedEncodingException e) {
+            throw ExceptionWrapperUtils.wrapperIOException(e, "解析drools文件异常.");
         }
     }
     

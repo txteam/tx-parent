@@ -46,15 +46,23 @@ public class ControllerCheckOperateAuthInterceptor implements
             HandlerMethod handlerMethod = ((HandlerMethod) handler);
             CheckOperateAuth checkOperateAuthAnno = handlerMethod.getMethod()
                     .getAnnotation(CheckOperateAuth.class);
+            //如果是容器中不存在的权限则不进行
+            if (!AuthContext.getContext()
+                    .getAllAuthItemMapping()
+                    .containsKey(checkOperateAuthAnno.key())) {
+                return true;
+            }
             String authKey = checkOperateAuthAnno.key();
             if (StringUtils.isEmpty(authKey)) {
                 return true;
             }
             
             //如果无权限抛出异常
-            if(!AuthContext.getContext().hasAuth(authKey)){
-                throw new NoAuthorityAccessException("Controller class:{} method:{} needAuth:{}",
-                        new Object[]{handlerMethod.getBean().getClass(),handlerMethod.getMethod(),authKey});
+            if (!AuthContext.getContext().hasAuth(authKey)) {
+                throw new NoAuthorityAccessException(
+                        "Controller class:{} method:{} needAuth:{}",
+                        new Object[] { handlerMethod.getBean().getClass(),
+                                handlerMethod.getMethod(), authKey });
             }
         }
         return true;
@@ -71,7 +79,6 @@ public class ControllerCheckOperateAuthInterceptor implements
     public void postHandle(HttpServletRequest request,
             HttpServletResponse response, Object handler,
             ModelAndView modelAndView) throws Exception {
-        
     }
     
     /**
@@ -85,6 +92,5 @@ public class ControllerCheckOperateAuthInterceptor implements
     public void afterCompletion(HttpServletRequest request,
             HttpServletResponse response, Object handler, Exception ex)
             throws Exception {
-        
-    }    
+    }
 }

@@ -7,6 +7,9 @@
 package com.tx.component.rule.impl.drools.drlfile;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStreamReader;
 
 import org.drools.builder.ResourceType;
 import org.drools.io.ResourceFactory;
@@ -17,6 +20,7 @@ import com.tx.component.rule.impl.drools.exception.DroolsKnowledgeBaseInitExcept
 import com.tx.component.rule.loader.RuleItem;
 import com.tx.component.rule.loader.RuleStateEnum;
 import com.tx.component.rule.loader.RuleTypeEnum;
+import com.tx.core.exceptions.util.ExceptionWrapperUtils;
 
 /**
  * drl文件类型的drools规则
@@ -34,6 +38,7 @@ public class DRLFileDroolsRule extends BaseDroolsRule {
     
     /**
      * 构造函数,根据二进制流构造drools规则
+     * @throws  
      */
     public DRLFileDroolsRule(RuleItem ruleItem) {
         super(ruleItem);
@@ -54,7 +59,9 @@ public class DRLFileDroolsRule extends BaseDroolsRule {
         
         File file = (File) fileObj;
         try {
-            this.knowledgeBase = DroolsRuleHelper.newKnowledgeBase(ResourceFactory.newFileResource(file),
+            this.knowledgeBase = DroolsRuleHelper.newKnowledgeBase(ResourceFactory.newReaderResource(new InputStreamReader(
+                    new FileInputStream(file)),
+                    "UTF-8"),
                     ResourceType.DRL);
             this.state = RuleStateEnum.OPERATION;
         } catch (DroolsKnowledgeBaseInitException e) {
@@ -62,8 +69,9 @@ public class DRLFileDroolsRule extends BaseDroolsRule {
                     e.getKnowledgeBuilderErrors());
             this.state = RuleStateEnum.ERROR;
             ruleItem.setRemark(e.getKnowledgeBuilderErrors().toString());
+        } catch (FileNotFoundException e) {
+            throw ExceptionWrapperUtils.wrapperIOException(e, "file not exist.");
         }
-        
     }
     
     /**

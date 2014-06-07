@@ -23,6 +23,7 @@ import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.util.MultiValueMap;
 
 import com.tx.component.auth.model.AuthItem;
 import com.tx.component.auth.model.AuthItemImpl;
@@ -470,14 +471,23 @@ public class AuthItemRefImplDaoImpl implements AuthItemRefImplDao {
         if (!ObjectUtils.isEmpty(params.get("refType2RefIdMap"))) {
             conditionSb.append(" AND (");
             @SuppressWarnings("unchecked")
-            Map<String, String> refType2RefIdMap = (Map<String, String>) params.get("refType2RefIdMap");
+            MultiValueMap<String, String> refType2RefIdMap = (MultiValueMap<String, String>) params.get("refType2RefIdMap");
             int entryIndex = 0;
-            for (@SuppressWarnings("unused")
-            Entry<String, String> entryTemp : refType2RefIdMap.entrySet()) {
+            for (Entry<String, List<String>> entryTemp : refType2RefIdMap.entrySet()) {
                 if (entryIndex > 0) {
                     conditionSb.append(" OR ");
                 }
-                conditionSb.append(" (TAIRI.AUTHREFTYPE = ? AND TAIRI.REFID = ?) ");
+                if(entryTemp.getValue().size() > 1){
+                    conditionSb.append(" (TAIRI.AUTHREFTYPE = ? AND TAIRI.REFID IN ( ");
+                    for(@SuppressWarnings("unused") String refId : entryTemp.getValue()){
+                        conditionSb.append(" ? ,");
+                    }
+                    conditionSb.deleteCharAt(conditionSb.length() - 1);
+                    conditionSb.append(" ))");
+                }else{
+                    conditionSb.append(" (TAIRI.AUTHREFTYPE = ? AND TAIRI.REFID = ?) ");
+                }
+                entryIndex++;
             }
             conditionSb.append(" ) ");
         }
@@ -533,12 +543,14 @@ public class AuthItemRefImplDaoImpl implements AuthItemRefImplDao {
                         }
                         if (!ObjectUtils.isEmpty(params.get("refType2RefIdMap"))) {
                             @SuppressWarnings("unchecked")
-                            Map<String, String> refType2RefIdMap = (Map<String, String>) params.get("refType2RefIdMap");
-                            for (Entry<String, String> entryTemp : refType2RefIdMap.entrySet()) {
+                            MultiValueMap<String, String> refType2RefIdMap = (MultiValueMap<String, String>) params.get("refType2RefIdMap");
+                            for (Entry<String, List<String>> entryTemp : refType2RefIdMap.entrySet()) {
                                 ps.setString(++parameterIndex,
                                         entryTemp.getKey());
-                                ps.setString(++parameterIndex,
-                                        entryTemp.getValue());
+                                for(String valueTemp  : entryTemp.getValue()){
+                                    ps.setString(++parameterIndex,
+                                            valueTemp);
+                                }
                             }
                         }
                         if (!ObjectUtils.isEmpty(params.get("authRefType"))) {

@@ -18,6 +18,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.util.MultiValueMap;
 
 import com.tx.component.auth.context.AuthContext;
 import com.tx.component.auth.model.AuthItem;
@@ -84,7 +85,7 @@ public class AuthItemRefImplService {
       * @see [类、类#方法、类#成员]
      */
     public List<AuthItemRefImpl> queryAuthItemRefListByRefType2RefIdMapping(
-            Map<String, String> refType2RefIdMapping, String systemId,
+            MultiValueMap<String, String> refType2RefIdMapping, String systemId,
             String tableSuffix) {
         AssertUtils.notEmpty(refType2RefIdMapping,
                 "refType2RefIdMapping is empty.");
