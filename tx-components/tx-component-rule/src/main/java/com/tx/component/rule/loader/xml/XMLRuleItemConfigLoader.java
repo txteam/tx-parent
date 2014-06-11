@@ -51,8 +51,6 @@ public class XMLRuleItemConfigLoader extends BaseRuleItemLoader {
     /** 规则配置文件解析器 */
     private static final XStream ruleConfigParse = XstreamUtils.getXstream(RulesConfig.class);
     
-    private String charsetName = "UTF-8";
-    
     /**
      * @return
      */
@@ -181,11 +179,11 @@ public class XMLRuleItemConfigLoader extends BaseRuleItemLoader {
             IOUtils.closeQuietly(in);
         }
         try {
-            ruleItem.addByteParam(paramKey, context.getBytes(charsetName));
+            ruleItem.addByteParam(paramKey, context.getBytes("UTF-8"));
         } catch (UnsupportedEncodingException e) {
             throw new IllegalArgException(
                     MessageFormatter.arrayFormat("key:{} paramKey:{} charsetName:{}",
-                            new Object[] { ruleKey, paramKey, charsetName })
+                            new Object[] { ruleKey, paramKey, "UTF-8" })
                             .getMessage());
         }
     }

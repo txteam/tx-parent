@@ -8,6 +8,7 @@ package com.tx.component.rule.impl.drools.drlbyte;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 
 import org.drools.builder.ResourceType;
@@ -53,10 +54,9 @@ public class DRLByteDroolsRule extends BaseDroolsRule {
         
         byte[] bytes = byteParam.getParamValue();
         try {
-            this.knowledgeBase = DroolsRuleHelper.newKnowledgeBase(ResourceFactory.newReaderResource(new InputStreamReader(
-                    new ByteArrayInputStream(bytes), "UTF-8")),
-                    ResourceType.DRL);
-            this.knowledgeBase = DroolsRuleHelper.newKnowledgeBase(ResourceFactory.newByteArrayResource(bytes),
+            Reader reader = new InputStreamReader(new ByteArrayInputStream(
+                    bytes), "UTF-8");
+            this.knowledgeBase = DroolsRuleHelper.newKnowledgeBase(ResourceFactory.newReaderResource(reader,"UTF-8"),
                     ResourceType.DRL);
             this.state = RuleStateEnum.OPERATION;
         } catch (DroolsKnowledgeBaseInitException e) {
