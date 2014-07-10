@@ -30,13 +30,13 @@ public abstract class TypeHandleSerializerFactory<T> extends
         super();
         this.type = type;
     }
-
+    
     /**
      * @param cl
      * @return
      * @throws HessianProtocolException
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({ "rawtypes" })
     @Override
     public Serializer getSerializer(Class type) throws HessianProtocolException {
         if (this.type.isAssignableFrom(type)) {
@@ -45,7 +45,8 @@ public abstract class TypeHandleSerializerFactory<T> extends
         return null;
     }
     
-    public abstract Serializer doGetSerializer(Class type)
+    public abstract Serializer doGetSerializer(
+            @SuppressWarnings("rawtypes") Class type)
             throws HessianProtocolException;
     
     /**
@@ -53,7 +54,7 @@ public abstract class TypeHandleSerializerFactory<T> extends
      * @return
      * @throws HessianProtocolException
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({ "rawtypes" })
     @Override
     public Deserializer getDeserializer(Class type)
             throws HessianProtocolException {
@@ -63,7 +64,8 @@ public abstract class TypeHandleSerializerFactory<T> extends
         return null;
     }
     
-    public abstract Deserializer doGetDeserializer(Class type)
+    public abstract Deserializer doGetDeserializer(
+            @SuppressWarnings("rawtypes") Class type)
             throws HessianProtocolException;
     
 }

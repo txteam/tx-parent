@@ -8,6 +8,8 @@ package com.tx.core.util;
 
 import java.util.Date;
 
+import org.joda.time.DateTime;
+
 /**
  * 时间工具类<br/>
  * <功能详细描述>
@@ -82,9 +84,20 @@ public class DateUtils {
                 preDate)) {
             return 0;
         }
+        DateTime preDateTime = new DateTime(preDate);
+        preDateTime = new DateTime(preDateTime.getYear(),
+                preDateTime.getMonthOfYear(), preDateTime.getDayOfMonth(), 0,
+                0, 0);
         long afterDateTime = afterDate.getTime();
-        long beforeDateTime = preDate.getTime();
-        int dayCount = (int) ((afterDateTime - beforeDateTime) / DAY_SECOND_COUNT);
+        long beforeDateTime = preDateTime.toDate().getTime();
+        int dayCount = 0;
+        if (afterDateTime > beforeDateTime) {
+            dayCount = (int) ((afterDateTime - beforeDateTime) / DAY_SECOND_COUNT);
+        } else {
+            dayCount = (int) ((afterDateTime - beforeDateTime) / DAY_SECOND_COUNT)
+                    + (((afterDateTime - beforeDateTime) % DAY_SECOND_COUNT == 0) ? 0
+                            : -1);
+        }
         return dayCount;
     }
 }

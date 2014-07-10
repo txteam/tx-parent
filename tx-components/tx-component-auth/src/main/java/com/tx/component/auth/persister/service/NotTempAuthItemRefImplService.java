@@ -54,7 +54,7 @@ public class NotTempAuthItemRefImplService {
     public NotTempAuthItemRefImplService() {
         super();
     }
-
+    
     /**
      * <默认构造函数>
      */
@@ -515,7 +515,10 @@ public class NotTempAuthItemRefImplService {
         //生成需要插入权限引用历史表的数据
         List<AuthItemRefImpl> needInsertToHis = new ArrayList<AuthItemRefImpl>();
         for (String needDeleteAuthItemIdTemp : needDeleteAuthItemIds) {
-            if (dbAuthItemRefMap.containsKey(needDeleteAuthItemIdTemp)) {
+            if (dbAuthItemRefMap.containsKey(needDeleteAuthItemIdTemp)
+                    && AuthContext.getContext()
+                            .getAllAuthItemMapping()
+                            .containsKey(needDeleteAuthItemIdTemp)) {
                 needInsertToHis.add(dbAuthItemRefMap.get(needDeleteAuthItemIdTemp));
             }
         }
@@ -593,7 +596,10 @@ public class NotTempAuthItemRefImplService {
         //生成需要插入权限引用历史表的数据
         List<AuthItemRefImpl> needInsertToHis = new ArrayList<AuthItemRefImpl>();
         for (String needDeleteAuthItemIdTemp : needDeleteAuthItemIds) {
-            if (dbAuthItemRefMap.containsKey(needDeleteAuthItemIdTemp)) {
+            if (dbAuthItemRefMap.containsKey(needDeleteAuthItemIdTemp)
+                    && AuthContext.getContext()
+                            .getAllAuthItemMapping()
+                            .containsKey(needDeleteAuthItemIdTemp)) {
                 needInsertToHis.add(dbAuthItemRefMap.get(needDeleteAuthItemIdTemp));
             }
         }
@@ -651,7 +657,12 @@ public class NotTempAuthItemRefImplService {
             authItemRef.setTemp(false);
             authItemRef.setAuthRefType(authRefType);
             authItemRef.setRefId(refId);
-            
+            //跳过系统中不存在的权限
+            if (!AuthContext.getContext()
+                    .getAllAuthItemMapping()
+                    .containsKey(authItemIdTemp)) {
+                continue;
+            }
             AuthItem authItemTemp = AuthContext.getContext()
                     .getAuthItemFromContextById(authItemIdTemp);
             AssertUtils.notNull(authItemTemp,
@@ -685,6 +696,12 @@ public class NotTempAuthItemRefImplService {
             return;
         }
         AssertUtils.notEmpty(systemId, "systemId is empty");
+        //跳过系统中不存在的权限
+        if (!AuthContext.getContext()
+                .getAllAuthItemMapping()
+                .containsKey(authItemId)) {
+            return;
+        }
         
         AuthItem authItem = AuthContext.getContext()
                 .getAuthItemFromContextById(authItemId);
@@ -739,6 +756,12 @@ public class NotTempAuthItemRefImplService {
             authItemRef.setCreateOperId(currentOperatorId);
             authItemRef.setAuthRefType(authRefType);
             authItemRef.setRefId(refId);
+            //跳过系统中不存在的权限
+            if (!AuthContext.getContext()
+                    .getAllAuthItemMapping()
+                    .containsKey(authItemIdTemp)) {
+                continue;
+            }
             
             AuthItem authItemTemp = AuthContext.getContext()
                     .getAuthItemFromContextById(authItemIdTemp);
@@ -771,7 +794,12 @@ public class NotTempAuthItemRefImplService {
             String tableSuffix) {
         AssertUtils.notEmpty(systemId, "systemId is empty");
         List<AuthItemRefImpl> authItemRefList = new ArrayList<AuthItemRefImpl>();
-        
+        //跳过系统中不存在的权限
+        if (!AuthContext.getContext()
+                .getAllAuthItemMapping()
+                .containsKey(authItemId)) {
+            return;
+        }
         //取得当前登录人员id
         AuthItem authItem = AuthContext.getContext()
                 .getAuthItemFromContextById(authItemId);
