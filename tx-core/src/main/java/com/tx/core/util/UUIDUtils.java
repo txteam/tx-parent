@@ -13,8 +13,6 @@ import java.util.Map.Entry;
 import org.hibernate.id.IdentifierGenerator;
 import org.hibernate.id.UUIDHexGenerator;
 
-import com.tx.core.exceptions.util.AssertUtils;
-
 /**
  * 生成UUID唯一键工具类<br/>
  * <功能详细描述>
@@ -36,11 +34,11 @@ public class UUIDUtils {
         for (int i = 0; i < 10; i++) {
             integer2characterMap.put(i, (char) ((int) '0' + i));
         }
-        //97为'a' 122为'z' 共26个字母  共36个
+        //97为'A-Z' 122为'z' 共26个字母  共36个
         for (int i = 0; i < 26; i++) {
             integer2characterMap.put(i + 10, (char) ((int) 'A' + i));
         }
-        //97为'a' 122为'z' 共32个字母 共68个
+        //
         for (int i = 0; i < 32; i++) {
             integer2characterMap.put(i + 36, (char) ((int) 'À' + i));
         }

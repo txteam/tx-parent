@@ -6,6 +6,11 @@
  */
 package com.tx.core.util;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Map;
@@ -13,12 +18,14 @@ import java.util.Map;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.reflect.ConstructorUtils;
 import org.apache.commons.lang3.reflect.TypeUtils;
 import org.apache.ibatis.reflection.MetaObject;
 
+import com.tx.core.exceptions.io.ResourceAccessException;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.reflection.exception.ReflectionException;
 
@@ -35,15 +42,13 @@ import com.tx.core.reflection.exception.ReflectionException;
  */
 public class ObjectUtils {
     
-    public static <T> void populate(T obj,Map<String, Object> properties){
+    public static <T> void populate(T obj, Map<String, Object> properties) {
         try {
             BeanUtils.populate(obj, properties);
         } catch (IllegalAccessException e) {
-            throw new ReflectionException(
-                    "invoke populate error.", e);
+            throw new ReflectionException("invoke populate error.", e);
         } catch (InvocationTargetException e) {
-            throw new ReflectionException(
-                    "invoke populate error.", e);
+            throw new ReflectionException("invoke populate error.", e);
         }
     }
     
@@ -164,5 +169,42 @@ public class ObjectUtils {
             }
             return true;
         }
+    }
+    
+    /**
+      * 对一个Serializable的对象进行深度Clone
+      *     基于序列化与反序列化实现，
+      *     该方法通用性强，但性能反而不如clone或BeanUtils的应用<br/>
+      *     如果深度克隆的对象未实现Serializable将会抛出异常
+      * <功能详细描述>
+      * @param srcObj
+      * @return [参数说明]
+      * 
+      * @return T [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T deepClone(T srcObj) {
+        T resObject = null;
+        ByteArrayOutputStream baos = null;
+        ObjectOutputStream oos = null;
+        ObjectInputStream ois = null;
+        try {
+            baos = new ByteArrayOutputStream();
+            oos = new ObjectOutputStream(baos);
+            oos.writeObject(srcObj);
+            ByteArrayInputStream bais = new ByteArrayInputStream(
+                    baos.toByteArray());
+            ois = new ObjectInputStream(bais);
+            resObject = (T) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            throw new ResourceAccessException("deepClone error.", e);
+        } finally {
+            IOUtils.closeQuietly(oos);
+            IOUtils.closeQuietly(ois);
+            IOUtils.closeQuietly(baos);
+        }
+        return resObject;
     }
 }
