@@ -349,6 +349,7 @@ public class MyBatisDaoSupport implements InitializingBean {
         }
         int offset = pageSize * (pageIndex - 1);
         int limit = pageSize * pageIndex;
+        limit = limit > count ? count : limit;
         List<T> list = this.sqlSessionTemplate.<T> selectList(statement,
                 parameter,
                 new RowBounds(offset, limit));
@@ -378,6 +379,7 @@ public class MyBatisDaoSupport implements InitializingBean {
         }
         int offset = pageSize * (pageIndex - 1);
         int limit = pageSize * pageIndex;
+        limit = limit > count ? count : limit;
         List<T> list = this.sqlSessionTemplate.selectList(statement,
                 parameter,
                 new RowBounds(offset, limit));

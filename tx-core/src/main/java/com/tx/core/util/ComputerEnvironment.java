@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +45,6 @@ public class ComputerEnvironment {
     /** <默认构造函数> */
     public ComputerEnvironment() {
         super();
-        
         try {
             Enumeration<NetworkInterface> nis = NetworkInterface.getNetworkInterfaces();
             while(nis.hasMoreElements()){
@@ -54,7 +54,6 @@ public class ComputerEnvironment {
                 String macAddress = "";
                 if(networkInterface.getHardwareAddress() != null){
                     StringBuilder sb = new StringBuilder(TxConstants.INITIAL_STR_LENGTH);
-                    
                     byte[] macByte = networkInterface.getHardwareAddress();
                     int m = 0; 
                     for(int i=0;i<macByte.length;i++){  
@@ -62,16 +61,18 @@ public class ComputerEnvironment {
                         m = macByte[i]<0?(macByte[i]+256):macByte[i];
                         sb.append(Integer.toHexString(m).toUpperCase());
                     }
-                    macAddress = sb.toString();
+                    macAddress = sb.toString().trim();
                 }
-                
+                if(StringUtils.isBlank(macAddress)){
+                    continue;
+                }
                 //获取当前机器的ip相关信息
                 List<InterfaceAddress> iaList = networkInterface.getInterfaceAddresses();
                 List<String> hostNameList = new ArrayList<String>();
                 List<String> hostAddressList = new ArrayList<String>();
                 for(InterfaceAddress iat : iaList){
-                    hostNameList.add(iat.getAddress().getHostName());
-                    hostAddressList.add(iat.getAddress().getHostAddress());
+                    hostNameList.add(iat.getAddress().getHostName().trim());
+                    hostAddressList.add(iat.getAddress().getHostAddress().trim());
                 }
                 
                 ipConfigInfoList.add(new IpConfigInfo(macAddress, hostNameList, hostAddressList));

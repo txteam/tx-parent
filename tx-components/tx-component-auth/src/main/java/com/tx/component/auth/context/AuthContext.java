@@ -833,11 +833,13 @@ public class AuthContext extends AuthContextBuilder {
         }
         
         for (AuthItemRefImpl authItemRefTemp : authItemRefImplList) {
-            authItemRefTemp.setAuthItem(authItemMapping.get(authItemRefTemp.getAuthItem()
-                    .getId()));
-            resList.add(authItemRefTemp);
+            if (authItemMapping.containsKey(authItemRefTemp.getAuthItem()
+                    .getId())) {
+                authItemRefTemp.setAuthItem(authItemMapping.get(authItemRefTemp.getAuthItem()
+                        .getId()));
+                resList.add(authItemRefTemp);
+            }
         }
-        
         return resList;
     }
     

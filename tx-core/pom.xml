@@ -232,6 +232,18 @@
 			<optional>true</optional>
 		</dependency>
 
+		<!-- itext -->
+		<dependency>
+			<groupId>com.itextpdf</groupId>
+			<artifactId>itextpdf</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>com.itextpdf</groupId>
+			<artifactId>itext-asian</artifactId>
+			<optional>true</optional>
+		</dependency>
+
 		<!-- ognl -->
 		<dependency>
 			<groupId>ognl</groupId>
@@ -300,6 +312,12 @@
 		<dependency>
 			<groupId>org.jsoup</groupId>
 			<artifactId>jsoup</artifactId>
+		</dependency>
+
+		<!-- joda-time -->
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
 		</dependency>
 
 		<!-- dom4j -->

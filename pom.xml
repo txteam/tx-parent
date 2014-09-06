@@ -420,11 +420,11 @@
 				<artifactId>dom4j</artifactId>
 				<version>1.6.1</version>
 				<exclusions>
-                    <exclusion>
-                        <groupId>xml-apis</groupId>
-                        <artifactId>xml-apis</artifactId>
-                    </exclusion>
-                </exclusions>
+					<exclusion>
+						<groupId>xml-apis</groupId>
+						<artifactId>xml-apis</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<!-- java开发的xpath引擎，支持jdom,dom4j -->
@@ -983,11 +983,11 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
-			
+
 			<dependency>
-			    <groupId>com.caucho</groupId>
-			    <artifactId>hessian</artifactId>
-			    <version>4.0.38</version>
+				<groupId>com.caucho</groupId>
+				<artifactId>hessian</artifactId>
+				<version>4.0.38</version>
 			</dependency>
 
 			<!-- 定时运行任务 -->
@@ -1225,6 +1225,28 @@
 						<artifactId>jmxri</artifactId>
 					</exclusion>
 				</exclusions>
+			</dependency>
+
+			<!-- itext -->
+			<dependency>
+				<groupId>com.itextpdf</groupId>
+				<artifactId>itextpdf</artifactId>
+				<version>5.5.1</version>
+			</dependency>
+			<dependency>
+				<groupId>com.itextpdf</groupId>
+				<artifactId>itext-asian</artifactId>
+				<version>5.2.0</version>
+			</dependency>
+			<dependency>
+				<groupId>org.xhtmlrenderer</groupId>
+				<artifactId>flying-saucer-core</artifactId>
+				<version>9.0.6</version>
+			</dependency>
+			<dependency>
+				<groupId>org.xhtmlrenderer</groupId>
+				<artifactId>flying-saucer-pdf-itext5</artifactId>
+				<version>9.0.6</version>
 			</dependency>
 
 			<!-- Doc text deal jar JAVA读写 excel,word -->

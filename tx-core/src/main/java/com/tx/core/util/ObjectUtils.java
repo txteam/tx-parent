@@ -16,6 +16,7 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.reflect.ConstructorUtils;
+import org.apache.commons.lang3.reflect.TypeUtils;
 import org.apache.ibatis.reflection.MetaObject;
 
 import com.tx.core.exceptions.util.AssertUtils;
@@ -99,7 +100,7 @@ public class ObjectUtils {
             return CollectionUtils.isEmpty((Collection<?>) obj);
         } else if (obj instanceof Map<?, ?>) {
             return MapUtils.isEmpty((Map<?, ?>) obj);
-        } else if (obj instanceof Object[]) {
+        } else if (TypeUtils.isArrayType(obj.getClass())) {
             return ArrayUtils.isEmpty((Object[]) obj);
         } else {
             return false;

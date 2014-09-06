@@ -169,7 +169,7 @@ public class XMLRuleItemConfigLoader extends BaseRuleItemLoader {
         String context = "";
         try {
             in = byteParam.getValue().getInputStream();
-            context = IOUtils.toString(in);
+            context = IOUtils.toString(in,"UTF-8");
         } catch (IOException e) {
             throw ExceptionWrapperUtils.wrapperIOException(e,
                     "key:{} paramKey:{}",
