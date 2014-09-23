@@ -6,19 +6,21 @@
  */
 package com.tx.core.util;
 
+import java.util.UUID;
+
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.id.IdentifierGenerator;
 import org.hibernate.id.UUIDHexGenerator;
 
-
- /**
-  * 生成UUID唯一键工具类<br/>
-  * <功能详细描述>
-  * 
-  * @author  brady
-  * @version  [版本号, 2013-8-27]
-  * @see  [相关类/方法]
-  * @since  [产品/模块版本]
-  */
+/**
+ * 生成UUID唯一键工具类<br/>
+ * <功能详细描述>
+ * 
+ * @author  brady
+ * @version  [版本号, 2013-8-27]
+ * @see  [相关类/方法]
+ * @since  [产品/模块版本]
+ */
 public class UUIDUtils {
     
     private static final IdentifierGenerator generator = new UUIDHexGenerator();
@@ -32,7 +34,12 @@ public class UUIDUtils {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-   public static String generateUUID() {
-       return generator.generate(null, null).toString();
-   }
+    public static String generateUUID() {
+        return generator.generate(null, null).toString();
+    }
+    
+    public static void main(String[] args) {
+        StringBuilder sb = new StringBuilder();
+        System.out.println(UUID.randomUUID().toString());
+    }
 }

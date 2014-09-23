@@ -46,7 +46,7 @@ public abstract class RuleItemParamHelper {
                 "ruleItemParamEnumClass is not Enum.");
         
         @SuppressWarnings({ "unchecked", "rawtypes" })
-        Iterator<P> ite = (Iterator<P>)EnumUtils.getEnumList((Class<Enum>)ruleItemParamEnumClass).iterator();
+        Iterator<P> ite = (Iterator<P>)EnumUtils.getEnumList((Class<? extends Enum>)ruleItemParamEnumClass).iterator();
         Set<RuleItemParam> resSet = new HashSet<RuleItemParam>();
         while (ite.hasNext()) {
             P pTemp = ite.next();
