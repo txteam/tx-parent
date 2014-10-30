@@ -1361,6 +1361,13 @@
 				<version>1.0.0.GA</version>
 			</dependency>
 
+			<!-- -->
+			<dependency>
+				<groupId>net.sf.barcode4j</groupId>
+				<artifactId>barcode4j</artifactId>
+				<version>2.1</version>
+			</dependency>
+
 			<!-- web context -->
 			<dependency>
 				<groupId>javax.servlet</groupId>
@@ -1716,11 +1723,11 @@
 	<distributionManagement>
 		<repository>
 			<id>releases</id>
-			<url>http://lenovo-pc-10:8081/nexus/content/repositories/releases</url>
+			<url>http://192.168.85.105:8081/nexus/content/repositories/releases</url>
 		</repository>
 		<snapshotRepository>
 			<id>snapshots</id>
-			<url>http://lenovo-pc-10:8081/nexus/content/repositories/snapshots</url>
+			<url>http://192.168.85.105:8081/nexus/content/repositories/snapshots</url>
 		</snapshotRepository>
 	</distributionManagement>
 

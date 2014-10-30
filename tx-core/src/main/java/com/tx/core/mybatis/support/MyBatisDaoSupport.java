@@ -649,7 +649,7 @@ public class MyBatisDaoSupport implements InitializingBean {
                 }
             }
         }
-        
+        this.sqlSessionTemplate.clearCache();
         return result;
     }
     
@@ -750,7 +750,7 @@ public class MyBatisDaoSupport implements InitializingBean {
                 }
             }
         }
-        
+        this.sqlSessionTemplate.clearCache();
         return result;
     }
     
@@ -896,7 +896,7 @@ public class MyBatisDaoSupport implements InitializingBean {
                 }
             }
         }
-        
+        this.sqlSessionTemplate.clearCache();
         return result;
     }
     
@@ -1057,7 +1057,7 @@ public class MyBatisDaoSupport implements InitializingBean {
                 }
             }
         }
-        
+        this.sqlSessionTemplate.clearCache();
         return result;
     }
     
@@ -1221,7 +1221,7 @@ public class MyBatisDaoSupport implements InitializingBean {
                 }
             }
         }
-        
+        this.sqlSessionTemplate.clearCache();
         return result;
     }
     
@@ -1238,6 +1238,18 @@ public class MyBatisDaoSupport implements InitializingBean {
      */
     private List<org.apache.ibatis.executor.BatchResult> flushBatchStatements() {
         return this.batchSqlSessionTemplate.flushStatements();
+    }
+    
+    /**
+      * 清空缓存<br/>
+      * <功能详细描述> [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public void clearCache() {
+        this.sqlSessionTemplate.clearCache();
     }
     
     /**

@@ -27,6 +27,7 @@ import com.thoughtworks.xstream.mapper.MapperWrapper;
   * @since  [产品/模块版本]
  */
 public class XstreamUtils {
+    
     private static Logger logger = LoggerFactory.getLogger(XstreamUtils.class);
     
     private static Map<Class<?>, XStream> xstreamMap = new WeakHashMap<Class<?>, XStream>();

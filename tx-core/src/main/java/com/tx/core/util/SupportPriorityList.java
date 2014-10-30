@@ -149,7 +149,7 @@ public class SupportPriorityList<T> {
         
         MultiValueMap<String, String> tt = new LinkedMultiValueMap<>();
         
-        int count = 64;
+        int count = 25;
         for (int i = 0; i < count; i++) {
             String t1 = t.getObject();
             tt.add(t1, t1);
