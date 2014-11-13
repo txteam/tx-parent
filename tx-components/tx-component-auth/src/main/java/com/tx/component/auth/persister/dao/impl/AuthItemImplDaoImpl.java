@@ -153,6 +153,8 @@ public class AuthItemImplDaoImpl implements AuthItemImplDao {
         sb.append("SELECT ");
         sb.append("ID,");
         sb.append("PARENTID,");
+        sb.append("REFID,");
+        sb.append("REFTYPE,");
         sb.append("SYSTEMID,");
         sb.append("VALID,");
         sb.append("EDITABLE,");
@@ -179,6 +181,8 @@ public class AuthItemImplDaoImpl implements AuthItemImplDao {
         sb.append("SELECT ");
         sb.append("ID,");
         sb.append("PARENTID,");
+        sb.append("REFID,");
+        sb.append("REFTYPE,");
         sb.append("SYSTEMID,");
         sb.append("VALID,");
         sb.append("EDITABLE,");
@@ -192,6 +196,12 @@ public class AuthItemImplDaoImpl implements AuthItemImplDao {
                 TxConstants.INITIAL_STR_LENGTH);
         if (!ObjectUtils.isEmpty(params.get("id"))) {
             conditionSb.append(" AND TAII.ID = ?");
+        }
+        if (!ObjectUtils.isEmpty(params.get("refId"))) {
+            conditionSb.append(" AND TAII.REFID = ?");
+        }
+        if (!ObjectUtils.isEmpty(params.get("refType"))) {
+            conditionSb.append(" AND TAII.REFTYPE = ?");
         }
         if (!ObjectUtils.isEmpty(params.get("systemId"))) {
             conditionSb.append(" AND TAII.SYSTEMID = ?");
@@ -226,6 +236,14 @@ public class AuthItemImplDaoImpl implements AuthItemImplDao {
                         if (!ObjectUtils.isEmpty(params.get("id"))) {
                             ps.setString(++parameterIndex,
                                     (String) params.get("id"));
+                        }
+                        if (!ObjectUtils.isEmpty(params.get("refId"))) {
+                            ps.setString(++parameterIndex,
+                                    (String) params.get("refId"));
+                        }
+                        if (!ObjectUtils.isEmpty(params.get("refType"))) {
+                            ps.setString(++parameterIndex,
+                                    (String) params.get("refType"));
                         }
                         if (!ObjectUtils.isEmpty(params.get("systemId"))) {
                             ps.setString(++parameterIndex,
@@ -266,6 +284,12 @@ public class AuthItemImplDaoImpl implements AuthItemImplDao {
             String tableSuffix) {
         StringBuilder sb = new StringBuilder(TxConstants.INITIAL_STR_LENGTH);
         sb.append(" UPDATE AUTH_AUTHITEM").append(tableSuffix).append(" SET ");
+        if (!ObjectUtils.isEmpty(updateRowMap.get("refId"))) {
+            sb.append(" REFID = ?,");
+        }
+        if (!ObjectUtils.isEmpty(updateRowMap.get("refType"))) {
+            sb.append(" REFTYPE = ?,");
+        }
         if (!ObjectUtils.isEmpty(updateRowMap.get("valid"))) {
             sb.append(" VALID = ?,");
         }
@@ -295,6 +319,14 @@ public class AuthItemImplDaoImpl implements AuthItemImplDao {
             @Override
             public void setValues(PreparedStatement ps) throws SQLException {
                 int parameterIndex = 0;
+                if (!ObjectUtils.isEmpty(updateRowMap.get("refId"))) {
+                    ps.setString(++parameterIndex,
+                            (String) updateRowMap.get("refId"));
+                }
+                if (!ObjectUtils.isEmpty(updateRowMap.get("refType"))) {
+                    ps.setString(++parameterIndex,
+                            (String) updateRowMap.get("refType"));
+                }
                 if (!ObjectUtils.isEmpty(updateRowMap.get("valid"))) {
                     ps.setBoolean(++parameterIndex,
                             (Boolean) updateRowMap.get("valid"));
@@ -339,6 +371,8 @@ public class AuthItemImplDaoImpl implements AuthItemImplDao {
                 throws SQLException {
             AuthItemImpl res = new AuthItemImpl();
             res.setId(rs.getString("ID"));
+            res.setRefId(rs.getString("REFID"));
+            res.setRefType(rs.getString("REFTYPE"));
             res.setParentId(rs.getString("PARENTID"));
             res.setSystemId(rs.getString("SYSTEMID"));
             res.setDescription(rs.getString("DESCRIPTION"));

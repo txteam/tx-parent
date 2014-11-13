@@ -659,6 +659,12 @@
 				</exclusions>
 			</dependency>
 
+			<dependency>
+				<groupId>cn.edu.hfut.dmic.webcollector</groupId>
+				<artifactId>WebCollector</artifactId>
+				<version>1.31</version>
+			</dependency>
+
 			<!-- drools -->
 			<dependency>
 				<groupId>org.drools</groupId>

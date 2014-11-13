@@ -26,6 +26,28 @@ public interface AuthItem extends TreeAble<List<AuthItem>, AuthItem>,
     String getId();
     
     /**
+      * 获取权限关联项id 
+      *<功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return String [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    String getRefId();
+    
+    /**
+      * 权限项目引用类型  
+      * <功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return String [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    String getRefType();
+    
+    /**
       * 获取权限项系统id
       *<功能详细描述>
       * @return [参数说明]

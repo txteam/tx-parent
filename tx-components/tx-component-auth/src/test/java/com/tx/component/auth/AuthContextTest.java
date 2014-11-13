@@ -45,11 +45,6 @@ public class AuthContextTest {
     private AuthContext authContext;
     
     @Test
-    public void testGetAllAuthItemList() {
-        Assert.assertNotNull(authContext.getAllAuthItemList());
-    }
-    
-    @Test
     public void testGetAllAuthItemMapping() {
         Assert.assertNotNull(authContext.getAllAuthItemMapping());
     }

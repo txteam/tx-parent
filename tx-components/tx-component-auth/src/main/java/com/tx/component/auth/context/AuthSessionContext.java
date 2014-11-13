@@ -171,9 +171,77 @@ public abstract class AuthSessionContext {
         List<AuthItem> authItemList = new ArrayList<AuthItem>();
         MultiValueMap<String, AuthItemRef> authRefMulMap = getAuthRefMultiValueMapFromSession();
         for (String authIdTemp : authRefMulMap.keySet()) {
+            if (!authItemMapping.containsKey(authIdTemp)) {
+                continue;
+            }
             authItemList.add(authItemMapping.get(authIdTemp));
         }
         return authItemList;
+    }
+    
+    /**
+      * 根据父级权限id获取当前人员拥有的权限权限项列表
+      *<功能详细描述>
+      * @param parentId
+      * @return [参数说明]
+      * 
+      * @return List<AuthItem> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public static List<AuthItem> getAuthItemListByParentIdFromSession(
+            String parentId) {
+        AssertUtils.notEmpty(parentId, "parentId is empty.");
+        
+        Map<String, AuthItem> authItemMapping = AuthContext.getContext()
+                .getAllAuthItemMapping();
+        List<AuthItem> resList = new ArrayList<AuthItem>();
+        MultiValueMap<String, AuthItemRef> authRefMulMap = getAuthRefMultiValueMapFromSession();
+        for (String authIdTemp : authRefMulMap.keySet()) {
+            if (!authItemMapping.containsKey(authIdTemp)) {
+                continue;
+            }
+            AuthItem authItemTemp = authItemMapping.get(authIdTemp);
+            if (parentId.equals(authItemTemp.getParentId())) {
+                resList.add(authItemTemp);
+            }
+        }
+        return resList;
+    }
+    
+    /**
+      * 根据父级权限id以及权限类型获取当前人员拥有的权限权限项列表
+      *<功能详细描述>
+      * @param authType
+      * @param parentId
+      * @return [参数说明]
+      * 
+      * @return List<AuthItem> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public static List<AuthItem> getAuthItemListByAuthTypeAndParentIdFromSession(
+            String authType, String parentId) {
+        AssertUtils.notEmpty(parentId, "parentId is empty.");
+        AssertUtils.notEmpty(authType, "authType is empty.");
+        
+        Map<String, AuthItem> authItemMapping = AuthContext.getContext()
+                .getAllAuthItemMapping();
+        
+        List<AuthItem> resList = new ArrayList<AuthItem>();
+        MultiValueMap<String, AuthItemRef> authRefMulMap = getAuthRefMultiValueMapFromSession();
+        for (String authIdTemp : authRefMulMap.keySet()) {
+            if (!authItemMapping.containsKey(authIdTemp)) {
+                continue;
+            }
+            
+            AuthItem authItemTemp = authItemMapping.get(authIdTemp);
+            if (parentId.equals(authItemTemp.getParentId())
+                    && authType.equals(authItemTemp.getAuthType())) {
+                resList.add(authItemTemp);
+            }
+        }
+        return resList;
     }
     
     /**
@@ -192,6 +260,10 @@ public abstract class AuthSessionContext {
         List<AuthItem> authItemList = new ArrayList<AuthItem>();
         MultiValueMap<String, AuthItemRef> authRefMulMap = getAuthRefMultiValueMapFromSession();
         for (Entry<String, List<AuthItemRef>> entryTemp : authRefMulMap.entrySet()) {
+            if (!authItemMapping.containsKey(entryTemp.getKey())) {
+                continue;
+            }
+            
             AuthItem authItemTemp = authItemMapping.get(entryTemp.getKey());
             List<AuthItemRef> authItemRefListTemp = entryTemp.getValue();
             if (!CollectionUtils.isEmpty(authItemRefListTemp)) {

@@ -15,6 +15,7 @@ import java.util.Map.Entry;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.ListUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MultiValueMap;
@@ -97,27 +98,6 @@ public class AuthContext extends AuthContextBuilder {
     }
     
     /**
-      * 获取系统中所有权限项的列表
-      * <功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return List<AuthItem> [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    public List<AuthItem> getAllAuthItemList() {
-        List<AuthItem> authItemList = new ArrayList<>(
-                TxConstants.INITIAL_CONLLECTION_SIZE);
-        
-        for (AuthItem authItemTemp : authItemMapping.values()) {
-            authItemList.add(authItemTemp);
-        }
-        @SuppressWarnings("unchecked")
-        List<AuthItem> resList = ListUtils.unmodifiableList(authItemList);
-        return resList;
-    }
-    
-    /**
       * 根据权限类型获取权限列表<br/>
       *<功能详细描述>
       * @param authType
@@ -139,6 +119,10 @@ public class AuthContext extends AuthContextBuilder {
             }
         }
         return (List<AuthItem>) ListUtils.unmodifiableList(resList);
+    }
+    
+    public List<AuthItem> getAuthItemListByAuthTypeAndParentId(String authType,String parentId){
+        throw new NotImplementedException();
     }
     
     /**

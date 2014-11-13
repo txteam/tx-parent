@@ -46,6 +46,16 @@ public class AuthItemImpl implements AuthItem {
     @Id
     private String id;
     
+    /**
+     * 引用id
+     */
+    private String refId;
+    
+    /**
+     * 引用类型
+     */
+    private String refType;
+    
     /** 父级权限id */
     private String parentId;
     
@@ -318,6 +328,34 @@ public class AuthItemImpl implements AuthItem {
         this.editAble = editAble;
     }
     
+    /**
+     * @return 返回 refId
+     */
+    public String getRefId() {
+        return refId;
+    }
+
+    /**
+     * @param 对refId进行赋值
+     */
+    public void setRefId(String refId) {
+        this.refId = refId;
+    }
+
+    /**
+     * @return 返回 refType
+     */
+    public String getRefType() {
+        return refType;
+    }
+
+    /**
+     * @param 对refType进行赋值
+     */
+    public void setRefType(String refType) {
+        this.refType = refType;
+    }
+
     /**
      * @return 返回 virtual
      */
