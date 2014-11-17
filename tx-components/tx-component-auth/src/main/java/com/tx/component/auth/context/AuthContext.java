@@ -329,6 +329,8 @@ public class AuthContext extends AuthContextBuilder {
             newAuthItemImpl.setConfigAble(authItem.isConfigAble());
             newAuthItemImpl.setValid(authItem.isValid());
             newAuthItemImpl.setViewAble(authItem.isViewAble());
+            newAuthItemImpl.setRefId(authItem.getRefId());
+            newAuthItemImpl.setRefType(authItem.getRefType());
             
             //持久化权限项
             res = doRegisteNewAuth(newAuthItemImpl);
@@ -343,6 +345,8 @@ public class AuthContext extends AuthContextBuilder {
             authItemRowMap.put("configAble", authItem.isConfigAble());
             authItemRowMap.put("valid", authItem.isValid());
             authItemRowMap.put("viewAble", authItem.isViewAble());
+            authItemRowMap.put("refId", authItem.getRefId());
+            authItemRowMap.put("refType", authItem.getRefType());
             
             res = doRegisteSaveAuth(authItemRowMap);
         }
@@ -363,7 +367,7 @@ public class AuthContext extends AuthContextBuilder {
       * @return [参数说明]
       * 
       * @return AuthItem [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
+      * @exception throws [异常类型] [rr异常说明]
       * @see [类、类#方法、类#成员]
      */
     @Transactional
