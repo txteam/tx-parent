@@ -99,9 +99,7 @@ public class ObjectUtils {
         //为空时认为是empty的
         if (obj == null) {
             return true;
-        } else if (obj instanceof Boolean) {
-            return obj == null;
-        }else if (obj instanceof String) {
+        } else if (obj instanceof String) {
             return StringUtils.isEmpty((String) obj);
         } else if (obj instanceof Collection<?>) {
             return CollectionUtils.isEmpty((Collection<?>) obj);
