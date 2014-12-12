@@ -77,7 +77,7 @@ public class MyBatisDaoSupport implements InitializingBean {
      * @throws Exception
      */
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         if (sqlSessionTemplate == null && sqlSessionFactory == null) {
             throw new NullArgException(
                     "sqlSessionTemplate and sqlSessionFactory is null");

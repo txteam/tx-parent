@@ -10,6 +10,8 @@
 			--****************************************************************************
 			create table auth_authitem${tableSuffix}(
 			  id varchar2(64) not null,				--权限项唯一键key 
+			  refId varchar2(64) not null,	
+			  refType varchar2(64) not null,
 			  systemid varchar2(64) not null,       --系统唯一键id
 			  parentId varchar2(64),				--父级权限id
 			  name varchar2(256),					--权限项名 
@@ -45,6 +47,8 @@
 			create table auth_authitem${tableSuffix}
 			(
 			  id varchar2(64) not null,				--权限项唯一键key 
+			  refId varchar2(64) not null,	
+			  refType varchar2(64) not null,
 			  systemid varchar2(64) not null,       --系统唯一键id
 			  parentId varchar2(64),				--父级权限id
 			  name varchar2(256),					--权限项名 
@@ -77,6 +81,8 @@
 			create table auth_authitem${tableSuffix}
 			(
 			  id varchar2(64) not null,				--权限项唯一键key 
+			  refId varchar2(64) not null,	
+			  refType varchar2(64) not null,
 			  systemid varchar2(64) not null,       --系统唯一键id
 			  parentId varchar2(64),				--父级权限id
 			  name varchar2(256),					--权限项名 
@@ -112,6 +118,8 @@
 			create table auth_authitem${tableSuffix}
 			(
 			  id varchar2(64) not null,				--权限项唯一键key 
+			  refId varchar2(64) not null,	
+			  refType varchar2(64) not null,
 			  systemid varchar2(64) not null,       --系统唯一键id
 			  parentId varchar2(64),				--父级权限id
 			  name varchar2(256),					--权限项名 
@@ -144,6 +152,8 @@
 			create table auth_authitem${tableSuffix}
 			(
 			  id varchar(64) not null,				--权限项唯一键key 
+			  refId varchar(64) not null,	
+			  refType varchar(64) not null,
 			  systemid varchar(64) not null,       --系统唯一键id
 			  parentId varchar(64),				--父级权限id
 			  name varchar(256),					--权限项名 
@@ -179,6 +189,8 @@
 			create table auth_authitem${tableSuffix}
 			(
 			  id varchar(64) not null,				--权限项唯一键key 
+			  refId varchar(64) not null,	
+			  refType varchar(64) not null,
 			  systemid varchar(64) not null,       --系统唯一键id
 			  parentId varchar(64),				--父级权限id
 			  name varchar(256),					--权限项名 

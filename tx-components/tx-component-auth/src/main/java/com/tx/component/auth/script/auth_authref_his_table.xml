@@ -10,6 +10,8 @@
 			--****************************************************************************
 			create table auth_authref_his${tableSuffix}(
 			  id varchar2(64) not null,
+			  refId varchar2(64) not null,	
+			  refType varchar2(64) not null,
 			  refid  varchar2(64) not null,
 			  authreftype varchar2(64) not null,
 			  authid varchar2(128) not null,
@@ -20,8 +22,7 @@
 			  effectiveDate timestamp,
 			  invalidDate timestamp,
 			  createoperid varchar2(64),
-			  temp number(1) not null default 0,
-			  primary key(id)
+			  temp number(1) not null default 0
 			);
 			create index idx_auth_ref_his01 on auth_authref_his${tableSuffix}(systemid,refid);
 			create index idx_auth_ref_his02 on auth_authref_his${tableSuffix}(systemid,refid,authreftype);
@@ -49,6 +50,8 @@
 			--****************************************************************************
 			create table auth_authref_his${tableSuffix}(
 			  id varchar2(64) not null,
+			  refId varchar2(64) not null,	
+			  refType varchar2(64) not null,
 			  refid  varchar2(64) not null,
 			  authreftype varchar2(64) not null,
 			  authid varchar2(128) not null,
@@ -59,8 +62,7 @@
 			  effectiveDate timestamp,
 			  invalidDate timestamp,
 			  createoperid varchar2(64),
-			  temp number(1) not null default 0,
-			  primary key(id)
+			  temp number(1) not null default 0
 			);
 			create index idx_auth_ref_his01 on auth_authref_his${tableSuffix}(systemid,refid);
 			create index idx_auth_ref_his02 on auth_authref_his${tableSuffix}(systemid,refid,authreftype);
@@ -87,7 +89,8 @@
 			--****************************************************************************
 			create table auth_authref_his${tableSuffix}(
 			  id varchar2(64) not null,
-			  refid  varchar2(64) not null,
+			  refId varchar2(64) not null,	
+			  refType varchar2(64) not null,
 			  authreftype varchar2(64) not null,
 			  authid varchar2(128) not null,
 			  systemid varchar2(64) not null,
@@ -97,8 +100,7 @@
 			  effectiveDate date,
 			  invalidDate date,
 			  createoperid varchar2(64),
-			  temp number(1) not null default 0,
-			  primary key(id)
+			  temp number(1) not null default 0
 			);
 			create index idx_auth_ref_his01 on auth_authref_his${tableSuffix}(systemid,refid);
 			create index idx_auth_ref_his02 on auth_authref_his${tableSuffix}(systemid,refid,authreftype);
@@ -126,7 +128,8 @@
 			--****************************************************************************
 			create table auth_authref_his${tableSuffix}(
 			  id varchar2(64) not null,
-			  refid  varchar2(64) not null,
+			  refId varchar2(64) not null,	
+			  refType varchar2(64) not null,
 			  authreftype varchar2(64) not null,
 			  authid varchar2(128) not null,
 			  systemid varchar2(64) not null,
@@ -136,8 +139,7 @@
 			  effectiveDate date,
 			  invalidDate date,
 			  createoperid varchar2(64),
-			  temp number(1) not null default 0,
-			  primary key(id)
+			  temp number(1) not null default 0
 			);
 			create index idx_auth_ref_his01 on auth_authref_his${tableSuffix}(systemid,refid);
 			create index idx_auth_ref_his02 on auth_authref_his${tableSuffix}(systemid,refid,authreftype);
@@ -161,7 +163,8 @@
 		<createTableScript>
 			create table auth_authref_his${tableSuffix}(
 			  id varchar(64) not null,
-			  refid  varchar(64) not null,
+			  refId varchar(64) not null,	
+			  refType varchar(64) not null,
 			  authreftype varchar(64) not null,
 			  authid varchar(128) not null,
 			  systemid varchar(64) not null,
@@ -171,8 +174,7 @@
 			  effectiveDate timestamp,
 			  invalidDate timestamp,
 			  createoperid varchar(64),
-			  temp smallint not null default 0,
-			  primary key(id)
+			  temp smallint not null default 0
 			);
 			create index idx_auth_ref_his01 on auth_authref_his${tableSuffix}(systemid,refid);
 			create index idx_auth_ref_his02 on auth_authref_his${tableSuffix}(systemid,refid,authreftype);
@@ -189,7 +191,8 @@
 			DROP TABLE auth_authref_his${tableSuffix};
 			create table auth_authref_his${tableSuffix}(
 			  id varchar(64) not null,
-			  refid  varchar(64) not null,
+			  refId varchar(64) not null,	
+			  refType varchar(64) not null,
 			  authreftype varchar(64) not null,
 			  authid varchar(128) not null,
 			  systemid varchar(64) not null,
@@ -199,8 +202,7 @@
 			  effectiveDate timestamp,
 			  invalidDate timestamp,
 			  createoperid varchar(64),
-			  temp smallint not null default 0,
-			  primary key(id)
+			  temp smallint not null default 0
 			);
 			create index idx_auth_ref_his01 on auth_authref_his${tableSuffix}(systemid,refid);
 			create index idx_auth_ref_his02 on auth_authref_his${tableSuffix}(systemid,refid,authreftype);
