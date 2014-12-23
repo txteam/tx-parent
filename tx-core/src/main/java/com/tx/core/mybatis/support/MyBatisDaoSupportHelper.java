@@ -6,6 +6,10 @@
  */
 package com.tx.core.mybatis.support;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.sql.DataSource;
 
 import org.apache.ibatis.plugin.Interceptor;
@@ -17,6 +21,7 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.dao.support.PersistenceExceptionTranslator;
 
 import com.tx.core.dbscript.model.DataSourceTypeEnum;
@@ -34,6 +39,8 @@ import com.tx.core.mybatis.interceptor.PagedDiclectStatementHandlerInterceptor;
 public class MyBatisDaoSupportHelper {
     
     private static ResourceLoader defaultResourceLoader = new DefaultResourceLoader();
+    
+    private static PathMatchingResourcePatternResolver pathMatchingResourcePatternResolver = new PathMatchingResourcePatternResolver();
     
     /**
       * 构建MybatisDaoSupport
@@ -119,7 +126,14 @@ public class MyBatisDaoSupportHelper {
         
         sqlSessionFactoryBean.setDataSource(dataSource);
         sqlSessionFactoryBean.setConfigLocation(defaultResourceLoader.getResource(configLocation));
-        sqlSessionFactoryBean.setMapperLocations(new Resource[] {});
+        //if(applicationContext)
+        Set<Resource> mapperLocationResourcesSet = new HashSet<>();
+        for (String mapperLocationTemp : mapperLocations) {
+            Resource[] resourcesTemp = pathMatchingResourcePatternResolver.getResources(mapperLocationTemp);
+            mapperLocationResourcesSet.addAll(new HashSet<>(
+                    Arrays.asList(resourcesTemp)));
+        }
+        sqlSessionFactoryBean.setMapperLocations(mapperLocationResourcesSet.toArray(new Resource[] {}));
         
         sqlSessionFactoryBean.afterPropertiesSet();
         SqlSessionFactory sqlSessionFactory = (SqlSessionFactory) sqlSessionFactoryBean.getObject();
