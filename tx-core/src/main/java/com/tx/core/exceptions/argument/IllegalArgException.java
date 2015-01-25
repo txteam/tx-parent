@@ -11,7 +11,6 @@ import com.tx.core.exceptions.SILException;
 
  /**
   * 参数非法异常<br/>
-  * <功能详细描述>
   * 
   * @author  brady
   * @version  [版本号, 2013-8-20]

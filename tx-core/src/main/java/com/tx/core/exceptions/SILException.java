@@ -102,9 +102,7 @@ public class SILException extends RuntimeException {
         return "系统内部错误";
     }
     
-    /**
-     * <默认构造函数>
-     */
+    /** <默认构造函数> */
     public SILException(String message) {
         this(message, new Object[0]);
         this.errorCode = getErrorCode();
@@ -118,9 +116,7 @@ public class SILException extends RuntimeException {
         this.errorMessage = getErrorMessage();
     }
     
-    /**
-     * <默认构造函数>
-     */
+    /** <默认构造函数> */
     public SILException(String message, Object[] parameters) {
         super((parameters == null || parameters.length == 0) ? message
                 : MessageFormatter.arrayFormat(message, parameters)

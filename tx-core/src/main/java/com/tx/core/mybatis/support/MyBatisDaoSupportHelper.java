@@ -134,6 +134,11 @@ public class MyBatisDaoSupportHelper {
                     Arrays.asList(resourcesTemp)));
         }
         sqlSessionFactoryBean.setMapperLocations(mapperLocationResourcesSet.toArray(new Resource[] {}));
+
+        sqlSessionFactoryBean.setTypeHandlersPackage("com.tx.core.mybatis.handler");
+        PagedDiclectStatementHandlerInterceptor pagedInterceptor = new PagedDiclectStatementHandlerInterceptor();
+        pagedInterceptor.setDataSourceType(dataSourceType);
+        sqlSessionFactoryBean.setPlugins(new Interceptor[]{pagedInterceptor});
         
         sqlSessionFactoryBean.afterPropertiesSet();
         SqlSessionFactory sqlSessionFactory = (SqlSessionFactory) sqlSessionFactoryBean.getObject();

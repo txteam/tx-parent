@@ -10,6 +10,8 @@ import java.util.Date;
 
 import org.joda.time.DateTime;
 
+import com.tx.core.exceptions.util.AssertUtils;
+
 /**
  * 时间工具类<br/>
  * <功能详细描述>
@@ -23,6 +25,23 @@ public class DateUtils {
     
     /** 每天秒数 */
     private static long DAY_SECOND_COUNT = 1000 * 60 * 60 * 24;
+    
+    /**
+      * 获取对应时间对应标准时间间隔天数
+      * <功能详细描述>
+      * @param date
+      * @return [参数说明]
+      * 
+      * @return int [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public static int getDays(Date date) {
+        AssertUtils.notNull(date, "date is null");
+        
+        long res = date.getTime() / DAY_SECOND_COUNT;
+        return (int) res;
+    }
     
     /**
       * 获取两个时间之间最大的时间<br/>
@@ -99,5 +118,18 @@ public class DateUtils {
                             : -1);
         }
         return dayCount;
+    }
+    
+    public static void main(String[] args) {
+        System.out.println((new Date()).getTime() / 1000 / 60 / 60 / 24);
+        
+        System.out.println((new DateTime(9999, 1, 13, 23, 59, 59)).toDate()
+                .getTime() / 1000 / 60 / 60 / 24);
+        
+        System.out.println((new DateTime(2015, 1, 13, 00, 00, 00)).toDate()
+                .getTime() / 1000 / 60 / 60 / 24);
+        
+        System.out.println((new DateTime(2015, 1, 14, 00, 00, 00)).toDate()
+                .getTime() / 1000 / 60 / 60 / 24);
     }
 }
