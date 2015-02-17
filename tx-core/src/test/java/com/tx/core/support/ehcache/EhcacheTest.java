@@ -24,19 +24,17 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-
- /**
-  * 测试ehcache相关特性
-  * <功能详细描述>
-  * 
-  * @author  PengQingyang
-  * @version  [版本号, 2013-4-4]
-  * @see  [相关类/方法]
-  * @since  [产品/模块版本]
-  */
+/**
+ * 测试ehcache相关特性
+ * <功能详细描述>
+ * 
+ * @author  PengQingyang
+ * @version  [版本号, 2013-4-4]
+ * @see  [相关类/方法]
+ * @since  [产品/模块版本]
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {
-        "classpath:spring/beans-cache.xml"})
+@ContextConfiguration(locations = { "classpath:spring/beans-cache.xml" })
 public class EhcacheTest {
     
     @Resource(name = "cache")
@@ -46,51 +44,48 @@ public class EhcacheTest {
      * 单例CacheManager 创建
      */
     @Test
-    public void testCreateSingleCacheManager(){
+    public void testCreateSingleCacheManager() {
         // Create a singleton CacheManager using defaults   
-        System.out.println("Create a singleton CacheManager using defaults");   
+        System.out.println("Create a singleton CacheManager using defaults");
         // CacheManager.create();   
-        System.out.println("CacheManager.create()     :="  
-                + CacheManager.getInstance());   
-        System.out.println("cacheNames length := "  
-                + CacheManager.getInstance().getCacheNames().length);   
-        CacheManager.getInstance().shutdown();   
-        System.out.println("=======================================");   
-   
+        System.out.println("CacheManager.create()     :="
+                + CacheManager.getInstance());
+        System.out.println("cacheNames length := "
+                + CacheManager.getInstance().getCacheNames().length);
+        CacheManager.getInstance().shutdown();
+        System.out.println("=======================================");
+        
         // Create a singleton CacheManager using a configuration file   
-        System.out   
-                .println("Create a singleton CacheManager using a configuration file");   
-        CacheManager singletonManager2 = CacheManager  
-                .create("src/main/resources/ehcache.xml");   
-        System.out.println("CacheManager.create(file) :=" + singletonManager2);   
-        System.out.println("cacheNames length := "  
-                + singletonManager2.getCacheNames().length);   
-        System.out   
-                .println("CacheManager.getInstance() == singletonManager2 :: "  
-                        + (CacheManager.getInstance() == singletonManager2));   
-        singletonManager2.shutdown();   
+        System.out.println("Create a singleton CacheManager using a configuration file");
+        CacheManager singletonManager2 = CacheManager.create("src/main/resources/ehcache.xml");
+        System.out.println("CacheManager.create(file) :=" + singletonManager2);
+        System.out.println("cacheNames length := "
+                + singletonManager2.getCacheNames().length);
+        System.out.println("CacheManager.getInstance() == singletonManager2 :: "
+                + (CacheManager.getInstance() == singletonManager2));
+        singletonManager2.shutdown();
         // CacheManager.getInstance().shutdown();   
-   
-        System.out.println("=======================================");   
-   
+        
+        System.out.println("=======================================");
+        
         // Create a singleton CacheManager from a configuration resource in the   
         // classpath.   
-        URL configurl = Thread.currentThread().getContextClassLoader()   
-                .getResource("ehcache.xml");   
-        CacheManager singletonManager3 = CacheManager.create(configurl);   
-        System.out.println("CacheManager.create(url)  :=" + singletonManager3);   
-   
-        String[] cacheNames = singletonManager3.getCacheNames();   
-        System.out.println("cacheNames length := " + cacheNames.length);   
-        for (String name : cacheNames) {   
-            System.out.println("name := " + name);   
-        }   
-        System.out   
-        .println("CacheManager.getInstance() == singletonManager3 :: "  
-                + (CacheManager.getInstance() == singletonManager3)); 
-        singletonManager3.shutdown();   
+        URL configurl = Thread.currentThread()
+                .getContextClassLoader()
+                .getResource("ehcache.xml");
+        CacheManager singletonManager3 = CacheManager.create(configurl);
+        System.out.println("CacheManager.create(url)  :=" + singletonManager3);
+        
+        String[] cacheNames = singletonManager3.getCacheNames();
+        System.out.println("cacheNames length := " + cacheNames.length);
+        for (String name : cacheNames) {
+            System.out.println("name := " + name);
+        }
+        System.out.println("CacheManager.getInstance() == singletonManager3 :: "
+                + (CacheManager.getInstance() == singletonManager3));
+        singletonManager3.shutdown();
         // CacheManager.getInstance().shutdown();   
-        System.out.println("=======================================");   
+        System.out.println("=======================================");
     }
     
     /**
@@ -103,7 +98,7 @@ public class EhcacheTest {
       * @see [类、类#方法、类#成员]
      */
     @Test
-    public void testCacheWriteAfterUpdate(){
+    public void testCacheWriteAfterUpdate() {
         String key = "testKey1";
         Map<String, String> value = new HashMap<String, String>();
         value.put("1", "1");
@@ -116,7 +111,8 @@ public class EhcacheTest {
         value.put("1", "2");
         
         System.out.println(cache.get(key));
-        Map<String, String> cacheMap = (Map<String, String>)cache.get(key).getValue();
+        Map<String, String> cacheMap = (Map<String, String>) cache.get(key)
+                .getValue();
         System.out.println(value == cacheMap);
         System.out.println(cacheMap.size());
         System.out.println(cacheMap.get("1"));
@@ -124,7 +120,7 @@ public class EhcacheTest {
     }
     
     @Test
-    public void testCacheWriteAfterUpdateWithListener(){
+    public void testCacheWriteAfterUpdateWithListener() {
         String key = "testKey1";
         Map<String, String> value = new HashMap<String, String>();
         value.put("1", "1");
@@ -144,7 +140,8 @@ public class EhcacheTest {
         value.put("1", "2");
         
         System.out.println(cache.get(key));
-        Map<String, String> cacheMap = (Map<String, String>)cache.get(key).getValue();
+        Map<String, String> cacheMap = (Map<String, String>) cache.get(key)
+                .getValue();
         System.out.println(value == cacheMap);
         System.out.println(cacheMap.size());
         System.out.println(cacheMap.get("1"));
@@ -156,7 +153,7 @@ public class EhcacheTest {
         System.out.println("testEnd");
     }
     
-    public void testSimpleEhcacheImpl(){
+    public void testSimpleEhcacheImpl() {
         CacheManager cm = CacheManager.getInstance();
         
         cm.addCache("test");
