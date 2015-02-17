@@ -100,15 +100,13 @@ public class ExcelReadUtils {
         } catch (InvalidFormatException e) {
             throw ExceptionWrapperUtils.wrapperSILException(ResourceParseException.class,
                     "资源解析异常");
-        }finally {
-            IOUtils.closeQuietly(inputStream);
         }
         return book;
     }
     
     /**
       * 读取excel数据并写入map中<br/>
-      *<功能详细描述>
+      * <功能详细描述>
       * @param sheet
       * @param keys
       * @return [参数说明]
@@ -206,12 +204,14 @@ public class ExcelReadUtils {
         Row firstRow = sheet.getRow(firstRowNum);
         AssertUtils.notNull(firstRow,"firstRow is null");
         //获取第一行列数
-        int numberOfCells = firstRow.getPhysicalNumberOfCells();
+        //int numberOfCells = firstRow.getPhysicalNumberOfCells();
         //构造返回列表
         List<T> resList = new ArrayList<T>();
         //获取行中有多少列
-        int rows = sheet.getPhysicalNumberOfRows();
-        for (int r = 0; r < rows; r++) {//遍历多行
+        //int rows = sheet.getPhysicalNumberOfRows();
+        int lastRowNum = sheet.getLastRowNum();
+        //System.out.println(test);
+        for (int r = 0; r < lastRowNum; r++) {//遍历多行
             if (r < skips) {
                 continue;
             }
@@ -226,7 +226,7 @@ public class ExcelReadUtils {
                     ignoreError,
                     ignoreBlank,
                     ignoreTypeUnmatch,
-                    numberOfCells);
+                    0);
             
             //添加到列表中
             resList.add(tInsTemp);

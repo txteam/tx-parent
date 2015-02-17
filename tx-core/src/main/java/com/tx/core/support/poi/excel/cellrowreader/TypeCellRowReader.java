@@ -75,7 +75,9 @@ public class TypeCellRowReader<T> implements CellRowReader<T> {
             boolean ignoreBlank, boolean ignoreTypeUnmatch, int numberOfCells) {
         T obj = ObjectUtils.newInstance(type);
         MetaObject mo = MetaObject.forObject(obj);
-        int cellsLength = numberOfCells != 0 ? numberOfCells : row.getPhysicalNumberOfCells();
+        
+        //int cellsLength = numberOfCells != 0 ? numberOfCells : row.getPhysicalNumberOfCells();
+        int cellsLength = numberOfCells != 0 ? numberOfCells : row.getLastCellNum();
         for (ExcelCellInfo<?> cellInfo : key2excelCellInfoMapping.values()) {
             AssertUtils.isTrue(cellInfo.getIndex() <= cellsLength,
                     "index:{} is not exist.cellsLength:{} ",

@@ -18,6 +18,8 @@ import org.drools.core.util.StringUtils;
 import org.slf4j.helpers.MessageFormatter;
 import org.springframework.core.Ordered;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.core.io.support.ResourcePatternResolver;
 
 import com.thoughtworks.xstream.XStream;
 import com.tx.component.rule.loader.BaseRuleItemLoader;
@@ -50,6 +52,8 @@ public class XMLRuleItemConfigLoader extends BaseRuleItemLoader {
     
     /** 规则配置文件解析器 */
     private static final XStream ruleConfigParse = XstreamUtils.getXstream(RulesConfig.class);
+    
+    private ResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
     
     /**
      * @return
@@ -220,7 +224,7 @@ public class XMLRuleItemConfigLoader extends BaseRuleItemLoader {
       * @see [类、类#方法、类#成员]
      */
     private List<RuleItemConfig> loadFromConfigXML() throws IOException {
-        Resource[] locations = this.applicationContext.getResources(this.configLocations);
+        Resource[] locations = this.resourceResolver.getResources(this.configLocations);
         
         List<RuleItemConfig> ruleItemList = new ArrayList<RuleItemConfig>();
         for (Resource resourceTemp : locations) {

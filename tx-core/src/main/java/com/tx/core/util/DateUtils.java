@@ -8,8 +8,6 @@ package com.tx.core.util;
 
 import java.util.Date;
 
-import org.joda.time.DateTime;
-
 import com.tx.core.exceptions.util.AssertUtils;
 
 /**
@@ -103,33 +101,8 @@ public class DateUtils {
                 preDate)) {
             return 0;
         }
-        DateTime preDateTime = new DateTime(preDate);
-        preDateTime = new DateTime(preDateTime.getYear(),
-                preDateTime.getMonthOfYear(), preDateTime.getDayOfMonth(), 0,
-                0, 0);
-        long afterDateTime = afterDate.getTime();
-        long beforeDateTime = preDateTime.toDate().getTime();
-        int dayCount = 0;
-        if (afterDateTime > beforeDateTime) {
-            dayCount = (int) ((afterDateTime - beforeDateTime) / DAY_SECOND_COUNT);
-        } else {
-            dayCount = (int) ((afterDateTime - beforeDateTime) / DAY_SECOND_COUNT)
-                    + (((afterDateTime - beforeDateTime) % DAY_SECOND_COUNT == 0) ? 0
-                            : -1);
-        }
-        return dayCount;
-    }
-    
-    public static void main(String[] args) {
-        System.out.println((new Date()).getTime() / 1000 / 60 / 60 / 24);
-        
-        System.out.println((new DateTime(9999, 1, 13, 23, 59, 59)).toDate()
-                .getTime() / 1000 / 60 / 60 / 24);
-        
-        System.out.println((new DateTime(2015, 1, 13, 00, 00, 00)).toDate()
-                .getTime() / 1000 / 60 / 60 / 24);
-        
-        System.out.println((new DateTime(2015, 1, 14, 00, 00, 00)).toDate()
-                .getTime() / 1000 / 60 / 60 / 24);
+        int afterDays = getDays(afterDate);
+        int preDays = getDays(preDate);
+        return afterDays - preDays;
     }
 }

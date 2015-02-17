@@ -11,7 +11,7 @@
 				paramKey varchar(64) not null,
 				paramOrder int default 0 not null,
 				paramValue varchar(1024),
-				primary key(ruleId,paramKey,paramOrder)
+				primary key(ruleKey,paramKey,paramOrder)
 			);
 		</createTableScript>
 		
@@ -26,7 +26,7 @@
 				paramKey varchar(64) not null,
 				paramOrder int default 0 not null,
 				paramValue varchar(1024),
-				primary key(ruleId,paramKey,paramOrder)
+				primary key(ruleKey,paramKey,paramOrder)
 			);
 		</defaultUpdateTableScript>
 	</dataSourceScript>
@@ -39,7 +39,7 @@
 				paramKey varchar2(64) not null,
 				paramOrder int default 0 not null,
 				paramValue varchar2(1024),
-				primary key(ruleId,paramKey,paramOrder)
+				primary key(ruleKey,paramKey,paramOrder)
 			);
 		</createTableScript>
 		
@@ -54,7 +54,7 @@
 				paramKey varchar2(64) not null,
 				paramOrder int default 0 not null,
 				paramValue varchar2(1024),
-				primary key(ruleId,paramKey,paramOrder)
+				primary key(ruleKey,paramKey,paramOrder)
 			);
 		</defaultUpdateTableScript>
 	</dataSourceScript>
@@ -67,7 +67,7 @@
 				paramKey varchar(64) not null,
 				paramOrder int default 0 not null,
 				paramValue varchar(1024),
-				primary key(ruleId,paramKey,paramOrder)
+				primary key(ruleKey,paramKey,paramOrder)
 			);
 		</createTableScript>
 		
@@ -82,7 +82,7 @@
 				paramKey varchar(64) not null,
 				paramOrder int default 0 not null,
 				paramValue varchar(1024),
-				primary key(ruleId,paramKey,paramOrder)
+				primary key(ruleKey,paramKey,paramOrder)
 			);
 		</defaultUpdateTableScript>
 	</dataSourceScript>
