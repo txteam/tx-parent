@@ -1729,11 +1729,11 @@
 	<distributionManagement>
 		<repository>
 			<id>releases</id>
-			<url>http://121.40.188.217:8081/nexus/content/repositories/releases</url>
+			<url>http://192.168.85.105:8081/nexus/content/repositories/releases</url>
 		</repository>
 		<snapshotRepository>
 			<id>snapshots</id>
-			<url>http://121.40.188.217:8081/nexus/content/repositories/snapshots</url>
+			<url>http://192.168.85.105:8081/nexus/content/repositories/snapshots</url>
 		</snapshotRepository>
 	</distributionManagement>
 

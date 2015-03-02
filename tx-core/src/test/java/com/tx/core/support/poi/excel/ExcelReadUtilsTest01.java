@@ -17,6 +17,7 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.ss.usermodel.Sheet;
 
 /**
  * 
@@ -28,7 +29,19 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  */
 public class ExcelReadUtilsTest01 {
     
-    public static void main(String[] args) throws FileNotFoundException,
+    public static void main(String[] args) throws Exception{
+        File file = new File("c:/1111.xlsx");
+
+        Sheet sheet = ExcelReadUtils.getWorkBook(new FileInputStream(file)).getSheetAt(0);
+        
+        List<Map<String, String>> resMapList = ExcelReadUtils.readSheet(sheet, new String[] {"客户账号编号"}, 1);
+    
+        for(Map<String, String> temp : resMapList){
+            MapUtils.verbosePrint(System.out, "11", temp);
+        }
+    }
+    
+    public static void main1(String[] args) throws FileNotFoundException,
             IOException {
         try {
             String classPath = ExcelReadUtilsTest01.class.getResource("/").getPath() ;

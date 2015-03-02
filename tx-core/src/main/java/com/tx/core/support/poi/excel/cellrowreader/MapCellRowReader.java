@@ -62,9 +62,10 @@ public class MapCellRowReader implements CellRowReader<Map<String, String>> {
     public Map<String, String> read(Row row, int rowNum, boolean ignoreError,
             boolean ignoreBlank, boolean ignoreTypeUnmatch, int numberOfCells) {
         Map<String, String> res = new HashMap<String, String>();
-        int cellsLength = numberOfCells != 0 ? numberOfCells : row.getPhysicalNumberOfCells();
+        //int cellsLength = numberOfCells != 0 ? numberOfCells : row.getPhysicalNumberOfCells();
+        int cellsLength = numberOfCells != 0 ? numberOfCells : row.getLastCellNum();
         for (int cellNum = 0; cellNum < keys.length; cellNum++) {
-            if (cellNum >= cellsLength) {
+            if (cellNum > cellsLength) {
                 break;//直接跳出本次循环
             }
             Cell cell = row.getCell(cellNum);

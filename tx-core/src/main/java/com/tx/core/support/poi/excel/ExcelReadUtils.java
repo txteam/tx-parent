@@ -200,9 +200,9 @@ public class ExcelReadUtils {
         AssertUtils.notNull(cellRowReader, "cellRowReader is null.");
         AssertUtils.notNull(sheet, "sheet is null.");
         //获取第一行
-        int firstRowNum = sheet.getFirstRowNum();
-        Row firstRow = sheet.getRow(firstRowNum);
-        AssertUtils.notNull(firstRow,"firstRow is null");
+        //int firstRowNum = sheet.getFirstRowNum();
+        //Row firstRow = sheet.getRow(firstRowNum);
+        //AssertUtils.notNull(firstRow,"firstRow is null");
         //获取第一行列数
         //int numberOfCells = firstRow.getPhysicalNumberOfCells();
         //构造返回列表
@@ -211,7 +211,7 @@ public class ExcelReadUtils {
         //int rows = sheet.getPhysicalNumberOfRows();
         int lastRowNum = sheet.getLastRowNum();
         //System.out.println(test);
-        for (int r = 0; r < lastRowNum; r++) {//遍历多行
+        for (int r = 0; r <= lastRowNum; r++) {//遍历多行
             if (r < skips) {
                 continue;
             }
@@ -227,7 +227,6 @@ public class ExcelReadUtils {
                     ignoreBlank,
                     ignoreTypeUnmatch,
                     0);
-            
             //添加到列表中
             resList.add(tInsTemp);
         }
