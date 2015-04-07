@@ -78,10 +78,12 @@ public class TypeCellRowReader<T> implements CellRowReader<T> {
         
         //int cellsLength = numberOfCells != 0 ? numberOfCells : row.getPhysicalNumberOfCells();
         int cellsLength = numberOfCells != 0 ? numberOfCells : row.getLastCellNum();
+        
         for (ExcelCellInfo<?> cellInfo : key2excelCellInfoMapping.values()) {
-            AssertUtils.isTrue(cellInfo.getIndex() <= cellsLength,
-                    "index:{} is not exist.cellsLength:{} ",
-                    new Object[] { cellInfo.getIndex(), cellsLength });
+            if(cellInfo.getIndex() > cellsLength){
+                mo.setValue(cellInfo.getFieldName(), null);
+                continue;
+            }
             
             Cell cell = row.getCell(cellInfo.getIndex());
             Object value = null;
