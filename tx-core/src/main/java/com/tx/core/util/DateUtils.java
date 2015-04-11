@@ -8,6 +8,8 @@ package com.tx.core.util;
 
 import java.util.Date;
 
+import org.joda.time.DateTime;
+
 import com.tx.core.exceptions.util.AssertUtils;
 
 /**
@@ -24,6 +26,8 @@ public class DateUtils {
     /** 每天秒数 */
     private static long DAY_SECOND_COUNT = 1000 * 60 * 60 * 24;
     
+    private static long BASE_DATE_TIME = (new DateTime(1970,1,1,0,0,0).toDate()).getTime();
+    
     /**
       * 获取对应时间对应标准时间间隔天数
       * <功能详细描述>
@@ -37,8 +41,30 @@ public class DateUtils {
     public static int getDays(Date date) {
         AssertUtils.notNull(date, "date is null");
         
-        long res = date.getTime() / DAY_SECOND_COUNT;
+        long res = (date.getTime() - BASE_DATE_TIME) / DAY_SECOND_COUNT;
         return (int) res;
+    }
+    
+    public static void main(String[] args) {
+        DateTime now = DateTime.now();
+        System.out.println(getDays(now.toDate()));
+        
+        System.out.println((new DateTime(1970,1,1,0,0,0).toDate()).getTime());
+        
+        System.out.println(getDays(new DateTime(1970,1,1,0,0,0).toDate()));
+        
+        System.out.println(getDays(new DateTime(now.getYear(),now.getMonthOfYear(),now.getDayOfMonth(),0,0,0).toDate()));
+        
+        System.out.println(getDays(new DateTime(now.getYear(),now.getMonthOfYear(),now.getDayOfMonth(),0,0,0).toDate()));
+        
+        System.out.println(getDays(new DateTime(now.getYear(),now.getMonthOfYear(),now.getDayOfMonth(),7,59,59).toDate()));
+        
+        DateTime be = now.plusDays(-1);
+        System.out.println(getDays(new DateTime(be.getYear(),be.getMonthOfYear(),be.getDayOfMonth(),0,0,0).toDate()));
+        
+        System.out.println(getDays(new DateTime(be.getYear(),be.getMonthOfYear(),be.getDayOfMonth(),0,0,0).toDate()));
+        
+        System.out.println(getDays(new DateTime(be.getYear(),be.getMonthOfYear(),be.getDayOfMonth(),7,59,59).toDate()));
     }
     
     /**

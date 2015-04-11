@@ -7,10 +7,15 @@
 package com.tx.core.util;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Proxy;
 
 import org.springframework.aop.framework.AdvisedSupport;
 import org.springframework.aop.framework.AopProxy;
 import org.springframework.aop.support.AopUtils;
+import org.springframework.util.ClassUtils;
+
+import com.tx.core.exceptions.util.ExceptionWrapperUtils;
+import com.tx.core.reflection.exception.ReflectionException;
 
 /**
  * Aop代理对象工具类<br/>
@@ -28,15 +33,36 @@ public class AopTargetUtils {
      * @return 
      * @throws Exception
      */
-    public static Object getTarget(Object proxy) throws Exception {
-        if (!AopUtils.isAopProxy(proxy)) {
-            return proxy;//不是代理对象
+    public static boolean isProxy(Object proxy) {
+        if (AopUtils.isAopProxy(proxy)) {
+            return true;//不是代理对象
         }
         
-        if (AopUtils.isJdkDynamicProxy(proxy)) {
-            return getJdkDynamicProxyTargetObject(proxy);
-        } else { //cglib
-            return getCglibProxyTargetObject(proxy);
+        if (Proxy.isProxyClass(proxy.getClass())
+                || ClassUtils.isCglibProxy(proxy)) {
+            return true;
+        }
+        return false;
+    }
+    
+    /**
+     * 获取 目标对象
+     * @param proxy 代理对象
+     * @return 
+     * @throws Exception
+     */
+    public static Object getTarget(Object proxy) {        
+        try {
+            if(Proxy.isProxyClass(proxy.getClass())){
+                return getJdkDynamicProxyTargetObject(proxy);
+            }else if(ClassUtils.isCglibProxy(proxy)){
+                return getCglibProxyTargetObject(proxy);
+            }else{
+                return proxy;
+            }
+        } catch (Exception e) {
+            throw ExceptionWrapperUtils.wrapperSILException(ReflectionException.class,
+                    e.getMessage());
         }
     }
     
