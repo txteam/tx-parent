@@ -44,29 +44,29 @@ public class UUIDUtils {
         }
     }
     
-    /**
-      * 根据一个int值获取一个映射字符
-      *<功能详细描述>
-      * @param value
-      * @return [参数说明]
-      * 
-      * @return char [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    private char getCharByInt(int value) {
-        if (value < 0) {
-            value = value * -1;
-        }
-        char result = '0';
-        if (value < 68) {
-            result = integer2characterMap.get(value);
-        } else {
-            value = value % 68;
-            result = integer2characterMap.get(value);
-        }
-        return result;
-    }
+    //    /**
+    //      * 根据一个int值获取一个映射字符
+    //      *<功能详细描述>
+    //      * @param value
+    //      * @return [参数说明]
+    //      * 
+    //      * @return char [返回类型说明]
+    //      * @exception throws [异常类型] [异常说明]
+    //      * @see [类、类#方法、类#成员]
+    //     */
+    //    private char getCharByInt(int value) {
+    //        if (value < 0) {
+    //            value = value * -1;
+    //        }
+    //        char result = '0';
+    //        if (value < 68) {
+    //            result = integer2characterMap.get(value);
+    //        } else {
+    //            value = value % 68;
+    //            result = integer2characterMap.get(value);
+    //        }
+    //        return result;
+    //    }
     
     /**
      * 利用hibernaeUUID生成器，生成唯一键
