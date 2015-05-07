@@ -43,7 +43,8 @@ public class LazyEhCacheMapTest {
     
     private Map<String, String> testCacheMap;
     
-    @Test
+    @SuppressWarnings("resource")
+	@Test
     public void testRuleConstants() {
         final Map<String, String> testMap = new HashMap<String, String>();
         testMap.put("wx", "wx");

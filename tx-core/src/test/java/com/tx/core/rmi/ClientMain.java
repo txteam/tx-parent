@@ -21,7 +21,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
   */
 public class ClientMain {
     
-    public static void main(String[] args) {
+    @SuppressWarnings("resource")
+	public static void main(String[] args) {
         ApplicationContext context = new ClassPathXmlApplicationContext(
                 new String[] {"com/tx/core/rmi/beans-rmiclient.xml"});
         

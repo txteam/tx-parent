@@ -6,7 +6,7 @@
  */
 package com.tx.core.dbscript.config;
 
-import org.apache.cxf.common.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
@@ -53,7 +53,7 @@ public class UpdateTableScriptConfigConverter implements Converter {
                 updateTableScriptConfig.getTargetVersion());
         
         //写入值
-        if (!StringUtils.isEmpty(updateTableScriptConfig.getScript())) {
+        if (!StringUtils.isBlank(updateTableScriptConfig.getScript())) {
             writer.setValue(updateTableScriptConfig.getScript());
         } else {
             writer.setValue("");

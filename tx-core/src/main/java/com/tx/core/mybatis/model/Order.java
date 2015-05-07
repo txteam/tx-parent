@@ -10,7 +10,7 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.cxf.common.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.tx.core.TxConstants;
 import com.tx.core.exceptions.argument.IllegalArgException;
@@ -67,7 +67,7 @@ public class Order implements Serializable {
      * Constructor for Order.
      */
     private Order(String columnNames, boolean ascending) {
-        if (StringUtils.isEmpty(columnNames)) {
+        if (StringUtils.isBlank(columnNames)) {
             throw new NullArgException(
                     "Order(columnNames,ascending) columnNames is empty.");
         }
