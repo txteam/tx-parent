@@ -16,7 +16,8 @@ import com.tx.core.datasource.finder.ConfigDataSourceFinder;
 import com.tx.core.datasource.finder.JNDIDataSourceFinder;
 
 /**
- * jndi数据源工厂类
+ * jndi数据源工厂类<br/>
+ * 从[数据源查找生成器]列表中遍历返回数据源,直到一个可用的数据源则停止遍历
  * 
  * @author  PengQingyang
  * @version  [版本号, 2012-10-5]

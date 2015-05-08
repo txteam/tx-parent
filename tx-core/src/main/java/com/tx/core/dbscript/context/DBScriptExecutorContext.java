@@ -21,10 +21,10 @@ import com.tx.core.util.UUIDUtils;
  * 数据库脚本自动执行容器<br/>
  * <功能详细描述>
  * 
- * @author  brady
- * @version  [版本号, 2013-12-17]
- * @see  [相关类/方法]
- * @since  [产品/模块版本]
+ * @author brady
+ * @version [版本号, 2013-12-17]
+ * @see [相关类/方法]
+ * @since [产品/模块版本]
  */
 public class DBScriptExecutorContext extends
         DBScriptExecutorContextConfigurator {
@@ -68,13 +68,14 @@ public class DBScriptExecutorContext extends
     
     /**
      * 获取创建表的语句<br/>
-     *<功能详细描述>
+     * <功能详细描述>
+     * 
      * @param tableDefinition [参数说明]
      * 
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
+     */
     public boolean isExistInContext(String tableName) {
         Map<String, Object> queryCondition = new HashMap<String, Object>();
         queryCondition.put("tableName", tableName);
@@ -85,14 +86,15 @@ public class DBScriptExecutorContext extends
     }
     
     /**
-      * 根据表名查询容器中对应DBScriptContext实例<br/>
-      *<功能详细描述>
-      * @param tableName
-      * @return [参数说明]
-      * 
-      * @return DBScriptContext [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 根据表名查询容器中对应DBScriptContext实例<br/>
+     * <功能详细描述>
+     * 
+     * @param tableName
+     * @return [参数说明]
+     * 
+     * @return DBScriptContext [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     public DBScriptContext findDBScriptContextByTableName(String tableName) {
         Map<String, Object> queryCondition = new HashMap<String, Object>();
@@ -105,26 +107,28 @@ public class DBScriptExecutorContext extends
     }
     
     /**
-      * 删除数据
-      *<功能详细描述>
-      * @param dbScriptContextId [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 删除数据 <功能详细描述>
+     * 
+     * @param dbScriptContextId [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     public void deleteById(String dbScriptContextId) {
-        this.jdbcTemplate.update(this.dbScriptContextSqlSource.deleteSql(),dbScriptContextId);
+        this.jdbcTemplate.update(this.dbScriptContextSqlSource.deleteSql(),
+                dbScriptContextId);
     }
     
     /**
-      * 新插入数据<br/>
-      *<功能详细描述>
-      * @param dbScriptContext [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 新插入数据<br/>
+     * <功能详细描述>
+     * 
+     * @param dbScriptContext [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     public void insert(DBScriptContext dbScriptContext) {
         dbScriptContext.setId(UUIDUtils.generateUUID());

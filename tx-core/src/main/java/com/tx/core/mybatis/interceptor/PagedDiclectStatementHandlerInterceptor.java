@@ -32,8 +32,7 @@ import org.slf4j.LoggerFactory;
 import com.tx.core.dbscript.model.DataSourceTypeEnum;
 
 /**
- * <数据库分页容器处理器>
- * <功能详细描述>
+ * 数据库分页容器处理器
  * 
  * @author  PengQingyang
  * @version  [版本号, 2012-11-5]

@@ -17,7 +17,6 @@ import com.tx.core.datasource.DataSourceFinder;
 
 /**
  * 从Jndi上下文获取数据源
- * <从Jndi上下文获取数据源>
  * 
  * @author  PengQingyang
  * @version  [版本号, 2012-10-5]

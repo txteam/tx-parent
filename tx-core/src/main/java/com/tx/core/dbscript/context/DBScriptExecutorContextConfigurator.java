@@ -56,8 +56,6 @@ public class DBScriptExecutorContextConfigurator implements InitializingBean {
     /** 在enable == true 的情况，如果该值不为空，则当前机器的mac地址必须包含指定的mac地址才会被执行 */
     private String enableMacAddress;
     
-    private ComputerEnvironment ce = new ComputerEnvironment();
-    
     /**
      * @throws Exception
      */
@@ -78,12 +76,12 @@ public class DBScriptExecutorContextConfigurator implements InitializingBean {
             return false;
         } else {
             if (!StringUtils.isEmpty(this.enableIpAddress)) {
-                if (!ce.getHostAddressSet().contains(this.enableIpAddress)) {
+                if (!ComputerEnvironment.getHostAddressSet().contains(this.enableIpAddress)) {
                     return false;
                 }
             }
             if (!StringUtils.isEmpty(this.enableMacAddress)) {
-                if (!ce.getMacAddressSet().contains(this.enableMacAddress)) {
+                if (!ComputerEnvironment.getMacAddressSet().contains(this.enableMacAddress)) {
                     return false;
                 }
             }
