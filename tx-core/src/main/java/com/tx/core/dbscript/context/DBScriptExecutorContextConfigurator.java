@@ -18,12 +18,11 @@ import com.tx.core.util.ComputerEnvironment;
 
 /**
  * 数据库脚本自动执行容器<br/>
- * <功能详细描述>
  * 
- * @author  brady
- * @version  [版本号, 2013-12-17]
- * @see  [相关类/方法]
- * @since  [产品/模块版本]
+ * @author brady
+ * @version [版本号, 2013-12-17]
+ * @see [相关类/方法]
+ * @since [产品/模块版本]
  */
 public class DBScriptExecutorContextConfigurator implements InitializingBean {
     
@@ -46,7 +45,7 @@ public class DBScriptExecutorContextConfigurator implements InitializingBean {
     private boolean ignoreFailedDrops = true;
     
     /** 是否更新不存在容器表中的数据 */
-    private boolean updateNotExistTableInContext = false; 
+    private boolean updateNotExistTableInContext = false;
     
     /** 脚本的编码 */
     private String sqlScriptEncoding = "UTF-8";
@@ -54,7 +53,7 @@ public class DBScriptExecutorContextConfigurator implements InitializingBean {
     /** 在enable == true 的情况，如果该值不为空，则当前机器ip必须含有该指定ip容器才会被执行 */
     private String enableIpAddress;
     
-    /** 在enable == true 的情况，如果该值不为空，则当前机器的mac地址必须包含指定的mac地址才会被执行  */
+    /** 在enable == true 的情况，如果该值不为空，则当前机器的mac地址必须包含指定的mac地址才会被执行 */
     private String enableMacAddress;
     
     private ComputerEnvironment ce = new ComputerEnvironment();
@@ -79,7 +78,7 @@ public class DBScriptExecutorContextConfigurator implements InitializingBean {
             return false;
         } else {
             if (!StringUtils.isEmpty(this.enableIpAddress)) {
-                if (!ce.getIpConfigInfoList().contains(this.enableIpAddress)) {
+                if (!ce.getHostAddressSet().contains(this.enableIpAddress)) {
                     return false;
                 }
             }
@@ -196,18 +195,19 @@ public class DBScriptExecutorContextConfigurator implements InitializingBean {
     public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
-
+    
     /**
      * @return 返回 updateNotExistTableInContext
      */
     public boolean isUpdateNotExistTableInContext() {
         return updateNotExistTableInContext;
     }
-
+    
     /**
      * @param 对updateNotExistTableInContext进行赋值
      */
-    public void setUpdateNotExistTableInContext(boolean updateNotExistTableInContext) {
+    public void setUpdateNotExistTableInContext(
+            boolean updateNotExistTableInContext) {
         this.updateNotExistTableInContext = updateNotExistTableInContext;
     }
 }
