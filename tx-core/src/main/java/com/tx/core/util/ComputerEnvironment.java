@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * 计算机运行环境辅助类<br/>
+ * 2015年5月10日 修改此类为静态类,提供静态方法和数据缓存
  * 
  * @author brady
  * @version [版本号, 2013-5-21]
