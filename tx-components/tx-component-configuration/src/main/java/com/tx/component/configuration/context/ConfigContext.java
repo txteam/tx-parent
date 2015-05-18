@@ -112,8 +112,8 @@ public class ConfigContext extends ConfigContextConfigurator {
         AssertUtils.notNull(configPropertyGroup, "configPropertyGroup is null.");
         if (!this.isRepeatAble()) {
             AssertUtils.notTrue(this.configPropertyGroupList.contains(configPropertyGroup),
-                    "configPropertyGroup is repeat.configPropertyGroup:{}",
-                    new Object[] { configPropertyGroup });
+                    "configPropertyGroup is repeat.configPropertyGroup : [{}]",
+                    new Object[] { configPropertyGroup.getName()});
         }
         this.configPropertyGroupList.add(configPropertyGroup);
     }
