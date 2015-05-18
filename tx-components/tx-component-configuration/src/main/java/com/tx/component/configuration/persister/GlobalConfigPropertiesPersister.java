@@ -41,12 +41,11 @@ import com.tx.core.util.UUIDUtils;
 
 /**
  * 全局配置属性持久器<br/>
- * <功能详细描述>
  * 
- * @author  brady
- * @version  [版本号, 2014-2-17]
- * @see  [相关类/方法]
- * @since  [产品/模块版本]
+ * @author brady
+ * @version [版本号, 2014-2-17]
+ * @see [相关类/方法]
+ * @since [产品/模块版本]
  */
 public class GlobalConfigPropertiesPersister extends
         BaseConfigPropertiesPersister {
@@ -76,9 +75,6 @@ public class GlobalConfigPropertiesPersister extends
     /** 是否自动执行创建表脚本 */
     private boolean databaseSchemaUpdate = true;
     
-    /**
-     * @throws Exception
-     */
     @Override
     public void afterPropertiesSet() throws Exception {
         AssertUtils.notNull(this.dataSource, "dataSource is null.");
@@ -97,20 +93,11 @@ public class GlobalConfigPropertiesPersister extends
         super.afterPropertiesSet();
     }
     
-    /**
-     * @return
-     */
     @Override
     protected ConfigPropertyTypeEnum configPropertyType() {
         return ConfigPropertyTypeEnum.全局配置项;
     }
     
-    /**
-     * @param configContext
-     * @param configPropertyParse
-     * @param configGroupParse
-     * @return
-     */
     @Override
     protected ConfigProperty buildConfigProperty(ConfigContext configContext,
             ConfigPropertyParse configPropertyParse,
@@ -150,14 +137,16 @@ public class GlobalConfigPropertiesPersister extends
     }
     
     /**
-      * 更新配置属性项<br/>
-      *<功能详细描述>
-      * @param configPropertyParse
-      * @return [参数说明]
-      * 
-      * @return ConfigPropertyItem [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 
+     * 更新配置属性项<br/>
+     * 
+     * @param nowConfigPropertyItem
+     * @param configPropertyParse
+     * @return
+     * 
+     * @return ConfigPropertyItem [返回类型说明]
+     * @exception [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     private ConfigPropertyItem updateConfigPropertyItem(
             ConfigPropertyItem nowConfigPropertyItem,
@@ -179,18 +168,11 @@ public class GlobalConfigPropertiesPersister extends
         return configPropertyItem;
     }
     
-    /**
-     * @return
-     */
     @Override
     public boolean isSupportModifyAble() {
         return true;
     }
     
-    /**
-     * @param key
-     * @param value
-     */
     @Override
     public synchronized void updateConfigProperty(String key, String value) {
         AssertUtils.notEmpty(key, "key is empty.");
@@ -219,12 +201,11 @@ public class GlobalConfigPropertiesPersister extends
     }
     
     /**
-      * 重新构建配置属性值缓存
-      *<功能详细描述> [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 重新构建配置属性值缓存
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     private synchronized void reBuildConfigPropertyValueCache() {
         logger.info("重新构建配置属性值缓存.");
@@ -243,10 +224,6 @@ public class GlobalConfigPropertiesPersister extends
         oldMap.clear();
     }
     
-    /**
-     * @param key
-     * @return
-     */
     @Override
     public String getConfigPropertyValueByKey(String key) {
         String resValue = null;
@@ -265,15 +242,14 @@ public class GlobalConfigPropertiesPersister extends
     }
     
     /**
-      * 判断是否需要更新配置属性项<br/>
-      *<功能详细描述>
-      * @param nowConfigPropertyItem
-      * @param configPropertyParse
-      * @return [参数说明]
-      * 
-      * @return boolean [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 判断是否需要更新配置属性项<br/>
+     * 
+     * @param nowConfigPropertyItem
+     * @param configPropertyParse
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     private boolean isNeedUpdate(ConfigPropertyItem nowConfigPropertyItem,
             ConfigPropertyParse configPropertyParse) {
@@ -295,14 +271,14 @@ public class GlobalConfigPropertiesPersister extends
     }
     
     /**
-      * 根据配置属性项目配置文件将配置属性项插入数据库中<br/>
-      *<功能详细描述>
-      * @param configPropertyParse
-      * @return [参数说明]
-      * 
-      * @return ConfigPropertyItem [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 根据配置属性项目配置文件将配置属性项插入数据库中<br/>
+     * 
+     * @param configPropertyParse
+     * @return [参数说明]
+     * 
+     * @return ConfigPropertyItem [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     private ConfigPropertyItem insertConfigPropertyItem(
             ConfigPropertyParse configPropertyParse) {
@@ -322,9 +298,6 @@ public class GlobalConfigPropertiesPersister extends
         return configPropertyItem;
     }
     
-    /**
-     * 
-     */
     @Override
     protected void afterPropertyConfigsLoaded() {
         @SuppressWarnings("unchecked")
@@ -335,9 +308,6 @@ public class GlobalConfigPropertiesPersister extends
         }
     }
     
-    /**
-     * 
-     */
     @Override
     protected void postPropertyConfigsLoaded() {
         List<ConfigPropertyItem> configPropertyItems = this.configPropertyItemDao.queryConfigPropertyItemList();

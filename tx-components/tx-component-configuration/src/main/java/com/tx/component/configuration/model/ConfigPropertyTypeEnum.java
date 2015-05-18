@@ -8,7 +8,6 @@ package com.tx.component.configuration.model;
 
 /**
  * 配置属性类型 <br/>
- * <功能详细描述>
  * 
  * @author  Administrator
  * @version  [版本号, 2014年2月23日]
