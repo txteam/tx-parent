@@ -56,7 +56,7 @@ public class RandomUtils extends org.apache.commons.lang.math.RandomUtils {
      * 产生[minNumber,maxNumber)之间的随机正整数<br />
      * 
      * @param minNumber 任意大于等于0的数字
-     * @param maxNumber 任意大于等于0数字
+     * @param maxNumber 任意大于等于0的数字
      * @return int [minNumber,maxNumber)之间的随机整数
      */
     public static int randomInt(int minNumber, int maxNumber) {
@@ -125,6 +125,22 @@ public class RandomUtils extends org.apache.commons.lang.math.RandomUtils {
      */
     public static String randomRangeInt(int length) {
         return randomRangeString(RANDOM_INTEGER, length);
+    }
+    
+    /**
+     * 
+     * 通过默认数字字符串库,随机选择length个来组成随机字符串返回<br/>
+     * 左起第一位不会是0
+     * 
+     * @param length 生成范围长度
+     * 
+     * @return String 数字字符串
+     * @exception [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static String randomRangeIntNotLeftZero(int length) {
+        int randomInt = randomInt(1, 9);
+        return randomInt + randomRangeString(RANDOM_INTEGER, length - 1);
     }
     
     /**
