@@ -17,7 +17,7 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 
 /**
- * 基础配置容器实现的PropertyPlacehoder
+ * 基础配置容器实现的PropertyPlaceholder
  * <功能详细描述>
  * 
  * @author  brady

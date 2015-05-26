@@ -21,35 +21,21 @@ import com.tx.component.configuration.model.ConfigPropertyTypeEnum;
 
 /**
  * 基础配置属性解析器
- * <功能详细描述>
  * 
- * @author  brady
- * @version  [版本号, 2014-2-7]
- * @see  [相关类/方法]
- * @since  [产品/模块版本]
+ * @author brady
+ * @version [版本号, 2014-2-7]
+ * @see [相关类/方法]
+ * @since [产品/模块版本]
  */
 public class LocalConfigPropertiesPersister extends
         BaseConfigPropertiesPersister {
     
-    /**
-     * @return
-     */
     @Override
     protected ConfigPropertyTypeEnum configPropertyType() {
         return ConfigPropertyTypeEnum.本地配置项;
     }
     
-    /**
-     * 构建配置属性实例<br/>
-     *<功能详细描述>
-     * @param configPropertyParse
-     * @param configGroupParse
-     * @return [参数说明]
-     * 
-     * @return ConfigProperty [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-    */
+    @Override
     protected ConfigProperty buildConfigProperty(ConfigContext configContext,
             ConfigPropertyParse configPropertyParse,
             ConfigGroupParse configGroupParse) {
@@ -63,10 +49,6 @@ public class LocalConfigPropertiesPersister extends
         return configProperty;
     }
     
-    /**
-     * @param key
-     * @return
-     */
     @Override
     public String getConfigPropertyValueByKey(String key) {
         if (this.cache.get(key) == null) {
@@ -76,26 +58,16 @@ public class LocalConfigPropertiesPersister extends
         return value;
     }
     
-    /**
-     * @return
-     */
     @Override
     public boolean isSupportModifyAble() {
         return false;
     }
     
-    /**
-     * @param key
-     * @param value
-     */
     @Override
     public void updateConfigProperty(String key, String value) {
         throw new UnModifyAbleException("本地配置属性不支持更新");
     }
     
-    /**
-     * 
-     */
     @Override
     protected void afterPropertyConfigsLoaded() {
         @SuppressWarnings("unchecked")
@@ -106,9 +78,6 @@ public class LocalConfigPropertiesPersister extends
         }
     }
     
-    /**
-     * 
-     */
     @Override
     protected void postPropertyConfigsLoaded() {
     }

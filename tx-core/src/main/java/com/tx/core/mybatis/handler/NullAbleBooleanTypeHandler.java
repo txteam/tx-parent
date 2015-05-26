@@ -18,9 +18,8 @@ import org.apache.ibatis.type.MappedTypes;
 import com.tx.core.util.JdbcUtils;
 
 /**
- * 修改默认的BigDecimal映射处理器
+ * 修改默认的Boolean映射处理器<br/>
  * 替换系统中的TypeHandler
- * <功能详细描述>
  * 
  * @author  brady
  * @version  [版本号, 2012-12-7]

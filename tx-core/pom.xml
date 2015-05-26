@@ -149,6 +149,10 @@
 			<artifactId>cxf-rt-frontend-jaxrs</artifactId>
 			<optional>true</optional>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.neethi</groupId>
+			<artifactId>neethi</artifactId>
+		</dependency>
 
 		<!-- xfire -->
 		<dependency>

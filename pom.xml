@@ -116,7 +116,7 @@
 			<dependency>
 				<groupId>org.apache.neethi</groupId>
 				<artifactId>neethi</artifactId>
-				<version>2.0.5</version>
+				<version>3.0.3</version>
 			</dependency>
 			<dependency>
 				<!--SOAP with Attachments API for Java能为java提供按照SOAP规范的收发信息 -->
@@ -1735,10 +1735,12 @@
 		<repository>
 			<id>releases</id>
 			<url>http://192.168.85.105:8081/nexus/content/repositories/releases</url>
+<!-- 			<url>http://114.215.158.227:8081/nexus/content/repositories/releases</url> -->
 		</repository>
 		<snapshotRepository>
 			<id>snapshots</id>
 			<url>http://192.168.85.105:8081/nexus/content/repositories/snapshots</url>
+<!-- 			<url>http://114.215.158.227:8081/nexus/content/repositories/snapshots</url> -->
 		</snapshotRepository>
 	</distributionManagement>
 

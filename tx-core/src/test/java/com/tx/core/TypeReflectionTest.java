@@ -24,7 +24,7 @@ public class TypeReflectionTest<T> {
     }
     
     public static void main(String[] args) {
-        TypeReflectionTest t  = new TypeReflectionTest();
+        TypeReflectionTest<Object> t  = new TypeReflectionTest<Object>();
         System.out.println(t.getClass().getGenericSuperclass());
     }
 }

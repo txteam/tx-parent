@@ -97,7 +97,8 @@ public class EhcacheTest {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    @Test
+    @SuppressWarnings("unchecked")
+	@Test
     public void testCacheWriteAfterUpdate() {
         String key = "testKey1";
         Map<String, String> value = new HashMap<String, String>();
@@ -119,7 +120,8 @@ public class EhcacheTest {
         //Assert.assertEquals(value.get("1"), actual)
     }
     
-    @Test
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+	@Test
     public void testCacheWriteAfterUpdateWithListener() {
         String key = "testKey1";
         Map<String, String> value = new HashMap<String, String>();

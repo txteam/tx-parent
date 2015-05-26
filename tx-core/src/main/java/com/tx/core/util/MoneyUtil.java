@@ -6,14 +6,15 @@
  */
 package com.tx.core.util;
 
+import java.text.DecimalFormat;
+
 /**
- * 将数字转换成大写
- * <功能详细描述>
+ * 金钱工具 <功能详细描述>
  * 
- * @author  brady
- * @version  [版本号, 3-2-25]
- * @see  [相关类/方法]
- * @since  [产品/模块版本]
+ * @author brady
+ * @version [版本号, 3-2-25]
+ * @see [相关类/方法]
+ * @since [产品/模块版本]
  */
 public class MoneyUtil {
     
@@ -21,14 +22,14 @@ public class MoneyUtil {
             "肆", "伍", "陆", "柒", "捌", "玖" };
     
     /**
-      * 把金额转换为汉字表示的数量，小数点后四舍五入保留两位
-      * <功能详细描述>
-      * @param amount
-      * @return [参数说明]
-      * 
-      * @return String [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 把金额转换为汉字表示的数量，小数点后四舍五入保留两位 <功能详细描述>
+     * 
+     * @param amount
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     public static String amountToChinese(double amount) {
         if (amount > 99999999999999.99 || amount < -99999999999999.99) {
@@ -64,10 +65,9 @@ public class MoneyUtil {
         for (int i = 0; i < numParts; i++) {
             String partChinese = partTranslate(parts[i]);
             if (i % 2 == 0) {
-                if ("".equals(partChinese)){
+                if ("".equals(partChinese)) {
                     beforeWanIsZero = true;
-                }
-                else{
+                } else {
                     beforeWanIsZero = false;
                 }
             }
@@ -142,14 +142,13 @@ public class MoneyUtil {
     }
     
     /**
-
-    * 把一个 0~9 之间的整数转换为汉字的字符串，如果是 0 则返回 ""
-
-    * @param amountPart
-
-    * @return
-
-    */
+     * 
+     * 把一个 0~9 之间的整数转换为汉字的字符串，如果是 0 则返回 ""
+     * 
+     * @param amountPart
+     * 
+     * @return
+     */
     
     private static String partTranslate(int amountPart) {
         
@@ -223,6 +222,9 @@ public class MoneyUtil {
             
             System.out.println("0: " + amountToChinese(0));
             
+            System.out.println("999999999999999999.88: "
+                    + amountToChinese(999999999999999999.88));
+            
             System.out.println("-------------------------");
             
             //System.out.println(Long.MAX_VALUE);
@@ -239,6 +241,20 @@ public class MoneyUtil {
                     + amountToChinese(Double.parseDouble(args[0])));
             
         }
-        
+    }
+    
+    /**
+     * 
+     * 数字加三位分隔符
+     * 
+     * @param d
+     * @return
+     * 
+     * @return String [返回类型说明]
+     * @exception [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static String moneyConver(double d) {
+        return new DecimalFormat("#,###.####").format(d);
     }
 }

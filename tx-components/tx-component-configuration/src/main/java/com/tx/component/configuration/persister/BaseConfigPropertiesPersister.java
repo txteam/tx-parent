@@ -40,12 +40,11 @@ import com.tx.core.util.XstreamUtils;
 
 /**
  * 基础配置属性解析器
- * <功能详细描述>
  * 
- * @author  brady
- * @version  [版本号, 2014-2-7]
- * @see  [相关类/方法]
- * @since  [产品/模块版本]
+ * @author brady
+ * @version [版本号, 2014-2-7]
+ * @see [相关类/方法]
+ * @since [产品/模块版本]
  */
 public abstract class BaseConfigPropertiesPersister implements
         ConfigPropertiesPersister, ApplicationContextAware, InitializingBean,
@@ -96,19 +95,12 @@ public abstract class BaseConfigPropertiesPersister implements
         }
     }
     
-    /**
-     * @param applicationContext
-     * @throws BeansException
-     */
     @Override
     public void setApplicationContext(ApplicationContext applicationContext)
             throws BeansException {
         this.applicationContext = applicationContext;
     }
     
-    /**
-     * @param locations
-     */
     @Transactional
     @Override
     public void load(ConfigContext configContext) {
@@ -159,14 +151,14 @@ public abstract class BaseConfigPropertiesPersister implements
     }
     
     /**
-      * 解析配置容器配置<br/>
-      *<功能详细描述>
-      * @param configContext
-      * @param configContextConfigList [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 解析配置容器配置<br/>
+     * 
+     * @param configContext
+     * @param configContextConfigList [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     private void parseConfigContextConfig(ConfigContext configContext,
             List<ConfigContextConfig> configContextConfigList) {
@@ -194,14 +186,14 @@ public abstract class BaseConfigPropertiesPersister implements
     }
     
     /**
-      * 解析配置组<br/>
-      *<功能详细描述>
-      * @param configContext
-      * @param configGroupParseList [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 解析配置组<br/>
+     * 
+     * @param configContext
+     * @param configGroupParseList [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     private void parseConfigGroup(ConfigContext configContext,
             ConfigGroupParse parentConfigGroupParse,
@@ -236,15 +228,14 @@ public abstract class BaseConfigPropertiesPersister implements
     }
     
     /**
+     * 
       * 构建配置属性组<br/>
-      *<功能详细描述>
-      * @param configContext
-      * @param configPropertyParse
+      * 
+      * @param parentConfigGroupParse
       * @param configGroupParse
-      * @return [参数说明]
       * 
       * @return ConfigPropertyGroup [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
+      * @exception [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
     protected ConfigPropertyGroup buildConfigPropertyGroup(
@@ -256,15 +247,16 @@ public abstract class BaseConfigPropertiesPersister implements
     }
     
     /**
-      * 构建配置属性实例<br/>
-      *<功能详细描述>
-      * @param configPropertyParse
-      * @param configGroupParse
-      * @return [参数说明]
-      * 
-      * @return ConfigProperty [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 
+     * 构建配置属性实例<br/>
+     * 
+     * @param configContext
+     * @param configPropertyParse
+     * @param configGroupParse
+     * 
+     * @return ConfigProperty [返回类型说明]
+     * @exception [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     protected abstract ConfigProperty buildConfigProperty(
             ConfigContext configContext,
@@ -273,31 +265,28 @@ public abstract class BaseConfigPropertiesPersister implements
     
     /**
      * 属性配置加载
-     *<功能详细描述> [参数说明]
      * 
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
+     */
     protected abstract ConfigPropertyTypeEnum configPropertyType();
     
     /**
-      * 属性配置加载
-      *<功能详细描述> [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 属性配置加载
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     protected abstract void postPropertyConfigsLoaded();
     
     /**
-      * 属性加载后执行的方法<br/>
-      *<功能详细描述> [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 属性加载后执行的方法<br/>
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     protected abstract void afterPropertyConfigsLoaded();
     

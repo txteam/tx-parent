@@ -6,9 +6,6 @@
  */
 package com.tx.core.validator.rule;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.tx.core.validator.BaseValidateRule;
 import com.tx.core.validator.ValidateResult;
 import com.tx.core.validator.ValidateRule;
@@ -24,7 +21,7 @@ import com.tx.core.validator.ValidateRule;
  */
 public class RequiredValidateRule extends BaseValidateRule {
     
-    private Map<String, RequiredValidateRule> instanceMap = new HashMap<String, RequiredValidateRule>();
+//    private Map<String, RequiredValidateRule> instanceMap = new HashMap<String, RequiredValidateRule>();
     
     /**
      * @return

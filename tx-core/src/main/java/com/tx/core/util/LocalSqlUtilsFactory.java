@@ -9,8 +9,7 @@ package com.tx.core.util;
 import org.springframework.beans.factory.FactoryBean;
 
 /**
- * 本地sql工具工厂
- * <功能详细描述>
+ * 本地sql工具工厂<br/>
  * 
  * @author  Administrator
  * @version  [版本号, 2014年2月24日]

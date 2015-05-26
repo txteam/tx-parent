@@ -23,7 +23,8 @@ import org.springframework.beans.factory.FactoryBean;
  */
 public class ValidatorFactory implements FactoryBean<Validator> {
     
-    private Validator validatorProxy;
+    @SuppressWarnings("unused")
+	private Validator validatorProxy;
     
     public void xxx() {
         validatorProxy = (Validator) Proxy.newProxyInstance(ValidatorFactory.class.getClassLoader(),
