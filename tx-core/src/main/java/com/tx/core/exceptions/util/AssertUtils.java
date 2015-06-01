@@ -12,8 +12,8 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.helpers.MessageFormatter;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -148,7 +148,7 @@ public class AssertUtils {
         if (obj == null) {
             return;
         }
-        if (obj instanceof String && !StringUtils.isBlank((String) obj)) {
+        if (obj instanceof CharSequence && !StringUtils.isBlank((CharSequence) obj)) {
             throw new NullArgException(MessageFormatter.arrayFormat(message,
                     parameters).getMessage());
         } else if (obj instanceof Collection
