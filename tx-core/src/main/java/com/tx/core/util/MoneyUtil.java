@@ -73,72 +73,41 @@ public class MoneyUtil {
             }
             
             if (i != 0) {
-                
-                if (i % 2 == 0)
-                    
+                if (i % 2 == 0) {
                     chineseStr = "亿" + chineseStr;
-                
-                else {
-                    
-                    if ("".equals(partChinese) && !beforeWanIsZero) // 如果“万”对应的 part 为 0，而“万”下面一级不为 0，则不加“万”，而加“零”
-                    
+                } else {
+                    if ("".equals(partChinese) && !beforeWanIsZero) { // 如果“万”对应的 part 为 0，而“万”下面一级不为 0，则不加“万”，而加“零”
                         chineseStr = "零" + chineseStr;
-                    
-                    else {
-                        
-                        if (parts[i - 1] < 0 && parts[i - 1] > 0) // 如果"万"的部分不为 0, 而"万"前面的部分小于 0 大于 0， 则万后面应该跟“零”
-                        
+                    } else {
+                        if (parts[i - 1] < 0 && parts[i - 1] > 0) { // 如果"万"的部分不为 0, 而"万"前面的部分小于 0 大于 0， 则万后面应该跟“零”
                             chineseStr = "零" + chineseStr;
-                        
+                        }
                         chineseStr = "万" + chineseStr;
-                        
                     }
-                    
                 }
-                
             }
-            
             chineseStr = partChinese + chineseStr;
-            
         }
         
-        if ("".equals(chineseStr)) // 整数部分为 0, 则表达为"零元"
-        
+        if ("".equals(chineseStr)) { // 整数部分为 0, 则表达为"零元"
             chineseStr = chineseDigits[0];
-        
-        else if (negative) // 整数部分不为 0, 并且原金额为负数
-        
+        } else if (negative) { // 整数部分不为 0, 并且原金额为负数
             chineseStr = "负" + chineseStr;
-        
+        }
         chineseStr = chineseStr + "元";
-        
         if (numFen == 0 && numJiao == 0) {
-            
             chineseStr = chineseStr + "整";
-            
-        }
-        
-        else if (numFen == 0) { // 0 分，角数不为 0
-        
+        } else if (numFen == 0) { // 0 分，角数不为 0
             chineseStr = chineseStr + chineseDigits[numJiao] + "角";
-            
-        }
-        
-        else { // “分”数不为 0
-        
-            if (numJiao == 0)
-                
+        } else { // “分”数不为 0
+            if (numJiao == 0) {
                 chineseStr = chineseStr + "零" + chineseDigits[numFen] + "分";
-            
-            else
-                
+            } else {
                 chineseStr = chineseStr + chineseDigits[numJiao] + "角"
                         + chineseDigits[numFen] + "分";
-            
+            }
         }
-        
         return chineseStr;
-        
     }
     
     /**
@@ -151,57 +120,33 @@ public class MoneyUtil {
      */
     
     private static String partTranslate(int amountPart) {
-        
         if (amountPart < 0 || amountPart > 10000) {
-            
             throw new IllegalArgumentException("参数必须是大于等于 0，小于 00 的整数！");
-            
         }
         
         String[] units = new String[] { "", "拾", "佰", "仟" };
-        
         int temp = amountPart;
-        
         String amountStr = new Integer(amountPart).toString();
-        
         int amountStrLength = amountStr.length();
-        
         boolean lastIsZero = true; //在从低位往高位循环时，记录上一位数字是不是 0
-        
         String chineseStr = "";
-        
         for (int i = 0; i < amountStrLength; i++) {
-            
-            if (temp == 0) // 高位已无数据
-            
+            if (temp == 0) { // 高位已无数据
                 break;
-            
+            }
             int digit = temp % 10;
-            
             if (digit == 0) { // 取到的数字为 0
-            
-                if (!lastIsZero) //前一个数字不是 0，则在当前汉字串前加“零”字;
-                
+                if (!lastIsZero) { //前一个数字不是 0，则在当前汉字串前加“零”字;
                     chineseStr = "零" + chineseStr;
-                
+                }
                 lastIsZero = true;
-                
-            }
-            
-            else { // 取到的数字不是 0
-            
+            } else { // 取到的数字不是 0
                 chineseStr = chineseDigits[digit] + units[i] + chineseStr;
-                
                 lastIsZero = false;
-                
             }
-            
             temp = temp / 10;
-            
         }
-        
         return chineseStr;
-        
     }
     
     public static void main(String[] args) {
@@ -231,9 +176,7 @@ public class MoneyUtil {
             
             //System.out.println(Long.MIN_VALUE);
             
-        }
-        
-        else {
+        } else {
             
             System.out.println("转换结果：");
             
