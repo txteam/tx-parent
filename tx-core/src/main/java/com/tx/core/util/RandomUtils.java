@@ -56,7 +56,7 @@ public class RandomUtils extends org.apache.commons.lang.math.RandomUtils {
      * 产生[minNumber,maxNumber)之间的随机正整数<br />
      * 
      * @param minNumber 任意大于等于0的数字
-     * @param maxNumber 任意大于等于0数字
+     * @param maxNumber 任意大于等于0的数字
      * @return int [minNumber,maxNumber)之间的随机整数
      */
     public static int randomInt(int minNumber, int maxNumber) {
@@ -128,6 +128,22 @@ public class RandomUtils extends org.apache.commons.lang.math.RandomUtils {
     }
     
     /**
+     * 
+     * 通过默认数字字符串库,随机选择length个来组成随机字符串返回<br/>
+     * 左起第一位不会是0
+     * 
+     * @param length 生成范围长度
+     * 
+     * @return String 数字字符串
+     * @exception [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static String randomRangeIntNotLeftZero(int length) {
+        int randomInt = randomInt(1, 9);
+        return randomInt + randomRangeString(RANDOM_INTEGER, length - 1);
+    }
+    
+    /**
      * 计算命中率<br />
      * 以100为基数根据rate参数计算命中率<br />
      * 
@@ -156,6 +172,7 @@ public class RandomUtils extends org.apache.commons.lang.math.RandomUtils {
     /**
      * 
      * 随机生成的汉字 <br />
+     * 尽可能的去掉生僻字和繁体字(但是不能避免)<br/>
      * 原理是从汉字区位码找到汉字。 在汉字区位码中分高位与底位，且其中有简体又有繁体。 位数越前生成的汉字繁体的机率越大。<br />
      * 所以在本方法中高位从176取，底位从161取，去掉大部分的繁体和生僻字。 但仍然会有.<br />
      * 
@@ -188,7 +205,9 @@ public class RandomUtils extends org.apache.commons.lang.math.RandomUtils {
     
     /**
      * 根据需要生成汉子的数量生成汉字<br/>
-     * 尽可能的去掉生僻字和繁体字(但是不能避免)
+     * 尽可能的去掉生僻字和繁体字(但是不能避免)<br/>
+     * 原理是从汉字区位码找到汉字。 在汉字区位码中分高位与底位，且其中有简体又有繁体。 位数越前生成的汉字繁体的机率越大。<br />
+     * 所以在本方法中高位从176取，底位从161取，去掉大部分的繁体和生僻字。 但仍然会有.<br />
      * 
      * @param number 生成汉字数量(大于0)
      * 

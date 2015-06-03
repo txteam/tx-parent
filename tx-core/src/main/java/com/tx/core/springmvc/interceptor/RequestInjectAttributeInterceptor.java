@@ -19,13 +19,12 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- * <向Request中注入部分常量>
- * <功能详细描述>
+ * <向Request中注入部分常量> <功能详细描述>
  * 
- * @author  PengQingyang
- * @version  [版本号, 2012-10-19]
- * @see  [相关类/方法]
- * @since  [产品/模块版本]
+ * @author PengQingyang
+ * @version [版本号, 2012-10-19]
+ * @see [相关类/方法]
+ * @since [产品/模块版本]
  */
 public class RequestInjectAttributeInterceptor implements HandlerInterceptor {
     
@@ -35,6 +34,7 @@ public class RequestInjectAttributeInterceptor implements HandlerInterceptor {
     
     public static final String CONTEXT_PATH_ATTR_NAME = "contextPath";
     
+    /** 是否覆盖注入,当为false时,如果key存在且对应value不为null则注入,true则直接覆盖 */
     private boolean isCover = true;
     
     /**
@@ -97,6 +97,20 @@ public class RequestInjectAttributeInterceptor implements HandlerInterceptor {
     public void afterCompletion(HttpServletRequest request,
             HttpServletResponse response, Object handler, Exception ex)
             throws Exception {
+    }
+    
+    /**
+     * @return 返回 isCover
+     */
+    public boolean isCover() {
+        return isCover;
+    }
+    
+    /**
+     * @param isCover 是否覆盖注入,当为false时,如果key存在且对应value不为null则注入,true则直接覆盖
+     */
+    public void setCover(boolean isCover) {
+        this.isCover = isCover;
     }
     
     /**

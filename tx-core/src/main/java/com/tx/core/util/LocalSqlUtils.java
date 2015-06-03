@@ -17,13 +17,12 @@ import com.tx.core.exceptions.argument.NullArgException;
 import com.tx.core.exceptions.util.AssertUtils;
 
 /**
- * 本地sql工具类
- * <功能详细描述>
+ * 本地sql工具类 <功能详细描述>
  * 
- * @author  Administrator
- * @version  [版本号, 2014年2月24日]
- * @see  [相关类/方法]
- * @since  [产品/模块版本]
+ * @author Administrator
+ * @version [版本号, 2014年2月24日]
+ * @see [相关类/方法]
+ * @since [产品/模块版本]
  */
 public class LocalSqlUtils implements InitializingBean {
     
@@ -54,13 +53,13 @@ public class LocalSqlUtils implements InitializingBean {
     }
     
     /**
-      * 获取本地sql处理工具实例类
-      *<功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return LocalSqlUtils [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 获取本地sql处理工具实例类 <功能详细描述>
+     * 
+     * @return [参数说明]
+     * 
+     * @return LocalSqlUtils [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     public static LocalSqlUtils instance() {
         AssertUtils.notNull(instance,
@@ -69,14 +68,14 @@ public class LocalSqlUtils implements InitializingBean {
     }
     
     /**
-      * 构建like字符串
-      *<功能详细描述>
-      * @param parameter
-      * @return [参数说明]
-      * 
-      * @return String [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 构建like字符串 <功能详细描述>
+     * 
+     * @param parameter
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     public String buildLikeArg(String parameter) {
         List<String> concatArgs = new ArrayList<String>();
@@ -90,14 +89,14 @@ public class LocalSqlUtils implements InitializingBean {
     }
     
     /**
-      * 构建前置like字符串
-      *<功能详细描述>
-      * @param parameter
-      * @return [参数说明]
-      * 
-      * @return String [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 构建前置like字符串 <功能详细描述>
+     * 
+     * @param parameter
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     public String buildBeforeLikeArg(String parameter) {
         List<String> concatArgs = new ArrayList<String>();
@@ -110,14 +109,14 @@ public class LocalSqlUtils implements InitializingBean {
     }
     
     /**
-     * 构建后置like字符串
-      *<功能详细描述>
-      * @param parameter
-      * @return [参数说明]
-      * 
-      * @return String [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 构建后置like字符串 <功能详细描述>
+     * 
+     * @param parameter
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     public String buildAfterLikeArg(String parameter) {
         List<String> concatArgs = new ArrayList<String>();
@@ -135,7 +134,7 @@ public class LocalSqlUtils implements InitializingBean {
     public void setDialect(Dialect dialect) {
         this.dialect = dialect;
     }
-
+    
     /**
      * @param 对dataSourceType进行赋值
      */
@@ -143,7 +142,7 @@ public class LocalSqlUtils implements InitializingBean {
         this.dataSourceType = dataSourceType;
         this.dialect = this.dataSourceType.getDialect();
     }
-
+    
     public static void main(String[] args) {
         System.out.println("use: @com.tx.core.util.LocalSqlUtils@instance().buildLikeArg('#{xxx}')");
         
