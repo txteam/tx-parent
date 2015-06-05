@@ -40,7 +40,7 @@ public class DBScriptExecutorContext extends
     
     /** <默认构造函数> */
     public DBScriptExecutorContext() {
-        System.out.println("DBScriptExecutorContext");
+        logger.debug("实例化 数据库脚本自动执行容器 [DBScriptExecutorContext]  ");
     }
     
     /**
