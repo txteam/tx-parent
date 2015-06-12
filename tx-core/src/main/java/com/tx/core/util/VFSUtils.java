@@ -341,8 +341,8 @@ public class VFSUtils {
             out = fileObj.getContent().getOutputStream();
             IOUtils.write(data, out, encoding);
         } catch (FileSystemException e) {
-            e.printStackTrace();
-            throw new IOException("File '" + filePath + "' resolveFile fail.");
+            throw new IOException("File '" + filePath + "' resolveFile fail.",
+                    e);
         } finally {
             IOUtils.closeQuietly(out);
             if (fileObj != null) {
