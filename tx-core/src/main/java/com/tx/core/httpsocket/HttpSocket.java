@@ -19,8 +19,8 @@ import com.tx.core.httpsocket.context.HttpPost;
 import com.tx.core.httpsocket.context.HttpProxy;
 import com.tx.core.httpsocket.context.HttpUrl;
 import com.tx.core.httpsocket.context.HttpWebUrl;
-import com.tx.core.httpsocket.context.RequestHeader;
-import com.tx.core.httpsocket.context.ResponseHeader;
+import com.tx.core.httpsocket.context.Request;
+import com.tx.core.httpsocket.context.Response;
 import com.tx.core.httpsocket.context.responseheader.ResponseStatus;
 import com.tx.core.httpsocket.exception.HttpSocketException;
 
@@ -38,7 +38,7 @@ public class HttpSocket implements Serializable {
     private static final Logger logger = LoggerFactory.getLogger(HttpSocket.class);
     
     /** http发送头信息 */
-    private RequestHeader requestHeader = null;
+    private Request request = null;
     
     /** 连接超时时间,默认5秒 */
     private int timeout = 5 * 1000; //
@@ -53,12 +53,12 @@ public class HttpSocket implements Serializable {
     private boolean isHoldCookies = true;
     
     public HttpSocket() {
-        this.requestHeader = RequestHeader.newRequestHeaderByEmpty();
+        this.request = Request.newRequestByEmpty();
     }
     
     public HttpSocket(boolean isHoldCookies) {
         this.isHoldCookies = isHoldCookies;
-        this.requestHeader = RequestHeader.newRequestHeaderByEmpty();
+        this.request = Request.newRequestByEmpty();
     }
     
     // **-----------about new HttpSocket functions-----------**//
@@ -81,9 +81,9 @@ public class HttpSocket implements Serializable {
      * @param httpUrl
      * @return
      */
-    public ResponseHeader send(String httpUrl) throws HttpSocketException {
-        return send(RequestHeader.newRequestHeaderByGet(HttpUrl.newInstance(httpUrl),
-                requestHeader.getHttpProxy()));
+    public Response send(String httpUrl) throws HttpSocketException {
+        return send(Request.newRequestByGet(HttpUrl.newInstance(httpUrl),
+                request.getHttpProxy()));
     }
     
     /**
@@ -92,10 +92,10 @@ public class HttpSocket implements Serializable {
      * @param httpWebUrl
      * @return
      */
-    public ResponseHeader send(HttpWebUrl httpWebUrl)
+    public Response send(HttpWebUrl httpWebUrl)
             throws HttpSocketException {
-        return send(RequestHeader.newRequestHeaderByGet(HttpUrl.newInstance(httpWebUrl),
-                requestHeader.getHttpProxy()));
+        return send(Request.newRequestByGet(HttpUrl.newInstance(httpWebUrl),
+                request.getHttpProxy()));
     }
     
     /**
@@ -106,10 +106,10 @@ public class HttpSocket implements Serializable {
      * @param headers
      * @return
      */
-    public ResponseHeader send(String httpUrl, Map<String, Cookie> cookies,
+    public Response send(String httpUrl, Map<String, Cookie> cookies,
             Map<String, String> headers) throws HttpSocketException {
-        return send(RequestHeader.newRequestHeaderByGet(HttpUrl.newInstance(httpUrl),
-                requestHeader.getHttpProxy())
+        return send(Request.newRequestByGet(HttpUrl.newInstance(httpUrl),
+                request.getHttpProxy())
                 .putCookies(cookies)
                 .putAllHeader(headers));
     }
@@ -121,11 +121,11 @@ public class HttpSocket implements Serializable {
      * @param post
      * @return
      */
-    public ResponseHeader send(String httpUrl, HttpPost post)
+    public Response send(String httpUrl, HttpPost post)
             throws HttpSocketException {
-        return send(RequestHeader.newRequestHeaderByPost(HttpUrl.newInstance(httpUrl),
+        return send(Request.newRequestByPost(HttpUrl.newInstance(httpUrl),
                 post,
-                requestHeader.getHttpProxy()));
+                request.getHttpProxy()));
     }
     
     /**
@@ -135,11 +135,11 @@ public class HttpSocket implements Serializable {
      * @param post
      * @return
      */
-    public ResponseHeader send(HttpWebUrl httpWebUrl, HttpPost post)
+    public Response send(HttpWebUrl httpWebUrl, HttpPost post)
             throws HttpSocketException {
-        return send(RequestHeader.newRequestHeaderByPost(HttpUrl.newInstance(httpWebUrl),
+        return send(Request.newRequestByPost(HttpUrl.newInstance(httpWebUrl),
                 post,
-                requestHeader.getHttpProxy()));
+                request.getHttpProxy()));
     }
     
     /**
@@ -152,12 +152,12 @@ public class HttpSocket implements Serializable {
      * @return
      * @throws NetworkIOReadErrorException 网络IO读取错误
      */
-    public ResponseHeader send(String httpUrl, HttpPost post,
+    public Response send(String httpUrl, HttpPost post,
             Map<String, Cookie> cookies, Map<String, String> headers)
             throws HttpSocketException {
-        return send(RequestHeader.newRequestHeaderByPost(HttpUrl.newInstance(httpUrl),
+        return send(Request.newRequestByPost(HttpUrl.newInstance(httpUrl),
                 post,
-                requestHeader.getHttpProxy())
+                request.getHttpProxy())
                 .putCookies(cookies)
                 .putAllHeader(headers));
     }
@@ -172,16 +172,16 @@ public class HttpSocket implements Serializable {
      * @param parName 文件参数name
      * @param fileName 文件名
      * 
-     * @return ResponseHeader
+     * @return Response
      * @throws NetworkIOReadErrorException 网络IO读取错误
      * @throws IOException 文件IO读取错误
      */
-    public ResponseHeader send(String httpUrl, File file,
+    public Response send(String httpUrl, File file,
             Map<String, String> pars, String parName, String fileName)
             throws HttpSocketException {
-        return send(RequestHeader.newRequestHeaderByUpFile(HttpUrl.newInstance(httpUrl),
+        return send(Request.newRequestByUpFile(HttpUrl.newInstance(httpUrl),
                 file,
-                requestHeader.getHttpProxy(),
+                request.getHttpProxy(),
                 pars,
                 parName,
                 fileName));
@@ -193,9 +193,9 @@ public class HttpSocket implements Serializable {
      * 
      * @throws NetworkIOReadErrorException 网络IO读取错误
      */
-    public synchronized ResponseHeader send(RequestHeader requestHeader)
+    public synchronized Response send(Request request)
             throws HttpSocketException {
-        this.requestHeader = requestHeader;
+        this.request = request;
         return send();
     }
     
@@ -205,31 +205,31 @@ public class HttpSocket implements Serializable {
      * @return 返回报文头
      * @throws NetworkIOReadErrorException 网络IO读取错误
      */
-    public synchronized ResponseHeader send() throws HttpSocketException {
+    public synchronized Response send() throws HttpSocketException {
         this.isConnectionFree = false;
-        ResponseHeader responseHeader = ResponseHeader.newResponseHeaderByEmpty();
+        Response response = Response.newResponseByEmpty();
         Socket socket = null;
         InputStream inputStream = null;
         try {
             // 开始发送数据
             // 如果保持cookies,则添加保持着的cookies
             if (this.isHoldCookies) {
-                this.requestHeader.putCookies(this.cookies);
+                this.request.putCookies(this.cookies);
             }
             
             // 发送命令,同时返回"返回报文"的流通道
-            socket = this.requestHeader.send(this.timeout);
+            socket = this.request.send(this.timeout);
             
             // 解析返回的报文
             inputStream = socket.getInputStream();
-            responseHeader.resolveResponse(inputStream);
+            response.resolveResponse(inputStream);
             
             // 如果保持cookies,则从返回头中提取出cookies保存起来
             if (this.isHoldCookies) {
-                this.cookies.putAll(responseHeader.getCookies());
+                this.cookies.putAll(response.getCookies());
             }
             
-            ResponseStatus status = responseHeader.getStatus();
+            ResponseStatus status = response.getStatus();
             if (!ResponseStatus.s200.equals(status)) {
                 logger.warn("返回非正常的报文{}", status.toString());
             }
@@ -237,32 +237,32 @@ public class HttpSocket implements Serializable {
             throw new HttpSocketException("获取数据超时!", 1);
         } catch (UnknownHostException uhe) {
             throw new HttpSocketException("不可识别的主机地址 : "
-                    + this.requestHeader.getHost(), 2);
+                    + this.request.getHost(), 2);
         } catch (IOException e) {
             throw new HttpSocketException("未知的网络错误!  当前request请求头 : \r\n"
-                    + this.requestHeader.getRequest(), 3);
+                    + this.request.getRequest(), 3);
         } finally {
             // 已经发送完成
             IOUtils.closeQuietly(inputStream);
             IOUtils.closeQuietly(socket);
             this.isConnectionFree = true;
         }
-        return responseHeader;
+        return response;
     }
     
     // **-----------setter and getter-----------**//
     
-    /** 获得发送RequestHeader的头信息 */
-    public RequestHeader getRequestHeader() {
-        return this.requestHeader;
+    /** 获得发送Request的头信息 */
+    public Request getRequest() {
+        return this.request;
     }
     
     /**
-     * 设置RequestHeader的头信息<br />
+     * 设置Request的头信息<br />
      * 如果调用地方法来发送请求,请自己处理代理设置
      */
-    public HttpSocket setRequestHeader(RequestHeader requestHeader) {
-        this.requestHeader = requestHeader;
+    public HttpSocket setRequest(Request request) {
+        this.request = request;
         return this;
     }
     
@@ -283,18 +283,18 @@ public class HttpSocket implements Serializable {
     
     /** 获取代理设置 */
     public HttpProxy getProxy() {
-        return requestHeader.getHttpProxy();
+        return request.getHttpProxy();
     }
     
     /** 设置代理 */
     public HttpSocket setProxy(HttpProxy httpProxy) {
-        requestHeader.setHttpProxy(httpProxy);
+        request.setHttpProxy(httpProxy);
         return this;
     }
     
     /** 清空代理 */
     public HttpSocket clearProxy() {
-        requestHeader.clearProxy();
+        request.clearProxy();
         return this;
     }
     
@@ -347,7 +347,7 @@ public class HttpSocket implements Serializable {
     
     @Override
     public String toString() {
-        return "HttpSocket [requestHeader=" + requestHeader
+        return "HttpSocket [request=" + request
                 + ", isHoldCookies=" + isHoldCookies + "]";
     }
 }

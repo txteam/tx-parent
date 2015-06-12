@@ -31,13 +31,13 @@ import com.tx.core.httpsocket.context.responseheader.ResponseStatus;
 import com.tx.core.httpsocket.exception.HttpSocketException;
 
 /**
- * 返回的消息报头<br>
+ * 返回的消息<br>
  * 由三部分组成，分别为：状态行、消息报头、响应正文<br>
  * 
  * @author Rain
  * 
  */
-public class ResponseHeader implements Serializable {
+public class Response implements Serializable {
     private static final long serialVersionUID = 2212952560121701011L;
     
     /** 返回http协议版本,默认为HTTP/1.1 */
@@ -55,16 +55,16 @@ public class ResponseHeader implements Serializable {
     /** 返回的数据 */
     private byte[] responseBody = null;
     
-    private ResponseHeader() {
+    private Response() {
     }
     
     /** 新建一个使用空白信息的RequestHeader */
-    public static ResponseHeader newResponseHeaderByEmpty() {
-        return new ResponseHeader();
+    public static Response newResponseByEmpty() {
+        return new Response();
     }
     
     /** 设置返回的地址类型,如果传入空则设置为默认的HTTP/1.1 */
-    private ResponseHeader setHttpType(String httpType) {
+    private Response setHttpType(String httpType) {
         if (StringUtils.isEmpty(httpType)) {
             this.httpType = HttpType.HTTP_1_1;
         } else {
@@ -79,7 +79,7 @@ public class ResponseHeader implements Serializable {
     }
     
     /** 设置返回的状态 */
-    private ResponseHeader setStatus(String status) {
+    private Response setStatus(String status) {
         this.status = ResponseStatus.getResponseStatus(status);
         return this;
     }
@@ -90,7 +90,7 @@ public class ResponseHeader implements Serializable {
     }
     
     /** 设置返回Header,如果传入空则直接返回 */
-    public ResponseHeader putHeader(String header) {
+    public Response putHeader(String header) {
         if (StringUtils.isEmpty(header)) {
             return this;
         }
@@ -116,7 +116,7 @@ public class ResponseHeader implements Serializable {
     }
     
     /** 添加Cookie,如果传入的值为空则直接返回 */
-    public ResponseHeader putCookie(Cookie cookie) {
+    public Response putCookie(Cookie cookie) {
         if (cookie == null) {
             return this;
         }
@@ -125,7 +125,7 @@ public class ResponseHeader implements Serializable {
     }
     
     /** 添加cookies,如果传入的参数为空,则直接返回 */
-    public ResponseHeader addAllCookie(Map<String, Cookie> cookies) {
+    public Response addAllCookie(Map<String, Cookie> cookies) {
         if (MapUtils.isEmpty(cookies)) {
             return this;
         }

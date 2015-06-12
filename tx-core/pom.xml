@@ -125,6 +125,12 @@
 			<artifactId>cglib-nodep</artifactId>
 		</dependency>
 
+		<!-- sftp支持 -->
+		<dependency>
+			<groupId>com.jcraft</groupId>
+			<artifactId>jsch</artifactId>
+		</dependency>
+
 
 		<!-- quartz -->
 		<dependency>

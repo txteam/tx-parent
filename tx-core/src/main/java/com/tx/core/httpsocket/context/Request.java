@@ -27,7 +27,7 @@ import com.tx.core.util.RandomUtils;
  * @author Rain
  * 
  */
-public class RequestHeader implements Serializable {
+public class Request implements Serializable {
     private static final long serialVersionUID = -8999621270754679019L;
     
     private static final String BOUNDARY = "--hiyouyu--rain--"
@@ -56,7 +56,7 @@ public class RequestHeader implements Serializable {
     /** ---POST--- 如果发送类型为POST,则此字段保存post数据 */
     private byte[] post = null;
     
-    private RequestHeader() {
+    private Request() {
         headers.put("Accept", "*/*");
         headers.put("Accept-Language", "zh-cn");
         headers.put("UA-CPU", "x86");
@@ -66,28 +66,28 @@ public class RequestHeader implements Serializable {
         headers.put("Connection", "close");
     }
     
-    /** 新建一个使用空白信息的RequestHeader */
-    public static RequestHeader newRequestHeaderByEmpty() {
-        return new RequestHeader();
+    /** 新建一个使用空白信息的Request */
+    public static Request newRequestByEmpty() {
+        return new Request();
     }
     
     /**
-     * 新建一个使用GET提交的RequestHeader
+     * 新建一个使用GET提交的Request
      * 
      * @param httpUrl 请求路径
      * @param httpProxy 代理设置
      * 
      * @return
      */
-    public static RequestHeader newRequestHeaderByGet(HttpUrl httpUrl,
+    public static Request newRequestByGet(HttpUrl httpUrl,
             HttpProxy httpProxy) {
-        return RequestHeader.newRequestHeaderByEmpty()
+        return Request.newRequestByEmpty()
                 .setGet(httpUrl)
                 .setHttpProxy(httpProxy);
     }
     
     /**
-     * 新建一个使用POST提交的RequestHeader<br>
+     * 新建一个使用POST提交的Request<br>
      * 
      * @param httpUrl 请求路径
      * @param post 提交的数据
@@ -95,15 +95,15 @@ public class RequestHeader implements Serializable {
      * 
      * @return
      */
-    public static RequestHeader newRequestHeaderByPost(HttpUrl httpUrl,
+    public static Request newRequestByPost(HttpUrl httpUrl,
             HttpPost post, HttpProxy httpProxy) {
-        return RequestHeader.newRequestHeaderByEmpty()
+        return Request.newRequestByEmpty()
                 .setPost(httpUrl, post)
                 .setHttpProxy(httpProxy);
     }
     
     /**
-     * 新建一个发送(上传)文件的RequestHeader
+     * 新建一个发送(上传)文件的Request
      * 
      * @param httpUrl 请求路径
      * @param upFile 需要发送的文件
@@ -114,10 +114,10 @@ public class RequestHeader implements Serializable {
      * @return
      * @throws IOException 读取文件失败时抛出此异常
      */
-    public static RequestHeader newRequestHeaderByUpFile(HttpUrl httpUrl,
+    public static Request newRequestByUpFile(HttpUrl httpUrl,
             File upFile, HttpProxy httpProxy, Map<String, String> upFilePars,
             String parName, String fileName) {
-        return RequestHeader.newRequestHeaderByEmpty()
+        return Request.newRequestByEmpty()
                 .setUpFile(httpUrl, upFile, upFilePars, parName, fileName)
                 .setHttpProxy(httpProxy);
     }
@@ -134,7 +134,7 @@ public class RequestHeader implements Serializable {
      * @return
      * @throws IOException 读取文件失败时抛出此异常
      */
-    public RequestHeader setUpFile(HttpUrl httpUrl, File upFile,
+    public Request setUpFile(HttpUrl httpUrl, File upFile,
             Map<String, String> upFilePars, String parName, String fileName) {
         this.httpUrl = httpUrl;
         this.urlType = RequestUrlType.POST;
@@ -145,12 +145,12 @@ public class RequestHeader implements Serializable {
         
         headers.put("Content-Length", String.valueOf(post.length));
         headers.put("Content-Type", "multipart/form-data; boundary="
-                + RequestHeader.BOUNDARY); // post必须添加的标识-上传
+                + Request.BOUNDARY); // post必须添加的标识-上传
         return this;
     }
     
-    /** 设置RequestHeader中GET值 */
-    public RequestHeader setGet(HttpUrl httpUrl) {
+    /** 设置Request中GET值 */
+    public Request setGet(HttpUrl httpUrl) {
         this.httpUrl = httpUrl;
         this.urlType = RequestUrlType.GET;
         headers.remove("Content-Type");
@@ -164,7 +164,7 @@ public class RequestHeader implements Serializable {
      * @param post post数据,0字节长度不算空
      * @param postSize post长度,如果此值为空,则直接取post数据的长度
      */
-    public RequestHeader setPost(HttpUrl httpUrl, byte[] post, Integer postSize) {
+    public Request setPost(HttpUrl httpUrl, byte[] post, Integer postSize) {
         AssertUtils.notNull(post, "post is null.");
         if (postSize != null && postSize.intValue() < 0) {
             throw new HttpSocketException("不能传入负的post数据长度");
@@ -185,13 +185,13 @@ public class RequestHeader implements Serializable {
      * @param httpUrl 请求路径
      * @param post post数据
      */
-    public RequestHeader setPost(HttpUrl httpUrl, HttpPost post) {
+    public Request setPost(HttpUrl httpUrl, HttpPost post) {
         setPost(httpUrl, post.getPost().getBytes(), null);
         return this;
     }
     
     /** 增加请求的header信息,如果传入的键值为空,则直接返回 */
-    public RequestHeader putHeader(String key, String value) {
+    public Request putHeader(String key, String value) {
         if (StringUtils.isEmpty(key) || StringUtils.isEmpty(value)) {
             return this;
         }
@@ -209,7 +209,7 @@ public class RequestHeader implements Serializable {
     }
     
     /** 增加请求的header信息,如果传入的值为空,则直接返回 */
-    public RequestHeader putAllHeader(Map<String, String> headers) {
+    public Request putAllHeader(Map<String, String> headers) {
         if (MapUtils.isEmpty(headers)) {
             return this;
         }
@@ -242,7 +242,7 @@ public class RequestHeader implements Serializable {
     }
     
     /** 设置请求数据的起止位置 */
-    public RequestHeader setRange(Integer start, Integer end) {
+    public Request setRange(Integer start, Integer end) {
         if (start != null && start.intValue() < 0) {
             throw new HttpSocketException("请求数据的起始位置不能小于0");
         }
@@ -266,7 +266,7 @@ public class RequestHeader implements Serializable {
      * http://www.baidu.com:8080,截取出:www.baidu.com:8080<br>
      * http://www.baidu.com:80/index.html,截取出:www.baidu.com
      */
-    public RequestHeader setHost(String host) {
+    public Request setHost(String host) {
         HttpUrl hu = HttpUrl.newInstance(host);
         httpUrl.setUrl(hu.getUrl());
         httpUrl.setHost(hu.getHost());
@@ -285,7 +285,7 @@ public class RequestHeader implements Serializable {
     }
     
     /** 设置http发送协议的版本,如果为空则取默认的HTTP/1.1 */
-    public RequestHeader setHttpType(HttpType httpType) {
+    public Request setHttpType(HttpType httpType) {
         if (httpType == null) {
             this.httpType = HttpType.HTTP_1_1;
         } else {
@@ -295,7 +295,7 @@ public class RequestHeader implements Serializable {
     }
     
     /** 添加cookies,如果传入的值为空则直接返回 */
-    public RequestHeader putCookies(Cookie cookie) {
+    public Request putCookies(Cookie cookie) {
         if (cookie == null) {
             return this;
         }
@@ -304,7 +304,7 @@ public class RequestHeader implements Serializable {
     }
     
     /** 添加cookies,如果传入的参数为空,则直接返回 */
-    public RequestHeader putCookies(Map<String, Cookie> cookies) {
+    public Request putCookies(Map<String, Cookie> cookies) {
         if (MapUtils.isEmpty(cookies)) {
             return this;
         }
@@ -377,20 +377,20 @@ public class RequestHeader implements Serializable {
     }
     
     /** 设置代理 */
-    public RequestHeader setHttpProxy(HttpProxy httpProxy) {
+    public Request setHttpProxy(HttpProxy httpProxy) {
         this.httpProxy = httpProxy;
         return this;
     }
     
     /** 清空代理 */
-    public RequestHeader clearProxy() {
+    public Request clearProxy() {
         this.httpProxy = null;
         return this;
     }
     
     @Override
     public String toString() {
-        return "RequestHeader [urlType=" + urlType + ", url="
+        return "Request [urlType=" + urlType + ", url="
                 + (httpUrl == null ? "" : httpUrl.getUrl()) + "]";
     }
     
@@ -404,7 +404,7 @@ public class RequestHeader implements Serializable {
         StringBuilder sb = new StringBuilder();
         if (MapUtils.isNotEmpty(upFilePars)) {
             for (Map.Entry<String, String> entry : upFilePars.entrySet()) {
-                sb.append("--").append(RequestHeader.BOUNDARY).append("\r\n");
+                sb.append("--").append(Request.BOUNDARY).append("\r\n");
                 sb.append("Content-Disposition: form-data; name=\"")
                         .append(entry.getKey())
                         .append("\"")
@@ -419,7 +419,7 @@ public class RequestHeader implements Serializable {
         if (StringUtils.isBlank(fileName)) {
             fileName = file.getPath();
         }
-        sb.append("--").append(RequestHeader.BOUNDARY).append("\r\n");
+        sb.append("--").append(Request.BOUNDARY).append("\r\n");
         sb.append("Content-Disposition: form-data; name=\"")
                 .append(parName)
                 .append("\"; filename=\"")
@@ -433,7 +433,7 @@ public class RequestHeader implements Serializable {
         try {
             byte[] pre = sb.toString().getBytes();
             byte[] files = FileUtils.readFileToByteArray(file);
-            byte[] last = ("\r\n--" + RequestHeader.BOUNDARY + "--\r\n").getBytes();
+            byte[] last = ("\r\n--" + Request.BOUNDARY + "--\r\n").getBytes();
             return ArrayUtils.addAll(ArrayUtils.addAll(pre, files), last);
         } catch (IOException e) {
             throw new HttpSocketException("上传文件读取异常!", e);
