@@ -383,6 +383,7 @@ public class VFSUtils {
             out = fileObj.getContent().getOutputStream();
             IOUtils.write(data, out, encoding);
         } catch (FileSystemException e) {
+            e.printStackTrace();
             throw new IOException("File '" + filePath + "' resolveFile fail.");
         } finally {
             IOUtils.closeQuietly(out);
