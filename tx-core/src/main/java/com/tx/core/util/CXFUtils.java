@@ -197,6 +197,60 @@ public class CXFUtils {
                                 new RPCAccessException(error.toString(), fault));
                     }
                 });
+        
+        client.getOutFaultInterceptors()
+                .add(new AbstractPhaseInterceptor<Message>(Phase.MARSHAL) {
+                    @Override
+                    public void handleMessage(Message message) throws Fault {
+                        Fault fault = (Fault) message.getContent(Exception.class);
+                        Method method = message.getExchange().get(Method.class);
+                        if (fault != null && method != null) {
+                            StringBuilder error = new StringBuilder();
+                            error.append("调用wsclient方法出错:")
+                                    .append(fault.getMessage())
+                                    .append("[")
+                                    .append(method.toString())
+                                    .append("]");
+                            message.setContent(Exception.class,
+                                    new RPCAccessException(error.toString(),
+                                            fault));
+                        }
+                    }
+                    
+                });
+        
+        //        Field[] declaredFields = Phase.class.getDeclaredFields();
+        //        for (Field field : declaredFields) {
+        //            if (Modifier.isStatic(field.getModifiers())) {
+        //                try {
+        //                    Object object = field.get(null);
+        //                    client.getOutFaultInterceptors().add(new ABCD(
+        //                            String.valueOf(object)) {
+        //                    });
+        //                } catch (IllegalArgumentException | IllegalAccessException e) {
+        //                    e.printStackTrace();
+        //                }
+        //            }
+        //        }
+    }
+    
+    public static class ABCD extends AbstractPhaseInterceptor<Message> {
+        
+        public String phase;
+        
+        @Override
+        public void handleMessage(Message message) throws Fault {
+            Fault fault = (Fault) message.getContent(Exception.class);
+            Method method = message.getExchange().get(Method.class);
+            if (fault != null && method != null) {
+                System.out.println("ABCD : " + phase);
+            }
+        }
+        
+        public ABCD(String phase) {
+            super(phase);
+            this.phase = phase;
+        }
     }
     
     /**

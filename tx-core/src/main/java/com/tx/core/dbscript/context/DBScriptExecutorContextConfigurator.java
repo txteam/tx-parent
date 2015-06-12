@@ -9,6 +9,8 @@ package com.tx.core.dbscript.context;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -25,6 +27,8 @@ import com.tx.core.util.ComputerEnvironment;
  * @since [产品/模块版本]
  */
 public class DBScriptExecutorContextConfigurator implements InitializingBean {
+    
+    protected static final Logger logger = LoggerFactory.getLogger(DBScriptExecutorContext.class);
     
     /** 数据源类型 */
     protected DataSourceTypeEnum dataSourceType;
@@ -76,12 +80,14 @@ public class DBScriptExecutorContextConfigurator implements InitializingBean {
             return false;
         } else {
             if (!StringUtils.isEmpty(this.enableIpAddress)) {
-                if (!ComputerEnvironment.getHostAddressSet().contains(this.enableIpAddress)) {
+                if (!ComputerEnvironment.getHostAddressSet()
+                        .contains(this.enableIpAddress)) {
                     return false;
                 }
             }
             if (!StringUtils.isEmpty(this.enableMacAddress)) {
-                if (!ComputerEnvironment.getMacAddressSet().contains(this.enableMacAddress)) {
+                if (!ComputerEnvironment.getMacAddressSet()
+                        .contains(this.enableMacAddress)) {
                     return false;
                 }
             }

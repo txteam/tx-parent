@@ -12,8 +12,8 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.helpers.MessageFormatter;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -28,23 +28,24 @@ import com.tx.core.util.ObjectUtils;
  * 断言工具类<br/>
  * <功能详细描述>
  * 
- * @author  brady
- * @version  [版本号, 2013-4-2]
- * @see  [相关类/方法]
- * @since  [产品/模块版本]
+ * @author brady
+ * @version [版本号, 2013-4-2]
+ * @see [相关类/方法]
+ * @since [产品/模块版本]
  */
 public class AssertUtils {
     
     /**
      * 判断对象不为空则抛出指定异常<br/>
      * <功能详细描述>
+     * 
      * @param obj
      * @param exception [参数说明]
      * 
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
+     */
     public static void isTrue(boolean flag, SILException exception) {
         //不为空
         if (!flag) {
@@ -55,13 +56,14 @@ public class AssertUtils {
     /**
      * 断言对应对象非空(支持：字符串，数组，集合，Map)<br/>
      * <功能详细描述>
+     * 
      * @param str
      * @param message [参数说明]
      * 
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
+     */
     public static void notEmpty(Object obj) {
         //不为空
         notEmpty(obj, "");
@@ -70,13 +72,14 @@ public class AssertUtils {
     /**
      * 断言对应对象非空(支持：字符串，数组，集合，Map)<br/>
      * <功能详细描述>
+     * 
      * @param str
      * @param message [参数说明]
      * 
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
+     */
     public static void notEmpty(Object obj, String message,
             String... parameters) {
         //不为空
@@ -86,13 +89,14 @@ public class AssertUtils {
     /**
      * 断言对应对象非空(支持：字符串，数组，集合，Map)<br/>
      * <功能详细描述>
+     * 
      * @param str
      * @param message [参数说明]
      * 
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
+     */
     public static void notEmpty(Object obj, String message, Object[] parameters) {
         //不为空
         notNull(obj, message, parameters);
@@ -105,13 +109,14 @@ public class AssertUtils {
     /**
      * 断言对应对象为空(支持：字符串，数组，集合，Map)<br/>
      * <功能详细描述>
+     * 
      * @param str
      * @param message [参数说明]
      * 
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
+     */
     public static void isEmpty(Object obj) {
         //不为空
         isEmpty(obj, "");
@@ -120,13 +125,14 @@ public class AssertUtils {
     /**
      * 断言对应对象为空(支持：字符串，数组，集合，Map)<br/>
      * <功能详细描述>
+     * 
      * @param str
      * @param message [参数说明]
      * 
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
+     */
     public static void isEmpty(Object obj, String message, String... parameters) {
         //不为空
         isEmpty(obj, message, (Object[]) parameters);
@@ -135,20 +141,22 @@ public class AssertUtils {
     /**
      * 断言对应字符串不能为空<br/>
      * <功能详细描述>
+     * 
      * @param str
      * @param message [参数说明]
      * 
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
+     */
     @SuppressWarnings("rawtypes")
     public static void isEmpty(Object obj, String message, Object[] parameters) {
         //不为空
         if (obj == null) {
             return;
         }
-        if (obj instanceof String && !StringUtils.isBlank((String) obj)) {
+        if (obj instanceof CharSequence
+                && !StringUtils.isBlank((CharSequence) obj)) {
             throw new NullArgException(MessageFormatter.arrayFormat(message,
                     parameters).getMessage());
         } else if (obj instanceof Collection
@@ -168,13 +176,14 @@ public class AssertUtils {
     /**
      * 断言对象不为空<br/>
      * <功能详细描述>
+     * 
      * @param object
      * @param message [参数说明]
      * 
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
+     */
     public static void notNull(Object object) {
         notNull(object, "");
     }
@@ -182,26 +191,28 @@ public class AssertUtils {
     /**
      * 断言对象不为空<br/>
      * <功能详细描述>
+     * 
      * @param object
      * @param message [参数说明]
      * 
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
+     */
     public static void notNull(Object object, String message,
             String... parameters) {
         notNull(object, message, (Object[]) parameters);
     }
     
     /**
-      * 断言对象不为空<br/>
-      * <功能详细描述>
-      * @param object [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 断言对象不为空<br/>
+     * <功能详细描述>
+     * 
+     * @param object [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     public static void notNull(Object object, String message,
             Object[] parameters) {
@@ -214,13 +225,14 @@ public class AssertUtils {
     /**
      * 断言对象为空<br/>
      * <功能详细描述>
+     * 
      * @param object
      * @param message [参数说明]
      * 
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
+     */
     public static void isNull(Object object) {
         isNull(object, "");
     }
@@ -228,26 +240,28 @@ public class AssertUtils {
     /**
      * 断言对象为空<br/>
      * <功能详细描述>
+     * 
      * @param object
      * @param message [参数说明]
      * 
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
+     */
     public static void isNull(Object object, String message,
             String... parameters) {
         isNull(object, message, (Object[]) parameters);
     }
     
     /**
-      * 断言对象为空<br/>
-      * <功能详细描述>
-      * @param object [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 断言对象为空<br/>
+     * <功能详细描述>
+     * 
+     * @param object [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     public static void isNull(Object object, String message, Object[] parameters) {
         if (object != null) {
@@ -258,29 +272,31 @@ public class AssertUtils {
     
     /**
      * 断言表达式是为真<br/>
-     *     如果不为真，抛出参数非法异常IllegalArgException<br/>
+     * 如果不为真，抛出参数非法异常IllegalArgException<br/>
      * <功能详细描述>
+     * 
      * @param expression
      * @param message [参数说明]
      * 
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
+     */
     public static void isTrue(boolean expression) {
         isTrue(expression, "");
     }
     
     /**
-      * 断言表达式是为真<br/>
-      *     如果不为真，抛出参数非法异常IllegalArgException<br/>
-      * <功能详细描述>
-      * @param expression
-      * @param message [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 断言表达式是为真<br/>
+     * 如果不为真，抛出参数非法异常IllegalArgException<br/>
+     * <功能详细描述>
+     * 
+     * @param expression
+     * @param message [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     public static void isTrue(boolean expression, String message,
             String... parameters) {
@@ -288,14 +304,15 @@ public class AssertUtils {
     }
     
     /**
-      * 断言表达式是为真<br/>
-      *     如果不为真，抛出参数非法异常IllegalArgException<br/>
-      * <功能详细描述>
-      * @param expression [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 断言表达式是为真<br/>
+     * 如果不为真，抛出参数非法异常IllegalArgException<br/>
+     * <功能详细描述>
+     * 
+     * @param expression [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     public static void isTrue(boolean expression, String message,
             Object[] parameters) {
@@ -307,44 +324,47 @@ public class AssertUtils {
     
     /**
      * 断言表达式是不为真<br/>
-     *     如果不为真，抛出参数非法异常IllegalArgException<br/>
+     * 如果不为真，抛出参数非法异常IllegalArgException<br/>
      * <功能详细描述>
+     * 
      * @param expression
      * @param message [参数说明]
      * 
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
+     */
     public static void notTrue(boolean expression) {
         notTrue(expression, "");
     }
     
     /**
      * 断言表达式是不为真<br/>
-     *     如果不为真，抛出参数非法异常IllegalArgException<br/>
+     * 如果不为真，抛出参数非法异常IllegalArgException<br/>
      * <功能详细描述>
+     * 
      * @param expression
      * @param message [参数说明]
      * 
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
+     */
     public static void notTrue(boolean expression, String message,
             String... parameters) {
         notTrue(expression, message, (Object[]) parameters);
     }
     
     /**
-      * 断言表达式是不为真<br/>
-      *     如果不为真，抛出参数非法异常IllegalArgException<br/>
-      * <功能详细描述>
-      * @param expression [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 断言表达式是不为真<br/>
+     * 如果不为真，抛出参数非法异常IllegalArgException<br/>
+     * <功能详细描述>
+     * 
+     * @param expression [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     public static void notTrue(boolean expression, String message,
             Object[] parameters) {
@@ -355,28 +375,28 @@ public class AssertUtils {
     }
     
     /**
-     * 断言是否为指定类型的实例
-     *<功能详细描述>
+     * 断言是否为指定类型的实例 <功能详细描述>
+     * 
      * @param clazz
      * @param obj [参数说明]
      * 
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
+     */
     public static void isInstanceOf(Class<?> clazz, Object obj) {
         isInstanceOf(clazz, obj, "");
     }
     
     /**
-      * 断言是否为指定类型的实例
-      *<功能详细描述>
-      * @param clazz
-      * @param obj [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 断言是否为指定类型的实例 <功能详细描述>
+     * 
+     * @param clazz
+     * @param obj [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     public static void isInstanceOf(Class<?> clazz, Object obj, String message,
             String... parameters) {
@@ -384,16 +404,16 @@ public class AssertUtils {
     }
     
     /**
-      * 断言对象是否为指定类型的实例
-      *<功能详细描述>
-      * @param type
-      * @param obj
-      * @param message
-      * @param parameters [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 断言对象是否为指定类型的实例 <功能详细描述>
+     * 
+     * @param type
+     * @param obj
+     * @param message
+     * @param parameters [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     public static void isInstanceOf(Class<?> type, Object obj, String message,
             Object[] parameters) {
@@ -406,14 +426,14 @@ public class AssertUtils {
     }
     
     /**
-      *<功能简述>
-      *<功能详细描述>
-      * @param superType
-      * @param subType [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * <功能简述> <功能详细描述>
+     * 
+     * @param superType
+     * @param subType [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     @SuppressWarnings("rawtypes")
     public static void isAssignable(Class superType, Class subType) {
@@ -422,13 +442,17 @@ public class AssertUtils {
     
     /**
      * Assert that {@code superType.isAssignableFrom(subType)} is {@code true}.
-     * <pre class="code">Assert.isAssignable(Number.class, myClass);</pre>
+     * 
+     * <pre class="code">
+     * Assert.isAssignable(Number.class, myClass);
+     * </pre>
+     * 
      * @param superType the super type to check against
      * @param subType the sub type to check
-     * @param message a message which will be prepended to the message produced by
-     * the function itself, and which may be used to provide context. It should
-     * normally end in a ": " or ". " so that the function generate message looks
-     * ok when prepended to it.
+     * @param message a message which will be prepended to the message produced
+     *            by the function itself, and which may be used to provide
+     *            context. It should normally end in a ": " or ". " so that the
+     *            function generate message looks ok when prepended to it.
      * @throws IllegalArgumentException if the classes are not assignable
      */
     public static void isAssignable(Class<?> superType, Class<?> subType,
@@ -443,13 +467,14 @@ public class AssertUtils {
     /**
      * 断言资源是存在否则抛出资源不存在异常<br/>
      * <功能详细描述>
+     * 
      * @param str
      * @param message [参数说明]
      * 
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
+     */
     public static void isExist(Resource resource, String message,
             String... parameters) {
         isExist(resource, message, (Object[]) parameters);
@@ -458,13 +483,14 @@ public class AssertUtils {
     /**
      * 断言资源是存在否则抛出资源不存在异常<br/>
      * <功能详细描述>
+     * 
      * @param str
      * @param message [参数说明]
      * 
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
+     */
     public static void isExist(Resource resource, String message,
             Object[] parameters) {
         if (resource == null || !resource.exists()) {
@@ -476,13 +502,14 @@ public class AssertUtils {
     /**
      * 断言资源是存在否则抛出资源不存在异常<br/>
      * <功能详细描述>
+     * 
      * @param str
      * @param message [参数说明]
      * 
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
+     */
     public static void isExist(File file, String message, String... parameters) {
         isExist(file, message, (Object[]) parameters);
     }
@@ -490,17 +517,98 @@ public class AssertUtils {
     /**
      * 断言资源是存在否则抛出资源不存在异常<br/>
      * <功能详细描述>
+     * 
      * @param str
      * @param message [参数说明]
      * 
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
+     */
     public static void isExist(File file, String message, Object[] parameters) {
         if (file == null || !file.exists()) {
             throw new ResourceIsNullOrNotExistException(new FileSystemResource(
                     file), message, parameters);
         }
+    }
+    
+    /**
+     * 
+     * 断言两个实体是否相等
+     * 
+     * @param srcObj
+     * @param tagObj
+     * @param message
+     * @param parameters
+     * 
+     * @return void [返回类型说明]
+     * @exception [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void isEq(Object srcObj, Object tagObj, String message,
+            Object[] parameters) {
+        if (!((srcObj == null && tagObj == null) || (srcObj != null
+                && tagObj != null && srcObj.equals(tagObj)))) {
+            throw new IllegalArgException("srcObj not equal tagObj : "
+                    + message, parameters);
+        }
+    }
+    
+    /**
+     * 
+     * 断言两个实体是否相等
+     * 
+     * @param srcObj
+     * @param tagObj
+     * @param message
+     * @param parameters
+     * 
+     * @return void [返回类型说明]
+     * @exception [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void isEq(Object srcObj, Object tagObj, String message,
+            String... parameters) {
+        isEq(srcObj, tagObj, message, (Object[]) parameters);
+    }
+    
+    /**
+     * 
+     * 断言两个实体不相等
+     * 
+     * @param srcObj
+     * @param tagObj
+     * @param message
+     * @param parameters
+     * 
+     * @return void [返回类型说明]
+     * @exception [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void isNotEq(Object srcObj, Object tagObj, String message,
+            Object[] parameters) {
+        if ((srcObj == null && tagObj == null)
+                || (srcObj != null && tagObj != null && srcObj.equals(tagObj))) {
+            throw new IllegalArgException("srcObj equal tagObj : "
+                    + message, parameters);
+        }
+    }
+    
+    /**
+     * 
+     * 断言两个实体不相等
+     * 
+     * @param srcObj
+     * @param tagObj
+     * @param message
+     * @param parameters
+     * 
+     * @return void [返回类型说明]
+     * @exception [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void isNotEq(Object srcObj, Object tagObj, String message,
+            String... parameters) {
+        isNotEq(srcObj, tagObj, message, (Object[]) parameters);
     }
 }
