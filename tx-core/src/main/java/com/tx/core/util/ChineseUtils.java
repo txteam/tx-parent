@@ -66,6 +66,26 @@ public class ChineseUtils {
     
     /**
      * 
+     * 计算拥有中文的字符串长度<br/>
+     * 此方法会把中文的所占字符串长度当做 length 来计算
+     * 
+     * @param str 字符串
+     * @param length 把中文当做几个单位长度看待
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static int lengthFromChinese(String str, int length) {
+        if (StringUtils.isBlank(str)) {
+            return 0;
+        }
+        int countChineseWords = countChineseWords(str);
+        return str.length() + (countChineseWords - 1) * length;
+    }
+    
+    /**
+     * 
      *根据Unicode编码完美的判断中文汉字和符号
      * @param c 字符
      * 
