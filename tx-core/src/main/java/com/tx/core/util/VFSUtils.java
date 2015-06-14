@@ -12,6 +12,7 @@ import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
 import org.apache.commons.vfs2.FileSystemManager;
 import org.apache.commons.vfs2.FileType;
+import org.apache.commons.vfs2.FileTypeSelector;
 import org.apache.commons.vfs2.VFS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -119,22 +120,22 @@ public class VFSUtils {
     /**
      * 判断对应文件是否存在
      * 
-     * @param filePath
+     * @param sftpFilePath
      * 
      * @return boolean true:存在|false:不存在
      * @exception IOException [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public static boolean exists(String filePath) throws IOException {
-        if (StringUtils.isEmpty(filePath)) {
-            throw new IOException("File '" + filePath + "' is empty.");
+    public static boolean exists(String sftpFilePath) throws IOException {
+        if (StringUtils.isEmpty(sftpFilePath)) {
+            throw new IOException("File '" + sftpFilePath + "' is empty.");
         }
         FileObject fileObj = null;
         try {
-            fileObj = fsManager.resolveFile(filePath);
+            fileObj = fsManager.resolveFile(sftpFilePath);
             return fileObj.exists();
         } catch (FileSystemException e) {
-            throw new IOException("File '" + filePath + "' resolveFile fail.");
+            throw fail(sftpFilePath, e);
         } finally {
             if (fileObj != null) {
                 fileObj.close();
@@ -145,7 +146,7 @@ public class VFSUtils {
     /**
      * <读取文件，将其中内容以byte进行输出> <功能详细描述>
      * 
-     * @param filePath
+     * @param sftpFilePath
      * @return
      * @throws IOException [参数说明]
      * 
@@ -153,30 +154,30 @@ public class VFSUtils {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public static byte[] readFileToByteArray(String filePath)
+    public static byte[] readFileToByteArray(String sftpFilePath)
             throws IOException {
-        if (StringUtils.isEmpty(filePath)) {
-            throw new IOException("File '" + filePath + "' is empty.");
+        if (StringUtils.isEmpty(sftpFilePath)) {
+            throw new IOException("File '" + sftpFilePath + "' is empty.");
         }
         FileObject fileObj = null;
         InputStream in = null;
         try {
-            fileObj = fsManager.resolveFile(filePath);
+            fileObj = fsManager.resolveFile(sftpFilePath);
             if (fileObj.exists()) {
                 System.out.println(fileObj.getType().getName());
                 if (FileType.FOLDER.equals(fileObj.getType())) {
-                    throw new IOException("File '" + filePath
+                    throw new IOException("File '" + sftpFilePath
                             + "' exists but is a directory");
                 } else {
                     in = fileObj.getContent().getInputStream();
                     return IOUtils.toByteArray(in);
                 }
             } else {
-                throw new FileNotFoundException("File '" + filePath
+                throw new FileNotFoundException("File '" + sftpFilePath
                         + "' does not exist");
             }
         } catch (FileSystemException e) {
-            throw new IOException("File '" + filePath + "' resolveFile fail.");
+            throw fail(sftpFilePath, e);
         } finally {
             IOUtils.closeQuietly(in);
             if (fileObj != null) {
@@ -188,7 +189,7 @@ public class VFSUtils {
     /**
      * <读取文件内容> <功能详细描述>
      * 
-     * @param filePath
+     * @param sftpFilePath
      * @param encoding
      * @return
      * @throws IOException [参数说明]
@@ -197,29 +198,29 @@ public class VFSUtils {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public static String readFileToString(String filePath, String encoding)
+    public static String readFileToString(String sftpFilePath, String encoding)
             throws IOException {
-        if (StringUtils.isEmpty(filePath)) {
-            throw new IOException("File '" + filePath + "' is empty.");
+        if (StringUtils.isEmpty(sftpFilePath)) {
+            throw new IOException("File '" + sftpFilePath + "' is empty.");
         }
         FileObject fileObj = null;
         InputStream in = null;
         try {
-            fileObj = fsManager.resolveFile(filePath);
+            fileObj = fsManager.resolveFile(sftpFilePath);
             if (fileObj.exists()) {
                 if (FileType.FOLDER.equals(fileObj.getType())) {
-                    throw new IOException("File '" + filePath
+                    throw new IOException("File '" + sftpFilePath
                             + "' exists but is a directory");
                 } else {
                     in = fileObj.getContent().getInputStream();
                     return IOUtils.toString(in, encoding);
                 }
             } else {
-                throw new FileNotFoundException("File '" + filePath
+                throw new FileNotFoundException("File '" + sftpFilePath
                         + "' does not exist");
             }
         } catch (FileSystemException e) {
-            throw new IOException("File '" + filePath + "' resolveFile fail.");
+            throw fail(sftpFilePath, e);
         } finally {
             IOUtils.closeQuietly(in);
             if (fileObj != null) {
@@ -231,7 +232,7 @@ public class VFSUtils {
     /**
      * <读取文件内容> <功能详细描述>
      * 
-     * @param filePath
+     * @param sftpFilePath
      * @return
      * @throws IOException [参数说明]
      * 
@@ -239,14 +240,15 @@ public class VFSUtils {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public static String readFileToString(String filePath) throws IOException {
-        return readFileToString(filePath, null);
+    public static String readFileToString(String sftpFilePath)
+            throws IOException {
+        return readFileToString(sftpFilePath, null);
     }
     
     /**
      * <读取文件内容> <功能详细描述>
      * 
-     * @param filePath
+     * @param sftpFilePath
      * @param encoding
      * @return
      * @throws IOException [参数说明]
@@ -255,29 +257,29 @@ public class VFSUtils {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public static List<String> readLines(String filePath, String encoding)
+    public static List<String> readLines(String sftpFilePath, String encoding)
             throws IOException {
-        if (StringUtils.isEmpty(filePath)) {
-            throw new IOException("File '" + filePath + "' is empty.");
+        if (StringUtils.isEmpty(sftpFilePath)) {
+            throw new IOException("File '" + sftpFilePath + "' is empty.");
         }
         FileObject fileObj = null;
         InputStream in = null;
         try {
-            fileObj = fsManager.resolveFile(filePath);
+            fileObj = fsManager.resolveFile(sftpFilePath);
             if (fileObj.exists()) {
                 if (FileType.FOLDER.equals(fileObj.getType())) {
-                    throw new IOException("File '" + filePath
+                    throw new IOException("File '" + sftpFilePath
                             + "' exists but is a directory");
                 } else {
                     in = fileObj.getContent().getInputStream();
                     return IOUtils.readLines(in, encoding);
                 }
             } else {
-                throw new FileNotFoundException("File '" + filePath
+                throw new FileNotFoundException("File '" + sftpFilePath
                         + "' does not exist");
             }
         } catch (FileSystemException e) {
-            throw new IOException("File '" + filePath + "' resolveFile fail.");
+            throw fail(sftpFilePath, e);
         } finally {
             IOUtils.closeQuietly(in);
             if (fileObj != null) {
@@ -287,86 +289,144 @@ public class VFSUtils {
     }
     
     /**
-     * <读取文件内容> <功能详细描述>
      * 
-     * @param filePath
-     * @return
-     * @throws IOException [参数说明]
+     * 读取 sftp 文件内容
      * 
-     * @return List<String> [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
+     * @param sftpFilePath sftp 文件路径
+     * 
+     * @return List<String> 文件内容
+     * @exception throws IOException IO 异常
      * @see [类、类#方法、类#成员]
      */
-    public static List<String> readLines(String filePath) throws IOException {
-        return readLines(filePath, null);
+    public static List<String> readLines(String sftpFilePath)
+            throws IOException {
+        return readLines(sftpFilePath, null);
     }
     
     /**
-     * <将内容写入文件中> <功能详细描述>
      * 
-     * @param filePath
-     * @param data
-     * @param encoding
-     * @throws IOException [参数说明]
+     * 复制文件到 sftp 中
      * 
-     * @return void [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
+     * @param sftpFilePath sftp 路径
+     * @param sourceFilePath 预复制文件路径
+     * 
+     * @throws IOException IO 异常
      * @see [类、类#方法、类#成员]
      */
-    public static void writeStringToFile(String filePath, String data,
+    public static void copyFileToFile(String sftpFilePath, String sourceFilePath)
+            throws IOException {
+        if (StringUtils.isEmpty(sftpFilePath)) {
+            throw new IOException("File '" + sftpFilePath + "' is empty.");
+        }
+        FileObject fileObj = null;
+        FileObject sourceFileObj = null;
+        
+        try {
+            fileObj = fsManager.resolveFile(sftpFilePath);
+            sourceFileObj = fsManager.resolveFile(sourceFilePath);
+            
+            if (fileObj.exists()) {
+                throw new IOException("File '" + sftpFilePath + "' is exists.");
+            }
+            
+            fileObj.copyFrom(sourceFileObj, new FileTypeSelector(FileType.FILE));
+            
+        } catch (FileSystemException e) {
+            throw fail(sftpFilePath, e);
+        } finally {
+            if (fileObj != null) {
+                fileObj.close();
+            }
+            if (sourceFileObj != null) {
+                sourceFileObj.close();
+            }
+        }
+    }
+    
+    /**
+     * 
+     * 将内容写入文件中<br/>
+     * 1.如果文件不存在，则创建<br/>
+     * 2.如果 sftp 没有写入权限，则调用失败
+     * 
+     * @param sftpFilePath sftp 路径
+     * @param data 需要写入的数据
+     * @param encoding 文件编码
+     * 
+     * @throws IOException IO 异常
+     * @see [类、类#方法、类#成员]
+     */
+    public static void writeStringToFile(String sftpFilePath, String data,
             String encoding) throws IOException {
-        if (StringUtils.isEmpty(filePath)) {
-            throw new IOException("File '" + filePath + "' is empty.");
+        if (StringUtils.isEmpty(sftpFilePath)) {
+            throw new IOException("File '" + sftpFilePath + "' is empty.");
         }
         FileObject fileObj = null;
         OutputStream out = null;
         
         try {
-            fileObj = fsManager.resolveFile(filePath);
+            fileObj = fsManager.resolveFile(sftpFilePath);
             
             if (!fileObj.exists()) {
                 fileObj.createFile();
             } else {
                 if (FileType.FOLDER.equals(fileObj.getType())) {
-                    throw new IOException("Write fail. File '" + filePath
+                    throw new IOException("Write fail. File '" + sftpFilePath
                             + "' exists but is a directory");
                 }
             }
             
             if (!fileObj.isWriteable()) {
-                throw new IOException("Write fail. File '" + filePath
+                throw new IOException("Write fail. File '" + sftpFilePath
                         + "' exists but isWriteable is false.");
             }
             
             out = fileObj.getContent().getOutputStream();
             IOUtils.write(data, out, encoding);
         } catch (FileSystemException e) {
-            throw new IOException("File '" + filePath + "' resolveFile fail.",
-                    e);
+            throw fail(sftpFilePath, e);
         } finally {
             IOUtils.closeQuietly(out);
             if (fileObj != null) {
                 fileObj.close();
             }
         }
-        
     }
     
     /**
-     * <将内容写入文件中> <功能详细描述>
      * 
-     * @param filePath
-     * @param data
-     * @param encoding
-     * @throws IOException [参数说明]
+     * 抛出错误异常
+     * 
+     * @param sftpFilePath
+     * @param e
+     * @throws IOException
      * 
      * @return void [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
+     * @throws throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public static void writeStringToFile(String filePath, String data)
+    private static final IOException fail(String sftpFilePath,
+            FileSystemException e) {
+        return new IOException("File '" + sftpFilePath + "' resolveFile fail."
+                + "[" + e.getMessage() + "]", e);
+    }
+    
+    /**
+     * 
+     * 将内容写入文件中<br/>
+     * 1.如果文件不存在，则创建<br/>
+     * 2.如果 sftp 没有写入权限，则调用失败<br/>
+     * 3.文件编码为 utf-8
+     * 
+     * @param sftpFilePath sftp 路径
+     * @param data 需要写入的数据
+     * 
+     * @exception throws IOException IO 异常
+     * @see [类、类#方法、类#成员]
+     */
+    public static void writeStringToFile(String sftpFilePath, String data)
             throws IOException {
-        writeStringToFile(filePath, data, null);
+        writeStringToFile(sftpFilePath, data, null);
     }
     
     public static void main(String[] args) throws Exception {
