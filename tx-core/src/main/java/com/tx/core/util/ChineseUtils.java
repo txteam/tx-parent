@@ -13,10 +13,10 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * 中文工具
  * 
- * @author  rain
- * @version  [版本号, 2015年6月12日]
- * @see  [相关类/方法]
- * @since  [产品/模块版本]
+ * @author rain
+ * @version [版本号, 2015年6月12日]
+ * @see [相关类/方法]
+ * @since [产品/模块版本]
  */
 public class ChineseUtils {
     /**
@@ -81,12 +81,13 @@ public class ChineseUtils {
             return 0;
         }
         int countChineseWords = countChineseWords(str);
-        return str.length() + (countChineseWords - 1) * length;
+        return str.length() + countChineseWords * (length - 1);
     }
     
     /**
      * 
-     *根据Unicode编码完美的判断中文汉字和符号
+     * 根据Unicode编码完美的判断中文汉字和符号
+     * 
      * @param c 字符
      * 
      * @return boolean true：汉字|false：非汉字
