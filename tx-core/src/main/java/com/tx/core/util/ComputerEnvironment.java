@@ -10,6 +10,7 @@ import java.net.InetAddress;
 import java.net.InterfaceAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -210,6 +211,11 @@ public abstract class ComputerEnvironment {
     /** 获取本机所有的地址信息 */
     public static List<IpConfigInfo> getIpConfigInfoList() {
         return ipConfigInfoList;
+    }
+    
+    /** 获取本机默认id的ip地址 */
+    public static String getLocalHostAddress() throws UnknownHostException {
+        return InetAddress.getLocalHost().getHostAddress();
     }
     
     public static void main(String[] args) throws Exception {
