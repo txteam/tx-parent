@@ -11,7 +11,6 @@ import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Random;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.engine.SessionImplementor;
@@ -93,10 +92,6 @@ public class UUIDUtils {
     
     public static class UUID16HexGenerator extends AbstractUUIDGenerator {
         
-        private static Random random = null;
-        
-        private static long reverseIp = -1;
-        
         private static int count = 0;
         
         private synchronized int count() {
@@ -108,20 +103,6 @@ public class UUIDUtils {
         
         public UUID16HexGenerator() {
             super();
-            int ip = getIP();
-            String ipPad = StringUtils.leftPad(String.valueOf(ip), 13, '0');
-            StringBuilder sb = new StringBuilder(ipPad);
-            sb.reverse();
-            reverseIp = Long.parseLong(sb.toString());
-            
-            long seed = System.currentTimeMillis() + reverseIp;
-            random = new Random(seed);
-            
-            // 在分布式的时候,根据ip和当前时间戳,扰乱随机数
-            int max = random.nextInt(100) + 1;
-            for (int index = 0; index < max; index++) {
-                RandomUtils.nextInt();
-            }
         }
         
         @Override
