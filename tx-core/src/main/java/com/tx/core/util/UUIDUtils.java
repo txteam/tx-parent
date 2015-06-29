@@ -93,9 +93,10 @@ public class UUIDUtils {
     public static class UUID16HexGenerator extends AbstractUUIDGenerator {
         
         private static int count = 0;
+        private static int maxCount = Integer.parseInt("zzz", 36);
         
         private synchronized int count() {
-            if (count > Integer.parseInt("zzz", 36)) {
+            if (count > maxCount) {
                 count = 0;
             }
             return count++;
