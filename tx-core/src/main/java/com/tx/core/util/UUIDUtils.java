@@ -108,9 +108,9 @@ public class UUIDUtils {
         
         @Override
         public Serializable generate(SessionImplementor session, Object obj) {
-            // IP地址,32进制,7位
-            // 时间戳(单位毫秒),32进制,6位
-            // 同时间调用的自增长数字 32进制(zzz,46655) - 3位
+            // IP地址,36进制,7位
+            // 时间戳(单位毫秒),36进制,6位
+            // 同时间调用的自增长数字 36进制(zzz,46655) - 3位
             
             long currentTimeMillis = System.currentTimeMillis();
             String str1 = Long.toString(getHostAddressBy36(), 36); // IP地址,32进制,7位

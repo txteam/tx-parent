@@ -430,9 +430,14 @@ public class VFSUtils {
     }
     
     public static void main(String[] args) throws Exception {
-        VFSUtils.writeStringToFile("sftp://yxxd:yxxd@113.200.27.110:2021/11222.txt",
-                "测试",
-                "UTF-8");
+        // org.apache.commons.vfs2.FileSystemException: Badly formed URI "sftp://yxxd:yxxd@113.200.27.110:2021/REPAY_INFO-32166948-5-20150629-1hgei3bnqooeo005.xml".
+        VFSUtils.copyFileToFile("sftp://yxxd:yxxd@113.200.27.110:2021/1.xml", "/Users/rain/Develop/temp/cqdatasubmission/request/1b60tvtnqujno000.xml");
+//        VFSUtils.copyFileToFile("sftp://yxxd:yxxd@113.200.27.110:2021/test-20150629.txt", "/Users/rain/Develop//logs/skillgame.cxf.log");
+        
+        
+        //        VFSUtils.writeStringToFile("sftp://yxxd:yxxd@113.200.27.110:2021/test-20150626.txt",
+        //                "测试",
+        //                "UTF-8");
         //        VFSUtils.writeStringToFile("sftp://yxxd:yxxd@113.200.27.110:2021/1333.txt",
         //                "11111111111",
         //                "UTF-8");
