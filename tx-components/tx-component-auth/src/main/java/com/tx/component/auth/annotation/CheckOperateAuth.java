@@ -12,7 +12,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 校验权限
+ * 权限校验注解<br/>
  * <功能详细描述>
  * 
  * @author  brady

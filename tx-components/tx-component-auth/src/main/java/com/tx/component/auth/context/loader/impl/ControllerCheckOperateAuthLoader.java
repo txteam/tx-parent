@@ -29,9 +29,7 @@ import com.tx.core.util.ClassScanUtils;
 
 /**
  * 注解操作权限加载器<br/>
- *     controller中注解的权限部分
- *     如果均
- * <功能详细描述>
+ *     controller中注解的权限部分<br/>
  * 
  * @author  brady
  * @version  [版本号, 2013-10-11]
