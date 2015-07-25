@@ -27,8 +27,6 @@ public class TempalteEngineConfigurator {
     private DataSourceTypeEnum dataSourceType;
     
     private String systemId;
-    
-    
 
     /**
      * @return 返回 systemId

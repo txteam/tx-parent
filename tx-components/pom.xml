@@ -51,6 +51,7 @@
 		<module>tx-component-workflow</module>
 		<module>tx-component-template</module>
 		<module>tx-component-basicdata</module>
+		<module>tx-component-se</module>
 	</modules>
 
 
