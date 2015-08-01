@@ -98,6 +98,7 @@
 			<optional>true</optional>
 		</dependency>
 
+		<!-- hessian接口 -->
 		<dependency>
 			<groupId>com.caucho</groupId>
 			<artifactId>hessian</artifactId>
@@ -131,7 +132,6 @@
 			<artifactId>jsch</artifactId>
 		</dependency>
 
-
 		<!-- quartz -->
 		<dependency>
 			<groupId>org.quartz-scheduler</groupId>
@@ -155,9 +155,11 @@
 			<artifactId>cxf-rt-frontend-jaxrs</artifactId>
 			<optional>true</optional>
 		</dependency>
+		<!-- cxf所需jar -->
 		<dependency>
 			<groupId>org.apache.neethi</groupId>
 			<artifactId>neethi</artifactId>
+			<optional>true</optional>
 		</dependency>
 
 		<!-- xfire -->
