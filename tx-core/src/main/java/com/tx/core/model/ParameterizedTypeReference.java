@@ -22,42 +22,37 @@ import com.tx.core.util.AopTargetUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class ParameterizedTypeReference<T> {
-    
-    private Type rawType;
+public class ParameterizedTypeReference<T> extends
+        AbstractParameterizedTypeReference<T> {
     
     protected ParameterizedTypeReference() {
-        Object target = AopTargetUtils.getTarget(this);
-        
-        this.rawType = getClassRawType(target.getClass());
-        AssertUtils.notNull(this.rawType,"rawType is null.");
+        if (!AopTargetUtils.isProxy(this)) {
+            Type rawType = getClassRawType(this.getClass());
+            AssertUtils.notNull(rawType, "rawType is null.");
+            
+            setRawType(rawType);
+        }
     }
     
-    private Type getClassRawType(@SuppressWarnings("rawtypes") Class objectClass){
+    private Type getClassRawType(@SuppressWarnings("rawtypes") Class objectClass) {
         Type rawTypeTemp = objectClass.getGenericSuperclass();
         if (rawTypeTemp instanceof ParameterizedType) {
             rawTypeTemp = ((ParameterizedType) rawTypeTemp).getActualTypeArguments()[0];
             if (rawTypeTemp instanceof ParameterizedType) {
                 rawTypeTemp = ((ParameterizedType) rawTypeTemp).getRawType();
             }
-        }else {
-            if(Object.class.equals(objectClass)){
-                throw new SILException("TypeHandler '" + getClass()
-                        + "' extends TypeReference but misses the type parameter. "
-                        + "Remove the extension or add a type parameter to it.");
-            }else{
+        } else {
+            if (Object.class.equals(objectClass)) {
+                throw new SILException(
+                        "TypeHandler '"
+                                + getClass()
+                                + "' extends TypeReference but misses the type parameter. "
+                                + "Remove the extension or add a type parameter to it.");
+            } else {
                 Class<?> superClass = objectClass.getSuperclass();
-                rawTypeTemp = getClassRawType(superClass); 
+                rawTypeTemp = getClassRawType(superClass);
             }
         }
         return rawTypeTemp;
-    }
-    
-    public Type getType() {
-        return this.rawType;
-    }
-    
-    public final Type getRawType() {
-        return this.rawType;
     }
 }
