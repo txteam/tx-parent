@@ -2,8 +2,10 @@ package com.tx.core.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
@@ -428,17 +430,39 @@ public abstract class IDCardUtils {
             }
             return 0;
         }
-
-		@Override
-		public String toString() {
-			return "IDCard []";
-		}
+        
+        @Override
+        public String toString() {
+            return "IDCard []";
+        }
     }
     
     public static void main(String[] args) {
-        for (int index = 0;index < 100 ; index++) {
+        for (int index = 0; index < 100; index++) {
             System.out.println(getRandomIDCard());
         }
-       
+        
+    }
+    
+    public static List<String> cal(String pre, String last) {
+        List<String> strings = new ArrayList<String>();
+        for (int mm = 1, maxMM = 12; mm <= maxMM; mm++) {
+            for (int dd = 1, maxDD = 31; dd <= maxDD; dd++) {
+                for (int n = 0, maxN = 99; n <= maxN; n++) {
+                    String sm = StringUtils.leftPad(String.valueOf(mm), 2, '0');
+                    String dm = StringUtils.leftPad(String.valueOf(dd), 2, '0');
+                    String nn = StringUtils.leftPad(String.valueOf(n), 2, '0');
+                    String idcard = pre.concat(sm)
+                            .concat(dm)
+                            .concat(nn)
+                            .concat(last);
+                    if (getIDCard(idcard).isValidity()) {
+                        strings.add(idcard);
+                    }
+                    
+                }
+            }
+        }
+        return strings;
     }
 }
