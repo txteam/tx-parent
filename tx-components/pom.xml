@@ -44,14 +44,14 @@
 	</build>
 
 	<modules>
-		<module>tx-component-auth</module>
 		<module>tx-component-servicelog</module>
 		<module>tx-component-configuration</module>
-		<module>tx-component-rule</module>
-		<module>tx-component-workflow</module>
-		<module>tx-component-template</module>
+	
+		<module>tx-component-auth</module>
 		<module>tx-component-basicdata</module>
-		<module>tx-component-se</module>
+		
+		<module>tx-component-rule</module>
+		<module>tx-component-template</module>
 	</modules>
 
 
