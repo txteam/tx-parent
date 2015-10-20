@@ -36,7 +36,7 @@ public class TemplateEngine extends TempalteEngineConfigurator implements
         TemplateDataDaoImpl templateDataDaoImpl = new TemplateDataDaoImpl(
                 this.getDataSource(), this.getSystemId(),
                 this.getDataSourceType());
-        
+         
         this.templateDataService = new com.tx.component.template.service.impl.TemplateDataService(
                 null, templateDataDaoImpl);
         
