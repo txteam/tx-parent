@@ -145,16 +145,16 @@
 		</dependency>
 
 		<!-- cxf -->
-		<!-- <dependency> -->
-		<!-- <groupId>org.apache.cxf</groupId> -->
-		<!-- <artifactId>cxf-rt-frontend-jaxws</artifactId> -->
-		<!-- <optional>true</optional> -->
-		<!-- </dependency> -->
-		<!-- <dependency> -->
-		<!-- <groupId>org.apache.cxf</groupId> -->
-		<!-- <artifactId>cxf-rt-frontend-jaxrs</artifactId> -->
-		<!-- <optional>true</optional> -->
-		<!-- </dependency> -->
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-frontend-jaxws</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-frontend-jaxrs</artifactId>
+			<optional>true</optional>
+		</dependency>
 		<!-- cxf所需jar -->
 		<dependency>
 			<groupId>org.apache.neethi</groupId>
