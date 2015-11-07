@@ -9,6 +9,7 @@ package com.tx.component.auth.context.loader.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -20,6 +21,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
+import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
@@ -85,6 +87,18 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
     /** 节点isConfigAble */
     private final static String ELEMENT_ATTR_ISCONFIGABLE = "configAble";
     
+    /** Auth的节点属性集合 */
+    private final static Set<String> AUTH_ELEMENT_ATTR_SET = new HashSet<>(
+            Arrays.asList(AUTH_ELEMENT_ATTR_AUTHTYPE,
+                    AUTH_ELEMENT_ATTR_ISVALID,
+                    AUTH_ELEMENT_ATTR_ISEDITABLE,
+                    AUTH_ELEMENT_ATTR_ISVIRTUAL,
+                    ELEMENT_ATTR_ID,
+                    ELEMENT_ATTR_NAME,
+                    ELEMENT_ATTR_DESCRIPTION,
+                    ELEMENT_ATTR_ISVIEWABLE,
+                    ELEMENT_ATTR_ISCONFIGABLE));
+    
     private ApplicationContext applicationContext;
     
     /** 权限配置地址 */
@@ -101,21 +115,21 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
     /** <默认构造函数> */
     public XmlAuthLoader(String[] authConfigLocaions) {
         super();
-        if(!ArrayUtils.isEmpty(authConfigLocaions)){
+        if (!ArrayUtils.isEmpty(authConfigLocaions)) {
             this.authConfigLocaions = authConfigLocaions;
         }
     }
-
+    
     /** <默认构造函数> */
     public XmlAuthLoader(ApplicationContext applicationContext,
             String[] authConfigLocaions) {
         super();
-        if(!ArrayUtils.isEmpty(authConfigLocaions)){
+        if (!ArrayUtils.isEmpty(authConfigLocaions)) {
             this.authConfigLocaions = authConfigLocaions;
         }
         this.applicationContext = applicationContext;
     }
-
+    
     /**
      * @param applicationContext
      * @throws BeansException
@@ -130,7 +144,8 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
      * @return
      */
     @Override
-    public Set<AuthItem> loadAuthItems(Map<String, AuthItem> sourceAuthItemMapping) {
+    public Set<AuthItem> loadAuthItems(
+            Map<String, AuthItem> sourceAuthItemMapping) {
         Set<AuthItem> authItemSet = new HashSet<AuthItem>(
                 loadAuthItemConfig().values());
         return authItemSet;
@@ -279,7 +294,6 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
             Boolean isConfigAbleObj = BooleanUtils.toBooleanObject(authElTemp.attributeValue(ELEMENT_ATTR_ISCONFIGABLE));
             Boolean isVirtualObj = BooleanUtils.toBooleanObject(authElTemp.attributeValue(AUTH_ELEMENT_ATTR_ISVIRTUAL));
             
-            
             boolean isValid = isValidObj != null ? isValidObj.booleanValue()
                     : true;
             boolean isViewAble = isViewAbleObj != null ? isViewAbleObj.booleanValue()
@@ -292,14 +306,15 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
                     : false;
             
             String authType = authElTemp.attributeValue(AUTH_ELEMENT_ATTR_AUTHTYPE);
-            if(StringUtils.isEmpty(authType)){
+            if (StringUtils.isEmpty(authType)) {
                 authType = parentElAuthType;
             }
-            AssertUtils.notEmpty("xml resource.authType","auth:{} authType is empty.",id);
+            AssertUtils.notEmpty("xml resource.authType",
+                    "auth:{} authType is empty.",
+                    id);
             
             //向权限类型容器中注册权限类型
             AuthTypeItemContext.getContext().registeAuthTypeItem(authType);
-            
             
             AuthItemImpl newAuthItem = null;
             if (authItemMap.containsKey(id)) {
@@ -318,6 +333,18 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
                         isConfigAble,
                         isVirtual);
             }
+            
+            //加载属性点属性
+            Map<String, String> dataTemp = new HashMap<>();
+            @SuppressWarnings("unchecked")
+            List<Attribute> attributes = authElTemp.attributes();
+            for(Attribute attrTemp : attributes){
+                if(AUTH_ELEMENT_ATTR_SET.contains(attrTemp.getName())){
+                    continue;
+                }
+                dataTemp.put(attrTemp.getName(), attrTemp.getValue());
+            }
+            newAuthItem.getData().putAll(dataTemp);
             authItemMap.put(id, newAuthItem);
             
             //权限ElTemp
@@ -352,7 +379,7 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
     private AuthItemImpl createChildAuthItem(AuthItem parentAuthItem,
             String id, String authType, String name, String description,
             boolean isValid, boolean isViewAble, boolean isEditAble,
-            boolean isConfigAble,boolean isVirtual) {
+            boolean isConfigAble, boolean isVirtual) {
         //创建权限实体
         AuthItemImpl authItem = new AuthItemImpl();
         authItem.setId(id);
@@ -426,7 +453,7 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
     public void setAuthConfigLocaions(String[] authConfigLocaions) {
         this.authConfigLocaions = authConfigLocaions;
     }
-
+    
     /**
      * @return
      */

@@ -56,7 +56,8 @@ public class ControllerCheckOperateAuthLoader implements AuthLoader {
      * @return
      */
     @Override
-    public Set<AuthItem> loadAuthItems(Map<String, AuthItem> sourceAuthItemMapping) {
+    public Set<AuthItem> loadAuthItems(
+            Map<String, AuthItem> sourceAuthItemMapping) {
         Set<Class<? extends Object>> controllerClasses = ClassScanUtils.scanByAnnotation(Controller.class,
                 StringUtils.splitByWholeSeparator(basePackages, ","));
         Map<String, AuthItem> authItemMapping = new HashMap<String, AuthItem>();
@@ -103,7 +104,7 @@ public class ControllerCheckOperateAuthLoader implements AuthLoader {
     
     /**
       * 将权限压入authItemMapping
-      *<功能详细描述>
+      * <功能详细描述>
       * @param authItemMapping
       * @param methodAuthItem [参数说明]
       * 
@@ -114,6 +115,9 @@ public class ControllerCheckOperateAuthLoader implements AuthLoader {
     private void putAuthItem(Map<String, AuthItem> authItemMapping,
             AuthItem methodAuthItem) {
         if (authItemMapping.containsKey(methodAuthItem.getId())) {
+            if (!(authItemMapping.get(methodAuthItem.getId()) instanceof AuthItemImpl)) {
+                return;
+            }
             AuthItemImpl realAuthItem = (AuthItemImpl) authItemMapping.get(methodAuthItem.getId());
             if (StringUtils.isEmpty(realAuthItem.getName())
                     || realAuthItem.getId().equals(realAuthItem.getName())) {
