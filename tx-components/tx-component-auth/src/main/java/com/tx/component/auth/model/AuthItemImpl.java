@@ -7,6 +7,7 @@
 package com.tx.component.auth.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -96,6 +97,9 @@ public class AuthItemImpl implements AuthItem {
     
     /** 是否是虚拟权限，即不是真正的权限项 */
     private boolean virtual = false;
+    
+    /** xml中attribute的其他属性 */
+    private Map<String, String> data = new HashMap<>();
     
     /** <默认构造函数> */
     public AuthItemImpl() {
@@ -368,6 +372,20 @@ public class AuthItemImpl implements AuthItem {
      */
     public void setVirtual(boolean virtual) {
         this.virtual = virtual;
+    }
+
+    /**
+     * @return 返回 data
+     */
+    public Map<String, String> getData() {
+        return data;
+    }
+
+    /**
+     * @param 对data进行赋值
+     */
+    public void setData(Map<String, String> data) {
+        this.data = data;
     }
 
     /**

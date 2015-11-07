@@ -28,6 +28,8 @@ public class TempalteEngineConfigurator {
     /** 数据源类型 */
     private DataSourceTypeEnum dataSourceType;
     
+    private String systemId;
+    
     /** 表前缀:具有表前缀的功能，就无需systemId的支持了，这里的容器不同于权限容器，权限容器有时候，既需要表前缀又需要系统id去支撑功能 */
     private String tablePrefix;
     
@@ -71,5 +73,19 @@ public class TempalteEngineConfigurator {
      */
     public void setDataSourceType(DataSourceTypeEnum dataSourceType) {
         this.dataSourceType = dataSourceType;
+    }
+
+    /**
+     * @return 返回 systemId
+     */
+    public String getSystemId() {
+        return systemId;
+    }
+
+    /**
+     * @param 对systemId进行赋值
+     */
+    public void setSystemId(String systemId) {
+        this.systemId = systemId;
     }
 }
