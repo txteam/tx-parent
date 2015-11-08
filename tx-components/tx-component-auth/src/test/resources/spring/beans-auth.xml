@@ -20,25 +20,17 @@
 			<bean
 				class="com.tx.component.auth.context.authchecker.impl.DefaultAuthChecker"></bean>
 		</property>
-		<property name="systemId" value="testauth" />
+		<property name="systemId" value="wtms" />
 		<property name="ehcache">
-			<ref bean="authItemEhcache"/>
+			<ref bean="authItemEhcache" />
 		</property>
-		<property name="tableSuffix" value="_test" />
+		<property name="tableSuffix" value="_wtms" />
 		<property name="databaseSchemaUpdate" value="true"></property>
 		<property name="dbScriptExecutorContext">
 			<ref bean="dbScriptExecutorContext" />
 		</property>
 		<property name="dataSource">
 			<ref bean="dataSource" />
-		</property>
-	</bean>
-
-	<!-- authLoaders -->
-	<bean id="controllerCheckOperateAuthLoader"
-		class="com.tx.component.auth.context.loader.impl.ControllerCheckOperateAuthLoader">
-		<property name="basePackages">
-			<value>com.tx.component,com.tx.los</value>
 		</property>
 	</bean>
 

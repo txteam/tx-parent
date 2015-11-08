@@ -25,6 +25,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import com.tx.component.auth.context.authchecker.AuthChecker;
 import com.tx.component.auth.context.loader.impl.XmlAuthLoader;
 import com.tx.component.auth.context.loaderprocessor.ChildAuthRegisterSupportLoaderProcessor;
+import com.tx.component.auth.context.loaderprocessor.ControllerAuthRegisterSupportLoaderProcessor;
 import com.tx.component.auth.persister.AuthItemPersister;
 import com.tx.component.auth.persister.dao.AuthItemImplDao;
 import com.tx.component.auth.persister.dao.AuthItemRefImplDao;
@@ -49,8 +50,16 @@ import com.tx.core.exceptions.util.AssertUtils;
 public class AuthContextConfigurator implements InitializingBean,
         ApplicationContextAware {
     
+    /** 增加对Controller权限加载的支持 */
+    @Bean(name = "auth.controllerAuthRegisterSupportLoaderProcessor")
+    public AuthItemLoaderProcessor controllerAuthRegisterSupportLoaderProcessor(){
+        ControllerAuthRegisterSupportLoaderProcessor processor = new ControllerAuthRegisterSupportLoaderProcessor();
+        processor.setBasePackages(scanControllerAuthBasePackages);
+        return processor;
+    }
+    
     /** 增加对子权限加载的支撑 */
-    @Bean(name = "childAuthRegisterSupportLoaderProcessor")
+    @Bean(name = "auth.childAuthRegisterSupportLoaderProcessor")
     public AuthItemLoaderProcessor childAuthRegisterSupportLoaderProcessor() {
         ChildAuthRegisterSupportLoaderProcessor processor = new ChildAuthRegisterSupportLoaderProcessor();
         return processor;
@@ -155,6 +164,8 @@ public class AuthContextConfigurator implements InitializingBean,
     /** 权限配置地址 */
     protected String[] authConfigLocaions;
     
+    private String scanControllerAuthBasePackages = "com.tx";
+    
     /**
      * @param arg0
      * @throws BeansException
@@ -256,5 +267,13 @@ public class AuthContextConfigurator implements InitializingBean,
      */
     public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+    }
+
+    /**
+     * @param 对scanControllerAuthBasePackages进行赋值
+     */
+    public void setScanControllerAuthBasePackages(
+            String scanControllerAuthBasePackages) {
+        this.scanControllerAuthBasePackages = scanControllerAuthBasePackages;
     }
 }

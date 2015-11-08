@@ -7,10 +7,14 @@
 package com.tx.component.auth.model;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import com.tx.core.exceptions.util.AssertUtils;
 
 /**
  * 当前会话容器<br/> 
@@ -34,6 +38,9 @@ public class CurrentSessionContext implements Serializable {
     
     /** 当前请求的会话  */
     private HttpSession session;
+    
+    /** 数据映射Map方便携带数据 */
+    private final Map<String, Object> dataMap = new HashMap<String, Object>();
     
     /**
       * 初始化(安装)会话容器<br/>
@@ -66,6 +73,7 @@ public class CurrentSessionContext implements Serializable {
         this.request = null;
         this.response = null;
         this.session = null;
+        this.dataMap.clear();
     }
     
     /**
@@ -108,5 +116,55 @@ public class CurrentSessionContext implements Serializable {
      */
     public void setSession(HttpSession session) {
         this.session = session;
+    }
+    
+    /**
+     * @return 返回 dataMap
+     */
+    public Map<String, Object> getDataMap() {
+        return dataMap;
+    }
+    
+    /**
+     * @return 返回 dataMap
+     */
+    public Object getAttributeFromDataMap(String key) {
+        AssertUtils.notEmpty(key,"key is empty.");
+        Object obj = this.dataMap.get(key);
+        return obj;
+    }
+    
+    /**
+      * 将属性设置入DataMap中<br/>
+      * <功能详细描述>
+      * @param key
+      * @param obj [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public void setAttributeToDataMap(String key, Object obj){
+        AssertUtils.notEmpty(key,"key is empty.");
+        AssertUtils.notNull(obj,"obj is null.");
+        this.dataMap.put(key, obj);
+    }
+    
+    /**
+     * @return 返回 dataMap
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T getAttributeFromDataMap(String key, Class<T> type) {
+        AssertUtils.notEmpty(key,"key is empty.");
+        AssertUtils.notNull(type,"type is null.");
+        if (!this.dataMap.containsKey(key)) {
+            return null;
+        }
+        T res = null;
+        Object obj = this.dataMap.get(key);
+        if (type.isInstance(obj)) {
+            res = (T) obj;
+        }
+        return res;
     }
 }

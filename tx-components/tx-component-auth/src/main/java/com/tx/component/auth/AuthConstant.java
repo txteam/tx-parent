@@ -43,8 +43,8 @@ public interface AuthConstant {
     
     /** 操作员权限引用项：地区权限引用 */
     public static final String AUTHREFTYPE_AREA = "AUTHREFTYPE_AREA";
-    //end-----------------------权限引用类型----------------------
     
+    //end-----------------------权限引用类型----------------------
     
     //start-----------------------权限类型----------------------
     /** 权限类型：默认的权限类型:为抽象类型，不能直接作为权限的权限类型，用以支持AuthCheck的功能 */
@@ -58,6 +58,16 @@ public interface AuthConstant {
     
     /** 权限类型: 数据行权限 */
     public final static String AUTHTYPE_DATA_ROW = "AUTHTYPE_DATA_ROW";
+    
     //end-----------------------权限类型----------------------
+    
+    /** 常用的数据权限对应的属性名: vcid 虚中心 */
+    public final static String QUERY_AUTH_PROPERTY_NAME_VCID = "vcid";
+    
+    public final static String QUERY_AUTH_PROPERTY_NAME_ORGANIZATIONID = "organizationId";
+    
+    public final static String QUERY_AUTH_PROPERTY_NAME_DISTRUCTID = "distructId";
+    
+    public final static String QUERY_AUTH_PROPERTY_NAME_PROVINCEID = "provinceId";
     
 }

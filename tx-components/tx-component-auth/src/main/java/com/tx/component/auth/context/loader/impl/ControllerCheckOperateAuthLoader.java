@@ -30,12 +30,14 @@ import com.tx.core.util.ClassScanUtils;
 /**
  * 注解操作权限加载器<br/>
  *     controller中注解的权限部分<br/>
- * 
+ *     根据controller加载权限可能加载出来较多的权限
+ *     而有些基础数据维护项是完全不需要太多的操作权限去控制的
  * @author  brady
  * @version  [版本号, 2013-10-11]
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
+@Deprecated
 public class ControllerCheckOperateAuthLoader implements AuthLoader {
     
     /** 权限加载项的优先级 */
