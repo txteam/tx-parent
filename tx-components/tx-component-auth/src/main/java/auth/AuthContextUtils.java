@@ -9,10 +9,13 @@ package auth;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 
+import com.tx.component.auth.AuthConstant;
 import com.tx.component.auth.context.AuthContext;
 import com.tx.component.auth.context.AuthSessionContext;
 import com.tx.component.auth.model.AuthItem;
@@ -43,17 +46,52 @@ public class AuthContextUtils {
         return flag;
     }
     
+    /**
+      * 校验对应的权限引用ID是否非空<br/>
+      * <功能详细描述>
+      * @param propertyName
+      * @return [参数说明]
+      * 
+      * @return boolean [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
     public static boolean isNotEmptyOfQueryAuthRefIds(String propertyName) {
-        return false;
+        String authKey = AuthSessionContext.getAuthKeyFromQueryAuthMap(propertyName);
+        Set<String> refIds = getChildDataAuthRefIdsByAuthKey(authKey);
+        return CollectionUtils.isNotEmpty(refIds);
     }
     
+    /**
+     * 校验对应的权限引用ID是否非空<br/>
+     * <功能详细描述>
+     * @param propertyName
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
     public static boolean isEmptyOfQueryAuthRefIds(String propertyName) {
-        return true;
+        String authKey = AuthSessionContext.getAuthKeyFromQueryAuthMap(propertyName);
+        Set<String> refIds = getChildDataAuthRefIdsByAuthKey(authKey);
+        return CollectionUtils.isEmpty(refIds);
     }
     
-    public static Set<String> getQueryAuthRefIds(String propertyName){
-        Set<String> resSet = new HashSet<>();
-        return resSet;
+    /**
+      * 获取引用的权限id集合<br/>
+      * <功能详细描述>
+      * @param propertyName
+      * @return [参数说明]
+      * 
+      * @return Set<String> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public static Set<String> getQueryAuthRefIds(String propertyName) {
+        String authKey = AuthSessionContext.getAuthKeyFromQueryAuthMap(propertyName);
+        Set<String> refIds = getChildDataAuthRefIdsByAuthKey(authKey);
+        return refIds;
     }
     
     /**
@@ -65,12 +103,34 @@ public class AuthContextUtils {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public static void addQueryAuth(String propertyName, String authKey) {
+    public static void setQueryByAuth(String propertyName, String authKey) {
         AuthSessionContext.putToQueryAuthMap(propertyName, authKey);
     }
     
-    public static void clearQueryAuth() {
-        
+    /**
+      * 设置当前逻辑之后的查询可依赖某数据权限进行查询<br/>
+      * <功能详细描述>
+      * @param propertyName2authKeyMap [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public static void setQueryByAuth(
+            Map<String, String> propertyName2authKeyMap) {
+        AuthSessionContext.getQueryAuthMap().putAll(propertyName2authKeyMap);
+    }
+    
+    /**
+      * 清除根据权限查询的设置<br/>
+      * <功能详细描述> [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public static void clearQueryByAuth() {
+        AuthSessionContext.clearQueryAuthMap();
     }
     
     //public static Set<String> 
@@ -109,6 +169,50 @@ public class AuthContextUtils {
             }
         }
         return true;
+    }
+    
+    /**
+      * 获取子集数据权限的引用Id集合<br/>
+      * <功能详细描述>
+      * @param authKey
+      * @return [参数说明]
+      * 
+      * @return Set<String> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public static Set<String> getChildDataAuthRefIdsByAuthKey(String authKey) {
+        AssertUtils.notEmpty(authKey, "authKey is empty.");
+        Set<String> resSet = new HashSet<>();
+        Set<AuthItem> authItemSet = getChildDataAuthItemListByAuthKey(authKey);
+        if (CollectionUtils.isEmpty(authItemSet)) {
+            return resSet;
+        }
+        for (AuthItem authTemp : authItemSet) {
+            if (StringUtils.isEmpty(authTemp.getRefId())) {
+                continue;
+            }
+            //如果不为空压入
+            resSet.add(authTemp.getRefId());
+        }
+        return resSet;
+    }
+    
+    /**
+      * 根据权限Key获取子集数据权限集合<br/>
+      * <功能详细描述>
+      * @param authKey
+      * @return [参数说明]
+      * 
+      * @return Set<AuthItem> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public static Set<AuthItem> getChildDataAuthItemListByAuthKey(String authKey) {
+        AssertUtils.notEmpty(authKey, "authKey is empty.");
+        Set<AuthItem> resSet = getChildAuthItemListByAuthTypeAndParentId(AuthConstant.AUTHTYPE_DATA,
+                authKey);
+        return resSet;
     }
     
     /**

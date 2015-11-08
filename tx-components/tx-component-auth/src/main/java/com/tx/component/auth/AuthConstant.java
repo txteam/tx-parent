@@ -54,6 +54,9 @@ public interface AuthConstant {
     public final static String AUTHTYPE_OPERATE = "AUTHTYPE_OPERATE";
     
     /** 权限类型：数据列权限 */
+    public final static String AUTHTYPE_DATA = "AUTHTYPE_DATA";
+    
+    /** 权限类型：数据列权限 */
     public final static String AUTHTYPE_DATA_COLUMN = "AUTHTYPE_DATA_COLUMN";
     
     /** 权限类型: 数据行权限 */
