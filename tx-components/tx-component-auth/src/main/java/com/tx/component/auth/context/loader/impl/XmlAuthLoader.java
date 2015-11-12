@@ -21,6 +21,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.Element;
@@ -87,6 +88,9 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
     /** 节点isConfigAble */
     private final static String ELEMENT_ATTR_ISCONFIGABLE = "configAble";
     
+    /** 节点isConfigAble */
+    private final static String ELEMENT_ATTR_ORDER = "order";
+    
     /** Auth的节点属性集合 */
     private final static Set<String> AUTH_ELEMENT_ATTR_SET = new HashSet<>(
             Arrays.asList(AUTH_ELEMENT_ATTR_AUTHTYPE,
@@ -97,7 +101,8 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
                     ELEMENT_ATTR_NAME,
                     ELEMENT_ATTR_DESCRIPTION,
                     ELEMENT_ATTR_ISVIEWABLE,
-                    ELEMENT_ATTR_ISCONFIGABLE));
+                    ELEMENT_ATTR_ISCONFIGABLE,
+                    ELEMENT_ATTR_ORDER));
     
     private ApplicationContext applicationContext;
     
@@ -236,6 +241,8 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
             String authType = authTypeElTemp.attributeValue(ELEMENT_ATTR_ID);
             String name = authTypeElTemp.attributeValue(ELEMENT_ATTR_NAME);
             String description = authTypeElTemp.attributeValue(ELEMENT_ATTR_DESCRIPTION);
+            int orderIndex = NumberUtils.toInt(authTypeElTemp.attributeValue(ELEMENT_ATTR_NAME),
+                    0);
             Boolean isViewAbleObj = BooleanUtils.toBooleanObject(authTypeElTemp.attributeValue(ELEMENT_ATTR_ISVIEWABLE));
             Boolean isConfigAbleObj = BooleanUtils.toBooleanObject(authTypeElTemp.attributeValue(ELEMENT_ATTR_ISCONFIGABLE));
             
@@ -249,7 +256,8 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
                     name,
                     description,
                     isViewAble,
-                    isConfigAble);
+                    isConfigAble,
+                    orderIndex);
             
             //权限ElTemp
             @SuppressWarnings("unchecked")
@@ -338,8 +346,8 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
             Map<String, String> dataTemp = new HashMap<>();
             @SuppressWarnings("unchecked")
             List<Attribute> attributes = authElTemp.attributes();
-            for(Attribute attrTemp : attributes){
-                if(AUTH_ELEMENT_ATTR_SET.contains(attrTemp.getName())){
+            for (Attribute attrTemp : attributes) {
+                if (AUTH_ELEMENT_ATTR_SET.contains(attrTemp.getName())) {
                     continue;
                 }
                 dataTemp.put(attrTemp.getName(), attrTemp.getValue());

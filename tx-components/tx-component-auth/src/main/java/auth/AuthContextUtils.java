@@ -256,9 +256,8 @@ public class AuthContextUtils {
                     authItemTemp.getId());
             if (CollectionUtils.isNotEmpty(authItems3)) {
                 newAuthItems.addAll(authItems3);
-            } else {
-                resSet.add(authItemTemp);
             }
+            resSet.add(authItemTemp);
         }
         if (CollectionUtils.isNotEmpty(newAuthItems)) {
             nestedLoadChildAuthItems(authType, newAuthItems, resSet);
