@@ -34,6 +34,8 @@ public class RequestInjectAttributeInterceptor implements HandlerInterceptor {
     
     public static final String CONTEXT_PATH_ATTR_NAME = "contextPath";
     
+    public static final String CONTEXT_PATH_ATTR_NAME_PLACEHOLDER = "${contextPath}";
+    
     /** 是否覆盖注入,当为false时,如果key存在且对应value不为null则注入,true则直接覆盖 */
     private boolean isCover = true;
     
@@ -62,7 +64,16 @@ public class RequestInjectAttributeInterceptor implements HandlerInterceptor {
             }
             
             if (this.isCover) {
-                request.setAttribute(attrTemp.getKey(), attrTemp.getValue());
+                if (attrTemp.getValue()
+                        .contains(CONTEXT_PATH_ATTR_NAME_PLACEHOLDER)) {
+                    request.setAttribute(attrTemp.getKey(),
+                            attrTemp.getValue()
+                                    .replace(CONTEXT_PATH_ATTR_NAME_PLACEHOLDER,
+                                            request.getContextPath()));
+                } else {
+                    request.setAttribute(attrTemp.getKey(), attrTemp.getValue());
+                }
+                
                 continue;
             }
             
