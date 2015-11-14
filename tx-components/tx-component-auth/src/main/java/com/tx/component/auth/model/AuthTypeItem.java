@@ -9,7 +9,8 @@ package com.tx.component.auth.model;
 import java.io.Serializable;
 import java.util.List;
 
-import org.apache.cxf.common.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.core.Ordered;
 
 /**
  * 权限项类型<br/>
@@ -20,7 +21,7 @@ import org.apache.cxf.common.util.StringUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class AuthTypeItem implements Serializable {
+public class AuthTypeItem implements Serializable, Ordered {
     
     /** 注释内容 */
     private static final long serialVersionUID = 7942093110803351685L;
@@ -43,18 +44,21 @@ public class AuthTypeItem implements Serializable {
     /** 权限项列表 */
     private List<AuthItem> authItemList;
     
+    private int orderIndex = 0;
+    
     /**
      * 使AuthType构造函数为包内可见，使外部不能通过new去创建AuthTypeItem
      * <默认构造函数>
      */
     public AuthTypeItem(String authType, String name, String description,
-            boolean isViewAble, boolean isConfigAble) {
+            boolean isViewAble, boolean isConfigAble, int orderIndex) {
         super();
         this.authType = authType;
         this.name = name;
         this.description = description;
         this.isViewAble = isViewAble;
         this.isConfigAble = isConfigAble;
+        this.orderIndex = orderIndex;
     }
     
     /**
@@ -100,14 +104,14 @@ public class AuthTypeItem implements Serializable {
     public boolean isConfigAble() {
         return isConfigAble;
     }
-
+    
     /**
      * @param 对isConfigAble进行赋值
      */
     public void setConfigAble(boolean isConfigAble) {
         this.isConfigAble = isConfigAble;
     }
-
+    
     /**
      * @return 返回 authItemList
      */
@@ -182,4 +186,27 @@ public class AuthTypeItem implements Serializable {
         }
         return this.authType.hashCode();
     }
+    
+    /**
+     * @return 返回 orderIndex
+     */
+    public int getOrderIndex() {
+        return orderIndex;
+    }
+    
+    /**
+     * @param 对orderIndex进行赋值
+     */
+    public void setOrderIndex(int orderIndex) {
+        this.orderIndex = orderIndex;
+    }
+    
+    /**
+     * @return
+     */
+    @Override
+    public int getOrder() {
+        return this.orderIndex;
+    }
+    
 }

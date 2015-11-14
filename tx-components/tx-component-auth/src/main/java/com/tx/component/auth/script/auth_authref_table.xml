@@ -10,7 +10,7 @@
 			--****************************************************************************
 			create table auth_authref${tableSuffix}(
 			  id varchar2(64) not null,
-			  refid  varchar2(64) not null,
+			  refid  varchar2(255) not null,
 			  authreftype varchar2(64) not null,
 			  authid varchar2(128) not null,
 			  systemid varchar2(64) not null,
@@ -50,7 +50,7 @@
 			--****************************************************************************
 			create table auth_authref${tableSuffix}(
 			  id varchar2(64) not null,
-			  refid  varchar2(64) not null,
+			  refid  varchar2(255) not null,
 			  authreftype varchar2(64) not null,
 			  authid varchar2(128) not null,
 			  systemid varchar2(64) not null,
@@ -89,7 +89,7 @@
 			--****************************************************************************
 			create table auth_authref${tableSuffix}(
 			  id varchar2(64) not null,
-			  refid  varchar2(64) not null,
+			  refid  varchar2(255) not null,
 			  authreftype varchar2(64) not null,
 			  authid varchar2(128) not null,
 			  systemid varchar2(64) not null,
@@ -129,7 +129,7 @@
 			--****************************************************************************
 			create table auth_authref${tableSuffix}(
 			  id varchar2(64) not null,
-			  refid  varchar2(64) not null,
+			  refid  varchar2(255) not null,
 			  authreftype varchar2(64) not null,
 			  authid varchar2(128) not null,
 			  systemid varchar2(64) not null,
@@ -165,7 +165,7 @@
 		<createTableScript>
 			create table auth_authref${tableSuffix}(
 			  id varchar(64) not null,
-			  refid  varchar(64) not null,
+			  refid  varchar(255) not null,
 			  authreftype varchar(64) not null,
 			  authid varchar(128) not null,
 			  systemid varchar(64) not null,
@@ -194,7 +194,7 @@
 			DROP TABLE auth_authref${tableSuffix};
 			create table auth_authref${tableSuffix}(
 			  id varchar(64) not null,
-			  refid  varchar(64) not null,
+			  refid  varchar(255) not null,
 			  authreftype varchar(64) not null,
 			  authid varchar(128) not null,
 			  systemid varchar(64) not null,

@@ -2,6 +2,7 @@ package com.tx.component.auth.model;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 import com.tx.core.tree.model.TreeAble;
 
@@ -57,16 +58,6 @@ public interface AuthItem extends TreeAble<List<AuthItem>, AuthItem>,
       * @see [类、类#方法、类#成员]
      */
     String getSystemId();
-    
-    /**
-      * 社区权限所属系统<br/>
-      *<功能详细描述> [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    void setSystemId(String systemId);
     
     /**
      * 父级权限id
@@ -142,5 +133,26 @@ public interface AuthItem extends TreeAble<List<AuthItem>, AuthItem>,
       * @see [类、类#方法、类#成员]
      */
     public boolean isVirtual();
+    
+    /**
+      * 获取权限项的其他数据<br/>
+      *<功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return Map<String,String> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public Map<String, String> getData();
+    
+    /**
+     * 社区权限所属系统<br/>
+     *<功能详细描述> [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    void setSystemId(String systemId);
     
 }

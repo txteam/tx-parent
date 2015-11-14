@@ -61,6 +61,9 @@ public class AuthContextBuilder extends AuthContextConfigurator {
     /** 权限加载器 */
     private List<AuthLoader> authLoaderList;
     
+    /** 权限加载器处理器列表 */
+    private List<AuthItemLoaderProcessor> authLoaderProcessorList;
+    
     /**
      * 权限检查器映射，以权限
      * 权限类型检查器默认会添加几个检查器 用户自定义添加的权限检查器会覆盖该检查器
@@ -126,8 +129,20 @@ public class AuthContextBuilder extends AuthContextConfigurator {
                 .values();
         loadAuthLoader(authLoaders);
         
+        //权限加载器处理器，处理权限加载器加载权限完成后的一些后置处理逻辑
+        Collection<AuthItemLoaderProcessor> loaderProcessors = this.applicationContext.getBeansOfType(AuthItemLoaderProcessor.class)
+                .values();
+        this.authLoaderProcessorList = new ArrayList<>();
+        if (!CollectionUtils.isEmpty(loaderProcessors)) {
+            for (AuthItemLoaderProcessor processorTemp : loaderProcessors) {
+                this.authLoaderProcessorList.add(processorTemp);
+            }
+        }
+        Collections.sort(this.authLoaderProcessorList, OrderComparator.INSTANCE);
+        
         logger.info("      加载权限项...");
-        this.authItemMapping = loadAuthItems(this.authLoaderList);
+        this.authItemMapping = loadAuthItems(this.authLoaderList,
+                this.authLoaderProcessorList);
         
         logger.info("初始化权限容器end...");
     }
@@ -141,7 +156,8 @@ public class AuthContextBuilder extends AuthContextConfigurator {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    private Map<String, AuthItem> loadAuthItems(List<AuthLoader> authLoaders) {
+    private Map<String, AuthItem> loadAuthItems(List<AuthLoader> authLoaders,
+            List<AuthItemLoaderProcessor> loaderProcessors) {
         Map<String, AuthItem> resMap = null;
         
         Map<String, AuthItem> tempAuthItemMapping = new HashMap<String, AuthItem>();
@@ -151,6 +167,14 @@ public class AuthContextBuilder extends AuthContextConfigurator {
             //加载权限项
             @SuppressWarnings("unchecked")
             Set<AuthItem> authItemSet = authLoaderTemp.loadAuthItems((Map<String, AuthItem>) MapUtils.unmodifiableMap(tempAuthItemMapping));
+            if (CollectionUtils.isEmpty(authItemSet)) {
+                continue;
+            }
+            for (AuthItemLoaderProcessor processor : loaderProcessors) {
+                //将处理完成的权限集合一并压入
+                authItemSet.addAll(processor.postProcessAfterLoad(tempAuthItemMapping,
+                        authItemSet));
+            }
             
             for (AuthItem authItem : authItemSet) {
                 AssertUtils.notNull(authItem, "authItem is null.");
@@ -181,6 +205,7 @@ public class AuthContextBuilder extends AuthContextConfigurator {
                             realItemImplTemp.setParentId(authItem.getParentId());
                         }
                     }
+                    realItemTemp.getData().putAll(authItem.getData());
                 }
             }
         }
@@ -238,6 +263,7 @@ public class AuthContextBuilder extends AuthContextConfigurator {
         for (AuthLoader authLoaderTemp : authLoaders) {
             this.authLoaderList.add(authLoaderTemp);
         }
+        Collections.sort(this.authLoaderList, OrderComparator.INSTANCE);
     }
     
     /** 

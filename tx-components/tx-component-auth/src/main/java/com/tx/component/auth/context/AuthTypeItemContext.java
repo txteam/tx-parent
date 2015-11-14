@@ -27,7 +27,7 @@ import com.tx.core.exceptions.argument.NullArgException;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class AuthTypeItemContext{
+public class AuthTypeItemContext {
     
     private static AuthTypeItemContext context = new AuthTypeItemContext();
     
@@ -53,6 +53,31 @@ public class AuthTypeItemContext{
     }
     
     /**
+      * 向权限类型容器中写入权限类型<br/>
+      * <功能详细描述>
+      * @param authType
+      * @param name
+      * @param description
+      * @param isViewAble
+      * @param isConfigAble
+      * @return [参数说明]
+      * 
+      * @return AuthTypeItem [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public synchronized AuthTypeItem registeAuthTypeItem(String authType,
+            String name, String description, boolean isViewAble,
+            boolean isConfigAble) {
+        return registeAuthTypeItem(authType,
+                name,
+                description,
+                isViewAble,
+                isConfigAble,
+                0);
+    }
+    
+    /**
      * 创建权限类型实例<br/>
      * @param authType
      * @param name
@@ -61,9 +86,9 @@ public class AuthTypeItemContext{
      * @param isConfigAble
      * @return
      */
-    public synchronized AuthTypeItem registeAuthTypeItem(
-            String authType, String name, String description,
-            boolean isViewAble, boolean isConfigAble) {
+    public synchronized AuthTypeItem registeAuthTypeItem(String authType,
+            String name, String description, boolean isViewAble,
+            boolean isConfigAble, int orderIndex) {
         if (StringUtils.isEmpty(authType)) {
             throw new NullArgException("authType is empty");
         }
@@ -88,7 +113,7 @@ public class AuthTypeItemContext{
             }
         } else {
             res = new AuthTypeItem(authType, name, description, isViewAble,
-                    isConfigAble);
+                    isConfigAble, orderIndex);
             authTypeItemMapping.put(authType, res);
         }
         return res;

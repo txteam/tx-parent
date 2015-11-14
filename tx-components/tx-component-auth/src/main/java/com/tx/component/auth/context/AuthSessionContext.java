@@ -7,6 +7,7 @@
 package com.tx.component.auth.context;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -15,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
@@ -34,9 +36,17 @@ import com.tx.core.exceptions.util.AssertUtils;
  */
 public abstract class AuthSessionContext {
     
-    public final static String SESSION_KEY_CURRENT_OPERATOR_AUTHREF_MULTIVALUEMAP = "AUTH_CONTEXT_CURRENT_OPERATOR_AUTHREF_MULTIVALUEMAP";
+    /** session中当前登录人员拥有的权限引用项的MultiValueMap */
+    public final static String SESSION_KEY_CURRENT_OPERATOR_AUTHREF_MULTIVALUEMAP = "auth_context_current_operator_authref_multivaluemap";
     
-    public final static String SESSION_KEY_CURRENT_OPERATOR_ID = "AUTH_CONTEXT_CURRENT_OPERATOR_ID";
+    /** session中当前登录人员的id,作为权限容器存在 */
+    public final static String SESSION_KEY_CURRENT_OPERATOR_ID = "auth_context_current_operator_id";
+    
+    /** session中当前登录人员的id,作为权限容器存在 */
+    public final static String DATAMAP_KEY_QUERY_AUTH_MAP = "query_auth_map";
+    
+    /** session中当前登录人员的id,作为权限容器存在 */
+    public final static String DATAMAP_KEY_IS_QUERY_BY_AUTH = "is_query_by_auth";
     
     /**
      * 线程变量:当前会话容器<br/>
@@ -44,15 +54,116 @@ public abstract class AuthSessionContext {
      * 获取当前回话的session从而获取到相应的权限列表
      */
     private static ThreadLocal<CurrentSessionContext> currentSessionContext = new ThreadLocal<CurrentSessionContext>() {
-        /**
-         * @return
-         */
         @Override
         protected CurrentSessionContext initialValue() {
             CurrentSessionContext csContext = new CurrentSessionContext();
             return csContext;
         }
     };
+    
+    /** 
+     * 从CurrentSessionContext获取queryAuthMap
+     *      如果在获取过程中发现对应的Map不存在则自动创建
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return Map<String,String> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    private static Map<String, String> getQueryAuthMapFromCurrentSessionContext() {
+        @SuppressWarnings("unchecked")
+        Map<String, String> queryAuthMap = currentSessionContext.get()
+                .getAttributeFromDataMap(DATAMAP_KEY_QUERY_AUTH_MAP, Map.class);
+        if (queryAuthMap == null) {
+            queryAuthMap = new HashMap<String, String>();
+            currentSessionContext.get()
+                    .setAttributeToDataMap(DATAMAP_KEY_QUERY_AUTH_MAP,
+                            queryAuthMap);
+        }
+        return queryAuthMap;
+    }
+    
+    /**
+     * 将操作员的id放入session中
+     * <功能详细描述>
+     * @param operatorId [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    public static void putToQueryAuthMap(String propertyName, String authKey) {
+        AssertUtils.notEmpty(propertyName, "propertyName is empty.");
+        AssertUtils.notEmpty(authKey, "authKey is empty.");
+        
+        Map<String, String> queryAuthMap = getQueryAuthMapFromCurrentSessionContext();
+        
+        queryAuthMap.put(propertyName, authKey);
+    }
+    
+    /**
+      * 获取查询权限集合<br/>
+      * <功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return Set<String> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public static Map<String, String> getQueryAuthMap() {
+        Map<String, String> queryAuthMap = getQueryAuthMapFromCurrentSessionContext();
+        return queryAuthMap;
+    }
+    
+    /**
+     * 获取查询权限集合<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return Set<String> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    public static boolean isContainsInQueryAuthMap(String propertyName) {
+        AssertUtils.notEmpty(propertyName, "propertyName is empty.");
+        
+        Map<String, String> queryAuthMap = getQueryAuthMapFromCurrentSessionContext();
+        return queryAuthMap.containsKey(propertyName)
+                && !StringUtils.isEmpty(queryAuthMap.get(propertyName));
+    }
+    
+    /**
+      * 从当前线程变量中查询权限映射中取得指定属性值对应的权限key<br/>
+      * <功能详细描述>
+      * @param propertyName
+      * @return [参数说明]
+      * 
+      * @return String [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public static String getAuthKeyFromQueryAuthMap(String propertyName) {
+        AssertUtils.notEmpty(propertyName, "propertyName is empty.");
+        
+        Map<String, String> queryAuthMap = getQueryAuthMapFromCurrentSessionContext();
+        
+        String resAuthKey = queryAuthMap.get(propertyName);
+        return resAuthKey;
+    }
+    
+    /**
+      * 清空当前查询权限映射中的所有设置<br/>
+      * <功能详细描述> [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public static void clearQueryAuthMap() {
+        Map<String, String> queryAuthMap = getQueryAuthMapFromCurrentSessionContext();
+        queryAuthMap.clear();
+    }
     
     /**
       * 将操作员的id放入session中
@@ -65,7 +176,6 @@ public abstract class AuthSessionContext {
      */
     public static void putOperatorIdToSession(String operatorId) {
         AssertUtils.notEmpty(operatorId, "operatorId is empty.");
-        
         currentSessionContext.get()
                 .getSession()
                 .setAttribute(SESSION_KEY_CURRENT_OPERATOR_ID, operatorId);
@@ -83,7 +193,6 @@ public abstract class AuthSessionContext {
         String operatorId = (String) currentSessionContext.get()
                 .getSession()
                 .getAttribute(SESSION_KEY_CURRENT_OPERATOR_ID);
-        
         return operatorId;
     }
     
@@ -106,7 +215,6 @@ public abstract class AuthSessionContext {
                 authItemRefMap.add(refTemp.getAuthItem().getId(), refTemp);
             }
         }
-        
         //将权限压入当前会话中
         currentSessionContext.get()
                 .getSession()
@@ -195,6 +303,7 @@ public abstract class AuthSessionContext {
         
         Map<String, AuthItem> authItemMapping = AuthContext.getContext()
                 .getAllAuthItemMapping();
+        
         List<AuthItem> resList = new ArrayList<AuthItem>();
         MultiValueMap<String, AuthItemRef> authRefMulMap = getAuthRefMultiValueMapFromSession();
         for (String authIdTemp : authRefMulMap.keySet()) {
@@ -211,7 +320,7 @@ public abstract class AuthSessionContext {
     
     /**
       * 根据父级权限id以及权限类型获取当前人员拥有的权限权限项列表
-      *<功能详细描述>
+      * <功能详细描述>
       * @param authType
       * @param parentId
       * @return [参数说明]
@@ -305,7 +414,6 @@ public abstract class AuthSessionContext {
             HttpServletResponse response) {
         //绑定线程前先remove一次，以保证不会残留上一次的会话，虽然不是特别需要，也不会占用太多资源
         currentSessionContext.remove();
-        
         //将当前会话绑定到现成中
         currentSessionContext.get().install(request, response);
     }

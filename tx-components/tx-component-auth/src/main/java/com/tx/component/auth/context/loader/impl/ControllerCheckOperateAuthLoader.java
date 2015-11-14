@@ -29,15 +29,15 @@ import com.tx.core.util.ClassScanUtils;
 
 /**
  * 注解操作权限加载器<br/>
- *     controller中注解的权限部分
- *     如果均
- * <功能详细描述>
- * 
+ *     controller中注解的权限部分<br/>
+ *     根据controller加载权限可能加载出来较多的权限
+ *     而有些基础数据维护项是完全不需要太多的操作权限去控制的
  * @author  brady
  * @version  [版本号, 2013-10-11]
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
+@Deprecated
 public class ControllerCheckOperateAuthLoader implements AuthLoader {
     
     /** 权限加载项的优先级 */
@@ -58,7 +58,8 @@ public class ControllerCheckOperateAuthLoader implements AuthLoader {
      * @return
      */
     @Override
-    public Set<AuthItem> loadAuthItems(Map<String, AuthItem> sourceAuthItemMapping) {
+    public Set<AuthItem> loadAuthItems(
+            Map<String, AuthItem> sourceAuthItemMapping) {
         Set<Class<? extends Object>> controllerClasses = ClassScanUtils.scanByAnnotation(Controller.class,
                 StringUtils.splitByWholeSeparator(basePackages, ","));
         Map<String, AuthItem> authItemMapping = new HashMap<String, AuthItem>();
@@ -105,7 +106,7 @@ public class ControllerCheckOperateAuthLoader implements AuthLoader {
     
     /**
       * 将权限压入authItemMapping
-      *<功能详细描述>
+      * <功能详细描述>
       * @param authItemMapping
       * @param methodAuthItem [参数说明]
       * 
@@ -116,6 +117,9 @@ public class ControllerCheckOperateAuthLoader implements AuthLoader {
     private void putAuthItem(Map<String, AuthItem> authItemMapping,
             AuthItem methodAuthItem) {
         if (authItemMapping.containsKey(methodAuthItem.getId())) {
+            if (!(authItemMapping.get(methodAuthItem.getId()) instanceof AuthItemImpl)) {
+                return;
+            }
             AuthItemImpl realAuthItem = (AuthItemImpl) authItemMapping.get(methodAuthItem.getId());
             if (StringUtils.isEmpty(realAuthItem.getName())
                     || realAuthItem.getId().equals(realAuthItem.getName())) {
