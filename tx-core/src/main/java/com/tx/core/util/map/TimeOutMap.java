@@ -20,10 +20,9 @@ import java.util.Set;
  * <p/>
  * 此Map每个键值对都有一个超时时间,只要键值对超时,则会自动移除掉此键值对<br/>
  * <p/>
- * <strong>注意，此实现不是同步的</strong>,如果需要同步,请使用{@link Collections#synchronizedMap
- * Collections.synchronizedMap}方法进行包装
+ * <strong>注意，此实现不是同步的</strong>,如果需要同步,请使用{@link Collections#synchronizedMap Collections.synchronizedMap}方法进行包装
  * <p/>
- * 此实现中,集合方法非常影响性能,因为需要去遍历每一个键值对来确认是否超市,然后再返回
+ * 此实现中,集合方法非常影响性能,因为需要去遍历每一个键值对来确认是否超时,然后再返回
  * 
  * @author Rain.he
  * @version [版本号, 2015年4月8日]
@@ -45,7 +44,7 @@ public class TimeOutMap<K, V> extends HashMap<K, V> implements Map<K, V> {
      * 构造一个拥有超时时间的HashMap
      * 
      * @param timeout 超时时间,单位:毫秒
-     * 
+     *            
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
@@ -248,7 +247,7 @@ public class TimeOutMap<K, V> extends HashMap<K, V> implements Map<K, V> {
      * 刷新键值对,如果超时则移除
      * 
      * @param key 键
-     * 
+     *            
      * @return void [返回类型说明]
      * @exception [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
