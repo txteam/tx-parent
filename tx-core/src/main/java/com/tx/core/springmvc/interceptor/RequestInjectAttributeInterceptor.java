@@ -30,11 +30,11 @@ public class RequestInjectAttributeInterceptor implements HandlerInterceptor {
     
     private static Logger logger = LoggerFactory.getLogger(RequestInjectAttributeInterceptor.class);
     
-    private Map<String, String> injectAttributes = new HashMap<String, String>();
-    
     public static final String CONTEXT_PATH_ATTR_NAME = "contextPath";
     
     public static final String CONTEXT_PATH_ATTR_NAME_PLACEHOLDER = "${contextPath}";
+    
+    private Map<String, Object> injectAttributes = new HashMap<String, Object>();
     
     /** 是否覆盖注入,当为false时,如果key存在且对应value不为null则注入,true则直接覆盖 */
     private boolean isCover = true;
@@ -56,7 +56,7 @@ public class RequestInjectAttributeInterceptor implements HandlerInterceptor {
             return true;
         }
         
-        for (Entry<String, String> attrTemp : this.injectAttributes.entrySet()) {
+        for (Entry<String, Object> attrTemp : this.injectAttributes.entrySet()) {
             if (logger.isDebugEnabled()) {
                 logger.info("request set Attrubute key: {} value: {} .",
                         attrTemp.getKey(),
@@ -64,21 +64,24 @@ public class RequestInjectAttributeInterceptor implements HandlerInterceptor {
             }
             
             if (this.isCover) {
-                if (attrTemp.getValue()
-                        .contains(CONTEXT_PATH_ATTR_NAME_PLACEHOLDER)) {
-                    request.setAttribute(attrTemp.getKey(),
-                            attrTemp.getValue()
-                                    .replace(CONTEXT_PATH_ATTR_NAME_PLACEHOLDER,
-                                            request.getContextPath()));
+                if (attrTemp.getValue() instanceof String) {
+                    String objString = (String) attrTemp.getValue();
+                    if (objString.contains(CONTEXT_PATH_ATTR_NAME_PLACEHOLDER)) {
+                        request.setAttribute(attrTemp.getKey(),
+                                objString.replace(CONTEXT_PATH_ATTR_NAME_PLACEHOLDER,
+                                        request.getContextPath()));
+                    } else {
+                        request.setAttribute(attrTemp.getKey(), objString);
+                    }
                 } else {
                     request.setAttribute(attrTemp.getKey(), attrTemp.getValue());
                 }
-                
                 continue;
-            }
-            
-            if (request.getAttribute(attrTemp.getKey()) == null) {
-                request.setAttribute(attrTemp.getKey(), attrTemp.getValue());
+            } else {
+                //对应的属性值不存在时才进行写入<br/>
+                if (request.getAttribute(attrTemp.getKey()) == null) {
+                    request.setAttribute(attrTemp.getKey(), attrTemp.getValue());
+                }
             }
         }
         return true;
@@ -127,14 +130,14 @@ public class RequestInjectAttributeInterceptor implements HandlerInterceptor {
     /**
      * @return 返回 injectAttributes
      */
-    public Map<String, String> getInjectAttributes() {
+    public Map<String, Object> getInjectAttributes() {
         return injectAttributes;
     }
     
     /**
      * @param 对injectAttributes进行赋值
      */
-    public void setInjectAttributes(Map<String, String> injectAttributes) {
+    public void setInjectAttributes(Map<String, Object> injectAttributes) {
         this.injectAttributes = injectAttributes;
     }
 }
