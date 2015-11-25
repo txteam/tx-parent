@@ -18,16 +18,19 @@ import com.tx.core.util.JdbcUtils;
  */
 
 /**
- * <功能简述>
- * <功能详细描述>
+ * <功能简述> <功能详细描述>
  * 
- * @author  rain
- * @version  [版本号, 2015年7月1日]
- * @see  [相关类/方法]
- * @since  [产品/模块版本]
+ * @author rain
+ * @version [版本号, 2015年7月1日]
+ * @see [相关类/方法]
+ * @since [产品/模块版本]
  */
 public class Main {
     public static void main(String[] args) {
+        
+    }
+    
+    public static void main1(String[] args) {
         System.out.println(Integer.class == int.class);
         System.out.println("Object : " + JdbcUtils.isSupportedSimpleType(Object.class));
         System.out.println("int : " + JdbcUtils.isSupportedSimpleType(int.class));
@@ -45,6 +48,5 @@ public class Main {
         System.out.println("BigDecimal : " + JdbcUtils.isSupportedSimpleType(BigDecimal.class));
         
         TypeHandlerRegistry typeHandlerRegistry = new TypeHandlerRegistry();
-        
     }
 }

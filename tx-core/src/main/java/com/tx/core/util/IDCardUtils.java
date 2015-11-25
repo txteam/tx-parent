@@ -9,14 +9,18 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * 身份证实用工具
- * @author Rain
- *
+ * 
+ * 身份证工具
+ * 
+ * @author rain
+ * @version [版本号, 2015年11月23日]
+ * @see [相关类/方法]
+ * @since [产品/模块版本]
  */
 public abstract class IDCardUtils {
     private static final int[] wi = { 7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10,
             5, 8, 4, 2 }; //
-    
+            
     private static final int[] vi = { 1, 0, 'X', 9, 8, 7, 6, 5, 4, 3, 2 }; //
     
     private static int[] ai = new int[18];
@@ -84,12 +88,9 @@ public abstract class IDCardUtils {
     /**
      * 获得随机数字
      * 
-     * @param start
-     *            随机数字区间开始
-     * @param end
-     *            随机数字区间结束
-     * @param length
-     *            返回数字的长度,如果不到此长度,则前导加"0"
+     * @param start 随机数字区间开始
+     * @param end 随机数字区间结束
+     * @param length 返回数字的长度,如果不到此长度,则前导加"0"
      * @return
      */
     private static String getRandomNumber(int start, int end, int length) {
@@ -363,8 +364,7 @@ public abstract class IDCardUtils {
          * 月份 小于1月,大于12月则无效<br>
          * 日期必须大于1 小于等于当月最大日期
          * 
-         * @param birthday
-         *            格式:yyyyMMdd
+         * @param birthday 格式:yyyyMMdd
          * @return true:有效|false:无效
          */
         private boolean checkBirthday(String birthday) {
@@ -428,17 +428,17 @@ public abstract class IDCardUtils {
             }
             return 0;
         }
-
-		@Override
-		public String toString() {
-			return "IDCard []";
-		}
+        
+        @Override
+        public String toString() {
+            return "IDCard []";
+        }
     }
     
     public static void main(String[] args) {
-        for (int index = 0;index < 100 ; index++) {
+        for (int index = 0; index < 100; index++) {
             System.out.println(getRandomIDCard());
         }
-       
+        
     }
 }

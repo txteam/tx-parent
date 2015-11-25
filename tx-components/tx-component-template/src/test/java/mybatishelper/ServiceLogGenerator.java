@@ -6,7 +6,7 @@
  */
 package mybatishelper;
 
-import com.tx.component.servicelog.defaultimpl.TXServiceLogDBScriptHelper;
+import com.tx.component.servicelog.template.TXServiceLogDBScriptHelper;
 import com.tx.core.dbscript.model.DataSourceTypeEnum;
 import com.tx.core.reflection.JpaMetaClass;
 

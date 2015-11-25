@@ -37,14 +37,13 @@ import com.tx.core.util.ObjectUtils;
 
 /**
  * 简单的sqlMapMapper实现<br/>
- *     仅仅支持，属性对应java类型为简单类型的情况<br/>
- *     关联复杂对象的情况，不进行支持<br/>
- * <功能详细描述>
+ * 仅仅支持，属性对应java类型为简单类型的情况<br/>
+ * 关联复杂对象的情况，不进行支持<br/>
  * 
- * @author  brady
- * @version  [版本号, 2013-9-4]
- * @see  [相关类/方法]
- * @since  [产品/模块版本]
+ * @author brady
+ * @version [版本号, 2013-9-4]
+ * @see [相关类/方法]
+ * @since [产品/模块版本]
  */
 public class SqlSource<T> implements Serializable, Cloneable {
     
@@ -185,14 +184,14 @@ public class SqlSource<T> implements Serializable, Cloneable {
     }
     
     /**
-      * 添加getter2ColumnInfo的映射 
-      *<功能详细描述>
-      * @param jpaMetaClass
-      * @param getterName [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 添加getter2ColumnInfo的映射 <功能详细描述>
+     * 
+     * @param jpaMetaClass
+     * @param getterName [参数说明]
+     *            
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     public void addGetter2GetterColumnInfoMapping(JpaMetaClass<?> jpaMetaClass,
             String getterName) {
@@ -229,14 +228,15 @@ public class SqlSource<T> implements Serializable, Cloneable {
     }
     
     /**
-      * 添加属性值与条件的映射关系<br/>
-      *<功能详细描述>
-      * @param propertyName
-      * @param conditionExpression [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 添加属性值与条件的映射关系<br/>
+     * <功能详细描述>
+     * 
+     * @param propertyName
+     * @param conditionExpression [参数说明]
+     *            
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     public void addQueryConditionKey2SqlMapping(
             QueryConditionTypeEnum queryConditionType, String key,
@@ -258,19 +258,18 @@ public class SqlSource<T> implements Serializable, Cloneable {
     }
     
     /**
-      * 添加其他条件例如额外关联等情况
-      * 支持在固定表中存在固定条件的查询
-      *<功能详细描述>
-      * @param conditionExpression [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 添加其他条件例如额外关联等情况 支持在固定表中存在固定条件的查询 <功能详细描述>
+     * 
+     * @param conditionExpression [参数说明]
+     *            
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     public void addOtherCondition(String conditionExpression) {
         AssertUtils.notEmpty(conditionExpression,
                 "conditionExpression is empty.");
-        
+                
         this.otherCondition.add(conditionExpression);
     }
     
@@ -289,13 +288,14 @@ public class SqlSource<T> implements Serializable, Cloneable {
     }
     
     /**
-      * 获取对象主键名称<br/>
-      *<功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return String [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 获取对象主键名称<br/>
+     * <功能详细描述>
+     * 
+     * @return [参数说明]
+     *         
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     public String getPkName() {
         return pkName;
@@ -303,6 +303,7 @@ public class SqlSource<T> implements Serializable, Cloneable {
     
     /**
      * 获取对象的主键值
+     * 
      * @param 对pkName进行赋值
      */
     public Object getValue(Object obj) {
@@ -316,14 +317,15 @@ public class SqlSource<T> implements Serializable, Cloneable {
     }
     
     /**
-      * 获取到属性映射到的字段名<br/>
-      *<功能详细描述>
-      * @param getterName
-      * @return [参数说明]
-      * 
-      * @return String [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 获取到属性映射到的字段名<br/>
+     * <功能详细描述>
+     * 
+     * @param getterName
+     * @return [参数说明]
+     *         
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     public String getColumnNameByGetterName(String getterName) {
         AssertUtils.notEmpty(getterName, "getterName is empty.");
@@ -332,14 +334,14 @@ public class SqlSource<T> implements Serializable, Cloneable {
     }
     
     /**
-     * 获取插入语句
-     *<功能详细描述>
-     * @return [参数说明]
+     * 获取插入语句 <功能详细描述>
      * 
+     * @return [参数说明]
+     *         
      * @return String [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
+     */
     public String insertSql() {
         //开始构建sql
         SqlBuilder.BEGIN();
@@ -358,14 +360,15 @@ public class SqlSource<T> implements Serializable, Cloneable {
     }
     
     /**
-      * 生成setter对象进行设值<br/>
-      *<功能详细描述>
-      * @param obj
-      * @return [参数说明]
-      * 
-      * @return PreparedStatementSetter [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 生成setter对象进行设值<br/>
+     * <功能详细描述>
+     * 
+     * @param obj
+     * @return [参数说明]
+     *         
+     * @return PreparedStatementSetter [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     public PreparedStatementSetter getInsertSetter(final Object obj) {
         //如果插入语句还没有初始化，则需要先初始化插入语句
@@ -390,20 +393,21 @@ public class SqlSource<T> implements Serializable, Cloneable {
     
     /**
      * 获取设置主键的setter对象<br/>
-     *<功能详细描述>
+     * <功能详细描述>
+     * 
      * @param obj
      * @return [参数说明]
-     * 
+     *         
      * @return PreparedStatementSetter [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
+     */
     public PreparedStatementSetter getPKSetter(final Object obj) {
         AssertUtils.notEmpty(this.pkName, "pkName is empty.");
         AssertUtils.isTrue(this.getter2columnNameMapping.containsKey(this.pkName),
                 "property2columnNameMapping not contains pkName:{}.",
                 this.pkName);
-        
+                
         final String finalPkName = this.pkName;
         final MetaObject metaObject = MetaObject.forObject(obj);
         PreparedStatementSetter res = new PreparedStatementSetter() {
@@ -420,20 +424,21 @@ public class SqlSource<T> implements Serializable, Cloneable {
     }
     
     /**
-      * 获取删除语句<br/>
-      *<功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return String [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 获取删除语句<br/>
+     * <功能详细描述>
+     * 
+     * @return [参数说明]
+     *         
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     public String deleteSql() {
         AssertUtils.notEmpty(this.pkName, "pkName is empty.");
         AssertUtils.isTrue(this.getter2columnNameMapping.containsKey(this.pkName),
                 "property2columnNameMapping not contains pkName:{}.",
                 this.pkName);
-        
+                
         //开始构建sql
         SqlBuilder.BEGIN();
         SqlBuilder.DELETE_FROM(this.tableName);
@@ -446,13 +451,13 @@ public class SqlSource<T> implements Serializable, Cloneable {
     }
     
     /**
-      * 获取对象的RowMapper
-      *<功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return RowMapper [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 获取对象的RowMapper <功能详细描述>
+     * 
+     * @return [参数说明]
+     *         
+     * @return RowMapper [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     public RowMapper<T> getSelectRowMapper() {
         AssertUtils.notNull(this.type, "type is null");
@@ -461,12 +466,6 @@ public class SqlSource<T> implements Serializable, Cloneable {
         final Class<T> finalType = this.type;
         final ClassReflector<T> finalClassReflector = this.classReflector;
         RowMapper<T> rowMapper = new RowMapper<T>() {
-            /**
-             * @param rs
-             * @param rowNum
-             * @return
-             * @throws SQLException
-             */
             @Override
             public T mapRow(ResultSet rs, int rowNum) throws SQLException {
                 T newObjInstance = ObjectUtils.newInstance(finalType);
@@ -475,12 +474,9 @@ public class SqlSource<T> implements Serializable, Cloneable {
                 for (Entry<String, String> entryTemp : getter2columnNameMapping.entrySet()) {
                     String propertyName = entryTemp.getKey();
                     String columnName = entryTemp.getValue();
-                    if (finalClassReflector.getSetterNames()
-                            .contains(propertyName)) {
+                    if (finalClassReflector.getSetterNames().contains(propertyName)) {
                         Class<?> type = getter2JavaTypeMapping.get(propertyName);
-                        Object value = JdbcUtils.getResultSetValueForSimpleType(rs,
-                                columnName,
-                                type);
+                        Object value = JdbcUtils.getResultSetValueForSimpleType(rs, columnName, type);
                         metaObject.setValue(propertyName, value);
                     }
                 }
@@ -491,15 +487,15 @@ public class SqlSource<T> implements Serializable, Cloneable {
     }
     
     /**
-     * 获取一个设置的callbackHandler实现
-     *<功能详细描述>
+     * 获取一个设置的callbackHandler实现 <功能详细描述>
+     * 
      * @param newObjInstance
      * @return [参数说明]
-     * 
+     *         
      * @return RowCallbackHandler [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
+     */
     public RowCallbackHandler getSelectRowCallbackHandler(Object newObjInstance) {
         AssertUtils.notNull(this.classReflector, "classReflector is null");
         
@@ -528,20 +524,20 @@ public class SqlSource<T> implements Serializable, Cloneable {
     }
     
     /**
-      * 获取查询单条数据的sql
-      *<功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return String [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 获取查询单条数据的sql <功能详细描述>
+     * 
+     * @return [参数说明]
+     *         
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     public String findSql() {
         AssertUtils.notEmpty(this.pkName, "pkName is empty.");
         AssertUtils.isTrue(this.getter2columnNameMapping.containsKey(this.pkName),
                 "property2columnNameMapping not contains pkName:{}.",
                 this.pkName);
-        
+                
         SqlBuilder.BEGIN();
         for (Entry<String, String> entryTemp : getter2columnNameMapping.entrySet()) {
             SqlBuilder.SELECT(entryTemp.getValue());
@@ -555,20 +551,20 @@ public class SqlSource<T> implements Serializable, Cloneable {
     }
     
     /**
-      * 获取查询sql
-      *<功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return String [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 获取查询sql <功能详细描述>
+     * 
+     * @return [参数说明]
+     *         
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     public String querySql(Object obj) {
         AssertUtils.notEmpty(this.pkName, "pkName is empty.");
         AssertUtils.isTrue(this.getter2columnNameMapping.containsKey(this.pkName),
                 "property2columnNameMapping not contains pkName:{}.",
                 this.pkName);
-        
+                
         //构建query语句
         SqlBuilder.BEGIN();
         for (Entry<String, String> entryTemp : getter2columnNameMapping.entrySet()) {
@@ -607,14 +603,14 @@ public class SqlSource<T> implements Serializable, Cloneable {
     }
     
     /**
-     * 获取查询sql
-     *<功能详细描述>
-     * @return [参数说明]
+     * 获取查询sql <功能详细描述>
      * 
+     * @return [参数说明]
+     *         
      * @return String [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
+     */
     public String countSql(Object obj) {
         //构建query语句
         SqlBuilder.BEGIN();
@@ -642,14 +638,14 @@ public class SqlSource<T> implements Serializable, Cloneable {
     }
     
     /**
-      * 获取查询条件的Setter对象
-      *<功能详细描述>
-      * @param obj
-      * @return [参数说明]
-      * 
-      * @return PreparedStatementSetter [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 获取查询条件的Setter对象 <功能详细描述>
+     * 
+     * @param obj
+     * @return [参数说明]
+     *         
+     * @return PreparedStatementSetter [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     public PreparedStatementSetter getQueryCondtionSetter(Object obj) {
         PreparedStatementSetter res = null;
@@ -686,14 +682,15 @@ public class SqlSource<T> implements Serializable, Cloneable {
     }
     
     /**
-      * 获取动态查询条件的参数映射关系<br/>
-      *<功能详细描述>
-      * @param obj
-      * @return [参数说明]
-      * 
-      * @return LinkedHashMap<String,Object> [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 获取动态查询条件的参数映射关系<br/>
+     * <功能详细描述>
+     * 
+     * @param obj
+     * @return [参数说明]
+     *         
+     * @return LinkedHashMap<String,Object> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     public LinkedHashMap<String, Object> getQueryCondtionParamMaps(Object obj) {
         final MetaObject metaObject = MetaObject.forObject(obj);
@@ -710,12 +707,11 @@ public class SqlSource<T> implements Serializable, Cloneable {
     }
     
     /**
-      * 获取分页查询sql
-      *<功能详细描述> [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 获取分页查询sql <功能详细描述> [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     public String queryPagedSql(Object obj, int pageIndex, int pageSize) {
         String querySql = querySql(obj);
@@ -737,15 +733,15 @@ public class SqlSource<T> implements Serializable, Cloneable {
     }
     
     /**
-     * 获取查询条件的Setter对象
-     *<功能详细描述>
+     * 获取查询条件的Setter对象 <功能详细描述>
+     * 
      * @param obj
      * @return [参数说明]
-     * 
+     *         
      * @return PreparedStatementSetter [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
+     */
     public PreparedStatementSetter getPagedQueryCondtionSetter(Object obj,
             int offset, int limit) {
         final MetaObject metaObject = MetaObject.forObject(obj);
@@ -818,13 +814,14 @@ public class SqlSource<T> implements Serializable, Cloneable {
     }
     
     /**
-      * 如果没有设定可更新字段，则认为该对象不支持更新<br/>
-      *<功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return boolean [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 如果没有设定可更新字段，则认为该对象不支持更新<br/>
+     * <功能详细描述>
+     * 
+     * @return [参数说明]
+     *         
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     public boolean isUpdateAble() {
         if (CollectionUtils.isEmpty(this.updateAblePropertyNames)) {
@@ -835,14 +832,14 @@ public class SqlSource<T> implements Serializable, Cloneable {
     }
     
     /**
-     * 获取查询sql
-     *<功能详细描述>
-     * @return [参数说明]
+     * 获取查询sql <功能详细描述>
      * 
+     * @return [参数说明]
+     *         
      * @return String [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
+     */
     public String updateSql(Object obj) {
         AssertUtils.notEmpty(obj, "update obj must not empty.");
         
@@ -856,7 +853,7 @@ public class SqlSource<T> implements Serializable, Cloneable {
         AssertUtils.isTrue(keySet.contains(this.pkName),
                 "obj:{} must contains pk{}.",
                 new Object[] { obj, this.pkName });
-        
+                
         //构建query语句
         SqlBuilder.BEGIN();
         SqlBuilder.UPDATE(this.tableName);
@@ -877,15 +874,15 @@ public class SqlSource<T> implements Serializable, Cloneable {
     }
     
     /**
-     * 获取查询条件的Setter对象
-     *<功能详细描述>
+     * 获取查询条件的Setter对象 <功能详细描述>
+     * 
      * @param obj
      * @return [参数说明]
-     * 
+     *         
      * @return PreparedStatementSetter [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
+     */
     public PreparedStatementSetter getUpdateSetter(Object obj) {
         AssertUtils.notEmpty(obj, "update obj must not empty.");
         
@@ -899,7 +896,7 @@ public class SqlSource<T> implements Serializable, Cloneable {
         AssertUtils.isTrue(keySet.contains(this.pkName),
                 "obj:{} must contains pk{}.",
                 new Object[] { obj, this.pkName });
-        
+                
         final String finalPkName = this.pkName;
         PreparedStatementSetter res = new PreparedStatementSetter() {
             @Override

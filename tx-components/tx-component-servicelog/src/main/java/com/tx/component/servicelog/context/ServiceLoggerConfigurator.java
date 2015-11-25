@@ -2,78 +2,81 @@ package com.tx.component.servicelog.context;
 
 import javax.sql.DataSource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 import com.tx.core.dbscript.model.DataSourceTypeEnum;
-import com.tx.core.exceptions.util.AssertUtils;
 
 /**
-  * 日志容器<br/>
-  * 1、用以提供业务日志记录功能
-  * <功能详细描述>
-  * 
-  * @author  brady
-  * @version  [版本号, 2012-12-17]
-  * @see  [相关类/方法]
-  * @since  [产品/模块版本]
+ * 业务日志<br/>
+ * 1、用以提供业务日志记录功能
+ * 
+ * @author brady
+ * @version [版本号, 2012-12-17]
+ * @see [相关类/方法]
+ * @since [产品/模块版本]
  */
-public class ServiceLoggerConfigurator implements InitializingBean {
+public class ServiceLoggerConfigurator implements InitializingBean, ApplicationContextAware, BeanNameAware {
     
     /** 数据源类型 */
-    protected static DataSourceTypeEnum dataSourceType;
+    @Deprecated
+    protected DataSourceTypeEnum dataSourceType;
     
     /** 数据源 */
-    protected static DataSource dataSource;
+    @Deprecated
+    protected DataSource dataSource;
     
-    /** 事务管理器 */
-    protected static PlatformTransactionManager platformTransactionManager;
+    /** 日志对象建造者 */
+    @Deprecated
+    protected ServiceLoggerBuilder serviceLoggerBuilder;
     
-    /** jdbcTemplate */
-    protected static JdbcTemplate jdbcTemplate;
+    /** 日志 */
+    protected Logger logger = LoggerFactory.getLogger(ServiceLoggerContext.class);
     
-    /**
-     * @throws Exception
-     */
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        AssertUtils.notNull(dataSource, "dataSource is null");
-        AssertUtils.notNull(dataSourceType, "dataSourceType is null");
-        
-        jdbcTemplate = new JdbcTemplate(dataSource);
-        if(platformTransactionManager == null){
-            platformTransactionManager = new DataSourceTransactionManager(dataSource);
-        }
-    }
+    /** spring容器 */
+    protected ApplicationContext applicationContext;
     
-    /**
-     * 私有化构造方法
-     */
+    /** 业务日志 Bean 名称 */
+    protected String beanName;
+    
     protected ServiceLoggerConfigurator() {
         super();
     }
     
-    /**
-     * @param 对dataSourceType进行赋值
-     */
-    public void setDataSourceType(DataSourceTypeEnum dataSourceType) {
-        ServiceLoggerConfigurator.dataSourceType = dataSourceType;
+    @Override
+    public void afterPropertiesSet() throws Exception {
     }
     
-    /**
-     * @param 对dataSource进行赋值
-     */
-    public void setDataSource(DataSource dataSource) {
-        ServiceLoggerConfigurator.dataSource = dataSource;
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
     }
-
-    /**
-     * @param 对platformTransactionManager进行赋值
-     */
-    public static void setPlatformTransactionManager(
-            PlatformTransactionManager platformTransactionManager) {
-        ServiceLoggerConfigurator.platformTransactionManager = platformTransactionManager;
+    
+    @Override
+    public void setBeanName(String name) {
+        this.beanName = name;
+    }
+    
+    /** @param 对 dataSource 进行赋值 */
+    @Deprecated
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+    
+    /** @param 对 dataSourceType 进行赋值 */
+    @Deprecated
+    public void setDataSourceType(DataSourceTypeEnum dataSourceType) {
+        this.dataSourceType = dataSourceType;
+    }
+    
+    /** @param 对 serviceLoggerBuilder 进行赋值 */
+    @Deprecated
+    public void setServiceLoggerBuilder(ServiceLoggerBuilder serviceLoggerBuilder) {
+        this.serviceLoggerBuilder = serviceLoggerBuilder;
     }
 }

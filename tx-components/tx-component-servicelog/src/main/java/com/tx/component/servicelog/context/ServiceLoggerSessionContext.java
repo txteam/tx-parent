@@ -13,27 +13,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * 业务日志容器<br/>
- * <功能详细描述>
+ * 业务日志Session容器<br/>
  * 
- * @author  brady
- * @version  [版本号, 2013-9-22]
- * @see  [相关类/方法]
- * @since  [产品/模块版本]
+ * @author brady
+ * @version [版本号, 2013-9-22]
+ * @see [相关类/方法]
+ * @since [产品/模块版本]
  */
 public class ServiceLoggerSessionContext {
-    
-    private HttpServletRequest request;
-    
-    private HttpServletResponse response;
-    
-    private Map<String, Object> attributes;
-    
-    /** <默认构造函数> */
-    private ServiceLoggerSessionContext() {
-        super();
-        this.attributes = new HashMap<String, Object>();
-    }
     
     /**
      * 线程变量:当前会话容器<br/>
@@ -41,25 +28,26 @@ public class ServiceLoggerSessionContext {
      * 获取当前回话的session从而获取到相应的权限列表
      */
     private static ThreadLocal<ServiceLoggerSessionContext> context = new ThreadLocal<ServiceLoggerSessionContext>() {
-        
-        /**
-         * @return
-         */
         @Override
         protected ServiceLoggerSessionContext initialValue() {
-            ServiceLoggerSessionContext csContext = new ServiceLoggerSessionContext();
-            return csContext;
+            return new ServiceLoggerSessionContext();
         }
     };
     
+    private HttpServletRequest request;
+    
+    private HttpServletResponse response;
+    
+    private Map<String, Object> attributes;
+    
     /**
-      * 获取业务日志容器<br/>
-      *<功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return ServiceLoggerContext [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 获取业务日志容器<br/>
+     * 
+     * @return [参数说明]
+     *         
+     * @return ServiceLoggerContext [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     public static ServiceLoggerSessionContext getContext() {
         ServiceLoggerSessionContext res = context.get();
@@ -67,32 +55,17 @@ public class ServiceLoggerSessionContext {
     }
     
     /**
-     * 从当前线程中移除当前会话
-     * <功能详细描述> [参数说明]
+     * 初始化业务日志容器
      * 
+     * @param request
+     * @param response
+     * @param session [参数说明]
+     *            
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
-    public static void remove() {
-        ServiceLoggerSessionContext res = context.get();
-        res.clear();
-        context.remove();
-    }
-    
-    /**
-      * 初始化业务日志容器
-      *<功能详细描述>
-      * @param request
-      * @param response
-      * @param session [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
      */
-    public static void init(HttpServletRequest request,
-            HttpServletResponse response) {
+    public static void init(HttpServletRequest request, HttpServletResponse response) {
         context.remove();
         ServiceLoggerSessionContext localContext = context.get();
         localContext.setRequest(request);
@@ -100,69 +73,29 @@ public class ServiceLoggerSessionContext {
     }
     
     /**
-     * @return 返回 request
+     * 从当前线程中移除当前会话
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
-    public HttpServletRequest getRequest() {
-        return request;
+    public static void remove() {
+        ServiceLoggerSessionContext res = context.get();
+        res.clear();
+        context.remove();
+    }
+    
+    private ServiceLoggerSessionContext() {
+        super();
+        this.attributes = new HashMap<String, Object>();
     }
     
     /**
-     * @param 对request进行赋值
-     */
-    public void setRequest(HttpServletRequest request) {
-        this.request = request;
-    }
-    
-    /**
-     * @return 返回 response
-     */
-    public HttpServletResponse getResponse() {
-        return response;
-    }
-    
-    /**
-     * @param 对response进行赋值
-     */
-    public void setResponse(HttpServletResponse response) {
-        this.response = response;
-    }
-    
-    /**
-      * 设置属性值到线程变量中
-      *<功能详细描述>
-      * @param key
-      * @param value [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    public void setAttribute(String key, Object value) {
-        this.attributes.put(key, value);
-    }
-    
-    /**
-      * 获取线程变量中的属性值
-      *<功能详细描述>
-      * @param key
-      * @return [参数说明]
-      * 
-      * @return Object [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    public Object getAttribute(String key) {
-        Object res = this.attributes.get(key);
-        return res;
-    }
-    
-    /**
-      * 清空线程变量中对象
-      *<功能详细描述> [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 清空线程变量中对象
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     public void clear() {
         if (this.attributes != null) {
@@ -171,5 +104,50 @@ public class ServiceLoggerSessionContext {
         this.request = null;
         this.response = null;
         this.attributes = null;
+    }
+    
+    /**
+     * 获取线程变量中的属性值
+     * 
+     * @param key
+     * @return [参数说明]
+     *         
+     * @return Object [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public Object getAttribute(String key) {
+        Object res = this.attributes.get(key);
+        return res;
+    }
+    
+    public HttpServletRequest getRequest() {
+        return request;
+    }
+    
+    public HttpServletResponse getResponse() {
+        return response;
+    }
+    
+    /**
+     * 设置属性值到线程变量中
+     * 
+     * @param key
+     * @param value [参数说明]
+     *            
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public void setAttribute(String key, Object value) {
+        this.attributes.put(key, value);
+    }
+    
+    public void setRequest(HttpServletRequest request) {
+        this.request = request;
+    }
+    
+    public void setResponse(HttpServletResponse response) {
+        this.response = response;
     }
 }

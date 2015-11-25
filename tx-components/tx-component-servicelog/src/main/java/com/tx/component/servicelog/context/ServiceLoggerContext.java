@@ -8,40 +8,53 @@ package com.tx.component.servicelog.context;
 
 import org.springframework.beans.factory.InitializingBean;
 
+import com.tx.component.servicelog.context.logger.ServiceLogger;
 import com.tx.core.exceptions.util.AssertUtils;
 
 /**
  * 业务日志容器<br/>
- * <功能详细描述>
  * 
- * @author  brady
- * @version  [版本号, 2013-9-24]
- * @see  [相关类/方法]
- * @since  [产品/模块版本]
+ * @author brady
+ * @version [版本号, 2013-9-24]
+ * @see [相关类/方法]
+ * @since [产品/模块版本]
  */
-public class ServiceLoggerContext extends ServiceLoggerFactory implements
-        InitializingBean {
+public class ServiceLoggerContext extends ServiceLoggerFactory implements InitializingBean {
     
     private static ServiceLoggerContext context;
     
-    /** <默认构造函数> */
     protected ServiceLoggerContext() {
         super();
     }
     
-    /**
-     * @throws Exception
-     */
     @Override
     public void afterPropertiesSet() throws Exception {
+        logger.info("初始化日志容器..");
+        
         super.afterPropertiesSet();
         context = this;
+        
+        logger.info("初始化日志容器完成..");
     }
     
-    protected static ServiceLoggerContext getContext() {
-        AssertUtils.notNull(ServiceLoggerContext.context,
-                "serviceLogContext not init.");
-        
+    public static ServiceLoggerContext getContext() {
+        AssertUtils.notNull(context, "MRSContext is null. maybe not inited!");
         return ServiceLoggerContext.context;
+    }
+    
+    /**
+     * 
+     * 获取日志对象
+     *
+     * @param logObjectType 
+     * 
+     * @return ServiceLogger<T> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     * @version [版本号, 2015年11月24日]
+     * @author rain
+     */
+    public static <T> ServiceLogger<T> getLogger(Class<T> logObjectType) {
+        return getContext().getServiceLogger(logObjectType);
     }
 }

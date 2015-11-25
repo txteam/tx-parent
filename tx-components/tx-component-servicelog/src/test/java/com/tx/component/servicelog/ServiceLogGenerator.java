@@ -8,9 +8,8 @@ package com.tx.component.servicelog;
 
 import org.apache.commons.lang.StringUtils;
 
-
-import com.tx.component.servicelog.defaultimpl.TXServiceLogDBScriptHelper;
-import com.tx.component.servicelog.defaultimpl.TXServiceLogViewHelper;
+import com.tx.component.servicelog.template.TXServiceLogDBScriptHelper;
+import com.tx.component.servicelog.template.TXServiceLogViewHelper;
 import com.tx.component.servicelog.testmodel.LoginLog;
 import com.tx.core.dbscript.model.DataSourceTypeEnum;
 import com.tx.core.reflection.JpaMetaClass;
