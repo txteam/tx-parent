@@ -259,6 +259,25 @@ public class AuthContext extends AuthContextBuilder {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
+    public boolean hasAuth(String authKey) {
+        return hasAuth(authKey,(Object[]) null);
+    }
+    
+    /**
+     * 判断是否具有某权限<br/>
+     * authType:除定制的几类权限特性以外， 可以为 业务权限 产品权限
+     * 这里权限验证会根据当前会话以及对应的权限验证器判断是否具有对应权限
+     * 
+     * @param authKey
+     * @param authType
+     * @param objects
+     *            判断权限传入的参数，可以为业务ID，可以为等等。。。。 该参数会直接传入对应的authChecker中
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
     public boolean hasAuth(String authKey, Object... objects) {
         if (!authItemMapping.containsKey(authKey)) {
             return true;
