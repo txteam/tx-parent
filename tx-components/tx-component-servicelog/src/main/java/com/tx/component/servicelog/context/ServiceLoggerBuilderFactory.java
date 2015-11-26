@@ -40,21 +40,19 @@ public class ServiceLoggerBuilderFactory extends ServiceLoggerConfigurator {
         
         // 以下代码兼容以前的配置文件
         {
-            if (serviceLoggerBuilder != null) {
+            boolean isExistBuilder = false;
+            for (ServiceLoggerBuilder serviceLoggerBuilder : serviceLoggerBuilders) {
                 if (serviceLoggerBuilder instanceof TXServiceLoggerBuilder) {
-                    TXServiceLoggerBuilder builder = (TXServiceLoggerBuilder) serviceLoggerBuilder;
-                    builder.setDataSourceType(dataSourceType);
-                    builder.setDataSource(dataSource);
+                    isExistBuilder = true;
+                    ((TXServiceLoggerBuilder) serviceLoggerBuilder).initBuilder();
                 }
-                boolean isExistBuilder = false;
-                for (ServiceLoggerBuilder serviceLoggerBuilder : serviceLoggerBuilders) {
-                    if (serviceLoggerBuilder.getClass().equals(serviceLoggerBuilder.getClass())) {
-                        isExistBuilder = true;
-                    }
-                }
-                if (!isExistBuilder) {
-                    serviceLoggerBuilders.add(serviceLoggerBuilder);
-                }
+            }
+            if (!isExistBuilder && serviceLoggerBuilder != null && serviceLoggerBuilder instanceof TXServiceLoggerBuilder) {
+                TXServiceLoggerBuilder builder = (TXServiceLoggerBuilder) serviceLoggerBuilder;
+                builder.setDataSourceType(dataSourceType);
+                builder.setDataSource(dataSource);
+                builder.initBuilder();
+                serviceLoggerBuilders.add(serviceLoggerBuilder);
             }
         }
         

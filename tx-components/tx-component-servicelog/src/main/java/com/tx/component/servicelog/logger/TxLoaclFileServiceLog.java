@@ -6,9 +6,6 @@
  */
 package com.tx.component.servicelog.logger;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-
 /**
  * 报文日志
  * 
@@ -17,9 +14,7 @@ import javax.persistence.Table;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-@Entity
-@Table(name = "log_message")
-public class TxMessageLog extends TXBaseServiceLog {
+public class TxLoaclFileServiceLog extends TXBaseServiceLog {
     
     /** 报文请求id */
     private String messageid;
@@ -40,13 +35,13 @@ public class TxMessageLog extends TXBaseServiceLog {
     private String responseBody;
     
     /** 执行时间(可以保存报文请求时间,controller 执行时间等等,随意咯) */
-    private Long useTime;
-    
-    /** 备注 */
-    private String remark;
+    private String useTime;
     
     /** 版本号 */
     private String version;
+    
+    /** 备注 */
+    private String remark;
     
     /** 私有域1 */
     private String privat1;
@@ -57,6 +52,12 @@ public class TxMessageLog extends TXBaseServiceLog {
     /** 私有域3 */
     private String privat3;
     
+    /** 私有域4 */
+    private String privat4;
+    
+    /** 私有域5 */
+    private String privat5;
+    
     /**
      * 构造报文日志<br />
      * 
@@ -65,7 +66,7 @@ public class TxMessageLog extends TXBaseServiceLog {
      * @since [产品/模块版本]
      * @author rain
      */
-    public TxMessageLog() {
+    public TxLoaclFileServiceLog() {
         super();
     }
     
@@ -84,7 +85,13 @@ public class TxMessageLog extends TXBaseServiceLog {
      * @since [产品/模块版本]
      * @author rain
      */
-    public TxMessageLog(String messageid, String module, String requestBody, String responseCode, String responseCodeMessage, String responseBody) {
+    public TxLoaclFileServiceLog(
+            String messageid,
+            String module,
+            String requestBody,
+            String responseCode,
+            String responseCodeMessage,
+            String responseBody) {
         super();
         this.messageid = messageid;
         this.module = module;
@@ -106,29 +113,26 @@ public class TxMessageLog extends TXBaseServiceLog {
      * @param useTime 使用时间
      * @param remark 备注
      * @param version 版本
-     * @param privat1 私有域
-     * @param privat2 私有域
-     * @param privat3 私有域
      *            
      * @version [版本号, 2015年11月24日]
      * @see [相关类/方法]
      * @since [产品/模块版本]
      * @author rain
      */
-    public TxMessageLog(String messageid, String module, String requestBody, String responseCode, String responseCodeMessage, String responseBody, Long useTime, String remark, String version, String privat1, String privat2, String privat3) {
-        super();
-        this.messageid = messageid;
-        this.module = module;
-        this.requestBody = requestBody;
-        this.responseCode = responseCode;
-        this.responseCodeMessage = responseCodeMessage;
-        this.responseBody = responseBody;
+    public TxLoaclFileServiceLog(
+            String messageid,
+            String module,
+            String requestBody,
+            String responseCode,
+            String responseCodeMessage,
+            String responseBody,
+            String useTime,
+            String remark,
+            String version) {
+        this(messageid, module, requestBody, responseCode, responseCodeMessage, responseBody);
         this.useTime = useTime;
         this.remark = remark;
         this.version = version;
-        this.privat1 = privat1;
-        this.privat2 = privat2;
-        this.privat3 = privat3;
     }
     
     /** @return 返回 messageid */
@@ -154,6 +158,16 @@ public class TxMessageLog extends TXBaseServiceLog {
     /** @return 返回 privat3 */
     public String getPrivat3() {
         return privat3;
+    }
+    
+    /** @return 返回 privat4 */
+    public String getPrivat4() {
+        return privat4;
+    }
+    
+    /** @return 返回 privat5 */
+    public String getPrivat5() {
+        return privat5;
     }
     
     /** @return 返回 remark */
@@ -182,7 +196,7 @@ public class TxMessageLog extends TXBaseServiceLog {
     }
     
     /** @return 返回 useTime */
-    public Long getUseTime() {
+    public String getUseTime() {
         return useTime;
     }
     
@@ -216,6 +230,16 @@ public class TxMessageLog extends TXBaseServiceLog {
         this.privat3 = privat3;
     }
     
+    /** @param 对 privat4 进行赋值 */
+    public void setPrivat4(String privat4) {
+        this.privat4 = privat4;
+    }
+    
+    /** @param 对 privat5 进行赋值 */
+    public void setPrivat5(String privat5) {
+        this.privat5 = privat5;
+    }
+    
     /** @param 对 remark 进行赋值 */
     public void setRemark(String remark) {
         this.remark = remark;
@@ -242,7 +266,7 @@ public class TxMessageLog extends TXBaseServiceLog {
     }
     
     /** @param 对 useTime 进行赋值 */
-    public void setUseTime(Long useTime) {
+    public void setUseTime(String useTime) {
         this.useTime = useTime;
     }
     

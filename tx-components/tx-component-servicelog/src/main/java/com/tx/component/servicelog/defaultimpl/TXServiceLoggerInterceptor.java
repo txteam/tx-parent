@@ -35,7 +35,7 @@ public class TXServiceLoggerInterceptor extends BaseServiceLoggerInterceptor {
         attributes.put("vcid", getVcid());
         attributes.put("organizationId", getOrganizationId());
         attributes.put("operatorId", getOperatorId());
-        setOperatorInfo(attributes);
+        fillOperatorInfo(attributes);
         return attributes;
     }
     
@@ -72,15 +72,18 @@ public class TXServiceLoggerInterceptor extends BaseServiceLoggerInterceptor {
     //    }
     
     /**
-     * 获取操作员id <功能详细描述>
      * 
-     * @return [参数说明]
-     *         
-     * @return String [返回类型说明]
+     * 填充操作员信息
+     *
+     * @param attributes
+     *            
+     * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
+     * @version [版本号, 2015年11月25日]
+     * @author rain
      */
-    private void setOperatorInfo(Map<String, Object> attributes) {
+    private void fillOperatorInfo(Map<String, Object> attributes) {
         ServiceLoggerSessionContext context = ServiceLoggerSessionContext.getContext();
         
         if (context.getRequest() == null || context.getRequest().getSession(false) == null) {

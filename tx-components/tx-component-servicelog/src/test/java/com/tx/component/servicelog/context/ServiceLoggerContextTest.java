@@ -6,8 +6,6 @@
  */
 package com.tx.component.servicelog.context;
 
-import static org.junit.Assert.*;
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;

@@ -8,7 +8,7 @@ package com.tx.component.servicelog.util;
 
 import com.tx.component.servicelog.context.ServiceLoggerContext;
 import com.tx.component.servicelog.logger.TXBaseServiceLog;
-import com.tx.component.servicelog.logger.TxMessageLog;
+import com.tx.component.servicelog.logger.TxLoaclFileServiceLog;
 
 /**
  * 日志助手类
@@ -36,7 +36,7 @@ public class ServiceLogHelper {
         ServiceLoggerContext.getLogger(TXBaseServiceLog.class).log(log);
     }
     
-    public static void logMessage(TxMessageLog log){
+    public static void logMessage(TxLoaclFileServiceLog log){
         
     }
     
@@ -55,8 +55,8 @@ public class ServiceLogHelper {
      * @since [产品/模块版本]
      * @author rain
      */
-    public static TxMessageLog createTxMessageLog(String messageid, String module, String requestBody, String responseCode, String responseCodeMessage, String responseBody) {
-        TxMessageLog log = new TxMessageLog();
+    public static TxLoaclFileServiceLog createTxMessageLog(String messageid, String module, String requestBody, String responseCode, String responseCodeMessage, String responseBody) {
+        TxLoaclFileServiceLog log = new TxLoaclFileServiceLog();
         
         
         

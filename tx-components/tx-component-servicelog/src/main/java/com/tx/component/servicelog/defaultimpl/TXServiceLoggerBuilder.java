@@ -53,7 +53,7 @@ import com.tx.core.util.UUIDUtils;
 public class TXServiceLoggerBuilder extends BaseServiceLoggerBuilder implements InitializingBean {
     
     /** 日志 */
-    private static Logger logger = LoggerFactory.getLogger(TXServiceLoggerBuilder.class);
+    private Logger logger = LoggerFactory.getLogger(TXServiceLoggerBuilder.class);
     
     /** sql建造者,如果为 null 则 new 一个出来 */
     protected SqlSourceBuilder sqlSourceBuilder;
@@ -72,8 +72,37 @@ public class TXServiceLoggerBuilder extends BaseServiceLoggerBuilder implements 
     
     @Override
     public void afterPropertiesSet() throws Exception {
+        //        if (sqlSourceBuilder == null) {
+        //            sqlSourceBuilder = new SqlSourceBuilder();
+        //        }
+    }
+    
+    /**
+     * 
+     * 初始化建造者<br />
+     * 此方法是位了兼容上一个配置文件而写的.如果去掉上一个配置文件写法,则把此方法校验移动到afterPropertiesSet()里面
+     *
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     * @version [版本号, 2015年11月26日]
+     * @author rain
+     */
+    @Deprecated
+    public void initBuilder() {
+        AssertUtils.notNull(dataSource, "dataSource is null!");
+        AssertUtils.notNull(dataSourceType, "dataSourceType is null!");
+        
         if (sqlSourceBuilder == null) {
             sqlSourceBuilder = new SqlSourceBuilder();
+        }
+        if (txManager == null) {
+            txManager = new DataSourceTransactionManager(dataSource);
+        }
+        
+        if (jdbcTemplate == null) {
+            jdbcTemplate = new JdbcTemplate(dataSource);
         }
     }
     
@@ -86,21 +115,18 @@ public class TXServiceLoggerBuilder extends BaseServiceLoggerBuilder implements 
             logger.warn(e.toString(), e);
             return false;
         }
-        
         return ClassUtils.isAssignable(logObjectType, TXServiceLog.class);
+    }
+    
+    @Override
+    public int order() {
+        return Integer.MAX_VALUE;
     }
     
     /** @param 对 dataSource 进行赋值 */
     public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
         
-        if (txManager == null) {
-            txManager = new DataSourceTransactionManager(dataSource);
-        }
-        
-        if (jdbcTemplate == null) {
-            jdbcTemplate = new JdbcTemplate(dataSource);
-        }
     }
     
     /** @param 对 dataSourceType 进行赋值 */
