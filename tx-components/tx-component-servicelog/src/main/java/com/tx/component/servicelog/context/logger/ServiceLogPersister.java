@@ -14,7 +14,7 @@ package com.tx.component.servicelog.context.logger;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public interface ServiceLogPersister {
+public interface ServiceLogPersister<T> {
     
     /**
      * 记录业务日志<br/>
@@ -25,5 +25,5 @@ public interface ServiceLogPersister {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public void persist(Object logInstance);
+    public void persist(T logInstance);
 }

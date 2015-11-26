@@ -24,6 +24,10 @@
 					<property name="dataSource" ref="dataSource" />
 					<property name="dataSourceType" value="H2" />
 				</bean>
+				<bean class="com.tx.component.servicelog.defaultimpl.TXLocalFileServiceLoggerBuilder" >
+					<property name="dataformat" value="TXT" />
+					<property name="savepath" value="/Users/rain/Develop/JavaDev/logs/tx-component-servicelog" />
+				</bean>
 			</list>
 		</property>
 	</bean>

@@ -32,7 +32,7 @@ public class ServiceLoggerImpl<T> extends ServiceLoggerFactory implements Servic
     private ServiceLogQuerier<T> serviceLogQuerier;
     
     /** 业务日志记录器 */
-    private ServiceLogPersister serviceLogPersister;
+    private ServiceLogPersister<T> serviceLogPersister;
     
     protected ServiceLoggerImpl() {
     }
@@ -40,7 +40,7 @@ public class ServiceLoggerImpl<T> extends ServiceLoggerFactory implements Servic
     ServiceLoggerImpl(
             ServiceLogDecorate<T> serviceLogDecorate,
             ServiceLogQuerier<T> serviceLogQuerier,
-            ServiceLogPersister serviceLogPersister) {
+            ServiceLogPersister<T> serviceLogPersister) {
         super();
         this.serviceLogDecorate = serviceLogDecorate;
         this.serviceLogQuerier = serviceLogQuerier;
@@ -62,7 +62,7 @@ public class ServiceLoggerImpl<T> extends ServiceLoggerFactory implements Servic
         AssertUtils.notNull(serviceLogInstance, "serviceLogInstance is null");
         
         //利用业务日志装饰器，装饰日志实例
-        Object logInstance = serviceLogDecorate.decorate(serviceLogInstance);
+        T logInstance = serviceLogDecorate.decorate(serviceLogInstance);
         
         //将业务日志实例进行持久
         serviceLogPersister.persist(logInstance);

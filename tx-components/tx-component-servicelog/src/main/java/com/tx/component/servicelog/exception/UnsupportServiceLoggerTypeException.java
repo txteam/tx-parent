@@ -16,17 +16,18 @@ package com.tx.component.servicelog.exception;
  */
 public class UnsupportServiceLoggerTypeException extends ServiceLoggerException {
     
-    /** 注释内容 */
     private static final long serialVersionUID = 3062103647172437045L;
     
-    /** <默认构造函数> */
-    public UnsupportServiceLoggerTypeException(String message,
-            Object[] parameters) {
-        super(message, parameters);
-    }
-    
-    /** <默认构造函数> */
     public UnsupportServiceLoggerTypeException(String message) {
         super(message);
     }
+    
+    public UnsupportServiceLoggerTypeException(String message, Object[] parameters) {
+        super(message, parameters);
+    }
+    
+    public UnsupportServiceLoggerTypeException(String message, String... parameters) {
+        super(message, parameters);
+    }
+    
 }

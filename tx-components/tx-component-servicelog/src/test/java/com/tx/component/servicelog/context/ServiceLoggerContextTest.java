@@ -17,11 +17,14 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.tx.component.servicelog.logger.TxLoaclFileServiceLog;
 import com.tx.component.servicelog.template.TXServiceLogDBScriptHelper;
 import com.tx.component.servicelog.testmodel.LoginLog;
 import com.tx.core.dbscript.model.DataSourceTypeEnum;
 import com.tx.core.paged.model.PagedList;
 import com.tx.core.util.ObjectUtils;
+import com.tx.core.util.RandomUtils;
+import com.tx.core.util.UUIDUtils;
 
 /**
  * <功能简述><br />
@@ -42,22 +45,41 @@ import com.tx.core.util.ObjectUtils;
 public class ServiceLoggerContextTest {
     
     @Test
-    public void testServiceLoggerContextInit() {
-        System.out.println(1);
+    public void testTxLocalFileServiceLog() {
+        TxLoaclFileServiceLog log = new TxLoaclFileServiceLog();
+        log.setClientIpAddress("clientIpAddress");
+        log.setCreateDate(new Date());
+        log.setId(UUIDUtils.generateUUID());
+        log.setMessage(RandomUtils.randomChineseCharacter(10));
+        log.setMessageid(UUIDUtils.generateUUID16());
+        log.setModule("servicelog-test");
+        log.setOperatorId("operatorId");
+        log.setOperatorLoginName("operatorLoginName");
+        log.setOperatorName("operatorName");
+        log.setOrganizationId("organizationId");
+        log.setPrivat1("privat1");
+        log.setRemark("remark" + RandomUtils.randomRangeString(50));
+        log.setRequestBody("requestBody");
+        log.setResponseBody("responseBody");
+        log.setResponseCode("200");
+        log.setResponseCodeMessage("成功");
+        log.setUseTime(RandomUtils.randomRangeString("123456789", 10));
+        log.setVcid("vcid");
+        log.setVersion("version");
+        
+        ServiceLoggerContext.getLogger(TxLoaclFileServiceLog.class).log(log);
+        ServiceLoggerContext.getContext().getServiceLogger(TxLoaclFileServiceLog.class).log(log);
+        
+        //        Map<String, Object> params = new HashMap<String, Object>();
+        //        params.put("minCreateDate", DateUtils.addHours(new Date(), -1));
+        //        params.put("maxCreateDate", DateUtils.addHours(new Date(), 1));
+        //        PagedList<TxLoaclFileServiceLog> res = ServiceLoggerContext.getContext().getServiceLogger(TxLoaclFileServiceLog.class).queryPagedList(params, 1, 10);
+        //        
+        //        Assert.assertTrue(res != null && res.getList().size() > 0);
     }
     
-    @Test
-    public void testRecordServiceLog() {
-        System.out.println(2);
-        ServiceLoggerContext.getLogger(LoginLog.class).log(new LoginLog("0"));
-        ServiceLoggerContext.getContext().getServiceLogger(LoginLog.class).log(new LoginLog("0"));
-        
-    }
-    
-    @Test
-    public void testQueryServiceLog() {
-        System.out.println(3);
-        
+    //    @Test
+    public void testTXBaseServiceLog() {
         ServiceLoggerContext.getLogger(LoginLog.class).log(new LoginLog("3"));
         ServiceLoggerContext.getContext().getServiceLogger(LoginLog.class).log(new LoginLog("3"));
         

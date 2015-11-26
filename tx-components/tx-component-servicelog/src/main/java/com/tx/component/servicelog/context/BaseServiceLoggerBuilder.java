@@ -27,7 +27,7 @@ public abstract class BaseServiceLoggerBuilder implements ServiceLoggerBuilder {
     @Override
     public <T> ServiceLogger<T> build(Class<T> logObjectType) {
         //构建业务日志持久器
-        ServiceLogPersister serviceLogPersister = buildServiceLogPersister(logObjectType);
+        ServiceLogPersister<T> serviceLogPersister = buildServiceLogPersister(logObjectType);
         
         //构建业务日志装饰器
         ServiceLogDecorate<T> serviceLogDecorate = buildServiceLogDecorate(logObjectType);
@@ -77,7 +77,7 @@ public abstract class BaseServiceLoggerBuilder implements ServiceLoggerBuilder {
      * @version [版本号, 2015年11月23日]
      * @author rain
      */
-    protected abstract ServiceLogPersister buildServiceLogPersister(Class<?> logObjectType);
+    protected abstract <T> ServiceLogPersister<T> buildServiceLogPersister(Class<T> logObjectType);
     
     /**
      * 

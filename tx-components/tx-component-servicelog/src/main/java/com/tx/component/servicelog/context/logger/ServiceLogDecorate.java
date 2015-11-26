@@ -18,5 +18,5 @@ package com.tx.component.servicelog.context.logger;
  */
 public interface ServiceLogDecorate<T> {
     
-    public Object decorate(T srcObj);
+    public T decorate(T srcObj);
 }

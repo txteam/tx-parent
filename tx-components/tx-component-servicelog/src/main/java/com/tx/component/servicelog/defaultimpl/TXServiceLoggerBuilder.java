@@ -152,42 +152,26 @@ public class TXServiceLoggerBuilder extends BaseServiceLoggerBuilder implements 
     @Override
     protected <T> ServiceLogDecorate<T> buildServiceLogDecorate(Class<T> srcObjType) {
         ServiceLogDecorate<T> serviceLogDecorate = new ServiceLogDecorate<T>() {
-            
             @Override
-            public Object decorate(T srcObj) {
+            public T decorate(T srcObj) {
                 AssertUtils.notNull(srcObj, "srcObj is null");
                 
                 if (srcObj instanceof TXServiceLog) {
                     TXServiceLog other = (TXServiceLog) srcObj;
-                    Object res = decorateServiceLog(other);
-                    return res;
+                    ServiceLoggerSessionContext context = ServiceLoggerSessionContext.getContext();
+                    
+                    other.setId(UUIDUtils.generateUUID());
+                    other.setClientIpAddress((String) context.getAttribute("clientIpAddress"));
+                    other.setOperatorId((String) context.getAttribute("operatorId"));
+                    other.setOrganizationId((String) context.getAttribute("organizationId"));
+                    other.setVcid((String) context.getAttribute("vcid"));
+                    other.setCreateDate(new Date());
+                    other.setOperatorName((String) context.getAttribute("operatorName"));
+                    other.setOperatorLoginName((String) context.getAttribute("operatorLoginName"));
                 } else {
                     throw new UnsupportServiceLoggerTypeException("srcObject:{} not support.", new Object[] { srcObj });
                 }
-            }
-            
-            /**
-             * 装饰业务日志实例<br/>
-             * 
-             * @param logInstance
-             *            
-             * @return Object [返回类型说明]
-             * @exception throws [异常类型] [异常说明]
-             * @see [类、类#方法、类#成员]
-             */
-            private Object decorateServiceLog(TXServiceLog logInstance) {
-                ServiceLoggerSessionContext context = ServiceLoggerSessionContext.getContext();
-                
-                logInstance.setId(UUIDUtils.generateUUID());
-                logInstance.setClientIpAddress((String) context.getAttribute("clientIpAddress"));
-                logInstance.setOperatorId((String) context.getAttribute("operatorId"));
-                logInstance.setOrganizationId((String) context.getAttribute("organizationId"));
-                logInstance.setVcid((String) context.getAttribute("vcid"));
-                logInstance.setCreateDate(new Date());
-                logInstance.setOperatorName((String) context.getAttribute("operatorName"));
-                logInstance.setOperatorLoginName((String) context.getAttribute("operatorLoginName"));
-                
-                return logInstance;
+                return srcObj;
             }
         };
         
@@ -195,13 +179,12 @@ public class TXServiceLoggerBuilder extends BaseServiceLoggerBuilder implements 
     }
     
     @Override
-    protected ServiceLogPersister buildServiceLogPersister(Class<?> srcObjType) {
+    protected <T> ServiceLogPersister<T> buildServiceLogPersister(Class<T> srcObjType) {
         final SqlSource<?> sqlSource = sqlSourceBuilder.build(srcObjType, dataSourceType.getDialect());
-        
-        ServiceLogPersister txLogPersister = new ServiceLogPersister() {
+        ServiceLogPersister<T> txLogPersister = new ServiceLogPersister<T>() {
             
             @Override
-            public void persist(Object logInstance) {
+            public void persist(T logInstance) {
                 DefaultTransactionDefinition def = new DefaultTransactionDefinition();
                 def.setName("serviceLoggerTxName");
                 def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
@@ -221,6 +204,7 @@ public class TXServiceLoggerBuilder extends BaseServiceLoggerBuilder implements 
     
     @Override
     protected <T> ServiceLogQuerier<T> buildServiceLogQuerier(final Class<T> srcObjType) {
+        
         final SqlSource<T> sqlSource = sqlSourceBuilder.build(srcObjType, dataSourceType.getDialect());
         ServiceLogQuerier<T> querier = new ServiceLogQuerier<T>() {
             

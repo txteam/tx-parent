@@ -84,7 +84,6 @@ public class ObjectUtils {
                 out.println(getterMethod + " : " + invokeMethod);
             } catch (Exception e) {
             }
-            
         }
     }
     
