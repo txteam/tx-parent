@@ -231,7 +231,7 @@ public class TXLocalFileServiceLoggerBuilder extends BaseServiceLoggerBuilder im
                 String saveDirectory = getSaveDirectory(log);
                 Context context = new ContextBase();
                 TimeBasedRollingPolicy<String> policy = new TimeBasedRollingPolicy<>();
-                policy.setFileNamePattern(saveDirectory.concat("/").concat(txLog.getModule()).concat(".%d{yyyy-MM-dd}.log.zip"));
+                policy.setFileNamePattern(saveDirectory.concat("/").concat(String.valueOf(txLog.getModule())).concat(".%d{yyyy-MM-dd}.log.zip"));
                 policy.setContext(context);
                 
                 EchoEncoder<String> encoder = new EchoEncoder<String>() {
@@ -239,21 +239,21 @@ public class TXLocalFileServiceLoggerBuilder extends BaseServiceLoggerBuilder im
                     public void doEncode(String event) throws IOException {
                         StringBuilder sb = new StringBuilder(event.length() + 512);
                         // 第一部分 : 当前日期 模块名 id
-                        sb.append(DateFormatUtils.format(System.currentTimeMillis(), "yyyy-MM-dd HH:mm:ss")).append(' ');
+                        sb.append(DateFormatUtils.format(System.currentTimeMillis(), "yyyy-MM-dd HH:mm:ss:SSS")).append(' ');
                         sb.append('[').append(txLog.getModule()).append("] ");
                         sb.append(txLog.getId()).append(CoreConstants.LINE_SEPARATOR);
                         // 第二部分 : 日志内容
                         sb.append(event).append(CoreConstants.LINE_SEPARATOR).append(CoreConstants.LINE_SEPARATOR).append(CoreConstants.LINE_SEPARATOR);
                         outputStream.write(sb.toString().getBytes());
                     }
-                };
+                }; 
                 encoder.setContext(context);
                 
                 RollingFileAppender<String> appender = new RollingFileAppender<String>();
                 policy.setParent(appender);
                 appender.setRollingPolicy(policy);
                 appender.setContext(context);
-                appender.setFile(saveDirectory.concat("/").concat(txLog.getModule()).concat(".current.").concat(".log"));
+                appender.setFile(saveDirectory.concat("/").concat(String.valueOf(txLog.getModule())).concat(".current.").concat(".log"));
                 appender.setAppend(true);
                 appender.setName(txLog.getModule());
                 appender.setEncoder(encoder);

@@ -27,8 +27,6 @@ import com.tx.core.util.RandomUtils;
 import com.tx.core.util.UUIDUtils;
 
 /**
- * <功能简述><br />
- * <功能详细描述>
  * 
  * @author rain
  * @version [版本号, 2015年11月25日]
