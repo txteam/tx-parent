@@ -19,18 +19,14 @@ import com.tx.component.servicelog.interceptor.BaseServiceLoggerInterceptor;
 
 /**
  * 业务日志容器拦截器，负责向业务日志容器中写入初始化的一些业务日志信息<br/>
- * <功能详细描述>
  * 
- * @author  brady
- * @version  [版本号, 2013-9-23]
- * @see  [相关类/方法]
- * @since  [产品/模块版本]
+ * @author brady
+ * @version [版本号, 2013-9-23]
+ * @see [相关类/方法]
+ * @since [产品/模块版本]
  */
 public class TXServiceLoggerInterceptor extends BaseServiceLoggerInterceptor {
     
-    /**
-     * @return
-     */
     @Override
     protected Map<String, Object> initAttributes() {
         Map<String, Object> attributes = new HashMap<String, Object>();
@@ -39,8 +35,7 @@ public class TXServiceLoggerInterceptor extends BaseServiceLoggerInterceptor {
         attributes.put("vcid", getVcid());
         attributes.put("organizationId", getOrganizationId());
         attributes.put("operatorId", getOperatorId());
-        setOperatorInfo(attributes);
-        //setOrganizationInfo(attributes);
+        fillOperatorInfo(attributes);
         return attributes;
     }
     
@@ -77,19 +72,21 @@ public class TXServiceLoggerInterceptor extends BaseServiceLoggerInterceptor {
     //    }
     
     /**
-     * 获取操作员id
-     *<功能详细描述>
-     * @return [参数说明]
      * 
-     * @return String [返回类型说明]
+     * 填充操作员信息
+     *
+     * @param attributes
+     *            
+     * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
-    private void setOperatorInfo(Map<String, Object> attributes) {
+     * @version [版本号, 2015年11月25日]
+     * @author rain
+     */
+    private void fillOperatorInfo(Map<String, Object> attributes) {
         ServiceLoggerSessionContext context = ServiceLoggerSessionContext.getContext();
         
-        if (context.getRequest() == null
-                || context.getRequest().getSession(false) == null) {
+        if (context.getRequest() == null || context.getRequest().getSession(false) == null) {
             attributes.put("operatorLoginName", "");
             attributes.put("operatorName", "");
         } else {
@@ -101,10 +98,8 @@ public class TXServiceLoggerInterceptor extends BaseServiceLoggerInterceptor {
                 Object loginName = metaObject.getValue("loginName");
                 Object userName = metaObject.getValue("userName");
                 
-                attributes.put("operatorLoginName", loginName == null ? ""
-                        : (String) loginName);
-                attributes.put("operatorName", userName == null ? ""
-                        : (String) userName);
+                attributes.put("operatorLoginName", loginName == null ? "" : (String) loginName);
+                attributes.put("operatorName", userName == null ? "" : (String) userName);
             } else {
                 attributes.put("operatorLoginName", "");
                 attributes.put("operatorName", "");
@@ -113,19 +108,18 @@ public class TXServiceLoggerInterceptor extends BaseServiceLoggerInterceptor {
     }
     
     /**
-      * 获取操作员id
-      *<功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return String [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 获取操作员id
+     * 
+     * @return [参数说明]
+     *         
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     private String getOperatorId() {
         ServiceLoggerSessionContext context = ServiceLoggerSessionContext.getContext();
         
-        if (context.getRequest() == null
-                || context.getRequest().getSession(false) == null) {
+        if (context.getRequest() == null || context.getRequest().getSession(false) == null) {
             return "";
         } else {
             HttpSession session = context.getRequest().getSession(false);
@@ -141,19 +135,18 @@ public class TXServiceLoggerInterceptor extends BaseServiceLoggerInterceptor {
     }
     
     /**
-      * 获取当前组织id
-      *<功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return String [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 获取当前组织id
+     * 
+     * @return [参数说明]
+     *         
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     private String getOrganizationId() {
         ServiceLoggerSessionContext context = ServiceLoggerSessionContext.getContext();
         
-        if (context.getRequest() == null
-                || context.getRequest().getSession(false) == null) {
+        if (context.getRequest() == null || context.getRequest().getSession(false) == null) {
             return "";
         } else {
             HttpSession session = context.getRequest().getSession(false);
@@ -169,19 +162,18 @@ public class TXServiceLoggerInterceptor extends BaseServiceLoggerInterceptor {
     }
     
     /**
-      * 获取当前虚中心id
-      *<功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return String [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 获取当前虚中心id
+     * 
+     * @return [参数说明]
+     *         
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     private String getVcid() {
         ServiceLoggerSessionContext context = ServiceLoggerSessionContext.getContext();
         
-        if (context.getRequest() == null
-                || context.getRequest().getSession(false) == null) {
+        if (context.getRequest() == null || context.getRequest().getSession(false) == null) {
             return "";
         } else {
             HttpSession session = context.getRequest().getSession(false);
@@ -198,13 +190,13 @@ public class TXServiceLoggerInterceptor extends BaseServiceLoggerInterceptor {
     
     /**
      * 获取调用客户端ip<br/>
-     *<功能详细描述>
-     * @return [参数说明]
      * 
+     * @return [参数说明]
+     *         
      * @return String [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
+     */
     private String getClientIpAddress() {
         ServiceLoggerSessionContext context = ServiceLoggerSessionContext.getContext();
         if (context.getRequest() == null) {
@@ -212,16 +204,13 @@ public class TXServiceLoggerInterceptor extends BaseServiceLoggerInterceptor {
         } else {
             HttpServletRequest request = context.getRequest();
             String ip = request.getHeader("x-forwarded-for");
-            if (ip == null || ip.length() == 0
-                    || "unknown".equalsIgnoreCase(ip)) {
+            if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
                 ip = request.getHeader("Proxy-Client-IP");
             }
-            if (ip == null || ip.length() == 0
-                    || "unknown".equalsIgnoreCase(ip)) {
+            if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
                 ip = request.getHeader("WL-Proxy-Client-IP");
             }
-            if (ip == null || ip.length() == 0
-                    || "unknown".equalsIgnoreCase(ip)) {
+            if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
                 ip = request.getRemoteAddr();
             }
             return ip;

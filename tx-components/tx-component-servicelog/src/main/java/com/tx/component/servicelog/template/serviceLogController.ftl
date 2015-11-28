@@ -1,6 +1,6 @@
 /*
- * 描          述:  业务日志ServiceLog:${jpaMetaClass.entitySimpleName}
- * 修  改   人:  
+ * 描述: 业务日志ServiceLog:${jpaMetaClass.entitySimpleName}
+ * 修改人:  
  * 修改时间:  
  * <修改描述:>
  */
@@ -34,13 +34,14 @@ import com.tx.core.paged.model.PagedList;
 public class ${jpaMetaClass.entitySimpleName}Controller {
     
     /**
-      * 跳转到查询${jpaMetaClass.entitySimpleName}日志页面
-      *<功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return String [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 跳转到查询${jpaMetaClass.entitySimpleName}日志页面
+     * <功能详细描述>
+     *
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     @RequestMapping("/toQuery${jpaMetaClass.entitySimpleName}PagedList")
     public String toQuery${jpaMetaClass.entitySimpleName}PagedList() {
@@ -48,13 +49,14 @@ public class ${jpaMetaClass.entitySimpleName}Controller {
     }
     
     /**
-      * 分页查询${jpaMetaClass.entitySimpleName}日志<br/>
-      *<功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return PagedList<LoginLog> [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 分页查询${jpaMetaClass.entitySimpleName}日志<br/>
+     * <功能详细描述>
+     *
+     * @return [参数说明]
+     * 
+     * @return PagedList<LoginLog> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     @ResponseBody
     @RequestMapping("/query${jpaMetaClass.entitySimpleName}PagedList")
@@ -74,17 +76,17 @@ public class ${jpaMetaClass.entitySimpleName}Controller {
     }
     
     /**
-      * 处理返回数据<br/>
-      *<功能详细描述>
-      * @param resPagedList
-      * @return [参数说明]
-      * 
-      * @return PagedList<LoginLog> [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 处理返回数据<br/>
+     * <功能详细描述>
+     * 
+     * @param resPagedList
+     * @return [参数说明]
+     * 
+     * @return PagedList<LoginLog> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
-    protected PagedList<${jpaMetaClass.entitySimpleName}> filter(
-            PagedList<${jpaMetaClass.entitySimpleName}> resPagedList) {
+    protected PagedList<${jpaMetaClass.entitySimpleName}> filter(PagedList<${jpaMetaClass.entitySimpleName}> resPagedList) {
         return resPagedList;
     }
 }

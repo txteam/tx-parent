@@ -9,53 +9,34 @@ package com.tx.component.servicelog.context;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.tx.component.servicelog.logger.ServiceLogger;
+import com.tx.component.servicelog.context.logger.ServiceLogger;
 import com.tx.core.exceptions.util.AssertUtils;
 
 /**
- * 业务日志容器句柄
- * <功能详细描述>
+ * 业务日志工厂
  * 
- * @author  brady
- * @version  [版本号, 2013-9-23]
- * @see  [相关类/方法]
- * @since  [产品/模块版本]
+ * @author brady
+ * @version [版本号, 2013-9-23]
+ * @see [相关类/方法]
+ * @since [产品/模块版本]
  */
-public class ServiceLoggerFactory extends ServiceLoggerConfigurator {
+public class ServiceLoggerFactory extends ServiceLoggerBuilderFactory {
     
-    /** 业务日志实例工厂 */
-    protected static ServiceLoggerBuilder serviceLoggerBuilder;
-    
-    private static Map<Class<?>, ServiceLogger<?>> serviceLoggerMapping = new HashMap<Class<?>, ServiceLogger<?>>();
+    /** 日志对象类型和日志映射 */
+    private Map<Class<?>, ServiceLogger<?>> serviceLoggerMapping = new HashMap<Class<?>, ServiceLogger<?>>();
     
     @SuppressWarnings("unchecked")
-    public static <T> ServiceLogger<T> getLogger(Class<T> srcObjType) {
-        //根据类型构建
-        AssertUtils.notNull(serviceLoggerBuilder,
-                "serviceLoggerContextBuilder is null");
-        AssertUtils.notNull(srcObjType,
-                "init ServiceLogContext instance fail. type is null");
+    public <T> ServiceLogger<T> getServiceLogger(Class<T> logObjectType) {
+        AssertUtils.notNull(logObjectType, "init ServiceLogContext instance fail. type is null");
         
-        ServiceLogger<T> resLogger = null;
         //从如果已经存在实例化的logger则直接提取
-        if (serviceLoggerMapping.containsKey(srcObjType)) {
-            resLogger = (ServiceLogger<T>) serviceLoggerMapping.get(srcObjType);
+        if (serviceLoggerMapping.containsKey(logObjectType)) {
+            return (ServiceLogger<T>) serviceLoggerMapping.get(logObjectType);
         } else {
-            resLogger = serviceLoggerBuilder.build(srcObjType,
-                    dataSourceType,
-                    jdbcTemplate,
-                    platformTransactionManager);
-            serviceLoggerMapping.put(srcObjType, resLogger);
+            ServiceLoggerBuilder serviceLoggerBuilder = buildServiceLoggerBuilder(logObjectType);
+            ServiceLogger<T> resLogger = serviceLoggerBuilder.build(logObjectType);
+            serviceLoggerMapping.put(logObjectType, resLogger);
+            return resLogger;
         }
-        
-        return resLogger;
-    }
-
-    /**
-     * @param 对serviceLoggerBuilder进行赋值
-     */
-    public void setServiceLoggerBuilder(
-            ServiceLoggerBuilder serviceLoggerBuilder) {
-        ServiceLoggerFactory.serviceLoggerBuilder = serviceLoggerBuilder;
     }
 }

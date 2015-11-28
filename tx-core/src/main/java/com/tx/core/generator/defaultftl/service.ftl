@@ -1,6 +1,6 @@
 /*
- * 描          述:  <描述>
- * 修  改   人:  
+ * 描述: <描述>
+ * 修改人:  
  * 修改时间:  
  * <修改描述:>
  */
@@ -40,16 +40,18 @@ public class ${service.entitySimpleName}Service {
     @Resource(name = "${service.lowerCaseEntitySimpleName}Dao")
     private ${service.entitySimpleName}Dao ${service.lowerCaseEntitySimpleName}Dao;
     
-    /**
-      * 将${service.lowerCaseEntitySimpleName}实例插入数据库中保存
-      * 1、如果${service.lowerCaseEntitySimpleName}为空时抛出参数为空异常
-      * 2、如果${service.lowerCaseEntitySimpleName}中部分必要参数为非法值时抛出参数不合法异常
-     * <功能详细描述>
-     * @param district [参数说明]
-     * 
-     * @return void [返回类型说明]
-     * @exception throws
-     * @see [类、类#方法、类#成员]
+   /**
+    * 将${service.lowerCaseEntitySimpleName}实例插入数据库中保存<br />
+    * 1、如果${service.lowerCaseEntitySimpleName}为空时抛出参数为空异常<br />
+    * 2、如果${service.lowerCaseEntitySimpleName}中部分必要参数为非法值时抛出参数不合法异常<br />
+    *
+    * <功能详细描述>
+    * 
+    * @param district [参数说明]
+    * 
+    * @return void [返回类型说明]
+    * @exception throws
+    * @see [类、类#方法、类#成员]
     */
     @Transactional
     public void insert${service.entitySimpleName}(${service.entitySimpleName} ${service.lowerCaseEntitySimpleName}) {
@@ -62,17 +64,18 @@ public class ${service.entitySimpleName}Service {
         this.${service.lowerCaseEntitySimpleName}Dao.insert${service.entitySimpleName}(${service.lowerCaseEntitySimpleName});
     }
       
-     /**
-      * 根据${service.idPropertyName}删除${service.lowerCaseEntitySimpleName}实例
-      * 1、如果入参数为空，则抛出异常
-      * 2、执行删除后，将返回数据库中被影响的条数
-      * @param ${service.idPropertyName}
-      * @return 返回删除的数据条数，<br/>
-      * 有些业务场景，如果已经被别人删除同样也可以认为是成功的
-      * 这里讲通用生成的业务层代码定义为返回影响的条数
-      * @return int [返回类型说明]
-      * @exception throws 
-      * @see [类、类#方法、类#成员]
+    /**
+     * 根据${service.idPropertyName}删除${service.lowerCaseEntitySimpleName}实例<br />
+     * 1、如果入参数为空，则抛出异常<br />
+     * 2、执行删除后，将返回数据库中被影响的条数<br />
+     * 有些业务场景，如果已经被别人删除同样也可以认为是成功的<br />
+     * 这里讲通用生成的业务层代码定义为返回影响的条数<br />
+     *
+     * @param ${service.idPropertyName}
+     *
+     * @return 返回删除的数据条数<br/>
+     * @exception throws 
+     * @see [类、类#方法、类#成员]
      */
     @Transactional
     public int deleteBy${service.upCaseIdPropertyName}(String ${service.idPropertyName}) {
