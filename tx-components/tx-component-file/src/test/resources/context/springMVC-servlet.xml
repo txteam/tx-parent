@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:mvc="http://www.springframework.org/schema/mvc" 
-	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="  
        http://www.springframework.org/schema/beans  
@@ -11,24 +10,21 @@
        http://www.springframework.org/schema/mvc  
        http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd">
 
+	<bean id="imageResourceHttpRequestHandler"
+		class="com.tx.component.file.handler.ImageResourceHttpRequestHandler">
+		<property name="fileContext" ref="fileContext" />
+	</bean>
+	<bean id="thumbnailResourceHttpRequestHandler"
+		class="com.tx.component.file.handler.ThumbnailResourceHttpRequestHandler">
+		<property name="fileContext" ref="fileContext" />
+	</bean>
 
-	<!-- 图片资源处理器 -->
-	<bean id="imageResourceHttpRequestHandler" class="com.tx.billattachment.handler.ImageResourceHttpRequestHandler">
-		<property name="fileContext" ref="fileContext" />
-	</bean>
-	
-	<!-- 缩略图资源处理器 -->
-	<bean id="thumbnailResourceHttpRequestHandler" class="com.tx.billattachment.handler.ThumbnailResourceHttpRequestHandler">
-		<property name="fileContext" ref="fileContext" />
-	</bean>
-	
 	<bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
 		<property name="order" value="0" />
 		<property name="urlMap">
 			<props>
 				<prop key="/fileContext/resource/imageResource">imageResourceHttpRequestHandler</prop>
 				<prop key="/fileContext/resource/thumbnailImageResource">thumbnailResourceHttpRequestHandler</prop>
-				<prop key="/pdf/resource/pdfmageResource">pdfResourceHttpRequestHandler</prop>
 			</props>
 		</property>
 	</bean>
