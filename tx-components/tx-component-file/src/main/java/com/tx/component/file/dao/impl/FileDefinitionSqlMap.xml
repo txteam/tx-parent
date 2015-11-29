@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper 
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="fileDefinition">
+
+	<!-- auto generate default resultMap -->
+	<resultMap id="fileDefinitionMap" 
+		type="com.tx.component.file.model.FileDefinition">
+	</resultMap>
+	
+	<!-- auto generate default find -->
+	<select id="findFileDefinition" 
+		parameterType="com.tx.component.file.model.FileDefinition"
+		resultMap="fileDefinitionMap">
+		SELECT 
+				TFD.ID,
+				TFD.SYSTEM,
+				TFD.MODULE,
+				TFD.DELETEDATE,
+				TFD.RELATIVEPATH,
+				TFD.FILENAMEEXTENSION,
+				TFD.FILENAME,
+				TFD.CREATEDATE,
+				TFD.LASTUPDATEDATE
+		  FROM CORE_FILE_DEFINITION TFD
+		 WHERE
+		<trim prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
+	            AND TFD.ID = #{id}
+	        </if>
+		</trim>
+	</select>
+	
+	<!-- auto generate default query -->
+	<select id="queryFileDefinition" 
+		parameterType="java.util.Map"
+		resultMap="fileDefinitionMap">
+		SELECT 
+				TFD.ID,
+				TFD.SYSTEM,
+				TFD.MODULE,
+				TFD.DELETEDATE,
+				TFD.RELATIVEPATH,
+				TFD.FILENAMEEXTENSION,
+				TFD.FILENAME,
+				TFD.CREATEDATE,
+				TFD.LASTUPDATEDATE
+		  FROM CORE_FILE_DEFINITION TFD
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
+	            AND TFD.ID = #{id,javaType=java.lang.String}
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(system)">  
+	            AND TFD.SYSTEM = #{system,javaType=java.lang.String}
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(module)">  
+	            AND TFD.MODULE = #{module,javaType=java.lang.String}
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(deleteDate)">  
+	            AND TFD.DELETEDATE = #{deleteDate,javaType=java.util.Date}
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(relativePath)">  
+	            AND TFD.RELATIVEPATH = #{relativePath,javaType=java.lang.String}
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(filenameExtension)">  
+	            AND TFD.FILENAMEEXTENSION = #{filenameExtension,javaType=java.lang.String}
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(filename)">  
+	            AND TFD.FILENAME = #{filename,javaType=java.lang.String}
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(createDate)">  
+	            AND TFD.CREATEDATE = #{createDate,javaType=java.util.Date}
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(lastUpdateDate)">  
+	            AND TFD.LASTUPDATEDATE = #{lastUpdateDate,javaType=java.util.Date}
+	        </if>
+		</trim>
+		<choose>  
+	        <when test="@com.tx.core.util.OgnlUtils@isNotEmpty(orderSql)">  
+	            ORDER BY #{orderSql}
+	        </when>
+	        <otherwise>  
+	            ORDER BY ID
+	        </otherwise>  
+	    </choose>
+	</select>
+	
+		<!-- auto generate default count -->
+	<select id="queryFileDefinitionCount" 
+		parameterType="java.util.Map"
+		resultType="java.lang.Integer">
+		SELECT COUNT(1)
+		  FROM CORE_FILE_DEFINITION TFD
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
+	            AND TFD.ID = #{id,javaType=java.lang.String}
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(system)">  
+	            AND TFD.SYSTEM = #{system,javaType=java.lang.String}
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(module)">  
+	            AND TFD.MODULE = #{module,javaType=java.lang.String}
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(deleteDate)">  
+	            AND TFD.DELETEDATE = #{deleteDate,javaType=java.util.Date}
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(relativePath)">  
+	            AND TFD.RELATIVEPATH = #{relativePath,javaType=java.lang.String}
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(filenameExtension)">  
+	            AND TFD.FILENAMEEXTENSION = #{filenameExtension,javaType=java.lang.String}
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(filename)">  
+	            AND TFD.FILENAME = #{filename,javaType=java.lang.String}
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(createDate)">  
+	            AND TFD.CREATEDATE = #{createDate,javaType=java.util.Date}
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(lastUpdateDate)">  
+	            AND TFD.LASTUPDATEDATE = #{lastUpdateDate,javaType=java.util.Date}
+	        </if>
+		</trim>
+	</select>
+    
+    <!-- auto generate default insert -->
+    <insert id="insertFileDefinition" 
+		parameterType="com.tx.component.file.model.FileDefinition">
+		INSERT INTO CORE_FILE_DEFINITION
+		(
+			ID,
+			SYSTEM,
+			MODULE,
+			DELETEDATE,
+			RELATIVEPATH,
+			FILENAMEEXTENSION,
+			FILENAME,
+			CREATEDATE,
+			LASTUPDATEDATE
+		)
+		VALUES
+		(
+			#{id},
+			#{system},
+			#{module},
+			#{deleteDate},
+			#{relativePath},
+			#{filenameExtension},
+			#{filename},
+			#{createDate},
+			#{lastUpdateDate}
+		)
+	</insert>
+	
+	<!-- auto generate default insert -->
+    <insert id="insertFileDefinitionToHis" 
+		parameterType="com.tx.component.file.model.FileDefinition">
+		INSERT INTO CORE_FILE_DEFINITION_HIS
+		(
+			ID,
+			SYSTEM,
+			MODULE,
+			DELETEDATE,
+			RELATIVEPATH,
+			FILENAMEEXTENSION,
+			FILENAME,
+			CREATEDATE,
+			LASTUPDATEDATE
+		)
+		VALUES
+		(
+			#{id},
+			#{system},
+			#{module},
+			#{deleteDate},
+			#{relativePath},
+			#{filenameExtension},
+			#{filename},
+			#{createDate},
+			#{lastUpdateDate}
+		)
+	</insert>
+	
+	<!-- auto generate default delete -->
+	<delete id="deleteFileDefinition" 
+		parameterType="com.tx.component.file.model.FileDefinition">
+		DELETE FROM CORE_FILE_DEFINITION  WHERE
+		<trim prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
+	            AND ID = #{id}
+	        </if>
+		</trim>
+	</delete>
+
+	<!-- auto generate default update -->
+	<update id="updateFileDefinition"
+	    parameterType="java.util.Map">  
+	    UPDATE CORE_FILE_DEFINITION
+	    <trim prefix="SET" suffixOverrides=",">
+			<if test="_parameter.containsKey('system')">
+	    		SYSTEM = #{system,javaType=java.lang.String},
+	    	</if>	
+			<if test="_parameter.containsKey('module')">
+	    		MODULE = #{module,javaType=java.lang.String},
+	    	</if>	
+			<if test="_parameter.containsKey('deleteDate')">
+	    		DELETEDATE = #{deleteDate,javaType=java.util.Date},
+	    	</if>	
+			<if test="_parameter.containsKey('relativePath')">
+	    		RELATIVEPATH = #{relativePath,javaType=java.lang.String},
+	    	</if>	
+			<if test="_parameter.containsKey('filenameExtension')">
+	    		FILENAMEEXTENSION = #{filenameExtension,javaType=java.lang.String},
+	    	</if>	
+			<if test="_parameter.containsKey('filename')">
+	    		FILENAME = #{filename,javaType=java.lang.String},
+	    	</if>	
+			<if test="_parameter.containsKey('createDate')">
+	    		CREATEDATE = #{createDate,javaType=java.util.Date},
+	    	</if>	
+			<if test="_parameter.containsKey('lastUpdateDate')">
+	    		LASTUPDATEDATE = #{lastUpdateDate,javaType=java.util.Date},
+	    	</if>	
+	    </trim>
+	    WHERE ID = #{id} 
+	</update>  
+
+</mapper>
+<!--
+sqlMap生成描述:
+
+-->

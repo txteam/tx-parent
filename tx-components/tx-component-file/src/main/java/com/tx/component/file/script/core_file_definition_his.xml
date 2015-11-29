@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tableDefinition>
+	<tableName>core_file_definition_his</tableName>
+	<tableVersion>1.1.0</tableVersion>
+	
+	<dataSourceScript dataSourceType="H2">
+		<createTableScript>
+			CREATE TABLE core_file_definition_his(
+				id varchar(64),
+				system varchar(64),
+				module varchar(64),
+				relativePath varchar(256),
+				filename varchar(64),
+				filenameExtension varchar(64),
+				lastUpdateDate datetime,
+				createDate datetime,
+				deleteDate datetime,
+				primary key(id)
+			);
+			CREATE UNIQUE INDEX idx_file_definition_his_00 ON core_file_definition_his(relativePath);
+		</createTableScript>
+		
+		<defaultUpdateTableScript>
+			CREATE TABLE core_file_definition_his_bak
+				 AS SELECT * FROM core_file_definition;
+				 
+			DROP TABLE core_file_definition;
+			
+			CREATE TABLE core_file_definition_his(
+				id varchar(64),
+				system varchar(64),
+				module varchar(64),
+				relativePath varchar(256),
+				filename varchar(64),
+				filenameExtension varchar(64),
+				lastUpdateDate datetime,
+				createDate datetime,
+				deleteDate datetime,
+				primary key(id)
+			);
+			CREATE UNIQUE INDEX idx_file_definition_his_00 ON core_file_definition_his(relativePath);
+		</defaultUpdateTableScript>
+	</dataSourceScript>
+	
+	<dataSourceScript dataSourceType="MYSQL">
+		<createTableScript>
+			CREATE TABLE core_file_definition_his(
+				id varchar(64),
+				system varchar(64),
+				module varchar(64),
+				relativePath varchar(256),
+				filename varchar(64),
+				filenameExtension varchar(64),
+				lastUpdateDate datetime,
+				createDate datetime,
+				deleteDate datetime,
+				primary key(id)
+			);
+			CREATE UNIQUE INDEX idx_file_definition_his_00 ON core_file_definition_his(relativePath);
+		</createTableScript>
+		
+		<defaultUpdateTableScript>
+			CREATE TABLE core_file_definition_his_bak
+				 AS SELECT * FROM core_file_definition;
+				 
+			DROP TABLE core_file_definition;
+			
+			CREATE TABLE core_file_definition_his(
+				id varchar(64),
+				system varchar(64),
+				module varchar(64),
+				relativePath varchar(256),
+				filename varchar(64),
+				filenameExtension varchar(64),
+				lastUpdateDate datetime,
+				createDate datetime,
+				deleteDate datetime,
+				primary key(id)
+			);
+			CREATE UNIQUE INDEX idx_file_definition_his_00 ON core_file_definition_his(relativePath);
+		</defaultUpdateTableScript>
+	</dataSourceScript>
+</tableDefinition>

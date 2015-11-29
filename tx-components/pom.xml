@@ -52,6 +52,7 @@
 		
 		<module>tx-component-rule</module>
 		<module>tx-component-template</module>
+		<module>tx-component-file</module>
 	</modules>
 
 
