@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <tabs id="top">
+       <tab id="welcome" label="个人面板"> 	   		
+	   	   <url>view/mainframe/customePanel</url>
+	   </tab>
+	   <tab id="notepad" label="记事本" lazyLoad="false" 
+	   		timeouttime="2" 
+	   		timeoutpage="http://10.130.54.115:9080/knowledge/heart.jsp">
+	   	   <url>view/notepad/notepad</url>
+	   </tab>
+	   <tab id="calendar" label="行事历"
+	   		refreshCheck="http://10.130.53.179:7001/QCS/heart.jsp" lazyLoad="false">
+	   	   <url>mainframe/ssoLoginHelper1.jsp?url=http%3A%2F%2F10.130.53.179%3A7001%2FQCS%2Flogin2.jsp</url>
+	   </tab>
+	   <tab id="demoList1" label="demo列表1"
+	   		refreshCheck="http://10.130.53.179:7001/QCS/heart.jsp" lazyLoad="false">
+	   	   <url>mainframe/ssoLoginHelper1.jsp?url=http%3A%2F%2F10.130.53.179%3A7001%2FQCS%2Flogin2.jsp</url>
+	   </tab>
+	   <tab id="demoList2" label="demo列表2"
+	   		refreshCheck="http://10.130.53.179:7001/QCS/heart.jsp" lazyLoad="false">
+	   	   <url>mainframe/ssoLoginHelper1.jsp?url=http%3A%2F%2F10.130.53.179%3A7001%2FQCS%2Flogin2.jsp</url>
+	   </tab>
+	   <!--  
+	   <tab id="bulletinnote" label="公告便签" right="UV018_QCS"
+	   		refreshCheck="http://10.130.49.26:9081/bulletinnote/heart.jsp" lazyLoad="false">
+	   	   <url>mainframe/ssoLoginHelper1.jsp?url=http%3A%2F%2F10.130.49.26%3A9081%2Fbulletinnote%2Flogin.jsp</url>
+	   </tab> 
+	   -->   
+	</tabs>		
+</config>

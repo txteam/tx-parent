@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://www.springframework.org/schema/beans" 
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+	<!-- 统一的mybatis异常转换器 -->
+	<bean id="myBatisExceptionTranslator" class="org.mybatis.spring.MyBatisExceptionTranslator">
+		<constructor-arg name="dataSource" ref="dataSource" />
+		<constructor-arg name="exceptionTranslatorLazyInit" value="true" />
+	</bean>
+
+	<!-- sql Session模板 -->
+	<bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg name="sqlSessionFactory" ref="sqlSessionFactory" />
+		<constructor-arg name="executorType" value="SIMPLE" />
+		<constructor-arg name="exceptionTranslator" ref="myBatisExceptionTranslator" />
+	</bean>
+
+	<!-- mybatis数据库查询类 -->
+	<bean id="myBatisDaoSupport" class="com.tx.core.mybatis.support.MyBatisDaoSupport">
+		<property name="sqlSessionTemplate" ref="sqlSessionTemplate" />
+	</bean>
+	
+	<!-- sql执行器容器 -->
+	<bean id="dbScriptExecutorContext" class="com.tx.core.dbscript.context.DBScriptExecutorContext">
+		<!-- 启用 -->
+		<property name="enable" value="false" />
+		<!-- 在执行脚本过程中如果出现的错误是否继续执行 -->
+		<property name="continueOnError" value="true" />
+		<!-- 是否更新不存在容器表中的数据 -->
+		<property name="updateNotExistTableInContext" value="true" />
+		<!-- 数据源 -->
+		<property name="dataSource" ref="dataSource" />
+		<!-- 数据源类型 -->
+		<property name="dataSourceType" value="#{config.getValue('dataSource.dataSourceType')}"></property>
+		<!-- 是否忽略脚本执行过程中错误的drop语句 -->
+		<property name="ignoreFailedDrops" value="true" />
+		<!-- sql文件编码 -->
+		<property name="sqlScriptEncoding" value="UTF-8" />
+	</bean>
+
+	<!-- 开发模式 -->
+	<beans profile="dev">
+		<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+			<!-- 数据源 -->
+			<property name="dataSource" ref="dataSource" />
+			<!-- 配置文件 -->
+			<property name="configLocation">
+				<value>classpath:context/mybatis-config.xml</value>
+			</property>
+			<!-- 数据类型处理器架包 -->
+			<property name="typeHandlersPackage" value="com.tx.core.mybatis.handler" />
+			<!-- sqlmap文件地址 -->
+			<property name="mapperLocations">
+				<array>
+					<value>classpath*:com/tx/component/mainframe/**/*SqlMap.xml</value>
+					<value>classpath*:com/tx/component/attachment/**/*SqlMap.xml</value>
+					<value>classpath*:com/tx/component/file/**/*SqlMap.xml</value>
+					<value>classpath*:com/tx/component/operator/**/*SqlMap.xml</value>
+					<value>classpath*:com/tx/billattachment/**/*SqlMap.xml</value>
+				</array>
+			</property>
+			<property name="failFast" value="true"></property>
+			<property name="plugins">
+				<array>
+					<bean class="com.tx.core.mybatis.interceptor.PagedDiclectStatementHandlerInterceptor">
+						<property name="dataSourceType" value="#{config.getValue('dataSource.dataSourceType')}" />
+					</bean>
+				</array>
+			</property>
+		</bean>
+
+		<!-- 数据源 -->
+		<bean id="tx.dataSource" class="com.tx.core.datasource.DataSourceFactoryBean" depends-on="initDBScriptExcutor">
+			<property name="supportP6spy" value="true" />
+			<property name="datasourceFinderList">
+				<list>
+					<bean class="com.tx.core.datasource.finder.DelegatingDataSourceImplFinder">
+						<!-- 使用内存数据库 -->
+						<property name="srcDatasource" ref="h2DataSource" />
+					</bean>
+				</list>
+			</property>
+		</bean>
+		<alias alias="dataSource" name="tx.dataSource" />
+
+		<!-- 内存数据源 -->
+		<bean id="h2DataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+			<property name="url" value="jdbc:h2:mem:atta" />
+			<property name="username" value="atta" />
+			<property name="password" value="atta" />
+			<property name="driverClassName" value="org.h2.Driver" />
+			<property name="validationQuery" value="SELECT 1 " />
+			<property name="maxActive" value="#{config.getValue('dataSource.maxActive')}" />
+			<property name="maxIdle" value="#{config.getValue('dataSource.maxIdle')}" />
+			<property name="maxWait" value="#{config.getValue('dataSource.maxWait')}" />
+			<property name="removeAbandoned" value="true" />
+			<property name="testOnBorrow" value="true" />
+			<property name="removeAbandonedTimeout" value="180" />
+			<property name="logAbandoned" value="true" />
+
+			<!-- 配置监控统计拦截的filters -->
+			<property name="filters" value="stat" />
+			<!-- 慢查询sql打印 -->
+			<property name="connectionProperties" value="druid.stat.slowSqlMillis=100" />
+		</bean>
+
+		<!-- sql脚本执行器 -->
+		<bean id="initDBScriptExcutor" class="com.tx.core.dbscript.executor.DBScriptAutoExecutor">
+			<property name="enabled" value="true" />
+			<!-- sql脚本编码 -->
+			<property name="sqlScriptEncoding" value="GBK" />
+			<property name="ignoreFailedDrops" value="false" />
+			<property name="dataSource" ref="h2DataSource" />
+			<property name="initScriptLocations">
+				<list>
+					<value>classpath:dbscript/attachment.sql</value>
+				</list>
+			</property>
+		</bean>
+	</beans>
+
+	<!-- 正式环境 -->
+	<beans profile="production">
+		<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+			<property name="dataSource" ref="tx.dataSource" />
+			<property name="configLocation">
+				<value>classpath:context/mybatis-config.xml</value>
+			</property>
+			<property name="typeHandlersPackage" value="com.tx.core.mybatis.handler" />
+			<property name="mapperLocations">
+				<array>
+					<value>classpath*:com/tx/component/mainframe/**/*SqlMap.xml</value>
+					<value>classpath*:com/tx/component/attachment/**/*SqlMap.xml</value>
+					<value>classpath*:com/tx/component/file/**/*SqlMap.xml</value>
+					<value>classpath*:com/tx/component/operator/**/*SqlMap.xml</value>
+					<value>classpath*:com/tx/billattachment/**/*SqlMap.xml</value>
+				</array>
+			</property>
+			<property name="failFast" value="true" />
+			<property name="plugins">
+				<array>
+					<bean class="com.tx.core.mybatis.interceptor.PagedDiclectStatementHandlerInterceptor">
+						<property name="dataSourceType" value="#{config.getValue('dataSource.dataSourceType')}" />
+					</bean>
+				</array>
+			</property>
+		</bean>
+
+		 <bean id="tx.dataSource" class="com.tx.core.datasource.DataSourceFactoryBean" depends-on="tx.initDBScriptExcutor">
+			<property name="supportP6spy" value="true" />
+			<property name="datasourceFinderList">
+				<list>
+					<bean class="com.tx.core.datasource.finder.DelegatingDataSourceImplFinder">
+						<property name="srcDatasource" ref="druidDataSource" />
+					</bean>
+				</list>
+			</property>
+		</bean>
+
+		<bean id="tx.initDBScriptExcutor" class="com.tx.core.dbscript.executor.DBScriptAutoExecutor">
+			<property name="enabled" value="false" />
+			<property name="sqlScriptEncoding" value="GBK" />
+			<property name="ignoreFailedDrops" value="false" />
+			<property name="dataSource" ref="druidDataSource" />
+			<property name="initScriptLocations">
+				<list>
+					<value>classpath:dbscript/attachment.sql</value>
+				</list>
+			</property>
+		</bean>
+		
+		<bean id="druidDataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+			<property name="url" value="#{config.getValue('dataSource.url')}" />
+			<property name="username" value="#{config.getValue('dataSource.username')}" />
+			<property name="password" value="#{config.getValue('dataSource.password')}" />
+			<property name="driverClassName" value="#{config.getValue('dataSource.driverClassName')}" />
+			<property name="validationQuery" value="#{config.getValue('dataSource.validationQuery')}" />
+			<property name="maxActive" value="#{config.getValue('dataSource.maxActive')}" />
+			<property name="maxIdle" value="#{config.getValue('dataSource.maxIdle')}" />
+			<property name="maxWait" value="#{config.getValue('dataSource.maxWait')}" />
+			<property name="removeAbandoned" value="true" />
+			<property name="testOnBorrow" value="true" />
+			<property name="removeAbandonedTimeout" value="180" />
+			<property name="logAbandoned" value="true" />
+
+			<!-- 配置监控统计拦截的filters -->
+			<property name="filters" value="stat" />
+			<!-- 慢查询sql打印 -->
+			<property name="connectionProperties" value="druid.stat.slowSqlMillis=100" />
+		</bean>
+		<alias alias="dataSource" name="tx.dataSource" />
+	</beans>
+</beans>
