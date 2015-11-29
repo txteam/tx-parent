@@ -34,6 +34,10 @@ public class ThumbnailResourceHttpRequestHandler extends
     /** 文件容器 */
     private FileContext fileContext;
     
+    private float width = 100;
+    
+    private float height = 100;
+    
     /**
      * @throws Exception
      */
@@ -54,13 +58,21 @@ public class ThumbnailResourceHttpRequestHandler extends
         }
         //根据fileDefinitionId获取对应的资源
         Resource resource = fileContext.getResourceByFileDefinitionId(fileDefinitionId);
+        if (!resource.exists()) {
+            return null;
+        }
         
         File thumbnaileImageFile = null;
         try {
-            thumbnaileImageFile = ImageUtils.getThumbnailImage(resource.getFile());
+            thumbnaileImageFile = ThumbnailImageUtils.getThumbnailImage(resource.getFile(),
+                    this.width,
+                    this.height);
         } catch (IOException ioe) {
             throw ExceptionWrapperUtils.wrapperIOException(ioe,
                     ioe.getMessage());
+        }
+        if(thumbnaileImageFile == null){
+            return null;
         }
         
         return new FileSystemResource(thumbnaileImageFile);
@@ -78,5 +90,19 @@ public class ThumbnailResourceHttpRequestHandler extends
      */
     public void setFileContext(FileContext fileContext) {
         this.fileContext = fileContext;
+    }
+    
+    /**
+     * @param 对width进行赋值
+     */
+    public void setWidth(float width) {
+        this.width = width;
+    }
+    
+    /**
+     * @param 对height进行赋值
+     */
+    public void setHeight(float height) {
+        this.height = height;
     }
 }

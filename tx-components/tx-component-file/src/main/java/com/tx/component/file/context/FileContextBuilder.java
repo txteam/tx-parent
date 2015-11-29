@@ -103,9 +103,9 @@ public class FileContextBuilder extends FileContextConfigurator {
     protected void doDeleteFileByFileDefinitionId(String fileDefinitionId) {
         AssertUtils.notEmpty(fileDefinitionId, "fileDefinitionId is empty.");
         FileDefinition fileDefinition = this.fileDefinitionService.findFileDefinitionById(fileDefinitionId);
-        AssertUtils.notNull(fileDefinition,
-                "fileDefinition is null. fileDefinitionId:{}",
-                fileDefinitionId);
+        if (fileDefinition == null) {
+            return;
+        }
         
         this.fileDefinitionService.moveToHisByFileDefinitionId(fileDefinitionId);
         this.driver.delete(fileDefinition);
