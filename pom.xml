@@ -89,6 +89,11 @@
 				<artifactId>tx-component-basicdata</artifactId>
 				<version>${tx-version}</version>
 			</dependency>
+			<dependency>
+				<groupId>com.tx</groupId>
+				<artifactId>tx-component-file</artifactId>
+				<version>${tx-version}</version>
+			</dependency>
 
 			<!-- Low 1.6 version of the JDK dependency -->
 			<dependency>
