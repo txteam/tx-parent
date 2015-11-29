@@ -54,6 +54,9 @@ public class ThumbnailResourceHttpRequestHandler extends
     protected Resource getResource(HttpServletRequest request) {
         String fileDefinitionId = request.getParameter("fileDefinitionId");
         if (StringUtils.isEmpty(fileDefinitionId)) {
+            fileDefinitionId = request.getParameter("fileId");
+        }
+        if (StringUtils.isEmpty(fileDefinitionId)) {
             return null;
         }
         //根据fileDefinitionId获取对应的资源
