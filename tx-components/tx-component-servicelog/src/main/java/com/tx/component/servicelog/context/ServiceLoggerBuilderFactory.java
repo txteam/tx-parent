@@ -76,7 +76,7 @@ public class ServiceLoggerBuilderFactory extends ServiceLoggerConfigurator {
      * @version [版本号, 2015年11月24日]
      * @author rain
      */
-    protected <T> ServiceLoggerBuilder buildServiceLoggerBuilder(Class<T> logObjectType) {
+    protected ServiceLoggerBuilder buildServiceLoggerBuilder(Class<?> logObjectType) {
         if (CollectionUtils.isNotEmpty(serviceLoggerBuilders)) {
             for (ServiceLoggerBuilder serviceLoggerBuilder : serviceLoggerBuilders) {
                 boolean support = serviceLoggerBuilder.isSupport(logObjectType);

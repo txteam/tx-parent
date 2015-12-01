@@ -45,7 +45,7 @@ public interface ServiceLoggerBuilder {
      * @version [版本号, 2015年11月24日]
      * @author rain
      */
-    public <T> boolean isSupport(Class<T> logObjectType);
+    public boolean isSupport(Class<?> logObjectType);
     
     /**
      * 

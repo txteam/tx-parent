@@ -107,7 +107,7 @@ public class TXServiceLoggerBuilder extends BaseServiceLoggerBuilder implements 
     }
     
     @Override
-    public <T> boolean isSupport(Class<T> logObjectType) {
+    public boolean isSupport(Class<?> logObjectType) {
         try {
             // 检查能否生成 SqlSource
             sqlSourceBuilder.build(logObjectType, dataSourceType.getDialect());

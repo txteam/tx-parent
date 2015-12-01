@@ -42,9 +42,26 @@ import com.tx.core.util.UUIDUtils;
         "classpath:spring/beans-servicelog.xml" })
 public class ServiceLoggerContextTest {
     
+    class BB extends TxLoaclFileServiceLog {
+        private String abce;
+        
+        /** @return 返回 abce */
+        public String getAbce() {
+            return abce;
+        }
+        
+        /** @param 对 abce 进行赋值 */
+        public void setAbce(String abce) {
+            this.abce = abce;
+        }
+        
+    }
+    
     @Test
     public void testTxLocalFileServiceLog() {
-        TxLoaclFileServiceLog log = new TxLoaclFileServiceLog();
+        System.out.println("testTxLocalFileServiceLog");
+        BB log = new BB();
+        log.setAbce("abce");
         log.setClientIpAddress("clientIpAddress");
         log.setCreateDate(new Date());
         log.setId(UUIDUtils.generateUUID());
@@ -76,8 +93,9 @@ public class ServiceLoggerContextTest {
         //        Assert.assertTrue(res != null && res.getList().size() > 0);
     }
     
-    //    @Test
+    @Test
     public void testTXBaseServiceLog() {
+        System.out.println("testTXBaseServiceLog");
         ServiceLoggerContext.getLogger(LoginLog.class).log(new LoginLog("3"));
         ServiceLoggerContext.getContext().getServiceLogger(LoginLog.class).log(new LoginLog("3"));
         
@@ -92,7 +110,7 @@ public class ServiceLoggerContextTest {
         
         ObjectUtils.debugPrintPropertyValue(System.err, "loginlog01", loginLog, true, true);
         
-        int index = 3;
+        int index = 0;
         for (LoginLog log : res.getList()) {
             ObjectUtils.debugPrintPropertyValue(System.err, "log0" + index++, log, true, true);
         }

@@ -30,7 +30,7 @@ import com.tx.core.exceptions.util.ExceptionWrapperUtils;
  */
 public class ThumbnailResourceHttpRequestHandler extends
         ResourceHttpRequestHandler {
-    
+        
     /** 文件容器 */
     private FileContext fileContext;
     
@@ -67,14 +67,14 @@ public class ThumbnailResourceHttpRequestHandler extends
         
         File thumbnaileImageFile = null;
         try {
-            thumbnaileImageFile = ThumbnailImageUtils.getThumbnailImage(resource.getFile(),
+            thumbnaileImageFile = ThumbnailImageUtils.getThumbnailOrBlowImage(resource.getFile(),
                     this.width,
                     this.height);
         } catch (IOException ioe) {
             throw ExceptionWrapperUtils.wrapperIOException(ioe,
                     ioe.getMessage());
         }
-        if(thumbnaileImageFile == null){
+        if (thumbnaileImageFile == null) {
             return null;
         }
         
