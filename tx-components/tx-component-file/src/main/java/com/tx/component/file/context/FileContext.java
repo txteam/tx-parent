@@ -8,6 +8,7 @@ package com.tx.component.file.context;
 
 import java.io.InputStream;
 
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,7 +33,7 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public class FileContext extends FileContextBuilder {
+public class FileContext extends FileContextBuilder implements InitializingBean {
     
     /** 文件容器自我引用 */
     public static FileContext context;
@@ -70,6 +71,12 @@ public class FileContext extends FileContextBuilder {
             InputStream input) throws ResourceIsExistException {
         FileDefinition fileDefinition = doAddFile(relativePath, filename, input);
         return fileDefinition;
+    }
+    
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        super.afterPropertiesSet();
+        FileContext.context = this;
     }
     
     /**
