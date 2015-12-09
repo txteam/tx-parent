@@ -72,7 +72,7 @@ public class ServiceLoggerContextTest {
         log.setOperatorLoginName("operatorLoginName");
         log.setOperatorName("operatorName");
         log.setOrganizationId("organizationId");
-        log.setPrivat1("privat1");
+        log.putOtherParam("other", "abcd1234");
         log.setRemark("remark" + RandomUtils.randomRangeString(50));
         log.setRequestBody("requestBody");
         log.setResponseBody("responseBody");
@@ -82,8 +82,8 @@ public class ServiceLoggerContextTest {
         log.setVcid("vcid");
         log.setVersion("version");
         
-        ServiceLoggerContext.getLogger(TxLoaclFileServiceLog.class).log(log);
-        ServiceLoggerContext.getContext().getServiceLogger(TxLoaclFileServiceLog.class).log(log);
+        ServiceLoggerContext.getLogger(BB.class).log(log);
+        ServiceLoggerContext.getContext().getServiceLogger(BB.class).log(log);
         
         //        Map<String, Object> params = new HashMap<String, Object>();
         //        params.put("minCreateDate", DateUtils.addHours(new Date(), -1));
