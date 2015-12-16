@@ -10,7 +10,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.WeakHashMap;
 
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.slf4j.Logger;
@@ -54,6 +56,9 @@ public class TXLocalFileServiceLogPersister<T> implements ServiceLogPersister<T>
     private Context context = new ContextBase();
     
     private EchoEncoder<String> encoder = new EchoEncoder<String>();
+    
+    /** key 右补位缓存.用弱引用,方便释放 */
+    private Map<Class<?>, Integer> cacheRightPadMap = new WeakHashMap<Class<?>, Integer>();
     
     /**
      * 
@@ -123,7 +128,6 @@ public class TXLocalFileServiceLogPersister<T> implements ServiceLogPersister<T>
      * @author rain
      */
     private void persistLogByTxt(T log) {
-        TxLoaclFileServiceLog txLog = (TxLoaclFileServiceLog) log;
         String requestBody = "";
         String responseBody = "";
         Map<String, Object> values = new HashMap<String, Object>();
@@ -131,20 +135,25 @@ public class TXLocalFileServiceLogPersister<T> implements ServiceLogPersister<T>
         Set<String> getterNames = jpaMetaClass.getGetterNames();
         for (String getterMethod : getterNames) {
             try {
-                Object invokeMethod = MethodUtils.invokeMethod(log, "get" + StringUtils.capitalize(getterMethod));
+                Object returnValue = MethodUtils.invokeMethod(log, "get" + StringUtils.capitalize(getterMethod));
+                if (returnValue == null) {
+                    continue;
+                }
                 if ("requestBody".equals(getterMethod)) {
-                    requestBody = String.valueOf(invokeMethod);
+                    requestBody = String.valueOf(returnValue);
                 } else if ("responseBody".equals(getterMethod)) {
-                    responseBody = String.valueOf(invokeMethod);
+                    responseBody = String.valueOf(returnValue);
                 } else {
-                    values.put(getterMethod, invokeMethod);
+                    values.put(getterMethod, returnValue);
                 }
             } catch (Exception e) {
                 logger.warn("日志数据读取异常 : " + e.getMessage(), e);
             }
         }
         
-        // 保存
+        //// 保存
+        TxLoaclFileServiceLog txLog = (TxLoaclFileServiceLog) log;
+        int rightPad = rightPadNumber(txLog, values.keySet());
         StringBuilder sb = new StringBuilder(requestBody.length() + responseBody.length() + 1024);
         // 第一部分 : 当前日期 模块名 id
         sb.append(DateFormatUtils.format(System.currentTimeMillis(), "yyyy-MM-dd HH:mm:ss:SSS")).append(' ');
@@ -152,21 +161,68 @@ public class TXLocalFileServiceLogPersister<T> implements ServiceLogPersister<T>
         sb.append(txLog.getId()).append(CoreConstants.LINE_SEPARATOR);
         // 第二部分 : 日志内容
         for (Map.Entry<String, Object> entry : values.entrySet()) {
-            String key = org.apache.commons.lang3.StringUtils.rightPad(entry.getKey(), 22, ' ');
-            String value = null;
+            String key = entry.getKey();
+            if ("otherParams".equals(key)) {
+                continue;
+            }
             Object valueObj = entry.getValue();
-            if (valueObj instanceof Date) {
+            String value = null;
+            if (valueObj != null && valueObj instanceof Date) {
                 value = DateFormatUtils.format((Date) valueObj, "yyyy-MM-dd HH:mm:ss");
             } else {
                 value = valueObj == null ? "" : String.valueOf(valueObj);
             }
+            
+            key = org.apache.commons.lang3.StringUtils.rightPad(key, rightPad, ' ');
             sb.append(key).append("-| ").append(value).append("\r\n");
+        }
+        Map<String, Object> otherParams = txLog.getOtherParams();
+        if (MapUtils.isNotEmpty(otherParams)) {
+            for (Map.Entry<String, Object> entry : otherParams.entrySet()) {
+                String key = org.apache.commons.lang3.StringUtils.rightPad(entry.getKey(), rightPad, ' ');
+                sb.append(key).append("-| ").append(String.valueOf(entry.getValue())).append("\r\n");
+            }
         }
         sb.append("\r\n--requestBody--\r\n").append(requestBody).append("\r\n");
         sb.append("\r\n--responseBody--\r\n").append(responseBody).append("\r\n");
         sb.append("\r\n\r\n\r\n");
         
         saveLog(log, sb.toString());
+    }
+    
+    /**
+     * 
+     * 求 key 值右占位长度
+     *
+     * @param txLog 日志
+     * @param set key值
+     *            
+     * @return int [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     * @version [版本号, 2015年12月9日]
+     * @author rain
+     */
+    private int rightPadNumber(TxLoaclFileServiceLog txLog, Set<String> set) {
+        Integer integer = cacheRightPadMap.get(txLog.getClass());
+        if (integer == null) {
+            int rightPad = Integer.MIN_VALUE;
+            for (String string : set) {
+                rightPad = Math.max(string.length(), rightPad);
+            }
+            Map<String, Object> otherParams = txLog.getOtherParams();
+            if (MapUtils.isNotEmpty(otherParams)) {
+                Set<String> keySet = otherParams.keySet();
+                for (String string : keySet) {
+                    rightPad = Math.max(string.length(), rightPad);
+                }
+            }
+            
+            rightPad = rightPad + 3;
+            cacheRightPadMap.put(txLog.getClass(), Integer.valueOf(rightPad));
+            return rightPad;
+        }
+        return integer.intValue();
     }
     
     /**

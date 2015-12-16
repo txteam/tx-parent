@@ -6,6 +6,11 @@
  */
 package com.tx.component.servicelog.logger;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.persistence.Transient;
+
 /**
  * 报文日志
  * 
@@ -43,20 +48,9 @@ public class TxLoaclFileServiceLog extends TXBaseServiceLog {
     /** 备注 */
     private String remark;
     
-    /** 私有域1 */
-    private String privat1;
-    
-    /** 私有域2 */
-    private String privat2;
-    
-    /** 私有域3 */
-    private String privat3;
-    
-    /** 私有域4 */
-    private String privat4;
-    
-    /** 私有域5 */
-    private String privat5;
+    /** 其他参数 */
+    @Transient
+    private Map<String, Object> otherParams = new HashMap<String, Object>();
     
     /**
      * 构造报文日志<br />
@@ -145,29 +139,9 @@ public class TxLoaclFileServiceLog extends TXBaseServiceLog {
         return module;
     }
     
-    /** @return 返回 privat1 */
-    public String getPrivat1() {
-        return privat1;
-    }
-    
-    /** @return 返回 privat2 */
-    public String getPrivat2() {
-        return privat2;
-    }
-    
-    /** @return 返回 privat3 */
-    public String getPrivat3() {
-        return privat3;
-    }
-    
-    /** @return 返回 privat4 */
-    public String getPrivat4() {
-        return privat4;
-    }
-    
-    /** @return 返回 privat5 */
-    public String getPrivat5() {
-        return privat5;
+    /** 其他参数 */
+    public final Map<String, Object> getOtherParams() {
+        return otherParams;
     }
     
     /** @return 返回 remark */
@@ -205,6 +179,11 @@ public class TxLoaclFileServiceLog extends TXBaseServiceLog {
         return version;
     }
     
+    /** 添加其他参数 */
+    public final void putOtherParam(String key, Object object) {
+        this.otherParams.put(key, object);
+    }
+    
     /** @param 对 messageid 进行赋值 */
     public void setMessageid(String messageid) {
         this.messageid = messageid;
@@ -215,29 +194,9 @@ public class TxLoaclFileServiceLog extends TXBaseServiceLog {
         this.module = module;
     }
     
-    /** @param 对 privat1 进行赋值 */
-    public void setPrivat1(String privat1) {
-        this.privat1 = privat1;
-    }
-    
-    /** @param 对 privat2 进行赋值 */
-    public void setPrivat2(String privat2) {
-        this.privat2 = privat2;
-    }
-    
-    /** @param 对 privat3 进行赋值 */
-    public void setPrivat3(String privat3) {
-        this.privat3 = privat3;
-    }
-    
-    /** @param 对 privat4 进行赋值 */
-    public void setPrivat4(String privat4) {
-        this.privat4 = privat4;
-    }
-    
-    /** @param 对 privat5 进行赋值 */
-    public void setPrivat5(String privat5) {
-        this.privat5 = privat5;
+    /** 其他参数 */
+    public final void setOtherParams(Map<String, Object> otherParams) {
+        this.otherParams = otherParams;
     }
     
     /** @param 对 remark 进行赋值 */
