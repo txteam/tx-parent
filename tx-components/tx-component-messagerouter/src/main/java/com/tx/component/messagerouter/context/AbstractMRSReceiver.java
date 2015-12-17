@@ -40,6 +40,7 @@ public abstract class AbstractMRSReceiver<Request extends MRSRequest, Response e
     public void handle(MRSRequest request, MRSResponse response) {
         Request rq = (Request) request;
         Response rp = (Response) response;
+        MRSInterceptor interceptor = request.getInterceptor();
         
         long starttime = System.currentTimeMillis();
         
@@ -48,8 +49,14 @@ public abstract class AbstractMRSReceiver<Request extends MRSRequest, Response e
         Exception exception = null;
         try {
             beforeHandle(rq, rp);// 前置处理
+            if (interceptor != null) {
+                interceptor.logBeforeHandle(interceptor, rp);
+            }
             doHandle(rq, rp);// 消息处理
             afterHandle(rq, rp);// 后置处理
+            if (interceptor != null) {
+                interceptor.logAfterHandle(interceptor, rp);
+            }
         } catch (Exception e) {
             exception = e;
             logger.error("消息处理异常 : " + e.getMessage(), e);
