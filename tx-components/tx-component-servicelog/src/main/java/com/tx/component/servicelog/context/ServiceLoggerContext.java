@@ -57,4 +57,21 @@ public class ServiceLoggerContext extends ServiceLoggerFactory implements Initia
     public static <T> ServiceLogger<T> getLogger(Class<T> logObjectType) {
         return ServiceLoggerContext.getContext().getServiceLogger(logObjectType);
     }
+    
+    /**
+     * 
+     * 记录日志
+     *
+     * @param log 日志
+     * @param logObjectType 日志类型
+     *            
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     * @version [版本号, 2015年12月17日]
+     * @author rain
+     */
+    public static <T> void log(T log, Class<T> logObjectType) {
+        ServiceLoggerContext.getLogger(logObjectType).log(log);
+    }
 }
