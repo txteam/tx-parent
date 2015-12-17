@@ -18,6 +18,34 @@ package com.tx.core.util;
 public class StringUtils {
     
     /**
+      * 是否为空<br/>
+      * <功能详细描述>
+      * @param str
+      * @return [参数说明]
+      * 
+      * @return boolean [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public static boolean isEmpty(CharSequence str) {
+        return org.apache.commons.lang3.StringUtils.isEmpty(str);
+    }
+    
+    /**
+     * 检查字符串是否非空<br/>
+     * <功能详细描述>
+     * @param str
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    public static boolean isNotEmpty(CharSequence str) {
+        return org.apache.commons.lang3.StringUtils.isNotEmpty(str);
+    }
+    
+    /**
       * 截取字符串
       *    根据字符的长度进行处理<BR/>
       * <功能详细描述>
