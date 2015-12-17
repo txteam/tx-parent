@@ -60,7 +60,7 @@ public class ServiceLoggerContext extends ServiceLoggerFactory implements Initia
     
     /**
      * 
-     * 记录日志
+     * 记录日志<br>
      *
      * @param log 日志
      * @param logObjectType 日志类型
@@ -73,5 +73,25 @@ public class ServiceLoggerContext extends ServiceLoggerFactory implements Initia
      */
     public static <T> void log(T log, Class<T> logObjectType) {
         ServiceLoggerContext.getLogger(logObjectType).log(log);
+    }
+    
+    /**
+     * 
+     * 记录日志<br>
+     * 如果没有初始化 ServiceContext 则不会记录日志
+     *
+     * @param log 日志
+     * @param logObjectType 日志类型
+     *            
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     * @version [版本号, 2015年12月17日]
+     * @author rain
+     */
+    public static <T> void logWithNotInitContext(T log, Class<T> logObjectType) {
+        if (ServiceLoggerContext.context != null) {
+            ServiceLoggerContext.getLogger(logObjectType).log(log);
+        }
     }
 }
