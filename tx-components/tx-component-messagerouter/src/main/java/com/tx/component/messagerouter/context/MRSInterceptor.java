@@ -30,7 +30,7 @@ public interface MRSInterceptor {
      * @version [版本号, 2015年11月19日]
      * @author rain
      */
-    public void logAfterHandle(Object request, Object response);
+    public void logAfterHandle(MRSRequest request, MRSResponse response);
     
     /**
      * 
@@ -47,6 +47,6 @@ public interface MRSInterceptor {
      * @version [版本号, 2015年11月19日]
      * @author rain
      */
-    public boolean logBeforeHandle(Object request, Object response);
+    public boolean logBeforeHandle(MRSRequest request, MRSResponse response);
     
 }
