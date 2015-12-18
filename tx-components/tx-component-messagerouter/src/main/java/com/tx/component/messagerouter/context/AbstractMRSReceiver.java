@@ -50,12 +50,12 @@ public abstract class AbstractMRSReceiver<Request extends MRSRequest, Response e
         try {
             beforeHandle(rq, rp);// 前置处理
             if (interceptor != null) {
-                interceptor.logBeforeHandle(interceptor, rp);
+                interceptor.logBeforeHandle(rq, rp);
             }
             doHandle(rq, rp);// 消息处理
             afterHandle(rq, rp);// 后置处理
             if (interceptor != null) {
-                interceptor.logAfterHandle(interceptor, rp);
+                interceptor.logAfterHandle(rq, rp);
             }
         } catch (Exception e) {
             exception = e;
