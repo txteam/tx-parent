@@ -6,6 +6,10 @@
  */
 package com.tx.component.messagesender.context;
 
+import java.util.Map;
+
+import com.tx.component.messagesender.model.SendResult;
+
 /**
  * 消息路由服务拦截器
  * 
@@ -17,36 +21,50 @@ package com.tx.component.messagesender.context;
 public interface MessageSendInterceptor {
     
     /**
-     * 
-     * 后置处理<br/>
-     * 在该逻辑中触发相关事件<br/>
-     * 
-     * @param request 操作请求器
-     * @param response 操作返回对象
-     *            
-     * @return void [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     * @version [版本号, 2015年11月19日]
-     * @author rain
+      * 处理器的前置处理方法<br/> 
+      *<功能详细描述>
+      * @param params
+      * @param handler
+      * @return
+      * @throws Exception [参数说明]
+      * 
+      * @return boolean [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
      */
-    public void logAfterHandle(Object request, Object response);
+    boolean preHandle(Map<String, Object> params, Object handler)
+            throws Exception;
     
     /**
-     * 
-     * 前置处理<br/>
-     * 可做有一些校验请求合法性的功能等<br/>
-     * 如果返回 false 则停止调用命令链
-     * 
-     * @param request 操作请求器
-     * @param response 操作返回对象
-     *            
-     * @return boolean true: 继续执行| false: 停止执行
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     * @version [版本号, 2015年11月19日]
-     * @author rain
+      * 消息发送处理器<br/>
+      *     调用发生于Send调用之后<br/>
+      * <功能详细描述>
+      * @param params
+      * @param handler
+      * @param sendResult
+      * @throws Exception [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
      */
-    public boolean logBeforeHandle(Object request, Object response);
+    void postHandle(Map<String, Object> params, Object handler,
+            SendResult sendResult) throws Exception;
+    
+    /**
+      * 消息后置处理器<br/>
+      * <功能详细描述>
+      * @param params
+      * @param handler
+      * @param sendResult
+      * @param ex
+      * @throws Exception [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    void afterCompletion(Map<String, Object> params, Object handler,
+            SendResult sendResult, Exception ex) throws Exception;
     
 }
