@@ -18,7 +18,7 @@ import com.tx.component.messagesender.model.SendResult;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public interface MessageSendInterceptor {
+public interface MessageSendInterceptor{
     
     /**
       * 处理器的前置处理方法<br/> 

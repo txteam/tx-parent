@@ -28,7 +28,7 @@ import com.tx.component.messagesender.exception.MessageSenderException;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public class MessageSenderConfigurator implements InitializingBean, ApplicationContextAware, BeanNameAware {
+public class MessageSenderConfigurator implements InitializingBean, ApplicationContextAware{
     
     /** 日志 */
     protected static final Logger logger = LoggerFactory.getLogger(MessageSenderContext.class);
@@ -36,8 +36,8 @@ public class MessageSenderConfigurator implements InitializingBean, ApplicationC
     /** springContext */
     protected static ApplicationContext applicationContext;
     
-    /** 本身Bean名称 */
-    protected static String beanName;
+    /** 消息发送拦截器 */
+    protected static MessageSendInterceptor interceptors;
     
     /** 请求器名称和接收器映射 */
     protected Map<Class<? extends MRSRequest>, MRSReceiver<? extends MRSRequest, ? extends MRSResponse>> request2Receiver = new HashMap<>();
@@ -66,10 +66,5 @@ public class MessageSenderConfigurator implements InitializingBean, ApplicationC
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         MessageSenderConfigurator.applicationContext = applicationContext;
-    }
-    
-    @Override
-    public void setBeanName(String beanName) {
-        MessageSenderConfigurator.beanName = beanName;
     }
 }

@@ -24,11 +24,11 @@ public class SendMessage {
     /** 消息类型 */
     private String type;
     
-    /** 发送时间：如果支持定时发送时间，则使用该时间 */
-    private Date sendDate;
-    
     /** 接收消息 */
     private String receivers;
+    
+    /** 发送时间：如果支持定时发送时间，则使用该时间 */
+    private Date sendDate;
     
     /** 消息内容 */
     private String content;
@@ -38,6 +38,9 @@ public class SendMessage {
     
     /**
       * 获取消息属性<br/>
+      *     支持 get("type")
+      *         get("message")
+      *         此类的数据提取
       * <功能详细描述>
       * @param keyPath
       * @return [参数说明]
