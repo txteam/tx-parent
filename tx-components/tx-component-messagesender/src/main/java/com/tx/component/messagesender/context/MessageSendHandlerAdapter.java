@@ -6,6 +6,11 @@
  */
 package com.tx.component.messagesender.context;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.web.servlet.ModelAndView;
+
 
  /**
   * 消息发送处理适配器<br/>
@@ -17,7 +22,9 @@ package com.tx.component.messagesender.context;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
   */
-public class MessageSendHandlerAdapter {
+public interface MessageSendHandlerAdapter {
     
-    private MessageSendHandlerAdapter adapter;
+    boolean supports(Object handler);
+    
+    ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception;
 }

@@ -8,13 +8,19 @@ package com.tx.component.messagesender.context;
 
 import org.springframework.beans.factory.InitializingBean;
 
-import com.taobao.api.internal.tmc.Message;
+import com.tx.component.messagesender.model.SendMessage;
 import com.tx.component.messagesender.model.SendResult;
 import com.tx.core.exceptions.util.AssertUtils;
 
 /**
- * 消息路由服务容器
- * 
+ * 消息路由服务容器<br/>
+ *    容器的封装理念：将消息发送，邮件，TTS，简单的email等的发送变为简单化<br/>
+ *    用户可以:     send("{type:sms,receiver:1898337xxxx,1898377xxxx,message:xyz}");这样的格式实现内容发送
+ *         或：         send("sms","1898337xxxx","xyz");
+ *    容器中主要提供两种方法调用
+ *                 send: 发送消息并返回发送错误代码，适用于发送错误后需要感知发送返回结果
+ *                 sendWithodResult: 发送消息，如果错误则抛出预定异常，从异常中获取发送错误消息
+ *    在使用过程中能够直接拷贝原存在的代码快速方便的实现消息发送
  * @author Rain.he
  * @version [版本号, 2015年11月12日]
  * @see [相关类/方法]
@@ -39,9 +45,6 @@ public class MessageSenderContext extends MessageSenderConfigurator implements
         if (MessageSenderContext.context != null) {
             return context;
         }
-        synchronized (MessageSenderContext.class) {
-            MessageSenderContext.context = (MessageSenderContext) applicationContext.getBean(beanName);
-        }
         AssertUtils.notNull(context, "MRSContext is null. maybe not inited!");
         return MessageSenderContext.context;
     }
@@ -54,41 +57,62 @@ public class MessageSenderContext extends MessageSenderConfigurator implements
         logger.info("消息路由服务容器启动完毕...");
     }
     
-    public SendResult send(Message message) {
+    /**
+     * 发送消息<br/>
+     * <功能详细描述>
+     * @param type
+     * @param receivers
+     * @param messageJsonString
+     * @return [参数说明]
+     * 
+     * @return SendResult [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    public SendResult send(String messageJsonString) {
+        
         return null;
     }
     
+    /**
+      * 发送消息<br/>
+      * <功能详细描述>
+      * @param type
+      * @param receivers
+      * @param messageJsonString
+      * @return [参数说明]
+      * 
+      * @return SendResult [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
     public SendResult send(String type, String receivers,
             String messageJsonString) {
         
         return null;
     }
     
-    //    /**
-    //     * 
-    //     * 发送消息数据
-    //     *
-    //     * @param data 消息数据
-    //     *            
-    //     * @return void [返回类型说明]
-    //     * @exception throws [异常类型] [异常说明]
-    //     * @see [类、类#方法、类#成员]
-    //     * @version [版本号, 2015年11月12日]
-    //     * @author rain
-    //     */
-    //    @Transactional
-    //    public MRSResponse post(MRSRequest request) {
-    //        AssertUtils.notNull(request, "request is null!");
-    //        Class<? extends MRSRequest> clazz = request.getClass();
-    //        AssertUtils.isTrue(request2Receiver.containsKey(clazz), "消息路由服务请求器对应的接收器不存在! : {}", clazz.getName());
-    //        
-    //        MRSReceiver<? extends MRSRequest, ? extends MRSResponse> receiver = request2Receiver.get(request.getClass());
-    //        MRSResponse response = request.buildEmptyResponse();
-    //        if (response == null) {
-    //            throw new MRSException("response is null!");
-    //        }
-    //        
-    //        receiver.handle(request, response);
-    //        return response;
-    //    }
+    /**
+      * 发送消息<br/>
+      * <功能详细描述>
+      * @param type
+      * @param receivers
+      * @param sendDate
+      * @param messageJsonString
+      * @return [参数说明]
+      * 
+      * @return SendResult [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public SendResult send(String type, String receivers, String sendDate,
+            String messageJsonString) {
+        
+        return null;
+    }
+    
+    public SendResult send(SendMessage message) {
+        return null;
+    }
+    
 }

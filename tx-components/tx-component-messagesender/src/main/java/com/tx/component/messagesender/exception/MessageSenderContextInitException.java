@@ -17,7 +17,7 @@ import com.tx.core.util.MessageUtils;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public class MessageSenderException extends SILException {
+public class MessageSenderContextInitException extends SILException {
     private static final long serialVersionUID = -2323505371393070811L;
     
     @Override
@@ -30,24 +30,24 @@ public class MessageSenderException extends SILException {
         return "消息路由服务异常";
     }
     
-    public MessageSenderException(Throwable cause, String message,
+    public MessageSenderContextInitException(Throwable cause, String message,
             String... strings) {
         super(MessageUtils.createMessage(message, (Object[]) strings), cause);
     }
     
-    public MessageSenderException(String message, String... strings) {
+    public MessageSenderContextInitException(String message, String... strings) {
         super(message, (Object[]) strings);
     }
     
-    public MessageSenderException(String message, Object[] parameters) {
+    public MessageSenderContextInitException(String message, Object[] parameters) {
         super(message, parameters);
     }
     
-    public MessageSenderException(String message, Throwable cause) {
+    public MessageSenderContextInitException(String message, Throwable cause) {
         super(message, cause);
     }
     
-    public MessageSenderException(String message) {
+    public MessageSenderContextInitException(String message) {
         super(message);
     }
 }

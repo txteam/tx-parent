@@ -7,18 +7,18 @@
 package com.tx.component.messagesender.model;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
-
-
- /**
-  * 待发送的消息<br/>
-  * <功能详细描述>
-  * 
-  * @author  Administrator
-  * @version  [版本号, 2015年12月17日]
-  * @see  [相关类/方法]
-  * @since  [产品/模块版本]
-  */
+/**
+ * 待发送的消息<br/>
+ * <功能详细描述>
+ * 
+ * @author  Administrator
+ * @version  [版本号, 2015年12月17日]
+ * @see  [相关类/方法]
+ * @since  [产品/模块版本]
+ */
 public class SendMessage {
     
     /** 消息类型 */
@@ -33,8 +33,8 @@ public class SendMessage {
     /** 消息内容 */
     private String content;
     
-    /** 消息节点 */
-    private SendMessageNode message;
+    /** 消息对象的其他属性 */
+    public final Map<String, Object> attributes = new HashMap<String, Object>();
     
     /**
       * 获取消息属性<br/>
@@ -49,78 +49,64 @@ public class SendMessage {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public String getMessageAttribute(String keyPath){
+    public String getMessageAttribute(String keyPath) {
         
         return null;
     }
-
+    
     /**
      * @return 返回 type
      */
     public String getType() {
         return type;
     }
-
+    
     /**
      * @param 对type进行赋值
      */
     public void setType(String type) {
         this.type = type;
     }
-
+    
     /**
      * @return 返回 sendDate
      */
     public Date getSendDate() {
         return sendDate;
     }
-
+    
     /**
      * @param 对sendDate进行赋值
      */
     public void setSendDate(Date sendDate) {
         this.sendDate = sendDate;
     }
-
+    
     /**
      * @return 返回 receivers
      */
     public String getReceivers() {
         return receivers;
     }
-
+    
     /**
      * @param 对receivers进行赋值
      */
     public void setReceivers(String receivers) {
         this.receivers = receivers;
     }
-
+    
     /**
      * @return 返回 content
      */
     public String getContent() {
         return content;
     }
-
+    
     /**
      * @param 对content进行赋值
      */
     public void setContent(String content) {
         this.content = content;
-    }
-
-    /**
-     * @return 返回 message
-     */
-    public SendMessageNode getMessage() {
-        return message;
-    }
-
-    /**
-     * @param 对message进行赋值
-     */
-    public void setMessage(SendMessageNode message) {
-        this.message = message;
     }
 }

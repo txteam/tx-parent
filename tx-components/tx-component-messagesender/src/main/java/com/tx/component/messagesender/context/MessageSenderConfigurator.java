@@ -18,7 +18,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import com.tx.component.messagesender.exception.MessageSenderException;
+import com.tx.component.messagesender.exception.MessageSenderContextInitException;
 
 /**
  * 消息路由服务配置容器
@@ -53,7 +53,7 @@ public class MessageSenderConfigurator implements InitializingBean, ApplicationC
             for (MRSReceiver<?, ?> receiver : receivers.values()) {
                 Class<? extends MRSRequest> requestType = receiver.getRequestType();
                 if (this.request2Receiver.containsKey(requestType)) {
-                    throw new MessageSenderException("存在相同的消息路由服务 : {}", receiver.getClass().getName());
+                    throw new MessageSenderContextInitException("存在相同的消息路由服务 : {}", receiver.getClass().getName());
                 }
                 this.request2Receiver.put(requestType, receiver);
                 logger.info("加载消息路由服务 : {}[{}]", receiver.getClass().getName(), requestType.getName());
