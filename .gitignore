@@ -1,5 +1,9 @@
 /target
 /.settings
+/.classpath
+/.DS_Store
+
+.DS_Store
 
 /tx-core/target
 /tx-core/.settings
@@ -30,7 +34,4 @@
 
 /tx-components/tx-component-messagesender/target
 /tx-components/tx-component-messagesender/.settings
-/.classpath
 
-.DS_Store
-/.DS_Store
