@@ -28,3 +28,6 @@
 /tx-components/tx-component-template/target
 /tx-components/tx-component-template/.settings
 /.classpath
+
+.DS_Store
+/.DS_Store
