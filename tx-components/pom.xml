@@ -51,8 +51,7 @@
 		<module>tx-component-rule</module>
 		<module>tx-component-template</module>
 		<module>tx-component-file</module>
-		
-		<module>tx-component-messagerouter</module>
+<!-- 		<module>tx-component-messagesender</module> -->
 	</modules>
 
 
