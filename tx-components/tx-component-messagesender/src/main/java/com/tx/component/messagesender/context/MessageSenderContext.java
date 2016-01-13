@@ -6,6 +6,8 @@
  */
 package com.tx.component.messagesender.context;
 
+import java.util.Date;
+
 import org.springframework.beans.factory.InitializingBean;
 
 import com.tx.component.messagesender.model.SendMessage;
@@ -26,7 +28,7 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public class MessageSenderContext extends MessageSenderConfigurator implements
+public class MessageSenderContext extends MessageSenderBuilder implements
         InitializingBean {
     
     /** 对自身的引用 */
@@ -58,23 +60,6 @@ public class MessageSenderContext extends MessageSenderConfigurator implements
     }
     
     /**
-     * 发送消息<br/>
-     * <功能详细描述>
-     * @param type
-     * @param receivers
-     * @param messageJsonString
-     * @return [参数说明]
-     * 
-     * @return SendResult [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-    */
-    public SendResult send(String messageJsonString) {
-        
-        return null;
-    }
-    
-    /**
       * 发送消息<br/>
       * <功能详细描述>
       * @param type
@@ -86,8 +71,7 @@ public class MessageSenderContext extends MessageSenderConfigurator implements
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public SendResult send(String type, String receivers,
-            String messageJsonString) {
+    public SendResult send(String type, String receivers, String message) {
         
         return null;
     }
@@ -105,12 +89,22 @@ public class MessageSenderContext extends MessageSenderConfigurator implements
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public SendResult send(String type, String receivers, String sendDate,
-            String messageJsonString) {
+    public SendResult send(String type, String receivers,
+            String messageJsonString, Date sendDate) {
         
         return null;
     }
     
+    /**
+      * 消息发送<br/>
+      * <功能详细描述>
+      * @param message
+      * @return [参数说明]
+      * 
+      * @return SendResult [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
     public SendResult send(SendMessage message) {
         return null;
     }

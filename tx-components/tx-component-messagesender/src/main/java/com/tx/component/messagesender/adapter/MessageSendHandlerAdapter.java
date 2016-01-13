@@ -4,12 +4,14 @@
  * 修改时间:  2015年12月18日
  * <修改描述:>
  */
-package com.tx.component.messagesender.context;
+package com.tx.component.messagesender.adapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.web.servlet.ModelAndView;
+
+import com.tx.component.messagesender.model.SendResult;
 
 
  /**
@@ -26,5 +28,5 @@ public interface MessageSendHandlerAdapter {
     
     boolean supports(Object handler);
     
-    ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception;
+    SendResult handle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception;
 }

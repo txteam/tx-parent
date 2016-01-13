@@ -4,7 +4,9 @@
  * 修改时间:  2015年12月18日
  * <修改描述:>
  */
-package com.tx.component.messagesender.context;
+package com.tx.component.messagesender.handler;
+
+import java.util.Map;
 
 import com.tx.component.messagesender.model.SendMessage;
 import com.tx.component.messagesender.model.SendResult;
@@ -32,5 +34,5 @@ public interface MessageSendHandler {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public SendResult send(SendMessage message);
+    public SendResult send(SendMessage message, Map<String, Object> params);
 }

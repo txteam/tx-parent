@@ -29,7 +29,7 @@ import com.tx.component.template.basicdata.TemplateTableType;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-@Table(name="TEMPLATE_TABLE")
+@Table(name="tp_table")
 public class TemplateTable implements Serializable {
     
     /** 注释内容 */
@@ -38,20 +38,26 @@ public class TemplateTable implements Serializable {
     /** 模板表id:具体的一张模板表，id唯一对应唯一的tableName */
     private String id;
     
-    /** 与id一起同为模板表的唯一键 */
-    private String tableName;
-    
-    /** 所属系统id:与name,tableType一起作为联合唯一键 */
-    private String systemId;
-    
     /** 模板名，与tableType为模板表的联合唯一键，名字一旦确定不能进行修改 */
     private String name;
     
     /** 模板表类型：主表，备份表，历史表... */
     private TemplateTableType tableType;
     
+    /** 模板表版本<br/> V + _YYYYMMDD_ + x x首次为0，当表从运营态切换时，将自动+1，原0态表自动，重命名后作为备份存在，表明切换为tp_bak_... */
+    private String version;
+    
+    /** 与id一起同为模板表的唯一键 */
+    private String tableName;
+    
     /** 模板表状态 */
     private TemplateTableStatusEnum tableStatus = TemplateTableStatusEnum.配置态;
+    
+    /** 真正的表名 */
+    private String realTableName;
+    
+    /** 所属系统id:与name,tableType一起作为联合唯一键 */
+    private String systemId;
     
     /** 
      * 模板表字段集
@@ -62,8 +68,11 @@ public class TemplateTable implements Serializable {
     @OneToMany
     private Set<TemplateColumn> columns;
     
-    @Transient
+    @OneToMany
     private Set<String> columnNames;
+    
+    /** 模板表备注描述 */
+    private String remark;
     
     /** 创建人 */
     private String createOperatorId;
@@ -73,9 +82,6 @@ public class TemplateTable implements Serializable {
     
     /** 最后更新时间 */
     private Date lastUpdateDate;
-    
-    /** 模板表备注描述 */
-    private String remark;
 
     /**
      * @return 返回 id

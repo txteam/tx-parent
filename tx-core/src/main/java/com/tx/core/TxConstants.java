@@ -8,6 +8,7 @@
  */
 package com.tx.core;
 
+
 /**
  * 常用变量
  * 
@@ -17,6 +18,10 @@ package com.tx.core;
  * @since  [产品/模块版本]
  */
 public interface TxConstants {
+    
+    /** 默认空值，该值主要用于注解中，区分传入值为""时的业务逻辑 */
+    String DEFAULT_NONE = "\n\t\t\n\t\t\n\uE000\uE001\uE002\n\t\t\t\t\n";
+    
     /** 默认的字符集 */
     String DEFAULT_CHARSET = "UTF-8";
     

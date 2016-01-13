@@ -22,7 +22,7 @@ import javax.persistence.Table;
   * @since  [产品/模块版本]
   */
 @Entity
-@Table(name="t_tp_engine")
+@Table(name="tp_engine")
 public class TemplateEngineBaseModel implements Serializable{
     
     /** 注释内容 */
