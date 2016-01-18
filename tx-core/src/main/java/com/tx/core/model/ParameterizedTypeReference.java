@@ -26,6 +26,7 @@ public class ParameterizedTypeReference<T> extends
         AbstractParameterizedTypeReference<T> {
     
     protected ParameterizedTypeReference() {
+        
         if (!AopTargetUtils.isProxy(this)) {
             Type rawType = getClassRawType(this.getClass());
             AssertUtils.notNull(rawType, "rawType is null.");

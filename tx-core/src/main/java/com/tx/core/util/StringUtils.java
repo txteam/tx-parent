@@ -83,7 +83,7 @@ public class StringUtils {
             return null;
         }
         String resString = null;
-        if (str.length() > end) {
+        if (str.length() <= end) {
             resString = org.apache.commons.lang3.StringUtils.substring(str,
                     start,
                     end);
@@ -135,7 +135,7 @@ public class StringUtils {
             return null;
         }
         String resString = null;
-        if (str.length() > (start + length)) {
+        if (str.length() <= (start + length)) {
             resString = org.apache.commons.lang3.StringUtils.substring(str,
                     start,
                     start + length);
