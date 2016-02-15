@@ -35,10 +35,9 @@ public class InvokeDataBinder extends DataBinder{
     public static final String DEFAULT_FIELD_MARKER_PREFIX = "_";
 
     /**
-     * Default prefix that field default parameters start with, followed by the field
-     * name: e.g. "!subscribeToNewsletter" for a field "subscribeToNewsletter".
-     * <p>Default parameters differ from field markers in that they provide a default
-     * value instead of an empty value.
+     * 默认的前缀开始字段
+     * 例： 名称：如“！subscribetonewsletter” “subscribeToNewsletter”
+     * <p>Default parameters differ from field markers in that they provide a default value instead of an empty value.
      * @see #setFieldDefaultPrefix
      */
     public static final String DEFAULT_FIELD_DEFAULT_PREFIX = "!";
@@ -46,8 +45,6 @@ public class InvokeDataBinder extends DataBinder{
     private String fieldMarkerPrefix = DEFAULT_FIELD_MARKER_PREFIX;
 
     private String fieldDefaultPrefix = DEFAULT_FIELD_DEFAULT_PREFIX;
-
-    private boolean bindEmptyMultipartFiles = true;
 
 
     /**
@@ -129,26 +126,6 @@ public class InvokeDataBinder extends DataBinder{
     public String getFieldDefaultPrefix() {
         return this.fieldDefaultPrefix;
     }
-
-    /**
-     * Set whether to bind empty MultipartFile parameters. Default is "true".
-     * <p>Turn this off if you want to keep an already bound MultipartFile
-     * when the user resubmits the form without choosing a different file.
-     * Else, the already bound MultipartFile will be replaced by an empty
-     * MultipartFile holder.
-     * @see org.springframework.web.multipart.MultipartFile
-     */
-    public void setBindEmptyMultipartFiles(boolean bindEmptyMultipartFiles) {
-        this.bindEmptyMultipartFiles = bindEmptyMultipartFiles;
-    }
-
-    /**
-     * Return whether to bind empty MultipartFile parameters.
-     */
-    public boolean isBindEmptyMultipartFiles() {
-        return this.bindEmptyMultipartFiles;
-    }
-
 
     /**
      * This implementation performs a field default and marker check
@@ -236,56 +213,6 @@ public class InvokeDataBinder extends DataBinder{
         else {
             // Default value: try null.
             return null;
-        }
-    }
-
-
-    /**
-     * Bind the multipart files contained in the given request, if any
-     * (in case of a multipart request).
-     * <p>Multipart files will only be added to the property values if they
-     * are not empty or if we're configured to bind empty multipart files too.
-     * @param multipartFiles Map of field name String to MultipartFile object
-     * @param mpvs the property values to be bound (can be modified)
-     * @see org.springframework.web.multipart.MultipartFile
-     * @see #setBindEmptyMultipartFiles
-     * @deprecated as of Spring 3.0, in favor of {@link #bindMultipart} which binds
-     * all multipart files, even if more than one sent for the same name
-     */
-    @Deprecated
-    protected void bindMultipartFiles(Map<String, MultipartFile> multipartFiles, MutablePropertyValues mpvs) {
-        for (Map.Entry<String, MultipartFile> entry : multipartFiles.entrySet()) {
-            String key = entry.getKey();
-            MultipartFile value = entry.getValue();
-            if (isBindEmptyMultipartFiles() || !value.isEmpty()) {
-                mpvs.add(key, value);
-            }
-        }
-    }
-
-    /**
-     * Bind all multipart files contained in the given request, if any
-     * (in case of a multipart request).
-     * <p>Multipart files will only be added to the property values if they
-     * are not empty or if we're configured to bind empty multipart files too.
-     * @param multipartFiles Map of field name String to MultipartFile object
-     * @param mpvs the property values to be bound (can be modified)
-     * @see org.springframework.web.multipart.MultipartFile
-     * @see #setBindEmptyMultipartFiles
-     */
-    protected void bindMultipart(Map<String, List<MultipartFile>> multipartFiles, MutablePropertyValues mpvs) {
-        for (Map.Entry<String, List<MultipartFile>> entry : multipartFiles.entrySet()) {
-            String key = entry.getKey();
-            List<MultipartFile> values = entry.getValue();
-            if (values.size() == 1) {
-                MultipartFile value = values.get(0);
-                if (isBindEmptyMultipartFiles() || !value.isEmpty()) {
-                    mpvs.add(key, value);
-                }
-            }
-            else {
-                mpvs.add(key, values);
-            }
         }
     }
 }

@@ -6,8 +6,6 @@
  */
 package com.tx.core.support.methodinvoke.support;
 
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.context.request.WebRequest;
 
 /**
  * <功能简述>
@@ -25,5 +23,5 @@ public interface InvokeBindingInitializer {
      * @param binder the DataBinder to initialize
      * @param request the web request that the data binding happens within
      */
-    void initBinder(InvokeDataBinder binder, WebRequest request);
+    void initBinder(InvokeDataBinder binder, InvokeRequest request);
 }

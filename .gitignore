@@ -32,6 +32,6 @@
 /tx-components/tx-component-template/target
 /tx-components/tx-component-template/.settings
 
-/tx-components/tx-component-messagesender/target
-/tx-components/tx-component-messagesender/.settings
+/tx-components/tx-component-communication/target
+/tx-components/tx-component-communication/.settings
 

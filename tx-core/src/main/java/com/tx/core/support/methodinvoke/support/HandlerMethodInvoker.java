@@ -31,6 +31,7 @@
 //import org.springframework.core.ParameterNameDiscoverer;
 //import org.springframework.core.annotation.AnnotationUtils;
 //import org.springframework.ui.ExtendedModelMap;
+//import org.springframework.web.bind.support.SessionAttributeStore;
 //
 //import com.tx.core.support.methodinvoke.annotation.MISModelAttribute;
 //import com.tx.core.support.methodinvoke.annotation.MISRequestParam;
@@ -57,11 +58,12 @@
 //    /** 参数名解析器 */
 //    private final ParameterNameDiscoverer parameterNameDiscoverer;
 //    
+//    /** 注入参数解析器 */
+//    private final InvokeArgumentResolver[] customArgumentResolvers;
+//    
 //    private final WebBindingInitializer bindingInitializer;
 //    
 //    private final SessionAttributeStore sessionAttributeStore;
-//    
-//    private final WebArgumentResolver[] customArgumentResolvers;
 //    
 //    private final SimpleSessionStatus sessionStatus = new SimpleSessionStatus();
 //    
