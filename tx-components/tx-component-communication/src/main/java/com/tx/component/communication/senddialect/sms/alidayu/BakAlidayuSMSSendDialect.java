@@ -1,4 +1,4 @@
-package com.tx.component.communication.dialect.sms.alidayu;
+package com.tx.component.communication.senddialect.sms.alidayu;
 ///*
 // * 描述： <描述>
 // * 修改人： rain

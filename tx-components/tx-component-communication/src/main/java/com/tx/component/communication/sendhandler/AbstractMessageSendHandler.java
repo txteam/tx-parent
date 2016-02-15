@@ -4,7 +4,7 @@
  * 修改时间:  2015年12月31日
  * <修改描述:>
  */
-package com.tx.component.communication.handler;
+package com.tx.component.communication.sendhandler;
 
 /**
  * 抽象消息发送处理器<br/>

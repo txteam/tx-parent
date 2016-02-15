@@ -18,4 +18,5 @@ package com.tx.component.communication.model;
   */
 public class SendMessageLog {
     
+    private String id;
 }

@@ -4,7 +4,7 @@
  * 修改时间： 2015年11月12日
  * 项目： com.tx.router
  */
-package com.tx.component.communication.dialect.sms.alidayu;
+package com.tx.component.communication.senddialect.sms.alidayu;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -22,10 +22,10 @@ import com.taobao.api.DefaultTaobaoClient;
 import com.taobao.api.TaobaoClient;
 import com.taobao.api.request.AlibabaAliqinFcSmsNumSendRequest;
 import com.taobao.api.response.AlibabaAliqinFcSmsNumSendResponse;
-import com.tx.component.communication.dialect.MessageSendDialect;
 import com.tx.component.communication.exception.MessageSenderContextInitException;
 import com.tx.component.communication.model.SendMessage;
 import com.tx.component.communication.model.SendResult;
+import com.tx.component.communication.senddialect.MessageSendDialect;
 import com.tx.component.servicelog.context.ServiceLoggerContext;
 import com.tx.component.servicelog.logger.TxLoaclFileServiceLog;
 import com.tx.core.exceptions.util.AssertUtils;

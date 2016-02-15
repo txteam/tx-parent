@@ -28,17 +28,17 @@ import com.tx.component.communication.exception.MessageSenderContextInitExceptio
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public class CommunicationContextConfigurator implements InitializingBean,
+public class MessageSenderConfigurator implements InitializingBean,
         ApplicationContextAware {
     
     /** 日志 */
-    protected static final Logger logger = LoggerFactory.getLogger(CommunicationContextContext.class);
+    protected static final Logger logger = LoggerFactory.getLogger(MessageSenderContext.class);
     
     /** springContext */
     protected ApplicationContext applicationContext;
     
     /** 消息发送拦截器 */
-    protected CommunicationInterceptor interceptors;
+    protected MessageSenderInterceptor interceptors;
     
     @Override
     public void setApplicationContext(ApplicationContext applicationContext)

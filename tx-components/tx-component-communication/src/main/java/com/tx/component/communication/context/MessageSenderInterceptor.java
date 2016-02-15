@@ -18,7 +18,7 @@ import com.tx.component.communication.model.SendResult;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public interface CommunicationInterceptor{
+public interface MessageSenderInterceptor{
     
     /**
       * 处理器的前置处理方法<br/> 

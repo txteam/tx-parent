@@ -4,11 +4,11 @@
  * 修改时间:  2015年12月19日
  * <修改描述:>
  */
-package com.tx.component.communication.dialect.tts;
+package com.tx.component.communication.senddialect.sms;
 
 
  /**
-  * <功能简述>
+  * 短信常量类<br/>
   * <功能详细描述>
   * 
   * @author  Administrator
@@ -16,6 +16,6 @@ package com.tx.component.communication.dialect.tts;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
   */
-public interface TTSConstants {
+public interface SMSConstants {
     
 }

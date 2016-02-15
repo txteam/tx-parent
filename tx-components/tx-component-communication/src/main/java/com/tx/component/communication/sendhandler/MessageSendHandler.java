@@ -4,7 +4,7 @@
  * 修改时间:  2015年12月18日
  * <修改描述:>
  */
-package com.tx.component.communication.handler;
+package com.tx.component.communication.sendhandler;
 
 import com.tx.component.communication.model.SendMessage;
 import com.tx.component.communication.model.SendResult;
