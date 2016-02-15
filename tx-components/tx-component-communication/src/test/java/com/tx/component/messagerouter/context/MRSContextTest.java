@@ -19,7 +19,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.taobao.api.response.AlibabaAliqinFcSmsNumSendResponse;
 import com.tx.component.communication.context.MRSResponse;
-import com.tx.component.communication.context.MessageSenderContext;
+import com.tx.component.communication.context.CommunicationContextContext;
 import com.tx.component.communication.dialect.sms.alidayu.AlidayuSMSRequest;
 import com.tx.component.communication.dialect.sms.alidayu.AlidayuSMSTemplate;
 import com.tx.component.communication.enums.MRSRequestSourceEnum;

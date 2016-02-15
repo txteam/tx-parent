@@ -23,7 +23,7 @@ import com.tx.component.communication.exception.MessageSenderContextInitExceptio
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
   */
-public class MessageSenderBuilder extends MessageSenderConfigurator {
+public class CommunicationContextBuilder extends CommunicationContextConfigurator {
     
     /** 请求器名称和接收器映射 */
     protected Map<Class<? extends MRSRequest>, MRSReceiver<? extends MRSRequest, ? extends MRSResponse>> request2Receiver = new HashMap<>();

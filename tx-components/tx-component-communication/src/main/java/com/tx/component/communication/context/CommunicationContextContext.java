@@ -28,11 +28,11 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public class MessageSenderContext extends MessageSenderBuilder implements
+public class CommunicationContextContext extends CommunicationContextBuilder implements
         InitializingBean {
     
     /** 对自身的引用 */
-    protected static MessageSenderContext context;
+    protected static CommunicationContextContext context;
     
     /**
      * 返回自身唯一引用
@@ -43,12 +43,12 @@ public class MessageSenderContext extends MessageSenderBuilder implements
      * @version [版本号, 2015年11月12日]
      * @author rain
      */
-    public static MessageSenderContext getContext() {
-        if (MessageSenderContext.context != null) {
+    public static CommunicationContextContext getContext() {
+        if (CommunicationContextContext.context != null) {
             return context;
         }
         AssertUtils.notNull(context, "MRSContext is null. maybe not inited!");
-        return MessageSenderContext.context;
+        return CommunicationContextContext.context;
     }
     
     @Override

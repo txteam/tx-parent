@@ -19,16 +19,16 @@ import org.springframework.stereotype.Component;
  * @since [产品/模块版本]
  */
 @Component("mrs.context")
-public class MessageSenderContextFactory extends MessageSenderContext implements FactoryBean<MessageSenderContext> {
+public class CommunicationContextFactory extends CommunicationContextContext implements FactoryBean<CommunicationContextContext> {
     
     @Override
-    public MessageSenderContext getObject() throws Exception {
-        return MessageSenderContext.getContext();
+    public CommunicationContextContext getObject() throws Exception {
+        return CommunicationContextContext.getContext();
     }
     
     @Override
     public Class<?> getObjectType() {
-        return MessageSenderContext.class;
+        return CommunicationContextContext.class;
     }
     
     @Override
