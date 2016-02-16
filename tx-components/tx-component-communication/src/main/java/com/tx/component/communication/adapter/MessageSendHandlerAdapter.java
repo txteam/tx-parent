@@ -9,8 +9,6 @@ package com.tx.component.communication.adapter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.web.servlet.ModelAndView;
-
 import com.tx.component.communication.model.SendResult;
 
 

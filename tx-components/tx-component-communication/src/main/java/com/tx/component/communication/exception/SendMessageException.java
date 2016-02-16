@@ -17,7 +17,7 @@ import com.tx.core.util.MessageUtils;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public class MessageSendException extends SILException {
+public class SendMessageException extends SILException {
     
     private static final long serialVersionUID = -2323505371393070811L;
     
@@ -31,24 +31,24 @@ public class MessageSendException extends SILException {
         return "消息路由服务异常";
     }
     
-    public MessageSendException(Throwable cause, String message,
+    public SendMessageException(Throwable cause, String message,
             String... strings) {
         super(MessageUtils.createMessage(message, (Object[]) strings), cause);
     }
     
-    public MessageSendException(String message, String... strings) {
+    public SendMessageException(String message, String... strings) {
         super(message, (Object[]) strings);
     }
     
-    public MessageSendException(String message, Object[] parameters) {
+    public SendMessageException(String message, Object[] parameters) {
         super(message, parameters);
     }
     
-    public MessageSendException(String message, Throwable cause) {
+    public SendMessageException(String message, Throwable cause) {
         super(message, cause);
     }
     
-    public MessageSendException(String message) {
+    public SendMessageException(String message) {
         super(message);
     }
 }

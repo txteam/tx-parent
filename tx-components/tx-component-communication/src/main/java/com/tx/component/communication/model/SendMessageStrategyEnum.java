@@ -22,7 +22,12 @@ public enum SendMessageStrategyEnum {
      *    1、错误：不进行错误后重发.
      *    2、定时：不支持定时发送.
      */
-    NORMAL;
+    NORMAL,
+    /**
+     * 自动重发策略
+     *    1、错误：进行重发（小于最大重发次数时）
+     */
+    AUTO_RETRY;
     
     
 }

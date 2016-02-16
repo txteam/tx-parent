@@ -6,7 +6,7 @@
  */
 package com.tx.component.communication.context;
 
-import java.util.Date;
+import java.util.Map;
 
 import org.springframework.beans.factory.InitializingBean;
 
@@ -52,7 +52,7 @@ public class MessageSenderContext extends MessageSenderContextBuilder implements
     }
     
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void initContext() throws Exception {
         logger.info("消息路由服务容器启动...");
         super.afterPropertiesSet();
         context = this;
@@ -76,21 +76,8 @@ public class MessageSenderContext extends MessageSenderContextBuilder implements
         return null;
     }
     
-    /**
-      * 发送消息<br/>
-      * <功能详细描述>
-      * @param type
-      * @param receivers
-      * @param sendDate
-      * @param messageJsonString
-      * @return [参数说明]
-      * 
-      * @return SendResult [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    public SendResult send(String type, String receivers,
-            String messageJsonString, Date sendDate) {
+    public SendResult send(String type, String receivers, String templateKey,
+            Map<String, String> params) {
         
         return null;
     }

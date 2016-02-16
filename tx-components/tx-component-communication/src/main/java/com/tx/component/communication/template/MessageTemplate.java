@@ -45,25 +45,26 @@ public interface MessageTemplate {
     /**
       * 判断模板是否包含指定Key值<br/>
       * <功能详细描述>
-      * @param key
+      * @param templateKey
       * @return [参数说明]
       * 
       * @return boolean [返回类型说明]
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public boolean containsKey(String key);
+    public boolean containsKey(String templateKey);
     
     /**
-      * 获取模板消息的消息内容
-      * <功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return String [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    public String getTemplateMessage();
+     * 根据内容获取
+     * <功能详细描述>
+     * @param content
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    public String getTemplateKeyByContent(String content);
     
     /**
       * 获取转换后的消息内容<br/>
@@ -77,4 +78,5 @@ public interface MessageTemplate {
      */
     public String getTransferedContent(String templateKey,
             Map<String, Object> params);
+    
 }

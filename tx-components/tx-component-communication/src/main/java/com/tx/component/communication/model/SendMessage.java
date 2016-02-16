@@ -27,26 +27,26 @@ public class SendMessage {
     /** 发送消息的流水号 */
     private String serialNumber;
     
+    /** 发送时间：如果支持定时发送时间，则使用该时间 */
+    private Date sendDate;
+    
     /** 消息类型 */
     private String type;
     
     /** 接收消息 */
     private String receivers;
     
-    /** 发送时间：如果支持定时发送时间，则使用该时间 */
-    private Date sendDate;
-    
     /** 消息内容 */
     private String content;
     
-    /** 消息内容模板Id */
-    private String contentTemplateId;
+    /** 消息签名 */
+    private String signName;
     
-    /** 消息内容模板消息：可在初始化时不进行写入，在Dialect中进行注入即可，便于日志记录 */
-    private String contentTemplateMessage;
+    /** 消息内容模板Id */
+    private String contentTemplateKey;
     
     /** 消息对象的其他属性 */
-    public final Map<String, Object> attributes = new HashMap<String, Object>();
+    public final Map<String, String> attributes = new HashMap<String, String>();
 
     /**
      * @return 返回 id
@@ -133,37 +133,37 @@ public class SendMessage {
     }
 
     /**
-     * @return 返回 contentTemplateId
+     * @return 返回 contentTemplateKey
      */
-    public String getContentTemplateId() {
-        return contentTemplateId;
+    public String getContentTemplateKey() {
+        return contentTemplateKey;
     }
 
     /**
-     * @param 对contentTemplateId进行赋值
+     * @param 对contentTemplateKey进行赋值
      */
-    public void setContentTemplateId(String contentTemplateId) {
-        this.contentTemplateId = contentTemplateId;
-    }
-
-    /**
-     * @return 返回 contentTemplateMessage
-     */
-    public String getContentTemplateMessage() {
-        return contentTemplateMessage;
-    }
-
-    /**
-     * @param 对contentTemplateMessage进行赋值
-     */
-    public void setContentTemplateMessage(String contentTemplateMessage) {
-        this.contentTemplateMessage = contentTemplateMessage;
+    public void setContentTemplateKey(String contentTemplateKey) {
+        this.contentTemplateKey = contentTemplateKey;
     }
 
     /**
      * @return 返回 attributes
      */
-    public Map<String, Object> getAttributes() {
+    public Map<String, String> getAttributes() {
         return attributes;
+    }
+
+    /**
+     * @return 返回 signName
+     */
+    public String getSignName() {
+        return signName;
+    }
+
+    /**
+     * @param 对signName进行赋值
+     */
+    public void setSignName(String signName) {
+        this.signName = signName;
     }
 }

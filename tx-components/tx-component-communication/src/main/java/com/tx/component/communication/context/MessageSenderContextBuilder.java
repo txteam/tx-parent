@@ -6,12 +6,6 @@
  */
 package com.tx.component.communication.context;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.commons.collections.MapUtils;
-
-import com.tx.component.communication.exception.MessageSenderContextInitException;
 
 
  /**
@@ -23,31 +17,28 @@ import com.tx.component.communication.exception.MessageSenderContextInitExceptio
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
   */
-public class MessageSenderContextBuilder extends MessageSenderConfigurator {
+public class MessageSenderContextBuilder extends MessageSenderContextConfigurator {
     
-    /** 请求器名称和接收器映射 */
-    protected Map<Class<? extends MRSRequest>, MRSReceiver<? extends MRSRequest, ? extends MRSResponse>> request2Receiver = new HashMap<>();
-    
-    @SuppressWarnings({ "rawtypes" })
+    /**
+     * @throws Exception
+     */
     @Override
-    public void afterPropertiesSet() throws Exception {
+    protected final void initMessageSenderContext() throws Exception {
+        //调用初始化容器
+        initContext();
+    }
+    
+    /**
+      * 提供给子类初始化容器时使用<br/>
+      * <功能详细描述>
+      * @throws Exception [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    protected void initContext() throws Exception {
         logger.info("消息路由服务 配置容器启动...");
-        
-        // 加载消息路由服务接收器
-        Map<String, MRSReceiver> receivers = applicationContext.getBeansOfType(MRSReceiver.class);
-        if (MapUtils.isNotEmpty(receivers)) {
-            for (MRSReceiver<?, ?> receiver : receivers.values()) {
-                Class<? extends MRSRequest> requestType = receiver.getRequestType();
-                if (this.request2Receiver.containsKey(requestType)) {
-                    throw new MessageSenderContextInitException(
-                            "存在相同的消息路由服务 : {}", receiver.getClass().getName());
-                }
-                this.request2Receiver.put(requestType, receiver);
-                logger.info("加载消息路由服务 : {}[{}]",
-                        receiver.getClass().getName(),
-                        requestType.getName());
-            }
-        }
         
         logger.info("消息路由服务 配置容器启动完毕...");
     }

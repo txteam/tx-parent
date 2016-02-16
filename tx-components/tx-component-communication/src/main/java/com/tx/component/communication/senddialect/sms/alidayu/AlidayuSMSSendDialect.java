@@ -6,15 +6,10 @@
  */
 package com.tx.component.communication.senddialect.sms.alidayu;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
+import java.util.UUID;
 
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 
 import com.taobao.api.ApiException;
@@ -22,14 +17,11 @@ import com.taobao.api.DefaultTaobaoClient;
 import com.taobao.api.TaobaoClient;
 import com.taobao.api.request.AlibabaAliqinFcSmsNumSendRequest;
 import com.taobao.api.response.AlibabaAliqinFcSmsNumSendResponse;
-import com.tx.component.communication.exception.MessageSenderContextInitException;
+import com.tx.component.communication.exception.SendMessageException;
 import com.tx.component.communication.model.SendMessage;
 import com.tx.component.communication.model.SendResult;
 import com.tx.component.communication.senddialect.MessageSendDialect;
-import com.tx.component.servicelog.context.ServiceLoggerContext;
-import com.tx.component.servicelog.logger.TxLoaclFileServiceLog;
 import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.util.TxCollectionUtils;
 
 /**
  * 阿里大鱼短信发送方言<br/>
@@ -61,7 +53,7 @@ public class AlidayuSMSSendDialect implements MessageSendDialect,
     private int readTimeout = 15000;
     
     /** 应用 key */
-    private String appKey = "23266302";
+    private String appKey = "23309366";
     
     /** 应用 秘钥 */
     private String appSecret = "a04c7ae4333d376e55dead62ff41d791";
@@ -96,43 +88,36 @@ public class AlidayuSMSSendDialect implements MessageSendDialect,
     }
     
     private void validateMessage(SendMessage message) {
-        AssertUtils.notEmpty(request.getSmsFreeSignName(),
-                "smsFreeSignName[短信签名] is empty!");
-        AssertUtils.notEmpty(request.getSmsRecNums(),
-                "smsRecNum[短信接收号码] is empty!");
-        AssertUtils.notEmpty(request.getSmsTemplateCode(),
-                "smsTemplateCode[短信模板ID] is empty!");
+        //        AssertUtils.notEmpty(request.getSmsFreeSignName(),
+        //                "smsFreeSignName[短信签名] is empty!");
+        //        AssertUtils.notEmpty(request.getSmsRecNums(),
+        //                "smsRecNum[短信接收号码] is empty!");
+        //        AssertUtils.notEmpty(request.getSmsTemplateCode(),
+        //                "smsTemplateCode[短信模板ID] is empty!");
     }
     
-    @Override
     private SendResult doSend(SendMessage message) {
+        //        String smsFreeSignName = request.getSmsFreeSignName();
+        //        String smsTemplateCode = request.getSmsTemplateCode();
+        //        String smsParam = toSmsParam(request.getSmsParams());
+        //        String smsRecNum = null;
+        //        Set<String> set = new HashSet<String>(request.getSmsRecNums()); // 去重
+        //        List<Collection<String>> splitList = TxCollectionUtils.splitSize(set,
+        //                SMS_REC_NUMS_MAX);
+        //        for (Collection<String> collection : splitList) {
+        //            smsRecNum = StringUtils.join(collection, ',');
+        //        }
         
-        String smsFreeSignName = request.getSmsFreeSignName();
-        String smsTemplateCode = request.getSmsTemplateCode();
-        String smsParam = toSmsParam(request.getSmsParams());
-        String smsRecNum = null;
-        Set<String> set = new HashSet<String>(request.getSmsRecNums()); // 去重
-        List<Collection<String>> splitList = TxCollectionUtils.splitSize(set,
-                SMS_REC_NUMS_MAX);
-        for (Collection<String> collection : splitList) {
-            smsRecNum = StringUtils.join(collection, ',');
-        }
-        
-        AlibabaAliqinFcSmsNumSendRequest req = buildAlidayuSendSMSRequest(extend,
-                smsFreeSignName,
-                smsTemplateCode,
-                smsParam,
-                smsRecNum);
-        
-        //response.put("_smsParam", smsParam);
-        //response.put("_smsRecNum", smsRecNum);
-        //response.put("_req", req);
+        AlibabaAliqinFcSmsNumSendRequest req = buildAlidayuSendSMSRequest(message);
         try {
-            response.setBody(client.execute(req));
+            AlibabaAliqinFcSmsNumSendResponse response = this.sendSMSClient.execute(req);
+            //response.setBody(client.execute(req));
+            
+            System.out.println(response);
         } catch (ApiException e) {
-            throw new MessageSenderContextInitException(e,
-                    "阿里大鱼-短信 api 调用失败 : {}", request.toString());
+            throw new SendMessageException("调用阿里大鱼发送短信失败:ErrorCode:{} ErrorMessage:{}");
         }
+        return null;
     }
     
     /**
@@ -159,12 +144,12 @@ public class AlidayuSMSSendDialect implements MessageSendDialect,
         //短信签名，传入的短信签名必须是在阿里大鱼“管理中心-短信签名管理”中的可用签名。
         //如“阿里大鱼”已在短信签名管理中通过审核，则可传入”阿里大鱼“（传参时去掉引号）作为短信签名。
         //短信效果示例：【阿里大鱼】欢迎使用阿里大鱼服务。
-        String smsFreeSignName = "";
+        String smsFreeSignName = message.getAttributes().get("smsFreeSignName");
         //短信模板变量，传参规则{"key":"value"}，key的名字须和申请模板中的变量名一致，多个变量之间以逗号隔开。
         //示例：针对模板“验证码${code}，您正在进行${product}身份验证，打死不要告诉别人哦！”，传参时需传入{"code":"1234","product":"alidayu"}
-        String smsParam = "";
+        String smsParam = toSmsParam(message.getAttributes());//message.getAttributes();
         //短信模板ID，传入的模板必须是在阿里大鱼“管理中心-短信模板管理”中的可用模板。示例：SMS_585014
-        String smsTemplateCode = "";
+        String smsTemplateCode = message.getContentTemplateKey();
         
         AlibabaAliqinFcSmsNumSendRequest req = new AlibabaAliqinFcSmsNumSendRequest();
         req.setExtend(extend);
@@ -236,5 +221,25 @@ public class AlidayuSMSSendDialect implements MessageSendDialect,
      */
     public void setAppSecret(String appSecret) {
         this.appSecret = appSecret;
+    }
+    
+    public static void main(String[] args){
+        try {
+            AlidayuSMSSendDialect sender = new AlidayuSMSSendDialect();
+            sender.afterPropertiesSet();
+            //身份验证|注册验证
+            //用户注册验证码: SMS_2105920: 验证码${code}，您正在注册成为${product}用户，感谢您的支持！
+            SendMessage sm = new SendMessage();
+            sm.setSerialNumber(UUID.randomUUID().toString());
+            sm.setContentTemplateKey("SMS_2105920");
+            sm.setReceivers("18983379637,15014084494");
+            sm.getAttributes().put("code", "123321qQ");
+            sm.getAttributes().put("product", "测试公司");
+            sm.getAttributes().put("smsFreeSignName", "注册验证");
+            sender.send(sm);
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 }

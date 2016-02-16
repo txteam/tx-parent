@@ -17,13 +17,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.taobao.api.response.AlibabaAliqinFcSmsNumSendResponse;
-import com.tx.component.communication.context.MRSResponse;
-import com.tx.component.communication.context.MessageSenderContext;
-import com.tx.component.communication.enums.MRSRequestSourceEnum;
-import com.tx.component.communication.senddialect.sms.alidayu.AlidayuSMSRequest;
-import com.tx.component.communication.senddialect.sms.alidayu.AlidayuSMSTemplate;
-
 /**
  * 消息路由服务测试类
  * 
@@ -51,33 +44,6 @@ public class MRSContextTest {
         List<String> smsRecNums = new ArrayList<String>();
         smsRecNums.add("15223152423");
         
-//        AlidayuSMSRequest request = new AlidayuSMSRequest(smsFreeSignName, smsParams, smsRecNums, AlidayuSMSTemplate.测试, MRSRequestSourceEnum.调试);
-//        MRSResponse response = MessageSenderContext.getContext().post(request);
-//        Object body = response.getBody();
-//        AlibabaAliqinFcSmsNumSendResponse aliResponse = (AlibabaAliqinFcSmsNumSendResponse) body;
-//        System.out.println(aliResponse.getBody());
-        
-        //        for (int i = 0; i < 10; i++) {
-        //            new Thread(new Runnable() {
-        //                public void run() {
-        //                    TxLoaclFileServiceLog log = new TxLoaclFileServiceLog();
-        //                    log.setId(UUIDUtils.generateUUID16());
-        //                    log.setClientIpAddress("192.168.1.1");
-        //                    log.setCreateDate(new Date());
-        //                    log.setId(UUIDUtils.generateUUID());
-        //                    log.setMessage("test!");
-        //                    log.setModule("test");
-        //                    log.setResponseCode("200");
-        //                    for(;;){
-        //                        ServiceLoggerContext.getLogger(TxLoaclFileServiceLog.class).log(log);
-        //                        System.out.println("执行线程!!!"); 
-        //                    }
-        //                }
-        //            }).start();
-        //        }
-        //        
-        //        System.out.println("线程结束");
-        //        Thread.sleep(1000000000l);
     }
     
     

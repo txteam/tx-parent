@@ -6,19 +6,12 @@
  */
 package com.tx.component.communication.context;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.commons.collections.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-
-import com.tx.component.communication.exception.MessageSenderContextInitException;
 
 /**
  * 消息路由服务配置容器<br/>
@@ -28,7 +21,7 @@ import com.tx.component.communication.exception.MessageSenderContextInitExceptio
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public class MessageSenderConfigurator implements InitializingBean,
+public class MessageSenderContextConfigurator implements InitializingBean,
         ApplicationContextAware {
     
     /** 日志 */
@@ -41,8 +34,28 @@ public class MessageSenderConfigurator implements InitializingBean,
     protected MessageSenderInterceptor interceptors;
     
     @Override
-    public void setApplicationContext(ApplicationContext applicationContext)
+    public final void setApplicationContext(ApplicationContext applicationContext)
             throws BeansException {
         this.applicationContext = applicationContext;
+    }
+
+    /**
+     * @throws Exception
+     */
+    @Override
+    public final void afterPropertiesSet() throws Exception {
+        initMessageSenderContext();
+    }
+    
+    /**
+      * 初始化消息发送容器<br/>
+      * <功能详细描述>
+      * @throws Exception [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    protected void initMessageSenderContext() throws Exception{
     }
 }
