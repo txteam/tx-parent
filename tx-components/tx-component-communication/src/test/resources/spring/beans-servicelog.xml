@@ -9,10 +9,6 @@
 	<bean id="serviceLoggerContext" class="com.tx.component.servicelog.context.ServiceLoggerContextFactory">
 		<property name="serviceLoggerBuilders">
 			<list>
-				<bean class="com.tx.component.servicelog.defaultimpl.TXServiceLoggerBuilder">
-					<property name="dataSource" ref="dataSource" />
-					<property name="dataSourceType" value="#{config.getValue('dataSource.dataSourceType')}" />
-				</bean>
 				<bean class="com.tx.component.servicelog.defaultimpl.TXLocalFileServiceLoggerBuilder">
 					<property name="dataformat" value="TXT" />
 					<property name="savepath" value="/Users/rain/Develop/JavaDev/logs/tx-component-messagerouter" />

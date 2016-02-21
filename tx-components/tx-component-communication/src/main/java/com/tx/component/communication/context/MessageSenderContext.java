@@ -6,8 +6,6 @@
  */
 package com.tx.component.communication.context;
 
-import java.util.Map;
-
 import org.springframework.beans.factory.InitializingBean;
 
 import com.tx.component.communication.model.SendMessage;
@@ -52,9 +50,8 @@ public class MessageSenderContext extends MessageSenderContextBuilder implements
     }
     
     @Override
-    public void initContext() throws Exception {
+    public final void initContext() throws Exception {
         logger.info("消息路由服务容器启动...");
-        super.afterPropertiesSet();
         context = this;
         logger.info("消息路由服务容器启动完毕...");
     }
@@ -71,15 +68,11 @@ public class MessageSenderContext extends MessageSenderContextBuilder implements
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public SendResult send(String type, String receivers, String message) {
-        
-        return null;
-    }
-    
-    public SendResult send(String type, String receivers, String templateKey,
-            Map<String, String> params) {
-        
-        return null;
+    public SendResult send(String type, String receivers, String title,
+            String content) {
+        SendMessage message = new SendMessage(type, receivers, title, content);
+        SendResult result = doSend(message);
+        return result;
     }
     
     /**
@@ -93,7 +86,8 @@ public class MessageSenderContext extends MessageSenderContextBuilder implements
       * @see [类、类#方法、类#成员]
      */
     public SendResult send(SendMessage message) {
-        return null;
+        SendResult result = doSend(message);
+        return result;
     }
     
 }

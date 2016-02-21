@@ -7,7 +7,6 @@
 package com.tx.component.communication.context;
 
 import org.springframework.beans.factory.FactoryBean;
-import org.springframework.stereotype.Component;
 
 /**
  * 
@@ -18,8 +17,8 @@ import org.springframework.stereotype.Component;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-@Component("mrs.context")
-public class MessageSenderContextFactory extends MessageSenderContext implements FactoryBean<MessageSenderContext> {
+public class MessageSenderContextFactory extends MessageSenderContext implements
+        FactoryBean<MessageSenderContext> {
     
     @Override
     public MessageSenderContext getObject() throws Exception {

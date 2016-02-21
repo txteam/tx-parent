@@ -39,17 +39,29 @@ public class SendMessage {
     /** 接收消息 */
     private String receivers;
     
+    /** 消息内容标题 */
+    private String title;
+    
     /** 消息内容 */
     private String content;
     
-    /** 消息签名 */
-    private String signName;
-    
-    /** 消息内容模板Id */
-    private String contentTemplateKey;
-    
     /** 消息对象的其他属性 */
     public final Map<String, String> attributes = new HashMap<String, String>();
+    
+    /** <默认构造函数> */
+    public SendMessage() {
+        super();
+    }
+
+    /** <默认构造函数> */
+    public SendMessage(String type, String receivers, String title,
+            String content) {
+        super();
+        this.type = type;
+        this.receivers = receivers;
+        this.title = title;
+        this.content = content;
+    }
 
     /**
      * @return 返回 id
@@ -136,6 +148,20 @@ public class SendMessage {
     }
 
     /**
+     * @return 返回 title
+     */
+    public String getTitle() {
+        return title;
+    }
+
+    /**
+     * @param 对title进行赋值
+     */
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    /**
      * @return 返回 content
      */
     public String getContent() {
@@ -147,34 +173,6 @@ public class SendMessage {
      */
     public void setContent(String content) {
         this.content = content;
-    }
-
-    /**
-     * @return 返回 signName
-     */
-    public String getSignName() {
-        return signName;
-    }
-
-    /**
-     * @param 对signName进行赋值
-     */
-    public void setSignName(String signName) {
-        this.signName = signName;
-    }
-
-    /**
-     * @return 返回 contentTemplateKey
-     */
-    public String getContentTemplateKey() {
-        return contentTemplateKey;
-    }
-
-    /**
-     * @param 对contentTemplateKey进行赋值
-     */
-    public void setContentTemplateKey(String contentTemplateKey) {
-        this.contentTemplateKey = contentTemplateKey;
     }
 
     /**

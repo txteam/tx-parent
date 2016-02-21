@@ -6,6 +6,8 @@
  */
 package com.tx.component.communication.sendhandler;
 
+import org.springframework.core.Ordered;
+
 import com.tx.component.communication.model.SendMessage;
 import com.tx.component.communication.model.SendResult;
 
@@ -20,7 +22,18 @@ import com.tx.component.communication.model.SendResult;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public interface MessageSendHandler {
+public interface MessageSendHandler extends Ordered {
+    
+    /**
+      * 消息发送处理器对应的消息类型<br/>
+      * <功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return String [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public String type();
     
     /**
       * 是否匹配消息发送的处理器<br/>
