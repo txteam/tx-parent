@@ -53,6 +53,7 @@ public class AlidayuSMSSendDialect implements MessageSendDialect,
     private static final String DEFAULT_SMS_TYPE = "normal";
     
     /** 一次调用发送最大手机号码数量 */
+    @SuppressWarnings("unused")
     private static final int SMS_REC_NUMS_MAX = 200;
     
     /** 链接超时时间 */
@@ -70,6 +71,7 @@ public class AlidayuSMSSendDialect implements MessageSendDialect,
     /** 短信发送客户端 */
     private TaobaoClient sendSMSClient = null;
     
+    /** 默认的短信签名 */
     private String defaultSMSFreeSignName = null;
     
     /** 短信模板code 以及 短信模板内容的映射 */
@@ -370,6 +372,34 @@ public class AlidayuSMSSendDialect implements MessageSendDialect,
         this.appSecret = appSecret;
     }
     
+    /**
+     * @param 对placeholderPattern进行赋值
+     */
+    public static void setPlaceholderPattern(Pattern placeholderPattern) {
+        AlidayuSMSSendDialect.placeholderPattern = placeholderPattern;
+    }
+
+    /**
+     * @param 对defaultSMSFreeSignName进行赋值
+     */
+    public void setDefaultSMSFreeSignName(String defaultSMSFreeSignName) {
+        this.defaultSMSFreeSignName = defaultSMSFreeSignName;
+    }
+
+    /**
+     * @param 对smsTemplateMap进行赋值
+     */
+    public void setSmsTemplateMap(Map<String, String> smsTemplateMap) {
+        this.smsTemplateMap = smsTemplateMap;
+    }
+
+    /**
+     * @param 对signNameMap进行赋值
+     */
+    public void setSignNameMap(Map<String, String> signNameMap) {
+        this.signNameMap = signNameMap;
+    }
+    
     private static class SMSContentInfo {
         
         /** 短信模板信息 */
@@ -400,6 +430,8 @@ public class AlidayuSMSSendDialect implements MessageSendDialect,
         }
     }
     
+    
+    
     public static void main(String[] args) {
         try {
             AlidayuSMSSendDialect sender = new AlidayuSMSSendDialect();
@@ -419,5 +451,8 @@ public class AlidayuSMSSendDialect implements MessageSendDialect,
             e.printStackTrace();
         }
     }
+
+    
+    
     
 }
