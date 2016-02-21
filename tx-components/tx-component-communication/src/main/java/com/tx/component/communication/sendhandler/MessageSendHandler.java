@@ -23,6 +23,18 @@ import com.tx.component.communication.model.SendResult;
 public interface MessageSendHandler {
     
     /**
+      * 是否匹配消息发送的处理器<br/>
+      * <功能详细描述>
+      * @param message
+      * @return [参数说明]
+      * 
+      * @return boolean [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public boolean supports(SendMessage message);
+    
+    /**
       * 消息发送处理器<br/>
       * <功能详细描述>
       * @param message

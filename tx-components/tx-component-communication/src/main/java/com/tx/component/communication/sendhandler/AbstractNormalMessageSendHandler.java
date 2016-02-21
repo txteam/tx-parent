@@ -15,6 +15,7 @@ package com.tx.component.communication.sendhandler;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public abstract class AbstractMessageSendHandler implements MessageSendHandler {
+public abstract class AbstractNormalMessageSendHandler implements
+        MessageSendHandler {
     
 }

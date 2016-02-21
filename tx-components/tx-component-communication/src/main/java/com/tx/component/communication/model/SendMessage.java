@@ -24,14 +24,17 @@ public class SendMessage {
     /** 发送消息的唯一键 */
     private String id;
     
-    /** 发送消息的流水号 */
-    private String serialNumber;
-    
-    /** 发送时间：如果支持定时发送时间，则使用该时间 */
-    private Date sendDate;
+    /** 消息发送策略 */
+    private SendMessageStrategyEnum strategy = SendMessageStrategyEnum.NORMAL;
     
     /** 消息类型 */
     private String type;
+    
+    /** 发送时间：如果支持定时发送时间，则使用该时间 */
+    private Date sendDate = new Date();
+    
+    /** 发送消息的流水号 */
+    private String serialNumber;
     
     /** 接收消息 */
     private String receivers;
@@ -63,17 +66,17 @@ public class SendMessage {
     }
 
     /**
-     * @return 返回 serialNumber
+     * @return 返回 strategy
      */
-    public String getSerialNumber() {
-        return serialNumber;
+    public SendMessageStrategyEnum getStrategy() {
+        return strategy;
     }
 
     /**
-     * @param 对serialNumber进行赋值
+     * @param 对strategy进行赋值
      */
-    public void setSerialNumber(String serialNumber) {
-        this.serialNumber = serialNumber;
+    public void setStrategy(SendMessageStrategyEnum strategy) {
+        this.strategy = strategy;
     }
 
     /**
@@ -91,20 +94,6 @@ public class SendMessage {
     }
 
     /**
-     * @return 返回 receivers
-     */
-    public String getReceivers() {
-        return receivers;
-    }
-
-    /**
-     * @param 对receivers进行赋值
-     */
-    public void setReceivers(String receivers) {
-        this.receivers = receivers;
-    }
-
-    /**
      * @return 返回 sendDate
      */
     public Date getSendDate() {
@@ -119,6 +108,34 @@ public class SendMessage {
     }
 
     /**
+     * @return 返回 serialNumber
+     */
+    public String getSerialNumber() {
+        return serialNumber;
+    }
+
+    /**
+     * @param 对serialNumber进行赋值
+     */
+    public void setSerialNumber(String serialNumber) {
+        this.serialNumber = serialNumber;
+    }
+
+    /**
+     * @return 返回 receivers
+     */
+    public String getReceivers() {
+        return receivers;
+    }
+
+    /**
+     * @param 对receivers进行赋值
+     */
+    public void setReceivers(String receivers) {
+        this.receivers = receivers;
+    }
+
+    /**
      * @return 返回 content
      */
     public String getContent() {
@@ -130,6 +147,20 @@ public class SendMessage {
      */
     public void setContent(String content) {
         this.content = content;
+    }
+
+    /**
+     * @return 返回 signName
+     */
+    public String getSignName() {
+        return signName;
+    }
+
+    /**
+     * @param 对signName进行赋值
+     */
+    public void setSignName(String signName) {
+        this.signName = signName;
     }
 
     /**
@@ -151,19 +182,5 @@ public class SendMessage {
      */
     public Map<String, String> getAttributes() {
         return attributes;
-    }
-
-    /**
-     * @return 返回 signName
-     */
-    public String getSignName() {
-        return signName;
-    }
-
-    /**
-     * @param 对signName进行赋值
-     */
-    public void setSignName(String signName) {
-        this.signName = signName;
     }
 }
