@@ -236,16 +236,27 @@ public class AlidayuSMSSendDialect implements MessageSendDialect,
     }
     
     private SendResult doSend(SendMessage message) {
+        SendResult result  = null;
         AlibabaAliqinFcSmsNumSendRequest req = buildAlidayuSendSMSRequest(message);
         try {
             AlibabaAliqinFcSmsNumSendResponse response = this.sendSMSClient.execute(req);
             
-            System.out.println(response);
+            result = new SendResult();
+            if(response.isSuccess()){
+                result.setSuccess(true);
+            }else{
+                result.setSuccess(false);
+                result.setErrorCode(response.getErrorCode());
+                result.setErrorMessage(response.getMsg());
+                if(!MapUtils.isEmpty(response.getParams())){
+                    result.getAttributes().putAll(response.getParams());
+                }
+            }
         } catch (ApiException e) {
             throw new SendMessageException(
                     "调用阿里大鱼发送短信失败:ErrorCode:{} ErrorMessage:{}");
         }
-        return null;
+        return result;
     }
     
     /**
