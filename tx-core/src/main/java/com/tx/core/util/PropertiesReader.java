@@ -13,7 +13,6 @@ import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -31,7 +30,7 @@ import org.springframework.core.io.support.PropertiesLoaderUtils;
  * @since  [产品/模块版本]
  */
 public class PropertiesReader implements ApplicationContextAware,
-        InitializingBean, FactoryBean<Properties> {
+        InitializingBean {
     
     private Logger logger = LoggerFactory.getLogger(PropertiesReader.class);
     
@@ -49,31 +48,6 @@ public class PropertiesReader implements ApplicationContextAware,
     
     /** 是否忽略资源未找到异常 */
     private boolean ignoreResourceNotFound = false;
-    
-    /**
-     * @return
-     * @throws Exception
-     */
-    @Override
-    public Properties getObject() throws Exception {
-        return props;
-    }
-    
-    /**
-     * @return
-     */
-    @Override
-    public Class<?> getObjectType() {
-        return Properties.class;
-    }
-    
-    /**
-     * @return
-     */
-    @Override
-    public boolean isSingleton() {
-        return false;
-    }
     
     /**
       * 获取属性值<br/>
