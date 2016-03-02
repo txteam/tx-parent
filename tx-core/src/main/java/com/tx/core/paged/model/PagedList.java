@@ -44,6 +44,21 @@ public class PagedList<T> implements Serializable {
     private int count;
     
     /**
+      * 返回总页数<br/>
+      * <功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return int [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public int getPageCount() {
+        int pageCount = pageSize == 0 ? 0 : (count % pageSize == 0 ? count
+                / pageSize : count / pageSize + 1);
+        return pageCount;
+    }
+    
+    /**
      * @return 返回 list
      */
     @SuppressWarnings("unchecked")
