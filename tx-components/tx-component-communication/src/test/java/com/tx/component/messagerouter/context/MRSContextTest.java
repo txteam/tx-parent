@@ -37,7 +37,7 @@ public class MRSContextTest {
             MessageSenderContext.getContext().send("sms",
                     "18983379637",
                     "注册验证",
-                    "验证码123321qQ，您正在注册成为渝金所用户，感谢您的支持！");
+                    "验证码123321qQ，您正在注册成为12231用户，感谢您的支持！");
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
