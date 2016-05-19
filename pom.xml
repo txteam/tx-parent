@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.tx</groupId>
@@ -75,6 +74,13 @@
 				<groupId>com.tx</groupId>
 				<artifactId>tx-component-basicdata</artifactId>
 				<version>${tx-version}</version>
+			</dependency>
+
+			<!-- activemq -->
+			<dependency>
+				<groupId>org.apache.activemq</groupId>
+				<artifactId>activemq-all</artifactId>
+				<version>5.11.1</version>
 			</dependency>
 
 			<!-- Low 1.6 version of the JDK dependency -->
@@ -364,7 +370,7 @@
 			<dependency>
 				<groupId>commons-pool</groupId>
 				<artifactId>commons-pool</artifactId>
-				<version>1.5.7</version>
+				<version>1.6</version>
 				<exclusions>
 					<exclusion>
 						<groupId>commons-logging</groupId>
@@ -764,8 +770,7 @@
 
 			<!-- Spring Framework -->
 			<dependency>
-				<!-- 这个jar 文件包含在应用中使用Spring 的AOP 特性时所需的类和源码级元数据支持。使用基于AOP 的Spring特性，如声明型事务管理（Declarative 
-					Transaction Management），也要在应用里包含这个jar包 -->
+				<!-- 这个jar 文件包含在应用中使用Spring 的AOP 特性时所需的类和源码级元数据支持。使用基于AOP 的Spring特性，如声明型事务管理（Declarative Transaction Management），也要在应用里包含这个jar包 -->
 				<!-- 外部依赖spring-core， (spring-beans，AOP Alliance， CGLIB，Commons Attributes) -->
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-aop</artifactId>
@@ -801,8 +806,7 @@
 				</exclusions>
 			</dependency>
 			<dependency>
-				<!-- 这个jar 文件是所有应用都要用到的，它包含访问配置文件、创建和管理bean 以及进行Inversion of Control 
-					/ Dependency Injection（IoC/DI）操作相关的所有类。 -->
+				<!-- 这个jar 文件是所有应用都要用到的，它包含访问配置文件、创建和管理bean 以及进行Inversion of Control / Dependency Injection（IoC/DI）操作相关的所有类。 -->
 				<!-- 如果应用只需基本的IoC/DI 支持，引入spring-core.jar 及spring-beans.jar 文件就可以了。 -->
 				<!-- 外部依赖spring-core，(CGLIB)。Code Generator -->
 				<groupId>org.springframework</groupId>
@@ -818,8 +822,7 @@
 
 
 			<dependency>
-				<!-- 这个jar 文件为Spring 核心提供了大量扩展。可以找到使用Spring ApplicationContext特性时所需的全部类，JDNI 
-					所需的全部类，instrumentation组件以及校验Validation 方面的相关类。 -->
+				<!-- 这个jar 文件为Spring 核心提供了大量扩展。可以找到使用Spring ApplicationContext特性时所需的全部类，JDNI 所需的全部类，instrumentation组件以及校验Validation 方面的相关类。 -->
 				<!-- 外部依赖spring-beans,(spring-aop)。 -->
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-context</artifactId>
@@ -833,8 +836,7 @@
 			</dependency>
 			<dependency>
 				<!-- 这个jar 文件包含支持UI模版（Velocity，FreeMarker JasperReports），邮件服务，脚本服务 (JRuby)，缓存Cache（EHCache），任务计划Scheduling（uartz）方面的类。 -->
-				<!-- 外部依赖spring-context, (spring-jdbc, Velocity, FreeMarker, JasperReports, 
-					BSH, Groovy, JRuby, Quartz, EHCache) -->
+				<!-- 外部依赖spring-context, (spring-jdbc, Velocity, FreeMarker, JasperReports, BSH, Groovy, JRuby, Quartz, EHCache) -->
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-context-support</artifactId>
 				<version>3.2.1.RELEASE</version>
@@ -869,9 +871,7 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
-			<!-- 未引入spring-dao,如有需要，以后再进行维护 spring-dao.jar 这个jar 文件包含Spring DAO、Spring 
-				Transaction 进行数据访问的所有类。为了使用声明型事务支持，还需在自己的应用里包含spring-aop.jar。外部依赖spring-core，(spring-aop， 
-				spring-context， JTA API)。 -->
+			<!-- 未引入spring-dao,如有需要，以后再进行维护 spring-dao.jar 这个jar 文件包含Spring DAO、Spring Transaction 进行数据访问的所有类。为了使用声明型事务支持，还需在自己的应用里包含spring-aop.jar。外部依赖spring-core，(spring-aop， spring-context， JTA API)。 -->
 			<dependency>
 				<!--这个jar 文件包含对Spring 对JDBC 数据访问进行封装的所有类。 -->
 				<!-- 外部依赖spring-beans，spring-dao。 -->
@@ -919,10 +919,8 @@
 				</exclusions>
 			</dependency>
 			<dependency>
-				<!-- 这个jar 文件包含Web 应用开发时，用到Spring 框架时所需的核心类，包括自动载入Web Application Context 
-					特性的类、Struts 与JSF 集成类、文件上传的支持类、Filter 类和大量工具辅助类。 -->
-				<!-- 外部依赖spring-context, Servlet API, (JSP API, JSTL, Commons FileUpload, 
-					COS)。 -->
+				<!-- 这个jar 文件包含Web 应用开发时，用到Spring 框架时所需的核心类，包括自动载入Web Application Context 特性的类、Struts 与JSF 集成类、文件上传的支持类、Filter 类和大量工具辅助类。 -->
+				<!-- 外部依赖spring-context, Servlet API, (JSP API, JSTL, Commons FileUpload, COS)。 -->
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-web</artifactId>
 				<version>3.2.1.RELEASE</version>
@@ -933,15 +931,9 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
-			<!-- spring-portlet.jar spring自己实现的一个类似Spring MVC的框架。包括一个MVC框架和控制器。外部依赖spring-web， 
-				Portlet API，(spring-webmvc)。 spring-struts.jar Struts框架支持，可以更方便更容易的集成Struts框架。外部依赖spring-web，Struts。 
-				spring-remoting.jar 这个jar 文件包含支持EJB、远程调用Remoting（RMI、Hessian、Burlap、Http 
-				Invoker、JAX-RPC）方面的类。外部依赖spring-aop， (spring-context，spring-web，Hessian，Burlap，JAX-RPC，EJB 
-				API)。 spring-jmx.jar Java Management Extemsion 这个jar包提供了对JMX 1.0/1.2的支持类。外部依赖spring-beans，spring-aop， 
-				JMX API。 -->
+			<!-- spring-portlet.jar spring自己实现的一个类似Spring MVC的框架。包括一个MVC框架和控制器。外部依赖spring-web， Portlet API，(spring-webmvc)。 spring-struts.jar Struts框架支持，可以更方便更容易的集成Struts框架。外部依赖spring-web，Struts。 spring-remoting.jar 这个jar 文件包含支持EJB、远程调用Remoting（RMI、Hessian、Burlap、Http Invoker、JAX-RPC）方面的类。外部依赖spring-aop， (spring-context，spring-web，Hessian，Burlap，JAX-RPC，EJB API)。 spring-jmx.jar Java Management Extemsion 这个jar包提供了对JMX 1.0/1.2的支持类。外部依赖spring-beans，spring-aop， JMX API。 -->
 			<dependency>
-				<!-- 这个jar 文件包含Spring MVC 框架相关的所有类。包括框Servlets，Web MVC框架，控制器和视图支持。当然，如果你的应用使用了独立的MVC 
-					框架，则无需这个JAR 文件里的任何类。 -->
+				<!-- 这个jar 文件包含Spring MVC 框架相关的所有类。包括框Servlets，Web MVC框架，控制器和视图支持。当然，如果你的应用使用了独立的MVC 框架，则无需这个JAR 文件里的任何类。 -->
 				<!-- 外部依赖spring-web, (spring-support，Tiles，iText，POI)。 -->
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-webmvc</artifactId>
@@ -1460,8 +1452,7 @@
 						<source>1.7</source>
 						<!-- The -target argument for the Java compiler.Default value is: 1.5. -->
 						<target>1.7</target>
-						<!-- The -encoding argument for the Java compiler.Default value is: 
-							${project.build.sourceEncoding}. -->
+						<!-- The -encoding argument for the Java compiler.Default value is: ${project.build.sourceEncoding}. -->
 						<encoding>UTF-8</encoding>
 						<!-- Set to true to show compilation warnings. Default value is: false. -->
 						<!--<showWarnings>true</showWarnings> -->
@@ -1556,8 +1547,7 @@
 						<!-- The name of the generated WAR. -->
 						<!-- Default value is: ${project.build.finalName}. -->
 						<warName>${project.name}</warName>
-						<!-- Single directory for extra files to include in the WAR. This is 
-							where you place your JSP files. -->
+						<!-- Single directory for extra files to include in the WAR. This is where you place your JSP files. -->
 						<!-- Default value is: ${basedir}/src/main/webapp. -->
 						<!--<warSourceDirectory>${basedir}/src/main/webapp</warSourceDirectory> -->
 						<!-- The directory where the webapp is built. -->
@@ -1574,8 +1564,7 @@
 						<packagingExcludes>
 							**/spy.properties
 						</packagingExcludes>
-						<!-- The comma separated list of tokens to exclude when copying the 
-							content of the warSourceDirectory. -->
+						<!-- The comma separated list of tokens to exclude when copying the content of the warSourceDirectory. -->
 						<warSourceExcludes>
 							**/spy.properties
 						</warSourceExcludes>
@@ -1610,11 +1599,7 @@
 				</plugin>
 
 				<!-- mvn source:jar -->
-				<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-source-plugin</artifactId> 
-					<version>2.1.2</version> <inherited>true</inherited> <configuration> <attach>true</attach> 
-					<encoding>UTF-8</encoding> <excludes> <exclude>**/*Test.java</exclude> </excludes> 
-					</configuration> <executions> <execution> <phase>compile</phase> <goals> 
-					<goal>jar</goal> </goals> </execution> </executions> </plugin> -->
+				<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-source-plugin</artifactId> <version>2.1.2</version> <inherited>true</inherited> <configuration> <attach>true</attach> <encoding>UTF-8</encoding> <excludes> <exclude>**/*Test.java</exclude> </excludes> </configuration> <executions> <execution> <phase>compile</phase> <goals> <goal>jar</goal> </goals> </execution> </executions> </plugin> -->
 
 				<!-- javadoc -->
 				<plugin>
