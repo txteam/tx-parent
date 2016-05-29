@@ -80,7 +80,7 @@
 			<dependency>
 				<groupId>org.apache.activemq</groupId>
 				<artifactId>activemq-all</artifactId>
-				<version>5.11.1</version>
+				<version>5.13.3</version>
 				<exclusions>
 					<exclusion>
 						<groupId>org.slf4j</groupId>
@@ -91,6 +91,18 @@
 						<artifactId>log4j</artifactId>
 					</exclusion>
 				</exclusions>
+			</dependency>
+
+			<!-- 阿里云 消息 -->
+			<dependency>
+				<groupId>com.aliyun.openservices</groupId>
+				<artifactId>ons-client</artifactId>
+				<version>1.1.8</version>
+			</dependency>
+			<dependency>
+				<groupId>com.aliyun</groupId>
+				<artifactId>aliyun-java-sdk-core</artifactId>
+				<version>2.2.0</version>
 			</dependency>
 
 			<!-- Low 1.6 version of the JDK dependency -->
@@ -1734,13 +1746,13 @@
 	<distributionManagement>
 		<repository>
 			<id>releases</id>
-			<url>http://192.168.85.105:8081/nexus/content/repositories/releases</url>
-			<!-- <url>http://114.215.158.227:8081/nexus/content/repositories/releases</url> -->
+			<!-- <url>http://192.168.85.105:8081/nexus/content/repositories/releases</url> -->
+			<url>http://120.24.75.25:8081/nexus/content/repositories/releases</url>
 		</repository>
 		<snapshotRepository>
 			<id>snapshots</id>
-			<url>http://192.168.85.105:8081/nexus/content/repositories/snapshots</url>
-			<!-- <url>http://114.215.158.227:8081/nexus/content/repositories/snapshots</url> -->
+			<!-- <url>http://192.168.85.105:8081/nexus/content/repositories/snapshots</url> -->
+			<url>http://120.24.75.25:8081/nexus/content/repositories/snapshots</url>
 		</snapshotRepository>
 	</distributionManagement>
 
