@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>com.tx</groupId>
 		<artifactId>tx-parent</artifactId>
-		<version>2.1.x-SNAPSHOT</version>
+		<version>2.0.x-SNAPSHOT</version>
 	</parent>
 
 	<properties>
