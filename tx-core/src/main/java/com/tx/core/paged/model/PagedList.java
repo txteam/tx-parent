@@ -53,9 +53,8 @@ public class PagedList<T> implements Serializable {
       * @see [类、类#方法、类#成员]
      */
     public int getPageCount() {
-        int pageCount = pageSize == 0 ? 0
-                : ((count % pageSize == 0) ? (count / pageSize) : (count
-                        / pageSize + 1));
+        int pageCount = pageSize == 0 ? 0 : (count % pageSize == 0 ? count
+                / pageSize : count / pageSize + 1);
         return pageCount;
     }
     

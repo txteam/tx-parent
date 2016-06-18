@@ -15,8 +15,7 @@
 		class="com.tx.component.communication.sendhandler.smshandler.AlidayuSMSMessageSendHandler">
 		<property name="dialect">
 			<bean
-				class="com.tx.component.communication.senddialect.sms.alidayu.AlidayuSMSSendDialect">	
-			</bean>
+				class="com.tx.component.communication.senddialect.sms.alidayu.AlidayuSMSSendDialect"></bean>
 		</property>
 	</bean>
 </beans>

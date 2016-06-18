@@ -58,6 +58,7 @@ public class MessageSenderContext extends MessageSenderContextBuilder implements
     
     /**
       * 发送消息<br/>
+      * <功能详细描述>
       * @param type
       * @param receivers
       * @param messageJsonString
