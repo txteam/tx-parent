@@ -18,14 +18,7 @@
 	<select id="${select.findId}" 
 		parameterType="${select.parameterType}"
 		resultMap="${select.resultMapId}">
-		SELECT 
-<#list select.sqlMapColumnList as column>
-<#if column.isSimpleType()>
-				${select.simpleTableName}.${column.columnName}<#if !column.isSameName()> AS ${column.propertyName}</#if><#if column_has_next>,</#if>
-<#else>
-				${select.simpleTableName}.${column.columnName} AS ${column.propertyName}_${column.joinPropertyName}<#if column_has_next>,</#if>
-</#if>
-</#list>
+		SELECT *
 		  FROM ${select.tableName} ${select.simpleTableName}
 		 WHERE
 		<trim prefixOverrides="AND | OR">
@@ -42,14 +35,7 @@
 	<select id="${select.queryId}" 
 		parameterType="java.util.Map"
 		resultMap="${select.resultMapId}">
-		SELECT 
-<#list select.sqlMapColumnList as column>
-<#if column.isSimpleType()>
-				${select.simpleTableName}.${column.columnName}<#if !column.isSameName()> AS ${column.propertyName}</#if><#if column_has_next>,</#if>
-<#else>
-				${select.simpleTableName}.${column.columnName} AS ${column.propertyName}_${column.joinPropertyName}<#if column_has_next>,</#if>
-</#if>
-</#list>
+		SELECT *
 		  FROM ${select.tableName} ${select.simpleTableName}
 		<trim prefix="WHERE" prefixOverrides="AND | OR">
 <#list select.queryConditionMap?keys as key>
