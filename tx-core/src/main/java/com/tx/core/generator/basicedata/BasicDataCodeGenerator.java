@@ -1,10 +1,10 @@
 /*
  * 描          述:  <描述>
  * 修  改   人:  Administrator
- * 修改时间:  2014年2月18日
+ * 修改时间:  2016年6月21日
  * <修改描述:>
  */
-package com.tx.component.basicdata.generator;
+package com.tx.core.generator.basicedata;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,15 +41,14 @@ import com.tx.core.reflection.JpaMetaClass;
 import com.tx.core.util.FreeMarkerUtils;
 
 /**
- * 基础数据代码自动生成器<br/>
+ * <功能简述>
  * <功能详细描述>
  * 
  * @author  Administrator
- * @version  [版本号, 2014年2月18日]
+ * @version  [版本号, 2016年6月21日]
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-@Deprecated
 public class BasicDataCodeGenerator {
     
     /** 日志记录器 */
@@ -59,23 +58,23 @@ public class BasicDataCodeGenerator {
     
     private static Class<?> loadTemplateClass = BasicDataCodeGenerator.class;
     
-    private static String dbScriptTemplateFilePath = "com/tx/component/basicdata/generator/defaultftl/basicdata_dbscript.ftl";
+    private static String dbScriptTemplateFilePath = "com/tx/core/generator/basicedata/defaultftl/basicdata_dbscript.ftl";
     
-    private static String sqlMapTemplateFilePath = "com/tx/component/basicdata/generator/defaultftl/basicdata_sqlMap.ftl";
+    private static String sqlMapTemplateFilePath = "com/tx/core/generator/basicedata/defaultftl/basicdata_sqlMap.ftl";
     
-    private static String daoTemplateFilePath = "com/tx/component/basicdata/generator/defaultftl/basicdata_dao.ftl";
+    private static String daoTemplateFilePath = "com/tx/core/generator/basicedata/defaultftl/basicdata_dao.ftl";
     
-    private static String daoImplTemplateFilePath = "com/tx/component/basicdata/generator/defaultftl/basicdata_daoImpl.ftl";
+    private static String daoImplTemplateFilePath = "com/tx/core/generator/basicedata/defaultftl/basicdata_daoImpl.ftl";
     
-    private static String serviceTemplateFilePath = "com/tx/component/basicdata/generator/defaultftl/basicdata_service.ftl";
+    private static String serviceTemplateFilePath = "com/tx/core/generator/basicedata/defaultftl/basicdata_service.ftl";
     
-    private static String controllerTemplateFilePath = "com/tx/component/basicdata/generator/defaultftl/basicdata_controller.ftl";
+    private static String controllerTemplateFilePath = "com/tx/core/generator/basicedata/defaultftl/basicdata_controller.ftl";
     
-    private static String queryListTemplateFilePath = "com/tx/component/basicdata/generator/defaultftl/basicdata_queryList.jsp.ftl";
+    private static String queryListTemplateFilePath = "com/tx/core/generator/basicedata/defaultftl/basicdata_queryList.jsp.ftl";
     
-    private static String addTemplateFilePath = "com/tx/component/basicdata/generator/defaultftl/basicdata_add.jsp.ftl";
+    private static String addTemplateFilePath = "com/tx/core/generator/basicedata/defaultftl/basicdata_add.jsp.ftl";
     
-    private static String updateTemplateFilePath = "com/tx/component/basicdata/generator/defaultftl/basicdata_update.jsp.ftl";
+    private static String updateTemplateFilePath = "com/tx/core/generator/basicedata/defaultftl/basicdata_update.jsp.ftl";
     
     /**
       *  生成基础数据代码<br/>

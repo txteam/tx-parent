@@ -46,13 +46,25 @@ public class DBScriptMapper {
         super();
     }
     
-    public DBScriptMapper(JpaMetaClass<?> jpaMetaClass, Dialect dialect) {
+    public DBScriptMapper(JpaMetaClass<?> jpaMetaClass, Dialect dialect){
+        this(jpaMetaClass,dialect,true);
+    }
+    
+    public DBScriptMapper(JpaMetaClass<?> jpaMetaClass, Dialect dialect,
+            boolean nameToUpperCase) {
         super();
-        this.tableName = jpaMetaClass.getTableName().toUpperCase();
-        this.pkColumnName = jpaMetaClass.getGetter2columnInfoMapping()
-                .get(jpaMetaClass.getPkGetterName())
-                .getColumnName()
-                .toUpperCase();
+        if (nameToUpperCase) {
+            this.tableName = jpaMetaClass.getTableName().toUpperCase();
+            this.pkColumnName = jpaMetaClass.getGetter2columnInfoMapping()
+                    .get(jpaMetaClass.getPkGetterName())
+                    .getColumnName()
+                    .toUpperCase();
+        } else {
+            this.tableName = jpaMetaClass.getTableName();
+            this.pkColumnName = jpaMetaClass.getGetter2columnInfoMapping()
+                    .get(jpaMetaClass.getPkGetterName())
+                    .getColumnName();
+        }
         
         Map<String, JpaColumnInfo> property2columnMap = jpaMetaClass.getGetter2columnInfoMapping();
         List<String> propertyList = new ArrayList<>(property2columnMap.keySet());

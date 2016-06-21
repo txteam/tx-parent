@@ -1,10 +1,10 @@
 /*
  * 描          述:  <描述>
- * 修  改   人:  PengQingyang
- * 修改时间:  2012-12-9
+ * 修  改   人:  Administrator
+ * 修改时间:  2016年6月21日
  * <修改描述:>
  */
-package com.tx.core.generator;
+package com.tx.core.generator.table;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,6 +18,7 @@ import org.hibernate.dialect.Dialect;
 import org.springframework.util.ClassUtils;
 
 import com.tx.core.dbscript.model.DataSourceTypeEnum;
+import com.tx.core.generator.JpaEntityFreeMarkerGenerator;
 import com.tx.core.generator.model.DBScriptMapper;
 import com.tx.core.generator.model.DaoGeneratorModel;
 import com.tx.core.generator.model.DeleteMapper;
@@ -32,31 +33,31 @@ import com.tx.core.reflection.JpaMetaClass;
 import com.tx.core.util.FreeMarkerUtils;
 import com.tx.core.util.JdbcUtils;
 
-/**
- * 根据JPA实体生成sqlMap
- * <功能详细描述>
- * 
- * @author  PengQingyang
- * @version  [版本号, 2012-12-9]
- * @see  [相关类/方法]
- * @since  [产品/模块版本]
- */
-@Deprecated
-public class JpaEntityFreeMarkerGenerator {
+
+ /**
+  * <功能简述>
+  * <功能详细描述>
+  * 
+  * @author  Administrator
+  * @version  [版本号, 2016年6月21日]
+  * @see  [相关类/方法]
+  * @since  [产品/模块版本]
+  */
+public class TableCodeGenerator {
     
-    private Class<?> loadTemplateClass = JpaEntityFreeMarkerGenerator.class;
+    private Class<?> loadTemplateClass = TableCodeGenerator.class;
     
-    private String sqlMapTemplateFilePath = "com/tx/core/generator/defaultftl/sqlMap.ftl";
+    private String sqlMapTemplateFilePath = "com/tx/core/generator/table/defaultftl/sqlMap.ftl";
     
-    private String daoTemplateFilePath = "com/tx/core/generator/defaultftl/dao.ftl";
+    private String daoTemplateFilePath = "com/tx/core/generator/table/defaultftl/dao.ftl";
     
-    private String daoImplTemplateFilePath = "com/tx/core/generator/defaultftl/daoImpl.ftl";
+    private String daoImplTemplateFilePath = "com/tx/core/generator/table/defaultftl/daoImpl.ftl";
     
-    private String serviceTemplateFilePath = "com/tx/core/generator/defaultftl/service.ftl";
+    private String serviceTemplateFilePath = "com/tx/core/generator/table/defaultftl/service.ftl";
     
-    private String serviceTestTemplateFilePath = "com/tx/core/generator/defaultftl/serviceTest.ftl";
+    private String serviceTestTemplateFilePath = "com/tx/core/generator/table/defaultftl/serviceTest.ftl";
     
-    private String dbScriptTemplateFilePath = "com/tx/core/generator/defaultftl/dbscript.ftl";
+    private String dbScriptTemplateFilePath = "com/tx/core/generator/table/defaultftl/dbscript.ftl";
     
     public void generate(Class<?> type, String resultFolderPath,boolean cleanFolder) {
         if(cleanFolder){
@@ -547,5 +548,5 @@ public class JpaEntityFreeMarkerGenerator {
      */
     public void setDbScriptTemplateFilePath(String dbScriptTemplateFilePath) {
         this.dbScriptTemplateFilePath = dbScriptTemplateFilePath;
-    }
+    }   
 }

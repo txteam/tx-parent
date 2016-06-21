@@ -13,7 +13,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.tx.core.generator.GeneratorUtils;
+import com.tx.core.generator.util.GeneratorUtils;
 import com.tx.core.jdbc.sqlsource.SqlSource;
 import com.tx.core.reflection.JpaMetaClass;
 

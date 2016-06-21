@@ -8,7 +8,7 @@ package com.tx.core.generator.model;
 
 import java.util.List;
 
-import com.tx.core.generator.GeneratorUtils;
+import com.tx.core.generator.util.GeneratorUtils;
 import com.tx.core.reflection.JpaMetaClass;
 
 /**

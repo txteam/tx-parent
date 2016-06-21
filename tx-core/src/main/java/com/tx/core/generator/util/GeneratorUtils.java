@@ -4,7 +4,7 @@
  * 修改时间:  2014年3月1日
  * <修改描述:>
  */
-package com.tx.core.generator;
+package com.tx.core.generator.util;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
