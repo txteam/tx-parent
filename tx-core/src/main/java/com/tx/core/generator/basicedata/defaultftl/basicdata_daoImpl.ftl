@@ -38,6 +38,22 @@ public class ${dao.simpleEntityTypeName}DaoImpl implements ${dao.simpleEntityTyp
      * @param condition
      */
     @Override
+    public void batchInsert${dao.simpleEntityTypeName}(List<${dao.simpleEntityTypeName}> condition){
+        this.myBatisDaoSupport.batchInsertUseUUID("${dao.lowerCaseEntityTypeName}.insert${dao.simpleEntityTypeName}", condition, "id",true);
+    }
+    
+    /**
+     * @param condition
+     */
+    @Override
+    public void batchUpdate${dao.simpleEntityTypeName}(List<Map<String,Object>> updateRowMapList){
+        this.myBatisDaoSupport.batchUpdate("${dao.lowerCaseEntityTypeName}.update${dao.simpleEntityTypeName}", updateRowMapList,true);
+    }
+    
+    /**
+     * @param condition
+     */
+    @Override
     public void insert${dao.simpleEntityTypeName}(${dao.simpleEntityTypeName} condition) {
         this.myBatisDaoSupport.insertUseUUID("${dao.lowerCaseEntityTypeName}.insert${dao.simpleEntityTypeName}", condition, "id");
     }

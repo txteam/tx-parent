@@ -1,14 +1,19 @@
 /*
- * 描述: <描述>
- * 修改人:  
+ * 描          述:  <描述>
+ * 修  改   人:  
  * 修改时间:  
  * <修改描述:>
  */
 package ${service.basePackage}.service;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+<#list service.extentionTypeNames as typeName>
+import ${typeName};
+</#list> 
 
 import javax.annotation.Resource;
 
@@ -62,23 +67,32 @@ public class ${service.entitySimpleName}Service {
     }
     
     /**
-      * 根据${service.entitySimpleName}实体列表
-      * TODO:补充说明
-      * 
+      * 查询${service.entitySimpleName}实体列表
       * <功能详细描述>
+<#list service.queryConditionName2TypeNameMapping?keys as key>
+      * @param ${key}
+</#list> 
+      *       
       * @return [参数说明]
       * 
       * @return List<${service.entitySimpleName}> [返回类型说明]
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
-     */
-    public List<${service.entitySimpleName}> query${service.entitySimpleName}List(/*TODO:自己定义条件*/) {
-        //TODO:判断条件合法性
+      */
+    public List<${service.entitySimpleName}> query${service.entitySimpleName}List(
+<#list service.queryConditionName2TypeNameMapping?keys as key>
+		${service.queryConditionName2TypeNameMapping[key]} ${key}<#if key_has_next>,</#if>
+</#list>    
+    	) {
+        //判断条件合法性
         
-        //TODO:生成查询条件
+        //生成查询条件
         Map<String, Object> params = new HashMap<String, Object>();
+<#list service.queryConditionName2TypeNameMapping?keys as key>
+		params.put("${key}",${key});
+</#list>
         
-        //TODO:根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
+        //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
         List<${service.entitySimpleName}> resList = this.${service.lowerCaseEntitySimpleName}Dao.query${service.entitySimpleName}List(params);
         
         return resList;
@@ -86,7 +100,11 @@ public class ${service.entitySimpleName}Service {
     
     /**
      * 分页查询${service.entitySimpleName}实体列表
-     * TODO:补充说明
+<#list service.queryConditionName2TypeNameMapping?keys as key>
+     * @param ${key}
+</#list>
+     * @param pageIndex 当前页index从1开始计算
+     * @param pageSize 每页显示行数
      * 
      * <功能详细描述>
      * @return [参数说明]
@@ -95,38 +113,23 @@ public class ${service.entitySimpleName}Service {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    public PagedList<${service.entitySimpleName}> query${service.entitySimpleName}PagedList(/*TODO:自己定义条件*/int pageIndex,
+    public PagedList<${service.entitySimpleName}> query${service.entitySimpleName}PagedList(
+<#list service.queryConditionName2TypeNameMapping?keys as key>
+			${service.queryConditionName2TypeNameMapping[key]} ${key},
+</#list>
+    		int pageIndex,
             int pageSize) {
-        //TODO:判断条件合法性
+        //T判断条件合法性
         
-        //TODO:生成查询条件
+        //生成查询条件
         Map<String, Object> params = new HashMap<String, Object>();
-        
-        //TODO:根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
+<#list service.queryConditionName2TypeNameMapping?keys as key>
+		params.put("${key}",${key});
+</#list>
+ 
+        //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
         PagedList<${service.entitySimpleName}> resPagedList = this.${service.lowerCaseEntitySimpleName}Dao.query${service.entitySimpleName}PagedList(params, pageIndex, pageSize);
         
         return resPagedList;
-    }
-    
-    /**
-      * 查询${service.lowerCaseEntitySimpleName}列表总条数
-      * TODO:补充说明
-      * <功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return int [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    public int count${service.entitySimpleName}(/*TODO:自己定义条件*/){
-        //TODO:判断条件合法性
-        
-        //TODO:生成查询条件
-        Map<String, Object> params = new HashMap<String, Object>();
-        
-        //TODO:根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
-        int res = this.${service.lowerCaseEntitySimpleName}Dao.count${service.entitySimpleName}(params);
-        
-        return res;
     }
 }

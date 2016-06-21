@@ -77,8 +77,8 @@ public class BasicDataCodeGenerator {
     private static String updateTemplateFilePath = "com/tx/core/generator/basicedata/defaultftl/basicdata_update.jsp.ftl";
     
     /**
-      *  生成基础数据代码<br/>
-      *<功能详细描述>
+      * 生成基础数据代码<br/>
+      * <功能详细描述>
       * @param basicDataType 数据库类型
       * @param dataSourceType
       * @param codeBaseFolder
@@ -105,7 +105,68 @@ public class BasicDataCodeGenerator {
     
     /**
       * 生成基础数据代码<br/>
-      *<功能详细描述>
+      * <功能详细描述>
+      * @param basicDataType
+      * @param dataSourceType
+      * @param codeBaseFolder
+      * @param uniqueGetterNamesArray
+      * @param validGetterName
+      * @param queryPageIsPagedList
+      * @param cleanFolder [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public static void generate(Class<?> basicDataType,
+            DataSourceTypeEnum dataSourceType, String codeBaseFolder,
+            String[][] uniqueGetterNamesArray, String validGetterName,
+            boolean queryPageIsPagedList, boolean cleanFolder) {
+        generate("UTF-8",
+                "GBK",
+                basicDataType,
+                dataSourceType,
+                codeBaseFolder,
+                uniqueGetterNamesArray,
+                validGetterName,
+                queryPageIsPagedList,
+                cleanFolder);
+    }
+    
+    /**
+      * 生成基础数据代码<br/>
+      * <功能详细描述>
+      * @param codeEncode
+      * @param dbEncode
+      * @param basicDataType
+      * @param dataSourceType
+      * @param codeBaseFolder
+      * @param uniqueGetterNamesArray
+      * @param validPropertyName
+      * @param queryPageIsPagedList [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public static <T> void generate(String codeEncode, String dbEncode,
+            Class<T> basicDataType, DataSourceTypeEnum dataSourceType,
+            String codeBaseFolder, String[][] uniqueGetterNamesArray,
+            String validPropertyName, boolean queryPageIsPagedList) {
+        generate(codeEncode,
+                dbEncode,
+                basicDataType,
+                dataSourceType,
+                codeBaseFolder,
+                uniqueGetterNamesArray,
+                validPropertyName,
+                queryPageIsPagedList,
+                true);
+    }
+    
+    /**
+      * 生成基础数据代码<br/>
+      * <功能详细描述>
       * @param basicDataType
       * @param codeEncode
       * @param dataSourceType
@@ -118,12 +179,15 @@ public class BasicDataCodeGenerator {
     public static <T> void generate(String codeEncode, String dbEncode,
             Class<T> basicDataType, DataSourceTypeEnum dataSourceType,
             String codeBaseFolder, String[][] uniqueGetterNamesArray,
-            String validPropertyName, boolean queryPageIsPagedList) {
+            String validPropertyName, boolean queryPageIsPagedList,
+            boolean cleanFolder) {
         if (validPropertyName == null) {
             validPropertyName = "";
         }
         try {
-            FileUtils.cleanDirectory(new File(codeBaseFolder));
+            if (cleanFolder) {
+                FileUtils.cleanDirectory(new File(codeBaseFolder));
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

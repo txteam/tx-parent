@@ -4,7 +4,7 @@
  * 修改时间:  
  * <修改描述:>
  */
-package ${dao.basePackage}.impl;
+package ${dao.basePackage}.dao.impl;
 
 import java.util.List;
 import java.util.Map;
@@ -13,7 +13,7 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
 
-import ${dao.basePackage}.${dao.simpleEntityTypeName}Dao;
+import ${dao.basePackage}.dao.${dao.simpleEntityTypeName}Dao;
 import ${dao.entityTypeName};
 import com.tx.core.mybatis.model.Order;
 import com.tx.core.mybatis.support.MyBatisDaoSupport;

@@ -23,6 +23,33 @@ import ${dao.entityTypeName};
  * @since  [产品/模块版本]
  */
 public interface ${dao.simpleEntityTypeName}Dao {
+
+    /**
+      * 批量插入${dao.simpleEntityTypeName}对象实体
+      * 1、auto generate
+      * <功能详细描述>
+      * @param condition [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    //auto generate
+    public void batchInsert${dao.simpleEntityTypeName}(List<${dao.simpleEntityTypeName}> condition); 
+    
+    /**
+      * 批量更新${dao.simpleEntityTypeName}实体，
+      * auto generate
+      * 1、传入${dao.simpleEntityTypeName}中主键不能为空
+      * <功能详细描述>
+      * @param update${dao.simpleEntityTypeName}RowMap
+      * @return [参数说明]
+      * 
+      * @return int [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public void batchUpdate${dao.simpleEntityTypeName}(List<Map<String,Object>> updateRowMapList);
     
     /**
       * 插入${dao.simpleEntityTypeName}对象实体
