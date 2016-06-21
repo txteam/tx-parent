@@ -6,7 +6,11 @@
  */
 package com.tx.core.reflection;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
@@ -91,6 +95,47 @@ public class JpaMetaClass<T> {
         }
     }
     
+    /** */
+    private Class<T> type;
+    
+    private ClassReflector<T> classReflector;
+    
+    /** 实体类型:包括包名的类全名 */
+    private String entityTypeName;
+    
+    /** 去掉包名的类名:并转换首字母为小写 */
+    private String entitySimpleName;
+    
+    /** 所在模块包名 */
+    private String modulePackageName;
+    
+    /** 所在模块包简写名 */
+    private String modulePackageSimpleName;
+    
+    /** 对应表名 */
+    private String tableName;
+    
+    /** 生成表名的简写，根据对象名生成  */
+    private String simpleTableName;
+    
+    /** Id注解对应的属性名 */
+    private String pkGetterName;
+    
+    /** 主键类型 */
+    private Class<?> pkGetterType;
+    
+    /** 自动生成器类型 */
+    private GenerationType generationType;
+    
+    /** 自动生成器 */
+    private String generator;
+    
+    /** getter名及字段信息的映射关系 */
+    private Map<String, JpaColumnInfo> getter2columnInfoMapping = new LinkedHashMap<String, JpaColumnInfo>();
+    
+    /** 数据库字段和getter之间的映射 */
+    private Map<String, String> column2realGetterMapping = new LinkedHashMap<String, String>();
+    
     /**
      * <默认构造函数>
      */
@@ -135,6 +180,9 @@ public class JpaMetaClass<T> {
      */
     private void parseGetters() {
         //解析所有的getterNames
+        Map<String, JpaColumnInfo> getter2columnInfoMapping = new LinkedHashMap<String, JpaColumnInfo>();
+        Map<String, String> column2realGetterMapping = new LinkedHashMap<String, String>();
+        
         for (String getterNameTemp : this.classReflector.getGetterNames()) {
             //是否需要忽略对应字段
             if (isNeedSkip(type,
@@ -150,9 +198,24 @@ public class JpaMetaClass<T> {
                     this.classReflector);
             
             //将解析结果压入
-            this.column2realGetterMapping.put(jpaColumnInfo.getColumnName()
+            column2realGetterMapping.put(jpaColumnInfo.getColumnName()
                     .toUpperCase(), jpaColumnInfo.getRealGetterName());
-            this.getter2columnInfoMapping.put(getterNameTemp, jpaColumnInfo);
+            getter2columnInfoMapping.put(getterNameTemp, jpaColumnInfo);
+        }
+        
+        List<String> getterNameList = new ArrayList<>(
+                getter2columnInfoMapping.keySet());
+        Collections.sort(getterNameList, nameComparator);
+        for (String keyTemp : getterNameList) {
+            JpaColumnInfo columnInfoTemp = getter2columnInfoMapping.get(keyTemp);
+            this.getter2columnInfoMapping.put(keyTemp, columnInfoTemp);
+        }
+        List<String> columnNameList = new ArrayList<>(
+                column2realGetterMapping.keySet());
+        Collections.sort(columnNameList, nameComparator);
+        for (String keyTemp : columnNameList) {
+            String getterNameTemp = column2realGetterMapping.get(keyTemp);
+            this.column2realGetterMapping.put(keyTemp, getterNameTemp);
         }
     }
     
@@ -228,16 +291,18 @@ public class JpaMetaClass<T> {
             //"存在ManayToOne,OneToOne注解的字段不应该存在注解@Column应该为JoinColumn.type:{},getterName:{},getterType:{}",
             //new Object[] { type, getterName, getterType }));
             //存在Column注解并且为简单类型时
-            if(ReflectionUtils.isHasAnnotationForGetter(type,
+            if (ReflectionUtils.isHasAnnotationForGetter(type,
                     getterName,
-                    Column.class)){
-                processWhenColumnAnnotationExist(getterName, type, jpaColumnInfo);
+                    Column.class)) {
+                processWhenColumnAnnotationExist(getterName,
+                        type,
+                        jpaColumnInfo);
             }
             
             //当JoinColumn存在时
-            if(ReflectionUtils.isHasAnnotationForGetter(type,
+            if (ReflectionUtils.isHasAnnotationForGetter(type,
                     getterName,
-                    JoinColumn.class)){
+                    JoinColumn.class)) {
                 processWhenJoinColumnExist(getterName, type, jpaColumnInfo);
             }
         } else {
@@ -247,10 +312,12 @@ public class JpaMetaClass<T> {
             //JdbcUtils.isSupportedSimpleType(type)
             //为简单类型且不存在OneToOne ManyToOne时的解析方案
             //当JoinColumn存在时
-            if(ReflectionUtils.isHasAnnotationForGetter(type,
+            if (ReflectionUtils.isHasAnnotationForGetter(type,
                     getterName,
-                    Column.class)){
-                processWhenColumnAnnotationExist(getterName, type, jpaColumnInfo);
+                    Column.class)) {
+                processWhenColumnAnnotationExist(getterName,
+                        type,
+                        jpaColumnInfo);
             }
         }
         
@@ -505,11 +572,14 @@ public class JpaMetaClass<T> {
         this.tableName = this.entitySimpleName;
         
         //将类型截取掉
-        this.modulePackageName = StringUtils.substringBeforeLast(this.type.getName(), ".");
+        this.modulePackageName = StringUtils.substringBeforeLast(this.type.getName(),
+                ".");
         //将所在包
-        this.modulePackageName = StringUtils.substringBeforeLast(this.modulePackageName, ".");
+        this.modulePackageName = StringUtils.substringBeforeLast(this.modulePackageName,
+                ".");
         //截取最后一个包名作为模块名
-        String[] packages = StringUtils.splitByWholeSeparator(this.modulePackageName, ".");
+        String[] packages = StringUtils.splitByWholeSeparator(this.modulePackageName,
+                ".");
         this.modulePackageSimpleName = packages[packages.length - 1];
         
         //获取jpa注解
@@ -546,47 +616,6 @@ public class JpaMetaClass<T> {
             this.simpleTableName = "TO_";
         }
     }
-    
-    /** */
-    private Class<T> type;
-    
-    private ClassReflector<T> classReflector;
-    
-    /** 实体类型:包括包名的类全名 */
-    private String entityTypeName;
-    
-    /** 去掉包名的类名:并转换首字母为小写 */
-    private String entitySimpleName;
-    
-    /** 所在模块包名 */
-    private String modulePackageName;
-    
-    /** 所在模块包简写名 */
-    private String modulePackageSimpleName;
-    
-    /** 对应表名 */
-    private String tableName;
-    
-    /** 生成表名的简写，根据对象名生成  */
-    private String simpleTableName;
-    
-    /** Id注解对应的属性名 */
-    private String pkGetterName;
-    
-    /** 主键类型 */
-    private Class<?> pkGetterType;
-    
-    /** 自动生成器类型 */
-    private GenerationType generationType;
-    
-    /** 自动生成器 */
-    private String generator;
-    
-    /** getter名及字段信息的映射关系 */
-    private Map<String, JpaColumnInfo> getter2columnInfoMapping = new HashMap<String, JpaColumnInfo>();
-    
-    /** 数据库字段和getter之间的映射 */
-    private Map<String, String> column2realGetterMapping = new HashMap<String, String>();
     
     /**
      * @return 返回 type
@@ -701,18 +730,38 @@ public class JpaMetaClass<T> {
     public Map<String, String> getColumn2getterMapping() {
         return MapUtils.unmodifiableMap(column2realGetterMapping);
     }
-
+    
     /**
      * @return 返回 modulePackageName
      */
     public String getModulePackageName() {
         return modulePackageName;
     }
-
+    
     /**
      * @return 返回 modulePackageSimpleName
      */
     public String getModulePackageSimpleName() {
         return modulePackageSimpleName;
     }
+    
+    private static Comparator<String> nameComparator = new Comparator<String>() {
+        @Override
+        public int compare(String o1, String o2) {
+            if ("id".equals(o1.toLowerCase())) {
+                return -1;
+            } else if ("id".equals(o2.toLowerCase())) {
+                return 1;
+            } else if (o1.toLowerCase().endsWith("id")
+                    && o2.toLowerCase().endsWith("id")) {
+                return o1.compareTo(o2);
+            } else if (o1.toLowerCase().endsWith("id")) {
+                return -1;
+            } else if (o2.toLowerCase().endsWith("id")) {
+                return 1;
+            } else {
+                return o1.compareTo(o2);
+            }
+        }
+    };
 }

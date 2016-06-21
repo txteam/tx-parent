@@ -7,9 +7,10 @@
 package com.tx.core.generator.model;
 
 import java.sql.Types;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.hibernate.dialect.Dialect;
 import org.hibernate.dialect.MySQL5InnoDBDialect;
@@ -36,10 +37,10 @@ public class DBScriptMapper {
     private String pkColumnName;
     
     /** 字段对应数据库类型 */
-    private Map<String, String> columnName2TypeNameMapping = new HashMap<String, String>();
+    private Map<String, String> columnName2TypeNameMapping = new LinkedHashMap<String, String>();
     
     /** 字段对应注释 */
-    private Map<String, String> columnName2CommentMapping = new HashMap<String, String>();
+    private Map<String, String> columnName2CommentMapping = new LinkedHashMap<String, String>();
     
     public DBScriptMapper() {
         super();
@@ -53,11 +54,13 @@ public class DBScriptMapper {
                 .getColumnName()
                 .toUpperCase();
         
-        for (Entry<String, JpaColumnInfo> entryTemp : jpaMetaClass.getGetter2columnInfoMapping()
-                .entrySet()) {
-            JpaColumnInfo columnInfo = entryTemp.getValue();
+        Map<String, JpaColumnInfo> property2columnMap = jpaMetaClass.getGetter2columnInfoMapping();
+        List<String> propertyList = new ArrayList<>(property2columnMap.keySet());
+        
+        for (String keyTemp : propertyList) {
+            JpaColumnInfo columnInfo = property2columnMap.get(keyTemp);
             
-            this.columnName2TypeNameMapping.put(entryTemp.getKey(),
+            this.columnName2TypeNameMapping.put(keyTemp,
                     dialect.getTypeName(JdbcUtils.getSqlTypeByJavaType(columnInfo.getRealGetterType()),
                             columnInfo.getLength(),
                             columnInfo.getPrecision(),

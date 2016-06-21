@@ -4,7 +4,7 @@
  * 修改时间:  2016年6月19日
  * <修改描述:>
  */
-package com.tx.core.jdbc.tableview.annotation;
+package com.tx.core.model;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -29,7 +29,7 @@ import java.lang.annotation.Target;
 @Inherited
 public @interface TableView {
     
-    public String viewSql() default "";
+    public String createViewSql() default "";
     
     public String sourceDatasource() default "";
     
