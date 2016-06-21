@@ -17,6 +17,7 @@ import org.springframework.beans.factory.FactoryBean;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
+@Deprecated
 public class BasicDataContextFactory extends BasicDataContext implements
         FactoryBean<BasicDataContext> {
     

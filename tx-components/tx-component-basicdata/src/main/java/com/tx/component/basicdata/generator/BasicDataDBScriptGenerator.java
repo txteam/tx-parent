@@ -18,6 +18,7 @@ import com.tx.core.generator.JpaEntityFreeMarkerGenerator;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
+@Deprecated
 public class BasicDataDBScriptGenerator {
     
     private static Class<?> loadTemplateClass = BasicDataDBScriptGenerator.class;
