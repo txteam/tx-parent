@@ -51,7 +51,7 @@ $(document).ready(function(){
 </#if>
 
 	grid = $('#grid').datagrid({
-		url : '${r"${contextPath}"}/${view.lowerCaseEntitySimpleName}/query${view.entitySimpleName}ListIncludeInvalid.action',
+		url : '${r"${contextPath}"}/${view.lowerCaseEntitySimpleName}/query${view.entitySimpleName}<#if isPagedList>PagedList<#else>List</#if>.action',
 		fit : true,
 		fitColumns : true,
 		border : false,
