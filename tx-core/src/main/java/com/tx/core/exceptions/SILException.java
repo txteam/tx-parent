@@ -6,6 +6,7 @@
  */
 package com.tx.core.exceptions;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.helpers.MessageFormatter;
 
 import com.tx.core.TxConstants;
@@ -69,7 +70,7 @@ public class SILException extends RuntimeException {
      * @see [类、类#方法、类#成员]
      */
     public String getErrorMessage() {
-        String errorMessage = doGetErrorMessage();
+        String errorMessage = this.errorMessage;
         return errorMessage;
     }
     
@@ -84,26 +85,30 @@ public class SILException extends RuntimeException {
      * @see [类、类#方法、类#成员]
      */
     protected String doGetErrorMessage() {
-        return "系统内部错误";
+        return "";
     }
     
     public SILException(String message) {
         this(message, new Object[0]);
         this.errorCode = getErrorCode();
-        this.errorMessage = getErrorMessage();
+        this.errorMessage = !StringUtils.isEmpty(doGetErrorMessage()) ? doGetErrorMessage()
+                : message;
     }
     
     public SILException(String message, Throwable cause) {
         super(message, cause);
         this.errorCode = getErrorCode();
-        this.errorMessage = getErrorMessage();
+        this.errorMessage = !StringUtils.isEmpty(doGetErrorMessage()) ? doGetErrorMessage()
+                : message;
     }
     
     public SILException(String message, Object[] parameters) {
         super((parameters == null || parameters.length == 0) ? message
-                : MessageFormatter.arrayFormat(message, parameters).getMessage());
+                : MessageFormatter.arrayFormat(message, parameters)
+                        .getMessage());
         this.errorCode = getErrorCode();
-        this.errorMessage = getErrorMessage();
+        this.errorMessage = !StringUtils.isEmpty(doGetErrorMessage()) ? doGetErrorMessage()
+                : message;
     }
     
     public SILException(String message, String... parameters) {

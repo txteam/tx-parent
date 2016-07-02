@@ -270,7 +270,7 @@ public class JpaMetaClass<T> {
             jpaColumnInfo.setLength(64);
             
             //断言为非简单类型
-            if (!JdbcUtils.isSupportedSimpleType(getterType)) {
+            if (!JdbcUtils.isSupportedSimpleType(getterType) && !getterType.isEnum()) {
                 //关联字段的类型解析结果
                 //为了避免无限循环调用，这里使用了一个内置的特殊方法，不会用到缓存
                 @SuppressWarnings({ "unchecked", "rawtypes" })
