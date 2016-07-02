@@ -104,12 +104,6 @@
 			<artifactId>cxf-rt-frontend-jaxrs</artifactId>
 			<optional>true</optional>
 		</dependency>
-		<!-- xfire -->
-		<dependency>
-			<groupId>org.codehaus.xfire</groupId>
-			<artifactId>xfire-all</artifactId>
-			<optional>true</optional>
-		</dependency>
 
 		<!-- hibernate -->
 		<dependency>
