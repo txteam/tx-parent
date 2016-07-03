@@ -72,31 +72,53 @@ public class HttpClientUtils {
      */
     public static HttpClient42x buildHttpClient42x(Class<?> type,
             long connectionManagerTimeout, int connectionTimeout,
-            int soTimeout, int maxTotalConnections, int maxConnectionsPerHost) {
+            int soTimeout, int maxTotalConnections, int maxConnectionsPerHost,
+            boolean statleCheckingEnabled) {
         HttpClient42x httpClient42x = buildHttpClient42x(type,
                 connectionManagerTimeout,
                 connectionTimeout,
                 soTimeout,
                 maxTotalConnections,
                 maxConnectionsPerHost,
+                statleCheckingEnabled,
                 true,
                 3,
                 3000);
         return httpClient42x;
     }
     
+    /**
+      * 构建42x版本的HttpClient对象<br/>
+      * <功能详细描述>
+      * @param type
+      * @param connectionManagerTimeout
+      * @param connectionTimeout
+      * @param soTimeout
+      * @param maxTotalConnections
+      * @param maxConnectionsPerHost
+      * @param statleCheckingEnabled
+      * @param isRetry
+      * @param maxRetries
+      * @param retryInterval
+      * @return [参数说明]
+      * 
+      * @return HttpClient42x [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
     public static HttpClient42x buildHttpClient42x(Class<?> type,
             long connectionManagerTimeout, int connectionTimeout,
             int soTimeout, int maxTotalConnections, int maxConnectionsPerHost,
-            boolean isRetry, int maxRetries, int retryInterval) {
+            boolean statleCheckingEnabled, boolean isRetry, int maxRetries,
+            int retryInterval) {
         if (httpClient42xMap.containsKey(type)) {
             return httpClient42xMap.get(type);
         }
         
         HttpClient42x httpClient42x = new HttpClient42x(
                 connectionManagerTimeout, connectionTimeout, soTimeout,
-                maxTotalConnections, maxConnectionsPerHost, isRetry,
-                maxRetries, retryInterval);
+                maxTotalConnections, maxConnectionsPerHost,
+                statleCheckingEnabled, isRetry, maxRetries, retryInterval);
         httpClient42xMap.put(type, httpClient42x);
         return httpClient42x;
     }
@@ -138,14 +160,15 @@ public class HttpClientUtils {
         /** <默认构造函数> */
         public HttpClient42x(long connectionManagerTimeout,
                 int connectionTimeout, int soTimeout, int maxTotalConnections,
-                int maxConnectionsPerHost, boolean isRetry, int maxRetries,
-                int retryInterval) {
+                int maxConnectionsPerHost, boolean statleCheckingEnabled,
+                boolean isRetry, int maxRetries, int retryInterval) {
             super();
             this.connectionManagerTimeout = connectionManagerTimeout;
             this.connectionTimeout = connectionTimeout;
             this.soTimeout = soTimeout;
             this.maxTotalConnections = maxTotalConnections;
             this.maxConnectionsPerHost = maxConnectionsPerHost;
+            this.statleCheckingEnabled = statleCheckingEnabled;
             
             this.isRetry = isRetry;
             this.maxRetries = maxRetries;
@@ -228,12 +251,13 @@ public class HttpClientUtils {
         }
         
         public String post(String url, String requestMessage,
-                String requestEncoding, String responseEncoding){
+                String requestEncoding, String responseEncoding) {
             String resStr = "";
             
             HttpEntity requestEntity = null;
             try {
-                requestEntity = new StringEntity(requestMessage, requestEncoding);
+                requestEntity = new StringEntity(requestMessage,
+                        requestEncoding);
             } catch (UnsupportedEncodingException e) {
                 throw new BeforeHttpExcuteException("Http请求参数字符集转换异常.", e);
             }

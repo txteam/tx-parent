@@ -1,5 +1,6 @@
 package com.tx.core.util;
 
+import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -16,6 +17,7 @@ import com.thoughtworks.xstream.io.xml.Xpp3DomDriver;
 import com.thoughtworks.xstream.mapper.CannotResolveClassException;
 import com.thoughtworks.xstream.mapper.Mapper;
 import com.thoughtworks.xstream.mapper.MapperWrapper;
+import com.tx.core.exceptions.argument.UnsupportedEncodingArgException;
 
 /**
   * xstream工具封装
@@ -35,7 +37,7 @@ public class XstreamUtils {
     /**
      * 转换过程中特殊字符转码
      */
-    private static NameCoder nameCoder = new NameCoder() {
+    private static NameCoder defaultNameCoder = new NameCoder() {
         public String encodeNode(String arg0) {
             return arg0;
         }
@@ -52,6 +54,96 @@ public class XstreamUtils {
             return arg0;
         }
     };
+    
+    /**
+      * 增加字符集设置功能
+      * <功能详细描述>
+      * @param charset
+      * @return [参数说明]
+      * 
+      * @return NameCoder [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public static NameCoder getCharsetNameCoder(String charset) {
+        charset = StringUtils.isEmpty(charset) ? "UTF-8" : charset;
+        NameCoder nc = getNameCoder("UTF-8", charset, charset, "UTF-8");
+        return nc;
+    }
+    
+    /**
+      * 
+      * <功能详细描述>
+      * @param encodeSourceCharset
+      * @param encodeTargetCharset
+      * @param decodeSourceCharset
+      * @param decodeTargetCharset
+      * @return [参数说明]
+      * 
+      * @return NameCoder [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public static NameCoder getNameCoder(String encodeSourceCharset,
+            String encodeTargetCharset, String decodeSourceCharset,
+            String decodeTargetCharset) {
+        final String finalEncodeSourceCharset = StringUtils.isEmpty(encodeSourceCharset) ? "UTF-8"
+                : encodeSourceCharset;
+        final String finalEncodeTargetCharset = StringUtils.isEmpty(encodeTargetCharset) ? "UTF-8"
+                : encodeTargetCharset;
+        final String finalDecodeSourceCharset = StringUtils.isEmpty(decodeSourceCharset) ? "UTF-8"
+                : decodeSourceCharset;
+        final String finalDecodeTargetCharset = StringUtils.isEmpty(decodeTargetCharset) ? "UTF-8"
+                : decodeTargetCharset;
+        NameCoder nameCoder = new NameCoder() {
+            public String encodeNode(String content) {
+                content = transfer(content,
+                        finalEncodeSourceCharset,
+                        finalEncodeTargetCharset);
+                return content;
+            }
+            
+            public String encodeAttribute(String content) {
+                content = transfer(content,
+                        finalEncodeSourceCharset,
+                        finalEncodeTargetCharset);
+                return content;
+            }
+            
+            public String decodeNode(String content) {
+                content = transfer(content,
+                        finalDecodeSourceCharset,
+                        finalDecodeTargetCharset);
+                return content;
+            }
+            
+            public String decodeAttribute(String content) {
+                content = transfer(content,
+                        finalDecodeSourceCharset,
+                        finalDecodeTargetCharset);
+                return content;
+            }
+            
+            private String transfer(String content, String sourceCharset,
+                    String targetCharset) {
+                if (sourceCharset.equals(targetCharset)) {
+                    return content;
+                } else {
+                    try {
+                        content = new String(content.getBytes(sourceCharset),
+                                targetCharset);
+                    } catch (UnsupportedEncodingException e) {
+                        throw new UnsupportedEncodingArgException(
+                                "不支持的字符集.source:{} target:{}",
+                                finalEncodeSourceCharset,
+                                finalEncodeTargetCharset);
+                    }
+                }
+                return content;
+            }
+        };
+        return nameCoder;
+    }
     
     /**
       * 在xml中多余的节点生成bean时会抛出异常
@@ -77,8 +169,7 @@ public class XstreamUtils {
                 ;
                 try {
                     res = super.realClass(elementName);
-                }
-                catch (CannotResolveClassException e) {
+                } catch (CannotResolveClassException e) {
                     logger.warn("xstream change xml to object. filed (0) not exsit. ",
                             elementName);
                 }
@@ -103,8 +194,8 @@ public class XstreamUtils {
     }
     
     /**
-      *<获取xstream转换对象>
-      *<功能详细描述>
+      * 获取Xstream对象<br/>
+      * <功能详细描述>
       * @param classType
       * @param isSkipOverElement
       * @param isNewLine
@@ -116,6 +207,47 @@ public class XstreamUtils {
      */
     public static XStream getXstream(Class<?> classType,
             boolean isSkipOverElement, boolean isNewLine) {
+        return getXstream(classType,
+                defaultNameCoder,
+                isSkipOverElement,
+                isNewLine);
+    }
+    
+    /**
+      * 获取对应字符集的xstream对象
+      * <功能详细描述>
+      * @param classType
+      * @param charset
+      * @param isSkipOverElement
+      * @param isNewLine
+      * @return [参数说明]
+      * 
+      * @return XStream [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public static XStream getXstream(Class<?> classType, String charset,
+            boolean isSkipOverElement, boolean isNewLine) {
+        return getXstream(classType,
+                getCharsetNameCoder(charset),
+                isSkipOverElement,
+                isNewLine);
+    }
+    
+    /**
+      * <获取xstream转换对象>
+      * <功能详细描述>
+      * @param classType
+      * @param isSkipOverElement
+      * @param isNewLine
+      * @return [参数说明]
+      * 
+      * @return XStream [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public static XStream getXstream(Class<?> classType, NameCoder nameCoder,
+            boolean isSkipOverElement, boolean isNewLine) {
         if (xstreamMap.containsKey(classType)) {
             return xstreamMap.get(classType);
         }
@@ -126,8 +258,7 @@ public class XstreamUtils {
         HierarchicalStreamDriver domDriver = null;
         if (isNewLine) {
             domDriver = new Xpp3DomDriver(nameCoder);
-        }
-        else {
+        } else {
             domDriver = new Xpp3DomDriver(nameCoder) {
                 public HierarchicalStreamWriter createWriter(Writer out) {
                     return new PrettyPrintWriter(out, getNameCoder()) {
@@ -152,8 +283,7 @@ public class XstreamUtils {
                     return createSkipOverElementMapperWrapper(next);
                 }
             };
-        }
-        else {
+        } else {
             res = new XStream(domDriver);
         }
         
