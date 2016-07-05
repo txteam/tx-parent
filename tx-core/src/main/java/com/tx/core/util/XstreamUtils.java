@@ -251,7 +251,9 @@ public class XstreamUtils {
         if (xstreamMap.containsKey(classType)) {
             return xstreamMap.get(classType);
         }
-        
+        if(nameCoder == null){
+            nameCoder = defaultNameCoder;
+        }
         /**
          * 生成domDriver 重写createWriter方法，使生成的domDriver在新的节点不会信生成一行
          */
