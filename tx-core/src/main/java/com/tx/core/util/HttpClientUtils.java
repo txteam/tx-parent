@@ -8,6 +8,7 @@ package com.tx.core.util;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.params.ClientPNames;
 import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.AutoRetryHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -35,6 +37,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.CoreConnectionPNames;
 import org.apache.http.params.HttpParams;
+import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
 import com.tx.core.exceptions.http.AfterHttpExcuteException;
@@ -290,7 +293,20 @@ public class HttpClientUtils {
                 
                 if (entity != null) {
                     try {
-                        resStr = EntityUtils.toString(entity, responseEncoding);
+                        Charset responseCharset = Charset.forName(responseEncoding);
+                        if (responseCharset == null) {
+                            ContentType contentType = ContentType.getOrDefault(entity);
+                            Charset defaultCharset = contentType.getCharset();
+                            if (defaultCharset == null) {
+                                defaultCharset = HTTP.DEF_CONTENT_CHARSET;
+                            }
+                            resStr = new String(
+                                    EntityUtils.toByteArray(entity), defaultCharset);
+                        } else {
+                            resStr = new String(
+                                    EntityUtils.toByteArray(entity),
+                                    responseCharset);
+                        }
                     } catch (ParseException e) {
                         throw new AfterHttpExcuteException("Http请求返回解析异常", e);
                     } catch (IOException e) {
@@ -369,7 +385,20 @@ public class HttpClientUtils {
                 
                 if (entity != null) {
                     try {
-                        resStr = EntityUtils.toString(entity, responseEncoding);
+                        Charset responseCharset = Charset.forName(responseEncoding);
+                        if (responseCharset == null) {
+                            ContentType contentType = ContentType.getOrDefault(entity);
+                            Charset defaultCharset = contentType.getCharset();
+                            if (defaultCharset == null) {
+                                defaultCharset = HTTP.DEF_CONTENT_CHARSET;
+                            }
+                            resStr = new String(
+                                    EntityUtils.toByteArray(entity), defaultCharset);
+                        } else {
+                            resStr = new String(
+                                    EntityUtils.toByteArray(entity),
+                                    responseCharset);
+                        }
                     } catch (ParseException e) {
                         throw new AfterHttpExcuteException("Http请求返回解析异常", e);
                     } catch (IOException e) {
@@ -426,7 +455,20 @@ public class HttpClientUtils {
                 HttpEntity entity = response.getEntity();
                 if (entity != null) {
                     try {
-                        resStr = EntityUtils.toString(entity, responseEncoding);
+                        Charset responseCharset = Charset.forName(responseEncoding);
+                        if (responseCharset == null) {
+                            ContentType contentType = ContentType.getOrDefault(entity);
+                            Charset defaultCharset = contentType.getCharset();
+                            if (defaultCharset == null) {
+                                defaultCharset = HTTP.DEF_CONTENT_CHARSET;
+                            }
+                            resStr = new String(
+                                    EntityUtils.toByteArray(entity), defaultCharset);
+                        } else {
+                            resStr = new String(
+                                    EntityUtils.toByteArray(entity),
+                                    responseCharset);
+                        }
                     } catch (ParseException e) {
                         throw new AfterHttpExcuteException("Http请求返回解析异常", e);
                     } catch (IOException e) {
