@@ -100,9 +100,9 @@ public class ${service.entitySimpleName}Service {
     
     /**
      * 分页查询${service.entitySimpleName}实体列表
-<#list service.queryConditionName2TypeNameMapping?keys as key>
-     * @param ${key}
-</#list>
+	<#list service.queryConditionName2TypeNameMapping?keys as key>
+	     * @param ${key}
+	</#list>
      * @param pageIndex 当前页index从1开始计算
      * @param pageSize 每页显示行数
      * 
