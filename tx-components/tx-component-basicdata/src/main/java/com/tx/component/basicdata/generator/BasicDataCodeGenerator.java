@@ -218,6 +218,7 @@ public class BasicDataCodeGenerator {
         String[] entityTypeNameArray = jpaMetaClass.getEntityTypeName()
                 .split("\\.");
         String packageName = entityTypeNameArray[entityTypeNameArray.length - 3];
+        String entitySimpleName = jpaMetaClass.getEntitySimpleName();
         logger.info("代码生成完毕，请按以下步骤进行操作：");
         logger.info("   \t 1、打开文件夹：{}", codeBaseFolder);
         logger.info("   \t 2、拷贝main文件夹，粘贴于src目录下。");
@@ -231,11 +232,11 @@ public class BasicDataCodeGenerator {
                 + "\thref=\"/{}/toQuery{}List.action\" \n"
                 + "\ttarget=\"mainTabs\"></menu> \n",
                 new Object[] {
-                        StringUtils.uncapitalize(jpaMetaClass.getEntitySimpleName()),
-                        StringUtils.uncapitalize(jpaMetaClass.getEntitySimpleName()),
+                        StringUtils.uncapitalize(entitySimpleName),
+                        StringUtils.uncapitalize(entitySimpleName),
                         packageName,
-                        jpaMetaClass.getEntitySimpleName(),
-                        StringUtils.uncapitalize(jpaMetaClass.getEntitySimpleName()) });
+                        StringUtils.uncapitalize(entitySimpleName),
+                        StringUtils.capitalize(jpaMetaClass.getEntitySimpleName()) });
         logger.info("   \t 8、启动项目验证是否启动正确。");
         logger.info("   \t 9、点击对应菜单项目，进入查询页面。打开对应查询页面修改其中存在//TODO:的逻辑，并查看效果");
         logger.info("   \t 10、新增、修改、删除等操作。并调整新增、修改页面排版。");
