@@ -1770,7 +1770,7 @@
 		<profile>
 			<id>tx_profile</id>
 			<repositories>
-				<repository>
+				<!-- <repository>
 					<id>nexus-osc</id>
 					<url>http://maven.oschina.net/content/groups/public/</url>
 					<releases>
@@ -1789,7 +1789,7 @@
 					<snapshots>
 						<enabled>true</enabled>
 					</snapshots>
-				</repository>
+				</repository> -->
 				<repository>
 					<id>nexus-tx</id>
 					<url>http://120.24.75.25:8081/nexus/content/groups/public/</url>
@@ -1802,7 +1802,7 @@
 				</repository>
 			</repositories>
 			<pluginRepositories>
-				<pluginRepository>
+				<!-- <pluginRepository>
 					<id>nexus-osc</id>
 					<url>http://maven.oschina.net/content/groups/public/</url>
 					<releases>
@@ -1821,7 +1821,7 @@
 					<snapshots>
 						<enabled>true</enabled>
 					</snapshots>
-				</pluginRepository>
+				</pluginRepository> -->
 				<pluginRepository>
 					<id>nexus-tx</id>
 					<url>http://120.24.75.25:8081/nexus/content/groups/public/</url>
