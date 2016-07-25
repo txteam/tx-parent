@@ -1766,26 +1766,26 @@
 		<profile>
 			<id>tx_profile</id>
 			<repositories>
-				<repository>
-					<id>nexus-osc</id>
-					<url>http://maven.oschina.net/content/groups/public/</url>
-					<releases>
-						<enabled>true</enabled>
-					</releases>
-					<snapshots>
-						<enabled>true</enabled>
-					</snapshots>
-				</repository>
-				<repository>
-					<id>nexus-osc-thirdparty</id>
-					<url>http://maven.oschina.net/content/repositories/thirdparty/</url>
-					<releases>
-						<enabled>true</enabled>
-					</releases>
-					<snapshots>
-						<enabled>true</enabled>
-					</snapshots>
-				</repository>
+				<!-- <repository> -->
+				<!-- <id>nexus-osc</id> -->
+				<!-- <url>http://maven.oschina.net/content/groups/public/</url> -->
+				<!-- <releases> -->
+				<!-- <enabled>true</enabled> -->
+				<!-- </releases> -->
+				<!-- <snapshots> -->
+				<!-- <enabled>true</enabled> -->
+				<!-- </snapshots> -->
+				<!-- </repository> -->
+				<!-- <repository> -->
+				<!-- <id>nexus-osc-thirdparty</id> -->
+				<!-- <url>http://maven.oschina.net/content/repositories/thirdparty/</url> -->
+				<!-- <releases> -->
+				<!-- <enabled>true</enabled> -->
+				<!-- </releases> -->
+				<!-- <snapshots> -->
+				<!-- <enabled>true</enabled> -->
+				<!-- </snapshots> -->
+				<!-- </repository> -->
 				<repository>
 					<id>nexus-tx</id>
 					<url>http://120.24.75.25:8081/nexus/content/groups/public/</url>
@@ -1798,26 +1798,26 @@
 				</repository>
 			</repositories>
 			<pluginRepositories>
-				<pluginRepository>
-					<id>nexus-osc</id>
-					<url>http://maven.oschina.net/content/groups/public/</url>
-					<releases>
-						<enabled>true</enabled>
-					</releases>
-					<snapshots>
-						<enabled>true</enabled>
-					</snapshots>
-				</pluginRepository>
-				<pluginRepository>
-					<id>nexus-osc-thirdparty</id>
-					<url>http://maven.oschina.net/content/repositories/thirdparty/</url>
-					<releases>
-						<enabled>true</enabled>
-					</releases>
-					<snapshots>
-						<enabled>true</enabled>
-					</snapshots>
-				</pluginRepository>
+				<!-- <pluginRepository> -->
+				<!-- <id>nexus-osc</id> -->
+				<!-- <url>http://maven.oschina.net/content/groups/public/</url> -->
+				<!-- <releases> -->
+				<!-- <enabled>true</enabled> -->
+				<!-- </releases> -->
+				<!-- <snapshots> -->
+				<!-- <enabled>true</enabled> -->
+				<!-- </snapshots> -->
+				<!-- </pluginRepository> -->
+				<!-- <pluginRepository> -->
+				<!-- <id>nexus-osc-thirdparty</id> -->
+				<!-- <url>http://maven.oschina.net/content/repositories/thirdparty/</url> -->
+				<!-- <releases> -->
+				<!-- <enabled>true</enabled> -->
+				<!-- </releases> -->
+				<!-- <snapshots> -->
+				<!-- <enabled>true</enabled> -->
+				<!-- </snapshots> -->
+				<!-- </pluginRepository> -->
 				<pluginRepository>
 					<id>nexus-tx</id>
 					<url>http://120.24.75.25:8081/nexus/content/groups/public/</url>
