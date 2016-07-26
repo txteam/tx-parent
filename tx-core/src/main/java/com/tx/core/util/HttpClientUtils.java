@@ -27,6 +27,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.params.ClientPNames;
 import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.AutoRetryHttpClient;
@@ -316,7 +317,11 @@ public class HttpClientUtils {
             } catch (ClientProtocolException e1) {
                 throw new HttpExcutingException(false, "Http请求协议异常.", e1);
             } catch (IOException e1) {
-                throw new HttpExcutingException(true, "Http请求IO流异常.", e1);
+                if(e1 instanceof ConnectTimeoutException){
+                    throw new HttpExcutingException(false, "Http请求IO流异常.", e1);
+                }else{
+                    throw new HttpExcutingException(true, "Http请求IO流异常.", e1);
+                }
             } finally {
                 if (response != null) {
                     try {

@@ -103,7 +103,6 @@ public class ${service.entitySimpleName}Service {
 	<#list service.queryConditionName2TypeNameMapping?keys as key>* @param ${key}</#list>
      * @param pageIndex 当前页index从1开始计算
      * @param pageSize 每页显示行数
-     * 
      * <功能详细描述>
      * @return [参数说明]
      * 
