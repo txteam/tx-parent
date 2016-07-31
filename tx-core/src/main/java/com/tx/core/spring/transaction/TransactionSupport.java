@@ -8,6 +8,7 @@ package com.tx.core.spring.transaction;
 
 import java.lang.reflect.UndeclaredThrowableException;
 
+import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionException;
@@ -16,6 +17,9 @@ import org.springframework.transaction.TransactionSystemException;
 import org.springframework.transaction.support.CallbackPreferringPlatformTransactionManager;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationAdapter;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import com.tx.core.exceptions.util.AssertUtils;
@@ -119,8 +123,8 @@ public class TransactionSupport extends TransactionTemplate {
      * @throws TransactionException in case of a rollback error
      */
     private void rollbackOnException(TransactionStatus status, Throwable ex,
-            TransactionCallbackWithoutResult actionWhenRollback,
-            TransactionDefinition rollbackActionTransactionDefinition)
+            final TransactionCallbackWithoutResult actionWhenRollback,
+            final TransactionDefinition rollbackActionTransactionDefinition)
             throws TransactionException {
         logger.debug("Initiating transaction rollback on application exception",
                 ex);
@@ -141,8 +145,32 @@ public class TransactionSupport extends TransactionTemplate {
             throw err;
         } finally {
             if (actionWhenRollback != null) {
-                executeWhenRollback(actionWhenRollback,
-                        rollbackActionTransactionDefinition);
+                if (status.isNewTransaction()) {
+                    executeWhenRollback(actionWhenRollback,
+                            rollbackActionTransactionDefinition);
+                } else {
+                    TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
+                        /**
+                         * @return
+                         */
+                        @Override
+                        public int getOrder() {
+                            //需要在Mybatis的 DataSourceUtils.CONNECTION_SYNCHRONIZATION_ORDER - 1之前执行，否则会出现unbind时异常
+                            return DataSourceUtils.CONNECTION_SYNCHRONIZATION_ORDER - 2;
+                        }
+                        /**
+                         * @param status
+                         */
+                        @Override
+                        public void afterCompletion(int status) {
+                            if (TransactionSynchronization.STATUS_ROLLED_BACK != status) {
+                                return;
+                            }
+                            executeWhenRollback(actionWhenRollback,
+                                    rollbackActionTransactionDefinition);
+                        }
+                    });
+                }
             }
         }
     }

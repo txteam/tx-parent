@@ -21,7 +21,6 @@ import org.apache.ibatis.session.SqlSessionManager;
 import org.hibernate.id.IdentifierGenerator;
 import org.hibernate.id.UUIDHexGenerator;
 import org.mybatis.spring.SqlSessionTemplate;
-import org.mybatis.spring.SqlSessionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -704,13 +703,6 @@ public class MyBatisDaoSupport implements InitializingBean {
         }
         //设置总条数
         result.setTotalNum(objectList.size());
-        
-        //从当前环境中根据connection生成批量提交的sqlSession
-        SqlSessionFactory newSqlSessionFactory = SqlSessionManager.newInstance(this.sqlSessionTemplate.getSqlSessionFactory());
-        
-        SqlSessionUtils.getSqlSession(newSqlSessionFactory,
-                ExecutorType.BATCH,
-                null);
         
         // 本次flush的列表开始行行索引
         int startFlushRowIndex = 0;
