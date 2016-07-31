@@ -417,7 +417,7 @@ public abstract class BaseBasicDataExecutor<T> implements BasicDataExecutor<T> {
             //如果在事务逻辑中执行
             TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
                 @Override
-                public void afterCommit() {
+                public void beforeCommit(boolean readOnly) {
                     finalCache.removeAll();
                     
                     logger.debug("clearCache cacheName:{}.",

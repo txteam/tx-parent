@@ -45,7 +45,7 @@ public class TransactionAwareLazyEhCacheMap<V> extends LazyEhCacheMap<V> {
         if (TransactionSynchronizationManager.isSynchronizationActive()) {
             TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
                 @Override
-                public void afterCommit() {
+                public void beforeCommit(boolean readOnly) {
                     putInCache(key, value);
                 }
             });
@@ -62,7 +62,7 @@ public class TransactionAwareLazyEhCacheMap<V> extends LazyEhCacheMap<V> {
         if (TransactionSynchronizationManager.isSynchronizationActive()) {
             TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
                 @Override
-                public void afterCommit() {
+                public void beforeCommit(boolean readOnly) {
                     putAllInCache(m);
                 }
             });
@@ -79,7 +79,7 @@ public class TransactionAwareLazyEhCacheMap<V> extends LazyEhCacheMap<V> {
         if (TransactionSynchronizationManager.isSynchronizationActive()) {
             TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
                 @Override
-                public void afterCommit() {
+                public void beforeCommit(boolean readOnly) {
                     removeFromCache(key);
                 }
             });
@@ -96,7 +96,7 @@ public class TransactionAwareLazyEhCacheMap<V> extends LazyEhCacheMap<V> {
         if (TransactionSynchronizationManager.isSynchronizationActive()) {
             TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
                 @Override
-                public void afterCommit() {
+                public void beforeCommit(boolean readOnly) {
                     clearCache();
                 }
             });

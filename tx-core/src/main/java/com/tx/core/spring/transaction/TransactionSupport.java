@@ -14,9 +14,11 @@ import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.TransactionSystemException;
 import org.springframework.transaction.support.CallbackPreferringPlatformTransactionManager;
-import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
+
+import com.tx.core.exceptions.util.AssertUtils;
 
 /**
  * 事务支撑类<br/>
@@ -51,28 +53,57 @@ public class TransactionSupport extends TransactionTemplate {
         super(transactionManager);
     }
     
-    public <T> T execute(TransactionCallback<T> action,
-            TransactionCallbackWithoutResult exceptionAction)
+    public <T> T execute(
+            TransactionCallbackSupportRegisteRollbackAction<T> action)
+            throws TransactionException {
+        T result = execute(action, new DefaultTransactionDefinition(
+                TransactionDefinition.PROPAGATION_REQUIRES_NEW));
+        return result;
+    }
+    
+    /**
+      * 支持注册RollbackAction的执行器<br/>
+      * <功能详细描述>
+      * @param action
+      * @return
+      * @throws TransactionException [参数说明]
+      * 
+      * @return T [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public <T> T execute(
+            TransactionCallbackSupportRegisteRollbackAction<T> action,
+            TransactionDefinition rollbackActionTransactionDefinition)
             throws TransactionException {
         if (getTransactionManager() instanceof CallbackPreferringPlatformTransactionManager) {
             return ((CallbackPreferringPlatformTransactionManager) getTransactionManager()).execute(this,
                     action);
         } else {
             TransactionStatus status = getTransactionManager().getTransaction(this);
-            T result;
+            T result = null;
             try {
                 result = action.doInTransaction(status);
             } catch (RuntimeException ex) {
                 // Transactional code threw application exception -> rollback
-                rollbackOnException(status, ex, exceptionAction);
+                rollbackOnException(status,
+                        ex,
+                        action.getActionWhenRollback(),
+                        rollbackActionTransactionDefinition);
                 throw ex;
             } catch (Error err) {
                 // Transactional code threw error -> rollback
-                rollbackOnException(status, err, exceptionAction);
+                rollbackOnException(status,
+                        err,
+                        action.getActionWhenRollback(),
+                        rollbackActionTransactionDefinition);
                 throw err;
             } catch (Exception ex) {
                 // Transactional code threw unexpected exception -> rollback
-                rollbackOnException(status, ex, exceptionAction);
+                rollbackOnException(status,
+                        ex,
+                        action.getActionWhenRollback(),
+                        rollbackActionTransactionDefinition);
                 throw new UndeclaredThrowableException(ex,
                         "TransactionCallback threw undeclared checked exception");
             }
@@ -88,7 +119,8 @@ public class TransactionSupport extends TransactionTemplate {
      * @throws TransactionException in case of a rollback error
      */
     private void rollbackOnException(TransactionStatus status, Throwable ex,
-            TransactionCallbackWithoutResult exceptionAction)
+            TransactionCallbackWithoutResult actionWhenRollback,
+            TransactionDefinition rollbackActionTransactionDefinition)
             throws TransactionException {
         logger.debug("Initiating transaction rollback on application exception",
                 ex);
@@ -107,27 +139,35 @@ public class TransactionSupport extends TransactionTemplate {
             logger.warn("Application exception overridden by rollback error",
                     ex);
             throw err;
-        } finally{
-            executeWhenException(exceptionAction);
+        } finally {
+            if (actionWhenRollback != null) {
+                executeWhenRollback(actionWhenRollback,
+                        rollbackActionTransactionDefinition);
+            }
         }
     }
     
     /**
       * 异常存在的时候执行逻辑<br/>
       * <功能详细描述>
-      * @param exceptionAction
+      * @param actionWhenRollback
       * @throws TransactionException [参数说明]
       * 
       * @return void [返回类型说明]
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public void executeWhenException(
-            TransactionCallbackWithoutResult exceptionAction)
+    private void executeWhenRollback(
+            TransactionCallbackWithoutResult actionWhenRollback,
+            TransactionDefinition rollbackActionTransactionDefinition)
             throws TransactionException {
-        TransactionStatus status = getTransactionManager().getTransaction(this);
+        AssertUtils.notNull(actionWhenRollback, "actionWhenRollback is null.");
+        AssertUtils.notNull(rollbackActionTransactionDefinition,
+                "rollbackActionTransactionDefinition is null.");
+        //获取新的事务
+        TransactionStatus status = getTransactionManager().getTransaction(rollbackActionTransactionDefinition);
         try {
-            exceptionAction.doInTransaction(status);
+            actionWhenRollback.doInTransaction(status);
         } catch (RuntimeException ex) {
             rollbackOnExceptionWhenRollback(status, ex);
             throw ex;
