@@ -20,6 +20,9 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * 事务支撑类<br/>
+ *     如果利用TransactionSynchronizeManager.registerxxx去实现
+ *     在事务回滚的时执行逻辑的代码，由于在Mybatis底层中存在，也存在registe的逻辑
+ *     在对应的实现类的Order顺序不对的时候，可能造成链接泄露，此处新增该封装，代替原逻辑中此类实现<br/>
  * <功能详细描述>
  * 
  * @author  Administrator
