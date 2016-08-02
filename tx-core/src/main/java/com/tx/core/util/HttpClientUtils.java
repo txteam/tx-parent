@@ -8,6 +8,7 @@ package com.tx.core.util;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.ConnectException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -302,7 +303,8 @@ public class HttpClientUtils {
                                 defaultCharset = HTTP.DEF_CONTENT_CHARSET;
                             }
                             resStr = new String(
-                                    EntityUtils.toByteArray(entity), defaultCharset);
+                                    EntityUtils.toByteArray(entity),
+                                    defaultCharset);
                         } else {
                             resStr = new String(
                                     EntityUtils.toByteArray(entity),
@@ -316,12 +318,12 @@ public class HttpClientUtils {
                 }
             } catch (ClientProtocolException e1) {
                 throw new HttpExcutingException(false, "Http请求协议异常.", e1);
+            } catch (ConnectException e1) {
+                throw new HttpExcutingException(false, "Http请求IO流异常.", e1);
+            } catch (ConnectTimeoutException e1) {
+                throw new HttpExcutingException(false, "Http请求IO流异常.", e1);
             } catch (IOException e1) {
-                if(e1 instanceof ConnectTimeoutException){
-                    throw new HttpExcutingException(false, "Http请求IO流异常.", e1);
-                }else{
-                    throw new HttpExcutingException(true, "Http请求IO流异常.", e1);
-                }
+                throw new HttpExcutingException(true, "Http请求IO流异常.", e1);
             } finally {
                 if (response != null) {
                     try {
@@ -398,7 +400,8 @@ public class HttpClientUtils {
                                 defaultCharset = HTTP.DEF_CONTENT_CHARSET;
                             }
                             resStr = new String(
-                                    EntityUtils.toByteArray(entity), defaultCharset);
+                                    EntityUtils.toByteArray(entity),
+                                    defaultCharset);
                         } else {
                             resStr = new String(
                                     EntityUtils.toByteArray(entity),
@@ -468,7 +471,8 @@ public class HttpClientUtils {
                                 defaultCharset = HTTP.DEF_CONTENT_CHARSET;
                             }
                             resStr = new String(
-                                    EntityUtils.toByteArray(entity), defaultCharset);
+                                    EntityUtils.toByteArray(entity),
+                                    defaultCharset);
                         } else {
                             resStr = new String(
                                     EntityUtils.toByteArray(entity),
