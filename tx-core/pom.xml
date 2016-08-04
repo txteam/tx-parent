@@ -362,6 +362,7 @@
 		<dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-redis</artifactId>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
             <groupId>redis.clients</groupId>
