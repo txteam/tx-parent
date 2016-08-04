@@ -141,11 +141,16 @@
 			<artifactId>log4j-over-slf4j</artifactId>
 		</dependency>
 		
+		
+		<!-- freemarker -->
 		<dependency>
-			<groupId>freemarker</groupId>
+			<groupId>org.freemarker</groupId>
 			<artifactId>freemarker</artifactId>
+			<optional>true</optional>
 			<scope>compile</scope>
 		</dependency>
+		
+		<!-- ognl -->
 		<dependency>
 			<groupId>ognl</groupId>
 			<artifactId>ognl</artifactId>

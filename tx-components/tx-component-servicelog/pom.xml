@@ -40,8 +40,8 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-jdbc</artifactId>
 		</dependency>
-		
-		<!-- srpingframework web and orm-->
+
+		<!-- srpingframework web and orm -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-web</artifactId>
@@ -111,7 +111,15 @@
 			<groupId>p6spy</groupId>
 			<artifactId>p6spy</artifactId>
 		</dependency>
-		
+
+		<!-- freemarker -->
+		<dependency>
+			<groupId>org.freemarker</groupId>
+			<artifactId>freemarker</artifactId>
+			<optional>true</optional>
+			<scope>compile</scope>
+		</dependency>
+
 		<!-- postgresql jdbc optional:true -->
 		<dependency>
 			<groupId>com.h2database</groupId>
@@ -126,12 +134,7 @@
 			<optional>true</optional>
 			<scope>compile</scope>
 		</dependency>
-		<dependency>
-			<groupId>freemarker</groupId>
-			<artifactId>freemarker</artifactId>
-			<scope>compile</scope>
-		</dependency>
-		
+
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>

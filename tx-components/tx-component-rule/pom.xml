@@ -131,12 +131,6 @@
 			<artifactId>mybatis-spring</artifactId>
 		</dependency>
 
-		<dependency>
-			<groupId>freemarker</groupId>
-			<artifactId>freemarker</artifactId>
-			<optional>true</optional>
-		</dependency>
-
 		<!-- drools -->
 		<dependency>
 			<groupId>org.drools</groupId>
@@ -209,6 +203,15 @@
 			<artifactId>p6spy</artifactId>
 			<optional>true</optional>
 		</dependency>
+
+		<!-- freemarker -->
+		<dependency>
+			<groupId>org.freemarker</groupId>
+			<artifactId>freemarker</artifactId>
+			<optional>true</optional>
+			<scope>compile</scope>
+		</dependency>
+
 		<!-- postgresql jdbc optional:true -->
 		<dependency>
 			<groupId>postgresql</groupId>

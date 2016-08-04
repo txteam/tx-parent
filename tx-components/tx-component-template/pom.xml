@@ -112,12 +112,6 @@
 			<artifactId>mybatis-spring</artifactId>
 		</dependency>
 
-		<dependency>
-			<groupId>freemarker</groupId>
-			<artifactId>freemarker</artifactId>
-			<optional>true</optional>
-		</dependency>
-
 		<!-- log -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -183,12 +177,15 @@
 			<optional>true</optional>
 			<scope>compile</scope>
 		</dependency>
+		
+		<!-- freemarker -->
 		<dependency>
-			<groupId>freemarker</groupId>
+			<groupId>org.freemarker</groupId>
 			<artifactId>freemarker</artifactId>
+			<optional>true</optional>
 			<scope>compile</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>

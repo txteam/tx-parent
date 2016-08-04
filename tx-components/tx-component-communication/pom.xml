@@ -99,9 +99,10 @@
 		
 		<!-- freemarker -->
 		<dependency>
-			<groupId>freemarker</groupId>
+			<groupId>org.freemarker</groupId>
 			<artifactId>freemarker</artifactId>
 			<optional>true</optional>
+			<scope>compile</scope>
 		</dependency>
 
 		<!-- junit -->
