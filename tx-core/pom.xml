@@ -19,6 +19,12 @@
 	</properties>
 
 	<dependencies>
+		<!-- 动态代理实现 -->
+		<dependency>
+			<groupId>org.mitre.dsmiley.httpproxy</groupId>
+			<artifactId>smiley-http-proxy-servlet</artifactId>
+		</dependency>
+
 		<!-- commons -->
 		<dependency>
 			<groupId>commons-lang</groupId>
@@ -195,17 +201,17 @@
 			<artifactId>sqlbuilder</artifactId>
 			<optional>true</optional>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-redis</artifactId>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-            <groupId>redis.clients</groupId>
-            <artifactId>jedis</artifactId>
-            <optional>true</optional>
-        </dependency>
+			<groupId>redis.clients</groupId>
+			<artifactId>jedis</artifactId>
+			<optional>true</optional>
+		</dependency>
 
 		<!-- mybatis -->
 		<dependency>
@@ -365,10 +371,10 @@
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-            <groupId>redis.clients</groupId>
-            <artifactId>jedis</artifactId>
-            <optional>true</optional>
-        </dependency>
+			<groupId>redis.clients</groupId>
+			<artifactId>jedis</artifactId>
+			<optional>true</optional>
+		</dependency>
 
 		<!-- postgresql jdbc optional:true -->
 		<dependency>

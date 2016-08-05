@@ -403,6 +403,21 @@
 				</exclusions>
 			</dependency>
 
+			<!-- google工具类 -->
+			<dependency>
+				<groupId>com.google.guava</groupId>
+				<artifactId>guava</artifactId>
+				<version>19.0</version>
+			</dependency>
+
+			<!-- 动态代理实现 -->
+			<dependency>
+				<groupId>org.mitre.dsmiley.httpproxy</groupId>
+				<artifactId>smiley-http-proxy-servlet</artifactId>
+				<version>1.7</version>
+			</dependency>
+
+
 			<!-- joda-time -->
 			<dependency>
 				<groupId>joda-time</groupId>
@@ -610,7 +625,7 @@
 				<artifactId>ognl</artifactId>
 				<version>3.0.5</version>
 			</dependency>
-			
+
 			<!-- freemarker -->
 			<dependency>
 				<groupId>org.freemarker</groupId>
