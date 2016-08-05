@@ -23,6 +23,7 @@
 		<dependency>
 			<groupId>org.mitre.dsmiley.httpproxy</groupId>
 			<artifactId>smiley-http-proxy-servlet</artifactId>
+			<optional>true</optional>
 		</dependency>
 
 		<!-- commons -->
