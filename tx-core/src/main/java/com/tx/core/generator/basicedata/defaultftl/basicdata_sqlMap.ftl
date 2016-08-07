@@ -8,9 +8,9 @@
 	<resultMap id="${select.resultMapId}" 
 		type="${select.parameterType}">
 <#list insert.sqlMapColumnList as column>
-<#if !column.isSimpleType()>
+	<#if !column.isSimpleType()>
 		<result column="${column.propertyName}_${column.joinPropertyName}" property="${column.propertyName}.${column.joinPropertyName}"/>
-</#if>
+	</#if>
 </#list>
 	</resultMap>
 	
@@ -20,11 +20,11 @@
 		resultMap="${select.resultMapId}">
 		SELECT 
 <#list select.sqlMapColumnList as column>
-<#if column.isSimpleType()>
+	<#if column.isSimpleType()>
 				${select.simpleTableName}.${column.columnName}<#if !column.isSameName()> AS ${column.propertyName}</#if><#if column_has_next>,</#if>
-<#else>
+	<#else>
 				${select.simpleTableName}.${column.columnName} AS ${column.propertyName}_${column.joinPropertyName}<#if column_has_next>,</#if>
-</#if>
+	</#if>
 </#list>
 		  FROM ${select.tableName} ${select.simpleTableName}
 		 WHERE
@@ -44,11 +44,11 @@
 		resultMap="${select.resultMapId}">
 		SELECT 
 <#list select.sqlMapColumnList as column>
-<#if column.isSimpleType()>
+	<#if column.isSimpleType()>
 				${select.simpleTableName}.${column.columnName}<#if !column.isSameName()> AS ${column.propertyName}</#if><#if column_has_next>,</#if>
-<#else>
+	<#else>
 				${select.simpleTableName}.${column.columnName} AS ${column.propertyName}_${column.joinPropertyName}<#if column_has_next>,</#if>
-</#if>
+	</#if>
 </#list>
 		  FROM ${select.tableName} ${select.simpleTableName}
 		<trim prefix="WHERE" prefixOverrides="AND | OR">

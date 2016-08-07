@@ -262,7 +262,8 @@ function deleteFun(id,name) {
 			    			if(data){
 			    				DialogUtils.tip("删除" + entityName + "成功");
 			    			}else{
-			    				$.formatString("删除{0}:{1}失败.指定{0}可能已经被其他管理员所删除.如果指定{0}依然存在，请联系系统管理员.",entityName,name);
+			    				var errorMessage = $.formatString("删除{0}:{1}失败.数据可能已经被处理.如有疑问，请联系系统管理员.",entityName,name);
+			    				DialogUtils.alert("");
 			    			}
 			    			grid.datagrid('load',$('#queryForm').serializeObject());
 			    });

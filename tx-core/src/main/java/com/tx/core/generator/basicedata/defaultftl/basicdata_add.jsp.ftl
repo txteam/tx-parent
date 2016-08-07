@@ -52,8 +52,9 @@ function cancelFun(){
 			<form:hidden path="${view.idPropertyName}"/>
 			<table class="common_table">
 <#list fieldViewMapping?values as fieldView>
-<#if !fieldView.id>
-<#if fieldView.simpleType>
+	<#if !fieldView.id>
+		<#if fieldView.simpleType>
+			<#if validPropertyName != fieldView.fieldName>
 				<tr>
 					<!--//TODO:修改字段是否必填,修改其中文名-->
 					<th class="narrow" width="20%">${fieldView.fieldName}:<#if fieldView.isRequired()><span class="tRed">*</span></#if></th>
@@ -63,7 +64,8 @@ function cancelFun(){
 						</#if>/>
 					</td>
 				</tr>
-<#else>
+			</#if>
+		<#else>
 				<tr>
 					<!--//TODO:修改字段是否必填,修改其中文名-->
 					<th class="narrow" width="20%">${fieldView.fieldName}.${fieldView.foreignKeyFieldName}</th>
@@ -72,8 +74,8 @@ function cancelFun(){
 						<form:input path="${fieldView.fieldName}" cssClass="text"/>
 					</td>
 				</tr>
-</#if>
-</#if>
+		</#if>
+	</#if>
 </#list>
 				<tr>
 					<td class="rightOperRow" colspan="4" style="padding-right: 50px">

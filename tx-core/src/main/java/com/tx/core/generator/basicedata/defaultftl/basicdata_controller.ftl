@@ -55,7 +55,7 @@ public class ${view.entitySimpleName}Controller {
       * @see [类、类#方法、类#成员]
      */
     @RequestMapping("/toQuery${view.entitySimpleName}List")
-    public String toQuery${view.entitySimpleName}List() {
+    public String toQuery${view.entitySimpleName}List(ModelMap response) {
         return "/${packageName}/query${view.entitySimpleName}List";
     }
     
@@ -69,7 +69,7 @@ public class ${view.entitySimpleName}Controller {
       * @see [类、类#方法、类#成员]
      */
     @RequestMapping("/toQuery${view.entitySimpleName}PagedList")
-    public String toQuery${view.entitySimpleName}PagedList() {
+    public String toQuery${view.entitySimpleName}PagedList(ModelMap response) {
         return "/${packageName}/query${view.entitySimpleName}PagedList";
     }
     
@@ -109,34 +109,37 @@ public class ${view.entitySimpleName}Controller {
     }
 
 <#if !ObjectUtils.isEmpty(uniqueGetterNamesArray)>
-<#list uniqueGetterNamesArray as uniqueGetterNames>
-
+	<#list uniqueGetterNamesArray as uniqueGetterNames>
     /**
-      * 判断${view.entitySimpleName}:<#list uniqueGetterNames as uniqueGetterName>${uniqueGetterName}<#if uniqueGetterName_has_next>,</#if></#list>是否已经被使用
-      * <功能详细描述>
-<#list uniqueGetterNames as uniqueGetterName>
-	  * @param uniqueGetterName
-</#list>
-      * @param code
-      * @param exclude${view.entitySimpleName}${view.upCaseIdPropertyName}
-      * @return [参数说明]
-      * 
-      * @return boolean [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 判断${view.entitySimpleName}:
+      	<#list uniqueGetterNames as uniqueGetterName>
+     *  ${uniqueGetterName}
+     	</#list>
+     *
+     * 是否已经被使用
+		<#list uniqueGetterNames as uniqueGetterName>
+	 * @param uniqueGetterName
+		</#list>
+     * @param exclude${view.entitySimpleName}${view.upCaseIdPropertyName}
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     @ResponseBody
     @RequestMapping("/validate<#list uniqueGetterNames as uniqueGetterName>${uniqueGetterName?cap_first}<#if uniqueGetterName_has_next>And</#if></#list>IsExist")
     public Map<String, String> validate<#list uniqueGetterNames as uniqueGetterName>${uniqueGetterName?cap_first}<#if uniqueGetterName_has_next>And</#if></#list>IsExist(
     		@RequestParam MultiValueMap<String, String> request,
-<#list uniqueGetterNames as uniqueGetterName>
+		<#list uniqueGetterNames as uniqueGetterName>
             @RequestParam("${uniqueGetterName}") String ${uniqueGetterName},
-</#list>
+		</#list>
             @RequestParam(value = "${view.idPropertyName}", required = false) String exclude${view.entitySimpleName}${view.upCaseIdPropertyName}) {
+        
         Map<String, String> key2valueMap = new HashMap<String, String>();
-<#list uniqueGetterNames as uniqueGetterName>
+		<#list uniqueGetterNames as uniqueGetterName>
         key2valueMap.put("${uniqueGetterName}", ${uniqueGetterName});
-</#list>
+		</#list>
         
         boolean flag = this.${view.lowerCaseEntitySimpleName}Service.isExist(key2valueMap, exclude${view.entitySimpleName}${view.upCaseIdPropertyName});
         
@@ -151,73 +154,8 @@ public class ${view.entitySimpleName}Controller {
         return resMap;
     }
     
-</#list>
+	</#list>
 </#if>
-    
-<#if !StringUtils.isEmpty(validPropertyName)>
-
-    /**
-      * 查询${view.entitySimpleName}列表<br/>
-      *<功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return List<${view.entitySimpleName}> [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    @ResponseBody
-    @RequestMapping("/query${view.entitySimpleName}ListIncludeInvalid")
-    public List<${view.entitySimpleName}> query${view.entitySimpleName}ListIncludeInvalid(
-    		@RequestParam MultiValueMap<String, String> request,
-<#list view.queryConditionName2TypeNameMapping?keys as key>
-<#if validPropertyName != key>
-			@RequestParam(value="${key}",required=false) ${view.queryConditionName2TypeNameMapping[key]} ${key}<#if key_has_next>,</#if>
-</#if>
-</#list>  
-    	) {
-        List<${view.entitySimpleName}> resList = this.${view.lowerCaseEntitySimpleName}Service.query${view.entitySimpleName}ListIncludeInvalid(
-<#list view.queryConditionName2TypeNameMapping?keys as key>
-<#if validPropertyName != key>
-			${key}<#if key_has_next>,</#if>
-</#if>
-</#list>          
-        );
-        return resList;
-    }
-    
-     /**
-      * 查询${view.entitySimpleName}列表<br/>
-      *<功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return List<${view.entitySimpleName}> [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    @ResponseBody
-    @RequestMapping("/query${view.entitySimpleName}ListIncludeAppoint")
-    public List<${view.entitySimpleName}> query${view.entitySimpleName}ListIncludeAppoint${view.upCaseIdPropertyName}(
-    		@RequestParam MultiValueMap<String, String> request,
-<#list view.queryConditionName2TypeNameMapping?keys as key>
-<#if validPropertyName != key>
-			@RequestParam(value="${key}",required=false) ${view.queryConditionName2TypeNameMapping[key]} ${key},
-</#if>
-</#list>
-			@RequestParam(value="appoint${view.upCaseIdPropertyName}") String appoint${view.upCaseIdPropertyName}
-    	) {
-        List<${view.entitySimpleName}> resList = this.${view.lowerCaseEntitySimpleName}Service.query${view.entitySimpleName}ListIncludeAppoint${view.upCaseIdPropertyName}(
-<#list view.queryConditionName2TypeNameMapping?keys as key>
-<#if validPropertyName != key>
-			${key},
-</#if>
-</#list>
-			appoint${view.upCaseIdPropertyName}       
-        );
-        return resList;
-    }
-
-</#if>
-    
     /**
      * 查询${view.entitySimpleName}列表<br/>
      *<功能详细描述>
@@ -230,20 +168,26 @@ public class ${view.entitySimpleName}Controller {
     @ResponseBody
     @RequestMapping("/query${view.entitySimpleName}List")
     public List<${view.entitySimpleName}> query${view.entitySimpleName}List(
-    		@RequestParam MultiValueMap<String, String> request,
-<#list view.queryConditionName2TypeNameMapping?keys as key>
-<#if validPropertyName != key>
-			@RequestParam(value="${key}",required=false) ${view.queryConditionName2TypeNameMapping[key]} ${key}<#if key_has_next>,</#if>
+<#if StringUtils.isNotEmpty(validPropertyName)>
+			@RequestParam(value="${validPropertyName}",required=false) Boolean ${validPropertyName},
 </#if>
-</#list>  
+    		@RequestParam MultiValueMap<String, String> request
     	) {
-        List<${view.entitySimpleName}> resList = this.${view.lowerCaseEntitySimpleName}Service.query${view.entitySimpleName}List(
+        Map<String,Object> params = new HashMap<>();
+
 <#list view.queryConditionName2TypeNameMapping?keys as key>
-<#if validPropertyName != key>
-			${key}<#if key_has_next>,</#if>
+	<#if validPropertyName != key>
+		params.put("${key}",request.getFirst("${key}"));
+	</#if>
+</#list> 
+    	
+        List<${view.entitySimpleName}> resList = this.${view.lowerCaseEntitySimpleName}Service.query${view.entitySimpleName}List(
+<#if StringUtils.isNotEmpty(validPropertyName)>
+			${validPropertyName},
 </#if>
-</#list>          
+			params         
         );
+  
         return resList;
     }
     
@@ -259,61 +203,31 @@ public class ${view.entitySimpleName}Controller {
     @ResponseBody
     @RequestMapping("/query${view.entitySimpleName}PagedList")
     public PagedList<${view.entitySimpleName}> query${view.entitySimpleName}PagedList(
-    		@RequestParam MultiValueMap<String, String> request,
-<#list view.queryConditionName2TypeNameMapping?keys as key>
-<#if validPropertyName != key>
-			@RequestParam(value="${key}",required=false) ${view.queryConditionName2TypeNameMapping[key]} ${key},
+<#if StringUtils.isNotEmpty(validPropertyName)>
+			@RequestParam(value="${validPropertyName}",required=false) Boolean ${validPropertyName},
 </#if>
-</#list>  
+    		@RequestParam MultiValueMap<String, String> request,
 			@RequestParam(value = "pageNumber", required = false, defaultValue = "1") int pageIndex,
             @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize
     	) {
+		Map<String,Object> params = new HashMap<>();
+
+<#list view.queryConditionName2TypeNameMapping?keys as key>
+	<#if validPropertyName != key>
+		params.put("${key}",request.getFirst("${key}"));
+	</#if>
+</#list> 
+
         PagedList<${view.entitySimpleName}> resPagedList = this.${view.lowerCaseEntitySimpleName}Service.query${view.entitySimpleName}PagedList(
-<#list view.queryConditionName2TypeNameMapping?keys as key>
-<#if validPropertyName != key>
-			${key},
+<#if StringUtils.isNotEmpty(validPropertyName)>
+			${validPropertyName},
 </#if>
-</#list>          
+			params,
 			pageIndex,
 			pageSize
         );
         return resPagedList;
     }
-    
-<#if !StringUtils.isEmpty(validPropertyName)>
-    /**
-     * 查询${view.entitySimpleName}分页列表(包含无效的实体)<br/>
-     *<功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return PagedList<${view.entitySimpleName}> [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-    */
-    @ResponseBody
-    @RequestMapping("/query${view.entitySimpleName}PagedListIncludeInvalid")
-    public PagedList<${view.entitySimpleName}> query${view.entitySimpleName}PagedListIncludeInvalid(
-    		@RequestParam MultiValueMap<String, String> request,
-<#list view.queryConditionName2TypeNameMapping?keys as key>
-<#if validPropertyName != key>
-			@RequestParam(value="${key}",required=false) ${view.queryConditionName2TypeNameMapping[key]} ${key},
-</#if>
-</#list>  
-			@RequestParam(value = "pageNumber", required = false, defaultValue = "1") int pageIndex,
-            @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize
-    	) {
-        PagedList<${view.entitySimpleName}> resPagedList = this.${view.lowerCaseEntitySimpleName}Service.query${view.entitySimpleName}PagedListIncludeInvalid(
-<#list view.queryConditionName2TypeNameMapping?keys as key>
-<#if validPropertyName != key>
-			${key},
-</#if>
-</#list>          
-			pageIndex,
-			pageSize
-        );
-        return resPagedList;
-    }
-</#if>
     
     /**
      * 添加组织结构页面
@@ -372,7 +286,7 @@ public class ${view.entitySimpleName}Controller {
         return resFlag;
     }
     
-<#if !StringUtils.isEmpty(validPropertyName)>
+<#if StringUtils.isNotEmpty(validPropertyName)>
     /**
       * 禁用${view.entitySimpleName}
       * @param ${view.lowerCaseEntitySimpleName}${view.upCaseIdPropertyName}
@@ -409,6 +323,5 @@ public class ${view.entitySimpleName}Controller {
         boolean resFlag = this.${view.lowerCaseEntitySimpleName}Service.enableBy${view.upCaseIdPropertyName}(${view.lowerCaseEntitySimpleName}${view.upCaseIdPropertyName});
         return resFlag;
     }
-    
 </#if>
 }

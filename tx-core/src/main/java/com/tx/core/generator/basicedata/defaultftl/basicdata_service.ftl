@@ -7,10 +7,8 @@
 package ${service.basePackage}.service;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 <#list service.extentionTypeNames as typeName>
 import ${typeName};
 </#list> 
@@ -46,40 +44,38 @@ public class ${service.entitySimpleName}Service {
     private ${service.entitySimpleName}Dao ${service.lowerCaseEntitySimpleName}Dao;
     
     /**
-      * 将${service.lowerCaseEntitySimpleName}实例插入数据库中保存
-      * 1、如果${service.lowerCaseEntitySimpleName}为空时抛出参数为空异常
-      * 2、如果${service.lowerCaseEntitySimpleName}中部分必要参数为非法值时抛出参数不合法异常
-     * <功能详细描述>
-     * @param ${service.lowerCaseEntitySimpleName} [参数说明]
+     * 将${service.lowerCaseEntitySimpleName}实例插入数据库中保存
+     * 1、如果${service.lowerCaseEntitySimpleName} 为空时抛出参数为空异常
+     * 2、如果${service.lowerCaseEntitySimpleName} 中部分必要参数为非法值时抛出参数不合法异常
      * 
+     * @param ${service.lowerCaseEntitySimpleName} [参数说明]
      * @return void [返回类型说明]
      * @exception throws
      * @see [类、类#方法、类#成员]
-    */
+     */
     @Transactional
     public void insert${service.entitySimpleName}(${service.entitySimpleName} ${service.lowerCaseEntitySimpleName}) {
         //FIXME:验证参数是否合法
         AssertUtils.notNull(${service.lowerCaseEntitySimpleName}, "${service.lowerCaseEntitySimpleName} is null.");
-        
-        
+                
         //FIXME:为添加的数据需要填入默认值的字段填入默认值
-        
+<#if !StringUtils.isEmpty(validPropertyName)>
+		${service.lowerCaseEntitySimpleName}.set${validPropertyName?cap_first}(true);
+</#if>
         
         //调用数据持久层对实体进行持久化操作
         this.${service.lowerCaseEntitySimpleName}Dao.insert${service.entitySimpleName}(${service.lowerCaseEntitySimpleName});
     }
-      
-     /**
-      * 根据${service.idPropertyName}删除${service.lowerCaseEntitySimpleName}实例
-      * 1、如果入参数为空，则抛出异常
-      * 2、执行删除后，将返回数据库中被影响的条数
-      * @param ${service.idPropertyName}
-      * @return 返回删除的数据条数，<br/>
-      * 有些业务场景，如果已经被别人删除同样也可以认为是成功的
-      * 这里讲通用生成的业务层代码定义为返回影响的条数
-      * @return int [返回类型说明]
-      * @exception throws 
-      * @see [类、类#方法、类#成员]
+    
+    /**
+     * 根据${service.idPropertyName}删除${service.lowerCaseEntitySimpleName}实例
+     * 1、如果入参数为空，则抛出异常
+     * 2、执行删除后，将返回数据库中被影响的条数 > 0，则返回true
+     *
+     * @param ${service.idPropertyName}
+     * @return boolean 删除的条数>0则为true [返回类型说明]
+     * @exception throws 
+     * @see [类、类#方法、类#成员]
      */
     @Transactional
     public boolean deleteBy${service.upCaseIdPropertyName}(String ${service.idPropertyName}) {
@@ -88,19 +84,19 @@ public class ${service.entitySimpleName}Service {
         ${service.entitySimpleName} condition = new ${service.entitySimpleName}();
         condition.set${service.upCaseIdPropertyName}(${service.idPropertyName});
         int resInt = this.${service.lowerCaseEntitySimpleName}Dao.delete${service.entitySimpleName}(condition);
-        return resInt > 0;
+        
+        boolean flag = resInt > 0;
+        return flag;
     }
     
     /**
-      * 根据${service.upCaseIdPropertyName}查询${service.entitySimpleName}实体
-      * 1、当${service.idPropertyName}为empty时抛出异常
-      * <功能详细描述>
-      * @param ${service.idPropertyName}
-      * @return [参数说明]
-      * 
-      * @return ${service.entitySimpleName} [返回类型说明]
-      * @exception throws 可能存在数据库访问异常DataAccessException
-      * @see [类、类#方法、类#成员]
+     * 根据${service.upCaseIdPropertyName}查询${service.entitySimpleName}实体
+     * 1、当${service.idPropertyName}为empty时抛出异常
+     *
+     * @param ${service.idPropertyName}
+     * @return ${service.entitySimpleName} [返回类型说明]
+     * @exception throws
+     * @see [类、类#方法、类#成员]
      */
     public ${service.entitySimpleName} find${service.entitySimpleName}By${service.upCaseIdPropertyName}(String ${service.idPropertyName}) {
         AssertUtils.notEmpty(${service.idPropertyName}, "${service.idPropertyName} is empty.");
@@ -113,152 +109,45 @@ public class ${service.entitySimpleName}Service {
     }
     
     /**
-      * 查询${service.entitySimpleName}实体列表
+     * 查询${service.entitySimpleName}实体列表
+     * <功能详细描述>
 <#if !StringUtils.isEmpty(validPropertyName)>
-      *     不包含无效的实体
+     * @param ${validPropertyName}
 </#if>
-      * <功能详细描述>
-<#list service.queryConditionName2TypeNameMapping?keys as key>
-<#if validPropertyName != key>
-      * @param ${key}
-</#if>
-</#list> 
-      *       
-      * @return [参数说明]
-      * 
-      * @return List<${service.entitySimpleName}> [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-      */
-    public List<${service.entitySimpleName}> query${service.entitySimpleName}List(
-<#list service.queryConditionName2TypeNameMapping?keys as key>
-<#if validPropertyName != key>
-		${service.queryConditionName2TypeNameMapping[key]} ${key}<#if key_has_next>,</#if>
-</#if>
-</#list>    
-    	) {
-        //判断条件合法性
-        
-        //生成查询条件
-        Map<String, Object> params = new HashMap<String, Object>();
-<#list service.queryConditionName2TypeNameMapping?keys as key>
-<#if validPropertyName != key>
-		params.put("${key}",${key});
-</#if>
-</#list> 
-<#if !StringUtils.isEmpty(validPropertyName)>
-		params.put("${validPropertyName}",true);
-</#if>  
-        
-        //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
-        List<${service.entitySimpleName}> resList = this.${service.lowerCaseEntitySimpleName}Dao.query${service.entitySimpleName}List(params);
-        
-        return resList;
-    }
-    
-<#if !StringUtils.isEmpty(validPropertyName)>
-	 /**
-      * 查询${service.entitySimpleName}实体列表,
-      *		如果实体集合中不包含appoint${service.upCaseIdPropertyName}对应的实体将根据该id查询到对应的实体然后加入到集合中（appoint${service.upCaseIdPropertyName}被禁用的情况）
-      *     appoint${service.upCaseIdPropertyName}对应的实体如果不存在，系统将抛出异常（appoint${service.upCaseIdPropertyName}被删除的情况）
-      * <功能详细描述>
-<#list service.queryConditionName2TypeNameMapping?keys as key>
-<#if validPropertyName != key>
-      * @param ${key}
-</#if>
-</#list> 
-      *       
-      * @return [参数说明]
-      * 
-      * @return List<${service.entitySimpleName}> [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-      */
-	public List<${service.entitySimpleName}> query${service.entitySimpleName}ListIncludeAppoint${service.upCaseIdPropertyName}(
-<#list service.queryConditionName2TypeNameMapping?keys as key>
-<#if validPropertyName != key>
-			${service.queryConditionName2TypeNameMapping[key]} ${key},
-</#if>
-</#list>
-		String appoint${service.upCaseIdPropertyName}) {
-       //判断条件合法性
-       AssertUtils.notEmpty(appoint${service.upCaseIdPropertyName}, "appoint${service.upCaseIdPropertyName} is empty.");
-       
-       //生成查询条件
-       Map<String, Object> params = new HashMap<String, Object>();
-<#list service.queryConditionName2TypeNameMapping?keys as key>
-<#if validPropertyName != key>
-		params.put("${key}",${key});
-</#if>
-</#list> 
-<#if !StringUtils.isEmpty(validPropertyName)>
-		params.put("${validPropertyName}",true);
-</#if>  
-       
-       //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
-       List<${service.entitySimpleName}> resList = this.${service.lowerCaseEntitySimpleName}Dao.query${service.entitySimpleName}List(params);
-       
-       Set<String> ${service.idPropertyName}Set = new HashSet<String>();
-       for(${service.entitySimpleName} temp : resList){
-           ${service.idPropertyName}Set.add(temp.get${service.upCaseIdPropertyName}());
-       }
-       if(!${service.idPropertyName}Set.contains(appoint${service.upCaseIdPropertyName})){
-       	   ${service.entitySimpleName} findRes = find${service.entitySimpleName}By${service.upCaseIdPropertyName}(appoint${service.upCaseIdPropertyName});
-           resList.add(0, findRes);
-       }
-       
-       return resList;
-   }
-
-    /**
-      * 查询包含已经停用的${service.entitySimpleName}实体列表
-      * <功能详细描述>
-<#list service.queryConditionName2TypeNameMapping?keys as key>
-<#if validPropertyName != key>
-      * @param ${key}
-</#if>
-</#list> 
-      *       
-      * @return [参数说明]
-      * 
-      * @return List<${service.entitySimpleName}> [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * @param params      
+     * @return [参数说明]
+     * 
+     * @return List<${service.entitySimpleName}> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
-    public List<${service.entitySimpleName}> query${service.entitySimpleName}ListIncludeInvalid(
-<#list service.queryConditionName2TypeNameMapping?keys as key>
-<#if validPropertyName != key>
-		${service.queryConditionName2TypeNameMapping[key]} ${key}<#if key_has_next>,</#if>
+    public List<${service.entitySimpleName}> query${service.entitySimpleName}List(
+<#if !StringUtils.isEmpty(validPropertyName)>
+		Boolean ${validPropertyName},
 </#if>
-</#list>       
+		Map<String,Object> params   
     	) {
         //判断条件合法性
         
         //生成查询条件
-        Map<String, Object> params = new HashMap<String, Object>();
-<#list service.queryConditionName2TypeNameMapping?keys as key>
-<#if validPropertyName != key>
-		params.put("${key}",${key});
+        params = params == null ? new HashMap<String, Object>() : params;
+<#if !StringUtils.isEmpty(validPropertyName)>
+		params.put("${validPropertyName}",${validPropertyName});
 </#if>
-</#list> 
-        
+
         //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
         List<${service.entitySimpleName}> resList = this.${service.lowerCaseEntitySimpleName}Dao.query${service.entitySimpleName}List(params);
         
         return resList;
     }
-</#if> 
     
     /**
      * 分页查询${service.entitySimpleName}实体列表
+     * <功能详细描述>
 <#if !StringUtils.isEmpty(validPropertyName)>
-      *     不包含无效的实体
+     * @param ${validPropertyName}
 </#if>
-<#list service.queryConditionName2TypeNameMapping?keys as key>
-<#if validPropertyName != key>
-      * @param ${key}
-</#if>
-</#list>
+      * @param params    
      * @param pageIndex 当前页index从1开始计算
      * @param pageSize 每页显示行数
      * 
@@ -268,77 +157,27 @@ public class ${service.entitySimpleName}Service {
      * @return List<${service.entitySimpleName}> [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
+     */
     public PagedList<${service.entitySimpleName}> query${service.entitySimpleName}PagedList(
-<#list service.queryConditionName2TypeNameMapping?keys as key>
-<#if validPropertyName != key>
-			${service.queryConditionName2TypeNameMapping[key]} ${key},
+<#if !StringUtils.isEmpty(validPropertyName)>
+		Boolean ${validPropertyName},
 </#if>
-</#list>
-    		int pageIndex,
-            int pageSize) {
+		Map<String,Object> params,
+    	int pageIndex,
+        int pageSize) {
         //T判断条件合法性
         
         //生成查询条件
-        Map<String, Object> params = new HashMap<String, Object>();
-<#list service.queryConditionName2TypeNameMapping?keys as key>
-<#if validPropertyName != key>
-		params.put("${key}",${key});
-</#if>
-</#list>       
+        params = params == null ? new HashMap<String, Object>() : params;
 <#if !StringUtils.isEmpty(validPropertyName)>
-		params.put("${validPropertyName}",true);
-</#if>  
+		params.put("${validPropertyName}",${validPropertyName});
+</#if>
  
         //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
         PagedList<${service.entitySimpleName}> resPagedList = this.${service.lowerCaseEntitySimpleName}Dao.query${service.entitySimpleName}PagedList(params, pageIndex, pageSize);
         
         return resPagedList;
     }
-    
-<#if !StringUtils.isEmpty(validPropertyName)>
-    /**
-     * 分页查询${service.entitySimpleName}实体列表
-     *     包含无效的的实体
-<#list service.queryConditionName2TypeNameMapping?keys as key>
-<#if validPropertyName != key>
-      * @param ${key}
-</#if>
-</#list>
-     * @param pageIndex 当前页index从1开始计算
-     * @param pageSize 每页显示行数
-     * 
-     * <功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return List<${service.entitySimpleName}> [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-    */
-    public PagedList<${service.entitySimpleName}> query${service.entitySimpleName}PagedListIncludeInvalid(
-<#list service.queryConditionName2TypeNameMapping?keys as key>
-<#if validPropertyName != key>
-			${service.queryConditionName2TypeNameMapping[key]} ${key},
-</#if>
-</#list>
-    		int pageIndex,
-            int pageSize) {
-        //T判断条件合法性
-        
-        //生成查询条件
-        Map<String, Object> params = new HashMap<String, Object>();
-<#list service.queryConditionName2TypeNameMapping?keys as key>
-<#if validPropertyName != key>
-		params.put("${key}",${key});
-</#if>
-</#list> 
- 
-        //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
-        PagedList<${service.entitySimpleName}> resPagedList = this.${service.lowerCaseEntitySimpleName}Dao.query${service.entitySimpleName}PagedList(params, pageIndex, pageSize);
-        
-        return resPagedList;
-    }
-</#if> 
     
      /**
       * 判断是否已经存在<br/>
@@ -386,21 +225,24 @@ public class ${service.entitySimpleName}Service {
         
         //FIXME:需要更新的字段
 <#list service.updateAbleName2SqlMapColumnMapping?values as column>
-<#if !column.isId()>
-<#if column.isSimpleType()>
+	<#if !column.isId()>
+		<#if column.isSimpleType()>
+			<#if column.propertyName != validPropertyName>
 		updateRowMap.put("${column.propertyName}", ${service.lowerCaseEntitySimpleName}.${column.getterMethodSimpleName}());	
-<#else>
+			</#if>
+		<#else>
+		
 		//type:${column.javaType.name}
 		updateRowMap.put("${column.propertyName}", ${service.lowerCaseEntitySimpleName}.${column.getterMethodSimpleName}());
-</#if>
-</#if>
-</#list>
+		</#if>
+	</#if>
+	</#list>
         int updateRowCount = this.${service.lowerCaseEntitySimpleName}Dao.update${service.entitySimpleName}(updateRowMap);
         
         //如果需要大于1时，抛出异常并回滚，需要在这里修改
         return updateRowCount >= 1;
     }
-    
+
 <#if !StringUtils.isEmpty(validPropertyName)>
      /**
       * 根据${service.idPropertyName}禁用${service.entitySimpleName}<br/>
