@@ -20,7 +20,7 @@ $(document).ready(function(){
 	        DialogUtils.progress({
 	            text : '数据提交中，请等待....'
 	    	});
-			$('#form').ajaxSubmit({
+			$('#entityForm').ajaxSubmit({
 			    url:"${r"${contextPath }"}/${view.lowerCaseEntitySimpleName}/update.action",
 			    success: function(data) {
 			    	DialogUtils.progress('close');
