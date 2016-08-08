@@ -101,9 +101,9 @@ public class ${view.entitySimpleName}Controller {
     @RequestMapping("/toUpdate${view.entitySimpleName}")
     public String toUpdate${view.entitySimpleName}(
     		@RequestParam("${view.lowerCaseEntitySimpleName}${view.upCaseIdPropertyName}") String ${view.lowerCaseEntitySimpleName}${view.upCaseIdPropertyName},
-            ModelMap modelMap) {
-        ${view.entitySimpleName} res${view.entitySimpleName} = this.${view.lowerCaseEntitySimpleName}Service.find${view.entitySimpleName}By${view.upCaseIdPropertyName}(${view.lowerCaseEntitySimpleName}${view.upCaseIdPropertyName}); 
-        modelMap.put("${view.lowerCaseEntitySimpleName}", res${view.entitySimpleName});
+            ModelMap response) {
+        ${view.entitySimpleName} res${view.entitySimpleName} = this.${view.lowerCaseEntitySimpleName}Service.findBy${view.upCaseIdPropertyName}(${view.lowerCaseEntitySimpleName}${view.upCaseIdPropertyName}); 
+        response.put("${view.lowerCaseEntitySimpleName}", res${view.entitySimpleName});
         
         return "/${packageName}/update${view.entitySimpleName}";
     }
@@ -166,22 +166,37 @@ public class ${view.entitySimpleName}Controller {
      * @see [类、类#方法、类#成员]
     */
     @ResponseBody
-    @RequestMapping("/query${view.entitySimpleName}List")
-    public List<${view.entitySimpleName}> query${view.entitySimpleName}List(
+    @RequestMapping("/queryList")
+    public List<${view.entitySimpleName}> queryList(
 <#if StringUtils.isNotEmpty(validPropertyName)>
 			@RequestParam(value="${validPropertyName}",required=false) Boolean ${validPropertyName},
 </#if>
+<#list view.queryConditionName2TypeNameMapping?keys as key>
+	<#if validPropertyName != key>
+		<#if view.queryConditionName2TypeNameMapping[key] != 'String'>
+			<#if view.queryConditionName2TypeNameMapping[key] == 'boolean'>
+			@RequestParam(value="${key}",required=false) Boolean ${key},
+			<#else>
+			@RequestParam(value="${key}",required=false) ${view.queryConditionName2TypeNameMapping[key]} ${key},
+			</#if>
+		</#if>
+	</#if>
+</#list> 
     		@RequestParam MultiValueMap<String, String> request
     	) {
         Map<String,Object> params = new HashMap<>();
 
 <#list view.queryConditionName2TypeNameMapping?keys as key>
 	<#if validPropertyName != key>
+		<#if view.queryConditionName2TypeNameMapping[key] != 'String'>
+		params.put("${key}",${key});
+		<#else>
 		params.put("${key}",request.getFirst("${key}"));
+		</#if>
 	</#if>
 </#list> 
     	
-        List<${view.entitySimpleName}> resList = this.${view.lowerCaseEntitySimpleName}Service.query${view.entitySimpleName}List(
+        List<${view.entitySimpleName}> resList = this.${view.lowerCaseEntitySimpleName}Service.queryList(
 <#if StringUtils.isNotEmpty(validPropertyName)>
 			${validPropertyName},
 </#if>
@@ -201,11 +216,22 @@ public class ${view.entitySimpleName}Controller {
      * @see [类、类#方法、类#成员]
     */
     @ResponseBody
-    @RequestMapping("/query${view.entitySimpleName}PagedList")
-    public PagedList<${view.entitySimpleName}> query${view.entitySimpleName}PagedList(
+    @RequestMapping("/queryPagedList")
+    public PagedList<${view.entitySimpleName}> queryPagedList(
 <#if StringUtils.isNotEmpty(validPropertyName)>
 			@RequestParam(value="${validPropertyName}",required=false) Boolean ${validPropertyName},
 </#if>
+<#list view.queryConditionName2TypeNameMapping?keys as key>
+	<#if validPropertyName != key>
+		<#if view.queryConditionName2TypeNameMapping[key] != 'String'>
+			<#if view.queryConditionName2TypeNameMapping[key] == 'boolean'>
+			@RequestParam(value="${key}",required=false) Boolean ${key},
+			<#else>
+			@RequestParam(value="${key}",required=false) ${view.queryConditionName2TypeNameMapping[key]} ${key},
+			</#if>
+		</#if>
+	</#if>
+</#list> 
     		@RequestParam MultiValueMap<String, String> request,
 			@RequestParam(value = "pageNumber", required = false, defaultValue = "1") int pageIndex,
             @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize
@@ -214,11 +240,15 @@ public class ${view.entitySimpleName}Controller {
 
 <#list view.queryConditionName2TypeNameMapping?keys as key>
 	<#if validPropertyName != key>
+		<#if view.queryConditionName2TypeNameMapping[key] != 'String'>
+		params.put("${key}",${key});
+		<#else>
 		params.put("${key}",request.getFirst("${key}"));
+		</#if>
 	</#if>
 </#list> 
 
-        PagedList<${view.entitySimpleName}> resPagedList = this.${view.lowerCaseEntitySimpleName}Service.query${view.entitySimpleName}PagedList(
+        PagedList<${view.entitySimpleName}> resPagedList = this.${view.lowerCaseEntitySimpleName}Service.queryPagedList(
 <#if StringUtils.isNotEmpty(validPropertyName)>
 			${validPropertyName},
 </#if>
@@ -240,10 +270,10 @@ public class ${view.entitySimpleName}Controller {
     */
     //FIXME:修改删增加权限名称
     @CheckOperateAuth(key = "add_${view.lowerCaseEntitySimpleName}", name = "增加${view.entitySimpleName}")
-    @RequestMapping("/add${view.entitySimpleName}")
+    @RequestMapping("/add")
     @ResponseBody
-    public boolean add${view.entitySimpleName}(${view.entitySimpleName} ${view.lowerCaseEntitySimpleName}) {
-        this.${view.lowerCaseEntitySimpleName}Service.insert${view.entitySimpleName}(${view.lowerCaseEntitySimpleName});
+    public boolean add(${view.entitySimpleName} ${view.lowerCaseEntitySimpleName}) {
+        this.${view.lowerCaseEntitySimpleName}Service.insert(${view.lowerCaseEntitySimpleName});
         return true;
     }
     
@@ -259,9 +289,9 @@ public class ${view.entitySimpleName}Controller {
      */
     //FIXME:修改删编辑权限名称
     @CheckOperateAuth(key = "update_${view.lowerCaseEntitySimpleName}", name = "编辑${view.entitySimpleName}")
-    @RequestMapping("/update${view.entitySimpleName}")
+    @RequestMapping("/update")
     @ResponseBody
-    public boolean update${view.entitySimpleName}(${view.entitySimpleName} ${view.lowerCaseEntitySimpleName}) {
+    public boolean update(${view.entitySimpleName} ${view.lowerCaseEntitySimpleName}) {
         this.${view.lowerCaseEntitySimpleName}Service.updateBy${view.upCaseIdPropertyName}(${view.lowerCaseEntitySimpleName});
         
         return true;
@@ -280,8 +310,8 @@ public class ${view.entitySimpleName}Controller {
     //FIXME:修改删除权限名称
     @CheckOperateAuth(key = "delete_${view.lowerCaseEntitySimpleName}", name = "删除${view.entitySimpleName}")
     @ResponseBody
-    @RequestMapping("/delete${view.entitySimpleName}By${view.upCaseIdPropertyName}")
-    public boolean delete${view.entitySimpleName}By${view.upCaseIdPropertyName}(@RequestParam(value = "${view.lowerCaseEntitySimpleName}${view.upCaseIdPropertyName}") String ${view.lowerCaseEntitySimpleName}${view.upCaseIdPropertyName}) {
+    @RequestMapping("/deleteBy${view.upCaseIdPropertyName}")
+    public boolean deleteBy${view.upCaseIdPropertyName}(@RequestParam(value = "${view.lowerCaseEntitySimpleName}${view.upCaseIdPropertyName}") String ${view.lowerCaseEntitySimpleName}${view.upCaseIdPropertyName}) {
         boolean resFlag = this.${view.lowerCaseEntitySimpleName}Service.deleteBy${view.upCaseIdPropertyName}(${view.lowerCaseEntitySimpleName}${view.upCaseIdPropertyName});
         return resFlag;
     }
@@ -299,8 +329,8 @@ public class ${view.entitySimpleName}Controller {
     //FIXME:修改禁用权限名称
     @CheckOperateAuth(key = "disable_${view.lowerCaseEntitySimpleName}", name = "禁用${view.entitySimpleName}")
     @ResponseBody
-    @RequestMapping("/disable${view.entitySimpleName}By${view.upCaseIdPropertyName}")
-    public boolean disable${view.entitySimpleName}By${view.upCaseIdPropertyName}(@RequestParam(value = "${view.lowerCaseEntitySimpleName}${view.upCaseIdPropertyName}") String ${view.lowerCaseEntitySimpleName}${view.upCaseIdPropertyName}) {
+    @RequestMapping("/disableBy${view.upCaseIdPropertyName}")
+    public boolean disableBy${view.upCaseIdPropertyName}(@RequestParam(value = "${view.lowerCaseEntitySimpleName}${view.upCaseIdPropertyName}") String ${view.lowerCaseEntitySimpleName}${view.upCaseIdPropertyName}) {
         boolean resFlag = this.${view.lowerCaseEntitySimpleName}Service.disableBy${view.upCaseIdPropertyName}(${view.lowerCaseEntitySimpleName}${view.upCaseIdPropertyName});
         return resFlag;
     }
@@ -318,8 +348,8 @@ public class ${view.entitySimpleName}Controller {
     //FIXME:修改启用权限名称
     @CheckOperateAuth(key = "enable_${view.lowerCaseEntitySimpleName}", name = "启用${view.entitySimpleName}")
     @ResponseBody
-    @RequestMapping("/enable${view.entitySimpleName}By${view.upCaseIdPropertyName}")
-    public boolean enable${view.entitySimpleName}By${view.upCaseIdPropertyName}(@RequestParam(value = "${view.lowerCaseEntitySimpleName}${view.upCaseIdPropertyName}") String ${view.lowerCaseEntitySimpleName}${view.upCaseIdPropertyName}) {
+    @RequestMapping("/enableBy${view.upCaseIdPropertyName}")
+    public boolean enableBy${view.upCaseIdPropertyName}(@RequestParam(value = "${view.lowerCaseEntitySimpleName}${view.upCaseIdPropertyName}") String ${view.lowerCaseEntitySimpleName}${view.upCaseIdPropertyName}) {
         boolean resFlag = this.${view.lowerCaseEntitySimpleName}Service.enableBy${view.upCaseIdPropertyName}(${view.lowerCaseEntitySimpleName}${view.upCaseIdPropertyName});
         return resFlag;
     }

@@ -6,9 +6,12 @@
  */
 package com.tx.core.entityentry.support;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -27,7 +30,26 @@ import com.tx.core.entityentry.model.EntityEntry;
  */
 public class EntityEntrySupport<E extends EntityEntry> {
     
+    //实体分项基本字段
+    private static final Set<String> entityEntryUCFieldNames = new HashSet<>(
+            Arrays.asList("id".toUpperCase(),
+                    "entityId".toUpperCase(),
+                    "entryKey".toUpperCase(),
+                    "entryValue".toUpperCase()));
+    
+    //插入语句模板
+    //"INSERT INTO {} (id,entityId,entryKey,entryValue{}) values(?,?,?,?{})";
+    private static final String INSERT_SQL_TEMPLATE = (new StringBuilder(
+            "INSERT INTO ")).append(" {}")
+            .append("(id,entityId,entryKey,entryValue{})")
+            .append("values(?,?,?,?{})")
+            .toString();
+    
+    private static final String update_sql_template = null;
+    
     private JdbcTemplate jdbcTemplate;
+    
+    private Class<E> type;
     
     private String tableName;
     
@@ -85,8 +107,7 @@ public class EntityEntrySupport<E extends EntityEntry> {
      * @see [类、类#方法、类#成员]
      */
     @Transactional
-    private void batchInsert(String entityId,
-            List<E> entryList) {
+    private void batchInsert(String entityId, List<E> entryList) {
         if (CollectionUtils.isEmpty(entryList)) {
             return;
         }

@@ -51,7 +51,7 @@ $(document).ready(function(){
 </#if>
 
 	grid = $('#grid').datagrid({
-		url : '${r"${contextPath}"}/${view.lowerCaseEntitySimpleName}/query${view.entitySimpleName}<#if isPagedList>PagedList<#else>List</#if>.action',
+		url : '${r"${contextPath}"}/${view.lowerCaseEntitySimpleName}/query<#if isPagedList>PagedList<#else>List</#if>.action',
 		fit : true,
 		fitColumns : true,
 		border : false,
@@ -83,22 +83,22 @@ $(document).ready(function(){
 		}]],
 		columns: [[
 <#list fieldViewMapping?values as fieldView>
-<#if !fieldView.id>
-<#if fieldView.simpleType>
+	<#if !fieldView.id>
+		<#if fieldView.simpleType>
 		{
 			field : '${fieldView.fieldName}',
 			<%!//FIXME: 修改属性中文名 --%>
 			title : '${fieldView.fieldName}',
 			width : 200
-<#if fieldView.date>
+			<#if fieldView.date>
 			,formatter: function(cellvalue, options, rowObject){
 	   			var date = new Date();
 	   			date.setTime(cellvalue);
 	   			return date.format('yyyy-MM-dd hh:mm:ss');;
 			}
-</#if>
+			</#if>
 		}<#if fieldView_has_next>,</#if>
-<#else>
+		<#else>
 		{
 			<%!//FIXME: 修改属性需要显示的属性字段 --%>
 			field : '${fieldView.fieldName}.${fieldView.foreignKeyFieldName}',
@@ -106,8 +106,8 @@ $(document).ready(function(){
 			title : '${fieldView.fieldName}.${fieldView.foreignKeyFieldName}',
 			width : 200
 		}<#if fieldView_has_next>,</#if>
-</#if>
-</#if>
+		</#if>
+	</#if>
 </#list>
 		<c:if test="${r"${show_grid_action == true}"}">
 		,{
@@ -255,7 +255,7 @@ function deleteFun(id,name) {
 	    		});
 	    		//如果确认删除指定的${view.entitySimpleName}
 	    		$.post(
-			    		'${r"${contextPath}"}/${view.lowerCaseEntitySimpleName}/delete${view.entitySimpleName}By${view.upCaseIdPropertyName}.action',
+			    		'${r"${contextPath}"}/${view.lowerCaseEntitySimpleName}/deleteBy${view.upCaseIdPropertyName}.action',
 			    		{${view.lowerCaseEntitySimpleName}Id:id},
 			    		function(data){
 			    			DialogUtils.progress('close');
@@ -296,7 +296,7 @@ function disableFun(id,name){
     		});
     		//如果确认禁用指定${view.entitySimpleName}
     		$.post(
-		    		'${r"${contextPath}"}/${view.lowerCaseEntitySimpleName}/disable${view.entitySimpleName}By${view.upCaseIdPropertyName}.action',
+		    		'${r"${contextPath}"}/${view.lowerCaseEntitySimpleName}/disableBy${view.upCaseIdPropertyName}.action',
 		    		{${view.lowerCaseEntitySimpleName}Id:id},
 		    		function(){
 		    			DialogUtils.progress('close');
@@ -331,7 +331,7 @@ function enableFun(id,name){
     		});
     		//如果确认启用指定${view.entitySimpleName}
     		$.post(
-		    		'${r"${contextPath}"}/${view.lowerCaseEntitySimpleName}/enable${view.entitySimpleName}By${view.upCaseIdPropertyName}.action',
+		    		'${r"${contextPath}"}/${view.lowerCaseEntitySimpleName}/enableBy${view.upCaseIdPropertyName}.action',
 		    		{${view.lowerCaseEntitySimpleName}Id:id},
 		    		function(){
 		    			DialogUtils.progress('close');
@@ -352,28 +352,28 @@ function enableFun(id,name){
 		<form id="queryForm" class="form">
 			<table class="table table-hover table-condensed">
 <#list view.queryConditionName2ConditionInfoMapping?values as conditionInfo>
-<#if conditionInfo_index%2 = 0>
+	<#if conditionInfo_index%2 = 0>
 				<tr>
-</#if>
+	</#if>
 					<!--//FIXME: 修改查询条件中文名 -->
 					<th>${conditionInfo.queryConditionKey}</th>
-<#if conditionInfo.queryConditionJavaType.simpleName == "Date">
+	<#if conditionInfo.queryConditionJavaType.simpleName == "Date">
 					<td><input id="${conditionInfo.queryConditionKey}" name="${conditionInfo.queryConditionKey}"
 							readonly="readonly"
 							onclick="WdatePicker({readOnly:true,dateFmt:'yyyy-MM-dd HH:mm:ss'})"/>
 					</td>
-</#if>
-<#if conditionInfo.queryConditionJavaType.simpleName != "Date">
+	</#if>
+	<#if conditionInfo.queryConditionJavaType.simpleName != "Date">
 					<td><input id="${conditionInfo.queryConditionKey}" name="${conditionInfo.queryConditionKey}"/></td>
-</#if>
-<#if (conditionInfo_has_next && conditionInfo_index%2 == 1)>
+	</#if>
+	<#if (conditionInfo_has_next && conditionInfo_index%2 == 1)>
 				</tr>
-</#if>
-<#if (!conditionInfo_has_next && conditionInfo_index%2 == 0)>
+	</#if>
+	<#if (!conditionInfo_has_next && conditionInfo_index%2 == 0)>
 					<th>&nbsp;</th>
 					<td>&nbsp;</td>
 				</tr>
-</#if>
+	</#if>
 </#list>
 				<tr>
 					<td colspan="4" class="button operRow">

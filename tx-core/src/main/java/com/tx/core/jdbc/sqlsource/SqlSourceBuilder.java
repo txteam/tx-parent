@@ -12,6 +12,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.WeakHashMap;
 
+import javax.persistence.Column;
 import javax.persistence.OrderBy;
 
 import org.apache.commons.lang3.StringUtils;
@@ -160,10 +161,11 @@ public class SqlSourceBuilder {
         Set<String> getterNames = classReflector.getGetterNames();
         for (String getterNameTemp : getterNames) {
             Class<?> getterType = classReflector.getGetterType(getterNameTemp);
-            if(void.class.equals(getterType)){
+            if (void.class.equals(getterType)) {
                 continue;
             }
             String columnName = simpleSqlSource.getColumnNameByGetterName(getterNameTemp);
+            
             String queryConditionKey = getterNameTemp;
             Class<?> queryConditionKeyType = getterType;
             //如果为不直接支持的类型
@@ -415,6 +417,10 @@ public class SqlSourceBuilder {
                 .entrySet()) {
             JpaColumnInfo jpaColumnInfo = entryTemp.getValue();
             
+            //2016-08-08添加：增加getterName的直接映射
+            simpleSqlSource.addGetter2columnMapping(jpaColumnInfo.getGetterName(),
+                    jpaColumnInfo.getColumnName(),
+                    jpaColumnInfo.getRealGetterType());
             //如果为直接支持存储的字段，则开始解析
             simpleSqlSource.addGetter2columnMapping(jpaColumnInfo.getRealGetterName(),
                     jpaColumnInfo.getColumnName(),

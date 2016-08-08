@@ -192,6 +192,8 @@ public class JpaMetaClass<T> {
             }
             
             Class<?> getterType = this.classReflector.getGetterType(getterNameTemp);
+            //Field getterField = this.classReflector.getFiled(getterNameTemp);
+            //Method getterMethod = this.classReflector.getGetterMethod(getterNameTemp);
             JpaColumnInfo jpaColumnInfo = parseGetter(getterNameTemp,
                     getterType,
                     type,
@@ -258,6 +260,14 @@ public class JpaMetaClass<T> {
             jpaColumnInfo.setSimpleType(false);
         }
         
+        if (ReflectionUtils.isHasAnnotationForGetter(type,
+                getterName,
+                Column.class)) {
+            processWhenColumnAnnotationExist(getterName,
+                    type,
+                    jpaColumnInfo);
+        }
+        
         //是否存在Column注解
         if (ReflectionUtils.isHasAnnotationForGetter(type,
                 getterName,
@@ -291,13 +301,13 @@ public class JpaMetaClass<T> {
             //"存在ManayToOne,OneToOne注解的字段不应该存在注解@Column应该为JoinColumn.type:{},getterName:{},getterType:{}",
             //new Object[] { type, getterName, getterType }));
             //存在Column注解并且为简单类型时
-            if (ReflectionUtils.isHasAnnotationForGetter(type,
-                    getterName,
-                    Column.class)) {
-                processWhenColumnAnnotationExist(getterName,
-                        type,
-                        jpaColumnInfo);
-            }
+//            if (ReflectionUtils.isHasAnnotationForGetter(type,
+//                    getterName,
+//                    Column.class)) {
+//                processWhenColumnAnnotationExist(getterName,
+//                        type,
+//                        jpaColumnInfo);
+//            }
             
             //当JoinColumn存在时
             if (ReflectionUtils.isHasAnnotationForGetter(type,
@@ -312,13 +322,13 @@ public class JpaMetaClass<T> {
             //JdbcUtils.isSupportedSimpleType(type)
             //为简单类型且不存在OneToOne ManyToOne时的解析方案
             //当JoinColumn存在时
-            if (ReflectionUtils.isHasAnnotationForGetter(type,
-                    getterName,
-                    Column.class)) {
-                processWhenColumnAnnotationExist(getterName,
-                        type,
-                        jpaColumnInfo);
-            }
+//            if (ReflectionUtils.isHasAnnotationForGetter(type,
+//                    getterName,
+//                    Column.class)) {
+//                processWhenColumnAnnotationExist(getterName,
+//                        type,
+//                        jpaColumnInfo);
+//            }
         }
         
         return jpaColumnInfo;

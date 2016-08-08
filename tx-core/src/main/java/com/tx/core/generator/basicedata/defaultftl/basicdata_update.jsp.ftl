@@ -14,14 +14,14 @@ $(document).ready(function(){
 	parent.DialogUtils.progress('close');
 	
 	//验证器
-	$('#${view.lowerCaseEntitySimpleName}Form').validator({
+	$('#entityForm').validator({
 	    valid: function(){
 	        //表单验证通过，提交表单到服务器
 	        DialogUtils.progress({
 	            text : '数据提交中，请等待....'
 	    	});
-			$('#${view.lowerCaseEntitySimpleName}Form').ajaxSubmit({
-			    url:"${r"${contextPath }"}/${view.lowerCaseEntitySimpleName}/update${view.entitySimpleName}.action",
+			$('#form').ajaxSubmit({
+			    url:"${r"${contextPath }"}/${view.lowerCaseEntitySimpleName}/update.action",
 			    success: function(data) {
 			    	DialogUtils.progress('close');
 					if(data){
@@ -37,7 +37,7 @@ $(document).ready(function(){
 	});
 });
 function submitFun(){
-	$('#${view.lowerCaseEntitySimpleName}Form').submit();
+	$('#entityForm').submit();
 }
 function cancelFun(){
 	parent.DialogUtils.closeDialogById("update${view.entitySimpleName}");
@@ -47,7 +47,7 @@ function cancelFun(){
 <body>
 <div class="easyui-layout" data-options="fit:true,border:false">
 	<div data-options="region:'center',border:false" title="" style="overflow: hidden;">
-		<form:form id="${view.lowerCaseEntitySimpleName}Form" method="post" cssClass="form"
+		<form:form id="entityForm" method="post" cssClass="form"
 			modelAttribute="${view.lowerCaseEntitySimpleName}">
 			<form:hidden path="id"></form:hidden>
 			<table class="common_table">

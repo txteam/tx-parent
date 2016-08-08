@@ -72,7 +72,7 @@ public class DBScriptMapper {
         for (String keyTemp : propertyList) {
             JpaColumnInfo columnInfo = property2columnMap.get(keyTemp);
             
-            this.columnName2TypeNameMapping.put(keyTemp,
+            this.columnName2TypeNameMapping.put(columnInfo.getColumnName(),
                     dialect.getTypeName(JdbcUtils.getSqlTypeByJavaType(columnInfo.getRealGetterType()),
                             columnInfo.getLength(),
                             columnInfo.getPrecision(),

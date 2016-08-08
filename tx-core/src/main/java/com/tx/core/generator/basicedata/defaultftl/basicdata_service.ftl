@@ -54,7 +54,7 @@ public class ${service.entitySimpleName}Service {
      * @see [类、类#方法、类#成员]
      */
     @Transactional
-    public void insert${service.entitySimpleName}(${service.entitySimpleName} ${service.lowerCaseEntitySimpleName}) {
+    public void insert(${service.entitySimpleName} ${service.lowerCaseEntitySimpleName}) {
         //FIXME:验证参数是否合法
         AssertUtils.notNull(${service.lowerCaseEntitySimpleName}, "${service.lowerCaseEntitySimpleName} is null.");
                 
@@ -64,7 +64,7 @@ public class ${service.entitySimpleName}Service {
 </#if>
         
         //调用数据持久层对实体进行持久化操作
-        this.${service.lowerCaseEntitySimpleName}Dao.insert${service.entitySimpleName}(${service.lowerCaseEntitySimpleName});
+        this.${service.lowerCaseEntitySimpleName}Dao.insert(${service.lowerCaseEntitySimpleName});
     }
     
     /**
@@ -83,7 +83,7 @@ public class ${service.entitySimpleName}Service {
         
         ${service.entitySimpleName} condition = new ${service.entitySimpleName}();
         condition.set${service.upCaseIdPropertyName}(${service.idPropertyName});
-        int resInt = this.${service.lowerCaseEntitySimpleName}Dao.delete${service.entitySimpleName}(condition);
+        int resInt = this.${service.lowerCaseEntitySimpleName}Dao.delete(condition);
         
         boolean flag = resInt > 0;
         return flag;
@@ -98,13 +98,13 @@ public class ${service.entitySimpleName}Service {
      * @exception throws
      * @see [类、类#方法、类#成员]
      */
-    public ${service.entitySimpleName} find${service.entitySimpleName}By${service.upCaseIdPropertyName}(String ${service.idPropertyName}) {
+    public ${service.entitySimpleName} findBy${service.upCaseIdPropertyName}(String ${service.idPropertyName}) {
         AssertUtils.notEmpty(${service.idPropertyName}, "${service.idPropertyName} is empty.");
         
         ${service.entitySimpleName} condition = new ${service.entitySimpleName}();
         condition.set${service.upCaseIdPropertyName}(${service.idPropertyName});
         
-        ${service.entitySimpleName} res = this.${service.lowerCaseEntitySimpleName}Dao.find${service.entitySimpleName}(condition);
+        ${service.entitySimpleName} res = this.${service.lowerCaseEntitySimpleName}Dao.find(condition);
         return res;
     }
     
@@ -121,7 +121,7 @@ public class ${service.entitySimpleName}Service {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public List<${service.entitySimpleName}> query${service.entitySimpleName}List(
+    public List<${service.entitySimpleName}> queryList(
 <#if !StringUtils.isEmpty(validPropertyName)>
 		Boolean ${validPropertyName},
 </#if>
@@ -136,7 +136,7 @@ public class ${service.entitySimpleName}Service {
 </#if>
 
         //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
-        List<${service.entitySimpleName}> resList = this.${service.lowerCaseEntitySimpleName}Dao.query${service.entitySimpleName}List(params);
+        List<${service.entitySimpleName}> resList = this.${service.lowerCaseEntitySimpleName}Dao.queryList(params);
         
         return resList;
     }
@@ -158,7 +158,7 @@ public class ${service.entitySimpleName}Service {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public PagedList<${service.entitySimpleName}> query${service.entitySimpleName}PagedList(
+    public PagedList<${service.entitySimpleName}> queryPagedList(
 <#if !StringUtils.isEmpty(validPropertyName)>
 		Boolean ${validPropertyName},
 </#if>
@@ -174,7 +174,7 @@ public class ${service.entitySimpleName}Service {
 </#if>
  
         //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
-        PagedList<${service.entitySimpleName}> resPagedList = this.${service.lowerCaseEntitySimpleName}Dao.query${service.entitySimpleName}PagedList(params, pageIndex, pageSize);
+        PagedList<${service.entitySimpleName}> resPagedList = this.${service.lowerCaseEntitySimpleName}Dao.queryPagedList(params, pageIndex, pageSize);
         
         return resPagedList;
     }
@@ -197,7 +197,7 @@ public class ${service.entitySimpleName}Service {
         params.put("exclude${service.upCaseIdPropertyName}", exclude${service.upCaseIdPropertyName});
         
         //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
-        int res = this.${service.lowerCaseEntitySimpleName}Dao.count${service.entitySimpleName}(params);
+        int res = this.${service.lowerCaseEntitySimpleName}Dao.count(params);
         
         return res > 0;
     }
@@ -236,8 +236,8 @@ public class ${service.entitySimpleName}Service {
 		updateRowMap.put("${column.propertyName}", ${service.lowerCaseEntitySimpleName}.${column.getterMethodSimpleName}());
 		</#if>
 	</#if>
-	</#list>
-        int updateRowCount = this.${service.lowerCaseEntitySimpleName}Dao.update${service.entitySimpleName}(updateRowMap);
+</#list>
+        int updateRowCount = this.${service.lowerCaseEntitySimpleName}Dao.update(updateRowMap);
         
         //如果需要大于1时，抛出异常并回滚，需要在这里修改
         return updateRowCount >= 1;
@@ -263,7 +263,7 @@ public class ${service.entitySimpleName}Service {
         params.put("${service.idPropertyName}", ${service.idPropertyName});
         params.put("${validPropertyName}", false);
         
-        this.${service.lowerCaseEntitySimpleName}Dao.update${service.entitySimpleName}(params);
+        this.${service.lowerCaseEntitySimpleName}Dao.update(params);
         
         return true;
     }
@@ -287,7 +287,7 @@ public class ${service.entitySimpleName}Service {
         params.put("${service.idPropertyName}", ${service.idPropertyName});
         params.put("${validPropertyName}", true);
         
-        this.${service.lowerCaseEntitySimpleName}Dao.update${service.entitySimpleName}(params);
+        this.${service.lowerCaseEntitySimpleName}Dao.update(params);
         
         return true;
     }

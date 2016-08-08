@@ -18,7 +18,6 @@ import org.hibernate.dialect.Dialect;
 import org.springframework.util.ClassUtils;
 
 import com.tx.core.dbscript.model.DataSourceTypeEnum;
-import com.tx.core.generator.JpaEntityFreeMarkerGenerator;
 import com.tx.core.generator.model.DBScriptMapper;
 import com.tx.core.generator.model.DaoGeneratorModel;
 import com.tx.core.generator.model.DeleteMapper;
@@ -199,7 +198,7 @@ public class TableCodeGenerator {
                 data,
                 resultFolderPath + "/dbscript/" + dataSourceType.getName()
                         + "/01basisScript/" + moduleName + "/tables/"
-                        + jpaMetaClass.getTableName().toUpperCase() + ".sql",
+                        + jpaMetaClass.getTableName().toLowerCase() + ".sql",
                 encode);
     }
     

@@ -520,9 +520,9 @@ public class BasicDataCodeGenerator {
                 dbScriptTemplateFilePath,
                 data,
                 codeBaseFolder + "/mysql/01basisScript/" + packageName + "/"
-                        + sqlSource.getTableName().toUpperCase() + ".sql");
+                        + sqlSource.getTableName().toLowerCase() + ".sql");
         logger.info("mysql脚本存放路径:{}", codeBaseFolder + "/mysql/01basisScript/"
-                + packageName + "/" + sqlSource.getTableName().toUpperCase()
+                + packageName + "/" + sqlSource.getTableName().toLowerCase()
                 + ".sql");
         dbScriptMapper = new DBScriptMapper(jpaMetaClass,
                 DataSourceTypeEnum.ORACLE10G.getDialect());
@@ -531,10 +531,10 @@ public class BasicDataCodeGenerator {
                 dbScriptTemplateFilePath,
                 data,
                 codeBaseFolder + "/oracle/01basisScript/" + packageName + "/"
-                        + sqlSource.getTableName().toUpperCase() + ".sql");
+                        + sqlSource.getTableName().toLowerCase() + ".sql");
         logger.info("oracle脚本存放路径:{}", codeBaseFolder
                 + "/oracle/01basisScript/" + packageName + "/"
-                + sqlSource.getTableName().toUpperCase() + ".sql");
+                + sqlSource.getTableName().toLowerCase() + ".sql");
     }
     
     /**

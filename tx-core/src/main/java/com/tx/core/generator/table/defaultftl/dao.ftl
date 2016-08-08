@@ -35,7 +35,7 @@ public interface ${dao.simpleEntityTypeName}Dao {
       * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public void batchInsert${dao.simpleEntityTypeName}(List<${dao.simpleEntityTypeName}> condition);    
+    public void batchInsert(List<${dao.simpleEntityTypeName}> condition);    
     
     /**
       * 批量更新${dao.simpleEntityTypeName}实体，
@@ -49,7 +49,7 @@ public interface ${dao.simpleEntityTypeName}Dao {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public void batchUpdate${dao.simpleEntityTypeName}(List<Map<String,Object>> updateRowMapList);
+    public void batchUpdate(List<Map<String,Object>> updateRowMapList);
     
     /**
       * 插入${dao.simpleEntityTypeName}对象实体
@@ -62,7 +62,7 @@ public interface ${dao.simpleEntityTypeName}Dao {
       * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public void insert${dao.simpleEntityTypeName}(${dao.simpleEntityTypeName} condition);
+    public void insert(${dao.simpleEntityTypeName} condition);
     
     /**
       * 删除${dao.simpleEntityTypeName}对象
@@ -76,7 +76,7 @@ public interface ${dao.simpleEntityTypeName}Dao {
       * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public int delete${dao.simpleEntityTypeName}(${dao.simpleEntityTypeName} condition);
+    public int delete(${dao.simpleEntityTypeName} condition);
     
     /**
       * 查询${dao.simpleEntityTypeName}实体
@@ -90,7 +90,7 @@ public interface ${dao.simpleEntityTypeName}Dao {
       * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public ${dao.simpleEntityTypeName} find${dao.simpleEntityTypeName}(${dao.simpleEntityTypeName} condition);
+    public ${dao.simpleEntityTypeName} find(${dao.simpleEntityTypeName} condition);
     
     /**
       * 根据条件查询${dao.simpleEntityTypeName}列表
@@ -104,7 +104,7 @@ public interface ${dao.simpleEntityTypeName}Dao {
       * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public List<${dao.simpleEntityTypeName}> query${dao.simpleEntityTypeName}List(Map<String, Object> params);
+    public List<${dao.simpleEntityTypeName}> queryList(Map<String, Object> params);
     
     /**
       * 根据指定查询条件以及排序列查询${dao.simpleEntityTypeName}列表
@@ -119,7 +119,7 @@ public interface ${dao.simpleEntityTypeName}Dao {
       * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public List<${dao.simpleEntityTypeName}> query${dao.simpleEntityTypeName}List(Map<String, Object> params,
+    public List<${dao.simpleEntityTypeName}> queryList(Map<String, Object> params,
             List<Order> orderList);
     
     /**
@@ -133,7 +133,7 @@ public interface ${dao.simpleEntityTypeName}Dao {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public int count${dao.simpleEntityTypeName}(Map<String, Object> params);
+    public int count(Map<String, Object> params);
     
     /**
       * 分页查询${dao.simpleEntityTypeName}列表
@@ -149,7 +149,7 @@ public interface ${dao.simpleEntityTypeName}Dao {
       * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public PagedList<${dao.simpleEntityTypeName}> query${dao.simpleEntityTypeName}PagedList(Map<String, Object> params,
+    public PagedList<${dao.simpleEntityTypeName}> queryPagedList(Map<String, Object> params,
             int pageIndex, int pageSize);
     
     /**
@@ -167,7 +167,7 @@ public interface ${dao.simpleEntityTypeName}Dao {
       * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public PagedList<${dao.simpleEntityTypeName}> query${dao.simpleEntityTypeName}PagedList(Map<String, Object> params,
+    public PagedList<${dao.simpleEntityTypeName}> queryPagedList(Map<String, Object> params,
             int pageIndex, int pageSize, List<Order> orderList);
     
     
@@ -183,5 +183,5 @@ public interface ${dao.simpleEntityTypeName}Dao {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public int update${dao.simpleEntityTypeName}(Map<String, Object> updateRowMap);
+    public int update(Map<String, Object> updateRowMap);
 }
