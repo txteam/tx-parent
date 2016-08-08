@@ -54,14 +54,13 @@ public class ${service.entitySimpleName}Service {
     * @see [类、类#方法、类#成员]
     */
     @Transactional
-    public void insert${service.entitySimpleName}(${service.entitySimpleName} ${service.lowerCaseEntitySimpleName}) {
+    public void insert(${service.entitySimpleName} ${service.lowerCaseEntitySimpleName}) {
         //TODO:验证参数是否合法
         AssertUtils.notNull(${service.lowerCaseEntitySimpleName}, "${service.lowerCaseEntitySimpleName} is null.");
-        AssertUtils.notEmpty(${service.lowerCaseEntitySimpleName}.get${service.upCaseIdPropertyName}(), "${service.lowerCaseEntitySimpleName}.${service.idPropertyName} is empty.");
-        
+       	
         //TODO: 设置默认数据
         
-        this.${service.lowerCaseEntitySimpleName}Dao.insert${service.entitySimpleName}(${service.lowerCaseEntitySimpleName});
+        this.${service.lowerCaseEntitySimpleName}Dao.insert(${service.lowerCaseEntitySimpleName});
     }
       
     /**
@@ -83,7 +82,7 @@ public class ${service.entitySimpleName}Service {
         
         ${service.entitySimpleName} condition = new ${service.entitySimpleName}();
         condition.set${service.upCaseIdPropertyName}(${service.idPropertyName});
-        return this.${service.lowerCaseEntitySimpleName}Dao.delete${service.entitySimpleName}(condition);
+        return this.${service.lowerCaseEntitySimpleName}Dao.delete(condition);
     }
     
     /**
@@ -97,13 +96,13 @@ public class ${service.entitySimpleName}Service {
       * @exception throws 可能存在数据库访问异常DataAccessException
       * @see [类、类#方法、类#成员]
      */
-    public ${service.entitySimpleName} find${service.entitySimpleName}By${service.upCaseIdPropertyName}(String ${service.idPropertyName}) {
+    public ${service.entitySimpleName} findBy${service.upCaseIdPropertyName}(String ${service.idPropertyName}) {
         AssertUtils.notEmpty(${service.idPropertyName}, "${service.idPropertyName} is empty.");
         
         ${service.entitySimpleName} condition = new ${service.entitySimpleName}();
         condition.set${service.upCaseIdPropertyName}(${service.idPropertyName});
         
-        ${service.entitySimpleName} res = this.${service.lowerCaseEntitySimpleName}Dao.find${service.entitySimpleName}(condition);
+        ${service.entitySimpleName} res = this.${service.lowerCaseEntitySimpleName}Dao.find(condition);
         return res;
     }
     
@@ -118,14 +117,14 @@ public class ${service.entitySimpleName}Service {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public List<${service.entitySimpleName}> query${service.entitySimpleName}List(/*TODO:自己定义条件*/) {
+    public List<${service.entitySimpleName}> queryList(/*TODO:自己定义条件*/) {
         //TODO:判断条件合法性
         
         //TODO:生成查询条件
         Map<String, Object> params = new HashMap<String, Object>();
         
         //TODO:根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
-        List<${service.entitySimpleName}> resList = this.${service.lowerCaseEntitySimpleName}Dao.query${service.entitySimpleName}List(params);
+        List<${service.entitySimpleName}> resList = this.${service.lowerCaseEntitySimpleName}Dao.queryList(params);
         
         return resList;
     }
@@ -141,7 +140,7 @@ public class ${service.entitySimpleName}Service {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    public PagedList<${service.entitySimpleName}> query${service.entitySimpleName}PagedList(/*TODO:自己定义条件*/int pageIndex,
+    public PagedList<${service.entitySimpleName}> queryPagedList(/*TODO:自己定义条件*/int pageIndex,
             int pageSize) {
         //TODO:判断条件合法性
         
@@ -149,7 +148,7 @@ public class ${service.entitySimpleName}Service {
         Map<String, Object> params = new HashMap<String, Object>();
         
         //TODO:根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
-        PagedList<${service.entitySimpleName}> resPagedList = this.${service.lowerCaseEntitySimpleName}Dao.query${service.entitySimpleName}PagedList(params, pageIndex, pageSize);
+        PagedList<${service.entitySimpleName}> resPagedList = this.${service.lowerCaseEntitySimpleName}Dao.queryPagedList(params, pageIndex, pageSize);
         
         return resPagedList;
     }
@@ -164,14 +163,14 @@ public class ${service.entitySimpleName}Service {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public int count${service.entitySimpleName}(/*TODO:自己定义条件*/){
+    public int count(/*TODO:自己定义条件*/){
         //TODO:判断条件合法性
         
         //TODO:生成查询条件
         Map<String, Object> params = new HashMap<String, Object>();
         
         //TODO:根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
-        int res = this.${service.lowerCaseEntitySimpleName}Dao.count${service.entitySimpleName}(params);
+        int res = this.${service.lowerCaseEntitySimpleName}Dao.count(params);
         
         return res;
     }
@@ -209,7 +208,7 @@ public class ${service.entitySimpleName}Service {
 </#if>
 </#list>        
         
-        int updateRowCount = this.${service.lowerCaseEntitySimpleName}Dao.update${service.entitySimpleName}(updateRowMap);
+        int updateRowCount = this.${service.lowerCaseEntitySimpleName}Dao.update(updateRowMap);
         
         //TODO:如果需要大于1时，抛出异常并回滚，需要在这里修改
         return updateRowCount >= 1;

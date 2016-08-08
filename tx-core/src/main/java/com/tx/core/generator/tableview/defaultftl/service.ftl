@@ -56,13 +56,13 @@ public class ${service.entitySimpleName}Service {
      * @exception throws 可能存在数据库访问异常DataAccessException
      * @see [类、类#方法、类#成员]
      */
-    public ${service.entitySimpleName} find${service.entitySimpleName}By${service.upCaseIdPropertyName}(String ${service.idPropertyName}) {
+    public ${service.entitySimpleName} findBy${service.upCaseIdPropertyName}(String ${service.idPropertyName}) {
         AssertUtils.notEmpty(${service.idPropertyName}, "${service.idPropertyName} is empty.");
         
         ${service.entitySimpleName} condition = new ${service.entitySimpleName}();
         condition.set${service.upCaseIdPropertyName}(${service.idPropertyName});
         
-        ${service.entitySimpleName} res = this.${service.lowerCaseEntitySimpleName}Dao.find${service.entitySimpleName}(condition);
+        ${service.entitySimpleName} res = this.${service.lowerCaseEntitySimpleName}Dao.find(condition);
         return res;
     }
     
@@ -70,8 +70,10 @@ public class ${service.entitySimpleName}Service {
      * 查询${service.entitySimpleName}实体列表
      * <功能详细描述>
 <#list service.queryConditionName2TypeNameMapping?keys as key>
-     * @param ${key}
-</#list> 
+		<#if service.queryConditionName2TypeNameMapping[key] != 'String'>
+	 * param ${key}
+		</#if>
+</#list>
      *       
      * @return [参数说明]
      * 
@@ -79,30 +81,52 @@ public class ${service.entitySimpleName}Service {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public List<${service.entitySimpleName}> query${service.entitySimpleName}List(
+    public List<${service.entitySimpleName}> queryList(
 <#list service.queryConditionName2TypeNameMapping?keys as key>
-		${service.queryConditionName2TypeNameMapping[key]} ${key}<#if key_has_next>,</#if>
-</#list>    
+		<#if service.queryConditionName2TypeNameMapping[key] != 'String'>
+			<#if service.queryConditionName2TypeNameMapping[key] == 'boolean'>
+			Boolean ${key},
+			<#else>
+			${service.queryConditionName2TypeNameMapping[key]} ${key},
+			</#if>
+		</#if>
+</#list>
+			Map<String,Object> params
     	) {
         //判断条件合法性
         
-        //生成查询条件
-        Map<String, Object> params = new HashMap<String, Object>();
+        //查询条件
+        params = params == null ? new HashMap<String, Object>() : params;
+        
 <#list service.queryConditionName2TypeNameMapping?keys as key>
-		params.put("${key}",${key});
+		<#if service.queryConditionName2TypeNameMapping[key] == 'String'>
+		//params.put("${key}",${key});
+		</#if>
 </#list>
+
+<#list service.queryConditionName2TypeNameMapping?keys as key>
+		<#if service.queryConditionName2TypeNameMapping[key] != 'String'>
+		params.put("${key}",${key});
+		</#if>
+</#list>
+
+<#if StringUtils.isNotEmpty(validPropertyName)>
+		params.put("${validPropertyName}",true);
+</#if>
         
         //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
-        List<${service.entitySimpleName}> resList = this.${service.lowerCaseEntitySimpleName}Dao.query${service.entitySimpleName}List(params);
+        List<${service.entitySimpleName}> resList = this.${service.lowerCaseEntitySimpleName}Dao.queryList(params);
         
         return resList;
     }
     
     /**
      * 分页查询${service.entitySimpleName}实体列表
-	 <#list service.queryConditionName2TypeNameMapping?keys as key>
+<#list service.queryConditionName2TypeNameMapping?keys as key>
+		<#if service.queryConditionName2TypeNameMapping[key] != 'String'>
 	 * param ${key}
-	 </#list>
+		</#if>
+</#list>
      * @param pageIndex 当前页index从1开始计算 @param pageSize 每页显示行数
      * @return [参数说明]
      * 
@@ -110,22 +134,42 @@ public class ${service.entitySimpleName}Service {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public PagedList<${service.entitySimpleName}> query${service.entitySimpleName}PagedList(
+    public PagedList<${service.entitySimpleName}> queryPagedList(
 <#list service.queryConditionName2TypeNameMapping?keys as key>
+		<#if service.queryConditionName2TypeNameMapping[key] != 'String'>
+			<#if service.queryConditionName2TypeNameMapping[key] == 'boolean'>
+			Boolean ${key},
+			<#else>
 			${service.queryConditionName2TypeNameMapping[key]} ${key},
+			</#if>
+		</#if>
 </#list>
+			Map<String,Object> params,
     		int pageIndex,
             int pageSize) {
         //T判断条件合法性
         
-        //生成查询条件
-        Map<String, Object> params = new HashMap<String, Object>();
+        //查询条件
+        params = params == null ? new HashMap<String, Object>() : params;
+        
 <#list service.queryConditionName2TypeNameMapping?keys as key>
-		params.put("${key}",${key});
+		<#if service.queryConditionName2TypeNameMapping[key] == 'String'>
+		//params.put("${key}",${key});
+		</#if>
 </#list>
+
+<#list service.queryConditionName2TypeNameMapping?keys as key>
+		<#if service.queryConditionName2TypeNameMapping[key] != 'String'>
+		params.put("${key}",${key});
+		</#if>
+</#list>
+
+<#if StringUtils.isNotEmpty(validPropertyName)>
+		params.put("${validPropertyName}",true);
+</#if>
  
         //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
-        PagedList<${service.entitySimpleName}> resPagedList = this.${service.lowerCaseEntitySimpleName}Dao.query${service.entitySimpleName}PagedList(params, pageIndex, pageSize);
+        PagedList<${service.entitySimpleName}> resPagedList = this.${service.lowerCaseEntitySimpleName}Dao.queryPagedList(params, pageIndex, pageSize);
         
         return resPagedList;
     }

@@ -38,7 +38,7 @@ public class ${dao.simpleEntityTypeName}DaoImpl implements ${dao.simpleEntityTyp
      * @param condition
      */
     @Override
-    public void batchInsert${dao.simpleEntityTypeName}(List<${dao.simpleEntityTypeName}> condition){
+    public void batchInsert(List<${dao.simpleEntityTypeName}> condition){
         this.myBatisDaoSupport.batchInsertUseUUID("${dao.lowerCaseEntityTypeName}.insert${dao.simpleEntityTypeName}", condition, "id",true);
     }
     
@@ -46,7 +46,7 @@ public class ${dao.simpleEntityTypeName}DaoImpl implements ${dao.simpleEntityTyp
      * @param condition
      */
     @Override
-    public void batchUpdate${dao.simpleEntityTypeName}(List<Map<String,Object>> updateRowMapList){
+    public void batchUpdate(List<Map<String,Object>> updateRowMapList){
         this.myBatisDaoSupport.batchUpdate("${dao.lowerCaseEntityTypeName}.update${dao.simpleEntityTypeName}", updateRowMapList,true);
     }
     
@@ -54,7 +54,7 @@ public class ${dao.simpleEntityTypeName}DaoImpl implements ${dao.simpleEntityTyp
      * @param condition
      */
     @Override
-    public void insert${dao.simpleEntityTypeName}(${dao.simpleEntityTypeName} condition) {
+    public void insert(${dao.simpleEntityTypeName} condition) {
         this.myBatisDaoSupport.insertUseUUID("${dao.lowerCaseEntityTypeName}.insert${dao.simpleEntityTypeName}", condition, "id");
     }
     
@@ -63,7 +63,7 @@ public class ${dao.simpleEntityTypeName}DaoImpl implements ${dao.simpleEntityTyp
      * @return
      */
     @Override
-    public int delete${dao.simpleEntityTypeName}(${dao.simpleEntityTypeName} condition) {
+    public int delete(${dao.simpleEntityTypeName} condition) {
         return this.myBatisDaoSupport.delete("${dao.lowerCaseEntityTypeName}.delete${dao.simpleEntityTypeName}", condition);
     }
     
@@ -72,7 +72,7 @@ public class ${dao.simpleEntityTypeName}DaoImpl implements ${dao.simpleEntityTyp
      * @return
      */
     @Override
-    public ${dao.simpleEntityTypeName} find${dao.simpleEntityTypeName}(${dao.simpleEntityTypeName} condition) {
+    public ${dao.simpleEntityTypeName} find(${dao.simpleEntityTypeName} condition) {
         return this.myBatisDaoSupport.<${dao.simpleEntityTypeName}> find("${dao.lowerCaseEntityTypeName}.find${dao.simpleEntityTypeName}", condition);
     }
     
@@ -81,7 +81,7 @@ public class ${dao.simpleEntityTypeName}DaoImpl implements ${dao.simpleEntityTyp
      * @return
      */
     @Override
-    public List<${dao.simpleEntityTypeName}> query${dao.simpleEntityTypeName}List(Map<String, Object> params) {
+    public List<${dao.simpleEntityTypeName}> queryList(Map<String, Object> params) {
         return this.myBatisDaoSupport.<${dao.simpleEntityTypeName}> queryList("${dao.lowerCaseEntityTypeName}.query${dao.simpleEntityTypeName}",
                 params);
     }
@@ -92,7 +92,7 @@ public class ${dao.simpleEntityTypeName}DaoImpl implements ${dao.simpleEntityTyp
      * @return
      */
     @Override
-    public List<${dao.simpleEntityTypeName}> query${dao.simpleEntityTypeName}List(Map<String, Object> params,
+    public List<${dao.simpleEntityTypeName}> queryList(Map<String, Object> params,
             List<Order> orderList) {
         return this.myBatisDaoSupport.<${dao.simpleEntityTypeName}> queryList("${dao.lowerCaseEntityTypeName}.query${dao.simpleEntityTypeName}",
                 params,
@@ -104,7 +104,7 @@ public class ${dao.simpleEntityTypeName}DaoImpl implements ${dao.simpleEntityTyp
      * @return
      */
     @Override
-    public int count${dao.simpleEntityTypeName}(Map<String, Object> params) {
+    public int count(Map<String, Object> params) {
         return this.myBatisDaoSupport.<Integer> find("${dao.lowerCaseEntityTypeName}.query${dao.simpleEntityTypeName}Count",
                 params);
     }
@@ -116,7 +116,7 @@ public class ${dao.simpleEntityTypeName}DaoImpl implements ${dao.simpleEntityTyp
      * @return
      */
     @Override
-    public PagedList<${dao.simpleEntityTypeName}> query${dao.simpleEntityTypeName}PagedList(Map<String, Object> params,
+    public PagedList<${dao.simpleEntityTypeName}> queryPagedList(Map<String, Object> params,
             int pageIndex, int pageSize) {
         return this.myBatisDaoSupport.<${dao.simpleEntityTypeName}> queryPagedList("${dao.lowerCaseEntityTypeName}.query${dao.simpleEntityTypeName}",
                 params,
@@ -132,7 +132,7 @@ public class ${dao.simpleEntityTypeName}DaoImpl implements ${dao.simpleEntityTyp
      * @return
      */
     @Override
-    public PagedList<${dao.simpleEntityTypeName}> query${dao.simpleEntityTypeName}PagedList(Map<String, Object> params,
+    public PagedList<${dao.simpleEntityTypeName}> queryPagedList(Map<String, Object> params,
             int pageIndex, int pageSize, List<Order> orderList) {
         return this.myBatisDaoSupport.<${dao.simpleEntityTypeName}> queryPagedList("${dao.lowerCaseEntityTypeName}.query${dao.simpleEntityTypeName}",
                 params,
@@ -146,7 +146,7 @@ public class ${dao.simpleEntityTypeName}DaoImpl implements ${dao.simpleEntityTyp
      * @return
      */
     @Override
-    public int update${dao.simpleEntityTypeName}(Map<String, Object> updateRowMap) {
+    public int update(Map<String, Object> updateRowMap) {
         return this.myBatisDaoSupport.update("${dao.lowerCaseEntityTypeName}.update${dao.simpleEntityTypeName}", updateRowMap);
     }
 }

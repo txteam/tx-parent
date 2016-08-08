@@ -36,7 +36,7 @@ public interface ${dao.simpleEntityTypeName}Dao {
       * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public ${dao.simpleEntityTypeName} find${dao.simpleEntityTypeName}(${dao.simpleEntityTypeName} condition);
+    public ${dao.simpleEntityTypeName} find(${dao.simpleEntityTypeName} condition);
     
     /**
       * 根据条件查询${dao.simpleEntityTypeName}列表
@@ -50,7 +50,7 @@ public interface ${dao.simpleEntityTypeName}Dao {
       * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public List<${dao.simpleEntityTypeName}> query${dao.simpleEntityTypeName}List(Map<String, Object> params);
+    public List<${dao.simpleEntityTypeName}> queryList(Map<String, Object> params);
     
     /**
       * 根据指定查询条件以及排序列查询${dao.simpleEntityTypeName}列表
@@ -65,7 +65,7 @@ public interface ${dao.simpleEntityTypeName}Dao {
       * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public List<${dao.simpleEntityTypeName}> query${dao.simpleEntityTypeName}List(Map<String, Object> params,
+    public List<${dao.simpleEntityTypeName}> queryList(Map<String, Object> params,
             List<Order> orderList);
     
     /**
@@ -79,7 +79,7 @@ public interface ${dao.simpleEntityTypeName}Dao {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public int count${dao.simpleEntityTypeName}(Map<String, Object> params);
+    public int count(Map<String, Object> params);
     
     /**
       * 分页查询${dao.simpleEntityTypeName}列表
@@ -95,7 +95,7 @@ public interface ${dao.simpleEntityTypeName}Dao {
       * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public PagedList<${dao.simpleEntityTypeName}> query${dao.simpleEntityTypeName}PagedList(Map<String, Object> params,
+    public PagedList<${dao.simpleEntityTypeName}> queryPagedList(Map<String, Object> params,
             int pageIndex, int pageSize);
     
     /**
@@ -113,6 +113,6 @@ public interface ${dao.simpleEntityTypeName}Dao {
       * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public PagedList<${dao.simpleEntityTypeName}> query${dao.simpleEntityTypeName}PagedList(Map<String, Object> params,
+    public PagedList<${dao.simpleEntityTypeName}> queryPagedList(Map<String, Object> params,
             int pageIndex, int pageSize, List<Order> orderList);
 }
