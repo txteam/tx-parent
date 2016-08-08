@@ -91,10 +91,16 @@ $(document).ready(function(){
 			title : '${fieldView.fieldName}',
 			width : 200
 			<#if fieldView.date>
-			,formatter: function(cellvalue, options, rowObject){
-	   			var date = new Date();
-	   			date.setTime(cellvalue);
-	   			return date.format('yyyy-MM-dd hh:mm:ss');;
+			,formatter: function(value, row, index){
+	   			var text = '';
+	   			if($.ObjectUtils.isEmpty(value)){
+	   				text = '';
+	   			}else{
+	   				var date = new Date();
+	   				date.setTime(value);
+	   				text = date.format('yyyy-MM-dd hh:mm:ss');
+	   			}
+	   			return text;
 			}
 			</#if>
 		}<#if fieldView_has_next>,</#if>
@@ -202,7 +208,7 @@ function addFun() {
 		"新增" + entityName,
 		$.formatString("${r"${contextPath}"}/${view.lowerCaseEntitySimpleName}/toAdd${view.entitySimpleName}.action"),
 		450,220,function(){
-			grid.datagrid('load',$('#queryForm').serializeObject());
+			queryFun();
 	});
 	return false;
 }
@@ -228,7 +234,7 @@ function editFun(id,name) {
 		"编辑" + entityName + ":" + name,
 		$.formatString("${r"${contextPath}"}/${view.lowerCaseEntitySimpleName}/toUpdate${view.entitySimpleName}.action?${view.lowerCaseEntitySimpleName}Id={0}",id),
 		450,220,function(){
-			grid.datagrid('load',$('#queryForm').serializeObject());
+			queryFun();
 	});
 	return false;
 }
@@ -262,10 +268,10 @@ function deleteFun(id,name) {
 			    			if(data){
 			    				DialogUtils.tip("删除" + entityName + "成功");
 			    			}else{
-			    				var errorMessage = $.formatString("删除{0}:{1}失败.数据可能已经被处理.如有疑问，请联系系统管理员.",entityName,name);
-			    				DialogUtils.alert("");
+			    				var errorMessage = $.formatString("删除{0}失败.可能已被处理.如有疑问,请联系管理员.",entityName);
+			    				DialogUtils.alert("错误提示",errorMessage,"error");
 			    			}
-			    			grid.datagrid('load',$('#queryForm').serializeObject());
+			    			queryFun();
 			    });
 	    	}
     });
@@ -298,10 +304,15 @@ function disableFun(id,name){
     		$.post(
 		    		'${r"${contextPath}"}/${view.lowerCaseEntitySimpleName}/disableBy${view.upCaseIdPropertyName}.action',
 		    		{${view.lowerCaseEntitySimpleName}Id:id},
-		    		function(){
-		    			DialogUtils.progress('close');
-		    			DialogUtils.tip("禁用" + entityName + "成功");
-		    			grid.datagrid('reload',$('#queryForm').serializeObject());
+		    		function(data){
+			    			DialogUtils.progress('close');
+			    			if(data){
+			    				DialogUtils.tip("禁用" + entityName + "成功");
+			    			}else{
+			    				var errorMessage = $.formatString("禁用{0}失败.",entityName);
+			    				DialogUtils.alert("错误提示",errorMessage,"error");
+			    			}
+			    			queryFun();
 		    });
     	}
     });
@@ -333,10 +344,15 @@ function enableFun(id,name){
     		$.post(
 		    		'${r"${contextPath}"}/${view.lowerCaseEntitySimpleName}/enableBy${view.upCaseIdPropertyName}.action',
 		    		{${view.lowerCaseEntitySimpleName}Id:id},
-		    		function(){
-		    			DialogUtils.progress('close');
-		    			DialogUtils.tip("启用" + entityName + "成功");
-		    			grid.datagrid('reload',$('#queryForm').serializeObject());
+		    		function(data){
+			    			DialogUtils.progress('close');
+			    			if(data){
+			    				DialogUtils.tip("启用" + entityName + "成功");
+			    			}else{
+			    				var errorMessage = $.formatString("启用{0}失败.",entityName);
+			    				DialogUtils.alert("错误提示",errorMessage,"error");
+			    			}
+			    			queryFun();
 		    });
     	}
     });

@@ -25,10 +25,10 @@ $(document).ready(function(){
 			    success: function(data) {
 			    	DialogUtils.progress('close');
 					if(data){
-						parent.DialogUtils.tip("修改${view.lowerCaseEntitySimpleName}成功");
+						parent.DialogUtils.tip("修改${view.lowerCaseEntitySimpleName}成功.");
 						parent.DialogUtils.closeDialogById("update${view.entitySimpleName}");
 					}else{
-						parent.DialogUtils.tip("修改${view.lowerCaseEntitySimpleName}失败");
+						DialogUtils.alert("错误提示","修改${view.lowerCaseEntitySimpleName}失败.","error");
 					}
 			    } 
 			});
