@@ -4,15 +4,22 @@
 	<comment>datasource_config</comment>
 
 	<entry key="dataSource.dataSourceType">H2</entry>
-
 	<entry key="dataSource.url">jdbc:h2:mem:webdemo</entry>
 	<entry key="dataSource.username">webdemo</entry>
 	<entry key="dataSource.password">webdemo</entry>
 	<entry key="dataSource.driverClassName">org.h2.Driver</entry>
 	<entry key="dataSource.validationQuery">SELECT 1 </entry>
-	
 	<entry key="dataSource.maxActive">30</entry>
 	<entry key="dataSource.maxIdle">5</entry>
 	<entry key="dataSource.maxWait">5000</entry>
+	
+	<!-- redis配置 -->
+	<entry key="redis.host">192.168.25.132</entry>
+	<entry key="redis.port">6379</entry>
+	<entry key="redis.pass"></entry>
+	<entry key="redis.maxIdle">300</entry>
+	<entry key="redis.maxActive">600</entry>
+	<entry key="redis.maxWait">1000</entry>
+	<entry key="redis.testOnBorrow">true</entry>
 	
 </properties>
