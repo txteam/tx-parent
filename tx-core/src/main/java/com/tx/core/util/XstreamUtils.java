@@ -268,7 +268,6 @@ public class XstreamUtils {
                         protected String getNewLine() {
                             return "";
                         }
-                        
                         //行结束时不加多余的空格 
                         protected void endOfLine() {
                             return;
