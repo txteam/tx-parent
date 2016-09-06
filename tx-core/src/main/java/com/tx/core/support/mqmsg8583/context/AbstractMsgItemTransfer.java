@@ -26,7 +26,7 @@ public class AbstractMsgItemTransfer<T> extends ParameterizedTypeReference<T>
      * @param configurator
      */
     @Override
-    public void setConfigurator(Msg8583TransferConfigurator configurator) {
+    public final void setConfigurator(Msg8583TransferConfigurator configurator) {
         this.configurator = configurator;
     }
     
@@ -41,6 +41,8 @@ public class AbstractMsgItemTransfer<T> extends ParameterizedTypeReference<T>
         // TODO Auto-generated method stub
         
     }
+    
+    protected void doMarshal()
     
     /**
      * @param sb
