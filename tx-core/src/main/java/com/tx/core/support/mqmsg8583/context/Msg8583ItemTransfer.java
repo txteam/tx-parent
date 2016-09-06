@@ -16,7 +16,7 @@ package com.tx.core.support.mqmsg8583.context;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public interface MsgItemTransfer<T> {
+public interface Msg8583ItemTransfer<T> {
     
     void setConfigurator(Msg8583TransferConfigurator configurator);
     

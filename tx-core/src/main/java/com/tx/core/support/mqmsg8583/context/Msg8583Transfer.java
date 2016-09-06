@@ -7,6 +7,7 @@
 package com.tx.core.support.mqmsg8583.context;
 
 
+
  /**
   * 8583报文转换器<br/>
   * <功能详细描述>
@@ -18,11 +19,4 @@ package com.tx.core.support.mqmsg8583.context;
   */
 public class Msg8583Transfer {
     
-    public static void main(String[] args) {
-        StringBuilder sb = new StringBuilder();
-        
-        //sb.in
-        
-        System.out.println(sb.toString());
-    }
 }

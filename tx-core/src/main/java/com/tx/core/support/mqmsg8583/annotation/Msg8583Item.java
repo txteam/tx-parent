@@ -19,17 +19,6 @@ package com.tx.core.support.mqmsg8583.annotation;
 public @interface Msg8583Item {
     
     /**
-      * 报文8583项索引位置<br/>
-      * <功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return int [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    int index() default 0;
-    
-    /**
       * start与index其中之一必填<br/>
       * <功能详细描述>
       * @return [参数说明]
@@ -38,9 +27,16 @@ public @interface Msg8583Item {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    int start() default -1;
+    int start();
     
-    int length() default -1;
-    
-    int end() default -1;
+    /**
+      * 消息字长<br/>
+      * <功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return int [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    int length();
 }
