@@ -9,6 +9,9 @@ package com.tx.core.support.mqmsg8583.context;
 
  /**
   * 报文8583转换配置器<br/>
+  *    :填入是否xxx条件下是否抛出异常
+  *    ...
+  *    适用于定制条件<br/>
   * <功能详细描述>
   * 
   * @author  Administrator

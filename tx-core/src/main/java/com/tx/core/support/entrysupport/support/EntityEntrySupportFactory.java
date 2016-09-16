@@ -4,9 +4,12 @@
  * 修改时间:  2016年8月8日
  * <修改描述:>
  */
-package com.tx.core.entityentry.factory;
+package com.tx.core.support.entrysupport.support;
 
 import javax.sql.DataSource;
+
+import org.hibernate.dialect.Dialect;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 
  /**
@@ -21,4 +24,8 @@ import javax.sql.DataSource;
 public class EntityEntrySupportFactory {
     
     private DataSource dataSource;
+    
+    private JdbcTemplate jdbcTemplate;
+    
+    private Dialect dialect;
 }

@@ -6,7 +6,6 @@
  */
 package com.tx.core.support.mqmsg8583.context;
 
-
 /**
  * 文本项转换器<br/>
  * <功能详细描述>
@@ -20,7 +19,7 @@ public interface Msg8583ItemTransfer<T> {
     
     void setConfigurator(Msg8583TransferConfigurator configurator);
     
-    void marshal(StringBuffer sb, T parameter, int start, int length);
+    String marshal(T parameter, int start, int length);
     
-    T unmarshal(StringBuffer sb, int start, int length);
+    T unmarshal(String sb, int start, int length);
 }

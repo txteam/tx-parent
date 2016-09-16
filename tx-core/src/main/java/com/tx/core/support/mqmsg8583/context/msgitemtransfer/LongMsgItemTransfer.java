@@ -21,7 +21,7 @@
 // * @see  [相关类/方法]
 // * @since  [产品/模块版本]
 // */
-//public class IntegerMsgItemTransfer extends AbstractMsgItemTransfer<Integer> {
+//public class LongMsgItemTransfer extends AbstractMsgItemTransfer<Long> {
 //    
 //    /**
 //     * @param parameter
@@ -29,7 +29,7 @@
 //     * @return
 //     */
 //    @Override
-//    protected String doMarshal(Integer parameter, int length) {
+//    protected String doMarshal(Long parameter, int length) {
 //        AssertUtils.isTrue(length > 0, "length should > 0.");
 //        
 //        String parameterSource = parameter == null ? "0" : parameter.toString();
@@ -44,8 +44,8 @@
 //     * @return
 //     */
 //    @Override
-//    protected Integer doUnmarshal(String parameter) {
-//        int intValue = parameter == null ? 0 : NumberUtils.toInt(parameter);
+//    protected Long doUnmarshal(String parameter) {
+//        long intValue = parameter == null ? 0 : NumberUtils.toLong(parameter);
 //        return intValue;
 //    }
 //    

@@ -413,12 +413,14 @@ function enableFun(id,name){
 		<c:if test='${r"${authContext.hasAuth("}"delete_${view.lowerCaseEntitySimpleName}") }'>
 			<a id="deleteALink" onclick="deleteFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'pencil_delete'">删除</a>
 		</c:if>
+<#if !StringUtils.isEmpty(validPropertyName)>
 		<c:if test='${r"${authContext.hasAuth("}"enable_${view.lowerCaseEntitySimpleName}") }'>
 			<a id="enableALink" onclick="enableFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'control_play_blue'">启用</a>
 		</c:if>
 		<c:if test='${r"${authContext.hasAuth("}"disable_${view.lowerCaseEntitySimpleName}") }'>
 			<a id="disableALink" onclick="disableFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'control_stop_blue'">禁用</a>
 		</c:if>
+</#if>
 		<a onclick="grid.datagrid('reload');return false;" href="javascript:void(0);" 
 			class="easyui-linkbutton" data-options="plain:true,iconCls:'transmit'">刷新</a>
 	</div>
