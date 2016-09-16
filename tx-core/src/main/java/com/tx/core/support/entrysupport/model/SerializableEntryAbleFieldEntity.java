@@ -19,21 +19,4 @@ public class SerializableEntryAbleFieldEntity extends EntityEntry {
     
     /** 注释内容 */
     private static final long serialVersionUID = -192856661284350060L;
-    
-    /** 类型 */
-    private String typeName;
-
-    /**
-     * @return 返回 typeName
-     */
-    public String getTypeName() {
-        return typeName;
-    }
-
-    /**
-     * @param 对typeName进行赋值
-     */
-    public void setTypeName(String typeName) {
-        this.typeName = typeName;
-    }
 }

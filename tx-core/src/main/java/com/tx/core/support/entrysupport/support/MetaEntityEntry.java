@@ -6,20 +6,29 @@
  */
 package com.tx.core.support.entrysupport.support;
 
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.helpers.MessageFormatter;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 
 import com.tx.core.TxConstants;
+import com.tx.core.exceptions.SILException;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.reflection.JpaMetaClass;
 import com.tx.core.support.entrysupport.model.SerializableEntryAbleFieldEntity;
@@ -93,6 +102,12 @@ public class MetaEntityEntry {
     /** 对应的类型 */
     private final Class<?> type;
     
+    /** propertyDescriptors */
+    private final BeanInfo beanInfo;
+    
+    /** propertyDescriptors */
+    private final PropertyDescriptor[] propertyDescriptors;
+    
     /** RowMapper */
     private final RowMapper<?> rowMap;
     
@@ -108,14 +123,19 @@ public class MetaEntityEntry {
     /** 其他字段名称 */
     private final List<String> otherFieldName;
     
+    /** 除预制字段外的其他字段：columns */
     private final String otherColumnsForInsert;
     
+    /** 除预制字段外的其他字段：field */
     private final String otherFieldsForInsert;
     
+    /** 除预制字段外的其他字段：column2field */
     private final String otherColumn2FieldForUpdate;
     
+    /** insert语句 */
     private final String sqlOfInsert;
     
+    /** insertToHis语句 */
     private final String sqlOfInsertToHis;
     
     private final String sqlOfDeleteByEntityId;
@@ -126,7 +146,7 @@ public class MetaEntityEntry {
     
     private final String sqlOfUpdateById;
     
-    private final String sqlOfUpdateEntryKey;
+    private final String sqlOfUpdateByEntryKey;
     
     private final String sqlOfFindById;
     
@@ -185,6 +205,12 @@ public class MetaEntityEntry {
         } else {
             this.tableName = tableName;
         }
+        try {
+            this.beanInfo = Introspector.getBeanInfo(type);
+            this.propertyDescriptors = beanInfo.getPropertyDescriptors();
+        } catch (IntrospectionException e) {
+            throw new SILException("metaEntityEntry init exception.", e);
+        }
         this.hisTableName = this.tableName + hisTableNameSuffix;
         this.otherFieldName = new ArrayList<>();
         Set<String> getterNames = this.jpaMetaClass.getGetterNames();
@@ -204,7 +230,7 @@ public class MetaEntityEntry {
         for (String otherFieldNameTemp : this.otherFieldName) {
             columnSB.append(",").append(otherFieldNameTemp).append(" ");
             fieldsSB.append(",:").append(otherFieldNameTemp).append(" ");
-            column2FieldSB.append(", ")
+            column2FieldSB.append(",")
                     .append(otherFieldNameTemp)
                     .append(" = :")
                     .append(otherFieldNameTemp);
@@ -239,7 +265,7 @@ public class MetaEntityEntry {
                 new Object[] { this.tableName, this.otherColumn2FieldForUpdate })
                 .getMessage();
         //UPDATE {} SET entryValue = :entryValue {} WHERE entryKey = :entryKey AND entityId = :entityId
-        this.sqlOfUpdateEntryKey = MessageFormatter.arrayFormat(UPDATE_BY_ENTRYKEY_SQL_TEMPLATE,
+        this.sqlOfUpdateByEntryKey = MessageFormatter.arrayFormat(UPDATE_BY_ENTRYKEY_SQL_TEMPLATE,
                 new Object[] { this.tableName, this.otherColumn2FieldForUpdate })
                 .getMessage();
         //SELECT * FROM {} WHERE id = :id
@@ -315,8 +341,8 @@ public class MetaEntityEntry {
     /**
      * @return 返回 sqlOfUpdateEntryKey
      */
-    public String getSqlOfUpdateEntryKey() {
-        return sqlOfUpdateEntryKey;
+    public String getSqlOfUpdateByEntryKey() {
+        return sqlOfUpdateByEntryKey;
     }
     
     /**
@@ -361,7 +387,81 @@ public class MetaEntityEntry {
         return rowMap;
     }
     
-    public static void main(String[] args) {
+    /**
+      * 转换Map为Bean
+      * <功能详细描述>
+      * @param map
+      * @param obj [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    // Map --> Bean 1: 利用Introspector,PropertyDescriptor实现 Map --> Bean  
+    public void transferMap2Bean(Map<String, Object> map, Object obj) {
+        try {
+            PropertyDescriptor[] propertyDescriptors = this.propertyDescriptors;
+            
+            for (PropertyDescriptor property : propertyDescriptors) {
+                String key = property.getName();
+                // 过滤class属性  
+                if (key.equals("class")) {
+                    continue;
+                }
+                
+                if (map.containsKey(key)) {
+                    Object value = map.get(key);
+                    // 得到property对应的setter方法  
+                    Method setter = property.getWriteMethod();
+                    setter.invoke(obj, value);
+                }
+            }
+        } catch (IllegalAccessException | IllegalArgumentException
+                | InvocationTargetException e) {
+            throw new SILException("transferMap2Bean exception.", e);
+        }
+    }
+    
+    /**
+      * 转换Bean为Map
+      * <功能详细描述>
+      * @param obj
+      * @return [参数说明]
+      * 
+      * @return Map<String,Object> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    // Bean --> Map 1: 利用Introspector和PropertyDescriptor 将Bean --> Map  
+    public Map<String, Object> transferBean2Map(Object obj) {
+        if (obj == null) {
+            return null;
+        }
+        Map<String, Object> map = new HashMap<String, Object>();
+        try {
+            PropertyDescriptor[] propertyDescriptors = this.propertyDescriptors;
+            for (PropertyDescriptor property : propertyDescriptors) {
+                String key = property.getName();
+                // 过滤class属性  
+                if (key.equals("class")) {
+                    continue;
+                }
+                
+                // 得到property对应的getter方法  
+                Method getter = property.getReadMethod();
+                Object value = getter.invoke(obj);
+                
+                map.put(key, value);
+            }
+        } catch (IllegalAccessException | IllegalArgumentException
+                | InvocationTargetException e) {
+            throw new SILException("transferBean2Map exception.", e);
+        }
+        return map;
+    }
+    
+    public static void main(String[] args) throws IllegalAccessException,
+            InvocationTargetException {
         Class<?> type = SerializableEntryAbleFieldEntity.class;
         MetaEntityEntry mee = MetaEntityEntry.forClass(type, "t_test_entry");
         
@@ -373,11 +473,18 @@ public class MetaEntityEntry {
         System.out.println(mee.getSqlOfDeleteByEntryKey());
         
         System.out.println(mee.getSqlOfUpdateById());
-        System.out.println(mee.getSqlOfUpdateEntryKey());
+        System.out.println(mee.getSqlOfUpdateByEntryKey());
         
         System.out.println(mee.getSqlOfFindById());
         System.out.println(mee.getSqlOfFindByEntryKey());
         
         System.out.println(mee.getSqlOfQueryListByEntityId());
+        
+        SerializableEntryAbleFieldEntity tt = new SerializableEntryAbleFieldEntity();
+        tt.setEntityId("entityId");
+        tt.setEntryValue("entryValue");
+        
+        Map<String, Object> res = mee.transferBean2Map(tt);
+        MapUtils.debugPrint(System.out, "out", res);
     }
 }
