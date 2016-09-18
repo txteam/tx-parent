@@ -51,7 +51,7 @@
 				<menu id="auth_config" text="权限管理" href="/auth/toQueryAuthView.action"
 					authKey="auth_manage" target="mainTabs"></menu>
 			</menu>
-
+			
 			<menu id="servicelog_query_center" text="业务日志查询" target="mainTabs"
 				authKey="servicelog_query_center">
 				<menu id="query_login_log" text="登录日志"
