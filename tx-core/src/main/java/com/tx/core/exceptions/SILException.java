@@ -28,7 +28,7 @@ public class SILException extends RuntimeException {
     /** 错误编码 */
     private String errorCode = "";
     
-    /** 展示错误信息 */
+    /** 展示错误信息：如果子实现没有覆写对应的get方法.那么getErrorMessage() = getMessage() */
     private String errorMessage = "";
     
     /**

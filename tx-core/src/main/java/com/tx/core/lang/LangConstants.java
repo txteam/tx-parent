@@ -8,7 +8,7 @@ package com.tx.core.lang;
 
 
  /**
-  * <功能简述>
+  * 常用包中常量<br/>
   * <功能详细描述>
   * 
   * @author  Administrator

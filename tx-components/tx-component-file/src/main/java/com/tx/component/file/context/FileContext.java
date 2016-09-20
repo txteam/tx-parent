@@ -19,10 +19,10 @@ import com.tx.core.exceptions.util.AssertUtils;
 /**
  * 文件处理容器<br/>
  * 利用该容器能够实现存放文件<br/>
- * 获取文件<br/>
- * 存放临时文件<br/>
- * 自动清理临时文件<br/>
- * 获取临时文件流<br/>
+ *      获取文件<br/>
+ *      存放临时文件<br/>
+ *      自动清理临时文件<br/>
+ *      获取临时文件流<br/>
  * ... ...<br/>
  * 不建议在该封装中对业务逻辑相关查询进行支撑<br/>
  * 文件容器对文件的获取最好都是find的逻辑关系<br/>
@@ -52,6 +52,35 @@ public class FileContext extends FileContextBuilder implements InitializingBean 
         return FileContext.context;
     }
     
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        super.afterPropertiesSet();
+        FileContext.context = this;
+    }
+    
+    /**
+     * 保存文件<br/>
+     * 如果文件已经存在，则复写当前文件<br/>
+     * 如果文件不存在，则创建文件后写入<br/>
+     * 如果对应文件所在的文件夹不存在，对应文件夹会自动创建<br/>
+     * 
+     * @param relativePath 存储路径,此存储路径为文件全路径(包括扩展名)
+     * @param filename 文件名,此文件的实际文件名称
+     * @param input 文件流
+     * @return FileDefinition 文件定义的实体
+     *         
+     * @exception [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @Transactional
+    public FileDefinition save(String relativePath, String filename,
+            InputStream input) {
+        FileDefinition fileDefinition = doSaveFile(relativePath,
+                filename,
+                input);
+        return fileDefinition;
+    }
+    
     /**
      * 保存文件<br/>
      * 如果文件已经存在，则会抛出ResourceIsExistException<br/>
@@ -71,12 +100,6 @@ public class FileContext extends FileContextBuilder implements InitializingBean 
             InputStream input) throws ResourceIsExistException {
         FileDefinition fileDefinition = doAddFile(relativePath, filename, input);
         return fileDefinition;
-    }
-    
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        super.afterPropertiesSet();
-        FileContext.context = this;
     }
     
     /**
@@ -123,29 +146,5 @@ public class FileContext extends FileContextBuilder implements InitializingBean 
         FileDefinition res = doFindFileDefinitionByFileDefinitionId(fileDefinitionId);
         Resource resResource = res.getResource();
         return resResource;
-    }
-    
-    /**
-     * 
-     * 保存文件<br/>
-     * 如果文件已经存在，则复写当前文件<br/>
-     * 如果文件不存在，则创建文件后写入<br/>
-     * 如果对应文件所在的文件夹不存在，对应文件夹会自动创建<br/>
-     * 
-     * @param relativePath 存储路径,此存储路径为文件全路径(包括扩展名)
-     * @param filename 文件名,此文件的实际文件名称
-     * @param input 文件流
-     * @return FileDefinition 文件定义的实体
-     *         
-     * @exception [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    @Transactional
-    public FileDefinition save(String relativePath, String filename,
-            InputStream input) {
-        FileDefinition fileDefinition = doSaveFile(relativePath,
-                filename,
-                input);
-        return fileDefinition;
     }
 }
