@@ -20,6 +20,9 @@ import com.tx.component.file.model.FileDefinition;
  */
 public interface FileDefinitionResourceDriver {
     
+    /** 文件资源驱动名称 */
+    public String driverName();
+    
     /**
      * 获取资源对象<br/>
      * 

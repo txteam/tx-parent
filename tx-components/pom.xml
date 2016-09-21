@@ -44,14 +44,20 @@
 	</build>
 
 	<modules>
-		<module>tx-component-servicelog</module>
+		<!-- 有价值模块 -->
 		<module>tx-component-configuration</module>
+		<module>tx-component-servicelog</module>
 		<module>tx-component-auth</module>
-		<module>tx-component-basicdata</module>
-		<module>tx-component-rule</module>
-		<module>tx-component-template</module>
 		<module>tx-component-file</module>
 		<module>tx-component-communication</module>
+		
+		<!-- 准备弃用模块 -->
+		<module>tx-component-basicdata</module>
+		
+		<!-- 待完善模块 -->
+		<module>tx-component-rule</module>
+		<module>tx-component-template</module>
+		
 	</modules>
 
 

@@ -4,7 +4,7 @@
  * 修改时间:  2015年3月22日
  * <修改描述:>
  */
-package com.tx.component.file.handler;
+package com.tx.component.file.util;
 
 import java.awt.Graphics;
 import java.awt.Image;
@@ -26,7 +26,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import com.tx.core.exceptions.util.ExceptionWrapperUtils;
 
 /**
- * 图片工具<br/>
+ * 缩略图工具<br/>
  * 
  * @author Rain.he
  * @version [版本号, 2015年3月22日]

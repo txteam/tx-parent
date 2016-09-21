@@ -27,7 +27,7 @@ import com.tx.core.exceptions.util.ExceptionWrapperUtils;
 
 /**
  * 默认文件定义资源驱动<br/>
- * 
+ *     file://///somehost/someshare/afile.txt /home/someuser/somedir
  * @author Administrator
  * @version [版本号, 2014年12月21日]
  * @see [相关类/方法]
@@ -37,6 +37,26 @@ public class DefaultFileDefinitionResourceDriver implements
         FileDefinitionResourceDriver {
     
     private String path;
+    
+    @Override
+    public String driverName(){
+        return "file";
+    }
+    
+    public static void main(String[] args) {
+        String path = "d:/test/test/test1/";
+        File file = new File(path);
+        if (!file.exists() && !file.isDirectory()) {
+            try {
+                FileUtils.forceMkdir(new File(path));
+            } catch (IOException e) {
+                throw ExceptionWrapperUtils.wrapperIOException(e,
+                        e.getMessage());
+            }
+        }
+        
+        String testPath = "";
+    }
     
     /**
      * <默认构造函数><br/>

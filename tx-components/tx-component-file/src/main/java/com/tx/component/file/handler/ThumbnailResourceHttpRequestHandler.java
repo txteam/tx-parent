@@ -17,6 +17,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
 
 import com.tx.component.file.context.FileContext;
+import com.tx.component.file.util.ThumbnailImageUtils;
 import com.tx.core.exceptions.util.ExceptionWrapperUtils;
 
 /**
