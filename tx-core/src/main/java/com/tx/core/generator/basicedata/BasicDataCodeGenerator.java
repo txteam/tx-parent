@@ -300,8 +300,9 @@ public class BasicDataCodeGenerator {
                         StringUtils.uncapitalize(packageName),
                         StringUtils.uncapitalize(jpaMetaClass.getEntitySimpleName()),
                         queryPageIsPagedList ? StringUtils.capitalize(jpaMetaClass.getEntitySimpleName())
-                                                + "PagedList"
-                                                : StringUtils.capitalize(jpaMetaClass.getEntitySimpleName()) + "List" });
+                                + "PagedList"
+                                : StringUtils.capitalize(jpaMetaClass.getEntitySimpleName())
+                                        + "List" });
         logger.info("   \t 8、启动项目验证是否启动正确。");
         logger.info("   \t 9、点击对应菜单项目，进入查询页面。打开对应查询页面修改其中存在//TODO:的逻辑，并查看效果");
         logger.info("   \t 10、新增、修改、删除等操作。并调整新增、修改页面排版。");
@@ -510,7 +511,7 @@ public class BasicDataCodeGenerator {
         Map<String, Object> data = new HashMap<String, Object>();
         
         DBScriptMapper dbScriptMapper = new DBScriptMapper(jpaMetaClass,
-                DataSourceTypeEnum.MySQL5InnoDBDialect.getDialect());
+                DataSourceTypeEnum.MySQL5InnoDBDialect.getDialect(), false);
         data.put("dbScriptMapper", dbScriptMapper);
         
         String[] arrs = jpaMetaClass.getEntityTypeName().split("\\.");
@@ -525,7 +526,7 @@ public class BasicDataCodeGenerator {
                 + packageName + "/" + sqlSource.getTableName().toLowerCase()
                 + ".sql");
         dbScriptMapper = new DBScriptMapper(jpaMetaClass,
-                DataSourceTypeEnum.ORACLE10G.getDialect());
+                DataSourceTypeEnum.ORACLE10G.getDialect(), false);
         data.put("dbScriptMapper", dbScriptMapper);
         FreeMarkerUtils.fprint(loadTemplateClass,
                 dbScriptTemplateFilePath,
@@ -557,7 +558,7 @@ public class BasicDataCodeGenerator {
         Map<String, Object> data = new HashMap<String, Object>();
         
         DBScriptMapper dbScriptMapper = new DBScriptMapper(jpaMetaClass,
-                dialect);
+                dialect, false);
         data.put("dbScriptMapper", dbScriptMapper);
         
         String content = FreeMarkerUtils.generateContent(loadTemplateClass,

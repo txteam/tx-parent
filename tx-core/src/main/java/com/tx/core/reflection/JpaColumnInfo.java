@@ -144,14 +144,14 @@ public class JpaColumnInfo {
      * @return 返回 columnName
      */
     public String getColumnName() {
-        return columnName.trim().toUpperCase();
+        return columnName.trim();
     }
     
     /**
      * @param 对columnName进行赋值
      */
     public void setColumnName(String columnName) {
-        this.columnName = columnName.trim().toUpperCase();
+        this.columnName = columnName.trim();
     }
     
     /**

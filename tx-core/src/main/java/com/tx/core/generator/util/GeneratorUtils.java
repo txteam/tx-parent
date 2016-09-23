@@ -186,6 +186,22 @@ public class GeneratorUtils {
     */
     public static <TYPE> List<SqlMapColumn> generateSqlMapColumnList(
             JpaMetaClass<TYPE> jpaMetaClass) {
+        List<SqlMapColumn> columnList = generateSqlMapColumnList(jpaMetaClass, true);
+        return columnList;
+    }
+    
+    /** 
+     * 生成字段列表
+     *<功能详细描述>
+     * @param jpaMetaClass
+     * @return [参数说明]
+     * 
+     * @return List<SqlMapColumn> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    public static <TYPE> List<SqlMapColumn> generateSqlMapColumnList(
+            JpaMetaClass<TYPE> jpaMetaClass,boolean isColumnNameToUpCase) {
         List<SqlMapColumn> columnList = new ArrayList<SqlMapColumn>();
         //生成对应需要的列关系
         //Set<String> getterNameList = jpaMetaClass.getGetterNames();
@@ -201,12 +217,12 @@ public class GeneratorUtils {
             if (jpaColumnInfo.isSimpleType()) {
                 columnTemp = new SqlMapColumn(true,
                         jpaColumnInfo.getGetterName(),
-                        jpaColumnInfo.getColumnName(),
+                        isColumnNameToUpCase ? jpaColumnInfo.getColumnName().toUpperCase() : jpaColumnInfo.getColumnName(),
                         jpaColumnInfo.getRealGetterType(), null);
             } else {
                 columnTemp = new SqlMapColumn(false,
                         jpaColumnInfo.getGetterName(),
-                        jpaColumnInfo.getColumnName(),
+                        isColumnNameToUpCase ? jpaColumnInfo.getColumnName().toUpperCase() : jpaColumnInfo.getColumnName(),
                         jpaColumnInfo.getRealGetterType(),
                         jpaColumnInfo.getForeignKeyGetterName());
             }

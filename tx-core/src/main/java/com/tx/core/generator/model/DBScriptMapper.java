@@ -12,6 +12,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.dialect.MySQL5InnoDBDialect;
 
@@ -30,6 +31,8 @@ import com.tx.core.util.JdbcUtils;
  */
 public class DBScriptMapper {
     
+    private boolean nameToUpperCase = false;
+    
     /** 表名 */
     private String tableName;
     
@@ -46,14 +49,15 @@ public class DBScriptMapper {
         super();
     }
     
-    public DBScriptMapper(JpaMetaClass<?> jpaMetaClass, Dialect dialect){
-        this(jpaMetaClass,dialect,true);
+    public DBScriptMapper(JpaMetaClass<?> jpaMetaClass, Dialect dialect) {
+        this(jpaMetaClass, dialect, true);
     }
     
     public DBScriptMapper(JpaMetaClass<?> jpaMetaClass, Dialect dialect,
             boolean nameToUpperCase) {
         super();
-        if (nameToUpperCase) {
+        this.nameToUpperCase = nameToUpperCase;
+        if (this.nameToUpperCase) {
             this.tableName = jpaMetaClass.getTableName().toUpperCase();
             this.pkColumnName = jpaMetaClass.getGetter2columnInfoMapping()
                     .get(jpaMetaClass.getPkGetterName())
@@ -65,18 +69,27 @@ public class DBScriptMapper {
                     .get(jpaMetaClass.getPkGetterName())
                     .getColumnName();
         }
-        
         Map<String, JpaColumnInfo> property2columnMap = jpaMetaClass.getGetter2columnInfoMapping();
         List<String> propertyList = new ArrayList<>(property2columnMap.keySet());
         
         for (String keyTemp : propertyList) {
             JpaColumnInfo columnInfo = property2columnMap.get(keyTemp);
             
-            this.columnName2TypeNameMapping.put(columnInfo.getColumnName(),
-                    dialect.getTypeName(JdbcUtils.getSqlTypeByJavaType(columnInfo.getRealGetterType()),
-                            columnInfo.getLength(),
-                            columnInfo.getPrecision(),
-                            columnInfo.getScale()));
+            if (this.nameToUpperCase) {
+                this.columnName2TypeNameMapping.put(columnInfo.getColumnName()
+                        .toUpperCase(),
+                        dialect.getTypeName(JdbcUtils.getSqlTypeByJavaType(columnInfo.getRealGetterType()),
+                                columnInfo.getLength(),
+                                columnInfo.getPrecision(),
+                                columnInfo.getScale()));
+            } else {
+                this.columnName2TypeNameMapping.put(columnInfo.getColumnName(),
+                        dialect.getTypeName(JdbcUtils.getSqlTypeByJavaType(columnInfo.getRealGetterType()),
+                                columnInfo.getLength(),
+                                columnInfo.getPrecision(),
+                                columnInfo.getScale()));
+            }
+            
         }
     }
     
@@ -84,28 +97,48 @@ public class DBScriptMapper {
      * @return 返回 tableName
      */
     public String getTableName() {
-        return tableName;
+        if (this.nameToUpperCase) {
+            return StringUtils.isEmpty(tableName) ? ""
+                    : tableName.toUpperCase();
+        } else {
+            return this.tableName;
+        }
     }
     
     /**
      * @param 对tableName进行赋值
      */
     public void setTableName(String tableName) {
-        this.tableName = tableName;
+        if (this.nameToUpperCase) {
+            this.tableName = StringUtils.isEmpty(tableName) ? ""
+                    : tableName.toUpperCase();
+        } else {
+            this.tableName = tableName;
+        }
     }
     
     /**
      * @return 返回 pkColumnName
      */
     public String getPkColumnName() {
-        return pkColumnName;
+        if (this.nameToUpperCase) {
+            return StringUtils.isEmpty(this.pkColumnName) ? ""
+                    : this.pkColumnName.toUpperCase();
+        } else {
+            return this.pkColumnName;
+        }
     }
     
     /**
      * @param 对pkColumnName进行赋值
      */
     public void setPkColumnName(String pkColumnName) {
-        this.pkColumnName = pkColumnName;
+        if (this.nameToUpperCase) {
+            this.pkColumnName = StringUtils.isEmpty(pkColumnName) ? ""
+                    : pkColumnName.toUpperCase();
+        } else {
+            this.pkColumnName = pkColumnName;
+        }
     }
     
     /**

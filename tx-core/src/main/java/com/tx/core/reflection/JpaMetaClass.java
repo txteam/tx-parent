@@ -242,7 +242,7 @@ public class JpaMetaClass<T> {
         //jpa对象默认属性设置
         jpaColumnInfo.setGetterName(getterName);
         jpaColumnInfo.setGetterType(getterType);
-        jpaColumnInfo.setColumnName(getterName.toUpperCase());
+        jpaColumnInfo.setColumnName(getterName);
         jpaColumnInfo.setColumnComment("");
         jpaColumnInfo.setNullable(true);
         jpaColumnInfo.setUnique(false);
@@ -355,7 +355,7 @@ public class JpaMetaClass<T> {
             jpaColumnInfo.setColumnComment(joinColumnAnno.columnDefinition());
         }
         if (!StringUtils.isEmpty(joinColumnAnno.name())) {
-            jpaColumnInfo.setColumnName(joinColumnAnno.name().toUpperCase());
+            jpaColumnInfo.setColumnName(joinColumnAnno.name());
         }
     }
     
@@ -380,7 +380,7 @@ public class JpaMetaClass<T> {
             jpaColumnInfo.setColumnComment(columnAnno.columnDefinition());
         }
         if (!StringUtils.isEmpty(columnAnno.name())) {
-            jpaColumnInfo.setColumnName(columnAnno.name().toUpperCase());
+            jpaColumnInfo.setColumnName(columnAnno.name());
         }
         if (columnAnno.length() != 255) {
             jpaColumnInfo.setLength(columnAnno.length());
