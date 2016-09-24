@@ -61,9 +61,7 @@ public class XMLTableDefinition implements TableDefinition, InitializingBean {
     /** 表定义配置 */
     private TableDefinitionConfig tableDefinitionConfig;
     
-    /**
-     * 支持全文替换的数据
-     */
+    /** 支持全文替换的数据 */
     private Map<String, String> replaceDataMap = new HashMap<String, String>();
     
     /** 前置占位符 */

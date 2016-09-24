@@ -95,7 +95,6 @@ public abstract class ConfigInitAbleHelper<CIA extends ConfigInitAble> {
                 //如果不需要执行解绑操作
                 continue;
             }
-            
             //不存在的添加到可编辑的列表
             needUpdateToUnbindList.add(ciaOfDBTemp);
         }
