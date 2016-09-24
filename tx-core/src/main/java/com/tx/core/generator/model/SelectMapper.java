@@ -66,7 +66,7 @@ public class SelectMapper {
         this.simpleTableName = jpaMetaClass.getSimpleTableName().toUpperCase();
         this.idPropertyName = jpaMetaClass.getPkGetterName();
         this.idColumnName = jpaMetaClass.getGetter2columnInfoMapping().get(this.idPropertyName).getColumnName().toUpperCase();
-        this.sqlMapColumnList = GeneratorUtils.generateSqlMapColumnList(jpaMetaClass);
+        this.sqlMapColumnList = GeneratorUtils.generateSqlMapColumnList(jpaMetaClass,false);
         
         this.otherCondition.addAll(sqlSource.getOtherCondition());
         this.queryConditionMap = GeneratorUtils.generateQueryConditionMap(jpaMetaClass,

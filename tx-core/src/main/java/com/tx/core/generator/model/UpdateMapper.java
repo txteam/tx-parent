@@ -49,11 +49,11 @@ public class UpdateMapper {
         this.idPropertyName = jpaMetaClass.getPkGetterName();
         this.idColumnName = jpaMetaClass.getGetter2columnInfoMapping()
                 .get(this.idPropertyName)
-                .getColumnName()
-                .toUpperCase();
+                .getColumnName();
+                //.toUpperCase();
         this.simpleTableName = jpaMetaClass.getSimpleTableName().toUpperCase();
         this.tableName = jpaMetaClass.getTableName().toUpperCase();
-        this.sqlMapColumnList = GeneratorUtils.generateSqlMapColumnList(jpaMetaClass);
+        this.sqlMapColumnList = GeneratorUtils.generateSqlMapColumnList(jpaMetaClass,false);
     }
     
     /**

@@ -45,7 +45,7 @@ public class InsertMapper {
         this.parameterType = jpaMetaClass.getEntityTypeName();
         this.isUseSelectKey = false;
         this.tableName = jpaMetaClass.getTableName().toUpperCase();
-        this.sqlMapColumnList = GeneratorUtils.generateSqlMapColumnList(jpaMetaClass);
+        this.sqlMapColumnList = GeneratorUtils.generateSqlMapColumnList(jpaMetaClass,false);
     }
     
     /**
