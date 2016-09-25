@@ -25,8 +25,7 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-@Deprecated
-public class AlidayuSMSMessageSendHandler implements MessageSendHandler,
+public class SMSTemplateMessageSendHandler implements MessageSendHandler,
         InitializingBean {
     
     /** 消息类型 */
@@ -58,8 +57,13 @@ public class AlidayuSMSMessageSendHandler implements MessageSendHandler,
      */
     @Override
     public final boolean supports(SendMessage message) {
-        if (messageType.equals(message.getType())) {
-            return true;
+        if (message.getType() != null
+                && messageType.equals(message.getType().toUpperCase())) {
+            if (this.dialect.supports(message)) {
+                return true;
+            } else {
+                return false;
+            }
         }
         return false;
     }
@@ -81,7 +85,7 @@ public class AlidayuSMSMessageSendHandler implements MessageSendHandler,
     public int getOrder() {
         return Ordered.HIGHEST_PRECEDENCE;
     }
-
+    
     /**
      * @param 对dialect进行赋值
      */

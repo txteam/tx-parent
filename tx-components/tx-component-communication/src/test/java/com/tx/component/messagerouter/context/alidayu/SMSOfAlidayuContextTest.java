@@ -4,7 +4,7 @@
  * 修改时间： 2015年12月17日
  * 项目： tx-component-messagerouter
  */
-package com.tx.component.messagerouter.context;
+package com.tx.component.messagerouter.context.alidayu;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,10 +26,10 @@ import com.tx.component.communication.context.MessageSenderContext;
 @ContextConfiguration(locations = { "classpath:spring/beans-servicelog.xml",
         "classpath:spring/beans-cache.xml", "classpath:spring/beans-ds.xml",
         "classpath:spring/beans-tx.xml",
-        "classpath:spring/beans-communication.xml",
+        "classpath:com/tx/component/messagerouter/context/aliyunsms/beans-communication.xml",
         "classpath:spring/beans.xml" })
 @ActiveProfiles("production")
-public class MRSContextTest {
+public class SMSOfAlidayuContextTest {
     
     @Test
     public void test() throws InterruptedException {

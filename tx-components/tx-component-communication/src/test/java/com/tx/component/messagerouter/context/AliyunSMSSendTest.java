@@ -4,7 +4,7 @@
  * 修改时间:  2016年9月18日
  * <修改描述:>
  */
-package com.tx.component.communication.senddialect.sms.aliyun;
+package com.tx.component.messagerouter.context;
 
 import com.aliyuncs.DefaultAcsClient;
 import com.aliyuncs.IAcsClient;

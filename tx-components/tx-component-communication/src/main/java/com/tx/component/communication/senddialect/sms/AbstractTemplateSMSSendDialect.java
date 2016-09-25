@@ -6,7 +6,6 @@
  */
 package com.tx.component.communication.senddialect.sms;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -68,11 +67,11 @@ public abstract class AbstractTemplateSMSSendDialect implements
       * @see [类、类#方法、类#成员]
      */
     private void initSMSTemplateConfig() {
-        AssertUtils.notEmpty(smsTemplateMap,"smsTemplateMap is empty.");
-        if(StringUtils.isEmpty(defaultSMSSignName)){
-            AssertUtils.notEmpty(signNameMap,"smsTemplateMap is empty.");
+        AssertUtils.notEmpty(smsTemplateMap, "smsTemplateMap is empty.");
+        if (StringUtils.isEmpty(defaultSMSSignName)) {
+            AssertUtils.notEmpty(signNameMap, "smsTemplateMap is empty.");
             //如果默认签名为空，则将第一个短信签名当作默认签名
-            defaultSMSSignName = (String)this.signNameMap.values().toArray()[0];
+            defaultSMSSignName = (String) this.signNameMap.values().toArray()[0];
         }
         
         //迭代处理
@@ -102,6 +101,22 @@ public abstract class AbstractTemplateSMSSendDialect implements
     public void afterPropertiesSet() throws Exception {
         //初始化短信模板相关配置
         initSMSTemplateConfig();
+    }
+    
+    /**
+     * @param message
+     * @return
+     */
+    @Override
+    public final boolean supports(SendMessage message) {
+        boolean support = false;
+        for (Pattern pTemp : this.smsTemplatePatternMap.values()) {
+            if (pTemp.matcher(message.getContent()).matches()) {
+                support = true;
+                break;
+            }
+        }
+        return support;
     }
     
     /**

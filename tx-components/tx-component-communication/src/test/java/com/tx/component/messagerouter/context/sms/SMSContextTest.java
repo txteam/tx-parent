@@ -4,7 +4,7 @@
  * 修改时间： 2015年12月17日
  * 项目： tx-component-messagerouter
  */
-package com.tx.component.messagerouter.context;
+package com.tx.component.messagerouter.context.sms;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,15 +29,20 @@ import com.tx.component.communication.context.MessageSenderContext;
         "classpath:spring/beans-communication.xml",
         "classpath:spring/beans.xml" })
 @ActiveProfiles("production")
-public class MRSContextTest {
+public class SMSContextTest {
     
     @Test
     public void test() throws InterruptedException {
         try {
+//            MessageSenderContext.getContext().send("sms",
+//                    "18983379637",
+//                    "企账通",
+//                    "您的验证码是2232。");
+            
             MessageSenderContext.getContext().send("sms",
-                    "18983777587",
-                    "企账通",
-                    "您的验证码是2232。");
+                    "18983379637",
+                    "身份验证",
+                    "验证码${code}，您正在进行${product}身份验证，打死不要告诉别人哦！");
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

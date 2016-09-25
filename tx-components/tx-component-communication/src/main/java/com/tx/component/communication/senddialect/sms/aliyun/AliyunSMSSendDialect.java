@@ -80,7 +80,7 @@ public class AliyunSMSSendDialect extends AbstractTemplateSMSSendDialect {
             result.setSuccess(true);
             result.getAttributes().put("requestId", response.getRequestId());
         } catch (ServerException e) {
-            logger.warn("调用阿里大鱼发送短信失败.ServerException", e);
+            logger.warn("调用阿里云短信接口发送短信失败.ServerException", e);
             
             result.setSuccess(false);
             result.setErrorCode(e.getErrCode());
@@ -91,7 +91,7 @@ public class AliyunSMSSendDialect extends AbstractTemplateSMSSendDialect {
                     .put("errorType", e.getErrorType().toString());
             result.getAttributes().put("message", e.getMessage());
         } catch (ClientException e) {
-            logger.warn("调用阿里大鱼发送短信失败.ClientException", e);
+            logger.warn("调用阿里云短信接口发送短信失败.ClientException", e);
             
             result.setSuccess(false);
             result.setErrorCode(e.getErrCode());
