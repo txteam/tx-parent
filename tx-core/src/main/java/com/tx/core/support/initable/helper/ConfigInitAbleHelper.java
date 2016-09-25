@@ -138,7 +138,8 @@ public abstract class ConfigInitAbleHelper<CIA extends ConfigInitAble> {
      */
     protected boolean isNeedUnBind(CIA ciaOfDBTemp,
             Map<String, CIA> code2CIAMapOfConfig) {
-        if (!code2CIAMapOfConfig.containsKey(ciaOfDBTemp.getCode())) {
+        if (!code2CIAMapOfConfig.containsKey(ciaOfDBTemp.getCode())
+                && !ciaOfDBTemp.isModifyAble()) {
             return true;
         } else {
             return false;
