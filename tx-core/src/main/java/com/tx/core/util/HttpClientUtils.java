@@ -9,6 +9,7 @@ package com.tx.core.util;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.ConnectException;
+import java.net.NoRouteToHostException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -322,7 +323,9 @@ public class HttpClientUtils {
                 throw new HttpExcutingException(false, "Http请求IO流异常.", e1);
             } catch (ConnectTimeoutException e1) {
                 throw new HttpExcutingException(false, "Http请求IO流异常.", e1);
-            } catch (IOException e1) {
+            } catch (NoRouteToHostException e1) {
+                throw new HttpExcutingException(false, "Http请求IO流异常.", e1);
+            }catch (IOException e1) {
                 throw new HttpExcutingException(true, "Http请求IO流异常.", e1);
             } finally {
                 if (response != null) {
