@@ -130,7 +130,7 @@ public abstract class ConfigInitAbleHelper<CIA extends ConfigInitAble> {
         }
         //如果批量更新不为空
         if (!CollectionUtils.isEmpty(needUpdateList)) {
-            batchUpdate(needUpdateToUnbindList);
+            batchUpdate(needUpdateList);
         }
     }
     
