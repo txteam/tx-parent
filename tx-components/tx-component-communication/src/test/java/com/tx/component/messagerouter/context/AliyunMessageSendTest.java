@@ -16,7 +16,6 @@ import com.aliyuncs.exceptions.ClientException;
 import com.aliyuncs.exceptions.ServerException;
 import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.profile.IClientProfile;
-import com.tx.component.communication.senddialect.sms.AbstractTemplateSMSSendDialect;
 
 /**
  * 阿里云短信发送方言类<br/>
@@ -27,11 +26,12 @@ import com.tx.component.communication.senddialect.sms.AbstractTemplateSMSSendDia
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class AliyunSMSSendTest{
+public class AliyunMessageSendTest{
     
     public static void main(String[] args) {
-        sendMsg("18983379637");
-        //sendEmail("1019189199@qq.com");
+        //sendMsg("18983379637");
+        
+        sendEmail("240638006@qq.com");
     }
     
     private static void sendEmail(String email) {
@@ -41,14 +41,17 @@ public class AliyunSMSSendTest{
         IAcsClient client = new DefaultAcsClient(profile);
         SingleSendMailRequest request = new SingleSendMailRequest();
         try {
-            request.setAccountName("test1@e.cnvex.cn");//发件地址
             request.setFromAlias("企帐通");//发件名称
+            request.setAccountName("test1@e.cnvex.cn");//发件地址
+            
             request.setAddressType(1);
             request.setTagName("test1");//阿里云配置tag
             request.setReplyToAddress(true);
             request.setToAddress(email);
+            
             request.setSubject("给你打款800万，请及时验收！");
             request.setHtmlBody("测试邮件 别当真");
+            
             SingleSendMailResponse httpResponse = client.getAcsResponse(request);
             String rid = httpResponse.getRequestId();
             System.out.println(rid);

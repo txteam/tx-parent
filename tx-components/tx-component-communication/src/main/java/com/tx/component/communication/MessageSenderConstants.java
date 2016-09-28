@@ -23,4 +23,6 @@ package com.tx.component.communication;
   */
 public interface MessageSenderConstants {
     
+    /** 消息类型:短信 */
+    String MESSAGE_TYPE_SMS = "sms";
 }
