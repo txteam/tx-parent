@@ -35,3 +35,11 @@
 /tx-components/tx-component-communication/target
 /tx-components/tx-component-communication/.settings
 
+/tx-components/tx-component-command/target
+/tx-components/tx-component-command/.settings
+
+/tx-components/tx-component-event/target
+/tx-components/tx-component-event/.settings
+
+/tx-components/tx-component-sequence/target
+/tx-components/tx-component-sequence/.settings
