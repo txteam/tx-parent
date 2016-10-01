@@ -320,7 +320,7 @@
 			<artifactId>jaxen</artifactId>
 			<optional>true</optional>
 		</dependency>
-		
+
 		<!-- redis -->
 		<dependency>
 			<groupId>org.springframework.data</groupId>
@@ -339,7 +339,7 @@
 			<artifactId>smiley-http-proxy-servlet</artifactId>
 			<optional>true</optional>
 		</dependency>
-		
+
 		<!-- telnetd-x -->
 		<dependency>
 			<groupId>net.wimpi</groupId>
@@ -356,6 +356,33 @@
 					<groupId>log4j</groupId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+
+		<!-- jdbc optional:true -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>com.oracle</groupId>
+			<artifactId>ojdbc14</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>hsqldb</groupId>
+			<artifactId>hsqldb</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<optional>true</optional>
 		</dependency>
 
 		<!-- log -->
@@ -408,33 +435,6 @@
 			<groupId>taglibs</groupId>
 			<artifactId>standard</artifactId>
 			<scope>provided</scope>
-		</dependency>
-		
-		<!-- jdbc optional:true -->
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>com.oracle</groupId>
-			<artifactId>ojdbc14</artifactId>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>hsqldb</groupId>
-			<artifactId>hsqldb</artifactId>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-			<optional>true</optional>
 		</dependency>
 
 		<!-- test -->
