@@ -26,7 +26,6 @@ import org.springframework.util.MultiValueMap;
 import com.tx.component.communication.model.SendMessage;
 import com.tx.component.communication.model.SendResult;
 import com.tx.component.communication.senddialect.MessageSendDialect;
-import com.tx.core.exceptions.util.AssertUtils;
 
 /**
  * 阿里大鱼短信发送方言<br/>
@@ -67,14 +66,19 @@ public abstract class AbstractTemplateSMSSendDialect implements
       * @see [类、类#方法、类#成员]
      */
     private void initSMSTemplateConfig() {
-        AssertUtils.notEmpty(smsTemplateMap, "smsTemplateMap is empty.");
+        //如果默认的短信签名为空，则获取配置的签名映射中的第一个
         if (StringUtils.isEmpty(defaultSMSSignName)) {
-            AssertUtils.notEmpty(signNameMap, "smsTemplateMap is empty.");
-            //如果默认签名为空，则将第一个短信签名当作默认签名
-            defaultSMSSignName = (String) this.signNameMap.values().toArray()[0];
+            if (!MapUtils.isEmpty(this.signNameMap)) {
+                //如果默认签名为空，则将第一个短信签名当作默认签名
+                defaultSMSSignName = (String) this.signNameMap.values()
+                        .toArray()[0];
+            }
         }
         
         //迭代处理
+        if (MapUtils.isEmpty(this.smsTemplateMap)) {
+            return;
+        }
         for (Entry<String, String> entryTemp : smsTemplateMap.entrySet()) {
             String templateCode = entryTemp.getKey();
             String templateContent = entryTemp.getValue();
@@ -90,7 +94,6 @@ public abstract class AbstractTemplateSMSSendDialect implements
                 keySet.add(m.group(1));
                 this.smsTempalteParamsMap.add(templateCode, m.group(1));
             }
-            //this.smsTempalteParamsMap.put(templateCode, new ArrayList<>(keySet));
         }
     }
     
