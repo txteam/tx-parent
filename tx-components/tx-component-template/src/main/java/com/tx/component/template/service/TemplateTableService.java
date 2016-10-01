@@ -196,7 +196,7 @@ public class TemplateTableService {
         
         //TODO:需要更新的字段
 		updateRowMap.put("createOperatorId", templateTable.getCreateOperatorId());	
-		updateRowMap.put("tableStatus", templateTable.getTableStatus());	
+		//updateRowMap.put("tableStatus", templateTable.getTableStatus());	
 		updateRowMap.put("remark", templateTable.getRemark());	
 		updateRowMap.put("tableName", templateTable.getTableName());	
 		updateRowMap.put("name", templateTable.getName());	

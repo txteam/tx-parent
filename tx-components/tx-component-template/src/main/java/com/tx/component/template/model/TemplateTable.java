@@ -104,6 +104,258 @@ public class TemplateTable implements Serializable {
     
     @OneToMany
     private Set<String> columnNames;
+
+    /**
+     * @return 返回 id
+     */
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * @param 对id进行赋值
+     */
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    /**
+     * @return 返回 code
+     */
+    public String getCode() {
+        return code;
+    }
+
+    /**
+     * @param 对code进行赋值
+     */
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    /**
+     * @return 返回 valid
+     */
+    public boolean isValid() {
+        return valid;
+    }
+
+    /**
+     * @param 对valid进行赋值
+     */
+    public void setValid(boolean valid) {
+        this.valid = valid;
+    }
+
+    /**
+     * @return 返回 modifyAble
+     */
+    public boolean isModifyAble() {
+        return modifyAble;
+    }
+
+    /**
+     * @param 对modifyAble进行赋值
+     */
+    public void setModifyAble(boolean modifyAble) {
+        this.modifyAble = modifyAble;
+    }
+
+    /**
+     * @return 返回 status
+     */
+    public TemplateTableStatusEnum getStatus() {
+        return status;
+    }
+
+    /**
+     * @param 对status进行赋值
+     */
+    public void setStatus(TemplateTableStatusEnum status) {
+        this.status = status;
+    }
+
+    /**
+     * @return 返回 tableType
+     */
+    public TemplateTableType getTableType() {
+        return tableType;
+    }
+
+    /**
+     * @param 对tableType进行赋值
+     */
+    public void setTableType(TemplateTableType tableType) {
+        this.tableType = tableType;
+    }
+
+    /**
+     * @return 返回 name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * @param 对name进行赋值
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * @return 返回 systemId
+     */
+    public String getSystemId() {
+        return systemId;
+    }
+
+    /**
+     * @param 对systemId进行赋值
+     */
+    public void setSystemId(String systemId) {
+        this.systemId = systemId;
+    }
+
+    /**
+     * @return 返回 version
+     */
+    public String getVersion() {
+        return version;
+    }
+
+    /**
+     * @param 对version进行赋值
+     */
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    /**
+     * @return 返回 tableName
+     */
+    public String getTableName() {
+        return tableName;
+    }
+
+    /**
+     * @param 对tableName进行赋值
+     */
+    public void setTableName(String tableName) {
+        this.tableName = tableName;
+    }
+
+    /**
+     * @return 返回 realTableName
+     */
+    public String getRealTableName() {
+        return realTableName;
+    }
+
+    /**
+     * @param 对realTableName进行赋值
+     */
+    public void setRealTableName(String realTableName) {
+        this.realTableName = realTableName;
+    }
+
+    /**
+     * @return 返回 remark
+     */
+    public String getRemark() {
+        return remark;
+    }
+
+    /**
+     * @param 对remark进行赋值
+     */
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
+    /**
+     * @return 返回 lastUpdateOperatorId
+     */
+    public String getLastUpdateOperatorId() {
+        return lastUpdateOperatorId;
+    }
+
+    /**
+     * @param 对lastUpdateOperatorId进行赋值
+     */
+    public void setLastUpdateOperatorId(String lastUpdateOperatorId) {
+        this.lastUpdateOperatorId = lastUpdateOperatorId;
+    }
+
+    /**
+     * @return 返回 lastUpdateDate
+     */
+    public Date getLastUpdateDate() {
+        return lastUpdateDate;
+    }
+
+    /**
+     * @param 对lastUpdateDate进行赋值
+     */
+    public void setLastUpdateDate(Date lastUpdateDate) {
+        this.lastUpdateDate = lastUpdateDate;
+    }
+
+    /**
+     * @return 返回 createOperatorId
+     */
+    public String getCreateOperatorId() {
+        return createOperatorId;
+    }
+
+    /**
+     * @param 对createOperatorId进行赋值
+     */
+    public void setCreateOperatorId(String createOperatorId) {
+        this.createOperatorId = createOperatorId;
+    }
+
+    /**
+     * @return 返回 createDate
+     */
+    public Date getCreateDate() {
+        return createDate;
+    }
+
+    /**
+     * @param 对createDate进行赋值
+     */
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
+    }
+
+    /**
+     * @return 返回 columns
+     */
+    public Set<TemplateColumn> getColumns() {
+        return columns;
+    }
+
+    /**
+     * @param 对columns进行赋值
+     */
+    public void setColumns(Set<TemplateColumn> columns) {
+        this.columns = columns;
+    }
+
+    /**
+     * @return 返回 columnNames
+     */
+    public Set<String> getColumnNames() {
+        return columnNames;
+    }
+
+    /**
+     * @param 对columnNames进行赋值
+     */
+    public void setColumnNames(Set<String> columnNames) {
+        this.columnNames = columnNames;
+    }
     
     
 }
