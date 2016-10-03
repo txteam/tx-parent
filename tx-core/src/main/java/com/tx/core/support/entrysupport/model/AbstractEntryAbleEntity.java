@@ -25,19 +25,19 @@ public abstract class AbstractEntryAbleEntity<EE extends EntityEntry>
     private static final long serialVersionUID = -2430827302865996612L;
     
     /** 实体分项属性 */
-    private List<EE> entityEntryList;
+    private List<EE> entryList;
     
     /**
-     * @return 返回 entityEntry
+     * @return 返回 entryList
      */
-    public List<EE> getEntityEntryList() {
-        return entityEntryList;
+    public List<EE> getEntryList() {
+        return entryList;
     }
     
     /**
-     * @param 对entityEntry进行赋值
+     * @param 对entryList进行赋值
      */
-    public void setEntityEntryList(List<EE> entityEntryList) {
-        this.entityEntryList = entityEntryList;
+    public void setEntryList(List<EE> entryList) {
+        this.entryList = entryList;
     }
 }
