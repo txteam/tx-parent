@@ -17,6 +17,7 @@ import com.tx.core.TxConstants;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.support.poi.excel.CellReader;
 import com.tx.core.support.poi.excel.cellreader.CellReader4BigDecimal;
+import com.tx.core.support.poi.excel.cellreader.CellReader4Enum;
 import com.tx.core.support.poi.excel.cellreader.CellReader4StringValue;
 import com.tx.core.util.ObjectUtils;
 
@@ -89,16 +90,18 @@ public abstract class CellReaderBuilder {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public static <T> CellReader<T> build(
-            @SuppressWarnings("rawtypes") Class<? extends CellReader> readerType,
-            Class<T> type, Object... objs) {
+            Class<? extends CellReader> readerType, Class<T> type,
+            Object... objs) {
         AssertUtils.notNull(readerType, "readerType is null.");
         
         String key = buildCacheKey(readerType, type, objs);
         CellReader<?> reader = null;
         if (cellReaderCache.containsKey(key)) {
             reader = cellReaderCache.get(key);
+        } else if (type.isEnum()) {
+            reader = new CellReader4Enum(type);
         } else if (readerType.isInterface()) {
             //如果指定的类型readerType为接口时，则type不能为空
             AssertUtils.notNull(type, "readerType is interface.type is null.");

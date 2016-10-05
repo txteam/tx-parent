@@ -59,6 +59,7 @@ public class CellReader4BigDecimal implements CellReader<BigDecimal> {
     public BigDecimal read(Cell cell, int rowNum, int cellNum, String key,
             boolean ignoreError, boolean ignoreBlank, boolean ignoreTypeUnmatch) {
         BigDecimal resBigDecimal = null;
+        
         switch (cell.getCellType()) {
             case Cell.CELL_TYPE_ERROR:
                 if (!ignoreError) {

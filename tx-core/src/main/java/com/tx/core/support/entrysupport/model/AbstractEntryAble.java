@@ -18,8 +18,8 @@ import java.util.List;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public abstract class AbstractEntryAbleEntity<EE extends EntityEntry>
-        implements EntryAbleEntity<EE>, Serializable {
+public abstract class AbstractEntryAble<EE extends EntityEntry>
+        implements EntryAble<EE>, Serializable {
     
     /** 注释内容 */
     private static final long serialVersionUID = -2430827302865996612L;

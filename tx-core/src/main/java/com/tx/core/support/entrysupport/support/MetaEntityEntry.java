@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 
-import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.helpers.MessageFormatter;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -31,7 +30,6 @@ import com.tx.core.TxConstants;
 import com.tx.core.exceptions.SILException;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.reflection.JpaMetaClass;
-import com.tx.core.support.entrysupport.model.SerializableEntryAbleFieldEntity;
 
 /**
  * 实体分项反射类描述<br/>
@@ -200,6 +198,7 @@ public class MetaEntityEntry {
         this.type = type;
         this.jpaMetaClass = JpaMetaClass.forClass(type);
         this.rowMap = new BeanPropertyRowMapper<>(type);
+        
         if (StringUtils.isEmpty(tableName)) {
             this.tableName = this.jpaMetaClass.getTableName();
         } else {
@@ -458,33 +457,5 @@ public class MetaEntityEntry {
             throw new SILException("transferBean2Map exception.", e);
         }
         return map;
-    }
-    
-    public static void main(String[] args) throws IllegalAccessException,
-            InvocationTargetException {
-        Class<?> type = SerializableEntryAbleFieldEntity.class;
-        MetaEntityEntry mee = MetaEntityEntry.forClass(type, "t_test_entry");
-        
-        System.out.println(mee.getSqlOfInsert());
-        System.out.println(mee.getSqlOfInsertToHis());
-        
-        System.out.println(mee.getSqlOfDeleteByEntityId());
-        System.out.println(mee.getSqlOfDeleteById());
-        System.out.println(mee.getSqlOfDeleteByEntryKey());
-        
-        System.out.println(mee.getSqlOfUpdateById());
-        System.out.println(mee.getSqlOfUpdateByEntryKey());
-        
-        System.out.println(mee.getSqlOfFindById());
-        System.out.println(mee.getSqlOfFindByEntryKey());
-        
-        System.out.println(mee.getSqlOfQueryListByEntityId());
-        
-        SerializableEntryAbleFieldEntity tt = new SerializableEntryAbleFieldEntity();
-        tt.setEntityId("entityId");
-        tt.setEntryValue("entryValue");
-        
-        Map<String, Object> res = mee.transferBean2Map(tt);
-        MapUtils.debugPrint(System.out, "out", res);
     }
 }

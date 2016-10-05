@@ -6,26 +6,70 @@
  */
 package com.tx.core.support.entrysupport.support;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.sql.DataSource;
 
-import org.hibernate.dialect.Dialect;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
+import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.support.entrysupport.model.EntityEntry;
 
- /**
-  * 实体分项属性支撑类工对应的工厂类<br/>
-  * <功能详细描述>
-  * 
-  * @author  Administrator
-  * @version  [版本号, 2016年8月8日]
-  * @see  [相关类/方法]
-  * @since  [产品/模块版本]
-  */
+/**
+ * 实体分项属性支撑类工对应的工厂类<br/>
+ * <功能详细描述>
+ * 
+ * @author  Administrator
+ * @version  [版本号, 2016年8月8日]
+ * @see  [相关类/方法]
+ * @since  [产品/模块版本]
+ */
 public class EntityEntrySupportFactory {
     
-    private DataSource dataSource;
+    /** 数据源与工厂类的映射关系 */
+    private final static Map<DataSource, NamedParameterJdbcTemplate> dataSource2namedParameterJdbcTemplateMap = new HashMap<>();
     
-    private JdbcTemplate jdbcTemplate;
+    @SuppressWarnings("rawtypes")
+    private final static Map<Class<?>, EntityEntrySupport> type2supportMap = new HashMap<>();
     
-    private Dialect dialect;
+    /**
+      * 获取类型对应的EntityEntrySupport<br/>
+      * <功能详细描述>
+      * @param type
+      * @param tableName
+      * @return [参数说明]
+      * 
+      * @return EntityEntrySupport<ENTRY> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    @SuppressWarnings("unchecked")
+    public static <ENTRY extends EntityEntry> EntityEntrySupport<ENTRY> getSupport(
+            Class<ENTRY> type, String tableName, DataSource dataSource) {
+        EntityEntrySupport<ENTRY> support = null;
+        
+        if (type2supportMap.containsKey(type)) {
+            support = type2supportMap.get(type);
+            
+            return support;
+        }
+        
+        synchronized (type2supportMap) {
+            NamedParameterJdbcTemplate jdbcTemplate = null;
+            if (dataSource2namedParameterJdbcTemplateMap.containsKey(dataSource)) {
+                jdbcTemplate = dataSource2namedParameterJdbcTemplateMap.get(dataSource);
+            } else {
+                AssertUtils.notNull(dataSource, "dataSource is null.");
+                
+                jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+                dataSource2namedParameterJdbcTemplateMap.put(dataSource,
+                        jdbcTemplate);
+            }
+            
+            support = new EntityEntrySupport<>(type, tableName, jdbcTemplate);
+            type2supportMap.put(type, support);
+        }
+        return support;
+    }
 }

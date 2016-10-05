@@ -26,8 +26,8 @@ import com.tx.core.exceptions.io.ResourceParseException;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.exceptions.util.ExceptionWrapperUtils;
 import com.tx.core.support.poi.excel.builder.CellRowReaderBuilder;
-import com.tx.core.support.poi.excel.cellrowreader.MapCellRowReader;
-import com.tx.core.support.poi.excel.cellrowreader.TypeCellRowReader;
+import com.tx.core.support.poi.excel.rowreader.MapRowReader;
+import com.tx.core.support.poi.excel.rowreader.TypeRowReader;
 
 /**
  * excel读取生成工具
@@ -139,7 +139,7 @@ public class ExcelReadUtils {
         AssertUtils.notEmpty(keys, "keys is null.");
         
         @SuppressWarnings("rawtypes")
-        CellRowReader cellRowReader = CellRowReaderBuilder.build(MapCellRowReader.class,
+        CellRowReader cellRowReader = CellRowReaderBuilder.build(MapRowReader.class,
                 new Object[] { keys });
         @SuppressWarnings("unchecked")
         List<Map<String, String>> resList = readSheet(sheet,
@@ -170,7 +170,7 @@ public class ExcelReadUtils {
         AssertUtils.notEmpty(sheet, "sheet is null.");
         
         @SuppressWarnings("rawtypes")
-        CellRowReader cellRowReader = CellRowReaderBuilder.build(TypeCellRowReader.class,
+        CellRowReader cellRowReader = CellRowReaderBuilder.build(TypeRowReader.class,
                 new Object[] { type });
         @SuppressWarnings("unchecked")
         List<T> resList = readSheet(sheet,

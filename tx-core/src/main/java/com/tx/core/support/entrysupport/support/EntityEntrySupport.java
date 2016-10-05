@@ -6,13 +6,14 @@
  */
 package com.tx.core.support.entrysupport.support;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.sql.DataSource;
+import java.util.Map.Entry;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.support.entrysupport.model.EntityEntry;
+import com.tx.core.util.UUIDUtils;
 
 /**
  * 实体分项属性支撑类<br/>
@@ -38,15 +40,29 @@ public class EntityEntrySupport<EE extends EntityEntry> implements
     
     /** 设定的类型表名 */
     private String tableName;
-   
+    
     /** metaEntityEntry:反射实例 */
     private MetaEntityEntry metaEntityEntry;
     
-    /** 数据源 */
-    private DataSource dataSource;
-    
     /** namedParameterJdbcTemplate实例 */
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+    
+    /** <默认构造函数> */
+    public EntityEntrySupport() {
+        super();
+    }
+    
+    /** <默认构造函数> */
+    public EntityEntrySupport(Class<EE> type, String tableName,
+            NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
+        super();
+        this.type = type;
+        
+        this.tableName = tableName;
+        this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
+        
+        init();
+    }
     
     /**
      * @throws Exception
@@ -65,18 +81,13 @@ public class EntityEntrySupport<EE extends EntityEntry> implements
       * @see [类、类#方法、类#成员]
      */
     public void init() {
-        AssertUtils.notNull(type, "type is null.");//类型不能为空
-        
-        //初始化jdbcTemplate
-        if (this.namedParameterJdbcTemplate == null) {
-            AssertUtils.notNull(this.dataSource,
-                    "jdbcTemplate And dataSource is all null.");
-            this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(
-                    this.dataSource);
-        }
+        AssertUtils.notNull(this.type, "type is null.");//类型不能为空
+        AssertUtils.notNull(this.namedParameterJdbcTemplate,
+                "namedParameterJdbcTemplate is null.");//类型不能为空
         
         //获取对应的MetaEntityEntry
-        this.metaEntityEntry = MetaEntityEntry.forClass(this.type, this.tableName);
+        this.metaEntityEntry = MetaEntityEntry.forClass(this.type,
+                this.tableName);
     }
     
     /**
@@ -89,13 +100,12 @@ public class EntityEntrySupport<EE extends EntityEntry> implements
       * @see [类、类#方法、类#成员]
      */
     @Transactional
-    private void save(EE entry) {
+    private void saveEntry(EE entry) {
         AssertUtils.notNull(entry, "entry is null.");
         AssertUtils.notEmpty(entry.getEntityId(), "entry.entityId is empty.");
         AssertUtils.notEmpty(entry.getEntryKey(), "entry.entryKey is empty.");
         
-        EE dbEntry = findEntryByEntryKey(entry.getEntityId(),
-                entry.getEntryKey());
+        EE dbEntry = findByEntryKey(entry.getEntityId(), entry.getEntryKey());
         if (dbEntry == null) {
             insert(dbEntry);
         } else {
@@ -114,13 +124,37 @@ public class EntityEntrySupport<EE extends EntityEntry> implements
       * @see [类、类#方法、类#成员]
      */
     @Transactional
-    public void batchSave(String entityId, List<EE> entryList) {
-        if (CollectionUtils.isEmpty(entryList)) {
-            return;
-        }
+    public void batchSaveEntry(String entityId, List<EE> entryList) {
         AssertUtils.notEmpty(entityId, "entityId is empty.");
         
-        Map<String, EE> entryMap = loadEntryMapByEntityId(entityId);
+        entryList = entryList == null ? new ArrayList<EE>() : entryList;
+        Map<String, EE> entryMapOfNew = new HashMap<>();
+        Map<String, EE> entryMapOfDB = loadEntryMapFromDBByEntityId(entityId);//从数据库中加载对应的EntryMap
+        
+        List<EE> needInsertList = new ArrayList<>();
+        List<EE> needUpdateList = new ArrayList<>();
+        List<EE> needDeleteList = new ArrayList<>();
+        
+        for (EE entryOfNew : entryList) {
+            String entryKey = entryOfNew.getEntryKey();
+            
+            if(entryMapOfDB.containsKey(entryKey)){
+                needUpdateList.add(entryOfNew);
+            }else{
+                needInsertList.add(entryOfNew);
+            }
+            
+            entryMapOfNew.put(entryOfNew.getEntryKey(), entryOfNew);
+        }
+        
+        for (Entry<String, EE>  entryTemp : entryMapOfNew.entrySet()) {
+            String entryKey = entryTemp.getKey();
+            
+            if(!entryMapOfDB.containsKey(entryKey)){
+                //需要删除的数据
+                needDeleteList.add(entryMapOfDB.get(entryKey));
+            }
+        }
     }
     
     /**
@@ -134,10 +168,15 @@ public class EntityEntrySupport<EE extends EntityEntry> implements
      * @see [类、类#方法、类#成员]
     */
     @Transactional
-    private void insert(EE entry) {
+    public void insert(EE entry) {
         AssertUtils.notNull(entry, "entry is null.");
         AssertUtils.notEmpty(entry.getEntityId(), "entry.entityId is empty.");
         AssertUtils.notEmpty(entry.getEntryKey(), "entry.entryKey is empty.");
+        
+        //如果id为空，则填入id
+        if (StringUtils.isEmpty(entry.getId())) {
+            entry.setId(UUIDUtils.generateUUID());
+        }
         
         //转换为Map数组
         Map<String, ?> entryMap = this.metaEntityEntry.transferBean2Map(entry);
@@ -158,7 +197,7 @@ public class EntityEntrySupport<EE extends EntityEntry> implements
       * @see [类、类#方法、类#成员]
      */
     @Transactional
-    private void batchInsert(String entityId, List<EE> entryList) {
+    public void batchInsert(String entityId, List<EE> entryList) {
         if (CollectionUtils.isEmpty(entryList)) {
             return;
         }
@@ -173,12 +212,80 @@ public class EntityEntrySupport<EE extends EntityEntry> implements
             AssertUtils.notEmpty(entry.getEntryKey(),
                     "entry.entryKey is empty.");
             
+            //如果Entry的id为空，则自动生成
+            if (StringUtils.isEmpty(entry.getId())) {
+                entry.setId(UUIDUtils.generateUUID());
+            }
+            
             entryMapArray[i] = this.metaEntityEntry.transferBean2Map(entry);
         }
         
         //批量处理
         this.namedParameterJdbcTemplate.batchUpdate(this.metaEntityEntry.getSqlOfInsert(),
                 entryMapArray);
+    }
+    
+    /**
+      * 根据EntryId删除对应的Entry实例<br/>
+      * <功能详细描述>
+      * @param entryId [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public void deleteById(String entryId) {
+        AssertUtils.notEmpty(entryId, "entryId is empty.");
+        
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("id", entryId);
+        
+        //批量处理
+        this.namedParameterJdbcTemplate.update(this.metaEntityEntry.getSqlOfDeleteById(),
+                paramMap);
+    }
+    
+    /**
+      * 据entityId,entryKey删除对应的Entry实例<br/>
+      * <功能详细描述>
+      * @param entityId
+      * @param entryKey [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public void deleteByEntryKey(String entityId, String entryKey) {
+        AssertUtils.notEmpty(entityId, "entityId is empty.");
+        AssertUtils.notEmpty(entryKey, "entryKey is empty.");
+        
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("entityId", entityId);
+        paramMap.put("entryKey", entryKey);
+        
+        //批量处理
+        this.namedParameterJdbcTemplate.update(this.metaEntityEntry.getSqlOfDeleteByEntryKey(),
+                paramMap);
+    }
+    
+    /**
+      * 据entityId删除对应的Entry实例<br/>
+      * <功能详细描述>
+      * @param entityId [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public void deleteByEntityId(String entityId) {
+        AssertUtils.notEmpty(entityId, "entityId is empty.");
+        
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("entityId", entityId);
+        
+        //删除EntryList
+        this.namedParameterJdbcTemplate.update(this.metaEntityEntry.getSqlOfDeleteByEntityId(),
+                paramMap);
     }
     
     /**
@@ -191,7 +298,7 @@ public class EntityEntrySupport<EE extends EntityEntry> implements
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public EE findEntryById(String id) {
+    public EE findById(String id) {
         AssertUtils.notEmpty(id, "id is empty.");
         
         Map<String, Object> paramMap = new HashMap<>();
@@ -216,7 +323,7 @@ public class EntityEntrySupport<EE extends EntityEntry> implements
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public EE findEntryByEntryKey(String entityId, String entryKey) {
+    public EE findByEntryKey(String entityId, String entryKey) {
         AssertUtils.notEmpty(entityId, "entityId is empty.");
         AssertUtils.notEmpty(entryKey, "entryKey is empty.");
         
@@ -242,7 +349,7 @@ public class EntityEntrySupport<EE extends EntityEntry> implements
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public List<EE> queryEntryListByEntityId(String entityId) {
+    public List<EE> queryListByEntityId(String entityId) {
         AssertUtils.notEmpty(entityId, "entityId is empty.");
         
         Map<String, Object> paramMap = new HashMap<>();
@@ -273,8 +380,7 @@ public class EntityEntrySupport<EE extends EntityEntry> implements
         AssertUtils.notEmpty(entry.getId(), "entry.id is empty.");
         
         //转换为Map数组
-        Map<String, Object> paramMap = new HashMap<>();
-        paramMap.put("id", entry.getId());
+        Map<String, Object> paramMap = this.metaEntityEntry.transferBean2Map(entry);
         
         //批量处理
         this.namedParameterJdbcTemplate.update(this.metaEntityEntry.getSqlOfUpdateById(),
@@ -298,9 +404,7 @@ public class EntityEntrySupport<EE extends EntityEntry> implements
         AssertUtils.notEmpty(entry.getEntryKey(), "entry.entryKey is empty.");
         
         //转换为Map数组
-        Map<String, Object> paramMap = new HashMap<>();
-        paramMap.put("entityId", entry.getEntityId());
-        paramMap.put("entryKey", entry.getEntryKey());
+        Map<String, Object> paramMap = this.metaEntityEntry.transferBean2Map(entry);
         
         //批量处理
         this.namedParameterJdbcTemplate.update(this.metaEntityEntry.getSqlOfUpdateByEntryKey(),
@@ -316,8 +420,8 @@ public class EntityEntrySupport<EE extends EntityEntry> implements
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    private Map<String, EE> loadEntryMapByEntityId(String entityId) {
-        List<EE> entryList = queryEntryListByEntityId(entityId);//查询实体对象列表
+    private Map<String, EE> loadEntryMapFromDBByEntityId(String entityId) {
+        List<EE> entryList = queryListByEntityId(entityId);//查询实体对象列表
         
         //将对象加载Map中
         Map<String, EE> sourceMap = new HashMap<>();
@@ -335,13 +439,6 @@ public class EntityEntrySupport<EE extends EntityEntry> implements
      */
     public void setType(Class<EE> type) {
         this.type = type;
-    }
-    
-    /**
-     * @param 对dataSource进行赋值
-     */
-    public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
     }
     
     /**

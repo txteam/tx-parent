@@ -37,7 +37,7 @@ import com.tx.core.paged.model.PagedList;
  * @since  [产品/模块版本]
  */
 //FIXME:指定自动生成的权限上级权限,以及对应的权限名称
-@CheckOperateAuth(key = "${view.lowerCaseEntitySimpleName}_manage", name = "${view.lowerCaseEntitySimpleName}管理")
+@CheckOperateAuth(key = "${view.lowerCaseEntitySimpleName}_manage_menuauth", name = "${view.lowerCaseEntitySimpleName}管理")
 @Controller("${view.lowerCaseEntitySimpleName}Controller")
 @RequestMapping("/${view.lowerCaseEntitySimpleName}")
 public class ${view.entitySimpleName}Controller {
@@ -269,7 +269,7 @@ public class ${view.entitySimpleName}Controller {
      * @see [类、类#方法、类#成员]
     */
     //FIXME:修改删增加权限名称
-    @CheckOperateAuth(key = "add_${view.lowerCaseEntitySimpleName}", name = "增加${view.entitySimpleName}")
+    @CheckOperateAuth(key = "add_${view.lowerCaseEntitySimpleName}_oauth", name = "增加${view.entitySimpleName}")
     @RequestMapping("/add")
     @ResponseBody
     public boolean add(${view.entitySimpleName} ${view.lowerCaseEntitySimpleName}) {
@@ -288,7 +288,7 @@ public class ${view.entitySimpleName}Controller {
       * @see [类、类#方法、类#成员]
      */
     //FIXME:修改删编辑权限名称
-    @CheckOperateAuth(key = "update_${view.lowerCaseEntitySimpleName}", name = "编辑${view.entitySimpleName}")
+    @CheckOperateAuth(key = "update_${view.lowerCaseEntitySimpleName}_oauth", name = "编辑${view.entitySimpleName}")
     @RequestMapping("/update")
     @ResponseBody
     public boolean update(${view.entitySimpleName} ${view.lowerCaseEntitySimpleName}) {
@@ -308,7 +308,7 @@ public class ${view.entitySimpleName}Controller {
       * @see [类、类#方法、类#成员]
      */
     //FIXME:修改删除权限名称
-    @CheckOperateAuth(key = "delete_${view.lowerCaseEntitySimpleName}", name = "删除${view.entitySimpleName}")
+    @CheckOperateAuth(key = "delete_${view.lowerCaseEntitySimpleName}_oauth", name = "删除${view.entitySimpleName}")
     @ResponseBody
     @RequestMapping("/deleteBy${view.upCaseIdPropertyName}")
     public boolean deleteBy${view.upCaseIdPropertyName}(@RequestParam(value = "${view.lowerCaseEntitySimpleName}${view.upCaseIdPropertyName}") String ${view.lowerCaseEntitySimpleName}${view.upCaseIdPropertyName}) {
@@ -327,7 +327,7 @@ public class ${view.entitySimpleName}Controller {
       * @see [类、类#方法、类#成员]
      */
     //FIXME:修改禁用权限名称
-    @CheckOperateAuth(key = "disable_${view.lowerCaseEntitySimpleName}", name = "禁用${view.entitySimpleName}")
+    @CheckOperateAuth(key = "disable_${view.lowerCaseEntitySimpleName}_oauth", name = "禁用${view.entitySimpleName}")
     @ResponseBody
     @RequestMapping("/disableBy${view.upCaseIdPropertyName}")
     public boolean disableBy${view.upCaseIdPropertyName}(@RequestParam(value = "${view.lowerCaseEntitySimpleName}${view.upCaseIdPropertyName}") String ${view.lowerCaseEntitySimpleName}${view.upCaseIdPropertyName}) {
@@ -346,7 +346,7 @@ public class ${view.entitySimpleName}Controller {
       * @see [类、类#方法、类#成员]
      */
     //FIXME:修改启用权限名称
-    @CheckOperateAuth(key = "enable_${view.lowerCaseEntitySimpleName}", name = "启用${view.entitySimpleName}")
+    @CheckOperateAuth(key = "enable_${view.lowerCaseEntitySimpleName}_oauth", name = "启用${view.entitySimpleName}")
     @ResponseBody
     @RequestMapping("/enableBy${view.upCaseIdPropertyName}")
     public boolean enableBy${view.upCaseIdPropertyName}(@RequestParam(value = "${view.lowerCaseEntitySimpleName}${view.upCaseIdPropertyName}") String ${view.lowerCaseEntitySimpleName}${view.upCaseIdPropertyName}) {

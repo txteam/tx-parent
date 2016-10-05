@@ -6,10 +6,12 @@
  */
 package com.tx.core.support.poi.excel.cellreader;
 
-import org.apache.commons.lang.time.DateFormatUtils;
-import org.apache.poi.hssf.usermodel.HSSFDateUtil;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.poi.ss.usermodel.Cell;
 
+import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.support.poi.excel.CellReader;
 import com.tx.core.support.poi.excel.exception.ExcelReadException;
 
@@ -22,20 +24,19 @@ import com.tx.core.support.poi.excel.exception.ExcelReadException;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class CellReader4StringValue implements CellReader<String> {
+public class CellReader4Enum<E extends Enum<E>> implements CellReader<E> {
     
-    /** 默认的事件格式字符串 */
-    private String dateFormatterPattern = "yyyy-MM-dd HH:mm:ss";
-    
-    /** <默认构造函数> */
-    public CellReader4StringValue() {
-        super();
-    }
+    private Map<String, E> enumMap = new HashMap<String, E>();
     
     /** <默认构造函数> */
-    public CellReader4StringValue(String dateFormatterPattern) {
+    public CellReader4Enum(Class<E> type) {
         super();
-        this.dateFormatterPattern = dateFormatterPattern;
+        AssertUtils.isTrue(type.isEnum(),"type should is enum.");
+        
+        E[] enums = type.getEnumConstants();
+        for(E eTemp : enums){
+            enumMap.put(eTemp.toString(), eTemp);
+        }
     }
     
     /**
@@ -64,11 +65,11 @@ public class CellReader4StringValue implements CellReader<String> {
      * @return
      */
     @Override
-    public String read(Cell cell, int rowNum, int cellNum, String key,
+    public E read(Cell cell, int rowNum, int cellNum, String key,
             boolean ignoreError, boolean ignoreBlank, boolean ignoreTypeUnmatch) {
         String resString = null;
         if(null == cell){
-            return resString;
+            return null;
         }
         switch (cell.getCellType()) {
             case Cell.CELL_TYPE_ERROR:
@@ -93,21 +94,7 @@ public class CellReader4StringValue implements CellReader<String> {
                 break;
             case Cell.CELL_TYPE_NUMERIC:
                 //如果Cell类型一定要匹配
-                throwTypeUnmatchExceptionWhenNotIgnoreTypeUnmatch(ignoreTypeUnmatch,
-                        "CELL_TYPE_NUMERIC",
-                        rowNum,
-                        cellNum,
-                        key);
-                //如果Cell类型不需要匹配
-                //如果为数字，将计算公司进行提取
-                if (HSSFDateUtil.isCellDateFormatted(cell)) {
-                    //如果为时间的处理逻辑
-                    resString = DateFormatUtils.format(cell.getDateCellValue(),
-                            dateFormatterPattern);
-                }else {
-                    //如果为非时间
-                    resString = String.valueOf(cell.getNumericCellValue());
-                }
+                resString = null;
                 break;
             case Cell.CELL_TYPE_STRING:
                 resString = cell.getStringCellValue() != null ? cell.getStringCellValue()
@@ -127,7 +114,7 @@ public class CellReader4StringValue implements CellReader<String> {
             default:
                 resString = null;
         }
-        return resString;
+        return this.enumMap.get(resString);
     }
     
     /**
@@ -139,16 +126,21 @@ public class CellReader4StringValue implements CellReader<String> {
      * @return
      */
     @Override
-    public String read(int cellType, Cell cell, int rowNum, int cellNum,
+    public E read(int cellType, Cell cell, int rowNum, int cellNum,
             String key, boolean ignoreError, boolean ignoreBlank,
             boolean ignoreTypeUnmatch) {
+        E res =  null;
         String resString = null;
         if (cellType == Cell.CELL_TYPE_STRING) {
             resString = cell.getStringCellValue();
+            
+            res = this.enumMap.get(resString);
         } else if(cellType == Cell.CELL_TYPE_NUMERIC){
             resString = String.valueOf(cell.getNumericCellValue());
+            
+            res = this.enumMap.get(resString);
         }else {
-            resString = read(cell,
+            res = read(cell,
                     rowNum,
                     cellNum,
                     key,
@@ -156,13 +148,6 @@ public class CellReader4StringValue implements CellReader<String> {
                     ignoreBlank,
                     ignoreTypeUnmatch);
         }
-        return resString;
-    }
-    
-    /**
-     * @return 返回 defaultDateFormatterPattern
-     */
-    public String getDateFormatterPattern() {
-        return dateFormatterPattern;
+        return res;
     }
 }

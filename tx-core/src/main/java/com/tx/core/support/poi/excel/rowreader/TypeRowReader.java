@@ -4,7 +4,7 @@
  * 修改时间:  2014年5月14日
  * <修改描述:>
  */
-package com.tx.core.support.poi.excel.cellrowreader;
+package com.tx.core.support.poi.excel.rowreader;
 
 import java.util.HashMap;
 import java.util.List;
@@ -32,14 +32,14 @@ import com.tx.core.util.ObjectUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class TypeCellRowReader<T> implements CellRowReader<T> {
+public class TypeRowReader<T> implements CellRowReader<T> {
     
     private Class<T> type;
     
     private Map<Integer, ExcelCellInfo<?>> key2excelCellInfoMapping = new HashMap<>();
     
     /** <默认构造函数> */
-    public TypeCellRowReader(Class<T> type) {
+    public TypeRowReader(Class<T> type) {
         super();
         AssertUtils.notNull(type, "type is empty.");
         this.type = type;

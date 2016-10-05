@@ -290,8 +290,8 @@ public class BasicDataCodeGenerator {
         logger.info("   \t 5、打开生成的Controller文件，处理其中存在//TODO:的逻辑");
         logger.info("   \t 6、修改生成的数据库脚本，并运行。");
         logger.info("   \t 7、根据提示信息：添加对应菜单项。");
-        logger.info("   \t\n<menu id=\"{}_config\" text=\"{}管理\" \n"
-                + "\tauthKey=\"{}_manage\" \n"
+        logger.info("   \t\n<menu id=\"{}_manage_menu\" text=\"{}管理\" \n"
+                + "\tauthKey=\"{}_manage_menuauth\" \n"
                 + "\thref=\"/{}/toQuery{}.action\" \n"
                 + "\ttarget=\"mainTabs\"></menu> \n",
                 new Object[] {

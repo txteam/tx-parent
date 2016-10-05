@@ -28,7 +28,7 @@ import com.tx.core.jdbc.sqlsource.annotation.UpdateAble;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public abstract class EntityEntry implements Serializable {
+public class EntityEntry implements Serializable {
     
     /** 注释内容 */
     private static final long serialVersionUID = 7375322166119051390L;

@@ -10,16 +10,15 @@ import java.sql.SQLException;
 
 import org.apache.poi.ss.usermodel.Row;
 
-
- /**
-  * Cell行映射关联接口<br/>
-  * <功能详细描述>
-  * 
-  * @author  brady
-  * @version  [版本号, 2013-5-27]
-  * @see  [相关类/方法]
-  * @since  [产品/模块版本]
-  */
+/**
+ * Cell行映射关联接口<br/>
+ * <功能详细描述>
+ * 
+ * @author  brady
+ * @version  [版本号, 2013-5-27]
+ * @see  [相关类/方法]
+ * @since  [产品/模块版本]
+ */
 public interface CellRowReader<T> {
     
     /**
@@ -34,5 +33,6 @@ public interface CellRowReader<T> {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    T read(Row row, int rowNum,boolean ignoreError, boolean ignoreBlank, boolean ignoreTypeUnmatch, int numberOfCells);
+    T read(Row row, int rowNum, boolean ignoreError, boolean ignoreBlank,
+            boolean ignoreTypeUnmatch, int numberOfCells);
 }

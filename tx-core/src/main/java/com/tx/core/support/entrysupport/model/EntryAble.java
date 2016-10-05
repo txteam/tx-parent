@@ -17,15 +17,26 @@ import java.util.List;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public interface EntryAbleEntity<EE extends EntityEntry> {
+public interface EntryAble<EE extends EntityEntry> {
+    
+    /**
+      * 获取Entity的唯一键<br/>
+      * <功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return String [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public String getId();
     
     /**
      * @return 返回 entityEntry
      */
-    public List<EE> getEntityEntryList();
+    public List<EE> getEntryList();
     
     /**
      * @param 对entityEntry进行赋值
      */
-    public void setEntityEntryList(List<EE> entityEntry);
+    public void setEntryList(List<EE> entityEntry);
 }

@@ -221,13 +221,23 @@ public abstract class ConfigInitAbleHelper<CIA extends ConfigInitAble> {
      * @see [类、类#方法、类#成员]
     */
     protected final void beforeUpdate(CIA ciaOfDB, CIA ciaOfCfg) {
+        doBeforeUpdateOfNeedUpdate(ciaOfDB, ciaOfCfg);
+        
         ciaOfDB.setModifyAble(false);
         ciaOfDB.setValid(true);
-        
-        doBeforeUpdate(ciaOfDB, ciaOfCfg);
     }
     
-    protected void doBeforeUpdate(CIA ciaOfDB, CIA ciaOfCfg) {
+    /**
+      * 更新（设置值）需要更新的数据
+      * <功能详细描述>
+      * @param ciaOfDB
+      * @param ciaOfCfg [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    protected void doBeforeUpdateOfNeedUpdate(CIA ciaOfDB, CIA ciaOfCfg) {
         
     }
     
