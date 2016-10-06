@@ -100,7 +100,7 @@ public class EntityEntrySupport<EE extends EntityEntry> implements
       * @see [类、类#方法、类#成员]
      */
     @Transactional
-    private void saveEntry(EE entry) {
+    public void saveEntry(EE entry) {
         AssertUtils.notNull(entry, "entry is null.");
         AssertUtils.notEmpty(entry.getEntityId(), "entry.entityId is empty.");
         AssertUtils.notEmpty(entry.getEntryKey(), "entry.entryKey is empty.");
@@ -138,19 +138,23 @@ public class EntityEntrySupport<EE extends EntityEntry> implements
         for (EE entryOfNew : entryList) {
             String entryKey = entryOfNew.getEntryKey();
             
-            if(entryMapOfDB.containsKey(entryKey)){
+            if (entryMapOfDB.containsKey(entryKey)) {
+                //将id以及entityId set进入entry中
+                entryOfNew.setId(entryMapOfDB.get(entryKey).getId());
+                entryOfNew.setEntityId(entityId);
+                
                 needUpdateList.add(entryOfNew);
-            }else{
+            } else {
                 needInsertList.add(entryOfNew);
             }
             
             entryMapOfNew.put(entryOfNew.getEntryKey(), entryOfNew);
         }
         
-        for (Entry<String, EE>  entryTemp : entryMapOfNew.entrySet()) {
+        for (Entry<String, EE> entryTemp : entryMapOfNew.entrySet()) {
             String entryKey = entryTemp.getKey();
             
-            if(!entryMapOfDB.containsKey(entryKey)){
+            if (!entryMapOfDB.containsKey(entryKey)) {
                 //需要删除的数据
                 needDeleteList.add(entryMapOfDB.get(entryKey));
             }
@@ -359,6 +363,24 @@ public class EntityEntrySupport<EE extends EntityEntry> implements
         @SuppressWarnings("unchecked")
         List<EE> resList = this.namedParameterJdbcTemplate.query(this.metaEntityEntry.getSqlOfQueryListByEntityId(),
                 paramMap,
+                (RowMapper<EE>) this.metaEntityEntry.getRowMap());
+        
+        return resList;
+    }
+    
+    /**
+     * 根据实体Id查询分项列表<br/>
+     * <功能详细描述>
+     * @param entityId
+     * @return [参数说明]
+     * 
+     * @return List<EE> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    public List<EE> queryList() {
+        @SuppressWarnings("unchecked")
+        List<EE> resList = this.namedParameterJdbcTemplate.query(this.metaEntityEntry.getSqlOfQueryList(),
                 (RowMapper<EE>) this.metaEntityEntry.getRowMap());
         
         return resList;

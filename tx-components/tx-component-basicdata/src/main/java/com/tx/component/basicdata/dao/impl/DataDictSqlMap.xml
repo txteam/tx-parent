@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper 
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dataDict">
+
+	<!-- auto generate default resultMap -->
+	<resultMap id="dataDictMap" 
+		type="com.tx.component.basicdata.model.DataDict">
+	</resultMap>
+	
+	<!-- auto generate default find -->
+	<select id="findDataDict" 
+		parameterType="com.tx.component.basicdata.model.DataDict"
+		resultMap="dataDictMap">
+		SELECT 
+				TDD.id,
+				TDD.valid,
+				TDD.basicDataTypeCode,
+				TDD.code,
+				TDD.createDate,
+				TDD.lastUpdateDate,
+				TDD.modifyAble,
+				TDD.name,
+				TDD.remark
+		  FROM BD_DATA_DICT TDD
+		 WHERE
+		<trim prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
+	            AND TDD.ID = #{id}
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(basicDataTypeCode)">  
+	            <![CDATA[ AND TDD.BASICDATATYPECODE = #{basicDataTypeCode,jdbcType=VARCHAR} ]]>
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(code)">  
+	            <![CDATA[ AND TDD.CODE = #{code,jdbcType=VARCHAR} ]]>
+	        </if>
+		</trim>
+	</select>
+	
+	<!-- auto generate default query -->
+	<select id="queryDataDict" 
+		parameterType="java.util.Map"
+		resultMap="dataDictMap">
+		SELECT 
+				TDD.id,
+				TDD.valid,
+				TDD.basicDataTypeCode,
+				TDD.code,
+				TDD.createDate,
+				TDD.lastUpdateDate,
+				TDD.modifyAble,
+				TDD.name,
+				TDD.remark
+		  FROM BD_DATA_DICT TDD
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(basicDataTypeCode)">  
+	            <![CDATA[ AND TDD.BASICDATATYPECODE = #{basicDataTypeCode,jdbcType=VARCHAR} ]]>
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(code)">  
+	            <![CDATA[ AND TDD.CODE = #{code,jdbcType=VARCHAR} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(modifyAble)">  
+	            <![CDATA[ AND TDD.MODIFYABLE = #{modifyAble,jdbcType=BIT} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(valid)">  
+	            <![CDATA[ AND TDD.VALID = #{valid,jdbcType=BIT} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(remark)">  
+	            <![CDATA[ AND TDD.REMARK = #{remark,jdbcType=VARCHAR} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(name)">  
+	            <![CDATA[ AND TDD.NAME = #{name,jdbcType=VARCHAR} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(excludeId)">
+				<![CDATA[ AND TDD.ID <> #{excludeId,javaType=java.lang.String} ]]>
+			</if>
+		</trim>
+		<choose>  
+	        <when test="@com.tx.core.util.OgnlUtils@isNotEmpty(orderSql)">  
+	            ORDER BY ${orderSql}
+	        </when>
+	        <otherwise>  
+	            ORDER BY ID
+	        </otherwise>  
+	    </choose>
+	</select>
+	
+		<!-- auto generate default count -->
+	<select id="queryDataDictCount" 
+		parameterType="java.util.Map"
+		resultType="java.lang.Integer">
+		SELECT COUNT(1)
+		  FROM BD_DATA_DICT TDD
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(modifyAble)">  
+	            <![CDATA[ AND TDD.MODIFYABLE = #{modifyAble,jdbcType=BIT} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(basicDataTypeCode)">  
+	            <![CDATA[ AND TDD.BASICDATATYPECODE = #{basicDataTypeCode,jdbcType=VARCHAR} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(valid)">  
+	            <![CDATA[ AND TDD.VALID = #{valid,jdbcType=BIT} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(code)">  
+	            <![CDATA[ AND TDD.CODE = #{code,jdbcType=VARCHAR} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(remark)">  
+	            <![CDATA[ AND TDD.REMARK = #{remark,jdbcType=VARCHAR} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(name)">  
+	            <![CDATA[ AND TDD.NAME = #{name,jdbcType=VARCHAR} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(excludeId)">
+				<![CDATA[ AND TDD.ID <> #{excludeId,javaType=java.lang.String} ]]>
+			</if>
+		</trim>
+	</select>
+    
+    <!-- auto generate default insert -->
+    <insert id="insertDataDict" 
+		parameterType="com.tx.component.basicdata.model.DataDict">
+		INSERT INTO BD_DATA_DICT
+		(
+			id,
+			valid,
+			basicDataTypeCode,
+			code,
+			createDate,
+			lastUpdateDate,
+			modifyAble,
+			name,
+			remark
+		)
+		VALUES
+		(
+			#{id},
+			#{valid},
+			#{basicDataTypeCode},
+			#{code},
+			#{createDate},
+			#{lastUpdateDate},
+			#{modifyAble},
+			#{name},
+			#{remark}
+		)
+	</insert>
+	
+	<!-- auto generate default delete -->
+	<delete id="deleteDataDict" 
+		parameterType="com.tx.component.basicdata.model.DataDict">
+		DELETE FROM BD_DATA_DICT  WHERE
+		<trim prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
+	            AND id = #{id}
+	        </if>
+		</trim>
+	</delete>
+
+	<!-- auto generate default update -->
+	<update id="updateDataDict"
+	    parameterType="java.util.Map">  
+	    UPDATE BD_DATA_DICT 
+	    <trim prefix="SET" suffixOverrides=",">
+			<if test="_parameter.containsKey('valid')">
+	    		valid = #{valid,javaType=boolean},
+	    	</if>	
+			<if test="_parameter.containsKey('basicDataTypeCode')">
+	    		basicDataTypeCode = #{basicDataTypeCode,javaType=java.lang.String},
+	    	</if>	
+			<if test="_parameter.containsKey('code')">
+	    		code = #{code,javaType=java.lang.String},
+	    	</if>	
+			<if test="_parameter.containsKey('createDate')">
+	    		createDate = #{createDate,javaType=java.util.Date},
+	    	</if>	
+			<if test="_parameter.containsKey('lastUpdateDate')">
+	    		lastUpdateDate = #{lastUpdateDate,javaType=java.util.Date},
+	    	</if>	
+			<if test="_parameter.containsKey('modifyAble')">
+	    		modifyAble = #{modifyAble,javaType=boolean},
+	    	</if>	
+			<if test="_parameter.containsKey('name')">
+	    		name = #{name,javaType=java.lang.String},
+	    	</if>	
+			<if test="_parameter.containsKey('remark')">
+	    		remark = #{remark,javaType=java.lang.String},
+	    	</if>	
+	    </trim>
+	    WHERE id = #{id} 
+	</update>  
+
+</mapper>
+<!--
+sqlMap生成描述:
+
+-->

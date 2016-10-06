@@ -12,8 +12,9 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.WeakHashMap;
 
-import javax.persistence.Column;
+import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.type.JdbcType;
@@ -162,6 +163,16 @@ public class SqlSourceBuilder {
         for (String getterNameTemp : getterNames) {
             Class<?> getterType = classReflector.getGetterType(getterNameTemp);
             if (void.class.equals(getterType)) {
+                continue;
+            }
+            if (ReflectionUtils.isHasAnnotationForGetter(type,
+                    getterNameTemp,
+                    Transient.class)){
+                continue;
+            }
+            if (ReflectionUtils.isHasAnnotationForGetter(type,
+                    getterNameTemp,
+                    OneToMany.class)){
                 continue;
             }
             String columnName = simpleSqlSource.getColumnNameByGetterName(getterNameTemp);

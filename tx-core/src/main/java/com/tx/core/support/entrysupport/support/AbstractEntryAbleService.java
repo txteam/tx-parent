@@ -68,12 +68,15 @@ public abstract class AbstractEntryAbleService<ENTRY extends EntityEntry, ENTITY
       * @see [类、类#方法、类#成员]
      */
     @Transactional
-    public final void deleteById(String entityId) {
+    public final boolean deleteById(String entityId) {
         AssertUtils.notEmpty(entityId, "entityId is empty.");
         
-        deleteEntityById(entityId);
+        boolean flag = deleteEntityById(entityId);
         
-        entityEntrySupport.deleteByEntityId(entityId);
+        if (flag) {
+            entityEntrySupport.deleteByEntityId(entityId);
+        }
+        return flag;
     }
     
     /**
@@ -96,6 +99,33 @@ public abstract class AbstractEntryAbleService<ENTRY extends EntityEntry, ENTITY
         setupEntryList(entity);
         
         return entity;
+    }
+    
+    /**
+      * 更新对象<br/>
+      * <功能详细描述>
+      * @param entityId
+      * @return [参数说明]
+      * 
+      * @return ENTITY [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    @Transactional
+    public final boolean updateById(ENTITY entity) {
+        AssertUtils.notNull(entity, "entityId is empty.");
+        AssertUtils.notEmpty(entity.getId(), "entityId is empty.");
+        
+        //根据id查询实例
+        boolean flag = updateEntityById(entity);
+        
+        //如果更新实体成功，同时更新其其余参数
+        if (flag) {
+            String entityId = entity.getId();
+            entityEntrySupport.batchSaveEntry(entityId, entity.getEntryList());
+        }
+        
+        return flag;
     }
     
     /**
@@ -184,7 +214,7 @@ public abstract class AbstractEntryAbleService<ENTRY extends EntityEntry, ENTITY
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    protected abstract ENTITY findById(String entityId);
+    public abstract ENTITY findById(String entityId);
     
     /**
      * 插入实例<br/>
@@ -194,6 +224,7 @@ public abstract class AbstractEntryAbleService<ENTRY extends EntityEntry, ENTITY
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
-    protected abstract boolean updateEntityById(ENTITY entity);
+     */
+    @Transactional
+    public abstract boolean updateEntityById(ENTITY entity);
 }

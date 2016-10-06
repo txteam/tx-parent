@@ -14,6 +14,7 @@ import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -102,6 +103,48 @@ public class ExcelReadUtils {
                     "资源解析异常");
         }
         return book;
+    }
+    
+    /**
+     * 读取excel数据并写入map中<br/>
+     * <功能详细描述>
+     * @param sheet
+     * @param keys
+     * @return [参数说明]
+     * 
+     * @return List<Map<String,String>> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    public static List<Map<String, String>> readSheet(final Sheet sheet) {
+        AssertUtils.notNull(sheet, "sheet is null.");
+        
+        Row firstRow = sheet.getRow(0);
+        if (firstRow == null) {
+            return new ArrayList<>();
+        }
+        String[] keys = new String[firstRow.getLastCellNum()];
+        for (int cellIndex = 0; cellIndex < firstRow.getLastCellNum(); cellIndex++) {
+            Cell cell = firstRow.getCell(cellIndex);
+            AssertUtils.notNull(cell,
+                    "cell is null,sheet:{} cellIndex:{}",
+                    new Object[] { sheet, cellIndex });
+            
+            //如果获取不成功说明类型错误
+            keys[cellIndex] = cell.getStringCellValue();
+        }
+        
+        @SuppressWarnings("rawtypes")
+        CellRowReader cellRowReader = CellRowReaderBuilder.build(MapRowReader.class,
+                new Object[] { keys });
+        @SuppressWarnings("unchecked")
+        List<Map<String, String>> resList = readSheet(sheet,
+                1,
+                cellRowReader,
+                true,
+                true,
+                true);
+        return resList;
     }
     
     /**
@@ -199,6 +242,7 @@ public class ExcelReadUtils {
             boolean ignoreBlank, boolean ignoreTypeUnmatch) {
         AssertUtils.notNull(cellRowReader, "cellRowReader is null.");
         AssertUtils.notNull(sheet, "sheet is null.");
+        
         //获取第一行
         //int firstRowNum = sheet.getFirstRowNum();
         //Row firstRow = sheet.getRow(firstRowNum);

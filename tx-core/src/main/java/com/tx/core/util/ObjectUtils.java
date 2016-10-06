@@ -21,14 +21,15 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.reflect.ConstructorUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.lang3.reflect.ConstructorUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.apache.commons.lang3.reflect.TypeUtils;
-import org.apache.ibatis.reflection.MetaObject;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.PropertyAccessorFactory;
 
 import com.tx.core.exceptions.io.ResourceAccessException;
 import com.tx.core.exceptions.util.AssertUtils;
@@ -64,7 +65,8 @@ public class ObjectUtils {
      * @version [版本号, 2015年11月25日]
      * @author rain
      */
-    public static void debugPrintPropertyValue(PrintStream out, String label, Object object, boolean deep, boolean ignoreNull) {
+    public static void debugPrintPropertyValue(PrintStream out, String label,
+            Object object, boolean deep, boolean ignoreNull) {
         if (out == null) {
             out = System.out;
         }
@@ -77,7 +79,8 @@ public class ObjectUtils {
         Set<String> getterNames = jpaMetaClass.getGetterNames();
         for (String getterMethod : getterNames) {
             try {
-                Object invokeMethod = MethodUtils.invokeMethod(object, "get" + StringUtils.capitalize(getterMethod));
+                Object invokeMethod = MethodUtils.invokeMethod(object, "get"
+                        + StringUtils.capitalize(getterMethod));
                 if (ignoreNull && invokeMethod == null) {
                     continue;
                 }
@@ -136,19 +139,32 @@ public class ObjectUtils {
      */
     public static boolean equals(Object thisObj, Object otherObj,
             String... dependPropertyName) {
-        AssertUtils.notNull(thisObj, "thisObj is null.");
-        
         if (thisObj == otherObj) {
+            //两者均为空，则相等
             return true;
-        } else if (!thisObj.getClass().isAssignableFrom(otherObj.getClass())) {
+        }
+        if (thisObj == null || otherObj == null) {
+            //两者其中之一为空，则不等
+            return false;
+        }
+        
+        //两者均不为空
+        if (!thisObj.getClass().isAssignableFrom(otherObj.getClass())) {
             return false;
         } else {
-            MetaObject thisMetaObject = MetaObject.forObject(thisObj);
-            MetaObject otherMetaObject = MetaObject.forObject(otherObj);
-            
+            BeanWrapper thisMetaObject = PropertyAccessorFactory.forBeanPropertyAccess(thisObj);
+            BeanWrapper otherMetaObject = PropertyAccessorFactory.forBeanPropertyAccess(otherObj);
             for (String propertyNameTemp : dependPropertyName) {
-                if (!org.apache.commons.lang.ObjectUtils.equals(thisMetaObject.getValue(propertyNameTemp),
-                        otherMetaObject.getValue(propertyNameTemp))) {
+                Object thisPropertyValue = thisMetaObject.getPropertyValue(propertyNameTemp);
+                Object otherPropertyValue = otherMetaObject.getPropertyValue(propertyNameTemp);
+                if (thisPropertyValue == otherPropertyValue) {
+                    continue;
+                }
+                if (thisPropertyValue == null || otherPropertyValue == null) {
+                    return false;
+                }
+                if (!org.apache.commons.lang.ObjectUtils.equals(thisPropertyValue,
+                        otherPropertyValue)) {
                     return false;
                 }
             }
@@ -171,11 +187,12 @@ public class ObjectUtils {
             String... dependPropertyName) {
         AssertUtils.notNull(thisObj, "thisObj is null.");
         
-        MetaObject metaObject = MetaObject.forObject(thisObj);
         int resHashCode = thisObj.getClass().hashCode();
+        BeanWrapper metaObject = PropertyAccessorFactory.forBeanPropertyAccess(thisObj);
         for (String propertyNameTemp : dependPropertyName) {
-            Object value = metaObject.getValue(propertyNameTemp);
-            resHashCode += value == null ? superHashCode : value.hashCode();
+            Object value = metaObject.getPropertyValue(propertyNameTemp);
+            resHashCode += (value == null ? propertyNameTemp.hashCode()
+                    : value.hashCode());
         }
         return resHashCode;
     }
@@ -220,7 +237,6 @@ public class ObjectUtils {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @SuppressWarnings("unchecked")
     public static <T> T newInstance(Class<T> type, Object... objects) {
         T res = null;
         try {
@@ -270,9 +286,7 @@ public class ObjectUtils {
         if (value instanceof Boolean) {
             return (Boolean) value;
         }
-        if ("true".equals(value)
-                || "1".equals(value)
-                || "yes".equals(value)
+        if ("true".equals(value) || "1".equals(value) || "yes".equals(value)
                 || "on".equals(value)) {
             return Boolean.TRUE;
         }

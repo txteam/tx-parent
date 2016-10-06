@@ -94,6 +94,10 @@ public class MetaEntityEntry {
     private static final String QUERY_BY_ENTITYID_SQL_TEMPLATE = (new StringBuilder(
             "SELECT * FROM {} WHERE entityId = :entityId")).toString();
     
+    //SELECT * FROM {}
+    private static final String QUERY_SQL_TEMPLATE = (new StringBuilder(
+            "SELECT * FROM {}")).toString();
+    
     /** 实体分项解析类映射 */
     private static Map<String, MetaEntityEntry> metaEntityEntryMap = new WeakHashMap<>();
     
@@ -151,6 +155,8 @@ public class MetaEntityEntry {
     private final String sqlOfFindByEntryKey;
     
     private final String sqlOfQueryListByEntityId;
+    
+    private final String sqlOfQueryList;
     
     /**
       * 获取对应的EntityEntry的解析类<br/>
@@ -279,6 +285,9 @@ public class MetaEntityEntry {
         this.sqlOfQueryListByEntityId = MessageFormatter.arrayFormat(QUERY_BY_ENTITYID_SQL_TEMPLATE,
                 new Object[] { this.tableName })
                 .getMessage();
+        //SELECT * FROM {}
+        this.sqlOfQueryList = MessageFormatter.arrayFormat(QUERY_SQL_TEMPLATE,
+                new Object[] { this.tableName }).getMessage();
     }
     
     /**
@@ -363,6 +372,13 @@ public class MetaEntityEntry {
      */
     public String getSqlOfQueryListByEntityId() {
         return sqlOfQueryListByEntityId;
+    }
+    
+    /**
+     * @return 返回 sqlOfQueryList
+     */
+    public String getSqlOfQueryList() {
+        return sqlOfQueryList;
     }
     
     /**

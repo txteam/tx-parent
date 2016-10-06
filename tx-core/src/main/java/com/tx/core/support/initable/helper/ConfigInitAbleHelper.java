@@ -7,11 +7,13 @@
 package com.tx.core.support.initable.helper;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -71,42 +73,50 @@ public abstract class ConfigInitAbleHelper<CIA extends ConfigInitAble> {
         Map<String, CIA> code2CIAMapOfDB = new HashMap<String, CIA>();
         List<CIA> listFromDB = queryListFromDB();
         for (CIA ciaOfDBTemp : listFromDB) {
-            code2CIAMapOfDB.put(ciaOfDBTemp.getCode(), ciaOfDBTemp);
+            code2CIAMapOfDB.put(getSingleCode(ciaOfDBTemp), ciaOfDBTemp);
         }
         
         //从配置中获取对象集合
         Map<String, CIA> code2CIAMapOfConfig = new HashMap<String, CIA>();
         List<CIA> listFromConfig = queryListFromConfig();
         for (CIA ciaOfCfgTemp : listFromConfig) {
-            code2CIAMapOfConfig.put(ciaOfCfgTemp.getCode(), ciaOfCfgTemp);
+            String singleCode = getSingleCode(ciaOfCfgTemp);//获取唯一识别码
+            
+            code2CIAMapOfConfig.put(singleCode, ciaOfCfgTemp);
             //如果数据库中不对应对应的Code的实例，则添加到需要添加的列表
-            if (isNeedInsert(ciaOfCfgTemp, code2CIAMapOfDB)) {
-                needInsertList.add(ciaOfCfgTemp);
-            } else if (isNeedBind(ciaOfCfgTemp, code2CIAMapOfDB)) {
-                //如果可编辑：并且配置中存在，则添加到需要更新为不可编辑的列表
-                CIA ciaOfDBTemp = code2CIAMapOfDB.get(ciaOfCfgTemp.getCode());
-                
+            if (!code2CIAMapOfDB.containsKey(singleCode)
+                    && isNeedInsert(ciaOfCfgTemp, code2CIAMapOfDB)) {
                 //预制的前置插入方法
-                beforeBindUpdate(ciaOfDBTemp);
+                beforeInsert(ciaOfCfgTemp);
+                
+                needInsertList.add(ciaOfCfgTemp);
+            } else if (code2CIAMapOfDB.containsKey(singleCode)
+                    && code2CIAMapOfDB.get(singleCode).isModifyAble()
+                    && isNeedBind(code2CIAMapOfDB.get(singleCode), ciaOfCfgTemp)) {
+                //如果可编辑：并且配置中存在，则添加到需要更新为不可编辑的列表
+                CIA ciaOfDBTemp = code2CIAMapOfDB.get(singleCode);
+                doBeforeUpdate(ciaOfDBTemp, ciaOfCfgTemp);//更新字段
+                beforeBindUpdate(ciaOfDBTemp, ciaOfCfgTemp);//设置为
                 
                 needUpdateToBindList.add(ciaOfDBTemp);
             }
         }
         
         for (CIA ciaOfDBTemp : listFromDB) {
-            if (isNeedUnBind(ciaOfDBTemp, code2CIAMapOfConfig)) {
-                //默认为：配置中不含有，但是数据库中记录为不可编辑
-                
-                //预制的前置插入方法
-                beforeUnbindUpdate(ciaOfDBTemp);
+            String singleCode = getSingleCode(ciaOfDBTemp);//获取唯一识别码
+            
+            if (!code2CIAMapOfConfig.containsKey(singleCode)
+                    && ciaOfDBTemp.isModifyAble()
+                    && isNeedUnBind(ciaOfDBTemp, code2CIAMapOfConfig)) {
+                doBeforeUpdate(ciaOfDBTemp, code2CIAMapOfConfig.get(singleCode));//同时更新其他字段
+                beforeUnbindUpdate(ciaOfDBTemp);//预制的前置插入方法
                 
                 needUpdateToUnbindList.add(ciaOfDBTemp);
-            } else if (code2CIAMapOfConfig.containsKey(ciaOfDBTemp.getCode())
+            } else if (code2CIAMapOfConfig.containsKey(singleCode)
                     && isNeedUpdate(ciaOfDBTemp,
-                            code2CIAMapOfConfig.get(ciaOfDBTemp.getCode()))) {
-                
-                beforeUpdate(ciaOfDBTemp,
-                        code2CIAMapOfConfig.get(ciaOfDBTemp.getCode()));
+                            code2CIAMapOfConfig.get(singleCode))) {
+                doBeforeUpdate(ciaOfDBTemp, code2CIAMapOfConfig.get(singleCode));
+                beforeUpdate(ciaOfDBTemp, code2CIAMapOfConfig.get(singleCode));
                 
                 needUpdateList.add(ciaOfDBTemp);
             }
@@ -114,10 +124,6 @@ public abstract class ConfigInitAbleHelper<CIA extends ConfigInitAble> {
         
         //如果批量插入不为空
         if (!CollectionUtils.isEmpty(needInsertList)) {
-            for (CIA ciaTemp : needInsertList) {
-                //预制的前置插入方法
-                beforeInsert(ciaTemp);
-            }
             batchInsert(needInsertList);
         }
         //如果批量更新不为空
@@ -132,6 +138,24 @@ public abstract class ConfigInitAbleHelper<CIA extends ConfigInitAble> {
         if (!CollectionUtils.isEmpty(needUpdateList)) {
             batchUpdate(needUpdateList);
         }
+    }
+    
+    /**
+      * 数据的唯一识别码:默认为对象中的code值<br/>
+      * <功能详细描述>
+      * @param cia
+      * @return [参数说明]
+      * 
+      * @return String [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    protected String getSingleCode(CIA cia) {
+        AssertUtils.notNull(cia, "cia is null.");
+        AssertUtils.notEmpty(cia.getCode(), "cia is null.");
+        
+        String code = cia.getCode();
+        return code;
     }
     
     /**
@@ -162,13 +186,7 @@ public abstract class ConfigInitAbleHelper<CIA extends ConfigInitAble> {
      */
     protected boolean isNeedUnBind(CIA ciaOfDBTemp,
             Map<String, CIA> code2CIAMapOfConfig) {
-        if (!ciaOfDBTemp.isModifyAble()
-                && !code2CIAMapOfConfig.containsKey(ciaOfDBTemp.getCode())) {
-            //默认为：配置中不含有，但是数据库中记录为不可编辑
-            return true;
-        } else {
-            return false;
-        }
+        return true;
     }
     
     /**
@@ -182,49 +200,24 @@ public abstract class ConfigInitAbleHelper<CIA extends ConfigInitAble> {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    protected boolean isNeedBind(CIA ciaOfCfgTemp,
+    protected boolean isNeedInsert(CIA ciaOfCfg,
             Map<String, CIA> code2CIAMapOfDB) {
-        if (code2CIAMapOfDB.get(ciaOfCfgTemp.getCode()).isModifyAble()) {
-            return true;
-        } else {
-            return false;
-        }
+        return true;
     }
     
     /**
-      * 判断是否需要插入新的数据<br/>
-      * <功能详细描述>
-      * @param ciaOfCfgTemp
-      * @param code2CIAMapOfDB
-      * @return [参数说明]
-      * 
-      * @return boolean [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    protected boolean isNeedInsert(CIA ciaOfCfgTemp,
-            Map<String, CIA> code2CIAMapOfDB) {
-        if (!code2CIAMapOfDB.containsKey(ciaOfCfgTemp.getCode())) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-    
-    /**
-     * 预制的插入前置处理<br/>
+     * 判断是否需要插入新的数据<br/>
      * <功能详细描述>
-     * @param needInsertCIA [参数说明]
+     * @param ciaOfCfgTemp
+     * @param code2CIAMapOfDB
+     * @return [参数说明]
      * 
-     * @return void [返回类型说明]
+     * @return boolean [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    protected final void beforeUpdate(CIA ciaOfDB, CIA ciaOfCfg) {
-        doBeforeUpdateOfNeedUpdate(ciaOfDB, ciaOfCfg);
-        
-        ciaOfDB.setModifyAble(false);
-        ciaOfDB.setValid(true);
+    protected boolean isNeedBind(CIA ciaOfDB, CIA ciaOfCfg) {
+        return true;
     }
     
     /**
@@ -237,7 +230,7 @@ public abstract class ConfigInitAbleHelper<CIA extends ConfigInitAble> {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    protected void doBeforeUpdateOfNeedUpdate(CIA ciaOfDB, CIA ciaOfCfg) {
+    protected void doBeforeUpdate(CIA ciaOfDB, CIA ciaOfCfg) {
         
     }
     
@@ -250,11 +243,9 @@ public abstract class ConfigInitAbleHelper<CIA extends ConfigInitAble> {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    protected void beforeBindUpdate(CIA needUpdateCIA) {
-        AssertUtils.notEmpty(needUpdateCIA.getCode(), "CIA.code is empty.");
-        
-        needUpdateCIA.setModifyAble(false);
-        needUpdateCIA.setValid(true);
+    protected final void beforeUpdate(CIA ciaOfDB, CIA ciaOfCfg) {
+        ciaOfDB.setModifyAble(false);
+        ciaOfDB.setValid(true);
     }
     
     /**
@@ -266,9 +257,21 @@ public abstract class ConfigInitAbleHelper<CIA extends ConfigInitAble> {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    protected void beforeUnbindUpdate(CIA needUpdateCIA) {
-        AssertUtils.notEmpty(needUpdateCIA.getCode(), "CIA.code is empty.");
-        
+    protected final void beforeBindUpdate(CIA ciaOfDB, CIA ciaOfCfg) {
+        ciaOfDB.setModifyAble(false);
+        ciaOfDB.setValid(true);
+    }
+    
+    /**
+     * 预制的插入前置处理<br/>
+     * <功能详细描述>
+     * @param needInsertCIA [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    protected final void beforeUnbindUpdate(CIA needUpdateCIA) {
         needUpdateCIA.setModifyAble(true);
     }
     
@@ -282,8 +285,6 @@ public abstract class ConfigInitAbleHelper<CIA extends ConfigInitAble> {
       * @see [类、类#方法、类#成员]
      */
     protected void beforeInsert(CIA needInsertCIA) {
-        AssertUtils.notEmpty(needInsertCIA.getCode(), "CIA.code is empty.");
-        
         needInsertCIA.setValid(true);
         needInsertCIA.setModifyAble(false);
     }

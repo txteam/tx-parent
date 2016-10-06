@@ -49,6 +49,18 @@ public class EntityEntry implements Serializable {
     @UpdateAble
     private String entryValue;
     
+    /** <默认构造函数> */
+    public EntityEntry() {
+        super();
+    }
+    
+    /** <默认构造函数> */
+    public EntityEntry(String entryKey, String entryValue) {
+        super();
+        this.entryKey = entryKey;
+        this.entryValue = entryValue;
+    }
+    
     /**
      * @return 返回 id
      */

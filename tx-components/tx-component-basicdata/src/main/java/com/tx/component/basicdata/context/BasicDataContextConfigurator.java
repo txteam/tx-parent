@@ -1,141 +1,152 @@
 /*
  * 描          述:  <描述>
- * 修  改   人:  brady
- * 修改时间:  2013-8-14
+ * 修  改   人:  Administrator
+ * 修改时间:  2016年10月3日
  * <修改描述:>
  */
 package com.tx.component.basicdata.context;
 
-import java.util.List;
-
 import javax.sql.DataSource;
 
-import net.sf.ehcache.CacheManager;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
-import com.tx.component.basicdata.plugin.BasicDataExecutorPlugin;
-import com.tx.component.basicdata.plugin.BasicDataExecutorPluginRegistry;
-import com.tx.core.dbscript.model.DataSourceTypeEnum;
+import com.tx.core.exceptions.util.AssertUtils;
 
 /**
- * 基础数据容器配置加载<br/>
+ * 基础数据容器配置器<br/>
  * <功能详细描述>
  * 
- * @author  brady
- * @version  [版本号, 2013-8-14]
+ * @author  Administrator
+ * @version  [版本号, 2016年10月3日]
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-@Deprecated
-public class BasicDataContextConfigurator implements InitializingBean {
+public class BasicDataContextConfigurator implements ApplicationContextAware,
+        InitializingBean, BeanNameAware {
     
-    protected Logger logger = LoggerFactory.getLogger(getClass());
+    /** spring容器句柄 */
+    protected ApplicationContext applicationContext;
     
-    /** 是否在启动期间就加载基础数据执行器 */
-    private boolean loadExecutorOnStartup = true;
+    /** 包名 */
+    protected String packages = "com.tx";
     
-    /** 在启动期间如果构建基础数据查询器异常是否停止 */
-    private boolean stopOnBuildBasicDataExecutorWhenStartup = false;
+    /** mybatis配置文件 */
+    protected String mybatisConfigLocation = "classpath:context/mybatis-config.xml";
     
-    /** 基础数据所在扫描包 */
-    private String basePackages;
+    /** mybatis配置文件 */
+    protected String[] mybatisMapperLocations = new String[] { "classpath*:com/tx/component/basicdata/dao/impl/DataDictSqlMap.xml" };
     
-    /** 数据源 */
-    private DataSource dataSource;
+    /** beanName实例 */
+    protected String beanName;
     
-    /** 事务处理器 */
-    private PlatformTransactionManager platformTransactionManager;
+    /** 数据源:dataSource */
+    protected DataSource dataSource;
     
-    /** 数据源类型 */
-    private DataSourceTypeEnum dataSourceType;
+    /** jdbcTemplate句柄 */
+    protected JdbcTemplate jdbcTemplate;
     
-    /** 缓存 */
-    private CacheManager cacheManager;
+    /** transactionManager */
+    protected PlatformTransactionManager transactionManager;
+    
+    /** transactionTemplate: 如果存在事务则在当前事务中执行 */
+    protected TransactionTemplate transactionTemplate;
     
     /**
-     * 插件基础包
+     * @param applicationContext
+     * @throws BeansException
      */
-    private String pluginBasePackages;
+    @Override
+    public final void setApplicationContext(
+            ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
     
-    /** 基础数据执行器插件 */
-    private List<BasicDataExecutorPlugin> plugins;
-    
-    /** 基础数据执行器插件注册器 */
-    private BasicDataExecutorPluginRegistry basicDataExecutorPluginRegistry = new BasicDataExecutorPluginRegistry();
+    /**
+     * @param name
+     */
+    @Override
+    public final void setBeanName(String name) {
+        this.beanName = name;
+    }
     
     /**
      * @throws Exception
      */
     @Override
-    public void afterPropertiesSet() throws Exception {
-        if (!CollectionUtils.isEmpty(plugins)) {
-            for (BasicDataExecutorPlugin pluginTemp : plugins) {
-                basicDataExecutorPluginRegistry.register(pluginTemp);
-            }
+    public final void afterPropertiesSet() throws Exception {
+        AssertUtils.notTrue(dataSource == null && jdbcTemplate == null,
+                "dataSource or jdbcTemplate all is null.");
+        
+        if (this.dataSource == null) {
+            this.dataSource = this.jdbcTemplate.getDataSource();
         }
-        if (!StringUtils.isBlank(pluginBasePackages)) {
-            basicDataExecutorPluginRegistry.register(pluginBasePackages);
+        if (this.jdbcTemplate == null) {
+            this.jdbcTemplate = new JdbcTemplate(this.dataSource);
         }
-        if (platformTransactionManager == null) {
-            platformTransactionManager = new DataSourceTransactionManager(
+        if (this.transactionManager == null) {
+            this.transactionManager = new DataSourceTransactionManager(
                     this.dataSource);
         }
+        this.transactionTemplate = new TransactionTemplate(
+                this.transactionManager);
+        
+        //初始化包名
+        if (StringUtils.isEmpty(packages)) {
+            this.packages = "com.tx";
+        }
+        
+        //进行容器构建
+        doBuild();
+        
+        //初始化容器
+        doInitContext();
     }
     
     /**
-     * @return 返回 basePackage
+      * 基础数据容器构建
+      * <功能详细描述>
+      * @throws Exception [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
      */
-    public String getBasePackages() {
-        return basePackages;
+    protected void doBuild() throws Exception {
+        
+    }
+    
+    protected void doInitContext() throws Exception {
+        
     }
     
     /**
-     * @param 对basePackage进行赋值
+     * @param 对packages进行赋值
      */
-    public void setBasePackages(String basePackages) {
-        this.basePackages = basePackages;
+    public void setPackages(String packages) {
+        this.packages = packages;
     }
     
     /**
-     * @return 返回 dataSourceType
+     * @param 对mybatisConfigLocation进行赋值
      */
-    public DataSourceTypeEnum getDataSourceType() {
-        return dataSourceType;
+    public void setMybatisConfigLocation(String mybatisConfigLocation) {
+        this.mybatisConfigLocation = mybatisConfigLocation;
     }
     
     /**
-     * @param 对dataSourceType进行赋值
+     * @param 对mybatisMapperLocations进行赋值
      */
-    public void setDataSourceType(DataSourceTypeEnum dataSourceType) {
-        this.dataSourceType = dataSourceType;
-    }
-    
-    /**
-     * @return 返回 cacheManager
-     */
-    public CacheManager getCacheManager() {
-        return cacheManager;
-    }
-    
-    /**
-     * @param 对cacheManager进行赋值
-     */
-    public void setCacheManager(CacheManager cacheManager) {
-        this.cacheManager = cacheManager;
-    }
-    
-    /**
-     * @return 返回 dataSource
-     */
-    public DataSource getDataSource() {
-        return dataSource;
+    public void setMybatisMapperLocations(String[] mybatisMapperLocations) {
+        this.mybatisMapperLocations = mybatisMapperLocations;
     }
     
     /**
@@ -146,89 +157,24 @@ public class BasicDataContextConfigurator implements InitializingBean {
     }
     
     /**
-     * @return 返回 loadExecutorOnStartup
+     * @param 对jdbcTemplate进行赋值
      */
-    public boolean isLoadExecutorOnStartup() {
-        return loadExecutorOnStartup;
+    public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
     }
     
     /**
-     * @param 对loadExecutorOnStartup进行赋值
+     * @param 对transactionManager进行赋值
      */
-    public void setLoadExecutorOnStartup(boolean loadExecutorOnStartup) {
-        this.loadExecutorOnStartup = loadExecutorOnStartup;
+    public void setTransactionManager(
+            PlatformTransactionManager transactionManager) {
+        this.transactionManager = transactionManager;
     }
     
     /**
-     * @return 返回 stopOnBuildBasicDataExecutorWhenStartup
+     * @param 对transactionTemplate进行赋值
      */
-    public boolean isStopOnBuildBasicDataExecutorWhenStartup() {
-        return stopOnBuildBasicDataExecutorWhenStartup;
-    }
-    
-    /**
-     * @param 对stopOnBuildBasicDataExecutorWhenStartup进行赋值
-     */
-    public void setStopOnBuildBasicDataExecutorWhenStartup(
-            boolean stopOnBuildBasicDataExecutorWhenStartup) {
-        this.stopOnBuildBasicDataExecutorWhenStartup = stopOnBuildBasicDataExecutorWhenStartup;
-    }
-    
-    /**
-     * @return 返回 basicDataExecutorPluginRegistry
-     */
-    public BasicDataExecutorPluginRegistry getBasicDataExecutorPluginRegistry() {
-        return basicDataExecutorPluginRegistry;
-    }
-    
-    /**
-     * @param 对basicDataExecutorPluginRegistry进行赋值
-     */
-    protected void setBasicDataExecutorPluginRegistry(
-            BasicDataExecutorPluginRegistry basicDataExecutorPluginRegistry) {
-        this.basicDataExecutorPluginRegistry = basicDataExecutorPluginRegistry;
-    }
-    
-    /**
-     * @return 返回 pluginBasePackages
-     */
-    public String getPluginBasePackages() {
-        return pluginBasePackages;
-    }
-    
-    /**
-     * @param 对pluginBasePackages进行赋值
-     */
-    public void setPluginBasePackages(String pluginBasePackages) {
-        this.pluginBasePackages = pluginBasePackages;
-    }
-    
-    /**
-     * @return 返回 plugins
-     */
-    public List<BasicDataExecutorPlugin> getPlugins() {
-        return plugins;
-    }
-    
-    /**
-     * @param 对plugins进行赋值
-     */
-    public void setPlugins(List<BasicDataExecutorPlugin> plugins) {
-        this.plugins = plugins;
-    }
-    
-    /**
-     * @return 返回 platformTransactionManager
-     */
-    public PlatformTransactionManager getPlatformTransactionManager() {
-        return platformTransactionManager;
-    }
-    
-    /**
-     * @param 对platformTransactionManager进行赋值
-     */
-    public void setPlatformTransactionManager(
-            PlatformTransactionManager platformTransactionManager) {
-        this.platformTransactionManager = platformTransactionManager;
+    public void setTransactionTemplate(TransactionTemplate transactionTemplate) {
+        this.transactionTemplate = transactionTemplate;
     }
 }
