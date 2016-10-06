@@ -27,7 +27,6 @@ import com.tx.core.mybatis.support.MyBatisDaoSupportHelper;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-@Component("basicDataContext")
 @Configuration
 public class BasicDataContextFactory extends BasicDataContext implements
         FactoryBean<BasicDataContext> {
