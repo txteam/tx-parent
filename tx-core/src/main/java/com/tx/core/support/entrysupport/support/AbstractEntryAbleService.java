@@ -93,7 +93,7 @@ public abstract class AbstractEntryAbleService<ENTRY extends EntityEntry, ENTITY
         AssertUtils.notEmpty(entityId, "entityId is empty.");
         
         //根据id查询实例
-        ENTITY entity = findById(entityId);
+        ENTITY entity = findEntityById(entityId);
         
         //加载Entity的分项列表
         setupEntryList(entity);
@@ -137,7 +137,7 @@ public abstract class AbstractEntryAbleService<ENTRY extends EntityEntry, ENTITY
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    protected final void setupEntryList(ENTITY entity) {
+    public final void setupEntryList(ENTITY entity) {
         //如果entity为空，或EntityId为空，或EntryList不为空则不再从数据库中加载
         if (entity == null || StringUtils.isEmpty(entity.getId())
                 || !CollectionUtils.isEmpty(entity.getEntryList())) {
@@ -156,7 +156,7 @@ public abstract class AbstractEntryAbleService<ENTRY extends EntityEntry, ENTITY
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    protected final void setupEntryList(List<ENTITY> entityList) {
+    public final void setupEntryList(List<ENTITY> entityList) {
         if (CollectionUtils.isEmpty(entityList)) {
             return;
         }
@@ -174,7 +174,7 @@ public abstract class AbstractEntryAbleService<ENTRY extends EntityEntry, ENTITY
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    protected final void setupEntryList(PagedList<ENTITY> entityPagedList) {
+    public final void setupEntryList(PagedList<ENTITY> entityPagedList) {
         if (entityPagedList == null
                 || CollectionUtils.isEmpty(entityPagedList.getList())) {
             return;

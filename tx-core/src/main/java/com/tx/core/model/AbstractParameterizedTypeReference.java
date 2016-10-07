@@ -19,17 +19,44 @@ import java.lang.reflect.Type;
  */
 public abstract class AbstractParameterizedTypeReference<T> {
     
+    /** 泛型类型是否初始化 */
+    private boolean rawTypeInit = false;
+    
+    /** 泛型参数类型 */
     private Type rawType;
     
-    protected void setRawType(Type rawType){
+    /**
+     * @param 对setRawType进行赋值
+     */
+    protected void setRawType(Type rawType) {
+        if (rawType != null) {
+            this.rawTypeInit = true;
+        }
         this.rawType = rawType;
     }
     
-    public Type getType() {
+    /**
+     * @return 返回 rawTypeInit
+     */
+    protected boolean isRawTypeInit() {
+        return rawTypeInit;
+    }
+    
+    /**
+     * @return 返回 rawTypeInit
+     */
+    public Type getRawType() {
         return this.rawType;
     }
     
-    public Type getRawType() {
-        return this.rawType;
+    /**
+     * @return 返回 rawTypeInit
+     */
+    public Class<?> getType() {
+        if (this.rawType instanceof Class<?>) {
+            return (Class<?>) this.rawType;
+        } else {
+            return null;
+        }
     }
 }

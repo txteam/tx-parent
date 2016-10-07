@@ -9,7 +9,6 @@ package com.tx.core.model;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
-import com.tx.core.exceptions.SILException;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.util.AopTargetUtils;
 
@@ -24,13 +23,20 @@ import com.tx.core.util.AopTargetUtils;
  */
 public class ParameterizedTypeReference<T> extends
         AbstractParameterizedTypeReference<T> {
+    //private boolean rawTypeNullAble = false;
     
     protected ParameterizedTypeReference() {
-        
+        this(false);
+    }
+    
+    protected ParameterizedTypeReference(boolean rawTypeNullAble) {
+        //this.rawTypeNullAble = rawTypeNullAble;
         if (!AopTargetUtils.isProxy(this)) {
             Type rawType = getClassRawType(this.getClass());
-            AssertUtils.notNull(rawType, "rawType is null.");
-            
+            if (!rawTypeNullAble) {
+                //如果不能为空，则进行检查
+                AssertUtils.notNull(rawType, "rawType is null.");
+            }
             setRawType(rawType);
         }
     }
@@ -43,17 +49,23 @@ public class ParameterizedTypeReference<T> extends
                 rawTypeTemp = ((ParameterizedType) rawTypeTemp).getRawType();
             }
         } else {
-            if (Object.class.equals(objectClass)) {
-                throw new SILException(
-                        "TypeHandler '"
-                                + getClass()
-                                + "' extends TypeReference but misses the type parameter. "
-                                + "Remove the extension or add a type parameter to it.");
-            } else {
-                Class<?> superClass = objectClass.getSuperclass();
-                rawTypeTemp = getClassRawType(superClass);
-            }
+            Class<?> superClass = objectClass.getSuperclass();
+            rawTypeTemp = getClassRawType(superClass);
+            //            if (Object.class.equals(objectClass)) {
+            //                throw new SILException(
+            //                        "TypeHandler '"
+            //                                + getClass()
+            //                                + "' extends TypeReference but misses the type parameter. "
+            //                                + "Remove the extension or add a type parameter to it.");
+            //            } else {
+            //                Class<?> superClass = objectClass.getSuperclass();
+            //                rawTypeTemp = getClassRawType(superClass);
+            //            }
         }
         return rawTypeTemp;
     }
+    
+    //    public static void main(String[] args) {
+    //        System.out.println(Object.class.getSuperclass());
+    //    }
 }
