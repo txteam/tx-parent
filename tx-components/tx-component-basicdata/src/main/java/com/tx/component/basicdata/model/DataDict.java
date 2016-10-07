@@ -16,6 +16,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.tx.component.basicdata.annotation.BasicDataType;
 import com.tx.core.jdbc.sqlsource.annotation.QueryConditionEqual;
 import com.tx.core.jdbc.sqlsource.annotation.UpdateAble;
 import com.tx.core.support.entrysupport.model.EntityEntry;
@@ -34,6 +35,7 @@ import com.tx.core.support.poi.excel.annotation.ExcelCell;
  */
 @Entity
 @Table(name = "bd_data_dict")
+@BasicDataType(name = "数据字典", common = false, pagedList = true)
 public class DataDict implements EntryAble<EntityEntry>, ConfigInitAble,
         BasicData {
     

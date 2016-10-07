@@ -9,6 +9,8 @@ package com.tx.component.basicdata.context;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import com.tx.component.basicdata.model.BasicData;
 import com.tx.core.paged.model.PagedList;
 
@@ -32,7 +34,18 @@ public interface BasicDataService<T extends BasicData> {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public Class<T> basicDataType();
+    public Class<T> type();
+    
+    /**
+      * 对应基础数据编码<br/>
+      * <功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return String [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public String code();
     
     /**
       * 获取对应的表名<br/>
@@ -91,18 +104,7 @@ public interface BasicDataService<T extends BasicData> {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public boolean deleteByCode(String basicDataTypeCode, String code);
-    
-    /**
-      * 根据基础数据类型编码删除对应的基础数据
-      * <功能详细描述>
-      * @param basicDataTypeCode [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    public void deleteByBasicDataTypeCode(String basicDataTypeCode);
+    public boolean deleteByCode(String code);
     
     /**
       * 根据id查询基础数据实例<br/>
@@ -179,4 +181,30 @@ public interface BasicDataService<T extends BasicData> {
       * @see [类、类#方法、类#成员]
      */
     public void batchUpdate(List<T> dataList);
+    
+    /**
+     * 根据id禁用DataDict<br/>
+     * <功能详细描述>
+     * @param id
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    @Transactional
+    public boolean disableById(String id);
+    
+    /**
+      * 根据id启用DataDict<br/>
+      * <功能详细描述>
+      * @param postId
+      * @return [参数说明]
+      * 
+      * @return boolean [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    @Transactional
+    public boolean enableById(String id);
 }

@@ -45,6 +45,8 @@ public class JdbcUtils {
     }
     
     static {
+        SIMPLE_TYPE_2_TYPES_MAP.put(Class.class, Types.VARBINARY);
+        
         SIMPLE_TYPE_2_TYPES_MAP.put(char[].class, Types.CLOB);
         SIMPLE_TYPE_2_TYPES_MAP.put(byte[].class, Types.BLOB);
         

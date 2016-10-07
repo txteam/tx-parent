@@ -55,14 +55,14 @@ public class DataDictService extends AbstractEntityEntryAbleService<DataDict>
     @SuppressWarnings("unused")
     private Logger logger = LoggerFactory.getLogger(DataDictService.class);
     
-    @Resource(name = "dataSource")
+    @Resource(name = "basicdata.dataDictDao")
+    private DataDictDao dataDictDao;
+    
+    @Resource(name = "basicdata.dataSource")
     private DataSource dataSource;
     
-    @Resource(name = "transactionTemplate")
+    @Resource(name = "basicdata.transactionTemplate")
     private TransactionTemplate transactionTemplate;
-    
-    @Resource(name = "dataDictDao")
-    private DataDictDao dataDictDao;
     
     /**
      * @throws Exception
@@ -337,6 +337,27 @@ public class DataDictService extends AbstractEntityEntryAbleService<DataDict>
         AssertUtils.notEmpty(basicDataTypeCode, "basicDataTypeCode is empty.");
         AssertUtils.notEmpty(code, "code is empty.");
         
+        DataDict entity = findEntityByCode(basicDataTypeCode, code);
+        
+        //加载Entity的分项列表
+        setupEntryList(entity);
+        
+        return entity;
+    }
+    
+    /**
+     * 根据Id查询DataDict实体
+     * 1、当id为empty时抛出异常
+     *
+     * @param id
+     * @return DataDict [返回类型说明]
+     * @exception throws
+     * @see [类、类#方法、类#成员]
+     */
+    public DataDict findEntityByCode(String basicDataTypeCode, String code) {
+        AssertUtils.notEmpty(basicDataTypeCode, "basicDataTypeCode is empty.");
+        AssertUtils.notEmpty(code, "code is empty.");
+        
         DataDict condition = new DataDict();
         condition.setBasicDataTypeCode(basicDataTypeCode);
         condition.setCode(code);
@@ -442,9 +463,9 @@ public class DataDictService extends AbstractEntityEntryAbleService<DataDict>
         updateRowMap.put("id", dataDict.getId());
         
         //需要更新的字段
+        //updateRowMap.put("valid", false);
         updateRowMap.put("name", dataDict.getName());
         updateRowMap.put("remark", dataDict.getRemark());
-        //updateRowMap.put("valid", false);
         updateRowMap.put("modifyAble", dataDict.isModifyAble());
         updateRowMap.put("lastUpdateDate", new Date());
         
@@ -502,5 +523,19 @@ public class DataDictService extends AbstractEntityEntryAbleService<DataDict>
         this.dataDictDao.update(params);
         
         return true;
+    }
+    
+    /**
+     * @param 对dataSource进行赋值
+     */
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+    
+    /**
+     * @param 对transactionTemplate进行赋值
+     */
+    public void setTransactionTemplate(TransactionTemplate transactionTemplate) {
+        this.transactionTemplate = transactionTemplate;
     }
 }

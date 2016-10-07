@@ -221,6 +221,13 @@ public class JpaMetaClass<T> {
         }
     }
     
+    public static void main(String[] args) {
+        System.out.println(String.class instanceof Class);
+        
+        Object e = "dasd";
+        System.out.println(e instanceof Class);
+    }
+    
     /**
       * 解析getter
       *<功能详细描述>
@@ -280,7 +287,7 @@ public class JpaMetaClass<T> {
             jpaColumnInfo.setLength(64);
             
             //断言为非简单类型
-            if (!JdbcUtils.isSupportedSimpleType(getterType) && !getterType.isEnum()) {
+            if (!JdbcUtils.isSupportedSimpleType(getterType) && !getterType.isEnum() && !(getterType instanceof Class)) {
                 //关联字段的类型解析结果
                 //为了避免无限循环调用，这里使用了一个内置的特殊方法，不会用到缓存
                 @SuppressWarnings({ "unchecked", "rawtypes" })

@@ -6,8 +6,15 @@
  */
 package com.tx.component.basicdata.context;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.tx.component.basicdata.model.BasicData;
 import com.tx.component.basicdata.model.DataDict;
@@ -31,16 +38,45 @@ public class DefaultBasicDataService<T extends BasicData> extends
     /** 对应类型 */
     private Class<T> type;
     
+    /** 数据字典业务层 */
+    @Resource(name = "basicdata.dataDictService")
     private DataDictService dataDictService;
+    
+    /** <默认构造函数> */
+    public DefaultBasicDataService() {
+        super();
+    }
+    
+    /** <默认构造函数> */
+    public DefaultBasicDataService(Class<T> type) {
+        super();
+        this.type = type;
+    }
+    
+    /**
+     * @return
+     */
+    @Override
+    public Class<T> type() {
+        return this.type;
+    }
     
     /**
      * @param data
      */
     @Override
+    @Transactional
     public void insert(T object) {
         AssertUtils.notNull(object, "object is null.");
         
+        String basicDataTypeCode = code();
+        AssertUtils.notEmpty(basicDataTypeCode, "basicDataTypeCode is null.");
+        
+        //构建字典对象
         DataDict dd = EntryAbleUtils.toEntryAble(DataDict.class, object);
+        if (StringUtils.isEmpty(dd.getBasicDataTypeCode())) {
+            dd.setBasicDataTypeCode(basicDataTypeCode);
+        }
         
         this.dataDictService.insert(dd);
     }
@@ -50,6 +86,7 @@ public class DefaultBasicDataService<T extends BasicData> extends
      * @return
      */
     @Override
+    @Transactional
     public boolean deleteById(String id) {
         AssertUtils.notEmpty(id, "id is null.");
         
@@ -63,18 +100,19 @@ public class DefaultBasicDataService<T extends BasicData> extends
      * @return
      */
     @Override
-    public boolean deleteByCode(String basicDataTypeCode, String code) {
+    @Transactional
+    public boolean deleteByCode(String code) {
+        String basicDataTypeCode = code();
+        AssertUtils.notEmpty(basicDataTypeCode, "basicDataTypeCode is null.");
+        AssertUtils.notEmpty(code, "code is null.");
         
-        return false;
-    }
-    
-    /**
-     * @param basicDataTypeCode
-     */
-    @Override
-    public void deleteByBasicDataTypeCode(String basicDataTypeCode) {
-        // TODO Auto-generated method stub
-        
+        BasicData bd = this.dataDictService.findEntityByCode(basicDataTypeCode,
+                code);
+        boolean flag = false;
+        if (bd != null) {
+            flag = this.dataDictService.deleteById(bd.getId());
+        }
+        return flag;
     }
     
     /**
@@ -83,8 +121,14 @@ public class DefaultBasicDataService<T extends BasicData> extends
      */
     @Override
     public T findById(String id) {
-        // TODO Auto-generated method stub
-        return null;
+        AssertUtils.notEmpty(id, "id is null.");
+        
+        DataDict bd = this.dataDictService.findById(id);
+        T resObj = null;
+        if (bd != null) {
+            resObj = EntryAbleUtils.fromEntryAble(this.type, bd);
+        }
+        return resObj;
     }
     
     /**
@@ -93,8 +137,18 @@ public class DefaultBasicDataService<T extends BasicData> extends
      */
     @Override
     public T findByCode(String code) {
-        // TODO Auto-generated method stub
-        return null;
+        AssertUtils.notEmpty(code, "code is null.");
+        String basicDataTypeCode = code();
+        AssertUtils.notEmpty(basicDataTypeCode, "basicDataTypeCode is null.");
+        
+        //查询基础数据详情实例
+        DataDict bd = this.dataDictService.findByCode(basicDataTypeCode, code);
+        
+        T resObj = null;
+        if (bd != null) {
+            resObj = EntryAbleUtils.fromEntryAble(this.type, bd);
+        }
+        return resObj;
     }
     
     /**
@@ -104,8 +158,24 @@ public class DefaultBasicDataService<T extends BasicData> extends
      */
     @Override
     public List<T> queryList(Boolean valid, Map<String, Object> params) {
-        // TODO Auto-generated method stub
-        return null;
+        String basicDataTypeCode = code();
+        AssertUtils.notEmpty(basicDataTypeCode, "basicDataTypeCode is null.");
+        
+        List<DataDict> dataDictList = this.dataDictService.queryList(basicDataTypeCode,
+                valid,
+                params);
+        List<T> resList = new ArrayList<>();
+        if (CollectionUtils.isEmpty(dataDictList)) {
+            return resList;
+        }
+        
+        //如果不为空，则开始加载分项属性
+        this.dataDictService.setupEntryList(dataDictList);
+        for (DataDict dd : dataDictList) {
+            T obj = EntryAbleUtils.fromEntryAble(this.type, dd);
+            resList.add(obj);
+        }
+        return resList;
     }
     
     /**
@@ -118,8 +188,30 @@ public class DefaultBasicDataService<T extends BasicData> extends
     @Override
     public PagedList<T> queryPagedList(Boolean valid,
             Map<String, Object> params, int pageIndex, int pageSize) {
-        // TODO Auto-generated method stub
-        return null;
+        String basicDataTypeCode = code();
+        AssertUtils.notEmpty(basicDataTypeCode, "basicDataTypeCode is null.");
+        
+        PagedList<DataDict> dataDictPageList = this.dataDictService.queryPagedList(basicDataTypeCode,
+                valid,
+                params,
+                pageIndex,
+                pageSize);
+        PagedList<T> resPagedList = new PagedList<>();
+        resPagedList.setCount(dataDictPageList.getCount());
+        resPagedList.setPageIndex(dataDictPageList.getPageIndex());
+        resPagedList.setPageSize(dataDictPageList.getPageSize());
+        resPagedList.setQueryPageSize(dataDictPageList.getQueryPageSize());
+        if (CollectionUtils.isEmpty(dataDictPageList.getList())) {
+            return resPagedList;
+        }
+        
+        //加载数据
+        this.dataDictService.setupEntryList(dataDictPageList);
+        for (DataDict dd : dataDictPageList.getList()) {
+            T obj = EntryAbleUtils.fromEntryAble(this.type, dd);
+            resPagedList.getList().add(obj);
+        }
+        return resPagedList;
     }
     
     /**
@@ -127,9 +219,36 @@ public class DefaultBasicDataService<T extends BasicData> extends
      * @return
      */
     @Override
+    @Transactional
     public boolean updateById(T data) {
-        // TODO Auto-generated method stub
-        return false;
+        AssertUtils.notNull(data, "data is null.");
+        
+        DataDict obj = EntryAbleUtils.toEntryAble(DataDict.class, data);
+        AssertUtils.notEmpty(obj.getId(), "data.id is empty.");
+        
+        boolean flag = this.dataDictService.updateById(obj);
+        return flag;
     }
     
+    /**
+     * @param id
+     * @return
+     */
+    @Override
+    @Transactional
+    public boolean disableById(String id) {
+        boolean flag = this.dataDictService.disableById(id);
+        return flag;
+    }
+    
+    /**
+     * @param id
+     * @return
+     */
+    @Override
+    @Transactional
+    public boolean enableById(String id) {
+        boolean flag = this.dataDictService.enableById(id);
+        return flag;
+    }
 }

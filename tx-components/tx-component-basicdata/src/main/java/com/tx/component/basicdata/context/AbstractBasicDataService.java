@@ -15,7 +15,9 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 
+import com.tx.component.basicdata.annotation.BasicDataType;
 import com.tx.component.basicdata.model.BasicData;
+import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.model.ParameterizedTypeReference;
 import com.tx.core.support.initable.helper.ConfigInitAbleHelper;
 
@@ -168,8 +170,8 @@ public abstract class AbstractBasicDataService<T extends BasicData> extends
      */
     @SuppressWarnings("unchecked")
     @Override
-    public Class<T> basicDataType() {
-        Class<T> type = (Class<T>) getRawType();
+    public Class<T> type() {
+        Class<T> type = (Class<T>)getType();
         return type;
     }
     
@@ -177,18 +179,37 @@ public abstract class AbstractBasicDataService<T extends BasicData> extends
      * @return
      */
     @Override
+    public String code() {
+        Class<T> type = type();
+        AssertUtils.notNull(type, "type is null.");
+        
+        String code = type.getSimpleName();
+        if (type.isAnnotationPresent(BasicDataType.class)
+                && StringUtils.isNotEmpty(type.getAnnotation(BasicDataType.class)
+                        .code())) {
+            code = type.getAnnotation(BasicDataType.class).code();
+        }
+        return code;
+    }
+    
+    /**
+     * @return
+     */
+    @Override
     public String tableName() {
-        Class<T> type = basicDataType();
+        Class<T> type = type();
+        AssertUtils.notNull(type, "type is null.");
+        
         String tableName = type.getSimpleName();
-        if(type.isAnnotationPresent(Table.class)){
+        if (type.isAnnotationPresent(Table.class)) {
             tableName = type.getAnnotation(Table.class).name();
         }
-        if(type.isAnnotationPresent(org.hibernate.annotations.Table.class)){
+        if (type.isAnnotationPresent(org.hibernate.annotations.Table.class)) {
             tableName = type.getAnnotation(Table.class).name();
         }
         return tableName;
     }
-
+    
     /**
      * @param dataList
      */

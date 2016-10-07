@@ -6,6 +6,8 @@
  */
 package com.tx.component.basicdata.context;
 
+import com.tx.core.exceptions.util.AssertUtils;
+
 /**
  * 基础数据容器<br/>
  * <功能详细描述>
@@ -17,7 +19,7 @@ package com.tx.component.basicdata.context;
  */
 public class BasicDataContext extends BasicDataContextBuilder {
     
-    private static BasicDataContext context;
+    protected static BasicDataContext context;
     
     /**
       * 获取基础数据容器实例<br/>
@@ -29,6 +31,8 @@ public class BasicDataContext extends BasicDataContextBuilder {
       * @see [类、类#方法、类#成员]
      */
     public static BasicDataContext getContext() {
+        AssertUtils.notNull(BasicDataContext.context, "context not inited.");
+        
         return BasicDataContext.context;
     }
     
@@ -37,6 +41,9 @@ public class BasicDataContext extends BasicDataContextBuilder {
      */
     @Override
     protected final void doInitContext() throws Exception {
+        //限定容器有且只能被初始化一次
+        AssertUtils.isNull(BasicDataContext.context, "context already inited.");
+        
         BasicDataContext.context = this;
     }
     

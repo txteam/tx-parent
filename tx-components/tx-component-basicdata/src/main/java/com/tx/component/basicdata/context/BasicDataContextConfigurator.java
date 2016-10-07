@@ -10,16 +10,28 @@ import javax.sql.DataSource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.SingletonBeanRegistry;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import com.tx.component.basicdata.dao.DataDictDao;
+import com.tx.component.basicdata.dao.impl.DataDictDaoImpl;
+import com.tx.component.basicdata.service.DataDictService;
+import com.tx.core.dbscript.model.DataSourceTypeEnum;
 import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.mybatis.support.MyBatisDaoSupport;
+import com.tx.core.mybatis.support.MyBatisDaoSupportHelper;
 
 /**
  * 基础数据容器配置器<br/>
@@ -31,7 +43,53 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @since  [产品/模块版本]
  */
 public class BasicDataContextConfigurator implements ApplicationContextAware,
-        InitializingBean, BeanNameAware {
+        InitializingBean, BeanNameAware, BeanFactoryAware {
+    
+    @Bean(name = "basicdata.myBatisDaoSupport")
+    public MyBatisDaoSupport basicdata_myBatisDaoSupport() throws Exception {
+        MyBatisDaoSupport support = MyBatisDaoSupportHelper.buildMyBatisDaoSupport(this.mybatisConfigLocation,
+                this.mybatisMapperLocations,
+                DataSourceTypeEnum.MYSQL,
+                this.dataSource);
+        
+        return support;
+    }
+    
+    @Bean(name = "basicdata.dataDictDao")
+    public DataDictDao dataDictDao() {
+        DataDictDao dao = new DataDictDaoImpl();
+        return dao;
+    }
+    
+    @Bean(name = "basicdata.dataDictService")
+    public DataDictService dataDictService() {
+        DataDictService dao = new DataDictService();
+        //dao.setDataSource(this.dataSource);
+        //dao.setTransactionTemplate(this.transactionTemplate);
+        return dao;
+    }
+    
+    @Bean(name = "basicdata.basicDataServiceRegistry")
+    public BasicDataServiceRegistry basicDataServiceRegistry() {
+        BasicDataServiceRegistry serviceFactory = new BasicDataServiceRegistry(
+                this.packages);
+        return serviceFactory;
+    }
+    
+    @Bean(name = "basicDataContext")
+    public BasicDataContextFactory BasicDataContextFactory() {
+        BasicDataContextFactory context = new BasicDataContextFactory();
+        
+        context.setPackages(this.packages);
+        context.setMybatisConfigLocation(this.mybatisConfigLocation);
+        context.setMybatisMapperLocations(this.mybatisMapperLocations);
+        context.setDataSource(this.dataSource);
+        context.setJdbcTemplate(this.jdbcTemplate);
+        context.setTransactionManager(this.transactionManager);
+        context.setTransactionTemplate(this.transactionTemplate);
+        
+        return context;
+    }
     
     /** spring容器句柄 */
     protected ApplicationContext applicationContext;
@@ -59,6 +117,52 @@ public class BasicDataContextConfigurator implements ApplicationContextAware,
     
     /** transactionTemplate: 如果存在事务则在当前事务中执行 */
     protected TransactionTemplate transactionTemplate;
+    
+    /** 单例对象注册方法 */
+    protected SingletonBeanRegistry singletonBeanRegistry;
+    
+    protected BeanDefinitionRegistry beanDefinitionRegistry;
+    
+    /**
+     * @param beanFactory
+     * @throws BeansException
+     */
+    @Override
+    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+        AssertUtils.isInstanceOf(BeanDefinitionRegistry.class,
+                beanFactory,
+                "beanFactory is not BeanDefinitionRegistry instance.");
+        this.beanDefinitionRegistry = (BeanDefinitionRegistry) beanFactory;
+        
+        AssertUtils.isInstanceOf(SingletonBeanRegistry.class,
+                beanFactory,
+                "beanFactory is not SingletonBeanRegistry instance.");
+        this.singletonBeanRegistry = (SingletonBeanRegistry) beanFactory;
+    }
+    
+    /**
+     * @desc 向spring容器注册BeanDefinition
+     * @param beanName
+     * @param beanDefinition
+     */
+    protected void registerBeanDefinition(String beanName,
+            BeanDefinition beanDefinition) {
+        if (!this.beanDefinitionRegistry.containsBeanDefinition(beanName)) {
+            this.beanDefinitionRegistry.registerBeanDefinition(beanName,
+                    beanDefinition);
+        }
+    }
+    
+    /**
+     * @desc 向spring容器注册bean
+     * @param beanName
+     * @param beanDefinition
+     */
+    protected void registerSingletonBean(String beanName, Object bean) {
+        if (!this.singletonBeanRegistry.containsSingleton(beanName)) {
+            this.singletonBeanRegistry.registerSingleton(beanName, bean);
+        }
+    }
     
     /**
      * @param applicationContext
@@ -96,13 +200,22 @@ public class BasicDataContextConfigurator implements ApplicationContextAware,
             this.transactionManager = new DataSourceTransactionManager(
                     this.dataSource);
         }
-        this.transactionTemplate = new TransactionTemplate(
-                this.transactionManager);
+        if (this.transactionTemplate == null) {
+            this.transactionTemplate = new TransactionTemplate(
+                    this.transactionManager);
+        }
         
         //初始化包名
         if (StringUtils.isEmpty(packages)) {
             this.packages = "com.tx";
         }
+        
+        registerSingletonBean("basicdata.dataSource", this.dataSource);
+        registerSingletonBean("basicdata.jdbcTemplate", this.jdbcTemplate);
+        registerSingletonBean("basicdata.transactionManager",
+                this.transactionManager);
+        registerSingletonBean("basicdata.transactionTemplate",
+                this.transactionTemplate);
         
         //进行容器构建
         doBuild();
