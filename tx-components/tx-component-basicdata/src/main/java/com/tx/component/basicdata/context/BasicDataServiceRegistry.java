@@ -7,9 +7,11 @@
 package com.tx.component.basicdata.context;
 
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -27,10 +29,15 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import com.tx.component.basicdata.model.BasicData;
+import com.tx.component.basicdata.model.BasicDataType;
+import com.tx.component.basicdata.model.DataDict;
+import com.tx.component.basicdata.service.BasicDataTypeService;
 import com.tx.component.basicdata.service.DataDictService;
 import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.support.initable.helper.ConfigInitAbleHelper;
 import com.tx.core.util.ClassScanUtils;
 
 /**
@@ -60,6 +67,12 @@ public class BasicDataServiceRegistry implements ApplicationContextAware,
     
     @Resource(name = "basicdata.dataDictService")
     private DataDictService dataDictService;
+    
+    @Resource(name = "basicdata.basicDataTypeService")
+    private BasicDataTypeService basicDataTypeService;
+    
+    @Resource(name = "basicdata.transactionTemplate")
+    private TransactionTemplate transactionTemplate;
     
     private String packages = "com.tx";
     
@@ -236,7 +249,6 @@ public class BasicDataServiceRegistry implements ApplicationContextAware,
                 .values();
         for (BasicDataService service : basicDataServices) {
             if (service.type() == null) {
-                //跳过注册的LazyBean
                 continue;
             }
             //注册处理的业务类型
@@ -270,10 +282,16 @@ public class BasicDataServiceRegistry implements ApplicationContextAware,
             //注册业务层逻辑
             registeType2Service(bdService);
         }
+        
+        //初始化基础数据类型
+        initBasicDataType();
     }
     
     @SuppressWarnings("rawtypes")
     private void registeType2Service(BasicDataService service) {
+        if (DataDict.class.equals(service.type())) {
+            return;
+        }
         AssertUtils.notNull(service.type(), "type is null.");
         AssertUtils.notNull(service, "service is null.");
         
@@ -286,6 +304,124 @@ public class BasicDataServiceRegistry implements ApplicationContextAware,
         
         type2serviceMap.put(service.type(), service);
         typecode2serviceMap.put(service.code(), service);
+    }
+    
+    /**
+      * 初始化基础数据类型<br/>
+      * <功能详细描述> [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public void initBasicDataType() {
+        ConfigInitAbleHelper<BasicDataType> helper = new ConfigInitAbleHelper<BasicDataType>() {
+            /**
+             * @param ciaOfDBTemp
+             * @param ciaOfConfig
+             * @return
+             */
+            @Override
+            protected boolean isNeedUpdate(BasicDataType ciaOfDBTemp,
+                    BasicDataType ciaOfConfig) {
+                if (!StringUtils.equals(ciaOfDBTemp.getCode(),
+                        ciaOfConfig.getCode())) {
+                    return true;
+                }
+                if (!StringUtils.equals(ciaOfDBTemp.getName(),
+                        ciaOfConfig.getName())) {
+                    return true;
+                }
+                if (!StringUtils.equals(ciaOfDBTemp.getTableName(),
+                        ciaOfConfig.getTableName())) {
+                    return true;
+                }
+                if (!StringUtils.equals(ciaOfDBTemp.getRemark(),
+                        ciaOfConfig.getRemark())) {
+                    return true;
+                }
+                if (ciaOfDBTemp.isCommon() != ciaOfConfig.isCommon()) {
+                    return true;
+                }
+                if (ciaOfDBTemp.isPagedList() != ciaOfConfig.isPagedList()) {
+                    return true;
+                }
+                return false;
+            }
+            
+            /**
+             * @param ciaOfDB
+             * @param ciaOfCfg
+             */
+            @Override
+            protected void doBeforeUpdate(BasicDataType ciaOfDB,
+                    BasicDataType ciaOfCfg) {
+                ciaOfDB.setCode(ciaOfCfg.getCode());
+                ciaOfDB.setName(ciaOfCfg.getName());
+                ciaOfDB.setTableName(ciaOfCfg.getTableName());
+                ciaOfDB.setRemark(ciaOfCfg.getRemark());
+                
+                ciaOfDB.setCommon(ciaOfCfg.isCommon());
+                ciaOfDB.setPagedList(ciaOfCfg.isPagedList());
+            }
+            
+            @Override
+            protected String getSingleCode(BasicDataType cia) {
+                return cia.getType().getName();
+            }
+            
+            @Override
+            protected List<BasicDataType> queryListFromDB() {
+                return basicDataTypeService.queryList(null, null);
+            }
+            
+            @Override
+            protected List<BasicDataType> queryListFromConfig() {
+                List<BasicDataService<?>> services = getAllBasicDataServices();
+                List<BasicDataType> resListOfCfg = new ArrayList<>();
+                for (BasicDataService<?> s : services) {
+                    Class<?> type = s.type();
+                    String code = s.code();
+                    String tableName = s.tableName();
+                    String name = s.type().getSimpleName();
+                    
+                    BasicDataType bdType = new BasicDataType();
+                    bdType.setCode(code);
+                    bdType.setType(type);
+                    bdType.setTableName(tableName);
+                    bdType.setName(name);
+                    bdType.setModifyAble(false);
+                    
+                    if (type.isAnnotationPresent(com.tx.component.basicdata.annotation.BasicDataType.class)) {
+                        com.tx.component.basicdata.annotation.BasicDataType anno = type.getAnnotation(com.tx.component.basicdata.annotation.BasicDataType.class);
+                        //读取注解中值
+                        bdType.setCommon(anno.common());
+                        bdType.setPagedList(anno.pagedList());
+                        bdType.setRemark(anno.remark());
+                        
+                        bdType.setName(anno.name());//覆写名称
+                    }
+                    
+                    resListOfCfg.add(bdType);
+                }
+                return resListOfCfg;
+            }
+            
+            @Override
+            protected void batchUpdate(List<BasicDataType> needUpdateList) {
+                for (BasicDataType bdType : needUpdateList) {
+                    basicDataTypeService.updateById(bdType);
+                }
+            }
+            
+            @Override
+            protected void batchInsert(List<BasicDataType> needInsertList) {
+                for (BasicDataType bdType : needInsertList) {
+                    basicDataTypeService.insert(bdType);
+                }
+            }
+        };
+        helper.init(this.transactionTemplate);
     }
     
     /**
@@ -308,6 +444,21 @@ public class BasicDataServiceRegistry implements ApplicationContextAware,
         
         BasicDataService<BDTYPE> service = (BasicDataService<BDTYPE>) type2serviceMap.get(type);
         return service;
+    }
+    
+    /**
+      * 获取所有注册的基础数据业务方法<br/>
+      * <功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return List<BasicDataService<?>> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public List<BasicDataService<?>> getAllBasicDataServices() {
+        List<BasicDataService<?>> resList = new ArrayList<BasicDataService<?>>(
+                type2serviceMap.values());
+        return resList;
     }
     
     /**

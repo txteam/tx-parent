@@ -262,6 +262,7 @@ public class DataDictService extends AbstractEntityEntryAbleService<DataDict>
                     return;
                 }
                 for (DataDict erTemp : needInsertList) {
+                    erTemp.setModifyAble(false);
                     insert(erTemp);
                 }
             }
@@ -279,7 +280,8 @@ public class DataDictService extends AbstractEntityEntryAbleService<DataDict>
         
         //为添加的数据需要填入默认值的字段填入默认值
         dataDict.setValid(true);
-        dataDict.setModifyAble(true);
+        //不能设置该值，该值在初始化自动插入逻辑中被用到，应当在初始化期间设置为true
+        //dataDict.setModifyAble(true);
         
         Date now = new Date();
         dataDict.setCreateDate(now);

@@ -62,6 +62,14 @@ public class DefaultBasicDataService<T extends BasicData> extends
     }
     
     /**
+     * @return
+     */
+    @Override
+    public String tableName() {
+        return "bd_basic_data";
+    }
+
+    /**
      * @param data
      */
     @Override

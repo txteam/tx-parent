@@ -25,8 +25,11 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import com.tx.component.basicdata.dao.BasicDataTypeDao;
 import com.tx.component.basicdata.dao.DataDictDao;
+import com.tx.component.basicdata.dao.impl.BasicDataTypeDaoImpl;
 import com.tx.component.basicdata.dao.impl.DataDictDaoImpl;
+import com.tx.component.basicdata.service.BasicDataTypeService;
 import com.tx.component.basicdata.service.DataDictService;
 import com.tx.core.dbscript.model.DataSourceTypeEnum;
 import com.tx.core.exceptions.util.AssertUtils;
@@ -76,6 +79,18 @@ public class BasicDataContextConfigurator implements ApplicationContextAware,
         return serviceFactory;
     }
     
+    @Bean(name = "basicdata.basicDataTypeDao")
+    public BasicDataTypeDao basicDataTypeDao() {
+        BasicDataTypeDao basicDataTypeDao = new BasicDataTypeDaoImpl();
+        return basicDataTypeDao;
+    }
+    
+    @Bean(name = "basicdata.basicDataTypeService")
+    public BasicDataTypeService basicDataTypeService() {
+        BasicDataTypeService basicDataTypeService = new BasicDataTypeService();
+        return basicDataTypeService;
+    }
+    
     @Bean(name = "basicDataContext")
     public BasicDataContextFactory BasicDataContextFactory() {
         BasicDataContextFactory context = new BasicDataContextFactory();
@@ -101,7 +116,8 @@ public class BasicDataContextConfigurator implements ApplicationContextAware,
     protected String mybatisConfigLocation = "classpath:context/mybatis-config.xml";
     
     /** mybatis配置文件 */
-    protected String[] mybatisMapperLocations = new String[] { "classpath*:com/tx/component/basicdata/dao/impl/DataDictSqlMap.xml" };
+    protected String[] mybatisMapperLocations = new String[] {
+            "classpath*:com/tx/component/basicdata/dao/impl/*SqlMap_BASICDATA.xml"};
     
     /** beanName实例 */
     protected String beanName;
