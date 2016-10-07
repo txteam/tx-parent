@@ -89,7 +89,7 @@ public abstract class AbstractEntryAbleService<ENTRY extends EntityEntry, ENTITY
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public final ENTITY findDetailById(String entityId) {
+    public final ENTITY findById(String entityId) {
         AssertUtils.notEmpty(entityId, "entityId is empty.");
         
         //根据id查询实例
@@ -214,7 +214,7 @@ public abstract class AbstractEntryAbleService<ENTRY extends EntityEntry, ENTITY
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    public abstract ENTITY findById(String entityId);
+    public abstract ENTITY findEntityById(String entityId);
     
     /**
      * 插入实例<br/>

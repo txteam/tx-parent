@@ -314,7 +314,7 @@ public class DataDictService extends AbstractEntityEntryAbleService<DataDict>
      * @exception throws
      * @see [类、类#方法、类#成员]
      */
-    public DataDict findById(String id) {
+    public DataDict findEntityById(String id) {
         AssertUtils.notEmpty(id, "id is empty.");
         
         DataDict condition = new DataDict();
