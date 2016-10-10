@@ -12,6 +12,7 @@ import java.util.Collection;
  * @since  [产品/模块版本]
  */
 public interface TreeAble<C extends Collection<T>, T> {
+    
     /** 获取树节点id */
     public String getId();
     

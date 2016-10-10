@@ -130,11 +130,11 @@ public class ${view.entitySimpleName}Controller {
     @ResponseBody
     @RequestMapping("/validate<#list uniqueGetterNames as uniqueGetterName>${uniqueGetterName?cap_first}<#if uniqueGetterName_has_next>And</#if></#list>IsExist")
     public Map<String, String> validate<#list uniqueGetterNames as uniqueGetterName>${uniqueGetterName?cap_first}<#if uniqueGetterName_has_next>And</#if></#list>IsExist(
-    		@RequestParam MultiValueMap<String, String> request,
 		<#list uniqueGetterNames as uniqueGetterName>
             @RequestParam("${uniqueGetterName}") String ${uniqueGetterName},
 		</#list>
-            @RequestParam(value = "${view.idPropertyName}", required = false) String exclude${view.entitySimpleName}${view.upCaseIdPropertyName}) {
+            @RequestParam(value = "${view.idPropertyName}", required = false) String exclude${view.entitySimpleName}${view.upCaseIdPropertyName},
+            @RequestParam MultiValueMap<String, String> request) {
         
         Map<String, String> key2valueMap = new HashMap<String, String>();
 		<#list uniqueGetterNames as uniqueGetterName>
@@ -231,10 +231,10 @@ public class ${view.entitySimpleName}Controller {
 			</#if>
 		</#if>
 	</#if>
-</#list> 
-    		@RequestParam MultiValueMap<String, String> request,
+</#list>
 			@RequestParam(value = "pageNumber", required = false, defaultValue = "1") int pageIndex,
-            @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize
+            @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
+            @RequestParam MultiValueMap<String, String> request
     	) {
 		Map<String,Object> params = new HashMap<>();
 
