@@ -24,7 +24,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.PropertyAccessorFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.LinkedMultiValueMap;
@@ -49,8 +48,7 @@ import com.tx.core.support.poi.excel.ExcelReadUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class DataDictService extends AbstractEntityEntryAbleService<DataDict>
-        implements InitializingBean {
+public class DataDictService extends AbstractEntityEntryAbleService<DataDict> {
     
     @SuppressWarnings("unused")
     private Logger logger = LoggerFactory.getLogger(DataDictService.class);
@@ -169,7 +167,7 @@ public class DataDictService extends AbstractEntityEntryAbleService<DataDict>
      * @throws Exception
      */
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void doAfterPropertiesSet() throws Exception {
         ConfigInitAbleHelper<DataDict> helper = new ConfigInitAbleHelper<DataDict>() {
             
             /**

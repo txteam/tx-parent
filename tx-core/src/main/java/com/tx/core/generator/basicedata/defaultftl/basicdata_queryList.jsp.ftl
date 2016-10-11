@@ -58,7 +58,7 @@ $(document).ready(function(){
 		idField : 'id',
 		checkOnSelect : false,
 		selectOnCheck : false,
-		nowrap : false,
+		nowrap : true,
 		striped : true,
 		singleSelect : true,
 <#if isPagedList>

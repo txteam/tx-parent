@@ -8,10 +8,9 @@ package com.tx.core.support.entrysupport.support;
 
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.tx.core.exceptions.util.AssertUtils;
@@ -28,11 +27,24 @@ import com.tx.core.support.entrysupport.model.EntryAble;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public abstract class AbstractEntryAbleService<ENTRY extends EntityEntry, ENTITY extends EntryAble<ENTRY>> {
+public abstract class AbstractEntryAbleService<ENTRY extends EntityEntry, ENTITY extends EntryAble<ENTRY>>
+        implements InitializingBean {
     
     protected EntityEntrySupport<ENTRY> entityEntrySupport;
     
-    @PostConstruct
+    /**
+     * @throws Exception
+     */
+    @Override
+    public final void afterPropertiesSet() throws Exception {
+        initEntityEntrySupport();
+        doAfterPropertiesSet();
+    }
+    
+    protected void doAfterPropertiesSet() throws Exception {
+        
+    }
+    
     protected abstract void initEntityEntrySupport() throws Exception;
     
     /**
