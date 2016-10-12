@@ -36,6 +36,7 @@ import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.paged.model.PagedList;
 import com.tx.core.support.entrysupport.model.EntityEntry;
 import com.tx.core.support.entrysupport.support.AbstractEntityEntryAbleService;
+import com.tx.core.support.entrysupport.support.EntityEntrySupport;
 import com.tx.core.support.entrysupport.support.EntityEntrySupportFactory;
 import com.tx.core.support.initable.helper.ConfigInitAbleHelper;
 import com.tx.core.support.poi.excel.ExcelReadUtils;
@@ -68,11 +69,12 @@ public class DataDictService extends AbstractEntityEntryAbleService<DataDict>
      * @throws Exception
      */
     @Override
-    protected void initEntityEntrySupport() throws Exception {
-        //支持一对多属性的存储
-        this.entityEntrySupport = EntityEntrySupportFactory.getSupport(EntityEntry.class,
+    protected EntityEntrySupport<EntityEntry> doBuildEntityEntrySupport()
+            throws Exception {
+        EntityEntrySupport<EntityEntry> entityEntrySupport = EntityEntrySupportFactory.getSupport(EntityEntry.class,
                 "bd_data_dict_entry",
                 this.dataSource);
+        return entityEntrySupport;
     }
     
     /**
@@ -150,7 +152,7 @@ public class DataDictService extends AbstractEntityEntryAbleService<DataDict>
      */
     private List<DataDict> loadListFromDB() {
         MultiValueMap<String, EntityEntry> eeMultiMap = new LinkedMultiValueMap<>();
-        List<EntityEntry> entityEntryList = this.entityEntrySupport.queryList();
+        List<EntityEntry> entityEntryList = getEntityEntrySupport().queryList();
         for (EntityEntry eeTemp : entityEntryList) {
             eeMultiMap.add(eeTemp.getEntityId(), eeTemp);
         }

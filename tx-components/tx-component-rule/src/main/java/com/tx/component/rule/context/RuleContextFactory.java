@@ -43,6 +43,6 @@ public class RuleContextFactory extends RuleContext implements
      */
     @Override
     public boolean isSingleton() {
-        return false;
+        return true;
     }
 }

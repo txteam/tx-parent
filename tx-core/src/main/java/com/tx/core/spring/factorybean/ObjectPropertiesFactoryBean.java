@@ -63,7 +63,7 @@ public class ObjectPropertiesFactoryBean implements InitializingBean,
      */
     @Override
     public boolean isSingleton() {
-        return false;
+        return true;
     }
     
     /**

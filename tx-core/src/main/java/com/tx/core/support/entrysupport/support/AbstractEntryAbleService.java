@@ -30,10 +30,15 @@ import com.tx.core.support.entrysupport.model.EntryAble;
  */
 public abstract class AbstractEntryAbleService<ENTRY extends EntityEntry, ENTITY extends EntryAble<ENTRY>> {
     
-    protected EntityEntrySupport<ENTRY> entityEntrySupport;
+    private EntityEntrySupport<ENTRY> entityEntrySupport;
     
     @PostConstruct
-    protected abstract void initEntityEntrySupport() throws Exception;
+    public void initEntityEntrySupport() throws Exception {
+        this.entityEntrySupport = doBuildEntityEntrySupport();
+    }
+    
+    protected abstract EntityEntrySupport<ENTRY> doBuildEntityEntrySupport()
+            throws Exception;
     
     /**
       * 插入EntryAbleEntity实例<br/>
@@ -45,7 +50,7 @@ public abstract class AbstractEntryAbleService<ENTRY extends EntityEntry, ENTITY
       * @see [类、类#方法、类#成员]
      */
     @Transactional
-    public final void insert(ENTITY entity) {
+    public void insert(ENTITY entity) {
         AssertUtils.notNull(entity, "entity is null.");
         
         //插入entity实例
@@ -68,7 +73,7 @@ public abstract class AbstractEntryAbleService<ENTRY extends EntityEntry, ENTITY
       * @see [类、类#方法、类#成员]
      */
     @Transactional
-    public final boolean deleteById(String entityId) {
+    public boolean deleteById(String entityId) {
         AssertUtils.notEmpty(entityId, "entityId is empty.");
         
         boolean flag = deleteEntityById(entityId);
@@ -89,7 +94,7 @@ public abstract class AbstractEntryAbleService<ENTRY extends EntityEntry, ENTITY
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public final ENTITY findById(String entityId) {
+    public ENTITY findById(String entityId) {
         AssertUtils.notEmpty(entityId, "entityId is empty.");
         
         //根据id查询实例
@@ -112,7 +117,7 @@ public abstract class AbstractEntryAbleService<ENTRY extends EntityEntry, ENTITY
       * @see [类、类#方法、类#成员]
      */
     @Transactional
-    public final boolean updateById(ENTITY entity) {
+    public boolean updateById(ENTITY entity) {
         AssertUtils.notNull(entity, "entityId is empty.");
         AssertUtils.notEmpty(entity.getId(), "entityId is empty.");
         
@@ -137,7 +142,7 @@ public abstract class AbstractEntryAbleService<ENTRY extends EntityEntry, ENTITY
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    public final void setupEntryList(ENTITY entity) {
+    public void setupEntryList(ENTITY entity) {
         //如果entity为空，或EntityId为空，或EntryList不为空则不再从数据库中加载
         if (entity == null || StringUtils.isEmpty(entity.getId())
                 || !CollectionUtils.isEmpty(entity.getEntryList())) {
@@ -156,7 +161,7 @@ public abstract class AbstractEntryAbleService<ENTRY extends EntityEntry, ENTITY
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public final void setupEntryList(List<ENTITY> entityList) {
+    public void setupEntryList(List<ENTITY> entityList) {
         if (CollectionUtils.isEmpty(entityList)) {
             return;
         }
@@ -174,7 +179,7 @@ public abstract class AbstractEntryAbleService<ENTRY extends EntityEntry, ENTITY
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public final void setupEntryList(PagedList<ENTITY> entityPagedList) {
+    public void setupEntryList(PagedList<ENTITY> entityPagedList) {
         if (entityPagedList == null
                 || CollectionUtils.isEmpty(entityPagedList.getList())) {
             return;
@@ -227,4 +232,19 @@ public abstract class AbstractEntryAbleService<ENTRY extends EntityEntry, ENTITY
      */
     @Transactional
     public abstract boolean updateEntityById(ENTITY entity);
+    
+    /**
+     * @return 返回 entityEntrySupport
+     */
+    protected EntityEntrySupport<ENTRY> getEntityEntrySupport() {
+        return entityEntrySupport;
+    }
+    
+    /**
+     * @param 对entityEntrySupport进行赋值
+     */
+    public void setEntityEntrySupport(
+            EntityEntrySupport<ENTRY> entityEntrySupport) {
+        this.entityEntrySupport = entityEntrySupport;
+    }
 }

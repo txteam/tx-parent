@@ -73,7 +73,7 @@ public class PropertiesFactoryReader implements ApplicationContextAware,
      */
     @Override
     public boolean isSingleton() {
-        return false;
+        return true;
     }
     
     /**

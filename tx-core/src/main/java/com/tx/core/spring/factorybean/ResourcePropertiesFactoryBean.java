@@ -72,7 +72,7 @@ public class ResourcePropertiesFactoryBean implements ApplicationContextAware,
      */
     @Override
     public boolean isSingleton() {
-        return false;
+        return true;
     }
     
     /**
