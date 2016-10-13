@@ -14,7 +14,6 @@ import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.aop.framework.autoproxy.AbstractAutoProxyCreator;
 import org.springframework.beans.BeansException;
 import org.springframework.cache.CacheManager;
-import org.springframework.util.ClassUtils;
 
 /**
  * 基础数据业务层环绕
@@ -29,10 +28,6 @@ public class BasicDataServiceProxyCreator extends AbstractAutoProxyCreator {
     
     /** 注释内容 */
     private static final long serialVersionUID = 2087861805320061268L;
-    
-    private ClassLoader proxyClassLoader = ClassUtils.getDefaultClassLoader();
-    
-    private boolean freezeProxy = false;
     
     @Resource(name = "basicdata.cacheManager")
     private CacheManager cacheManager;
