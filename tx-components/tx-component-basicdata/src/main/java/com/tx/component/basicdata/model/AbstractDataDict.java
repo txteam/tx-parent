@@ -13,7 +13,6 @@ import javax.persistence.Id;
 
 import com.tx.core.jdbc.sqlsource.annotation.QueryConditionEqual;
 import com.tx.core.jdbc.sqlsource.annotation.UpdateAble;
-import com.tx.core.support.poi.excel.annotation.ExcelCell;
 
 /**
  * 基础数据字典<br/>
@@ -35,12 +34,10 @@ public abstract class AbstractDataDict implements BasicData {
     private String id;
     
     /** 类型编码 */
-    @ExcelCell(index = 0)
     @QueryConditionEqual
     private String basicDataTypeCode;
     
     /** 编码 */
-    @ExcelCell(index = 1)
     @QueryConditionEqual
     private String code;
     
@@ -55,13 +52,11 @@ public abstract class AbstractDataDict implements BasicData {
     private boolean modifyAble = true;
     
     /** 名称 */
-    @ExcelCell(index = 2)
     @UpdateAble
     @QueryConditionEqual
     private String name;
     
     /** 备注 */
-    @ExcelCell(index = 3)
     @UpdateAble
     @QueryConditionEqual
     private String remark;

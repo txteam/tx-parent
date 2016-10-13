@@ -8,16 +8,18 @@ package com.tx.component.basicdata.context;
 
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -29,11 +31,13 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.core.AliasRegistry;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import com.tx.component.basicdata.model.BasicData;
 import com.tx.component.basicdata.model.BasicDataType;
 import com.tx.component.basicdata.model.DataDict;
+import com.tx.component.basicdata.model.TreeAbleBasicData;
 import com.tx.component.basicdata.service.BasicDataTypeService;
 import com.tx.component.basicdata.service.DataDictService;
 import com.tx.core.exceptions.util.AssertUtils;
@@ -53,6 +57,8 @@ public class BasicDataServiceRegistry implements ApplicationContextAware,
         InitializingBean, FactoryBean<BasicDataServiceRegistry>,
         BeanFactoryAware {
     
+    private Logger logger = LoggerFactory.getLogger(BasicDataServiceRegistry.class);
+    
     private static BasicDataServiceRegistry factory;
     
     private static Map<Class<?>, BasicDataService<?>> type2serviceMap = new HashMap<Class<?>, BasicDataService<?>>();
@@ -64,6 +70,8 @@ public class BasicDataServiceRegistry implements ApplicationContextAware,
     private SingletonBeanRegistry singletonBeanRegistry;
     
     private BeanDefinitionRegistry beanDefinitionRegistry;
+    
+    private AliasRegistry aliasRegistry;
     
     @Resource(name = "basicdata.dataDictService")
     private DataDictService dataDictService;
@@ -102,6 +110,11 @@ public class BasicDataServiceRegistry implements ApplicationContextAware,
                 beanFactory,
                 "beanFactory is not SingletonBeanRegistry instance.");
         this.singletonBeanRegistry = (SingletonBeanRegistry) beanFactory;
+        
+        AssertUtils.isInstanceOf(AliasRegistry.class,
+                beanFactory,
+                "beanFactory is not SingletonBeanRegistry instance.");
+        this.aliasRegistry = (AliasRegistry) beanFactory;
     }
     
     /**
@@ -112,6 +125,8 @@ public class BasicDataServiceRegistry implements ApplicationContextAware,
     protected void registerBeanDefinition(String beanName,
             BeanDefinition beanDefinition) {
         if (!this.beanDefinitionRegistry.containsBeanDefinition(beanName)) {
+            logger.info("动态注入基础数据业务层定义: beanName:{} Type:com.tx.component.basicdata.context.DefaultBasicDataService",
+                    beanName);
             this.beanDefinitionRegistry.registerBeanDefinition(beanName,
                     beanDefinition);
         }
@@ -124,7 +139,22 @@ public class BasicDataServiceRegistry implements ApplicationContextAware,
      */
     protected void registerSingletonBean(String beanName, Object bean) {
         if (!this.singletonBeanRegistry.containsSingleton(beanName)) {
+            logger.info("注入基础数据业务层实例: beanName:{} Type:{}",
+                    beanName,
+                    bean.getClass().getName());
             this.singletonBeanRegistry.registerSingleton(beanName, bean);
+        }
+    }
+    
+    /**
+     * @desc 向spring容器注册bean
+     * @param beanName
+     * @param beanDefinition
+     */
+    protected void registerAlise(String beanName, String alias) {
+        if (!this.aliasRegistry.isAlias(beanName)
+                && !this.aliasRegistry.isAlias(alias)) {
+            this.aliasRegistry.registerAlias(beanName, alias);
         }
     }
     
@@ -140,44 +170,50 @@ public class BasicDataServiceRegistry implements ApplicationContextAware,
     @SuppressWarnings("rawtypes")
     public BasicDataService buildDefaultBasicDataService(
             Class<? extends BasicData> type) {
-        Class<?> defaultServiceType = DefaultBasicDataServiceFactory.class;
+        String beanName = generateServiceBeanName(type);
         
-        BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(defaultServiceType);
-        builder.addPropertyValue("type", type);
-        //builder.setScope("prototype");
-        //builder.addConstructorArgValue(type);
-        //        BeanDefinition bd = new AnnotatedGenericBeanDefinition(
-        //                defaultServiceType);
-        //        bd.setAttribute("type", type);
-        String beanName = "default." + type.getSimpleName()
-                + ".basicDataService";
-        registerBeanDefinition(beanName, builder.getBeanDefinition());
+        if (type.isAssignableFrom(TreeAbleBasicData.class)) {
+            //Class<?> defaultServiceType = DefaultTreeAbleBasicDataServiceFactory.class;
+            Class<?> defaultServiceType = DefaultTreeAbleBasicDataService.class;
+            
+            //                        AnnotatedGenericBeanDefinition bd = new AnnotatedGenericBeanDefinition(
+            //                                defaultServiceType);
+            //                        bd.setAttribute("type", type);
+            //                        registerBeanDefinition(beanName, bd);
+            BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(defaultServiceType);
+            builder.addPropertyValue("type", type);
+            registerBeanDefinition(beanName, builder.getBeanDefinition());
+        } else {
+            Class<?> defaultServiceType = DefaultBasicDataService.class;
+            //                        AnnotatedGenericBeanDefinition bd = new AnnotatedGenericBeanDefinition(
+            //                                defaultServiceType);
+            //                        bd.setAttribute("type", type);
+            //                        registerBeanDefinition(beanName, bd);
+            BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(defaultServiceType);
+            builder.addPropertyValue("type", type);
+            registerBeanDefinition(beanName, builder.getBeanDefinition());
+        }
         
         //利用有参构造函数,(Object) type
         BasicDataService service = (BasicDataService) this.applicationContext.getBean(beanName);
         return service;
     }
     
-    //    /**
-    //     * 
-    //      *<功能简述>
-    //      *<功能详细描述>
-    //      * @param type
-    //      * @return [参数说明]
-    //      * 
-    //      * @return BasicDataService [返回类型说明]
-    //      * @exception throws [异常类型] [异常说明]
-    //      * @see [类、类#方法、类#成员]
-    //     */
-    //    @SuppressWarnings("rawtypes")
-    //    public BasicDataService buildDefaultBasicDataService(
-    //            Class<? extends BasicData> type) {
-    //        BasicDataService bdService = (BasicDataService) this.applicationContext.getBean("basicdata.defaultBasicDataService",
-    //                new Object[] { type });
-    //        
-    //        System.out.println("type:" + type + " | service.type: " + bdService.type());
-    //        return bdService;
-    //    }
+    /** 
+     * 生成对应的业务层Bean名称<br/>
+     * <功能详细描述>
+     * @param type
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    private String generateServiceBeanName(Class<? extends BasicData> type) {
+        String beanName = "basicdata."
+                + StringUtils.uncapitalize(type.getSimpleName()) + "Service";
+        return beanName;
+    }
     
     /**
       * 单例基础数据工厂类<br/>
@@ -245,12 +281,18 @@ public class BasicDataServiceRegistry implements ApplicationContextAware,
         BasicDataServiceRegistry.factory = this;
         
         //查找spring容器中已经存在的业务层
-        Collection<BasicDataService> basicDataServices = this.applicationContext.getBeansOfType(BasicDataService.class)
-                .values();
-        for (BasicDataService service : basicDataServices) {
-            if (service.type() == null) {
+        Map<String, BasicDataService> basicDataServiceMap = this.applicationContext.getBeansOfType(BasicDataService.class);
+        for (Entry<String, BasicDataService> entry : basicDataServiceMap.entrySet()) {
+            BasicDataService service = entry.getValue();
+            String beanName = entry.getKey();
+            if (service.type() == null || DataDict.class.equals(service.type())) {
                 continue;
             }
+            String alias = generateServiceBeanName(service.type());
+            //注册单例Bean进入Spring容器
+            //registerSingletonBean(beanName, service);
+            registerAlise(beanName, alias);
+            
             //注册处理的业务类型
             registeType2Service(service);
         }
@@ -274,7 +316,8 @@ public class BasicDataServiceRegistry implements ApplicationContextAware,
                 //如果是接口或抽象类直接跳过
                 continue;
             }
-            if (type2serviceMap.containsKey(bdType)) {
+            if (type2serviceMap.containsKey(bdType)
+                    || DataDict.class.equals(bdType)) {
                 //如果已经存在对应的业务逻辑层
                 continue;
             }
@@ -332,6 +375,10 @@ public class BasicDataServiceRegistry implements ApplicationContextAware,
                         ciaOfConfig.getName())) {
                     return true;
                 }
+                if (!StringUtils.equals(ciaOfDBTemp.getModule(),
+                        ciaOfConfig.getModule())) {
+                    return true;
+                }
                 if (!StringUtils.equals(ciaOfDBTemp.getTableName(),
                         ciaOfConfig.getTableName())) {
                     return true;
@@ -343,7 +390,8 @@ public class BasicDataServiceRegistry implements ApplicationContextAware,
                 if (ciaOfDBTemp.isCommon() != ciaOfConfig.isCommon()) {
                     return true;
                 }
-                if (ciaOfDBTemp.isPagedList() != ciaOfConfig.isPagedList()) {
+                if (!ciaOfDBTemp.getViewType()
+                        .equals(ciaOfConfig.getViewType())) {
                     return true;
                 }
                 return false;
@@ -356,13 +404,14 @@ public class BasicDataServiceRegistry implements ApplicationContextAware,
             @Override
             protected void doBeforeUpdate(BasicDataType ciaOfDB,
                     BasicDataType ciaOfCfg) {
+                ciaOfDB.setModule(ciaOfCfg.getModule());
                 ciaOfDB.setCode(ciaOfCfg.getCode());
                 ciaOfDB.setName(ciaOfCfg.getName());
                 ciaOfDB.setTableName(ciaOfCfg.getTableName());
                 ciaOfDB.setRemark(ciaOfCfg.getRemark());
                 
                 ciaOfDB.setCommon(ciaOfCfg.isCommon());
-                ciaOfDB.setPagedList(ciaOfCfg.isPagedList());
+                ciaOfDB.setViewType(ciaOfCfg.getViewType());
             }
             
             @Override
@@ -379,8 +428,8 @@ public class BasicDataServiceRegistry implements ApplicationContextAware,
             protected List<BasicDataType> queryListFromConfig() {
                 List<BasicDataService<?>> services = getAllBasicDataServices();
                 List<BasicDataType> resListOfCfg = new ArrayList<>();
-                for (BasicDataService<?> s : services) {
-                    Class<?> type = s.type();
+                for (BasicDataService<? extends BasicData> s : services) {
+                    Class<? extends BasicData> type = s.type();
                     String code = s.code();
                     String tableName = s.tableName();
                     String name = s.type().getSimpleName();
@@ -391,17 +440,22 @@ public class BasicDataServiceRegistry implements ApplicationContextAware,
                     bdType.setTableName(tableName);
                     bdType.setName(name);
                     bdType.setModifyAble(false);
+                    bdType.setModule("basicdata");
                     
                     if (type.isAnnotationPresent(com.tx.component.basicdata.annotation.BasicDataType.class)) {
                         com.tx.component.basicdata.annotation.BasicDataType anno = type.getAnnotation(com.tx.component.basicdata.annotation.BasicDataType.class);
                         //读取注解中值
                         bdType.setCommon(anno.common());
-                        bdType.setPagedList(anno.pagedList());
+                        bdType.setViewType(anno.viewType());
                         bdType.setRemark(anno.remark());
                         
-                        bdType.setName(anno.name());//覆写名称
+                        if (StringUtils.isNotEmpty(anno.name())) {
+                            bdType.setName(anno.name());//覆写名称
+                        }
+                        if (StringUtils.isNotEmpty(anno.module())) {
+                            bdType.setModule(anno.module().toLowerCase());//覆写模块名称
+                        }
                     }
-                    
                     resListOfCfg.add(bdType);
                 }
                 return resListOfCfg;

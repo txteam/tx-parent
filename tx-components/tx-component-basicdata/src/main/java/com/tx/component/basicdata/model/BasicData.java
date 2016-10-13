@@ -48,35 +48,35 @@ public interface BasicData extends ConfigInitAble, Serializable {
     public Date getCreateDate();
     
     /**
-    * 设置基础数据名称<br/>
-    * <功能详细描述>
-    * @param name [参数说明]
-    * 
-    * @return void [返回类型说明]
-    * @exception throws [异常类型] [异常说明]
-    * @see [类、类#方法、类#成员]
-    */
+     * 设置基础数据唯一键<br/>
+     * <功能详细描述>
+     * @param name [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public void setId(String id);
+    
+    /**
+     * 设置基础数据名称<br/>
+     * <功能详细描述>
+     * @param name [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
     public void setName(String name);
     
     /**
-    * 设置备注信息<br/>
-    * <功能详细描述>
-    * @param remark [参数说明]
-    * 
-    * @return void [返回类型说明]
-    * @exception throws [异常类型] [异常说明]
-    * @see [类、类#方法、类#成员]
-    */
+     * 设置备注信息<br/>
+     * <功能详细描述>
+     * @param remark [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
     public void setRemark(String remark);
-    
-    ///**
-    //  * 获取类型编码<br/>
-    //  * <功能详细描述>
-    //  * @return [参数说明]
-    //  * 
-    //  * @return String [返回类型说明]
-    //  * @exception throws [异常类型] [异常说明]
-    //  * @see [类、类#方法、类#成员]
-    // */
-    //public String getBasicDataTypeCode();
 }

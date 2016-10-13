@@ -6,16 +6,12 @@
  */
 package com.tx.component.basicdata.context;
 
-import java.lang.reflect.Modifier;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
-
-import org.apache.commons.lang3.StringUtils;
 
 import com.tx.component.basicdata.model.BasicData;
-import com.tx.core.util.ClassScanUtils;
+import com.tx.component.basicdata.model.TreeAbleBasicData;
+import com.tx.core.exceptions.util.AssertUtils;
 
 /**
  * 基础数据容器构建器<br/>
@@ -37,8 +33,43 @@ public class BasicDataContextBuilder extends BasicDataContextConfigurator {
     @Override
     protected final void doBuild() throws Exception {
         //加载基础数据类<br/>
-        
     }
     
-
+    /**
+      * 根据类型获取对应的基础数据业务层<br/>
+      * <功能详细描述>
+      * @param type
+      * @return [参数说明]
+      * 
+      * @return BasicDataService<BDTYPE> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    protected final <BDTYPE extends BasicData> BasicDataService<BDTYPE> doGetBasicDataService(
+            Class<BDTYPE> type) {
+        AssertUtils.notNull(type, "type is null.");
+        
+        BasicDataService<BDTYPE> service = BasicDataServiceRegistry.getFactory()
+                .getBasicDataService(type);
+        return service;
+    }
+    
+    /**
+     * 根据类型获取对应的基础数据业务层<br/>
+     * <功能详细描述>
+     * @param type
+     * @return [参数说明]
+     * 
+     * @return BasicDataService<BDTYPE> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    protected final <BDTYPE extends TreeAbleBasicData<BDTYPE>> TreeAbleBasicDataService<BDTYPE> doGetTreeAbleBasicDataService(
+            Class<BDTYPE> type) {
+        AssertUtils.notNull(type, "type is null.");
+        
+        TreeAbleBasicDataService<BDTYPE> service = (TreeAbleBasicDataService<BDTYPE>) BasicDataServiceRegistry.getFactory()
+                .getBasicDataService(type);
+        return service;
+    }
 }

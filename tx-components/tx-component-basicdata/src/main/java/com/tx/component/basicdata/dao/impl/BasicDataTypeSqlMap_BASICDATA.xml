@@ -15,14 +15,17 @@
 		resultMap="basicDataTypeMap">
 		SELECT 
 				TBDT.id,
+				TBDT.module,
 				TBDT.valid,
+				TBDT.modifyAble,
+				TBDT.common,
+				TBDT.viewType,
 				TBDT.code,
 				TBDT.createDate,
 				TBDT.lastUpdateDate,
-				TBDT.modifyAble,
 				TBDT.name,
-				TBDT.remark,
 				TBDT.tableName,
+				TBDT.remark,
 				TBDT.type
 		  FROM BD_BASIC_DATA_TYPE TBDT
 		 WHERE
@@ -42,28 +45,40 @@
 		resultMap="basicDataTypeMap">
 		SELECT 
 				TBDT.id,
+				TBDT.module,
 				TBDT.valid,
+				TBDT.modifyAble,
+				TBDT.common,
+				TBDT.viewType,
 				TBDT.code,
 				TBDT.createDate,
 				TBDT.lastUpdateDate,
-				TBDT.modifyAble,
 				TBDT.name,
-				TBDT.remark,
 				TBDT.tableName,
+				TBDT.remark,
 				TBDT.type
 		  FROM BD_BASIC_DATA_TYPE TBDT
 		<trim prefix="WHERE" prefixOverrides="AND | OR">
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(modifyAble)">  
 	            <![CDATA[ AND TBDT.MODIFYABLE = #{modifyAble,jdbcType=BIT} ]]>
 	        </if>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(valid)">  
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(valid)">  
 	            <![CDATA[ AND TBDT.VALID = #{valid,jdbcType=BIT} ]]>
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(common)">  
+	            <![CDATA[ AND TBDT.COMMON = #{common,jdbcType=BIT} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(module)">  
+	            <![CDATA[ AND TBDT.MODULE = #{module,jdbcType=VARCHAR} ]]>
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(code)">  
 	            <![CDATA[ AND TBDT.CODE = #{code,jdbcType=VARCHAR} ]]>
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(type)">  
 	            <![CDATA[ AND TBDT.TYPE = #{type,jdbcType=VARBINARY} ]]>
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(viewType)">  
+	            <![CDATA[ AND TBDT.VIEWTYPE = #{viewType,jdbcType=VARBINARY} ]]>
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(tableName)">  
 	            <![CDATA[ AND TBDT.TABLENAME = #{tableName,jdbcType=VARCHAR} ]]>
@@ -95,14 +110,23 @@
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(modifyAble)">  
 	            <![CDATA[ AND TBDT.MODIFYABLE = #{modifyAble,jdbcType=BIT} ]]>
 	        </if>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(valid)">  
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(valid)">  
 	            <![CDATA[ AND TBDT.VALID = #{valid,jdbcType=BIT} ]]>
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(common)">  
+	            <![CDATA[ AND TBDT.COMMON = #{common,jdbcType=BIT} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(module)">  
+	            <![CDATA[ AND TBDT.MODULE = #{module,jdbcType=VARCHAR} ]]>
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(code)">  
 	            <![CDATA[ AND TBDT.CODE = #{code,jdbcType=VARCHAR} ]]>
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(type)">  
 	            <![CDATA[ AND TBDT.TYPE = #{type,jdbcType=VARBINARY} ]]>
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(viewType)">  
+	            <![CDATA[ AND TBDT.VIEWTYPE = #{viewType,jdbcType=VARBINARY} ]]>
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(tableName)">  
 	            <![CDATA[ AND TBDT.TABLENAME = #{tableName,jdbcType=VARCHAR} ]]>
@@ -123,10 +147,13 @@
 		(
 			id,
 			valid,
+			module,
 			code,
 			createDate,
 			lastUpdateDate,
 			modifyAble,
+			common,
+			viewType,
 			name,
 			remark,
 			tableName,
@@ -136,10 +163,13 @@
 		(
 			#{id},
 			#{valid},
+			#{module},
 			#{code},
 			#{createDate},
 			#{lastUpdateDate},
 			#{modifyAble},
+			#{common},
+			#{viewType},
 			#{name},
 			#{remark},
 			#{tableName},
@@ -169,8 +199,17 @@
 	    	<if test="_parameter.containsKey('modifyAble')">
 	    		modifyAble = #{modifyAble,javaType=boolean},
 	    	</if>
+	    	<if test="_parameter.containsKey('common')">
+	    		common = #{common,javaType=boolean},
+	    	</if>
+	    	<if test="_parameter.containsKey('module')">
+	    		module = #{module,javaType=java.lang.String},
+	    	</if>
 			<if test="_parameter.containsKey('code')">
 	    		code = #{code,javaType=java.lang.String},
+	    	</if>
+	    	<if test="_parameter.containsKey('viewType')">
+	    		viewType = #{viewType,javaType=com.tx.component.basicdata.model.BasicDataViewTypeEnum},
 	    	</if>
 			<if test="_parameter.containsKey('name')">
 	    		name = #{name,javaType=java.lang.String},

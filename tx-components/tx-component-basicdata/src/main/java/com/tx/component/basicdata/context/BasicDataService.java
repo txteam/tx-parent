@@ -107,6 +107,19 @@ public interface BasicDataService<T extends BasicData> {
     public boolean deleteByCode(String code);
     
     /**
+      * 判断基础数据是否存在<br/>
+      * <功能详细描述>
+      * @param key2valueMap
+      * @param excludeId
+      * @return [参数说明]
+      * 
+      * @return boolean [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public boolean isExist(Map<String, String> key2valueMap, String excludeId);
+    
+    /**
       * 根据id查询基础数据实例<br/>
       * <功能详细描述>
       * @param id

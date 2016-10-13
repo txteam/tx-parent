@@ -6,6 +6,8 @@
  */
 package com.tx.component.basicdata.context;
 
+import com.tx.component.basicdata.model.BasicData;
+import com.tx.component.basicdata.model.TreeAbleBasicData;
 import com.tx.core.exceptions.util.AssertUtils;
 
 /**
@@ -31,8 +33,14 @@ public class BasicDataContext extends BasicDataContextBuilder {
       * @see [类、类#方法、类#成员]
      */
     public static BasicDataContext getContext() {
-        AssertUtils.notNull(BasicDataContext.context, "context not inited.");
-        
+        if (BasicDataContext.context != null) {
+            return BasicDataContext.context;
+        }
+        synchronized (BasicDataContext.class) {
+            BasicDataContext.context = applicationContext.getBean(beanName,
+                    BasicDataContext.class);
+        }
+        AssertUtils.notNull(BasicDataContext.context, "context is null.");
         return BasicDataContext.context;
     }
     
@@ -45,6 +53,58 @@ public class BasicDataContext extends BasicDataContextBuilder {
         AssertUtils.isNull(BasicDataContext.context, "context already inited.");
         
         BasicDataContext.context = this;
+    }
+    
+    /**
+      * 装载对象属性<br/>
+      * <功能详细描述>
+      * @param obj [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public void setup(Object object) {
+        if (object == null) {
+            return;
+        }
+        
+        //装载基础数据
+        BasicDataSetupHandler handler = new BasicDataSetupHandler(object,
+                BasicDataContext.context);
+        handler.setup();
+    }
+    
+    /**
+      * 获取基础数据业务层<br/>
+      * <功能详细描述>
+      * @param type
+      * @return [参数说明]
+      * 
+      * @return BasicDataService<BDTYPE> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public <BDTYPE extends BasicData> BasicDataService<BDTYPE> getBasicDataService(
+            Class<BDTYPE> type) {
+        BasicDataService<BDTYPE> service = doGetBasicDataService(type);
+        return service;
+    }
+    
+    /**
+     * 根据类型获取对应的基础数据业务层<br/>
+     * <功能详细描述>
+     * @param type
+     * @return [参数说明]
+     * 
+     * @return BasicDataService<BDTYPE> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    public <BDTYPE extends TreeAbleBasicData<BDTYPE>> TreeAbleBasicDataService<BDTYPE> getTreeAbleBasicDataService(
+            Class<BDTYPE> type) {
+        TreeAbleBasicDataService<BDTYPE> service = doGetTreeAbleBasicDataService(type);
+        return service;
     }
     
 }

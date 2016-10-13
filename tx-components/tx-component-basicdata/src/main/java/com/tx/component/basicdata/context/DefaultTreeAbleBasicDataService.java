@@ -7,6 +7,7 @@
 package com.tx.component.basicdata.context;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.tx.component.basicdata.model.BasicData;
 import com.tx.component.basicdata.model.DataDict;
+import com.tx.component.basicdata.model.TreeAbleBasicData;
 import com.tx.component.basicdata.service.DataDictService;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.paged.model.PagedList;
@@ -32,8 +34,8 @@ import com.tx.core.support.entrysupport.helper.EntryAbleUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class DefaultBasicDataService<T extends BasicData> extends
-        AbstractBasicDataService<T> {
+public class DefaultTreeAbleBasicDataService<T extends TreeAbleBasicData<T>>
+        extends AbstractTreeAbleBasicDataService<T> {
     
     /** 对应类型 */
     private Class<T> type;
@@ -43,22 +45,14 @@ public class DefaultBasicDataService<T extends BasicData> extends
     protected DataDictService dataDictService;
     
     /** <默认构造函数> */
-    public DefaultBasicDataService() {
+    public DefaultTreeAbleBasicDataService() {
         super();
     }
     
     /** <默认构造函数> */
-    public DefaultBasicDataService(Class<T> type) {
+    public DefaultTreeAbleBasicDataService(Class<T> type) {
         super();
         this.type = type;
-    }
-    
-    /** <默认构造函数> */
-    public DefaultBasicDataService(Class<T> type,
-            DataDictService dataDictService) {
-        super();
-        this.type = type;
-        this.dataDictService = dataDictService;
     }
     
     /**
@@ -143,7 +137,6 @@ public class DefaultBasicDataService<T extends BasicData> extends
         T resObj = null;
         if (bd != null) {
             resObj = EntryAbleUtils.fromEntryAble(this.type, bd);
-            BasicDataContext.getContext().setup(resObj);
         }
         return resObj;
     }
@@ -166,6 +159,44 @@ public class DefaultBasicDataService<T extends BasicData> extends
             resObj = EntryAbleUtils.fromEntryAble(this.type, bd);
         }
         return resObj;
+    }
+    
+    /**
+     * @param parentId
+     * @param valid
+     * @param params
+     * @return
+     */
+    @Override
+    public List<T> queryListByParentId(String parentId, Boolean valid,
+            Map<String, Object> params) {
+        params = params == null ? new HashMap<String, Object>() : params;
+        params.put("parentId", parentId);
+        
+        List<T> resList = queryList(valid, params);
+        return resList;
+    }
+    
+    /**
+     * @param parentId
+     * @param valid
+     * @param params
+     * @param pageIndex
+     * @param pageSize
+     * @return
+     */
+    @Override
+    public PagedList<T> queryPagedListByParentId(String parentId,
+            Boolean valid, Map<String, Object> params, int pageIndex,
+            int pageSize) {
+        params = params == null ? new HashMap<String, Object>() : params;
+        params.put("parentId", parentId);
+        
+        PagedList<T> resPagedList = queryPagedList(valid,
+                params,
+                pageIndex,
+                pageSize);
+        return resPagedList;
     }
     
     /**
@@ -285,19 +316,5 @@ public class DefaultBasicDataService<T extends BasicData> extends
     public boolean enableById(String id) {
         boolean flag = this.dataDictService.enableById(id);
         return flag;
-    }
-    
-    /**
-     * @param 对type进行赋值
-     */
-    public void setType(Class<T> type) {
-        this.type = type;
-    }
-    
-    /**
-     * @param 对dataDictService进行赋值
-     */
-    public void setDataDictService(DataDictService dataDictService) {
-        this.dataDictService = dataDictService;
     }
 }

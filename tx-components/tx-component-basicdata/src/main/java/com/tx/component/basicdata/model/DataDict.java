@@ -16,13 +16,14 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.tx.component.basicdata.annotation.BasicDataType;
 import com.tx.core.jdbc.sqlsource.annotation.QueryConditionEqual;
 import com.tx.core.jdbc.sqlsource.annotation.UpdateAble;
 import com.tx.core.support.entrysupport.model.EntityEntry;
 import com.tx.core.support.entrysupport.model.EntryAble;
 import com.tx.core.support.initable.model.ConfigInitAble;
-import com.tx.core.support.poi.excel.annotation.ExcelCell;
 
 /**
  * 基础数据字典<br/>
@@ -35,7 +36,7 @@ import com.tx.core.support.poi.excel.annotation.ExcelCell;
  */
 @Entity
 @Table(name = "bd_data_dict")
-@BasicDataType(name = "数据字典", common = false, pagedList = true)
+@BasicDataType(name = "数据字典", common = false, viewType = BasicDataViewTypeEnum.PAGEDLIST)
 public class DataDict implements EntryAble<EntityEntry>, ConfigInitAble,
         BasicData {
     
@@ -46,13 +47,17 @@ public class DataDict implements EntryAble<EntityEntry>, ConfigInitAble,
     @Id
     private String id;
     
+    /** 父级对象id */
+    @UpdateAble
+    @QueryConditionEqual
+    @Transient
+    private BasicData parent;
+    
     /** 类型编码 */
-    @ExcelCell(index = 0)
     @QueryConditionEqual
     private String basicDataTypeCode;
     
     /** 编码 */
-    @ExcelCell(index = 1)
     @QueryConditionEqual
     private String code;
     
@@ -67,13 +72,11 @@ public class DataDict implements EntryAble<EntityEntry>, ConfigInitAble,
     private boolean modifyAble = true;
     
     /** 名称 */
-    @ExcelCell(index = 2)
     @UpdateAble
     @QueryConditionEqual
     private String name;
     
     /** 备注 */
-    @ExcelCell(index = 3)
     @UpdateAble
     @QueryConditionEqual
     private String remark;
@@ -102,6 +105,40 @@ public class DataDict implements EntryAble<EntityEntry>, ConfigInitAble,
      */
     public void setId(String id) {
         this.id = id;
+    }
+    
+    /**
+     * @return 返回 parent
+     */
+    public BasicData getParent() {
+        return parent;
+    }
+    
+    /**
+     * @param 对parent进行赋值
+     */
+    public void setParent(BasicData parent) {
+        this.parent = parent;
+    }
+    
+    /**
+     * @return 返回 parentId
+     */
+    public String getParentId() {
+        if (this.parent == null) {
+            return null;
+        }
+        return this.parent.getId();
+    }
+    
+    public void setParentId(String parentId) {
+        if (StringUtils.isEmpty(parentId)) {
+            return;
+        }
+        if (this.parent == null) {
+            this.parent = new DataDict();
+        }
+        this.parent.setId(parentId);
     }
     
     /**

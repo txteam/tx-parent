@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.tx.component.basicdata.dao.BasicDataTypeDao;
+import com.tx.component.basicdata.model.BasicData;
 import com.tx.component.basicdata.model.BasicDataType;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.paged.model.PagedList;
@@ -123,7 +124,7 @@ public class BasicDataTypeService {
      * @exception throws
      * @see [类、类#方法、类#成员]
      */
-    public BasicDataType findByType(Class<?> type) {
+    public BasicDataType findByType(Class<? extends BasicData> type) {
         AssertUtils.notNull(type, "type is null.");
         
         BasicDataType condition = new BasicDataType();
@@ -234,15 +235,16 @@ public class BasicDataTypeService {
         updateRowMap.put("id", basicDataType.getId());
         
         //需要更新的字段
+        updateRowMap.put("module", basicDataType.getModule());
         updateRowMap.put("code", basicDataType.getCode());
         updateRowMap.put("name", basicDataType.getName());
         updateRowMap.put("tableName", basicDataType.getTableName());
         updateRowMap.put("modifyAble", basicDataType.isModifyAble());
-        updateRowMap.put("remark", basicDataType.getRemark());
-        
+        updateRowMap.put("valid", basicDataType.isValid());
         updateRowMap.put("common", basicDataType.isCommon());
-        updateRowMap.put("pagedList", basicDataType.isPagedList());
+        updateRowMap.put("viewType", basicDataType.getViewType());
         
+        updateRowMap.put("remark", basicDataType.getRemark());
         updateRowMap.put("lastUpdateDate", new Date());
         int updateRowCount = this.basicDataTypeDao.update(updateRowMap);
         
@@ -268,6 +270,7 @@ public class BasicDataTypeService {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("id", id);
         params.put("valid", false);
+        params.put("lastUpdateDate", new Date());
         
         this.basicDataTypeDao.update(params);
         
@@ -292,6 +295,7 @@ public class BasicDataTypeService {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("id", id);
         params.put("valid", true);
+        params.put("lastUpdateDate", new Date());
         
         this.basicDataTypeDao.update(params);
         

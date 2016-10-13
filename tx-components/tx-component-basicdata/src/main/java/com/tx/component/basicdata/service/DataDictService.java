@@ -92,7 +92,6 @@ public class DataDictService extends AbstractEntityEntryAbleService<DataDict>
         List<DataDict> resList = new ArrayList<>();
         int numberOfSheets = wb.getNumberOfSheets();
         for (int sheetIndex = 0; sheetIndex < numberOfSheets; sheetIndex++) {
-            
             Sheet sheet = wb.getSheetAt(sheetIndex);
             if (sheet == null) {
                 continue;
@@ -126,7 +125,7 @@ public class DataDictService extends AbstractEntityEntryAbleService<DataDict>
                         continue;
                     }
                     if (ddBW.isWritableProperty(entryKey)) {
-                        //如果是基础类可以写入的属性
+                        //如果是基础类可以写入的属性:比如parentId的值？
                         ddBW.setPropertyValue(entryKey, entryValue);
                     } else {
                         //如果不是
@@ -387,8 +386,35 @@ public class DataDictService extends AbstractEntityEntryAbleService<DataDict>
         
         //生成查询条件
         params = params == null ? new HashMap<String, Object>() : params;
-        params.put("valid", valid);
         params.put("basicDataTypeCode", basicDataTypeCode);
+        params.put("valid", valid);
+        
+        //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
+        List<DataDict> resList = this.dataDictDao.queryList(params);
+        
+        return resList;
+    }
+    
+    /**
+     * 查询DataDict实体列表
+     * <功能详细描述>
+     * @param valid
+     * @param params      
+     * @return [参数说明]
+     * 
+     * @return List<DataDict> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public List<DataDict> queryList(String basicDataTypeCode, String parentId,
+            Boolean valid, Map<String, Object> params) {
+        //判断条件合法性
+        
+        //生成查询条件
+        params = params == null ? new HashMap<String, Object>() : params;
+        params.put("basicDataTypeCode", basicDataTypeCode);
+        params.put("parentId", parentId);
+        params.put("valid", valid);
         
         //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
         List<DataDict> resList = this.dataDictDao.queryList(params);
@@ -418,6 +444,41 @@ public class DataDictService extends AbstractEntityEntryAbleService<DataDict>
         
         //生成查询条件
         params = params == null ? new HashMap<String, Object>() : params;
+        params.put("basicDataTypeCode", basicDataTypeCode);
+        params.put("valid", valid);
+        
+        //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
+        PagedList<DataDict> resPagedList = this.dataDictDao.queryPagedList(params,
+                pageIndex,
+                pageSize);
+        
+        return resPagedList;
+    }
+    
+    /**
+     * 分页查询DataDict实体列表
+     * <功能详细描述>
+     * @param valid
+      * @param params    
+     * @param pageIndex 当前页index从1开始计算
+     * @param pageSize 每页显示行数
+     * 
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return List<DataDict> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public PagedList<DataDict> queryPagedList(String basicDataTypeCode,
+            String parentId, Boolean valid, Map<String, Object> params,
+            int pageIndex, int pageSize) {
+        //T判断条件合法性
+        
+        //生成查询条件
+        params = params == null ? new HashMap<String, Object>() : params;
+        params.put("basicDataTypeCode", basicDataTypeCode);
+        params.put("parentId", parentId);
         params.put("valid", valid);
         
         //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
@@ -437,12 +498,15 @@ public class DataDictService extends AbstractEntityEntryAbleService<DataDict>
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    public boolean isExist(Map<String, String> key2valueMap, String excludeId) {
+    public boolean isExist(String basicDataTypeCode,
+            Map<String, String> key2valueMap, String excludeId) {
+        AssertUtils.notEmpty(basicDataTypeCode, "basicDataTypeCode is empty");
         AssertUtils.notEmpty(key2valueMap, "key2valueMap is empty");
         
         //生成查询条件
         Map<String, Object> params = new HashMap<String, Object>();
         params.putAll(key2valueMap);
+        params.put("basicDataTypeCode", basicDataTypeCode);
         params.put("excludeId", excludeId);
         
         //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法

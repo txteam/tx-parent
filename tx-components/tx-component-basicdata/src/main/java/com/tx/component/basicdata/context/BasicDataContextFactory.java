@@ -26,8 +26,11 @@ public class BasicDataContextFactory extends BasicDataContext implements
      */
     @Override
     public BasicDataContext getObject() throws Exception {
-        BasicDataContext context = getContext();
-        return context;
+        if (BasicDataContextFactory.context == null) {
+            return this;
+        } else {
+            return BasicDataContextFactory.context;
+        }
     }
     
     /**

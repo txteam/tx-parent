@@ -12,7 +12,6 @@ import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import com.tx.core.jdbc.sqlsource.annotation.QueryConditionEqual;
 import com.tx.core.jdbc.sqlsource.annotation.UpdateAble;
@@ -40,7 +39,12 @@ public class BasicDataType implements ConfigInitAble, Serializable {
     
     /** 基础数据类型 */
     @QueryConditionEqual
-    private Class<?> type;
+    private Class<? extends BasicData> type;
+    
+    /** 基础数据所属模块 */
+    @UpdateAble
+    @QueryConditionEqual
+    private String module;
     
     /** 基础数据类型编码 */
     @UpdateAble
@@ -72,20 +76,19 @@ public class BasicDataType implements ConfigInitAble, Serializable {
     /** 是否在通用的界面中进行数据维护 */
     @UpdateAble
     @QueryConditionEqual
-    @Transient
     private boolean common = true;
     
     /** 是否分页显示 */
     @UpdateAble
     @QueryConditionEqual
-    @Transient
-    private boolean pagedList = false;
+    private BasicDataViewTypeEnum viewType = BasicDataViewTypeEnum.LIST;
+    
+    /** 最后更新时间 */
+    @UpdateAble
+    private Date lastUpdateDate;
     
     /** 基础数据类型创建时间 */
     private Date createDate;
-    
-    @UpdateAble
-    private Date lastUpdateDate;
     
     /**
      * @return 返回 id
@@ -104,29 +107,29 @@ public class BasicDataType implements ConfigInitAble, Serializable {
     /**
      * @return 返回 type
      */
-    public Class<?> getType() {
+    public Class<? extends BasicData> getType() {
         return type;
     }
     
     /**
      * @param 对type进行赋值
      */
-    public void setType(Class<?> type) {
+    public void setType(Class<? extends BasicData> type) {
         this.type = type;
     }
     
     /**
-     * @return 返回 tableName
+     * @return 返回 module
      */
-    public String getTableName() {
-        return tableName;
+    public String getModule() {
+        return module;
     }
     
     /**
-     * @param 对tableName进行赋值
+     * @param 对module进行赋值
      */
-    public void setTableName(String tableName) {
-        this.tableName = tableName;
+    public void setModule(String module) {
+        this.module = module;
     }
     
     /**
@@ -141,6 +144,20 @@ public class BasicDataType implements ConfigInitAble, Serializable {
      */
     public void setCode(String code) {
         this.code = code;
+    }
+    
+    /**
+     * @return 返回 tableName
+     */
+    public String getTableName() {
+        return tableName;
+    }
+    
+    /**
+     * @param 对tableName进行赋值
+     */
+    public void setTableName(String tableName) {
+        this.tableName = tableName;
     }
     
     /**
@@ -214,17 +231,17 @@ public class BasicDataType implements ConfigInitAble, Serializable {
     }
     
     /**
-     * @return 返回 pagedList
+     * @return 返回 viewType
      */
-    public boolean isPagedList() {
-        return pagedList;
+    public BasicDataViewTypeEnum getViewType() {
+        return viewType;
     }
     
     /**
-     * @param 对pagedList进行赋值
+     * @param 对viewType进行赋值
      */
-    public void setPagedList(boolean pagedList) {
-        this.pagedList = pagedList;
+    public void setViewType(BasicDataViewTypeEnum viewType) {
+        this.viewType = viewType;
     }
     
     /**

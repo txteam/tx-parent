@@ -17,9 +17,12 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.SingletonBeanRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -64,21 +67,6 @@ public class BasicDataContextConfigurator implements ApplicationContextAware,
         return dao;
     }
     
-    @Bean(name = "basicdata.dataDictService")
-    public DataDictService dataDictService() {
-        DataDictService dao = new DataDictService();
-        //dao.setDataSource(this.dataSource);
-        //dao.setTransactionTemplate(this.transactionTemplate);
-        return dao;
-    }
-    
-    @Bean(name = "basicdata.basicDataServiceRegistry")
-    public BasicDataServiceRegistry basicDataServiceRegistry() {
-        BasicDataServiceRegistry serviceFactory = new BasicDataServiceRegistry(
-                this.packages);
-        return serviceFactory;
-    }
-    
     @Bean(name = "basicdata.basicDataTypeDao")
     public BasicDataTypeDao basicDataTypeDao() {
         BasicDataTypeDao basicDataTypeDao = new BasicDataTypeDaoImpl();
@@ -89,6 +77,36 @@ public class BasicDataContextConfigurator implements ApplicationContextAware,
     public BasicDataTypeService basicDataTypeService() {
         BasicDataTypeService basicDataTypeService = new BasicDataTypeService();
         return basicDataTypeService;
+    }
+    
+    @Bean(name = "basicdata.dataDictService")
+    public DataDictService dataDictService() {
+        DataDictService service = new DataDictService();
+        return service;
+    }
+    
+    @DependsOn(value = "basicDataContext")
+    @Bean(name = "basicdata.basicDataServiceRegistry")
+    public BasicDataServiceRegistry basicDataServiceRegistry() {
+        BasicDataServiceRegistry serviceFactory = new BasicDataServiceRegistry(
+                this.packages);
+        return serviceFactory;
+    }
+    
+    /**
+     * 基础数据业务层代理创建器<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return BasicDataServiceProxyCreator [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    @Bean(name = "basicdata.basicDataServiceProxyCreator")
+    public BasicDataServiceProxyCreator basicDataServiceProxyCreator() {
+        BasicDataServiceProxyCreator processor = new BasicDataServiceProxyCreator();
+        
+        return processor;
     }
     
     @Bean(name = "basicDataContext")
@@ -107,7 +125,10 @@ public class BasicDataContextConfigurator implements ApplicationContextAware,
     }
     
     /** spring容器句柄 */
-    protected ApplicationContext applicationContext;
+    protected static ApplicationContext applicationContext;
+    
+    /** beanName实例 */
+    protected static String beanName;
     
     /** 包名 */
     protected String packages = "com.tx";
@@ -116,11 +137,7 @@ public class BasicDataContextConfigurator implements ApplicationContextAware,
     protected String mybatisConfigLocation = "classpath:context/mybatis-config.xml";
     
     /** mybatis配置文件 */
-    protected String[] mybatisMapperLocations = new String[] {
-            "classpath*:com/tx/component/basicdata/dao/impl/*SqlMap_BASICDATA.xml"};
-    
-    /** beanName实例 */
-    protected String beanName;
+    protected String[] mybatisMapperLocations = new String[] { "classpath*:com/tx/component/basicdata/dao/impl/*SqlMap_BASICDATA.xml" };
     
     /** 数据源:dataSource */
     protected DataSource dataSource;
@@ -133,6 +150,9 @@ public class BasicDataContextConfigurator implements ApplicationContextAware,
     
     /** transactionTemplate: 如果存在事务则在当前事务中执行 */
     protected TransactionTemplate transactionTemplate;
+    
+    /** cacheManager */
+    protected CacheManager cacheManager;
     
     /** 单例对象注册方法 */
     protected SingletonBeanRegistry singletonBeanRegistry;
@@ -187,7 +207,7 @@ public class BasicDataContextConfigurator implements ApplicationContextAware,
     @Override
     public final void setApplicationContext(
             ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
+        BasicDataContextConfigurator.applicationContext = applicationContext;
     }
     
     /**
@@ -195,7 +215,7 @@ public class BasicDataContextConfigurator implements ApplicationContextAware,
      */
     @Override
     public final void setBeanName(String name) {
-        this.beanName = name;
+        BasicDataContextConfigurator.beanName = name;
     }
     
     /**
@@ -220,12 +240,16 @@ public class BasicDataContextConfigurator implements ApplicationContextAware,
             this.transactionTemplate = new TransactionTemplate(
                     this.transactionManager);
         }
+        if (this.cacheManager == null) {
+            this.cacheManager = new ConcurrentMapCacheManager();
+        }
         
         //初始化包名
         if (StringUtils.isEmpty(packages)) {
             this.packages = "com.tx";
         }
         
+        registerSingletonBean("basicdata.cacheManager", this.cacheManager);
         registerSingletonBean("basicdata.dataSource", this.dataSource);
         registerSingletonBean("basicdata.jdbcTemplate", this.jdbcTemplate);
         registerSingletonBean("basicdata.transactionManager",
@@ -305,5 +329,12 @@ public class BasicDataContextConfigurator implements ApplicationContextAware,
      */
     public void setTransactionTemplate(TransactionTemplate transactionTemplate) {
         this.transactionTemplate = transactionTemplate;
+    }
+    
+    /**
+     * @param 对cacheManager进行赋值
+     */
+    public void setCacheManager(CacheManager cacheManager) {
+        this.cacheManager = cacheManager;
     }
 }

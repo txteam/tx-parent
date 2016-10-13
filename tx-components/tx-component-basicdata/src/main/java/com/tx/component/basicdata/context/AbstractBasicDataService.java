@@ -40,7 +40,7 @@ public abstract class AbstractBasicDataService<T extends BasicData> extends
      * @throws Exception
      */
     @Override
-    public final void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() throws Exception {
         this.configInitAbleHelper = new ConfigInitAbleHelper<T>() {
             
             /**
@@ -112,7 +112,6 @@ public abstract class AbstractBasicDataService<T extends BasicData> extends
       * @see [类、类#方法、类#成员]
      */
     protected void init() throws Exception {
-        
     }
     
     /**
@@ -222,7 +221,7 @@ public abstract class AbstractBasicDataService<T extends BasicData> extends
             insert(dataTemp);
         }
     }
-    
+
     /**
      * @param dataList
      */
