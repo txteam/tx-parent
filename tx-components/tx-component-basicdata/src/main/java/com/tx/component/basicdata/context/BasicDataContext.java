@@ -6,9 +6,12 @@
  */
 package com.tx.component.basicdata.context;
 
+import java.util.List;
+
 import com.tx.component.basicdata.model.BasicData;
 import com.tx.component.basicdata.model.TreeAbleBasicData;
 import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.paged.model.PagedList;
 
 /**
  * 基础数据容器<br/>
@@ -73,6 +76,14 @@ public class BasicDataContext extends BasicDataContextBuilder {
         BasicDataSetupHandler handler = new BasicDataSetupHandler(object,
                 BasicDataContext.context);
         handler.setup();
+    }
+    
+    public void setup(List<Object> objectList){
+        return ;
+    }
+    
+    public void setup(PagedList<Object> objectList){
+        return ;
     }
     
     /**
