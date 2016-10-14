@@ -6,7 +6,9 @@
  */
 package com.tx.component.basicdata.context;
 
-import java.util.List;
+import java.util.Collection;
+
+import org.apache.commons.collections.CollectionUtils;
 
 import com.tx.component.basicdata.model.BasicData;
 import com.tx.component.basicdata.model.TreeAbleBasicData;
@@ -78,12 +80,38 @@ public class BasicDataContext extends BasicDataContextBuilder {
         handler.setup();
     }
     
-    public void setup(List<Object> objectList){
-        return ;
+    /**
+      * 装载基础数据<br/>
+      * <功能详细描述>
+      * @param objectList [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public void setup(Collection<?> objectList) {
+        if (CollectionUtils.isEmpty(objectList)) {
+            return;
+        }
+        for (Object obj : objectList) {
+            setup(obj);
+        }
     }
     
-    public void setup(PagedList<Object> objectList){
-        return ;
+    /**
+      * 装载基础数据<br/>
+      * <功能详细描述>
+      * @param objectPagedList [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public void setup(PagedList<?> objectPagedList) {
+        if (objectPagedList == null || objectPagedList.getList() == null) {
+            return;
+        }
+        setup(objectPagedList.getList());
     }
     
     /**
