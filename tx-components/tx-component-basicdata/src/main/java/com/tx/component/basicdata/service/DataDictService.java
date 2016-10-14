@@ -71,8 +71,7 @@ public class DataDictService extends AbstractEntityEntryAbleService<DataDict>
     @Override
     protected EntityEntrySupport<EntityEntry> doBuildEntityEntrySupport()
             throws Exception {
-        EntityEntrySupport<EntityEntry> entityEntrySupport = EntityEntrySupportFactory.getSupport(EntityEntry.class,
-                "bd_data_dict_entry",
+        EntityEntrySupport<EntityEntry> entityEntrySupport = EntityEntrySupportFactory.getSupport("bd_data_dict_entry",
                 this.dataSource);
         return entityEntrySupport;
     }

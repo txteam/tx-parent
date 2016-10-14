@@ -31,7 +31,7 @@ public class EntityEntrySupportFactory {
     private final static Map<DataSource, NamedParameterJdbcTemplate> dataSource2namedParameterJdbcTemplateMap = new HashMap<>();
     
     @SuppressWarnings("rawtypes")
-    private final static Map<Class<?>, EntityEntrySupport> type2supportMap = new HashMap<>();
+    private final static Map<String, EntityEntrySupport> type2supportMap = new HashMap<>();
     
     /**
       * 获取类型对应的EntityEntrySupport<br/>
@@ -47,10 +47,13 @@ public class EntityEntrySupportFactory {
     @SuppressWarnings("unchecked")
     public static <ENTRY extends EntityEntry> EntityEntrySupport<ENTRY> getSupport(
             Class<ENTRY> type, String tableName, DataSource dataSource) {
+        AssertUtils.notEmpty(tableName, "tableName is empty.");
+        AssertUtils.notNull(type, "type is null.");
+        
         EntityEntrySupport<ENTRY> support = null;
         
-        if (type2supportMap.containsKey(type)) {
-            support = type2supportMap.get(type);
+        if (type2supportMap.containsKey(tableName)) {
+            support = type2supportMap.get(tableName);
             
             return support;
         }
@@ -68,8 +71,27 @@ public class EntityEntrySupportFactory {
             }
             
             support = new EntityEntrySupport<>(type, tableName, jdbcTemplate);
-            type2supportMap.put(type, support);
+            type2supportMap.put(tableName, support);
         }
+        return support;
+    }
+    
+    /**
+     * 获取类型对应的EntityEntrySupport<br/>
+     * <功能详细描述>
+     * @param type
+     * @param tableName
+     * @return [参数说明]
+     * 
+     * @return EntityEntrySupport<ENTRY> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    public static EntityEntrySupport<EntityEntry> getSupport(String tableName,
+            DataSource dataSource) {
+        EntityEntrySupport<EntityEntry> support = getSupport(EntityEntry.class,
+                tableName,
+                dataSource);
         return support;
     }
 }
