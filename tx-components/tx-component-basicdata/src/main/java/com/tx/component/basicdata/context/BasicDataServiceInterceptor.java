@@ -179,7 +179,7 @@ public class BasicDataServiceInterceptor implements MethodInterceptor {
             String val = "" + generateCacheKey(entryTemp.getKey(), cachedSet)
                     + ":" + generateCacheKey(entryTemp.getValue(), cachedSet)
                     + ";";
-            res = val.hashCode();
+            res += val.hashCode();
         }
         return res;
     }
