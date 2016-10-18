@@ -4,7 +4,10 @@
  * 修改时间:  2016年9月6日
  * <修改描述:>
  */
-package com.tx.core.support.mqmsg8583.context;
+package com.tx.core.support.msg8583.context;
+
+import com.tx.core.support.msg8583.model.Msg8583Content;
+import com.tx.core.support.msg8583.model.Msg8583MarshallingContext;
 
 /**
  * 文本项转换器<br/>
@@ -17,9 +20,7 @@ package com.tx.core.support.mqmsg8583.context;
  */
 public interface Msg8583ItemTransfer<T> {
     
-    void setConfigurator(Msg8583TransferConfigurator configurator);
+    String marshal(T parameter, StringBuilder sb,Msg8583MarshallingContext content);
     
-    String marshal(T parameter, int start, int length);
-    
-    T unmarshal(String sb, int start, int length);
+    T unmarshal(String text, Msg8583Content content);
 }

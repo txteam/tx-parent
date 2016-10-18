@@ -4,7 +4,7 @@
  * 修  改  时  间:  2016年9月6日
  * <修改描述:>
  */
-package com.tx.core.support.mqmsg8583.model;
+package com.tx.core.support.msg8583.model;
 
 /**
  * 报文消息项<br/>
@@ -24,7 +24,7 @@ public class Msg8583Item<T> {
     private Class<T> type;
     
     /** 对应字段名 */
-    private String fieldName;
+    private String propertyName;
     
     /**
      * @return 返回 value
@@ -53,18 +53,18 @@ public class Msg8583Item<T> {
     public void setType(Class<T> type) {
         this.type = type;
     }
-
+    
     /**
-     * @return 返回 fieldName
+     * @return 返回 propertyName
      */
-    protected String getFieldName() {
-        return fieldName;
+    public String getPropertyName() {
+        return propertyName;
     }
-
+    
     /**
-     * @param 对fieldName进行赋值
+     * @param 对propertyName进行赋值
      */
-    protected void setFieldName(String fieldName) {
-        this.fieldName = fieldName;
+    public void setPropertyName(String propertyName) {
+        this.propertyName = propertyName;
     }
 }

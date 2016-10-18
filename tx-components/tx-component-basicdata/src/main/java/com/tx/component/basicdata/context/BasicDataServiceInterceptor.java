@@ -93,7 +93,8 @@ public class BasicDataServiceInterceptor implements MethodInterceptor {
                         cacheKey);
                 res = vw.get();
             }
-        } else if (methodName.startsWith("insert")
+        } else if (methodName.startsWith("save")
+                || methodName.startsWith("insert")
                 || methodName.startsWith("move")
                 || methodName.startsWith("add")
                 || methodName.startsWith("update")

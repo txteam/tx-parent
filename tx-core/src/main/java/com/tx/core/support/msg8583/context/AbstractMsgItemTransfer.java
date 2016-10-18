@@ -1,3 +1,4 @@
+package com.tx.core.support.msg8583.context;
 ///*
 // * 描          述:  <描述>
 // * 修  改   人:  Administrator

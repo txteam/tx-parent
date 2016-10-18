@@ -4,7 +4,7 @@
  * 修改时间:  2016年9月6日
  * <修改描述:>
  */
-package com.tx.core.support.mqmsg8583.context;
+package com.tx.core.support.msg8583.context;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +20,7 @@ import java.util.Map;
  */
 public class Msg8583ItemTransferRegistry {
     
-    @SuppressWarnings("unused")
+    @SuppressWarnings("serial")
     private static final Map<Class<?>, Class<?>> reversePrimitiveMap = new HashMap<Class<?>, Class<?>>() {
         {
             put(Byte.class, byte.class);

@@ -26,6 +26,7 @@ import com.tx.core.paged.model.PagedList;
  */
 public class BasicDataContext extends BasicDataContextBuilder {
     
+    /** 基础数据容器实现 */
     protected static BasicDataContext context;
     
     /**
