@@ -51,7 +51,7 @@ public class FileDefinitionService {
      * @see [类、类#方法、类#成员]
      */
     @Transactional
-    public void insertFileDefinition(FileDefinition fileDefinition) {
+    public void insert(FileDefinition fileDefinition) {
         AssertUtils.notNull(fileDefinition, "fileDefinition is null.");
         AssertUtils.notEmpty(fileDefinition.getFilename(),
                 "fileDefinition.filename is null.");
@@ -78,9 +78,9 @@ public class FileDefinitionService {
      * @see [类、类#方法、类#成员]
      */
     @Transactional
-    public void moveToHisByFileDefinitionId(String fileDefinitionId) {
+    public void moveToHisById(String fileDefinitionId) {
         AssertUtils.notEmpty(fileDefinitionId, "fileDefinitionId is empty.");
-        FileDefinition fileDefinition = findFileDefinitionById(fileDefinitionId);
+        FileDefinition fileDefinition = findById(fileDefinitionId);
         
         Date now = new Date();
         fileDefinition.setDeleteDate(now);
@@ -116,7 +116,7 @@ public class FileDefinitionService {
      * @exception [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public FileDefinition findFileDefinitionById(String fileDefinitionId) {
+    public FileDefinition findById(String fileDefinitionId) {
         AssertUtils.notEmpty(fileDefinitionId, "id is empty.");
         
         FileDefinition condition = new FileDefinition();

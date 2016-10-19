@@ -85,7 +85,7 @@ public class FileContextBuilder extends FileContextConfigurator {
      */
     protected FileDefinition doFindFileDefinitionByFileDefinitionId(
             String fileDefinitionId) {
-        FileDefinition fileDefinition = this.fileDefinitionService.findFileDefinitionById(fileDefinitionId);
+        FileDefinition fileDefinition = this.fileDefinitionService.findById(fileDefinitionId);
         FileDefinitionResource resource = this.driver.getResource(fileDefinition);
         fileDefinition.setResource(resource);
         return fileDefinition;
@@ -102,12 +102,12 @@ public class FileContextBuilder extends FileContextConfigurator {
      */
     protected void doDeleteFileByFileDefinitionId(String fileDefinitionId) {
         AssertUtils.notEmpty(fileDefinitionId, "fileDefinitionId is empty.");
-        FileDefinition fileDefinition = this.fileDefinitionService.findFileDefinitionById(fileDefinitionId);
+        FileDefinition fileDefinition = this.fileDefinitionService.findById(fileDefinitionId);
         if (fileDefinition == null) {
             return;
         }
         
-        this.fileDefinitionService.moveToHisByFileDefinitionId(fileDefinitionId);
+        this.fileDefinitionService.moveToHisById(fileDefinitionId);
         this.driver.delete(fileDefinition);
     }
     
@@ -177,7 +177,7 @@ public class FileContextBuilder extends FileContextConfigurator {
         fileDefinition.setSystem(this.system);
         fileDefinition.setRelativePath(relativePath);
         
-        this.fileDefinitionService.insertFileDefinition(fileDefinition);
+        this.fileDefinitionService.insert(fileDefinition);
         return fileDefinition;
     }
 }
