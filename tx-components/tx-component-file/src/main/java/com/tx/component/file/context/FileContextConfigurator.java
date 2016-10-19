@@ -17,6 +17,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.tx.component.file.context.driver.DefaultFileDefinitionResourceDriver;
+import com.tx.component.file.dao.FileDefinitionDao;
 import com.tx.component.file.dao.impl.FileDefinitionDaoImpl;
 import com.tx.component.file.service.FileDefinitionService;
 import com.tx.core.dbscript.context.DBScriptExecutorContext;
@@ -39,7 +40,7 @@ public class FileContextConfigurator implements InitializingBean {
     /** 日志 */
     protected Logger logger = LoggerFactory.getLogger(FileContext.class);
     
-    @Bean(name = "fileDefinitionMyBatisDaoSupport")
+    @Bean(name = "fileContext.myBatisDaoSupport")
     public MyBatisDaoSupport fileDefinitionMyBatisDaoSupport() throws Exception {
         MyBatisDaoSupport res = MyBatisDaoSupportHelper.buildMyBatisDaoSupport(this.mybatisConfigLocation,
                 new String[] { "classpath*:com/tx/component/file/**/*SqlMap.xml" },
@@ -48,12 +49,12 @@ public class FileContextConfigurator implements InitializingBean {
         return res;
     }
     
-    @Bean(name = "fileDefinitionDao")
-    public FileDefinitionDaoImpl fileDefinitionDao() {
+    @Bean(name = "fileContext.fileDefinitionDao")
+    public FileDefinitionDao fileDefinitionDao() {
         return new FileDefinitionDaoImpl();
     }
     
-    @Bean(name = "fileDefinitionService")
+    @Bean(name = "fileContext.fileDefinitionService")
     public FileDefinitionService fileDefinitionService() {
         return new FileDefinitionService();
     }

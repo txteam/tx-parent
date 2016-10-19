@@ -7,13 +7,11 @@
 package com.tx.core.support.initable.helper;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -106,9 +104,9 @@ public abstract class ConfigInitAbleHelper<CIA extends ConfigInitAble> {
             String singleCode = getSingleCode(ciaOfDBTemp);//获取唯一识别码
             
             if (!code2CIAMapOfConfig.containsKey(singleCode)
-                    && ciaOfDBTemp.isModifyAble()
+                    && !ciaOfDBTemp.isModifyAble()
                     && isNeedUnBind(ciaOfDBTemp, code2CIAMapOfConfig)) {
-                doBeforeUpdate(ciaOfDBTemp, code2CIAMapOfConfig.get(singleCode));//同时更新其他字段
+                //doBeforeUpdate(ciaOfDBTemp, code2CIAMapOfConfig.get(singleCode));
                 beforeUnbindUpdate(ciaOfDBTemp);//预制的前置插入方法
                 
                 needUpdateToUnbindList.add(ciaOfDBTemp);

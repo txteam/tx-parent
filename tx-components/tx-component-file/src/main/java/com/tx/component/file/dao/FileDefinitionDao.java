@@ -35,7 +35,7 @@ public interface FileDefinitionDao {
       * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public void batchInsertFileDefinition(List<FileDefinition> condition);
+    public void batchInsert(List<FileDefinition> condition);
     
     /**
       * 批量更新FileDefinition实体，
@@ -49,8 +49,7 @@ public interface FileDefinitionDao {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public void batchUpdateFileDefinition(
-            List<Map<String, Object>> updateRowMapList);
+    public void batchUpdate(List<Map<String, Object>> updateRowMapList);
     
     /**
       * 插入FileDefinition对象实体
@@ -63,7 +62,7 @@ public interface FileDefinitionDao {
       * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public void insertFileDefinition(FileDefinition condition);
+    public void insert(FileDefinition condition);
     
     /**
      * 插入FileDefinition对象实体
@@ -75,7 +74,7 @@ public interface FileDefinitionDao {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    public void insertFileDefinitionToHis(FileDefinition condition);
+    public void insertToHis(FileDefinition condition);
     
     /**
       * 删除FileDefinition对象
@@ -89,7 +88,7 @@ public interface FileDefinitionDao {
       * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public int deleteFileDefinition(FileDefinition condition);
+    public int delete(FileDefinition condition);
     
     /**
       * 查询FileDefinition实体
@@ -103,7 +102,7 @@ public interface FileDefinitionDao {
       * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public FileDefinition findFileDefinition(FileDefinition condition);
+    public FileDefinition find(FileDefinition condition);
     
     /**
       * 根据条件查询FileDefinition列表
@@ -117,8 +116,7 @@ public interface FileDefinitionDao {
       * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public List<FileDefinition> queryFileDefinitionList(
-            Map<String, Object> params);
+    public List<FileDefinition> queryList(Map<String, Object> params);
     
     /**
       * 根据指定查询条件以及排序列查询FileDefinition列表
@@ -133,8 +131,8 @@ public interface FileDefinitionDao {
       * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public List<FileDefinition> queryFileDefinitionList(
-            Map<String, Object> params, List<Order> orderList);
+    public List<FileDefinition> queryList(Map<String, Object> params,
+            List<Order> orderList);
     
     /**
       * 根据条件查询FileDefinition列表总数
@@ -147,7 +145,7 @@ public interface FileDefinitionDao {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public int countFileDefinition(Map<String, Object> params);
+    public int count(Map<String, Object> params);
     
     /**
       * 分页查询FileDefinition列表
@@ -163,8 +161,8 @@ public interface FileDefinitionDao {
       * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public PagedList<FileDefinition> queryFileDefinitionPagedList(
-            Map<String, Object> params, int pageIndex, int pageSize);
+    public PagedList<FileDefinition> queryPagedList(Map<String, Object> params,
+            int pageIndex, int pageSize);
     
     /**
       * 分页查询FileDefinition列表，传入排序字段
@@ -181,9 +179,8 @@ public interface FileDefinitionDao {
       * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public PagedList<FileDefinition> queryFileDefinitionPagedList(
-            Map<String, Object> params, int pageIndex, int pageSize,
-            List<Order> orderList);
+    public PagedList<FileDefinition> queryPagedList(Map<String, Object> params,
+            int pageIndex, int pageSize, List<Order> orderList);
     
     /**
       * 更新FileDefinition实体，
@@ -197,5 +194,5 @@ public interface FileDefinitionDao {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public int updateFileDefinition(Map<String, Object> updateRowMap);
+    public int update(Map<String, Object> updateRowMap);
 }

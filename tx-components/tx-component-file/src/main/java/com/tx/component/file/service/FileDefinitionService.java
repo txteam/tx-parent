@@ -14,7 +14,6 @@ import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
@@ -31,7 +30,6 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-@Component("fileDefinitionService")
 public class FileDefinitionService {
     
     /** 日志 */
@@ -39,7 +37,7 @@ public class FileDefinitionService {
     private Logger logger = LoggerFactory.getLogger(FileDefinitionService.class);
     
     /** 文件定义Dao层 */
-    @Resource(name = "fileDefinitionDao")
+    @Resource(name = "fileContext.fileDefinitionDao")
     private FileDefinitionDao fileDefinitionDao;
     
     /**
@@ -67,7 +65,7 @@ public class FileDefinitionService {
             fileDefinition.setFilenameExtension(StringUtils.getFilenameExtension(fileDefinition.getFilename()));
         }
         
-        this.fileDefinitionDao.insertFileDefinition(fileDefinition);
+        this.fileDefinitionDao.insert(fileDefinition);
     }
     
     /**
@@ -87,7 +85,7 @@ public class FileDefinitionService {
         Date now = new Date();
         fileDefinition.setDeleteDate(now);
         
-        this.fileDefinitionDao.insertFileDefinitionToHis(fileDefinition);
+        this.fileDefinitionDao.insertToHis(fileDefinition);
         deleteById(fileDefinitionId);
     }
     
@@ -106,7 +104,7 @@ public class FileDefinitionService {
         
         FileDefinition condition = new FileDefinition();
         condition.setId(fileDefinitionId);
-        return this.fileDefinitionDao.deleteFileDefinition(condition);
+        return this.fileDefinitionDao.delete(condition);
     }
     
     /**
@@ -124,7 +122,7 @@ public class FileDefinitionService {
         FileDefinition condition = new FileDefinition();
         condition.setId(fileDefinitionId);
         
-        return this.fileDefinitionDao.findFileDefinition(condition);
+        return this.fileDefinitionDao.find(condition);
     }
     
     /**
@@ -155,6 +153,6 @@ public class FileDefinitionService {
         updateRowMap.put("filename", fileDefinition.getFilename());
         updateRowMap.put("lastUpdateDate", fileDefinition.getLastUpdateDate());
         
-        return this.fileDefinitionDao.updateFileDefinition(updateRowMap);
+        return this.fileDefinitionDao.update(updateRowMap);
     }
 }

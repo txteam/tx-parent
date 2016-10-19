@@ -36,7 +36,7 @@ public class FileContextBuilder extends FileContextConfigurator {
     private static final String fileDefinitionHisLocation = "classpath:/com/tx/component/file/script/core_file_definition_his.xml";
     
     /** 文件定义业务层 */
-    @Resource(name = "fileDefinitionService")
+    @Resource(name = "fileContext.fileDefinitionService")
     private FileDefinitionService fileDefinitionService;
     
     /**
