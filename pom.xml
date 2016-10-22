@@ -146,7 +146,7 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
-			
+
 			<!-- commons optional -->
 			<dependency>
 				<groupId>commons-codec</groupId>
@@ -200,7 +200,7 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
-			
+
 			<!-- commons-other -->
 			<dependency>
 				<groupId>commons-fileupload</groupId>
@@ -293,8 +293,8 @@
 			<!-- </exclusion> -->
 			<!-- </exclusions> -->
 			<!-- </dependency> -->
-			
-			
+
+
 
 			<!-- hibernate -->
 			<dependency>
@@ -708,8 +708,9 @@
 			<dependency>
 				<groupId>com.healthmarketscience.sqlbuilder</groupId>
 				<artifactId>sqlbuilder</artifactId>
-				<version>2.0.12</version>
+				<version>2.1.5</version>
 			</dependency>
+
 
 			<!-- mybatis -->
 			<dependency>
@@ -1388,7 +1389,7 @@
 				<version>2.0</version>
 				<scope>provided</scope>
 			</dependency>
-			
+
 			<!-- Low 1.6 version of the JDK dependency -->
 			<dependency>
 				<groupId>com.sun.xml.fastinfoset</groupId>

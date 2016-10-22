@@ -49,8 +49,8 @@ public class AliyunMessageSendTest{
             request.setReplyToAddress(true);
             request.setToAddress(email);
             
-            request.setSubject("给你打款800万，请及时验收！");
-            request.setHtmlBody("测试邮件 别当真");
+            request.setSubject("给你打款800万，请及时验收！xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+            request.setHtmlBody("测试邮件 别当真.xxxxxxxxxxxxxxxxxxxxxxxxx");
             
             SingleSendMailResponse httpResponse = client.getAcsResponse(request);
             String rid = httpResponse.getRequestId();

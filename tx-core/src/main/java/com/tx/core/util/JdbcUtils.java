@@ -45,7 +45,7 @@ public class JdbcUtils {
     }
     
     static {
-        SIMPLE_TYPE_2_TYPES_MAP.put(Class.class, Types.VARBINARY);
+        SIMPLE_TYPE_2_TYPES_MAP.put(Class.class, Types.VARCHAR);
         
         SIMPLE_TYPE_2_TYPES_MAP.put(char[].class, Types.CLOB);
         SIMPLE_TYPE_2_TYPES_MAP.put(byte[].class, Types.BLOB);
@@ -56,8 +56,8 @@ public class JdbcUtils {
         SIMPLE_TYPE_2_TYPES_MAP.put(Integer.class, Types.INTEGER);
         SIMPLE_TYPE_2_TYPES_MAP.put(long.class, Types.BIGINT);
         SIMPLE_TYPE_2_TYPES_MAP.put(Long.class, Types.BIGINT);
-        SIMPLE_TYPE_2_TYPES_MAP.put(boolean.class, Types.BIT);
-        SIMPLE_TYPE_2_TYPES_MAP.put(Boolean.class, Types.BIT);
+        SIMPLE_TYPE_2_TYPES_MAP.put(boolean.class, Types.BIT);//参考了hibernate的方言类设计，其实tinyint也可以
+        SIMPLE_TYPE_2_TYPES_MAP.put(Boolean.class, Types.BIT);//参考了hibernate的方言类设计，其实tinyint也可以
         SIMPLE_TYPE_2_TYPES_MAP.put(byte.class, Types.TINYINT);
         SIMPLE_TYPE_2_TYPES_MAP.put(Byte.class, Types.TINYINT);
         
