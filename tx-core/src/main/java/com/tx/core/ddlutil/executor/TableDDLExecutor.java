@@ -12,7 +12,7 @@ import com.tx.core.ddlutil.alter.AlterTableDDLBuilder;
 import com.tx.core.ddlutil.create.CreateTableDDLBuilder;
 import com.tx.core.ddlutil.model.DDLColumn;
 import com.tx.core.ddlutil.model.DDLIndex;
-import com.tx.core.ddlutil.model.DDLTable;
+import com.tx.core.ddlutil.model.Table;
 
 /**
  * 表DDL处理器<br/>
@@ -82,6 +82,18 @@ public interface TableDDLExecutor {
     public void alter(AlterTableDDLBuilder builder);
     
     /**
+      * 根据表名查询对应的DDLTable详情，查询期间将会查询对应的索引以及字段<br/>
+      * <功能详细描述>
+      * @param tableName
+      * @return [参数说明]
+      * 
+      * @return DDLTable [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public Table findDDLTableDetailByTableName(String tableName);
+    
+    /**
       * 从当前数据库中获取当前表定义<br/>
       * <功能详细描述>
       * @param tableName
@@ -91,7 +103,7 @@ public interface TableDDLExecutor {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public DDLTable findDDLTableByTableName(String tableName);
+    public Table findDDLTableByTableName(String tableName);
     
     /**
       * 根据表名查询DDL的字段集合<br/>

@@ -19,13 +19,13 @@ import com.tx.core.util.ObjectUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class DDLIndex implements Serializable {
+public class DDLIndex implements Serializable, TableIndex {
     
     /** 注释内容 */
     private static final long serialVersionUID = 1491278125877027478L;
     
     /** 索引名称. */
-    private String name;
+    private String indexName;
     
     /** 索引所在字段名 */
     private String columnName;
@@ -36,23 +36,28 @@ public class DDLIndex implements Serializable {
     /** 是否唯一键 */
     private boolean unique;
     
+    /** 排序优先级 */
+    private int orderPriority;
+    
     /**
-     * @return 返回 name
+     * @return
      */
-    public String getName() {
-        return name;
+    @Override
+    public String getIndexName() {
+        return indexName;
     }
     
     /**
      * @param 对name进行赋值
      */
-    public void setName(String name) {
-        this.name = name;
+    public void setIndexName(String indexName) {
+        this.indexName = indexName;
     }
     
     /**
-     * @return 返回 unique
+     * @return
      */
+    @Override
     public boolean isUnique() {
         return unique;
     }
@@ -79,8 +84,9 @@ public class DDLIndex implements Serializable {
     }
     
     /**
-     * @return 返回 columnName
+     * @return
      */
+    @Override
     public String getColumnName() {
         return columnName;
     }
@@ -93,13 +99,27 @@ public class DDLIndex implements Serializable {
     }
     
     /**
+     * @return 返回 orderPriority
+     */
+    public int getOrderPriority() {
+        return orderPriority;
+    }
+    
+    /**
+     * @param 对orderPriority进行赋值
+     */
+    public void setOrderPriority(int orderPriority) {
+        this.orderPriority = orderPriority;
+    }
+    
+    /**
      * @return
      */
     @Override
     public int hashCode() {
         int hashCode = ObjectUtils.generateHashCode(super.hashCode(),
                 this,
-                "name",
+                "indexName",
                 "columnName",
                 "tableName");
         return hashCode;
@@ -113,7 +133,7 @@ public class DDLIndex implements Serializable {
     public boolean equals(Object obj) {
         boolean flag = ObjectUtils.equals(this,
                 obj,
-                "name",
+                "indexName",
                 "columnName",
                 "tableName");
         return flag;

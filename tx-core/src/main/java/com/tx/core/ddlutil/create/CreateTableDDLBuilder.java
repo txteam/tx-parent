@@ -23,9 +23,11 @@ import org.springframework.util.MultiValueMap;
 import com.tx.core.dbscript.model.DataSourceTypeEnum;
 import com.tx.core.ddlutil.dialect.DDLDialect;
 import com.tx.core.ddlutil.dialect.MysqlDDLDialect;
+import com.tx.core.ddlutil.model.TableColumn;
 import com.tx.core.ddlutil.model.DDLColumn;
 import com.tx.core.ddlutil.model.DDLIndex;
 import com.tx.core.ddlutil.model.JdbcTypeEnum;
+import com.tx.core.ddlutil.model.TableIndex;
 import com.tx.core.exceptions.SILException;
 import com.tx.core.exceptions.util.AssertUtils;
 
@@ -112,10 +114,10 @@ public abstract class CreateTableDDLBuilder implements
     private String tableName;
     
     /** 字段集合 */
-    private final List<DDLColumn> columns = new LinkedList<>();
+    private final List<TableColumn> columns = new LinkedList<>();
     
     /** 索引集合 */
-    private final List<DDLIndex> indexes = new LinkedList<>();
+    private final List<TableIndex> indexes = new LinkedList<>();
     
     /** 是否要写入字符 */
     private StringWriter writer;
@@ -133,11 +135,35 @@ public abstract class CreateTableDDLBuilder implements
         this.tableName = tableName;
     }
     
-    public CreateTableDDLBuilder newColumn(DDLColumn ddlColumn) {
-        validateNewColumn(ddlColumn);
+    /**
+      * 新增字段<br/>
+      * <功能详细描述>
+      * @param ddlColumn
+      * @return [参数说明]
+      * 
+      * @return CreateTableDDLBuilder [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public CreateTableDDLBuilder newColumn(TableColumn tableColumn) {
+        AssertUtils.notNull(tableColumn, "tableColumn is null.");
+        AssertUtils.notEmpty(tableColumn.getColumnName(),
+                "tableColumn.columnName is empty.");
+        AssertUtils.notNull(tableColumn.getJdbcType(),
+                "ddlColumn.jdbcType is empty.");
+        if (StringUtils.isEmpty(tableColumn.getColumnType())) {
+            //字段类型
+            String columnType = this.ddlDialect.getDialect()
+                    .getTypeName(tableColumn.getJdbcType().getSqlType(),
+                            tableColumn.getSize(),
+                            tableColumn.getSize(),
+                            tableColumn.getScale());
+            tableColumn.setColumnType(columnType);
+        }
+        validateNewColumn(tableColumn);
         
         //添加字段
-        this.columns.add(ddlColumn);
+        this.columns.add(tableColumn);
         return this;
     }
     
@@ -268,29 +294,56 @@ public abstract class CreateTableDDLBuilder implements
         return this;
     }
     
+    /**
+      * 新增时间字段<br/>
+      * <功能详细描述>
+      * @param columnName
+      * @param required
+      * @param isDefaultNow
+      * @return [参数说明]
+      * 
+      * @return CreateTableDDLBuilder [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
     public CreateTableDDLBuilder newDateColumn(String columnName,
             boolean required, boolean isDefaultNow) {
         AssertUtils.notEmpty(columnName, "columnName is empty.");
         
+        JdbcTypeEnum jdbcType = JdbcTypeEnum.DATETIME;
+        DDLColumn ddlColumn = new DDLColumn(false, columnName, this.tableName,
+                jdbcType, 0, 0, required, isDefaultNow ? "now()" : null);
+        String columnType = this.ddlDialect.getDialect()
+                .getTypeName(jdbcType.getSqlType(), 0, 0, 0);
+        ddlColumn.setColumnType(columnType);
+        
+        validateNewColumn(ddlColumn);
+        this.columns.add(ddlColumn);
+        
         return this;
     }
     
-    public CreateTableDDLBuilder newBooleanColumn(String columnName, int size,
-            int scale, boolean required, boolean defaultValue) {
+    public CreateTableDDLBuilder newBooleanColumn(String columnName,
+            boolean required, Boolean defaultValue) {
         AssertUtils.notEmpty(columnName, "columnName is empty.");
         
-        return this;
-    }
-    
-    public CreateTableDDLBuilder newDecimalColumn(String columnName,
-            boolean required, boolean defaultValue) {
+        TableColumn ddlColumn = new DDLColumn(false, columnName,
+                this.tableName, JdbcTypeEnum.BIT, 0, 0, required,
+                defaultValue ? "now()" : null);
         
         return this;
     }
     
-    private void validateNewColumn(DDLColumn ddlColumn) {
+    public CreateTableDDLBuilder newDecimalColumn(String columnName, int size,
+            int scale, boolean required, boolean defaultValue) {
+        
+        return this;
+    }
+    
+    private void validateNewColumn(TableColumn ddlColumn) {
         AssertUtils.notNull(ddlColumn, "ddlColumn is null.");
-        AssertUtils.notEmpty(ddlColumn.getName(), "ddlColumn.name is empty.");
+        AssertUtils.notEmpty(ddlColumn.getColumnName(),
+                "ddlColumn.name is empty.");
         AssertUtils.notNull(ddlColumn.getJdbcType(),
                 "ddlColumn.jdbcType is null.");
         
@@ -311,7 +364,7 @@ public abstract class CreateTableDDLBuilder implements
         //            this.needRebuildSql = false;
         //        }
         try {
-            doRebuildCreateSql();
+            doBuildCreateSql();
         } catch (IOException e) {
             throw new SILException("generate create table sql exception.", e);
         }
@@ -319,7 +372,7 @@ public abstract class CreateTableDDLBuilder implements
         return createSql;
     }
     
-    protected void doRebuildCreateSql() throws IOException {
+    protected void doBuildCreateSql() throws IOException {
         this.writer = new StringWriter();
         
         //写入表注释
@@ -338,7 +391,7 @@ public abstract class CreateTableDDLBuilder implements
         printComment("-----------------------------------------------------------------------");
         printComment(this.tableName);
         printComment("-----------------------------------------------------------------------");
-        println();
+        //println();
     }
     
     /**
@@ -355,11 +408,11 @@ public abstract class CreateTableDDLBuilder implements
         print(this.tableName);
         println("(");//输出括号后换行
         
-        List<DDLColumn> primaryColumns = new ArrayList<>();
+        List<TableColumn> primaryColumns = new ArrayList<>();
         //输出字段
         int columnSize = this.columns.size();
         int index = 0;
-        for (DDLColumn column : this.columns) {
+        for (TableColumn column : this.columns) {
             print(" ");//输出缩进
             writeColumn(column);
             if (++index < columnSize) {
@@ -377,8 +430,8 @@ public abstract class CreateTableDDLBuilder implements
             
             int primaryColumnSize = primaryColumns.size();
             int primaryIndex = 0;
-            for (DDLColumn column : primaryColumns) {
-                print(column.getName());
+            for (TableColumn column : primaryColumns) {
+                print(column.getColumnName());
                 if ((++primaryIndex) < primaryColumnSize) {
                     print(",");
                 }
@@ -403,14 +456,14 @@ public abstract class CreateTableDDLBuilder implements
         if (CollectionUtils.isEmpty(this.indexes)) {
             return;
         }
-        MultiValueMap<String, DDLIndex> idxMutiMap = new LinkedMultiValueMap<>();
-        for (DDLIndex idex : this.indexes) {
-            idxMutiMap.add(idex.getName(), idex);
+        MultiValueMap<String, TableIndex> idxMutiMap = new LinkedMultiValueMap<>();
+        for (TableIndex idex : this.indexes) {
+            idxMutiMap.add(idex.getIndexName(), idex);
         }
         
-        for (Entry<String, List<DDLIndex>> entryTemp : idxMutiMap.entrySet()) {
+        for (Entry<String, List<TableIndex>> entryTemp : idxMutiMap.entrySet()) {
             String indexName = entryTemp.getKey();
-            DDLIndex idxFirst = idxMutiMap.getFirst(indexName);
+            TableIndex idxFirst = idxMutiMap.getFirst(indexName);
             boolean unique = idxFirst.isUnique();
             
             writeIndex(unique, indexName, entryTemp.getValue());
@@ -448,13 +501,13 @@ public abstract class CreateTableDDLBuilder implements
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    protected void writeColumn(DDLColumn column) throws IOException {
-        print(column.getName());
+    protected void writeColumn(TableColumn column) throws IOException {
+        print(column.getColumnName());
         print(" ");
         print(column.getColumnType());
         
         if (!StringUtils.isEmpty(column.getDefaultValue())) {
-            print(" default");
+            print(" default ");
             print(column.getDefaultValue());
         }
         
@@ -476,7 +529,7 @@ public abstract class CreateTableDDLBuilder implements
       * @see [类、类#方法、类#成员]
      */
     protected void writeIndex(boolean unique, String indexName,
-            List<DDLIndex> ddlIndexes) throws IOException {
+            List<TableIndex> ddlIndexes) throws IOException {
         print(unique ? "create unique index " : "create index ");
         print(indexName);
         print(" on ");
@@ -485,7 +538,7 @@ public abstract class CreateTableDDLBuilder implements
         
         int primaryColumnSize = ddlIndexes.size();
         int primaryIndex = 0;
-        for (DDLIndex column : ddlIndexes) {
+        for (TableIndex column : ddlIndexes) {
             print(column.getColumnName());
             if ((++primaryIndex) < primaryColumnSize) {
                 print(",");

@@ -6,7 +6,6 @@
  */
 package com.tx.core.ddlutil.alter;
 
-import com.tx.core.ddlutil.create.CreateTableDDLBuilder;
 
 
  /**

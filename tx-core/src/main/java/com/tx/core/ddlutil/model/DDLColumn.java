@@ -19,13 +19,16 @@ import com.tx.core.util.ObjectUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class DDLColumn implements Serializable {
+public class DDLColumn implements Serializable, TableColumn {
     
     /** 注释内容 */
     private static final long serialVersionUID = -6431639195048067292L;
     
     /** 字段名. */
-    private String name;
+    private String columnName;
+    
+    /** 表字段注释 */
+    private String comment;
     
     /** 索引所在表 */
     private String tableName;
@@ -51,17 +54,20 @@ public class DDLColumn implements Serializable {
     /** 默认值. */
     private String defaultValue;
     
+    /** 排序优先级 */
+    private int orderPriority = 0;
+    
     /** <默认构造函数> */
     public DDLColumn() {
         super();
     }
     
     /** <默认构造函数> */
-    public DDLColumn(boolean primaryKey, String name, String tableName,
+    public DDLColumn(boolean primaryKey, String columnName, String tableName,
             JdbcTypeEnum jdbcType, int size, int scale, boolean required,
             String defaultValue) {
         super();
-        this.name = name;
+        this.columnName = columnName;
         this.tableName = tableName;
         this.jdbcType = jdbcType;
         this.primaryKey = primaryKey;
@@ -72,22 +78,24 @@ public class DDLColumn implements Serializable {
     }
     
     /**
-     * @return 返回 name
+     * @return
      */
-    public String getName() {
-        return name;
+    @Override
+    public String getColumnName() {
+        return this.columnName;
     }
     
     /**
      * @param 对name进行赋值
      */
-    public void setName(String name) {
-        this.name = name;
+    public void setColumnName(String columnName) {
+        this.columnName = columnName;
     }
     
     /**
-     * @return 返回 columnType
+     * @return
      */
+    @Override
     public String getColumnType() {
         return columnType;
     }
@@ -95,6 +103,7 @@ public class DDLColumn implements Serializable {
     /**
      * @param 对columnType进行赋值
      */
+    @Override
     public void setColumnType(String columnType) {
         this.columnType = columnType;
     }
@@ -102,6 +111,7 @@ public class DDLColumn implements Serializable {
     /**
      * @return 返回 primaryKey
      */
+    @Override
     public boolean isPrimaryKey() {
         return primaryKey;
     }
@@ -116,6 +126,7 @@ public class DDLColumn implements Serializable {
     /**
      * @return 返回 required
      */
+    @Override
     public boolean isRequired() {
         return required;
     }
@@ -128,8 +139,9 @@ public class DDLColumn implements Serializable {
     }
     
     /**
-     * @return 返回 jdbcType
+     * @return
      */
+    @Override
     public JdbcTypeEnum getJdbcType() {
         return jdbcType;
     }
@@ -142,8 +154,9 @@ public class DDLColumn implements Serializable {
     }
     
     /**
-     * @return 返回 size
+     * @return
      */
+    @Override
     public int getSize() {
         return size;
     }
@@ -156,8 +169,9 @@ public class DDLColumn implements Serializable {
     }
     
     /**
-     * @return 返回 scale
+     * @return
      */
+    @Override
     public int getScale() {
         return scale;
     }
@@ -170,8 +184,9 @@ public class DDLColumn implements Serializable {
     }
     
     /**
-     * @return 返回 defaultValue
+     * @return
      */
+    @Override
     public String getDefaultValue() {
         return defaultValue;
     }
@@ -184,7 +199,7 @@ public class DDLColumn implements Serializable {
     }
     
     /**
-     * @return 返回 tableName
+     * @return
      */
     public String getTableName() {
         return tableName;
@@ -198,13 +213,41 @@ public class DDLColumn implements Serializable {
     }
     
     /**
+     * @return 返回 orderPriority
+     */
+    public int getOrderPriority() {
+        return orderPriority;
+    }
+    
+    /**
+     * @param 对orderPriority进行赋值
+     */
+    public void setOrderPriority(int orderPriority) {
+        this.orderPriority = orderPriority;
+    }
+    
+    /**
+     * @return 返回 comment
+     */
+    public String getComment() {
+        return comment;
+    }
+
+    /**
+     * @param 对comment进行赋值
+     */
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    /**
      * @return
      */
     @Override
     public int hashCode() {
         int hashCode = ObjectUtils.generateHashCode(super.hashCode(),
                 this,
-                "name",
+                "columnName",
                 "tableName");
         return hashCode;
     }
@@ -215,7 +258,7 @@ public class DDLColumn implements Serializable {
      */
     @Override
     public boolean equals(Object obj) {
-        boolean flag = ObjectUtils.equals(this, obj, "name", "tableName");
+        boolean flag = ObjectUtils.equals(this, obj, "columnName", "tableName");
         return flag;
     }
     

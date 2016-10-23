@@ -31,6 +31,7 @@ import com.tx.core.ddlutil.model.DDLColumn;
 import com.tx.core.ddlutil.model.DDLIndex;
 import com.tx.core.ddlutil.model.DDLTable;
 import com.tx.core.ddlutil.model.JdbcTypeEnum;
+import com.tx.core.ddlutil.model.Table;
 import com.tx.core.exceptions.SILException;
 import com.tx.core.exceptions.util.AssertUtils;
 
@@ -63,7 +64,7 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
     
     //查询table中column定义
     private static final String SQL_QUERY_COLUMN_BY_TABLENAME = "SELECT "
-            + "TCOL.COLUMN_NAME AS 'name', TCOL.COLUMN_TYPE AS 'columnType', "
+            + "TCOL.COLUMN_NAME AS 'columnName', TCOL.COLUMN_TYPE AS 'columnType', "
             + "TCOL.TABLE_NAME AS 'tableName', "
             + "( CASE WHEN TCOL.COLUMN_KEY = 'PRI' THEN 'Y' ELSE 'N' END ) AS 'primaryKey', "
             + "( CASE WHEN TCOL.IS_NULLABLE = 'NO' THEN 'Y' ELSE 'N' END ) AS 'required', "
@@ -79,7 +80,7 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
         @Override
         public DDLColumn mapRow(ResultSet rs, int rowNum) throws SQLException {
             DDLColumn col = new DDLColumn();
-            col.setName(rs.getString("name"));
+            col.setColumnName(rs.getString("columnName"));
             col.setColumnType(rs.getString("columnType"));
             col.setTableName(rs.getString("tableName"));
             
@@ -117,7 +118,7 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
     
     //查询索引SQL
     private static final String SQL_QUERY_INDEX_BY_TABLENAME = "SELECT "
-            + "TIDX.INDEX_NAME AS 'name', "
+            + "TIDX.INDEX_NAME AS 'indexName', "
             + "TIDX.COLUMN_NAME AS 'columnName', TIDX.TABLE_NAME AS 'tableName', "
             + "( CASE WHEN TIDX.NON_UNIQUE = 1 THEN 0 ELSE 1 END ) AS 'unique' "
             + "FROM information_schema.`STATISTICS` TIDX "
@@ -128,7 +129,7 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
         @Override
         public DDLIndex mapRow(ResultSet rs, int rowNum) throws SQLException {
             DDLIndex ddlIndex = new DDLIndex();
-            ddlIndex.setName(rs.getString("name"));
+            ddlIndex.setIndexName(rs.getString("indexName"));
             ddlIndex.setColumnName(rs.getString("columnName"));
             ddlIndex.setTableName(rs.getString("tableName"));
             ddlIndex.setUnique(rs.getBoolean("unique"));
@@ -334,13 +335,43 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
     @Override
     public void alter(AlterTableDDLBuilder builder) {
         AssertUtils.notNull(builder, "builder is null.");
-//        AssertUtils.isTrue(exists(builder),
-//                "table is not exist.tableName:{}",
-//                tableName);
+        //        AssertUtils.isTrue(exists(builder),
+        //                "table is not exist.tableName:{}",
+        //                tableName);
         
         String alterSql = builder.alterSql();
         
         this.jdbcTemplate.execute(alterSql);
+    }
+    
+    /**
+     * 从当前数据库中获取当前表定义<br/>
+     * <功能详细描述>
+     * @param tableName
+     * @return [参数说明]
+     * 
+     * @return DDLTable [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    @Override
+    public Table findDDLTableDetailByTableName(String tableName) {
+        AssertUtils.notEmpty(tableName, "tableName is empty.");
+        
+        List<DDLTable> ddlTableList = this.jdbcTemplate.query(SQL_FIND_TABLE_BY_TABLENAME,
+                new Object[] { tableName, this.schema },
+                ddlTableRowMapper);
+        if (CollectionUtils.isEmpty(ddlTableList)) {
+            return null;
+        }
+        
+        DDLTable ddlTable = ddlTableList.get(0);
+        List<DDLColumn> columns = queryDDLColumnsByTableName(tableName);
+        List<DDLIndex> indexes = queryDDLIndexesByTableName(tableName);
+        ddlTable.setColumns(columns);
+        ddlTable.setIndexes(indexes);
+        
+        return ddlTable;
     }
     
     /**

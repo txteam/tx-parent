@@ -33,27 +33,27 @@ public class DDLUtilTest {
     
     public static void main(String[] args) {
         DataSourceFinder finder = new SimpleDataSourceFinder(
-                "com.mysql.jdbc.Driver", "jdbc:mysql://localhost:3306/lms",
+                "com.mysql.jdbc.Driver", "jdbc:mysql://localhost:3306/wtms_db",
                 "root", "root");
         DataSource ds = finder.getDataSource();
         JdbcTemplate jt = new JdbcTemplate(ds);
         
         MysqlTableDDLExecutor ddlExecutor = new MysqlTableDDLExecutor(jt);
         
-        boolean flag = ddlExecutor.exists("la_payment_schedule");
+        boolean flag = ddlExecutor.exists("comm_message_tempalte");
         System.out.println("exists:" + flag);
         
-        DDLTable tab = ddlExecutor.findDDLTableByTableName("la_payment_schedule_entry");
+        DDLTable tab = ddlExecutor.findDDLTableByTableName("comm_message_tempalte");
         System.out.println(tab.getCatalog() + ":" + tab.getSchema() + ":"
                 + tab.getName() + ":" + tab.getType());
         
         CreateTableDDLBuilder createBuilder = ddlExecutor.generateCreateTableDDLBuilder(tab.getName());
         
-        List<DDLColumn> cols = ddlExecutor.queryDDLColumnsByTableName("la_payment_schedule_entry");
+        List<DDLColumn> cols = ddlExecutor.queryDDLColumnsByTableName("comm_message_tempalte");
         for (DDLColumn col : cols) {
             createBuilder.newColumn(col);
             
-            System.out.println(col.getName()
+            System.out.println(col.getColumnName()
                     + ":"
                     + col.getColumnType()
                     + ":"
@@ -68,7 +68,7 @@ public class DDLUtilTest {
                     + ":" + col.getScale());
         }
         
-        List<DDLIndex> idxs = ddlExecutor.queryDDLIndexesByTableName("la_payment_schedule_entry");
+        List<DDLIndex> idxs = ddlExecutor.queryDDLIndexesByTableName("comm_message_tempalte");
         for(DDLIndex idx : idxs){
             createBuilder.newIndex(idx);
         }

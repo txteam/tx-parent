@@ -8,6 +8,7 @@ package com.tx.core.ddlutil.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 import com.tx.core.ddlutil.DDLUtilsConstants;
 import com.tx.core.util.ObjectUtils;
@@ -21,7 +22,7 @@ import com.tx.core.util.ObjectUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class DDLTable implements Serializable {
+public class DDLTable implements Serializable, Table {
     
     /** 注释内容 */
     private static final long serialVersionUID = 829927103002085200L;
@@ -42,10 +43,10 @@ public class DDLTable implements Serializable {
     private String type = DDLUtilsConstants.DDL_TABLE_TYPE_TABLE;
     
     /** 表字段. */
-    private ArrayList<DDLColumn> columns = new ArrayList<DDLColumn>();
+    private List<? extends TableColumn> columns = new ArrayList<>();
     
     /** 索引集合. */
-    private ArrayList<DDLIndex> indexes = new ArrayList<DDLIndex>();
+    private List<? extends TableIndex> indexes = new ArrayList<>();
     
     /**
      * @return 返回 catalog
@@ -76,8 +77,9 @@ public class DDLTable implements Serializable {
     }
     
     /**
-     * @return 返回 name
+     * @return
      */
+    @Override
     public String getName() {
         return name;
     }
@@ -90,8 +92,9 @@ public class DDLTable implements Serializable {
     }
     
     /**
-     * @return 返回 comment
+     * @return
      */
+    @Override
     public String getComment() {
         return comment;
     }
@@ -118,30 +121,32 @@ public class DDLTable implements Serializable {
     }
     
     /**
-     * @return 返回 columns
+     * @return
      */
-    public ArrayList<DDLColumn> getColumns() {
+    @Override
+    public List<? extends TableColumn> getColumns() {
         return columns;
     }
     
     /**
      * @param 对columns进行赋值
      */
-    public void setColumns(ArrayList<DDLColumn> columns) {
+    public void setColumns(List<? extends TableColumn> columns) {
         this.columns = columns;
     }
     
     /**
-     * @return 返回 indexes
+     * @return
      */
-    public ArrayList<DDLIndex> getIndexes() {
+    @Override
+    public List<? extends TableIndex> getIndexes() {
         return indexes;
     }
     
     /**
      * @param 对indexes进行赋值
      */
-    public void setIndexes(ArrayList<DDLIndex> indexes) {
+    public void setIndexes(List<? extends TableIndex> indexes) {
         this.indexes = indexes;
     }
     

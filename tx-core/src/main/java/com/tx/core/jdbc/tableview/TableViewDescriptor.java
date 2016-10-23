@@ -37,9 +37,4 @@ public class TableViewDescriptor<T> {
         this.type = type;
         this.tableViewName = tableViewAnno.tableViewName();
     }
-    
-    
-    
-    
-    
 }
