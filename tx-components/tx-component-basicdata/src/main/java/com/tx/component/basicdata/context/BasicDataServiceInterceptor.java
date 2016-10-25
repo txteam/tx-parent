@@ -94,7 +94,9 @@ public class BasicDataServiceInterceptor implements MethodInterceptor {
                 || methodName.startsWith("add")
                 || methodName.startsWith("update")
                 || methodName.startsWith("change")
-                || methodName.startsWith("del")) {
+                || methodName.startsWith("del")
+                || methodName.startsWith("disable")
+                || methodName.startsWith("enable")) {
             cache.clear();
             res = invocation.proceed();
         } else {
