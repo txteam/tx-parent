@@ -67,12 +67,7 @@ public class BasicDataServiceInterceptor implements MethodInterceptor {
         Object[] args = invocation.getArguments();
         
         Object res = null;
-        if ("type".equals(methodName) || "code".equals(methodName)
-                || "tableName".equals(methodName)) {
-            //忽略：type,code,tableName等几个方法
-            res = invocation.proceed();
-        } else if (methodName.startsWith("query")
-                || methodName.startsWith("find")
+        if (methodName.startsWith("query") || methodName.startsWith("find")
                 || methodName.startsWith("list")) {
             //生成对应的缓存值
             String cacheKey = generateCacheKey(methodName, args);
@@ -101,6 +96,8 @@ public class BasicDataServiceInterceptor implements MethodInterceptor {
                 || methodName.startsWith("change")
                 || methodName.startsWith("del")) {
             cache.clear();
+            res = invocation.proceed();
+        } else {
             res = invocation.proceed();
         }
         return res;

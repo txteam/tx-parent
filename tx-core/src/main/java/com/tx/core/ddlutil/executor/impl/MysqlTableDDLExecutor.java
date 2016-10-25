@@ -448,6 +448,7 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
+    @Override
     public CreateTableDDLBuilder generateCreateTableDDLBuilder(String tableName) {
         AssertUtils.notEmpty(tableName, "tableName is empty.");
         
@@ -466,6 +467,7 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
+    @Override
     public AlterTableDDLBuilder generateAlterTableDDLBuilder(String tableName) {
         AssertUtils.notEmpty(tableName, "tableName is empty.");
         
