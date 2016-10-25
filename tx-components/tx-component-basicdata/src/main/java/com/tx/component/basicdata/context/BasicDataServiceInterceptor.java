@@ -74,7 +74,7 @@ public class BasicDataServiceInterceptor implements MethodInterceptor {
             ValueWrapper vw = cache.get(cacheKey);
             if (vw == null || vw.get() == null) {
                 //如果缓存里值不存在，则调用方法进行获取<br/>
-                logger.info("未命中缓存：缓存:{} 缓存key:{}",
+                logger.debug("未命中缓存：缓存:{} 缓存key:{}",
                         this.cache.getName(),
                         cacheKey);
                 res = invocation.proceed();
@@ -83,7 +83,7 @@ public class BasicDataServiceInterceptor implements MethodInterceptor {
                 }
             } else {
                 //如果有值则获取缓存值
-                logger.info("从缓存中获取: 命中缓存：缓存:{} 缓存key:{}",
+                logger.debug("从缓存中获取: 命中缓存：缓存:{} 缓存key:{}",
                         this.cache.getName(),
                         cacheKey);
                 res = vw.get();
