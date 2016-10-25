@@ -236,34 +236,35 @@ public class BasicDataServiceInterceptor implements MethodInterceptor {
     }
     
     public static void main(String[] args) {
-        Map<String, String> test1 = new TreeMap<String, String>();
-        test1.put("test2", "test2");
-        test1.put("test5", "test5");
-        test1.put("test4", "test4");
-        test1.put("test1", "test1");
-        test1.put("test3", "test3");
-        
-        Map<String, String> test2 = new TreeMap<String, String>();
-        test2.put("test1", "test1");
-        test2.put("test3", "test3");
-        test2.put("test2", "test2");
-        test2.put("test5", "test5");
-        test2.put("test4", "test4");
-        
-        for (Entry<String, String> entry : test1.entrySet()) {
-            System.out.println(entry.getKey());
-        }
-        for (Entry<String, String> entry : test2.entrySet()) {
-            System.out.println(entry.getKey());
-        }
-        
-        BasicDataServiceInterceptor t = new BasicDataServiceInterceptor();
-        String cacheKey1 = t.generateCacheKey("queryList", new Object[] { true,
-                test1 });
-        System.out.println(cacheKey1);
-        
-        String cacheKey2 = t.generateCacheKey("queryList", new Object[] { true,
-                test2 });
-        System.out.println(cacheKey2);
+        System.out.println("insert".startsWith("insert"));
+//        Map<String, String> test1 = new TreeMap<String, String>();
+//        test1.put("test2", "test2");
+//        test1.put("test5", "test5");
+//        test1.put("test4", "test4");
+//        test1.put("test1", "test1");
+//        test1.put("test3", "test3");
+//        
+//        Map<String, String> test2 = new TreeMap<String, String>();
+//        test2.put("test1", "test1");
+//        test2.put("test3", "test3");
+//        test2.put("test2", "test2");
+//        test2.put("test5", "test5");
+//        test2.put("test4", "test4");
+//        
+//        for (Entry<String, String> entry : test1.entrySet()) {
+//            System.out.println(entry.getKey());
+//        }
+//        for (Entry<String, String> entry : test2.entrySet()) {
+//            System.out.println(entry.getKey());
+//        }
+//        
+//        BasicDataServiceInterceptor t = new BasicDataServiceInterceptor();
+//        String cacheKey1 = t.generateCacheKey("queryList", new Object[] { true,
+//                test1 });
+//        System.out.println(cacheKey1);
+//        
+//        String cacheKey2 = t.generateCacheKey("queryList", new Object[] { true,
+//                test2 });
+//        System.out.println(cacheKey2);
     }
 }
