@@ -37,7 +37,22 @@ public class DDLIndex implements Serializable, TableIndex {
     private boolean unique;
     
     /** 排序优先级 */
-    private int orderPriority;
+    private int orderPriority = 0;
+    
+    /** <默认构造函数> */
+    public DDLIndex() {
+        super();
+    }
+    
+    /** <默认构造函数> */
+    public DDLIndex(String indexName, String columnName, String tableName,
+            boolean unique) {
+        super();
+        this.indexName = indexName;
+        this.columnName = columnName;
+        this.tableName = tableName;
+        this.unique = unique;
+    }
     
     /**
      * @return

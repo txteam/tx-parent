@@ -69,9 +69,19 @@ public class DDLUtilTest {
         }
         
         List<DDLIndex> idxs = ddlExecutor.queryDDLIndexesByTableName("comm_message_tempalte");
-        for(DDLIndex idx : idxs){
+        for (DDLIndex idx : idxs) {
             createBuilder.newIndex(idx);
         }
+        
+        createBuilder.newColumnOfBoolean("testBoolean", true, true);
+        createBuilder.newColumnOfDate("testDateTime", false, false);
+        createBuilder.newColumnOfDate("testDateTime2", false, true);
+        createBuilder.newColumnOfDecimal("testDecimal", 16, 4, true, "0");
+        createBuilder.newColumnOfInteger("testInteger", 8, false, null);
+        createBuilder.newColumnOfVarchar("testVarchar",
+                16,
+                true,
+                "defaultVarchar");
         
         System.out.println(createBuilder.createSql());
     }

@@ -23,6 +23,7 @@ public class MysqlCreateTableDDLBuilder extends CreateTableDDLBuilder {
     /** <默认构造函数> */
     MysqlCreateTableDDLBuilder(DDLDialect ddlDialect) {
         super(ddlDialect);
+        AssertUtils.notNull(ddlDialect, "ddlDialect is null.");
     }
     
     /** <默认构造函数> */
@@ -44,9 +45,5 @@ public class MysqlCreateTableDDLBuilder extends CreateTableDDLBuilder {
                 tableName, ddlDialect == null ? getDDLDialect() : ddlDialect);
         return builder;
     }
-    
-    
-    
-    
     
 }
