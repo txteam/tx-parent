@@ -15,10 +15,12 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import com.tx.core.datasource.DataSourceFinder;
 import com.tx.core.datasource.finder.SimpleDataSourceFinder;
 import com.tx.core.ddlutil.create.CreateTableDDLBuilder;
+import com.tx.core.ddlutil.executor.TableDDLExecutor;
 import com.tx.core.ddlutil.executor.impl.MysqlTableDDLExecutor;
 import com.tx.core.ddlutil.model.DDLColumn;
 import com.tx.core.ddlutil.model.DDLIndex;
 import com.tx.core.ddlutil.model.DDLTable;
+import com.tx.core.ddlutil.model.Table;
 
 /**
  * <功能简述>
@@ -38,16 +40,21 @@ public class DDLUtilTest {
         DataSource ds = finder.getDataSource();
         JdbcTemplate jt = new JdbcTemplate(ds);
         
-        MysqlTableDDLExecutor ddlExecutor = new MysqlTableDDLExecutor(jt);
+        TableDDLExecutor ddlExecutor = new MysqlTableDDLExecutor(jt);
         
         boolean flag = ddlExecutor.exists("comm_message_tempalte");
         System.out.println("exists:" + flag);
         
-        DDLTable tab = ddlExecutor.findDDLTableByTableName("comm_message_tempalte");
-        System.out.println(tab.getCatalog() + ":" + tab.getSchema() + ":"
-                + tab.getName() + ":" + tab.getType());
+        Table tab = ddlExecutor.findDDLTableByTableName("comm_message_tempalte");
+        if (tab instanceof DDLTable) {
+            DDLTable ddlTab = (DDLTable) tab;
+            System.out.println(ddlTab.getCatalog() + ":" + ddlTab.getSchema()
+                    + ":" + ddlTab.getTableName() + ":" + ddlTab.getType());
+        } else {
+            System.out.println(tab.getTableName());
+        }
         
-        CreateTableDDLBuilder createBuilder = ddlExecutor.generateCreateTableDDLBuilder(tab.getName());
+        CreateTableDDLBuilder createBuilder = ddlExecutor.generateCreateTableDDLBuilder(tab.getTableName());
         
         List<DDLColumn> cols = ddlExecutor.queryDDLColumnsByTableName("comm_message_tempalte");
         for (DDLColumn col : cols) {

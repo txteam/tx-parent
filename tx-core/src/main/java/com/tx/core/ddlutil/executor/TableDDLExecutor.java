@@ -12,6 +12,7 @@ import com.tx.core.ddlutil.alter.AlterTableDDLBuilder;
 import com.tx.core.ddlutil.create.CreateTableDDLBuilder;
 import com.tx.core.ddlutil.model.DDLColumn;
 import com.tx.core.ddlutil.model.DDLIndex;
+import com.tx.core.ddlutil.model.DDLTable;
 import com.tx.core.ddlutil.model.Table;
 
 /**
@@ -103,7 +104,7 @@ public interface TableDDLExecutor {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public Table findDDLTableByTableName(String tableName);
+    public DDLTable findDDLTableByTableName(String tableName);
     
     /**
       * 根据表名查询DDL的字段集合<br/>

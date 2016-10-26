@@ -34,7 +34,7 @@ public class DDLTable implements Serializable, Table {
     private String schema = null;
     
     /** 表名 */
-    private String name = null;
+    private String tableName = null;
     
     /** 表内容备注 */
     private String comment = "";
@@ -77,18 +77,17 @@ public class DDLTable implements Serializable, Table {
     }
     
     /**
-     * @return
+     * @return 返回 tableName
      */
-    @Override
-    public String getName() {
-        return name;
+    public String getTableName() {
+        return tableName;
     }
     
     /**
-     * @param 对name进行赋值
+     * @param 对tableName进行赋值
      */
-    public void setName(String name) {
-        this.name = name;
+    public void setTableName(String tableName) {
+        this.tableName = tableName;
     }
     
     /**

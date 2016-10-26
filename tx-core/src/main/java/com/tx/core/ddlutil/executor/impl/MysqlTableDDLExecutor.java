@@ -54,7 +54,7 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
     //查询table数据中的实际定义
     private static final String SQL_FIND_TABLE_BY_TABLENAME = "SELECT "
             + "TAB.TABLE_CATALOG as 'catalog',TAB.TABLE_SCHEMA as 'schema',"
-            + "TAB.TABLE_NAME as 'name',TAB.TABLE_COMMENT as 'comment' "
+            + "TAB.TABLE_NAME as 'tableName',TAB.TABLE_COMMENT as 'comment' "
             + "FROM INFORMATION_SCHEMA.`TABLES` TAB "
             + "WHERE TAB.TABLE_NAME = ? AND TAB.TABLE_SCHEMA = ? AND TAB.TABLE_TYPE='BASE TABLE'";
     
@@ -154,6 +154,15 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
     
     /** schema */
     private String schema;
+    
+    /** <默认构造函数> */
+    public MysqlTableDDLExecutor(DataSource dataSource,
+            JdbcTemplate jdbcTemplate) {
+        super();
+        this.jdbcTemplate = jdbcTemplate;
+        this.dataSource = dataSource;
+        init();
+    }
     
     /** <默认构造函数> */
     public MysqlTableDDLExecutor(DataSource dataSource) {

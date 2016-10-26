@@ -16,7 +16,7 @@ public interface Table {
     /**
      * @return 返回 name
      */
-    public abstract String getName();
+    public abstract String getTableName();
     
     /**
      * @return 返回 comment
