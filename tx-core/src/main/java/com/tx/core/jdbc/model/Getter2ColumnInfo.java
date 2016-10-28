@@ -6,8 +6,6 @@
  */
 package com.tx.core.jdbc.model;
 
-import java.lang.reflect.Method;
-
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.reflection.JpaMetaClass;
 import com.tx.core.util.JdbcUtils;
@@ -38,15 +36,27 @@ public class Getter2ColumnInfo {
     /** 类型 */
     private Class<?> getterType;
     
-    /** 获取的方法 */
-    private Method getterMethod;
+    //    /** 获取的方法 */
+    //    private Method getterMethod;
     
-    /** 非简单类型下外键的getter的getter对column关系信息 */
-    private Getter2ColumnInfo foreignKeyGetter2ColumnInfo;
+    //    /** 非简单类型下外键的getter的getter对column关系信息 */
+    //    private Getter2ColumnInfo foreignKeyGetter2ColumnInfo;
     
     /** <默认构造函数> */
     public Getter2ColumnInfo() {
         super();
+    }
+    
+    /** <默认构造函数> */
+    public Getter2ColumnInfo(boolean id, boolean simpleType, String columnName,
+            String getterName, Class<?> getterType) {
+        super();
+        this.id = id;
+        this.simpleType = simpleType;
+        this.columnName = columnName;
+        this.getterName = getterName;
+        this.getterType = getterType;
+        //        this.getterMethod = getterMethod;
     }
     
     /** <默认构造函数> */
@@ -62,24 +72,30 @@ public class Getter2ColumnInfo {
         this.id = getterName.equals(jpaMetaClass.getPkGetterName());
         this.simpleType = JdbcUtils.isSupportedSimpleType(jpaMetaClass.getGetterType(getterName));
         this.getterType = jpaMetaClass.getGetterType(getterName);
-        this.getterMethod = jpaMetaClass.getClassReflector()
-                .getGetterMethod(getterName);
+        
+        //this.getterMethod = jpaMetaClass.getClassReflector()
+        //                .getGetterMethod(getterName);
         this.columnName = jpaMetaClass.getGetter2columnInfoMapping()
                 .get(getterName)
-                .getColumnName()
-                .toUpperCase();
+                .getColumnName();
+        this.getterType = jpaMetaClass.getGetter2columnInfoMapping()
+                .get(getterName)
+                .getRealGetterType();
+        this.getterName = jpaMetaClass.getGetter2columnInfoMapping()
+                .get(getterName)
+                .getRealGetterName();
         
-        if (!this.simpleType) {
-            JpaMetaClass<?> foreignKeyMetaClass = JpaMetaClass.forClass(this.getterType);
-            String foreignKeyPkName = foreignKeyMetaClass.getPkGetterName();
-            Class<?> foreignKeyPkType = foreignKeyMetaClass.getGetterType(foreignKeyPkName);
-            
-            JdbcUtils.isSupportedSimpleType(foreignKeyPkType);
-            AssertUtils.isTrue(JdbcUtils.isSupportedSimpleType(foreignKeyPkType),
-                    "pk type is not simpleType.sourceType:{} sourceGetterName:{} foreignPkName:{} foreignPkType:{}",
-                    new Object[] { jpaMetaClass.getEntityTypeName(),
-                            getterName, foreignKeyPkName, foreignKeyPkType });
-        }
+        //        if (!this.simpleType) {
+        //            JpaMetaClass<?> foreignKeyMetaClass = JpaMetaClass.forClass(this.getterType);
+        //            String foreignKeyPkName = foreignKeyMetaClass.getPkGetterName();
+        //            Class<?> foreignKeyPkType = foreignKeyMetaClass.getGetterType(foreignKeyPkName);
+        //            
+        //            JdbcUtils.isSupportedSimpleType(foreignKeyPkType);
+        //            AssertUtils.isTrue(JdbcUtils.isSupportedSimpleType(foreignKeyPkType),
+        //                    "pk type is not simpleType.sourceType:{} sourceGetterName:{} foreignPkName:{} foreignPkType:{}",
+        //                    new Object[] { jpaMetaClass.getEntityTypeName(),
+        //                            getterName, foreignKeyPkName, foreignKeyPkType });
+        //        }
     }
     
     /**
@@ -138,34 +154,34 @@ public class Getter2ColumnInfo {
         this.getterType = getterType;
     }
     
-    /**
-     * @return 返回 getterMethod
-     */
-    public Method getGetterMethod() {
-        return getterMethod;
-    }
+    //    /**
+    //     * @return 返回 getterMethod
+    //     */
+    //    public Method getGetterMethod() {
+    //        return getterMethod;
+    //    }
+    //    
+    //    /**
+    //     * @param 对getterMethod进行赋值
+    //     */
+    //    public void setGetterMethod(Method getterMethod) {
+    //        this.getterMethod = getterMethod;
+    //    }
     
-    /**
-     * @param 对getterMethod进行赋值
-     */
-    public void setGetterMethod(Method getterMethod) {
-        this.getterMethod = getterMethod;
-    }
-    
-    /**
-     * @return 返回 foreignKeyGetter2ColumnInfo
-     */
-    public Getter2ColumnInfo getForeignKeyGetter2ColumnInfo() {
-        return foreignKeyGetter2ColumnInfo;
-    }
-    
-    /**
-     * @param 对foreignKeyGetter2ColumnInfo进行赋值
-     */
-    public void setForeignKeyGetter2ColumnInfo(
-            Getter2ColumnInfo foreignKeyGetter2ColumnInfo) {
-        this.foreignKeyGetter2ColumnInfo = foreignKeyGetter2ColumnInfo;
-    }
+    //    /**
+    //     * @return 返回 foreignKeyGetter2ColumnInfo
+    //     */
+    //    public Getter2ColumnInfo getForeignKeyGetter2ColumnInfo() {
+    //        return foreignKeyGetter2ColumnInfo;
+    //    }
+    //    
+    //    /**
+    //     * @param 对foreignKeyGetter2ColumnInfo进行赋值
+    //     */
+    //    public void setForeignKeyGetter2ColumnInfo(
+    //            Getter2ColumnInfo foreignKeyGetter2ColumnInfo) {
+    //        this.foreignKeyGetter2ColumnInfo = foreignKeyGetter2ColumnInfo;
+    //    }
     
     /**
      * @return 返回 columnName

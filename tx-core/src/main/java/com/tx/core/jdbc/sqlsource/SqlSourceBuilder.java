@@ -175,17 +175,18 @@ public class SqlSourceBuilder {
                     OneToMany.class)){
                 continue;
             }
+            //如果为不直接支持的类型
+            if (!JdbcUtils.isSupportedSimpleType(getterType)) {
+//                queryConditionKey = queryConditionKey
+//                        + StringUtils.capitalize(simpleSqlSource.);
+//                queryConditionKeyType = getterTypeJpaMetaClass.getPkGetterType();
+                continue;
+            }
             String columnName = simpleSqlSource.getColumnNameByGetterName(getterNameTemp);
             
             String queryConditionKey = getterNameTemp;
             Class<?> queryConditionKeyType = getterType;
-            //如果为不直接支持的类型
-            if (!JdbcUtils.isSupportedSimpleType(getterType)) {
-                JpaMetaClass<?> getterTypeJpaMetaClass = JpaMetaClass.forClass(getterType);
-                queryConditionKey = queryConditionKey
-                        + StringUtils.capitalize(getterTypeJpaMetaClass.getPkGetterName());
-                queryConditionKeyType = getterTypeJpaMetaClass.getPkGetterType();
-            }
+            
             JdbcType queryConditionKeyJdbcType = JdbcUtils.getJdbcTypeByJavaType(queryConditionKeyType);
             
             //如果存在queryCondition条件
