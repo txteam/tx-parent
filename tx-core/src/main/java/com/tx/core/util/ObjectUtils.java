@@ -13,7 +13,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -21,7 +23,6 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -220,7 +221,8 @@ public class ObjectUtils {
         } else if (obj instanceof Map<?, ?>) {
             return MapUtils.isEmpty((Map<?, ?>) obj);
         } else if (TypeUtils.isArrayType(obj.getClass())) {
-            return ArrayUtils.isEmpty((Object[]) obj);
+            List<?> arrayList = Arrays.asList(obj);
+            return CollectionUtils.isEmpty(arrayList);
         } else {
             return false;
         }
