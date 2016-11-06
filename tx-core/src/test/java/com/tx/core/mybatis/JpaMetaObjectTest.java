@@ -6,8 +6,14 @@
  */
 package com.tx.core.mybatis;
 
+import java.util.List;
+
+import javax.persistence.Table;
+
 import org.hibernate.annotations.common.reflection.XClass;
+import org.hibernate.annotations.common.reflection.XProperty;
 import org.hibernate.annotations.common.reflection.java.JavaReflectionManager;
+import org.hibernate.cfg.AccessType;
 
 import com.tx.core.mybatis.data.Demo;
 
@@ -34,6 +40,11 @@ public class JpaMetaObjectTest {
     public static void main(String[] args) {
         XClass xclass = javaReflectionManager.toXClass(Demo.class);
         
-        xclass.getDeclaredMethods();
+        Table t = xclass.getAnnotation(Table.class);
+        System.out.println(t);
+        
+        for(XProperty xproperty : xclass.getDeclaredProperties( AccessType.FIELD.getType())){
+            System.out.println(xproperty);
+        }
     }
 }

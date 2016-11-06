@@ -18,6 +18,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 
 
@@ -54,10 +55,12 @@ public class Demo {
     
     private BigDecimal testBigDeceimal;
     
+    @Transient
     private HashMap<String, String> testHashMap;
     
     private HashSet<String> testHashSet;
     
+    @Transient
     private ArrayList<String> testArrayList;
     
     private boolean booleanTest;
