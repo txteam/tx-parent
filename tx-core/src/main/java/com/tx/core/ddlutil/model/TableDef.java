@@ -11,7 +11,7 @@ import java.util.List;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
  */
-public interface Table {
+public interface TableDef {
     
     /**
      * @return 返回 name
@@ -26,11 +26,11 @@ public interface Table {
     /**
      * @return 返回 columns
      */
-    public abstract List<? extends TableColumn> getColumns();
+    public abstract List<? extends TableColumnDef> getColumns();
     
     /**
      * @return 返回 indexes
      */
-    public abstract List<? extends TableIndex> getIndexes();
+    public abstract List<? extends TableIndexDef> getIndexes();
     
 }

@@ -40,7 +40,7 @@
 			<groupId>commons-beanutils</groupId>
 			<artifactId>commons-beanutils</artifactId>
 		</dependency>
-		
+
 		<!-- commons optional -->
 		<!-- commons中按需加载的jar包 -->
 		<dependency>
@@ -73,6 +73,11 @@
 			<artifactId>httpclient</artifactId>
 			<optional>true</optional>
 		</dependency>
+		<dependency>
+			<groupId>com.belerweb</groupId>
+			<artifactId>pinyin4j</artifactId>
+			<optional>true</optional>
+		</dependency>
 
 		<!-- srpingframework core -->
 		<!-- spring核心常用工具类包：依赖加载 -->
@@ -92,7 +97,7 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-jdbc</artifactId>
 		</dependency>
-		
+
 		<!-- srpingframework web and orm -->
 		<!-- spring相关jar包：按需加载 -->
 		<dependency>
@@ -185,7 +190,7 @@
 			<artifactId>hibernate-ehcache</artifactId>
 			<optional>true</optional>
 		</dependency>
-		
+
 		<!-- 拼接构建查询sql使用:代码中自己进行实现即可 -->
 		<dependency>
 			<groupId>com.healthmarketscience.sqlbuilder</groupId>
@@ -414,7 +419,7 @@
 			<artifactId>standard</artifactId>
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<!-- telnetd-x -->
 		<dependency>
 			<groupId>net.wimpi</groupId>

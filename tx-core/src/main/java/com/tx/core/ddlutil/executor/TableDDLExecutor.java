@@ -10,10 +10,10 @@ import java.util.List;
 
 import com.tx.core.ddlutil.alter.AlterTableDDLBuilder;
 import com.tx.core.ddlutil.create.CreateTableDDLBuilder;
-import com.tx.core.ddlutil.model.DDLColumn;
-import com.tx.core.ddlutil.model.DDLIndex;
-import com.tx.core.ddlutil.model.DDLTable;
-import com.tx.core.ddlutil.model.Table;
+import com.tx.core.ddlutil.model.DBColumnDef;
+import com.tx.core.ddlutil.model.DBIndexDef;
+import com.tx.core.ddlutil.model.DBTableDef;
+import com.tx.core.ddlutil.model.TableDef;
 
 /**
  * 表DDL处理器<br/>
@@ -83,6 +83,32 @@ public interface TableDDLExecutor {
     public void alter(AlterTableDDLBuilder builder);
     
     /**
+      * 判断是否需要升级(仅考虑增量升级，减少字段，减少字段长度无需进行升级)<br/>
+      * <功能详细描述>
+      * @param newTableDef
+      * @param oldTableDef [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public boolean isNeedUpdate(TableDef newTableDef, TableDef oldTableDef);
+    
+    /**
+      * 判断是否需要升级<br/>
+      * <功能详细描述>
+      * @param newTableDef
+      * @param oldTableDef
+      * @param isIncrementalUpgrade [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public boolean isNeedUpdate(TableDef newTableDef, TableDef oldTableDef,
+            boolean isIncrementalUpgrade);
+    
+    /**
       * 根据表名查询对应的DDLTable详情，查询期间将会查询对应的索引以及字段<br/>
       * <功能详细描述>
       * @param tableName
@@ -92,7 +118,7 @@ public interface TableDDLExecutor {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public Table findDDLTableDetailByTableName(String tableName);
+    public DBTableDef findDBTableDetailByTableName(String tableName);
     
     /**
       * 从当前数据库中获取当前表定义<br/>
@@ -104,7 +130,7 @@ public interface TableDDLExecutor {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public DDLTable findDDLTableByTableName(String tableName);
+    public DBTableDef findDBTableByTableName(String tableName);
     
     /**
       * 根据表名查询DDL的字段集合<br/>
@@ -116,7 +142,7 @@ public interface TableDDLExecutor {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public List<DDLColumn> queryDDLColumnsByTableName(String tableName);
+    public List<DBColumnDef> queryDBColumnsByTableName(String tableName);
     
     /**
       * 根据表名查询DDL的索引集合<br/>
@@ -128,7 +154,7 @@ public interface TableDDLExecutor {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public List<DDLIndex> queryDDLIndexesByTableName(String tableName);
+    public List<DBIndexDef> queryDBIndexesByTableName(String tableName);
     
     /**
       * 生成创建表的Builder对象<br/>
@@ -141,6 +167,18 @@ public interface TableDDLExecutor {
       * @see [类、类#方法、类#成员]
      */
     public CreateTableDDLBuilder generateCreateTableDDLBuilder(String tableName);
+    
+    /**
+     * 生成创建表的Builder对象<br/>
+     * <功能详细描述>
+     * @param tableName
+     * @return [参数说明]
+     * 
+     * @return CreateTableDDLBuilder [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    public CreateTableDDLBuilder generateCreateTableDDLBuilder(TableDef table);
     
     /**
       * 生成修改表的Builder对象<br/>

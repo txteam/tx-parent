@@ -11,7 +11,7 @@ import com.tx.core.model.OrderedSupport;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
  */
-public interface TableIndex extends OrderedSupport {
+public interface TableIndexDef extends OrderedSupport {
     
     /**
       * 索引名称<br/>

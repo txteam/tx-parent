@@ -6,6 +6,7 @@
  */
 package com.tx.core.ddlutil;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -17,10 +18,10 @@ import com.tx.core.datasource.finder.SimpleDataSourceFinder;
 import com.tx.core.ddlutil.create.CreateTableDDLBuilder;
 import com.tx.core.ddlutil.executor.TableDDLExecutor;
 import com.tx.core.ddlutil.executor.impl.MysqlTableDDLExecutor;
-import com.tx.core.ddlutil.model.DDLColumn;
-import com.tx.core.ddlutil.model.DDLIndex;
-import com.tx.core.ddlutil.model.DDLTable;
-import com.tx.core.ddlutil.model.Table;
+import com.tx.core.ddlutil.model.DBColumnDef;
+import com.tx.core.ddlutil.model.DBIndexDef;
+import com.tx.core.ddlutil.model.DBTableDef;
+import com.tx.core.ddlutil.model.TableDef;
 
 /**
  * <功能简述>
@@ -45,9 +46,9 @@ public class DDLUtilTest {
         boolean flag = ddlExecutor.exists("comm_message_tempalte");
         System.out.println("exists:" + flag);
         
-        Table tab = ddlExecutor.findDDLTableByTableName("comm_message_tempalte");
-        if (tab instanceof DDLTable) {
-            DDLTable ddlTab = (DDLTable) tab;
+        TableDef tab = ddlExecutor.findDBTableByTableName("comm_message_tempalte");
+        if (tab instanceof DBTableDef) {
+            DBTableDef ddlTab = (DBTableDef) tab;
             System.out.println(ddlTab.getCatalog() + ":" + ddlTab.getSchema()
                     + ":" + ddlTab.getTableName() + ":" + ddlTab.getType());
         } else {
@@ -56,8 +57,8 @@ public class DDLUtilTest {
         
         CreateTableDDLBuilder createBuilder = ddlExecutor.generateCreateTableDDLBuilder(tab.getTableName());
         
-        List<DDLColumn> cols = ddlExecutor.queryDDLColumnsByTableName("comm_message_tempalte");
-        for (DDLColumn col : cols) {
+        List<DBColumnDef> cols = ddlExecutor.queryDBColumnsByTableName("comm_message_tempalte");
+        for (DBColumnDef col : cols) {
             createBuilder.newColumn(col);
             
             System.out.println(col.getColumnName()
@@ -75,16 +76,21 @@ public class DDLUtilTest {
                     + ":" + col.getScale());
         }
         
-        List<DDLIndex> idxs = ddlExecutor.queryDDLIndexesByTableName("comm_message_tempalte");
-        for (DDLIndex idx : idxs) {
+        List<DBIndexDef> idxs = ddlExecutor.queryDBIndexesByTableName("comm_message_tempalte");
+        for (DBIndexDef idx : idxs) {
             createBuilder.newIndex(idx);
         }
         
         createBuilder.newColumnOfBoolean("testBoolean", true, true);
         createBuilder.newColumnOfDate("testDateTime", false, false);
-        createBuilder.newColumnOfDate("testDateTime2", false, true);
-        createBuilder.newColumnOfDecimal("testDecimal", 16, 4, true, "0");
+        createBuilder.newColumnOfDate("testDateTime2", true, true);
+        createBuilder.newColumnOfBigDecimal("testDecimal",
+                16,
+                4,
+                true,
+                new BigDecimal("0"));
         createBuilder.newColumnOfInteger("testInteger", 8, false, null);
+        createBuilder.newColumnOfInteger("testInteger1", 8, true, 999);
         createBuilder.newColumnOfVarchar("testVarchar",
                 16,
                 true,

@@ -1,23 +1,29 @@
-/*
- * 描          述:  <描述>
- * 修  改   人:  Administrator
- * 修改时间:  2016年10月21日
- * <修改描述:>
- */
 package com.tx.core.ddlutil.create;
 
 import com.tx.core.ddlutil.dialect.DDLDialect;
+import com.tx.core.ddlutil.model.TableDef;
 
 /**
- * 创建DDLBuilder的工厂类<br/>
- * <功能详细描述>
- * 
- * @author  Administrator
- * @version  [版本号, 2016年10月21日]
- * @see  [相关类/方法]
- * @since  [产品/模块版本]
+  * 创建DDLBuilder工厂<br/>
+  * <功能详细描述>
+  * 
+  * @author  Administrator
+  * @version  [版本号, 2016年11月6日]
+  * @see  [相关类/方法]
+  * @since  [产品/模块版本]
  */
 public interface CreateTableDDLBuilderFactory {
+    
+    /**
+      * 获取默认的DDLDialect.用于创建实例期间传入默认的DDLDialect不能为空<br/>
+      * <功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return DDLDialect [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public DDLDialect getDefaultDDLDialect();
     
     /**
      * 创建建设表构建器实例<br/>
@@ -28,19 +34,40 @@ public interface CreateTableDDLBuilderFactory {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    public CreateTableDDLBuilder newInstance(String tableName);
+    public abstract CreateTableDDLBuilder newInstance(String tableName);
     
     /**
-      * 根据数据库表名以及DDL方言类构建对应的构建器<br/>
-      * <功能详细描述>
-      * @param tableName
-      * @param ddlDialect
-      * @return [参数说明]
-      * 
-      * @return CreateTableDDLBuilder [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    public CreateTableDDLBuilder newInstance(String tableName,
+     * 创建建设表构建器实例<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return CreateTableDDLBuilder [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    public abstract CreateTableDDLBuilder newInstance(TableDef tableDef);
+    
+    /**
+     * 创建建设表构建器实例<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return CreateTableDDLBuilder [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    public abstract CreateTableDDLBuilder newInstance(String tableName,
+            DDLDialect ddlDialect);
+    
+    /**
+     * 创建建设表构建器实例<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return CreateTableDDLBuilder [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    public abstract CreateTableDDLBuilder newInstance(TableDef tableDef,
             DDLDialect ddlDialect);
 }

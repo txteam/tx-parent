@@ -22,7 +22,7 @@ import com.tx.core.util.ObjectUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class DDLTable implements Serializable, Table {
+public class DBTableDef implements Serializable, TableDef {
     
     /** 注释内容 */
     private static final long serialVersionUID = 829927103002085200L;
@@ -43,10 +43,10 @@ public class DDLTable implements Serializable, Table {
     private String type = DDLUtilsConstants.DDL_TABLE_TYPE_TABLE;
     
     /** 表字段. */
-    private List<? extends TableColumn> columns = new ArrayList<>();
+    private List<? extends TableColumnDef> columns = new ArrayList<>();
     
     /** 索引集合. */
-    private List<? extends TableIndex> indexes = new ArrayList<>();
+    private List<? extends TableIndexDef> indexes = new ArrayList<>();
     
     /**
      * @return 返回 catalog
@@ -123,14 +123,14 @@ public class DDLTable implements Serializable, Table {
      * @return
      */
     @Override
-    public List<? extends TableColumn> getColumns() {
+    public List<? extends TableColumnDef> getColumns() {
         return columns;
     }
     
     /**
      * @param 对columns进行赋值
      */
-    public void setColumns(List<? extends TableColumn> columns) {
+    public void setColumns(List<? extends TableColumnDef> columns) {
         this.columns = columns;
     }
     
@@ -138,14 +138,14 @@ public class DDLTable implements Serializable, Table {
      * @return
      */
     @Override
-    public List<? extends TableIndex> getIndexes() {
+    public List<? extends TableIndexDef> getIndexes() {
         return indexes;
     }
     
     /**
      * @param 对indexes进行赋值
      */
-    public void setIndexes(List<? extends TableIndex> indexes) {
+    public void setIndexes(List<? extends TableIndexDef> indexes) {
         this.indexes = indexes;
     }
     

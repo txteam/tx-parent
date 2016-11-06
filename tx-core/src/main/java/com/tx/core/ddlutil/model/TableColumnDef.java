@@ -11,7 +11,7 @@ import com.tx.core.model.OrderedSupport;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
  */
-public interface TableColumn extends OrderedSupport {
+public interface TableColumnDef extends OrderedSupport {
     
     /**
       * 返回字段名<br/> 

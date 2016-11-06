@@ -19,7 +19,7 @@ import com.tx.core.util.ObjectUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class DDLColumn implements Serializable, TableColumn {
+public class DBColumnDef implements Serializable, TableColumnDef {
     
     /** 注释内容 */
     private static final long serialVersionUID = -6431639195048067292L;
@@ -58,12 +58,12 @@ public class DDLColumn implements Serializable, TableColumn {
     private int orderPriority = 0;
     
     /** <默认构造函数> */
-    public DDLColumn() {
+    public DBColumnDef() {
         super();
     }
     
     /** <默认构造函数> */
-    public DDLColumn(boolean primaryKey, String columnName, String tableName,
+    public DBColumnDef(boolean primaryKey, String columnName, String tableName,
             JdbcTypeEnum jdbcType, int size, int scale, boolean required,
             String defaultValue) {
         super();

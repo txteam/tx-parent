@@ -26,12 +26,13 @@ import org.springframework.util.PropertyPlaceholderHelper;
 import com.tx.core.dbscript.model.DataSourceTypeEnum;
 import com.tx.core.ddlutil.alter.AlterTableDDLBuilder;
 import com.tx.core.ddlutil.create.CreateTableDDLBuilder;
+import com.tx.core.ddlutil.create.impl.CreateTableDDLBuilderFactoryRegistry;
 import com.tx.core.ddlutil.executor.TableDDLExecutor;
-import com.tx.core.ddlutil.model.DDLColumn;
-import com.tx.core.ddlutil.model.DDLIndex;
-import com.tx.core.ddlutil.model.DDLTable;
+import com.tx.core.ddlutil.model.DBColumnDef;
+import com.tx.core.ddlutil.model.DBIndexDef;
+import com.tx.core.ddlutil.model.DBTableDef;
 import com.tx.core.ddlutil.model.JdbcTypeEnum;
-import com.tx.core.ddlutil.model.Table;
+import com.tx.core.ddlutil.model.TableDef;
 import com.tx.core.exceptions.SILException;
 import com.tx.core.exceptions.util.AssertUtils;
 
@@ -59,8 +60,8 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
             + "WHERE TAB.TABLE_NAME = ? AND TAB.TABLE_SCHEMA = ? AND TAB.TABLE_TYPE='BASE TABLE'";
     
     //查询出的table定义的RowMapper
-    private static final RowMapper<DDLTable> ddlTableRowMapper = new BeanPropertyRowMapper<DDLTable>(
-            DDLTable.class);
+    private static final RowMapper<DBTableDef> ddlTableRowMapper = new BeanPropertyRowMapper<DBTableDef>(
+            DBTableDef.class);
     
     //查询table中column定义
     private static final String SQL_QUERY_COLUMN_BY_TABLENAME = "SELECT "
@@ -76,10 +77,10 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
             + "WHERE TCOL.TABLE_NAME = ? AND TCOL.TABLE_SCHEMA = ?";
     
     //查询出的column定义的RowMapper
-    private static final RowMapper<DDLColumn> ddlColumnRowMapper = new RowMapper<DDLColumn>() {
+    private static final RowMapper<DBColumnDef> ddlColumnRowMapper = new RowMapper<DBColumnDef>() {
         @Override
-        public DDLColumn mapRow(ResultSet rs, int rowNum) throws SQLException {
-            DDLColumn col = new DDLColumn();
+        public DBColumnDef mapRow(ResultSet rs, int rowNum) throws SQLException {
+            DBColumnDef col = new DBColumnDef();
             col.setColumnName(rs.getString("columnName"));
             col.setColumnType(rs.getString("columnType"));
             col.setTableName(rs.getString("tableName"));
@@ -125,10 +126,10 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
             + "WHERE TIDX.TABLE_NAME = ? AND TIDX.TABLE_SCHEMA = ? AND TIDX.INDEX_NAME <> 'PRIMARY'";
     
     //DDLindexRowMap
-    private static final RowMapper<DDLIndex> ddlIndexRowMapper = new RowMapper<DDLIndex>() {
+    private static final RowMapper<DBIndexDef> ddlIndexRowMapper = new RowMapper<DBIndexDef>() {
         @Override
-        public DDLIndex mapRow(ResultSet rs, int rowNum) throws SQLException {
-            DDLIndex ddlIndex = new DDLIndex();
+        public DBIndexDef mapRow(ResultSet rs, int rowNum) throws SQLException {
+            DBIndexDef ddlIndex = new DBIndexDef();
             ddlIndex.setIndexName(rs.getString("indexName"));
             ddlIndex.setColumnName(rs.getString("columnName"));
             ddlIndex.setTableName(rs.getString("tableName"));
@@ -354,6 +355,28 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
     }
     
     /**
+     * @param newTableDef
+     * @param oldTableDef
+     */
+    @Override
+    public boolean isNeedUpdate(TableDef newTableDef, TableDef oldTableDef) {
+        boolean flag = isNeedUpdate(newTableDef, oldTableDef);
+        return flag;
+    }
+    
+    /**
+     * @param newTableDef
+     * @param oldTableDef
+     * @param isIncrementalUpgrade
+     */
+    @Override
+    public boolean isNeedUpdate(TableDef newTableDef, TableDef oldTableDef,
+            boolean isIncrementalUpgrade) {
+        
+        return false;
+    }
+    
+    /**
      * 从当前数据库中获取当前表定义<br/>
      * <功能详细描述>
      * @param tableName
@@ -364,19 +387,19 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
      * @see [类、类#方法、类#成员]
     */
     @Override
-    public Table findDDLTableDetailByTableName(String tableName) {
+    public DBTableDef findDBTableDetailByTableName(String tableName) {
         AssertUtils.notEmpty(tableName, "tableName is empty.");
         
-        List<DDLTable> ddlTableList = this.jdbcTemplate.query(SQL_FIND_TABLE_BY_TABLENAME,
+        List<DBTableDef> ddlTableList = this.jdbcTemplate.query(SQL_FIND_TABLE_BY_TABLENAME,
                 new Object[] { tableName, this.schema },
                 ddlTableRowMapper);
         if (CollectionUtils.isEmpty(ddlTableList)) {
             return null;
         }
         
-        DDLTable ddlTable = ddlTableList.get(0);
-        List<DDLColumn> columns = queryDDLColumnsByTableName(tableName);
-        List<DDLIndex> indexes = queryDDLIndexesByTableName(tableName);
+        DBTableDef ddlTable = ddlTableList.get(0);
+        List<DBColumnDef> columns = queryDBColumnsByTableName(tableName);
+        List<DBIndexDef> indexes = queryDBIndexesByTableName(tableName);
         ddlTable.setColumns(columns);
         ddlTable.setIndexes(indexes);
         
@@ -394,16 +417,16 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
       * @see [类、类#方法、类#成员]
      */
     @Override
-    public DDLTable findDDLTableByTableName(String tableName) {
+    public DBTableDef findDBTableByTableName(String tableName) {
         AssertUtils.notEmpty(tableName, "tableName is empty.");
         
-        List<DDLTable> ddlTableList = this.jdbcTemplate.query(SQL_FIND_TABLE_BY_TABLENAME,
+        List<DBTableDef> ddlTableList = this.jdbcTemplate.query(SQL_FIND_TABLE_BY_TABLENAME,
                 new Object[] { tableName, this.schema },
                 ddlTableRowMapper);
         if (CollectionUtils.isEmpty(ddlTableList)) {
             return null;
         }
-        DDLTable ddlTable = ddlTableList.get(0);
+        DBTableDef ddlTable = ddlTableList.get(0);
         return ddlTable;
     }
     
@@ -418,10 +441,10 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
       * @see [类、类#方法、类#成员]
      */
     @Override
-    public List<DDLColumn> queryDDLColumnsByTableName(String tableName) {
+    public List<DBColumnDef> queryDBColumnsByTableName(String tableName) {
         AssertUtils.notEmpty(tableName, "tableName is empty.");
         
-        List<DDLColumn> ddlColumnList = this.jdbcTemplate.query(SQL_QUERY_COLUMN_BY_TABLENAME,
+        List<DBColumnDef> ddlColumnList = this.jdbcTemplate.query(SQL_QUERY_COLUMN_BY_TABLENAME,
                 new Object[] { tableName, this.schema },
                 ddlColumnRowMapper);
         return ddlColumnList;
@@ -438,10 +461,10 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
       * @see [类、类#方法、类#成员]
      */
     @Override
-    public List<DDLIndex> queryDDLIndexesByTableName(String tableName) {
+    public List<DBIndexDef> queryDBIndexesByTableName(String tableName) {
         AssertUtils.notEmpty(tableName, "tableName is empty.");
         
-        List<DDLIndex> ddlIndexList = this.jdbcTemplate.query(SQL_QUERY_INDEX_BY_TABLENAME,
+        List<DBIndexDef> ddlIndexList = this.jdbcTemplate.query(SQL_QUERY_INDEX_BY_TABLENAME,
                 new Object[] { tableName, this.schema },
                 ddlIndexRowMapper);
         return ddlIndexList;
@@ -461,8 +484,22 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
     public CreateTableDDLBuilder generateCreateTableDDLBuilder(String tableName) {
         AssertUtils.notEmpty(tableName, "tableName is empty.");
         
-        CreateTableDDLBuilder builder = CreateTableDDLBuilder.getFactory(DataSourceTypeEnum.MYSQL)
+        CreateTableDDLBuilder builder = CreateTableDDLBuilderFactoryRegistry.getFactory(DataSourceTypeEnum.MYSQL)
                 .newInstance(tableName);
+        return builder;
+    }
+    
+    /**
+     * @param table
+     * @return
+     */
+    @Override
+    public CreateTableDDLBuilder generateCreateTableDDLBuilder(TableDef table) {
+        AssertUtils.notNull(table, "table is null.");
+        AssertUtils.notEmpty(table.getTableName(), "table.tableName is empty.");
+        
+        CreateTableDDLBuilder builder = CreateTableDDLBuilderFactoryRegistry.getFactory(DataSourceTypeEnum.MYSQL)
+                .newInstance(table);
         return builder;
     }
     
