@@ -16,6 +16,7 @@ import org.hibernate.annotations.common.reflection.java.JavaReflectionManager;
 import org.hibernate.cfg.AccessType;
 
 import com.tx.core.mybatis.data.Demo;
+import com.tx.core.mybatis.data.DemoTreeNode;
 
 
 /**
@@ -38,8 +39,9 @@ public class JpaMetaObjectTest {
 //    }
     
     public static void main(String[] args) {
-        XClass xclass = javaReflectionManager.toXClass(Demo.class);
+        XClass xclass = javaReflectionManager.toXClass(DemoTreeNode.class);
         
+        DemoTreeNode.class.getAnnotation(Table.class);
         Table t = xclass.getAnnotation(Table.class);
         System.out.println(t);
         

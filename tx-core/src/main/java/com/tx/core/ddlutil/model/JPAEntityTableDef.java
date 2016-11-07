@@ -10,7 +10,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.tx.core.ddlutil.DDLUtilsConstants;
 import com.tx.core.util.ObjectUtils;
 
 /**
@@ -32,9 +31,6 @@ public class JPAEntityTableDef implements Serializable, TableDef {
     
     /** 表内容备注 */
     private String comment = "";
-    
-    /** 表类型：BASE TABLE|VIEW */
-    private String type = DDLUtilsConstants.DDL_TABLE_TYPE_TABLE;
     
     /** 表字段. */
     private List<? extends TableColumnDef> columns = new ArrayList<>();
@@ -69,20 +65,6 @@ public class JPAEntityTableDef implements Serializable, TableDef {
      */
     public void setComment(String comment) {
         this.comment = comment;
-    }
-    
-    /**
-     * @return 返回 type
-     */
-    public String getType() {
-        return type;
-    }
-    
-    /**
-     * @param 对type进行赋值
-     */
-    public void setType(String type) {
-        this.type = type;
     }
     
     /**
