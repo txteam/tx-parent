@@ -416,7 +416,8 @@ public class BasicDataServiceRegistry implements ApplicationContextAware,
             
             @Override
             protected String getSingleCode(BasicDataType cia) {
-                return cia.getType().getName();
+                return cia.getType() != null ? cia.getType().getName()
+                        : cia.getCode();
             }
             
             @Override
@@ -433,9 +434,15 @@ public class BasicDataServiceRegistry implements ApplicationContextAware,
                     String code = s.code();
                     String tableName = s.tableName();
                     String name = s.type().getSimpleName();
-                    AssertUtils.notNull(type,"type is null.BasicDataService:{}",new Object[]{s});
-                    AssertUtils.notEmpty(code,"code is empty.BasicDataService:{}",new Object[]{s});
-                    AssertUtils.notEmpty(tableName,"tableName is empty.BasicDataService:{}",new Object[]{s});
+                    AssertUtils.notNull(type,
+                            "type is null.BasicDataService:{}",
+                            new Object[] { s });
+                    AssertUtils.notEmpty(code,
+                            "code is empty.BasicDataService:{}",
+                            new Object[] { s });
+                    AssertUtils.notEmpty(tableName,
+                            "tableName is empty.BasicDataService:{}",
+                            new Object[] { s });
                     
                     BasicDataType bdType = new BasicDataType();
                     bdType.setCode(code);
