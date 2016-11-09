@@ -12,7 +12,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.ibatis.reflection.MetaObject;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.PropertyAccessorFactory;
 
 import com.tx.component.servicelog.context.ServiceLoggerSessionContext;
 import com.tx.component.servicelog.interceptor.BaseServiceLoggerInterceptor;
@@ -86,7 +87,8 @@ public class TXServiceLoggerInterceptor extends BaseServiceLoggerInterceptor {
     private void fillOperatorInfo(Map<String, Object> attributes) {
         ServiceLoggerSessionContext context = ServiceLoggerSessionContext.getContext();
         
-        if (context.getRequest() == null || context.getRequest().getSession(false) == null) {
+        if (context.getRequest() == null
+                || context.getRequest().getSession(false) == null) {
             attributes.put("operatorLoginName", "");
             attributes.put("operatorName", "");
         } else {
@@ -94,12 +96,14 @@ public class TXServiceLoggerInterceptor extends BaseServiceLoggerInterceptor {
             
             Object operatorObj = session.getAttribute("operator");
             if (operatorObj != null) {
-                MetaObject metaObject = MetaObject.forObject(operatorObj);
-                Object loginName = metaObject.getValue("loginName");
-                Object userName = metaObject.getValue("userName");
+                BeanWrapper metaObject = PropertyAccessorFactory.forBeanPropertyAccess(operatorObj);
+                Object loginName = metaObject.getPropertyValue("loginName");
+                Object userName = metaObject.getPropertyValue("userName");
                 
-                attributes.put("operatorLoginName", loginName == null ? "" : (String) loginName);
-                attributes.put("operatorName", userName == null ? "" : (String) userName);
+                attributes.put("operatorLoginName", loginName == null ? ""
+                        : (String) loginName);
+                attributes.put("operatorName", userName == null ? ""
+                        : (String) userName);
             } else {
                 attributes.put("operatorLoginName", "");
                 attributes.put("operatorName", "");
@@ -119,7 +123,8 @@ public class TXServiceLoggerInterceptor extends BaseServiceLoggerInterceptor {
     private String getOperatorId() {
         ServiceLoggerSessionContext context = ServiceLoggerSessionContext.getContext();
         
-        if (context.getRequest() == null || context.getRequest().getSession(false) == null) {
+        if (context.getRequest() == null
+                || context.getRequest().getSession(false) == null) {
             return "";
         } else {
             HttpSession session = context.getRequest().getSession(false);
@@ -146,7 +151,8 @@ public class TXServiceLoggerInterceptor extends BaseServiceLoggerInterceptor {
     private String getOrganizationId() {
         ServiceLoggerSessionContext context = ServiceLoggerSessionContext.getContext();
         
-        if (context.getRequest() == null || context.getRequest().getSession(false) == null) {
+        if (context.getRequest() == null
+                || context.getRequest().getSession(false) == null) {
             return "";
         } else {
             HttpSession session = context.getRequest().getSession(false);
@@ -173,7 +179,8 @@ public class TXServiceLoggerInterceptor extends BaseServiceLoggerInterceptor {
     private String getVcid() {
         ServiceLoggerSessionContext context = ServiceLoggerSessionContext.getContext();
         
-        if (context.getRequest() == null || context.getRequest().getSession(false) == null) {
+        if (context.getRequest() == null
+                || context.getRequest().getSession(false) == null) {
             return "";
         } else {
             HttpSession session = context.getRequest().getSession(false);
@@ -204,13 +211,16 @@ public class TXServiceLoggerInterceptor extends BaseServiceLoggerInterceptor {
         } else {
             HttpServletRequest request = context.getRequest();
             String ip = request.getHeader("x-forwarded-for");
-            if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            if (ip == null || ip.length() == 0
+                    || "unknown".equalsIgnoreCase(ip)) {
                 ip = request.getHeader("Proxy-Client-IP");
             }
-            if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            if (ip == null || ip.length() == 0
+                    || "unknown".equalsIgnoreCase(ip)) {
                 ip = request.getHeader("WL-Proxy-Client-IP");
             }
-            if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            if (ip == null || ip.length() == 0
+                    || "unknown".equalsIgnoreCase(ip)) {
                 ip = request.getRemoteAddr();
             }
             return ip;

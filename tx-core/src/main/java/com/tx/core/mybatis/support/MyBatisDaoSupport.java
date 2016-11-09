@@ -12,7 +12,6 @@ import java.util.Map;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.ibatis.executor.BatchExecutorException;
-import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
@@ -23,6 +22,8 @@ import org.hibernate.id.UUIDHexGenerator;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.PropertyAccessorFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.dao.support.PersistenceExceptionTranslator;
 
@@ -91,8 +92,7 @@ public class MyBatisDaoSupport implements InitializingBean {
                     this.sqlSessionFactory, ExecutorType.SIMPLE,
                     this.exceptionTranslator);
         } else if (this.exceptionTranslator == null) {
-            MetaObject mo = MetaObject.forObject(this.sqlSessionTemplate);
-            this.exceptionTranslator = (PersistenceExceptionTranslator) mo.getValue("exceptionTranslator");
+            this.exceptionTranslator = this.sqlSessionTemplate.getPersistenceExceptionTranslator();
         }
         
         //创建batchSqlSessionFactory
@@ -447,7 +447,7 @@ public class MyBatisDaoSupport implements InitializingBean {
      * @see [类、类#方法、类#成员]
      */
     public void queryByResultHandler(String statement, Object parameter,
-            ResultHandler handler) {
+            ResultHandler<?> handler) {
         if (parameter != null) {
             this.sqlSessionTemplate.select(statement, parameter, handler);
         } else {
@@ -471,11 +471,11 @@ public class MyBatisDaoSupport implements InitializingBean {
             String keyPropertyName) {
         if (!StringUtils.isEmpty(keyPropertyName)) {
             //如果指定了keyProperty
-            MetaObject metaObject = MetaObject.forObject(parameter);
-            if (metaObject.hasSetter(keyPropertyName)
-                    && String.class.equals(metaObject.getSetterType(keyPropertyName))
-                    && StringUtils.isEmpty((String) metaObject.getValue(keyPropertyName))) {
-                metaObject.setValue(keyPropertyName, generateUUID());
+            BeanWrapper bw = PropertyAccessorFactory.forBeanPropertyAccess(parameter);
+            if (bw.isWritableProperty(keyPropertyName)
+                    && String.class.equals(bw.getPropertyType(keyPropertyName))
+                    && StringUtils.isEmpty((String) bw.getPropertyValue(keyPropertyName))) {
+                bw.setPropertyValue(keyPropertyName, generateUUID());
             }
         }
         insert(statement, parameter);
@@ -546,11 +546,11 @@ public class MyBatisDaoSupport implements InitializingBean {
             String keyProperty) {
         if (!StringUtils.isEmpty(keyProperty)) {
             //如果指定了keyProperty
-            MetaObject metaObject = MetaObject.forObject(parameter);
-            if (metaObject.hasSetter(keyProperty)
-                    && String.class.equals(metaObject.getSetterType(keyProperty))
-                    && StringUtils.isEmpty((String) metaObject.getValue(keyProperty))) {
-                metaObject.setValue(keyProperty, generateUUID());
+            BeanWrapper bw = PropertyAccessorFactory.forBeanPropertyAccess(parameter);
+            if (bw.isWritableProperty(keyProperty)
+                    && String.class.equals(bw.getPropertyType(keyProperty))
+                    && StringUtils.isEmpty((String) bw.getPropertyValue(keyProperty))) {
+                bw.setPropertyValue(keyProperty, generateUUID());
             }
         }
         
@@ -1067,7 +1067,7 @@ public class MyBatisDaoSupport implements InitializingBean {
      * @see [类、类#方法、类#成员]
      */
     public void query(String statement, Object parameter, RowBounds rowBounds,
-            ResultHandler handler) {
+            ResultHandler<?> handler) {
         this.sqlSessionTemplate.select(statement, parameter, rowBounds, handler);
     }
     

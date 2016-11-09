@@ -10,10 +10,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.ibatis.reflection.MetaClass;
-import org.apache.ibatis.reflection.MetaObject;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.PropertyAccessorFactory;
 
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.reflection.ReflectionUtils;
@@ -44,14 +45,14 @@ public class TypeRowReader<T> implements CellRowReader<T> {
         AssertUtils.notNull(type, "type is empty.");
         this.type = type;
         
-        MetaClass metaClass = MetaClass.forClass(type);
         List<String> getterList = ReflectionUtils.getGetterNamesByAnnotationType(type,
                 ExcelCell.class);
         for (String fieldName : getterList) {
             ExcelCell excelCellAnno = ReflectionUtils.getGetterAnnotation(type,
                     fieldName,
                     ExcelCell.class);
-            Class<?> fieldType = metaClass.getGetterType(fieldName);
+            Class<?> fieldType = BeanUtils.getPropertyDescriptor(type,
+                    fieldName).getPropertyType();
             
             ExcelCellInfo<?> excelCellInfo = new ExcelCellInfo<>(fieldName,
                     fieldType, excelCellAnno);
@@ -74,14 +75,15 @@ public class TypeRowReader<T> implements CellRowReader<T> {
     public T read(Row row, int rowNum, boolean ignoreError,
             boolean ignoreBlank, boolean ignoreTypeUnmatch, int numberOfCells) {
         T obj = ObjectUtils.newInstance(type);
-        MetaObject mo = MetaObject.forObject(obj);
+        BeanWrapper mo = PropertyAccessorFactory.forBeanPropertyAccess(obj);
         
         //int cellsLength = numberOfCells != 0 ? numberOfCells : row.getPhysicalNumberOfCells();
-        int cellsLength = numberOfCells != 0 ? numberOfCells : row.getLastCellNum();
+        int cellsLength = numberOfCells != 0 ? numberOfCells
+                : row.getLastCellNum();
         
         for (ExcelCellInfo<?> cellInfo : key2excelCellInfoMapping.values()) {
-            if(cellInfo.getIndex() > cellsLength){
-                mo.setValue(cellInfo.getFieldName(), null);
+            if (cellInfo.getIndex() > cellsLength) {
+                mo.setPropertyValue(cellInfo.getFieldName(), null);
                 continue;
             }
             
@@ -106,7 +108,7 @@ public class TypeRowReader<T> implements CellRowReader<T> {
                         ignoreTypeUnmatch);
             }
             
-            mo.setValue(cellInfo.getFieldName(), value);
+            mo.setPropertyValue(cellInfo.getFieldName(), value);
         }
         return obj;
     }

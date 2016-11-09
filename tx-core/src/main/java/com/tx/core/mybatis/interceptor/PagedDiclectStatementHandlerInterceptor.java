@@ -22,12 +22,13 @@ import org.apache.ibatis.plugin.Intercepts;
 import org.apache.ibatis.plugin.Invocation;
 import org.apache.ibatis.plugin.Plugin;
 import org.apache.ibatis.plugin.Signature;
-import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.RowBounds;
 import org.hibernate.dialect.Dialect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.PropertyAccessorFactory;
 
 import com.tx.core.dbscript.model.DataSourceTypeEnum;
 
@@ -96,13 +97,13 @@ public class PagedDiclectStatementHandlerInterceptor implements Interceptor {
         //提取statement
         RoutingStatementHandler statementHandler = (RoutingStatementHandler) invocation.getTarget();
         
-        MetaObject metaStatementHandler = MetaObject.forObject(statementHandler);
+        BeanWrapper metaStatementHandler = PropertyAccessorFactory.forBeanPropertyAccess(statementHandler);
         //提取statement
-        StatementHandler statement = (StatementHandler) metaStatementHandler.getValue("delegate");
+        StatementHandler statement = (StatementHandler) metaStatementHandler.getPropertyValue("delegate");
         //获取rowBounds
-        RowBounds rowBounds = (RowBounds) metaStatementHandler.getValue("delegate.rowBounds");
+        RowBounds rowBounds = (RowBounds) metaStatementHandler.getPropertyValue("delegate.rowBounds");
         //获取configuration
-        Configuration configuration = (Configuration) metaStatementHandler.getValue("delegate.configuration");
+        Configuration configuration = (Configuration) metaStatementHandler.getPropertyValue("delegate.configuration");
         
         //如果不为PreparedStatementHandler则不继续进行处理
         //不考虑simpleStatementHandle的情况
@@ -198,12 +199,12 @@ public class PagedDiclectStatementHandlerInterceptor implements Interceptor {
         }
         
         //将sql以及rowBounds替换为不需要再进行多余处理的形式
-        metaStatementHandler.setValue("delegate.boundSql.parameterMappings",
+        metaStatementHandler.setPropertyValue("delegate.boundSql.parameterMappings",
                 newParameterMappingList);
-        metaStatementHandler.setValue("delegate.boundSql.sql", limitSql);
-        metaStatementHandler.setValue("delegate.rowBounds.offset",
+        metaStatementHandler.setPropertyValue("delegate.boundSql.sql", limitSql);
+        metaStatementHandler.setPropertyValue("delegate.rowBounds.offset",
                 RowBounds.NO_ROW_OFFSET);
-        metaStatementHandler.setValue("delegate.rowBounds.limit",
+        metaStatementHandler.setPropertyValue("delegate.rowBounds.limit",
                 RowBounds.NO_ROW_LIMIT);
         
         return invocation.proceed();

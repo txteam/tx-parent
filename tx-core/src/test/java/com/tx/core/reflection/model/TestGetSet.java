@@ -6,9 +6,12 @@
  */
 package com.tx.core.reflection.model;
 
+import java.beans.PropertyDescriptor;
+
 import javax.persistence.Id;
 
 import org.apache.ibatis.reflection.MetaClass;
+import org.springframework.beans.BeanUtils;
 
 
  /**
@@ -235,8 +238,9 @@ public class TestGetSet {
         //ClassReflector<TestGetSet> classReflector = ClassReflector.forClass(TestGetSet.class);
         
         System.out.println("\n.......getterNames:........");
-        for(String getterName : MetaClass.forClass(TestGetSet.class).getGetterNames()){
-            System.out.println(getterName);
+        
+        for(PropertyDescriptor pd : BeanUtils.getPropertyDescriptors(TestGetSet.class)){
+            System.out.println(pd.getName());
         }
         
         /*
