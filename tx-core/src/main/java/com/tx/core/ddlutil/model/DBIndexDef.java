@@ -36,9 +36,6 @@ public class DBIndexDef implements Serializable, TableIndexDef {
     /** 是否唯一键 */
     private boolean unique;
     
-    /** 排序优先级 */
-    private int orderPriority = 0;
-    
     /** <默认构造函数> */
     public DBIndexDef() {
         super();
@@ -111,20 +108,6 @@ public class DBIndexDef implements Serializable, TableIndexDef {
      */
     public void setColumnName(String columnName) {
         this.columnName = columnName;
-    }
-    
-    /**
-     * @return 返回 orderPriority
-     */
-    public int getOrderPriority() {
-        return orderPriority;
-    }
-    
-    /**
-     * @param 对orderPriority进行赋值
-     */
-    public void setOrderPriority(int orderPriority) {
-        this.orderPriority = orderPriority;
     }
     
     /**

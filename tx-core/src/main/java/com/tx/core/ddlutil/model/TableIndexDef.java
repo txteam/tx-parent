@@ -1,7 +1,5 @@
 package com.tx.core.ddlutil.model;
 
-import com.tx.core.model.OrderedSupport;
-
 /**
   * 表索引接口<br/>
   * <功能详细描述>
@@ -11,7 +9,7 @@ import com.tx.core.model.OrderedSupport;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
  */
-public interface TableIndexDef extends OrderedSupport {
+public interface TableIndexDef {
     
     /**
       * 索引名称<br/>

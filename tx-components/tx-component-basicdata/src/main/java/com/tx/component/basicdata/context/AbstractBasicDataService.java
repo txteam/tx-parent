@@ -14,6 +14,7 @@ import javax.persistence.Table;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.tx.component.basicdata.annotation.BasicDataType;
 import com.tx.component.basicdata.model.BasicData;
@@ -41,6 +42,7 @@ public abstract class AbstractBasicDataService<T extends BasicData> extends
      */
     @Override
     public void afterPropertiesSet() throws Exception {
+        final AbstractBasicDataService<T> service = this;
         this.configInitAbleHelper = new ConfigInitAbleHelper<T>() {
             
             /**
@@ -48,7 +50,7 @@ public abstract class AbstractBasicDataService<T extends BasicData> extends
              */
             @Override
             protected void batchUpdate(List<T> needUpdateList) {
-                batchUpdate(needUpdateList);
+                doBatchUpdateWhenInit(needUpdateList);
             }
             
             /**
@@ -56,7 +58,7 @@ public abstract class AbstractBasicDataService<T extends BasicData> extends
              */
             @Override
             protected void batchInsert(List<T> needInsertList) {
-                batchInsert(needInsertList);
+                doBatchInsertWhenInit(needInsertList);
             }
             
             /**
@@ -84,7 +86,7 @@ public abstract class AbstractBasicDataService<T extends BasicData> extends
              */
             @Override
             protected boolean isNeedUpdate(T ciaOfDBTemp, T ciaOfConfig) {
-                boolean flag = isNeedUpdate(ciaOfDBTemp, ciaOfConfig);
+                boolean flag = service.isNeedUpdate(ciaOfDBTemp, ciaOfConfig);
                 return flag;
             }
             
@@ -112,6 +114,32 @@ public abstract class AbstractBasicDataService<T extends BasicData> extends
       * @see [类、类#方法、类#成员]
      */
     protected void init() throws Exception {
+    }
+    
+    /**
+     * 执行初始化期间批量插入逻辑<br/>
+     * <功能详细描述>
+     * @param dataList [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    protected void doBatchInsertWhenInit(List<T> dataList) {
+        batchInsert(dataList);
+    }
+    
+    /**
+     * 执行初始化期间批量插入逻辑<br/>
+     * <功能详细描述>
+     * @param dataList [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    protected void doBatchUpdateWhenInit(List<T> dataList) {
+        batchUpdate(dataList);
     }
     
     /**
@@ -170,7 +198,7 @@ public abstract class AbstractBasicDataService<T extends BasicData> extends
     @SuppressWarnings("unchecked")
     @Override
     public Class<T> type() {
-        Class<T> type = (Class<T>)getType();
+        Class<T> type = (Class<T>) getType();
         return type;
     }
     
@@ -213,6 +241,7 @@ public abstract class AbstractBasicDataService<T extends BasicData> extends
      * @param dataList
      */
     @Override
+    @Transactional
     public void batchInsert(List<T> dataList) {
         if (CollectionUtils.isEmpty(dataList)) {
             return;
@@ -221,11 +250,12 @@ public abstract class AbstractBasicDataService<T extends BasicData> extends
             insert(dataTemp);
         }
     }
-
+    
     /**
      * @param dataList
      */
     @Override
+    @Transactional
     public void batchUpdate(List<T> dataList) {
         if (CollectionUtils.isEmpty(dataList)) {
             return;

@@ -66,18 +66,19 @@ public class JPAEntityColumnDef implements Serializable, TableColumnDef {
     }
     
     /** <默认构造函数> */
-    public JPAEntityColumnDef(boolean primaryKey, String columnName, String tableName,
-            JdbcTypeEnum jdbcType, int size, int scale, boolean required,
-            String defaultValue) {
+    public JPAEntityColumnDef(String columnName, Class<?> javaType,
+            JdbcTypeEnum jdbcType, int size, int scale, boolean required) {
         super();
         this.columnName = columnName;
-        this.tableName = tableName;
+        this.javaType = javaType;
         this.jdbcType = jdbcType;
-        this.primaryKey = primaryKey;
-        this.required = required;
         this.size = size;
         this.scale = scale;
-        this.defaultValue = defaultValue;
+        this.required = required;
+        
+        this.primaryKey = false;
+        this.tableName = null;
+        this.defaultValue = null;
     }
     
     /**
@@ -235,28 +236,28 @@ public class JPAEntityColumnDef implements Serializable, TableColumnDef {
     public Class<?> getJavaType() {
         return javaType;
     }
-
+    
     /**
      * @param 对javaType进行赋值
      */
     public void setJavaType(Class<?> javaType) {
         this.javaType = javaType;
     }
-
+    
     /**
      * @return 返回 comment
      */
     public String getComment() {
         return comment;
     }
-
+    
     /**
      * @param 对comment进行赋值
      */
     public void setComment(String comment) {
         this.comment = comment;
     }
-
+    
     /**
      * @return
      */

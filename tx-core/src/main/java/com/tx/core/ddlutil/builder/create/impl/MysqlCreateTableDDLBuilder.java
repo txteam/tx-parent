@@ -4,10 +4,10 @@
  * 修改时间:  2016年10月20日
  * <修改描述:>
  */
-package com.tx.core.ddlutil.create.impl;
+package com.tx.core.ddlutil.builder.create.impl;
 
-import com.tx.core.ddlutil.create.AbstractCreateTableDDLBuilder;
-import com.tx.core.ddlutil.create.CreateTableDDLBuilder;
+import com.tx.core.ddlutil.builder.create.AbstractCreateTableDDLBuilder;
+import com.tx.core.ddlutil.builder.create.CreateTableDDLBuilder;
 import com.tx.core.ddlutil.dialect.DDLDialect;
 import com.tx.core.ddlutil.model.TableDef;
 import com.tx.core.exceptions.util.AssertUtils;

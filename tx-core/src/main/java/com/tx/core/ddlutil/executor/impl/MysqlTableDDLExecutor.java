@@ -24,9 +24,9 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.util.PropertyPlaceholderHelper;
 
 import com.tx.core.dbscript.model.DataSourceTypeEnum;
-import com.tx.core.ddlutil.alter.AlterTableDDLBuilder;
-import com.tx.core.ddlutil.create.CreateTableDDLBuilder;
-import com.tx.core.ddlutil.create.impl.CreateTableDDLBuilderFactoryRegistry;
+import com.tx.core.ddlutil.builder.alter.AlterTableDDLBuilder;
+import com.tx.core.ddlutil.builder.create.CreateTableDDLBuilder;
+import com.tx.core.ddlutil.builder.create.impl.CreateTableDDLBuilderFactoryRegistry;
 import com.tx.core.ddlutil.executor.TableDDLExecutor;
 import com.tx.core.ddlutil.model.DBColumnDef;
 import com.tx.core.ddlutil.model.DBIndexDef;
@@ -35,6 +35,7 @@ import com.tx.core.ddlutil.model.JdbcTypeEnum;
 import com.tx.core.ddlutil.model.TableDef;
 import com.tx.core.exceptions.SILException;
 import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.util.SqlUtils;
 
 /**
  * Mysql 表相关 DDL执行器<br/>
@@ -324,13 +325,18 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
     @Override
     public void create(CreateTableDDLBuilder builder) {
         AssertUtils.notNull(builder, "builder is null.");
-        AssertUtils.isTrue(!exists(builder.getTableName()),
+        AssertUtils.isTrue(!exists(builder.tableName()),
                 "table is exist.tableName:{}",
-                builder.getTableName());
+                builder.tableName());
         
-        String createSql = builder.createSql();
+        String createSql = SqlUtils.format(builder.createSql());
         
-        this.jdbcTemplate.execute(createSql);
+        String[] createSqls = StringUtils.splitByWholeSeparator(createSql, ";");
+        for (String createSqlTemp : createSqls) {
+            if (!StringUtils.isBlank(createSqlTemp)) {
+                this.jdbcTemplate.execute(createSqlTemp);
+            }
+        }
     }
     
     /**
@@ -345,13 +351,18 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
     @Override
     public void alter(AlterTableDDLBuilder builder) {
         AssertUtils.notNull(builder, "builder is null.");
-        //        AssertUtils.isTrue(exists(builder),
-        //                "table is not exist.tableName:{}",
-        //                tableName);
+        AssertUtils.isTrue(exists(builder.tableName()),
+                "table is not exist.tableName:{}",
+                builder.tableName());
         
-        String alterSql = builder.alterSql();
+        String alterSql = SqlUtils.format(builder.alterSql());
         
-        this.jdbcTemplate.execute(alterSql);
+        String[] alterSqls = StringUtils.splitByWholeSeparator(alterSql, ";");
+        for (String alterSqlTemp : alterSqls) {
+            if (!StringUtils.isBlank(alterSqlTemp)) {
+                this.jdbcTemplate.execute(alterSqlTemp);
+            }
+        }
     }
     
     /**
@@ -520,4 +531,15 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
         AlterTableDDLBuilder builder = null;
         return builder;
     }
+    
+    /**
+     * @param table
+     * @return
+     */
+    @Override
+    public AlterTableDDLBuilder generateAlterTableDDLBuilder(TableDef table) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    
 }

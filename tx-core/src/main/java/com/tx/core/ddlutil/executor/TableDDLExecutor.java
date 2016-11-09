@@ -8,8 +8,8 @@ package com.tx.core.ddlutil.executor;
 
 import java.util.List;
 
-import com.tx.core.ddlutil.alter.AlterTableDDLBuilder;
-import com.tx.core.ddlutil.create.CreateTableDDLBuilder;
+import com.tx.core.ddlutil.builder.alter.AlterTableDDLBuilder;
+import com.tx.core.ddlutil.builder.create.CreateTableDDLBuilder;
 import com.tx.core.ddlutil.model.DBColumnDef;
 import com.tx.core.ddlutil.model.DBIndexDef;
 import com.tx.core.ddlutil.model.DBTableDef;
@@ -191,4 +191,16 @@ public interface TableDDLExecutor {
       * @see [类、类#方法、类#成员]
      */
     public AlterTableDDLBuilder generateAlterTableDDLBuilder(String tableName);
+    
+    /**
+     * 生成修改表的Builder对象<br/>
+     * <功能详细描述>
+     * @param tableName
+     * @return [参数说明]
+     * 
+     * @return CreateTableDDLBuilder [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    public AlterTableDDLBuilder generateAlterTableDDLBuilder(TableDef table);
 }

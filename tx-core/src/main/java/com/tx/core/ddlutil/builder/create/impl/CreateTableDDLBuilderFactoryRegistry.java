@@ -4,13 +4,13 @@
  * 修改时间:  2016年11月6日
  * <修改描述:>
  */
-package com.tx.core.ddlutil.create.impl;
+package com.tx.core.ddlutil.builder.create.impl;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import com.tx.core.dbscript.model.DataSourceTypeEnum;
-import com.tx.core.ddlutil.create.CreateTableDDLBuilderFactory;
+import com.tx.core.ddlutil.builder.create.CreateTableDDLBuilderFactory;
 import com.tx.core.ddlutil.dialect.DDLDialect;
 import com.tx.core.ddlutil.dialect.MysqlDDLDialect;
 import com.tx.core.exceptions.util.AssertUtils;

@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import com.tx.core.jdbc.sqlsource.annotation.QueryConditionEqual;
+import com.tx.core.jdbc.sqlsource.annotation.QueryConditionLike;
 import com.tx.core.jdbc.sqlsource.annotation.UpdateAble;
 import com.tx.core.support.initable.model.ConfigInitAble;
 
@@ -58,7 +59,7 @@ public class BasicDataType implements ConfigInitAble, Serializable {
     
     /** 基础数据类型名 */
     @UpdateAble
-    @QueryConditionEqual
+    @QueryConditionLike
     private String name;
     
     @UpdateAble

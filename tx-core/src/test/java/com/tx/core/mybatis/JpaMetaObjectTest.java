@@ -6,16 +6,11 @@
  */
 package com.tx.core.mybatis;
 
-import java.util.List;
+import java.beans.PropertyDescriptor;
 
-import javax.persistence.Table;
-
-import org.hibernate.annotations.common.reflection.XClass;
-import org.hibernate.annotations.common.reflection.XProperty;
 import org.hibernate.annotations.common.reflection.java.JavaReflectionManager;
-import org.hibernate.cfg.AccessType;
+import org.springframework.beans.BeanUtils;
 
-import com.tx.core.mybatis.data.Demo;
 import com.tx.core.mybatis.data.DemoTreeNode;
 
 
@@ -38,15 +33,26 @@ public class JpaMetaObjectTest {
 //        g.generate(Demo.class, "d:/mybatis");
 //    }
     
+//    public static void main(String[] args) {
+//        XClass xclass = javaReflectionManager.toXClass(DemoTreeNode.class);
+//        
+//        DemoTreeNode.class.getAnnotation(Table.class);
+//        Table t = xclass.getAnnotation(Table.class);
+//        System.out.println(t);
+//        
+//        for(XProperty xproperty : xclass.getDeclaredProperties(XClass.ACCESS_PROPERTY)){
+//            System.out.println(xproperty);
+//        }
+//    }
+    
     public static void main(String[] args) {
-        XClass xclass = javaReflectionManager.toXClass(DemoTreeNode.class);
+        PropertyDescriptor[] pds = BeanUtils.getPropertyDescriptors(DemoTreeNode.class);
         
-        DemoTreeNode.class.getAnnotation(Table.class);
-        Table t = xclass.getAnnotation(Table.class);
-        System.out.println(t);
-        
-        for(XProperty xproperty : xclass.getDeclaredProperties( AccessType.FIELD.getType())){
-            System.out.println(xproperty);
+        for(PropertyDescriptor pd : pds){
+            System.out.println(pd.getName());
         }
+        //BeanUtils.
+        
+        
     }
 }

@@ -6,7 +6,6 @@
  */
 package com.tx.core.mybatis.handler;
 
-import java.math.BigDecimal;
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -32,7 +31,7 @@ import com.tx.core.util.JdbcUtils;
  * @since  [产品/模块版本]
  */
 @MappedTypes(value = { Class.class })
-public class NullAbleClassTypeHandler extends BaseTypeHandler<Class> {
+public class NullAbleClassTypeHandler extends BaseTypeHandler<Class<?>> {
     
     private Logger logger = LoggerFactory.getLogger(NullAbleClassTypeHandler.class);
     
@@ -44,7 +43,7 @@ public class NullAbleClassTypeHandler extends BaseTypeHandler<Class> {
      * @throws SQLException
      */
     @Override
-    public void setParameter(PreparedStatement ps, int i, Class parameter,
+    public void setParameter(PreparedStatement ps, int i, Class<?> parameter,
             JdbcType jdbcType) throws SQLException {
         if (parameter == null
                 && (jdbcType == null || JdbcType.OTHER == jdbcType)) {
@@ -57,7 +56,7 @@ public class NullAbleClassTypeHandler extends BaseTypeHandler<Class> {
     
     @Override
     public void setNonNullParameter(PreparedStatement ps, int i,
-            Class parameter, JdbcType jdbcType) throws SQLException {
+            Class<?> parameter, JdbcType jdbcType) throws SQLException {
         ps.setString(i, parameter.getName());
         //ps.setBigDecimal(i, parameter);
     }

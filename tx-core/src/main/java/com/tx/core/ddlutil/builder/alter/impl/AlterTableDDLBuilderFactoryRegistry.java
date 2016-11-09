@@ -4,14 +4,13 @@
  * 修改时间:  2016年11月6日
  * <修改描述:>
  */
-package com.tx.core.ddlutil.alter.impl;
+package com.tx.core.ddlutil.builder.alter.impl;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import com.tx.core.dbscript.model.DataSourceTypeEnum;
-import com.tx.core.ddlutil.alter.AlterTableDDLBuilderFactory;
-import com.tx.core.ddlutil.create.CreateTableDDLBuilderFactory;
+import com.tx.core.ddlutil.builder.alter.AlterTableDDLBuilderFactory;
 import com.tx.core.ddlutil.dialect.DDLDialect;
 import com.tx.core.ddlutil.dialect.MysqlDDLDialect;
 import com.tx.core.exceptions.util.AssertUtils;
@@ -32,6 +31,10 @@ public class AlterTableDDLBuilderFactoryRegistry {
     
     static {
         DDLDialect mysqlDialect = new MysqlDDLDialect();
+        AlterTableDDLBuilderFactoryRegistry.registeFactory(DataSourceTypeEnum.MYSQL,
+                new MysqlAlterTableDDLBuilder(mysqlDialect));
+        AlterTableDDLBuilderFactoryRegistry.registeFactory(DataSourceTypeEnum.MySQL5InnoDBDialect,
+                new MysqlAlterTableDDLBuilder(mysqlDialect));
     }
     
     /**
