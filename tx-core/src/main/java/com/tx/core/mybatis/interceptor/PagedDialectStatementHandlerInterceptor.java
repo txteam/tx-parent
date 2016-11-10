@@ -42,10 +42,9 @@ import com.tx.core.util.MetaObjectUtils;
  */
 @Intercepts({ @Signature(type = StatementHandler.class, method = "prepare", args = {
         Connection.class, Integer.class }) })
-@Deprecated
-public class PagedDiclectStatementHandlerInterceptor implements Interceptor {
+public class PagedDialectStatementHandlerInterceptor implements Interceptor {
     
-    private Logger logger = LoggerFactory.getLogger(PagedDiclectStatementHandlerInterceptor.class);
+    private Logger logger = LoggerFactory.getLogger(PagedDialectStatementHandlerInterceptor.class);
     
     private Dialect dialect;
     
