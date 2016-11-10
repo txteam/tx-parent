@@ -54,6 +54,7 @@
 				<artifactId>tx-core</artifactId>
 				<version>${tx-version}</version>
 			</dependency>
+			
 			<dependency>
 				<groupId>com.tx</groupId>
 				<artifactId>tx-component-configuration</artifactId>
@@ -87,6 +88,11 @@
 			<dependency>
 				<groupId>com.tx</groupId>
 				<artifactId>tx-component-basicdata</artifactId>
+				<version>${tx-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.tx</groupId>
+				<artifactId>tx-component-communication</artifactId>
 				<version>${tx-version}</version>
 			</dependency>
 
