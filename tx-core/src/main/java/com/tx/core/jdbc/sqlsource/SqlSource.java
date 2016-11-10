@@ -6,7 +6,6 @@
  */
 package com.tx.core.jdbc.sqlsource;
 
-import java.beans.PropertyDescriptor;
 import java.io.Serializable;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,10 +19,9 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.ibatis.jdbc.SqlBuilder;
+import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.type.JdbcType;
 import org.hibernate.dialect.Dialect;
-import org.springframework.beans.BeanWrapper;
-import org.springframework.beans.PropertyAccessorFactory;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
@@ -35,6 +33,7 @@ import com.tx.core.jdbc.model.QueryConditionTypeEnum;
 import com.tx.core.reflection.ClassReflector;
 import com.tx.core.reflection.JpaMetaClass;
 import com.tx.core.util.JdbcUtils;
+import com.tx.core.util.MetaObjectUtils;
 import com.tx.core.util.ObjectUtils;
 
 /**
@@ -310,8 +309,8 @@ public class SqlSource<T> implements Serializable, Cloneable {
      */
     public Object getValue(Object obj) {
         AssertUtils.notNull(obj, "obj is null.");
-        BeanWrapper metaObject = PropertyAccessorFactory.forBeanPropertyAccess(obj);
-        return metaObject.getPropertyValue(this.pkName);
+        MetaObject metaObject = MetaObjectUtils.forObject(obj);
+        return metaObject.getValue(this.pkName);
     }
     
     public Dialect getDialect() {
@@ -374,7 +373,7 @@ public class SqlSource<T> implements Serializable, Cloneable {
      */
     public PreparedStatementSetter getInsertSetter(final Object obj) {
         //如果插入语句还没有初始化，则需要先初始化插入语句
-        final BeanWrapper metaObject = PropertyAccessorFactory.forBeanPropertyAccess(obj);
+        final MetaObject metaObject = MetaObjectUtils.forObject(obj);
         PreparedStatementSetter res = new PreparedStatementSetter() {
             @Override
             public void setValues(PreparedStatement ps) throws SQLException {
@@ -384,7 +383,7 @@ public class SqlSource<T> implements Serializable, Cloneable {
                     Class<?> getterType = getter2JavaTypeMapping.get(propertyTemp);
                     JdbcUtils.setPreparedStatementValueForSimpleType(ps,
                             i,
-                            metaObject.getPropertyValue(entryTemp.getKey()),
+                            metaObject.getValue(entryTemp.getKey()),
                             getterType);
                     i++;
                 }
@@ -411,14 +410,14 @@ public class SqlSource<T> implements Serializable, Cloneable {
                 this.pkName);
         
         final String finalPkName = this.pkName;
-        final BeanWrapper metaObject = PropertyAccessorFactory.forBeanPropertyAccess(obj);
+        final MetaObject metaObject = MetaObjectUtils.forObject(obj);
         PreparedStatementSetter res = new PreparedStatementSetter() {
             @Override
             public void setValues(PreparedStatement ps) throws SQLException {
                 Class<?> setterType = getter2JavaTypeMapping.get(finalPkName);
                 JdbcUtils.setPreparedStatementValueForSimpleType(ps,
                         1,
-                        metaObject.getPropertyValue(finalPkName),
+                        metaObject.getValue(finalPkName),
                         setterType);
             }
         };
@@ -471,7 +470,7 @@ public class SqlSource<T> implements Serializable, Cloneable {
             @Override
             public T mapRow(ResultSet rs, int rowNum) throws SQLException {
                 T newObjInstance = ObjectUtils.newInstance(finalType);
-                BeanWrapper metaObject = PropertyAccessorFactory.forBeanPropertyAccess(newObjInstance);
+                MetaObject metaObject = MetaObjectUtils.forObject(newObjInstance);
                 
                 for (Entry<String, String> entryTemp : getter2columnNameMapping.entrySet()) {
                     String propertyName = entryTemp.getKey();
@@ -482,7 +481,7 @@ public class SqlSource<T> implements Serializable, Cloneable {
                         Object value = JdbcUtils.getResultSetValueForSimpleType(rs,
                                 columnName,
                                 type);
-                        metaObject.setPropertyValue(propertyName, value);
+                        metaObject.setValue(propertyName, value);
                     }
                 }
                 return newObjInstance;
@@ -504,7 +503,7 @@ public class SqlSource<T> implements Serializable, Cloneable {
     public RowCallbackHandler getSelectRowCallbackHandler(Object newObjInstance) {
         AssertUtils.notNull(this.classReflector, "classReflector is null");
         
-        final BeanWrapper metaObject = PropertyAccessorFactory.forBeanPropertyAccess(newObjInstance);
+        final MetaObject metaObject = MetaObjectUtils.forObject(newObjInstance);
         final ClassReflector<T> finalClassReflector = this.classReflector;
         RowCallbackHandler res = new RowCallbackHandler() {
             @Override
@@ -520,7 +519,7 @@ public class SqlSource<T> implements Serializable, Cloneable {
                         Object value = JdbcUtils.getResultSetValueForSimpleType(rs,
                                 columnName,
                                 type);
-                        metaObject.setPropertyValue(propertyName, value);
+                        metaObject.setValue(propertyName, value);
                     }
                 }
             }
@@ -578,10 +577,10 @@ public class SqlSource<T> implements Serializable, Cloneable {
         SqlBuilder.FROM(this.tableName);
         
         if (!ObjectUtils.isEmpty(obj)) {
-            BeanWrapper metaObject = PropertyAccessorFactory.forBeanPropertyAccess(obj);
+            MetaObject metaObject = MetaObjectUtils.forObject(obj);
             for (Entry<String, String> entryTemp : queryConditionKey2SqlMapping.entrySet()) {
                 String queryKeyName = entryTemp.getKey();
-                Object valueObj = metaObject.getPropertyValue(queryKeyName);
+                Object valueObj = metaObject.getValue(queryKeyName);
                 if (ObjectUtils.isEmpty(valueObj)) {
                     continue;
                 }
@@ -623,10 +622,10 @@ public class SqlSource<T> implements Serializable, Cloneable {
         SqlBuilder.FROM(this.tableName);
         
         if (!ObjectUtils.isEmpty(obj)) {
-            BeanWrapper metaObject = PropertyAccessorFactory.forBeanPropertyAccess(obj);
+            MetaObject metaObject = MetaObjectUtils.forObject(obj);
             for (Entry<String, String> entryTemp : queryConditionKey2SqlMapping.entrySet()) {
                 String queryKeyName = entryTemp.getKey();
-                Object valueObj = metaObject.getPropertyValue(queryKeyName);
+                Object valueObj = metaObject.getValue(queryKeyName);
                 if (ObjectUtils.isEmpty(valueObj)) {
                     continue;
                 }
@@ -655,14 +654,14 @@ public class SqlSource<T> implements Serializable, Cloneable {
     public PreparedStatementSetter getQueryCondtionSetter(Object obj) {
         PreparedStatementSetter res = null;
         if (!ObjectUtils.isEmpty(obj)) {
-            final BeanWrapper metaObject = PropertyAccessorFactory.forBeanPropertyAccess(obj);
+            final MetaObject metaObject = MetaObjectUtils.forObject(obj);
             res = new PreparedStatementSetter() {
                 @Override
                 public void setValues(PreparedStatement ps) throws SQLException {
                     int i = 1;
                     for (Entry<String, String> entryTemp : queryConditionKey2SqlMapping.entrySet()) {
                         String queryKeyName = entryTemp.getKey();
-                        Object valueObj = metaObject.getPropertyValue(queryKeyName);
+                        Object valueObj = metaObject.getValue(queryKeyName);
                         if (ObjectUtils.isEmpty(valueObj)) {
                             continue;
                         }
@@ -698,11 +697,11 @@ public class SqlSource<T> implements Serializable, Cloneable {
      * @see [类、类#方法、类#成员]
      */
     public LinkedHashMap<String, Object> getQueryCondtionParamMaps(Object obj) {
-        final BeanWrapper metaObject = PropertyAccessorFactory.forBeanPropertyAccess(obj);
+        final MetaObject metaObject = MetaObjectUtils.forObject(obj);
         final LinkedHashMap<String, Object> resMap = new LinkedHashMap<String, Object>();
         for (Entry<String, String> entryTemp : queryConditionKey2SqlMapping.entrySet()) {
             String queryKeyName = entryTemp.getKey();
-            Object valueObj = metaObject.getPropertyValue(queryKeyName);
+            Object valueObj = metaObject.getValue(queryKeyName);
             if (ObjectUtils.isEmpty(valueObj)) {
                 continue;
             }
@@ -749,7 +748,7 @@ public class SqlSource<T> implements Serializable, Cloneable {
      */
     public PreparedStatementSetter getPagedQueryCondtionSetter(Object obj,
             int offset, int limit) {
-        final BeanWrapper metaObject = PropertyAccessorFactory.forBeanPropertyAccess(obj);
+        final MetaObject metaObject = MetaObjectUtils.forObject(obj);
         
         //如果支持isSupportsLimitOffset并且当前需要偏移值
         //final boolean isSupportsVariableLimit = dialect.supportsVariableLimit();//是否支持物理分页
@@ -786,7 +785,7 @@ public class SqlSource<T> implements Serializable, Cloneable {
                 }
                 for (Entry<String, String> entryTemp : queryConditionKey2SqlMapping.entrySet()) {
                     String queryKeyName = entryTemp.getKey();
-                    Object valueObj = metaObject.getPropertyValue(queryKeyName);
+                    Object valueObj = metaObject.getValue(queryKeyName);
                     if (ObjectUtils.isEmpty(valueObj)) {
                         continue;
                     }
@@ -849,12 +848,10 @@ public class SqlSource<T> implements Serializable, Cloneable {
         AssertUtils.notEmpty(obj, "update obj must not empty.");
         
         //获取当前对象中有哪些属性
-        BeanWrapper metaObject = PropertyAccessorFactory.forBeanPropertyAccess(obj);
+        MetaObject metaObject = MetaObjectUtils.forObject(obj);
         Set<String> keySet = new HashSet<String>();
-        for (PropertyDescriptor pd : metaObject.getPropertyDescriptors()) {
-            if (metaObject.isReadableProperty(pd.getName())) {
-                keySet.add(pd.getName());
-            }
+        for (String getterName : metaObject.getGetterNames()) {
+            keySet.add(getterName);
         }
         AssertUtils.isTrue(keySet.contains(this.pkName),
                 "obj:{} must contains pk{}.",
@@ -893,13 +890,10 @@ public class SqlSource<T> implements Serializable, Cloneable {
         AssertUtils.notEmpty(obj, "update obj must not empty.");
         
         //获取当前对象中有哪些属性
-        final BeanWrapper metaObject = PropertyAccessorFactory.forBeanPropertyAccess(obj);
+        final MetaObject metaObject = MetaObjectUtils.forObject(obj);
         final Set<String> keySet = new HashSet<String>();
-        for (PropertyDescriptor pd : metaObject.getPropertyDescriptors()) {
-            String propertyName = pd.getName();
-            if (metaObject.isReadableProperty(propertyName)) {
-                keySet.add(propertyName);
-            }
+        for (String getterName : metaObject.getGetterNames()) {
+            keySet.add(getterName);
         }
         AssertUtils.isTrue(keySet.contains(this.pkName),
                 "obj:{} must contains pk{}.",
@@ -913,7 +907,7 @@ public class SqlSource<T> implements Serializable, Cloneable {
                     if (!keySet.contains(propertyNameTemp)) {
                         continue;
                     }
-                    Object valueObj = metaObject.getPropertyValue(propertyNameTemp);
+                    Object valueObj = metaObject.getValue(propertyNameTemp);
                     Class<?> setterType = getter2JavaTypeMapping.get(propertyNameTemp);
                     JdbcUtils.setPreparedStatementValueForSimpleType(ps,
                             i++,
@@ -923,7 +917,7 @@ public class SqlSource<T> implements Serializable, Cloneable {
                 Class<?> setterType = getter2JavaTypeMapping.get(finalPkName);
                 JdbcUtils.setPreparedStatementValueForSimpleType(ps,
                         i,
-                        metaObject.getPropertyValue(finalPkName),
+                        metaObject.getValue(finalPkName),
                         setterType);
             }
         };

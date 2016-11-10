@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.reflection.MetaObject;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.springframework.beans.BeanUtils;
@@ -22,6 +23,7 @@ import com.tx.core.support.poi.excel.CellRowReader;
 import com.tx.core.support.poi.excel.annotation.ExcelCell;
 import com.tx.core.support.poi.excel.annotation.ExcelCellInfo;
 import com.tx.core.support.poi.excel.exception.ExcelReadException;
+import com.tx.core.util.MetaObjectUtils;
 import com.tx.core.util.ObjectUtils;
 
 /**
@@ -75,7 +77,7 @@ public class TypeRowReader<T> implements CellRowReader<T> {
     public T read(Row row, int rowNum, boolean ignoreError,
             boolean ignoreBlank, boolean ignoreTypeUnmatch, int numberOfCells) {
         T obj = ObjectUtils.newInstance(type);
-        BeanWrapper mo = PropertyAccessorFactory.forBeanPropertyAccess(obj);
+        MetaObject mo = MetaObjectUtils.forObject(obj);
         
         //int cellsLength = numberOfCells != 0 ? numberOfCells : row.getPhysicalNumberOfCells();
         int cellsLength = numberOfCells != 0 ? numberOfCells
@@ -83,7 +85,7 @@ public class TypeRowReader<T> implements CellRowReader<T> {
         
         for (ExcelCellInfo<?> cellInfo : key2excelCellInfoMapping.values()) {
             if (cellInfo.getIndex() > cellsLength) {
-                mo.setPropertyValue(cellInfo.getFieldName(), null);
+                mo.setValue(cellInfo.getFieldName(), null);
                 continue;
             }
             
@@ -108,7 +110,7 @@ public class TypeRowReader<T> implements CellRowReader<T> {
                         ignoreTypeUnmatch);
             }
             
-            mo.setPropertyValue(cellInfo.getFieldName(), value);
+            mo.setValue(cellInfo.getFieldName(), value);
         }
         return obj;
     }

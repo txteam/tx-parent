@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.reflection.MetaObject;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
@@ -24,6 +25,7 @@ import com.tx.core.support.poi.excel.CellRowWriter;
 import com.tx.core.support.poi.excel.annotation.ExcelCell;
 import com.tx.core.support.poi.excel.annotation.ExcelCellInfo;
 import com.tx.core.support.poi.excel.exception.ExcelReadException;
+import com.tx.core.util.MetaObjectUtils;
 
 /**
  * 类自动映射类的写入<br/>
@@ -82,7 +84,7 @@ public class TypeCellRowWriter<T> implements CellRowWriter<T> {
         //设置行高
         row.setHeightInPoints(rowHeight);
         
-        BeanWrapper metaObject = PropertyAccessorFactory.forBeanPropertyAccess(obj);
+        MetaObject metaObject = MetaObjectUtils.forObject(obj);
         
         for (ExcelCellInfo<?> cellInfo : key2excelCellInfoMapping.values()) {
             Cell cell = row.createCell(cellInfo.getIndex());
@@ -90,7 +92,7 @@ public class TypeCellRowWriter<T> implements CellRowWriter<T> {
             if (cellInfo.getWidth() > 0) {
                 sheet.setColumnWidth(cellInfo.getIndex(), cellInfo.getWidth());
             }
-            Object value = metaObject.getPropertyValue(cellInfo.getFieldName());
+            Object value = metaObject.getValue(cellInfo.getFieldName());
             
             cellInfo.getCellWriter().write(cell,
                     value,
