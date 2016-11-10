@@ -25,7 +25,7 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.dao.support.PersistenceExceptionTranslator;
 
 import com.tx.core.dbscript.model.DataSourceTypeEnum;
-import com.tx.core.mybatis.interceptor.PagedDiclectStatementHandlerInterceptor;
+import com.tx.core.mybatis.interceptor.PagedDialectStatementHandlerInterceptor;
 
 /**
  * 辅助构建MybatisDaoSupport实例<br/>
@@ -122,7 +122,7 @@ public class MyBatisDaoSupportHelper {
         SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
         sqlSessionFactoryBean.setFailFast(true);
         sqlSessionFactoryBean.setTypeHandlersPackage("com.tx.core.mybatis.handler");
-        sqlSessionFactoryBean.setPlugins(new Interceptor[] { buildPagedDiclectStatementHandlerInterceptor(dataSourceType) });
+        sqlSessionFactoryBean.setPlugins(new Interceptor[] { buildPagedDialectStatementHandlerInterceptor(dataSourceType) });
         
         sqlSessionFactoryBean.setDataSource(dataSource);
         sqlSessionFactoryBean.setConfigLocation(defaultResourceLoader.getResource(configLocation));
@@ -134,11 +134,11 @@ public class MyBatisDaoSupportHelper {
                     Arrays.asList(resourcesTemp)));
         }
         sqlSessionFactoryBean.setMapperLocations(mapperLocationResourcesSet.toArray(new Resource[] {}));
-
+        
         sqlSessionFactoryBean.setTypeHandlersPackage("com.tx.core.mybatis.handler");
-        PagedDiclectStatementHandlerInterceptor pagedInterceptor = new PagedDiclectStatementHandlerInterceptor();
+        PagedDialectStatementHandlerInterceptor pagedInterceptor = new PagedDialectStatementHandlerInterceptor();
         pagedInterceptor.setDataSourceType(dataSourceType);
-        sqlSessionFactoryBean.setPlugins(new Interceptor[]{pagedInterceptor});
+        sqlSessionFactoryBean.setPlugins(new Interceptor[] { pagedInterceptor });
         
         sqlSessionFactoryBean.afterPropertiesSet();
         SqlSessionFactory sqlSessionFactory = (SqlSessionFactory) sqlSessionFactoryBean.getObject();
@@ -155,9 +155,9 @@ public class MyBatisDaoSupportHelper {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    private static Interceptor buildPagedDiclectStatementHandlerInterceptor(
+    private static Interceptor buildPagedDialectStatementHandlerInterceptor(
             DataSourceTypeEnum dataSourceType) {
-        PagedDiclectStatementHandlerInterceptor resInterceptor = new PagedDiclectStatementHandlerInterceptor();
+        PagedDialectStatementHandlerInterceptor resInterceptor = new PagedDialectStatementHandlerInterceptor();
         resInterceptor.setDataSourceType(dataSourceType);
         return resInterceptor;
     }
