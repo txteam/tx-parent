@@ -51,7 +51,7 @@ public class DataDict implements EntryAble<EntityEntry>, ConfigInitAble,
     @UpdateAble
     @QueryConditionEqual
     @Transient
-    private BasicData parent;
+    private DataDict parent;
     
     /** 类型编码 */
     @QueryConditionEqual
@@ -110,14 +110,14 @@ public class DataDict implements EntryAble<EntityEntry>, ConfigInitAble,
     /**
      * @return 返回 parent
      */
-    public BasicData getParent() {
+    public DataDict getParent() {
         return parent;
     }
     
     /**
      * @param 对parent进行赋值
      */
-    public void setParent(BasicData parent) {
+    public void setParent(DataDict parent) {
         this.parent = parent;
     }
     

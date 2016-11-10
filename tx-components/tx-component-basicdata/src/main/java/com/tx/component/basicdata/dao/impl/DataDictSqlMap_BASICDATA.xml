@@ -7,7 +7,7 @@
 	<!-- auto generate default resultMap -->
 	<resultMap id="dataDictMap" 
 		type="com.tx.component.basicdata.model.DataDict">
-		<result column="parentId" property="parent.id" javaType="com.tx.component.basicdata.model.DataDict"/>
+		<result column="parentId" property="parent.id"/>
 	</resultMap>
 	
 	<!-- auto generate default find -->
