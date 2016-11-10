@@ -644,7 +644,7 @@
 			<dependency>
 				<groupId>org.activiti</groupId>
 				<artifactId>activiti-engine</artifactId>
-				<version>5.12</version>
+				<version>5.22</version>
 				<exclusions>
 					<exclusion>
 						<groupId>commons-logging</groupId>
@@ -655,7 +655,7 @@
 			<dependency>
 				<groupId>org.activiti</groupId>
 				<artifactId>activiti-spring</artifactId>
-				<version>5.12</version>
+				<version>5.22</version>
 				<exclusions>
 					<exclusion>
 						<groupId>commons-logging</groupId>
@@ -666,7 +666,7 @@
 			<dependency>
 				<groupId>org.activiti</groupId>
 				<artifactId>activiti-cxf</artifactId>
-				<version>5.12</version>
+				<version>5.22</version>
 				<exclusions>
 					<exclusion>
 						<groupId>commons-logging</groupId>
@@ -677,7 +677,7 @@
 			<dependency>
 				<groupId>org.activiti</groupId>
 				<artifactId>activiti-cdi</artifactId>
-				<version>5.12</version>
+				<version>5.22</version>
 				<exclusions>
 					<exclusion>
 						<groupId>commons-logging</groupId>
