@@ -34,13 +34,13 @@ public class DBIndexDef implements Serializable, TableIndexDef {
     private String tableName;
     
     /** 是否唯一键 */
-    private boolean unique;
+    private boolean unique = false;
+    
+    /** 是否主键 */
+    private boolean primaryKey = false;
     
     /** 排序值 */
     private int orderPriority;
-    
-    /** 索引约束类型 */
-    private ConstraintTypeEnum constraintType;
     
     /** <默认构造函数> */
     public DBIndexDef() {
@@ -58,14 +58,14 @@ public class DBIndexDef implements Serializable, TableIndexDef {
     }
     
     /** <默认构造函数> */
-    public DBIndexDef(ConstraintTypeEnum constraintType, String indexName,
-            String columnName, String tableName, boolean unique) {
+    public DBIndexDef(boolean primaryKey, boolean unique, String indexName,
+            String columnName, String tableName) {
         super();
         this.indexName = indexName;
         this.columnName = columnName;
         this.tableName = tableName;
         this.unique = unique;
-        this.constraintType = constraintType;
+        this.primaryKey = primaryKey;
     }
     
     /**
@@ -142,17 +142,17 @@ public class DBIndexDef implements Serializable, TableIndexDef {
     }
     
     /**
-     * @return 返回 constraintType
+     * @return 返回 primaryKey
      */
-    public ConstraintTypeEnum getConstraintType() {
-        return constraintType;
+    public boolean isPrimaryKey() {
+        return primaryKey;
     }
     
     /**
-     * @param 对constraintType进行赋值
+     * @param 对primaryKey进行赋值
      */
-    public void setConstraintType(ConstraintTypeEnum constraintType) {
-        this.constraintType = constraintType;
+    public void setPrimaryKey(boolean primaryKey) {
+        this.primaryKey = primaryKey;
     }
     
     /**

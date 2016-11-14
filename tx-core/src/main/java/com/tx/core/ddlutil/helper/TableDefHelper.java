@@ -18,7 +18,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import com.tx.core.ddlutil.builder.DDLBuilder;
-import com.tx.core.ddlutil.model.ConstraintTypeEnum;
 import com.tx.core.ddlutil.model.TableColumnDef;
 import com.tx.core.ddlutil.model.TableDef;
 import com.tx.core.ddlutil.model.TableIndexDef;
@@ -76,7 +75,7 @@ public abstract class TableDefHelper {
         StringBuffer pkIndexColumnNames = new StringBuffer();
         List<TableIndexDef> pkIndexes = new ArrayList<>();
         for (TableIndexDef idxTemp : indexes) {
-            if (ConstraintTypeEnum.PRIMARY_KEY.equals(idxTemp.getConstraintType())) {
+            if (idxTemp.isPrimaryKey()) {
                 pkIndexes.add(idxTemp);
             }
         }
@@ -123,9 +122,7 @@ public abstract class TableDefHelper {
             for (int i = 0; i < pkColumns.size(); i++) {
                 columnNames[i] = pkColumns.get(i).getColumnName();
             }
-            createBuilder.newIndex(ConstraintTypeEnum.PRIMARY_KEY,
-                    PRIMARY_KEY_NAME,
-                    columnNames);
+            createBuilder.newIndex(true, true, PRIMARY_KEY_NAME, columnNames);
         }
         validatePrimaryKey(pkColumns, pkIndexes);
     }
@@ -148,7 +145,7 @@ public abstract class TableDefHelper {
         StringBuffer pkIndexColumnNames = new StringBuffer();
         List<TableIndexDef> pkIndexes = new ArrayList<>();
         for (TableIndexDef idxTemp : indexes) {
-            if (ConstraintTypeEnum.PRIMARY_KEY.equals(idxTemp.getConstraintType())) {
+            if (idxTemp.isPrimaryKey()) {
                 pkIndexes.add(idxTemp);
             }
         }
@@ -197,7 +194,7 @@ public abstract class TableDefHelper {
         StringBuffer pkIndexColumnNames = new StringBuffer();
         List<TableIndexDef> pkIndexes = new ArrayList<>();
         for (TableIndexDef idxTemp : indexes) {
-            if (ConstraintTypeEnum.PRIMARY_KEY.equals(idxTemp.getConstraintType())) {
+            if (idxTemp.isPrimaryKey()) {
                 pkIndexes.add(idxTemp);
             }
         }
@@ -498,7 +495,7 @@ public abstract class TableDefHelper {
             }
             
             for (TableIndexDef priIdx : this.sourceTable.getIndexes()) {
-                if (ConstraintTypeEnum.PRIMARY_KEY.equals(priIdx.getConstraintType())) {
+                if (priIdx.isPrimaryKey()) {
                     this.primaryKeyName = priIdx.getIndexName();
                     break;
                 }
@@ -521,7 +518,7 @@ public abstract class TableDefHelper {
             
             MultiValueMap<String, TableIndexDef> sourceMap = new LinkedMultiValueMap<String, TableIndexDef>();
             for (TableIndexDef sourceIndex : this.sourceTable.getIndexes()) {
-                if (ConstraintTypeEnum.PRIMARY_KEY.equals(sourceIndex.getConstraintType())) {
+                if (sourceIndex.isPrimaryKey()) {
                     continue;
                 }
                 sourceMap.add(sourceIndex.getIndexName().toUpperCase(),
@@ -529,7 +526,7 @@ public abstract class TableDefHelper {
             }
             MultiValueMap<String, TableIndexDef> newMap = new LinkedMultiValueMap<String, TableIndexDef>();
             for (TableIndexDef newIndex : this.newIndexes) {
-                if (ConstraintTypeEnum.PRIMARY_KEY.equals(newIndex.getConstraintType())) {
+                if (newIndex.isPrimaryKey()) {
                     continue;
                 }
                 newMap.add(newIndex.getIndexName().toUpperCase(), newIndex);

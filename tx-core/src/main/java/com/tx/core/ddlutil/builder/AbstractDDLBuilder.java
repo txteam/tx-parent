@@ -15,7 +15,6 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
 import com.tx.core.ddlutil.dialect.DDLDialect;
-import com.tx.core.ddlutil.model.ConstraintTypeEnum;
 import com.tx.core.ddlutil.model.DBColumnDef;
 import com.tx.core.ddlutil.model.DBIndexDef;
 import com.tx.core.ddlutil.model.JdbcTypeEnum;
@@ -389,15 +388,7 @@ public abstract class AbstractDDLBuilder<B extends DDLBuilder<B>> implements
      */
     @Override
     public B newIndex(boolean unique, String indexName, String... columnNames) {
-        AssertUtils.notEmpty(indexName, "indexName is empty.");
-        AssertUtils.notEmpty(columnNames, "columnNames is empty.");
-        
-        for (String columnName : columnNames) {
-            DBIndexDef newIndex = new DBIndexDef(indexName, columnName,
-                    this.tableName, unique);
-            
-            addAndValidateNewIndex(newIndex);
-        }
+        newIndex(false, unique, indexName, columnNames);
         
         @SuppressWarnings("unchecked")
         B builder = (B) this;
@@ -411,24 +402,17 @@ public abstract class AbstractDDLBuilder<B extends DDLBuilder<B>> implements
      * @return
      */
     @Override
-    public B newIndex(ConstraintTypeEnum constraintType, String indexName,
+    public B newIndex(boolean primaryKey, boolean unique, String indexName,
             String... columnNames) {
         AssertUtils.notEmpty(indexName, "indexName is empty.");
         AssertUtils.notEmpty(columnNames, "columnNames is empty.");
-        boolean unique = false;
-        if (constraintType != null) {
-            switch (constraintType) {
-                case UNIQUE:
-                case PRIMARY_KEY:
-                    unique = true;
-                    break;
-                default:
-                    break;
-            }
+        
+        if (primaryKey) {
+            unique = true;
         }
         for (String columnName : columnNames) {
-            DBIndexDef newIndex = new DBIndexDef(constraintType, indexName,
-                    columnName, this.tableName, unique);
+            DBIndexDef newIndex = new DBIndexDef(primaryKey, unique, indexName,
+                    columnName, this.tableName);
             
             addAndValidateNewIndex(newIndex);
         }

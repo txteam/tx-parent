@@ -3,7 +3,6 @@ package com.tx.core.ddlutil.builder;
 import java.math.BigDecimal;
 import java.util.List;
 
-import com.tx.core.ddlutil.model.ConstraintTypeEnum;
 import com.tx.core.ddlutil.model.TableColumnDef;
 import com.tx.core.ddlutil.model.TableIndexDef;
 
@@ -195,7 +194,7 @@ public interface DDLBuilder<B extends DDLBuilder<B>> {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    public abstract B newIndex(ConstraintTypeEnum constraintType,
+    public abstract B newIndex(boolean primaryKey, boolean unique,
             String indexName, String... columnNames);
     
     /**

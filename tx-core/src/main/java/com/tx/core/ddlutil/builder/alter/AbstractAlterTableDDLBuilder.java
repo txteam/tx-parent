@@ -20,7 +20,6 @@ import com.tx.core.ddlutil.builder.AbstractDDLBuilder;
 import com.tx.core.ddlutil.dialect.DDLDialect;
 import com.tx.core.ddlutil.helper.TableDefHelper;
 import com.tx.core.ddlutil.helper.TableDefHelper.AlterTableContent;
-import com.tx.core.ddlutil.model.ConstraintTypeEnum;
 import com.tx.core.ddlutil.model.TableColumnDef;
 import com.tx.core.ddlutil.model.TableDef;
 import com.tx.core.ddlutil.model.TableIndexDef;
@@ -453,8 +452,10 @@ public abstract class AbstractAlterTableDDLBuilder extends
         MultiValueMap<String, TableIndexDef> idxMutiMap = new LinkedMultiValueMap<>();
         OrderedSupportComparator.sort(addIndexes);
         for (TableIndexDef idx : addIndexes) {
-            if (ConstraintTypeEnum.PRIMARY_KEY.equals(idx.getConstraintType()))
-                idxMutiMap.add(idx.getIndexName(), idx);
+            if (idx.isPrimaryKey()) {
+                continue;
+            }
+            idxMutiMap.add(idx.getIndexName(), idx);
         }
         
         for (Entry<String, List<TableIndexDef>> entryTemp : idxMutiMap.entrySet()) {

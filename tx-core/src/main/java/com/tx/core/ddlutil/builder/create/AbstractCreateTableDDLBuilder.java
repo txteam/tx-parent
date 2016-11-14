@@ -19,7 +19,6 @@ import org.springframework.util.MultiValueMap;
 import com.tx.core.ddlutil.builder.AbstractDDLBuilder;
 import com.tx.core.ddlutil.dialect.DDLDialect;
 import com.tx.core.ddlutil.helper.TableDefHelper;
-import com.tx.core.ddlutil.model.ConstraintTypeEnum;
 import com.tx.core.ddlutil.model.TableColumnDef;
 import com.tx.core.ddlutil.model.TableDef;
 import com.tx.core.ddlutil.model.TableIndexDef;
@@ -194,7 +193,8 @@ public abstract class AbstractCreateTableDDLBuilder extends
      */
     protected void writeCreateTablePrimaryKeyStmt() throws IOException {
         //遍历索引，获取其中主键
-        String primaryNames = TableDefHelper.parsePrimaryKeyColumnNames(columns, indexes);
+        String primaryNames = TableDefHelper.parsePrimaryKeyColumnNames(columns,
+                indexes);
         
         //如果主键名集合为空
         if (StringUtils.isBlank(primaryNames)) {
@@ -252,7 +252,7 @@ public abstract class AbstractCreateTableDDLBuilder extends
         MultiValueMap<String, TableIndexDef> idxMutiMap = new LinkedMultiValueMap<>();
         OrderedSupportComparator.sort(this.indexes);
         for (TableIndexDef idx : this.indexes) {
-            if (ConstraintTypeEnum.PRIMARY_KEY.equals(idx.getConstraintType())) {
+            if (idx.isPrimaryKey()) {
                 continue;
             }
             idxMutiMap.add(idx.getIndexName().toUpperCase(), idx);

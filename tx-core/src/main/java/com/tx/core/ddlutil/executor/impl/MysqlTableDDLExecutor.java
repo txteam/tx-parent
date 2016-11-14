@@ -11,13 +11,11 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import javax.sql.DataSource;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -31,7 +29,6 @@ import com.tx.core.ddlutil.builder.alter.impl.AlterTableDDLBuilderFactoryRegistr
 import com.tx.core.ddlutil.builder.create.CreateTableDDLBuilder;
 import com.tx.core.ddlutil.builder.create.impl.CreateTableDDLBuilderFactoryRegistry;
 import com.tx.core.ddlutil.executor.TableDDLExecutor;
-import com.tx.core.ddlutil.model.ConstraintTypeEnum;
 import com.tx.core.ddlutil.model.DBColumnDef;
 import com.tx.core.ddlutil.model.DBIndexDef;
 import com.tx.core.ddlutil.model.DBTableDef;
@@ -133,13 +130,13 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
             + "TIDX.COLUMN_NAME AS 'columnName', TIDX.TABLE_NAME AS 'tableName', "
             + "(CASE WHEN TIDX.NON_UNIQUE = 1 THEN 0 ELSE 1 END ) AS 'unique',"
             + "TIDX.SEQ_IN_INDEX as 'orderPriority', "
-            + "(CASE WHEN TCONS.CONSTRAINT_TYPE = 'FOREIGN KEY' THEN 'FOREIGN_KEY' WHEN TCONS.CONSTRAINT_TYPE = 'PRIMARY KEY' THEN 'PRIMARY_KEY' WHEN TCONS.CONSTRAINT_TYPE = 'UNIQUE' THEN 'UNIQUE' ELSE '' END ) AS 'constraintType' "
+            + "(CASE WHEN TCONS.CONSTRAINT_TYPE = 'PRIMARY KEY' THEN 'Y' ELSE 'N' END ) AS 'primaryKey' "
             + "FROM information_schema.`STATISTICS` TIDX "
             + "LEFT JOIN information_schema.`TABLE_CONSTRAINTS` TCONS ON (TIDX.TABLE_SCHEMA = TCONS.CONSTRAINT_SCHEMA AND TIDX.TABLE_NAME = TCONS.TABLE_NAME AND TIDX.INDEX_NAME = TCONS.CONSTRAINT_NAME) "
             + "WHERE TIDX.TABLE_NAME = ? AND TIDX.TABLE_SCHEMA = ? "
             + "ORDER BY TIDX.INDEX_NAME,TIDX.SEQ_IN_INDEX";
     
-    private static final Map<String, ConstraintTypeEnum> constraintTypeMap = EnumUtils.getEnumMap(ConstraintTypeEnum.class);
+    //private static final Map<String, ConstraintTypeEnum> constraintTypeMap = EnumUtils.getEnumMap(ConstraintTypeEnum.class);
     
     //DDLindexRowMap
     private static final RowMapper<DBIndexDef> ddlIndexRowMapper = new RowMapper<DBIndexDef>() {
@@ -151,8 +148,9 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
             ddlIndex.setTableName(rs.getString("tableName"));
             ddlIndex.setUnique(rs.getBoolean("unique"));
             ddlIndex.setOrderPriority(rs.getInt("orderPriority"));
-            String constraintType = rs.getString("constraintType");
-            ddlIndex.setConstraintType(constraintTypeMap.get(constraintType));
+            //String constraintType = rs.getString("constraintType");
+            //constraintTypeMap.get(constraintType)
+            ddlIndex.setPrimaryKey(rs.getBoolean("primaryKey"));
             return ddlIndex;
         }
     };
