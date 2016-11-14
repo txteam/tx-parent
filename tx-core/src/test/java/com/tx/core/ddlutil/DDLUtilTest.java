@@ -15,6 +15,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import com.tx.core.datasource.DataSourceFinder;
 import com.tx.core.datasource.finder.SimpleDataSourceFinder;
+import com.tx.core.ddlutil.builder.alter.AlterTableDDLBuilder;
 import com.tx.core.ddlutil.builder.create.CreateTableDDLBuilder;
 import com.tx.core.ddlutil.executor.TableDDLExecutor;
 import com.tx.core.ddlutil.executor.impl.MysqlTableDDLExecutor;
@@ -22,7 +23,6 @@ import com.tx.core.ddlutil.model.DBColumnDef;
 import com.tx.core.ddlutil.model.DBIndexDef;
 import com.tx.core.ddlutil.model.DBTableDef;
 import com.tx.core.ddlutil.model.TableDef;
-import com.tx.core.util.SqlUtils;
 
 /**
  * <功能简述>
@@ -84,9 +84,8 @@ public class DDLUtilTest {
             createBuilder.newIndex(idx);
         }
         createBuilder.setTableName(tableName);
-        System.out.println(createBuilder.createSql());
-        System.out.println(SqlUtils.format(createBuilder.createSql()));
-        ddlExecutor.create(createBuilder);
+        //System.out.println(createBuilder.createSql());
+        //System.out.println(SqlUtils.format(createBuilder.createSql()));
         
         //增加字段
         createBuilder.newColumnOfBoolean("testBoolean", true, true)
@@ -103,5 +102,17 @@ public class DDLUtilTest {
                 16,
                 true,
                 "defaultVarchar");
+        createBuilder.newIndex("idx_t_test_001_10", "testBoolean","testInteger1");
+        createBuilder.newIndex("idx_t_test_001_20", "testDateTime2");
+        System.out.println(createBuilder.createSql());
+        ddlExecutor.create(createBuilder);
+        
+        DBTableDef sourceTable = ddlExecutor.findDBTableDetailByTableName(tableName);
+        DBTableDef newTable = ddlExecutor.findDBTableDetailByTableName("comm_message_tempalte");
+        newTable.setTableName(tableName);
+        AlterTableDDLBuilder alterBuilder = ddlExecutor.generateAlterTableDDLBuilder(newTable,sourceTable);
+        
+        System.out.println(alterBuilder.alterSql());
+        System.out.println(alterBuilder.alterSql(false, true));
     }
 }

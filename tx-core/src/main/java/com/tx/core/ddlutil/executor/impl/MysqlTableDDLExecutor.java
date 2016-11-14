@@ -11,11 +11,13 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.sql.DataSource;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -25,9 +27,11 @@ import org.springframework.util.PropertyPlaceholderHelper;
 
 import com.tx.core.dbscript.model.DataSourceTypeEnum;
 import com.tx.core.ddlutil.builder.alter.AlterTableDDLBuilder;
+import com.tx.core.ddlutil.builder.alter.impl.AlterTableDDLBuilderFactoryRegistry;
 import com.tx.core.ddlutil.builder.create.CreateTableDDLBuilder;
 import com.tx.core.ddlutil.builder.create.impl.CreateTableDDLBuilderFactoryRegistry;
 import com.tx.core.ddlutil.executor.TableDDLExecutor;
+import com.tx.core.ddlutil.model.ConstraintTypeEnum;
 import com.tx.core.ddlutil.model.DBColumnDef;
 import com.tx.core.ddlutil.model.DBIndexDef;
 import com.tx.core.ddlutil.model.DBTableDef;
@@ -73,7 +77,12 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
             + "( CASE WHEN TCOL.DATA_TYPE = 'int' THEN 'integer' ELSE TCOL.DATA_TYPE END ) AS 'jdbcType', "
             + "( CASE WHEN TCOL.CHARACTER_MAXIMUM_LENGTH IS NULL THEN TCOL.NUMERIC_PRECISION ELSE TCOL.CHARACTER_MAXIMUM_LENGTH END ) AS size, "
             + "TCOL.NUMERIC_SCALE AS 'scale', "
-            + "TCOL.COLUMN_DEFAULT AS 'defaultValue' "
+            + "( CASE "
+            + "     WHEN TCOL.DATA_TYPE = 'bit' AND TCOL.COLUMN_DEFAULT = 'b''1''' THEN 1 "
+            + "     WHEN TCOL.DATA_TYPE = 'bit' AND TCOL.COLUMN_DEFAULT = 'b''0''' THEN 0 "
+            + "     WHEN TCOL.DATA_TYPE = 'datetime' AND TCOL.COLUMN_DEFAULT = 'CURRENT_TIMESTAMP' THEN 'now()' "
+            + "     WHEN TCOL.DATA_TYPE = 'varchar' THEN CONCAT( '''', TCOL.COLUMN_DEFAULT, '''' ) "
+            + "     ELSE TCOL.COLUMN_DEFAULT END " + ") AS 'defaultValue' "
             + "FROM INFORMATION_SCHEMA.`COLUMNS` TCOL "
             + "WHERE TCOL.TABLE_NAME = ? AND TCOL.TABLE_SCHEMA = ?";
     
@@ -122,9 +131,15 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
     private static final String SQL_QUERY_INDEX_BY_TABLENAME = "SELECT "
             + "TIDX.INDEX_NAME AS 'indexName', "
             + "TIDX.COLUMN_NAME AS 'columnName', TIDX.TABLE_NAME AS 'tableName', "
-            + "( CASE WHEN TIDX.NON_UNIQUE = 1 THEN 0 ELSE 1 END ) AS 'unique' "
+            + "(CASE WHEN TIDX.NON_UNIQUE = 1 THEN 0 ELSE 1 END ) AS 'unique',"
+            + "TIDX.SEQ_IN_INDEX as 'orderPriority', "
+            + "(CASE WHEN TCONS.CONSTRAINT_TYPE = 'FOREIGN KEY' THEN 'FOREIGN_KEY' WHEN TCONS.CONSTRAINT_TYPE = 'PRIMARY KEY' THEN 'PRIMARY_KEY' WHEN TCONS.CONSTRAINT_TYPE = 'UNIQUE' THEN 'UNIQUE' ELSE '' END ) AS 'constraintType' "
             + "FROM information_schema.`STATISTICS` TIDX "
-            + "WHERE TIDX.TABLE_NAME = ? AND TIDX.TABLE_SCHEMA = ? AND TIDX.INDEX_NAME <> 'PRIMARY'";
+            + "LEFT JOIN information_schema.`TABLE_CONSTRAINTS` TCONS ON (TIDX.TABLE_SCHEMA = TCONS.CONSTRAINT_SCHEMA AND TIDX.TABLE_NAME = TCONS.TABLE_NAME AND TIDX.INDEX_NAME = TCONS.CONSTRAINT_NAME) "
+            + "WHERE TIDX.TABLE_NAME = ? AND TIDX.TABLE_SCHEMA = ? "
+            + "ORDER BY TIDX.INDEX_NAME,TIDX.SEQ_IN_INDEX";
+    
+    private static final Map<String, ConstraintTypeEnum> constraintTypeMap = EnumUtils.getEnumMap(ConstraintTypeEnum.class);
     
     //DDLindexRowMap
     private static final RowMapper<DBIndexDef> ddlIndexRowMapper = new RowMapper<DBIndexDef>() {
@@ -135,6 +150,9 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
             ddlIndex.setColumnName(rs.getString("columnName"));
             ddlIndex.setTableName(rs.getString("tableName"));
             ddlIndex.setUnique(rs.getBoolean("unique"));
+            ddlIndex.setOrderPriority(rs.getInt("orderPriority"));
+            String constraintType = rs.getString("constraintType");
+            ddlIndex.setConstraintType(constraintTypeMap.get(constraintType));
             return ddlIndex;
         }
     };
@@ -144,6 +162,13 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
     
     //BACKUP表
     private static final String SQL_BACKUP_TABLE = "CREATE TABLE ${backupTableName} AS SELECT * FROM ${tableName}";
+    
+    //查詢表的主鍵名稱
+    @SuppressWarnings("unused")
+    private static final String SQL_FIND_PRIMARYKEY_NAME = "SELECT TCONS.CONSTRAINT_NAME "
+            + "FROM information_schema.TABLE_CONSTRAINTS TCONS "
+            + "WHERE TCONS.TABLE_NAME = ? and TCONS.TABLE_SCHEMA = ? "
+            + "AND TCONS.CONSTRAINT_TYPE = 'PRIMARY KEY'";
     
     private static PropertyPlaceholderHelper placeholderHelper = new PropertyPlaceholderHelper(
             "${", "}");
@@ -527,8 +552,13 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
     @Override
     public AlterTableDDLBuilder generateAlterTableDDLBuilder(String tableName) {
         AssertUtils.notEmpty(tableName, "tableName is empty.");
+        AssertUtils.isTrue(exists(tableName),
+                "table is not exist.tableName:{}",
+                tableName);
         
-        AlterTableDDLBuilder builder = null;
+        TableDef sourceTableDef = findDBTableDetailByTableName(tableName);
+        AlterTableDDLBuilder builder = AlterTableDDLBuilderFactoryRegistry.getFactory(DataSourceTypeEnum.MYSQL)
+                .newInstance(sourceTableDef);
         return builder;
     }
     
@@ -537,9 +567,44 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
      * @return
      */
     @Override
-    public AlterTableDDLBuilder generateAlterTableDDLBuilder(TableDef table) {
-        // TODO Auto-generated method stub
-        return null;
+    public AlterTableDDLBuilder generateAlterTableDDLBuilder(TableDef newTable) {
+        AssertUtils.notNull(newTable, "table is null.");
+        AssertUtils.notEmpty(newTable.getTableName(),
+                "newTable.tableName is empty.");
+        AssertUtils.isTrue(exists(newTable.getTableName()),
+                "table is not exist.tableName:{}",
+                newTable.getTableName());
+        
+        TableDef sourceTableDef = findDBTableDetailByTableName(newTable.getTableName());
+        AlterTableDDLBuilder builder = AlterTableDDLBuilderFactoryRegistry.getFactory(DataSourceTypeEnum.MYSQL)
+                .newInstance(newTable, sourceTableDef);
+        return builder;
     }
     
+    /**
+     * @param newTable
+     * @param sourceTable
+     * @return
+     */
+    @Override
+    public AlterTableDDLBuilder generateAlterTableDDLBuilder(TableDef newTable,
+            TableDef sourceTable) {
+        AssertUtils.notNull(newTable, "table is null.");
+        AssertUtils.notEmpty(newTable.getTableName(),
+                "newTable.tableName is empty.");
+        
+        AssertUtils.notNull(sourceTable, "table is null.");
+        AssertUtils.notEmpty(sourceTable.getTableName(),
+                "sourceTable.tableName is empty.");
+        
+        AssertUtils.isTrue(newTable.getTableName()
+                .equalsIgnoreCase(sourceTable.getTableName()),
+                "newTable.tableName:{} should equalsIgnoreCase sourceTable.tableName:{}",
+                new Object[] { newTable.getTableName(),
+                        sourceTable.getTableName() });
+        
+        AlterTableDDLBuilder builder = AlterTableDDLBuilderFactoryRegistry.getFactory(DataSourceTypeEnum.MYSQL)
+                .newInstance(newTable, sourceTable);
+        return builder;
+    }
 }

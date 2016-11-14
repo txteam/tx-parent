@@ -113,6 +113,17 @@ public interface TableColumnDef extends OrderedSupport {
     public boolean isRequired();
     
     /**
+      * 设置是否为必填<br/>
+      * <功能详细描述>
+      * @param required [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public void setRequired(boolean required);
+    
+    /**
       * 获取表字段注释<br/>
       * <功能详细描述>
       * @return [参数说明]

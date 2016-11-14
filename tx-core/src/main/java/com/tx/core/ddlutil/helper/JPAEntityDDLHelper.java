@@ -4,7 +4,7 @@
  * 修改时间:  2016年11月6日
  * <修改描述:>
  */
-package com.tx.core.ddlutil.jpa;
+package com.tx.core.ddlutil.helper;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
@@ -25,7 +25,6 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 import org.springframework.beans.BeanUtils;
 
 import com.tx.core.ddlutil.model.JPAEntityColumnDef;
-import com.tx.core.ddlutil.model.JPAEntityIndexDef;
 import com.tx.core.ddlutil.model.JPAEntityTableDef;
 import com.tx.core.ddlutil.model.JdbcTypeEnum;
 import com.tx.core.ddlutil.model.TableDef;
@@ -43,7 +42,7 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public abstract class JPAEntityDDLUtils {
+public abstract class JPAEntityDDLHelper {
     
     /** 类型与表定义间的映射关联 */
     private static final Map<Class<?>, JPAEntityTableDef> TYPE_2_TABLEDEF_MAP = new HashMap<Class<?>, JPAEntityTableDef>();
@@ -85,11 +84,9 @@ public abstract class JPAEntityDDLUtils {
         
         List<JPAEntityColumnDef> columnDefs = doAnalyzeCoumnDefs(tableDef.getTableName(),
                 type);//解析字段集合
-        List<JPAEntityIndexDef> indexDefs = doAnalyzeIndexDefs(tableDef.getTableName(),
-                type);//解析索引集合
         
         tableDef.setColumns(columnDefs);
-        tableDef.setIndexes(indexDefs);
+        
         return tableDef;
     }
     
@@ -233,49 +230,7 @@ public abstract class JPAEntityDDLUtils {
         JdbcTypeEnum jdbcType = JPAEntityTypeRegistry.getJdbcType(javaType);//获取对应的jdbcType
         colDef = new JPAEntityColumnDef(columnName, javaType, jdbcType, size,
                 scale, required);
-        colDef.setTableName(tableName);
         colDef.setComment(columnComment);
         return colDef;
-    }
-    
-    /**
-      * 解析索引集合定义<br/>
-      * <功能详细描述>
-      * @param type
-      * @return [参数说明]
-      * 
-      * @return List<JPAEntityIndexDef> [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    private static List<JPAEntityIndexDef> doAnalyzeIndexDefs(String tableName,
-            Class<?> type) {
-        List<JPAEntityIndexDef> indexDefList = new ArrayList<>();
-        
-        PropertyDescriptor[] pds = BeanUtils.getPropertyDescriptors(type);
-        for (PropertyDescriptor pd : pds) {
-            JPAEntityIndexDef indexDef = doAnalyzeIndexDef(tableName, type, pd);
-            
-            if (indexDef != null) {
-                indexDefList.add(indexDef);
-            }
-        }
-        return indexDefList;
-    }
-    
-    /**
-      * 解析索引定义<br/>
-      * <功能详细描述>
-      * @param type
-      * @param pd
-      * @return [参数说明]
-      * 
-      * @return JPAEntityIndexDef [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    private static JPAEntityIndexDef doAnalyzeIndexDef(String tableName,
-            Class<?> type, PropertyDescriptor pd) {
-        return null;
     }
 }

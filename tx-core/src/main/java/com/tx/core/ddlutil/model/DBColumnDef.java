@@ -39,7 +39,7 @@ public class DBColumnDef implements Serializable, TableColumnDef {
     /** 字段类型 */
     private String columnType;
     
-    /** 是否主键. */
+    /** 是否主键.:保留属性，主键根据索引进行建立 */
     private boolean primaryKey;
     
     /** 是否必填. */

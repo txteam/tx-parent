@@ -30,9 +30,6 @@ public class JPAEntityColumnDef implements Serializable, TableColumnDef {
     /** 表字段注释 */
     private String comment;
     
-    /** 索引所在表 */
-    private String tableName;
-    
     /** 对应的类的类型 */
     private Class<?> javaType;
     
@@ -77,7 +74,6 @@ public class JPAEntityColumnDef implements Serializable, TableColumnDef {
         this.required = required;
         
         this.primaryKey = false;
-        this.tableName = null;
         this.defaultValue = null;
     }
     
@@ -200,20 +196,6 @@ public class JPAEntityColumnDef implements Serializable, TableColumnDef {
      */
     public void setDefaultValue(String defaultValue) {
         this.defaultValue = defaultValue;
-    }
-    
-    /**
-     * @return
-     */
-    public String getTableName() {
-        return tableName;
-    }
-    
-    /**
-     * @param 对tableName进行赋值
-     */
-    public void setTableName(String tableName) {
-        this.tableName = tableName;
     }
     
     /**

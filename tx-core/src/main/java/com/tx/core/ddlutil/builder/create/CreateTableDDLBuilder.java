@@ -1,6 +1,10 @@
 package com.tx.core.ddlutil.builder.create;
 
+import java.util.List;
+
 import com.tx.core.ddlutil.builder.DDLBuilder;
+import com.tx.core.ddlutil.model.TableColumnDef;
+import com.tx.core.ddlutil.model.TableIndexDef;
 
 /**
   * 建表DDL构建器<br/>
@@ -46,4 +50,26 @@ public interface CreateTableDDLBuilder extends
       * @see [类、类#方法、类#成员]
      */
     public abstract void setTableName(String tableName);
+    
+    /**
+      * 获取所有字段<br/>
+      * <功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return List<? extends TableColumnDef> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public List<? extends TableColumnDef> getColumns();
+    
+    /**
+      * 获取所有的索引<br/>
+      * <功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return List<? extends TableIndexDef> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public List<? extends TableIndexDef> getIndexes();
 }

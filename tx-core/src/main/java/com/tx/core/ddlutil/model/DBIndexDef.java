@@ -36,6 +36,12 @@ public class DBIndexDef implements Serializable, TableIndexDef {
     /** 是否唯一键 */
     private boolean unique;
     
+    /** 排序值 */
+    private int orderPriority;
+    
+    /** 索引约束类型 */
+    private ConstraintTypeEnum constraintType;
+    
     /** <默认构造函数> */
     public DBIndexDef() {
         super();
@@ -49,6 +55,17 @@ public class DBIndexDef implements Serializable, TableIndexDef {
         this.columnName = columnName;
         this.tableName = tableName;
         this.unique = unique;
+    }
+    
+    /** <默认构造函数> */
+    public DBIndexDef(ConstraintTypeEnum constraintType, String indexName,
+            String columnName, String tableName, boolean unique) {
+        super();
+        this.indexName = indexName;
+        this.columnName = columnName;
+        this.tableName = tableName;
+        this.unique = unique;
+        this.constraintType = constraintType;
     }
     
     /**
@@ -108,6 +125,34 @@ public class DBIndexDef implements Serializable, TableIndexDef {
      */
     public void setColumnName(String columnName) {
         this.columnName = columnName;
+    }
+    
+    /**
+     * @return 返回 orderPriority
+     */
+    public int getOrderPriority() {
+        return orderPriority;
+    }
+    
+    /**
+     * @param 对orderPriority进行赋值
+     */
+    public void setOrderPriority(int orderPriority) {
+        this.orderPriority = orderPriority;
+    }
+    
+    /**
+     * @return 返回 constraintType
+     */
+    public ConstraintTypeEnum getConstraintType() {
+        return constraintType;
+    }
+    
+    /**
+     * @param 对constraintType进行赋值
+     */
+    public void setConstraintType(ConstraintTypeEnum constraintType) {
+        this.constraintType = constraintType;
     }
     
     /**

@@ -15,6 +15,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
 import com.tx.core.ddlutil.dialect.DDLDialect;
+import com.tx.core.ddlutil.model.ConstraintTypeEnum;
 import com.tx.core.ddlutil.model.DBColumnDef;
 import com.tx.core.ddlutil.model.DBIndexDef;
 import com.tx.core.ddlutil.model.JdbcTypeEnum;
@@ -206,7 +207,7 @@ public abstract class AbstractDDLBuilder<B extends DDLBuilder<B>> implements
         } else if (size < 6) {
             jdbcType = JdbcTypeEnum.SMALLINT;
         } else if (size < 11) {
-            jdbcType = JdbcTypeEnum.INTEGER;
+            jdbcType = JdbcTypeEnum.INT;
         } else if (size < 20) {
             jdbcType = JdbcTypeEnum.BIGINT;
         } else {
@@ -404,6 +405,40 @@ public abstract class AbstractDDLBuilder<B extends DDLBuilder<B>> implements
     }
     
     /**
+     * @param constraintType
+     * @param indexName
+     * @param columnNames
+     * @return
+     */
+    @Override
+    public B newIndex(ConstraintTypeEnum constraintType, String indexName,
+            String... columnNames) {
+        AssertUtils.notEmpty(indexName, "indexName is empty.");
+        AssertUtils.notEmpty(columnNames, "columnNames is empty.");
+        boolean unique = false;
+        if (constraintType != null) {
+            switch (constraintType) {
+                case UNIQUE:
+                case PRIMARY_KEY:
+                    unique = true;
+                    break;
+                default:
+                    break;
+            }
+        }
+        for (String columnName : columnNames) {
+            DBIndexDef newIndex = new DBIndexDef(constraintType, indexName,
+                    columnName, this.tableName, unique);
+            
+            addAndValidateNewIndex(newIndex);
+        }
+        
+        @SuppressWarnings("unchecked")
+        B builder = (B) this;
+        return builder;
+    }
+    
+    /**
       * 添加并验证索引<br/>
       * <功能详细描述>
       * @param tableIndex [参数说明]
@@ -480,6 +515,19 @@ public abstract class AbstractDDLBuilder<B extends DDLBuilder<B>> implements
     }
     
     /**
+     * 写入指定字符集
+     * @param text The text to print
+     */
+    protected final void deleteLastIndexOf(String text) throws IOException {
+        StringBuffer sb = this.writer.getBuffer();
+        if (sb.lastIndexOf(text) < 0) {
+            return;
+        }
+        int start = sb.lastIndexOf(text);
+        sb.delete(start, start + text.length());
+    }
+    
+    /**
      * @return 返回 ddlDialect
      */
     protected final DDLDialect getDDLDialect() {
@@ -491,5 +539,19 @@ public abstract class AbstractDDLBuilder<B extends DDLBuilder<B>> implements
      */
     public final String tableName() {
         return tableName;
+    }
+    
+    /**
+     * @return 返回 columns
+     */
+    public List<TableColumnDef> getColumns() {
+        return columns;
+    }
+    
+    /**
+     * @return 返回 indexes
+     */
+    public List<TableIndexDef> getIndexes() {
+        return indexes;
     }
 }

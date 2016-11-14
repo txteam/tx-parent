@@ -63,7 +63,8 @@ public interface AlterTableDDLBuilder extends DDLBuilder<AlterTableDDLBuilder> {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public String alterSql(boolean isIncrementUpdate);
+    public String alterSql(boolean isIncrementUpdate,
+            boolean isIgnoreIndexChange);
     
     /**
       * 是否需要更新修改表<br/>
@@ -80,11 +81,13 @@ public interface AlterTableDDLBuilder extends DDLBuilder<AlterTableDDLBuilder> {
       * 是否需要更新修改表<br/>
       * <功能详细描述>
       * @param isIncrementUpdate
+      * @param isIgnoreIndexChange
       * @return [参数说明]
       * 
       * @return boolean [返回类型说明]
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public boolean isNeedAlter(boolean isIncrementUpdate);
+    public boolean isNeedAlter(boolean isIncrementUpdate,
+            boolean isIgnoreIndexChange);
 }

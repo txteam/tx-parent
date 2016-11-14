@@ -83,6 +83,8 @@ public class MysqlAlterTableDDLBuilder extends AbstractAlterTableDDLBuilder {
         
         MysqlAlterTableDDLBuilder builder = new MysqlAlterTableDDLBuilder(
                 newTable, sourceTable, ddlDialect);
+        this.columns.addAll(newTable.getColumns());
+        this.indexes.addAll(newTable.getIndexes());
         return builder;
     }
 }

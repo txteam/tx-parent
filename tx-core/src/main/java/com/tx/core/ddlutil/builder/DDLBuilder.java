@@ -1,7 +1,9 @@
 package com.tx.core.ddlutil.builder;
 
 import java.math.BigDecimal;
+import java.util.List;
 
+import com.tx.core.ddlutil.model.ConstraintTypeEnum;
 import com.tx.core.ddlutil.model.TableColumnDef;
 import com.tx.core.ddlutil.model.TableIndexDef;
 
@@ -181,4 +183,40 @@ public interface DDLBuilder<B extends DDLBuilder<B>> {
     public abstract B newIndex(boolean unique, String indexName,
             String... columnNames);
     
+    /**
+     * 新增表索引<br/>
+     * <功能详细描述>
+     * @param unique
+     * @param indexName
+     * @param columnNames
+     * @return [参数说明]
+     * 
+     * @return CreateTableDDLBuilder [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    public abstract B newIndex(ConstraintTypeEnum constraintType,
+            String indexName, String... columnNames);
+    
+    /**
+      * 获取所有字段的定义
+      * <功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return List<TableColumnDef> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public List<? extends TableColumnDef> getColumns();
+    
+    /**
+      * 获取所有索引的定义<br/>
+      * <功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return List<? extends TableIndexDef> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public List<? extends TableIndexDef> getIndexes();
 }

@@ -1,5 +1,7 @@
 package com.tx.core.ddlutil.model;
 
+import com.tx.core.model.OrderedSupport;
+
 /**
   * 表索引接口<br/>
   * <功能详细描述>
@@ -9,7 +11,7 @@ package com.tx.core.ddlutil.model;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
  */
-public interface TableIndexDef {
+public interface TableIndexDef extends OrderedSupport{
     
     /**
       * 索引名称<br/>
@@ -43,5 +45,16 @@ public interface TableIndexDef {
       * @see [类、类#方法、类#成员]
      */
     public abstract String getColumnName();
+    
+    /**
+      * 获取约束类型<br/>
+      * <功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return ConstraintTypeEnum [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public ConstraintTypeEnum getConstraintType();
     
 }

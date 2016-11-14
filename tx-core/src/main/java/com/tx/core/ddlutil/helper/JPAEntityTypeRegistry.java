@@ -4,7 +4,7 @@
  * 修改时间:  2016年11月9日
  * <修改描述:>
  */
-package com.tx.core.ddlutil.jpa;
+package com.tx.core.ddlutil.helper;
 
 import java.util.HashMap;
 import java.util.Map;
