@@ -113,6 +113,6 @@ public class DDLUtilTest {
         AlterTableDDLBuilder alterBuilder = ddlExecutor.generateAlterTableDDLBuilder(newTable,sourceTable);
         
         System.out.println(alterBuilder.alterSql());
-        System.out.println(alterBuilder.alterSql(false, true));
+        System.out.println(alterBuilder.alterSql(false, false));
     }
 }

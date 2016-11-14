@@ -128,7 +128,8 @@ public abstract class AbstractAlterTableDDLBuilder extends
                 new Object[] { newTableDef.getTableName(),
                         sourceTableDef.getTableName() });
         
-        AlterTableDDLBuilder builder = newInstance(newTableDef,sourceTableDef,
+        AlterTableDDLBuilder builder = newInstance(newTableDef,
+                sourceTableDef,
                 getDefaultDDLDialect());
         
         return builder;
@@ -164,7 +165,7 @@ public abstract class AbstractAlterTableDDLBuilder extends
      */
     @Override
     public final String alterSql() {
-        String alterSql = alterSql(true, false);
+        String alterSql = alterSql(true, true);
         return alterSql;
     }
     
