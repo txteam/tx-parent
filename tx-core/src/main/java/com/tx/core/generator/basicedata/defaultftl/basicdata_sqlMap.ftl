@@ -58,7 +58,7 @@
 	        </if>
 </#list>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(exclude${select.idPropertyName?cap_first})">
-				${r"<![CDATA[ "}AND ${select.simpleTableName}.${select.idColumnName} ${r"<>"} ${r"#{exclude"}${select.idPropertyName?cap_first}${r",javaType=java.lang.String} ]]>"}
+				${r"<![CDATA[ "}AND ${select.simpleTableName}.${select.idColumnName} ${r"<>"} ${r"#{exclude"}${select.idPropertyName?cap_first}${r"} ]]>"}
 			</if>
 <#list select.otherCondition as condition>
 			AND ${select.simpleTableName}.${condition}
@@ -87,7 +87,7 @@
 	        </if>
 </#list>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(exclude${select.idPropertyName?cap_first})">
-				${r"<![CDATA[ "}AND ${select.simpleTableName}.${select.idColumnName} ${r"<>"} ${r"#{exclude"}${select.idPropertyName?cap_first}${r",javaType=java.lang.String} ]]>"}
+				${r"<![CDATA[ "}AND ${select.simpleTableName}.${select.idColumnName} ${r"<>"} ${r"#{exclude"}${select.idPropertyName?cap_first}${r"} ]]>"}
 			</if>
 <#list select.otherCondition as condition>
 			AND ${select.simpleTableName}.${condition}

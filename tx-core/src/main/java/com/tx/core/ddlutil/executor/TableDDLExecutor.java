@@ -83,6 +83,20 @@ public interface TableDDLExecutor {
     public void alter(AlterTableDDLBuilder builder);
     
     /**
+      * 根据修改表的Builder执行修改表逻辑<br/>
+      * <功能详细描述>
+      * @param builder
+      * @param isIncrementUpdate
+      * @param isIgnoreIndexChange [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public void alter(AlterTableDDLBuilder builder, boolean isIncrementUpdate,
+            boolean isIgnoreIndexChange);
+    
+    /**
       * 判断是否需要升级(仅考虑增量升级，减少字段，减少字段长度无需进行升级)<br/>
       * <功能详细描述>
       * @param newTableDef

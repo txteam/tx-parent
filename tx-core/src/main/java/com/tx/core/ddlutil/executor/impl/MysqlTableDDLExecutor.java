@@ -238,7 +238,7 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
             conn = this.dataSource.getConnection();
             try {
                 this.schema = conn.getSchema();
-            } catch (AbstractMethodError e) {
+            } catch (Throwable e) {
                 this.schema = conn.getCatalog();
             }
             if (StringUtils.isEmpty(this.schema)) {
@@ -379,6 +379,23 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
                 builder.tableName());
         
         String alterSql = SqlUtils.format(builder.alterSql());
+        
+        String[] alterSqls = StringUtils.splitByWholeSeparator(alterSql, ";");
+        for (String alterSqlTemp : alterSqls) {
+            if (!StringUtils.isBlank(alterSqlTemp)) {
+                this.jdbcTemplate.execute(alterSqlTemp);
+            }
+        }
+    }
+    
+    public void alter(AlterTableDDLBuilder builder,boolean isIncrementUpdate,
+            boolean isIgnoreIndexChange) {
+        AssertUtils.notNull(builder, "builder is null.");
+        AssertUtils.isTrue(exists(builder.tableName()),
+                "table is not exist.tableName:{}",
+                builder.tableName());
+        
+        String alterSql = SqlUtils.format(builder.alterSql(isIncrementUpdate,isIgnoreIndexChange));
         
         String[] alterSqls = StringUtils.splitByWholeSeparator(alterSql, ";");
         for (String alterSqlTemp : alterSqls) {

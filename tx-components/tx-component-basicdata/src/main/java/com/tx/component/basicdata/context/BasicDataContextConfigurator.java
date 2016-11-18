@@ -337,4 +337,6 @@ public class BasicDataContextConfigurator implements ApplicationContextAware,
     public void setCacheManager(CacheManager cacheManager) {
         this.cacheManager = cacheManager;
     }
+    
+    
 }
