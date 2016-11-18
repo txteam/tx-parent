@@ -153,8 +153,9 @@ public class GeneratorUtils {
             //QueryConditionInfo queryConditionInfoTemp = queryConditionInfoMapping.get(queryConditionKey);;
             JdbcType jdbcType = queryConditionTypeMapping.get(queryConditionKey);
             AssertUtils.notNull(jdbcType, "jdbcType is null.");
-            String replaceValue = "#{" + queryConditionKey + ",jdbcType="
-                    + jdbcType.toString() + "}";
+            //            String replaceValue = "#{" + queryConditionKey + ",jdbcType="
+            //                    + jdbcType.toString() + "}";
+            String replaceValue = "#{" + queryConditionKey + "}";
             String queryCondition = StringUtils.replace(entryTemp.getValue(),
                     "?",
                     replaceValue);
@@ -186,7 +187,8 @@ public class GeneratorUtils {
     */
     public static <TYPE> List<SqlMapColumn> generateSqlMapColumnList(
             JpaMetaClass<TYPE> jpaMetaClass) {
-        List<SqlMapColumn> columnList = generateSqlMapColumnList(jpaMetaClass, true);
+        List<SqlMapColumn> columnList = generateSqlMapColumnList(jpaMetaClass,
+                true);
         return columnList;
     }
     
@@ -201,7 +203,7 @@ public class GeneratorUtils {
      * @see [类、类#方法、类#成员]
     */
     public static <TYPE> List<SqlMapColumn> generateSqlMapColumnList(
-            JpaMetaClass<TYPE> jpaMetaClass,boolean isColumnNameToUpCase) {
+            JpaMetaClass<TYPE> jpaMetaClass, boolean isColumnNameToUpCase) {
         List<SqlMapColumn> columnList = new ArrayList<SqlMapColumn>();
         //生成对应需要的列关系
         //Set<String> getterNameList = jpaMetaClass.getGetterNames();
@@ -217,12 +219,14 @@ public class GeneratorUtils {
             if (jpaColumnInfo.isSimpleType()) {
                 columnTemp = new SqlMapColumn(true,
                         jpaColumnInfo.getGetterName(),
-                        isColumnNameToUpCase ? jpaColumnInfo.getColumnName().toUpperCase() : jpaColumnInfo.getColumnName(),
+                        isColumnNameToUpCase ? jpaColumnInfo.getColumnName()
+                                .toUpperCase() : jpaColumnInfo.getColumnName(),
                         jpaColumnInfo.getRealGetterType(), null);
             } else {
                 columnTemp = new SqlMapColumn(false,
                         jpaColumnInfo.getGetterName(),
-                        isColumnNameToUpCase ? jpaColumnInfo.getColumnName().toUpperCase() : jpaColumnInfo.getColumnName(),
+                        isColumnNameToUpCase ? jpaColumnInfo.getColumnName()
+                                .toUpperCase() : jpaColumnInfo.getColumnName(),
                         jpaColumnInfo.getRealGetterType(),
                         jpaColumnInfo.getForeignKeyGetterName());
             }

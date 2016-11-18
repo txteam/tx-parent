@@ -337,7 +337,7 @@ public class MyBatisDaoSupport implements InitializingBean {
         result.setPageSize(pageSize);
         
         // 构建Count查询列表中数目
-        if (count <= 0 || pageIndex * pageSize >= count) {
+        if (count < 0) {
             String queryCountStatement = statement + "Count";
             count = (Integer) this.sqlSessionTemplate.selectOne(queryCountStatement,
                     parameter);

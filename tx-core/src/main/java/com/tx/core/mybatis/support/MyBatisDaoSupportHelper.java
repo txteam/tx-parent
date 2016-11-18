@@ -43,6 +43,34 @@ public class MyBatisDaoSupportHelper {
     private static PathMatchingResourcePatternResolver pathMatchingResourcePatternResolver = new PathMatchingResourcePatternResolver();
     
     /**
+     * 构建MybatisDaoSupport
+     * <功能详细描述>
+     * @param configLocation
+     * @param mapperLocations
+     * @param dataSourceType
+     * @param dataSource
+     * @return
+     * @throws Exception [参数说明]
+     * 
+     * @return MyBatisDaoSupport [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    public static MyBatisDaoSupport buildMyBatisDaoSupport(
+            String configLocation, DataSourceTypeEnum dataSourceType,
+            DataSource dataSource) throws Exception {
+        PersistenceExceptionTranslator exceptionTranslator = buildDefaultExceptionTranslator(dataSource);
+        
+        MyBatisDaoSupport myBatisDaoSupport = doBuildMyBatisDaoSupport(configLocation,
+                null,
+                dataSourceType,
+                dataSource,
+                exceptionTranslator);
+        
+        return myBatisDaoSupport;
+    }
+    
+    /**
       * 构建MybatisDaoSupport
       * <功能详细描述>
       * @param configLocation
@@ -128,17 +156,18 @@ public class MyBatisDaoSupportHelper {
         sqlSessionFactoryBean.setConfigLocation(defaultResourceLoader.getResource(configLocation));
         //if(applicationContext)
         Set<Resource> mapperLocationResourcesSet = new HashSet<>();
-        for (String mapperLocationTemp : mapperLocations) {
-            Resource[] resourcesTemp = pathMatchingResourcePatternResolver.getResources(mapperLocationTemp);
-            mapperLocationResourcesSet.addAll(new HashSet<>(
-                    Arrays.asList(resourcesTemp)));
+        if (mapperLocations != null) {
+            for (String mapperLocationTemp : mapperLocations) {
+                Resource[] resourcesTemp = pathMatchingResourcePatternResolver.getResources(mapperLocationTemp);
+                mapperLocationResourcesSet.addAll(new HashSet<>(
+                        Arrays.asList(resourcesTemp)));
+            }
+            sqlSessionFactoryBean.setMapperLocations(mapperLocationResourcesSet.toArray(new Resource[] {}));
         }
-        sqlSessionFactoryBean.setMapperLocations(mapperLocationResourcesSet.toArray(new Resource[] {}));
-        
-        sqlSessionFactoryBean.setTypeHandlersPackage("com.tx.core.mybatis.handler");
-        PagedDialectStatementHandlerInterceptor pagedInterceptor = new PagedDialectStatementHandlerInterceptor();
-        pagedInterceptor.setDataSourceType(dataSourceType);
-        sqlSessionFactoryBean.setPlugins(new Interceptor[] { pagedInterceptor });
+        //sqlSessionFactoryBean.setTypeHandlersPackage("com.tx.core.mybatis.handler");
+        //PagedDialectStatementHandlerInterceptor pagedInterceptor = new PagedDialectStatementHandlerInterceptor();
+        //pagedInterceptor.setDataSourceType(dataSourceType);
+        //sqlSessionFactoryBean.setPlugins(new Interceptor[] { pagedInterceptor });
         
         sqlSessionFactoryBean.afterPropertiesSet();
         SqlSessionFactory sqlSessionFactory = (SqlSessionFactory) sqlSessionFactoryBean.getObject();

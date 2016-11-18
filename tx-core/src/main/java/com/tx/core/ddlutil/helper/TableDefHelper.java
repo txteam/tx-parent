@@ -116,13 +116,18 @@ public abstract class TableDefHelper {
                     "pkColumnNames should equal.byIndex:{} byColumn:{}",
                     new Object[] { pkIndexColumnNames.toString().toUpperCase(),
                             pkColumnNames.toString().toUpperCase() });
-            
         } else {
             String[] columnNames = new String[pkColumns.size()];
             for (int i = 0; i < pkColumns.size(); i++) {
                 columnNames[i] = pkColumns.get(i).getColumnName();
             }
             createBuilder.newIndex(true, true, PRIMARY_KEY_NAME, columnNames);
+            pkIndexes.clear();
+            for (TableIndexDef idxTemp : createBuilder.getIndexes()) {
+                if (idxTemp.isPrimaryKey()) {
+                    pkIndexes.add(idxTemp);
+                }
+            }
         }
         validatePrimaryKey(pkColumns, pkIndexes);
     }

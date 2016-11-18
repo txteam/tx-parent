@@ -83,12 +83,12 @@
 <#list insert.sqlMapColumnList as column>
 <#if column.isSimpleType()>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(${column.propertyName})">  
-	            AND ${select.simpleTableName}.${column.columnName} = ${r"#{"}${column.propertyName}${r"}"}
+	            AND ${select.simpleTableName}.${column.columnName} = ${r"#{"}${column.propertyName},javaType=${column.javaType.name}${r"}"}
 	        </if>
 <#else>
 			<if test="${column.propertyName} != null">
 				<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(${column.propertyName}.${column.joinPropertyName})">  
-		            AND ${select.simpleTableName}.${column.columnName} = ${r"#{"}${column.propertyName}.${column.joinPropertyName}${r"}"}
+		            AND ${select.simpleTableName}.${column.columnName} = ${r"#{"}${column.propertyName}.${column.joinPropertyName},javaType=${column.javaType.name}${r"}"}
 		        </if>
 	        </if>
 </#if>
@@ -116,7 +116,12 @@
 <#if column.isSimpleType()>
 			${r"#{"}${column.propertyName}${r"}"}<#if column_has_next>,</#if>
 <#else>
-			${r"#{"}${column.propertyName}.${column.joinPropertyName}${r"}"}<#if column_has_next>,</#if>
+			<if test="${column.propertyName} != null">
+				${r"#{"}${column.propertyName}.${column.joinPropertyName}${r"}"}<#if column_has_next>,</#if>
+	        </if>
+	        <if test="${column.propertyName} == null">
+				${r"#{"}${column.propertyName},javaType=${column.javaType.name}${r"}"}<#if column_has_next>,</#if>
+	        </if>
 </#if>
 </#list>
 		)
