@@ -314,6 +314,11 @@ public abstract class TableDefHelper {
         
         boolean flag = isNeedUpdateForIndex(newIndexColumns.toString()
                 .toUpperCase(), sourceIndexColumns.toString().toUpperCase());
+        if (!flag) {
+            if (newIndexes.get(0).isUnique() != sourceIndexes.get(0).isUnique()) {
+                return true;
+            }
+        }
         return flag;
     }
     

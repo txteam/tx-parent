@@ -164,7 +164,7 @@ public abstract class AbstractAlterTableDDLBuilder extends
      */
     @Override
     public final String alterSql() {
-        String alterSql = alterSql(true, true);
+        String alterSql = alterSql(true, false);
         return alterSql;
     }
     
