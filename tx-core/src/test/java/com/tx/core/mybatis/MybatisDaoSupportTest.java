@@ -6,9 +6,14 @@
  */
 package com.tx.core.mybatis;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.sql.DataSource;
 
+import org.apache.ibatis.mapping.ResultMapping;
 import org.apache.ibatis.mapping.SqlCommandType;
+import org.apache.ibatis.type.JdbcType;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import com.tx.core.datasource.DataSourceFinder;
@@ -62,17 +67,16 @@ public class MybatisDaoSupportTest {
         createBuilder.newColumnOfDate("lastUpdateDate", true, true);
         ddlExecutor.create(createBuilder);
         
-        String namespace = "test";
+        String namespace = "test_namespace";
         MapperBuilderAssistantExtention ass = new MapperBuilderAssistantExtention(
                 myBatisDaoSupport.getSqlSessionTemplate().getConfiguration(),
                 namespace);
         ass.setCurrentNamespace(namespace);
-        String insertStatementId = "test_insert_test_001";
+        String insertStatementId = "test_mapper_insert_test_001";
         ass.saveMappedStatement(insertStatementId,
                 SqlCommandType.INSERT,
                 "insert into test_001(id,code)values(#{id},#{code}) ",
-                TestDemo.class,
-                null);
+                TestDemo.class);
         
         TestDemo td = new TestDemo();
         td.setId(UUIDUtils.generateUUID());
@@ -86,16 +90,14 @@ public class MybatisDaoSupportTest {
         ass.saveMappedStatement(insertStatementId,
                 SqlCommandType.INSERT,
                 "insert into test_001(id,code,name,remark)values(#{id},#{code},#{name},#{remark}) ",
-                TestDemo.class,
-                null);
+                TestDemo.class);
         td.setId(UUIDUtils.generateUUID());
         myBatisDaoSupport.insert(namespace + "." + insertStatementId, td);
         
         ass.saveMappedStatement(insertStatementId,
                 SqlCommandType.INSERT,
                 "insert into test_001(id,code,name,remark,demoId)values(#{id},#{code},#{name},#{remark},#{demo.id}) ",
-                TestDemo.class,
-                null);
+                TestDemo.class);
         td.setId(UUIDUtils.generateUUID());
         td.setDemo(null);
         myBatisDaoSupport.insert(namespace + "." + insertStatementId, td);
@@ -103,11 +105,68 @@ public class MybatisDaoSupportTest {
         ass.saveMappedStatement(insertStatementId,
                 SqlCommandType.INSERT,
                 "insert into test_001(id,code,name,remark,demoId)values(#{id},#{code},#{name},#{remark},#{demo.id}) ",
-                TestDemo.class,
-                null);
+                TestDemo.class);
         td.setId(UUIDUtils.generateUUID());
         td.setDemo(new Demo());
         td.getDemo().setId(UUIDUtils.generateUUID());
         myBatisDaoSupport.insert(namespace + "." + insertStatementId, td);
+        
+        ass.saveMappedStatement(insertStatementId,
+                SqlCommandType.INSERT,
+                "insert into test_001(id,code,name,remark,demoId)values(#{id},#{code},#{name},#{remark},#{demo.id}) ",
+                TestDemo.class);
+        
+        String queryStatementId = "test_mapper_query_test_001";
+        String resultMapId = "test_resultmap_test_001Map";
+        
+        List<ResultMapping> resultMappings = new ArrayList<>();
+        ass.saveResultMap(resultMapId, TestDemo.class, resultMappings);
+        ass.saveMappedStatement(queryStatementId,
+                SqlCommandType.SELECT,
+                "select id,code from test_001",
+                TestDemo.class,
+                resultMapId);
+        List<TestDemo> tdList = myBatisDaoSupport.queryList(namespace + "."
+                + queryStatementId, null);
+        for (TestDemo tdTemp : tdList) {
+            System.out.println(tdTemp.getId()
+                    + " | "
+                    + tdTemp.getCode()
+                    + " | "
+                    + tdTemp.getName()
+                    + " | "
+                    + tdTemp.getRemark()
+                    + " | "
+                    + (tdTemp.getDemo() == null ? "null" : tdTemp.getDemo()
+                            .getId()));
+        }
+        
+        resultMappings.clear();
+        resultMappings.add(ass.buildResultMapping(TestDemo.class,
+                "demo.id",
+                String.class,
+                "demoId",
+                JdbcType.VARCHAR));
+        ass.saveResultMap(resultMapId, TestDemo.class, resultMappings);
+        ass.saveMappedStatement(queryStatementId,
+                SqlCommandType.SELECT,
+                "select id,code,name,remark,demoId from test_001",
+                TestDemo.class,
+                resultMapId);
+        tdList = myBatisDaoSupport.queryList(namespace + "." + queryStatementId,
+                null);
+        System.out.println();
+        for (TestDemo tdTemp : tdList) {
+            System.out.println(tdTemp.getId()
+                    + " | "
+                    + tdTemp.getCode()
+                    + " | "
+                    + tdTemp.getName()
+                    + " | "
+                    + tdTemp.getRemark()
+                    + " | "
+                    + (tdTemp.getDemo() == null ? "null" : tdTemp.getDemo()
+                            .getId()));
+        }
     }
 }

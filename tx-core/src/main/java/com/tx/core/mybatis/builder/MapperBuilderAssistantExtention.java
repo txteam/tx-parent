@@ -64,6 +64,82 @@ public class MapperBuilderAssistantExtention extends MapperBuilderAssistant {
     }
     
     /**
+     * 保存MappedStatement<br/>
+     * <功能详细描述>
+     * @param id
+     * @param sqlCommandType
+     * @param sql
+     * @param parameterType
+     * @param resultType
+     * @return [参数说明]
+     * 
+     * @return MappedStatement [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    public MappedStatement saveMappedStatement(String id,
+            SqlCommandType sqlCommandType, String sql, Class<?> parameterType) {
+        AssertUtils.notEmpty(id, "id is empty.");
+        AssertUtils.notEmpty(sql, "sql is empty.");
+        AssertUtils.notNull(sqlCommandType, "sqlCommandType is null.");
+        AssertUtils.notNull(parameterType, "parameterType is null.");
+        
+        StatementType statementType = StatementType.PREPARED;
+        ResultSetType resultSetType = ResultSetType.FORWARD_ONLY;
+        Integer fetchSize = null;
+        Integer timeout = null;
+        
+        boolean isSelect = sqlCommandType == SqlCommandType.SELECT;
+        boolean flushCache = !isSelect;
+        boolean useCache = isSelect;
+        boolean resultOrdered = false;
+        
+        String keyProperty = null;
+        String keyColumn = null;
+        String databaseId = null;
+        String resultSets = null;
+        String resultMap = null;
+        Class<?> resultType = null;
+        
+        String parameterMap = null;
+        
+        KeyGenerator keyGenerator = (configuration.isUseGeneratedKeys() && SqlCommandType.INSERT.equals(sqlCommandType)) ? new Jdbc3KeyGenerator()
+                : new NoKeyGenerator();
+        LanguageDriver lang = getLanguageDriver(null);
+        
+        SqlSource sqlSource = lang.createSqlSource(configuration,
+                sql,
+                parameterType);
+        
+        id = applyCurrentNamespace(id, false);//获取对应的statement的id
+        if (configuration.hasStatement(id, false)) {
+            //如果已经含有了，需要将对应的statement移除
+            this.mappedStatements.remove(id);
+        }
+        MappedStatement statement = addMappedStatement(id,
+                sqlSource,
+                statementType,
+                sqlCommandType,
+                fetchSize,
+                timeout,
+                parameterMap,
+                parameterType,
+                resultMap,
+                resultType,
+                resultSetType,
+                flushCache,
+                useCache,
+                resultOrdered,
+                keyGenerator,
+                keyProperty,
+                keyColumn,
+                databaseId,
+                lang,
+                resultSets);
+        return statement;
+    }
+    
+    /**
       * 保存MappedStatement<br/>
       * <功能详细描述>
       * @param id
@@ -84,6 +160,7 @@ public class MapperBuilderAssistantExtention extends MapperBuilderAssistant {
         AssertUtils.notEmpty(sql, "sql is empty.");
         AssertUtils.notNull(sqlCommandType, "sqlCommandType is null.");
         AssertUtils.notNull(parameterType, "parameterType is null.");
+        AssertUtils.notNull(resultType, "resultType is null.");
         
         StatementType statementType = StatementType.PREPARED;
         ResultSetType resultSetType = ResultSetType.FORWARD_ONLY;
@@ -157,15 +234,12 @@ public class MapperBuilderAssistantExtention extends MapperBuilderAssistant {
      */
     public MappedStatement saveMappedStatement(String id,
             SqlCommandType sqlCommandType, String sql, Class<?> parameterType,
-            String resultMapId, Class<?> resultType,
-            List<ResultMapping> resultMappings) {
+            String resultMapId) {
         AssertUtils.notEmpty(id, "id is empty.");
         AssertUtils.notEmpty(sql, "sql is empty.");
         AssertUtils.notNull(sqlCommandType, "sqlCommandType is null.");
         AssertUtils.notNull(parameterType, "parameterType is null.");
-        AssertUtils.notNull(resultType, "resultType is null.");
         AssertUtils.notEmpty(resultMapId, "resultMapId is empty.");
-        AssertUtils.notNull(resultMappings, "resultMappings is null.");
         
         StatementType statementType = StatementType.PREPARED;
         ResultSetType resultSetType = ResultSetType.FORWARD_ONLY;
@@ -181,6 +255,7 @@ public class MapperBuilderAssistantExtention extends MapperBuilderAssistant {
         String keyColumn = null;
         String databaseId = null;
         String resultSets = null;
+        Class<?> resultType = null;
         
         String parameterMap = null;
         
@@ -188,24 +263,15 @@ public class MapperBuilderAssistantExtention extends MapperBuilderAssistant {
                 : new NoKeyGenerator();
         LanguageDriver lang = getLanguageDriver(null);
         
-        SqlSource sqlSource = null;//lang.createSqlSource(configuration, script, parameterType);
+        SqlSource sqlSource = lang.createSqlSource(configuration,
+                sql,
+                parameterType);
         
-        resultMapId = applyCurrentNamespace(resultMapId, false);//获取对应的statement的id
-        if (configuration.hasResultMap(resultMapId)) {
-            //如果已经含有了，需要将对应的statement移除
-            this.resultMaps.remove(resultMapId);
-        }
         id = applyCurrentNamespace(id, false);//获取对应的statement的id
         if (configuration.hasStatement(id, false)) {
             //如果已经含有了，需要将对应的statement移除
             this.mappedStatements.remove(id);
         }
-        ResultMap resultMap = addResultMap(databaseId,
-                resultType,
-                null,
-                null,
-                resultMappings,
-                null);
         MappedStatement statement = addMappedStatement(id,
                 sqlSource,
                 statementType,
@@ -214,7 +280,7 @@ public class MapperBuilderAssistantExtention extends MapperBuilderAssistant {
                 timeout,
                 parameterMap,
                 parameterType,
-                resultMap.getId(),
+                resultMapId,
                 resultType,
                 resultSetType,
                 flushCache,
@@ -227,6 +293,44 @@ public class MapperBuilderAssistantExtention extends MapperBuilderAssistant {
                 lang,
                 resultSets);
         return statement;
+    }
+    
+    /**
+     * 保存MappedStatement
+     * <功能详细描述>
+     * @param id
+     * @param sqlCommandType
+     * @param sql
+     * @param parameterType
+     * @param resultMapId
+     * @param resultType
+     * @param resultMappings
+     * @return [参数说明]
+     * 
+     * @return MappedStatement [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    public ResultMap saveResultMap(String resultMapId, Class<?> resultType,
+            List<ResultMapping> resultMappings) {
+        AssertUtils.notEmpty(resultMapId, "resultMapId is empty.");
+        AssertUtils.notNull(resultType, "resultType is null.");
+        AssertUtils.notEmpty(resultMapId, "resultMapId is empty.");
+        AssertUtils.notNull(resultMappings, "resultMappings is null.");
+        
+        resultMapId = applyCurrentNamespace(resultMapId, false);//获取对应的statement的id
+        if (configuration.hasResultMap(resultMapId)) {
+            //如果已经含有了，需要将对应的statement移除
+            this.resultMaps.remove(resultMapId);
+        }
+        ResultMap resultMap = addResultMap(resultMapId,
+                resultType,
+                null,
+                null,
+                resultMappings,
+                null);
+        
+        return resultMap;
     }
     
     /**

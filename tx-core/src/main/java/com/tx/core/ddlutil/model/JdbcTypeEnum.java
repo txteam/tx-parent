@@ -10,6 +10,7 @@ import java.sql.Types;
 import java.util.Map;
 
 import org.apache.commons.lang3.EnumUtils;
+import org.apache.ibatis.type.JdbcType;
 
 import com.tx.core.exceptions.util.AssertUtils;
 
@@ -24,115 +25,118 @@ import com.tx.core.exceptions.util.AssertUtils;
  */
 public enum JdbcTypeEnum {
     
-    SET(Types.ARRAY),
+    SET(Types.ARRAY, JdbcType.ARRAY),
     
-    ARRAY(Types.ARRAY),
+    ARRAY(Types.ARRAY, JdbcType.ARRAY),
     
-    BOOLEAN(Types.BOOLEAN),
+    BOOLEAN(Types.BOOLEAN, JdbcType.BIT),
     
-    BIT(Types.BIT),
+    BIT(Types.BIT, JdbcType.BIT),
     /**
      * TINYINT[(M)] [UNSIGNED] [ZEROFILL]  M默认为4
      * 很小的整数。带符号的范围是-128到127。无符号的范围是0到255
      */
-    TINYINT(Types.TINYINT),
+    TINYINT(Types.TINYINT, JdbcType.TINYINT),
     /**
      * SMALLINT[(M)] [UNSIGNED] [ZEROFILL] M默认为6
      * 小的整数。带符号的范围是-32768到32767。无符号的范围是0到65535。
      */
-    SMALLINT(Types.SMALLINT),
+    SMALLINT(Types.SMALLINT, JdbcType.SMALLINT),
     /**
      * INT[(M)] [UNSIGNED] [ZEROFILL]   M默认为11
      * 普通大小的整数。带符号的范围是-2147483648到2147483647。无符号的范围是0到4294967295。
      */
-    INT(Types.INTEGER),
+    INT(Types.INTEGER, JdbcType.INTEGER),
     /**
      * INT[(M)] [UNSIGNED] [ZEROFILL]   M默认为11
      * 普通大小的整数。带符号的范围是-2147483648到2147483647。无符号的范围是0到4294967295。
      */
-    INTEGER(Types.INTEGER),
+    INTEGER(Types.INTEGER, JdbcType.INTEGER),
     /**
      * BIGINT[(M)] [UNSIGNED] [ZEROFILL] M默认为20
      * 大整数。带符号的范围是-9223372036854775808到9223372036854775807。无符号的范围是0到18446744073709551615
      */
-    BIGINT(Types.BIGINT),
+    BIGINT(Types.BIGINT, JdbcType.BIGINT),
     
-    FLOAT(Types.FLOAT),
+    FLOAT(Types.FLOAT, JdbcType.FLOAT),
     
-    REAL(Types.REAL),
+    REAL(Types.REAL, JdbcType.REAL),
     
-    DOUBLE(Types.DOUBLE),
+    DOUBLE(Types.DOUBLE, JdbcType.DOUBLE),
     
-    NUMERIC(Types.NUMERIC),
+    NUMERIC(Types.NUMERIC, JdbcType.NUMERIC),
     
-    DECIMAL(Types.DECIMAL),
+    DECIMAL(Types.DECIMAL, JdbcType.DECIMAL),
     
-    CHAR(Types.CHAR),
+    CHAR(Types.CHAR, JdbcType.CHAR),
     
-    VARCHAR(Types.VARCHAR),
+    VARCHAR(Types.VARCHAR, JdbcType.VARCHAR),
     
-    LONGVARCHAR(Types.LONGVARCHAR),
+    LONGVARCHAR(Types.LONGVARCHAR, JdbcType.LONGNVARCHAR),
     
     /**
      * TEXT 最大长度是 65535 (2^16 – 1) 个字符。
      */
-    TEXT(Types.LONGVARCHAR),
+    TEXT(Types.LONGVARCHAR, JdbcType.LONGVARCHAR),
     /**
      * 最大长度是 255 (2^8 – 1) 个字符。
      */
-    TINYTEXT(Types.LONGVARCHAR),
+    TINYTEXT(Types.LONGVARCHAR, JdbcType.LONGVARCHAR),
     /**
      * MEDIUMTEXT 最大长度是 16777215 (2^24 – 1) 个字符。
      */
-    MEDIUMTEXT(Types.LONGNVARCHAR),
+    MEDIUMTEXT(Types.LONGNVARCHAR, JdbcType.LONGVARCHAR),
     /**
      * LONGTEXT 最大长度是 4294967295 (2^32 – 1) 个字符。
      */
-    LONGTEXT(Types.LONGVARCHAR),
+    LONGTEXT(Types.LONGVARCHAR, JdbcType.LONGVARCHAR),
     
-    DATE(Types.DATE),
+    DATE(Types.DATE, JdbcType.DATE),
     
-    TIME(Types.TIME),
+    TIME(Types.TIME, JdbcType.TIME),
     
-    TIMESTAMP(Types.TIMESTAMP),
+    TIMESTAMP(Types.TIMESTAMP, JdbcType.TIMESTAMP),
     
-    DATETIME(Types.TIMESTAMP),
+    DATETIME(Types.TIMESTAMP, JdbcType.TIMESTAMP),
     
-    BINARY(Types.BINARY),
+    BINARY(Types.BINARY, JdbcType.BINARY),
     
-    VARBINARY(Types.VARBINARY),
+    VARBINARY(Types.VARBINARY, JdbcType.VARBINARY),
     
-    LONGVARBINARY(Types.LONGVARBINARY),
+    LONGVARBINARY(Types.LONGVARBINARY, JdbcType.LONGVARBINARY),
     
-    NULL(Types.NULL),
+    NULL(Types.NULL, JdbcType.NULL),
     
-    OTHER(Types.OTHER),
+    OTHER(Types.OTHER, JdbcType.OTHER),
     
-    BLOB(Types.BLOB),
+    BLOB(Types.BLOB, JdbcType.BLOB),
     
-    LONGBLOB(Types.BLOB),
+    LONGBLOB(Types.BLOB, JdbcType.BLOB),
     
-    CLOB(Types.CLOB),
+    CLOB(Types.CLOB, JdbcType.CLOB),
     
-    STRUCT(Types.STRUCT),
+    STRUCT(Types.STRUCT, JdbcType.STRUCT),
     
-    NVARCHAR(Types.NVARCHAR), // JDK6
+    NVARCHAR(Types.NVARCHAR, JdbcType.NVARCHAR), // JDK6
     
-    NCHAR(Types.NCHAR), // JDK6
+    NCHAR(Types.NCHAR, JdbcType.NCHAR), // JDK6
     
-    NCLOB(Types.NCLOB), // JDK6
+    NCLOB(Types.NCLOB, JdbcType.NCLOB), // JDK6
     
-    ENUM(Types.VARCHAR),
+    ENUM(Types.VARCHAR, JdbcType.VARCHAR),
     
-    CURSOR(-10), // Oracle
+    CURSOR(-10, JdbcType.CURSOR), // Oracle
     
-    UNDEFINED(Integer.MIN_VALUE + 1000);
+    UNDEFINED(Integer.MIN_VALUE + 1000, JdbcType.UNDEFINED);
     
     public final int sqlType;
     
+    private final JdbcType mybatisJdbcType;
+    
     /** <默认构造函数> */
-    private JdbcTypeEnum(int sqlType) {
+    private JdbcTypeEnum(int sqlType, JdbcType mybatisJdbcType) {
         this.sqlType = sqlType;
+        this.mybatisJdbcType = mybatisJdbcType;
     }
     
     /**
@@ -140,6 +144,13 @@ public enum JdbcTypeEnum {
      */
     public int getSqlType() {
         return sqlType;
+    }
+    
+    /**
+     * @return 返回 mybatisJdbcType
+     */
+    public JdbcType getMybatisJdbcType() {
+        return mybatisJdbcType;
     }
     
     private static Map<String, JdbcTypeEnum> typekey2typeMap = EnumUtils.getEnumMap(JdbcTypeEnum.class);

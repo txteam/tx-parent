@@ -6,10 +6,14 @@
  */
 package com.tx.core.ddlutil.helper;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.tx.core.ddlutil.model.JdbcTypeEnum;
+import com.tx.core.exceptions.util.AssertUtils;
 
 /**
  * 字段类型注册机<br/>
@@ -26,7 +30,6 @@ class JPAEntityTypeRegistry {
     private static final Map<Class<?>, JdbcTypeEnum> CLASSTYPE_2_JDBCTYPE_MAP = new HashMap<Class<?>, JdbcTypeEnum>();
     
     static {
-        registeClass(CharSequence.class, JdbcTypeEnum.VARCHAR);
         registeClass(String.class, JdbcTypeEnum.VARCHAR);
         registeClass(Byte.class, JdbcTypeEnum.TINYINT);
         registeClass(byte.class, JdbcTypeEnum.TINYINT);
@@ -44,6 +47,11 @@ class JPAEntityTypeRegistry {
         registeClass(boolean.class, JdbcTypeEnum.BIT);
         registeClass(Character.class, JdbcTypeEnum.VARCHAR);
         registeClass(char.class, JdbcTypeEnum.VARCHAR);
+        
+        registeClass(BigDecimal.class, JdbcTypeEnum.DECIMAL);
+        registeClass(Date.class, JdbcTypeEnum.DATETIME);
+        registeClass(CharSequence.class, JdbcTypeEnum.VARCHAR);
+        registeClass(Number.class, JdbcTypeEnum.DECIMAL);
     }
     
     /**
@@ -71,12 +79,20 @@ class JPAEntityTypeRegistry {
       * @see [类、类#方法、类#成员]
      */
     public static JdbcTypeEnum getJdbcType(Class<?> type) {
+        AssertUtils.notNull(type,"type is null.");
+        
         if (type.isEnum()) {
             return JdbcTypeEnum.VARCHAR;
         } else if (CLASSTYPE_2_JDBCTYPE_MAP.containsKey(type)) {
             return CLASSTYPE_2_JDBCTYPE_MAP.get(type);
-        } else {
-            return JdbcTypeEnum.VARCHAR;
+        } 
+        
+        for(Entry<Class<?>, JdbcTypeEnum> entryTemp : CLASSTYPE_2_JDBCTYPE_MAP.entrySet()){
+            if(entryTemp.getKey().isAssignableFrom(type)){
+                return entryTemp.getValue();
+            }
         }
+        
+        return JdbcTypeEnum.VARCHAR;
     }
 }
