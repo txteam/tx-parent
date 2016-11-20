@@ -24,32 +24,44 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-class JPAEntityTypeRegistry {
+public class JPAEntityTypeRegistry {
     
     /** class类型对jdbctype的映射 */
     private static final Map<Class<?>, JdbcTypeEnum> CLASSTYPE_2_JDBCTYPE_MAP = new HashMap<Class<?>, JdbcTypeEnum>();
     
     static {
         registeClass(String.class, JdbcTypeEnum.VARCHAR);
+        
         registeClass(Byte.class, JdbcTypeEnum.TINYINT);
         registeClass(byte.class, JdbcTypeEnum.TINYINT);
+        
         registeClass(Short.class, JdbcTypeEnum.TINYINT);
         registeClass(short.class, JdbcTypeEnum.TINYINT);
+        
         registeClass(Integer.class, JdbcTypeEnum.INTEGER);
         registeClass(int.class, JdbcTypeEnum.INTEGER);
+        
         registeClass(Long.class, JdbcTypeEnum.BIGINT);
         registeClass(long.class, JdbcTypeEnum.BIGINT);
+        
         registeClass(Float.class, JdbcTypeEnum.DECIMAL);
         registeClass(float.class, JdbcTypeEnum.DECIMAL);
+        
         registeClass(Double.class, JdbcTypeEnum.DECIMAL);
         registeClass(double.class, JdbcTypeEnum.DECIMAL);
+        
         registeClass(Boolean.class, JdbcTypeEnum.BIT);
         registeClass(boolean.class, JdbcTypeEnum.BIT);
+        
         registeClass(Character.class, JdbcTypeEnum.VARCHAR);
         registeClass(char.class, JdbcTypeEnum.VARCHAR);
         
         registeClass(BigDecimal.class, JdbcTypeEnum.DECIMAL);
+        
         registeClass(Date.class, JdbcTypeEnum.DATETIME);
+        
+        registeClass(Class.class, JdbcTypeEnum.VARCHAR);
+        
         registeClass(CharSequence.class, JdbcTypeEnum.VARCHAR);
         registeClass(Number.class, JdbcTypeEnum.DECIMAL);
     }
@@ -79,16 +91,16 @@ class JPAEntityTypeRegistry {
       * @see [类、类#方法、类#成员]
      */
     public static JdbcTypeEnum getJdbcType(Class<?> type) {
-        AssertUtils.notNull(type,"type is null.");
+        AssertUtils.notNull(type, "type is null.");
         
         if (type.isEnum()) {
             return JdbcTypeEnum.VARCHAR;
         } else if (CLASSTYPE_2_JDBCTYPE_MAP.containsKey(type)) {
             return CLASSTYPE_2_JDBCTYPE_MAP.get(type);
-        } 
+        }
         
-        for(Entry<Class<?>, JdbcTypeEnum> entryTemp : CLASSTYPE_2_JDBCTYPE_MAP.entrySet()){
-            if(entryTemp.getKey().isAssignableFrom(type)){
+        for (Entry<Class<?>, JdbcTypeEnum> entryTemp : CLASSTYPE_2_JDBCTYPE_MAP.entrySet()) {
+            if (entryTemp.getKey().isAssignableFrom(type)) {
                 return entryTemp.getValue();
             }
         }
