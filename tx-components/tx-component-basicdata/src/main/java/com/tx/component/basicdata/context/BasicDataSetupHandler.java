@@ -90,7 +90,6 @@ class BasicDataSetupHandler {
             
             BasicDataSetupHandler setupHandler = new BasicDataSetupHandler(
                     bdFromDB, this.context);
-            setupHandler.setup();
             //写入
             if (bw.isWritableProperty(pdName)) {
                 //如果有写入
@@ -98,6 +97,7 @@ class BasicDataSetupHandler {
             } else {
                 BeanUtils.copyProperties(bdFromDB, pdValue);
             }
+            setupHandler.setup();
         }
     }
 }

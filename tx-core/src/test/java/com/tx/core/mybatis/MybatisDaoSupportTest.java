@@ -144,7 +144,7 @@ public class MybatisDaoSupportTest {
         resultMappings.clear();
         resultMappings.add(ass.buildResultMapping(TestDemo.class,
                 "demo.id",
-                String.class,
+                String.class,//TestDemo.class
                 "demoId",
                 JdbcType.VARCHAR));
         ass.saveResultMap(resultMapId, TestDemo.class, resultMappings);

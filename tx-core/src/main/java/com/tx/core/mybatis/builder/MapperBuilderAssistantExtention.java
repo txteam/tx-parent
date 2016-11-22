@@ -328,7 +328,7 @@ public class MapperBuilderAssistantExtention extends MapperBuilderAssistant {
                 null,
                 null,
                 resultMappings,
-                null);
+                true);
         
         return resultMap;
     }

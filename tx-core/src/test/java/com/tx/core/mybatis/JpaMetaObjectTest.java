@@ -6,12 +6,15 @@
  */
 package com.tx.core.mybatis;
 
-import java.beans.PropertyDescriptor;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.apache.ibatis.reflection.MetaObject;
 import org.hibernate.annotations.common.reflection.java.JavaReflectionManager;
-import org.springframework.beans.BeanUtils;
 
-import com.tx.core.mybatis.data.DemoTreeNode;
+import com.tx.core.mybatis.data.Demo;
+import com.tx.core.mybatis.data.TestDemo;
+import com.tx.core.util.MetaObjectUtils;
 
 
 /**
@@ -46,13 +49,25 @@ public class JpaMetaObjectTest {
 //    }
     
     public static void main(String[] args) {
-        PropertyDescriptor[] pds = BeanUtils.getPropertyDescriptors(DemoTreeNode.class);
+        TestDemo td1 = new TestDemo();
+        td1.setDemo(new Demo());
+        td1.getDemo().setId("testId1");
         
-        for(PropertyDescriptor pd : pds){
-            System.out.println(pd.getName());
-        }
-        //BeanUtils.
+        MetaObject mo1 = MetaObjectUtils.forObject(td1);
+        System.out.println(mo1.getValue("demo.id"));
         
+        Map<String, Object> md = new HashMap<String, Object>();
+        Demo mdd = new Demo();
+        mdd.setId("testId2");
+        md.put("demo", mdd);
+        MetaObject mo2 = MetaObjectUtils.forObject(md);
+        System.out.println(mo2.getValue("demo.id"));
         
+        Map<String, Object> hm = new HashMap<String, Object>();
+        hm.put("demo.id", "testId3");
+        hm.put("demo_id", "testId3");
+        MetaObject mo3 = MetaObjectUtils.forObject(hm);
+        System.out.println(mo3.getValue("demo.id"));
+        System.out.println(mo3.getValue("demo_id"));
     }
 }

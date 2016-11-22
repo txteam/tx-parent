@@ -114,5 +114,6 @@ public class DDLUtilTest {
         
         System.out.println(alterBuilder.alterSql());
         System.out.println(alterBuilder.alterSql(false, false));
+        
     }
 }

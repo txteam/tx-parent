@@ -116,7 +116,12 @@
 <#if column.isSimpleType()>
 			${r"#{"}${column.propertyName}${r"}"}<#if column_has_next>,</#if>
 <#else>
-			${r"#{"}${column.propertyName}.${column.joinPropertyName}${r"}"}<#if column_has_next>,</#if>
+			<if test="${column.propertyName} != null">
+				${r"#{"}${column.propertyName}.${column.joinPropertyName}${r"}"}<#if column_has_next>,</#if>
+	        </if>
+	        <if test="${column.propertyName} == null">
+				${r"#{"}${column.propertyName},javaType=${column.javaType.name}${r"}"}<#if column_has_next>,</#if>
+	        </if>
 </#if>
 </#list>
 		)
