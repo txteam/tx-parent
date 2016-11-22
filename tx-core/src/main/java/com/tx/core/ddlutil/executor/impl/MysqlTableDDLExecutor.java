@@ -388,14 +388,15 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
         }
     }
     
-    public void alter(AlterTableDDLBuilder builder,boolean isIncrementUpdate,
+    public void alter(AlterTableDDLBuilder builder, boolean isIncrementUpdate,
             boolean isIgnoreIndexChange) {
         AssertUtils.notNull(builder, "builder is null.");
         AssertUtils.isTrue(exists(builder.tableName()),
                 "table is not exist.tableName:{}",
                 builder.tableName());
         
-        String alterSql = SqlUtils.format(builder.alterSql(isIncrementUpdate,isIgnoreIndexChange));
+        String alterSql = SqlUtils.format(builder.alterSql(isIncrementUpdate,
+                isIgnoreIndexChange));
         
         String[] alterSqls = StringUtils.splitByWholeSeparator(alterSql, ";");
         for (String alterSqlTemp : alterSqls) {
@@ -422,7 +423,7 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
      */
     @Override
     public boolean isNeedUpdate(TableDef newTableDef, TableDef oldTableDef,
-            boolean isIncrementalUpgrade) {
+            boolean isIncrementalUpgrade, boolean isIgnoreIndexChange) {
         
         return false;
     }

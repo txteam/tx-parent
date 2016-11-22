@@ -120,7 +120,7 @@ public interface TableDDLExecutor {
       * @see [类、类#方法、类#成员]
      */
     public boolean isNeedUpdate(TableDef newTableDef, TableDef oldTableDef,
-            boolean isIncrementalUpgrade);
+            boolean isIncrementalUpgrade,boolean isIgnoreIndexChange);
     
     /**
       * 根据表名查询对应的DDLTable详情，查询期间将会查询对应的索引以及字段<br/>
