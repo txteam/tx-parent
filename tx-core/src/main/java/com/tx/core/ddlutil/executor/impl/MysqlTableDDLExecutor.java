@@ -128,7 +128,7 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
     private static final String SQL_QUERY_INDEX_BY_TABLENAME = "SELECT "
             + "TIDX.INDEX_NAME AS 'indexName', "
             + "TIDX.COLUMN_NAME AS 'columnName', TIDX.TABLE_NAME AS 'tableName', "
-            + "(CASE WHEN TIDX.NON_UNIQUE = 1 THEN 0 ELSE 1 END ) AS 'unique',"
+            + "(CASE WHEN TIDX.NON_UNIQUE = 1 THEN 0 ELSE 1 END ) AS 'uniqueKey',"
             + "TIDX.SEQ_IN_INDEX as 'orderPriority', "
             + "(CASE WHEN TCONS.CONSTRAINT_TYPE = 'PRIMARY KEY' THEN 'Y' ELSE 'N' END ) AS 'primaryKey' "
             + "FROM information_schema.`STATISTICS` TIDX "
@@ -146,7 +146,7 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
             ddlIndex.setIndexName(rs.getString("indexName"));
             ddlIndex.setColumnName(rs.getString("columnName"));
             ddlIndex.setTableName(rs.getString("tableName"));
-            ddlIndex.setUnique(rs.getBoolean("unique"));
+            ddlIndex.setUniqueKey(rs.getBoolean("uniqueKey"));
             ddlIndex.setOrderPriority(rs.getInt("orderPriority"));
             //String constraintType = rs.getString("constraintType");
             //constraintTypeMap.get(constraintType)

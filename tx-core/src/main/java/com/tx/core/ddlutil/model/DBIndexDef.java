@@ -34,7 +34,7 @@ public class DBIndexDef implements Serializable, TableIndexDef {
     private String tableName;
     
     /** 是否唯一键 */
-    private boolean unique = false;
+    private boolean uniqueKey = false;
     
     /** 是否主键 */
     private boolean primaryKey = false;
@@ -49,22 +49,22 @@ public class DBIndexDef implements Serializable, TableIndexDef {
     
     /** <默认构造函数> */
     public DBIndexDef(String indexName, String columnName, String tableName,
-            boolean unique) {
+            boolean uniqueKey) {
         super();
         this.indexName = indexName;
         this.columnName = columnName;
         this.tableName = tableName;
-        this.unique = unique;
+        this.uniqueKey = uniqueKey;
     }
     
     /** <默认构造函数> */
-    public DBIndexDef(boolean primaryKey, boolean unique, String indexName,
+    public DBIndexDef(boolean primaryKey, boolean uniqueKey, String indexName,
             String columnName, String tableName) {
         super();
         this.indexName = indexName;
         this.columnName = columnName;
         this.tableName = tableName;
-        this.unique = unique;
+        this.uniqueKey = uniqueKey;
         this.primaryKey = primaryKey;
     }
     
@@ -84,18 +84,17 @@ public class DBIndexDef implements Serializable, TableIndexDef {
     }
     
     /**
-     * @return
+     * @return 返回 uniqueKey
      */
-    @Override
-    public boolean isUnique() {
-        return unique;
+    public boolean isUniqueKey() {
+        return uniqueKey;
     }
     
     /**
-     * @param 对unique进行赋值
+     * @param 对uniqueKey进行赋值
      */
-    public void setUnique(boolean unique) {
-        this.unique = unique;
+    public void setUniqueKey(boolean uniqueKey) {
+        this.uniqueKey = uniqueKey;
     }
     
     /**

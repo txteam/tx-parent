@@ -461,7 +461,7 @@ public abstract class AbstractAlterTableDDLBuilder extends
         for (Entry<String, List<TableIndexDef>> entryTemp : idxMutiMap.entrySet()) {
             String indexName = entryTemp.getKey();
             TableIndexDef idxFirst = idxMutiMap.getFirst(indexName);
-            boolean unique = idxFirst.isUnique();
+            boolean unique = idxFirst.isUniqueKey();
             
             writeAddIndex(unique, indexName, entryTemp.getValue());
         }
