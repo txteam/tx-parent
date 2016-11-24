@@ -505,7 +505,8 @@ public abstract class TableDefHelper {
                 List<? extends TableIndexDef> newIndexes, TableDef sourceTable,
                 boolean isIncrementUpdate, boolean isIgnoreIndexChange) {
             this.newColumns = newColumns;
-            this.newIndexes = newIndexes;
+            this.newIndexes = newIndexes == null ? new ArrayList<TableIndexDef>()
+                    : newIndexes;
             this.sourceTable = sourceTable;
             this.isIncrementUpdate = isIncrementUpdate;
             this.isIgnoreIndexChange = isIgnoreIndexChange;
