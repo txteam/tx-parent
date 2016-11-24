@@ -6,10 +6,14 @@
  */
 package com.tx.core.mybatis.handler;
 
+import java.math.BigDecimal;
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.type.BaseTypeHandler;
@@ -34,6 +38,33 @@ import com.tx.core.util.JdbcUtils;
 public class NullAbleClassTypeHandler extends BaseTypeHandler<Class<?>> {
     
     private Logger logger = LoggerFactory.getLogger(NullAbleClassTypeHandler.class);
+    
+    private static Map<String, Class<?>> SIMPLE_TYPE_CLASS_MAP = new HashMap<String, Class<?>>();
+    
+    static {
+        SIMPLE_TYPE_CLASS_MAP.put("byte", byte.class);
+        SIMPLE_TYPE_CLASS_MAP.put("short", short.class);
+        SIMPLE_TYPE_CLASS_MAP.put("int", int.class);
+        SIMPLE_TYPE_CLASS_MAP.put("long", long.class);
+        SIMPLE_TYPE_CLASS_MAP.put("float", float.class);
+        SIMPLE_TYPE_CLASS_MAP.put("double", double.class);
+        SIMPLE_TYPE_CLASS_MAP.put("boolean", boolean.class);
+        SIMPLE_TYPE_CLASS_MAP.put("char", char.class);
+        
+        SIMPLE_TYPE_CLASS_MAP.put("String", String.class);
+        SIMPLE_TYPE_CLASS_MAP.put("Byte", Byte.class);
+        SIMPLE_TYPE_CLASS_MAP.put("Short", Short.class);
+        SIMPLE_TYPE_CLASS_MAP.put("Integer", Integer.class);
+        SIMPLE_TYPE_CLASS_MAP.put("Long", Long.class);
+        SIMPLE_TYPE_CLASS_MAP.put("Float", Float.class);
+        SIMPLE_TYPE_CLASS_MAP.put("Double", Double.class);
+        SIMPLE_TYPE_CLASS_MAP.put("Boolean", Boolean.class);
+        SIMPLE_TYPE_CLASS_MAP.put("Character", Character.class);
+        
+        SIMPLE_TYPE_CLASS_MAP.put("BigDecimal", BigDecimal.class);
+        SIMPLE_TYPE_CLASS_MAP.put("Date", Date.class);
+        SIMPLE_TYPE_CLASS_MAP.put("Class", Class.class);
+    }
     
     /**
      * @param ps
@@ -68,6 +99,9 @@ public class NullAbleClassTypeHandler extends BaseTypeHandler<Class<?>> {
         String className = rs.getString(columnName);
         if (StringUtils.isEmpty(className)) {
             return null;
+        } else if (SIMPLE_TYPE_CLASS_MAP.containsKey(className)) {
+            Class type = SIMPLE_TYPE_CLASS_MAP.get(className);
+            return type;
         } else {
             Class type = null;
             try {
@@ -86,6 +120,9 @@ public class NullAbleClassTypeHandler extends BaseTypeHandler<Class<?>> {
         String className = rs.getString(columnIndex);
         if (StringUtils.isEmpty(className)) {
             return null;
+        } else if (SIMPLE_TYPE_CLASS_MAP.containsKey(className)) {
+            Class type = SIMPLE_TYPE_CLASS_MAP.get(className);
+            return type;
         } else {
             Class type = null;
             try {
@@ -104,6 +141,9 @@ public class NullAbleClassTypeHandler extends BaseTypeHandler<Class<?>> {
         String className = cs.getString(columnIndex);
         if (StringUtils.isEmpty(className)) {
             return null;
+        } else if (SIMPLE_TYPE_CLASS_MAP.containsKey(className)) {
+            Class type = SIMPLE_TYPE_CLASS_MAP.get(className);
+            return type;
         } else {
             Class type = null;
             try {
