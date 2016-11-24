@@ -12,7 +12,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
-import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.SingletonBeanRegistry;
@@ -49,7 +48,7 @@ import com.tx.core.mybatis.support.MyBatisDaoSupportHelper;
  * @since  [产品/模块版本]
  */
 public class BasicDataContextConfigurator implements ApplicationContextAware,
-        InitializingBean, BeanNameAware, BeanFactoryAware {
+        InitializingBean, BeanFactoryAware {
     
     @Bean(name = "basicdata.myBatisDaoSupport")
     public MyBatisDaoSupport basicdata_myBatisDaoSupport() throws Exception {
@@ -126,9 +125,6 @@ public class BasicDataContextConfigurator implements ApplicationContextAware,
     
     /** spring容器句柄 */
     protected static ApplicationContext applicationContext;
-    
-    /** beanName实例 */
-    protected static String beanName;
     
     /** 包名 */
     protected String packages = "com.tx";
@@ -208,14 +204,6 @@ public class BasicDataContextConfigurator implements ApplicationContextAware,
     public final void setApplicationContext(
             ApplicationContext applicationContext) throws BeansException {
         BasicDataContextConfigurator.applicationContext = applicationContext;
-    }
-    
-    /**
-     * @param name
-     */
-    @Override
-    public final void setBeanName(String name) {
-        BasicDataContextConfigurator.beanName = name;
     }
     
     /**
@@ -337,6 +325,5 @@ public class BasicDataContextConfigurator implements ApplicationContextAware,
     public void setCacheManager(CacheManager cacheManager) {
         this.cacheManager = cacheManager;
     }
-    
     
 }

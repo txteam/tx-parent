@@ -315,7 +315,8 @@ public abstract class TableDefHelper {
         boolean flag = isNeedUpdateForIndex(newIndexColumns.toString()
                 .toUpperCase(), sourceIndexColumns.toString().toUpperCase());
         if (!flag) {
-            if (newIndexes.get(0).isUniqueKey() != sourceIndexes.get(0).isUniqueKey()) {
+            if (newIndexes.get(0).isUniqueKey() != sourceIndexes.get(0)
+                    .isUniqueKey()) {
                 return true;
             }
         }
@@ -344,13 +345,94 @@ public abstract class TableDefHelper {
         return false;
     }
     
-    public static boolean isNeedUpdate(List<TableColumnDef> newColumns,
-            List<TableIndexDef> newIndexes, TableDef sourceTable,
+    /**
+     * 判断是否需要升级表<br/>
+     * <功能详细描述>
+     * @param newColumns
+     * @param newIndexes
+     * @param sourceTable
+     * @param isIncrementUpdate
+     * @param isIgnoreIndexChange
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    public static boolean isNeedAlter(
+            List<? extends TableColumnDef> newColumns, TableDef sourceTable,
             boolean isIncrementUpdate) {
+        AssertUtils.notEmpty(newColumns, "newColumns is empty.");
         AssertUtils.notNull(sourceTable, "sourceTable is null.");
-        AssertUtils.notEmpty(newColumns, "sourceCol is null.");
+        AssertUtils.notEmpty(sourceTable.getColumns(),
+                "sourceTable.columns is null.");
         
-        return false;
+        boolean isNeedUpdate = isNeedAlter(newColumns,
+                null,
+                sourceTable,
+                isIncrementUpdate,
+                true);
+        return isNeedUpdate;
+    }
+    
+    /**
+     * 判断是否需要升级表<br/>
+     * <功能详细描述>
+     * @param newColumns
+     * @param newIndexes
+     * @param sourceTable
+     * @param isIncrementUpdate
+     * @param isIgnoreIndexChange
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    public static boolean isNeedAlter(
+            List<? extends TableColumnDef> newColumns,
+            List<? extends TableIndexDef> newIndexes, TableDef sourceTable,
+            boolean isIncrementUpdate) {
+        AssertUtils.notEmpty(newColumns, "newColumns is empty.");
+        AssertUtils.notNull(sourceTable, "sourceTable is null.");
+        AssertUtils.notEmpty(sourceTable.getColumns(),
+                "sourceTable.columns is null.");
+        
+        boolean isNeedUpdate = isNeedAlter(newColumns,
+                null,
+                sourceTable,
+                isIncrementUpdate,
+                false);
+        return isNeedUpdate;
+    }
+    
+    /**
+      * 判断是否需要升级表<br/>
+      * <功能详细描述>
+      * @param newColumns
+      * @param newIndexes
+      * @param sourceTable
+      * @param isIncrementUpdate
+      * @param isIgnoreIndexChange
+      * @return [参数说明]
+      * 
+      * @return boolean [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public static boolean isNeedAlter(
+            List<? extends TableColumnDef> newColumns,
+            List<? extends TableIndexDef> newIndexes, TableDef sourceTable,
+            boolean isIncrementUpdate, boolean isIgnoreIndexChange) {
+        AssertUtils.notEmpty(newColumns, "newColumns is empty.");
+        AssertUtils.notNull(sourceTable, "sourceTable is null.");
+        AssertUtils.notEmpty(sourceTable.getColumns(),
+                "sourceTable.columns is null.");
+        
+        AlterTableContent content = new AlterTableContent(newColumns,
+                newIndexes, sourceTable, isIncrementUpdate, isIgnoreIndexChange);
+        boolean isNeedUpdate = content.isNeedAlter();
+        return isNeedUpdate;
     }
     
     /**
@@ -388,10 +470,10 @@ public abstract class TableDefHelper {
     public static class AlterTableContent {
         
         /** 新表的表字段 */
-        private final List<TableColumnDef> newColumns;
+        private final List<? extends TableColumnDef> newColumns;
         
         /** 新表的表索引 */
-        private final List<TableIndexDef> newIndexes;
+        private final List<? extends TableIndexDef> newIndexes;
         
         /** 对比表 */
         private final TableDef sourceTable;
@@ -419,8 +501,8 @@ public abstract class TableDefHelper {
         private final List<TableIndexDef> alterDeleteIndexes = new ArrayList<>();
         
         /** <默认构造函数> */
-        public AlterTableContent(List<TableColumnDef> newColumns,
-                List<TableIndexDef> newIndexes, TableDef sourceTable,
+        public AlterTableContent(List<? extends TableColumnDef> newColumns,
+                List<? extends TableIndexDef> newIndexes, TableDef sourceTable,
                 boolean isIncrementUpdate, boolean isIgnoreIndexChange) {
             this.newColumns = newColumns;
             this.newIndexes = newIndexes;
