@@ -33,27 +33,35 @@ public class JPAEntityTypeRegistry {
         registeClass(String.class, JdbcTypeEnum.VARCHAR);
         
         registeClass(Byte.class, JdbcTypeEnum.TINYINT);
+        
         registeClass(byte.class, JdbcTypeEnum.TINYINT);
         
         registeClass(Short.class, JdbcTypeEnum.TINYINT);
+        
         registeClass(short.class, JdbcTypeEnum.TINYINT);
         
         registeClass(Integer.class, JdbcTypeEnum.INTEGER);
+        
         registeClass(int.class, JdbcTypeEnum.INTEGER);
         
         registeClass(Long.class, JdbcTypeEnum.BIGINT);
+        
         registeClass(long.class, JdbcTypeEnum.BIGINT);
         
         registeClass(Float.class, JdbcTypeEnum.NUMERIC);
+        
         registeClass(float.class, JdbcTypeEnum.NUMERIC);
         
         registeClass(Double.class, JdbcTypeEnum.NUMERIC);
+        
         registeClass(double.class, JdbcTypeEnum.NUMERIC);
         
         registeClass(Boolean.class, JdbcTypeEnum.BIT);
+        
         registeClass(boolean.class, JdbcTypeEnum.BIT);
         
         registeClass(Character.class, JdbcTypeEnum.VARCHAR);
+        
         registeClass(char.class, JdbcTypeEnum.VARCHAR);
         
         registeClass(BigDecimal.class, JdbcTypeEnum.NUMERIC);
@@ -63,7 +71,8 @@ public class JPAEntityTypeRegistry {
         registeClass(Class.class, JdbcTypeEnum.VARCHAR);
         
         registeClass(CharSequence.class, JdbcTypeEnum.VARCHAR);
-        registeClass(Number.class, JdbcTypeEnum.DECIMAL);
+        
+        registeClass(Number.class, JdbcTypeEnum.NUMERIC);
     }
     
     /**

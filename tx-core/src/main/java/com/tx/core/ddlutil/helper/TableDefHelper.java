@@ -14,10 +14,13 @@ import java.util.Map.Entry;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.dialect.Dialect;
+import org.hibernate.dialect.MySQL5InnoDBDialect;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import com.tx.core.ddlutil.builder.DDLBuilder;
+import com.tx.core.ddlutil.model.JdbcTypeEnum;
 import com.tx.core.ddlutil.model.TableColumnDef;
 import com.tx.core.ddlutil.model.TableDef;
 import com.tx.core.ddlutil.model.TableIndexDef;
@@ -237,6 +240,95 @@ public abstract class TableDefHelper {
     }
     
     /**
+      * 根据JdbcType对比判断是否需要修改<br/>
+      * <功能详细描述>
+      * @param newJdbcType
+      * @param sourceJdbcType
+      * @return [参数说明]
+      * 
+      * @return boolean [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    @SuppressWarnings("incomplete-switch")
+    private static boolean isNeedUpdateForJdbcType(JdbcTypeEnum newJdbcType,
+            JdbcTypeEnum sourceJdbcType) {
+        AssertUtils.notNull(newJdbcType, "newJdbcType is null.");
+        AssertUtils.notNull(sourceJdbcType, "sourceJdbcType is null.");
+        
+        if (newJdbcType.equals(sourceJdbcType)) {
+            return false;
+        }
+        
+        switch (newJdbcType) {
+            case TINYINT:
+            case SMALLINT:
+            case INT:
+            case INTEGER:
+            case BIGINT:
+                switch (sourceJdbcType) {
+                    case TINYINT:
+                    case SMALLINT:
+                    case INT:
+                    case INTEGER:
+                    case BIGINT:
+                        return false;
+                }
+                break;
+            case FLOAT:
+            case DOUBLE:
+            case REAL:
+            case NUMERIC:
+            case DECIMAL:
+                switch (sourceJdbcType) {
+                    case FLOAT:
+                    case DOUBLE:
+                    case REAL:
+                    case NUMERIC:
+                    case DECIMAL:
+                        return false;
+                }
+                break;
+            case CHAR:
+            case VARCHAR:
+            case NCHAR:
+            case NVARCHAR:
+            case TEXT:
+            case LONGTEXT:
+            case LONGVARCHAR:
+            case TINYTEXT:
+                switch (sourceJdbcType) {
+                    case CHAR:
+                    case VARCHAR:
+                    case NCHAR:
+                    case NVARCHAR:
+                    case TEXT:
+                    case LONGTEXT:
+                    case LONGVARCHAR:
+                    case TINYTEXT:
+                        return false;
+                }
+                break;
+            case DATE:
+            case DATETIME:
+            case TIMESTAMP:
+            case TIME:
+                switch (sourceJdbcType) {
+                    case DATE:
+                    case DATETIME:
+                    case TIMESTAMP:
+                    case TIME:
+                        return false;
+                }
+                break;
+            default:
+                break;
+        }
+        
+        return true;
+    }
+    
+    /**
       * 字段是否需要进行升级<br/>
       * <功能详细描述>
       * @param newCol
@@ -257,7 +349,8 @@ public abstract class TableDefHelper {
                 new Object[] { newCol.getColumnName(),
                         sourceCol.getColumnName() });
         
-        if (!newCol.getJdbcType().equals(sourceCol.getJdbcType())) {
+        if (isNeedUpdateForJdbcType(newCol.getJdbcType(),
+                sourceCol.getJdbcType())) {
             return true;
         }
         if (newCol.getSize() != sourceCol.getSize()) {
@@ -736,5 +829,14 @@ public abstract class TableDefHelper {
         public String getPrimaryKeyColumnNames() {
             return primaryKeyColumnNames;
         }
+    }
+    
+    public static void main(String[] args) {
+        Dialect dia = new MySQL5InnoDBDialect();
+        System.out.println(dia.getTypeName(JdbcTypeEnum.NUMERIC.getSqlType(),
+                10,
+                10,
+                2));
+        //System.out.println(dia.getTypeName(JdbcTypeEnum.DECIMAL.getSqlType(), 10, 10, 2));
     }
 }

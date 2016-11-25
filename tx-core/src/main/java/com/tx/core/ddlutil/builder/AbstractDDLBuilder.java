@@ -210,7 +210,7 @@ public abstract class AbstractDDLBuilder<B extends DDLBuilder<B>> implements
         } else if (size < 20) {
             jdbcType = JdbcTypeEnum.BIGINT;
         } else {
-            jdbcType = JdbcTypeEnum.DECIMAL;
+            jdbcType = JdbcTypeEnum.NUMERIC;
         }
         
         String defaultValueString = null;
