@@ -378,8 +378,11 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
                 "table is not exist.tableName:{}",
                 builder.tableName());
         
-        String alterSql = SqlUtils.format(builder.alterSql());
-        
+        String alterSql = builder.alterSql();
+        if (StringUtils.isBlank(alterSql)) {
+            return;
+        }
+        alterSql = SqlUtils.format(alterSql);
         String[] alterSqls = StringUtils.splitByWholeSeparator(alterSql, ";");
         for (String alterSqlTemp : alterSqls) {
             if (!StringUtils.isBlank(alterSqlTemp)) {
