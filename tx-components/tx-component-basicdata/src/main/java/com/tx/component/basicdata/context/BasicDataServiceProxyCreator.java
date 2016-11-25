@@ -8,7 +8,8 @@ package com.tx.component.basicdata.context;
 
 import javax.annotation.Resource;
 
-import org.slf4j.helpers.MessageFormatter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.aop.TargetSource;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.aop.framework.autoproxy.AbstractAutoProxyCreator;
@@ -25,6 +26,8 @@ import org.springframework.cache.CacheManager;
  * @since  [产品/模块版本]
  */
 public class BasicDataServiceProxyCreator extends AbstractAutoProxyCreator {
+    
+    private Logger logger = LoggerFactory.getLogger(BasicDataServiceProxyCreator.class);
     
     /** 注释内容 */
     private static final long serialVersionUID = 2087861805320061268L;
@@ -79,10 +82,9 @@ public class BasicDataServiceProxyCreator extends AbstractAutoProxyCreator {
         if (bean != null && bean instanceof BasicDataService) {
             Object cacheKey = getCacheKey(bean.getClass(), beanName);
             Object proxy = wrapIfNecessary(bean, beanName, cacheKey);
-            System.out.println(MessageFormatter.arrayFormat("beanName:{} bean:{} bean.getClass:{}",
-                    new Object[] { beanName, bean,
-                    bean.getClass() })
-                    .getMessage());
+            
+            logger.debug("beanName:{} bean:{} bean.getClass:{}", new Object[] {
+                    beanName, bean, bean.getClass() });
             return proxy;
         }
         return bean;

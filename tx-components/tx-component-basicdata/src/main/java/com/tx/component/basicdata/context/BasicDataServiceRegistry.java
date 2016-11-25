@@ -125,7 +125,7 @@ public class BasicDataServiceRegistry implements ApplicationContextAware,
     protected void registerBeanDefinition(String beanName,
             BeanDefinition beanDefinition) {
         if (!this.beanDefinitionRegistry.containsBeanDefinition(beanName)) {
-            logger.info("动态注入基础数据业务层定义: beanName:{} Type:com.tx.component.basicdata.context.DefaultBasicDataService",
+            logger.debug("动态注入基础数据业务层定义: beanName:{} Type:com.tx.component.basicdata.context.DefaultBasicDataService",
                     beanName);
             this.beanDefinitionRegistry.registerBeanDefinition(beanName,
                     beanDefinition);
@@ -139,7 +139,7 @@ public class BasicDataServiceRegistry implements ApplicationContextAware,
      */
     protected void registerSingletonBean(String beanName, Object bean) {
         if (!this.singletonBeanRegistry.containsSingleton(beanName)) {
-            logger.info("注入基础数据业务层实例: beanName:{} Type:{}",
+            logger.debug("注入基础数据业务层实例: beanName:{} Type:{}",
                     beanName,
                     bean.getClass().getName());
             this.singletonBeanRegistry.registerSingleton(beanName, bean);
