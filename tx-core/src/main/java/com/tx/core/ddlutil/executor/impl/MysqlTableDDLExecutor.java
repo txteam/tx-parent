@@ -354,6 +354,8 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
         
         String createSql = SqlUtils.format(builder.createSql());
         
+        logger.info("execute sql:" + createSql);
+        
         String[] createSqls = StringUtils.splitByWholeSeparator(createSql, ";");
         for (String createSqlTemp : createSqls) {
             if (!StringUtils.isBlank(createSqlTemp)) {

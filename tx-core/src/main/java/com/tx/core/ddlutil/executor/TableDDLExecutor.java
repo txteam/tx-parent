@@ -8,6 +8,9 @@ package com.tx.core.ddlutil.executor;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.tx.core.ddlutil.builder.alter.AlterTableDDLBuilder;
 import com.tx.core.ddlutil.builder.create.CreateTableDDLBuilder;
 import com.tx.core.ddlutil.model.DBColumnDef;
@@ -25,6 +28,9 @@ import com.tx.core.ddlutil.model.TableDef;
  * @since  [产品/模块版本]
  */
 public interface TableDDLExecutor {
+    
+    static final Logger logger = LoggerFactory.getLogger(TableDDLExecutor.class);
+    
     /**
      * 根据表名判断表是否存在<br/>
      * <功能详细描述>
