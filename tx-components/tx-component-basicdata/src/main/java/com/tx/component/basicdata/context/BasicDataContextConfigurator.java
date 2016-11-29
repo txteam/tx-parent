@@ -101,9 +101,9 @@ public class BasicDataContextConfigurator implements ApplicationContextAware,
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    @Bean(name = "basicdata.basicDataServiceProxyCreator")
-    public BasicDataServiceProxyCreator basicDataServiceProxyCreator() {
-        BasicDataServiceProxyCreator processor = new BasicDataServiceProxyCreator();
+    @Bean(name = "basicdata.basicDataServiceSupportCacheProxyCreator")
+    public BasicDataServiceSupportCacheProxyCreator basicDataServiceSupportCacheProxyCreator() {
+        BasicDataServiceSupportCacheProxyCreator processor = new BasicDataServiceSupportCacheProxyCreator();
         
         return processor;
     }

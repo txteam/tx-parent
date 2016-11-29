@@ -8,6 +8,7 @@ package com.tx.component.basicdata.context;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.TargetSource;
@@ -15,6 +16,8 @@ import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.aop.framework.autoproxy.AbstractAutoProxyCreator;
 import org.springframework.beans.BeansException;
 import org.springframework.cache.CacheManager;
+
+import com.tx.core.spring.interceptor.ServiceSupportCacheInterceptor;
 
 /**
  * 基础数据业务层环绕
@@ -25,9 +28,10 @@ import org.springframework.cache.CacheManager;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class BasicDataServiceProxyCreator extends AbstractAutoProxyCreator {
+public class BasicDataServiceSupportCacheProxyCreator extends
+        AbstractAutoProxyCreator {
     
-    private Logger logger = LoggerFactory.getLogger(BasicDataServiceProxyCreator.class);
+    private Logger logger = LoggerFactory.getLogger(BasicDataServiceSupportCacheProxyCreator.class);
     
     /** 注释内容 */
     private static final long serialVersionUID = 2087861805320061268L;
@@ -36,7 +40,7 @@ public class BasicDataServiceProxyCreator extends AbstractAutoProxyCreator {
     private CacheManager cacheManager;
     
     /** <默认构造函数> */
-    public BasicDataServiceProxyCreator() {
+    public BasicDataServiceSupportCacheProxyCreator() {
         super();
     }
     
@@ -56,21 +60,36 @@ public class BasicDataServiceProxyCreator extends AbstractAutoProxyCreator {
         }
         
         String cacheNameOfService = beanName;
-        if (beanName.startsWith("basicdata")) {
-            cacheNameOfService = (new StringBuilder("cache.service.")).append(beanName)
+        if (!beanName.startsWith("basicdata.")) {
+            cacheNameOfService = (new StringBuilder("basicdata.service.")).append(beanName)
                     .toString();
         } else {
-            cacheNameOfService = (new StringBuilder("cache.service.basicdata.")).append(beanName)
+            cacheNameOfService = (new StringBuilder("basicdata.service.")).append(StringUtils.substringAfter(beanName,
+                    "basicdata."))
                     .toString();
         }
         org.springframework.cache.Cache cache = this.cacheManager.getCache(cacheNameOfService);
         if (BasicDataService.class.isAssignableFrom(beanClass)) {
-            Object[] interceptors = new Object[] { new BasicDataServiceInterceptor(
+            Object[] interceptors = new Object[] { new ServiceSupportCacheInterceptor(
                     cache) };
             return interceptors;
         }
         return DO_NOT_PROXY;
     }
+    
+    //    public static void main(String[] args) {
+    //        String beanName = "basicdata.testService";
+    //        String cacheNameOfService = "";
+    //        if (!beanName.startsWith("basicdata.")) {
+    //            cacheNameOfService = (new StringBuilder("basicdata.service.")).append(beanName)
+    //                    .toString();
+    //        } else {
+    //            cacheNameOfService = (new StringBuilder("basicdata.service.")).append(StringUtils.substringAfter(beanName,
+    //                    "basicdata."))
+    //                    .toString();
+    //        }
+    //        System.out.println(cacheNameOfService);
+    //    }
     
     /**
      * 在Bean初始化前进行代理类生成<br/>
