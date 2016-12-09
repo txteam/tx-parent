@@ -146,12 +146,7 @@
 	    	</if>	
 <#else>
 			<if test="_parameter.containsKey('${column.propertyName}')">
-				<if test="${column.propertyName} != null">
-					${column.columnName} = ${r"#{"}${column.propertyName}.${column.joinPropertyName},javaType=${column.javaType.name}${r"}"},
-		        </if>
-		        <if test="${column.propertyName} == null">
-					${column.columnName} = ${r"#{"}${column.propertyName},javaType=${column.javaType.name}${r"}"},
-		        </if>
+				${column.columnName} = ${r"#{"}${column.propertyName}.${column.joinPropertyName},javaType=${column.javaType.name}${r"}"},
 	    	</if>
 </#if>
 </#if>
