@@ -30,8 +30,10 @@ import com.tx.core.exceptions.argument.UnsupportedEncodingArgException;
  */
 public class XstreamUtils {
     
+    /** xstream日志记录器 */
     private static Logger logger = LoggerFactory.getLogger(XstreamUtils.class);
     
+    /** Xstream弱引用缓存 */
     private static Map<Class<?>, XStream> xstreamMap = new WeakHashMap<Class<?>, XStream>();
     
     /**

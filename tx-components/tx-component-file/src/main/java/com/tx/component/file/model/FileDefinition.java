@@ -15,7 +15,6 @@ import com.tx.component.file.context.FileDefinitionResource;
 import com.tx.core.jdbc.sqlsource.annotation.UpdateAble;
 
 /**
- * 
  * 文件定义<br/>
  * <功能详细描述>
  * 
@@ -24,7 +23,7 @@ import com.tx.core.jdbc.sqlsource.annotation.UpdateAble;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-@Table(name = "CORE_FILE_DEFINITION")
+@Table(name = "core_file_definition")
 public class FileDefinition {
     
     /** 文件的存储id */
@@ -36,7 +35,7 @@ public class FileDefinition {
     /** 所属模块:容器初始化时唯一确定，如果一个系统需要支撑多个模块 ,仅需要根据不同的module生成多个FileContext实现即可 */
     private String module;
     
-    /** 相对于文件容器的绝对路径 */
+    /** 相对于文件容器的相对路径 */
     @UpdateAble
     private String relativePath;
     
@@ -48,9 +47,11 @@ public class FileDefinition {
     @UpdateAble
     private String filenameExtension;
     
-    /** 文件访问的真正路径：由FileContext加工后才会生成，非持久化字段 */
-    @Transient
-    private FileDefinitionResource resource;
+    /** 访问应用的url如果：写入的策略不支持url可以为空 */
+    private String url;
+    
+    /** 文件资源的相对资源url */
+    private String relativeUrl;
     
     /** 最后跟新时间 */
     @UpdateAble
@@ -62,139 +63,171 @@ public class FileDefinition {
     /** 删除时间 */
     private Date deleteDate;
     
+    /** 文件访问的真正路径：由FileContext加工后才会生成，非持久化字段 */
+    @Transient
+    private FileDefinitionResource resource;
+
     /**
      * @return 返回 id
      */
     public String getId() {
         return id;
     }
-    
+
     /**
      * @param 对id进行赋值
      */
     public void setId(String id) {
         this.id = id;
     }
-    
+
     /**
      * @return 返回 system
      */
     public String getSystem() {
         return system;
     }
-    
+
     /**
      * @param 对system进行赋值
      */
     public void setSystem(String system) {
         this.system = system;
     }
-    
+
     /**
      * @return 返回 module
      */
     public String getModule() {
         return module;
     }
-    
+
     /**
      * @param 对module进行赋值
      */
     public void setModule(String module) {
         this.module = module;
     }
-    
+
     /**
-     * @return 返回 相对于文件容器的绝对路径
+     * @return 返回 relativePath
      */
     public String getRelativePath() {
         return relativePath;
     }
-    
+
     /**
-     * @param 对 相对于文件容器的绝对路径 进行赋值
+     * @param 对relativePath进行赋值
      */
     public void setRelativePath(String relativePath) {
         this.relativePath = relativePath;
     }
-    
+
     /**
-     * @return 返回 文件名
+     * @return 返回 filename
      */
     public String getFilename() {
         return filename;
     }
-    
+
     /**
-     * @param 对 文件名 进行赋值
+     * @param 对filename进行赋值
      */
     public void setFilename(String filename) {
         this.filename = filename;
     }
-    
+
     /**
-     * @return 返回 文件的后缀名
+     * @return 返回 filenameExtension
      */
     public String getFilenameExtension() {
         return filenameExtension;
     }
-    
+
     /**
-     * @param 对 文件的后缀名 进行赋值
+     * @param 对filenameExtension进行赋值
      */
     public void setFilenameExtension(String filenameExtension) {
         this.filenameExtension = filenameExtension;
     }
-    
+
     /**
-     * @return 返回 createDate
+     * @return 返回 url
      */
-    public Date getCreateDate() {
-        return createDate;
+    public String getUrl() {
+        return url;
     }
-    
+
     /**
-     * @param 对createDate进行赋值
+     * @param 对url进行赋值
      */
-    public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
+    public void setUrl(String url) {
+        this.url = url;
     }
-    
+
     /**
-     * @return 返回 deleteDate
+     * @return 返回 relativeUrl
      */
-    public Date getDeleteDate() {
-        return deleteDate;
+    public String getRelativeUrl() {
+        return relativeUrl;
     }
-    
+
     /**
-     * @param 对deleteDate进行赋值
+     * @param 对relativeUrl进行赋值
      */
-    public void setDeleteDate(Date deleteDate) {
-        this.deleteDate = deleteDate;
+    public void setRelativeUrl(String relativeUrl) {
+        this.relativeUrl = relativeUrl;
     }
-    
+
     /**
      * @return 返回 lastUpdateDate
      */
     public Date getLastUpdateDate() {
         return lastUpdateDate;
     }
-    
+
     /**
      * @param 对lastUpdateDate进行赋值
      */
     public void setLastUpdateDate(Date lastUpdateDate) {
         this.lastUpdateDate = lastUpdateDate;
     }
-    
+
+    /**
+     * @return 返回 createDate
+     */
+    public Date getCreateDate() {
+        return createDate;
+    }
+
+    /**
+     * @param 对createDate进行赋值
+     */
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
+    }
+
+    /**
+     * @return 返回 deleteDate
+     */
+    public Date getDeleteDate() {
+        return deleteDate;
+    }
+
+    /**
+     * @param 对deleteDate进行赋值
+     */
+    public void setDeleteDate(Date deleteDate) {
+        this.deleteDate = deleteDate;
+    }
+
     /**
      * @return 返回 resource
      */
     public FileDefinitionResource getResource() {
         return resource;
     }
-    
+
     /**
      * @param 对resource进行赋值
      */

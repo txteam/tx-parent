@@ -13,6 +13,7 @@ import net.sourceforge.pinyin4j.format.HanyuPinyinToneType;
 import net.sourceforge.pinyin4j.format.HanyuPinyinVCharType;
 import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombination;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.tx.core.exceptions.SILException;
@@ -82,6 +83,9 @@ public abstract class PinyinUtils {
                 if (Character.toString(input[i]).matches("[\u4E00-\u9FA5]+")) {
                     String[] temp = PinyinHelper.toHanyuPinyinStringArray(input[i],
                             format);
+                    if (ArrayUtils.isEmpty(temp)) {
+                        continue;
+                    }
                     output.append(temp[0]);
                     if (isSplitPinyinByWhitespace) {
                         //每个拼音后是否添加空格
@@ -130,6 +134,10 @@ public abstract class PinyinUtils {
         if (StringUtils.isEmpty(inputString)) {
             return inputString;
         }
+        if (StringUtils.isBlank(inputString)) {
+            return "";
+        }
+        inputString = inputString.trim();
         
         //汉语拼音格式输出类
         HanyuPinyinOutputFormat format = new HanyuPinyinOutputFormat();
@@ -151,7 +159,7 @@ public abstract class PinyinUtils {
                 if (Character.toString(input[i]).matches("[\u4E00-\u9FA5]+")) {
                     String[] temp = PinyinHelper.toHanyuPinyinStringArray(input[i],
                             format);
-                    if (StringUtils.isEmpty(temp[0])) {
+                    if (ArrayUtils.isEmpty(temp)) {
                         continue;
                     }
                     output.append(temp[0].charAt(0));
@@ -172,5 +180,8 @@ public abstract class PinyinUtils {
         System.out.println(chs);
         System.out.println(parseToPinyin(chs, false, true));
         System.out.println(parseToPY(chs, true));
+        System.out.println(parseToPY(null, true));
+        System.out.println(parseToPY("", true));
+        System.out.println(parseToPY(" ", true));
     }
 }
