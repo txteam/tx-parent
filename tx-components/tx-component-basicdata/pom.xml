@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -13,13 +12,12 @@
 	<name>tx-component-basicdata</name>
 	<url>http://maven.apache.org</url>
 
-
 	<dependencies>
 		<dependency>
 			<groupId>com.tx</groupId>
 			<artifactId>tx-core</artifactId>
 		</dependency>
-		
+
 		<!-- 根据excel加载初始化数据 -->
 		<dependency>
 			<groupId>org.apache.poi</groupId>
@@ -41,16 +39,11 @@
 			<artifactId>poi-ooxml-schemas</artifactId>
 			<optional>true</optional>
 		</dependency>
-		
+
 		<!-- 根据xml加载初始化数据 -->
 		<dependency>
-			<groupId>org.codehaus.jackson</groupId>
-			<artifactId>jackson-core-asl</artifactId>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.codehaus.jackson</groupId>
-			<artifactId>jackson-mapper-asl</artifactId>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
@@ -63,12 +56,7 @@
 			<artifactId>jsoup</artifactId>
 			<optional>true</optional>
 		</dependency>
-		<dependency>
-			<groupId>org.codehaus.jettison</groupId>
-			<artifactId>jettison</artifactId>
-			<optional>true</optional>
-		</dependency>
-		
+
 		<!-- junit -->
 		<dependency>
 			<groupId>junit</groupId>

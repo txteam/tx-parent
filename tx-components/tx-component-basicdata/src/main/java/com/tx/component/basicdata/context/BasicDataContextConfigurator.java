@@ -153,6 +153,7 @@ public class BasicDataContextConfigurator implements ApplicationContextAware,
     /** 单例对象注册方法 */
     protected SingletonBeanRegistry singletonBeanRegistry;
     
+    /** Bean定义注册机 */
     protected BeanDefinitionRegistry beanDefinitionRegistry;
     
     /**

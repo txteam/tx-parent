@@ -8,16 +8,23 @@ package com.tx.component.file.context;
 
 import java.io.InputStream;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
-import javax.annotation.Resource;
-
+import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.util.StringUtils;
 
+import com.tx.component.file.driver.FileDefinitionResourceDriver;
+import com.tx.component.file.driver.impl.SystemFileDefinitionResourceDriver;
 import com.tx.component.file.model.FileDefinition;
-import com.tx.component.file.service.FileDefinitionService;
-import com.tx.core.dbscript.TableDefinition;
-import com.tx.core.dbscript.XMLTableDefinition;
+import com.tx.component.file.model.FileModule;
+import com.tx.component.file.model.ReadWritePermissionEnum;
+import com.tx.component.file.resource.FileDefinitionResource;
+import com.tx.core.ddlutil.builder.DDLBuilder;
+import com.tx.core.ddlutil.builder.alter.AlterTableDDLBuilder;
+import com.tx.core.ddlutil.builder.create.CreateTableDDLBuilder;
 import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.util.UUIDUtils;
 
 /**
  * 文件容器构建器<br/>
@@ -27,88 +34,107 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public class FileContextBuilder extends FileContextConfigurator {
+public class FileContextBuilder extends FileContextConfigurator implements
+        BeanNameAware {
     
-    /** 权限表定义文件路径 */
-    private static final String fileDefinitionLocation = "classpath:/com/tx/component/file/script/core_file_definition.xml";
+    /** beanName */
+    protected static String beanName;
     
-    /** 权限引用表定义文件路径 */
-    private static final String fileDefinitionHisLocation = "classpath:/com/tx/component/file/script/core_file_definition_his.xml";
+    /** 默认文件模块 */
+    protected FileModule defaultFileModule;
     
-    /** 文件定义业务层 */
-    @Resource(name = "fileContext.fileDefinitionService")
-    private FileDefinitionService fileDefinitionService;
+    /** 模块映射 */
+    protected final Map<String, FileModule> moduleMap = new HashMap<String, FileModule>();
     
-    /**
-     * InitializingBean接口的实现，用以在容器参数设置完成后加载相关权限
-     * 
-     * @throws Exception
-     */
+    /** @param name */
     @Override
-    public void afterPropertiesSet() throws Exception {
-        logger.info("初始化文件管理容器start...");
-        databaseSchemaUpdate();
-        
-        super.afterPropertiesSet();
-        logger.info("初始化文件管理容器end...");
+    public void setBeanName(String name) {
+        FileContextBuilder.beanName = name;
     }
     
     /**
-     * 执行脚本自动升级<br/>
-     * 
-     * @return void
-     * @exception [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
+     * @throws Exception
      */
-    private void databaseSchemaUpdate() {
-        if (databaseSchemaUpdate && dbScriptExecutorContext != null) {
-            TableDefinition fileDefinitionTable = new XMLTableDefinition(
-                    fileDefinitionLocation);
-            TableDefinition fileDefinitionHisTable = new XMLTableDefinition(
-                    fileDefinitionHisLocation);
-            
-            this.dbScriptExecutorContext.createOrUpdateTable(fileDefinitionTable);
-            this.dbScriptExecutorContext.createOrUpdateTable(fileDefinitionHisTable);
-            
-            logger.info(" 自动初始化权限容器表结构完成.表后缀名为：{}...");
+    @Override
+    protected final void doBuild() throws Exception {
+        initTables();//初始化表定义
+        
+        AssertUtils.notEmpty(this.location, "location is empty.");
+        this.defaultFileModule = new FileModule("default",
+                ReadWritePermissionEnum.PUBLIC_READ_WRITE,
+                new SystemFileDefinitionResourceDriver(this.location));
+    }
+    
+    /**
+      * 获取模块对应的文件文件模块对象<br/>
+      * <功能详细描述>
+      * @param module
+      * @return [参数说明]
+      * 
+      * @return FileModule [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    private FileModule getFileModule(String module) {
+        AssertUtils.notEmpty(module, "module is empty.");
+        
+        if(!moduleMap.containsKey(module)){
+            return defaultFileModule;
         }
+        
+        FileModule fm = moduleMap.get(module);
+        return fm;
     }
     
     /**
      * 返回文件定义对象<br/>
      * 
-     * @param fileDefinitionId 文件定义id
+     * @param fileId 文件定义id
      * 
      * @return FileDefinition 文件定义
      * @exception [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    protected FileDefinition doFindFileDefinitionByFileDefinitionId(
-            String fileDefinitionId) {
-        FileDefinition fileDefinition = this.fileDefinitionService.findById(fileDefinitionId);
-        FileDefinitionResource resource = this.driver.getResource(fileDefinition);
+    protected FileDefinition doFindById(String fileId) {
+        AssertUtils.notEmpty(fileId, "fileId is empty.");
+        
+        FileDefinition fileDefinition = getFileDefinitionService().findById(fileId);
+        if (fileDefinition == null) {
+            return null;
+        }
+        
+        String module = fileDefinition.getModule();
+        FileModule fm = getFileModule(module);
+        FileDefinitionResourceDriver driver = fm.getDriver();
+        FileDefinitionResource resource = driver.getResource(fileDefinition);
         fileDefinition.setResource(resource);
+        
         return fileDefinition;
     }
     
     /**
      * 删除对应的文件，并将对应文件的相关记录移除到历史表中<br/>
      * 
-     * @param fileDefinitionId 文件定义id
+     * @param fileId 文件定义id
      * 
      * @return void
      * @exception [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    protected void doDeleteFileByFileDefinitionId(String fileDefinitionId) {
-        AssertUtils.notEmpty(fileDefinitionId, "fileDefinitionId is empty.");
-        FileDefinition fileDefinition = this.fileDefinitionService.findById(fileDefinitionId);
+    protected void doDeleteById(String fileId) {
+        AssertUtils.notEmpty(fileId, "fileId is empty.");
+        
+        FileDefinition fileDefinition = getFileDefinitionService().findById(fileId);
         if (fileDefinition == null) {
             return;
         }
         
-        this.fileDefinitionService.moveToHisById(fileDefinitionId);
-        this.driver.delete(fileDefinition);
+        getFileDefinitionService().moveToHisById(fileId);
+        
+        String module = fileDefinition.getModule();
+        FileModule fm = getFileModule(module);
+        FileDefinitionResourceDriver driver = fm.getDriver();
+        driver.del(fileDefinition);
     }
     
     /**
@@ -123,13 +149,21 @@ public class FileContextBuilder extends FileContextConfigurator {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    protected FileDefinition doSaveFile(String relativePath, String filename,
-            InputStream input) {
+    protected FileDefinition doSaveFile(String module, String relativePath,
+            String filename, InputStream input) {
+        AssertUtils.notEmpty(module, "module is empty.");
+        AssertUtils.notEmpty(filename, "filename is empty.");
+        AssertUtils.notNull(input, "input is empty.");
+        
         //持久化对应的文件对象
-        FileDefinition fileDefinition = buildAndPersistFileDefinition(relativePath,
+        FileDefinition fileDefinition = buildFileDefinition(module,
+                relativePath,
                 filename);
-        FileDefinitionResource resource = this.driver.save(fileDefinition,
-                input);
+        
+        FileModule fm = getFileModule(module);
+        FileDefinitionResourceDriver driver = fm.getDriver();
+        FileDefinitionResource resource = driver.save(fileDefinition, input);
+        
         fileDefinition.setResource(resource);
         return fileDefinition;
     }
@@ -145,12 +179,21 @@ public class FileContextBuilder extends FileContextConfigurator {
      * @exception [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    protected FileDefinition doAddFile(String relativePath, String filename,
-            InputStream input) {
+    protected FileDefinition doAddFile(String module, String relativePath,
+            String filename, InputStream input) {
+        AssertUtils.notEmpty(module, "module is empty.");
+        AssertUtils.notEmpty(filename, "filename is empty.");
+        AssertUtils.notNull(input, "input is empty.");
+        
         //持久化对应的文件对象
-        FileDefinition fileDefinition = buildAndPersistFileDefinition(relativePath,
+        FileDefinition fileDefinition = buildFileDefinition(module,
+                relativePath,
                 filename);
-        FileDefinitionResource resource = this.driver.add(fileDefinition, input);
+        
+        FileModule fm = getFileModule(module);
+        FileDefinitionResourceDriver driver = fm.getDriver();
+        FileDefinitionResource resource = driver.add(fileDefinition, input);
+        
         fileDefinition.setResource(resource);
         return fileDefinition;
     }
@@ -165,19 +208,113 @@ public class FileContextBuilder extends FileContextConfigurator {
      * @exception [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    private FileDefinition buildAndPersistFileDefinition(String relativePath,
-            String filename) {
+    private FileDefinition buildFileDefinition(String module,
+            String relativePath, String filename) {
         Date now = new Date();
+        
         FileDefinition fileDefinition = new FileDefinition();
+        fileDefinition.setId(UUIDUtils.generateUUID());
         fileDefinition.setCreateDate(now);
+        fileDefinition.setLastUpdateDate(now);
+        
+        fileDefinition.setModule(module);
+        fileDefinition.setRelativePath(relativePath);
         fileDefinition.setFilename(filename);
         fileDefinition.setFilenameExtension(StringUtils.getFilenameExtension(relativePath));
-        fileDefinition.setLastUpdateDate(now);
-        fileDefinition.setModule(this.module);
-        fileDefinition.setSystem(this.system);
-        fileDefinition.setRelativePath(relativePath);
         
-        this.fileDefinitionService.insert(fileDefinition);
+        fileDefinition.setSystem(this.system);
+        
         return fileDefinition;
+    }
+    
+    /**
+     * 为容器创建或升级表
+     * <功能详细描述> [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    private void initTables() {
+        table_core_file_definition();
+    }
+    
+    /**
+      * 核心文件定义表<br/>
+      * <功能详细描述> [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    private void table_core_file_definition() {
+        String tableName = "core_file_definition";
+        String hisTableName = "core_file_definition_his";
+        
+        CreateTableDDLBuilder createDDLBuilder = null;
+        AlterTableDDLBuilder alterDDLBuilder = null;
+        DDLBuilder<?> ddlBuilder = null;
+        CreateTableDDLBuilder hisCreateDDLBuilder = null;
+        AlterTableDDLBuilder hisAlterDDLBuilder = null;
+        DDLBuilder<?> hisDDLBuilder = null;
+        
+        if (this.tableDDLExecutor.exists(tableName)) {
+            alterDDLBuilder = this.tableDDLExecutor.generateAlterTableDDLBuilder(tableName);
+            ddlBuilder = alterDDLBuilder;
+        } else {
+            createDDLBuilder = this.tableDDLExecutor.generateCreateTableDDLBuilder(tableName);
+            ddlBuilder = createDDLBuilder;
+        }
+        
+        if (this.tableDDLExecutor.exists(hisTableName)) {
+            hisAlterDDLBuilder = this.tableDDLExecutor.generateAlterTableDDLBuilder(hisTableName);
+            hisDDLBuilder = hisAlterDDLBuilder;
+        } else {
+            hisCreateDDLBuilder = this.tableDDLExecutor.generateCreateTableDDLBuilder(hisTableName);
+            hisDDLBuilder = hisCreateDDLBuilder;
+        }
+        
+        core_file_definition(ddlBuilder);//写入表结构
+        ddlBuilder.newIndex(true,
+                "idx_file_definition_00",
+                "relativePath",
+                "module");
+        
+        if (alterDDLBuilder != null
+                && alterDDLBuilder.isNeedAlter(false, false)) {
+            this.tableDDLExecutor.alter(alterDDLBuilder, false, false);
+        } else if (createDDLBuilder != null) {
+            this.tableDDLExecutor.create(createDDLBuilder);
+        }
+        
+        core_file_definition(hisDDLBuilder);//写入表结构
+        if (hisAlterDDLBuilder != null
+                && hisAlterDDLBuilder.isNeedAlter(false, false)) {
+            this.tableDDLExecutor.alter(hisAlterDDLBuilder, false, false);
+        } else if (hisCreateDDLBuilder != null) {
+            this.tableDDLExecutor.create(hisCreateDDLBuilder);
+        }
+    }
+    
+    /**
+     * dt_table的构建器<br/>
+     * <功能详细描述>
+     * @param ddlBuilder [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    private void core_file_definition(DDLBuilder<?> ddlBuilder) {
+        ddlBuilder.newColumnOfVarchar(true, "id", 64, true, null)
+                .newColumnOfVarchar("system", 64, true, null)
+                .newColumnOfVarchar("module", 64, true, null)
+                .newColumnOfVarchar("relativePath", 256, true, null)
+                .newColumnOfVarchar("filename", 64, true, null)
+                .newColumnOfVarchar("filenameExtension", 64, false, null)
+                .newColumnOfVarchar("viewUrl", 256, false, null)
+                .newColumnOfDate("deleteDate", false, false)
+                .newColumnOfDate("lastUpdateDate", true, true)
+                .newColumnOfDate("createDate", true, true);
     }
 }

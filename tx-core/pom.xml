@@ -302,13 +302,8 @@
 
 		<!-- json xml -->
 		<dependency>
-			<groupId>org.codehaus.jackson</groupId>
-			<artifactId>jackson-core-asl</artifactId>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.codehaus.jackson</groupId>
-			<artifactId>jackson-mapper-asl</artifactId>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
@@ -321,11 +316,7 @@
 			<artifactId>jsoup</artifactId>
 			<optional>true</optional>
 		</dependency>
-		<dependency>
-			<groupId>org.codehaus.jettison</groupId>
-			<artifactId>jettison</artifactId>
-			<optional>true</optional>
-		</dependency>
+
 
 		<!-- dom4j -->
 		<dependency>

@@ -6,8 +6,7 @@
  */
 package com.tx.component.basicdata.model;
 
-import org.codehaus.jackson.map.annotate.JsonSerialize;
-
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.tx.core.lang.enums.BaseSimpleEnum;
 import com.tx.core.lang.enums.BaseSimpleEnumJsonSerializer;
 

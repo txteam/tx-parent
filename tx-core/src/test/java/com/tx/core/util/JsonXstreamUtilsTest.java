@@ -6,14 +6,7 @@
  */
 package com.tx.core.util;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-
-import org.codehaus.jettison.mapped.Configuration;
-
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.json.JettisonMappedXmlDriver;
 
 /**
  * <功能简述> <功能详细描述>
@@ -89,32 +82,32 @@ public class JsonXstreamUtilsTest {
     }
     
     public static void main(String[] args) {
-        Configuration c = new Configuration();
-        c.setDropRootElement(true);
-        c.setPrimitiveArrayKeys(new HashSet<String>());
-        //c.getPrimitiveArrayKeys().add("t2");
-        //c.setEscapeForwardSlashAlways(false);
-        XStream xsJson = new XStream(new JettisonMappedXmlDriver(c, true));
-        //xsJson.setMode(XStream.);
-        //        XStream xsJson = new XStream(new JsonHierarchicalStreamDriver() {
-        //            public HierarchicalStreamWriter createWriter(Writer out) {
-        //                return new JsonWriter(out, JsonWriter.DROP_ROOT_MODE);
-        //            }
-        //        });
-        xsJson.processAnnotations(Test1.class);
-        xsJson.processAnnotations(Test2.class);
-        xsJson.addImplicitCollection(Test1.class, "t2");
-        //        xsJson.alias("t1", String.class);
-        Test1 t1 = new Test1();
-        t1.setT1("t1test");
-        t1.setT2(new ArrayList<Test2>());
-        t1.getT2().add(new Test2("t1.t2-1"));
-        t1.getT2().add(new Test2("t1.t2-2"));
-        //t1.getT2().add(new Test2("t1.t2-2"));
-        
-        //        System.out.println(xsJson.toXML(t1));
-        String xml = xsJson.toXML(t1);
-        System.out.println(xml);
+//        Configuration c = new Configuration();
+//        c.setDropRootElement(true);
+//        c.setPrimitiveArrayKeys(new HashSet<String>());
+//        //c.getPrimitiveArrayKeys().add("t2");
+//        //c.setEscapeForwardSlashAlways(false);
+//        XStream xsJson = new XStream(new JettisonMappedXmlDriver(c, true));
+//        //xsJson.setMode(XStream.);
+//        //        XStream xsJson = new XStream(new JsonHierarchicalStreamDriver() {
+//        //            public HierarchicalStreamWriter createWriter(Writer out) {
+//        //                return new JsonWriter(out, JsonWriter.DROP_ROOT_MODE);
+//        //            }
+//        //        });
+//        xsJson.processAnnotations(Test1.class);
+//        xsJson.processAnnotations(Test2.class);
+//        xsJson.addImplicitCollection(Test1.class, "t2");
+//        //        xsJson.alias("t1", String.class);
+//        Test1 t1 = new Test1();
+//        t1.setT1("t1test");
+//        t1.setT2(new ArrayList<Test2>());
+//        t1.getT2().add(new Test2("t1.t2-1"));
+//        t1.getT2().add(new Test2("t1.t2-2"));
+//        //t1.getT2().add(new Test2("t1.t2-2"));
+//        
+//        //        System.out.println(xsJson.toXML(t1));
+//        String xml = xsJson.toXML(t1);
+//        System.out.println(xml);
         
 //        Object fromXML = xsJson.fromXML(xml);
 //        ObjectUtils.debugPrintPropertyValue(System.err, "fromXML", fromXML, true, true);

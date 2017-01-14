@@ -4,11 +4,12 @@
  * 修改时间:  2014年12月21日
  * <修改描述:>
  */
-package com.tx.component.file.context;
+package com.tx.component.file.driver;
 
 import java.io.InputStream;
 
 import com.tx.component.file.model.FileDefinition;
+import com.tx.component.file.resource.FileDefinitionResource;
 
 /**
  * 文件定义资源驱动<br/>
@@ -27,7 +28,6 @@ public interface FileDefinitionResourceDriver {
      * 获取资源对象<br/>
      * 
      * @param fileDefinition 文件定义
-     * 
      * @return FileDefinitionResource 资源对象
      * @exception [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
@@ -73,5 +73,5 @@ public interface FileDefinitionResourceDriver {
      * @exception [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public void delete(FileDefinition fileDefinition);
+    public void del(FileDefinition fileDefinition);
 }

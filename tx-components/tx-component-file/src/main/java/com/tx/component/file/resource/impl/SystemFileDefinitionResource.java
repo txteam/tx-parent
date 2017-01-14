@@ -4,7 +4,7 @@
  * 修改时间:  2014年12月21日
  * <修改描述:>
  */
-package com.tx.component.file.context.resource;
+package com.tx.component.file.resource.impl;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,7 +16,9 @@ import java.net.URL;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
-import com.tx.component.file.context.FileDefinitionResource;
+import com.tx.component.file.model.FileDefinition;
+import com.tx.component.file.resource.FileDefinitionResource;
+import com.tx.core.exceptions.util.AssertUtils;
 
 /**
  * 默认的文件定义资源的实现<br/>
@@ -27,14 +29,31 @@ import com.tx.component.file.context.FileDefinitionResource;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class DefaultFileDefinitionResource implements FileDefinitionResource {
+public class SystemFileDefinitionResource implements FileDefinitionResource {
     
+    /** 文件定义 */
+    private FileDefinition fileDefinition;
+    
+    /** 系统文件资源 */
     private FileSystemResource fileSystemResource;
     
     /** <默认构造函数> */
-    public DefaultFileDefinitionResource(FileSystemResource fileSystemResource) {
+    public SystemFileDefinitionResource(FileDefinition fileDefinition,
+            FileSystemResource fileSystemResource) {
         super();
+        AssertUtils.notNull(fileDefinition, "fileDefinition is null.");
+        AssertUtils.notNull(fileSystemResource, "fileSystemResource is null.");
+        
+        this.fileDefinition = fileDefinition;
         this.fileSystemResource = fileSystemResource;
+    }
+    
+    /**
+     * @return
+     */
+    @Override
+    public String getViewUrl() {
+        return "fileId=" + fileDefinition.getId();
     }
     
     /**
@@ -157,5 +176,4 @@ public class DefaultFileDefinitionResource implements FileDefinitionResource {
     public InputStream getInputStream() throws IOException {
         return fileSystemResource.getInputStream();
     }
-    
 }

@@ -14,7 +14,6 @@
 	</properties>
 
 	<artifactId>tx-components</artifactId>
-	<version>2.5.x-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>tx-components</name>
@@ -56,6 +55,5 @@
 		
 		<!-- 待完善模块 -->
 		<module>tx-component-rule</module>
-		<module>tx-component-template</module>
 	</modules>
 </project>

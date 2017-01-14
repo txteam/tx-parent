@@ -65,6 +65,7 @@ public class FileDefinitionService {
             fileDefinition.setFilenameExtension(StringUtils.getFilenameExtension(fileDefinition.getFilename()));
         }
         
+        //插入数据
         this.fileDefinitionDao.insert(fileDefinition);
     }
     
@@ -80,12 +81,15 @@ public class FileDefinitionService {
     @Transactional
     public void moveToHisById(String fileDefinitionId) {
         AssertUtils.notEmpty(fileDefinitionId, "fileDefinitionId is empty.");
+        //根据id查询文件定义
         FileDefinition fileDefinition = findById(fileDefinitionId);
         
+        //插入历史表
         Date now = new Date();
         fileDefinition.setDeleteDate(now);
-        
         this.fileDefinitionDao.insertToHis(fileDefinition);
+        
+        //删除当前表中的数据
         deleteById(fileDefinitionId);
     }
     
@@ -146,12 +150,14 @@ public class FileDefinitionService {
         updateRowMap.put("id", fileDefinition.getId());
         
         //需要更新的字段
-        updateRowMap.put("deleteDate", fileDefinition.getDeleteDate());
+        //updateRowMap.put("deleteDate", fileDefinition.getDeleteDate());
+        updateRowMap.put("viewUrl", fileDefinition.getViewUrl());
         updateRowMap.put("relativePath", fileDefinition.getRelativePath());
+        updateRowMap.put("filename", fileDefinition.getFilename());
         updateRowMap.put("filenameExtension",
                 fileDefinition.getFilenameExtension());
-        updateRowMap.put("filename", fileDefinition.getFilename());
-        updateRowMap.put("lastUpdateDate", fileDefinition.getLastUpdateDate());
+        
+        updateRowMap.put("lastUpdateDate", new Date());
         
         return this.fileDefinitionDao.update(updateRowMap);
     }

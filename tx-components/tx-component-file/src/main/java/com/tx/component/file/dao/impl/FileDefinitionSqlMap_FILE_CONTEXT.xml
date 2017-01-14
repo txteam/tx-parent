@@ -14,15 +14,16 @@
 		parameterType="com.tx.component.file.model.FileDefinition"
 		resultMap="fileDefinitionMap">
 		SELECT 
-				TFD.ID,
-				TFD.SYSTEM,
-				TFD.MODULE,
-				TFD.DELETEDATE,
-				TFD.RELATIVEPATH,
-				TFD.FILENAMEEXTENSION,
-				TFD.FILENAME,
-				TFD.CREATEDATE,
-				TFD.LASTUPDATEDATE
+				TFD.id,
+				TFD.system,
+				TFD.module,
+				TFD.relativePath,
+				TFD.filename,
+				TFD.filenameExtension,
+				TFD.viewUrl,
+				TFD.deleteDate,
+				TFD.createDate,
+				TFD.lastUpdateDate
 		  FROM CORE_FILE_DEFINITION TFD
 		 WHERE
 		<trim prefixOverrides="AND | OR">
@@ -37,15 +38,16 @@
 		parameterType="java.util.Map"
 		resultMap="fileDefinitionMap">
 		SELECT 
-				TFD.ID,
-				TFD.SYSTEM,
-				TFD.MODULE,
-				TFD.DELETEDATE,
-				TFD.RELATIVEPATH,
-				TFD.FILENAMEEXTENSION,
-				TFD.FILENAME,
-				TFD.CREATEDATE,
-				TFD.LASTUPDATEDATE
+				TFD.id,
+				TFD.system,
+				TFD.module,
+				TFD.relativePath,
+				TFD.filename,
+				TFD.filenameExtension,
+				TFD.viewUrl,
+				TFD.deleteDate,
+				TFD.createDate,
+				TFD.lastUpdateDate
 		  FROM CORE_FILE_DEFINITION TFD
 		<trim prefix="WHERE" prefixOverrides="AND | OR">
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
@@ -57,23 +59,11 @@
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(module)">  
 	            AND TFD.MODULE = #{module,javaType=java.lang.String}
 	        </if>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(deleteDate)">  
-	            AND TFD.DELETEDATE = #{deleteDate,javaType=java.util.Date}
-	        </if>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(relativePath)">  
-	            AND TFD.RELATIVEPATH = #{relativePath,javaType=java.lang.String}
-	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(filenameExtension)">  
 	            AND TFD.FILENAMEEXTENSION = #{filenameExtension,javaType=java.lang.String}
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(filename)">  
 	            AND TFD.FILENAME = #{filename,javaType=java.lang.String}
-	        </if>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(createDate)">  
-	            AND TFD.CREATEDATE = #{createDate,javaType=java.util.Date}
-	        </if>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(lastUpdateDate)">  
-	            AND TFD.LASTUPDATEDATE = #{lastUpdateDate,javaType=java.util.Date}
 	        </if>
 		</trim>
 		<choose>  
@@ -81,12 +71,12 @@
 	            ORDER BY #{orderSql}
 	        </when>
 	        <otherwise>  
-	            ORDER BY ID
+	            ORDER BY createDate DESC
 	        </otherwise>  
 	    </choose>
 	</select>
 	
-		<!-- auto generate default count -->
+	<!-- auto generate default count -->
 	<select id="queryFileDefinitionCount" 
 		parameterType="java.util.Map"
 		resultType="java.lang.Integer">
@@ -102,23 +92,11 @@
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(module)">  
 	            AND TFD.MODULE = #{module,javaType=java.lang.String}
 	        </if>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(deleteDate)">  
-	            AND TFD.DELETEDATE = #{deleteDate,javaType=java.util.Date}
-	        </if>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(relativePath)">  
-	            AND TFD.RELATIVEPATH = #{relativePath,javaType=java.lang.String}
-	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(filenameExtension)">  
 	            AND TFD.FILENAMEEXTENSION = #{filenameExtension,javaType=java.lang.String}
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(filename)">  
 	            AND TFD.FILENAME = #{filename,javaType=java.lang.String}
-	        </if>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(createDate)">  
-	            AND TFD.CREATEDATE = #{createDate,javaType=java.util.Date}
-	        </if>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(lastUpdateDate)">  
-	            AND TFD.LASTUPDATEDATE = #{lastUpdateDate,javaType=java.util.Date}
 	        </if>
 		</trim>
 	</select>
@@ -131,10 +109,11 @@
 			ID,
 			SYSTEM,
 			MODULE,
-			DELETEDATE,
 			RELATIVEPATH,
 			FILENAMEEXTENSION,
 			FILENAME,
+			VIEWURL,
+			DELETEDATE,
 			CREATEDATE,
 			LASTUPDATEDATE
 		)
@@ -143,10 +122,11 @@
 			#{id},
 			#{system},
 			#{module},
-			#{deleteDate},
 			#{relativePath},
 			#{filenameExtension},
 			#{filename},
+			#{uviewUrlrl},
+			#{deleteDate},
 			#{createDate},
 			#{lastUpdateDate}
 		)
@@ -160,10 +140,11 @@
 			ID,
 			SYSTEM,
 			MODULE,
-			DELETEDATE,
 			RELATIVEPATH,
 			FILENAMEEXTENSION,
 			FILENAME,
+			VIEWURL,
+			DELETEDATE,
 			CREATEDATE,
 			LASTUPDATEDATE
 		)
@@ -172,10 +153,11 @@
 			#{id},
 			#{system},
 			#{module},
-			#{deleteDate},
 			#{relativePath},
 			#{filenameExtension},
 			#{filename},
+			#{viewUrl},
+			#{deleteDate},
 			#{createDate},
 			#{lastUpdateDate}
 		)
@@ -184,7 +166,7 @@
 	<!-- auto generate default delete -->
 	<delete id="deleteFileDefinition" 
 		parameterType="com.tx.component.file.model.FileDefinition">
-		DELETE FROM CORE_FILE_DEFINITION  WHERE
+		DELETE FROM CORE_FILE_DEFINITION WHERE
 		<trim prefixOverrides="AND | OR">
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
 	            AND ID = #{id}
@@ -197,27 +179,30 @@
 	    parameterType="java.util.Map">  
 	    UPDATE CORE_FILE_DEFINITION
 	    <trim prefix="SET" suffixOverrides=",">
-			<if test="_parameter.containsKey('system')">
-	    		SYSTEM = #{system,javaType=java.lang.String},
-	    	</if>	
-			<if test="_parameter.containsKey('module')">
-	    		MODULE = #{module,javaType=java.lang.String},
-	    	</if>	
-			<if test="_parameter.containsKey('deleteDate')">
-	    		DELETEDATE = #{deleteDate,javaType=java.util.Date},
+			<!-- <if test="_parameter.containsKey('createDate')"> -->
+			<!-- CREATEDATE = #{createDate,javaType=java.util.Date}, -->
+			<!-- </if> -->
+			<!-- <if test="_parameter.containsKey('system')"> -->
+			<!-- SYSTEM = #{system,javaType=java.lang.String}, -->
+			<!-- </if> -->
+			<!-- <if test="_parameter.containsKey('module')"> -->
+			<!-- MODULE = #{module,javaType=java.lang.String}, -->
+			<!-- </if> -->
+			<if test="_parameter.containsKey('viewUrl')">
+	    		VIEWURL = #{viewUrl,javaType=java.lang.String},
 	    	</if>	
 			<if test="_parameter.containsKey('relativePath')">
 	    		RELATIVEPATH = #{relativePath,javaType=java.lang.String},
 	    	</if>	
+	    	<if test="_parameter.containsKey('filename')">
+	    		FILENAME = #{filename,javaType=java.lang.String},
+	    	</if>
 			<if test="_parameter.containsKey('filenameExtension')">
 	    		FILENAMEEXTENSION = #{filenameExtension,javaType=java.lang.String},
-	    	</if>	
-			<if test="_parameter.containsKey('filename')">
-	    		FILENAME = #{filename,javaType=java.lang.String},
-	    	</if>	
-			<if test="_parameter.containsKey('createDate')">
-	    		CREATEDATE = #{createDate,javaType=java.util.Date},
-	    	</if>	
+	    	</if>
+	    	<if test="_parameter.containsKey('deleteDate')">
+	    		DELETEDATE = #{deleteDate,javaType=java.util.Date},
+	    	</if>
 			<if test="_parameter.containsKey('lastUpdateDate')">
 	    		LASTUPDATEDATE = #{lastUpdateDate,javaType=java.util.Date},
 	    	</if>	

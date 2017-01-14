@@ -10,8 +10,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.codehaus.jackson.annotate.JsonAutoDetect;
-
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.tx.core.paged.PagedConstant;
 
 /**

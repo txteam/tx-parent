@@ -540,9 +540,10 @@ public class JpaMetaClass<T> {
             AssertUtils.isTrue(this.classReflector.getGetterMethod(getterNameTemp) != null,
                     "type:{} pkPropertyName:{} getterMethod is not exist.",
                     new Object[] { this.type, getterNameTemp });
-            AssertUtils.isTrue(this.classReflector.getSetterMethod(getterNameTemp) != null,
-                    "type:{} pkPropertyName:{} setterMethod is not exist.",
-                    new Object[] { this.type, getterNameTemp });
+            //如果对应方法为接口时，可能是没有Setter方法的
+//            AssertUtils.isTrue(this.classReflector.getSetterMethod(getterNameTemp) != null,
+//                    "type:{} pkPropertyName:{} setterMethod is not exist.",
+//                    new Object[] { this.type, getterNameTemp });
             //主键类型应该为直接可以进行存取的类型
             AssertUtils.isTrue(JdbcUtils.isSupportedSimpleType(pkGetterType),
                     new JpaMetaClassNewInstanceException(

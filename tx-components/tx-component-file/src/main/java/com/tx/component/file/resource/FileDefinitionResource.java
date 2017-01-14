@@ -4,7 +4,7 @@
  * 修改时间:  2014年11月24日
  * <修改描述:>
  */
-package com.tx.component.file.context;
+package com.tx.component.file.resource;
 
 import org.springframework.core.io.WritableResource;
 
@@ -21,4 +21,14 @@ import org.springframework.core.io.WritableResource;
  */
 public interface FileDefinitionResource extends WritableResource {
     
+    /**
+     * 访问资源的ViewUrl:可能为相对路径|获绝对路径|或http访问的路径<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public String getViewUrl();
 }
