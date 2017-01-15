@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.SerializerProvider;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
+@Deprecated
 public class BaseSimpleEnumJsonSerializer extends
         JsonSerializer<BaseSimpleEnum> {
     

@@ -54,7 +54,7 @@
 				<artifactId>tx-core</artifactId>
 				<version>${tx-version}</version>
 			</dependency>
-			
+
 			<dependency>
 				<groupId>com.tx</groupId>
 				<artifactId>tx-component-configuration</artifactId>
@@ -354,8 +354,6 @@
 				<version>3.0</version>
 			</dependency>
 
-
-
 			<!-- google工具类 -->
 			<dependency>
 				<groupId>com.google.guava</groupId>
@@ -620,7 +618,6 @@
 			<dependency>
 				<groupId>com.jcraft</groupId>
 				<artifactId>jsch</artifactId>
-				<optional>true</optional>
 				<version>0.1.53</version>
 			</dependency>
 
@@ -641,11 +638,16 @@
 			<!-- <version>1.3.7</version> -->
 			<!-- </dependency> -->
 			<dependency>
+				<groupId>com.alibaba</groupId>
+				<artifactId>fastjson</artifactId>
+				<version>1.2.23</version>
+			</dependency>
+			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-databind</artifactId>
 				<version>2.2.3</version>
 			</dependency>
-			
+
 
 			<!-- activiti -->
 			<dependency>
