@@ -96,6 +96,28 @@
 				<version>${tx-version}</version>
 			</dependency>
 
+			<!-- aliyun -->
+			<dependency>
+				<groupId>alibaba</groupId>
+				<artifactId>alidayu</artifactId>
+				<version>1.0</version>
+			</dependency>
+			<dependency>
+				<groupId>com.aliyun.oss</groupId>
+				<artifactId>aliyun-sdk-oss</artifactId>
+				<version>2.4.1</version>
+			</dependency>
+			<dependency>
+				<groupId>com.aliyun</groupId>
+				<artifactId>aliyun-java-sdk-dm</artifactId>
+				<version>3.0.0-rc2</version>
+			</dependency>
+			<dependency>
+				<groupId>com.aliyun</groupId>
+				<artifactId>aliyun-java-sdk-core</artifactId>
+				<version>3.0.9</version>
+			</dependency>
+
 			<!-- commons -->
 			<dependency>
 				<groupId>commons-lang</groupId>
@@ -611,7 +633,7 @@
 			<dependency>
 				<groupId>org.apache.httpcomponents</groupId>
 				<artifactId>httpclient</artifactId>
-				<version>4.2.3</version>
+				<version>4.4.1</version>
 			</dependency>
 
 			<!-- sftp支持 -->

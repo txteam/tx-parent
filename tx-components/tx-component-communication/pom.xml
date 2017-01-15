@@ -14,21 +14,18 @@
 	<url>http://maven.apache.org</url>
 
 	<dependencies>
-		<!-- 升级版本后：修改项目中添加依赖，这里添加optional:true的配置 -->
+		<!-- aliyun -->
 		<dependency>
 			<groupId>alibaba</groupId>
 			<artifactId>alidayu</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.aliyun</groupId>
-			<artifactId>aliyun-java-sdk-core</artifactId>
-			<version>3.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.aliyun</groupId>
 			<artifactId>aliyun-java-sdk-dm</artifactId>
-			<version>3.0.0-rc1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.aliyun</groupId>
+			<artifactId>aliyun-java-sdk-core</artifactId>
 		</dependency>
 
 		<!-- tx -->
@@ -54,7 +51,7 @@
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 		</dependency>
-		
+
 		<!-- 单元测试依赖类 -->
 		<dependency>
 			<groupId>org.hibernate</groupId>

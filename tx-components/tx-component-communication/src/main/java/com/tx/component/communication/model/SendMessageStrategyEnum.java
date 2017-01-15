@@ -28,6 +28,4 @@ public enum SendMessageStrategyEnum {
      *    1、错误：进行重发（小于最大重发次数时）
      */
     AUTO_RETRY;
-    
-    
 }

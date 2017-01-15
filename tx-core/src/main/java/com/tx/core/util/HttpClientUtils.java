@@ -261,12 +261,12 @@ public class HttpClientUtils {
             String resStr = "";
             
             HttpEntity requestEntity = null;
-            try {
+//            try {
                 requestEntity = new StringEntity(requestMessage,
                         requestEncoding);
-            } catch (UnsupportedEncodingException e) {
-                throw new BeforeHttpExcuteException("Http请求参数字符集转换异常.", e);
-            }
+//            } catch (UnsupportedEncodingException e) {
+//                throw new BeforeHttpExcuteException("Http请求参数字符集转换异常.", e);
+//            }
             
             HttpResponse response = null;
             // 创建httppost

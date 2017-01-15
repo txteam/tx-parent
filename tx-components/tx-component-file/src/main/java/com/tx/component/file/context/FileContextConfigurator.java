@@ -26,7 +26,6 @@ import com.tx.component.file.dao.impl.FileDefinitionDaoImpl;
 import com.tx.component.file.service.FileDefinitionService;
 import com.tx.core.dbscript.model.DataSourceTypeEnum;
 import com.tx.core.ddlutil.executor.TableDDLExecutor;
-import com.tx.core.ddlutil.executor.TableDDLExecutorFactory;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.mybatis.support.MyBatisDaoSupport;
 import com.tx.core.mybatis.support.MyBatisDaoSupportHelper;
@@ -94,6 +93,27 @@ public class FileContextConfigurator implements ApplicationContextAware,
         return fdService;
     }
     
+    /**
+      * 注册文件容器<br/>
+      * <功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return FileContextFactroy [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    @Bean(name = "fileContext")
+    public FileContextFactroy fileContextFactroy() {
+        FileContextFactroy fileContext = new FileContextFactroy();
+        
+        fileContext.setDataSource(dataSource);
+        fileContext.setDataSourceType(dataSourceType);
+        fileContext.setLocation(location);
+        fileContext.setMybatisConfigLocation(mybatisConfigLocation);
+        fileContext.setSystem(system);
+        return fileContext;
+    }
+    
     /** spring容器句柄 */
     protected static ApplicationContext applicationContext;
     
@@ -101,7 +121,7 @@ public class FileContextConfigurator implements ApplicationContextAware,
     private String mybatisConfigLocation = "classpath:context/mybatis-config.xml";
     
     /** 数据源类型 */
-    private DataSourceTypeEnum dataSourceType = DataSourceTypeEnum.MYSQL;
+    protected DataSourceTypeEnum dataSourceType = DataSourceTypeEnum.MYSQL;
     
     /** 如果没有指定系统，则默认的系统id */
     protected String system = FileContextConstants.DEFAULT_SYSTEM;
@@ -110,7 +130,7 @@ public class FileContextConfigurator implements ApplicationContextAware,
     protected String location = "classpath:context/file-context-config.xml";;
     
     /** 数据源 */
-    private DataSource dataSource;
+    protected DataSource dataSource;
     
     /** 表DDL执行器 */
     protected TableDDLExecutor tableDDLExecutor;
@@ -176,9 +196,6 @@ public class FileContextConfigurator implements ApplicationContextAware,
     public void afterPropertiesSet() throws Exception {
         AssertUtils.notNull(system, "system is null.");
         AssertUtils.notTrue(dataSource == null, "dataSource all is null.");
-        
-        this.tableDDLExecutor = TableDDLExecutorFactory.buildTableDDLExecutor(dataSourceType,
-                dataSource);
         
         //进行容器构建
         doBuild();

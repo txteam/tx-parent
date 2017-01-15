@@ -50,10 +50,9 @@
 		<module>tx-component-communication</module>
 		<module>tx-component-basicdata</module>
 		
+		<!-- 待完善模块 -->
 		<module>tx-component-servicelog</module>
 		<module>tx-component-file</module>
-		
-		<!-- 待完善模块 -->
 		<module>tx-component-rule</module>
 	</modules>
 </project>

@@ -23,6 +23,12 @@ package com.tx.component.communication;
   */
 public interface MessageSenderConstants {
     
+    /** 消息类型:邮件 */
+    String MESSAGE_TYPE_EMAIL = "EMAIL";
+    
+    /** 消息类型:语音 */
+    String MESSAGE_TYPE_TTS = "TTS";
+    
     /** 消息类型:短信 */
-    String MESSAGE_TYPE_SMS = "sms";
+    String MESSAGE_TYPE_SMS = "SMS";
 }

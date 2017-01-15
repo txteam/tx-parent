@@ -130,6 +130,24 @@ public class FileDefinitionService {
     }
     
     /**
+     * 根据Id查询FileDefinition实体<br/>
+     * 
+     * @param fileDefinitionId 文件定义id
+     * 
+     * @return FileDefinition 文件定义
+     * @exception [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public FileDefinition findByRelativePath(String relativePath) {
+        AssertUtils.notEmpty(relativePath, "relativePath is empty.");
+        
+        FileDefinition condition = new FileDefinition();
+        condition.setRelativePath(relativePath);
+        
+        return this.fileDefinitionDao.find(condition);
+    }
+    
+    /**
      * 更新<br/>
      * 
      * @param fileDefinition 文件定义

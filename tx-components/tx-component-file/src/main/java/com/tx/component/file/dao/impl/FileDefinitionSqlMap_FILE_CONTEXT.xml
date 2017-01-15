@@ -28,7 +28,10 @@
 		 WHERE
 		<trim prefixOverrides="AND | OR">
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
-	            AND TFD.ID = #{id}
+	            AND TFD.id = #{id}
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(relativePath)">  
+	            AND TFD.relativePath = #{relativePath}
 	        </if>
 		</trim>
 	</select>
@@ -51,19 +54,22 @@
 		  FROM CORE_FILE_DEFINITION TFD
 		<trim prefix="WHERE" prefixOverrides="AND | OR">
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
-	            AND TFD.ID = #{id,javaType=java.lang.String}
+	            AND TFD.id = #{id}
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(relativePath)">  
+	            AND TFD.relativePath = #{relativePath}
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(system)">  
-	            AND TFD.SYSTEM = #{system,javaType=java.lang.String}
+	            AND TFD.system = #{system,javaType=java.lang.String}
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(module)">  
-	            AND TFD.MODULE = #{module,javaType=java.lang.String}
+	            AND TFD.module = #{module,javaType=java.lang.String}
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(filename)">  
+	            AND TFD.filename = #{filename,javaType=java.lang.String}
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(filenameExtension)">  
-	            AND TFD.FILENAMEEXTENSION = #{filenameExtension,javaType=java.lang.String}
-	        </if>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(filename)">  
-	            AND TFD.FILENAME = #{filename,javaType=java.lang.String}
+	            AND TFD.filenameExtension = #{filenameExtension,javaType=java.lang.String}
 	        </if>
 		</trim>
 		<choose>  
@@ -84,19 +90,22 @@
 		  FROM CORE_FILE_DEFINITION TFD
 		<trim prefix="WHERE" prefixOverrides="AND | OR">
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
-	            AND TFD.ID = #{id,javaType=java.lang.String}
+	            AND TFD.id = #{id}
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(relativePath)">  
+	            AND TFD.relativePath = #{relativePath}
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(system)">  
-	            AND TFD.SYSTEM = #{system,javaType=java.lang.String}
+	            AND TFD.system = #{system,javaType=java.lang.String}
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(module)">  
-	            AND TFD.MODULE = #{module,javaType=java.lang.String}
+	            AND TFD.module = #{module,javaType=java.lang.String}
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(filename)">  
+	            AND TFD.filename = #{filename,javaType=java.lang.String}
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(filenameExtension)">  
-	            AND TFD.FILENAMEEXTENSION = #{filenameExtension,javaType=java.lang.String}
-	        </if>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(filename)">  
-	            AND TFD.FILENAME = #{filename,javaType=java.lang.String}
+	            AND TFD.filenameExtension = #{filenameExtension,javaType=java.lang.String}
 	        </if>
 		</trim>
 	</select>
@@ -110,8 +119,8 @@
 			SYSTEM,
 			MODULE,
 			RELATIVEPATH,
-			FILENAMEEXTENSION,
 			FILENAME,
+			FILENAMEEXTENSION,
 			VIEWURL,
 			DELETEDATE,
 			CREATEDATE,
@@ -123,9 +132,9 @@
 			#{system},
 			#{module},
 			#{relativePath},
-			#{filenameExtension},
 			#{filename},
-			#{uviewUrlrl},
+			#{filenameExtension},
+			#{viewUrlrl},
 			#{deleteDate},
 			#{createDate},
 			#{lastUpdateDate}
@@ -141,8 +150,8 @@
 			SYSTEM,
 			MODULE,
 			RELATIVEPATH,
-			FILENAMEEXTENSION,
 			FILENAME,
+			FILENAMEEXTENSION,
 			VIEWURL,
 			DELETEDATE,
 			CREATEDATE,
@@ -154,8 +163,8 @@
 			#{system},
 			#{module},
 			#{relativePath},
-			#{filenameExtension},
 			#{filename},
+			#{filenameExtension},
 			#{viewUrl},
 			#{deleteDate},
 			#{createDate},
