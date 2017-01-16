@@ -62,6 +62,16 @@
 			</dependency>
 			<dependency>
 				<groupId>com.tx</groupId>
+				<artifactId>tx-component-basicdata</artifactId>
+				<version>${tx-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.tx</groupId>
+				<artifactId>tx-component-communication</artifactId>
+				<version>${tx-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.tx</groupId>
 				<artifactId>tx-component-file</artifactId>
 				<version>${tx-version}</version>
 			</dependency>
@@ -85,17 +95,7 @@
 				<artifactId>tx-component-workflow</artifactId>
 				<version>${tx-version}</version>
 			</dependency>
-			<dependency>
-				<groupId>com.tx</groupId>
-				<artifactId>tx-component-basicdata</artifactId>
-				<version>${tx-version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.tx</groupId>
-				<artifactId>tx-component-communication</artifactId>
-				<version>${tx-version}</version>
-			</dependency>
-
+			
 			<!-- aliyun -->
 			<dependency>
 				<groupId>alibaba</groupId>
@@ -417,6 +417,7 @@
 				<artifactId>jsoup</artifactId>
 				<version>1.7.3</version>
 			</dependency>
+			
 			<dependency>
 				<groupId>com.thoughtworks.xstream</groupId>
 				<artifactId>xstream</artifactId>
@@ -1054,11 +1055,11 @@
 			</dependency>
 
 			<!-- 定时运行任务 -->
-			<dependency>
-				<groupId>opensymphony</groupId>
-				<artifactId>quartz</artifactId>
-				<version>1.6.3</version>
-			</dependency>
+			<!-- <dependency> -->
+			<!-- <groupId>opensymphony</groupId> -->
+			<!-- <artifactId>quartz</artifactId> -->
+			<!-- <version>1.6.3</version> -->
+			<!-- </dependency> -->
 			<dependency>
 				<groupId>org.quartz-scheduler</groupId>
 				<artifactId>quartz</artifactId>
