@@ -525,7 +525,7 @@
 			<dependency>
 				<groupId>com.alibaba</groupId>
 				<artifactId>druid</artifactId>
-				<version>1.0.19</version>
+				<version>1.0.27</version>
 			</dependency>
 			<dependency>
 				<groupId>com.oracle</groupId>
@@ -540,7 +540,7 @@
 			<dependency>
 				<groupId>mysql</groupId>
 				<artifactId>mysql-connector-java</artifactId>
-				<version>5.1.37</version>
+				<version>5.1.40</version>
 			</dependency>
 			<dependency>
 				<groupId>hsqldb</groupId>
@@ -825,7 +825,7 @@
 				<!-- 外部依赖spring-core， (spring-beans，AOP Alliance， CGLIB，Commons Attributes) -->
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-aop</artifactId>
-				<version>3.2.15.RELEASE</version>
+				<version>3.2.18.RELEASE</version>
 				<exclusions>
 					<exclusion>
 						<groupId>commons-logging</groupId>
@@ -836,7 +836,7 @@
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-asm</artifactId>
-				<version>3.2.15.RELEASE</version>
+				<version>3.2.18.RELEASE</version>
 				<exclusions>
 					<exclusion>
 						<groupId>commons-logging</groupId>
@@ -848,7 +848,7 @@
 				<!-- 提供对AspectJ的支持，以便可以方便的将面向方面的功能集成进IDE中，比如Eclipse AJDT。外部依赖。 -->
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-aspects</artifactId>
-				<version>3.2.15.RELEASE</version>
+				<version>3.2.18.RELEASE</version>
 				<exclusions>
 					<exclusion>
 						<groupId>commons-logging</groupId>
@@ -862,7 +862,7 @@
 				<!-- 外部依赖spring-core，(CGLIB)。Code Generator -->
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-beans</artifactId>
-				<version>3.2.15.RELEASE</version>
+				<version>3.2.18.RELEASE</version>
 				<exclusions>
 					<exclusion>
 						<groupId>commons-logging</groupId>
@@ -877,7 +877,7 @@
 				<!-- 外部依赖spring-beans,(spring-aop)。 -->
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-context</artifactId>
-				<version>3.2.15.RELEASE</version>
+				<version>3.2.18.RELEASE</version>
 				<exclusions>
 					<exclusion>
 						<groupId>commons-logging</groupId>
@@ -890,7 +890,7 @@
 				<!-- 外部依赖spring-context, (spring-jdbc, Velocity, FreeMarker, JasperReports, BSH, Groovy, JRuby, Quartz, EHCache) -->
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-context-support</artifactId>
-				<version>3.2.15.RELEASE</version>
+				<version>3.2.18.RELEASE</version>
 				<exclusions>
 					<exclusion>
 						<groupId>commons-logging</groupId>
@@ -903,7 +903,7 @@
 				<!-- 外部依赖Commons Logging， (Log4J) -->
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-core</artifactId>
-				<version>3.2.15.RELEASE</version>
+				<version>3.2.18.RELEASE</version>
 				<exclusions>
 					<exclusion>
 						<groupId>commons-logging</groupId>
@@ -914,7 +914,7 @@
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-expression</artifactId>
-				<version>3.2.15.RELEASE</version>
+				<version>3.2.18.RELEASE</version>
 				<exclusions>
 					<exclusion>
 						<groupId>commons-logging</groupId>
@@ -928,7 +928,7 @@
 				<!-- 外部依赖spring-beans，spring-dao。 -->
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-jdbc</artifactId>
-				<version>3.2.15.RELEASE</version>
+				<version>3.2.18.RELEASE</version>
 				<exclusions>
 					<exclusion>
 						<groupId>commons-logging</groupId>
@@ -939,7 +939,7 @@
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-orm</artifactId>
-				<version>3.2.15.RELEASE</version>
+				<version>3.2.18.RELEASE</version>
 				<exclusions>
 					<exclusion>
 						<groupId>commons-logging</groupId>
@@ -950,7 +950,7 @@
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-oxm</artifactId>
-				<version>3.2.15.RELEASE</version>
+				<version>3.2.18.RELEASE</version>
 				<exclusions>
 					<exclusion>
 						<groupId>commons-logging</groupId>
@@ -961,7 +961,7 @@
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-tx</artifactId>
-				<version>3.2.15.RELEASE</version>
+				<version>3.2.18.RELEASE</version>
 				<exclusions>
 					<exclusion>
 						<groupId>commons-logging</groupId>
@@ -974,7 +974,7 @@
 				<!-- 外部依赖spring-context, Servlet API, (JSP API, JSTL, Commons FileUpload, COS)。 -->
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-web</artifactId>
-				<version>3.2.15.RELEASE</version>
+				<version>3.2.18.RELEASE</version>
 				<exclusions>
 					<exclusion>
 						<groupId>commons-logging</groupId>
@@ -988,7 +988,7 @@
 				<!-- 外部依赖spring-web, (spring-support，Tiles，iText，POI)。 -->
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-webmvc</artifactId>
-				<version>3.2.15.RELEASE</version>
+				<version>3.2.18.RELEASE</version>
 				<exclusions>
 					<exclusion>
 						<groupId>commons-logging</groupId>
@@ -999,7 +999,7 @@
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-test</artifactId>
-				<version>3.2.15.RELEASE</version>
+				<version>3.2.18.RELEASE</version>
 				<scope>test</scope>
 				<exclusions>
 					<exclusion>

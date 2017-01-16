@@ -56,8 +56,8 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
     
     //查询table数据中的实际定义
     private static final String SQL_FIND_TABLE_BY_TABLENAME = "SELECT "
-            + "TAB.TABLE_CATALOG as 'catalog',TAB.TABLE_SCHEMA as 'schema',"
-            + "TAB.TABLE_NAME as 'tableName',TAB.TABLE_COMMENT as 'comment' "
+            + "TABLE_CATALOG as 'catalog',TABLE_SCHEMA as 'schema',"
+            + "TABLE_NAME as 'tableName',TABLE_COMMENT as 'comment' "
             + "FROM INFORMATION_SCHEMA.`TABLES` TAB "
             + "WHERE TAB.TABLE_NAME = ? AND TAB.TABLE_SCHEMA = ? AND TAB.TABLE_TYPE='BASE TABLE'";
     
