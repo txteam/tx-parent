@@ -127,7 +127,7 @@ public class FileContextConfigurator implements ApplicationContextAware,
     protected String system = FileContextConstants.DEFAULT_SYSTEM;
     
     /** 默认的存储路径 */
-    protected String location = "classpath:context/file-context-config.xml";;
+    protected String location = "classpath:context/file_context_config.xml";;
     
     /** 数据源 */
     protected DataSource dataSource;

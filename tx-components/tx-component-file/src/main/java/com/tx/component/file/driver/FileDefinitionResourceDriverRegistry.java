@@ -13,7 +13,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
-import org.hsqldb.lib.StringInputStream;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 
@@ -139,7 +138,6 @@ public class FileDefinitionResourceDriverRegistry {
         fileDefinition.setFilename("testfile.xml");
         FileDefinitionResource fdResource = resourceDriver.getResource(fileDefinition);
         
-        fdResource.save(new StringInputStream("111222"));
         
         String res = "";
         try {
@@ -170,6 +168,5 @@ public class FileDefinitionResourceDriverRegistry {
         fileDefinition.setFilename("testfile.xml");
         FileDefinitionResource fdResource = resourceDriver.getResource(fileDefinition);
         
-        fdResource.save(new StringInputStream("111222"));
     }
 }

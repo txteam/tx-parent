@@ -9,7 +9,8 @@ package com.tx.core.log.p6spy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.p6spy.engine.logging.appender.P6Logger;
+import com.p6spy.engine.logging.Category;
+import com.p6spy.engine.spy.appender.P6Logger;
 
 /**
  * <在p6spy中利用logback统一打印日志，统一日志记录的位置>
@@ -24,42 +25,70 @@ public class P6SpyLogbackLogger implements P6Logger {
     
     private static final Logger logger = LoggerFactory.getLogger(P6SpyLogbackLogger.class);
     
-    private String lastEntry;
-    
-    public String getLastEntry() {
-        return lastEntry;
+    /**
+     * @param arg0
+     * @return
+     */
+    @Override
+    public boolean isCategoryEnabled(Category category) {
+        return false;
     }
     
-    public void setLastEntry(String lastEntry) {
-        this.lastEntry = lastEntry;
-    }
-    
+    /**
+     * 记录异常日志<br/>
+     * @param e
+     */
+    @Override
     public void logException(Exception e) {
-        logger.debug(e.getMessage(), e);
+        logger.info(e.getMessage(), e);
     }
     
+    /**
+     * 记录文本日志<br/>
+     * @param text
+     */
+    @Override
+    public void logText(String text) {
+        logger.info(text);
+    }
+    
+    /**
+     * @param arg0
+     * @param arg1
+     * @param arg2
+     * @param arg3
+     * @param arg4
+     * @param arg5
+     */
+    @Override
     public void logSQL(int connectionId, String now, long elapsed,
-            String category, String prepared, String sql) {
+            Category category, String prepared, String sql) {
         if (logger.isInfoEnabled()) {
-            if (!"resultset".equals(category)) {
-                if ("statement".equals(category)) {
-                    logger.info("prepared: " + trim(prepared));
+            if (!Category.RESULTSET.equals(category)) {
+                if (Category.STATEMENT.equals(category)) {
+                    logger.info("statement: " + trim(prepared));
                     logger.info(trim(sql));
                 } else {
-                    logger.info(category);
+                    logger.info(category.getName() + ": " + trim(prepared));
+                    logger.info(trim(sql));
                 }
-            }else if(logger.isDebugEnabled()){
+            } else if (logger.isDebugEnabled()) {
                 logger.debug("resultset: " + trim(sql));
             }
         }
     }
     
-    public void logText(String text) {
-        logger.debug(text);
-        lastEntry = text;
-    }
-    
-    public static String trim(String sql) {
+    /**
+      * 格式化Sql<br/>
+      * <功能详细描述>
+      * @param sql
+      * @return [参数说明]
+      * 
+      * @return String [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    private static String trim(String sql) {
         if (sql == null) {
             return sql;
         }
