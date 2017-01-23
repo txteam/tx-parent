@@ -25,14 +25,14 @@ import com.tx.core.exceptions.SILException;
 /**
  * 基础数据json序列化器<br/>
  * <功能详细描述>
- * 
- * @author  Administrator
- * @version  [版本号, 2017年1月14日]
- * @see  [相关类/方法]
- * @since  [产品/模块版本]
+ *
+ * @author Administrator
+ * @version [版本号, 2017年1月14日]
+ * @see [相关类/方法]
+ * @since [产品/模块版本]
  */
 public class BasicDataEnumJsonSerializer extends JsonSerializer<BasicDataEnum> {
-    
+
     /**
      * @param value
      * @param jgen
@@ -42,12 +42,12 @@ public class BasicDataEnumJsonSerializer extends JsonSerializer<BasicDataEnum> {
      */
     @Override
     public void serialize(BasicDataEnum value, JsonGenerator generator,
-            SerializerProvider provider) throws IOException,
+                          SerializerProvider provider) throws IOException,
             JsonProcessingException {
         if (value == null) {
             return;
         }
-        
+
         generator.writeStartObject();
         PropertyDescriptor[] pds = BeanUtils.getPropertyDescriptors(value.getClass());
         for (PropertyDescriptor pd : pds) {
@@ -62,9 +62,10 @@ public class BasicDataEnumJsonSerializer extends JsonSerializer<BasicDataEnum> {
             }
             generator.writeFieldName(pdName);
             try {
-                generator.writeString(pd.getReadMethod()
-                        .invoke(value)
-                        .toString());
+                Object object = pd.getReadMethod().invoke(value);
+                if (object != null) {
+                    generator.writeString(object.toString());
+                }
             } catch (IllegalAccessException | IllegalArgumentException
                     | InvocationTargetException e) {
                 throw new SILException(e.getMessage(), e);
@@ -72,17 +73,16 @@ public class BasicDataEnumJsonSerializer extends JsonSerializer<BasicDataEnum> {
         }
         generator.writeEndObject();
     }
-    
-    /** 
+
+    /**
      * 判断是否忽略对应的节点<br/>
      * <功能详细描述>
+     *
      * @param value
      * @param pd
      * @param pdName
-     * @return [参数说明]
-     * 
      * @return boolean [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
+     * @throws throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
     private boolean isIgnore(BasicDataEnum value, PropertyDescriptor pd) {
