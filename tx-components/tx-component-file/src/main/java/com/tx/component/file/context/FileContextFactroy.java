@@ -16,11 +16,16 @@ import org.springframework.beans.factory.FactoryBean;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public class FileContextFactroy extends FileContext implements FactoryBean<FileContext> {
+public class FileContextFactroy extends FileContext implements
+        FactoryBean<FileContext> {
     
     @Override
     public FileContext getObject() throws Exception {
-        return FileContext.getContext();
+        if (FileContextFactroy.context == null) {
+            return this;
+        } else {
+            return FileContextFactroy.context;
+        }
     }
     
     @Override

@@ -6,19 +6,12 @@
  */
 package com.tx.component.file.viewhandler.impl;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.Resource;
-
-import com.tx.component.file.resource.FileDefinitionResource;
-import com.tx.component.file.viewhandler.ViewHandler;
-import com.tx.core.exceptions.SILException;
+import com.tx.component.file.FileContextConstants;
+import com.tx.component.file.model.FileDefinition;
+import com.tx.component.file.resource.FileResource;
+import com.tx.component.file.viewhandler.AbstractViewHandler;
 
 /**
  * 图片资源HttpRequest处理器<br/>
@@ -29,45 +22,29 @@ import com.tx.core.exceptions.SILException;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class DefaultViewHandler extends ViewHandler {
+public class DefaultViewHandler extends AbstractViewHandler {
     
     /**
      * @return
      */
     @Override
-    public String viewHandlerName() {
-        return "default";
+    public final String name() {
+        return FileContextConstants.VIEWHANDLER_DEFAULT;
     }
     
     /**
+     * @param fileDefinition
      * @param request
+     * @param path
+     * @param fileId
+     * @param viewHandlerName
      * @return
      */
     @Override
-    protected Resource getResource(HttpServletRequest request) {
-        String fileId = request.getParameter("fileDefinitionId");
-        if (StringUtils.isEmpty(fileId)) {
-            fileId = request.getParameter("fileId");
-        }
-        if (StringUtils.isEmpty(fileId)) {
-            return null;
-        }
-        
-        //根据fileDefinitionId获取对应的资源
-        FileDefinitionResource resource = fileContext.getResourceById(fileId);
-        if (resource == null || !resource.exists()) {
-            return null;
-        }
-        
-        InputStream inputStream = null;
-        try {
-            inputStream = resource.getInputStream();
-        } catch (IOException e) {
-            IOUtils.closeQuietly(inputStream);
-            throw new SILException(e.getMessage(), e);
-        }
-        Resource inputStreamResource = new InputStreamResource(inputStream);
-        //返回图片资源
-        return inputStreamResource;
+    public FileResource getResource(FileDefinition fileDefinition,
+            HttpServletRequest request, String path, String fileId,
+            String viewHandlerName) {
+        FileResource fileResource = this.fileContext.getResourceById(fileId);
+        return fileResource;
     }
 }

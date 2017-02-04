@@ -23,4 +23,10 @@ public interface FileContextConstants {
     
     /** 默认的模块 */
     String DEFAULT_MODULE = "default";
+    
+    /** 默认的模块 */
+    String VIEWHANDLER_THUMBNAIL = "thumbnail";
+    
+    /** 默认的模块 */
+    String VIEWHANDLER_DEFAULT = "default";
 }

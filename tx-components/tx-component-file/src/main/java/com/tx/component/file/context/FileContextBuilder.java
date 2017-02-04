@@ -28,7 +28,9 @@ import com.tx.component.file.driver.impl.SystemFileDefinitionResourceDriver;
 import com.tx.component.file.model.FileDefinition;
 import com.tx.component.file.model.FileModule;
 import com.tx.component.file.model.ReadWritePermissionEnum;
-import com.tx.component.file.resource.FileDefinitionResource;
+import com.tx.component.file.resource.FileResource;
+import com.tx.component.file.service.FileDefinitionPersistService;
+import com.tx.component.file.service.FileDefinitionService;
 import com.tx.core.ddlutil.builder.DDLBuilder;
 import com.tx.core.ddlutil.builder.alter.AlterTableDDLBuilder;
 import com.tx.core.ddlutil.builder.create.CreateTableDDLBuilder;
@@ -62,6 +64,48 @@ public class FileContextBuilder extends FileContextConfigurator implements
     
     /** 资源加载器 */
     protected ResourceLoader resourceLoader;
+    
+    /** 文件定义业务层 */
+    private FileDefinitionService fileDefinitionService;
+    
+    /** 文件定义持久层 */
+    private FileDefinitionPersistService fileDefinitionPersistService;
+    
+    /**
+      * 获取文件定义业务层<br/>
+      * <功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return FileDefinitionService [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    private FileDefinitionService getFileDefinitionService() {
+        if (this.fileDefinitionService != null) {
+            return this.fileDefinitionService;
+        }
+        this.fileDefinitionService = applicationContext.getBean("fileContext.fileDefinitionService",
+                FileDefinitionService.class);
+        return this.fileDefinitionService;
+    }
+    
+    /**
+     * 获取文件定义业务层<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return FileDefinitionService [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    private FileDefinitionPersistService getFileDefinitionPersistService() {
+        if (this.fileDefinitionPersistService != null) {
+            return this.fileDefinitionPersistService;
+        }
+        this.fileDefinitionPersistService = applicationContext.getBean("fileContext.fileDefinitionPersistService",
+                FileDefinitionPersistService.class);
+        return this.fileDefinitionPersistService;
+    }
     
     /**
      * @param resourceLoader
@@ -171,6 +215,29 @@ public class FileContextBuilder extends FileContextConfigurator implements
     }
     
     /**
+      * 根据文件定义获取文件资源<br/>
+      * <功能详细描述>
+      * @param fileDefinition
+      * @return [参数说明]
+      * 
+      * @return FileResource [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    protected FileResource doGetFileResource(FileDefinition fileDefinition) {
+        if (fileDefinition == null) {
+            return null;
+        }
+        
+        String module = fileDefinition.getModule();
+        FileModule fm = getFileModule(module);
+        FileDefinitionResourceDriver driver = fm.getDriver();
+        FileResource resource = driver.getResource(fileDefinition);
+        
+        return resource;
+    }
+    
+    /**
      * 返回文件定义对象<br/>
      * 
      * @param fileId 文件定义id
@@ -182,17 +249,7 @@ public class FileContextBuilder extends FileContextConfigurator implements
     protected FileDefinition doFindById(String fileId) {
         AssertUtils.notEmpty(fileId, "fileId is empty.");
         
-        FileDefinition fileDefinition = getFileDefinitionService().findById(fileId);
-        if (fileDefinition == null) {
-            return null;
-        }
-        
-        String module = fileDefinition.getModule();
-        FileModule fm = getFileModule(module);
-        FileDefinitionResourceDriver driver = fm.getDriver();
-        FileDefinitionResource resource = driver.getResource(fileDefinition);
-        
-        fileDefinition.setResource(resource);
+        FileDefinition fileDefinition = getFileDefinitionPersistService().findById(fileId);
         
         return fileDefinition;
     }
@@ -209,17 +266,15 @@ public class FileContextBuilder extends FileContextConfigurator implements
     protected void doDeleteById(String fileId) {
         AssertUtils.notEmpty(fileId, "fileId is empty.");
         
-        FileDefinition fileDefinition = getFileDefinitionService().findById(fileId);
+        FileDefinition fileDefinition = getFileDefinitionPersistService().moveToHis(fileId);//删除
         if (fileDefinition == null) {
             return;
         }
         
-        getFileDefinitionService().moveToHisById(fileId);
-        
         String module = fileDefinition.getModule();
         FileModule fm = getFileModule(module);
         FileDefinitionResourceDriver driver = fm.getDriver();
-        FileDefinitionResource resource = driver.getResource(fileDefinition);
+        FileResource resource = driver.getResource(fileDefinition);
         
         resource.delete();
     }
@@ -240,16 +295,18 @@ public class FileContextBuilder extends FileContextConfigurator implements
             InputStream input, String filename) {
         AssertUtils.notEmpty(module, "module is empty.");
         AssertUtils.notEmpty(relativePath, "relativePath is empty.");
-        AssertUtils.notEmpty(filename, "filename is empty.");
         AssertUtils.notNull(input, "input is empty.");
+        AssertUtils.notEmpty(filename, "filename is empty.");
         
         relativePath = cleanRelativePath(relativePath);//相对路径
         //持久化对应的文件对象
         FileDefinition fileDefinition = fileDefinitionService().findByRelativePath(relativePath);
         if (fileDefinition != null) {
+            getFileDefinitionPersistService().moveToHis(fileDefinition.getId());//移动到历史表去,历史文件备份
+            
             FileModule fm = getFileModule(module);
             FileDefinitionResourceDriver driver = fm.getDriver();
-            FileDefinitionResource resource = driver.getResource(fileDefinition);
+            FileResource resource = driver.getResource(fileDefinition);
             resource.save(input);
             
             fileDefinition.setViewUrl(resource.getViewUrl());
@@ -260,7 +317,7 @@ public class FileContextBuilder extends FileContextConfigurator implements
             fileDefinition = buildFileDefinition(module, relativePath, filename);
             FileModule fm = getFileModule(module);
             FileDefinitionResourceDriver driver = fm.getDriver();
-            FileDefinitionResource resource = driver.getResource(fileDefinition);
+            FileResource resource = driver.getResource(fileDefinition);
             resource.add(input);
             
             fileDefinition.setViewUrl(resource.getViewUrl());
@@ -298,11 +355,13 @@ public class FileContextBuilder extends FileContextConfigurator implements
         
         FileModule fm = getFileModule(module);
         FileDefinitionResourceDriver driver = fm.getDriver();
-        FileDefinitionResource resource = driver.getResource(fileDefinition);
+        FileResource resource = driver.getResource(fileDefinition);
         resource.add(input);
         
         fileDefinition.setViewUrl(resource.getViewUrl());
         fileDefinition.setResource(resource);
+        
+        getFileDefinitionService().insert(fileDefinition);
         
         return fileDefinition;
     }
@@ -431,17 +490,4 @@ public class FileContextBuilder extends FileContextConfigurator implements
                 .newColumnOfDate("lastUpdateDate", true, true)
                 .newColumnOfDate("createDate", true, true);
     }
-    
-    //  public static void main(String[] args) {
-    //        String relativePath = "/\\sdfads\\sdfadsd\\test.txt";
-    //        AssertUtils.notEmpty(relativePath, "relativePath is empty.");
-    //        relativePath = StringUtils.cleanPath(relativePath);//整理path中"\\"为"/"
-    //        while (relativePath.startsWith("/")) {
-    //            //去除path中尾部存在的"/"
-    //            relativePath = relativePath.substring(1, relativePath.length());
-    //        }
-    //        AssertUtils.notEmpty(relativePath, "relativePath is empty.");
-    //        
-    //        System.out.println(relativePath);
-    //    }
 }

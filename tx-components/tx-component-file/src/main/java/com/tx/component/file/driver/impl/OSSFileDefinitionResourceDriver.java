@@ -15,8 +15,8 @@ import com.aliyun.oss.model.CannedAccessControlList;
 import com.aliyun.oss.model.CreateBucketRequest;
 import com.tx.component.file.driver.FileDefinitionResourceDriver;
 import com.tx.component.file.model.FileDefinition;
-import com.tx.component.file.resource.FileDefinitionResource;
-import com.tx.component.file.resource.impl.OSSFileDefinitionResource;
+import com.tx.component.file.resource.FileResource;
+import com.tx.component.file.resource.impl.OSSFileResource;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.util.ObjectUtils;
 
@@ -173,12 +173,12 @@ public class OSSFileDefinitionResourceDriver implements
      * @return
      */
     @Override
-    public FileDefinitionResource getResource(FileDefinition fileDefinition) {
+    public FileResource getResource(FileDefinition fileDefinition) {
         AssertUtils.notNull(fileDefinition, "fileDefinition is null.");
         AssertUtils.notEmpty(fileDefinition.getRelativePath(),
                 "fileDefinition.relativePath is empty.");
         
-        FileDefinitionResource fdResource = new OSSFileDefinitionResource(
+        FileResource fdResource = new OSSFileResource(
                 fileDefinition, this.bucketName, this.ossClient);
         fileDefinition.setResource(fdResource);
         

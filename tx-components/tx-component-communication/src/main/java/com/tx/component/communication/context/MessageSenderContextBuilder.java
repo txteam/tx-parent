@@ -12,6 +12,7 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.core.OrderComparator;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -31,20 +32,29 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @since  [产品/模块版本]
  */
 public class MessageSenderContextBuilder extends
-        MessageSenderContextConfigurator {
+        MessageSenderContextConfigurator implements BeanNameAware {
     
+    /** bean名 */
+    protected static String beanName;
+    
+    /** send处理器映射 */
     private MultiValueMap<String, MessageSendHandler> sendHandlerMap = new LinkedMultiValueMap<>();
+    
+    /**
+     * @param name
+     */
+    @Override
+    public void setBeanName(String name) {
+        MessageSenderContextBuilder.beanName = name;
+    }
     
     /**
      * @throws Exception
      */
     @Override
-    protected final void initMessageSenderContext() throws Exception {
+    protected final void doBuild() throws Exception {
         logger.info("消息路由服务 配置容器启动...");
-        //调用初始化容器
-        initContext();
-        
-        Collection<MessageSendHandler> senders = this.applicationContext.getBeansOfType(MessageSendHandler.class)
+        Collection<MessageSendHandler> senders = applicationContext.getBeansOfType(MessageSendHandler.class)
                 .values();
         if (!CollectionUtils.isEmpty(senders)) {
             for (MessageSendHandler senderTemp : senders) {
@@ -55,24 +65,11 @@ public class MessageSenderContextBuilder extends
                 this.sendHandlerMap.add(type.toUpperCase(), senderTemp);
             }
         }
-        
         //将sender按照优先级进行排序
         for (List<MessageSendHandler> handlerListTemp : this.sendHandlerMap.values()) {
             Collections.sort(handlerListTemp, OrderComparator.INSTANCE);
         }
         logger.info("消息路由服务 配置容器启动完毕...");
-    }
-    
-    /**
-      * 提供给子类初始化容器时使用<br/>
-      * <功能详细描述>
-      * @throws Exception [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    protected void initContext() throws Exception {
     }
     
     /**
@@ -86,14 +83,13 @@ public class MessageSenderContextBuilder extends
      */
     protected SendResult doSend(SendMessage message) {
         AssertUtils.notNull(message, "message is null.");
-        AssertUtils.notEmpty(message.getType(),
-                "sendMessage.type is empty.");
+        AssertUtils.notEmpty(message.getType(), "sendMessage.type is empty.");
         
         String messageType = message.getType().toUpperCase();
         SendResult result = null;
-        for(MessageSendHandler sendHandlerTemp : this.sendHandlerMap.get(messageType)){
+        for (MessageSendHandler sendHandlerTemp : this.sendHandlerMap.get(messageType)) {
             message.setType(messageType);//强制转换为大写字符
-            if(sendHandlerTemp.supports(message)){
+            if (sendHandlerTemp.supports(message)) {
                 result = sendHandlerTemp.send(message);
                 break;
             }

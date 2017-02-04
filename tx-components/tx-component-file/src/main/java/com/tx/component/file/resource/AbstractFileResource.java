@@ -23,14 +23,14 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public abstract class AbstractFileDefinitionResource implements
-        FileDefinitionResource {
+public abstract class AbstractFileResource implements
+        FileResource {
     
     /** 文件定义 */
     protected FileDefinition fileDefinition;
     
     /** <默认构造函数> */
-    public AbstractFileDefinitionResource(FileDefinition fileDefinition) {
+    public AbstractFileResource(FileDefinition fileDefinition) {
         super();
         AssertUtils.notNull(fileDefinition, "fileDefinition is null.");
         this.fileDefinition = fileDefinition;
@@ -40,11 +40,8 @@ public abstract class AbstractFileDefinitionResource implements
      * @return
      */
     @Override
-    public final String getViewUrl() {
-        StringBuilder sb = new StringBuilder("/filecontext/resource/");
-        sb.append(fileDefinition.getId());
-        
-        return sb.toString();
+    public String getViewUrl() {
+        return null;
     }
     
     /**
@@ -67,7 +64,7 @@ public abstract class AbstractFileDefinitionResource implements
      */
     @Override
     public final void save(final InputStream inputStream) {
-        if(TransactionSynchronizationManager.isSynchronizationActive()){
+        if (TransactionSynchronizationManager.isSynchronizationActive()) {
             TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
                 /**
                  * @param readOnly
@@ -77,7 +74,7 @@ public abstract class AbstractFileDefinitionResource implements
                     doSave(inputStream);
                 }
             });
-        }else{
+        } else {
             doSave(inputStream);
         }
     }
@@ -98,7 +95,7 @@ public abstract class AbstractFileDefinitionResource implements
      */
     @Override
     public final void add(final InputStream inputStream) {
-        if(TransactionSynchronizationManager.isSynchronizationActive()){
+        if (TransactionSynchronizationManager.isSynchronizationActive()) {
             TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
                 /**
                  * @param readOnly
@@ -108,7 +105,7 @@ public abstract class AbstractFileDefinitionResource implements
                     doAdd(inputStream);
                 }
             });
-        }else{
+        } else {
             doAdd(inputStream);
         }
     }
@@ -129,7 +126,7 @@ public abstract class AbstractFileDefinitionResource implements
      */
     @Override
     public final void delete() {
-        if(TransactionSynchronizationManager.isSynchronizationActive()){
+        if (TransactionSynchronizationManager.isSynchronizationActive()) {
             TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
                 /**
                  * @param readOnly
@@ -139,7 +136,7 @@ public abstract class AbstractFileDefinitionResource implements
                     doDelete();
                 }
             });
-        }else{
+        } else {
             doDelete();
         }
     }

@@ -6,13 +6,10 @@
  */
 package com.tx.component.file.driver;
 
-import java.io.IOException;
-import java.util.Date;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 
@@ -20,11 +17,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.tx.component.file.driver.impl.OSSFileDefinitionResourceDriver;
 import com.tx.component.file.driver.impl.SystemFileDefinitionResourceDriver;
-import com.tx.component.file.model.FileDefinition;
-import com.tx.component.file.resource.FileDefinitionResource;
 import com.tx.core.exceptions.SILException;
 import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.util.UUIDUtils;
 
 /**
  * 资源驱动注册表<br/>
@@ -94,79 +88,77 @@ public class FileDefinitionResourceDriverRegistry {
         return resourceDriver;
     }
     
-    public static void main(String[] args) {
-        String driver = "systemfile:{path:\"d:/develop/txworkspace/wtp/thumbnail\"}";
-        
-        Matcher matcher = driverPattern.matcher(driver);
-        
-        System.out.println(matcher.matches());
-        AssertUtils.isTrue(matcher.matches(), "driver is invalid.");
-        
-        System.out.println(driver.substring(0, driver.indexOf(":")));
-        System.out.println(driver.substring(driver.indexOf(":") + 1,
-                driver.length()));
-        
-        String jsonString = "{" + matcher.group(2) + "}";
-        System.out.println(matcher.group(1));
-        System.out.println(jsonString);
-        
-        JSONObject jsonObject = JSON.parseObject(jsonString);
-        System.out.println(jsonObject.get("path"));
-        
-        testSystemFileDriver(driver);//测试系统文件驱动
-        
-        driver = "ossfile:{endpoint:\"http://oss-cn-shenzhen.aliyuncs.com\",accessKeyId:\"LTAIqiYuWr9WAkWa\",secretAccessKey:\"e4tyMfOU9IGiiDwWlc6gidT8siQek1\",bucketName:\"clientinfo\"}";
-        testOSSFileDriver(driver);
-    }
-    
-    /** 
-     * 文件资源存储<br/>
-     * <功能详细描述>
-     * @param driver [参数说明]
-     * 
-     * @return void [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    private static void testOSSFileDriver(String driver) {
-        FileDefinitionResourceDriver resourceDriver = parseDriver(driver);
-        System.out.println(resourceDriver);
-        FileDefinition fileDefinition = new FileDefinition();
-        fileDefinition.setCreateDate(new Date());
-        fileDefinition.setId(UUIDUtils.generateUUID());
-        fileDefinition.setRelativePath("testfolder/testfile.xml");
-        fileDefinition.setFilename("testfile.xml");
-        FileDefinitionResource fdResource = resourceDriver.getResource(fileDefinition);
-        
-        
-        String res = "";
-        try {
-            res = IOUtils.toString(fdResource.getInputStream());
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        System.out.println(res);
-    }
-    
-    /** 
-     * 文件资源存储<br/>
-     * <功能详细描述>
-     * @param driver [参数说明]
-     * 
-     * @return void [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    private static void testSystemFileDriver(String driver) {
-        FileDefinitionResourceDriver resourceDriver = parseDriver(driver);
-        System.out.println(resourceDriver);
-        FileDefinition fileDefinition = new FileDefinition();
-        fileDefinition.setCreateDate(new Date());
-        fileDefinition.setId(UUIDUtils.generateUUID());
-        fileDefinition.setRelativePath("testfolder/testfile.xml");
-        fileDefinition.setFilename("testfile.xml");
-        FileDefinitionResource fdResource = resourceDriver.getResource(fileDefinition);
-        
-    }
+    //public static void main(String[] args) {
+    //    String driver = "systemfile:{path:\"d:/develop/txworkspace/wtp/thumbnail\"}";
+    //    
+    //    Matcher matcher = driverPattern.matcher(driver);
+    //    
+    //    System.out.println(matcher.matches());
+    //    AssertUtils.isTrue(matcher.matches(), "driver is invalid.");
+    //    
+    //    System.out.println(driver.substring(0, driver.indexOf(":")));
+    //    System.out.println(driver.substring(driver.indexOf(":") + 1,
+    //            driver.length()));
+    //    
+    //    String jsonString = "{" + matcher.group(2) + "}";
+    //    System.out.println(matcher.group(1));
+    //    System.out.println(jsonString);
+    //    
+    //    JSONObject jsonObject = JSON.parseObject(jsonString);
+    //    System.out.println(jsonObject.get("path"));
+    //    
+    //    testSystemFileDriver(driver);//测试系统文件驱动
+    //    
+    //    driver = "ossfile:{endpoint:\"http://oss-cn-shenzhen.aliyuncs.com\",accessKeyId:\"LTAIqiYuWr9WAkWa\",secretAccessKey:\"e4tyMfOU9IGiiDwWlc6gidT8siQek1\",bucketName:\"clientinfo\"}";
+    //    testOSSFileDriver(driver);
+    //}
+    ///** 
+    // * 文件资源存储<br/>
+    // * <功能详细描述>
+    // * @param driver [参数说明]
+    // * 
+    // * @return void [返回类型说明]
+    // * @exception throws [异常类型] [异常说明]
+    // * @see [类、类#方法、类#成员]
+    // */
+    //private static void testOSSFileDriver(String driver) {
+    //    FileDefinitionResourceDriver resourceDriver = parseDriver(driver);
+    //    System.out.println(resourceDriver);
+    //    FileDefinition fileDefinition = new FileDefinition();
+    //    fileDefinition.setCreateDate(new Date());
+    //    fileDefinition.setId(UUIDUtils.generateUUID());
+    //    fileDefinition.setRelativePath("testfolder/testfile.xml");
+    //fileDefinition.setFilename("testfile.xml");
+    //FileResource fdResource = resourceDriver.getResource(fileDefinition);
+    //
+    //
+    //String res = "";
+    //try {
+    //    res = IOUtils.toString(fdResource.getInputStream());
+    //} catch (IOException e) {
+    //        e.printStackTrace();
+    //    }
+    //    System.out.println(res);
+    //}
+    //
+    ///** 
+    // * 文件资源存储<br/>
+    // * <功能详细描述>
+    // * @param driver [参数说明]
+    // * 
+    // * @return void [返回类型说明]
+    // * @exception throws [异常类型] [异常说明]
+    // * @see [类、类#方法、类#成员]
+    // */
+    //private static void testSystemFileDriver(String driver) {
+    //    FileDefinitionResourceDriver resourceDriver = parseDriver(driver);
+    //    System.out.println(resourceDriver);
+    //    FileDefinition fileDefinition = new FileDefinition();
+    //    fileDefinition.setCreateDate(new Date());
+    //    fileDefinition.setId(UUIDUtils.generateUUID());
+    //    fileDefinition.setRelativePath("testfolder/testfile.xml");
+    //fileDefinition.setFilename("testfile.xml");
+    //    FileResource fdResource = resourceDriver.getResource(fileDefinition);
+    //    
+    //}
 }

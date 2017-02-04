@@ -13,7 +13,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import com.tx.component.file.resource.FileDefinitionResource;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.tx.component.file.resource.FileResource;
 import com.tx.core.jdbc.sqlsource.annotation.UpdateAble;
 
 /**
@@ -67,7 +68,8 @@ public class FileDefinition {
     
     /** 文件访问的真正路径：由FileContext加工后才会生成，非持久化字段 */
     @Transient
-    private FileDefinitionResource resource;
+    @JsonIgnore
+    private FileResource resource;
     
     /**
      * @return 返回 id
@@ -212,14 +214,14 @@ public class FileDefinition {
     /**
      * @return 返回 resource
      */
-    public FileDefinitionResource getResource() {
+    public FileResource getResource() {
         return resource;
     }
     
     /**
      * @param 对resource进行赋值
      */
-    public void setResource(FileDefinitionResource resource) {
+    public void setResource(FileResource resource) {
         this.resource = resource;
     }
 }

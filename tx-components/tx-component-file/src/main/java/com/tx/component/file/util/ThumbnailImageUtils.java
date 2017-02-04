@@ -10,7 +10,6 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -18,10 +17,10 @@ import javax.imageio.ImageIO;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.util.StringUtils;
 
 import com.tx.core.exceptions.util.ExceptionWrapperUtils;
 
@@ -35,13 +34,14 @@ import com.tx.core.exceptions.util.ExceptionWrapperUtils;
  */
 public class ThumbnailImageUtils {
     
+    /** 日志记录器 */
     private static Logger logger = LoggerFactory.getLogger(ThumbnailImageUtils.class);
     
     /** 图片格式 */
-    public final static String IMAGE_EXTENSION = "jpg";
+    public final static String DEFAULT_IMAGE_EXTENSION = "jpg";
     
     /** 任务池中的任务数量 */
-    public final static int POOLSIZE = 8;
+    public final static int POOLSIZE = 10;
     
     /** 任务池 */
     private static ThreadPoolTaskExecutor tpte = null;
@@ -82,25 +82,28 @@ public class ThumbnailImageUtils {
      * </ul>
      * 
      * 
-     * @param imageFile 图片文件
+     * @param thumbnailFilePath　缩略图输入流
+     * @param fileExtention 文件扩展名
      * @param width 压缩宽
      * @param height 压缩高
+     * @param sourceImageInputStream 图片文件输入流
+     * @param isCache 是否支撑缓存
      *            
      * @return File 缩略图文件
      * @exception IOException 图片读取失败或者缩略图生成失败
      * @see [类、类#方法、类#成员]
      */
-    public static File getThumbnailOrBlowImage(File imageFile, float width, float height) {
+    public static File getThumbnailOrBlowImage(String thumbnailFilePath,
+            String filenameExtension, float width, float height,
+            InputStream sourceImageInputStream, boolean isCache) {
         //如果原文件不存在，直接返回null
-        if (!imageFile.exists()) {
+        if (sourceImageInputStream == null) {
             return null;
         }
-        String thumbnailFilePath = getThumbnailImagePathBySourceImageFile(imageFile); // 获取缩略图全路径
         
         File thumbnailFile = new File(thumbnailFilePath); // 缩略图文件
-        
         // 如果缩略图存在,则直接返回
-        if (thumbnailFile.exists() && thumbnailFile.isFile()) {
+        if (isCache && thumbnailFile.exists() && thumbnailFile.isFile()) {
             return thumbnailFile;
         }
         
@@ -108,8 +111,7 @@ public class ThumbnailImageUtils {
         BufferedImage sourceImage = null;
         InputStream inputStream = null;
         try {
-            inputStream = new FileInputStream(imageFile);
-            sourceImage = ImageIO.read(inputStream);
+            sourceImage = ImageIO.read(sourceImageInputStream);
             int sourceWidth = sourceImage.getWidth();
             int sourceHeight = sourceImage.getHeight();
             
@@ -117,7 +119,8 @@ public class ThumbnailImageUtils {
             int resultHeight = sourceHeight;
             if (width <= 0 && height <= 0) {
                 //宽高均小于等于0不进行压缩
-                return imageFile;
+                resultWidth = (int) (sourceWidth);
+                resultHeight = (int) (sourceHeight);
             } else if (height <= 0) {
                 //根据指定宽度进行压缩
                 if (width <= 1) {
@@ -154,7 +157,7 @@ public class ThumbnailImageUtils {
             
             thumbnailFile = doBulidThumbnailImage(sourceImage,
                     thumbnailFilePath,
-                    IMAGE_EXTENSION,
+                    filenameExtension,
                     resultWidth,
                     resultHeight);
         } catch (Exception ioe) {
@@ -181,11 +184,9 @@ public class ThumbnailImageUtils {
      * @version [版本号, 2015年11月30日]
      * @author rain
      */
-    public static void bulidThumbnailImage(
-            final String thumbnailFilePath,
-            final BufferedImage image,
-            final int width,
-            final int height) throws IOException {
+    public static void bulidThumbnailImage(final String thumbnailFilePath,
+            final String imageExtension, final BufferedImage image,
+            final int width, final int height) throws IOException {
         // 初始化任务池
         tpte.execute(new Runnable() {
             @Override
@@ -193,7 +194,7 @@ public class ThumbnailImageUtils {
                 try {
                     doBulidThumbnailImage(image,
                             thumbnailFilePath,
-                            IMAGE_EXTENSION,
+                            imageExtension,
                             width,
                             height);
                 } catch (IOException ioe) {
@@ -225,7 +226,8 @@ public class ThumbnailImageUtils {
     private static File doBulidThumbnailImage(BufferedImage image,
             String thumbnailFilePath, String imageExtension,
             int thumbImageWidth, int thumbImageHeight) throws IOException {
-            
+        imageExtension = StringUtils.isEmpty(imageExtension) ? DEFAULT_IMAGE_EXTENSION
+                : imageExtension;
         // 根据缩略图路径哈希值进行锁定
         synchronized (getLock(thumbnailFilePath)) {
             //如果等待期间，缩略图已经存在，所以需要在此重新判断缩略图文件是否存在
@@ -242,15 +244,15 @@ public class ThumbnailImageUtils {
             }
             
             // 创建缩略图
-            Image thumbImage = image.getScaledInstance(thumbImageWidth, thumbImageHeight, Image.SCALE_SMOOTH);
+            Image thumbImage = image.getScaledInstance(thumbImageWidth,
+                    thumbImageHeight,
+                    Image.SCALE_SMOOTH);
             
             // 生成缩略图画布
-            BufferedImage bufImg = new BufferedImage(
-                    thumbImage.getWidth(null),
-                    thumbImage.getHeight(null),
-                    BufferedImage.TYPE_INT_RGB);
-            Graphics g = bufImg.createGraphics();   // 创建原始图画板
-            g.drawImage(thumbImage, 0, 0, null);    // 把原始图画到缩略图
+            BufferedImage bufImg = new BufferedImage(thumbImage.getWidth(null),
+                    thumbImage.getHeight(null), BufferedImage.TYPE_INT_RGB);
+            Graphics g = bufImg.createGraphics(); // 创建原始图画板
+            g.drawImage(thumbImage, 0, 0, null); // 把原始图画到缩略图
             g.dispose();
             
             // 保存缩略图
@@ -258,27 +260,6 @@ public class ThumbnailImageUtils {
             
             return thumbnailFile;
         }
-    }
-    
-    /**
-     * 
-     * 从图片文件获取缩略图全路径<br/>
-     * 
-     * @param imageFile 图片文件
-     *            
-     * @return String 缩略图路径
-     * @exception [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    private static String getThumbnailImagePathBySourceImageFile(File imageFile) {
-        String directoryName = imageFile.getParent(); // 文件所在文件夹
-        String fileName = imageFile.getName(); // 文件名
-        String fileNameSuffix = StringUtils.substringBeforeLast(fileName, "."); // 文件名(没有后缀)
-        
-        String thumbnailFilePath = directoryName + "/" + fileNameSuffix
-                + "_thumbnail." + IMAGE_EXTENSION; // 缩略图文件名
-                
-        return thumbnailFilePath;
     }
     
     /**

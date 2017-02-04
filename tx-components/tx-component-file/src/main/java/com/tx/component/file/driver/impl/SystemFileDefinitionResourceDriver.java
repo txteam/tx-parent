@@ -15,8 +15,8 @@ import org.springframework.util.StringUtils;
 
 import com.tx.component.file.driver.FileDefinitionResourceDriver;
 import com.tx.component.file.model.FileDefinition;
-import com.tx.component.file.resource.FileDefinitionResource;
-import com.tx.component.file.resource.impl.SystemFileDefinitionResource;
+import com.tx.component.file.resource.FileResource;
+import com.tx.component.file.resource.impl.SystemFileResource;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.exceptions.util.ExceptionWrapperUtils;
 
@@ -93,7 +93,7 @@ public class SystemFileDefinitionResourceDriver implements
      * @return
      */
     @Override
-    public FileDefinitionResource getResource(FileDefinition fileDefinition) {
+    public FileResource getResource(FileDefinition fileDefinition) {
         AssertUtils.notNull(fileDefinition, "fileDefinition is null.");
         AssertUtils.notEmpty(fileDefinition.getRelativePath(),
                 "fileDefinition.relativePath is empty.");
@@ -103,7 +103,7 @@ public class SystemFileDefinitionResourceDriver implements
         realPath = StringUtils.cleanPath(realPath);
         FileSystemResource fsResource = new FileSystemResource(realPath);
         
-        FileDefinitionResource fdResource = new SystemFileDefinitionResource(
+        FileResource fdResource = new SystemFileResource(
                 fileDefinition, fsResource);
         fileDefinition.setResource(fdResource);
         

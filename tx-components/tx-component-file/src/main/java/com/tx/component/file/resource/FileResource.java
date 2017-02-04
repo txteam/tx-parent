@@ -20,7 +20,7 @@ import java.io.InputStream;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public interface FileDefinitionResource {
+public interface FileResource {
     
     /**
      * 访问资源的ViewUrl:可能为相对路径|获绝对路径|或http访问的路径<br/>
