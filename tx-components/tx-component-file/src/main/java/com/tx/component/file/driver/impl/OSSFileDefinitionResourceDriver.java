@@ -32,6 +32,9 @@ import com.tx.core.util.ObjectUtils;
 public class OSSFileDefinitionResourceDriver implements
         FileDefinitionResourceDriver {
     
+    /** 访问域名 */
+    private String accessDomain = "http://oss-cn-shenzhen.aliyuncs.com";
+    
     /** endpoint */
     private String endpoint = "http://oss-cn-shenzhen.aliyuncs.com";
     
@@ -178,8 +181,8 @@ public class OSSFileDefinitionResourceDriver implements
         AssertUtils.notEmpty(fileDefinition.getRelativePath(),
                 "fileDefinition.relativePath is empty.");
         
-        FileResource fdResource = new OSSFileResource(
-                fileDefinition, this.bucketName, this.ossClient);
+        FileResource fdResource = new OSSFileResource(fileDefinition,
+                this.bucketName, this.ossClient, this.accessDomain);
         fileDefinition.setResource(fdResource);
         
         return fdResource;
@@ -198,14 +201,14 @@ public class OSSFileDefinitionResourceDriver implements
     public void setAccessKeyId(String accessKeyId) {
         this.accessKeyId = accessKeyId;
     }
-
+    
     /**
      * @param 对secretAccessKey进行赋值
      */
     public void setSecretAccessKey(String secretAccessKey) {
         this.secretAccessKey = secretAccessKey;
     }
-
+    
     /**
      * @param 对bucketName进行赋值
      */
@@ -316,5 +319,12 @@ public class OSSFileDefinitionResourceDriver implements
      */
     public void setProxyPassword(String proxyPassword) {
         this.proxyPassword = proxyPassword;
+    }
+    
+    /**
+     * @param 对accessDomain进行赋值
+     */
+    public void setAccessDomain(String accessDomain) {
+        this.accessDomain = accessDomain;
     }
 }

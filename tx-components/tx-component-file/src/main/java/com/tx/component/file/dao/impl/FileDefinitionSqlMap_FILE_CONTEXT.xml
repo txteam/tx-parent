@@ -32,6 +32,7 @@
 	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(relativePath)">  
 	            AND TFD.relativePath = #{relativePath}
+	            AND TFD.module = #{module}
 	        </if>
 		</trim>
 	</select>
@@ -56,14 +57,14 @@
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
 	            AND TFD.id = #{id}
 	        </if>
-	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(relativePath)">  
-	            AND TFD.relativePath = #{relativePath}
-	        </if>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(system)">  
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(system)">  
 	            AND TFD.system = #{system,javaType=java.lang.String}
 	        </if>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(module)">  
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(module)">  
 	            AND TFD.module = #{module,javaType=java.lang.String}
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(relativePath)">  
+	            AND TFD.relativePath = #{relativePath}
 	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(filename)">  
 	            AND TFD.filename = #{filename,javaType=java.lang.String}
@@ -92,14 +93,14 @@
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
 	            AND TFD.id = #{id}
 	        </if>
-	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(relativePath)">  
-	            AND TFD.relativePath = #{relativePath}
-	        </if>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(system)">  
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(system)">  
 	            AND TFD.system = #{system,javaType=java.lang.String}
 	        </if>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(module)">  
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(module)">  
 	            AND TFD.module = #{module,javaType=java.lang.String}
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(relativePath)">  
+	            AND TFD.relativePath = #{relativePath}
 	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(filename)">  
 	            AND TFD.filename = #{filename,javaType=java.lang.String}
@@ -134,7 +135,7 @@
 			#{relativePath},
 			#{filename},
 			#{filenameExtension},
-			#{viewUrlrl},
+			#{viewUrl},
 			#{deleteDate},
 			#{createDate},
 			#{lastUpdateDate}

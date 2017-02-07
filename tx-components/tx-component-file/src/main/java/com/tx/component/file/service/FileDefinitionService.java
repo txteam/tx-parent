@@ -94,6 +94,30 @@ public class FileDefinitionService {
     }
     
     /**
+     * 将对应的记录移除到历史表<br/>
+     * 
+     * @param fileDefinitionId 文件定义id
+     * 
+     * @return void
+     * @exception [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @Transactional
+    public void moveToHis(FileDefinition fileDefinition) {
+        AssertUtils.notNull(fileDefinition, "fileDefinition is null.");
+        AssertUtils.notEmpty(fileDefinition.getId(),
+                "fileDefinition.id is empty.");
+        
+        //插入历史表
+        Date now = new Date();
+        fileDefinition.setDeleteDate(now);
+        this.fileDefinitionDao.insertToHis(fileDefinition);
+        
+        //删除当前表中的数据
+        deleteById(fileDefinition.getId());
+    }
+    
+    /**
      * 根据文件定义id删除fileDefinition实例<br/>
      * 
      * @param fileDefinitionId 文件定义id
@@ -138,10 +162,11 @@ public class FileDefinitionService {
      * @exception [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public FileDefinition findByRelativePath(String relativePath) {
+    public FileDefinition findByRelativePath(String module, String relativePath) {
         AssertUtils.notEmpty(relativePath, "relativePath is empty.");
         
         FileDefinition condition = new FileDefinition();
+        condition.setModule(module);
         condition.setRelativePath(relativePath);
         
         return this.fileDefinitionDao.find(condition);

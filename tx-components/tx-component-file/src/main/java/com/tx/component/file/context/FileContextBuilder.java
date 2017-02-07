@@ -255,6 +255,28 @@ public class FileContextBuilder extends FileContextConfigurator implements
     }
     
     /**
+      * 返回文件定义对象<br/>
+      * <功能详细描述>
+      * @param module
+      * @param relativePath
+      * @return [参数说明]
+      * 
+      * @return FileDefinition [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    protected FileDefinition doFindByRelativePath(String module,
+            String relativePath) {
+        AssertUtils.notEmpty(module, "module is empty.");
+        AssertUtils.notEmpty(relativePath, "relativePath is empty.");
+        
+        FileDefinition fileDefinition = getFileDefinitionService().findByRelativePath(module,
+                relativePath);
+        
+        return fileDefinition;
+    }
+    
+    /**
      * 删除对应的文件，并将对应文件的相关记录移除到历史表中<br/>
      * 
      * @param fileId 文件定义id
@@ -263,13 +285,14 @@ public class FileContextBuilder extends FileContextConfigurator implements
      * @exception [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    protected void doDeleteById(String fileId) {
+    protected boolean doDeleteById(String fileId) {
         AssertUtils.notEmpty(fileId, "fileId is empty.");
         
-        FileDefinition fileDefinition = getFileDefinitionPersistService().moveToHis(fileId);//删除
+        FileDefinition fileDefinition = getFileDefinitionPersistService().findById(fileId);
         if (fileDefinition == null) {
-            return;
+            return false;
         }
+        getFileDefinitionPersistService().moveToHis(fileDefinition);//删除
         
         String module = fileDefinition.getModule();
         FileModule fm = getFileModule(module);
@@ -277,6 +300,7 @@ public class FileContextBuilder extends FileContextConfigurator implements
         FileResource resource = driver.getResource(fileDefinition);
         
         resource.delete();
+        return true;
     }
     
     /**
@@ -300,9 +324,10 @@ public class FileContextBuilder extends FileContextConfigurator implements
         
         relativePath = cleanRelativePath(relativePath);//相对路径
         //持久化对应的文件对象
-        FileDefinition fileDefinition = fileDefinitionService().findByRelativePath(relativePath);
+        FileDefinition fileDefinition = getFileDefinitionService().findByRelativePath(module,
+                relativePath);
         if (fileDefinition != null) {
-            getFileDefinitionPersistService().moveToHis(fileDefinition.getId());//移动到历史表去,历史文件备份
+            getFileDefinitionPersistService().moveToHis(fileDefinition);//移动到历史表去,历史文件备份
             
             FileModule fm = getFileModule(module);
             FileDefinitionResourceDriver driver = fm.getDriver();

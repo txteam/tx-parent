@@ -157,6 +157,7 @@ public class FileContext extends FileContextBuilder implements InitializingBean 
      * @param relativePath 存储路径,此存储路径为文件全路径(包括扩展名)
      * @param input 文件流
      * @param filename 文件名,此文件的实际文件名称
+     * @param used 文件是否被使用
      * 
      * @return FileDefinition 文件定义的实体
      *         
@@ -257,10 +258,35 @@ public class FileContext extends FileContextBuilder implements InitializingBean 
      * @see [类、类#方法、类#成员]
      */
     @Transactional
-    public void deleteById(String fileDefinitionId) {
+    public boolean deleteById(String fileDefinitionId) {
         AssertUtils.notEmpty(fileDefinitionId, "fileDefinitionId is empty.");
         
-        doDeleteById(fileDefinitionId);
+        boolean flag = doDeleteById(fileDefinitionId);
+        return flag;
+    }
+    
+    /**
+     * 根据文件定义id删除对应的文件定义及对应的资源<br/>
+     * 删除对应数据库文件资源数据以及存储中对应的文件资源
+     * 
+     * @param fileDefinitionId 文件定义id
+     *            
+     * @return void
+     * @exception [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @Transactional
+    public boolean deleteByByRelativePath(String module, String relativePath) {
+        AssertUtils.notEmpty(module, "module is empty.");
+        AssertUtils.notEmpty(relativePath, "relativePath is empty.");
+        
+        FileDefinition fileDefinition = doFindByRelativePath(module,
+                relativePath);
+        if (fileDefinition == null) {
+            return false;
+        }
+        boolean flag = doDeleteById(fileDefinition.getId());
+        return flag;
     }
     
     /**

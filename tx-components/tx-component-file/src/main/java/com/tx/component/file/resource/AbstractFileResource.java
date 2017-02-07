@@ -23,8 +23,7 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public abstract class AbstractFileResource implements
-        FileResource {
+public abstract class AbstractFileResource implements FileResource {
     
     /** 文件定义 */
     protected FileDefinition fileDefinition;

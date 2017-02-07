@@ -110,26 +110,26 @@ public class FileDefinitionPersistService implements InitializingBean {
      * @exception [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public FileDefinition moveToHis(final String fileId) {
-        AssertUtils.notEmpty(fileId, "fileId is empty.");
+    public FileDefinition moveToHis(final FileDefinition fileDefinition) {
+        AssertUtils.notNull(fileDefinition, "fileDefinition is null.");
+        AssertUtils.notEmpty(fileDefinition.getId(), "fileDefinition.id is empty.");
         
-        FileDefinition fileDefinition = findById(fileId);
         if (fileDefinition != null) {
-            this.fileDefinitionService.moveToHisById(fileId);
+            this.fileDefinitionService.moveToHis(fileDefinition);
         }
         
         final Cache finalCache = this.fileDefinitionCache;
         if (finalCache instanceof TransactionAwareCacheDecorator) {
-            finalCache.evict(fileId);
+            finalCache.evict(fileDefinition.getId());
         } else {
             if (TransactionSynchronizationManager.isSynchronizationActive()) {
                 TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
                     public void afterCommit() {
-                        finalCache.evict(fileId);
+                        finalCache.evict(fileDefinition.getId());
                     }
                 });
             } else {
-                finalCache.evict(fileId);
+                finalCache.evict(fileDefinition.getId());
             }
         }
         return fileDefinition;
