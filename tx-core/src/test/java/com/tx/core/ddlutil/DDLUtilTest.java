@@ -21,6 +21,7 @@ import com.tx.core.ddlutil.executor.TableDDLExecutor;
 import com.tx.core.ddlutil.executor.impl.MysqlTableDDLExecutor;
 import com.tx.core.ddlutil.model.DBColumnDef;
 import com.tx.core.ddlutil.model.DBIndexDef;
+import com.tx.core.ddlutil.model.DBTableDef;
 import com.tx.core.exceptions.SILException;
 import com.tx.core.model.OrderedSupportComparator;
 
@@ -154,8 +155,8 @@ public class DDLUtilTest {
     
     public static void main(String[] args) {
         DataSourceFinder finder = new SimpleDataSourceFinder(
-                "com.mysql.jdbc.Driver", "jdbc:mysql://localhost:3306/wtms_db",
-                "root", "root");
+                "com.mysql.jdbc.Driver", "jdbc:mysql://120.24.75.25:3306/wtms_dbmjs05?characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull",
+                "pqy", "pqy");
         DataSource ds = finder.getDataSource();
         JdbcTemplate jt = new JdbcTemplate(ds);
         
@@ -164,6 +165,9 @@ public class DDLUtilTest {
         if (ddlExecutor.exists(tableName)) {
             ddlExecutor.drop(tableName);
         }
+        
+        DBTableDef def = ddlExecutor.findDBTableDetailByTableName("core_file_definition");
+        System.out.println(def.getTableName());
         
         printCreateTableJavaCode(ddlExecutor, "dt_table_column");
         //        boolean flag = ddlExecutor.exists("comm_message_tempalte");

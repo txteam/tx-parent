@@ -28,27 +28,43 @@ public class MessageSenderContextConfigurator implements InitializingBean,
     protected static final Logger logger = LoggerFactory.getLogger(MessageSenderContext.class);
     
     /** springContext */
-    protected ApplicationContext applicationContext;
+    protected static ApplicationContext applicationContext;
     
     /** 消息发送拦截器 */
     protected MessageSenderInterceptor interceptors;
     
     @Override
-    public final void setApplicationContext(ApplicationContext applicationContext)
-            throws BeansException {
-        this.applicationContext = applicationContext;
+    public final void setApplicationContext(
+            ApplicationContext applicationContext) throws BeansException {
+        MessageSenderContextConfigurator.applicationContext = applicationContext;
     }
-
+    
     /**
      * @throws Exception
      */
     @Override
     public final void afterPropertiesSet() throws Exception {
-        initMessageSenderContext();
+        //进行容器构建
+        doBuild();
+        
+        //初始化容器
+        doInitContext();
     }
     
     /**
-      * 初始化消息发送容器<br/>
+     * 基础数据容器构建
+     * <功能详细描述>
+     * @throws Exception [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    protected void doBuild() throws Exception {
+    }
+    
+    /**
+      * 初始化容器<br/>
       * <功能详细描述>
       * @throws Exception [参数说明]
       * 
@@ -56,6 +72,6 @@ public class MessageSenderContextConfigurator implements InitializingBean,
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    protected void initMessageSenderContext() throws Exception{
+    protected void doInitContext() throws Exception {
     }
 }

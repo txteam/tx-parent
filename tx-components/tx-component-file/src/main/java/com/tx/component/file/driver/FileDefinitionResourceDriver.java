@@ -9,7 +9,7 @@ package com.tx.component.file.driver;
 import org.springframework.beans.factory.InitializingBean;
 
 import com.tx.component.file.model.FileDefinition;
-import com.tx.component.file.resource.FileDefinitionResource;
+import com.tx.component.file.resource.FileResource;
 
 /**
  * 文件定义资源驱动<br/>
@@ -29,5 +29,5 @@ public interface FileDefinitionResourceDriver extends InitializingBean {
      * @exception [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public FileDefinitionResource getResource(FileDefinition fileDefinition);
+    public FileResource getResource(FileDefinition fileDefinition);
 }

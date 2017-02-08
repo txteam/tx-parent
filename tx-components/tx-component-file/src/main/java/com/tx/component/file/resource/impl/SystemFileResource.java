@@ -16,7 +16,7 @@ import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.FileSystemResource;
 
 import com.tx.component.file.model.FileDefinition;
-import com.tx.component.file.resource.AbstractFileDefinitionResource;
+import com.tx.component.file.resource.AbstractFileResource;
 import com.tx.core.exceptions.io.ResourceIsExistException;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.exceptions.util.ExceptionWrapperUtils;
@@ -30,14 +30,14 @@ import com.tx.core.exceptions.util.ExceptionWrapperUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class SystemFileDefinitionResource extends
-        AbstractFileDefinitionResource {
+public class SystemFileResource extends
+        AbstractFileResource {
     
     /** 系统文件资源 */
     private FileSystemResource fileSystemResource;
     
     /** <默认构造函数> */
-    public SystemFileDefinitionResource(FileDefinition fileDefinition,
+    public SystemFileResource(FileDefinition fileDefinition,
             FileSystemResource fileSystemResource) {
         super(fileDefinition);
         AssertUtils.notNull(fileDefinition, "fileDefinition is null.");

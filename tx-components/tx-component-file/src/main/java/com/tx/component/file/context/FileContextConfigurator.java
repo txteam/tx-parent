@@ -16,6 +16,8 @@ import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.SingletonBeanRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
@@ -23,7 +25,12 @@ import org.springframework.context.annotation.Bean;
 import com.tx.component.file.FileContextConstants;
 import com.tx.component.file.dao.FileDefinitionDao;
 import com.tx.component.file.dao.impl.FileDefinitionDaoImpl;
+import com.tx.component.file.service.FileDefinitionPersistService;
 import com.tx.component.file.service.FileDefinitionService;
+import com.tx.component.file.viewhandler.FileContextHttpRequestHandler;
+import com.tx.component.file.viewhandler.ViewHandlerRegistry;
+import com.tx.component.file.viewhandler.impl.DefaultViewHandler;
+import com.tx.component.file.viewhandler.impl.ThumbnailViewHandler;
 import com.tx.core.dbscript.model.DataSourceTypeEnum;
 import com.tx.core.ddlutil.executor.TableDDLExecutor;
 import com.tx.core.exceptions.util.AssertUtils;
@@ -94,6 +101,36 @@ public class FileContextConfigurator implements ApplicationContextAware,
     }
     
     /**
+      * 文件持久业务层<br/>
+      * <功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return FileDefinitionPersistService [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    @Bean(name = "fileContext.fileDefinitionPersistService")
+    public FileDefinitionPersistService fileDefinitionPersistService() {
+        FileDefinitionPersistService fdpService = new FileDefinitionPersistService();
+        return fdpService;
+    }
+    
+    /**
+      * 视图处理器注册表<br/>
+      * <功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return ViewHandlerRegistry [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    @Bean(name = "fileContext.viewHandlerRegistry")
+    public ViewHandlerRegistry viewHandlerRegistry() {
+        ViewHandlerRegistry vhRegistry = new ViewHandlerRegistry();
+        return vhRegistry;
+    }
+    
+    /**
       * 注册文件容器<br/>
       * <功能详细描述>
       * @return [参数说明]
@@ -106,12 +143,59 @@ public class FileContextConfigurator implements ApplicationContextAware,
     public FileContextFactroy fileContextFactroy() {
         FileContextFactroy fileContext = new FileContextFactroy();
         
-        fileContext.setDataSource(dataSource);
-        fileContext.setDataSourceType(dataSourceType);
-        fileContext.setLocation(location);
-        fileContext.setMybatisConfigLocation(mybatisConfigLocation);
-        fileContext.setSystem(system);
+        fileContext.setMybatisConfigLocation(this.mybatisConfigLocation);
+        fileContext.setDataSource(this.dataSource);
+        fileContext.setDataSourceType(this.dataSourceType);
+        fileContext.setLocation(this.location);
+        fileContext.setSystem(this.system);
+        fileContext.setCacheManager(this.cacheManager);
+        
         return fileContext;
+    }
+    
+    /**
+      * 返回文件容器Http请求处理器<br/>
+      * <功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return FileContextHttpRequestHandler [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    @Bean(name = "fileContextHttpRequestHandler")
+    public FileContextHttpRequestHandler fileContextHttpRequestHandler() {
+        FileContextHttpRequestHandler requestHandler = new FileContextHttpRequestHandler();
+        return requestHandler;
+    }
+    
+    /**
+      * 缩略图视图处理器<br/>
+      * <功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return ThumbnailViewHandler [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    @Bean(name = "thumbnailViewHandler")
+    public ThumbnailViewHandler thumbnailViewHandler() {
+        ThumbnailViewHandler viewHandler = new ThumbnailViewHandler();
+        return viewHandler;
+    }
+    
+    /**
+      * 默认的视图处理器<br/>
+      * <功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return DefaultViewHandler [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    @Bean(name = "defaultViewHandler")
+    public DefaultViewHandler defaultViewHandler() {
+        DefaultViewHandler viewHandler = new DefaultViewHandler();
+        return viewHandler;
     }
     
     /** spring容器句柄 */
@@ -127,7 +211,10 @@ public class FileContextConfigurator implements ApplicationContextAware,
     protected String system = FileContextConstants.DEFAULT_SYSTEM;
     
     /** 默认的存储路径 */
-    protected String location = "classpath:context/file-context-config.xml";;
+    protected String location = "classpath:context/file_context_config.xml";
+    
+    /** 缓存Manager */
+    protected CacheManager cacheManager;
     
     /** 数据源 */
     protected DataSource dataSource;
@@ -140,27 +227,6 @@ public class FileContextConfigurator implements ApplicationContextAware,
     
     /** Bean定义注册机 */
     protected BeanDefinitionRegistry beanDefinitionRegistry;
-    
-    /** 文件定义业务层 */
-    private FileDefinitionService fileDefinitionService;
-    
-    /**
-      * 获取文件定义业务层<br/>
-      * <功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return FileDefinitionService [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    protected FileDefinitionService getFileDefinitionService() {
-        if (this.fileDefinitionService != null) {
-            return this.fileDefinitionService;
-        }
-        this.fileDefinitionService = applicationContext.getBean("fileContext.fileDefinitionService",
-                FileDefinitionService.class);
-        return this.fileDefinitionService;
-    }
     
     /**
      * @param beanFactory
@@ -190,12 +256,29 @@ public class FileContextConfigurator implements ApplicationContextAware,
     }
     
     /**
+     * @desc 向spring容器注册bean
+     * @param beanName
+     * @param beanDefinition
+     */
+    protected void registerSingletonBean(String beanName, Object bean) {
+        if (!this.singletonBeanRegistry.containsSingleton(beanName)) {
+            this.singletonBeanRegistry.registerSingleton(beanName, bean);
+        }
+    }
+    
+    /**
      * @throws Exception
      */
     @Override
     public void afterPropertiesSet() throws Exception {
         AssertUtils.notNull(system, "system is null.");
         AssertUtils.notTrue(dataSource == null, "dataSource all is null.");
+        
+        if (this.cacheManager == null) {
+            this.cacheManager = new ConcurrentMapCacheManager();
+        }
+        
+        registerSingletonBean("fileContext.cacheManager", this.cacheManager);
         
         //进行容器构建
         doBuild();
@@ -261,5 +344,19 @@ public class FileContextConfigurator implements ApplicationContextAware,
      */
     public void setLocation(String location) {
         this.location = location;
+    }
+    
+    /**
+     * @param 对cacheManager进行赋值
+     */
+    public void setCacheManager(CacheManager cacheManager) {
+        this.cacheManager = cacheManager;
+    }
+    
+    /**
+     * @return 返回 location
+     */
+    public String getLocation() {
+        return location;
     }
 }

@@ -15,8 +15,8 @@ import com.aliyun.oss.model.CannedAccessControlList;
 import com.aliyun.oss.model.CreateBucketRequest;
 import com.tx.component.file.driver.FileDefinitionResourceDriver;
 import com.tx.component.file.model.FileDefinition;
-import com.tx.component.file.resource.FileDefinitionResource;
-import com.tx.component.file.resource.impl.OSSFileDefinitionResource;
+import com.tx.component.file.resource.FileResource;
+import com.tx.component.file.resource.impl.OSSFileResource;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.util.ObjectUtils;
 
@@ -31,6 +31,9 @@ import com.tx.core.util.ObjectUtils;
  */
 public class OSSFileDefinitionResourceDriver implements
         FileDefinitionResourceDriver {
+    
+    /** 访问域名 */
+    private String accessDomain = "http://oss-cn-shenzhen.aliyuncs.com";
     
     /** endpoint */
     private String endpoint = "http://oss-cn-shenzhen.aliyuncs.com";
@@ -173,13 +176,13 @@ public class OSSFileDefinitionResourceDriver implements
      * @return
      */
     @Override
-    public FileDefinitionResource getResource(FileDefinition fileDefinition) {
+    public FileResource getResource(FileDefinition fileDefinition) {
         AssertUtils.notNull(fileDefinition, "fileDefinition is null.");
         AssertUtils.notEmpty(fileDefinition.getRelativePath(),
                 "fileDefinition.relativePath is empty.");
         
-        FileDefinitionResource fdResource = new OSSFileDefinitionResource(
-                fileDefinition, this.bucketName, this.ossClient);
+        FileResource fdResource = new OSSFileResource(fileDefinition,
+                this.bucketName, this.ossClient, this.accessDomain);
         fileDefinition.setResource(fdResource);
         
         return fdResource;
@@ -198,14 +201,14 @@ public class OSSFileDefinitionResourceDriver implements
     public void setAccessKeyId(String accessKeyId) {
         this.accessKeyId = accessKeyId;
     }
-
+    
     /**
      * @param 对secretAccessKey进行赋值
      */
     public void setSecretAccessKey(String secretAccessKey) {
         this.secretAccessKey = secretAccessKey;
     }
-
+    
     /**
      * @param 对bucketName进行赋值
      */
@@ -316,5 +319,12 @@ public class OSSFileDefinitionResourceDriver implements
      */
     public void setProxyPassword(String proxyPassword) {
         this.proxyPassword = proxyPassword;
+    }
+    
+    /**
+     * @param 对accessDomain进行赋值
+     */
+    public void setAccessDomain(String accessDomain) {
+        this.accessDomain = accessDomain;
     }
 }

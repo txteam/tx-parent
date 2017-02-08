@@ -22,7 +22,11 @@ public class MessageSenderContextFactory extends MessageSenderContext implements
     
     @Override
     public MessageSenderContext getObject() throws Exception {
-        return MessageSenderContext.getContext();
+        if (MessageSenderContextFactory.context == null) {
+            return this;
+        } else {
+            return MessageSenderContextFactory.context;
+        }
     }
     
     @Override

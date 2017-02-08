@@ -6,8 +6,6 @@
  */
 package com.tx.component.communication.context;
 
-import org.springframework.beans.factory.InitializingBean;
-
 import com.tx.component.communication.model.SendMessage;
 import com.tx.component.communication.model.SendResult;
 import com.tx.core.exceptions.util.AssertUtils;
@@ -26,8 +24,7 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public class MessageSenderContext extends MessageSenderContextBuilder implements
-        InitializingBean {
+public class MessageSenderContext extends MessageSenderContextBuilder {
     
     /** 对自身的引用 */
     protected static MessageSenderContext context;
@@ -43,17 +40,15 @@ public class MessageSenderContext extends MessageSenderContextBuilder implements
      */
     public static MessageSenderContext getContext() {
         if (MessageSenderContext.context != null) {
-            return context;
+            return MessageSenderContext.context;
         }
-        AssertUtils.notNull(context, "MRSContext is null. maybe not inited!");
+        synchronized (MessageSenderContext.class) {
+            MessageSenderContext.context = applicationContext.getBean(beanName,
+                    MessageSenderContext.class);
+        }
+        AssertUtils.notNull(MessageSenderContext.context, "context is null.");
+        
         return MessageSenderContext.context;
-    }
-    
-    @Override
-    public final void initContext() throws Exception {
-        logger.info("消息路由服务容器启动...");
-        context = this;
-        logger.info("消息路由服务容器启动完毕...");
     }
     
     /**

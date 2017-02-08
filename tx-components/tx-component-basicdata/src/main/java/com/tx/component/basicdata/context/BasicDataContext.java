@@ -51,17 +51,6 @@ public class BasicDataContext extends BasicDataContextBuilder {
     }
     
     /**
-     * @throws Exception
-     */
-    @Override
-    protected final void doInitContext() throws Exception {
-        //限定容器有且只能被初始化一次
-        AssertUtils.isNull(BasicDataContext.context, "context already inited.");
-        
-        BasicDataContext.context = this;
-    }
-    
-    /**
       * 装载对象属性<br/>
       * <功能详细描述>
       * @param obj [参数说明]

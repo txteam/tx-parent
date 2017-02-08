@@ -13,7 +13,9 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import com.tx.component.file.resource.FileDefinitionResource;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.tx.component.file.resource.FileResource;
+import com.tx.core.jdbc.sqlsource.annotation.QueryConditionEqual;
 import com.tx.core.jdbc.sqlsource.annotation.UpdateAble;
 
 /**
@@ -31,27 +33,34 @@ public class FileDefinition {
     
     /** 文件的存储id */
     @Id
+    @QueryConditionEqual
     private String id;
     
     /** 所属系统：容器初始化时唯一确定 */
+    @QueryConditionEqual
     private String system;
     
     /** 所属模块:容器初始化时唯一确定，如果一个系统需要支撑多个模块 ,仅需要根据不同的module生成多个FileContext实现即可 */
+    @QueryConditionEqual
     private String module;
     
     /** 相对于文件容器的相对路径 */
+    @QueryConditionEqual
     @UpdateAble
     private String relativePath;
     
     /** 文件名称 */
+    @QueryConditionEqual
     @UpdateAble
     private String filename;
     
     /** 文件的后缀名 */
+    @QueryConditionEqual
     @UpdateAble
     private String filenameExtension;
     
     /** 访问应用的url如果：写入的策略不支持url可以为空 */
+    @QueryConditionEqual
     private String viewUrl;
     
     /** 删除时间 */
@@ -67,7 +76,8 @@ public class FileDefinition {
     
     /** 文件访问的真正路径：由FileContext加工后才会生成，非持久化字段 */
     @Transient
-    private FileDefinitionResource resource;
+    @JsonIgnore
+    private FileResource resource;
     
     /**
      * @return 返回 id
@@ -212,14 +222,14 @@ public class FileDefinition {
     /**
      * @return 返回 resource
      */
-    public FileDefinitionResource getResource() {
+    public FileResource getResource() {
         return resource;
     }
     
     /**
      * @param 对resource进行赋值
      */
-    public void setResource(FileDefinitionResource resource) {
+    public void setResource(FileResource resource) {
         this.resource = resource;
     }
 }

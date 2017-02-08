@@ -12,7 +12,7 @@ import java.io.InputStream;
 import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.model.OSSObject;
 import com.tx.component.file.model.FileDefinition;
-import com.tx.component.file.resource.AbstractFileDefinitionResource;
+import com.tx.component.file.resource.AbstractFileResource;
 import com.tx.core.exceptions.io.ResourceIsExistException;
 import com.tx.core.exceptions.util.AssertUtils;
 
@@ -25,7 +25,10 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class OSSFileDefinitionResource extends AbstractFileDefinitionResource {
+public class OSSFileResource extends AbstractFileResource {
+    
+    /** 访问域名 */
+    private String accessDomain;
     
     /** bucketName */
     private String bucketName;
@@ -34,8 +37,8 @@ public class OSSFileDefinitionResource extends AbstractFileDefinitionResource {
     private OSSClient ossClient;
     
     /** <默认构造函数> */
-    public OSSFileDefinitionResource(FileDefinition fileDefinition,
-            String bucketName, OSSClient ossClient) {
+    public OSSFileResource(FileDefinition fileDefinition, String bucketName,
+            OSSClient ossClient, String accessDomain) {
         super(fileDefinition);
         AssertUtils.notEmpty(bucketName, "bucketName is empty.");
         AssertUtils.notNull(fileDefinition, "fileDefinition is null.");
@@ -43,6 +46,20 @@ public class OSSFileDefinitionResource extends AbstractFileDefinitionResource {
         
         this.bucketName = bucketName;
         this.ossClient = ossClient;
+        this.accessDomain = accessDomain;
+        if (!this.accessDomain.endsWith("/")) {
+            this.accessDomain = this.accessDomain + "/";
+        }
+    }
+    
+    /**
+     * @return
+     */
+    @Override
+    public String getViewUrl() {
+        String viewUrl = this.accessDomain
+                + this.fileDefinition.getRelativePath();
+        return viewUrl;
     }
     
     /**

@@ -1,5 +1,5 @@
 /*
- * 描          述:  <描述>
+s * 描          述:  <描述>
  * 修  改   人:  Administrator
  * 修改时间:  2014年5月11日
  * <修改描述:>
@@ -14,7 +14,7 @@ import org.springframework.util.StringUtils;
 
 import com.tx.component.file.FileContextConstants;
 import com.tx.component.file.model.FileDefinition;
-import com.tx.component.file.resource.FileDefinitionResource;
+import com.tx.component.file.resource.FileResource;
 import com.tx.core.exceptions.io.ResourceIsExistException;
 import com.tx.core.exceptions.util.AssertUtils;
 
@@ -157,6 +157,7 @@ public class FileContext extends FileContextBuilder implements InitializingBean 
      * @param relativePath 存储路径,此存储路径为文件全路径(包括扩展名)
      * @param input 文件流
      * @param filename 文件名,此文件的实际文件名称
+     * @param used 文件是否被使用
      * 
      * @return FileDefinition 文件定义的实体
      *         
@@ -257,10 +258,35 @@ public class FileContext extends FileContextBuilder implements InitializingBean 
      * @see [类、类#方法、类#成员]
      */
     @Transactional
-    public void deleteById(String fileDefinitionId) {
+    public boolean deleteById(String fileDefinitionId) {
         AssertUtils.notEmpty(fileDefinitionId, "fileDefinitionId is empty.");
         
-        doDeleteById(fileDefinitionId);
+        boolean flag = doDeleteById(fileDefinitionId);
+        return flag;
+    }
+    
+    /**
+     * 根据文件定义id删除对应的文件定义及对应的资源<br/>
+     * 删除对应数据库文件资源数据以及存储中对应的文件资源
+     * 
+     * @param fileDefinitionId 文件定义id
+     *            
+     * @return void
+     * @exception [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @Transactional
+    public boolean deleteByByRelativePath(String module, String relativePath) {
+        AssertUtils.notEmpty(module, "module is empty.");
+        AssertUtils.notEmpty(relativePath, "relativePath is empty.");
+        
+        FileDefinition fileDefinition = doFindByRelativePath(module,
+                relativePath);
+        if (fileDefinition == null) {
+            return false;
+        }
+        boolean flag = doDeleteById(fileDefinition.getId());
+        return flag;
     }
     
     /**
@@ -282,6 +308,28 @@ public class FileContext extends FileContextBuilder implements InitializingBean 
     }
     
     /**
+      * 根据文件id获取对应的文件定义(含fileResource)<br/>
+      * <功能详细描述>
+      * @param fileDefinitionId
+      * @return [参数说明]
+      * 
+      * @return FileDefinition [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public FileDefinition findWithResourceById(String fileDefinitionId) {
+        AssertUtils.notEmpty(fileDefinitionId, "fileDefinitionId is empty.");
+        
+        FileDefinition fileDefinition = doFindById(fileDefinitionId);
+        if (fileDefinition != null) {
+            FileResource fileResource = doGetFileResource(fileDefinition);
+            fileDefinition.setResource(fileResource);
+        }
+        
+        return fileDefinition;
+    }
+    
+    /**
      * 根据文件定义id获取文件定义对应的资源<br/>
      * <功能详细描述>
      * 
@@ -291,15 +339,15 @@ public class FileContext extends FileContextBuilder implements InitializingBean 
      * @exception [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public FileDefinitionResource getResourceById(String fileDefinitionId) {
+    public FileResource getResourceById(String fileDefinitionId) {
         AssertUtils.notEmpty(fileDefinitionId, "fileDefinitionId is empty.");
         
-        FileDefinition res = doFindById(fileDefinitionId);
-        if (res == null) {
+        FileDefinition fileDefinition = doFindById(fileDefinitionId);
+        if (fileDefinition == null) {
             return null;
         }
         
-        FileDefinitionResource resource = res.getResource();
-        return resource;
+        FileResource fileResource = doGetFileResource(fileDefinition);
+        return fileResource;
     }
 }
