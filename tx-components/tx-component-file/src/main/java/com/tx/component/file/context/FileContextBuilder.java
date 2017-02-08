@@ -292,7 +292,8 @@ public class FileContextBuilder extends FileContextConfigurator implements
         if (fileDefinition == null) {
             return false;
         }
-        getFileDefinitionPersistService().moveToHis(fileDefinition);//删除
+        getFileDefinitionPersistService().evict(fileId);
+        getFileDefinitionService().moveToHis(fileDefinition);//删除
         
         String module = fileDefinition.getModule();
         FileModule fm = getFileModule(module);
@@ -327,7 +328,7 @@ public class FileContextBuilder extends FileContextConfigurator implements
         FileDefinition fileDefinition = getFileDefinitionService().findByRelativePath(module,
                 relativePath);
         if (fileDefinition != null) {
-            getFileDefinitionPersistService().moveToHis(fileDefinition);//移动到历史表去,历史文件备份
+            getFileDefinitionPersistService().evict(fileDefinition.getId());
             
             FileModule fm = getFileModule(module);
             FileDefinitionResourceDriver driver = fm.getDriver();

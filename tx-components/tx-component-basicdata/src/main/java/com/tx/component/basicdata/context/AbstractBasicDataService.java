@@ -50,7 +50,7 @@ public abstract class AbstractBasicDataService<T extends BasicData> extends
              */
             @Override
             protected void batchUpdate(List<T> needUpdateList) {
-                doBatchUpdateWhenInit(needUpdateList);
+                service.doBatchUpdateWhenInit(needUpdateList);
             }
             
             /**
@@ -58,7 +58,7 @@ public abstract class AbstractBasicDataService<T extends BasicData> extends
              */
             @Override
             protected void batchInsert(List<T> needInsertList) {
-                doBatchInsertWhenInit(needInsertList);
+                service.doBatchInsertWhenInit(needInsertList);
             }
             
             /**
@@ -66,7 +66,7 @@ public abstract class AbstractBasicDataService<T extends BasicData> extends
              */
             @Override
             protected List<T> queryListFromConfig() {
-                List<T> resCfgList = loadDataFromConfig();
+                List<T> resCfgList = service.loadDataFromConfig();
                 return resCfgList;
             }
             
@@ -75,7 +75,7 @@ public abstract class AbstractBasicDataService<T extends BasicData> extends
              */
             @Override
             protected List<T> queryListFromDB() {
-                List<T> resDbList = queryList(null, null);
+                List<T> resDbList = service.queryList(null, null);
                 return resDbList;
             }
             
@@ -96,7 +96,7 @@ public abstract class AbstractBasicDataService<T extends BasicData> extends
              */
             @Override
             protected void doBeforeUpdate(T ciaOfDB, T ciaOfCfg) {
-                doBeforeUpdate(ciaOfDB, ciaOfCfg);
+                service.doBeforeUpdate(ciaOfDB, ciaOfCfg);
             }
         };
         
@@ -187,7 +187,7 @@ public abstract class AbstractBasicDataService<T extends BasicData> extends
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    protected void doBeforeUpdateOfNeedUpdate(T ciaOfDB, T ciaOfCfg) {
+    protected void doBeforeUpdate(T ciaOfDB, T ciaOfCfg) {
         ciaOfDB.setName(ciaOfCfg.getName());
         ciaOfDB.setRemark(ciaOfCfg.getRemark());
     }

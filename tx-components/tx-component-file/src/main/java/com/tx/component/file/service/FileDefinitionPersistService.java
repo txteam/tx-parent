@@ -80,21 +80,29 @@ public class FileDefinitionPersistService implements InitializingBean {
             } else {
                 fileDefinition = this.fileDefinitionService.findById(fileId);
             }
+        }else{
+            fileDefinition = this.fileDefinitionService.findById(fileId);
         }
         
         final FileDefinition finalFD = fileDefinition;
         final Cache finalCache = this.fileDefinitionCache;
         if (finalCache instanceof TransactionAwareCacheDecorator) {
-            finalCache.put(fileId, fileDefinition);
+            if(finalFD != null){
+                finalCache.put(fileId, finalFD);
+            }
         } else {
             if (TransactionSynchronizationManager.isSynchronizationActive()) {
                 TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
                     public void afterCommit() {
-                        finalCache.put(fileId, finalFD);
+                        if(finalFD != null){
+                            finalCache.put(fileId, finalFD);
+                        }
                     }
                 });
             } else {
-                finalCache.put(fileId, finalFD);
+                if(finalFD != null){
+                    finalCache.put(fileId, finalFD);
+                }
             }
         }
         
@@ -110,28 +118,22 @@ public class FileDefinitionPersistService implements InitializingBean {
      * @exception [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public FileDefinition moveToHis(final FileDefinition fileDefinition) {
-        AssertUtils.notNull(fileDefinition, "fileDefinition is null.");
-        AssertUtils.notEmpty(fileDefinition.getId(), "fileDefinition.id is empty.");
-        
-        if (fileDefinition != null) {
-            this.fileDefinitionService.moveToHis(fileDefinition);
-        }
+    public void evict(final String fileId) {
+        AssertUtils.notEmpty(fileId, "fileId is empty.");
         
         final Cache finalCache = this.fileDefinitionCache;
         if (finalCache instanceof TransactionAwareCacheDecorator) {
-            finalCache.evict(fileDefinition.getId());
+            finalCache.evict(fileId);
         } else {
             if (TransactionSynchronizationManager.isSynchronizationActive()) {
                 TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
                     public void afterCommit() {
-                        finalCache.evict(fileDefinition.getId());
+                        finalCache.evict(fileId);
                     }
                 });
             } else {
-                finalCache.evict(fileDefinition.getId());
+                finalCache.evict(fileId);
             }
         }
-        return fileDefinition;
     }
 }
