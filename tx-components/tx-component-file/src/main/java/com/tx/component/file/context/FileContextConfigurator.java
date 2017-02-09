@@ -6,8 +6,12 @@
  */
 package com.tx.component.file.context;
 
+import java.io.File;
+import java.io.IOException;
+
 import javax.sql.DataSource;
 
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -21,6 +25,7 @@ import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
+import org.springframework.util.StringUtils;
 
 import com.tx.component.file.FileContextConstants;
 import com.tx.component.file.dao.FileDefinitionDao;
@@ -34,6 +39,7 @@ import com.tx.component.file.viewhandler.impl.ThumbnailViewHandler;
 import com.tx.core.dbscript.model.DataSourceTypeEnum;
 import com.tx.core.ddlutil.executor.TableDDLExecutor;
 import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.exceptions.util.ExceptionWrapperUtils;
 import com.tx.core.mybatis.support.MyBatisDaoSupport;
 import com.tx.core.mybatis.support.MyBatisDaoSupportHelper;
 
@@ -147,6 +153,7 @@ public class FileContextConfigurator implements ApplicationContextAware,
         fileContext.setDataSource(this.dataSource);
         fileContext.setDataSourceType(this.dataSourceType);
         fileContext.setLocation(this.location);
+        fileContext.setConfigLocation(this.configLocation);
         fileContext.setSystem(this.system);
         fileContext.setCacheManager(this.cacheManager);
         
@@ -211,7 +218,10 @@ public class FileContextConfigurator implements ApplicationContextAware,
     protected String system = FileContextConstants.DEFAULT_SYSTEM;
     
     /** 默认的存储路径 */
-    protected String location = "classpath:context/file_context_config.xml";
+    protected String configLocation = "classpath:context/file_context_config.xml";
+    
+    /**  */
+    protected String location;
     
     /** 缓存Manager */
     protected CacheManager cacheManager;
@@ -358,5 +368,19 @@ public class FileContextConfigurator implements ApplicationContextAware,
      */
     public String getLocation() {
         return location;
+    }
+    
+    /**
+     * @return 返回 configLocation
+     */
+    public String getConfigLocation() {
+        return configLocation;
+    }
+    
+    /**
+     * @param 对configLocation进行赋值
+     */
+    public void setConfigLocation(String configLocation) {
+        this.configLocation = configLocation;
     }
 }

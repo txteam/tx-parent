@@ -159,7 +159,8 @@ public class ThumbnailImageUtils {
                     thumbnailFilePath,
                     filenameExtension,
                     resultWidth,
-                    resultHeight);
+                    resultHeight,
+                    isCache);
         } catch (Exception ioe) {
             logger.error("生成缩略图失败.", ioe);
             return null;
@@ -186,7 +187,8 @@ public class ThumbnailImageUtils {
      */
     public static void bulidThumbnailImage(final String thumbnailFilePath,
             final String imageExtension, final BufferedImage image,
-            final int width, final int height) throws IOException {
+            final int width, final int height, final boolean isCache)
+            throws IOException {
         // 初始化任务池
         tpte.execute(new Runnable() {
             @Override
@@ -196,7 +198,8 @@ public class ThumbnailImageUtils {
                             thumbnailFilePath,
                             imageExtension,
                             width,
-                            height);
+                            height,
+                            isCache);
                 } catch (IOException ioe) {
                     ExceptionWrapperUtils.wrapperIOException(ioe,
                             "缩略图生成失败,path : ",
@@ -225,7 +228,8 @@ public class ThumbnailImageUtils {
      */
     private static File doBulidThumbnailImage(BufferedImage image,
             String thumbnailFilePath, String imageExtension,
-            int thumbImageWidth, int thumbImageHeight) throws IOException {
+            int thumbImageWidth, int thumbImageHeight, boolean isCache)
+            throws IOException {
         imageExtension = StringUtils.isEmpty(imageExtension) ? DEFAULT_IMAGE_EXTENSION
                 : imageExtension;
         // 根据缩略图路径哈希值进行锁定
@@ -233,7 +237,7 @@ public class ThumbnailImageUtils {
             //如果等待期间，缩略图已经存在，所以需要在此重新判断缩略图文件是否存在
             File thumbnailFile = new File(thumbnailFilePath); // 缩略图文件
             // 如果缩略图存在,则直接返回
-            if (thumbnailFile.exists() && thumbnailFile.isFile()) {
+            if (isCache && thumbnailFile.exists() && thumbnailFile.isFile()) {
                 return thumbnailFile;
             }
             
