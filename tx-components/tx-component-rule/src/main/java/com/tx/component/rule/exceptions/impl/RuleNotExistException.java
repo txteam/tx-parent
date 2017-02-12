@@ -7,6 +7,8 @@
 package com.tx.component.rule.exceptions.impl;
 
 import com.tx.component.rule.exceptions.RuleAccessException;
+import com.tx.component.rule.exceptions.RuleContextErrorCodeEnum;
+import com.tx.core.exceptions.ErrorCode;
 
 
  /**
@@ -27,23 +29,21 @@ public class RuleNotExistException extends RuleAccessException {
      * @return
      */
     @Override
-    public String doGetErrorCode() {
-        return "RULE_NOT_EXIST_ERROR";
-    }
-
-    /**
-     * @return
-     */
-    @Override
-    public String doGetErrorMessage() {
-        return "未定义的规则";
+    protected ErrorCode error() {
+        // TODO Auto-generated method stub
+        return RuleContextErrorCodeEnum.RULL_ACCESS_ERROR;
     }
 
     /** <默认构造函数> */
-    public RuleNotExistException(String message, Object[] parameters) {
-        super(message, parameters);
+    public RuleNotExistException() {
+        super();
     }
-    
+
+    /** <默认构造函数> */
+    public RuleNotExistException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
     /** <默认构造函数> */
     public RuleNotExistException(String message) {
         super(message);

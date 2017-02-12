@@ -13,11 +13,12 @@ import net.sf.ehcache.Element;
 import com.tx.component.configuration.config.ConfigGroupParse;
 import com.tx.component.configuration.config.ConfigPropertyParse;
 import com.tx.component.configuration.context.ConfigContext;
-import com.tx.component.configuration.exception.NotExistException;
-import com.tx.component.configuration.exception.UnModifyAbleException;
+import com.tx.component.configuration.exceptions.NotExistException;
+import com.tx.component.configuration.exceptions.UnModifyAbleException;
 import com.tx.component.configuration.model.ConfigProperty;
 import com.tx.component.configuration.model.ConfigPropertyProxy;
 import com.tx.component.configuration.model.ConfigPropertyTypeEnum;
+import com.tx.core.util.MessageUtils;
 
 /**
  * 基础配置属性解析器
@@ -52,7 +53,8 @@ public class LocalConfigPropertiesPersister extends
     @Override
     public String getConfigPropertyValueByKey(String key) {
         if (this.cache.get(key) == null) {
-            throw new NotExistException("配置属性不存在。key:{}", new Object[] { key });
+            throw new NotExistException(MessageUtils.format("配置属性不存在。key:{}",
+                    new Object[] { key }));
         }
         String value = (String) this.cache.get(key).getValue();
         return value;

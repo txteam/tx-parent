@@ -17,7 +17,6 @@ import com.thoughtworks.xstream.io.xml.Xpp3DomDriver;
 import com.thoughtworks.xstream.mapper.CannotResolveClassException;
 import com.thoughtworks.xstream.mapper.Mapper;
 import com.thoughtworks.xstream.mapper.MapperWrapper;
-import com.tx.core.exceptions.argument.UnsupportedEncodingArgException;
 
 /**
   * xstream工具封装
@@ -135,10 +134,11 @@ public class XstreamUtils {
                         content = new String(content.getBytes(sourceCharset),
                                 targetCharset);
                     } catch (UnsupportedEncodingException e) {
-                        throw new UnsupportedEncodingArgException(
-                                "不支持的字符集.source:{} target:{}",
-                                finalEncodeSourceCharset,
-                                finalEncodeTargetCharset);
+                        throw new com.tx.core.exceptions.context.UnsupportedEncodingException(
+                                MessageUtils.format("不支持的字符集.source:{} target:{}",
+                                        new Object[] {
+                                                finalEncodeSourceCharset,
+                                                finalEncodeTargetCharset }));
                     }
                 }
                 return content;
@@ -253,7 +253,7 @@ public class XstreamUtils {
         if (xstreamMap.containsKey(classType)) {
             return xstreamMap.get(classType);
         }
-        if(nameCoder == null){
+        if (nameCoder == null) {
             nameCoder = defaultNameCoder;
         }
         /**
@@ -270,6 +270,7 @@ public class XstreamUtils {
                         protected String getNewLine() {
                             return "";
                         }
+                        
                         //行结束时不加多余的空格 
                         protected void endOfLine() {
                             return;

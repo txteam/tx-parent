@@ -26,7 +26,7 @@ import net.sf.ehcache.Element;
 import com.tx.component.configuration.config.ConfigGroupParse;
 import com.tx.component.configuration.config.ConfigPropertyParse;
 import com.tx.component.configuration.context.ConfigContext;
-import com.tx.component.configuration.exception.NotExistException;
+import com.tx.component.configuration.exceptions.NotExistException;
 import com.tx.component.configuration.model.ConfigProperty;
 import com.tx.component.configuration.model.ConfigPropertyItem;
 import com.tx.component.configuration.model.ConfigPropertyProxy;
@@ -37,6 +37,7 @@ import com.tx.core.dbscript.TableDefinition;
 import com.tx.core.dbscript.XMLTableDefinition;
 import com.tx.core.dbscript.context.DBScriptExecutorContext;
 import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.util.MessageUtils;
 import com.tx.core.util.UUIDUtils;
 
 /**
@@ -236,7 +237,8 @@ public class GlobalConfigPropertiesPersister extends
         }
         //如果重建缓存后依然无法寻找到对应值，抛出异常
         if (resValue == null) {
-            throw new NotExistException("配置属性不存在。key:{}", new Object[] { key });
+            throw new NotExistException(MessageUtils.format("配置属性不存在。key:{}",
+                    new Object[] { key }));
         }
         return resValue;
     }

@@ -3,8 +3,8 @@ package com.tx.core.httpsocket.context.responseheader;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.helpers.MessageFormatter;
 
+import com.tx.core.exceptions.remote.HttpSocketException;
 import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.httpsocket.exception.HttpSocketException;
 
 /**
  * 返回时的状态

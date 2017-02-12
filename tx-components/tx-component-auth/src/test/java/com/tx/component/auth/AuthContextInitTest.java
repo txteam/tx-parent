@@ -36,6 +36,6 @@ public class AuthContextInitTest {
     
     @Test
     public void test(){
-        AssertUtils.notNull(AuthContext.getContext());
+        AssertUtils.notNull(AuthContext.getContext(),"");
     }
 }

@@ -21,12 +21,13 @@ import com.tx.component.servicelog.context.logger.ServiceLogDecorate;
 import com.tx.component.servicelog.context.logger.ServiceLogPersister;
 import com.tx.component.servicelog.context.logger.ServiceLogQuerier;
 import com.tx.component.servicelog.defaultimpl.persister.TXLocalFileServiceLogPersister;
-import com.tx.component.servicelog.exception.ServiceLoggerException;
-import com.tx.component.servicelog.exception.UnsupportServiceLoggerTypeException;
+import com.tx.component.servicelog.exceptions.ServiceLoggerException;
+import com.tx.component.servicelog.exceptions.UnsupportedServiceLoggerTypeException;
 import com.tx.component.servicelog.logger.TXServiceLog;
 import com.tx.component.servicelog.logger.TxLoaclFileServiceLog;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.paged.model.PagedList;
+import com.tx.core.util.MessageUtils;
 import com.tx.core.util.UUIDUtils;
 
 /**
@@ -37,7 +38,8 @@ import com.tx.core.util.UUIDUtils;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public class TXLocalFileServiceLoggerBuilder extends BaseServiceLoggerBuilder implements InitializingBean {
+public class TXLocalFileServiceLoggerBuilder extends BaseServiceLoggerBuilder
+        implements InitializingBean {
     
     /** 日志 */
     @SuppressWarnings("unused")
@@ -72,7 +74,8 @@ public class TXLocalFileServiceLoggerBuilder extends BaseServiceLoggerBuilder im
     }
     
     @Override
-    protected <T> ServiceLogDecorate<T> buildServiceLogDecorate(Class<T> logObjectType) {
+    protected <T> ServiceLogDecorate<T> buildServiceLogDecorate(
+            Class<T> logObjectType) {
         return new ServiceLogDecorate<T>() {
             @Override
             public T decorate(T srcObj) {
@@ -95,7 +98,9 @@ public class TXLocalFileServiceLoggerBuilder extends BaseServiceLoggerBuilder im
                         other.setMessageid(UUIDUtils.generateUUID());
                     }
                 } else {
-                    throw new UnsupportServiceLoggerTypeException("srcObject:{} not support.", srcObj.toString());
+                    throw new UnsupportedServiceLoggerTypeException(
+                            MessageUtils.format("srcObject:{} not support.",
+                                    srcObj.toString()));
                 }
                 
                 return srcObj;
@@ -104,15 +109,18 @@ public class TXLocalFileServiceLoggerBuilder extends BaseServiceLoggerBuilder im
     }
     
     @Override
-    protected <T> ServiceLogPersister<T> buildServiceLogPersister(Class<T> logObjectType) {
+    protected <T> ServiceLogPersister<T> buildServiceLogPersister(
+            Class<T> logObjectType) {
         return new TXLocalFileServiceLogPersister<T>(dataformat, savepath);
     }
     
     @Override
-    protected <T> ServiceLogQuerier<T> buildServiceLogQuerier(Class<T> logObjectType) {
+    protected <T> ServiceLogQuerier<T> buildServiceLogQuerier(
+            Class<T> logObjectType) {
         return new ServiceLogQuerier<T>() {
             @Override
-            public PagedList<T> queryPagedList(Map<String, Object> params, int pageIndex, int pageSize) {
+            public PagedList<T> queryPagedList(Map<String, Object> params,
+                    int pageIndex, int pageSize) {
                 throw new ServiceLoggerException("文件日志不支持查询!");
             }
             

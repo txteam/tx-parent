@@ -24,11 +24,11 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import com.tx.core.exceptions.remote.HttpSocketException;
 import com.tx.core.httpsocket.context.responseheader.ResponseContentEncoding;
 import com.tx.core.httpsocket.context.responseheader.ResponseContentType;
 import com.tx.core.httpsocket.context.responseheader.ResponseDataType;
 import com.tx.core.httpsocket.context.responseheader.ResponseStatus;
-import com.tx.core.httpsocket.exception.HttpSocketException;
 
 /**
  * 返回的消息<br>

@@ -15,7 +15,7 @@ import org.springframework.util.StringUtils;
 import com.tx.component.file.FileContextConstants;
 import com.tx.component.file.model.FileDefinition;
 import com.tx.component.file.resource.FileResource;
-import com.tx.core.exceptions.io.ResourceIsExistException;
+import com.tx.core.exceptions.resource.ResourceIsExistException;
 import com.tx.core.exceptions.util.AssertUtils;
 
 /**

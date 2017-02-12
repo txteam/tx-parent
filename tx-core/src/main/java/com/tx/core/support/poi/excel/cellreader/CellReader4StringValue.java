@@ -10,8 +10,9 @@ import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.ss.usermodel.Cell;
 
+import com.tx.core.exceptions.resource.ResourceReadException;
 import com.tx.core.support.poi.excel.CellReader;
-import com.tx.core.support.poi.excel.exception.ExcelReadException;
+import com.tx.core.util.MessageUtils;
 
 /**
  * 默认为String类型的CellREeader实现
@@ -51,9 +52,9 @@ public class CellReader4StringValue implements CellReader<String> {
             boolean ignoreTypeUnmatch, String cellType, int rowNum,
             int cellNum, String key) {
         if (!ignoreTypeUnmatch) {
-            throw new ExcelReadException(
-                    "cell rowNum:{} cellNum:{} key:{} type is:{} unable change to BigDecimal.",
-                    new Object[] { rowNum, cellNum, key });
+            throw new ResourceReadException(
+                    MessageUtils.format("cell rowNum:{} cellNum:{} key:{} type is:{} unable change to BigDecimal.",
+                            new Object[] { rowNum, cellNum, key }));
         }
     }
     
@@ -67,23 +68,23 @@ public class CellReader4StringValue implements CellReader<String> {
     public String read(Cell cell, int rowNum, int cellNum, String key,
             boolean ignoreError, boolean ignoreBlank, boolean ignoreTypeUnmatch) {
         String resString = null;
-        if(null == cell){
+        if (null == cell) {
             return resString;
         }
         switch (cell.getCellType()) {
             case Cell.CELL_TYPE_ERROR:
                 if (!ignoreError) {
-                    throw new ExcelReadException(
-                            "cell rowNum:{} cellNum:{} key:{} cellType is error.",
-                            new Object[] { rowNum, cellNum, key });
+                    throw new ResourceReadException(
+                            MessageUtils.format("cell rowNum:{} cellNum:{} key:{} cellType is error.",
+                                    new Object[] { rowNum, cellNum, key }));
                 }
                 resString = null;
                 break;
             case Cell.CELL_TYPE_BLANK:
                 if (!ignoreBlank) {
-                    throw new ExcelReadException(
-                            "cell rowNum:{} cellNum:{} key:{} cellType is blank.",
-                            new Object[] { rowNum, cellNum, key });
+                    throw new ResourceReadException(
+                            MessageUtils.format("cell rowNum:{} cellNum:{} key:{} cellType is blank.",
+                                    new Object[] { rowNum, cellNum, key }));
                 }
                 resString = "";
                 break;
@@ -104,7 +105,7 @@ public class CellReader4StringValue implements CellReader<String> {
                     //如果为时间的处理逻辑
                     resString = DateFormatUtils.format(cell.getDateCellValue(),
                             dateFormatterPattern);
-                }else {
+                } else {
                     //如果为非时间
                     resString = String.valueOf(cell.getNumericCellValue());
                 }
@@ -145,9 +146,9 @@ public class CellReader4StringValue implements CellReader<String> {
         String resString = null;
         if (cellType == Cell.CELL_TYPE_STRING) {
             resString = cell.getStringCellValue();
-        } else if(cellType == Cell.CELL_TYPE_NUMERIC){
+        } else if (cellType == Cell.CELL_TYPE_NUMERIC) {
             resString = String.valueOf(cell.getNumericCellValue());
-        }else {
+        } else {
             resString = read(cell,
                     rowNum,
                     cellNum,

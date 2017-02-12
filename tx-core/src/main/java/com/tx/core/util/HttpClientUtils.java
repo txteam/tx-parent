@@ -43,9 +43,9 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
-import com.tx.core.exceptions.http.AfterHttpExcuteException;
-import com.tx.core.exceptions.http.BeforeHttpExcuteException;
-import com.tx.core.exceptions.http.HttpExcutingException;
+import com.tx.core.exceptions.remote.AfterHttpExcuteException;
+import com.tx.core.exceptions.remote.BeforeHttpExcuteException;
+import com.tx.core.exceptions.remote.HttpExcutingException;
 
 /**
  * HttpClient实现<br/>

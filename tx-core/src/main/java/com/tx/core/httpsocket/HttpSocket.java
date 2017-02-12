@@ -14,6 +14,7 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.tx.core.exceptions.remote.HttpSocketException;
 import com.tx.core.httpsocket.context.Cookie;
 import com.tx.core.httpsocket.context.HttpPost;
 import com.tx.core.httpsocket.context.HttpProxy;
@@ -22,7 +23,6 @@ import com.tx.core.httpsocket.context.HttpWebUrl;
 import com.tx.core.httpsocket.context.Request;
 import com.tx.core.httpsocket.context.Response;
 import com.tx.core.httpsocket.context.responseheader.ResponseStatus;
-import com.tx.core.httpsocket.exception.HttpSocketException;
 
 /**
  * 提供对Http协议的发送和接收<br />
@@ -234,13 +234,11 @@ public class HttpSocket implements Serializable {
                 logger.warn("返回非正常的报文{}", status.toString());
             }
         } catch (SocketTimeoutException ste) {
-            throw new HttpSocketException("获取数据超时!", 1);
+            throw new HttpSocketException("获取数据超时!");
         } catch (UnknownHostException uhe) {
-            throw new HttpSocketException("不可识别的主机地址 : "
-                    + this.request.getHost(), 2);
+            throw new HttpSocketException("不可识别的主机地址 : ");
         } catch (IOException e) {
-            throw new HttpSocketException("未知的网络错误!  当前request请求头 : \r\n"
-                    + this.request.getRequest(), 3);
+            throw new HttpSocketException("未知的网络错误!  当前request请求头 : \r\n");
         } finally {
             // 已经发送完成
             IOUtils.closeQuietly(inputStream);

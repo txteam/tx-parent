@@ -33,7 +33,7 @@ import org.apache.cxf.transport.http.HTTPConduit;
 import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.springframework.core.io.Resource;
 
-import com.tx.core.exceptions.rpc.RPCAccessException;
+import com.tx.core.exceptions.remote.RemoteAccessException;
 
 /**
  * CXF工具类
@@ -194,7 +194,7 @@ public class CXFUtils {
                                 .append(method.toString())
                                 .append("]");
                         message.setContent(Exception.class,
-                                new RPCAccessException(error.toString(), fault));
+                                new RemoteAccessException(error.toString(), fault));
                     }
                 });
         
@@ -212,7 +212,7 @@ public class CXFUtils {
                                     .append(method.toString())
                                     .append("]");
                             message.setContent(Exception.class,
-                                    new RPCAccessException(error.toString(),
+                                    new RemoteAccessException(error.toString(),
                                             fault));
                         }
                     }

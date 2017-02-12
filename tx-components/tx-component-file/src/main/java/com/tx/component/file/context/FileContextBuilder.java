@@ -381,7 +381,7 @@ public class FileContextBuilder extends FileContextConfigurator implements
             FileModule fm = getFileModule(module);
             FileDefinitionResourceDriver driver = fm.getDriver();
             FileResource resource = driver.getResource(fileDefinition);
-            resource.add(input);
+            resource.save(input);
             
             fileDefinition.setViewUrl(resource.getViewUrl());
             fileDefinition.setResource(resource);

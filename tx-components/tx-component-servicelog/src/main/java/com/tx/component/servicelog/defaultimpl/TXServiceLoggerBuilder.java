@@ -32,7 +32,7 @@ import com.tx.component.servicelog.context.ServiceLoggerSessionContext;
 import com.tx.component.servicelog.context.logger.ServiceLogDecorate;
 import com.tx.component.servicelog.context.logger.ServiceLogPersister;
 import com.tx.component.servicelog.context.logger.ServiceLogQuerier;
-import com.tx.component.servicelog.exception.UnsupportServiceLoggerTypeException;
+import com.tx.component.servicelog.exceptions.UnsupportedServiceLoggerTypeException;
 import com.tx.component.servicelog.logger.TXServiceLog;
 import com.tx.core.dbscript.model.DataSourceTypeEnum;
 import com.tx.core.exceptions.SILException;
@@ -40,6 +40,7 @@ import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.jdbc.sqlsource.SqlSource;
 import com.tx.core.jdbc.sqlsource.SqlSourceBuilder;
 import com.tx.core.paged.model.PagedList;
+import com.tx.core.util.MessageUtils;
 import com.tx.core.util.UUIDUtils;
 
 /**
@@ -50,7 +51,8 @@ import com.tx.core.util.UUIDUtils;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public class TXServiceLoggerBuilder extends BaseServiceLoggerBuilder implements InitializingBean {
+public class TXServiceLoggerBuilder extends BaseServiceLoggerBuilder implements
+        InitializingBean {
     
     /** 日志 */
     private Logger logger = LoggerFactory.getLogger(TXServiceLoggerBuilder.class);
@@ -150,7 +152,8 @@ public class TXServiceLoggerBuilder extends BaseServiceLoggerBuilder implements 
     }
     
     @Override
-    protected <T> ServiceLogDecorate<T> buildServiceLogDecorate(Class<T> srcObjType) {
+    protected <T> ServiceLogDecorate<T> buildServiceLogDecorate(
+            Class<T> srcObjType) {
         ServiceLogDecorate<T> serviceLogDecorate = new ServiceLogDecorate<T>() {
             @Override
             public T decorate(T srcObj) {
@@ -169,7 +172,9 @@ public class TXServiceLoggerBuilder extends BaseServiceLoggerBuilder implements 
                     other.setOperatorName((String) context.getAttribute("operatorName"));
                     other.setOperatorLoginName((String) context.getAttribute("operatorLoginName"));
                 } else {
-                    throw new UnsupportServiceLoggerTypeException("srcObject:{} not support.", new Object[] { srcObj });
+                    throw new UnsupportedServiceLoggerTypeException(
+                            MessageUtils.format("srcObject:{} not support.",
+                                    new Object[] { srcObj }));
                 }
                 return srcObj;
             }
@@ -179,8 +184,10 @@ public class TXServiceLoggerBuilder extends BaseServiceLoggerBuilder implements 
     }
     
     @Override
-    protected <T> ServiceLogPersister<T> buildServiceLogPersister(Class<T> srcObjType) {
-        final SqlSource<?> sqlSource = sqlSourceBuilder.build(srcObjType, dataSourceType.getDialect());
+    protected <T> ServiceLogPersister<T> buildServiceLogPersister(
+            Class<T> srcObjType) {
+        final SqlSource<?> sqlSource = sqlSourceBuilder.build(srcObjType,
+                dataSourceType.getDialect());
         ServiceLogPersister<T> txLogPersister = new ServiceLogPersister<T>() {
             
             @Override
@@ -191,7 +198,8 @@ public class TXServiceLoggerBuilder extends BaseServiceLoggerBuilder implements 
                 TransactionStatus status = txManager.getTransaction(def);
                 
                 try {
-                    jdbcTemplate.update(sqlSource.insertSql(), sqlSource.getInsertSetter(logInstance));
+                    jdbcTemplate.update(sqlSource.insertSql(),
+                            sqlSource.getInsertSetter(logInstance));
                 } catch (DataAccessException e) {
                     txManager.rollback(status);
                     throw e;
@@ -203,22 +211,27 @@ public class TXServiceLoggerBuilder extends BaseServiceLoggerBuilder implements 
     }
     
     @Override
-    protected <T> ServiceLogQuerier<T> buildServiceLogQuerier(final Class<T> srcObjType) {
+    protected <T> ServiceLogQuerier<T> buildServiceLogQuerier(
+            final Class<T> srcObjType) {
         
-        final SqlSource<T> sqlSource = sqlSourceBuilder.build(srcObjType, dataSourceType.getDialect());
+        final SqlSource<T> sqlSource = sqlSourceBuilder.build(srcObjType,
+                dataSourceType.getDialect());
         ServiceLogQuerier<T> querier = new ServiceLogQuerier<T>() {
             
             @Override
             public T find(String id) {
-                return jdbcTemplate.queryForObject(sqlSource.findSql(), sqlSource.getSelectRowMapper(), id);
+                return jdbcTemplate.queryForObject(sqlSource.findSql(),
+                        sqlSource.getSelectRowMapper(),
+                        id);
             }
             
             @Override
-            public PagedList<T> queryPagedList(Map<String, Object> params, int pageIndex, int pageSize) {
+            public PagedList<T> queryPagedList(Map<String, Object> params,
+                    int pageIndex, int pageSize) {
                 //查询总条数
-                RowMapper<Integer> integerRowMapper = new SingleColumnRowMapper<Integer>(Integer.class);
-                List<Integer> resCountList = jdbcTemplate.query(
-                        sqlSource.countSql(params),
+                RowMapper<Integer> integerRowMapper = new SingleColumnRowMapper<Integer>(
+                        Integer.class);
+                List<Integer> resCountList = jdbcTemplate.query(sqlSource.countSql(params),
                         sqlSource.getQueryCondtionSetter(params),
                         integerRowMapper);
                 int count = DataAccessUtils.singleResult(resCountList);
@@ -237,9 +250,12 @@ public class TXServiceLoggerBuilder extends BaseServiceLoggerBuilder implements 
                 limit = limit > count ? count : limit;
                 
                 //查询指定索引条数
-                List<T> resList = jdbcTemplate.query(
-                        sqlSource.queryPagedSql(params, pageIndex, pageSize),
-                        sqlSource.getPagedQueryCondtionSetter(params, offset, limit),
+                List<T> resList = jdbcTemplate.query(sqlSource.queryPagedSql(params,
+                        pageIndex,
+                        pageSize),
+                        sqlSource.getPagedQueryCondtionSetter(params,
+                                offset,
+                                limit),
                         sqlSource.getSelectRowMapper());
                 result.setList(resList);
                 

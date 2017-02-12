@@ -19,7 +19,7 @@ import org.apache.commons.lang.ClassUtils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
-import com.tx.core.exceptions.argument.NullArgException;
+import com.tx.core.exceptions.argument.ArgNullException;
 
 /**
  * 类反射器<br/>
@@ -70,7 +70,7 @@ public class ClassReflector<T> {
     public static <TYPE> ClassReflector<TYPE> forClass(Class<TYPE> type,
             boolean isIncludeInaccessible) {
         if (type == null) {
-            throw new NullArgException(
+            throw new ArgNullException(
                     "MetaAnnotationClass forClass parameter type is empty.");
         }
         synchronized (type) {

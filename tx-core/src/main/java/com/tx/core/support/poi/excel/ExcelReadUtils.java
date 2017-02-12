@@ -23,7 +23,7 @@ import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
-import com.tx.core.exceptions.io.ResourceParseException;
+import com.tx.core.exceptions.resource.ResourceParseException;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.exceptions.util.ExceptionWrapperUtils;
 import com.tx.core.support.poi.excel.builder.CellRowReaderBuilder;

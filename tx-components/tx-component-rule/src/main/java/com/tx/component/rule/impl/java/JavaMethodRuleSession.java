@@ -22,8 +22,9 @@ import com.tx.component.rule.session.CallbackHandler;
 import com.tx.component.rule.session.ValueWrapper;
 import com.tx.component.rule.session.impl.BaseRuleSession;
 import com.tx.component.rule.transation.RuleSessionContext;
-import com.tx.core.exceptions.argument.IllegalArgException;
+import com.tx.core.exceptions.argument.ArgTypeNotMatchedException;
 import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.util.MessageUtils;
 import com.tx.core.util.ObjectUtils;
 
 /**
@@ -186,9 +187,9 @@ public class JavaMethodRuleSession extends BaseRuleSession<JavaMethodRule> {
             if (Map.class.isAssignableFrom(methodParameterTemp.getParameterType())) {
                 argTemp = newFactMap;
             } else {
-                throw new IllegalArgException(
-                        "Incorrect @RuleRequestParam.paramName is empty and type is not Map.parameterIndex:{}",
-                        new Object[] { parameterIndex });
+                throw new ArgTypeNotMatchedException(
+                        MessageUtils.format("Incorrect @RuleRequestParam.paramName is empty and type is not Map.parameterIndex:{}",
+                                new Object[] { parameterIndex }));
             }
         }
         return argTemp;

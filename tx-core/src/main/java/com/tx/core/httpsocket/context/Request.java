@@ -14,10 +14,10 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import com.tx.core.exceptions.remote.HttpSocketException;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.httpsocket.context.responseheader.RequestUrlType;
 import com.tx.core.httpsocket.context.responseheader.ResponseContentTypeCode;
-import com.tx.core.httpsocket.exception.HttpSocketException;
 import com.tx.core.util.RandomUtils;
 
 /**

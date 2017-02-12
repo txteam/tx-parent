@@ -10,7 +10,7 @@ import java.io.UnsupportedEncodingException;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.tx.core.exceptions.argument.IllegalArgException;
+import com.tx.core.exceptions.argument.ArgIllegalException;
 
 /**
  * 随机工具
@@ -217,7 +217,7 @@ public class RandomUtils extends org.apache.commons.lang.math.RandomUtils {
      */
     public static String randomChineseCharacter(int number) {
         if (number <= 0) {
-            throw new IllegalArgException("只能传入大于0的整数.");
+            throw new ArgIllegalException("只能传入大于0的整数.");
         }
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < number; i++) {

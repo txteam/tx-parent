@@ -11,7 +11,7 @@ import java.security.NoSuchAlgorithmException;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.tx.core.exceptions.argument.IllegalArgException;
+import com.tx.core.exceptions.argument.ArgIllegalException;
 
 /**
  * MD5加密工具类<br/>
@@ -45,8 +45,8 @@ public class MD5Utils {
         try {
             md5 = MessageDigest.getInstance(algorithm);
         } catch (NoSuchAlgorithmException e) {
-            throw new IllegalArgException("不支持的消息加密类型:{}",
-                    new Object[] { algorithm });
+            throw new ArgIllegalException(MessageUtils.format("不支持的消息加密类型:{}",
+                    new Object[] { algorithm }));
         }
         byte buffer[] = source.getBytes();
         md5.update(buffer);

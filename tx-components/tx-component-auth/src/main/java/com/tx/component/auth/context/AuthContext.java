@@ -28,6 +28,7 @@ import com.tx.component.auth.model.AuthItemRef;
 import com.tx.component.auth.model.AuthItemRefImpl;
 import com.tx.core.TxConstants;
 import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.util.MessageUtils;
 
 /**
  * 权限容器<br/>
@@ -121,7 +122,8 @@ public class AuthContext extends AuthContextBuilder {
         return (List<AuthItem>) ListUtils.unmodifiableList(resList);
     }
     
-    public List<AuthItem> getAuthItemListByAuthTypeAndParentId(String authType,String parentId){
+    public List<AuthItem> getAuthItemListByAuthTypeAndParentId(String authType,
+            String parentId) {
         throw new NotImplementedException();
     }
     
@@ -260,7 +262,7 @@ public class AuthContext extends AuthContextBuilder {
      * @see [类、类#方法、类#成员]
      */
     public boolean hasAuth(String authKey) {
-        return hasAuth(authKey,(Object[]) null);
+        return hasAuth(authKey, (Object[]) null);
     }
     
     /**
@@ -286,8 +288,8 @@ public class AuthContext extends AuthContextBuilder {
         AuthItem authItem = authItemMapping.get(authKey);
         if (authItem == null) {
             throw new AuthContextInitException(
-                    "The authKey:{} AuthItem is not exists.",
-                    new Object[] { authKey });
+                    MessageUtils.format("The authKey:{} AuthItem is not exists.",
+                            new Object[] { authKey }));
         }
         
         //如果对应权限项已经无效，则认为拥有权限

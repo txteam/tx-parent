@@ -13,8 +13,8 @@ import java.util.List;
 
 import org.jsoup.nodes.Element;
 
+import com.tx.core.exceptions.context.JsoupParseException;
 import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.support.jsoup.exception.JsoupParseException;
 
 /**
  * Jsoup工具类<br/>

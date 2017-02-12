@@ -5,7 +5,7 @@ package com.tx.core.httpsocket.context;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.tx.core.httpsocket.exception.HttpSocketException;
+import com.tx.core.exceptions.remote.HttpSocketException;
 
 /**
  * Http协议<br>

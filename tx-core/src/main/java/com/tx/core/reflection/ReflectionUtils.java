@@ -20,9 +20,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
+import com.tx.core.exceptions.reflection.InvalidGetterMethodException;
+import com.tx.core.exceptions.reflection.InvalidSetterMethodException;
 import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.reflection.exception.InvalidGetterMethodException;
-import com.tx.core.reflection.exception.InvalidSetterMethodException;
+import com.tx.core.util.MessageUtils;
 
 /**
  *  反射工具类<br/>
@@ -108,8 +109,9 @@ public class ReflectionUtils {
         if (method.getParameterTypes().length > 0
                 && !Void.TYPE.equals(returnType)) {
             throw new InvalidGetterMethodException(
-                    "方法入参不为空，或返回类型为空.paramterTypes:{};returnType:{}",
-                    new Object[] { method.getParameterTypes(), returnType });
+                    MessageUtils.format("方法入参不为空，或返回类型为空.paramterTypes:{};returnType:{}",
+                            new Object[] { method.getParameterTypes(),
+                                    returnType }));
         }
         
         //如果为getClass则认为该方法非get方法
@@ -117,8 +119,9 @@ public class ReflectionUtils {
                 && needSkipGetterMethod.get(methodName)
                         .isAssignableFrom(returnType)) {
             throw new InvalidGetterMethodException(
-                    "getClass非get方法，it include needSkipGetterMethod.",
-                    new Object[] { method.getParameterTypes(), returnType });
+                    MessageUtils.format("getClass非get方法，it include needSkipGetterMethod.",
+                            new Object[] { method.getParameterTypes(),
+                                    returnType }));
         }
         
         String getterName = null;
@@ -138,8 +141,8 @@ public class ReflectionUtils {
             return getterName;
         } else {
             throw new InvalidGetterMethodException(
-                    "方法名应该以is/get+首写字母为大写字母的字符串组成.methodName:{}",
-                    new Object[] { methodName });
+                    MessageUtils.format("方法名应该以is/get+首写字母为大写字母的字符串组成.methodName:{}",
+                            new Object[] { methodName }));
         }
     }
     
@@ -190,8 +193,9 @@ public class ReflectionUtils {
         if (!Void.TYPE.equals(returnType)
                 || method.getParameterTypes().length != 1) {
             throw new InvalidSetterMethodException(
-                    "方法入参为空，或返回不为空.paramterTypes:{};returnType:{}",
-                    new Object[] { method.getParameterTypes(), returnType });
+                    MessageUtils.format("方法入参为空，或返回不为空.paramterTypes:{};returnType:{}",
+                            new Object[] { method.getParameterTypes(),
+                                    returnType }));
         }
         
         String setterName = null;
@@ -204,8 +208,8 @@ public class ReflectionUtils {
             return setterName;
         } else {
             throw new InvalidSetterMethodException(
-                    "方法名应该以set+首写字母为大写字母的字符串组成.methodName:{}",
-                    new Object[] { methodName });
+                    MessageUtils.format("方法名应该以set+首写字母为大写字母的字符串组成.methodName:{}",
+                            new Object[] { methodName }));
         }
     }
     

@@ -10,7 +10,7 @@ import java.lang.annotation.Annotation;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.tx.core.exceptions.argument.NullArgException;
+import com.tx.core.exceptions.argument.ArgNullException;
 
 /**
  * 参数解析器
@@ -30,7 +30,7 @@ public class ParameterResolver {
     
     public ParameterResolver(Class<?> paramterType, Annotation[] annotations) {
         if (paramterType == null) {
-            throw new NullArgException("生成参数解析器发生异常，参数类型不能为空");
+            throw new ArgNullException("生成参数解析器发生异常，参数类型不能为空");
         }
         this.paramterType = paramterType;
         if (annotations != null) {

@@ -12,8 +12,9 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.ss.usermodel.Cell;
 
+import com.tx.core.exceptions.resource.ResourceReadException;
 import com.tx.core.support.poi.excel.CellReader;
-import com.tx.core.support.poi.excel.exception.ExcelReadException;
+import com.tx.core.util.MessageUtils;
 
 /**
  * 默认为String类型的CellREeader实现
@@ -49,9 +50,9 @@ public class CellReader4BigDecimal implements CellReader<BigDecimal> {
             boolean ignoreTypeUnmatch, String cellType, int rowNum,
             int cellNum, String key) {
         if (!ignoreTypeUnmatch) {
-            throw new ExcelReadException(
-                    "cell rowNum:{} cellNum:{} key:{} type is:{} unable change to BigDecimal.",
-                    new Object[] { rowNum, cellNum, key });
+            throw new ResourceReadException(
+                    MessageUtils.format("cell rowNum:{} cellNum:{} key:{} type is:{} unable change to BigDecimal.",
+                            new Object[] { rowNum, cellNum, key }));
         }
     }
     
@@ -63,17 +64,17 @@ public class CellReader4BigDecimal implements CellReader<BigDecimal> {
         switch (cell.getCellType()) {
             case Cell.CELL_TYPE_ERROR:
                 if (!ignoreError) {
-                    throw new ExcelReadException(
-                            "cell rowNum:{} cellNum:{} key:{} cellType is error.",
-                            new Object[] { rowNum, cellNum, key });
+                    throw new ResourceReadException(
+                            MessageUtils.format("cell rowNum:{} cellNum:{} key:{} cellType is error.",
+                                    new Object[] { rowNum, cellNum, key }));
                 }
                 resBigDecimal = null;
                 break;
             case Cell.CELL_TYPE_BLANK:
                 if (!ignoreBlank) {
-                    throw new ExcelReadException(
-                            "cell rowNum:{} cellNum:{} key:{} cellType is blank.",
-                            new Object[] { rowNum, cellNum, key });
+                    throw new ResourceReadException(
+                            MessageUtils.format("cell rowNum:{} cellNum:{} key:{} cellType is blank.",
+                                    new Object[] { rowNum, cellNum, key }));
                 }
                 resBigDecimal = null;
                 break;

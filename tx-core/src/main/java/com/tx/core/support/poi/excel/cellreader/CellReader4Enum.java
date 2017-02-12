@@ -11,9 +11,10 @@ import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Cell;
 
+import com.tx.core.exceptions.resource.ResourceReadException;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.support.poi.excel.CellReader;
-import com.tx.core.support.poi.excel.exception.ExcelReadException;
+import com.tx.core.util.MessageUtils;
 
 /**
  * 默认为String类型的CellREeader实现
@@ -31,10 +32,10 @@ public class CellReader4Enum<E extends Enum<E>> implements CellReader<E> {
     /** <默认构造函数> */
     public CellReader4Enum(Class<E> type) {
         super();
-        AssertUtils.isTrue(type.isEnum(),"type should is enum.");
+        AssertUtils.isTrue(type.isEnum(), "type should is enum.");
         
         E[] enums = type.getEnumConstants();
-        for(E eTemp : enums){
+        for (E eTemp : enums) {
             enumMap.put(eTemp.toString(), eTemp);
         }
     }
@@ -52,9 +53,9 @@ public class CellReader4Enum<E extends Enum<E>> implements CellReader<E> {
             boolean ignoreTypeUnmatch, String cellType, int rowNum,
             int cellNum, String key) {
         if (!ignoreTypeUnmatch) {
-            throw new ExcelReadException(
-                    "cell rowNum:{} cellNum:{} key:{} type is:{} unable change to BigDecimal.",
-                    new Object[] { rowNum, cellNum, key });
+            throw new ResourceReadException(
+                    MessageUtils.format("cell rowNum:{} cellNum:{} key:{} type is:{} unable change to BigDecimal.",
+                            new Object[] { rowNum, cellNum, key }));
         }
     }
     
@@ -68,23 +69,23 @@ public class CellReader4Enum<E extends Enum<E>> implements CellReader<E> {
     public E read(Cell cell, int rowNum, int cellNum, String key,
             boolean ignoreError, boolean ignoreBlank, boolean ignoreTypeUnmatch) {
         String resString = null;
-        if(null == cell){
+        if (null == cell) {
             return null;
         }
         switch (cell.getCellType()) {
             case Cell.CELL_TYPE_ERROR:
                 if (!ignoreError) {
-                    throw new ExcelReadException(
-                            "cell rowNum:{} cellNum:{} key:{} cellType is error.",
-                            new Object[] { rowNum, cellNum, key });
+                    throw new ResourceReadException(
+                            MessageUtils.format("cell rowNum:{} cellNum:{} key:{} cellType is error.",
+                                    new Object[] { rowNum, cellNum, key }));
                 }
                 resString = null;
                 break;
             case Cell.CELL_TYPE_BLANK:
                 if (!ignoreBlank) {
-                    throw new ExcelReadException(
-                            "cell rowNum:{} cellNum:{} key:{} cellType is blank.",
-                            new Object[] { rowNum, cellNum, key });
+                    throw new ResourceReadException(
+                            MessageUtils.format("cell rowNum:{} cellNum:{} key:{} cellType is blank.",
+                                    new Object[] { rowNum, cellNum, key }));
                 }
                 resString = "";
                 break;
@@ -126,20 +127,19 @@ public class CellReader4Enum<E extends Enum<E>> implements CellReader<E> {
      * @return
      */
     @Override
-    public E read(int cellType, Cell cell, int rowNum, int cellNum,
-            String key, boolean ignoreError, boolean ignoreBlank,
-            boolean ignoreTypeUnmatch) {
-        E res =  null;
+    public E read(int cellType, Cell cell, int rowNum, int cellNum, String key,
+            boolean ignoreError, boolean ignoreBlank, boolean ignoreTypeUnmatch) {
+        E res = null;
         String resString = null;
         if (cellType == Cell.CELL_TYPE_STRING) {
             resString = cell.getStringCellValue();
             
             res = this.enumMap.get(resString);
-        } else if(cellType == Cell.CELL_TYPE_NUMERIC){
+        } else if (cellType == Cell.CELL_TYPE_NUMERIC) {
             resString = String.valueOf(cell.getNumericCellValue());
             
             res = this.enumMap.get(resString);
-        }else {
+        } else {
             res = read(cell,
                     rowNum,
                     cellNum,

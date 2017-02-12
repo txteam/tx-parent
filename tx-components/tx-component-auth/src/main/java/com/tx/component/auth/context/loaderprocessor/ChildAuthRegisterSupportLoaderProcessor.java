@@ -22,6 +22,7 @@ import com.tx.component.auth.context.AuthItemLoaderProcessor;
 import com.tx.component.auth.context.loaderprocessor.childauth.ChildAuthRegister;
 import com.tx.component.auth.exceptions.AuthContextInitException;
 import com.tx.component.auth.model.AuthItem;
+import com.tx.core.util.MessageUtils;
 
 /**
  * 子数据权限权限加载器处理器<br/>
@@ -114,9 +115,9 @@ public class ChildAuthRegisterSupportLoaderProcessor implements
         }
         if (registerTemp == null) {
             throw new AuthContextInitException(
-                    "register:[{}] not exist.register not regist to springApplicationContext "
+                    MessageUtils.format("register:[{}] not exist.register not regist to springApplicationContext "
                             + "or not instance of ChildAuthRegister.",
-                    new Object[] { registerName });
+                            new Object[] { registerName }));
         }
         return registerTemp;
     }

@@ -16,15 +16,14 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.BeanWrapper;
-import org.springframework.beans.PropertyAccessorFactory;
 
+import com.tx.core.exceptions.resource.ResourceReadException;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.reflection.ReflectionUtils;
 import com.tx.core.support.poi.excel.CellRowWriter;
 import com.tx.core.support.poi.excel.annotation.ExcelCell;
 import com.tx.core.support.poi.excel.annotation.ExcelCellInfo;
-import com.tx.core.support.poi.excel.exception.ExcelReadException;
+import com.tx.core.util.MessageUtils;
 import com.tx.core.util.MetaObjectUtils;
 
 /**
@@ -64,8 +63,8 @@ public class TypeCellRowWriter<T> implements CellRowWriter<T> {
                     fieldType, excelCellAnno);
             
             if (key2excelCellInfoMapping.containsKey(excelCellAnno.index())) {
-                throw new ExcelReadException("重复的字段索引值:{}。请核对。",
-                        new Object[] { excelCellAnno.index() });
+                throw new ResourceReadException(MessageUtils.format("重复的字段索引值:{}。请核对。",
+                        new Object[] { excelCellAnno.index() }));
             }
             key2excelCellInfoMapping.put(excelCellAnno.index(), excelCellInfo);
         }
