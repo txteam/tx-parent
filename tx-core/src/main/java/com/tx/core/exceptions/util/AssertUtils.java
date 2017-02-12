@@ -79,6 +79,24 @@ public class AssertUtils {
      * @see [类、类#方法、类#成员]
      */
     public static void notEmpty(Object obj, ErrorCode error,
+            String messagePattern, String... parameters) {
+        int errorCode = error == null ? -1 : error.getCode();
+        notEmpty(obj, errorCode, null, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言对应对象非空(支持：字符串，数组，集合，Map)<br/>
+     * <功能详细描述>
+     * @param obj 传入的检查是否为空的对象
+     * @param error 传入的ErrorCode对象实例，如果在错误信息注册表中存在对应的错误实现类，则自动根据参数实例化对应的类实例
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void notEmpty(Object obj, ErrorCode error,
             String messagePattern, Object[] parameters) {
         int errorCode = error == null ? -1 : error.getCode();
         notEmpty(obj, errorCode, null, messagePattern, parameters);
@@ -97,8 +115,42 @@ public class AssertUtils {
      * @see [类、类#方法、类#成员]
      */
     public static void notEmpty(Object obj, int errorCode,
+            String messagePattern, String... parameters) {
+        notEmpty(obj, errorCode, null, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言对应对象非空(支持：字符串，数组，集合，Map)<br/>
+     * <功能详细描述>
+     * @param obj 传入的检查是否为空的对象
+     * @param errorCode 传入的errorCode,如果对应的ErrorCode的实例类存在，则生成的异常为实际对应的类，否则为SILException.并且其中errorCode为传入的值（注：errorCode应>=0）
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void notEmpty(Object obj, int errorCode,
             String messagePattern, Object[] parameters) {
         notEmpty(obj, errorCode, null, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言对应对象非空(支持：字符串，数组，集合，Map)<br/>
+     * <功能详细描述>
+     * @param obj 传入的检查是否为空的对象
+     * @param type 默认额异常实现类，如果为空，则系统自动选择SILException进行替代
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void notEmpty(Object obj, Class<? extends SILException> type,
+            String messagePattern, String... parameters) {
+        notEmpty(obj, -1, type, messagePattern, parameters);
     }
     
     /**
@@ -1030,7 +1082,7 @@ public class AssertUtils {
             Class<? extends SILException> type, String messagePattern,
             Object[] parameters) {
         notNull(clazz, "clazz is null.");//判断是否是类型的实例，首先类型不能为空
-        if (clazz.isInstance(obj)) {
+        if (!clazz.isInstance(obj)) {
             //如果为空则抛出异常
             String message = MessageUtils.format(messagePattern, parameters);
             throw SILExceptionHelper.newSILException(errorCode,

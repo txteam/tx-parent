@@ -6,6 +6,8 @@
  */
 package com.tx.core.exceptions;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.tx.core.TxConstants;
 
 /**
@@ -29,13 +31,10 @@ public class SILException extends RuntimeException {
     /** 注释内容 */
     private static final long serialVersionUID = 4629630103815146373L;
     
-    /** 错误编码注册表 */
-    private static final ErrorCodeRegistry ERROR_CODE_REGISTRY = ErrorCodeRegistry.INSTANCE;
-    
     /** 注册错误编码 */
     protected static final void registeErrorCode(int errorCode,
             String errorMessage) {
-        ERROR_CODE_REGISTRY.registeErrorCode(errorCode, errorMessage);
+        ErrorCodeRegistry.INSTANCE.registeErrorCode(errorCode, errorMessage);
     }
     
     /** 错误 */
@@ -67,7 +66,8 @@ public class SILException extends RuntimeException {
       * @see [类、类#方法、类#成员]
      */
     public final void setErrorCode(int errorCode) {
-        if (this.error() != null || this.errorCode() < 0) {
+        if (this.error() != null || this.errorCode() == null
+                || this.errorCode().intValue() >= 0) {
             //当子类覆写了error()方法，或errorCode()方法时.setErrorCode方法将会失效<br/>
             return;
         }
@@ -88,7 +88,7 @@ public class SILException extends RuntimeException {
     public final int getErrorCode() {
         if (this.error() != null) {
             return this.error().getCode();
-        } else if (this.errorCode() >= 0) {
+        } else if (this.errorCode() != null && this.errorCode().intValue() >= 0) {
             return this.errorCode();
         } else {
             return this.errorCode;
@@ -107,7 +107,9 @@ public class SILException extends RuntimeException {
      * @see [类、类#方法、类#成员]
      */
     public final String getErrorMessage() {
-        String errorMessage = ERROR_CODE_REGISTRY.getErrorMessage(this.getErrorCode());
+        String errorMessage = ErrorCodeRegistry.INSTANCE.getErrorMessage(this.getErrorCode());
+        errorMessage = StringUtils.isEmpty(errorMessage) ? getMessage()
+                : errorMessage;
         return errorMessage;
     }
     
