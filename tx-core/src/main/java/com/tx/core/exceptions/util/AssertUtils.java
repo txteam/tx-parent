@@ -1030,7 +1030,7 @@ public class AssertUtils {
             Class<? extends SILException> type, String messagePattern,
             Object[] parameters) {
         notNull(clazz, "clazz is null.");//判断是否是类型的实例，首先类型不能为空
-        if (clazz.isInstance(obj)) {
+        if (!clazz.isInstance(obj)) {
             //如果为空则抛出异常
             String message = MessageUtils.format(messagePattern, parameters);
             throw SILExceptionHelper.newSILException(errorCode,
