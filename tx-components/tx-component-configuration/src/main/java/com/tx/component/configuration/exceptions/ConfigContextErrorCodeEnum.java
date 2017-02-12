@@ -28,7 +28,7 @@ public enum ConfigContextErrorCodeEnum implements ErrorCode {
     
     CONFIG_ITEM_NOT_EXIST_ERROR(242001, "配置项不存在"),
     
-    UNMODIFYABLE_ERROR(242002, "配置项目不可编辑"),
+    UNMODIFYABLE_ERROR(242002, "配置项目不可编辑")
     /* -------　配置容器异常 end   ------- */
     ;
     

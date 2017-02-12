@@ -36,14 +36,16 @@ public class ErrorCodeRegistry {
     public static final ErrorCodeRegistry INSTANCE = new ErrorCodeRegistry();
     
     /** 错误编码映射 */
-    private static final Map<Integer, String> code2messageMap = new HashMap<Integer, String>();
+    private final Map<Integer, String> code2messageMap;
     
     /** 错误编码映射 */
-    private static final Map<Integer, Class<? extends SILException>> code2typeMap = new HashMap<Integer, Class<? extends SILException>>();
+    private final Map<Integer, Class<? extends SILException>> code2typeMap;
     
     /** <默认构造函数> */
     private ErrorCodeRegistry() {
         super();
+        this.code2messageMap = new HashMap<Integer, String>();
+        this.code2typeMap = new HashMap<Integer, Class<? extends SILException>>();
         
         //根据异常编码枚举类初始化异常错误信息<br/>
         initByErrorCodeEnumTypes();
@@ -109,8 +111,12 @@ public class ErrorCodeRegistry {
         if (errorCode == null || errorCode.getCode() < 0) {
             return;
         }
-        ErrorCodeRegistry.code2messageMap.put(errorCode.getCode(),
-                errorCode.getMessage());
+        this.code2messageMap.put(errorCode.getCode(), errorCode.getMessage());
+    }
+    
+    public static void main(String[] args) {
+        Map<String, String> test = new HashMap<String, String>();
+        test.put(null, null);
     }
     
     /**
@@ -123,14 +129,14 @@ public class ErrorCodeRegistry {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    public void registeErrorCode(int errorCode, String errorMessage,
+    public void registeErrorCode(Integer errorCode, String errorMessage,
             Class<? extends SILException> exceptionType) {
-        if (errorCode < 0) {
+        if (errorCode == null || errorCode.intValue() < 0) {
             return;
         }
-        ErrorCodeRegistry.code2messageMap.put(errorCode, errorMessage);
+        this.code2messageMap.put(errorCode, errorMessage);
         if (exceptionType != null) {
-            ErrorCodeRegistry.code2typeMap.put(errorCode, exceptionType);
+            this.code2typeMap.put(errorCode, exceptionType);
         }
     }
     
@@ -148,7 +154,7 @@ public class ErrorCodeRegistry {
         if (errorCode < 0) {
             return;
         }
-        ErrorCodeRegistry.code2messageMap.put(errorCode, errorMessage);
+        this.code2messageMap.put(errorCode, errorMessage);
     }
     
     /**
@@ -165,7 +171,7 @@ public class ErrorCodeRegistry {
         if (errorCode < 0) {
             return null;
         }
-        String errorMessage = ErrorCodeRegistry.code2messageMap.get(errorCode);
+        String errorMessage = this.code2messageMap.get(errorCode);
         return errorMessage;
     }
     
@@ -183,7 +189,7 @@ public class ErrorCodeRegistry {
         if (errorCode < 0) {
             return null;
         }
-        Class<? extends SILException> type = ErrorCodeRegistry.code2typeMap.get(errorCode);
+        Class<? extends SILException> type = this.code2typeMap.get(errorCode);
         return type;
     }
 }

@@ -24,7 +24,7 @@ public enum CommunicationContextErrorCodeEnum implements ErrorCode {
     
     COMMUNICATION_CONTEXT_INIT_ERROR(231000, "消息容器初始化异常"),
     
-    SEND_MESSAGE_ERROR(232000, "消息发送异常"),
+    SEND_MESSAGE_ERROR(232000, "消息发送异常")
     /* -------　消息容器异常 end   ------- */
     ;
     

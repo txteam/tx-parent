@@ -26,7 +26,7 @@ public enum SLCErrorCodeEnum implements ErrorCode {
     
     UNSUPPORTED_SERVICE_LOGGER_TYPE_ERROR(211200, "不支持的业务日志类型"),
     
-    SERVICE_LOGGER_PERSIST_ERROR(211300, "业务日志持久化异常"),
+    SERVICE_LOGGER_PERSIST_ERROR(211300, "业务日志持久化异常")
     /* -------　业务日志异常 end   ------- */
     ;
     

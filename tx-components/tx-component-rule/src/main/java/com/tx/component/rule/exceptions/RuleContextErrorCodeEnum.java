@@ -33,7 +33,7 @@ public enum RuleContextErrorCodeEnum implements ErrorCode {
     
     RULL_NOT_EXSIT_ERROR(253200, "规则不存在"),
     
-    RULL_STATE_ERROR(253300, "规则状态异常"),
+    RULL_STATE_ERROR(253300, "规则状态异常")
     /* -------　权限容器异常 end   ------- */
     ;
     

@@ -24,7 +24,7 @@ public enum AuthContextErrorCodeEnum implements ErrorCode {
     
     AUTH_CONTEXT_INIT_ERROR(221000, "权限容器初始化异常"),
     
-    AUTH_ITEM_NOT_EXIST_ERROR(222000, "权限项不存在"),
+    AUTH_ITEM_NOT_EXIST_ERROR(222000, "权限项不存在")
     /* -------　权限容器异常 end   ------- */
     ;
     

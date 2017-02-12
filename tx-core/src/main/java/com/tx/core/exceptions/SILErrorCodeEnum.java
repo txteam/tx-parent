@@ -80,7 +80,7 @@ public enum SILErrorCodeEnum implements ErrorCode {
     
     HTTP_AFTER_EXECUTE_ERROR(131003, "发送HTTP请求异常"),
     
-    HTTP_SOCKET_ERROR(131004, "发送HTTP请求异常"),
+    HTTP_SOCKET_ERROR(131004, "发送HTTP请求异常")
     /* -------　Remote异常 end   ------- */
     
     /* -------　context异常 start ------- */
