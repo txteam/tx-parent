@@ -63,7 +63,10 @@ public class SimpleCallbackHandler<R> implements CallbackHandler<R> {
      */
     @Override
     public void setValue(R value) {
-        AssertUtils.isAssignable(rowType, value.getClass());
+        AssertUtils.isAssignable(rowType,
+                value.getClass(),
+                "type:{} should be subtype of :{}",
+                new Object[] { value.getClass(), rowType });
         this.value = value;
     }
     
