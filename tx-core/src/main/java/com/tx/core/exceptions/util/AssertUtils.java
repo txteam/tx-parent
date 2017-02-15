@@ -7,6 +7,7 @@
 package com.tx.core.exceptions.util;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.springframework.core.io.Resource;
 
@@ -19,6 +20,7 @@ import com.tx.core.exceptions.argument.ArgNotEmptyException;
 import com.tx.core.exceptions.argument.ArgNotNullException;
 import com.tx.core.exceptions.argument.ArgNullException;
 import com.tx.core.exceptions.argument.ArgTypeIllegalException;
+import com.tx.core.exceptions.resource.ResourceAccessException;
 import com.tx.core.exceptions.resource.ResourceNotExistException;
 import com.tx.core.util.MessageUtils;
 import com.tx.core.util.ObjectUtils;
@@ -33,6 +35,178 @@ import com.tx.core.util.ObjectUtils;
  * @since [产品/模块版本]
  */
 public class AssertUtils {
+    
+    /**
+     * 断言包装抛出的异常<br/>
+     * <功能详细描述>
+     * @param e 传入的检查是否为空的对象
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void wrap(Throwable e, String messagePattern,
+            String... parameters) {
+        wrap(e, -1, null, messagePattern, (Object[]) parameters);
+    }
+    
+    /**
+     * 断言包装抛出的异常<br/>
+     * <功能详细描述>
+     * @param e 传入的检查是否为空的对象
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void wrap(Throwable e, String messagePattern,
+            Object[] parameters) {
+        wrap(e, -1, null, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言包装抛出的异常<br/>
+     * <功能详细描述>
+     * @param e 传入的检查是否为空的对象
+     * @param error 传入的ErrorCode对象实例，如果在错误信息注册表中存在对应的错误实现类，则自动根据参数实例化对应的类实例
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void wrap(Throwable e, ErrorCode error,
+            String messagePattern, String... parameters) {
+        int errorCode = error == null ? -1 : error.getCode();
+        wrap(e, errorCode, null, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言包装抛出的异常<br/>
+     * <功能详细描述>
+     * @param e 传入的检查是否为空的对象
+     * @param error 传入的ErrorCode对象实例，如果在错误信息注册表中存在对应的错误实现类，则自动根据参数实例化对应的类实例
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void wrap(Throwable e, ErrorCode error,
+            String messagePattern, Object[] parameters) {
+        int errorCode = error == null ? -1 : error.getCode();
+        wrap(e, errorCode, null, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言包装抛出的异常<br/>
+     * <功能详细描述>
+     * @param e 传入的检查是否为空的对象
+     * @param errorCode 传入的errorCode,如果对应的ErrorCode的实例类存在，则生成的异常为实际对应的类，否则为SILException.并且其中errorCode为传入的值（注：errorCode应>=0）
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void wrap(Throwable e, int errorCode, String messagePattern,
+            String... parameters) {
+        wrap(e, errorCode, null, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言包装抛出的异常<br/>
+     * <功能详细描述>
+     * @param e 传入的检查是否为空的对象
+     * @param errorCode 传入的errorCode,如果对应的ErrorCode的实例类存在，则生成的异常为实际对应的类，否则为SILException.并且其中errorCode为传入的值（注：errorCode应>=0）
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void wrap(Throwable e, int errorCode, String messagePattern,
+            Object[] parameters) {
+        wrap(e, errorCode, null, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言包装抛出的异常<br/>
+     * <功能详细描述>
+     * @param e 传入的检查是否为空的对象
+     * @param type 默认额异常实现类，如果为空，则系统自动选择SILException进行替代
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void wrap(Throwable e, Class<? extends SILException> type,
+            String messagePattern, String... parameters) {
+        wrap(e, -1, type, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言包装抛出的异常<br/>
+     * <功能详细描述>
+     * @param e 传入的检查是否为空的对象
+     * @param type 默认额异常实现类，如果为空，则系统自动选择SILException进行替代
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void wrap(Throwable e, Class<? extends SILException> type,
+            String messagePattern, Object[] parameters) {
+        wrap(e, -1, type, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言包装抛出的异常<br/>
+     * <功能详细描述>
+     * @param e 传入的检查是否为空的对象
+     * @param errorCode 传入的errorCode,如果对应的ErrorCode的实例类存在，则生成的异常为实际对应的类，否则为SILException.并且其中errorCode为传入的值（注：errorCode应>=0）
+     * @param type 默认额异常实现类，如果为空，则系统自动选择SILException进行替代
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void wrap(Throwable e, int errorCode,
+            Class<? extends SILException> type, String messagePattern,
+            Object[] parameters) {
+        if (e != null) {
+            if (e instanceof SILException) {
+                throw (SILException) e;
+            }
+            if (type == null) {
+                if (e instanceof IOException) {
+                    type = ResourceAccessException.class;
+                } else {
+                    type = SILException.class;
+                }
+            }
+            //如果为空则抛出异常
+            String message = MessageUtils.format(messagePattern, parameters);
+            throw SILExceptionHelper.newSILException(errorCode,
+                    message,
+                    null,
+                    type);
+        }
+    }
     
     /**
      * 断言对应对象非空(支持：字符串，数组，集合，Map)<br/>

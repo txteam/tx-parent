@@ -354,11 +354,10 @@ public class FileContextBuilder extends FileContextConfigurator implements
      * @see [类、类#方法、类#成员]
      */
     protected FileDefinition doSaveFile(String module, String relativePath,
-            InputStream input, String filename) {
+            InputStream input) {
         AssertUtils.notEmpty(module, "module is empty.");
         AssertUtils.notEmpty(relativePath, "relativePath is empty.");
         AssertUtils.notNull(input, "input is empty.");
-        AssertUtils.notEmpty(filename, "filename is empty.");
         
         relativePath = cleanRelativePath(relativePath);//相对路径
         //持久化对应的文件对象
@@ -377,7 +376,7 @@ public class FileContextBuilder extends FileContextConfigurator implements
             
             getFileDefinitionService().updateById(fileDefinition);
         } else {
-            fileDefinition = buildFileDefinition(module, relativePath, filename);
+            fileDefinition = buildFileDefinition(module, relativePath);
             FileModule fm = getFileModule(module);
             FileDefinitionResourceDriver driver = fm.getDriver();
             FileResource resource = driver.getResource(fileDefinition);
@@ -404,17 +403,15 @@ public class FileContextBuilder extends FileContextConfigurator implements
      * @see [类、类#方法、类#成员]
      */
     protected FileDefinition doAddFile(String module, String relativePath,
-            InputStream input, String filename) {
+            InputStream input) {
         AssertUtils.notEmpty(module, "module is empty.");
         AssertUtils.notEmpty(relativePath, "relativePath is empty.");
         AssertUtils.notNull(input, "input is empty.");
-        AssertUtils.notEmpty(filename, "filename is empty.");
         
         relativePath = cleanRelativePath(relativePath);//相对路径
         //持久化对应的文件对象
         FileDefinition fileDefinition = buildFileDefinition(module,
-                relativePath,
-                filename);
+                relativePath);
         
         FileModule fm = getFileModule(module);
         FileDefinitionResourceDriver driver = fm.getDriver();
@@ -440,10 +437,11 @@ public class FileContextBuilder extends FileContextConfigurator implements
      * @see [类、类#方法、类#成员]
      */
     private FileDefinition buildFileDefinition(String module,
-            String relativePath, String filename) {
+            String relativePath) {
         AssertUtils.notEmpty(module, "module is empty.");
         AssertUtils.notEmpty(relativePath, "relativePath is empty.");
-        AssertUtils.notEmpty(filename, "filename is empty.");
+        String filename = StringUtils.getFilename(relativePath);
+        String filenameExtension = StringUtils.getFilenameExtension(relativePath);
         
         relativePath = cleanRelativePath(relativePath);//相对路径
         Date now = new Date();
@@ -456,7 +454,7 @@ public class FileContextBuilder extends FileContextConfigurator implements
         fileDefinition.setModule(module);
         fileDefinition.setRelativePath(relativePath);
         fileDefinition.setFilename(filename);
-        fileDefinition.setFilenameExtension(StringUtils.getFilenameExtension(relativePath));
+        fileDefinition.setFilenameExtension(filenameExtension);
         
         fileDefinition.setSystem(this.system);
         
