@@ -522,7 +522,7 @@ public class AssertUtils {
     public static void isEmpty(Object obj, int errorCode,
             Class<? extends SILException> type, String messagePattern,
             Object[] parameters) {
-        if (ObjectUtils.isEmpty(obj)) {
+        if (!ObjectUtils.isEmpty(obj)) {
             //如果为空则抛出异常
             String message = MessageUtils.format(messagePattern, parameters);
             throw SILExceptionHelper.newSILException(errorCode,
