@@ -11,12 +11,12 @@ import java.util.Map;
 
 import com.aliyuncs.DefaultAcsClient;
 import com.aliyuncs.IAcsClient;
-import com.aliyuncs.dm.model.v20151123.SingleSendSmsRequest;
-import com.aliyuncs.dm.model.v20151123.SingleSendSmsResponse;
 import com.aliyuncs.exceptions.ClientException;
 import com.aliyuncs.exceptions.ServerException;
 import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.profile.IClientProfile;
+import com.aliyuncs.sms.model.v20160927.SingleSendSmsRequest;
+import com.aliyuncs.sms.model.v20160927.SingleSendSmsResponse;
 import com.tx.component.communication.model.SendMessage;
 import com.tx.component.communication.model.SendResult;
 import com.tx.component.communication.senddialect.sms.AbstractTemplateSMSSendDialect;

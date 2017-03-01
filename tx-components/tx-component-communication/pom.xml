@@ -22,13 +22,18 @@
 		</dependency>
 		<dependency>
 			<groupId>com.aliyun</groupId>
-			<artifactId>aliyun-java-sdk-core</artifactId>
-			<version>3.0.0</version>
+			<artifactId>aliyun-java-sdk-dm</artifactId>
+			<version>3.0.0-rc3</version>
 		</dependency>
 		<dependency>
 			<groupId>com.aliyun</groupId>
-			<artifactId>aliyun-java-sdk-dm</artifactId>
+			<artifactId>aliyun-java-sdk-sms</artifactId>
 			<version>3.0.0-rc1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.aliyun</groupId>
+			<artifactId>aliyun-java-sdk-core</artifactId>
+			<version>3.1.0</version>
 		</dependency>
 
 		<!-- tx -->
@@ -54,7 +59,7 @@
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 		</dependency>
-		
+
 		<!-- 单元测试依赖类 -->
 		<dependency>
 			<groupId>org.hibernate</groupId>
