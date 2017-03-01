@@ -10,15 +10,16 @@
 	<bean id="messageSendContent"
 		class="com.tx.component.communication.context.MessageSenderContext">
 	</bean>
-
+	
 	<bean id="aliyun.smsTemplateMessageSendHandler" class="com.tx.component.communication.sendhandler.smshandler.SMSTemplateMessageSendHandler">
 		<property name="dialect">
-			<bean id="alidayuSMSSendDialect" class="com.tx.component.communication.senddialect.sms.aliyun.AliyunSMSSendDialect">
+			<bean id="aliyun.SMSSendDialect" class="com.tx.component.communication.senddialect.sms.aliyun.AliyunSMSSendDialect">
 				<property name="accessKeyId" value="LTAItTQj5hMN5eD1"></property>
 				<property name="secret" value="8L8MXtQUb0wNUOlNNan0o9GrNpTCRc"></property>
+				<property name="regionId" value="cn-shenzhen"></property>
 				<property name="smsTemplateMap">
 					<map>
-						<entry key="SMS_14246689" value="您的验证码是${code}。"></entry>
+						<entry key="SMS_16505322" value="您于${currentDate}发起的入金操作，金额为：${amount}元，已成功到账。"></entry>
 					</map>
 				</property>
 				<property name="signNameMap">

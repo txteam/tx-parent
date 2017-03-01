@@ -11,11 +11,13 @@
 		class="com.tx.component.communication.context.MessageSenderContext">
 	</bean>
 
-	<bean id="aliyun.smsTemplateMessageSendHandler" class="com.tx.component.communication.sendhandler.smshandler.SMSTemplateMessageSendHandler">
+	<bean id="SMS.TemplateMessageSendHandler"
+		class="com.tx.component.communication.sendhandler.smshandler.SMSTemplateMessageSendHandler">
 		<property name="dialect">
-			<bean id="aliyun.SMSSendDialect" class="com.tx.component.communication.senddialect.sms.aliyun.AliyunSMSSendDialect">
-				<property name="accessKeyId" value="LTAItTQj5hMN5eD1"></property>
-				<property name="secret" value="8L8MXtQUb0wNUOlNNan0o9GrNpTCRc"></property>
+			<bean id="alidayuSMSSendDialect"
+				class="com.tx.component.communication.senddialect.sms.alidayu.AlidayuSMSSendDialect">
+				<property name="accessKeyId" value="LTAItTQj5hMN5eD1---"></property>
+				<property name="secret" value="8L8MXtQUb0wNUOlNNan0o9GrNpTCRc----"></property>
 				<property name="smsTemplateMap">
 					<map>
 						<entry key="SMS_14246689" value="您的验证码是${code}。"></entry>
@@ -30,29 +32,49 @@
 			</bean>
 		</property>
 	</bean>
+
+<!-- 	<bean id="aliyun.smsTemplateMessageSendHandler" class="com.tx.component.communication.sendhandler.smshandler.SMSTemplateMessageSendHandler"> -->
+<!-- 		<property name="dialect"> -->
+<!-- 			<bean id="aliyun.SMSSendDialect" class="com.tx.component.communication.senddialect.sms.aliyun.AliyunSMSSendDialect"> -->
+<!-- 				<property name="accessKeyId" value="LTAItTQj5hMN5eD1"></property> -->
+<!-- 				<property name="secret" value="8L8MXtQUb0wNUOlNNan0o9GrNpTCRc"></property> -->
+<!-- 				<property name="smsTemplateMap"> -->
+<!-- 					<map> -->
+<!-- 						<entry key="SMS_14246689" value="您的验证码是${code}。"></entry> -->
+<!-- 					</map> -->
+<!-- 				</property> -->
+<!-- 				<property name="signNameMap"> -->
+<!-- 					<map> -->
+<!-- 						<entry key="企账通" value="企账通"></entry> -->
+<!-- 						<entry key="汽摩交易所" value="汽摩交易所"></entry> -->
+<!-- 					</map> -->
+<!-- 				</property> -->
+<!-- 			</bean> -->
+<!-- 		</property> -->
+<!-- 	</bean> -->
 	
-	<bean id="alidayuSMSMessageSendHandler"
-		class="com.tx.component.communication.sendhandler.smshandler.AlidayuSMSMessageSendHandler">
-		<property name="dialect">
-			<bean id="alidayuSMSSendDialect"
-				class="com.tx.component.communication.senddialect.sms.alidayu.AlidayuSMSSendDialect">
-				<property name="appKey" value="23444919"></property>
-				<property name="appSecret" value="73455c3ed8086bd08b5daea68ec5df94"></property>	
-				<property name="smsTemplateMap">
-					<map>
-						<entry key="SMS_13061319" value="验证码${code}，您正在进行${product}身份验证，打死不要告诉别人哦！"></entry>
-					</map>
-				</property>
-				<property name="signNameMap">
-					<map>
-						<entry key="身份验证" value="身份验证"></entry>
-						<entry key="注册验证" value="注册验证"></entry>
-						<entry key="登录验证" value="登录验证"></entry>
-						<entry key="变更验证" value="变更验证"></entry>
-						<entry key="活动验证" value="活动验证"></entry>
-					</map>
-				</property>
-			</bean>
-		</property>
-	</bean>
+<!-- 	<bean id="alidayuSMSMessageSendHandler" -->
+<!-- 		class="com.tx.component.communication.sendhandler.smshandler.AlidayuSMSMessageSendHandler"> -->
+<!-- 		<property name="dialect"> -->
+<!-- 			<bean id="alidayuSMSSendDialect" -->
+<!-- 				class="com.tx.component.communication.senddialect.sms.alidayu.AlidayuSMSSendDialect"> -->
+<!-- 				<property name="appKey" value="23343159"></property> -->
+<!-- 				<property name="appSecret" value="1764783a98b40f91f9b73b5bfdcda872"></property>	 -->
+<!-- 				<property name="smsTemplateMap"> -->
+<!-- 					<map> -->
+<!-- 						<entry key="SMS_13061319" value="验证码${code}，您正在进行${product}身份验证，打死不要告诉别人哦！"></entry> -->
+<!-- 					</map> -->
+<!-- 				</property> -->
+<!-- 				<property name="signNameMap"> -->
+<!-- 					<map> -->
+<!-- 						<entry key="身份验证" value="身份验证"></entry> -->
+<!-- 						<entry key="注册验证" value="注册验证"></entry> -->
+<!-- 						<entry key="登录验证" value="登录验证"></entry> -->
+<!-- 						<entry key="变更验证" value="变更验证"></entry> -->
+<!-- 						<entry key="活动验证" value="活动验证"></entry> -->
+<!-- 					</map> -->
+<!-- 				</property> -->
+<!-- 			</bean> -->
+<!-- 		</property> -->
+<!-- 	</bean> -->
 </beans>
