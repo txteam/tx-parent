@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import com.tx.component.file.FileContextConstants;
+import com.tx.component.file.helper.FileContextHelper;
 import com.tx.component.file.model.FileDefinition;
 import com.tx.component.file.resource.FileResource;
 import com.tx.core.exceptions.resource.ResourceIsExistException;
@@ -170,6 +171,8 @@ public class FileContext extends FileContextBuilder implements InitializingBean 
     @Transactional
     public FileDefinition save(String module, String relativePath,
             Resource resource, String filename) {
+        relativePath = FileContextHelper.preHandleRelativePath(relativePath);
+        
         AssertUtils.notEmpty(relativePath, "relativePath is null.");
         AssertUtils.notNull(resource, "resource is null.");
         AssertUtils.isExist(resource, "resource is not exsit.");
@@ -296,6 +299,8 @@ public class FileContext extends FileContextBuilder implements InitializingBean 
     @Transactional
     public FileDefinition add(String module, String relativePath,
             Resource resource, String filename) throws ResourceIsExistException {
+        relativePath = FileContextHelper.preHandleRelativePath(relativePath);
+        
         AssertUtils.notEmpty(relativePath, "relativePath is null.");
         AssertUtils.notNull(resource, "resource is null.");
         AssertUtils.isExist(resource, "resource is not exsit.");
