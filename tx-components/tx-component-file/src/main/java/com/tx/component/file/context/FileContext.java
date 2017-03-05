@@ -171,8 +171,7 @@ public class FileContext extends FileContextBuilder implements InitializingBean 
     @Transactional
     public FileDefinition save(String module, String relativePath,
             Resource resource, String filename) {
-        relativePath = FileContextHelper.preHandleRelativePath(relativePath);
-        
+        relativePath = FileContextHelper.handleRelativePath(relativePath);
         AssertUtils.notEmpty(relativePath, "relativePath is null.");
         AssertUtils.notNull(resource, "resource is null.");
         AssertUtils.isExist(resource, "resource is not exsit.");
@@ -299,8 +298,7 @@ public class FileContext extends FileContextBuilder implements InitializingBean 
     @Transactional
     public FileDefinition add(String module, String relativePath,
             Resource resource, String filename) throws ResourceIsExistException {
-        relativePath = FileContextHelper.preHandleRelativePath(relativePath);
-        
+        relativePath = FileContextHelper.handleRelativePath(relativePath);
         AssertUtils.notEmpty(relativePath, "relativePath is null.");
         AssertUtils.notNull(resource, "resource is null.");
         AssertUtils.isExist(resource, "resource is not exsit.");

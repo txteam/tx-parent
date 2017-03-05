@@ -32,11 +32,11 @@ public class FileContextHelper {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    public static String preHandleRelativePath(String relativePath) {
+    public static String handleRelativePath(String relativePath) {
         AssertUtils.notEmpty(relativePath, "relativePath is empty.");
         
         //整理存储的relativePath相对路径
-        relativePath = preHandleRelativePath(relativePath, null);
+        relativePath = handleRelativePath(relativePath, null);
         return relativePath;
     }
     
@@ -51,7 +51,7 @@ public class FileContextHelper {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public static String preHandleRelativePath(String relativePath,
+    public static String handleRelativePath(String relativePath,
             String filenameExtension) {
         AssertUtils.notEmpty(relativePath, "relativePath is empty.");
         
