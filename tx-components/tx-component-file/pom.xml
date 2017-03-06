@@ -22,7 +22,6 @@
 		<dependency>
 			<groupId>com.aliyun.oss</groupId>
 			<artifactId>aliyun-sdk-oss</artifactId>
-			<optional>true</optional>
 		</dependency>
 
 

@@ -11,6 +11,7 @@ import java.io.IOException;
 import com.aliyun.oss.ClientConfiguration;
 import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.common.comm.Protocol;
+import com.aliyun.oss.model.BucketInfo;
 import com.aliyun.oss.model.CannedAccessControlList;
 import com.aliyun.oss.model.CreateBucketRequest;
 import com.tx.component.file.driver.FileDefinitionResourceDriver;
@@ -92,6 +93,16 @@ public class OSSFileDefinitionResourceDriver implements
     /** 代理服务器验证的密码 */
     private String proxyPassword;
     
+    public static void main(String[] args) throws Exception {
+        OSSFileDefinitionResourceDriver driver1 = new OSSFileDefinitionResourceDriver();
+        driver1.setAccessDomain("http://txstaticresource.oss-cn-shenzhen.aliyuncs.com");
+        driver1.setEndpoint("http://oss-cn-shenzhen.aliyuncs.com");
+        driver1.setAccessKeyId("LTAIqiYuWr9WAkWa");
+        driver1.setSecretAccessKey("e4tyMfOU9IGiiDwWlc6gidT8siQek1");
+        driver1.setBucketName("txstaticresource");
+        driver1.afterPropertiesSet();
+    }
+    
     /**
      * 系统文件定义资源驱动器<br/>
      * <构造功能简述>
@@ -122,11 +133,13 @@ public class OSSFileDefinitionResourceDriver implements
         if (!this.ossClient.doesBucketExist(this.bucketName)) {
             CreateBucketRequest cbRequest = new CreateBucketRequest(
                     this.bucketName);
-            //设置为公共读
-            cbRequest.setCannedACL(CannedAccessControlList.PublicRead);
             
+            cbRequest.setCannedACL(CannedAccessControlList.PublicRead);//设置为公共读
             this.ossClient.createBucket(cbRequest);
         }
+        //如果存在则读取bucket信息，如果已被占用，则此处会抛出异常
+        BucketInfo bucketInfo = this.ossClient.getBucketInfo(this.bucketName);
+        bucketInfo.getBucket().getLocation();
     }
     
     /** 
