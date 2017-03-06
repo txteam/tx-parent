@@ -6,7 +6,7 @@
  */
 package com.tx.component.auth.exceptions;
 
-import com.tx.core.exceptions.SILException;
+import com.tx.core.exceptions.ErrorCode;
 
 /**
  * 权限容器初始化异常<br/>
@@ -17,39 +17,32 @@ import com.tx.core.exceptions.SILException;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class AuthContextInitException extends SILException {
+public class AuthContextInitException extends AuthContextException {
     
     /** 注释内容 */
     private static final long serialVersionUID = 7273081031541085969L;
-
+    
     /**
      * @return
      */
     @Override
-    protected String doGetErrorCode() {
-        return "AUTH_CONTEXT_INIT_ERROR";
+    protected ErrorCode error() {
+        return AuthContextErrorCodeEnum.AUTH_CONTEXT_INIT_ERROR;
     }
-
-    /**
-     * @return
-     */
-    @Override
-    protected String doGetErrorMessage() {
-        return "权限容器初始化错误";
-    }
-
+    
     /** <默认构造函数> */
-    public AuthContextInitException(String message, Object[] parameters) {
-        super(message, parameters);
+    public AuthContextInitException() {
+        super();
     }
-
+    
     /** <默认构造函数> */
     public AuthContextInitException(String message, Throwable cause) {
         super(message, cause);
     }
-
+    
     /** <默认构造函数> */
     public AuthContextInitException(String message) {
         super(message);
     }
+    
 }

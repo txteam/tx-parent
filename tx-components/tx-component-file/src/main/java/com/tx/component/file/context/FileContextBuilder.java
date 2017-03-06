@@ -6,6 +6,7 @@
  */
 package com.tx.component.file.context;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
@@ -13,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.io.Resource;
@@ -36,6 +38,7 @@ import com.tx.core.ddlutil.builder.alter.AlterTableDDLBuilder;
 import com.tx.core.ddlutil.builder.create.CreateTableDDLBuilder;
 import com.tx.core.ddlutil.executor.TableDDLExecutorFactory;
 import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.exceptions.util.ExceptionWrapperUtils;
 import com.tx.core.util.UUIDUtils;
 import com.tx.core.util.XstreamUtils;
 
@@ -133,9 +136,43 @@ public class FileContextBuilder extends FileContextConfigurator implements
         parseFileModuleConfig();
         
         AssertUtils.notEmpty(this.location, "location is empty.");
+        initDefaultLocation();
         this.defaultFileModule = new FileModule("default",
                 ReadWritePermissionEnum.PUBLIC_READ,
                 new SystemFileDefinitionResourceDriver(this.location));
+    }
+    
+    /**
+      * 初始化默认存储路径<br/>
+      * <功能详细描述>
+      * @throws Exception [参数说明]
+      * 
+      * @return void [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public void initDefaultLocation() throws Exception {
+        AssertUtils.notEmpty(this.location, "location is empty.");
+        this.location = StringUtils.cleanPath(this.location);//整理path中"\\"为"/"
+        while (this.location.endsWith("/")) {
+            //去除path中尾部存在的"/"
+            this.location = this.location.substring(0, location.length() - 1);
+        }
+        AssertUtils.notEmpty(location, "location is empty.");
+        if (!this.location.endsWith("/")) {
+            //追加"/"
+            this.location = this.location + "/";
+        }
+        
+        File file = new File(location);
+        if (!file.exists() && !file.isDirectory()) {
+            try {
+                FileUtils.forceMkdir(new File(location));
+            } catch (IOException e) {
+                throw ExceptionWrapperUtils.wrapperIOException(e,
+                        e.getMessage());
+            }
+        }
     }
     
     /** 
@@ -148,7 +185,7 @@ public class FileContextBuilder extends FileContextConfigurator implements
      * @see [类、类#方法、类#成员]
      */
     private void parseFileModuleConfig() throws IOException {
-        Resource configResource = this.resourceLoader.getResource(this.location);
+        Resource configResource = this.resourceLoader.getResource(this.configLocation);
         InputStream inputStream = configResource.getInputStream();
         FileContextConfig fcc = (FileContextConfig) fileModuleCfgXstream.fromXML(inputStream);
         if (fcc.getFileModuleConfig() == null) {
@@ -317,11 +354,10 @@ public class FileContextBuilder extends FileContextConfigurator implements
      * @see [类、类#方法、类#成员]
      */
     protected FileDefinition doSaveFile(String module, String relativePath,
-            InputStream input, String filename) {
+            InputStream input) {
         AssertUtils.notEmpty(module, "module is empty.");
         AssertUtils.notEmpty(relativePath, "relativePath is empty.");
         AssertUtils.notNull(input, "input is empty.");
-        AssertUtils.notEmpty(filename, "filename is empty.");
         
         relativePath = cleanRelativePath(relativePath);//相对路径
         //持久化对应的文件对象
@@ -340,11 +376,11 @@ public class FileContextBuilder extends FileContextConfigurator implements
             
             getFileDefinitionService().updateById(fileDefinition);
         } else {
-            fileDefinition = buildFileDefinition(module, relativePath, filename);
+            fileDefinition = buildFileDefinition(module, relativePath);
             FileModule fm = getFileModule(module);
             FileDefinitionResourceDriver driver = fm.getDriver();
             FileResource resource = driver.getResource(fileDefinition);
-            resource.add(input);
+            resource.save(input);
             
             fileDefinition.setViewUrl(resource.getViewUrl());
             fileDefinition.setResource(resource);
@@ -367,17 +403,15 @@ public class FileContextBuilder extends FileContextConfigurator implements
      * @see [类、类#方法、类#成员]
      */
     protected FileDefinition doAddFile(String module, String relativePath,
-            InputStream input, String filename) {
+            InputStream input) {
         AssertUtils.notEmpty(module, "module is empty.");
         AssertUtils.notEmpty(relativePath, "relativePath is empty.");
         AssertUtils.notNull(input, "input is empty.");
-        AssertUtils.notEmpty(filename, "filename is empty.");
         
         relativePath = cleanRelativePath(relativePath);//相对路径
         //持久化对应的文件对象
         FileDefinition fileDefinition = buildFileDefinition(module,
-                relativePath,
-                filename);
+                relativePath);
         
         FileModule fm = getFileModule(module);
         FileDefinitionResourceDriver driver = fm.getDriver();
@@ -403,10 +437,11 @@ public class FileContextBuilder extends FileContextConfigurator implements
      * @see [类、类#方法、类#成员]
      */
     private FileDefinition buildFileDefinition(String module,
-            String relativePath, String filename) {
+            String relativePath) {
         AssertUtils.notEmpty(module, "module is empty.");
         AssertUtils.notEmpty(relativePath, "relativePath is empty.");
-        AssertUtils.notEmpty(filename, "filename is empty.");
+        String filename = StringUtils.getFilename(relativePath);
+        String filenameExtension = StringUtils.getFilenameExtension(relativePath);
         
         relativePath = cleanRelativePath(relativePath);//相对路径
         Date now = new Date();
@@ -419,7 +454,7 @@ public class FileContextBuilder extends FileContextConfigurator implements
         fileDefinition.setModule(module);
         fileDefinition.setRelativePath(relativePath);
         fileDefinition.setFilename(filename);
-        fileDefinition.setFilenameExtension(StringUtils.getFilenameExtension(relativePath));
+        fileDefinition.setFilenameExtension(filenameExtension);
         
         fileDefinition.setSystem(this.system);
         

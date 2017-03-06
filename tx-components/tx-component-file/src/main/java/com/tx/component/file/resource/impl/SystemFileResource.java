@@ -17,9 +17,10 @@ import org.springframework.core.io.FileSystemResource;
 
 import com.tx.component.file.model.FileDefinition;
 import com.tx.component.file.resource.AbstractFileResource;
-import com.tx.core.exceptions.io.ResourceIsExistException;
+import com.tx.core.exceptions.resource.ResourceIsExistException;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.exceptions.util.ExceptionWrapperUtils;
+import com.tx.core.util.MessageUtils;
 
 /**
  * 默认的文件定义资源的实现<br/>
@@ -30,8 +31,7 @@ import com.tx.core.exceptions.util.ExceptionWrapperUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class SystemFileResource extends
-        AbstractFileResource {
+public class SystemFileResource extends AbstractFileResource {
     
     /** 系统文件资源 */
     private FileSystemResource fileSystemResource;
@@ -106,8 +106,8 @@ public class SystemFileResource extends
             //如果对应的文件资源已经存在，则进行替换
             if (this.fileSystemResource.exists()) {
                 throw new ResourceIsExistException(
-                        "resource is exist. path:{}",
-                        new Object[] { fileDefinition.getRelativePath() });
+                        MessageUtils.format("resource is exist. path:{}",
+                                new Object[] { fileDefinition.getRelativePath() }));
             }
             writeFile(this.fileSystemResource, inputStream);
         } catch (IOException e) {

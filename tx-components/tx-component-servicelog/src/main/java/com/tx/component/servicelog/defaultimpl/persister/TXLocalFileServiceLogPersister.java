@@ -22,9 +22,10 @@ import org.springframework.util.StringUtils;
 import com.tx.component.servicelog.context.logger.ServiceLogPersister;
 import com.tx.component.servicelog.defaultimpl.TXLocalFileServiceLoggerBuilder;
 import com.tx.component.servicelog.defaultimpl.TXLocalFileServiceLoggerBuilder.TXLocalFileDataFormat;
-import com.tx.component.servicelog.exception.ServiceLoggerException;
+import com.tx.component.servicelog.exceptions.ServiceLoggerException;
 import com.tx.component.servicelog.logger.TxLoaclFileServiceLog;
 import com.tx.core.reflection.JpaMetaClass;
+import com.tx.core.util.MessageUtils;
 
 import ch.qos.logback.core.Context;
 import ch.qos.logback.core.ContextBase;
@@ -42,7 +43,8 @@ import ch.qos.logback.core.rolling.TimeBasedRollingPolicy;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public class TXLocalFileServiceLogPersister<T> implements ServiceLogPersister<T> {
+public class TXLocalFileServiceLogPersister<T> implements
+        ServiceLogPersister<T> {
     
     /** 日志 */
     private Logger logger = LoggerFactory.getLogger(TXLocalFileServiceLoggerBuilder.class);
@@ -72,7 +74,8 @@ public class TXLocalFileServiceLogPersister<T> implements ServiceLogPersister<T>
      * @since [产品/模块版本]
      * @author rain
      */
-    public TXLocalFileServiceLogPersister(TXLocalFileDataFormat dataformat, String savepath) {
+    public TXLocalFileServiceLogPersister(TXLocalFileDataFormat dataformat,
+            String savepath) {
         super();
         this.dataformat = dataformat;
         this.savepath = savepath;
@@ -86,7 +89,9 @@ public class TXLocalFileServiceLogPersister<T> implements ServiceLogPersister<T>
                 persistLogByTxt(logInstance);
                 break;
             default:
-                throw new ServiceLoggerException("dataformat:{} not support.", dataformat.name());
+                throw new ServiceLoggerException(
+                        MessageUtils.format("dataformat:{} not support.",
+                                dataformat.name()));
                 
         }
     }
@@ -135,7 +140,8 @@ public class TXLocalFileServiceLogPersister<T> implements ServiceLogPersister<T>
         Set<String> getterNames = jpaMetaClass.getGetterNames();
         for (String getterMethod : getterNames) {
             try {
-                Object returnValue = MethodUtils.invokeMethod(log, "get" + StringUtils.capitalize(getterMethod));
+                Object returnValue = MethodUtils.invokeMethod(log, "get"
+                        + StringUtils.capitalize(getterMethod));
                 if (returnValue == null) {
                     continue;
                 }
@@ -154,9 +160,11 @@ public class TXLocalFileServiceLogPersister<T> implements ServiceLogPersister<T>
         //// 保存
         TxLoaclFileServiceLog txLog = (TxLoaclFileServiceLog) log;
         int rightPad = rightPadNumber(txLog, values.keySet());
-        StringBuilder sb = new StringBuilder(requestBody.length() + responseBody.length() + 1024);
+        StringBuilder sb = new StringBuilder(requestBody.length()
+                + responseBody.length() + 1024);
         // 第一部分 : 当前日期 模块名 id
-        sb.append(DateFormatUtils.format(System.currentTimeMillis(), "yyyy-MM-dd HH:mm:ss:SSS")).append(' ');
+        sb.append(DateFormatUtils.format(System.currentTimeMillis(),
+                "yyyy-MM-dd HH:mm:ss:SSS")).append(' ');
         sb.append('[').append(txLog.getModule()).append("] ");
         sb.append(txLog.getId()).append(CoreConstants.LINE_SEPARATOR);
         // 第二部分 : 日志内容
@@ -168,23 +176,33 @@ public class TXLocalFileServiceLogPersister<T> implements ServiceLogPersister<T>
             Object valueObj = entry.getValue();
             String value = null;
             if (valueObj != null && valueObj instanceof Date) {
-                value = DateFormatUtils.format((Date) valueObj, "yyyy-MM-dd HH:mm:ss");
+                value = DateFormatUtils.format((Date) valueObj,
+                        "yyyy-MM-dd HH:mm:ss");
             } else {
                 value = valueObj == null ? "" : String.valueOf(valueObj);
             }
             
-            key = org.apache.commons.lang3.StringUtils.rightPad(key, rightPad, ' ');
+            key = org.apache.commons.lang3.StringUtils.rightPad(key,
+                    rightPad,
+                    ' ');
             sb.append(key).append("-| ").append(value).append("\r\n");
         }
         Map<String, Object> otherParams = txLog.getOtherParams();
         if (MapUtils.isNotEmpty(otherParams)) {
             for (Map.Entry<String, Object> entry : otherParams.entrySet()) {
-                String key = org.apache.commons.lang3.StringUtils.rightPad(entry.getKey(), rightPad, ' ');
-                sb.append(key).append("-| ").append(String.valueOf(entry.getValue())).append("\r\n");
+                String key = org.apache.commons.lang3.StringUtils.rightPad(entry.getKey(),
+                        rightPad,
+                        ' ');
+                sb.append(key)
+                        .append("-| ")
+                        .append(String.valueOf(entry.getValue()))
+                        .append("\r\n");
             }
         }
         sb.append("\r\n--requestBody--\r\n").append(requestBody).append("\r\n");
-        sb.append("\r\n--responseBody--\r\n").append(responseBody).append("\r\n");
+        sb.append("\r\n--responseBody--\r\n")
+                .append(responseBody)
+                .append("\r\n");
         sb.append("\r\n\r\n\r\n");
         
         saveLog(log, sb.toString());
@@ -244,14 +262,19 @@ public class TXLocalFileServiceLogPersister<T> implements ServiceLogPersister<T>
         String saveDirectory = getSaveDirectory(log);
         
         TimeBasedRollingPolicy<String> policy = new TimeBasedRollingPolicy<>();
-        policy.setFileNamePattern(saveDirectory.concat("/").concat(String.valueOf(txLog.getModule())).concat(".%d{yyyy-MM-dd}.log.zip"));
+        policy.setFileNamePattern(saveDirectory.concat("/")
+                .concat(String.valueOf(txLog.getModule()))
+                .concat(".%d{yyyy-MM-dd}.log.zip"));
         policy.setContext(context);
         
         RollingFileAppender<String> appender = new RollingFileAppender<String>();
         policy.setParent(appender);
         appender.setRollingPolicy(policy);
         appender.setContext(context);
-        appender.setFile(saveDirectory.concat("/").concat(String.valueOf(txLog.getModule())).concat(".current").concat(".log"));
+        appender.setFile(saveDirectory.concat("/")
+                .concat(String.valueOf(txLog.getModule()))
+                .concat(".current")
+                .concat(".log"));
         appender.setAppend(true);
         appender.setName(txLog.getModule());
         appender.setEncoder(encoder);

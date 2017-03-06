@@ -16,11 +16,12 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import com.tx.component.configuration.exception.NotExistException;
+import com.tx.component.configuration.exceptions.NotExistException;
 import com.tx.component.configuration.model.ConfigProperty;
 import com.tx.component.configuration.model.ConfigPropertyGroup;
 import com.tx.component.configuration.persister.ConfigPropertiesPersister;
 import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.util.MessageUtils;
 
 /**
  * 配置容器<br/>
@@ -168,8 +169,9 @@ public class ConfigContext extends ConfigContextConfigurator {
      */
     public void update(String key, String value) {
         if (!this.configPropertyMapping.containsKey(key)) {
-            throw new NotExistException("configProperty key:{} not exsit.",
-                    new Object[] { key });
+            throw new NotExistException(
+                    MessageUtils.format("configProperty key:{} not exsit.",
+                            new Object[] { key }));
         }
         this.configPropertyMapping.get(key).update(value);
     }

@@ -10,13 +10,13 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-
-import com.tx.component.file.viewhandler.impl.DefaultViewHandler;
 
 /**
  * 视图处理器注册表<br/>
@@ -33,7 +33,8 @@ public class ViewHandlerRegistry implements InitializingBean,
     private ApplicationContext applicationContext;
     
     /** 默认的视图处理 */
-    private final ViewHandler defaultViewHandler = new DefaultViewHandler();
+    @Resource(name = "defaultViewHandler")
+    private ViewHandler defaultViewHandler;
     
     /** 视图处理器映射 */
     private final Map<String, ViewHandler> viewHandlerMap = new HashMap<String, ViewHandler>();

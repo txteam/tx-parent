@@ -29,7 +29,7 @@ import com.tx.component.rule.loader.xml.model.FileParam;
 import com.tx.component.rule.loader.xml.model.RuleItemConfig;
 import com.tx.component.rule.loader.xml.model.RulesConfig;
 import com.tx.component.rule.loader.xml.model.ValueParam;
-import com.tx.core.exceptions.argument.IllegalArgException;
+import com.tx.core.exceptions.argument.ArgIllegalException;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.exceptions.util.ExceptionWrapperUtils;
 import com.tx.core.util.XstreamUtils;
@@ -185,7 +185,7 @@ public class XMLRuleItemConfigLoader extends BaseRuleItemLoader {
         try {
             ruleItem.addByteParam(paramKey, context.getBytes("UTF-8"));
         } catch (UnsupportedEncodingException e) {
-            throw new IllegalArgException(
+            throw new ArgIllegalException(
                     MessageFormatter.arrayFormat("key:{} paramKey:{} charsetName:{}",
                             new Object[] { ruleKey, paramKey, "UTF-8" })
                             .getMessage());

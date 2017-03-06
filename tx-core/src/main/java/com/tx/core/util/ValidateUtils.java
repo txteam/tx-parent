@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 public class ValidateUtils {
     
     /** 移动电话号码正则表达式 */
-    private static Pattern mobilePhoneNumberPattern = Pattern.compile("^((13[0-9])|(15[0-9])|(18[0,5-9])|(14[0-9])|(18[0-9]))\\d{8}$");
+    private static Pattern mobilePhoneNumberPattern = Pattern.compile("^((13[0-9])|(15[0-9])|(17[0-9])|(18[0,5-9])|(14[0-9])|(18[0-9]))\\d{8}$");
     
     /** 移动电话号码正则表达式 */
     private static Pattern emailPattern = Pattern.compile("\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*");

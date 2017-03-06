@@ -16,7 +16,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.tx.component.auth.annotation.CheckOperateAuth;
 import com.tx.component.auth.context.AuthContext;
-import com.tx.core.exceptions.logic.NoAuthorityAccessException;
+import com.tx.core.exceptions.context.NoAuthAccessException;
+import com.tx.core.util.MessageUtils;
 
 /**
  * 控制器中，操作权限校验切面
@@ -59,10 +60,11 @@ public class ControllerCheckOperateAuthInterceptor implements
             
             //如果无权限抛出异常
             if (!AuthContext.getContext().hasAuth(authKey)) {
-                throw new NoAuthorityAccessException(
-                        "Controller class:{} method:{} needAuth:{}",
-                        new Object[] { handlerMethod.getBean().getClass(),
-                                handlerMethod.getMethod(), authKey });
+                throw new NoAuthAccessException(
+                        MessageUtils.format("Controller class:{} method:{} needAuth:{}",
+                                new Object[] {
+                                        handlerMethod.getBean().getClass(),
+                                        handlerMethod.getMethod(), authKey }));
             }
         }
         return true;

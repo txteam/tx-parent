@@ -13,8 +13,8 @@ import java.lang.reflect.InvocationTargetException;
 import org.slf4j.helpers.MessageFormatter;
 
 import com.tx.core.exceptions.SILException;
-import com.tx.core.exceptions.io.ResourceAccessException;
-import com.tx.core.reflection.exception.ReflectionException;
+import com.tx.core.exceptions.reflection.ReflectionException;
+import com.tx.core.exceptions.resource.ResourceAccessException;
 
 /**
  * 异常包装工具方便异常捕获后包装为系统内部定义异常

@@ -32,10 +32,10 @@ import org.apache.commons.lang3.reflect.TypeUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.PropertyAccessorFactory;
 
-import com.tx.core.exceptions.io.ResourceAccessException;
+import com.tx.core.exceptions.reflection.ReflectionException;
+import com.tx.core.exceptions.resource.ResourceAccessException;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.reflection.JpaMetaClass;
-import com.tx.core.reflection.exception.ReflectionException;
 
 /**
  * 对象工具类<br />
@@ -214,8 +214,8 @@ public class ObjectUtils {
         //为空时认为是empty的
         if (obj == null) {
             return true;
-        } else if (obj instanceof String) {
-            return StringUtils.isEmpty((String) obj);
+        } else if (obj instanceof CharSequence) {
+            return StringUtils.isEmpty((CharSequence) obj);
         } else if (obj instanceof Collection<?>) {
             return CollectionUtils.isEmpty((Collection<?>) obj);
         } else if (obj instanceof Map<?, ?>) {

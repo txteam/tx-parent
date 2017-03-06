@@ -26,70 +26,85 @@ import org.slf4j.helpers.MessageFormatter;
 public class MessageUtils {
     
     /**
-     * 组装消息 将对象toString放入消息占位符{}中
-     * 
-     * @param message
-     * @param objArr
+     * 格式化组装消息<br/>
+     * <功能详细描述>
+     * @param messagePattern
+     * @param argArray
      * @return [参数说明]
      * 
      * @return String [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-     */
-    public static String createMessage(String message, Object... objArr) {
-        return MessageFormatter.arrayFormat(message, objArr).getMessage();
+    */
+    public static String format(String messagePattern, String... argArray) {
+        String message = MessageFormatter.arrayFormat(messagePattern, argArray)
+                .getMessage();
+        return message;
     }
     
     /**
-     * 
-     * 组装消息,将mapArr放入占位符中<br/>
-     * 
-     * <pre>
+      * 格式化组装消息<br/>
+      * <功能详细描述>
+      * @param messagePattern
+      * @param argArray
+      * @return [参数说明]
+      * 
+      * @return String [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public static String format(String messagePattern, Object[] argArray) {
+        String message = MessageFormatter.arrayFormat(messagePattern, argArray)
+                .getMessage();
+        return message;
+    }
+    
+    /**
+     * 格式化组装消息<br/>
+     * <功能详细描述>
      * false : key:a->value:1   key:12->value:3  => "{{a}2}" = {12}
      * </pre>
      * 
      * @param message 消息字符串
-     * @param mapArr 参数
+     * @param params 参数
      * 
      * @return String 替换后的消息
      * @exception [异常类型] [异常说明]
-     * @see com.tx.core.util.MessageUtils#createMessageByMap(String, Map, boolean)
+     * @see com.tx.core.util.MessageUtils#format(String, Map, boolean)
      */
-    public static String createMessageByMap(String message,
-            Map<String, Object> mapArr) {
-        return createMessageByMap(message, mapArr, false);
+    public static String format(String message, Map<String, Object> params) {
+        return format(message, params, false);
     }
     
     /**
-     * 
-     * 组装消息,将mapArr放入占位符中<br/>
+     * 格式化组装消息<br/>
      * repeat如果为true.则替换占位符时,会重复替换.
-     * 
+     * <功能详细描述>
      * <pre>
      * true :  key:a->value:1   key:12->value:3  => "{{a}2}" = {12} = 3 
      * false : key:a->value:1   key:12->value:3  => "{{a}2}" = {12}
      * </pre>
      * 
      * @param message 消息字符串
-     * @param mapArr 参数
+     * @param params 参数
      * @param repeat 是否重复替换
      * 
      * @return String 替换后的消息
      * @exception [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public static String createMessageByMap(String message,
-            Map<String, Object> mapArr, boolean repeat) {
-        if (MapUtils.isEmpty(mapArr)) {
+    public static String format(String message, Map<String, Object> params,
+            boolean repeat) {
+        if (MapUtils.isEmpty(params)) {
             return message;
         }
-        if (message == null) {
-            return null;
+        if (StringUtils.isEmpty(message)) {
+            return message;
         }
         
         List<String> keys = new ArrayList<String>();
         List<String> values = new ArrayList<String>();
-        for (Map.Entry<String, Object> entry : mapArr.entrySet()) {
+        for (Map.Entry<String, Object> entry : params.entrySet()) {
             keys.add("{" + entry.getKey() + "}");
             values.add(String.valueOf(entry.getValue()));
         }
@@ -110,7 +125,7 @@ public class MessageUtils {
         map.put("0", "零");
         map.put("向上", "xiangshang");
         map.put("xiangshang你可以吗?", "去掉了");
-        String createMessage = MessageUtils.createMessageByMap(str, map);
-        System.out.println(createMessage);
+        System.out.println(MessageUtils.format(str, map));
+        System.out.println(MessageUtils.format(str, map, true));
     }
 }

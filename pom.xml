@@ -95,7 +95,7 @@
 				<artifactId>tx-component-workflow</artifactId>
 				<version>${tx-version}</version>
 			</dependency>
-			
+
 			<!-- aliyun -->
 			<dependency>
 				<groupId>alibaba</groupId>
@@ -110,12 +110,17 @@
 			<dependency>
 				<groupId>com.aliyun</groupId>
 				<artifactId>aliyun-java-sdk-dm</artifactId>
-				<version>3.0.0-rc2</version>
+				<version>3.0.0-rc3</version>
+			</dependency>
+			<dependency>
+				<groupId>com.aliyun</groupId>
+				<artifactId>aliyun-java-sdk-sms</artifactId>
+				<version>3.0.0-rc1</version>
 			</dependency>
 			<dependency>
 				<groupId>com.aliyun</groupId>
 				<artifactId>aliyun-java-sdk-core</artifactId>
-				<version>3.0.9</version>
+				<version>3.1.0</version>
 			</dependency>
 
 			<!-- commons -->
@@ -417,7 +422,7 @@
 				<artifactId>jsoup</artifactId>
 				<version>1.7.3</version>
 			</dependency>
-			
+
 			<dependency>
 				<groupId>com.thoughtworks.xstream</groupId>
 				<artifactId>xstream</artifactId>

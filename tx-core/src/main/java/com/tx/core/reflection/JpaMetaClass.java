@@ -32,9 +32,10 @@ import javax.persistence.Transient;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import com.tx.core.exceptions.reflection.JPAParseException;
 import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.reflection.exception.JpaMetaClassNewInstanceException;
 import com.tx.core.util.JdbcUtils;
+import com.tx.core.util.MessageUtils;
 
 /**
  * jpa实体解析结果类
@@ -270,9 +271,7 @@ public class JpaMetaClass<T> {
         if (ReflectionUtils.isHasAnnotationForGetter(type,
                 getterName,
                 Column.class)) {
-            processWhenColumnAnnotationExist(getterName,
-                    type,
-                    jpaColumnInfo);
+            processWhenColumnAnnotationExist(getterName, type, jpaColumnInfo);
         }
         
         //是否存在Column注解
@@ -287,7 +286,8 @@ public class JpaMetaClass<T> {
             jpaColumnInfo.setLength(64);
             
             //断言为非简单类型
-            if (!JdbcUtils.isSupportedSimpleType(getterType) && !getterType.isEnum() && (getterType instanceof Class)) {
+            if (!JdbcUtils.isSupportedSimpleType(getterType)
+                    && !getterType.isEnum() && (getterType instanceof Class)) {
                 //关联字段的类型解析结果
                 //为了避免无限循环调用，这里使用了一个内置的特殊方法，不会用到缓存
                 @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -308,13 +308,13 @@ public class JpaMetaClass<T> {
             //"存在ManayToOne,OneToOne注解的字段不应该存在注解@Column应该为JoinColumn.type:{},getterName:{},getterType:{}",
             //new Object[] { type, getterName, getterType }));
             //存在Column注解并且为简单类型时
-//            if (ReflectionUtils.isHasAnnotationForGetter(type,
-//                    getterName,
-//                    Column.class)) {
-//                processWhenColumnAnnotationExist(getterName,
-//                        type,
-//                        jpaColumnInfo);
-//            }
+            //            if (ReflectionUtils.isHasAnnotationForGetter(type,
+            //                    getterName,
+            //                    Column.class)) {
+            //                processWhenColumnAnnotationExist(getterName,
+            //                        type,
+            //                        jpaColumnInfo);
+            //            }
             
             //当JoinColumn存在时
             if (ReflectionUtils.isHasAnnotationForGetter(type,
@@ -329,13 +329,13 @@ public class JpaMetaClass<T> {
             //JdbcUtils.isSupportedSimpleType(type)
             //为简单类型且不存在OneToOne ManyToOne时的解析方案
             //当JoinColumn存在时
-//            if (ReflectionUtils.isHasAnnotationForGetter(type,
-//                    getterName,
-//                    Column.class)) {
-//                processWhenColumnAnnotationExist(getterName,
-//                        type,
-//                        jpaColumnInfo);
-//            }
+            //            if (ReflectionUtils.isHasAnnotationForGetter(type,
+            //                    getterName,
+            //                    Column.class)) {
+            //                processWhenColumnAnnotationExist(getterName,
+            //                        type,
+            //                        jpaColumnInfo);
+            //            }
         }
         
         return jpaColumnInfo;
@@ -494,19 +494,18 @@ public class JpaMetaClass<T> {
             
             //限定主键字段field必须具有get,set方法
             AssertUtils.isTrue(this.classReflector.getGetterMethod(getterNameTemp) != null,
-                    new JpaMetaClassNewInstanceException(
-                            "type:{} pkPropertyName:{} getterMethod is not exist.",
-                            new Object[] { this.type, getterNameTemp }));
+                    JPAParseException.class,
+                    "type:{} pkPropertyName:{} getterMethod is not exist.",
+                    new Object[] { this.type, getterNameTemp });
             AssertUtils.isTrue(this.classReflector.getSetterMethod(getterNameTemp) != null,
-                    new JpaMetaClassNewInstanceException(
-                            "type:{} pkPropertyName:{} setterMethod is not exist.",
-                            new Object[] { this.type, getterNameTemp }));
+                    JPAParseException.class,
+                    "type:{} pkPropertyName:{} setterMethod is not exist.",
+                    new Object[] { this.type, getterNameTemp });
             //主键类型应该为直接可以进行存取的类型
             AssertUtils.isTrue(JdbcUtils.isSupportedSimpleType(pkGetterType),
-                    new JpaMetaClassNewInstanceException(
-                            "type:{} pkPropertyName:{} getterType:{} is not supported.",
-                            new Object[] { this.type, getterNameTemp,
-                                    this.pkGetterType }));
+                    JPAParseException.class,
+                    "type:{} pkPropertyName:{} getterType:{} is not supported.",
+                    new Object[] { this.type, getterNameTemp, this.pkGetterType });
             
             //主键生成策略
             //org.hibernate.annotations.Generated.class
@@ -541,15 +540,14 @@ public class JpaMetaClass<T> {
                     "type:{} pkPropertyName:{} getterMethod is not exist.",
                     new Object[] { this.type, getterNameTemp });
             //如果对应方法为接口时，可能是没有Setter方法的
-//            AssertUtils.isTrue(this.classReflector.getSetterMethod(getterNameTemp) != null,
-//                    "type:{} pkPropertyName:{} setterMethod is not exist.",
-//                    new Object[] { this.type, getterNameTemp });
+            //            AssertUtils.isTrue(this.classReflector.getSetterMethod(getterNameTemp) != null,
+            //                    "type:{} pkPropertyName:{} setterMethod is not exist.",
+            //                    new Object[] { this.type, getterNameTemp });
             //主键类型应该为直接可以进行存取的类型
             AssertUtils.isTrue(JdbcUtils.isSupportedSimpleType(pkGetterType),
-                    new JpaMetaClassNewInstanceException(
-                            "type:{} pkPropertyName:{} getterType:{} is not supported.",
-                            new Object[] { this.type, getterNameTemp,
-                                    this.pkGetterType }));
+                    JPAParseException.class,
+                    "type:{} pkPropertyName:{} getterType:{} is not supported.",
+                    new Object[] { this.type, getterNameTemp, this.pkGetterType });
             
             //主键生成策略
             //org.hibernate.annotations.Generated.class
@@ -569,8 +567,9 @@ public class JpaMetaClass<T> {
             return;
         }
         
-        throw new JpaMetaClassNewInstanceException(
-                "type:{} pkGetter is not exist.", new Object[] { this.type });
+        throw new JPAParseException(
+                MessageUtils.format("type:{} pkGetter is not exist.",
+                        new Object[] { this.type }));
     }
     
     /**

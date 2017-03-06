@@ -2,8 +2,8 @@ package com.tx.core.httpsocket.context.responseheader;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.tx.core.exceptions.remote.HttpSocketException;
 import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.httpsocket.exception.HttpSocketException;
 
 /**
  * 返回内容的编码<br>

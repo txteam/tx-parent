@@ -6,7 +6,7 @@
  */
 package com.tx.component.rule.exceptions;
 
-import com.tx.core.exceptions.SILException;
+import com.tx.core.exceptions.ErrorCode;
 
 /**
  * 规则访问异常
@@ -17,7 +17,7 @@ import com.tx.core.exceptions.SILException;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class RuleAccessException extends SILException {
+public class RuleAccessException extends RuleContextException {
     
     /** 注释内容 */
     private static final long serialVersionUID = 3113970360855922652L;
@@ -26,28 +26,20 @@ public class RuleAccessException extends SILException {
      * @return
      */
     @Override
-    public String doGetErrorCode() {
-        return "RULE_ACCESS_ERROR";
+    protected ErrorCode error() {
+        return RuleContextErrorCodeEnum.RULL_ACCESS_ERROR;
     }
-
-    /**
-     * @return
-     */
-    @Override
-    public String doGetErrorMessage() {
-        return "规则运行时异常";
-    }
-
+    
     /** <默认构造函数> */
-    public RuleAccessException(String message, Object[] parameters) {
-        super(message, parameters);
+    public RuleAccessException() {
+        super();
     }
-
+    
     /** <默认构造函数> */
     public RuleAccessException(String message, Throwable cause) {
         super(message, cause);
     }
-
+    
     /** <默认构造函数> */
     public RuleAccessException(String message) {
         super(message);

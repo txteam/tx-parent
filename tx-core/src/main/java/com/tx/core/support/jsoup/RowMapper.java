@@ -9,7 +9,7 @@ package com.tx.core.support.jsoup;
 
 import org.jsoup.nodes.Element;
 
-import com.tx.core.support.jsoup.exception.JsoupParseException;
+import com.tx.core.exceptions.context.JsoupParseException;
 
 /**
  * 元数据映射接口<br/>

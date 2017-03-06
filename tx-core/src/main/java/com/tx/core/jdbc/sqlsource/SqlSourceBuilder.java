@@ -217,7 +217,7 @@ public class SqlSourceBuilder {
                         : anno.key();
                 simpleSqlSource.addQueryConditionKey2SqlMapping(QueryConditionTypeEnum.EQUAL,
                         keyTemp,
-                        MessageUtils.createMessage("{} = ?", columnName),
+                        MessageUtils.format("{} = ?", columnName),
                         queryConditionKeyJdbcType,
                         queryConditionKeyType);
                 
@@ -233,7 +233,7 @@ public class SqlSourceBuilder {
                         : anno.key();
                 simpleSqlSource.addQueryConditionKey2SqlMapping(QueryConditionTypeEnum.UNEQUAL,
                         keyTemp,
-                        MessageUtils.createMessage("{} <> ?", columnName),
+                        MessageUtils.format("{} <> ?", columnName),
                         queryConditionKeyJdbcType,
                         queryConditionKeyType);
             }
@@ -257,7 +257,7 @@ public class SqlSourceBuilder {
                         .render(null, concatArgs, null);
                 simpleSqlSource.addQueryConditionKey2SqlMapping(QueryConditionTypeEnum.LIKE,
                         keyTemp,
-                        MessageUtils.createMessage("{} LIKE {}",
+                        MessageUtils.format("{} LIKE {}",
                                 columnName,
                                 valueStr),
                         queryConditionKeyJdbcType,
@@ -283,7 +283,7 @@ public class SqlSourceBuilder {
                         .render(null, concatArgs, null);
                 simpleSqlSource.addQueryConditionKey2SqlMapping(QueryConditionTypeEnum.LIKE_AFTER,
                         keyTemp,
-                        MessageUtils.createMessage("{} LIKE {}",
+                        MessageUtils.format("{} LIKE {}",
                                 columnName,
                                 valueStr),
                         queryConditionKeyJdbcType,
@@ -309,7 +309,7 @@ public class SqlSourceBuilder {
                         .render(null, concatArgs, null);
                 simpleSqlSource.addQueryConditionKey2SqlMapping(QueryConditionTypeEnum.LIKE_BEFORE,
                         keyTemp,
-                        MessageUtils.createMessage("{} LIKE {}",
+                        MessageUtils.format("{} LIKE {}",
                                 columnName,
                                 valueStr),
                         queryConditionKeyJdbcType,
@@ -328,7 +328,7 @@ public class SqlSourceBuilder {
                 
                 simpleSqlSource.addQueryConditionKey2SqlMapping(QueryConditionTypeEnum.GREATER,
                         keyTemp,
-                        MessageUtils.createMessage("{} > ?", columnName),
+                        MessageUtils.format("{} > ?", columnName),
                         queryConditionKeyJdbcType,
                         queryConditionKeyType);
             }
@@ -345,7 +345,7 @@ public class SqlSourceBuilder {
                 
                 simpleSqlSource.addQueryConditionKey2SqlMapping(QueryConditionTypeEnum.GREATER_OR_EQUAL,
                         keyTemp,
-                        MessageUtils.createMessage("{} >= ?", columnName),
+                        MessageUtils.format("{} >= ?", columnName),
                         queryConditionKeyJdbcType,
                         queryConditionKeyType);
             }
@@ -362,7 +362,7 @@ public class SqlSourceBuilder {
                 
                 simpleSqlSource.addQueryConditionKey2SqlMapping(QueryConditionTypeEnum.LESS,
                         keyTemp,
-                        MessageUtils.createMessage("{} < ?", columnName),
+                        MessageUtils.format("{} < ?", columnName),
                         queryConditionKeyJdbcType,
                         queryConditionKeyType);
             }
@@ -379,7 +379,7 @@ public class SqlSourceBuilder {
                 
                 simpleSqlSource.addQueryConditionKey2SqlMapping(QueryConditionTypeEnum.LESS_OR_EQUAL,
                         keyTemp,
-                        MessageUtils.createMessage("{} <= ?", columnName),
+                        MessageUtils.format("{} <= ?", columnName),
                         queryConditionKeyJdbcType,
                         queryConditionKeyType);
             }

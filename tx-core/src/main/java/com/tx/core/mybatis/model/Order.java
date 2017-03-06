@@ -13,8 +13,8 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 
 import com.tx.core.TxConstants;
-import com.tx.core.exceptions.argument.IllegalArgException;
-import com.tx.core.exceptions.argument.NullArgException;
+import com.tx.core.exceptions.argument.ArgIllegalException;
+import com.tx.core.exceptions.argument.ArgNullException;
 
 /**
  * 排序支持
@@ -68,11 +68,11 @@ public class Order implements Serializable {
      */
     private Order(String columnNames, boolean ascending) {
         if (StringUtils.isBlank(columnNames)) {
-            throw new NullArgException(
+            throw new ArgNullException(
                     "Order(columnNames,ascending) columnNames is empty.");
         }
         if (columnNames.indexOf(";") >= 0 || columnNames.indexOf("'") >= 0) {
-            throw new IllegalArgException(
+            throw new ArgIllegalException(
                     "Order(columnNames,ascending) columnNames hase invalid char ;或'");
         }
         String upcaseColumnNamesString = columnNames.toUpperCase();
@@ -81,7 +81,7 @@ public class Order implements Serializable {
         for (String columnTemp : columns) {
             columnTemp = columnTemp.trim();
             if (unSafeKeyword.contains(columnTemp)) {
-                throw new IllegalArgException(
+                throw new ArgIllegalException(
                         "Order(columnNames,ascending) columnNames hase invalid keyword "
                                 + columnTemp);
             }

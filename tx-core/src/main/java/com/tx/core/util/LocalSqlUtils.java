@@ -13,7 +13,7 @@ import org.hibernate.dialect.Dialect;
 import org.springframework.beans.factory.InitializingBean;
 
 import com.tx.core.dbscript.model.DataSourceTypeEnum;
-import com.tx.core.exceptions.argument.NullArgException;
+import com.tx.core.exceptions.argument.ArgNullException;
 import com.tx.core.exceptions.util.AssertUtils;
 
 /**
@@ -47,7 +47,7 @@ public class LocalSqlUtils implements InitializingBean {
         } else if (this.dataSourceType != null) {
             this.dialect = this.dataSourceType.getDialect();
         } else {
-            throw new NullArgException("dialect and dataSourceType all null");
+            throw new ArgNullException("dialect and dataSourceType all null");
         }
         LocalSqlUtils.instance = this;
     }

@@ -7,21 +7,22 @@
 package com.tx.core.exceptions.util;
 
 import java.io.File;
-import java.util.Collection;
-import java.util.Map;
+import java.io.IOException;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.helpers.MessageFormatter;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
+import com.tx.core.exceptions.ErrorCode;
 import com.tx.core.exceptions.SILException;
-import com.tx.core.exceptions.argument.IllegalArgException;
-import com.tx.core.exceptions.argument.NullArgException;
-import com.tx.core.exceptions.io.ResourceIsNullOrNotExistException;
+import com.tx.core.exceptions.SILExceptionHelper;
+import com.tx.core.exceptions.argument.ArgEmptyException;
+import com.tx.core.exceptions.argument.ArgIllegalException;
+import com.tx.core.exceptions.argument.ArgNotEmptyException;
+import com.tx.core.exceptions.argument.ArgNotNullException;
+import com.tx.core.exceptions.argument.ArgNullException;
+import com.tx.core.exceptions.argument.ArgTypeIllegalException;
+import com.tx.core.exceptions.resource.ResourceAccessException;
+import com.tx.core.exceptions.resource.ResourceNotExistException;
+import com.tx.core.util.MessageUtils;
 import com.tx.core.util.ObjectUtils;
 
 /**
@@ -36,499 +37,1855 @@ import com.tx.core.util.ObjectUtils;
 public class AssertUtils {
     
     /**
-     * 判断对象不为空则抛出指定异常<br/>
+     * 断言包装抛出的异常<br/>
      * <功能详细描述>
-     * 
-     * @param obj
-     * @param exception [参数说明]
+     * @param e 传入的检查是否为空的对象
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
      * 
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public static void isTrue(boolean flag, SILException exception) {
-        //不为空
-        if (!flag) {
-            throw exception;
+    public static void wrap(Throwable e, String messagePattern,
+            String... parameters) {
+        wrap(e, -1, null, messagePattern, (Object[]) parameters);
+    }
+    
+    /**
+     * 断言包装抛出的异常<br/>
+     * <功能详细描述>
+     * @param e 传入的检查是否为空的对象
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void wrap(Throwable e, String messagePattern,
+            Object[] parameters) {
+        wrap(e, -1, null, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言包装抛出的异常<br/>
+     * <功能详细描述>
+     * @param e 传入的检查是否为空的对象
+     * @param error 传入的ErrorCode对象实例，如果在错误信息注册表中存在对应的错误实现类，则自动根据参数实例化对应的类实例
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void wrap(Throwable e, ErrorCode error,
+            String messagePattern, String... parameters) {
+        int errorCode = error == null ? -1 : error.getCode();
+        wrap(e, errorCode, null, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言包装抛出的异常<br/>
+     * <功能详细描述>
+     * @param e 传入的检查是否为空的对象
+     * @param error 传入的ErrorCode对象实例，如果在错误信息注册表中存在对应的错误实现类，则自动根据参数实例化对应的类实例
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void wrap(Throwable e, ErrorCode error,
+            String messagePattern, Object[] parameters) {
+        int errorCode = error == null ? -1 : error.getCode();
+        wrap(e, errorCode, null, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言包装抛出的异常<br/>
+     * <功能详细描述>
+     * @param e 传入的检查是否为空的对象
+     * @param errorCode 传入的errorCode,如果对应的ErrorCode的实例类存在，则生成的异常为实际对应的类，否则为SILException.并且其中errorCode为传入的值（注：errorCode应>=0）
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void wrap(Throwable e, int errorCode, String messagePattern,
+            String... parameters) {
+        wrap(e, errorCode, null, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言包装抛出的异常<br/>
+     * <功能详细描述>
+     * @param e 传入的检查是否为空的对象
+     * @param errorCode 传入的errorCode,如果对应的ErrorCode的实例类存在，则生成的异常为实际对应的类，否则为SILException.并且其中errorCode为传入的值（注：errorCode应>=0）
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void wrap(Throwable e, int errorCode, String messagePattern,
+            Object[] parameters) {
+        wrap(e, errorCode, null, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言包装抛出的异常<br/>
+     * <功能详细描述>
+     * @param e 传入的检查是否为空的对象
+     * @param type 默认额异常实现类，如果为空，则系统自动选择SILException进行替代
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void wrap(Throwable e, Class<? extends SILException> type,
+            String messagePattern, String... parameters) {
+        wrap(e, -1, type, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言包装抛出的异常<br/>
+     * <功能详细描述>
+     * @param e 传入的检查是否为空的对象
+     * @param type 默认额异常实现类，如果为空，则系统自动选择SILException进行替代
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void wrap(Throwable e, Class<? extends SILException> type,
+            String messagePattern, Object[] parameters) {
+        wrap(e, -1, type, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言包装抛出的异常<br/>
+     * <功能详细描述>
+     * @param e 传入的检查是否为空的对象
+     * @param errorCode 传入的errorCode,如果对应的ErrorCode的实例类存在，则生成的异常为实际对应的类，否则为SILException.并且其中errorCode为传入的值（注：errorCode应>=0）
+     * @param type 默认额异常实现类，如果为空，则系统自动选择SILException进行替代
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void wrap(Throwable e, int errorCode,
+            Class<? extends SILException> type, String messagePattern,
+            Object[] parameters) {
+        if (e != null) {
+            if (e instanceof SILException) {
+                throw (SILException) e;
+            }
+            if (type == null) {
+                if (e instanceof IOException) {
+                    type = ResourceAccessException.class;
+                } else {
+                    type = SILException.class;
+                }
+            }
+            //如果为空则抛出异常
+            String message = MessageUtils.format(messagePattern, parameters);
+            throw SILExceptionHelper.newSILException(errorCode,
+                    message,
+                    null,
+                    type);
         }
     }
     
     /**
      * 断言对应对象非空(支持：字符串，数组，集合，Map)<br/>
      * <功能详细描述>
-     * 
-     * @param str
-     * @param message [参数说明]
-     * 
-     * @return void [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public static void notEmpty(Object obj) {
-        //不为空
-        notEmpty(obj, "");
-    }
-    
-    /**
-     * 断言对应对象非空(支持：字符串，数组，集合，Map)<br/>
-     * <功能详细描述>
-     * 
-     * @param str
-     * @param message [参数说明]
+     * @param obj 传入的检查是否为空的对象
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
      * 
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public static void notEmpty(Object obj, String message,
+    public static void notEmpty(Object obj, String messagePattern,
             String... parameters) {
-        //不为空
-        notEmpty(obj, message, (Object[]) parameters);
+        notEmpty(obj, -1, null, messagePattern, (Object[]) parameters);
     }
     
     /**
      * 断言对应对象非空(支持：字符串，数组，集合，Map)<br/>
      * <功能详细描述>
-     * 
-     * @param str
-     * @param message [参数说明]
+     * @param obj 传入的检查是否为空的对象
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
      * 
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public static void notEmpty(Object obj, String message, Object[] parameters) {
-        //不为空
-        notNull(obj, message, parameters);
+    public static void notEmpty(Object obj, String messagePattern,
+            Object[] parameters) {
+        notEmpty(obj, -1, null, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言对应对象非空(支持：字符串，数组，集合，Map)<br/>
+     * <功能详细描述>
+     * @param obj 传入的检查是否为空的对象
+     * @param error 传入的ErrorCode对象实例，如果在错误信息注册表中存在对应的错误实现类，则自动根据参数实例化对应的类实例
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void notEmpty(Object obj, ErrorCode error,
+            String messagePattern, String... parameters) {
+        int errorCode = error == null ? -1 : error.getCode();
+        notEmpty(obj, errorCode, null, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言对应对象非空(支持：字符串，数组，集合，Map)<br/>
+     * <功能详细描述>
+     * @param obj 传入的检查是否为空的对象
+     * @param error 传入的ErrorCode对象实例，如果在错误信息注册表中存在对应的错误实现类，则自动根据参数实例化对应的类实例
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void notEmpty(Object obj, ErrorCode error,
+            String messagePattern, Object[] parameters) {
+        int errorCode = error == null ? -1 : error.getCode();
+        notEmpty(obj, errorCode, null, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言对应对象非空(支持：字符串，数组，集合，Map)<br/>
+     * <功能详细描述>
+     * @param obj 传入的检查是否为空的对象
+     * @param errorCode 传入的errorCode,如果对应的ErrorCode的实例类存在，则生成的异常为实际对应的类，否则为SILException.并且其中errorCode为传入的值（注：errorCode应>=0）
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void notEmpty(Object obj, int errorCode,
+            String messagePattern, String... parameters) {
+        notEmpty(obj, errorCode, null, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言对应对象非空(支持：字符串，数组，集合，Map)<br/>
+     * <功能详细描述>
+     * @param obj 传入的检查是否为空的对象
+     * @param errorCode 传入的errorCode,如果对应的ErrorCode的实例类存在，则生成的异常为实际对应的类，否则为SILException.并且其中errorCode为传入的值（注：errorCode应>=0）
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void notEmpty(Object obj, int errorCode,
+            String messagePattern, Object[] parameters) {
+        notEmpty(obj, errorCode, null, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言对应对象非空(支持：字符串，数组，集合，Map)<br/>
+     * <功能详细描述>
+     * @param obj 传入的检查是否为空的对象
+     * @param type 默认额异常实现类，如果为空，则系统自动选择SILException进行替代
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void notEmpty(Object obj, Class<? extends SILException> type,
+            String messagePattern, String... parameters) {
+        notEmpty(obj, -1, type, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言对应对象非空(支持：字符串，数组，集合，Map)<br/>
+     * <功能详细描述>
+     * @param obj 传入的检查是否为空的对象
+     * @param type 默认额异常实现类，如果为空，则系统自动选择SILException进行替代
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void notEmpty(Object obj, Class<? extends SILException> type,
+            String messagePattern, Object[] parameters) {
+        notEmpty(obj, -1, type, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言对应对象非空(支持：字符串，数组，集合，Map)<br/>
+     * <功能详细描述>
+     * @param obj 传入的检查是否为空的对象
+     * @param errorCode 传入的errorCode,如果对应的ErrorCode的实例类存在，则生成的异常为实际对应的类，否则为SILException.并且其中errorCode为传入的值（注：errorCode应>=0）
+     * @param type 默认额异常实现类，如果为空，则系统自动选择SILException进行替代
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void notEmpty(Object obj, int errorCode,
+            Class<? extends SILException> type, String messagePattern,
+            Object[] parameters) {
         if (ObjectUtils.isEmpty(obj)) {
-            throw new NullArgException(MessageFormatter.arrayFormat(message,
-                    parameters).getMessage());
+            //如果为空则抛出异常
+            String message = MessageUtils.format(messagePattern, parameters);
+            throw SILExceptionHelper.newSILException(errorCode,
+                    message,
+                    null,
+                    type == null ? ArgEmptyException.class : type);
         }
     }
     
     /**
      * 断言对应对象为空(支持：字符串，数组，集合，Map)<br/>
      * <功能详细描述>
-     * 
-     * @param str
-     * @param message [参数说明]
+     * @param obj 传入的检查是否为空的对象
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
      * 
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public static void isEmpty(Object obj) {
-        //不为空
-        isEmpty(obj, "");
+    public static void isEmpty(Object obj, String messagePattern,
+            String... parameters) {
+        isEmpty(obj, -1, null, messagePattern, (Object[]) parameters);
     }
     
     /**
      * 断言对应对象为空(支持：字符串，数组，集合，Map)<br/>
      * <功能详细描述>
-     * 
-     * @param str
-     * @param message [参数说明]
+     * @param obj 传入的检查是否为空的对象
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
      * 
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public static void isEmpty(Object obj, String message, String... parameters) {
-        //不为空
-        isEmpty(obj, message, (Object[]) parameters);
+    public static void isEmpty(Object obj, String messagePattern,
+            Object[] parameters) {
+        isEmpty(obj, -1, null, messagePattern, parameters);
     }
     
     /**
-     * 断言对应字符串不能为空<br/>
+     * 断言对应对象为空(支持：字符串，数组，集合，Map)<br/>
      * <功能详细描述>
-     * 
-     * @param str
-     * @param message [参数说明]
+     * @param obj 传入的检查是否为空的对象
+     * @param error 传入的ErrorCode对象实例，如果在错误信息注册表中存在对应的错误实现类，则自动根据参数实例化对应的类实例
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
      * 
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @SuppressWarnings("rawtypes")
-    public static void isEmpty(Object obj, String message, Object[] parameters) {
-        //不为空
+    public static void isEmpty(Object obj, ErrorCode error,
+            String messagePattern, String... parameters) {
+        int errorCode = error == null ? -1 : error.getCode();
+        isEmpty(obj, errorCode, null, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言对应对象为空(支持：字符串，数组，集合，Map)<br/>
+     * <功能详细描述>
+     * @param obj 传入的检查是否为空的对象
+     * @param error 传入的ErrorCode对象实例，如果在错误信息注册表中存在对应的错误实现类，则自动根据参数实例化对应的类实例
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void isEmpty(Object obj, ErrorCode error,
+            String messagePattern, Object[] parameters) {
+        int errorCode = error == null ? -1 : error.getCode();
+        isEmpty(obj, errorCode, null, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言对应对象为空(支持：字符串，数组，集合，Map)<br/>
+     * <功能详细描述>
+     * @param obj 传入的检查是否为空的对象
+     * @param errorCode 传入的errorCode,如果对应的ErrorCode的实例类存在，则生成的异常为实际对应的类，否则为SILException.并且其中errorCode为传入的值（注：errorCode应>=0）
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void isEmpty(Object obj, int errorCode,
+            String messagePattern, String... parameters) {
+        isEmpty(obj, errorCode, null, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言对应对象为空(支持：字符串，数组，集合，Map)<br/>
+     * <功能详细描述>
+     * @param obj 传入的检查是否为空的对象
+     * @param errorCode 传入的errorCode,如果对应的ErrorCode的实例类存在，则生成的异常为实际对应的类，否则为SILException.并且其中errorCode为传入的值（注：errorCode应>=0）
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void isEmpty(Object obj, int errorCode,
+            String messagePattern, Object[] parameters) {
+        isEmpty(obj, errorCode, null, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言对应对象为空(支持：字符串，数组，集合，Map)<br/>
+     * <功能详细描述>
+     * @param obj 传入的检查是否为空的对象
+     * @param type 默认额异常实现类，如果为空，则系统自动选择SILException进行替代
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void isEmpty(Object obj, Class<? extends SILException> type,
+            String messagePattern, String... parameters) {
+        isEmpty(obj, -1, type, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言对应对象为空(支持：字符串，数组，集合，Map)<br/>
+     * <功能详细描述>
+     * @param obj 传入的检查是否为空的对象
+     * @param type 默认额异常实现类，如果为空，则系统自动选择SILException进行替代
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void isEmpty(Object obj, Class<? extends SILException> type,
+            String messagePattern, Object[] parameters) {
+        isEmpty(obj, -1, type, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言对应对象为空(支持：字符串，数组，集合，Map)<br/>
+     * <功能详细描述>
+     * @param obj 传入的检查是否为空的对象
+     * @param errorCode 传入的errorCode,如果对应的ErrorCode的实例类存在，则生成的异常为实际对应的类，否则为SILException.并且其中errorCode为传入的值（注：errorCode应>=0）
+     * @param type 默认额异常实现类，如果为空，则系统自动选择SILException进行替代
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void isEmpty(Object obj, int errorCode,
+            Class<? extends SILException> type, String messagePattern,
+            Object[] parameters) {
+        if (!ObjectUtils.isEmpty(obj)) {
+            //如果为空则抛出异常
+            String message = MessageUtils.format(messagePattern, parameters);
+            throw SILExceptionHelper.newSILException(errorCode,
+                    message,
+                    null,
+                    type == null ? ArgNotEmptyException.class : type);
+        }
+    }
+    
+    /**
+     * 断言对应对象非空(支持：字符串，数组，集合，Map)<br/>
+     * <功能详细描述>
+     * @param obj 传入的检查是否为空的对象
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void notNull(Object obj, String messagePattern,
+            String... parameters) {
+        notNull(obj, -1, null, messagePattern, (Object[]) parameters);
+    }
+    
+    /**
+     * 断言对应对象非空(支持：字符串，数组，集合，Map)<br/>
+     * <功能详细描述>
+     * @param obj 传入的检查是否为空的对象
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void notNull(Object obj, String messagePattern,
+            Object[] parameters) {
+        notNull(obj, -1, null, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言对应对象非空(支持：字符串，数组，集合，Map)<br/>
+     * <功能详细描述>
+     * @param obj 传入的检查是否为空的对象
+     * @param error 传入的ErrorCode对象实例，如果在错误信息注册表中存在对应的错误实现类，则自动根据参数实例化对应的类实例
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void notNull(Object obj, ErrorCode error,
+            String messagePattern, String... parameters) {
+        int errorCode = error == null ? -1 : error.getCode();
+        notNull(obj, errorCode, null, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言对应对象非空(支持：字符串，数组，集合，Map)<br/>
+     * <功能详细描述>
+     * @param obj 传入的检查是否为空的对象
+     * @param error 传入的ErrorCode对象实例，如果在错误信息注册表中存在对应的错误实现类，则自动根据参数实例化对应的类实例
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void notNull(Object obj, ErrorCode error,
+            String messagePattern, Object[] parameters) {
+        int errorCode = error == null ? -1 : error.getCode();
+        notNull(obj, errorCode, null, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言对应对象非空(支持：字符串，数组，集合，Map)<br/>
+     * <功能详细描述>
+     * @param obj 传入的检查是否为空的对象
+     * @param errorCode 传入的errorCode,如果对应的ErrorCode的实例类存在，则生成的异常为实际对应的类，否则为SILException.并且其中errorCode为传入的值（注：errorCode应>=0）
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void notNull(Object obj, int errorCode,
+            String messagePattern, String... parameters) {
+        notNull(obj, errorCode, null, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言对应对象非空(支持：字符串，数组，集合，Map)<br/>
+     * <功能详细描述>
+     * @param obj 传入的检查是否为空的对象
+     * @param errorCode 传入的errorCode,如果对应的ErrorCode的实例类存在，则生成的异常为实际对应的类，否则为SILException.并且其中errorCode为传入的值（注：errorCode应>=0）
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void notNull(Object obj, int errorCode,
+            String messagePattern, Object[] parameters) {
+        notNull(obj, errorCode, null, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言对应对象非空(支持：字符串，数组，集合，Map)<br/>
+     * <功能详细描述>
+     * @param obj 传入的检查是否为空的对象
+     * @param type 默认额异常实现类，如果为空，则系统自动选择SILException进行替代
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void notNull(Object obj, Class<? extends SILException> type,
+            String messagePattern, String... parameters) {
+        notNull(obj, -1, type, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言对应对象非空(支持：字符串，数组，集合，Map)<br/>
+     * <功能详细描述>
+     * @param obj 传入的检查是否为空的对象
+     * @param type 默认额异常实现类，如果为空，则系统自动选择SILException进行替代
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void notNull(Object obj, Class<? extends SILException> type,
+            String messagePattern, Object[] parameters) {
+        notNull(obj, -1, type, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言对应对象非空(支持：字符串，数组，集合，Map)<br/>
+     * <功能详细描述>
+     * @param obj 传入的检查是否为空的对象
+     * @param errorCode 传入的errorCode,如果对应的ErrorCode的实例类存在，则生成的异常为实际对应的类，否则为SILException.并且其中errorCode为传入的值（注：errorCode应>=0）
+     * @param type 默认额异常实现类，如果为空，则系统自动选择SILException进行替代
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void notNull(Object obj, int errorCode,
+            Class<? extends SILException> type, String messagePattern,
+            Object[] parameters) {
         if (obj == null) {
-            return;
-        }
-        if (obj instanceof CharSequence
-                && !StringUtils.isBlank((CharSequence) obj)) {
-            throw new NullArgException(MessageFormatter.arrayFormat(message,
-                    parameters).getMessage());
-        } else if (obj instanceof Collection
-                && !CollectionUtils.isEmpty((Collection) obj)) {
-            throw new NullArgException(MessageFormatter.arrayFormat(message,
-                    parameters).getMessage());
-        } else if (obj instanceof Map && !MapUtils.isEmpty((Map) obj)) {
-            throw new NullArgException(MessageFormatter.arrayFormat(message,
-                    parameters).getMessage());
-        } else if (obj instanceof Object[]
-                && !ArrayUtils.isEmpty((Object[]) obj)) {
-            throw new NullArgException(MessageFormatter.arrayFormat(message,
-                    parameters).getMessage());
+            //如果为空则抛出异常
+            String message = MessageUtils.format(messagePattern, parameters);
+            throw SILExceptionHelper.newSILException(errorCode,
+                    message,
+                    null,
+                    type == null ? ArgNullException.class : type);
         }
     }
     
     /**
-     * 断言对象不为空<br/>
+     * 断言对应对象为空(支持：字符串，数组，集合，Map)<br/>
      * <功能详细描述>
-     * 
-     * @param object
-     * @param message [参数说明]
+     * @param obj 传入的检查是否为空的对象
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
      * 
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public static void notNull(Object object) {
-        notNull(object, "");
-    }
-    
-    /**
-     * 断言对象不为空<br/>
-     * <功能详细描述>
-     * 
-     * @param object
-     * @param message [参数说明]
-     * 
-     * @return void [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public static void notNull(Object object, String message,
+    public static void isNull(Object obj, String messagePattern,
             String... parameters) {
-        notNull(object, message, (Object[]) parameters);
+        isNull(obj, -1, null, messagePattern, (Object[]) parameters);
     }
     
     /**
-     * 断言对象不为空<br/>
+     * 断言对应对象为空(支持：字符串，数组，集合，Map)<br/>
      * <功能详细描述>
-     * 
-     * @param object [参数说明]
+     * @param obj 传入的检查是否为空的对象
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
      * 
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public static void notNull(Object object, String message,
+    public static void isNull(Object obj, String messagePattern,
             Object[] parameters) {
-        if (object == null) {
-            throw new NullArgException(MessageFormatter.arrayFormat(message,
-                    parameters).getMessage());
-        }
+        isNull(obj, -1, null, messagePattern, parameters);
     }
     
     /**
-     * 断言对象为空<br/>
+     * 断言对应对象为空(支持：字符串，数组，集合，Map)<br/>
      * <功能详细描述>
-     * 
-     * @param object
-     * @param message [参数说明]
+     * @param obj 传入的检查是否为空的对象
+     * @param error 传入的ErrorCode对象实例，如果在错误信息注册表中存在对应的错误实现类，则自动根据参数实例化对应的类实例
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
      * 
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public static void isNull(Object object) {
-        isNull(object, "");
+    public static void isNull(Object obj, ErrorCode error,
+            String messagePattern, String... parameters) {
+        int errorCode = error == null ? -1 : error.getCode();
+        isNull(obj, errorCode, null, messagePattern, parameters);
     }
     
     /**
-     * 断言对象为空<br/>
+     * 断言对应对象为空(支持：字符串，数组，集合，Map)<br/>
      * <功能详细描述>
-     * 
-     * @param object
-     * @param message [参数说明]
+     * @param obj 传入的检查是否为空的对象
+     * @param error 传入的ErrorCode对象实例，如果在错误信息注册表中存在对应的错误实现类，则自动根据参数实例化对应的类实例
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
      * 
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public static void isNull(Object object, String message,
+    public static void isNull(Object obj, ErrorCode error,
+            String messagePattern, Object[] parameters) {
+        int errorCode = error == null ? -1 : error.getCode();
+        isNull(obj, errorCode, null, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言对应对象为空(支持：字符串，数组，集合，Map)<br/>
+     * <功能详细描述>
+     * @param obj 传入的检查是否为空的对象
+     * @param errorCode 传入的errorCode,如果对应的ErrorCode的实例类存在，则生成的异常为实际对应的类，否则为SILException.并且其中errorCode为传入的值（注：errorCode应>=0）
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void isNull(Object obj, int errorCode, String messagePattern,
             String... parameters) {
-        isNull(object, message, (Object[]) parameters);
+        isNull(obj, errorCode, null, messagePattern, parameters);
     }
     
     /**
-     * 断言对象为空<br/>
+     * 断言对应对象为空(支持：字符串，数组，集合，Map)<br/>
      * <功能详细描述>
-     * 
-     * @param object [参数说明]
+     * @param obj 传入的检查是否为空的对象
+     * @param errorCode 传入的errorCode,如果对应的ErrorCode的实例类存在，则生成的异常为实际对应的类，否则为SILException.并且其中errorCode为传入的值（注：errorCode应>=0）
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
      * 
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public static void isNull(Object object, String message, Object[] parameters) {
-        if (object != null) {
-            throw new IllegalArgException(MessageFormatter.arrayFormat(message,
-                    parameters).getMessage());
-        }
-    }
-    
-    /**
-     * 断言表达式是为真<br/>
-     * 如果不为真，抛出参数非法异常IllegalArgException<br/>
-     * <功能详细描述>
-     * 
-     * @param expression
-     * @param message [参数说明]
-     * 
-     * @return void [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public static void isTrue(boolean expression) {
-        isTrue(expression, "");
-    }
-    
-    /**
-     * 断言表达式是为真<br/>
-     * 如果不为真，抛出参数非法异常IllegalArgException<br/>
-     * <功能详细描述>
-     * 
-     * @param expression
-     * @param message [参数说明]
-     * 
-     * @return void [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public static void isTrue(boolean expression, String message,
-            String... parameters) {
-        isTrue(expression, message, (Object[]) parameters);
-    }
-    
-    /**
-     * 断言表达式是为真<br/>
-     * 如果不为真，抛出参数非法异常IllegalArgException<br/>
-     * <功能详细描述>
-     * 
-     * @param expression [参数说明]
-     * 
-     * @return void [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public static void isTrue(boolean expression, String message,
+    public static void isNull(Object obj, int errorCode, String messagePattern,
             Object[] parameters) {
-        if (!expression) {
-            throw new IllegalArgException(MessageFormatter.arrayFormat(message,
-                    parameters).getMessage());
+        isNull(obj, errorCode, null, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言对应对象为空(支持：字符串，数组，集合，Map)<br/>
+     * <功能详细描述>
+     * @param obj 传入的检查是否为空的对象
+     * @param type 默认额异常实现类，如果为空，则系统自动选择SILException进行替代
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void isNull(Object obj, Class<? extends SILException> type,
+            String messagePattern, String... parameters) {
+        isNull(obj, -1, type, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言对应对象为空(支持：字符串，数组，集合，Map)<br/>
+     * <功能详细描述>
+     * @param obj 传入的检查是否为空的对象
+     * @param type 默认额异常实现类，如果为空，则系统自动选择SILException进行替代
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void isNull(Object obj, Class<? extends SILException> type,
+            String messagePattern, Object[] parameters) {
+        isNull(obj, -1, type, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言对应对象为空(支持：字符串，数组，集合，Map)<br/>
+     * <功能详细描述>
+     * @param obj 传入的检查是否为空的对象
+     * @param errorCode 传入的errorCode,如果对应的ErrorCode的实例类存在，则生成的异常为实际对应的类，否则为SILException.并且其中errorCode为传入的值（注：errorCode应>=0）
+     * @param type 默认额异常实现类，如果为空，则系统自动选择SILException进行替代
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void isNull(Object obj, int errorCode,
+            Class<? extends SILException> type, String messagePattern,
+            Object[] parameters) {
+        if (obj != null) {
+            //如果为空则抛出异常
+            String message = MessageUtils.format(messagePattern, parameters);
+            throw SILExceptionHelper.newSILException(errorCode,
+                    message,
+                    null,
+                    type == null ? ArgNotNullException.class : type);
         }
     }
     
     /**
-     * 断言表达式是不为真<br/>
-     * 如果不为真，抛出参数非法异常IllegalArgException<br/>
+     * 断言表达式非真<br/>
      * <功能详细描述>
-     * 
-     * @param expression
-     * @param message [参数说明]
+     * @param expression 传入的检查是否为空的对象
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
      * 
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public static void notTrue(boolean expression) {
-        notTrue(expression, "");
-    }
-    
-    /**
-     * 断言表达式是不为真<br/>
-     * 如果不为真，抛出参数非法异常IllegalArgException<br/>
-     * <功能详细描述>
-     * 
-     * @param expression
-     * @param message [参数说明]
-     * 
-     * @return void [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public static void notTrue(boolean expression, String message,
+    public static void notTrue(boolean expression, String messagePattern,
             String... parameters) {
-        notTrue(expression, message, (Object[]) parameters);
+        notTrue(expression, -1, null, messagePattern, (Object[]) parameters);
     }
     
     /**
-     * 断言表达式是不为真<br/>
-     * 如果不为真，抛出参数非法异常IllegalArgException<br/>
+     * 断言表达式非真<br/>
      * <功能详细描述>
-     * 
-     * @param expression [参数说明]
+     * @param expression 传入的检查是否为空的对象
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
      * 
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public static void notTrue(boolean expression, String message,
+    public static void notTrue(boolean expression, String messagePattern,
+            Object[] parameters) {
+        notTrue(expression, -1, null, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言表达式非真<br/>
+     * <功能详细描述>
+     * @param expression 传入的检查是否为空的对象
+     * @param error 传入的ErrorCode对象实例，如果在错误信息注册表中存在对应的错误实现类，则自动根据参数实例化对应的类实例
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void notTrue(boolean expression, ErrorCode error,
+            String messagePattern, String... parameters) {
+        int errorCode = error == null ? -1 : error.getCode();
+        notTrue(expression, errorCode, null, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言表达式非真<br/>
+     * <功能详细描述>
+     * @param expression 传入的检查是否为空的对象
+     * @param error 传入的ErrorCode对象实例，如果在错误信息注册表中存在对应的错误实现类，则自动根据参数实例化对应的类实例
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void notTrue(boolean expression, ErrorCode error,
+            String messagePattern, Object[] parameters) {
+        int errorCode = error == null ? -1 : error.getCode();
+        notTrue(expression, errorCode, null, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言表达式非真<br/>
+     * <功能详细描述>
+     * @param expression 传入的检查是否为空的对象
+     * @param errorCode 传入的errorCode,如果对应的ErrorCode的实例类存在，则生成的异常为实际对应的类，否则为SILException.并且其中errorCode为传入的值（注：errorCode应>=0）
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void notTrue(boolean expression, int errorCode,
+            String messagePattern, String... parameters) {
+        notTrue(expression, errorCode, null, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言表达式非真<br/>
+     * <功能详细描述>
+     * @param expression 传入的检查是否为空的对象
+     * @param errorCode 传入的errorCode,如果对应的ErrorCode的实例类存在，则生成的异常为实际对应的类，否则为SILException.并且其中errorCode为传入的值（注：errorCode应>=0）
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void notTrue(boolean expression, int errorCode,
+            String messagePattern, Object[] parameters) {
+        notTrue(expression, errorCode, null, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言表达式非真<br/>
+     * <功能详细描述>
+     * @param expression 传入的检查是否为空的对象
+     * @param type 默认额异常实现类，如果为空，则系统自动选择SILException进行替代
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void notTrue(boolean expression,
+            Class<? extends SILException> type, String messagePattern,
+            String... parameters) {
+        notTrue(expression, -1, type, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言表达式非真<br/>
+     * <功能详细描述>
+     * @param expression 传入的检查是否为空的对象
+     * @param type 默认额异常实现类，如果为空，则系统自动选择SILException进行替代
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void notTrue(boolean expression,
+            Class<? extends SILException> type, String messagePattern,
+            Object[] parameters) {
+        notTrue(expression, -1, type, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言表达式非真<br/>
+     * <功能详细描述>
+     * @param expression 传入的检查是否为空的对象
+     * @param errorCode 传入的errorCode,如果对应的ErrorCode的实例类存在，则生成的异常为实际对应的类，否则为SILException.并且其中errorCode为传入的值（注：errorCode应>=0）
+     * @param type 默认额异常实现类，如果为空，则系统自动选择SILException进行替代
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void notTrue(boolean expression, int errorCode,
+            Class<? extends SILException> type, String messagePattern,
             Object[] parameters) {
         if (expression) {
-            throw new IllegalArgException(MessageFormatter.arrayFormat(message,
-                    parameters).getMessage());
+            //如果为空则抛出异常
+            String message = MessageUtils.format(messagePattern, parameters);
+            throw SILExceptionHelper.newSILException(errorCode,
+                    message,
+                    null,
+                    type == null ? ArgIllegalException.class : type);
         }
     }
     
     /**
-     * 断言是否为指定类型的实例 <功能详细描述>
-     * 
-     * @param clazz
-     * @param obj [参数说明]
-     * 
-     * @return void [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public static void isInstanceOf(Class<?> clazz, Object obj) {
-        isInstanceOf(clazz, obj, "");
-    }
-    
-    /**
-     * 断言是否为指定类型的实例 <功能详细描述>
-     * 
-     * @param clazz
-     * @param obj [参数说明]
+     * 断言表达式为真<br/>
+     * <功能详细描述>
+     * @param expression 传入的表达式boolean值
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
      * 
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public static void isInstanceOf(Class<?> clazz, Object obj, String message,
+    public static void isTrue(boolean expression, String messagePattern,
             String... parameters) {
-        isInstanceOf(clazz, obj, message, (Object[]) parameters);
+        isTrue(expression, -1, null, messagePattern, (Object[]) parameters);
     }
     
     /**
-     * 断言对象是否为指定类型的实例 <功能详细描述>
-     * 
-     * @param type
-     * @param obj
-     * @param message
-     * @param parameters [参数说明]
+     * 断言表达式为真<br/>
+     * <功能详细描述>
+     * @param expression 传入的表达式boolean值
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
      * 
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public static void isInstanceOf(Class<?> type, Object obj, String message,
+    public static void isTrue(boolean expression, String messagePattern,
             Object[] parameters) {
-        notNull(type, "Type to check against must not be null");
-        if (!type.isInstance(obj)) {
-            throw new IllegalArgumentException(message + ". Object of class ["
-                    + (obj != null ? obj.getClass().getName() : "null")
-                    + "] must be an instance of " + type);
-        }
+        isTrue(expression, -1, null, messagePattern, parameters);
     }
     
     /**
-     * <功能简述> <功能详细描述>
-     * 
-     * @param superType
-     * @param subType [参数说明]
-     * 
-     * @return void [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    @SuppressWarnings("rawtypes")
-    public static void isAssignable(Class superType, Class subType) {
-        isAssignable(superType, subType, "");
-    }
-    
-    /**
-     * Assert that {@code superType.isAssignableFrom(subType)} is {@code true}.
-     * 
-     * <pre class="code">
-     * Assert.isAssignable(Number.class, myClass);
-     * </pre>
-     * 
-     * @param superType the super type to check against
-     * @param subType the sub type to check
-     * @param message a message which will be prepended to the message produced
-     *            by the function itself, and which may be used to provide
-     *            context. It should normally end in a ": " or ". " so that the
-     *            function generate message looks ok when prepended to it.
-     * @throws IllegalArgumentException if the classes are not assignable
-     */
-    public static void isAssignable(Class<?> superType, Class<?> subType,
-            String message) {
-        notNull(superType, "Type to check against must not be null");
-        if (subType == null || !superType.isAssignableFrom(subType)) {
-            throw new IllegalArgumentException(message + subType
-                    + " is not assignable to " + superType);
-        }
-    }
-    
-    /**
-     * 断言资源是存在否则抛出资源不存在异常<br/>
+     * 断言表达式为真<br/>
      * <功能详细描述>
-     * 
-     * @param str
-     * @param message [参数说明]
+     * @param expression 传入的表达式boolean值
+     * @param error 传入的ErrorCode对象实例，如果在错误信息注册表中存在对应的错误实现类，则自动根据参数实例化对应的类实例
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
      * 
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public static void isExist(Resource resource, String message,
+    public static void isTrue(boolean expression, ErrorCode error,
+            String messagePattern, String... parameters) {
+        int errorCode = error == null ? -1 : error.getCode();
+        isTrue(expression, errorCode, null, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言表达式为真<br/>
+     * <功能详细描述>
+     * @param expression 传入的表达式boolean值
+     * @param error 传入的ErrorCode对象实例，如果在错误信息注册表中存在对应的错误实现类，则自动根据参数实例化对应的类实例
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void isTrue(boolean expression, ErrorCode error,
+            String messagePattern, Object[] parameters) {
+        int errorCode = error == null ? -1 : error.getCode();
+        isTrue(expression, errorCode, null, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言表达式为真<br/>
+     * <功能详细描述>
+     * @param expression 传入的表达式boolean值
+     * @param errorCode 传入的errorCode,如果对应的ErrorCode的实例类存在，则生成的异常为实际对应的类，否则为SILException.并且其中errorCode为传入的值（注：errorCode应>=0）
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void isTrue(boolean expression, int errorCode,
+            String messagePattern, String... parameters) {
+        isTrue(expression, errorCode, null, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言表达式为真<br/>
+     * <功能详细描述>
+     * @param expression 传入的表达式boolean值
+     * @param errorCode 传入的errorCode,如果对应的ErrorCode的实例类存在，则生成的异常为实际对应的类，否则为SILException.并且其中errorCode为传入的值（注：errorCode应>=0）
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void isTrue(boolean expression, int errorCode,
+            String messagePattern, Object[] parameters) {
+        isTrue(expression, errorCode, null, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言表达式为真<br/>
+     * <功能详细描述>
+     * @param expression 传入的表达式boolean值
+     * @param type 默认额异常实现类，如果为空，则系统自动选择SILException进行替代
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void isTrue(boolean expression,
+            Class<? extends SILException> type, String messagePattern,
             String... parameters) {
-        isExist(resource, message, (Object[]) parameters);
+        isTrue(expression, -1, type, messagePattern, parameters);
     }
     
     /**
-     * 断言资源是存在否则抛出资源不存在异常<br/>
+     * 断言表达式为真<br/>
      * <功能详细描述>
-     * 
-     * @param str
-     * @param message [参数说明]
+     * @param expression 传入的表达式boolean值
+     * @param type 默认额异常实现类，如果为空，则系统自动选择SILException进行替代
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
      * 
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public static void isExist(Resource resource, String message,
+    public static void isTrue(boolean expression,
+            Class<? extends SILException> type, String messagePattern,
+            Object[] parameters) {
+        isTrue(expression, -1, type, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言表达式为真<br/>
+     * <功能详细描述>
+     * @param expression 传入的表达式boolean值
+     * @param errorCode 传入的errorCode,如果对应的ErrorCode的实例类存在，则生成的异常为实际对应的类，否则为SILException.并且其中errorCode为传入的值（注：errorCode应>=0）
+     * @param type 默认额异常实现类，如果为空，则系统自动选择SILException进行替代
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void isTrue(boolean expression, int errorCode,
+            Class<? extends SILException> type, String messagePattern,
+            Object[] parameters) {
+        if (!expression) {
+            //如果为空则抛出异常
+            String message = MessageUtils.format(messagePattern, parameters);
+            throw SILExceptionHelper.newSILException(errorCode,
+                    message,
+                    null,
+                    type == null ? ArgIllegalException.class : type);
+        }
+    }
+    
+    /**
+     * 断言资源存在<br/>
+     * <功能详细描述>
+     * @param resource 传入的检查是否存在资源
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void isExist(Resource resource, String messagePattern,
+            String... parameters) {
+        isExist(resource, -1, null, messagePattern, (Object[]) parameters);
+    }
+    
+    /**
+     * 断言资源存在<br/>
+     * <功能详细描述>
+     * @param resource 传入的检查是否存在资源
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void isExist(Resource resource, String messagePattern,
+            Object[] parameters) {
+        isExist(resource, -1, null, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言资源存在<br/>
+     * <功能详细描述>
+     * @param resource 传入的检查是否存在资源
+     * @param error 传入的ErrorCode对象实例，如果在错误信息注册表中存在对应的错误实现类，则自动根据参数实例化对应的类实例
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void isExist(Resource resource, ErrorCode error,
+            String messagePattern, String... parameters) {
+        int errorCode = error == null ? -1 : error.getCode();
+        isExist(resource, errorCode, null, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言资源存在<br/>
+     * <功能详细描述>
+     * @param resource 传入的检查是否存在资源
+     * @param error 传入的ErrorCode对象实例，如果在错误信息注册表中存在对应的错误实现类，则自动根据参数实例化对应的类实例
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void isExist(Resource resource, ErrorCode error,
+            String messagePattern, Object[] parameters) {
+        int errorCode = error == null ? -1 : error.getCode();
+        isExist(resource, errorCode, null, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言资源存在<br/>
+     * <功能详细描述>
+     * @param resource 传入的检查是否存在资源
+     * @param errorCode 传入的errorCode,如果对应的ErrorCode的实例类存在，则生成的异常为实际对应的类，否则为SILException.并且其中errorCode为传入的值（注：errorCode应>=0）
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void isExist(Resource resource, int errorCode,
+            String messagePattern, String... parameters) {
+        isExist(resource, errorCode, null, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言资源存在<br/>
+     * <功能详细描述>
+     * @param resource 传入的检查是否存在资源
+     * @param errorCode 传入的errorCode,如果对应的ErrorCode的实例类存在，则生成的异常为实际对应的类，否则为SILException.并且其中errorCode为传入的值（注：errorCode应>=0）
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void isExist(Resource resource, int errorCode,
+            String messagePattern, Object[] parameters) {
+        isExist(resource, errorCode, null, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言资源存在<br/>
+     * <功能详细描述>
+     * @param resource 传入的检查是否存在资源
+     * @param type 默认额异常实现类，如果为空，则系统自动选择SILException进行替代
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void isExist(Resource resource,
+            Class<? extends SILException> type, String messagePattern,
+            String... parameters) {
+        isExist(resource, -1, type, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言资源存在<br/>
+     * <功能详细描述>
+     * @param resource 传入的检查是否存在资源
+     * @param type 默认额异常实现类，如果为空，则系统自动选择SILException进行替代
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void isExist(Resource resource,
+            Class<? extends SILException> type, String messagePattern,
+            Object[] parameters) {
+        isExist(resource, -1, type, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言资源存在<br/>
+     * <功能详细描述>
+     * @param resource 传入的检查是否存在资源
+     * @param errorCode 传入的errorCode,如果对应的ErrorCode的实例类存在，则生成的异常为实际对应的类，否则为SILException.并且其中errorCode为传入的值（注：errorCode应>=0）
+     * @param type 默认额异常实现类，如果为空，则系统自动选择SILException进行替代
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void isExist(Resource resource, int errorCode,
+            Class<? extends SILException> type, String messagePattern,
             Object[] parameters) {
         if (resource == null || !resource.exists()) {
-            throw new ResourceIsNullOrNotExistException(resource, message,
-                    parameters);
+            //如果为空则抛出异常
+            String message = MessageUtils.format(messagePattern, parameters);
+            throw SILExceptionHelper.newSILException(errorCode,
+                    message,
+                    null,
+                    type == null ? ResourceNotExistException.class : type);
         }
     }
     
     /**
-     * 断言资源是存在否则抛出资源不存在异常<br/>
+     * 断言文件存在<br/>
      * <功能详细描述>
-     * 
-     * @param str
-     * @param message [参数说明]
+     * @param file 传入的检查是否存在文件
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
      * 
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public static void isExist(File file, String message, String... parameters) {
-        isExist(file, message, (Object[]) parameters);
+    public static void isExist(File file, String messagePattern,
+            String... parameters) {
+        isExist(file, -1, null, messagePattern, (Object[]) parameters);
     }
     
     /**
-     * 断言资源是存在否则抛出资源不存在异常<br/>
+     * 断言文件存在<br/>
      * <功能详细描述>
-     * 
-     * @param str
-     * @param message [参数说明]
+     * @param file 传入的检查是否存在文件
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
      * 
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public static void isExist(File file, String message, Object[] parameters) {
+    public static void isExist(File file, String messagePattern,
+            Object[] parameters) {
+        isExist(file, -1, null, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言文件存在<br/>
+     * <功能详细描述>
+     * @param file 传入的检查是否存在文件
+     * @param error 传入的ErrorCode对象实例，如果在错误信息注册表中存在对应的错误实现类，则自动根据参数实例化对应的类实例
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void isExist(File file, ErrorCode error,
+            String messagePattern, String... parameters) {
+        int errorCode = error == null ? -1 : error.getCode();
+        isExist(file, errorCode, null, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言文件存在<br/>
+     * <功能详细描述>
+     * @param file 传入的检查是否存在文件
+     * @param error 传入的ErrorCode对象实例，如果在错误信息注册表中存在对应的错误实现类，则自动根据参数实例化对应的类实例
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void isExist(File file, ErrorCode error,
+            String messagePattern, Object[] parameters) {
+        int errorCode = error == null ? -1 : error.getCode();
+        isExist(file, errorCode, null, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言文件存在<br/>
+     * <功能详细描述>
+     * @param file 传入的检查是否存在文件
+     * @param errorCode 传入的errorCode,如果对应的ErrorCode的实例类存在，则生成的异常为实际对应的类，否则为SILException.并且其中errorCode为传入的值（注：errorCode应>=0）
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void isExist(File file, int errorCode, String messagePattern,
+            String... parameters) {
+        isExist(file, errorCode, null, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言文件存在<br/>
+     * <功能详细描述>
+     * @param file 传入的检查是否存在文件
+     * @param errorCode 传入的errorCode,如果对应的ErrorCode的实例类存在，则生成的异常为实际对应的类，否则为SILException.并且其中errorCode为传入的值（注：errorCode应>=0）
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void isExist(File file, int errorCode, String messagePattern,
+            Object[] parameters) {
+        isExist(file, errorCode, null, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言文件存在<br/>
+     * <功能详细描述>
+     * @param file 传入的检查是否存在文件
+     * @param type 默认额异常实现类，如果为空，则系统自动选择SILException进行替代
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void isExist(File file, Class<? extends SILException> type,
+            String messagePattern, String... parameters) {
+        isExist(file, -1, type, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言文件存在<br/>
+     * <功能详细描述>
+     * @param file 传入的检查是否存在文件
+     * @param type 默认额异常实现类，如果为空，则系统自动选择SILException进行替代
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void isExist(File file, Class<? extends SILException> type,
+            String messagePattern, Object[] parameters) {
+        isExist(file, -1, type, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言文件存在<br/>
+     * <功能详细描述>
+     * @param file 传入的检查是否存在文件
+     * @param errorCode 传入的errorCode,如果对应的ErrorCode的实例类存在，则生成的异常为实际对应的类，否则为SILException.并且其中errorCode为传入的值（注：errorCode应>=0）
+     * @param type 默认额异常实现类，如果为空，则系统自动选择SILException进行替代
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void isExist(File file, int errorCode,
+            Class<? extends SILException> type, String messagePattern,
+            Object[] parameters) {
         if (file == null || !file.exists()) {
-            throw new ResourceIsNullOrNotExistException(new FileSystemResource(
-                    file), message, parameters);
+            //如果为空则抛出异常
+            String message = MessageUtils.format(messagePattern, parameters);
+            throw SILExceptionHelper.newSILException(errorCode,
+                    message,
+                    null,
+                    type == null ? ResourceNotExistException.class : type);
+        }
+    }
+    
+    /**
+     * 断言对象为指定类的实现<br/>
+     * <功能详细描述>
+     * @param clazz 验证类型（不能为空）
+     * @param obj 待验证对象
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void isInstanceOf(Class<?> clazz, Object obj,
+            String messagePattern, String... parameters) {
+        isInstanceOf(clazz,
+                obj,
+                -1,
+                null,
+                messagePattern,
+                (Object[]) parameters);
+    }
+    
+    /**
+     * 断言对象为指定类的实现<br/>
+     * <功能详细描述>
+     * @param clazz 验证类型（不能为空）
+     * @param obj 待验证对象
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void isInstanceOf(Class<?> clazz, Object obj,
+            String messagePattern, Object[] parameters) {
+        isInstanceOf(clazz, obj, -1, null, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言对象为指定类的实现<br/>
+     * <功能详细描述>
+     * @param clazz 验证类型（不能为空）
+     * @param obj 待验证对象
+     * @param error 传入的ErrorCode对象实例，如果在错误信息注册表中存在对应的错误实现类，则自动根据参数实例化对应的类实例
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void isInstanceOf(Class<?> clazz, Object obj,
+            ErrorCode error, String messagePattern, String... parameters) {
+        int errorCode = error == null ? -1 : error.getCode();
+        isInstanceOf(clazz, obj, errorCode, null, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言对象为指定类的实现<br/>
+     * <功能详细描述>
+     * @param clazz 验证类型（不能为空）
+     * @param obj 待验证对象
+     * @param error 传入的ErrorCode对象实例，如果在错误信息注册表中存在对应的错误实现类，则自动根据参数实例化对应的类实例
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void isInstanceOf(Class<?> clazz, Object obj,
+            ErrorCode error, String messagePattern, Object[] parameters) {
+        int errorCode = error == null ? -1 : error.getCode();
+        isInstanceOf(clazz, obj, errorCode, null, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言对象为指定类的实现<br/>
+     * <功能详细描述>
+     * @param clazz 验证类型（不能为空）
+     * @param obj 待验证对象
+     * @param errorCode 传入的errorCode,如果对应的ErrorCode的实例类存在，则生成的异常为实际对应的类，否则为SILException.并且其中errorCode为传入的值（注：errorCode应>=0）
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void isInstanceOf(Class<?> clazz, Object obj, int errorCode,
+            String messagePattern, String... parameters) {
+        isInstanceOf(clazz, obj, errorCode, null, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言对象为指定类的实现<br/>
+     * <功能详细描述>
+     * @param clazz 验证类型（不能为空）
+     * @param obj 待验证对象
+     * @param errorCode 传入的errorCode,如果对应的ErrorCode的实例类存在，则生成的异常为实际对应的类，否则为SILException.并且其中errorCode为传入的值（注：errorCode应>=0）
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void isInstanceOf(Class<?> clazz, Object obj, int errorCode,
+            String messagePattern, Object[] parameters) {
+        isInstanceOf(clazz, obj, errorCode, null, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言对象为指定类的实现<br/>
+     * <功能详细描述>
+     * @param clazz 验证类型（不能为空）
+     * @param obj 待验证对象
+     * @param type 默认额异常实现类，如果为空，则系统自动选择SILException进行替代
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void isInstanceOf(Class<?> clazz, Object obj,
+            Class<? extends SILException> type, String messagePattern,
+            String... parameters) {
+        isInstanceOf(clazz, obj, -1, type, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言对象为指定类的实现<br/>
+     * <功能详细描述>
+     * @param clazz 验证类型（不能为空）
+     * @param obj 待验证对象
+     * @param type 默认额异常实现类，如果为空，则系统自动选择SILException进行替代
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void isInstanceOf(Class<?> clazz, Object obj,
+            Class<? extends SILException> type, String messagePattern,
+            Object[] parameters) {
+        isInstanceOf(clazz, obj, -1, type, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言对象为指定类的实现<br/>
+     * <功能详细描述>
+     * @param clazz 验证类型（不能为空）
+     * @param obj 待验证对象
+     * @param errorCode 传入的errorCode,如果对应的ErrorCode的实例类存在，则生成的异常为实际对应的类，否则为SILException.并且其中errorCode为传入的值（注：errorCode应>=0）
+     * @param type 默认额异常实现类，如果为空，则系统自动选择SILException进行替代
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void isInstanceOf(Class<?> clazz, Object obj, int errorCode,
+            Class<? extends SILException> type, String messagePattern,
+            Object[] parameters) {
+        notNull(clazz, "clazz is null.");//判断是否是类型的实例，首先类型不能为空
+        if (!clazz.isInstance(obj)) {
+            //如果为空则抛出异常
+            String message = MessageUtils.format(messagePattern, parameters);
+            throw SILExceptionHelper.newSILException(errorCode,
+                    message,
+                    null,
+                    type == null ? ArgTypeIllegalException.class : type);
+        }
+    }
+    
+    /**
+     * 断言对象为指定类的实现<br/>
+     * <功能详细描述>
+     * @param clazz 验证类型（不能为空）
+     * @param obj 待验证对象
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void isAssignable(Class<?> superType, Class<?> subType,
+            String messagePattern, String... parameters) {
+        isAssignable(superType,
+                subType,
+                -1,
+                null,
+                messagePattern,
+                (Object[]) parameters);
+    }
+    
+    /**
+     * 断言对象为指定类的实现<br/>
+     * <功能详细描述>
+     * @param clazz 验证类型（不能为空）
+     * @param obj 待验证对象
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void isAssignable(Class<?> superType, Class<?> subType,
+            String messagePattern, Object[] parameters) {
+        isAssignable(superType, subType, -1, null, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言对象为指定类的实现<br/>
+     * <功能详细描述>
+     * @param clazz 验证类型（不能为空）
+     * @param obj 待验证对象
+     * @param error 传入的ErrorCode对象实例，如果在错误信息注册表中存在对应的错误实现类，则自动根据参数实例化对应的类实例
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void isAssignable(Class<?> superType, Class<?> subType,
+            ErrorCode error, String messagePattern, String... parameters) {
+        int errorCode = error == null ? -1 : error.getCode();
+        isAssignable(superType,
+                subType,
+                errorCode,
+                null,
+                messagePattern,
+                parameters);
+    }
+    
+    /**
+     * 断言对象为指定类的实现<br/>
+     * <功能详细描述>
+     * @param clazz 验证类型（不能为空）
+     * @param obj 待验证对象
+     * @param error 传入的ErrorCode对象实例，如果在错误信息注册表中存在对应的错误实现类，则自动根据参数实例化对应的类实例
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void isAssignable(Class<?> superType, Class<?> subType,
+            ErrorCode error, String messagePattern, Object[] parameters) {
+        int errorCode = error == null ? -1 : error.getCode();
+        isAssignable(superType,
+                subType,
+                errorCode,
+                null,
+                messagePattern,
+                parameters);
+    }
+    
+    /**
+     * 断言对象为指定类的实现<br/>
+     * <功能详细描述>
+     * @param clazz 验证类型（不能为空）
+     * @param obj 待验证对象
+     * @param errorCode 传入的errorCode,如果对应的ErrorCode的实例类存在，则生成的异常为实际对应的类，否则为SILException.并且其中errorCode为传入的值（注：errorCode应>=0）
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void isAssignable(Class<?> superType, Class<?> subType,
+            int errorCode, String messagePattern, String... parameters) {
+        isAssignable(superType,
+                subType,
+                errorCode,
+                null,
+                messagePattern,
+                parameters);
+    }
+    
+    /**
+     * 断言对象为指定类的实现<br/>
+     * <功能详细描述>
+     * @param clazz 验证类型（不能为空）
+     * @param obj 待验证对象
+     * @param errorCode 传入的errorCode,如果对应的ErrorCode的实例类存在，则生成的异常为实际对应的类，否则为SILException.并且其中errorCode为传入的值（注：errorCode应>=0）
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void isAssignable(Class<?> superType, Class<?> subType,
+            int errorCode, String messagePattern, Object[] parameters) {
+        isAssignable(superType,
+                subType,
+                errorCode,
+                null,
+                messagePattern,
+                parameters);
+    }
+    
+    /**
+     * 断言对象为指定类的实现<br/>
+     * <功能详细描述>
+     * @param clazz 验证类型（不能为空）
+     * @param obj 待验证对象
+     * @param type 默认额异常实现类，如果为空，则系统自动选择SILException进行替代
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void isAssignable(Class<?> superType, Class<?> subType,
+            Class<? extends SILException> type, String messagePattern,
+            String... parameters) {
+        isAssignable(superType, subType, -1, type, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言对象为指定类的实现<br/>
+     * <功能详细描述>
+     * @param clazz 验证类型（不能为空）
+     * @param obj 待验证对象
+     * @param type 默认额异常实现类，如果为空，则系统自动选择SILException进行替代
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void isAssignable(Class<?> superType, Class<?> subType,
+            Class<? extends SILException> type, String messagePattern,
+            Object[] parameters) {
+        isAssignable(superType, subType, -1, type, messagePattern, parameters);
+    }
+    
+    /**
+     * 断言对象为指定类的实现<br/>
+     * <功能详细描述>
+     * @param superType 验证类型（不能为空）
+     * @param subType 待验证对象
+     * @param errorCode 传入的errorCode,如果对应的ErrorCode的实例类存在，则生成的异常为实际对应的类，否则为SILException.并且其中errorCode为传入的值（注：errorCode应>=0）
+     * @param type 默认额异常实现类，如果为空，则系统自动选择SILException进行替代
+     * @param messagePattern 异常信息Pattern支持占位符
+     * @param parameters 信息中占位符的值
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void isAssignable(Class<?> superType, Class<?> subType,
+            int errorCode, Class<? extends SILException> type,
+            String messagePattern, Object[] parameters) {
+        notNull(superType, "superType is null.");//首先类型不能为空
+        notNull(subType, "subType is null.");//首先类型不能为空
+        if (!superType.isAssignableFrom(subType)) {
+            //如果为空则抛出异常
+            String message = MessageUtils.format(messagePattern, parameters);
+            throw SILExceptionHelper.newSILException(errorCode,
+                    message,
+                    null,
+                    type == null ? ArgTypeIllegalException.class : type);
         }
     }
     
@@ -549,8 +1906,9 @@ public class AssertUtils {
             Object[] parameters) {
         if (!((srcObj == null && tagObj == null) || (srcObj != null
                 && tagObj != null && srcObj.equals(tagObj)))) {
-            throw new IllegalArgException("srcObj not equal tagObj : "
-                    + message, parameters);
+            throw new ArgIllegalException(
+                    MessageUtils.format("srcObj not equal tagObj : " + message,
+                            parameters));
         }
     }
     
@@ -589,8 +1947,9 @@ public class AssertUtils {
             Object[] parameters) {
         if ((srcObj == null && tagObj == null)
                 || (srcObj != null && tagObj != null && srcObj.equals(tagObj))) {
-            throw new IllegalArgException("srcObj equal tagObj : "
-                    + message, parameters);
+            throw new ArgIllegalException(
+                    MessageUtils.format("srcObj equal tagObj : " + message,
+                            parameters));
         }
     }
     

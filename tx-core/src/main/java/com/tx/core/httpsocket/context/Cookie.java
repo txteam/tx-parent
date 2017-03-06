@@ -7,8 +7,8 @@ import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import com.tx.core.exceptions.remote.HttpSocketException;
 import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.httpsocket.exception.HttpSocketException;
 
 /**
  * Cookie<br>

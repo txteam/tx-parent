@@ -11,7 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.tx.component.configuration.config.ConfigGroupParse;
 import com.tx.component.configuration.config.ConfigPropertyParse;
 import com.tx.component.configuration.context.ConfigContext;
-import com.tx.component.configuration.exception.UnModifyAbleException;
+import com.tx.component.configuration.exceptions.UnModifyAbleException;
 import com.tx.component.configuration.persister.ConfigPropertiesPersister;
 import com.tx.core.exceptions.util.AssertUtils;
 

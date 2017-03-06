@@ -33,6 +33,7 @@ import com.tx.component.auth.model.AuthItem;
 import com.tx.component.auth.model.AuthItemImpl;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.util.ClassScanUtils;
+import com.tx.core.util.MessageUtils;
 
 /**
  * 子数据权限权限加载器处理器<br/>
@@ -202,8 +203,8 @@ public class ControllerAuthRegisterSupportLoaderProcessor implements
             if (!ControllerAuthRegisterSupportLoaderProcessor.parentId2authItemMap.containsKey(authTemp.getId())) {
                 if (throwExceptionWhenNotExist) {
                     throw new AuthContextInitException(
-                            "authItem:{} set CONTROLLER_AUTH_LOAD.but child not exist.",
-                            new Object[] { authTemp.getId() });
+                            MessageUtils.format("authItem:{} set CONTROLLER_AUTH_LOAD.but child not exist.",
+                                    new Object[] { authTemp.getId() }));
                 } else {
                     continue;
                 }
@@ -244,7 +245,7 @@ public class ControllerAuthRegisterSupportLoaderProcessor implements
             nestedLoadChildAuthItem(parentAuthItemIdSetTemp, newAuthItemSet);
         }
     }
-
+    
     /**
      * @param 对basePackages进行赋值
      */

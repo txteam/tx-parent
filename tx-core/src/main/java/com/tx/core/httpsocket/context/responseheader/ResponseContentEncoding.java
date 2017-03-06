@@ -2,7 +2,7 @@ package com.tx.core.httpsocket.context.responseheader;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.tx.core.httpsocket.exception.HttpSocketException;
+import com.tx.core.exceptions.remote.HttpSocketException;
 
 /** 返回的压缩类型 */
 public enum ResponseContentEncoding {

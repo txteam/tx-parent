@@ -13,8 +13,9 @@ import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.model.OSSObject;
 import com.tx.component.file.model.FileDefinition;
 import com.tx.component.file.resource.AbstractFileResource;
-import com.tx.core.exceptions.io.ResourceIsExistException;
+import com.tx.core.exceptions.resource.ResourceIsExistException;
 import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.util.MessageUtils;
 
 /**
  * 默认的文件定义资源的实现<br/>
@@ -104,8 +105,9 @@ public class OSSFileResource extends AbstractFileResource {
         
         if (this.ossClient.doesObjectExist(this.bucketName,
                 this.fileDefinition.getRelativePath())) {
-            throw new ResourceIsExistException("resource is exist. path:{}",
-                    new Object[] { fileDefinition.getRelativePath() });
+            throw new ResourceIsExistException(
+                    MessageUtils.format("resource is exist. path:{}",
+                            new Object[] { fileDefinition.getRelativePath() }));
         }
         
         this.ossClient.putObject(this.bucketName,

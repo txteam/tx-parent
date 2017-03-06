@@ -22,7 +22,7 @@ import com.tx.component.rule.impl.drools.exception.DroolsKnowledgeBaseInitExcept
 import com.tx.component.rule.loader.RuleItem;
 import com.tx.component.rule.loader.RuleStateEnum;
 import com.tx.component.rule.loader.RuleTypeEnum;
-import com.tx.core.exceptions.io.ResourceParseException;
+import com.tx.core.exceptions.resource.ResourceParseException;
 import com.tx.core.exceptions.util.ExceptionWrapperUtils;
 
 /**

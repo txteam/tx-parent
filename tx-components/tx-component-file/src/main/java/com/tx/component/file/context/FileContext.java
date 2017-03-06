@@ -6,16 +6,20 @@ s * 描          述:  <描述>
  */
 package com.tx.component.file.context;
 
+import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.core.io.Resource;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import com.tx.component.file.FileContextConstants;
+import com.tx.component.file.helper.FileContextHelper;
 import com.tx.component.file.model.FileDefinition;
 import com.tx.component.file.resource.FileResource;
-import com.tx.core.exceptions.io.ResourceIsExistException;
+import com.tx.core.exceptions.resource.ResourceIsExistException;
 import com.tx.core.exceptions.util.AssertUtils;
 
 /**
@@ -69,6 +73,262 @@ public class FileContext extends FileContextBuilder implements InitializingBean 
      * 如果对应文件所在的文件夹不存在，对应文件夹会自动创建<br/>
      * 
      * @param relativePath 存储路径,此存储路径为文件全路径(包括扩展名)
+     * @param resource 文件流
+     * 
+     * @return FileDefinition 文件定义的实体
+     * 
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @Transactional
+    public FileDefinition save(String relativePath, Resource resource) {
+        AssertUtils.notEmpty(relativePath, "relativePath is null.");
+        AssertUtils.notNull(resource, "input is null.");
+        
+        FileDefinition fileDefinition = save(FileContextConstants.DEFAULT_MODULE,
+                relativePath,
+                resource,
+                null);
+        
+        return fileDefinition;
+    }
+    
+    /**
+     * 保存文件<br/>
+     * 如果文件已经存在，则复写当前文件<br/>
+     * 如果文件不存在，则创建文件后写入<br/>
+     * 如果对应文件所在的文件夹不存在，对应文件夹会自动创建<br/>
+     * 
+     * @param relativePath 存储路径,此存储路径为文件全路径(包括扩展名)
+     * @param resource 文件流
+     * @param filename 文件名,此文件的实际文件名称
+     * 
+     * @return FileDefinition 文件定义的实体
+     * 
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @Transactional
+    public FileDefinition save(String module, String relativePath,
+            Resource resource) {
+        AssertUtils.notEmpty(relativePath, "relativePath is null.");
+        AssertUtils.notNull(resource, "input is null.");
+        
+        FileDefinition fileDefinition = save(module,
+                relativePath,
+                resource,
+                null);
+        
+        return fileDefinition;
+    }
+    
+    /**
+     * 保存文件<br/>
+     * 如果文件已经存在，则复写当前文件<br/>
+     * 如果文件不存在，则创建文件后写入<br/>
+     * 如果对应文件所在的文件夹不存在，对应文件夹会自动创建<br/>
+     * 
+     * @param relativePath 存储路径,此存储路径为文件全路径(包括扩展名)
+     * @param resource 文件流
+     * @param filename 文件名,此文件的实际文件名称
+     * 
+     * @return FileDefinition 文件定义的实体
+     * 
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @Transactional
+    public FileDefinition save(String relativePath, Resource resource,
+            String filename) {
+        AssertUtils.notEmpty(relativePath, "relativePath is null.");
+        AssertUtils.notNull(resource, "input is null.");
+        
+        FileDefinition fileDefinition = save(FileContextConstants.DEFAULT_MODULE,
+                relativePath,
+                resource,
+                filename);
+        
+        return fileDefinition;
+    }
+    
+    /**
+     * 保存文件<br/>
+     * 如果文件已经存在，则复写当前文件<br/>
+     * 如果文件不存在，则创建文件后写入<br/>
+     * 如果对应文件所在的文件夹不存在，对应文件夹会自动创建<br/>
+     * 
+     * @param module 归属模块
+     * @param relativePath 存储路径,此存储路径为文件全路径(包括扩展名)
+     * @param resource 文件流
+     * @param filename 文件名,此文件的实际文件名称
+     * @param used 文件是否被使用
+     * 
+     * @return FileDefinition 文件定义的实体
+     *         
+     * @exception [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @Transactional
+    public FileDefinition save(String module, String relativePath,
+            Resource resource, String filename) {
+        relativePath = FileContextHelper.handleRelativePath(relativePath);
+        AssertUtils.notEmpty(relativePath, "relativePath is null.");
+        AssertUtils.notNull(resource, "resource is null.");
+        AssertUtils.isExist(resource, "resource is not exsit.");
+        
+        module = StringUtils.isEmpty(module) ? FileContextConstants.DEFAULT_MODULE
+                : module;
+        if (!StringUtils.isEmpty(filename)) {
+            relativePath = StringUtils.applyRelativePath(relativePath, filename);
+        }
+        
+        InputStream input = null;
+        FileDefinition fileDefinition = null;
+        try {
+            input = resource.getInputStream();
+            fileDefinition = doSaveFile(module, relativePath, input);
+        } catch (IOException e) {
+            AssertUtils.wrap(e, "文件流处理异常.");
+        } finally {
+            IOUtils.closeQuietly(input);
+        }
+        return fileDefinition;
+    }
+    
+    /**
+     * 添加文件资源<br/>
+     * <功能详细描述>
+     * @param relativePath
+     * @param resource
+     * @return
+     * @throws ResourceIsExistException [参数说明]
+     * 
+     * @return FileDefinition [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    @Transactional
+    public FileDefinition add(String relativePath, Resource resource)
+            throws ResourceIsExistException {
+        AssertUtils.notEmpty(relativePath, "relativePath is null.");
+        AssertUtils.notNull(resource, "input is null.");
+        
+        FileDefinition fileDefinition = add(FileContextConstants.DEFAULT_MODULE,
+                relativePath,
+                resource,
+                null);
+        return fileDefinition;
+    }
+    
+    /**
+     * 保存文件<br/>
+     * 如果文件已经存在，则复写当前文件<br/>
+     * 如果文件不存在，则创建文件后写入<br/>
+     * 如果对应文件所在的文件夹不存在，对应文件夹会自动创建<br/>
+     * 
+     * @param relativePath 存储路径,此存储路径为文件全路径(包括扩展名)
+     * @param resource 文件流
+     * @param filename 文件名,此文件的实际文件名称
+     * 
+     * @return FileDefinition 文件定义的实体
+     * 
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @Transactional
+    public FileDefinition add(String module, String relativePath,
+            Resource resource) {
+        AssertUtils.notEmpty(relativePath, "relativePath is null.");
+        AssertUtils.notNull(resource, "input is null.");
+        
+        FileDefinition fileDefinition = add(module,
+                relativePath,
+                resource,
+                null);
+        
+        return fileDefinition;
+    }
+    
+    /**
+     * 保存文件<br/>
+     * 如果文件已经存在，则会抛出ResourceIsExistException<br/>
+     * 如果文件不存在，则创建文件后写入<br/>
+     * 如果对应文件所在的文件夹不存在，对应文件夹会自动创建<br/>
+     * <功能详细描述>
+     * 
+     * @param relativePath
+     * @param resource
+     * @param filename
+     * 
+     * @return FileDefinition
+     * @throws ResourceIsExistException [参数说明]
+     * 
+     * @return FileDefinition [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @Transactional
+    public FileDefinition add(String relativePath, Resource resource,
+            String filename) throws ResourceIsExistException {
+        AssertUtils.notEmpty(relativePath, "relativePath is null.");
+        AssertUtils.notNull(resource, "input is null.");
+        
+        FileDefinition fileDefinition = add(FileContextConstants.DEFAULT_MODULE,
+                relativePath,
+                resource,
+                filename);
+        return fileDefinition;
+    }
+    
+    /**
+     * 保存文件<br/>
+     * 如果文件已经存在，则会抛出ResourceIsExistException<br/>
+     * 如果文件不存在，则创建文件后写入<br/>
+     * 如果对应文件所在的文件夹不存在，对应文件夹会自动创建<br/>
+     * 
+     * @param module 归属模块
+     * @param relativePath 存储路径,此存储路径为文件全路径(包括扩展名)
+     * @param resource 文件流
+     * @param filename 文件名,此文件的实际文件名称
+     *            
+     * @return FileDefinition 文件定义的实体
+     * @exception ResourceIsExistException 如果存在同全路径文件,则抛出此异常
+     * @see [类、类#方法、类#成员]
+     */
+    @Transactional
+    public FileDefinition add(String module, String relativePath,
+            Resource resource, String filename) throws ResourceIsExistException {
+        relativePath = FileContextHelper.handleRelativePath(relativePath);
+        AssertUtils.notEmpty(relativePath, "relativePath is null.");
+        AssertUtils.notNull(resource, "resource is null.");
+        AssertUtils.isExist(resource, "resource is not exsit.");
+        
+        module = StringUtils.isEmpty(module) ? FileContextConstants.DEFAULT_MODULE
+                : module;
+        if (!StringUtils.isEmpty(filename)) {
+            relativePath = StringUtils.applyRelativePath(relativePath, filename);
+        }
+        
+        InputStream input = null;
+        FileDefinition fileDefinition = null;
+        try {
+            input = resource.getInputStream();
+            fileDefinition = doAddFile(module, relativePath, input);
+        } catch (IOException e) {
+            AssertUtils.wrap(e, "文件流处理异常.");
+        } finally {
+            IOUtils.closeQuietly(input);
+        }
+        return fileDefinition;
+    }
+    
+    /**
+     * 保存文件<br/>
+     * 如果文件已经存在，则复写当前文件<br/>
+     * 如果文件不存在，则创建文件后写入<br/>
+     * 如果对应文件所在的文件夹不存在，对应文件夹会自动创建<br/>
+     * 
+     * @param relativePath 存储路径,此存储路径为文件全路径(包括扩展名)
      * @param input 文件流
      * 
      * @return FileDefinition 文件定义的实体
@@ -84,7 +344,7 @@ public class FileContext extends FileContextBuilder implements InitializingBean 
         FileDefinition fileDefinition = save(FileContextConstants.DEFAULT_MODULE,
                 relativePath,
                 input,
-                StringUtils.getFilename(relativePath));
+                null);
         
         return fileDefinition;
     }
@@ -110,10 +370,7 @@ public class FileContext extends FileContextBuilder implements InitializingBean 
         AssertUtils.notEmpty(relativePath, "relativePath is null.");
         AssertUtils.notNull(input, "input is null.");
         
-        FileDefinition fileDefinition = save(module,
-                relativePath,
-                input,
-                StringUtils.getFilename(relativePath));
+        FileDefinition fileDefinition = save(module, relativePath, input, null);
         
         return fileDefinition;
     }
@@ -172,13 +429,62 @@ public class FileContext extends FileContextBuilder implements InitializingBean 
         
         module = StringUtils.isEmpty(module) ? FileContextConstants.DEFAULT_MODULE
                 : module;
-        filename = StringUtils.isEmpty(filename) ? StringUtils.getFilename(relativePath)
-                : filename;
+        if (!StringUtils.isEmpty(filename)) {
+            relativePath = StringUtils.applyRelativePath(relativePath, filename);
+        }
         
-        FileDefinition fileDefinition = doSaveFile(module,
+        FileDefinition fileDefinition = doSaveFile(module, relativePath, input);
+        
+        return fileDefinition;
+    }
+    
+    /**
+      * 添加文件资源<br/>
+      * <功能详细描述>
+      * @param relativePath
+      * @param input
+      * @return
+      * @throws ResourceIsExistException [参数说明]
+      * 
+      * @return FileDefinition [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    @Transactional
+    public FileDefinition add(String relativePath, InputStream input)
+            throws ResourceIsExistException {
+        AssertUtils.notEmpty(relativePath, "relativePath is null.");
+        AssertUtils.notNull(input, "input is null.");
+        
+        FileDefinition fileDefinition = add(FileContextConstants.DEFAULT_MODULE,
                 relativePath,
                 input,
-                filename);
+                null);
+        return fileDefinition;
+    }
+    
+    /**
+     * 保存文件<br/>
+     * 如果文件已经存在，则复写当前文件<br/>
+     * 如果文件不存在，则创建文件后写入<br/>
+     * 如果对应文件所在的文件夹不存在，对应文件夹会自动创建<br/>
+     * 
+     * @param relativePath 存储路径,此存储路径为文件全路径(包括扩展名)
+     * @param input 文件流
+     * @param filename 文件名,此文件的实际文件名称
+     * 
+     * @return FileDefinition 文件定义的实体
+     * 
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @Transactional
+    public FileDefinition add(String module, String relativePath,
+            InputStream input) {
+        AssertUtils.notEmpty(relativePath, "relativePath is null.");
+        AssertUtils.notNull(input, "input is null.");
+        
+        FileDefinition fileDefinition = add(module, relativePath, input, null);
         
         return fileDefinition;
     }
@@ -237,13 +543,11 @@ public class FileContext extends FileContextBuilder implements InitializingBean 
         
         module = StringUtils.isEmpty(module) ? FileContextConstants.DEFAULT_MODULE
                 : module;
-        filename = StringUtils.isEmpty(filename) ? StringUtils.getFilename(relativePath)
-                : filename;
+        if (!StringUtils.isEmpty(filename)) {
+            relativePath = StringUtils.applyRelativePath(relativePath, filename);
+        }
         
-        FileDefinition fileDefinition = doAddFile(module,
-                relativePath,
-                input,
-                filename);
+        FileDefinition fileDefinition = doAddFile(module, relativePath, input);
         return fileDefinition;
     }
     
