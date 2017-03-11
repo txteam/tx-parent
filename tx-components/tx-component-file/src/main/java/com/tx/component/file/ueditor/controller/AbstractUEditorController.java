@@ -8,7 +8,6 @@ package com.tx.component.file.ueditor.controller;
 
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -143,17 +142,17 @@ public abstract class AbstractUEditorController implements InitializingBean,
             @RequestParam(value = "callback", required = false) String callback,
             @RequestParam(value = "action", required = false) String actionType,
             HttpServletRequest request) {
-        @SuppressWarnings("unchecked")
-        Enumeration<String> names = request.getParameterNames();
-        while (names.hasMoreElements()) {
-            String nameTemp = names.nextElement();
-            String[] values = request.getParameterValues(nameTemp);
-            System.out.print(nameTemp + " : ");
-            for (String valueTemp : values) {
-                System.out.print(valueTemp + " , ");
-            }
-            System.out.println("");
-        }
+        //        @SuppressWarnings("unchecked")
+        //        Enumeration<String> names = request.getParameterNames();
+        //        while (names.hasMoreElements()) {
+        //            String nameTemp = names.nextElement();
+        //            String[] values = request.getParameterValues(nameTemp);
+        //            System.out.print(nameTemp + " : ");
+        //            for (String valueTemp : values) {
+        //                System.out.print(valueTemp + " , ");
+        //            }
+        //            System.out.println("");
+        //        }
         
         String json = null;
         if (!StringUtils.isEmpty(callback) && !validateCallback(callback)) {
