@@ -8,6 +8,8 @@ package com.tx.component.file.context;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.InitializingBean;
@@ -21,6 +23,7 @@ import com.tx.component.file.model.FileDefinition;
 import com.tx.component.file.resource.FileResource;
 import com.tx.core.exceptions.resource.ResourceIsExistException;
 import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.paged.model.PagedList;
 
 /**
  * 文件处理容器<br/>
@@ -653,5 +656,54 @@ public class FileContext extends FileContextBuilder implements InitializingBean 
         
         FileResource fileResource = doGetFileResource(fileDefinition);
         return fileResource;
+    }
+    
+    /**
+      * 根据所属模块以及存储相对路径目录查询对应的文件定义列表<br/>
+      * <功能详细描述>
+      * @param module
+      * @param relativePathFolder
+      * @param params
+      * @return [参数说明]
+      * 
+      * @return List<FileDefinition> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public List<FileDefinition> queryList(String module, String relativeFolder,
+            String[] filenameExtensions, Map<String, Object> params) {
+        AssertUtils.notEmpty(module, "module is empty.");
+        
+        List<FileDefinition> resList = doQueryList(module,
+                relativeFolder,
+                filenameExtensions,
+                params);
+        return resList;
+    }
+    
+    /**
+     * 根据所属模块以及存储相对路径目录查询对应的文件定义列表<br/>
+     * <功能详细描述>
+     * @param module
+     * @param relativePathFolder
+     * @param params
+     * @return [参数说明]
+     * 
+     * @return List<FileDefinition> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    public PagedList<FileDefinition> queryPagedList(String module,
+            String relativeFolder, String[] filenameExtensions,
+            Map<String, Object> params, int pageIndex, int pageSize) {
+        AssertUtils.notEmpty(module, "module is empty.");
+        
+        PagedList<FileDefinition> resPagedList = doQueryPagedList(module,
+                relativeFolder,
+                filenameExtensions,
+                params,
+                pageIndex,
+                pageSize);
+        return resPagedList;
     }
 }

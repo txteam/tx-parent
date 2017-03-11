@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -39,6 +40,7 @@ import com.tx.core.ddlutil.builder.create.CreateTableDDLBuilder;
 import com.tx.core.ddlutil.executor.TableDDLExecutorFactory;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.exceptions.util.ExceptionWrapperUtils;
+import com.tx.core.paged.model.PagedList;
 import com.tx.core.util.UUIDUtils;
 import com.tx.core.util.XstreamUtils;
 
@@ -272,6 +274,60 @@ public class FileContextBuilder extends FileContextConfigurator implements
         FileResource resource = driver.getResource(fileDefinition);
         
         return resource;
+    }
+    
+    /**
+      * 返回文件定义对象<br/>
+      * <功能详细描述>
+      * @param module
+      * @param relativeFolder
+      * @param filenameExtensions
+      * @param params
+      * @param pageIndex
+      * @param pageSize
+      * @return [参数说明]
+      * 
+      * @return PagedList<FileDefinition> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    protected PagedList<FileDefinition> doQueryPagedList(String module,
+            String relativeFolder, String[] filenameExtensions,
+            Map<String, Object> params, int pageIndex, int pageSize) {
+        AssertUtils.notEmpty(module, "module is empty.");
+        
+        PagedList<FileDefinition> resPagedList = getFileDefinitionService().queryPagedList(module,
+                relativeFolder,
+                filenameExtensions,
+                params,
+                pageIndex,
+                pageSize);
+        return resPagedList;
+    }
+    
+    /**
+      * 返回文件定义对象<br/>
+      * <功能详细描述>
+      * @param module
+      * @param relativeFolder
+      * @param filenameExtensions
+      * @param params
+      * @return [参数说明]
+      * 
+      * @return List<FileDefinition> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    protected List<FileDefinition> doQueryList(String module,
+            String relativeFolder, String[] filenameExtensions,
+            Map<String, Object> params) {
+        AssertUtils.notEmpty(module, "module is empty.");
+        
+        List<FileDefinition> resList = getFileDefinitionService().queryList(module,
+                relativeFolder,
+                filenameExtensions,
+                params);
+        return resList;
     }
     
     /**

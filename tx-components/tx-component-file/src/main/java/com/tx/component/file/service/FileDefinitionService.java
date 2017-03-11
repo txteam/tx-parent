@@ -8,10 +8,14 @@ package com.tx.component.file.service;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +24,7 @@ import org.springframework.util.StringUtils;
 import com.tx.component.file.dao.FileDefinitionDao;
 import com.tx.component.file.model.FileDefinition;
 import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.paged.model.PagedList;
 
 /**
  * FileDefinition的业务层<br/>
@@ -170,6 +175,87 @@ public class FileDefinitionService {
         condition.setRelativePath(relativePath);
         
         return this.fileDefinitionDao.find(condition);
+    }
+    
+    /**
+      * 根据所属模块以及所在目录查询文件定义<br/>
+      * <功能详细描述>
+      * @param module
+      * @param relativeFolder
+      * @param params
+      * @return [参数说明]
+      * 
+      * @return List<FileDefinition> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    public List<FileDefinition> queryList(String module, String relativeFolder,
+            String[] filenameExtensions, Map<String, Object> params) {
+        AssertUtils.notEmpty(module, "module is empty.");
+        
+        params = params == null ? new HashMap<String, Object>() : params;
+        params.put("module", module);
+        params.put("relativeFolder", relativeFolder);
+        params.put("filenameExtensions",
+                filterFilenameExtensions(filenameExtensions));
+        
+        List<FileDefinition> resList = this.fileDefinitionDao.queryList(params);
+        return resList;
+    }
+    
+    /**
+     * 根据所属模块以及所在目录查询文件定义<br/>
+     * <功能详细描述>
+     * @param module
+     * @param relativeFolder
+     * @param params
+     * @return [参数说明]
+     * 
+     * @return List<FileDefinition> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    public PagedList<FileDefinition> queryPagedList(String module,
+            String relativeFolder, String[] filenameExtensions,
+            Map<String, Object> params, int pageIndex, int pageSize) {
+        AssertUtils.notEmpty(module, "module is empty.");
+        
+        params = params == null ? new HashMap<String, Object>() : params;
+        params.put("module", module);
+        params.put("relativeFolder", relativeFolder);
+        params.put("filenameExtensions",
+                filterFilenameExtensions(filenameExtensions));
+        
+        PagedList<FileDefinition> resPagedList = this.fileDefinitionDao.queryPagedList(params,
+                pageIndex,
+                pageSize);
+        return resPagedList;
+    }
+    
+    /**
+      * 过滤处理文件扩展名<br/>
+      * <功能详细描述>
+      * @param filenameExtensions
+      * @return [参数说明]
+      * 
+      * @return Set<String> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
+    private Set<String> filterFilenameExtensions(String[] filenameExtensions) {
+        Set<String> res = new HashSet<>();
+        if (ArrayUtils.isEmpty(filenameExtensions)) {
+            return res;
+        }
+        for (String fileExt : filenameExtensions) {
+            if (fileExt.lastIndexOf(".") >= 0) {
+                fileExt = fileExt.substring(fileExt.lastIndexOf('.') + 1);
+            }
+            if (!StringUtils.isEmpty(fileExt)) {
+                res.add(fileExt);
+            }
+        }
+        return res;
     }
     
     /**
