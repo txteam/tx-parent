@@ -140,22 +140,31 @@ public class MetaEntityEntry {
     /** insertToHis语句 */
     private final String sqlOfInsertToHis;
     
+    /** deleteByEntityId */
     private final String sqlOfDeleteByEntityId;
     
+    /** deleteById */
     private final String sqlOfDeleteById;
     
+    /** deleteByEntryKey */
     private final String sqlOfDeleteByEntryKey;
     
+    /** updateById */
     private final String sqlOfUpdateById;
     
+    /** updateByEntryKey */
     private final String sqlOfUpdateByEntryKey;
     
+    /** findById */
     private final String sqlOfFindById;
     
+    /** findByEntryKey */
     private final String sqlOfFindByEntryKey;
     
+    /** queryListByEntityId */
     private final String sqlOfQueryListByEntityId;
     
+    /** queryList */
     private final String sqlOfQueryList;
     
     /**

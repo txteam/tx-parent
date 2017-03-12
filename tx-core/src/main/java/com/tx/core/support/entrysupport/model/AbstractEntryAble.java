@@ -18,26 +18,26 @@ import java.util.List;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public abstract class AbstractEntryAble<EE extends EntityEntry>
-        implements EntryAble<EE>, Serializable {
+public abstract class AbstractEntryAble implements EntryAble<EntityEntry>,
+        Serializable {
     
     /** 注释内容 */
     private static final long serialVersionUID = -2430827302865996612L;
     
     /** 实体分项属性 */
-    private List<EE> entryList;
+    private List<EntityEntry> entryList;
     
     /**
      * @return 返回 entryList
      */
-    public List<EE> getEntryList() {
+    public List<EntityEntry> getEntryList() {
         return entryList;
     }
     
     /**
      * @param 对entryList进行赋值
      */
-    public void setEntryList(List<EE> entryList) {
+    public void setEntryList(List<EntityEntry> entryList) {
         this.entryList = entryList;
     }
 }

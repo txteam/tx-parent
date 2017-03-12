@@ -6,6 +6,9 @@
  */
 package com.tx.core.ddlutil.executor;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.FactoryBean;
@@ -28,6 +31,9 @@ import com.tx.core.exceptions.util.AssertUtils;
 public class TableDDLExecutorFactory implements FactoryBean<TableDDLExecutor>,
         InitializingBean {
     
+    /** executorMap */
+    private static Map<DataSource, TableDDLExecutor> executorMap = new HashMap<DataSource, TableDDLExecutor>();
+    
     /**
       * 构建表TableDDLExecutor<br/>
       * <功能详细描述>
@@ -41,13 +47,22 @@ public class TableDDLExecutorFactory implements FactoryBean<TableDDLExecutor>,
      */
     public static TableDDLExecutor buildTableDDLExecutor(
             DataSourceTypeEnum dataSourceType, JdbcTemplate jdbcTemplate) {
+        AssertUtils.notNull(jdbcTemplate, "jdbcTemplate is null.");
+        AssertUtils.notNull(jdbcTemplate.getDataSource(),
+                "jdbcTemplate.datasource is null.");
+        if (executorMap.containsKey(jdbcTemplate.getDataSource())) {
+            return executorMap.get(jdbcTemplate.getDataSource());
+        }
+        
         TableDDLExecutorFactory facotry = new TableDDLExecutorFactory();
         facotry.setDataSourceType(dataSourceType);
         facotry.setJdbcTemplate(jdbcTemplate);
         
         facotry.afterPropertiesSet();
-        
         TableDDLExecutor tableDDLExecutor = facotry.getObject();
+        
+        executorMap.put(jdbcTemplate.getDataSource(), tableDDLExecutor);
+        
         return tableDDLExecutor;
     }
     
@@ -64,13 +79,20 @@ public class TableDDLExecutorFactory implements FactoryBean<TableDDLExecutor>,
      */
     public static TableDDLExecutor buildTableDDLExecutor(
             DataSourceTypeEnum dataSourceType, DataSource dataSource) {
+        AssertUtils.notNull(dataSource, "dataSource is null.");
+        if (executorMap.containsKey(dataSource)) {
+            return executorMap.get(dataSource);
+        }
+        
         TableDDLExecutorFactory facotry = new TableDDLExecutorFactory();
         facotry.setDataSourceType(dataSourceType);
         facotry.setDataSource(dataSource);
         
         facotry.afterPropertiesSet();
-        
         TableDDLExecutor tableDDLExecutor = facotry.getObject();
+        
+        executorMap.put(dataSource, tableDDLExecutor);
+        
         return tableDDLExecutor;
     }
     

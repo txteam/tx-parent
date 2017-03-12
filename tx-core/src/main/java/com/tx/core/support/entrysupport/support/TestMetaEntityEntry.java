@@ -6,15 +6,18 @@
  */
 package com.tx.core.support.entrysupport.support;
 
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.MapUtils;
 
 import com.tx.core.support.entrysupport.model.AbstractEntryAble;
 import com.tx.core.support.entrysupport.model.EntityEntry;
+import com.tx.core.support.entrysupport.model.EntryAble;
 
 /**
  * 实体分项反射类描述<br/>
@@ -85,7 +88,7 @@ public class TestMetaEntityEntry {
     }
     
     public static class TestEntryAbleFieldEntityOfEntityEntry extends
-            AbstractEntryAble<EntityEntry> {
+            AbstractEntryAble {
         
         /** 注释内容 */
         private static final long serialVersionUID = 8355518853017127324L;
@@ -102,13 +105,16 @@ public class TestMetaEntityEntry {
         
     }
     
-    public static class TestEntryAbleFieldEntityOfTestEntityEntry extends
-            AbstractEntryAble<TestEntityEntry> {
+    public static class TestEntryAbleFieldEntityOfTestEntityEntry implements
+            EntryAble<TestEntityEntry>,Serializable {
         
         /** 注释内容 */
         private static final long serialVersionUID = 5429503808574541835L;
         
         private String id;
+        
+        /** 实体分项属性 */
+        private List<TestEntityEntry> entryList;
         
         public String getId() {
             return id;
@@ -116,6 +122,20 @@ public class TestMetaEntityEntry {
         
         public void setId(String id) {
             this.id = id;
+        }
+        
+        /**
+         * @return 返回 entryList
+         */
+        public List<TestEntityEntry> getEntryList() {
+            return entryList;
+        }
+        
+        /**
+         * @param 对entryList进行赋值
+         */
+        public void setEntryList(List<TestEntityEntry> entryList) {
+            this.entryList = entryList;
         }
         
     }
