@@ -6,6 +6,10 @@
  */
 package com.tx.component.communication.context;
 
+import java.util.Map;
+
+import org.apache.commons.collections.MapUtils;
+
 import com.tx.component.communication.model.SendMessage;
 import com.tx.component.communication.model.SendResult;
 import com.tx.core.exceptions.util.AssertUtils;
@@ -66,6 +70,28 @@ public class MessageSenderContext extends MessageSenderContextBuilder {
     public SendResult send(String type, String receivers, String title,
             String content) {
         SendMessage message = new SendMessage(type, receivers, title, content);
+        SendResult result = doSend(message);
+        return result;
+    }
+    
+    /**
+     * 发送消息<br/>
+     * <功能详细描述>
+     * @param type
+     * @param receivers
+     * @param messageJsonString
+     * @return [参数说明]
+     * 
+     * @return SendResult [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    public SendResult send(String type, String receivers, String title,
+            String content, Map<String, String> attributes) {
+        SendMessage message = new SendMessage(type, receivers, title, content);
+        if (!MapUtils.isEmpty(attributes)) {
+            message.getAttributes().putAll(attributes);
+        }
         SendResult result = doSend(message);
         return result;
     }

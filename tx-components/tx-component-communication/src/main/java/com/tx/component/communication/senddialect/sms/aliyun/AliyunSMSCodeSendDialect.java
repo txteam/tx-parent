@@ -6,8 +6,8 @@
  */
 package com.tx.component.communication.senddialect.sms.aliyun;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.aliyuncs.DefaultAcsClient;
 import com.aliyuncs.IAcsClient;
@@ -19,7 +19,7 @@ import com.aliyuncs.sms.model.v20160927.SingleSendSmsRequest;
 import com.aliyuncs.sms.model.v20160927.SingleSendSmsResponse;
 import com.tx.component.communication.model.SendMessage;
 import com.tx.component.communication.model.SendResult;
-import com.tx.component.communication.senddialect.sms.AbstractSMSMessageSendDialect;
+import com.tx.component.communication.senddialect.sms.AbstractSMSCodeSendDialect;
 import com.tx.core.exceptions.util.AssertUtils;
 
 /**
@@ -31,7 +31,7 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class AliyunSMSSendDialect extends AbstractSMSMessageSendDialect {
+public class AliyunSMSCodeSendDialect extends AbstractSMSCodeSendDialect {
     
     private String regionId = "cn-shenzhen";
     
@@ -130,13 +130,11 @@ public class AliyunSMSSendDialect extends AbstractSMSMessageSendDialect {
         //如“阿里大鱼”已在短信签名管理中通过审核，则可传入”阿里大鱼“（传参时去掉引号）作为短信签名。
         //短信效果示例：【阿里大鱼】欢迎使用阿里大鱼服务。
         String smsSignName = getSMSSignName(message);
-        //根据短信内容结息短信发送模板信息
-        SMSContentInfo smsContentInfo = parseSendMessageContent(message);
         //短信模板变量，传参规则{"key":"value"}，key的名字须和申请模板中的变量名一致，多个变量之间以逗号隔开。
         //短信模板ID，传入的模板必须是在阿里大鱼“管理中心-短信模板管理”中的可用模板。示例：SMS_585014
-        String smsTemplateCode = smsContentInfo.getTemplateCode();
+        String smsTemplateCode = message.getContent();
         //示例：针对模板“验证码${code}，您正在进行${product}身份验证，打死不要告诉别人哦！”，传参时需传入{"code":"1234","product":"alidayu"}
-        String paramString = buildParamString(smsContentInfo.getParams());//message.getAttributes();
+        String paramString = buildParamString(message.getAttributes());//message.getAttributes();
         
         //       AlibabaAliqinFcSmsNumSendRequest req = new AlibabaAliqinFcSmsNumSendRequest();
         //       req.setExtend(extend);
@@ -187,25 +185,25 @@ public class AliyunSMSSendDialect extends AbstractSMSMessageSendDialect {
     }
     
     private static void sendMsg(String tel) throws Exception {
-        AliyunSMSSendDialect d = new AliyunSMSSendDialect();
+        AliyunSMSCodeSendDialect d = new AliyunSMSCodeSendDialect();
         
         d.setAccessKeyId("LTAItTQj5hMN5eD1");
         d.setSecret("8L8MXtQUb0wNUOlNNan0o9GrNpTCRc");
         
-        Map<String, String> signNameMap = new HashMap<String, String>();
-        signNameMap.put("汽摩交易所", "汽摩交易所");
-        signNameMap.put("企账通", "企账通");
-        Map<String, String> smsTemplateMap = new HashMap<String, String>();
-        smsTemplateMap.put("SMS_14246689", "您的验证码是${code}。");
+        Set<String> signNameSet = new HashSet<String>();
+        signNameSet.add("汽摩交易所");
+        signNameSet.add("企账通");
+        //Map<String, String> smsTemplateMap = new HashMap<String, String>();
+        //smsTemplateMap.put("SMS_14246689", "您的验证码是${code}。");
         
-        d.setSignNameMap(signNameMap);
-        d.setSmsTemplateMap(smsTemplateMap);
+        d.setSignNameSet(signNameSet);
+        //d.setSmsTemplateMap(smsTemplateMap);
         
         d.afterPropertiesSet();
         
         SendMessage message = new SendMessage("SMS", "18983379637", "汽摩交易所",
-                "您的验证码是0018。");
-        
+                "SMS_14246689");
+        message.getAttributes().put("code", "1213");
         SendResult result = d.send(message);
         if (result.isSuccess()) {
             System.out.println("success.");
