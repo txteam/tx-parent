@@ -206,6 +206,12 @@ public class AliyunSMSSendDialect extends AbstractTemplateSMSSendDialect {
         SendMessage message = new SendMessage("SMS", "18983379637", "汽摩交易所",
                 "您的验证码是0018。");
         
-        d.send(message);
+        SendResult result = d.send(message);
+        if (result.isSuccess()) {
+            System.out.println("success.");
+        } else {
+            System.out.println("errorCode:" + result.getErrorCode()
+                    + " errorMessage:" + result.getErrorMessage());
+        }
     }
 }

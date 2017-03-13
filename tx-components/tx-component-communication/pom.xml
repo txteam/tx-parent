@@ -16,6 +16,10 @@
 	<dependencies>
 		<!-- 升级版本后：修改项目中添加依赖，这里添加optional:true的配置 -->
 		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>fastjson</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>alibaba</groupId>
 			<artifactId>alidayu</artifactId>
 			<version>1.0</version>
