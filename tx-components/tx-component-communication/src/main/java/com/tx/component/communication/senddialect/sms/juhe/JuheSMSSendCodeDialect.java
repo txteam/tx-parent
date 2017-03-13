@@ -18,7 +18,6 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.regex.Pattern;
 
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -28,7 +27,8 @@ import org.slf4j.LoggerFactory;
 import com.alibaba.fastjson.JSONObject;
 import com.tx.component.communication.model.SendMessage;
 import com.tx.component.communication.model.SendResult;
-import com.tx.component.communication.senddialect.sms.AbstractSMSMessageSendDialect;
+import com.tx.component.communication.senddialect.sms.AbstractSMSCodeSendDialect;
+import com.tx.component.communication.senddialect.sms.AbstractSMSMessageSendDialect.SMSContentInfo;
 import com.tx.core.exceptions.SILException;
 import com.tx.core.exceptions.util.AssertUtils;
 
@@ -41,9 +41,9 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class JuheSMSSendDialect extends AbstractSMSMessageSendDialect {
+public class JuheSMSSendCodeDialect extends AbstractSMSCodeSendDialect {
     
-    private static Logger logger = LoggerFactory.getLogger(JuheSMSSendDialect.class);
+    private static Logger logger = LoggerFactory.getLogger(JuheSMSSendCodeDialect.class);
     
     public static final String DEF_CHATSET = "UTF-8";
     
@@ -65,7 +65,6 @@ public class JuheSMSSendDialect extends AbstractSMSMessageSendDialect {
     @Override
     public void afterPropertiesSet() throws Exception {
         AssertUtils.notEmpty(appKey, "appKey is empty.");
-        setPlaceholder("#(.+?)#");
         
         super.afterPropertiesSet();
     }
@@ -126,13 +125,11 @@ public class JuheSMSSendDialect extends AbstractSMSMessageSendDialect {
         //群发短信需传入多个号码，以英文逗号分隔，一次调用最多传入200个号码。
         //示例：18600000000,13911111111,13322222222
         String recNum = message.getReceivers();
-        //根据短信内容结息短信发送模板信息
-        SMSContentInfo smsContentInfo = parseSendMessageContent(message);
         //短信模板变量，传参规则{"key":"value"}，key的名字须和申请模板中的变量名一致，多个变量之间以逗号隔开。
         //短信模板ID，传入的模板必须是在阿里大鱼“管理中心-短信模板管理”中的可用模板。示例：SMS_585014
-        String smsTemplateCode = smsContentInfo.getTemplateCode();
+        String smsTemplateCode = message.getContent();
         //示例：针对模板“验证码#code#，您正在进行#product#身份验证，打死不要告诉别人哦！”，传参时需传入 #code#=1234&#product#=alidayu
-        String paramString = buildParamString(smsContentInfo.getParams());//message.getAttributes();
+        String paramString = buildParamString(message.getAttributes());//message.getAttributes();
         
         //       AlibabaAliqinFcSmsNumSendRequest req = new AlibabaAliqinFcSmsNumSendRequest();
         //       req.setExtend(extend);
@@ -277,18 +274,21 @@ public class JuheSMSSendDialect extends AbstractSMSMessageSendDialect {
     }
     
     public static void main(String[] args) throws Exception {
-        JuheSMSSendDialect dialect = new JuheSMSSendDialect();
+        JuheSMSSendCodeDialect dialect = new JuheSMSSendCodeDialect();
         dialect.setAppKey("036a43cf37e9ffd5aff0e22e6e775862");
         
-        Map<String, String> smsTemplateMap = new HashMap<String, String>();
-        smsTemplateMap.put("29669", "【添馨网络科技】验证码#code#,您正在注册成为#app#用户,感谢您的支持!");
-        dialect.setSmsTemplateMap(smsTemplateMap);
+        //Map<String, String> smsTemplateMap = new HashMap<String, String>();
+        //smsTemplateMap.put("29669", "【添馨网络科技】验证码#code#,您正在注册成为#app#用户,感谢您的支持!");
+        //dialect.setSmsTemplateMap(smsTemplateMap);
         dialect.afterPropertiesSet();
         
         SendMessage message = new SendMessage();
         message.setReceivers("18983379637");
-        message.setContent("【添馨网络科技】验证码0032,您正在注册成为添馨网络科技用户,感谢您的支持!");
+        message.setContent("29669");
+        message.getAttributes().put("code", "1122");
+        message.getAttributes().put("app", "添馨网络科技有限公司");
         SendResult result = dialect.send(message);
+        
         if (result.isSuccess()) {
             System.out.println("success.");
         } else {

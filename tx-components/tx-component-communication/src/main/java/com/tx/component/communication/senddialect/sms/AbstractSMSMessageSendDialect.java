@@ -35,10 +35,10 @@ import com.tx.component.communication.senddialect.MessageSendDialect;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public abstract class AbstractTemplateSMSSendDialect implements
+public abstract class AbstractSMSMessageSendDialect implements
         MessageSendDialect, InitializingBean {
     
-    protected Logger logger = LoggerFactory.getLogger(AbstractTemplateSMSSendDialect.class);
+    protected Logger logger = LoggerFactory.getLogger(AbstractSMSMessageSendDialect.class);
     
     private String placeholder = "\\$\\{(.+?)\\}";
     

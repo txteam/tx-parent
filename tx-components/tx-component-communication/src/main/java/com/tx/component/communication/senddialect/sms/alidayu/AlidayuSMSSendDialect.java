@@ -17,7 +17,7 @@ import com.taobao.api.request.AlibabaAliqinFcSmsNumSendRequest;
 import com.taobao.api.response.AlibabaAliqinFcSmsNumSendResponse;
 import com.tx.component.communication.model.SendMessage;
 import com.tx.component.communication.model.SendResult;
-import com.tx.component.communication.senddialect.sms.AbstractTemplateSMSSendDialect;
+import com.tx.component.communication.senddialect.sms.AbstractSMSMessageSendDialect;
 import com.tx.core.exceptions.util.AssertUtils;
 
 /**
@@ -28,7 +28,7 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public class AlidayuSMSSendDialect extends AbstractTemplateSMSSendDialect {
+public class AlidayuSMSSendDialect extends AbstractSMSMessageSendDialect {
     
     /** 请求地址 */
     private static final String HTTP_URL = "http://gw.api.taobao.com/router/rest";

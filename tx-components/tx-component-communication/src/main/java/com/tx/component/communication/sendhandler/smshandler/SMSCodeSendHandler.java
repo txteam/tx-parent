@@ -11,7 +11,7 @@ import org.springframework.core.Ordered;
 
 import com.tx.component.communication.model.SendMessage;
 import com.tx.component.communication.model.SendResult;
-import com.tx.component.communication.senddialect.sms.AbstractSMSMessageSendDialect;
+import com.tx.component.communication.senddialect.sms.AbstractSMSCodeSendDialect;
 import com.tx.component.communication.sendhandler.MessageSendHandler;
 import com.tx.core.exceptions.util.AssertUtils;
 
@@ -25,15 +25,14 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-@Deprecated
-public class SMSTemplateMessageSendHandler implements MessageSendHandler,
+public class SMSCodeSendHandler implements MessageSendHandler,
         InitializingBean {
     
     /** 消息类型 */
-    private final String messageType = "SMS";
+    private final String messageType = "SMS_CODE";
     
     /** 消息对应的方言类 */
-    private AbstractSMSMessageSendDialect dialect;
+    private AbstractSMSCodeSendDialect dialect;
     
     /**
      * @return
@@ -90,7 +89,7 @@ public class SMSTemplateMessageSendHandler implements MessageSendHandler,
     /**
      * @param 对dialect进行赋值
      */
-    public void setDialect(AbstractSMSMessageSendDialect dialect) {
+    public void setDialect(AbstractSMSCodeSendDialect dialect) {
         this.dialect = dialect;
     }
 }
