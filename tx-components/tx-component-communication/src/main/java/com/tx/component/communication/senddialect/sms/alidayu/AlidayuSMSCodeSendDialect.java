@@ -18,7 +18,7 @@ import com.taobao.api.request.AlibabaAliqinFcSmsNumSendRequest;
 import com.taobao.api.response.AlibabaAliqinFcSmsNumSendResponse;
 import com.tx.component.communication.model.SendMessage;
 import com.tx.component.communication.model.SendResult;
-import com.tx.component.communication.senddialect.sms.AbstractSMSMessageSendDialect;
+import com.tx.component.communication.senddialect.sms.AbstractSMSCodeSendDialect;
 import com.tx.core.exceptions.util.AssertUtils;
 
 /**
@@ -29,7 +29,7 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public class AlidayuSMSSendDialect extends AbstractSMSMessageSendDialect {
+public class AlidayuSMSCodeSendDialect extends AbstractSMSCodeSendDialect {
     
     /** 请求地址 */
     private static final String HTTP_URL = "http://gw.api.taobao.com/router/rest";
@@ -145,14 +145,11 @@ public class AlidayuSMSSendDialect extends AbstractSMSMessageSendDialect {
         //如“阿里大鱼”已在短信签名管理中通过审核，则可传入”阿里大鱼“（传参时去掉引号）作为短信签名。
         //短信效果示例：【阿里大鱼】欢迎使用阿里大鱼服务。
         String smsFreeSignName = getSMSSignName(message);
-        
-        //根据短信内容结息短信发送模板信息
-        SMSContentInfo smsContentInfo = parseSendMessageContent(message);
         //短信模板变量，传参规则{"key":"value"}，key的名字须和申请模板中的变量名一致，多个变量之间以逗号隔开。
         //短信模板ID，传入的模板必须是在阿里大鱼“管理中心-短信模板管理”中的可用模板。示例：SMS_585014
-        String smsTemplateCode = smsContentInfo.getTemplateCode();
+        String smsTemplateCode = message.getContent();
         //示例：针对模板“验证码${code}，您正在进行${product}身份验证，打死不要告诉别人哦！”，传参时需传入{"code":"1234","product":"alidayu"}
-        String smsParam = toSmsParam(smsContentInfo.getParams());//message.getAttributes();
+        String smsParam = toSmsParam(message.getAttributes());//message.getAttributes();
         
         AlibabaAliqinFcSmsNumSendRequest req = new AlibabaAliqinFcSmsNumSendRequest();
         req.setExtend(extend);
@@ -231,7 +228,7 @@ public class AlidayuSMSSendDialect extends AbstractSMSMessageSendDialect {
     }
     
     private static void sendMsg(String tel) throws Exception {
-        AlidayuSMSSendDialect d = new AlidayuSMSSendDialect();
+        AlidayuSMSCodeSendDialect d = new AlidayuSMSCodeSendDialect();
         
         d.setAppKey("23343159");
         d.setAppSecret("1764783a98b40f91f9b73b5bfdcda872");
@@ -247,13 +244,12 @@ public class AlidayuSMSSendDialect extends AbstractSMSMessageSendDialect {
         smsTemplateMap.put("SMS_7310913", "验证码${code}，您正在尝试修改${product}登录密码，请妥善保管账户信息。");
         smsTemplateMap.put("SMS_7310912", "验证码${code}，您正在尝试变更${product}重要信息，请妥善保管账户信息。");
         
-        d.setSignNameMap(signNameMap);
-        d.setSmsTemplateMap(smsTemplateMap);
-        
         d.afterPropertiesSet();
         
         SendMessage message = new SendMessage("SMS", "18983379637", "身份验证",
-                "验证码3322，您正在进行测试身份验证，打死不要告诉别人哦！");
+                "SMS_7310912");
+        message.getAttributes().put("code", "1234");
+        message.getAttributes().put("product", "测试");
         
         SendResult result = d.send(message);
         if (result.isSuccess()) {

@@ -42,20 +42,25 @@ import com.tx.core.exceptions.util.AssertUtils;
  */
 public class JuheSMSSendCodeDialect extends AbstractSMSCodeSendDialect {
     
+    /** 日志记录器 */
     private static Logger logger = LoggerFactory.getLogger(JuheSMSSendCodeDialect.class);
     
+    /** 默认的字符集 */
     public static final String DEF_CHATSET = "UTF-8";
     
+    /** 默认链接的超时时间 */
     public static final int DEF_CONN_TIMEOUT = 30000;
     
+    /** 默认的读取超时时间 */
     public static final int DEF_READ_TIMEOUT = 30000;
     
+    /** userAgent */
     public static String userAgent = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.66 Safari/537.36";
     
-    //聚合发送短信接口
+    /** 聚合发送短信接口 */
     public static final String SERVER_URL = "http://v.juhe.cn/sms/send";
     
-    //配置您申请的KEY 036a43cf37e9ffd5aff0e22e6e775862
+    /** 配置您申请的KEY 036a43cf37e9ffd5aff0e22e6e775862 */
     public String appKey = "";
     
     /**

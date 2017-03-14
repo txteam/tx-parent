@@ -79,6 +79,7 @@ public class AliyunSMSSendDialect extends AbstractSMSMessageSendDialect {
             
             result.setSuccess(true);
             result.getAttributes().put("requestId", response.getRequestId());
+            result.getAttributes().put("code", req.getTemplateCode());//
         } catch (ServerException e) {
             logger.warn("调用阿里云短信接口发送短信失败.ServerException", e);
             
@@ -183,7 +184,6 @@ public class AliyunSMSSendDialect extends AbstractSMSMessageSendDialect {
     
     public static void main(String[] args) throws Exception {
         sendMsg("18983379637");
-        //sendEmail("1019189199@qq.com");
     }
     
     private static void sendMsg(String tel) throws Exception {
@@ -191,13 +191,11 @@ public class AliyunSMSSendDialect extends AbstractSMSMessageSendDialect {
         
         d.setAccessKeyId("LTAItTQj5hMN5eD1");
         d.setSecret("8L8MXtQUb0wNUOlNNan0o9GrNpTCRc");
-        
         Map<String, String> signNameMap = new HashMap<String, String>();
         signNameMap.put("汽摩交易所", "汽摩交易所");
         signNameMap.put("企账通", "企账通");
         Map<String, String> smsTemplateMap = new HashMap<String, String>();
         smsTemplateMap.put("SMS_14246689", "您的验证码是${code}。");
-        
         d.setSignNameMap(signNameMap);
         d.setSmsTemplateMap(smsTemplateMap);
         

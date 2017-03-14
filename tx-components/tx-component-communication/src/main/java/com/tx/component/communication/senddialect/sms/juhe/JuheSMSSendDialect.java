@@ -90,9 +90,12 @@ public class JuheSMSSendDialect extends AbstractSMSMessageSendDialect {
             JSONObject object = JSONObject.parseObject(resultMessage);
             if (object.getInteger("error_code") == 0) {
                 result.setSuccess(true);
+                
                 result.getAttributes().put("result", object.get("result"));
+                result.getAttributes().put("code", params.get("tpl_id"));
             } else {
                 result.setSuccess(false);
+                
                 result.setErrorCode(String.valueOf(object.get("reason")));
                 result.setErrorMessage(String.valueOf(object.get("reason")));
             }

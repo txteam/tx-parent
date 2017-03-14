@@ -87,12 +87,21 @@ public class MessageSenderContextBuilder extends
         
         String messageType = message.getType().toUpperCase();
         SendResult result = null;
+        MessageSendHandler sendHandler = null;
         for (MessageSendHandler sendHandlerTemp : this.sendHandlerMap.get(messageType)) {
             message.setType(messageType);//强制转换为大写字符
             if (sendHandlerTemp.supports(message)) {
-                result = sendHandlerTemp.send(message);
+                sendHandler = sendHandlerTemp;
                 break;
             }
+        }
+        if (sendHandler == null) {
+            result = new SendResult();
+            result.setSuccess(false);
+            result.setErrorMessage("没有匹配的消息发送处理器.");
+            result.setErrorCode("404");
+        } else {
+            result = sendHandler.send(message);
         }
         return result;
     }

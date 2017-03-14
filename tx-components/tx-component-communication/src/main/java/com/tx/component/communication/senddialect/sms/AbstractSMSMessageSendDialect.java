@@ -215,8 +215,10 @@ public abstract class AbstractSMSMessageSendDialect implements
         String title = message.getTitle();
         if (this.signNameMap.containsKey(title)) {
             return this.signNameMap.get(title);
-        } else {
+        } else if (!StringUtils.isEmpty(this.defaultSMSSignName)) {
             return defaultSMSSignName;
+        } else {
+            return title;
         }
     }
     

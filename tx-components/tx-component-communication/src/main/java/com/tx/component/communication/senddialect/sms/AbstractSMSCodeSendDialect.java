@@ -15,6 +15,7 @@ import org.apache.commons.collections.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.util.StringUtils;
 
 import com.tx.component.communication.model.SendMessage;
 import com.tx.component.communication.model.SendResult;
@@ -110,8 +111,10 @@ public abstract class AbstractSMSCodeSendDialect implements MessageSendDialect,
         String title = message.getTitle();
         if (this.signNameSet.contains(title)) {
             return title;
-        } else {
+        } else if (!StringUtils.isEmpty(this.defaultSMSSignName)) {
             return defaultSMSSignName;
+        } else {
+            return title;
         }
     }
     
