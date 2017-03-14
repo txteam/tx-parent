@@ -6,8 +6,9 @@
  */
 package com.tx.component.messagerouter.context.aliyunsms;
 
-import org.apache.commons.lang3.time.DateFormatUtils;
-import org.joda.time.DateTime;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ActiveProfiles;
@@ -16,7 +17,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.tx.component.communication.context.MessageSenderContext;
 import com.tx.component.communication.model.SendResult;
-import com.tx.core.util.MessageUtils;
 
 /**
  * 消息路由服务测试类
@@ -28,36 +28,50 @@ import com.tx.core.util.MessageUtils;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {
-        "classpath:spring/beans-servicelog.xml",
-        "classpath:spring/beans-cache.xml",
+        "classpath:spring/beans.xml",
         "classpath:spring/beans-ds.xml",
         "classpath:spring/beans-tx.xml",
-        "classpath:com/tx/component/messagerouter/context/aliyunsms/beans-communication.xml",
-        "classpath:spring/beans.xml" })
+        "classpath:com/tx/component/messagerouter/context/aliyunsms/beans-communication.xml" })
 @ActiveProfiles("production")
 public class SMSOfAliyunContextTest {
     
     @Test
     public void test() throws InterruptedException {
         try {
-            for (int i = 0; i < 1; i++) {
-                SendResult sr = MessageSenderContext.getContext()
-                        .send("sms",
-                                "15998918907",
-                                "企账通",
-                                MessageUtils.format("您于{}发起的入金操作，金额为：{}元，已成功到账。",
-                                        new Object[] {
-                                                DateTime.now()
-                                                        .toString("yyyy-MM-dd HH:mm:ss"),
-                                                String.valueOf((int) (Math.random() * 1000)) }));
-                if(!sr.isSuccess()){
-                    System.out.println(sr.getErrorMessage());
-                }
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("code", String.valueOf((int) (Math.random() * 1000)));
+            SendResult result = MessageSenderContext.getContext().send("sms_code",
+                    "15998918907",
+                    "企账通",
+                    "SMS_14246689",
+                    params);
+            if (result.isSuccess()) {
+                System.out.println("success.");
+            } else {
+                System.out.println("errorCode:" + result.getErrorCode()
+                        + " errorMessage:" + result.getErrorMessage());
             }
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        
+        //        try {
+        //            SendResult result = MessageSenderContext.getContext()
+        //                    .send("sms",
+        //                            "15998918907",
+        //                            "企账通",
+        //                            MessageUtils.format("您的验证码是{}。",
+        //                                    new Object[] { String.valueOf((int) (Math.random() * 1000)) }));
+        //            
+        //            if (result.isSuccess()) {
+        //                System.out.println("success.");
+        //            } else {
+        //                System.out.println("errorCode:" + result.getErrorCode()
+        //                        + " errorMessage:" + result.getErrorMessage());
+        //            }
+        //        } catch (Exception e) {
+        //            e.printStackTrace();
+        //        }
     }
     
 }
