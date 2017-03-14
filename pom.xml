@@ -1065,26 +1065,27 @@
 			<!-- <artifactId>quartz</artifactId> -->
 			<!-- <version>1.6.3</version> -->
 			<!-- </dependency> -->
+			<!-- 2.2.3 -->
 			<dependency>
 				<groupId>org.quartz-scheduler</groupId>
 				<artifactId>quartz</artifactId>
 				<version>1.8.6</version>
 			</dependency>
-			<dependency>
-				<groupId>org.quartz-scheduler</groupId>
-				<artifactId>quartz-commonj</artifactId>
-				<version>1.8.6</version>
-			</dependency>
-			<dependency>
-				<groupId>org.quartz-scheduler</groupId>
-				<artifactId>quartz-weblogic</artifactId>
-				<version>1.8.6</version>
-			</dependency>
-			<dependency>
-				<groupId>org.quartz-scheduler</groupId>
-				<artifactId>quartz-oracle</artifactId>
-				<version>1.8.6</version>
-			</dependency>
+			<!-- <dependency> -->
+			<!-- <groupId>org.quartz-scheduler</groupId> -->
+			<!-- <artifactId>quartz-commonj</artifactId> -->
+			<!-- <version>1.8.6</version> -->
+			<!-- </dependency> -->
+			<!-- <dependency> -->
+			<!-- <groupId>org.quartz-scheduler</groupId> -->
+			<!-- <artifactId>quartz-weblogic</artifactId> -->
+			<!-- <version>1.8.6</version> -->
+			<!-- </dependency> -->
+			<!-- <dependency> -->
+			<!-- <groupId>org.quartz-scheduler</groupId> -->
+			<!-- <artifactId>quartz-oracle</artifactId> -->
+			<!-- <version>1.8.6</version> -->
+			<!-- </dependency> -->
 
 			<dependency>
 				<groupId>javax.mail</groupId>

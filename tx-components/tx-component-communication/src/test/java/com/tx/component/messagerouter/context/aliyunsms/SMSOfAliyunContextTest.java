@@ -17,6 +17,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.tx.component.communication.context.MessageSenderContext;
 import com.tx.component.communication.model.SendResult;
+import com.tx.core.util.MessageUtils;
 
 /**
  * 消息路由服务测试类
@@ -55,23 +56,23 @@ public class SMSOfAliyunContextTest {
             e.printStackTrace();
         }
         
-        //        try {
-        //            SendResult result = MessageSenderContext.getContext()
-        //                    .send("sms",
-        //                            "15998918907",
-        //                            "企账通",
-        //                            MessageUtils.format("您的验证码是{}。",
-        //                                    new Object[] { String.valueOf((int) (Math.random() * 1000)) }));
-        //            
-        //            if (result.isSuccess()) {
-        //                System.out.println("success.");
-        //            } else {
-        //                System.out.println("errorCode:" + result.getErrorCode()
-        //                        + " errorMessage:" + result.getErrorMessage());
-        //            }
-        //        } catch (Exception e) {
-        //            e.printStackTrace();
-        //        }
+                try {
+                    SendResult result = MessageSenderContext.getContext()
+                            .send("sms",
+                                    "15998918907",
+                                    "企账通",
+                                    MessageUtils.format("您的验证码是{}。",
+                                            new Object[] { String.valueOf((int) (Math.random() * 1000)) }));
+                    
+                    if (result.isSuccess()) {
+                        System.out.println("success.");
+                    } else {
+                        System.out.println("errorCode:" + result.getErrorCode()
+                                + " errorMessage:" + result.getErrorMessage());
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
     }
     
 }
