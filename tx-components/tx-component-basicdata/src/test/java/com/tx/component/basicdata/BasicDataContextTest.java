@@ -27,8 +27,6 @@ import com.tx.component.basicdata.context.BasicDataContext;
 @ContextConfiguration(locations = { 
         "classpath:spring/beans-basicdata.xml",
         "classpath:spring/beans-aop.xml",
-        "classpath:spring/beans-cache.xml",
-        "classpath:spring/beans-config.xml",
         "classpath:spring/beans-ds.xml",
         "classpath:spring/beans-tx.xml", 
         "classpath:com/tx/component/basicdata/beans.xml"})
