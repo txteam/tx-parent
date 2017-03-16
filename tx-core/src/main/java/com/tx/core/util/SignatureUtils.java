@@ -51,6 +51,10 @@ public class SignatureUtils {
         String ipInfo = null;
         try {
             ipInfo = getIpAddressInfo();
+            if (ipInfo.startsWith("127.0.0.1")
+                    || ipInfo.startsWith("localhost")) {
+                ipInfo = getIpInfoHashCodeMD5();
+            }
         } catch (UnknownHostException | SocketException e1) {
             ipInfo = getIpInfoHashCodeMD5();
         }
