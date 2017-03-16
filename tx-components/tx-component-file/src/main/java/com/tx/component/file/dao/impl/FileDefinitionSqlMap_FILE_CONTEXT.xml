@@ -66,11 +66,17 @@
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(relativePath)">  
 	            AND TFD.relativePath = #{relativePath}
 	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(relativeFolder)">  
+	            AND TFD.relativePath LIKE concat(#{relativeFolder,jdbcType=VARCHAR}, '%')
+	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(filename)">  
 	            AND TFD.filename = #{filename,javaType=java.lang.String}
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(filenameExtension)">  
 	            AND TFD.filenameExtension = #{filenameExtension,javaType=java.lang.String}
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(filenameExtensions)">  
+	        	AND TFD.filenameExtension in <foreach collection="filenameExtensions" open="(" close=")" separator="," item="filenameExtensionTemp">#{filenameExtensionTemp,javaType=java.lang.String}</foreach>
 	        </if>
 		</trim>
 		<choose>  
@@ -102,11 +108,17 @@
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(relativePath)">  
 	            AND TFD.relativePath = #{relativePath}
 	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(relativeFolder)">  
+	            AND TFD.relativePath LIKE concat(#{relativeFolder,jdbcType=VARCHAR}, '%')
+	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(filename)">  
 	            AND TFD.filename = #{filename,javaType=java.lang.String}
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(filenameExtension)">  
 	            AND TFD.filenameExtension = #{filenameExtension,javaType=java.lang.String}
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(filenameExtensions)">  
+	        	AND TFD.filenameExtension in <foreach collection="filenameExtensions" open="(" close=")" separator="," item="filenameExtensionTemp">#{filenameExtensionTemp,javaType=java.lang.String}</foreach>
 	        </if>
 		</trim>
 	</select>

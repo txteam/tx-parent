@@ -16,12 +16,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.util.StringUtils;
 
 import com.tx.component.communication.model.SendMessage;
 import com.tx.component.communication.model.SendResult;
@@ -35,12 +35,14 @@ import com.tx.component.communication.senddialect.MessageSendDialect;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public abstract class AbstractTemplateSMSSendDialect implements
+public abstract class AbstractSMSMessageSendDialect implements
         MessageSendDialect, InitializingBean {
     
-    protected Logger logger = LoggerFactory.getLogger(AbstractTemplateSMSSendDialect.class);
+    protected Logger logger = LoggerFactory.getLogger(AbstractSMSMessageSendDialect.class);
     
-    private Pattern placeholderPattern = Pattern.compile("\\$\\{(.+?)\\}");
+    private String placeholder = "\\$\\{(.+?)\\}";
+    
+    private Pattern placeholderPattern = null;
     
     /** 短信模板code 以及 短信模板内容的映射 */
     private Map<String, String> smsTemplateMap = new HashMap<String, String>();
@@ -75,6 +77,8 @@ public abstract class AbstractTemplateSMSSendDialect implements
             }
         }
         
+        //替换字符串
+        this.placeholderPattern = Pattern.compile(this.placeholder);
         //迭代处理
         if (MapUtils.isEmpty(this.smsTemplateMap)) {
             return;
@@ -83,7 +87,8 @@ public abstract class AbstractTemplateSMSSendDialect implements
             String templateCode = entryTemp.getKey();
             String templateContent = entryTemp.getValue();
             String patternStringTemp = "^.*?"
-                    + templateContent.replaceAll("\\$\\{.+?\\}", "(.+?)") + "$";
+                    + templateContent.replaceAll(this.placeholder, "(.+?)")
+                    + "$";
             Pattern pTemp = Pattern.compile(patternStringTemp);
             
             this.smsTemplatePatternMap.put(templateCode, pTemp);
@@ -178,8 +183,8 @@ public abstract class AbstractTemplateSMSSendDialect implements
     /**
      * @param 对placeholderPattern进行赋值
      */
-    public void setPlaceholderPattern(Pattern placeholderPattern) {
-        this.placeholderPattern = placeholderPattern;
+    public void setPlaceholder(String placeholder) {
+        this.placeholder = placeholder;
     }
     
     /**
@@ -210,8 +215,10 @@ public abstract class AbstractTemplateSMSSendDialect implements
         String title = message.getTitle();
         if (this.signNameMap.containsKey(title)) {
             return this.signNameMap.get(title);
-        } else {
+        } else if (!StringUtils.isEmpty(this.defaultSMSSignName)) {
             return defaultSMSSignName;
+        } else {
+            return title;
         }
     }
     

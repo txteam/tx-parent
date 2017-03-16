@@ -51,6 +51,15 @@ public class SystemFileResource extends AbstractFileResource {
      * @return
      */
     @Override
+    public String getViewUrl() {
+        String viewUrl = "/filecontext/resource/" + this.fileDefinition.getId();
+        return viewUrl;
+    }
+    
+    /**
+     * @return
+     */
+    @Override
     public boolean exists() {
         return fileSystemResource.exists();
     }

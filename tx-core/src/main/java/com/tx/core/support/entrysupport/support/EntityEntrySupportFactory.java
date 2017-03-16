@@ -50,8 +50,9 @@ public class EntityEntrySupportFactory {
         AssertUtils.notEmpty(tableName, "tableName is empty.");
         AssertUtils.notNull(type, "type is null.");
         
-        EntityEntrySupport<ENTRY> support = null;
+        tableName = tableName.toLowerCase();//将表名toLowerCase
         
+        EntityEntrySupport<ENTRY> support = null;
         if (type2supportMap.containsKey(tableName)) {
             support = type2supportMap.get(tableName);
             

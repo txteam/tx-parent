@@ -11,11 +11,11 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.core.OrderComparator;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.util.StringUtils;
 
 import com.tx.component.communication.model.SendMessage;
 import com.tx.component.communication.model.SendResult;
@@ -87,12 +87,21 @@ public class MessageSenderContextBuilder extends
         
         String messageType = message.getType().toUpperCase();
         SendResult result = null;
+        MessageSendHandler sendHandler = null;
         for (MessageSendHandler sendHandlerTemp : this.sendHandlerMap.get(messageType)) {
             message.setType(messageType);//强制转换为大写字符
             if (sendHandlerTemp.supports(message)) {
-                result = sendHandlerTemp.send(message);
+                sendHandler = sendHandlerTemp;
                 break;
             }
+        }
+        if (sendHandler == null) {
+            result = new SendResult();
+            result.setSuccess(false);
+            result.setErrorMessage("没有匹配的消息发送处理器.");
+            result.setErrorCode("404");
+        } else {
+            result = sendHandler.send(message);
         }
         return result;
     }

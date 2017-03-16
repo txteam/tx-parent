@@ -10,9 +10,9 @@
 	<!-- 扫描权限模块中需要装载的bean -->
 	<bean id="basicDataContext"
 		class="com.tx.component.basicdata.context.BasicDataContextFactory">
-		<property name="cacheManager">
-			<ref bean="ehcacheManager" />
-		</property>
+<!-- 		<property name="cacheManager"> -->
+<!-- 			<ref bean="ehcacheManager" /> -->
+<!-- 		</property> -->
 		<property name="dataSource">
 			<ref bean="dataSource" />
 		</property>

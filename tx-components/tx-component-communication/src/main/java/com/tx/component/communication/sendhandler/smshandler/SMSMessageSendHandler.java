@@ -4,18 +4,20 @@
  * 修改时间:  2015年12月31日
  * <修改描述:>
  */
-package com.tx.component.communication.sendhandler;
+package com.tx.component.communication.sendhandler.smshandler;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.Ordered;
 
 import com.tx.component.communication.model.SendMessage;
 import com.tx.component.communication.model.SendResult;
-import com.tx.component.communication.senddialect.MessageSendDialect;
+import com.tx.component.communication.senddialect.sms.AbstractSMSMessageSendDialect;
+import com.tx.component.communication.sendhandler.MessageSendHandler;
 import com.tx.core.exceptions.util.AssertUtils;
 
 /**
  * 抽象消息发送处理器<br/>
+ *     //TODO:需重构逻辑，将短信发送模板匹配的逻辑移到SendHandler中，间接支持support的逻辑
  * <功能详细描述>
  * 
  * @author  Administrator
@@ -23,19 +25,30 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public abstract class AbstractMessageSendHandler implements MessageSendHandler,
+public class SMSMessageSendHandler implements MessageSendHandler,
         InitializingBean {
     
+    /** 消息类型 */
+    private final String messageType = "SMS";
+    
     /** 消息对应的方言类 */
-    protected MessageSendDialect dialect;
+    private AbstractSMSMessageSendDialect dialect;
+    
+    /**
+     * @return
+     */
+    @Override
+    public String type() {
+        return messageType;
+    }
     
     /**
      * @throws Exception
      */
     @Override
-    public final void afterPropertiesSet() throws Exception {
-        AssertUtils.notNull(this.dialect, "dialect is null.");
-        AssertUtils.notEmpty(type(), "type() is empty.");
+    public void afterPropertiesSet() throws Exception {
+        AssertUtils.notNull(dialect, "dialect is null.");
+        AssertUtils.notEmpty(messageType, "messageType is null.");
     }
     
     /**
@@ -45,7 +58,7 @@ public abstract class AbstractMessageSendHandler implements MessageSendHandler,
     @Override
     public final boolean supports(SendMessage message) {
         if (message.getType() != null
-                && type().equals(message.getType().toUpperCase())) {
+                && messageType.equals(message.getType().toUpperCase())) {
             if (this.dialect.supports(message)) {
                 return true;
             } else {
@@ -76,7 +89,7 @@ public abstract class AbstractMessageSendHandler implements MessageSendHandler,
     /**
      * @param 对dialect进行赋值
      */
-    public void setDialect(MessageSendDialect dialect) {
+    public void setDialect(AbstractSMSMessageSendDialect dialect) {
         this.dialect = dialect;
     }
 }
