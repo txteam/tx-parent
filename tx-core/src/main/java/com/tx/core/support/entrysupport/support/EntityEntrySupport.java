@@ -32,8 +32,8 @@ import com.tx.core.util.UUIDUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class EntityEntrySupport<EE extends EntityEntry> implements
-        InitializingBean {
+public class EntityEntrySupport<EE extends EntityEntry>
+        implements InitializingBean {
     
     /** 类型:type */
     private Class<EE> type;
@@ -159,6 +159,26 @@ public class EntityEntrySupport<EE extends EntityEntry> implements
                 needDeleteList.add(entryMapOfDB.get(entryKey));
             }
         }
+
+        //对数据进行删除
+        if (CollectionUtils.isNotEmpty(needDeleteList)) {
+            for (EntityEntry entityEntry : needDeleteList) {
+                this.deleteById(entityEntry.getId());
+            }
+        }
+
+        //新增数据
+        if (CollectionUtils.isNotEmpty(needInsertList)) {
+            this.batchInsert(entityId, needInsertList);
+        }
+
+        //更新数据
+        if (CollectionUtils.isNotEmpty(needUpdateList)) {
+            for (EE entityEntry : needUpdateList) {
+                this.updateByEntryKey(entityEntry);
+            }
+        }
+        
     }
     
     /**
@@ -186,8 +206,8 @@ public class EntityEntrySupport<EE extends EntityEntry> implements
         Map<String, ?> entryMap = this.metaEntityEntry.transferBean2Map(entry);
         
         //批量处理
-        this.namedParameterJdbcTemplate.update(this.metaEntityEntry.getSqlOfInsert(),
-                entryMap);
+        this.namedParameterJdbcTemplate
+                .update(this.metaEntityEntry.getSqlOfInsert(), entryMap);
     }
     
     /**
@@ -225,8 +245,8 @@ public class EntityEntrySupport<EE extends EntityEntry> implements
         }
         
         //批量处理
-        this.namedParameterJdbcTemplate.batchUpdate(this.metaEntityEntry.getSqlOfInsert(),
-                entryMapArray);
+        this.namedParameterJdbcTemplate.batchUpdate(
+                this.metaEntityEntry.getSqlOfInsert(), entryMapArray);
     }
     
     /**
@@ -245,8 +265,8 @@ public class EntityEntrySupport<EE extends EntityEntry> implements
         paramMap.put("id", entryId);
         
         //批量处理
-        this.namedParameterJdbcTemplate.update(this.metaEntityEntry.getSqlOfDeleteById(),
-                paramMap);
+        this.namedParameterJdbcTemplate
+                .update(this.metaEntityEntry.getSqlOfDeleteById(), paramMap);
     }
     
     /**
@@ -268,8 +288,8 @@ public class EntityEntrySupport<EE extends EntityEntry> implements
         paramMap.put("entryKey", entryKey);
         
         //批量处理
-        this.namedParameterJdbcTemplate.update(this.metaEntityEntry.getSqlOfDeleteByEntryKey(),
-                paramMap);
+        this.namedParameterJdbcTemplate.update(
+                this.metaEntityEntry.getSqlOfDeleteByEntryKey(), paramMap);
     }
     
     /**
@@ -288,8 +308,8 @@ public class EntityEntrySupport<EE extends EntityEntry> implements
         paramMap.put("entityId", entityId);
         
         //删除EntryList
-        this.namedParameterJdbcTemplate.update(this.metaEntityEntry.getSqlOfDeleteByEntityId(),
-                paramMap);
+        this.namedParameterJdbcTemplate.update(
+                this.metaEntityEntry.getSqlOfDeleteByEntityId(), paramMap);
     }
     
     /**
@@ -309,7 +329,8 @@ public class EntityEntrySupport<EE extends EntityEntry> implements
         paramMap.put("id", id);
         
         @SuppressWarnings("unchecked")
-        EE res = this.namedParameterJdbcTemplate.queryForObject(this.metaEntityEntry.getSqlOfFindById(),
+        EE res = this.namedParameterJdbcTemplate.queryForObject(
+                this.metaEntityEntry.getSqlOfFindById(),
                 paramMap,
                 (RowMapper<EE>) this.metaEntityEntry.getRowMap());
         
@@ -336,7 +357,8 @@ public class EntityEntrySupport<EE extends EntityEntry> implements
         paramMap.put("entryKey", entryKey);
         
         @SuppressWarnings("unchecked")
-        EE res = this.namedParameterJdbcTemplate.queryForObject(this.metaEntityEntry.getSqlOfFindByEntryKey(),
+        EE res = this.namedParameterJdbcTemplate.queryForObject(
+                this.metaEntityEntry.getSqlOfFindByEntryKey(),
                 paramMap,
                 (RowMapper<EE>) this.metaEntityEntry.getRowMap());
         
@@ -361,7 +383,8 @@ public class EntityEntrySupport<EE extends EntityEntry> implements
         //this.namedParameterJdbcTemplate.batchUpdate(sql, batchValues);
         
         @SuppressWarnings("unchecked")
-        List<EE> resList = this.namedParameterJdbcTemplate.query(this.metaEntityEntry.getSqlOfQueryListByEntityId(),
+        List<EE> resList = this.namedParameterJdbcTemplate.query(
+                this.metaEntityEntry.getSqlOfQueryListByEntityId(),
                 paramMap,
                 (RowMapper<EE>) this.metaEntityEntry.getRowMap());
         
@@ -380,7 +403,8 @@ public class EntityEntrySupport<EE extends EntityEntry> implements
     */
     public List<EE> queryList() {
         @SuppressWarnings("unchecked")
-        List<EE> resList = this.namedParameterJdbcTemplate.query(this.metaEntityEntry.getSqlOfQueryList(),
+        List<EE> resList = this.namedParameterJdbcTemplate.query(
+                this.metaEntityEntry.getSqlOfQueryList(),
                 (RowMapper<EE>) this.metaEntityEntry.getRowMap());
         
         return resList;
@@ -402,11 +426,12 @@ public class EntityEntrySupport<EE extends EntityEntry> implements
         AssertUtils.notEmpty(entry.getId(), "entry.id is empty.");
         
         //转换为Map数组
-        Map<String, Object> paramMap = this.metaEntityEntry.transferBean2Map(entry);
+        Map<String, Object> paramMap = this.metaEntityEntry
+                .transferBean2Map(entry);
         
         //批量处理
-        this.namedParameterJdbcTemplate.update(this.metaEntityEntry.getSqlOfUpdateById(),
-                paramMap);
+        this.namedParameterJdbcTemplate
+                .update(this.metaEntityEntry.getSqlOfUpdateById(), paramMap);
     }
     
     /**
@@ -426,11 +451,12 @@ public class EntityEntrySupport<EE extends EntityEntry> implements
         AssertUtils.notEmpty(entry.getEntryKey(), "entry.entryKey is empty.");
         
         //转换为Map数组
-        Map<String, Object> paramMap = this.metaEntityEntry.transferBean2Map(entry);
+        Map<String, Object> paramMap = this.metaEntityEntry
+                .transferBean2Map(entry);
         
         //批量处理
-        this.namedParameterJdbcTemplate.update(this.metaEntityEntry.getSqlOfUpdateByEntryKey(),
-                paramMap);
+        this.namedParameterJdbcTemplate.update(
+                this.metaEntityEntry.getSqlOfUpdateByEntryKey(), paramMap);
     }
     
     /**
