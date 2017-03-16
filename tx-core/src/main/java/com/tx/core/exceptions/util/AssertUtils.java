@@ -212,7 +212,7 @@ public class AssertUtils {
      * 断言对应对象非空(支持：字符串，数组，集合，Map)<br/>
      * <功能详细描述>
      * @param obj 传入的检查是否为空的对象
-     * @param messagePattern 异常信息Pattern支持占位符
+     * @param messagePattern 异常信息Pattern支持占位符 
      * @param parameters 信息中占位符的值
      * 
      * @return void [返回类型说明]
