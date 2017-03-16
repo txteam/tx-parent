@@ -72,6 +72,7 @@ public class EntityEntrySupportFactory {
             }
             
             support = new EntityEntrySupport<>(type, tableName, jdbcTemplate);
+            //验证表是否存在，若不存在则创建表
             type2supportMap.put(tableName, support);
         }
         return support;
@@ -80,8 +81,8 @@ public class EntityEntrySupportFactory {
     /**
      * 获取类型对应的EntityEntrySupport<br/>
      * <功能详细描述>
-     * @param type
      * @param tableName
+     * @param dataSource
      * @return [参数说明]
      * 
      * @return EntityEntrySupport<ENTRY> [返回类型说明]

@@ -53,7 +53,19 @@ public class MetaEntityEntry {
     
     //实例表后缀
     private static final String hisTableNameSuffix = "_his";
-    
+
+    private static final String CREATE_SQL_TEMPLATE = (new StringBuilder(
+            "CREATE TABLE  ")).append("{} ")
+            .append("( id varchar(64) not null, ")
+            .append(" entityId varchar(64) not null,")
+            .append(" entryKey varchar(64) not null,")
+            .append(" entryValue varchar(256),")
+            .append("  primary key(id))")
+            .toString();
+
+
+
+
     //插入语句模板
     //"INSERT INTO {} (id ,entityId ,entryKey ,entryValue {}) VALUES(:id ,:entityId ,:entryKey ,:entryValue {})";
     private static final String INSERT_SQL_TEMPLATE = (new StringBuilder(
@@ -136,6 +148,8 @@ public class MetaEntityEntry {
     
     /** insert语句 */
     private final String sqlOfInsert;
+
+    private final String sqlOfCreateTable;
     
     /** insertToHis语句 */
     private final String sqlOfInsertToHis;
@@ -252,6 +266,9 @@ public class MetaEntityEntry {
         this.otherFieldsForInsert = fieldsSB.toString();
         this.otherColumnsForInsert = columnSB.toString();
         this.otherColumn2FieldForUpdate = column2FieldSB.toString();
+
+        //create table
+        this.sqlOfCreateTable = MessageFormatter.arrayFormat(CREATE_SQL_TEMPLATE,new Object[]{this.tableName}).getMessage();
         
         //INSERT INTO {} (id ,entityId ,entryKey ,entryValue {}) VALUES(:id ,:entityId ,:entryKey ,:entryValue {})
         this.sqlOfInsert = MessageFormatter.arrayFormat(INSERT_SQL_TEMPLATE,
@@ -410,7 +427,11 @@ public class MetaEntityEntry {
     public RowMapper<?> getRowMap() {
         return rowMap;
     }
-    
+
+    public String getSqlOfCreateTable() {
+        return sqlOfCreateTable;
+    }
+
     /**
       * 转换Map为Bean
       * <功能详细描述>
