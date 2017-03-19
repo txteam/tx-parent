@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.jdbc.core.RowMapper;
@@ -88,6 +89,15 @@ public class EntityEntrySupport<EE extends EntityEntry>
         //获取对应的MetaEntityEntry
         this.metaEntityEntry = MetaEntityEntry.forClass(this.type,
                 this.tableName);
+        
+        try {
+            queryList();
+        } catch (Exception e) {
+            Map<String, Object> params = new HashedMap();
+            this.namedParameterJdbcTemplate
+                    .update(metaEntityEntry.getSqlOfCreateTable(), params);
+        }
+        
     }
     
     /**
@@ -126,7 +136,6 @@ public class EntityEntrySupport<EE extends EntityEntry>
     @Transactional
     public void batchSaveEntry(String entityId, List<EE> entryList) {
         AssertUtils.notEmpty(entityId, "entityId is empty.");
-        
         entryList = entryList == null ? new ArrayList<EE>() : entryList;
         Map<String, EE> entryMapOfNew = new HashMap<>();
         Map<String, EE> entryMapOfDB = loadEntryMapFromDBByEntityId(entityId);//从数据库中加载对应的EntryMap
@@ -151,27 +160,27 @@ public class EntityEntrySupport<EE extends EntityEntry>
             entryMapOfNew.put(entryOfNew.getEntryKey(), entryOfNew);
         }
         
-        for (Entry<String, EE> entryTemp : entryMapOfNew.entrySet()) {
+        for (Entry<String, EE> entryTemp : entryMapOfDB.entrySet()) {
             String entryKey = entryTemp.getKey();
             
-            if (!entryMapOfDB.containsKey(entryKey)) {
+            if (!entryMapOfNew.containsKey(entryKey)   ) {
                 //需要删除的数据
-                needDeleteList.add(entryMapOfDB.get(entryKey));
+                needDeleteList.add(entryTemp.getValue());
             }
         }
-
+        
         //对数据进行删除
         if (CollectionUtils.isNotEmpty(needDeleteList)) {
             for (EntityEntry entityEntry : needDeleteList) {
                 this.deleteById(entityEntry.getId());
             }
         }
-
+        
         //新增数据
         if (CollectionUtils.isNotEmpty(needInsertList)) {
             this.batchInsert(entityId, needInsertList);
         }
-
+        
         //更新数据
         if (CollectionUtils.isNotEmpty(needUpdateList)) {
             for (EE entityEntry : needUpdateList) {
