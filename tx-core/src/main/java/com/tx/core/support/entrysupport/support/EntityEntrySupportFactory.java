@@ -6,11 +6,16 @@
  */
 package com.tx.core.support.entrysupport.support;
 
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.collections.map.HashedMap;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import com.tx.core.exceptions.util.AssertUtils;
@@ -61,8 +66,10 @@ public class EntityEntrySupportFactory {
         
         synchronized (type2supportMap) {
             NamedParameterJdbcTemplate jdbcTemplate = null;
-            if (dataSource2namedParameterJdbcTemplateMap.containsKey(dataSource)) {
-                jdbcTemplate = dataSource2namedParameterJdbcTemplateMap.get(dataSource);
+            if (dataSource2namedParameterJdbcTemplateMap
+                    .containsKey(dataSource)) {
+                jdbcTemplate = dataSource2namedParameterJdbcTemplateMap
+                        .get(dataSource);
             } else {
                 AssertUtils.notNull(dataSource, "dataSource is null.");
                 
@@ -73,6 +80,42 @@ public class EntityEntrySupportFactory {
             
             support = new EntityEntrySupport<>(type, tableName, jdbcTemplate);
             //验证表是否存在，若不存在则创建表
+            Connection connection = null;
+            try {
+                connection = dataSource.getConnection();
+                DatabaseMetaData databaseMetaData = connection.getMetaData();
+                String dataBaseName = connection.getCatalog();
+                ResultSet rsTables = databaseMetaData.getTables(dataBaseName,
+                        null,
+                        tableName,
+                        new String[] { "TABLE" });
+                if (!rsTables.next()) {
+                    //创建表
+                    String CREATE_SQL_TEMPLATE = (new StringBuilder(
+                            "CREATE TABLE  ")).append(tableName )
+                                    .append(" ( id varchar(64) not null, ")
+                                    .append(" entityId varchar(64) not null,")
+                                    .append(" entryKey varchar(64) not null,")
+                                    .append(" entryValue varchar(256),")
+                                    .append("  primary key(id))")
+                                    .toString();
+                    
+                    Map<String, Object> params = new HashedMap();
+                    jdbcTemplate.update(CREATE_SQL_TEMPLATE, params);
+                }
+                
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                if (connection != null) {
+                    try {
+                        connection.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            
             type2supportMap.put(tableName, support);
         }
         return support;

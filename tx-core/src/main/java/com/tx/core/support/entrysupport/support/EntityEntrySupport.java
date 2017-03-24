@@ -89,14 +89,15 @@ public class EntityEntrySupport<EE extends EntityEntry>
         //获取对应的MetaEntityEntry
         this.metaEntityEntry = MetaEntityEntry.forClass(this.type,
                 this.tableName);
-        
-        try {
-            queryList();
-        } catch (Exception e) {
-            Map<String, Object> params = new HashedMap();
-            this.namedParameterJdbcTemplate
-                    .update(metaEntityEntry.getSqlOfCreateTable(), params);
-        }
+//
+//        try {
+//            queryList();
+//
+//        } catch (Exception e) {
+//            Map<String, Object> params = new HashedMap();
+//            this.namedParameterJdbcTemplate
+//                    .update(metaEntityEntry.getSqlOfCreateTable(), params);
+//        }
         
     }
     
