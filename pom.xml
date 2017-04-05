@@ -3,12 +3,12 @@
 
 	<groupId>com.tx</groupId>
 	<artifactId>tx-parent</artifactId>
-	<version>2.5.x-SNAPSHOT</version>
+	<version>3.0.x-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<properties>
 		<!-- lib info -->
-		<tx-version>2.5.x-SNAPSHOT</tx-version>
+		<tx-version>3.0.x-SNAPSHOT</tx-version>
 		<!-- base info -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<!-- projectInfo -->
@@ -1609,10 +1609,10 @@
 					<inherited>true</inherited>
 					<configuration>
 						<verbose>true</verbose>
-						<!-- The -source argument for the Java compiler.Default value is: 1.5. -->
-						<source>1.7</source>
-						<!-- The -target argument for the Java compiler.Default value is: 1.5. -->
-						<target>1.7</target>
+						<!-- The -source argument for the Java compiler.Default value is: 1.8. -->
+						<source>1.8</source>
+						<!-- The -target argument for the Java compiler.Default value is: 1.8. -->
+						<target>1.8</target>
 						<!-- The -encoding argument for the Java compiler.Default value is: ${project.build.sourceEncoding}. -->
 						<encoding>UTF-8</encoding>
 						<!-- Set to true to show compilation warnings. Default value is: false. -->
