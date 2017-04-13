@@ -18,7 +18,7 @@ package com.tx.component.rule.loader;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public enum RuleTypeEnum {
+public enum RuleTypeEnum{
     /**
      * 方法类型规则
      */
@@ -26,19 +26,7 @@ public enum RuleTypeEnum {
     /**
      * DROOLS规则
      */
-    DROOLS_DRL_BYTE("DROOLS_DRL_BYTE"),
-    /**
-     * DROOLS规则
-     */
-    DROOLS_DRL_FILE("DROOLS_DRL_FILE"),
-    /**
-     * 文件类型规则
-     */
-    DROOLS_FILES("DROOLS_FILES"),
-    /**
-     * DROOLS规则
-     */
-    DROOLS_PKG_URL("DROOLS_PKG_URL");
+    DROOLS_DRL_BYTE("DROOLS_DRL_BYTE");
     
     /** 规则类型名 */
     private String name;

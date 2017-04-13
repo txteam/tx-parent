@@ -8,8 +8,6 @@ package com.tx.component.rule.context;
 
 import javax.sql.DataSource;
 
-import net.sf.ehcache.Ehcache;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -19,8 +17,6 @@ import org.springframework.jdbc.support.lob.DefaultLobHandler;
 import org.springframework.jdbc.support.lob.LobHandler;
 import org.springframework.jdbc.support.lob.OracleLobHandler;
 
-import com.tx.component.rule.impl.drools.drlbyte.DRLByteDroolsRuleRegister;
-import com.tx.component.rule.impl.drools.drlfile.DRLFileDroolsRuleRegister;
 import com.tx.component.rule.impl.java.JavaMethodRuleRegister;
 import com.tx.component.rule.loader.RuleItemPersister;
 import com.tx.component.rule.loader.java.JavaMethodRuleItemLoader;
@@ -38,6 +34,8 @@ import com.tx.component.rule.transation.impl.DefaultRuleSessionTransactionFactor
 import com.tx.core.dbscript.context.DBScriptExecutorContext;
 import com.tx.core.dbscript.model.DataSourceTypeEnum;
 import com.tx.core.exceptions.util.AssertUtils;
+
+import net.sf.ehcache.Ehcache;
 
 /**
  * 规则容器配置器<br/>
@@ -95,17 +93,17 @@ public class RuleContextConfigurator implements InitializingBean {
         return xmlRuleItemConfigLoader;
     }
     
-    @Bean(name = "drlByteDroolsRuleRegister")
-    public DRLByteDroolsRuleRegister drlByteDroolsRuleRegister() {
-        DRLByteDroolsRuleRegister drlByteDroolsRuleRegister = new DRLByteDroolsRuleRegister();
-        return drlByteDroolsRuleRegister;
-    }
-    
-    @Bean(name = "drlFileDroolsRuleRegister")
-    public DRLFileDroolsRuleRegister drlFileDroolsRuleRegister(){
-        DRLFileDroolsRuleRegister drlFileDroolsRuleRegister = new DRLFileDroolsRuleRegister();
-        return drlFileDroolsRuleRegister;
-    }
+//    @Bean(name = "drlByteDroolsRuleRegister")
+//    public DRLByteDroolsRuleRegister drlByteDroolsRuleRegister() {
+//        DRLByteDroolsRuleRegister drlByteDroolsRuleRegister = new DRLByteDroolsRuleRegister();
+//        return drlByteDroolsRuleRegister;
+//    }
+//    
+//    @Bean(name = "drlFileDroolsRuleRegister")
+//    public DRLFileDroolsRuleRegister drlFileDroolsRuleRegister(){
+//        DRLFileDroolsRuleRegister drlFileDroolsRuleRegister = new DRLFileDroolsRuleRegister();
+//        return drlFileDroolsRuleRegister;
+//    }
     
     @Bean(name = "javaMethodRuleRegister")
     public JavaMethodRuleRegister javaMethodRuleRegister() {

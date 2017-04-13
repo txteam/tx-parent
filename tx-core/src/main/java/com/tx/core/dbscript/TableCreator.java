@@ -92,11 +92,9 @@ public class TableCreator {
             return;
         }
         
-        logger.info("开始：创建或更新表:{}",
-                new Object[] { tableDefinition.tableName() });
+        logger.info("开始：创建或更新表:{}", new Object[] { tableDefinition.tableName() });
         if (!isExist(tableDefinition)) {
-            logger.info("     检测到：表'{}'在数据库中不存在.",
-                    new Object[] { tableDefinition.tableName() });
+            logger.info("     检测到：表'{}'在数据库中不存在.", new Object[] { tableDefinition.tableName() });
             Date now = new Date();
             DBScriptContext dbScriptContext = new DBScriptContext();
             dbScriptContext.setTableName(tableDefinition.tableName());
@@ -107,16 +105,15 @@ public class TableCreator {
             //实际创建表
             doCreateTable(tableDefinition);
             if (context.isExistInContext(tableDefinition.tableName())) {
-                DBScriptContext dbScriptContextTemp = context.findDBScriptContextByTableName(tableDefinition.tableName());
+                DBScriptContext dbScriptContextTemp = context
+                        .findDBScriptContextByTableName(tableDefinition.tableName());
                 context.deleteById(dbScriptContextTemp.getId());
             }
             
             context.insert(dbScriptContext);
-            logger.info("结束：创建表:{}成功.",
-                    new Object[] { tableDefinition.tableName() });
+            logger.info("结束：创建表:{}成功.", new Object[] { tableDefinition.tableName() });
         } else {
-            logger.info("     检测到：表'{}'在数据库中已经存在.",
-                    new Object[] { tableDefinition.tableName() });
+            logger.info("     检测到：表'{}'在数据库中已经存在.", new Object[] { tableDefinition.tableName() });
             Date now = new Date();
             DBScriptContext dbScriptContext = new DBScriptContext();
             dbScriptContext.setCreateDate(now);
@@ -125,38 +122,32 @@ public class TableCreator {
             dbScriptContext.setTableVersion(tableDefinition.tableVersion());
             
             if (context.isExistInContext(tableDefinition.tableName())) {
-                DBScriptContext dbScriptContextTemp = context.findDBScriptContextByTableName(tableDefinition.tableName());
-                if (!dbScriptContextTemp.getTableVersion()
-                        .equals(tableDefinition.tableVersion())) {
+                DBScriptContext dbScriptContextTemp = context
+                        .findDBScriptContextByTableName(tableDefinition.tableName());
+                if (!dbScriptContextTemp.getTableVersion().equals(tableDefinition.tableVersion())) {
                     logger.info("     检测到：表'{}'版需进行升级.{}->{}",
-                            new Object[] { tableDefinition.tableName(),
-                                    dbScriptContextTemp.getTableVersion(),
+                            new Object[] { tableDefinition.tableName(), dbScriptContextTemp.getTableVersion(),
                                     tableDefinition.tableVersion() });
                     //根据当前版本号对表进行升级
-                    doUpdateTable(dbScriptContext.getTableVersion(),
-                            tableDefinition);
+                    doUpdateTable(dbScriptContext.getTableVersion(), tableDefinition);
                     dbScriptContext.setCreateDate(dbScriptContext.getCreateDate());
                     //删除原表中容器对其的管理
                     context.deleteById(dbScriptContextTemp.getId());
                     context.insert(dbScriptContext);
-                    logger.info("结束：升级表:{}成功.",
-                            new Object[] { tableDefinition.tableName() });
+                    logger.info("结束：升级表:{}成功.", new Object[] { tableDefinition.tableName() });
                 } else {
                     logger.info("结束： 检测到：表'{}'版本'{}'一致无需进行升级.",
-                            new Object[] { tableDefinition.tableName(),
-                                    tableDefinition.tableVersion() });
+                            new Object[] { tableDefinition.tableName(), tableDefinition.tableVersion() });
                 }
             } else {
                 logger.warn("     在容器中并未检测到原表信息。");
                 if (this.updateNotExistTableInContext) {
                     logger.warn("     在容器中并未检测到原表版本，容器现配置强制对原表进行一次默认升级.如无需升级，请关闭updateNotExistTableInContext值为false");
                     doUpdateTable(null, tableDefinition);
-                    logger.info("结束：升级表:{}成功.",
-                            new Object[] { tableDefinition.tableName() });
+                    logger.info("结束：升级表:{}成功.", new Object[] { tableDefinition.tableName() });
                 }
                 context.insert(dbScriptContext);
             }
-            
         }
     }
     
@@ -173,8 +164,7 @@ public class TableCreator {
     protected boolean isExist(TableDefinition tableDefinition) {
         boolean isExistFlag = false;
         try {
-            this.jdbcTemplate.queryForInt("SELECT COUNT(1) FROM "
-                    + tableDefinition.tableName());
+            this.jdbcTemplate.queryForObject("SELECT COUNT(1) FROM " + tableDefinition.tableName(), Integer.class);
             isExistFlag = true;
         } catch (DataAccessException e) {
             isExistFlag = false;
@@ -199,27 +189,21 @@ public class TableCreator {
         resourceDatabasePopulator.setIgnoreFailedDrops(this.ignoreFailedDrops);
         resourceDatabasePopulator.setSqlScriptEncoding(sqlScriptEncoding);
         
-        resourceDatabasePopulator.addScript(new ByteArrayResource(
-                createTableSql.getBytes()));
+        resourceDatabasePopulator.addScript(new ByteArrayResource(createTableSql.getBytes()));
         //执行脚本
-        DatabasePopulatorUtils.execute(resourceDatabasePopulator,
-                this.dataSource);
+        DatabasePopulatorUtils.execute(resourceDatabasePopulator, this.dataSource);
     }
     
-    protected void doUpdateTable(String currentVersion,
-            TableDefinition tableDefinition) {
-        String updateTableSql = tableDefinition.updateTableScript(currentVersion,
-                this.dataSourceType);
+    protected void doUpdateTable(String currentVersion, TableDefinition tableDefinition) {
+        String updateTableSql = tableDefinition.updateTableScript(currentVersion, this.dataSourceType);
         
         ResourceDatabasePopulator resourceDatabasePopulator = new ResourceDatabasePopulator();
         resourceDatabasePopulator.setContinueOnError(this.continueOnError);
         resourceDatabasePopulator.setIgnoreFailedDrops(this.ignoreFailedDrops);
         resourceDatabasePopulator.setSqlScriptEncoding(sqlScriptEncoding);
         
-        resourceDatabasePopulator.addScript(new ByteArrayResource(
-                updateTableSql.getBytes()));
+        resourceDatabasePopulator.addScript(new ByteArrayResource(updateTableSql.getBytes()));
         //执行脚本
-        DatabasePopulatorUtils.execute(resourceDatabasePopulator,
-                this.dataSource);
+        DatabasePopulatorUtils.execute(resourceDatabasePopulator, this.dataSource);
     }
 }

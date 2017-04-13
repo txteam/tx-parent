@@ -30,7 +30,7 @@ public class SqlMapMapper {
     /** <默认构造函数> */
     public SqlMapMapper(JpaMetaClass<?> jpaMetaClass) {
         super();
-        this.namespace = org.apache.commons.lang.StringUtils.uncapitalize(jpaMetaClass.getEntitySimpleName());
+        this.namespace = org.apache.commons.lang3.StringUtils.uncapitalize(jpaMetaClass.getEntitySimpleName());
     }
     
     /**

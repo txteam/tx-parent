@@ -39,15 +39,20 @@ public class XstreamUtilsTest extends TestCase {
      * @see [类、类#方法、类#成员]
     */
     public static void main(String[] args) throws Exception {
-        XstreamUtilsTest.TestBean tt = createTestBean();
-        
-        System.out.println(testBeanXstream.toXML(tt));
-        
-        System.out.println(((XstreamUtilsTest.TestBean) testBeanXstream.fromXML(testBeanXstream.toXML(tt))).getTestEl1());
-        
-        System.out.println("-------------------------------");
-        
-        System.out.println(((XstreamUtilsTest.TestBean) testBeanXstream.fromXML(tt1)).getTestEl1());
+        try {
+            XstreamUtilsTest.TestBean tt = createTestBean();
+            
+            System.out.println(testBeanXstream.toXML(tt));
+            
+            System.out.println(((XstreamUtilsTest.TestBean) testBeanXstream.fromXML(testBeanXstream.toXML(tt))).getTestEl1());
+            
+            System.out.println("-------------------------------");
+            
+            System.out.println(((XstreamUtilsTest.TestBean) testBeanXstream.fromXML(tt1)).getTestEl1());
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         
     }
     

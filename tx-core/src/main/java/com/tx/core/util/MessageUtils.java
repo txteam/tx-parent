@@ -37,8 +37,7 @@ public class MessageUtils {
      * @see [类、类#方法、类#成员]
     */
     public static String format(String messagePattern, String... argArray) {
-        String message = MessageFormatter.arrayFormat(messagePattern, argArray)
-                .getMessage();
+        String message = MessageFormatter.arrayFormat(messagePattern, argArray).getMessage();
         return message;
     }
     
@@ -54,8 +53,7 @@ public class MessageUtils {
       * @see [类、类#方法、类#成员]
      */
     public static String format(String messagePattern, Object[] argArray) {
-        String message = MessageFormatter.arrayFormat(messagePattern, argArray)
-                .getMessage();
+        String message = MessageFormatter.arrayFormat(messagePattern, argArray).getMessage();
         return message;
     }
     
@@ -93,8 +91,7 @@ public class MessageUtils {
      * @exception [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public static String format(String message, Map<String, Object> params,
-            boolean repeat) {
+    public static String format(String message, Map<String, Object> params, boolean repeat) {
         if (MapUtils.isEmpty(params)) {
             return message;
         }
@@ -113,9 +110,7 @@ public class MessageUtils {
                     keys.toArray(new String[] {}),
                     values.toArray(new String[] {}));
         } else {
-            return StringUtils.replaceEach(message,
-                    keys.toArray(new String[] {}),
-                    values.toArray(new String[] {}));
+            return StringUtils.replaceEach(message, keys.toArray(new String[] {}), values.toArray(new String[] {}));
         }
     }
     

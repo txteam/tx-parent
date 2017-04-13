@@ -45,7 +45,7 @@ public class DaoGeneratorModel {
         this.basePackage = ClassUtils.convertResourcePathToClassName(basePath);
         this.entityTypeName = jpaMetaClass.getEntityTypeName();
         this.simpleEntityTypeName = jpaMetaClass.getEntitySimpleName();
-        this.lowerCaseEntityTypeName = org.apache.commons.lang.StringUtils.uncapitalize(jpaMetaClass.getEntitySimpleName());
+        this.lowerCaseEntityTypeName = org.apache.commons.lang3.StringUtils.uncapitalize(jpaMetaClass.getEntitySimpleName());
     }
     
     /**

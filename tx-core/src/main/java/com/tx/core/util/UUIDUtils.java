@@ -13,7 +13,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.engine.SessionImplementor;
+import org.hibernate.HibernateException;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.id.AbstractUUIDGenerator;
 import org.hibernate.id.IdentifierGenerator;
 import org.hibernate.id.UUIDHexGenerator;
@@ -93,6 +94,7 @@ public class UUIDUtils {
     public static class UUID16HexGenerator extends AbstractUUIDGenerator {
         
         private static int count = 0;
+        
         private static int maxCount = Integer.parseInt("zzz", 36);
         
         private synchronized int count() {
@@ -106,8 +108,15 @@ public class UUIDUtils {
             super();
         }
         
+        /**
+         * @param session
+         * @param object
+         * @return
+         * @throws HibernateException
+         */
         @Override
-        public Serializable generate(SessionImplementor session, Object obj) {
+        public Serializable generate(SharedSessionContractImplementor session, Object object)
+                throws HibernateException {
             // IP地址,36进制,7位
             // 时间戳(单位毫秒),36进制,6位
             // 同时间调用的自增长数字 36进制(zzz,46655) - 3位
@@ -115,9 +124,7 @@ public class UUIDUtils {
             long currentTimeMillis = System.currentTimeMillis();
             String str1 = Long.toString(getHostAddressBy36(), 36); // IP地址,32进制,7位
             String str2 = Long.toString(currentTimeMillis / 1000, 36); // 时间戳(单位毫秒),32进制,6位
-            String str3 = StringUtils.leftPad(Long.toString(count(), 36),
-                    3,
-                    '0'); // 同时间调用的自增长数字 32进制(zzz,46655) - 3位
+            String str3 = StringUtils.leftPad(Long.toString(count(), 36), 3, '0'); // 同时间调用的自增长数字 32进制(zzz,46655) - 3位
             
             StringBuilder sb = new StringBuilder();
             sb.append(str1).append(str2).append(str3);

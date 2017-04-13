@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.commons.beanutils.BeanUtils;
@@ -66,8 +67,8 @@ public class ObjectUtils {
      * @version [版本号, 2015年11月25日]
      * @author rain
      */
-    public static void debugPrintPropertyValue(PrintStream out, String label,
-            Object object, boolean deep, boolean ignoreNull) {
+    public static void debugPrintPropertyValue(PrintStream out, String label, Object object, boolean deep,
+            boolean ignoreNull) {
         if (out == null) {
             out = System.out;
         }
@@ -80,8 +81,7 @@ public class ObjectUtils {
         Set<String> getterNames = jpaMetaClass.getGetterNames();
         for (String getterMethod : getterNames) {
             try {
-                Object invokeMethod = MethodUtils.invokeMethod(object, "get"
-                        + StringUtils.capitalize(getterMethod));
+                Object invokeMethod = MethodUtils.invokeMethod(object, "get" + StringUtils.capitalize(getterMethod));
                 if (ignoreNull && invokeMethod == null) {
                     continue;
                 }
@@ -112,8 +112,7 @@ public class ObjectUtils {
             baos = new ByteArrayOutputStream();
             oos = new ObjectOutputStream(baos);
             oos.writeObject(srcObj);
-            ByteArrayInputStream bais = new ByteArrayInputStream(
-                    baos.toByteArray());
+            ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
             ois = new ObjectInputStream(bais);
             resObject = (T) ois.readObject();
         } catch (IOException | ClassNotFoundException e) {
@@ -138,8 +137,7 @@ public class ObjectUtils {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public static boolean equals(Object thisObj, Object otherObj,
-            String... dependPropertyName) {
+    public static boolean equals(Object thisObj, Object otherObj, String... dependPropertyName) {
         if (thisObj == otherObj) {
             //两者均为空，则相等
             return true;
@@ -164,8 +162,7 @@ public class ObjectUtils {
                 if (thisPropertyValue == null || otherPropertyValue == null) {
                     return false;
                 }
-                if (!org.apache.commons.lang.ObjectUtils.equals(thisPropertyValue,
-                        otherPropertyValue)) {
+                if (!Objects.equals(thisPropertyValue, otherPropertyValue)) {
                     return false;
                 }
             }
@@ -184,16 +181,14 @@ public class ObjectUtils {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public static int generateHashCode(int superHashCode, Object thisObj,
-            String... dependPropertyName) {
+    public static int generateHashCode(int superHashCode, Object thisObj, String... dependPropertyName) {
         AssertUtils.notNull(thisObj, "thisObj is null.");
         
         int resHashCode = thisObj.getClass().hashCode();
         BeanWrapper metaObject = PropertyAccessorFactory.forBeanPropertyAccess(thisObj);
         for (String propertyNameTemp : dependPropertyName) {
             Object value = metaObject.getPropertyValue(propertyNameTemp);
-            resHashCode += (value == null ? propertyNameTemp.hashCode()
-                    : value.hashCode());
+            resHashCode += (value == null ? propertyNameTemp.hashCode() : value.hashCode());
         }
         return resHashCode;
     }
@@ -245,17 +240,13 @@ public class ObjectUtils {
             res = (T) ConstructorUtils.invokeConstructor(type, objects);
             return res;
         } catch (NoSuchMethodException e) {
-            throw new ReflectionException(
-                    "invokeConstructor create newInstance error.", e);
+            throw new ReflectionException("invokeConstructor create newInstance error.", e);
         } catch (IllegalAccessException e) {
-            throw new ReflectionException(
-                    "invokeConstructor create newInstance error.", e);
+            throw new ReflectionException("invokeConstructor create newInstance error.", e);
         } catch (InvocationTargetException e) {
-            throw new ReflectionException(
-                    "invokeConstructor create newInstance error.", e);
+            throw new ReflectionException("invokeConstructor create newInstance error.", e);
         } catch (InstantiationException e) {
-            throw new ReflectionException(
-                    "invokeConstructor create newInstance error.", e);
+            throw new ReflectionException("invokeConstructor create newInstance error.", e);
         }
     }
     
@@ -288,8 +279,7 @@ public class ObjectUtils {
         if (value instanceof Boolean) {
             return (Boolean) value;
         }
-        if ("true".equals(value) || "1".equals(value) || "yes".equals(value)
-                || "on".equals(value)) {
+        if ("true".equals(value) || "1".equals(value) || "yes".equals(value) || "on".equals(value)) {
             return Boolean.TRUE;
         }
         return BooleanUtils.toBooleanObject(String.valueOf(value));

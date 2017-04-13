@@ -15,10 +15,10 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.model.ParameterizedTypeReference;
@@ -58,13 +58,11 @@ public class TableViewRepository<T> extends ParameterizedTypeReference<T>
      * @throws BeansException
      */
     @Override
-    public void setApplicationContext(ApplicationContext applicationContext)
-            throws BeansException {
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }
     
-    public TableViewRepository(JdbcTemplate jdbcTemplate, Dialect dialect,
-            RowMapper<T> rowMapper) {
+    public TableViewRepository(JdbcTemplate jdbcTemplate, Dialect dialect, RowMapper<T> rowMapper) {
         super();
         this.dialect = dialect;
         this.jdbcTemplate = jdbcTemplate;
@@ -107,7 +105,7 @@ public class TableViewRepository<T> extends ParameterizedTypeReference<T>
     @Override
     public void afterPropertiesSet() {
         if (rowMapper == null) {
-            this.rowMapper = ParameterizedBeanPropertyRowMapper.newInstance((Class<T>) getRawType());
+            this.rowMapper = new BeanPropertyRowMapper<>((Class<T>) getRawType());
         }
         if (this.jdbcTemplate == null) {
             this.jdbcTemplate = this.applicationContext.getBean(JdbcTemplate.class);
@@ -118,8 +116,7 @@ public class TableViewRepository<T> extends ParameterizedTypeReference<T>
         
         this.init = true;
         AssertUtils.notNull(this.jdbcTemplate, "jdbcTemplate is null.");
-        this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(
-                this.jdbcTemplate);
+        this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(this.jdbcTemplate);
     }
     
     public T findById(String id) {
@@ -156,9 +153,7 @@ public class TableViewRepository<T> extends ParameterizedTypeReference<T>
       * @see [类、类#方法、类#成员]
      */
     public T findByNamedSql(String sql, Map<String, Object> paramMap) {
-        T resObj = this.namedParameterJdbcTemplate.queryForObject(sql,
-                paramMap,
-                this.rowMapper);
+        T resObj = this.namedParameterJdbcTemplate.queryForObject(sql, paramMap, this.rowMapper);
         return resObj;
     }
     
@@ -172,8 +167,7 @@ public class TableViewRepository<T> extends ParameterizedTypeReference<T>
         return resList;
     }
     
-    public PagedList<T> queryByPagedListBySql(String sql, 
-            int pageIndex, int pageSize,Object... params) {
+    public PagedList<T> queryByPagedListBySql(String sql, int pageIndex, int pageSize, Object... params) {
         int offset = pageSize * (pageIndex - 1);
         int limit = pageSize * pageIndex;
         final boolean isSupportsVariableLimit = dialect.supportsVariableLimit();//是否支持物理分页
@@ -181,8 +175,7 @@ public class TableViewRepository<T> extends ParameterizedTypeReference<T>
         final boolean isSupportsLimitOffset = dialect.supportsLimitOffset();//是否支持offset
         
         //如果不支持物理分页，直接返回sql
-        if (!isSupportsVariableLimit
-                || (!isSupportsLimit && !isSupportsLimitOffset)) {
+        if (!isSupportsVariableLimit || (!isSupportsLimit && !isSupportsLimitOffset)) {
             
         } else {
             //如果支持

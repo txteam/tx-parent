@@ -18,38 +18,16 @@
 	</properties>
 
 	<dependencies>
+		<!-- tx -->
 		<dependency>
 			<groupId>com.tx</groupId>
 			<artifactId>tx-core</artifactId>
-		</dependency>
-
-		<!-- srpingframework -->
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context-support</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-jdbc</artifactId>
 		</dependency>
 
 		<!-- srpingframework web and orm -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-web</artifactId>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-orm</artifactId>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
@@ -64,11 +42,6 @@
 			<artifactId>hibernate-core</artifactId>
 			<optional>true</optional>
 		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-ehcache</artifactId>
-			<optional>true</optional>
-		</dependency>
 
 		<!-- mybatis -->
 		<dependency>
@@ -77,39 +50,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.mybatis</groupId>
-			<artifactId>mybatis-ehcache</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.mybatis</groupId>
 			<artifactId>mybatis-spring</artifactId>
-		</dependency>
-
-		<!-- log -->
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>jcl-over-slf4j</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>log4j-over-slf4j</artifactId>
-		</dependency>
-
-		<!-- p6spy -->
-		<dependency>
-			<groupId>p6spy</groupId>
-			<artifactId>p6spy</artifactId>
 		</dependency>
 
 		<!-- freemarker -->
@@ -119,7 +60,6 @@
 			<optional>true</optional>
 			<scope>compile</scope>
 		</dependency>
-
 		<!-- postgresql jdbc optional:true -->
 		<dependency>
 			<groupId>com.h2database</groupId>

@@ -9,7 +9,7 @@ package com.tx.core.support.jackson.jsonserializer;
 import java.io.IOException;
 import java.util.Date;
 
-import org.apache.commons.lang.time.DateFormatUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;

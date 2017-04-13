@@ -1,5 +1,5 @@
 /*
- * 描          述:  <描述>
+  * 描          述:  <描述>
  * 修  改   人:  Administrator
  * 修改时间:  2016年8月7日
  * <修改描述:>
@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.jdbc.core.RowMapper;

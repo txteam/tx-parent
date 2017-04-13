@@ -9,7 +9,7 @@ package com.tx.core.spring.factorybean;
 import java.io.IOException;
 import java.util.Properties;
 
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.FactoryBean;

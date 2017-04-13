@@ -26,8 +26,7 @@ import com.tx.core.util.UUIDUtils;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public class DBScriptExecutorContext extends
-        DBScriptExecutorContextConfigurator {
+public class DBScriptExecutorContext extends DBScriptExecutorContextConfigurator {
     
     private TableDefinition dbScriptContextTableDefinition = new XMLTableDefinition(
             "classpath:com/tx/core/dbscript/script/dbscript_context_table.xml");
@@ -50,8 +49,7 @@ public class DBScriptExecutorContext extends
     public void afterPropertiesSet() throws Exception {
         super.afterPropertiesSet();
         SqlSourceBuilder ssb = new SqlSourceBuilder();
-        dbScriptContextSqlSource = ssb.build(DBScriptContext.class,
-                dataSourceType.getDialect());
+        dbScriptContextSqlSource = ssb.build(DBScriptContext.class, dataSourceType.getDialect());
         if (tableCreator == null) {
             tableCreator = new TableCreator(this);
         }
@@ -80,8 +78,9 @@ public class DBScriptExecutorContext extends
         Map<String, Object> queryCondition = new HashMap<String, Object>();
         queryCondition.put("tableName", tableName);
         
-        int resInt = this.jdbcTemplate.queryForInt(this.dbScriptContextSqlSource.countSql(queryCondition),
-                tableName);
+        int resInt = this.jdbcTemplate.queryForObject(this.dbScriptContextSqlSource.countSql(queryCondition),
+                new Object[] { tableName },
+                Integer.class);
         return resInt > 0;
     }
     
@@ -100,7 +99,8 @@ public class DBScriptExecutorContext extends
         Map<String, Object> queryCondition = new HashMap<String, Object>();
         queryCondition.put("tableName", tableName);
         
-        DBScriptContext dbScriptContext = this.jdbcTemplate.queryForObject(this.dbScriptContextSqlSource.querySql(queryCondition),
+        DBScriptContext dbScriptContext = this.jdbcTemplate.queryForObject(
+                this.dbScriptContextSqlSource.querySql(queryCondition),
                 this.dbScriptContextSqlSource.getSelectRowMapper(),
                 tableName);
         return dbScriptContext;
@@ -116,8 +116,7 @@ public class DBScriptExecutorContext extends
      * @see [类、类#方法、类#成员]
      */
     public void deleteById(String dbScriptContextId) {
-        this.jdbcTemplate.update(this.dbScriptContextSqlSource.deleteSql(),
-                dbScriptContextId);
+        this.jdbcTemplate.update(this.dbScriptContextSqlSource.deleteSql(), dbScriptContextId);
     }
     
     /**

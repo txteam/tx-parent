@@ -9,8 +9,8 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
-import org.apache.commons.dbcp.BasicDataSource;
-import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.dbcp2.BasicDataSource;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
@@ -57,8 +57,7 @@ public class ConfigDataSourceFinder implements DataSourceFinder {
     @SuppressWarnings("unchecked")
     public DataSource getDataSource() {
         
-        logger.info("Try to init DataSource by classpath:/resources/context/dbContext.xml resourceId:"
-                + resourceId);
+        logger.info("Try to init DataSource by classpath:/resources/context/dbContext.xml resourceId:" + resourceId);
         // 这里不做同步控制
         DataSource ds1 = (DataSource) this.dataSourceMap.get(resourceId);
         
@@ -98,19 +97,15 @@ public class ConfigDataSourceFinder implements DataSourceFinder {
             io = dbcontextResource.getInputStream();
             Document doc = reader.read(io);
             Element rootEl = doc.getRootElement();
-            elList = (List<Element>)rootEl.elements("Resource");
+            elList = (List<Element>) rootEl.elements("Resource");
             
             if (elList == null) {
                 logger.info("Init DataSource by configDataSource. In dbContext Resource size is zero(empty).");
             }
             
-
         } catch (Exception e) {
-            logger.info("Init DataSource by configDataSource. read dbconfig context exception: "
-                    + e.toString());
-            logger.debug("Init DataSource by configDataSource. read dbconfig context exception: "
-                    + e.toString(),
-                    e);
+            logger.info("Init DataSource by configDataSource. read dbconfig context exception: " + e.toString());
+            logger.debug("Init DataSource by configDataSource. read dbconfig context exception: " + e.toString(), e);
         } finally {
             if (io != null) {
                 try {
@@ -152,20 +147,20 @@ public class ConfigDataSourceFinder implements DataSourceFinder {
                 //设置初始化连接总数
                 bds.setInitialSize(NumberUtils.toInt(maxIdle, 10));
                 //设置同时应用的连接总数
-                bds.setMaxActive(NumberUtils.toInt(maxActive, -1));
+                bds.setMaxTotal(NumberUtils.toInt(maxActive, -1));
                 //设置在缓冲池的最大连接数
                 bds.setMaxIdle(NumberUtils.toInt(maxIdle, -1));
                 //设置在缓冲池的最小连接数
                 bds.setMinIdle(0);
                 //设置最长的等待时间
-                bds.setMaxWait(NumberUtils.toInt(maxWait, -1));
+                bds.setMaxWaitMillis(NumberUtils.toInt(maxWait, -1));
                 
                 this.dataSourceMap.put(name, bds);
             } catch (Exception e) {
-                logger.info("Init DataSource by configDataSource. new BasicDataSource happend exception: "
-                        + e.toString());
-                logger.debug("Init DataSource by configDataSource. new BasicDataSource happend exception: "
-                        + e.toString(),
+                logger.info(
+                        "Init DataSource by configDataSource. new BasicDataSource happend exception: " + e.toString());
+                logger.debug(
+                        "Init DataSource by configDataSource. new BasicDataSource happend exception: " + e.toString(),
                         e);
             }
         }
@@ -180,28 +175,28 @@ public class ConfigDataSourceFinder implements DataSourceFinder {
         
         return ds1;
     }
-
+    
     /**
      * @return 返回 dbContextPath
      */
     public String getDbContextPath() {
         return dbContextPath;
     }
-
+    
     /**
      * @param 对dbContextPath进行赋值
      */
     public void setDbContextPath(String dbContextPath) {
         this.dbContextPath = dbContextPath;
     }
-
+    
     /**
      * @return 返回 resourceId
      */
     public String getResourceId() {
         return resourceId;
     }
-
+    
     /**
      * @param 对resourceId进行赋值
      */

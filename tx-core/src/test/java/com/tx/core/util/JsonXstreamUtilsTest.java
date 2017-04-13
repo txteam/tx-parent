@@ -108,7 +108,7 @@ public class JsonXstreamUtilsTest {
 //        //        System.out.println(xsJson.toXML(t1));
 //        String xml = xsJson.toXML(t1);
 //        System.out.println(xml);
-        
+//        
 //        Object fromXML = xsJson.fromXML(xml);
 //        ObjectUtils.debugPrintPropertyValue(System.err, "fromXML", fromXML, true, true);
     }

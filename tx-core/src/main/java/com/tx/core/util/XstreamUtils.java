@@ -5,6 +5,7 @@ import java.io.Writer;
 import java.util.Map;
 import java.util.WeakHashMap;
 
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +15,6 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import com.thoughtworks.xstream.io.naming.NameCoder;
 import com.thoughtworks.xstream.io.xml.PrettyPrintWriter;
 import com.thoughtworks.xstream.io.xml.Xpp3DomDriver;
-import com.thoughtworks.xstream.mapper.CannotResolveClassException;
 import com.thoughtworks.xstream.mapper.Mapper;
 import com.thoughtworks.xstream.mapper.MapperWrapper;
 
@@ -85,9 +85,8 @@ public class XstreamUtils {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public static NameCoder getNameCoder(String encodeSourceCharset,
-            String encodeTargetCharset, String decodeSourceCharset,
-            String decodeTargetCharset) {
+    public static NameCoder getNameCoder(String encodeSourceCharset, String encodeTargetCharset,
+            String decodeSourceCharset, String decodeTargetCharset) {
         final String finalEncodeSourceCharset = StringUtils.isEmpty(encodeSourceCharset) ? "UTF-8"
                 : encodeSourceCharset;
         final String finalEncodeTargetCharset = StringUtils.isEmpty(encodeTargetCharset) ? "UTF-8"
@@ -98,47 +97,35 @@ public class XstreamUtils {
                 : decodeTargetCharset;
         NameCoder nameCoder = new NameCoder() {
             public String encodeNode(String content) {
-                content = transfer(content,
-                        finalEncodeSourceCharset,
-                        finalEncodeTargetCharset);
+                content = transfer(content, finalEncodeSourceCharset, finalEncodeTargetCharset);
                 return content;
             }
             
             public String encodeAttribute(String content) {
-                content = transfer(content,
-                        finalEncodeSourceCharset,
-                        finalEncodeTargetCharset);
+                content = transfer(content, finalEncodeSourceCharset, finalEncodeTargetCharset);
                 return content;
             }
             
             public String decodeNode(String content) {
-                content = transfer(content,
-                        finalDecodeSourceCharset,
-                        finalDecodeTargetCharset);
+                content = transfer(content, finalDecodeSourceCharset, finalDecodeTargetCharset);
                 return content;
             }
             
             public String decodeAttribute(String content) {
-                content = transfer(content,
-                        finalDecodeSourceCharset,
-                        finalDecodeTargetCharset);
+                content = transfer(content, finalDecodeSourceCharset, finalDecodeTargetCharset);
                 return content;
             }
             
-            private String transfer(String content, String sourceCharset,
-                    String targetCharset) {
+            private String transfer(String content, String sourceCharset, String targetCharset) {
                 if (sourceCharset.equals(targetCharset)) {
                     return content;
                 } else {
                     try {
-                        content = new String(content.getBytes(sourceCharset),
-                                targetCharset);
+                        content = new String(content.getBytes(sourceCharset), targetCharset);
                     } catch (UnsupportedEncodingException e) {
                         throw new com.tx.core.exceptions.context.UnsupportedEncodingException(
                                 MessageUtils.format("不支持的字符集.source:{} target:{}",
-                                        new Object[] {
-                                                finalEncodeSourceCharset,
-                                                finalEncodeTargetCharset }));
+                                        new Object[] { finalEncodeSourceCharset, finalEncodeTargetCharset }));
                     }
                 }
                 return content;
@@ -157,28 +144,24 @@ public class XstreamUtils {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    private static MapperWrapper createSkipOverElementMapperWrapper(
-            Mapper mapper) {
+    private static MapperWrapper createSkipOverElementMapperWrapper(Mapper mapper) {
         MapperWrapper resMapper = new MapperWrapper(mapper) {
+            
             /**
-             * @param elementName
+             * @param definedIn
+             * @param fieldName
              * @return
              */
             @SuppressWarnings("rawtypes")
             @Override
-            public Class realClass(String elementName) {
-                Class res = null;
-                ;
-                try {
-                    res = super.realClass(elementName);
-                } catch (CannotResolveClassException e) {
-                    logger.warn("xstream change xml to object. filed (0) not exsit. ",
-                            elementName);
+            public boolean shouldSerializeMember(Class definedIn, String fieldName) {
+                if (FieldUtils.getDeclaredField(definedIn, fieldName, true) == null) {
+                    return false;
+                } else {
+                    return true;
                 }
-                return res;
             }
         };
-        
         return resMapper;
     }
     
@@ -207,12 +190,8 @@ public class XstreamUtils {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public static XStream getXstream(Class<?> classType,
-            boolean isSkipOverElement, boolean isNewLine) {
-        return getXstream(classType,
-                defaultNameCoder,
-                isSkipOverElement,
-                isNewLine);
+    public static XStream getXstream(Class<?> classType, boolean isSkipOverElement, boolean isNewLine) {
+        return getXstream(classType, defaultNameCoder, isSkipOverElement, isNewLine);
     }
     
     /**
@@ -228,12 +207,8 @@ public class XstreamUtils {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public static XStream getXstream(Class<?> classType, String charset,
-            boolean isSkipOverElement, boolean isNewLine) {
-        return getXstream(classType,
-                getCharsetNameCoder(charset),
-                isSkipOverElement,
-                isNewLine);
+    public static XStream getXstream(Class<?> classType, String charset, boolean isSkipOverElement, boolean isNewLine) {
+        return getXstream(classType, getCharsetNameCoder(charset), isSkipOverElement, isNewLine);
     }
     
     /**
@@ -248,8 +223,8 @@ public class XstreamUtils {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public static XStream getXstream(Class<?> classType, NameCoder nameCoder,
-            boolean isSkipOverElement, boolean isNewLine) {
+    public static XStream getXstream(Class<?> classType, NameCoder nameCoder, boolean isSkipOverElement,
+            boolean isNewLine) {
         if (xstreamMap.containsKey(classType)) {
             return xstreamMap.get(classType);
         }
@@ -290,9 +265,9 @@ public class XstreamUtils {
         } else {
             res = new XStream(domDriver);
         }
+        //XStream res = new XStream(domDriver);
         
-        logger.info("create xstream by {0} , parameter {1}", new Object[] {
-                classType.getName(), isSkipOverElement });
+        logger.info("create xstream by {0} , parameter {1}", new Object[] { classType.getName(), isSkipOverElement });
         
         res.processAnnotations(classType);
         

@@ -5,8 +5,8 @@ import java.util.WeakHashMap;
 
 import javax.sql.DataSource;
 
-import org.apache.commons.dbcp.BasicDataSource;
-import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.dbcp2.BasicDataSource;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,11 +89,11 @@ public class SimpleDataSourceFinder implements DataSourceFinder {
             //设置初始化连接总数
             bds.setInitialSize(NumberUtils.toInt(maxIdle, 10));
             //设置同时应用的连接总数
-            bds.setMaxActive(NumberUtils.toInt(maxActive, -1));
+            bds.setMaxTotal(NumberUtils.toInt(maxActive, -1));
             //设置在缓冲池的最大连接数
             bds.setMaxIdle(NumberUtils.toInt(maxIdle, -1));
             //设置最长的等待时间
-            bds.setMaxWait(NumberUtils.toInt(maxWait, -1));
+            bds.setMaxWaitMillis(NumberUtils.toInt(maxWait, -1));
             //设置在缓冲池的最小连接数
             bds.setMinIdle(0);
             

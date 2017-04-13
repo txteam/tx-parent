@@ -255,7 +255,7 @@ public class JpaEntityFreeMarkerGenerator {
         model.setBasePackage(ClassUtils.convertResourcePathToClassName(basePath));
         model.setEntitySimpleName(jpaMetaClass.getEntitySimpleName());
         model.setIdPropertyName(jpaMetaClass.getPkGetterName());
-        model.setLowerCaseEntitySimpleName(org.apache.commons.lang.StringUtils.uncapitalize(jpaMetaClass.getEntitySimpleName()));
+        model.setLowerCaseEntitySimpleName(org.apache.commons.lang3.StringUtils.uncapitalize(jpaMetaClass.getEntitySimpleName()));
         model.setSqlMapColumnList(GeneratorUtils.generateSqlMapColumnList(jpaMetaClass));
         model.setUpCaseIdPropertyName(StringUtils.capitalize(jpaMetaClass.getPkGetterName()));
         
@@ -298,7 +298,7 @@ public class JpaEntityFreeMarkerGenerator {
         model.setBasePackage(ClassUtils.convertResourcePathToClassName(daoPath));
         model.setEntityTypeName(jpaMetaClass.getEntityTypeName());
         model.setSimpleEntityTypeName(jpaMetaClass.getEntitySimpleName());
-        model.setLowerCaseEntityTypeName(org.apache.commons.lang.StringUtils.uncapitalize(jpaMetaClass.getEntitySimpleName()));
+        model.setLowerCaseEntityTypeName(org.apache.commons.lang3.StringUtils.uncapitalize(jpaMetaClass.getEntitySimpleName()));
         
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("dao", model);
@@ -415,7 +415,7 @@ public class JpaEntityFreeMarkerGenerator {
         selectMapper.setIdPropertyName(idPropertyName);
         
         selectMapper.setParameterType(jpaMetaClass.getEntityTypeName());
-        selectMapper.setResultMapId(org.apache.commons.lang.StringUtils.uncapitalize(jpaMetaClass.getEntitySimpleName())
+        selectMapper.setResultMapId(org.apache.commons.lang3.StringUtils.uncapitalize(jpaMetaClass.getEntitySimpleName())
                 + "Map");
         
         selectMapper.setSimpleTableName(jpaMetaClass.getSimpleTableName()
@@ -495,7 +495,7 @@ public class JpaEntityFreeMarkerGenerator {
      */
     private SqlMapMapper generateMapper(JpaMetaClass<?> jpaMetaClass) {
         SqlMapMapper mapper = new SqlMapMapper();
-        mapper.setNamespace(org.apache.commons.lang.StringUtils.uncapitalize(jpaMetaClass.getEntitySimpleName()));
+        mapper.setNamespace(org.apache.commons.lang3.StringUtils.uncapitalize(jpaMetaClass.getEntitySimpleName()));
         return mapper;
     }
     

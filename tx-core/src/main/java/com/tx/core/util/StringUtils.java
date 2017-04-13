@@ -6,8 +6,6 @@
  */
 package com.tx.core.util;
 
-import org.slf4j.helpers.MessageFormatter;
-
 /**
  * 字符串工具类<br/>
  * <功能详细描述>

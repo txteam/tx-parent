@@ -8,6 +8,7 @@ package com.tx.core.util;
 
 import java.io.UnsupportedEncodingException;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.tx.core.exceptions.argument.ArgIllegalException;
@@ -20,7 +21,7 @@ import com.tx.core.exceptions.argument.ArgIllegalException;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public class RandomUtils extends org.apache.commons.lang.math.RandomUtils {
+public class RandomUtils extends RandomStringUtils {
     
     public static void main(String[] args) {
         for (int i = 0; i < 100; i++) {
@@ -47,9 +48,9 @@ public class RandomUtils extends org.apache.commons.lang.math.RandomUtils {
             return 0;
         }
         if (0 < maxNumber) {
-            return JVM_RANDOM.nextInt(maxNumber);
+            return (int)(Math.random() * maxNumber);
         }
-        return JVM_RANDOM.nextInt();
+        return (int)(Math.random() * maxNumber);
     }
     
     /**
@@ -73,7 +74,7 @@ public class RandomUtils extends org.apache.commons.lang.math.RandomUtils {
             minNumber ^= maxNumber;
         }
         
-        return JVM_RANDOM.nextInt(maxNumber - minNumber) + minNumber;
+        return (int)(Math.random() * (maxNumber - minNumber) + minNumber) ;
     }
     
     /**

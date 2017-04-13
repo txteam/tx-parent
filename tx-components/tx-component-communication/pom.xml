@@ -18,19 +18,25 @@
 		<dependency>
 			<groupId>alibaba</groupId>
 			<artifactId>alidayu</artifactId>
+			<version>1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.aliyun</groupId>
 			<artifactId>aliyun-java-sdk-dm</artifactId>
+			<version>3.0.0-rc3</version>
 		</dependency>
 		<dependency>
 			<groupId>com.aliyun</groupId>
 			<artifactId>aliyun-java-sdk-sms</artifactId>
+			<version>3.0.0-rc1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.aliyun</groupId>
 			<artifactId>aliyun-java-sdk-core</artifactId>
+			<version>3.1.0</version>
 		</dependency>
+		
+		<!-- fastjson -->
 		<dependency>
 			<groupId>com.alibaba</groupId>
 			<artifactId>fastjson</artifactId>
@@ -41,42 +47,28 @@
 			<groupId>com.tx</groupId>
 			<artifactId>tx-core</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>com.tx</groupId>
-			<artifactId>tx-component-servicelog</artifactId>
-		</dependency>
-
-		<!-- log -->
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
-		</dependency>
-
+		
 		<!-- 单元测试依赖类 -->
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-core</artifactId>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>com.alibaba</groupId>
-			<artifactId>druid</artifactId>
-			<optional>true</optional>
-		</dependency>
 		<dependency>
 			<groupId>com.thoughtworks.xstream</groupId>
 			<artifactId>xstream</artifactId>
 			<optional>true</optional>
 		</dependency>
-
+		
+		<!-- compile -->
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>druid</artifactId>
+			<optional>true</optional>
+			<scope>compile</scope>
+		</dependency>
+		<!-- hibernate-core -->	
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<optional>true</optional>
+			<scope>compile</scope>
+		</dependency>
 		<!-- freemarker -->
 		<dependency>
 			<groupId>org.freemarker</groupId>
@@ -84,14 +76,15 @@
 			<optional>true</optional>
 			<scope>compile</scope>
 		</dependency>
-
-		<!-- junit -->
+		<!-- db test -->
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
 			<optional>true</optional>
 			<scope>test</scope>
 		</dependency>
+
+		<!-- test -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>

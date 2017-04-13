@@ -32,16 +32,15 @@ import com.tx.core.reflection.JpaMetaClass;
 import com.tx.core.util.FreeMarkerUtils;
 import com.tx.core.util.JdbcUtils;
 
-
- /**
-  * <功能简述>
-  * <功能详细描述>
-  * 
-  * @author  Administrator
-  * @version  [版本号, 2016年6月21日]
-  * @see  [相关类/方法]
-  * @since  [产品/模块版本]
-  */
+/**
+ * <功能简述>
+ * <功能详细描述>
+ * 
+ * @author  Administrator
+ * @version  [版本号, 2016年6月21日]
+ * @see  [相关类/方法]
+ * @since  [产品/模块版本]
+ */
 public class TableCodeGenerator {
     
     private Class<?> loadTemplateClass = TableCodeGenerator.class;
@@ -58,8 +57,8 @@ public class TableCodeGenerator {
     
     private String dbScriptTemplateFilePath = "com/tx/core/generator/table/defaultftl/dbscript.ftl";
     
-    public void generate(Class<?> type, String resultFolderPath,boolean cleanFolder) {
-        if(cleanFolder){
+    public void generate(Class<?> type, String resultFolderPath, boolean cleanFolder) {
+        if (cleanFolder) {
             File folder = new File(resultFolderPath);
             try {
                 FileUtils.cleanDirectory(folder);
@@ -111,23 +110,13 @@ public class TableCodeGenerator {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public void generateScript(Class<?> type, String resultFolderPath,
-            String encode) {
+    public void generateScript(Class<?> type, String resultFolderPath, String encode) {
         JpaMetaClass<?> jpaMetaClass = JpaMetaClass.forClass(type);
         
         //生成service单元测试类
-        generateScript(DataSourceTypeEnum.ORACLE,
-                jpaMetaClass,
-                resultFolderPath,
-                encode);
-        generateScript(DataSourceTypeEnum.H2,
-                jpaMetaClass,
-                resultFolderPath,
-                encode);
-        generateScript(DataSourceTypeEnum.MYSQL,
-                jpaMetaClass,
-                resultFolderPath,
-                encode);
+        generateScript(DataSourceTypeEnum.ORACLE, jpaMetaClass, resultFolderPath, encode);
+        generateScript(DataSourceTypeEnum.H2, jpaMetaClass, resultFolderPath, encode);
+        generateScript(DataSourceTypeEnum.MYSQL, jpaMetaClass, resultFolderPath, encode);
     }
     
     /**
@@ -142,14 +131,11 @@ public class TableCodeGenerator {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public <TYPE> String generateScriptContent(Class<TYPE> type,
-            DataSourceTypeEnum dataSourceType, String encode) {
+    public <TYPE> String generateScriptContent(Class<TYPE> type, DataSourceTypeEnum dataSourceType, String encode) {
         JpaMetaClass<TYPE> jpaMetaClass = JpaMetaClass.forClass(type);
         
         //生成service单元测试类
-        String script = generateScriptContentByDataSourceType(dataSourceType,
-                jpaMetaClass,
-                encode);
+        String script = generateScriptContentByDataSourceType(dataSourceType, jpaMetaClass, encode);
         return script;
     }
     
@@ -165,8 +151,8 @@ public class TableCodeGenerator {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public void generateScript(DataSourceTypeEnum dataSourceType,
-            JpaMetaClass<?> jpaMetaClass, String resultFolderPath, String encode) {
+    public void generateScript(DataSourceTypeEnum dataSourceType, JpaMetaClass<?> jpaMetaClass, String resultFolderPath,
+            String encode) {
         //
         Dialect dialect = dataSourceType.getDialect();
         
@@ -174,18 +160,15 @@ public class TableCodeGenerator {
         
         DBScriptMapper dbScriptMapper = new DBScriptMapper();
         dbScriptMapper.setTableName(jpaMetaClass.getTableName().toUpperCase());
-        dbScriptMapper.setPkColumnName(jpaMetaClass.getGetter2columnInfoMapping()
-                .get(jpaMetaClass.getPkGetterName())
-                .getColumnName());
-        for (Entry<String, JpaColumnInfo> entryTemp : jpaMetaClass.getGetter2columnInfoMapping()
-                .entrySet()) {
+        dbScriptMapper.setPkColumnName(
+                jpaMetaClass.getGetter2columnInfoMapping().get(jpaMetaClass.getPkGetterName()).getColumnName());
+        for (Entry<String, JpaColumnInfo> entryTemp : jpaMetaClass.getGetter2columnInfoMapping().entrySet()) {
             JpaColumnInfo columnInfo = entryTemp.getValue();
-            dbScriptMapper.getColumnName2TypeNameMapping()
-                    .put(columnInfo.getColumnName(),
-                            dialect.getTypeName(JdbcUtils.getSqlTypeByJavaType(columnInfo.getRealGetterType()),
-                                    columnInfo.getLength(),
-                                    columnInfo.getPrecision(),
-                                    columnInfo.getScale()));
+            dbScriptMapper.getColumnName2TypeNameMapping().put(columnInfo.getColumnName(),
+                    dialect.getTypeName(JdbcUtils.getSqlTypeByJavaType(columnInfo.getRealGetterType()),
+                            columnInfo.getLength(),
+                            columnInfo.getPrecision(),
+                            columnInfo.getScale()));
         }
         data.put("dbScriptMapper", dbScriptMapper);
         
@@ -196,15 +179,13 @@ public class TableCodeGenerator {
         FreeMarkerUtils.fprint(loadTemplateClass,
                 this.dbScriptTemplateFilePath,
                 data,
-                resultFolderPath + "/dbscript/" + dataSourceType.getName()
-                        + "/01basisScript/" + moduleName + "/tables/"
+                resultFolderPath + "/dbscript/" + dataSourceType.getName() + "/01basisScript/" + moduleName + "/tables/"
                         + jpaMetaClass.getTableName().toLowerCase() + ".sql",
                 encode);
     }
     
-    private String generateScriptContentByDataSourceType(
-            DataSourceTypeEnum dataSourceType, JpaMetaClass<?> jpaMetaClass,
-            String encode) {
+    private String generateScriptContentByDataSourceType(DataSourceTypeEnum dataSourceType,
+            JpaMetaClass<?> jpaMetaClass, String encode) {
         //
         Dialect dialect = dataSourceType.getDialect();
         
@@ -212,18 +193,15 @@ public class TableCodeGenerator {
         
         DBScriptMapper dbScriptMapper = new DBScriptMapper();
         dbScriptMapper.setTableName(jpaMetaClass.getTableName().toUpperCase());
-        dbScriptMapper.setPkColumnName(jpaMetaClass.getGetter2columnInfoMapping()
-                .get(jpaMetaClass.getPkGetterName())
-                .getColumnName());
-        for (Entry<String, JpaColumnInfo> entryTemp : jpaMetaClass.getGetter2columnInfoMapping()
-                .entrySet()) {
+        dbScriptMapper.setPkColumnName(
+                jpaMetaClass.getGetter2columnInfoMapping().get(jpaMetaClass.getPkGetterName()).getColumnName());
+        for (Entry<String, JpaColumnInfo> entryTemp : jpaMetaClass.getGetter2columnInfoMapping().entrySet()) {
             JpaColumnInfo columnInfo = entryTemp.getValue();
-            dbScriptMapper.getColumnName2TypeNameMapping()
-                    .put(columnInfo.getColumnName(),
-                            dialect.getTypeName(JdbcUtils.getSqlTypeByJavaType(columnInfo.getRealGetterType()),
-                                    columnInfo.getLength(),
-                                    columnInfo.getPrecision(),
-                                    columnInfo.getScale()));
+            dbScriptMapper.getColumnName2TypeNameMapping().put(columnInfo.getColumnName(),
+                    dialect.getTypeName(JdbcUtils.getSqlTypeByJavaType(columnInfo.getRealGetterType()),
+                            columnInfo.getLength(),
+                            columnInfo.getPrecision(),
+                            columnInfo.getScale()));
         }
         data.put("dbScriptMapper", dbScriptMapper);
         
@@ -248,14 +226,14 @@ public class TableCodeGenerator {
         JpaMetaClass<TYPE> jpaMetaClass = JpaMetaClass.forClass(type);
         ServiceGeneratorModel model = new ServiceGeneratorModel();
         
-        String basePath = ClassUtils.convertClassNameToResourcePath(jpaMetaClass.getEntityTypeName())
-                + "/../..";
+        String basePath = ClassUtils.convertClassNameToResourcePath(jpaMetaClass.getEntityTypeName()) + "/../..";
         basePath = org.springframework.util.StringUtils.cleanPath(basePath);
         
         model.setBasePackage(ClassUtils.convertResourcePathToClassName(basePath));
         model.setEntitySimpleName(jpaMetaClass.getEntitySimpleName());
         model.setIdPropertyName(jpaMetaClass.getPkGetterName());
-        model.setLowerCaseEntitySimpleName(org.apache.commons.lang.StringUtils.uncapitalize(jpaMetaClass.getEntitySimpleName()));
+        model.setLowerCaseEntitySimpleName(
+                org.apache.commons.lang3.StringUtils.uncapitalize(jpaMetaClass.getEntitySimpleName()));
         model.setSqlMapColumnList(GeneratorUtils.generateSqlMapColumnList(jpaMetaClass));
         model.setUpCaseIdPropertyName(StringUtils.capitalize(jpaMetaClass.getPkGetterName()));
         
@@ -265,14 +243,13 @@ public class TableCodeGenerator {
         FreeMarkerUtils.fprint(loadTemplateClass,
                 this.serviceTemplateFilePath,
                 data,
-                resultFolderPath + "/main/java/" + basePath + "/service/"
-                        + jpaMetaClass.getEntitySimpleName() + "Service.java");
+                resultFolderPath + "/main/java/" + basePath + "/service/" + jpaMetaClass.getEntitySimpleName()
+                        + "Service.java");
         
         FreeMarkerUtils.fprint(loadTemplateClass,
                 this.serviceTestTemplateFilePath,
                 data,
-                resultFolderPath + "/test/java/" + basePath + "/"
-                        + jpaMetaClass.getEntitySimpleName()
+                resultFolderPath + "/test/java/" + basePath + "/" + jpaMetaClass.getEntitySimpleName()
                         + "ServiceTest.java");
         
     }
@@ -291,14 +268,14 @@ public class TableCodeGenerator {
         JpaMetaClass<TYPE> jpaMetaClass = JpaMetaClass.forClass(type);
         DaoGeneratorModel model = new DaoGeneratorModel();
         
-        String daoPath = ClassUtils.convertClassNameToResourcePath(jpaMetaClass.getEntityTypeName())
-                + "/../../dao";
+        String daoPath = ClassUtils.convertClassNameToResourcePath(jpaMetaClass.getEntityTypeName()) + "/../../dao";
         daoPath = org.springframework.util.StringUtils.cleanPath(daoPath);
         
         model.setBasePackage(ClassUtils.convertResourcePathToClassName(daoPath));
         model.setEntityTypeName(jpaMetaClass.getEntityTypeName());
         model.setSimpleEntityTypeName(jpaMetaClass.getEntitySimpleName());
-        model.setLowerCaseEntityTypeName(org.apache.commons.lang.StringUtils.uncapitalize(jpaMetaClass.getEntitySimpleName()));
+        model.setLowerCaseEntityTypeName(
+                org.apache.commons.lang3.StringUtils.uncapitalize(jpaMetaClass.getEntitySimpleName()));
         
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("dao", model);
@@ -306,14 +283,13 @@ public class TableCodeGenerator {
         FreeMarkerUtils.fprint(loadTemplateClass,
                 this.daoTemplateFilePath,
                 data,
-                resultFolderPath + "/main/java/" + daoPath + "/"
-                        + jpaMetaClass.getEntitySimpleName() + "Dao.java");
+                resultFolderPath + "/main/java/" + daoPath + "/" + jpaMetaClass.getEntitySimpleName() + "Dao.java");
         
         FreeMarkerUtils.fprint(loadTemplateClass,
                 this.daoImplTemplateFilePath,
                 data,
-                resultFolderPath + "/main/java/" + daoPath + "/impl/"
-                        + jpaMetaClass.getEntitySimpleName() + "DaoImpl.java");
+                resultFolderPath + "/main/java/" + daoPath + "/impl/" + jpaMetaClass.getEntitySimpleName()
+                        + "DaoImpl.java");
     }
     
     /**
@@ -326,8 +302,7 @@ public class TableCodeGenerator {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public <TYPE> void generateSimpleSqlMap(Class<TYPE> type,
-            String resultFolderPath) {
+    public <TYPE> void generateSimpleSqlMap(Class<TYPE> type, String resultFolderPath) {
         JpaMetaClass<TYPE> jpaMetaClass = JpaMetaClass.forClass(type);
         
         SqlMapMapper mapper = generateMapper(jpaMetaClass);
@@ -352,8 +327,8 @@ public class TableCodeGenerator {
         FreeMarkerUtils.fprint(loadTemplateClass,
                 this.sqlMapTemplateFilePath,
                 data,
-                resultFolderPath + "/main/java/" + sqlMapPath + "/"
-                        + jpaMetaClass.getEntitySimpleName() + "SqlMap.xml");
+                resultFolderPath + "/main/java/" + sqlMapPath + "/" + jpaMetaClass.getEntitySimpleName()
+                        + "SqlMap.xml");
         
     }
     
@@ -374,15 +349,12 @@ public class TableCodeGenerator {
         
         Map<String, JpaColumnInfo> getter2columnInfoMapping = jpaMetaClass.getGetter2columnInfoMapping();
         String idPropertyName = jpaMetaClass.getPkGetterName();
-        String idColumnName = getter2columnInfoMapping.get(idPropertyName)
-                .getColumnName();
+        String idColumnName = getter2columnInfoMapping.get(idPropertyName).getColumnName();
         
-        updateMapper.setIdColumnName(idColumnName == null ? ""
-                : idColumnName.toUpperCase());
+        updateMapper.setIdColumnName(idColumnName == null ? "" : idColumnName.toUpperCase());
         updateMapper.setIdPropertyName(idPropertyName);
         
-        updateMapper.setSimpleTableName(jpaMetaClass.getSimpleTableName()
-                .toUpperCase());
+        updateMapper.setSimpleTableName(jpaMetaClass.getSimpleTableName().toUpperCase());
         updateMapper.setTableName(jpaMetaClass.getTableName());
         updateMapper.setSqlMapColumnList(GeneratorUtils.generateSqlMapColumnList(jpaMetaClass));
         
@@ -407,19 +379,16 @@ public class TableCodeGenerator {
         
         Map<String, JpaColumnInfo> getter2columnInfoMapping = jpaMetaClass.getGetter2columnInfoMapping();
         String idPropertyName = jpaMetaClass.getPkGetterName();
-        String idColumnName = getter2columnInfoMapping.get(idPropertyName)
-                .getColumnName();
+        String idColumnName = getter2columnInfoMapping.get(idPropertyName).getColumnName();
         
-        selectMapper.setIdColumnName(idColumnName == null ? ""
-                : idColumnName.toUpperCase());
+        selectMapper.setIdColumnName(idColumnName == null ? "" : idColumnName.toUpperCase());
         selectMapper.setIdPropertyName(idPropertyName);
         
         selectMapper.setParameterType(jpaMetaClass.getEntityTypeName());
-        selectMapper.setResultMapId(org.apache.commons.lang.StringUtils.uncapitalize(jpaMetaClass.getEntitySimpleName())
-                + "Map");
+        selectMapper.setResultMapId(
+                org.apache.commons.lang3.StringUtils.uncapitalize(jpaMetaClass.getEntitySimpleName()) + "Map");
         
-        selectMapper.setSimpleTableName(jpaMetaClass.getSimpleTableName()
-                .toUpperCase());
+        selectMapper.setSimpleTableName(jpaMetaClass.getSimpleTableName().toUpperCase());
         selectMapper.setTableName(jpaMetaClass.getTableName().toUpperCase());
         
         selectMapper.setSqlMapColumnList(GeneratorUtils.generateSqlMapColumnList(jpaMetaClass));
@@ -445,14 +414,11 @@ public class TableCodeGenerator {
         
         Map<String, JpaColumnInfo> getter2columnInfoMapping = jpaMetaClass.getGetter2columnInfoMapping();
         String idPropertyName = jpaMetaClass.getPkGetterName();
-        String idColumnName = getter2columnInfoMapping.get(idPropertyName)
-                .getColumnName();
+        String idColumnName = getter2columnInfoMapping.get(idPropertyName).getColumnName();
         
-        deleteMapper.setIdColumnName(idColumnName == null ? ""
-                : idColumnName.toUpperCase());
+        deleteMapper.setIdColumnName(idColumnName == null ? "" : idColumnName.toUpperCase());
         deleteMapper.setIdPropertyName(idPropertyName);
-        deleteMapper.setSimpleTableName(jpaMetaClass.getSimpleTableName()
-                .toUpperCase());
+        deleteMapper.setSimpleTableName(jpaMetaClass.getSimpleTableName().toUpperCase());
         deleteMapper.setTableName(jpaMetaClass.getTableName().toUpperCase());
         
         return deleteMapper;
@@ -477,8 +443,7 @@ public class TableCodeGenerator {
         insertMapper.setTableName(jpaMetaClass.getTableName().toUpperCase());
         
         //字段
-        insertMapper.getSqlMapColumnList()
-                .addAll(GeneratorUtils.generateSqlMapColumnList(jpaMetaClass));
+        insertMapper.getSqlMapColumnList().addAll(GeneratorUtils.generateSqlMapColumnList(jpaMetaClass));
         
         return insertMapper;
     }
@@ -495,7 +460,7 @@ public class TableCodeGenerator {
      */
     private SqlMapMapper generateMapper(JpaMetaClass<?> jpaMetaClass) {
         SqlMapMapper mapper = new SqlMapMapper();
-        mapper.setNamespace(org.apache.commons.lang.StringUtils.uncapitalize(jpaMetaClass.getEntitySimpleName()));
+        mapper.setNamespace(org.apache.commons.lang3.StringUtils.uncapitalize(jpaMetaClass.getEntitySimpleName()));
         return mapper;
     }
     
@@ -530,8 +495,7 @@ public class TableCodeGenerator {
     /**
      * @param 对serviceTestTemplateFilePath进行赋值
      */
-    public void setServiceTestTemplateFilePath(
-            String serviceTestTemplateFilePath) {
+    public void setServiceTestTemplateFilePath(String serviceTestTemplateFilePath) {
         this.serviceTestTemplateFilePath = serviceTestTemplateFilePath;
     }
     
@@ -547,5 +511,5 @@ public class TableCodeGenerator {
      */
     public void setDbScriptTemplateFilePath(String dbScriptTemplateFilePath) {
         this.dbScriptTemplateFilePath = dbScriptTemplateFilePath;
-    }   
+    }
 }

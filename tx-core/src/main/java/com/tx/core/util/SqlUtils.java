@@ -12,8 +12,8 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.tx.core.TxConstants;
 import com.tx.core.exceptions.SILException;
@@ -65,20 +65,20 @@ public class SqlUtils {
         return resString;
     }
     
-    /**
-      * 对sql进行处理放置sql注入
-      * <功能详细描述>
-      * @param srcSql
-      * @return [参数说明]
-      * 
-      * @return String [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    public static String escapeSql(String srcSql) {
-        String newSql = StringEscapeUtils.escapeSql(srcSql);
-        return newSql;
-    }
+//    /**
+//      * 对sql进行处理放置sql注入
+//      * <功能详细描述>
+//      * @param srcSql
+//      * @return [参数说明]
+//      * 
+//      * @return String [返回类型说明]
+//      * @exception throws [异常类型] [异常说明]
+//      * @see [类、类#方法、类#成员]
+//     */
+//    public static String escapeSql(String srcSql) {
+//        String newSql = StringEscapeUtils.escapeSql(srcSql);
+//        return newSql;
+//    }
     
     /**
       * 将sqlContent依据';\s' '/\s'进行分割，分割为多个sql语句

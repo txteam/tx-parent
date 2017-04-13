@@ -233,7 +233,9 @@ public class XMLRuleItemConfigLoader extends BaseRuleItemLoader {
                 in = resourceTemp.getInputStream();
                 RulesConfig rulesConfigsTemp = (RulesConfig) ruleConfigParse.fromXML(in);
                 
-                ruleItemList.addAll(rulesConfigsTemp.getRuleItemConfig());
+                if(rulesConfigsTemp.getRuleItemConfig() != null){
+                    ruleItemList.addAll(rulesConfigsTemp.getRuleItemConfig());
+                }
             } finally {
                 IOUtils.closeQuietly(in);
             }
