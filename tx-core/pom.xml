@@ -116,7 +116,7 @@
 			<groupId>org.freemarker</groupId>
 			<artifactId>freemarker</artifactId>
 		</dependency>
-		
+
 		<!-- log -->
 		<dependency>
 			<!-- p6spy -->
@@ -324,7 +324,7 @@
 			<artifactId>xstream</artifactId>
 			<optional>true</optional>
 		</dependency>
-		
+
 		<!-- html解析 -->
 		<dependency>
 			<groupId>org.jsoup</groupId>
@@ -343,16 +343,27 @@
 			<artifactId>h2</artifactId>
 			<optional>true</optional>
 		</dependency>
+		
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+			<optional>true</optional>
+		</dependency>
 
 		<!-- taglib -->
 		<dependency>
-			<groupId>javax.servlet</groupId>
+			<groupId>org.apache.tomcat</groupId>
+			<artifactId>servlet-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.tomcat</groupId>
 			<artifactId>jsp-api</artifactId>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
+			<groupId>org.apache.tomcat</groupId>
+			<artifactId>el-api</artifactId>
 			<scope>provided</scope>
 		</dependency>
 

@@ -25,7 +25,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-	
+
 		<!-- tx -->
 		<dependency>
 			<groupId>com.tx</groupId>
@@ -102,15 +102,21 @@
 			<optional>true</optional>
 		</dependency>
 
-		<!-- Taglibs -->
+		<!-- j2ee -->
 		<dependency>
-			<groupId>javax.servlet</groupId>
+			<groupId>org.apache.tomcat</groupId>
 			<artifactId>servlet-api</artifactId>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>javax.servlet</groupId>
+			<groupId>org.apache.tomcat</groupId>
 			<artifactId>jsp-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.tomcat</groupId>
+			<artifactId>el-api</artifactId>
+			<scope>provided</scope>
 		</dependency>
 
 		<!-- freemarker -->
