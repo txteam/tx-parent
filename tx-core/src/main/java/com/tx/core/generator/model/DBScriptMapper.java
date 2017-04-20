@@ -44,7 +44,7 @@ public class DBScriptMapper {
     
     /** 字段对应注释 */
     private Map<String, String> columnName2CommentMapping = new LinkedHashMap<String, String>();
-    
+
     public DBScriptMapper() {
         super();
     }
@@ -74,7 +74,7 @@ public class DBScriptMapper {
         
         for (String keyTemp : propertyList) {
             JpaColumnInfo columnInfo = property2columnMap.get(keyTemp);
-            
+
             if (this.nameToUpperCase) {
                 this.columnName2TypeNameMapping.put(columnInfo.getColumnName()
                         .toUpperCase(),
@@ -82,12 +82,14 @@ public class DBScriptMapper {
                                 columnInfo.getLength(),
                                 columnInfo.getPrecision(),
                                 columnInfo.getScale()));
+                this.columnName2CommentMapping.put(columnInfo.getColumnName().toUpperCase(),columnInfo.getColumnComment());
             } else {
                 this.columnName2TypeNameMapping.put(columnInfo.getColumnName(),
                         dialect.getTypeName(JdbcUtils.getSqlTypeByJavaType(columnInfo.getRealGetterType()),
                                 columnInfo.getLength(),
                                 columnInfo.getPrecision(),
                                 columnInfo.getScale()));
+                this.columnName2CommentMapping.put(columnInfo.getColumnName(),columnInfo.getColumnComment());
             }
             
         }

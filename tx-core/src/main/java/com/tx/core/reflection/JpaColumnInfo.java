@@ -58,10 +58,10 @@ public class JpaColumnInfo {
     private int length = 255;
     
     /** The precision for a decimal */
-    private int precision = 0;
+    private int precision = 2;
     
     /** The scale for a decimal (exact numeric) column */
-    private int scale = 0;
+    private int scale = 16;
     
     /**
      * <默认构造函数>

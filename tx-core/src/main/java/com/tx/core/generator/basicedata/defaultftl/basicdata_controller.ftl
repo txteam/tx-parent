@@ -27,6 +27,12 @@ import ${view.basePackage}.model.${view.entitySimpleName};
 import ${view.basePackage}.service.${view.entitySimpleName}Service;
 import com.tx.core.paged.model.PagedList;
 
+<#list fieldViewMapping?values as fieldView>
+    <#if fieldView.javaType.enum >
+import ${fieldView.javaType.name};
+    </#if>
+</#list>
+
 /**
  * ${view.entitySimpleName}显示层逻辑<br/>
  * <功能详细描述>
@@ -56,6 +62,12 @@ public class ${view.entitySimpleName}Controller {
      */
     @RequestMapping("/toQuery${view.entitySimpleName}List")
     public String toQuery${view.entitySimpleName}List(ModelMap response) {
+        <#list fieldViewMapping?values as fieldView>
+            <#if fieldView.javaType.enum >
+        response.put("${fieldView.fieldName}List", ${fieldView.javaType.simpleName}.values());
+            </#if>
+        </#list>
+
         return "/${packageName}/query${view.entitySimpleName}List";
     }
     
@@ -70,6 +82,12 @@ public class ${view.entitySimpleName}Controller {
      */
     @RequestMapping("/toQuery${view.entitySimpleName}PagedList")
     public String toQuery${view.entitySimpleName}PagedList(ModelMap response) {
+        <#list fieldViewMapping?values as fieldView>
+            <#if fieldView.javaType.enum >
+        response.put("${fieldView.fieldName}List", ${fieldView.javaType.simpleName}.values());
+            </#if>
+        </#list>
+
         return "/${packageName}/query${view.entitySimpleName}PagedList";
     }
     
@@ -85,7 +103,13 @@ public class ${view.entitySimpleName}Controller {
     @RequestMapping("/toAdd${view.entitySimpleName}")
     public String toAdd${view.entitySimpleName}(ModelMap response) {
         response.put("${view.lowerCaseEntitySimpleName}", new ${view.entitySimpleName}());
-        
+
+        <#list fieldViewMapping?values as fieldView>
+        <#if fieldView.javaType.enum >
+        response.put("${fieldView.fieldName}List", ${fieldView.javaType.simpleName}.values());
+        </#if>
+        </#list>
+
         return "/${packageName}/add${view.entitySimpleName}";
     }
     
@@ -104,6 +128,12 @@ public class ${view.entitySimpleName}Controller {
             ModelMap response) {
         ${view.entitySimpleName} res${view.entitySimpleName} = this.${view.lowerCaseEntitySimpleName}Service.findBy${view.upCaseIdPropertyName}(${view.lowerCaseEntitySimpleName}${view.upCaseIdPropertyName}); 
         response.put("${view.lowerCaseEntitySimpleName}", res${view.entitySimpleName});
+
+<#list fieldViewMapping?values as fieldView>
+    <#if fieldView.javaType.enum >
+        response.put("${fieldView.fieldName}List", ${fieldView.javaType.simpleName}.values());
+    </#if>
+</#list>
         
         return "/${packageName}/update${view.entitySimpleName}";
     }

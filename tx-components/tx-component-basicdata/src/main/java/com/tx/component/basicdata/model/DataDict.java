@@ -16,6 +16,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.tx.core.generator.annotation.Comment;
 import org.apache.commons.lang3.StringUtils;
 
 import com.tx.component.basicdata.annotation.BasicDataType;
@@ -45,6 +46,7 @@ public class DataDict implements EntryAble<EntityEntry>, ConfigInitAble,
     
     /** 数据字典数据：唯一键 */
     @Id
+    @Comment("唯一ID")
     private String id;
     
     /** 父级对象id */

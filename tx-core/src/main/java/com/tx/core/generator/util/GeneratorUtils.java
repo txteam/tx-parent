@@ -17,8 +17,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.type.JdbcType;
 
 import com.tx.core.TxConstants;
@@ -33,25 +33,25 @@ import com.tx.core.reflection.ReflectionUtils;
 /**
  * <功能简述>
  * <功能详细描述>
- * 
+ *
  * @author  Administrator
  * @version  [版本号, 2014年3月1日]
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
 public class GeneratorUtils {
-    
+
     /**
-      * 生成页面显示行信息
-      *<功能详细描述>
-      * @param jpaMetaClass
-      * @param sqlSource
-      * @param uniqueGetterNamesArray
-      * @return [参数说明]
-      * 
-      * @return Map<String,FieldView> [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 生成页面显示行信息
+     *<功能详细描述>
+     * @param jpaMetaClass
+     * @param sqlSource
+     * @param uniqueGetterNamesArray
+     * @return [参数说明]
+     *
+     * @return Map<String,FieldView> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     public static Map<String, FieldView> generateFieldViewMapping(
             JpaMetaClass<?> jpaMetaClass, SqlSource<?> sqlSource,
@@ -60,7 +60,7 @@ public class GeneratorUtils {
         String pkFieldName = jpaMetaClass.getPkGetterName();
         Set<String> updateAbleGetterSet = sqlSource.getUpdateAblePropertyNames();
         Map<String, String[]> uniqueGetterNameMap = new HashMap<String, String[]>();
-        
+
         if (!ArrayUtils.isEmpty(uniqueGetterNamesArray)) {
             for (String[] temp : uniqueGetterNamesArray) {
                 if (ArrayUtils.isEmpty(temp)) {
@@ -75,17 +75,19 @@ public class GeneratorUtils {
         }
         String entitySimpleName = jpaMetaClass.getEntitySimpleName();
         String uncapitalizeEntitySimpleName = StringUtils.uncapitalize(entitySimpleName);
-        
+
         for (Entry<String, JpaColumnInfo> entryTemp : jpaMetaClass.getGetter2columnInfoMapping()
                 .entrySet()) {
             FieldView fieldView = new FieldView();
             JpaColumnInfo jpaColumnInfo = entryTemp.getValue();
-            
+
             fieldView.setDate(Date.class.equals(jpaColumnInfo.getGetterType())
                     || Timestamp.class.equals(jpaColumnInfo.getGetterType())
                     || java.sql.Date.class.equals(jpaColumnInfo.getGetterType()));
+
             fieldView.setId(pkFieldName.equals(entryTemp.getKey()));
             fieldView.setFieldName(entryTemp.getKey());
+            fieldView.setFieldComment(jpaColumnInfo.getColumnComment());
             if (!jpaColumnInfo.isSimpleType()) {
                 fieldView.setSimpleType(false);
                 fieldView.setForeignKeyFieldName(jpaColumnInfo.getForeignKeyGetterName());
@@ -121,34 +123,34 @@ public class GeneratorUtils {
                         + "/"
                         + validateMethodNameSb.toString() + "]");
             }
-            
+
             fieldViewMap.put(entryTemp.getKey(), fieldView);
         }
-        
+
         return fieldViewMap;
     }
-    
+
     /**
-      * 生成查询条件映射<br/>
-      *<功能详细描述>
-      * @param jpaMetaClass
-      * @param sqlSource
-      * @return [参数说明]
-      * 
-      * @return Map<String,String> [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 生成查询条件映射<br/>
+     *<功能详细描述>
+     * @param jpaMetaClass
+     * @param sqlSource
+     * @return [参数说明]
+     *
+     * @return Map<String,String> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     public static Map<String, String> generateQueryConditionMap(
             JpaMetaClass<?> jpaMetaClass, SqlSource<?> sqlSource) {
         Map<String, String> resMap = new HashMap<String, String>();
-        
+
         Map<String, String> queryConditionSqlMapping = sqlSource.getQueryConditionKey2SqlMapping();
         Map<String, JdbcType> queryConditionTypeMapping = sqlSource.getQueryConditionKey2JdbcTypeMapping();
         //Map<String, QueryConditionInfo> queryConditionInfoMapping = sqlSource.getQueryConditionKey2ConditionInfoMapping();
-        
+
         for (Entry<String, String> entryTemp : queryConditionSqlMapping.entrySet()) {
-            
+
             String queryConditionKey = entryTemp.getKey();
             //QueryConditionInfo queryConditionInfoTemp = queryConditionInfoMapping.get(queryConditionKey);;
             JdbcType jdbcType = queryConditionTypeMapping.get(queryConditionKey);
@@ -174,34 +176,34 @@ public class GeneratorUtils {
         }
         return resMap;
     }
-    
-    /** 
+
+    /**
      * 生成字段列表
      *<功能详细描述>
      * @param jpaMetaClass
      * @return [参数说明]
-     * 
+     *
      * @return List<SqlMapColumn> [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
+     */
     public static <TYPE> List<SqlMapColumn> generateSqlMapColumnList(
             JpaMetaClass<TYPE> jpaMetaClass) {
         List<SqlMapColumn> columnList = generateSqlMapColumnList(jpaMetaClass,
                 true);
         return columnList;
     }
-    
-    /** 
+
+    /**
      * 生成字段列表
      *<功能详细描述>
      * @param jpaMetaClass
      * @return [参数说明]
-     * 
+     *
      * @return List<SqlMapColumn> [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
+     */
     public static <TYPE> List<SqlMapColumn> generateSqlMapColumnList(
             JpaMetaClass<TYPE> jpaMetaClass, boolean isColumnNameToUpCase) {
         List<SqlMapColumn> columnList = new ArrayList<SqlMapColumn>();
@@ -209,12 +211,12 @@ public class GeneratorUtils {
         //Set<String> getterNameList = jpaMetaClass.getGetterNames();
         //Set<String> setterNameList = jpaMetaClass.getSetterNames();
         String idPropertyName = jpaMetaClass.getPkGetterName();
-        
+
         for (Entry<String, JpaColumnInfo> entryTemp : jpaMetaClass.getGetter2columnInfoMapping()
                 .entrySet()) {
             String getterName = entryTemp.getKey();
             JpaColumnInfo jpaColumnInfo = entryTemp.getValue();
-            
+
             SqlMapColumn columnTemp = null;
             if (jpaColumnInfo.isSimpleType()) {
                 columnTemp = new SqlMapColumn(true,
@@ -230,21 +232,21 @@ public class GeneratorUtils {
                         jpaColumnInfo.getRealGetterType(),
                         jpaColumnInfo.getForeignKeyGetterName());
             }
-            
+
             if (idPropertyName.equals(getterName)) {
                 columnTemp.setId(true);
             }
-            
+
             columnTemp.setGetterMethodSimpleName(ReflectionUtils.getGetMethodNameByGetterNameAndType(jpaColumnInfo.getGetterName(),
                     jpaColumnInfo.getGetterType()));
-            
+
             columnList.add(columnTemp);
         }
-        
-        Collections.sort(columnList, columnComparator);
+
+        //Collections.sort(columnList, columnComparator);
         return columnList;
     }
-    
+
     /** 默认的字段比较器，用以排序 */
     private static final Comparator<SqlMapColumn> columnComparator = new Comparator<SqlMapColumn>() {
         /**
@@ -271,5 +273,5 @@ public class GeneratorUtils {
             }
         }
     };
-    
+
 }

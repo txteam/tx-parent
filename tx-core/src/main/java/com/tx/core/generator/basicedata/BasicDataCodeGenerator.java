@@ -71,7 +71,9 @@ public class BasicDataCodeGenerator {
     private static String controllerTemplateFilePath = "com/tx/core/generator/basicedata/defaultftl/basicdata_controller.ftl";
     
     private static String queryListTemplateFilePath = "com/tx/core/generator/basicedata/defaultftl/basicdata_queryList.jsp.ftl";
-    
+
+//    private static String detailTemplateFilePath = "com/tx/core/generator/basicedata/defaultftl/basicdata_detail.jsp.ftl";
+
     private static String addTemplateFilePath = "com/tx/core/generator/basicedata/defaultftl/basicdata_add.jsp.ftl";
     
     private static String updateTemplateFilePath = "com/tx/core/generator/basicedata/defaultftl/basicdata_update.jsp.ftl";
