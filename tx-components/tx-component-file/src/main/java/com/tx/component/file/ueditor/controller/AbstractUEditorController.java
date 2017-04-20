@@ -94,7 +94,7 @@ public abstract class AbstractUEditorController implements InitializingBean,
     @Override
     public void afterPropertiesSet() throws Exception {
         //启动期间加载Controller同级的目录中的配置文件
-        InputStream input = getClass().getResourceAsStream("./config.json");
+        InputStream input = getClass().getResourceAsStream("./config.js");
         try {
             String configContext = IOUtils.toString(input, "UTF-8");
             //过滤输入字符串, 剔除多行注释以及替换掉反斜杠
