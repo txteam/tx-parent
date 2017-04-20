@@ -6,7 +6,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>add${view.entitySimpleName}</title>
+<title>update${view.entitySimpleName}</title>
 <%@include file="../includes/commonHead.jsp" %>
 
 <script type="text/javascript" >
@@ -57,11 +57,33 @@ function cancelFun(){
 <#if fieldView.simpleType>
 				<tr>
 					<!--//TODO:修改字段是否必填,修改其中文名-->
-					<th class="narrow" width="20%">${fieldView.fieldName}:<#if fieldView.isRequired()><span class="tRed">*</span></#if></th>
+					<th class="narrow" width="20%"><#if fieldView.fieldComment?? >${fieldView.fieldComment}<#else >${fieldView.fieldName}</#if>:<#if fieldView.isRequired()><span class="tRed">*</span></#if></th>
 					<td width="80%">
-						<form:input path="${fieldView.fieldName}" cssClass="text" <#if fieldView.validateExpression?exists>
-							data-rule="${fieldView.fieldName}:${fieldView.validateExpression}" 
-						</#if>/>
+						<#if fieldView.javaType.simpleName =="boolean" || fieldView.javaType.simpleName == 'Boolean'>
+                            <form:select path="${fieldView.fieldName}" cssClass="text" <#if fieldView.validateExpression?exists>
+                                         data-rule="${fieldView.fieldName}:${fieldView.validateExpression}"</#if>>
+							<#if fieldView.javaType.simpleName == 'Boolean'>
+                                <form:option value="">全部</form:option>
+							</#if>
+                                <form:option value="1">是</form:option>
+                                <form:option value="0">否</form:option>
+                            </form:select>
+						<#elseif  fieldView.javaType.enum >
+                            <form:select path="${fieldView.fieldName}" cssClass="text" <#if fieldView.validateExpression?exists>
+                                         data-rule="${fieldView.fieldName}:${fieldView.validateExpression}"</#if>>
+                                <form:option value="">全部</form:option>
+                                <form:options items="${r"${"}${fieldView.fieldName}List}"/>
+                            </form:select>
+						<#elseif  fieldView.date >
+                            <form:input path="${fieldView.fieldName}" cssClass="text" <#if fieldView.validateExpression?exists>
+                                        data-rule="${fieldView.fieldName}:${fieldView.validateExpression}"
+                                        readonly="readonly" onclick="WdatePicker({readOnly:true,dateFmt:'yyyy-MM-dd',startDate:'%y-{%M-1}-%d'})"
+							</#if>/>
+						<#else >
+                            <form:input path="${fieldView.fieldName}" cssClass="text" <#if fieldView.validateExpression?exists>
+                                        data-rule="${fieldView.fieldName}:${fieldView.validateExpression}"
+							</#if>/>
+						</#if>
 					</td>
 				</tr>
 <#else>

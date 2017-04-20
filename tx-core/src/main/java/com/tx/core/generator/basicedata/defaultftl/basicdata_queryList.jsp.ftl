@@ -88,7 +88,7 @@ $(document).ready(function(){
 		{
 			field : '${fieldView.fieldName}',
 			<%!//FIXME: 修改属性中文名 --%>
-			title : '${fieldView.fieldName}',
+			title : <#if fieldView.fieldComment?? >'${fieldView.fieldComment}'<#else >'${fieldView.fieldName}'</#if>,
 			width : 200
 			<#if fieldView.date>
 			,formatter: function(value, row, index){
@@ -207,7 +207,7 @@ function addFun() {
 		"add${view.entitySimpleName}",
 		"新增" + entityName,
 		$.formatString("${r"${contextPath}"}/${view.lowerCaseEntitySimpleName}/toAdd${view.entitySimpleName}.action"),
-		450,220,function(){
+		450,${fieldViewMapping?size*30+50},function(){
 			queryFun();
 	});
 	return false;
@@ -233,7 +233,7 @@ function editFun(id,name) {
 		"update${view.entitySimpleName}",
 		"编辑" + entityName + ":" + name,
 		$.formatString("${r"${contextPath}"}/${view.lowerCaseEntitySimpleName}/toUpdate${view.entitySimpleName}.action?${view.lowerCaseEntitySimpleName}Id={0}",id),
-		450,220,function(){
+		450,${fieldViewMapping?size*30+50},function(){
 			queryFun();
 	});
 	return false;

@@ -29,7 +29,9 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.tx.core.generator.annotation.Comment;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 
 import com.tx.core.exceptions.reflection.JPAParseException;
@@ -243,7 +245,7 @@ public class JpaMetaClass<T> {
         jpaColumnInfo.setGetterName(getterName);
         jpaColumnInfo.setGetterType(getterType);
         jpaColumnInfo.setColumnName(getterName);
-        jpaColumnInfo.setColumnComment("");
+        jpaColumnInfo.setColumnComment(getBaseColumnName2Comment(getterName));
         jpaColumnInfo.setNullable(true);
         jpaColumnInfo.setUnique(false);
         jpaColumnInfo.setRealGetterName(getterName);
@@ -262,6 +264,9 @@ public class JpaMetaClass<T> {
         
         if (ReflectionUtils.isHasAnnotationForGetter(type, getterName, Column.class)) {
             processWhenColumnAnnotationExist(getterName, type, jpaColumnInfo);
+        }
+        if (ReflectionUtils.isHasAnnotationForGetter(type, getterName, Comment.class)) {
+            processWhenCommentAnnotationExist(getterName, type, jpaColumnInfo);
         }
         
         //是否存在Column注解
@@ -369,6 +374,14 @@ public class JpaMetaClass<T> {
         }
         jpaColumnInfo.setPrecision(columnAnno.precision());
         jpaColumnInfo.setScale(columnAnno.scale());
+
+    }
+
+    private void processWhenCommentAnnotationExist(String getterName, Class<T> type, JpaColumnInfo jpaColumnInfo) {
+         Comment comment =  ReflectionUtils.getGetterAnnotation(type,getterName, Comment.class);
+        if(comment!=null && StringUtils.isNotEmpty(comment.value())){
+            jpaColumnInfo.setColumnComment(comment.value());
+        }
     }
     
     /**
@@ -580,6 +593,24 @@ public class JpaMetaClass<T> {
         if ("TO".equals(this.simpleTableName)) {
             this.simpleTableName = "TO_";
         }
+    }
+
+    public static  Map<String,String> map = new HashedMap();
+    private String getBaseColumnName2Comment(String columnName){
+        if(map.isEmpty()){
+            map.put("ID","主键ID");
+            map.put("PARENTID","父类ID");
+            map.put("MODIFYABLE","是否可以修改");
+            map.put("REMARK","备注");
+            map.put("CODE","编码");
+            map.put("NAME","名称");
+            map.put("CREATEDATE","创建时间");
+            map.put("LASTUPDATEDATE","最后更新时间");
+            map.put("VALID","是否有效");
+        }
+
+        return map.get(columnName.toUpperCase());
+
     }
     
     /**

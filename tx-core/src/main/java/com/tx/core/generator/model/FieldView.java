@@ -30,7 +30,8 @@ public class FieldView {
     
     /** 是否为日期类型 */
     private boolean date = false;
-    
+
+
     /** 
      * 是否为基本类型
      * 是否为typeHandle能够处理的类型  
@@ -41,6 +42,11 @@ public class FieldView {
      * 字段名
      */
     private String fieldName;
+
+    /**
+     * 字段中文名称
+     */
+    private String fieldComment;
     
     /**
      * 字段类型名
@@ -179,5 +185,15 @@ public class FieldView {
      */
     public void setUpdateAble(boolean updateAble) {
         this.updateAble = updateAble;
+    }
+
+
+
+    public String getFieldComment() {
+        return fieldComment;
+    }
+
+    public void setFieldComment(String fieldComment) {
+        this.fieldComment = fieldComment;
     }
 }

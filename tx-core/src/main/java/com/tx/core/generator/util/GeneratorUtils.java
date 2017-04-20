@@ -84,8 +84,10 @@ public class GeneratorUtils {
             fieldView.setDate(Date.class.equals(jpaColumnInfo.getGetterType())
                     || Timestamp.class.equals(jpaColumnInfo.getGetterType())
                     || java.sql.Date.class.equals(jpaColumnInfo.getGetterType()));
+
             fieldView.setId(pkFieldName.equals(entryTemp.getKey()));
             fieldView.setFieldName(entryTemp.getKey());
+            fieldView.setFieldComment(jpaColumnInfo.getColumnComment());
             if (!jpaColumnInfo.isSimpleType()) {
                 fieldView.setSimpleType(false);
                 fieldView.setForeignKeyFieldName(jpaColumnInfo.getForeignKeyGetterName());
