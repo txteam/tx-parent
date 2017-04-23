@@ -25,6 +25,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.PropertyAccessorFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.ResourceLoaderAware;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.LinkedMultiValueMap;
@@ -51,7 +53,7 @@ import com.tx.core.support.poi.excel.ExcelReadUtils;
  * @since  [产品/模块版本]
  */
 public class DataDictService extends AbstractEntityEntryAbleService<DataDict>
-        implements InitializingBean {
+        implements InitializingBean, ResourceLoaderAware {
     
     @SuppressWarnings("unused")
     private Logger logger = LoggerFactory.getLogger(DataDictService.class);
@@ -65,15 +67,24 @@ public class DataDictService extends AbstractEntityEntryAbleService<DataDict>
     @Resource(name = "basicdata.transactionTemplate")
     private TransactionTemplate transactionTemplate;
     
+    private ResourceLoader resourceLoader;
+    
     /**
      * @throws Exception
      */
     @Override
-    protected EntityEntrySupport<EntityEntry> doBuildEntityEntrySupport()
-            throws Exception {
+    protected EntityEntrySupport<EntityEntry> doBuildEntityEntrySupport() throws Exception {
         EntityEntrySupport<EntityEntry> entityEntrySupport = EntityEntrySupportFactory.getSupport("bd_data_dict_entry",
                 this.dataSource);
         return entityEntrySupport;
+    }
+    
+    /**
+     * @param resourceLoader
+     */
+    @Override
+    public void setResourceLoader(ResourceLoader resourceLoader) {
+        this.resourceLoader = resourceLoader;
     }
     
     /**
@@ -86,7 +97,7 @@ public class DataDictService extends AbstractEntityEntryAbleService<DataDict>
      * @see [类、类#方法、类#成员]
     */
     private List<DataDict> loadListFromExcelConfig() {
-        Workbook wb = ExcelReadUtils.getWorkBook("classpath:init/basicdata/data_dict.xlsx");
+        Workbook wb = ExcelReadUtils.getWorkBook("classpath*:init/basicdata/data_dict.xlsx");
         
         List<DataDict> resList = new ArrayList<>();
         int numberOfSheets = wb.getNumberOfSheets();
@@ -118,9 +129,7 @@ public class DataDictService extends AbstractEntityEntryAbleService<DataDict>
                 for (Entry<String, String> entryTemp : rowMap.entrySet()) {
                     String entryKey = entryTemp.getKey();
                     String entryValue = entryTemp.getValue();
-                    if ("code".equals(entryKey)
-                            || "basicDataTypeCode".equals(entryKey)
-                            || "class".equals(entryKey)) {
+                    if ("code".equals(entryKey) || "basicDataTypeCode".equals(entryKey) || "class".equals(entryKey)) {
                         continue;
                     }
                     if (ddBW.isWritableProperty(entryKey)) {
@@ -170,6 +179,9 @@ public class DataDictService extends AbstractEntityEntryAbleService<DataDict>
      */
     @Override
     public void afterPropertiesSet() throws Exception {
+        if (!resourceLoader.getResource("classpath*:init/basicdata/data_dict.xlsx").exists()) {
+            return;
+        }
         ConfigInitAbleHelper<DataDict> helper = new ConfigInitAbleHelper<DataDict>() {
             
             /**
@@ -212,13 +224,11 @@ public class DataDictService extends AbstractEntityEntryAbleService<DataDict>
                 if (!StringUtils.equals(ciaOfDB.getName(), ciaOfCfg.getName())) {
                     return true;
                 }
-                if (!StringUtils.equals(ciaOfDB.getRemark(),
-                        ciaOfCfg.getRemark())) {
+                if (!StringUtils.equals(ciaOfDB.getRemark(), ciaOfCfg.getRemark())) {
                     return true;
                 }
                 if (ciaOfDB.getEntryList() != ciaOfCfg.getEntryList()) {
-                    if (ciaOfDB.getEntryList() == null
-                            || ciaOfCfg.getEntryList() == null) {
+                    if (ciaOfDB.getEntryList() == null || ciaOfCfg.getEntryList() == null) {
                         return false;
                     }
                     Map<String, EntityEntry> dbEntryMap = new HashMap<>();
@@ -237,8 +247,7 @@ public class DataDictService extends AbstractEntityEntryAbleService<DataDict>
                         EntityEntry dbee = dbeeEntry.getValue();
                         if (!cfgEntryMap.containsKey(key)) {
                             return false;
-                        } else if (!StringUtils.equals(dbee.getEntryValue(),
-                                cfgEntryMap.get(key).getEntryValue())) {
+                        } else if (!StringUtils.equals(dbee.getEntryValue(), cfgEntryMap.get(key).getEntryValue())) {
                             return false;
                         }
                     }
@@ -379,8 +388,7 @@ public class DataDictService extends AbstractEntityEntryAbleService<DataDict>
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public List<DataDict> queryList(String basicDataTypeCode, Boolean valid,
-            Map<String, Object> params) {
+    public List<DataDict> queryList(String basicDataTypeCode, Boolean valid, Map<String, Object> params) {
         //判断条件合法性
         
         //生成查询条件
@@ -405,8 +413,8 @@ public class DataDictService extends AbstractEntityEntryAbleService<DataDict>
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public List<DataDict> queryList(String basicDataTypeCode, String parentId,
-            Boolean valid, Map<String, Object> params) {
+    public List<DataDict> queryList(String basicDataTypeCode, String parentId, Boolean valid,
+            Map<String, Object> params) {
         //判断条件合法性
         
         //生成查询条件
@@ -436,9 +444,8 @@ public class DataDictService extends AbstractEntityEntryAbleService<DataDict>
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public PagedList<DataDict> queryPagedList(String basicDataTypeCode,
-            Boolean valid, Map<String, Object> params, int pageIndex,
-            int pageSize) {
+    public PagedList<DataDict> queryPagedList(String basicDataTypeCode, Boolean valid, Map<String, Object> params,
+            int pageIndex, int pageSize) {
         //T判断条件合法性
         
         //生成查询条件
@@ -447,9 +454,7 @@ public class DataDictService extends AbstractEntityEntryAbleService<DataDict>
         params.put("valid", valid);
         
         //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
-        PagedList<DataDict> resPagedList = this.dataDictDao.queryPagedList(params,
-                pageIndex,
-                pageSize);
+        PagedList<DataDict> resPagedList = this.dataDictDao.queryPagedList(params, pageIndex, pageSize);
         
         return resPagedList;
     }
@@ -469,9 +474,8 @@ public class DataDictService extends AbstractEntityEntryAbleService<DataDict>
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public PagedList<DataDict> queryPagedList(String basicDataTypeCode,
-            String parentId, Boolean valid, Map<String, Object> params,
-            int pageIndex, int pageSize) {
+    public PagedList<DataDict> queryPagedList(String basicDataTypeCode, String parentId, Boolean valid,
+            Map<String, Object> params, int pageIndex, int pageSize) {
         //T判断条件合法性
         
         //生成查询条件
@@ -481,9 +485,7 @@ public class DataDictService extends AbstractEntityEntryAbleService<DataDict>
         params.put("valid", valid);
         
         //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
-        PagedList<DataDict> resPagedList = this.dataDictDao.queryPagedList(params,
-                pageIndex,
-                pageSize);
+        PagedList<DataDict> resPagedList = this.dataDictDao.queryPagedList(params, pageIndex, pageSize);
         
         return resPagedList;
     }
@@ -497,8 +499,7 @@ public class DataDictService extends AbstractEntityEntryAbleService<DataDict>
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    public boolean isExist(String basicDataTypeCode,
-            Map<String, String> key2valueMap, String excludeId) {
+    public boolean isExist(String basicDataTypeCode, Map<String, String> key2valueMap, String excludeId) {
         AssertUtils.notEmpty(basicDataTypeCode, "basicDataTypeCode is empty");
         AssertUtils.notEmpty(key2valueMap, "key2valueMap is empty");
         
