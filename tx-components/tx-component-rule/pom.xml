@@ -64,20 +64,20 @@
 		</dependency>
 
 		<!-- drools -->
-		<dependency>
-			<groupId>org.drools</groupId>
-			<artifactId>drools-core</artifactId>
-			<optional>true</optional>
-		</dependency>
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.drools</groupId> -->
-<!-- 			<artifactId>drools-spring</artifactId> -->
-<!-- 		</dependency> -->
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.codehaus.janino</groupId> -->
-<!-- 			<artifactId>janino</artifactId> -->
-<!-- 			<version>2.5.16</version> -->
-<!-- 		</dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.drools</groupId> -->
+		<!-- <artifactId>drools-core</artifactId> -->
+		<!-- <optional>true</optional> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.drools</groupId> -->
+		<!-- <artifactId>drools-spring</artifactId> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.codehaus.janino</groupId> -->
+		<!-- <artifactId>janino</artifactId> -->
+		<!-- <version>2.5.16</version> -->
+		<!-- </dependency> -->
 
 		<!-- db -->
 		<dependency>
@@ -116,7 +116,7 @@
 			<optional>true</optional>
 			<scope>test</scope>
 		</dependency>
-		
+
 		<!-- j2ee -->
 		<dependency>
 			<groupId>org.apache.tomcat</groupId>
