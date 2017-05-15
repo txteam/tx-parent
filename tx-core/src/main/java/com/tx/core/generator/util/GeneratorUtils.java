@@ -221,14 +221,12 @@ public class GeneratorUtils {
             if (jpaColumnInfo.isSimpleType()) {
                 columnTemp = new SqlMapColumn(true,
                         jpaColumnInfo.getGetterName(),
-                        isColumnNameToUpCase ? jpaColumnInfo.getColumnName()
-                                .toUpperCase() : jpaColumnInfo.getColumnName(),
+                        isColumnNameToUpCase ? jpaColumnInfo.getColumnName() : jpaColumnInfo.getColumnName(),
                         jpaColumnInfo.getRealGetterType(), null);
             } else {
                 columnTemp = new SqlMapColumn(false,
                         jpaColumnInfo.getGetterName(),
-                        isColumnNameToUpCase ? jpaColumnInfo.getColumnName()
-                                .toUpperCase() : jpaColumnInfo.getColumnName(),
+                        isColumnNameToUpCase ? jpaColumnInfo.getColumnName() : jpaColumnInfo.getColumnName(),
                         jpaColumnInfo.getRealGetterType(),
                         jpaColumnInfo.getForeignKeyGetterName());
             }

@@ -159,7 +159,7 @@ public class TableCodeGenerator {
         Map<String, Object> data = new HashMap<String, Object>();
         
         DBScriptMapper dbScriptMapper = new DBScriptMapper();
-        dbScriptMapper.setTableName(jpaMetaClass.getTableName().toUpperCase());
+        dbScriptMapper.setTableName(jpaMetaClass.getTableName().toLowerCase());
         dbScriptMapper.setPkColumnName(
                 jpaMetaClass.getGetter2columnInfoMapping().get(jpaMetaClass.getPkGetterName()).getColumnName());
         for (Entry<String, JpaColumnInfo> entryTemp : jpaMetaClass.getGetter2columnInfoMapping().entrySet()) {
@@ -354,7 +354,7 @@ public class TableCodeGenerator {
         updateMapper.setIdColumnName(idColumnName == null ? "" : idColumnName.toUpperCase());
         updateMapper.setIdPropertyName(idPropertyName);
         
-        updateMapper.setSimpleTableName(jpaMetaClass.getSimpleTableName().toUpperCase());
+        updateMapper.setSimpleTableName(jpaMetaClass.getSimpleTableName());
         updateMapper.setTableName(jpaMetaClass.getTableName());
         updateMapper.setSqlMapColumnList(GeneratorUtils.generateSqlMapColumnList(jpaMetaClass));
         
@@ -389,7 +389,7 @@ public class TableCodeGenerator {
                 org.apache.commons.lang3.StringUtils.uncapitalize(jpaMetaClass.getEntitySimpleName()) + "Map");
         
         selectMapper.setSimpleTableName(jpaMetaClass.getSimpleTableName().toUpperCase());
-        selectMapper.setTableName(jpaMetaClass.getTableName().toUpperCase());
+        selectMapper.setTableName(jpaMetaClass.getTableName());
         
         selectMapper.setSqlMapColumnList(GeneratorUtils.generateSqlMapColumnList(jpaMetaClass));
         
@@ -419,7 +419,7 @@ public class TableCodeGenerator {
         deleteMapper.setIdColumnName(idColumnName == null ? "" : idColumnName.toUpperCase());
         deleteMapper.setIdPropertyName(idPropertyName);
         deleteMapper.setSimpleTableName(jpaMetaClass.getSimpleTableName().toUpperCase());
-        deleteMapper.setTableName(jpaMetaClass.getTableName().toUpperCase());
+        deleteMapper.setTableName(jpaMetaClass.getTableName());
         
         return deleteMapper;
     }
@@ -440,7 +440,7 @@ public class TableCodeGenerator {
         insertMapper.setId("insert" + jpaMetaClass.getEntitySimpleName());
         insertMapper.setParameterType(jpaMetaClass.getEntityTypeName());
         //设置表名，并转换为大写
-        insertMapper.setTableName(jpaMetaClass.getTableName().toUpperCase());
+        insertMapper.setTableName(jpaMetaClass.getTableName());
         
         //字段
         insertMapper.getSqlMapColumnList().addAll(GeneratorUtils.generateSqlMapColumnList(jpaMetaClass));

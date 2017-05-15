@@ -197,7 +197,7 @@ public class JpaMetaClass<T> {
             JpaColumnInfo jpaColumnInfo = parseGetter(getterNameTemp, getterType, type, this.classReflector);
             
             //将解析结果压入
-            column2realGetterMapping.put(jpaColumnInfo.getColumnName().toUpperCase(),
+            column2realGetterMapping.put(jpaColumnInfo.getColumnName(),
                     jpaColumnInfo.getRealGetterName());
             getter2columnInfoMapping.put(getterNameTemp, jpaColumnInfo);
         }
