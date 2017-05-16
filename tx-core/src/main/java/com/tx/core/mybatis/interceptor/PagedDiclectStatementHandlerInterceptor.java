@@ -145,10 +145,10 @@ public class PagedDiclectStatementHandlerInterceptor implements Interceptor {
         String limitSql = dialect.getLimitString(sql,
                 rowBounds.getOffset(),
                 rowBounds.getLimit());
-        //在调试模式下打印分页sql
-        if (logger.isDebugEnabled()) {
-            logger.debug("生成分页SQL : " + boundSql.getSql());
-        }
+//        //在调试模式下打印分页sql
+//        if (logger.isDebugEnabled()) {
+//            logger.debug("生成分页SQL : " + boundSql.getSql());
+//        }
         
         //如果支持isSupportsLimitOffset并且当前需要偏移值
         boolean isNeedSetOffset = isSupportsLimitOffset
