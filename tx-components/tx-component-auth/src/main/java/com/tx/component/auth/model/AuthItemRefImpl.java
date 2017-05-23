@@ -253,7 +253,11 @@ public class AuthItemRefImpl implements AuthItemRef {
     public Boolean isTemp() {
         return temp;
     }
-    
+
+    public Boolean getTemp() {
+        return temp;
+    }
+
     /**
      * @param 对temp进行赋值
      */
