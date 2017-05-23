@@ -246,14 +246,16 @@ public class AuthItemRefImpl implements AuthItemRef {
     public void setInvalidDate(Date invalidDate) {
         this.invalidDate = invalidDate;
     }
-    
-    /**
-     * @return 返回 temp
-     */
-    public Boolean isTemp() {
+
+    public Boolean getTemp() {
         return temp;
     }
-    
+
+    public Boolean isTemp(){
+        return temp;
+    }
+
+
     /**
      * @param 对temp进行赋值
      */
