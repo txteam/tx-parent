@@ -12,6 +12,9 @@ import org.slf4j.LoggerFactory;
 import com.p6spy.engine.logging.Category;
 import com.p6spy.engine.spy.appender.P6Logger;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * <在p6spy中利用logback统一打印日志，统一日志记录的位置>
  * <功能详细描述>
@@ -24,14 +27,35 @@ import com.p6spy.engine.spy.appender.P6Logger;
 public class P6SpyLogbackLogger implements P6Logger {
     
     private static final Logger logger = LoggerFactory.getLogger(P6SpyLogbackLogger.class);
+    private static  Set<Category> debugCategory = new HashSet<>();
+
+   static  {
+        debugCategory.add(Category.BATCH);
+        debugCategory.add(Category.STATEMENT);
+        debugCategory.add(Category.RESULTSET);
+        debugCategory.add(Category.COMMIT);
+        debugCategory.add(Category.ROLLBACK);
+        debugCategory.add(Category.RESULT);
+        debugCategory.add(Category.OUTAGE);
+    }
     
     /**
-     * @param arg0
+     * @param category
      * @return
      */
     @Override
     public boolean isCategoryEnabled(Category category) {
-        return false;
+
+        if (Category.ERROR.equals(category) ) {
+            return logger.isErrorEnabled();
+        } else if (Category.WARN.equals(category)) {
+            return logger.isWarnEnabled();
+        } else if (Category.DEBUG.equals(category) || debugCategory.contains(category)
+                ) {
+            return logger.isDebugEnabled();
+        } else {
+            return logger.isInfoEnabled();
+        }
     }
     
     /**
@@ -53,12 +77,12 @@ public class P6SpyLogbackLogger implements P6Logger {
     }
     
     /**
-     * @param arg0
-     * @param arg1
-     * @param arg2
-     * @param arg3
-     * @param arg4
-     * @param arg5
+     * @param connectionId
+     * @param now
+     * @param elapsed
+     * @param category
+     * @param prepared
+     * @param sql
      */
     @Override
     public void logSQL(int connectionId, String now, long elapsed,
