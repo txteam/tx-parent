@@ -138,13 +138,13 @@ public class DateUtils {
         return afterDays - preDays;
     }
     
-    public static void main(String[] args) {
+    public static void main2(String[] args) {
         DateTime now = DateTime.now();
         System.out.println(calculateNumberOfDaysBetween(now.toDate(),
                 new DateTime("2014-12-13").toDate()));
     }
     
-    public static void main1(String[] args) {
+    public static void main(String[] args) {
         DateTime now = DateTime.now();
         System.out.println(getDays(now.toDate()));
         
