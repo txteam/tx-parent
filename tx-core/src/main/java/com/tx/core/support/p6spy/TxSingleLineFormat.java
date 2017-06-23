@@ -41,7 +41,7 @@ public class TxSingleLineFormat implements MessageFormattingStrategy {
             final String prepared, final String sql) {
         String logText = now + "|" + elapsed + "|" + category + "|connection " + connectionId + "|";
         if ("statement".equals(category)) {
-            logText = logText + trimSql(prepared) + "\n\t|\t" + trimSql(sql);
+            logText = trimSql(sql);//logText + trimSql(prepared) + "\n\t|\t" + 
         } else {
             logText = logText + trimSql(prepared) + "|" + trimSql(sql);
         }
