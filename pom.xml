@@ -317,6 +317,11 @@
 				<version>3.2.2</version>
 			</dependency>
 			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-collections4</artifactId>
+				<version>4.1</version>
+			</dependency>
+			<dependency>
 				<!-- Commons-BeanUtils 提供对 Java 反射和自省API的包装 -->
 				<groupId>commons-beanutils</groupId>
 				<artifactId>commons-beanutils</artifactId>
