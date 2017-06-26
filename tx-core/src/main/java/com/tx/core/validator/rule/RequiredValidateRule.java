@@ -21,36 +21,19 @@ import com.tx.core.validator.ValidateRule;
  */
 public class RequiredValidateRule extends BaseValidateRule {
     
-//    private Map<String, RequiredValidateRule> instanceMap = new HashMap<String, RequiredValidateRule>();
-    
-    /**
-     * @return
-     */
     @Override
     public String[] validateExpression() {
         return new String[] {"required,notEmpty,notNull"};
     }
     
-    /**
-     * required        //不能为空
-     * required(xxx)   //满足xxx规则，才验证required
-     * required(not, xxx) //如果值为空，或者xxx也认为是空
-     * @param expression
-     * @return
-     */
     @Override
     public ValidateRule newInstance(String expression) {
         return null;
     }
     
-    /**
-     * @param message
-     * @param placeHolder
-     * @return
-     */
     @Override
     protected ValidateResult doValidate(Object message, String placeHolder) {
-        // TODO Auto-generated method stub
+        
         return null;
     }
 }

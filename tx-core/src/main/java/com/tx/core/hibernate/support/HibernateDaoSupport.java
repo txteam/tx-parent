@@ -511,7 +511,7 @@ public class HibernateDaoSupport {
                         query.setParameter(i, finalValues[i]);
                     }
                 }
-                //TODO:这里需要验证一下，size是否是触发了count方法
+                
                 List<?> tempList = query.list();
                 int count = tempList.size();
                 res.setCount(count);
@@ -574,7 +574,7 @@ public class HibernateDaoSupport {
                                 entryTemp.getValue());
                     }
                 }
-                //TODO:这里需要验证一下，size是否是触发了count方法
+                
                 List<?> tempList = query.list();
                 int count = tempList.size();
                 res.setCount(count);

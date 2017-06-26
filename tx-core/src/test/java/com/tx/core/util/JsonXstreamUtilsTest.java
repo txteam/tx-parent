@@ -82,7 +82,7 @@ public class JsonXstreamUtilsTest {
         /** <默认构造函数> */
         public Test2() {
             super();
-            // TODO Auto-generated constructor stub
+            
         }
 
         /**

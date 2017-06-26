@@ -14,13 +14,12 @@ import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.util.AopTargetUtils;
 
 /**
- * 基础类能够获取该类的子类的注解类型
- * <功能详细描述>
+ * 基础类能够获取该类的子类的注解类型 <功能详细描述>
  * 
- * @author  Administrator
- * @version  [版本号, 2015年3月4日]
- * @see  [相关类/方法]
- * @since  [产品/模块版本]
+ * @author Administrator
+ * @version [版本号, 2015年3月4日]
+ * @see [相关类/方法]
+ * @since [产品/模块版本]
  */
 public class ParameterizedTypeReference<T> extends
         AbstractParameterizedTypeReference<T> {

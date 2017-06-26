@@ -3,12 +3,12 @@
 
 	<groupId>com.tx</groupId>
 	<artifactId>tx-parent</artifactId>
-	<version>1.4.x-SNAPSHOT</version>
+	<version>1.4.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<properties>
 		<!-- lib info -->
-		<tx-version>1.4.x-SNAPSHOT</tx-version>
+		<tx-version>1.4.1-SNAPSHOT</tx-version>
 
 		<!-- base info -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -76,6 +76,18 @@
 				<version>${tx-version}</version>
 			</dependency>
 
+			<dependency>
+				<groupId>org.jasig.cas.client</groupId>
+				<artifactId>cas-client-core</artifactId>
+				<exclusions>
+					<exclusion>
+						<artifactId>commons-logging</artifactId>
+						<groupId>commons-logging</groupId>
+					</exclusion>
+				</exclusions>
+				<version>3.2.1</version>
+			</dependency>
+
 			<!-- activemq -->
 			<dependency>
 				<groupId>org.apache.activemq</groupId>
@@ -91,6 +103,12 @@
 						<artifactId>log4j</artifactId>
 					</exclusion>
 				</exclusions>
+			</dependency>
+
+			<dependency>
+				<groupId>com.google.code.gson</groupId>
+				<artifactId>gson</artifactId>
+				<version>2.3.1</version>
 			</dependency>
 
 			<!-- 阿里云 消息 -->

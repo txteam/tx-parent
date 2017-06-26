@@ -27,7 +27,7 @@ public class IntegerValidateRule extends BaseValidateRule {
      */
     @Override
     public String[] validateExpression() {
-        // TODO Auto-generated method stub
+        
         return null;
     }
     
@@ -37,7 +37,7 @@ public class IntegerValidateRule extends BaseValidateRule {
      */
     @Override
     public ValidateRule newInstance(String expression) {
-        // TODO Auto-generated method stub
+        
         return null;
     }
     
@@ -48,7 +48,7 @@ public class IntegerValidateRule extends BaseValidateRule {
      */
     @Override
     protected ValidateResult doValidate(Object message, String placeHolder) {
-        // TODO Auto-generated method stub
+        
         return null;
     }
     

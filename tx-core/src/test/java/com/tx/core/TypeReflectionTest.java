@@ -20,7 +20,7 @@ public class TypeReflectionTest<T> {
     
     /** <默认构造函数> */
     public TypeReflectionTest() {
-        // TODO Auto-generated constructor stub
+        
     }
     
     public static void main(String[] args) {
