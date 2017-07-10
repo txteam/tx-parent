@@ -8,6 +8,8 @@ package com.tx.core.support.p6spy;
 
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.p6spy.engine.spy.appender.MessageFormattingStrategy;
 
 /**
@@ -41,7 +43,12 @@ public class TxSingleLineFormat implements MessageFormattingStrategy {
             final String prepared, final String sql) {
         String logText = now + "|" + elapsed + "|" + category + "|connection " + connectionId + "|";
         if ("statement".equals(category)) {
-            logText = trimSql(sql);//logText + trimSql(prepared) + "\n\t|\t" + 
+            if (StringUtils.isBlank(sql)) {
+                logText = trimSql(prepared);
+            } else {
+                logText = trimSql(sql);
+            }
+            //logText + trimSql(prepared) + "\n\t|\t" + 
         } else {
             logText = logText + trimSql(prepared) + "|" + trimSql(sql);
         }
