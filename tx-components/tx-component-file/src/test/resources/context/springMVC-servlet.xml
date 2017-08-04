@@ -10,12 +10,12 @@
        http://www.springframework.org/schema/mvc  
        http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd">
 
-	<bean id="imageResourceHttpRequestHandler"
-		class="com.tx.component.file.handler.ImageResourceHttpRequestHandler">
+	<bean id="defaultViewHandler"
+		class="com.tx.component.file.viewhandler.impl.DefaultViewHandler">
 		<property name="fileContext" ref="fileContext" />
 	</bean>
-	<bean id="thumbnailResourceHttpRequestHandler"
-		class="com.tx.component.file.handler.ThumbnailResourceHttpRequestHandler">
+	<bean id="thumbnailViewHandler"
+		class="com.tx.component.file.viewhandler.impl.ThumbnailViewHandler">
 		<property name="fileContext" ref="fileContext" />
 	</bean>
 
@@ -23,8 +23,8 @@
 		<property name="order" value="0" />
 		<property name="urlMap">
 			<props>
-				<prop key="/fileContext/resource/imageResource">imageResourceHttpRequestHandler</prop>
-				<prop key="/fileContext/resource/thumbnailImageResource">thumbnailResourceHttpRequestHandler</prop>
+				<prop key="/fileContext/resource/imageResource">defaultViewHandler</prop>
+				<prop key="/fileContext/resource/thumbnailImageResource">thumbnailViewHandler</prop>
 			</props>
 		</property>
 	</bean>
