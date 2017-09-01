@@ -9,6 +9,7 @@ package com.tx.core.util;
 import java.util.Date;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 import com.tx.core.exceptions.util.AssertUtils;
 
@@ -24,9 +25,10 @@ import com.tx.core.exceptions.util.AssertUtils;
 public class DateUtils {
     
     /** 每天秒数 */
+    //86400000
     private static long DAY_SECOND_COUNT = 1000 * 60 * 60 * 24;
     
-    private static long BASE_DATE_TIME = (new DateTime(1970, 1, 1, 0, 0, 0).toDate()).getTime();
+    private static long BASE_DATE_TIME = (new DateTime(1970, 1, 1, 0, 0, 0, 0).toDate()).getTime();
     
     /**
       * 根据生日计算当前年龄<br/>
@@ -69,7 +71,11 @@ public class DateUtils {
     public static int getDays(Date date) {
         AssertUtils.notNull(date, "date is null");
         
-        long res = (date.getTime() - BASE_DATE_TIME) / DAY_SECOND_COUNT;
+        //System.out.println(DAY_SECOND_COUNT);
+        //System.out.println((date.getTime() - BASE_DATE_TIME) % DAY_SECOND_COUNT);
+        
+        LocalDate localDate = new LocalDate(date.getTime());
+        long res = (localDate.toDate().getTime() - BASE_DATE_TIME) / DAY_SECOND_COUNT;
         return (int) res;
     }
     
@@ -129,8 +135,7 @@ public class DateUtils {
       * @see [类、类#方法、类#成员]
      */
     public static int calculateNumberOfDaysBetween(Date afterDate, Date preDate) {
-        if (org.apache.commons.lang3.time.DateUtils.isSameDay(afterDate,
-                preDate)) {
+        if (org.apache.commons.lang3.time.DateUtils.isSameDay(afterDate, preDate)) {
             return 0;
         }
         int afterDays = getDays(afterDate);
@@ -140,35 +145,67 @@ public class DateUtils {
     
     public static void main2(String[] args) {
         DateTime now = DateTime.now();
-        System.out.println(calculateNumberOfDaysBetween(now.toDate(),
-                new DateTime("2014-12-13").toDate()));
+        System.out.println(calculateNumberOfDaysBetween(now.toDate(), new DateTime("2014-12-13").toDate()));
     }
     
     public static void main(String[] args) {
         DateTime now = DateTime.now();
-        System.out.println(getDays(now.toDate()));
+        //        System.out.println(getDays(now.toDate()));
+        //        
+        //        System.out.println((new DateTime(1970, 1, 1, 0, 0, 0).toDate()).getTime());
+        //        
+        //        System.out.println(getDays(new DateTime(1970, 1, 1, 0, 0, 0).toDate()));
+        //        
+        //        System.out.println(getDays(new DateTime(1970, 1, 1, 0, 1, 0).toDate()));
+        System.out.println(BASE_DATE_TIME);
+        System.out.println(DAY_SECOND_COUNT);
         
-        System.out.println((new DateTime(1970, 1, 1, 0, 0, 0).toDate()).getTime());
+        System.out.println("-----------------------");
         
-        System.out.println(getDays(new DateTime(1970, 1, 1, 0, 0, 0).toDate()));
+        System.out.println(
+                ((new DateTime(now.getYear(), now.getMonthOfYear(), now.getDayOfMonth(), 0, 0, 0)).toDate().getTime()
+                        - BASE_DATE_TIME) % DAY_SECOND_COUNT);
+        System.out.println(
+                ((new DateTime(now.getYear(), now.getMonthOfYear(), now.getDayOfMonth(), 0, 0, 0)).toDate().getTime()
+                        - BASE_DATE_TIME) / DAY_SECOND_COUNT);
         
-        System.out.println(getDays(new DateTime(now.getYear(),
-                now.getMonthOfYear(), now.getDayOfMonth(), 0, 0, 0).toDate()));
+        System.out.println(
+                ((new DateTime(now.getYear(), now.getMonthOfYear(), now.getDayOfMonth(), 0, 5, 0)).toDate().getTime()
+                        - BASE_DATE_TIME) % DAY_SECOND_COUNT);
+        System.out.println(
+                ((new DateTime(now.getYear(), now.getMonthOfYear(), now.getDayOfMonth(), 0, 5, 0)).toDate().getTime()
+                        - BASE_DATE_TIME) / DAY_SECOND_COUNT);
         
-        System.out.println(getDays(new DateTime(now.getYear(),
-                now.getMonthOfYear(), now.getDayOfMonth(), 0, 0, 0).toDate()));
+        System.out.println(
+                ((new DateTime(now.getYear(), now.getMonthOfYear(), now.getDayOfMonth(), 1, 0, 0)).toDate().getTime()
+                        - BASE_DATE_TIME) % DAY_SECOND_COUNT);
+        System.out.println(
+                ((new DateTime(now.getYear(), now.getMonthOfYear(), now.getDayOfMonth(), 1, 0, 0)).toDate().getTime()
+                        - BASE_DATE_TIME) / DAY_SECOND_COUNT);
         
-        System.out.println(getDays(new DateTime(now.getYear(),
-                now.getMonthOfYear(), now.getDayOfMonth(), 7, 59, 59).toDate()));
+        System.out.println(
+                getDays(new DateTime(now.getYear(), now.getMonthOfYear(), now.getDayOfMonth(), 0, 0, 0).toDate()));
+        
+        System.out.println(
+                getDays(new DateTime(now.getYear(), now.getMonthOfYear(), now.getDayOfMonth(), 0, 33, 0).toDate()));
+        
+        System.out.println(
+                getDays(new DateTime(now.getYear(), now.getMonthOfYear(), now.getDayOfMonth(), 1, 0, 0).toDate()));
+        
+        System.out.println(
+                getDays(new DateTime(now.getYear(), now.getMonthOfYear(), now.getDayOfMonth(), 7, 59, 59).toDate()));
         
         DateTime be = now.plusDays(-1);
-        System.out.println(getDays(new DateTime(be.getYear(),
-                be.getMonthOfYear(), be.getDayOfMonth(), 0, 0, 0).toDate()));
+        System.out.println(
+                getDays(new DateTime(be.getYear(), be.getMonthOfYear(), be.getDayOfMonth(), 0, 0, 0).toDate()));
         
-        System.out.println(getDays(new DateTime(be.getYear(),
-                be.getMonthOfYear(), be.getDayOfMonth(), 0, 0, 0).toDate()));
+        System.out.println(
+                getDays(new DateTime(be.getYear(), be.getMonthOfYear(), be.getDayOfMonth(), 0, 0, 1).toDate()));
         
-        System.out.println(getDays(new DateTime(be.getYear(),
-                be.getMonthOfYear(), be.getDayOfMonth(), 7, 59, 59).toDate()));
+        System.out.println(
+                getDays(new DateTime(be.getYear(), be.getMonthOfYear(), be.getDayOfMonth(), 1, 0, 1).toDate()));
+        
+        System.out.println(
+                getDays(new DateTime(be.getYear(), be.getMonthOfYear(), be.getDayOfMonth(), 7, 59, 59).toDate()));
     }
 }
