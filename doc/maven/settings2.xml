@@ -5,39 +5,17 @@
 	<!-- 本地仓库地址：可修改为本机任意路径，依赖包将放置于该包中 -->
 	<localRepository>d:/repository/repo</localRepository>
 
-	<!-- 是否关闭网络连接 -->
-	<!-- <offline>false</offline> -->
-
-	<!-- 默认插件组 -->
-	<pluginGroups>
-		<!-- <pluginGroup>com.your.plugins</pluginGroup> -->
-	</pluginGroups>
-
-	<!-- 配置网络代理 -->
-	<proxies>
-		<!-- <proxy> -->
-		<!-- <id>optional</id> -->
-		<!-- <active>true</active> -->
-		<!-- <protocol>http</protocol> -->
-		<!-- <username>proxyuser</username> -->
-		<!-- <password>proxypass</password> -->
-		<!-- <host>proxy.host.net</host> -->
-		<!-- <port>80</port> -->
-		<!-- <nonProxyHosts>local.net|some.host.com</nonProxyHosts> -->
-		<!-- </proxy> -->
-	</proxies>
-
 	<!-- 对应版本发布时用户名密码 -->
 	<servers>
 		<server>
 			<id>snapshots</id>
-			<username>admin</username>
-			<password>admin123</password>
+			<username>deployment</username>
+			<password>deployment123</password>
 		</server>
 		<server>
 			<id>releases</id>
-			<username>admin</username>
-			<password>admin123</password>
+			<username>deployment</username>
+			<password>deployment123</password>
 		</server>
 		<!-- Another sample, using keys to authenticate. -->
 		<!-- <server> -->
@@ -52,7 +30,7 @@
 		<mirror>
 			<id>nexusForCentral</id>
 			<name>internalNexusRepository</name>
-			<url>http://112.124.7.157:8081/nexus/content/groups/public/</url>
+			<url>http://192.168.100.87:8082/nexus/content/groups/public</url>
 			<mirrorOf>central</mirrorOf>
 		</mirror>
 	</mirrors>
@@ -64,7 +42,7 @@
 			<repositories>
 				<repository>
 					<id>nexus</id>
-					<url>http://112.124.7.157:8081/nexus/content/groups/public/</url>
+					<url>http://192.168.100.87:8082/nexus/content/groups/public</url>
 					<releases>
 						<enabled>true</enabled>
 					</releases>
@@ -76,7 +54,7 @@
 			<pluginRepositories>
 				<pluginRepository>
 					<id>nexus</id>
-					<url>http://112.124.7.157:8081/nexus/content/groups/public/</url>
+					<url>http://192.168.100.87:8082/nexus/content/groups/public</url>
 					<releases>
 						<enabled>true</enabled>
 					</releases>
