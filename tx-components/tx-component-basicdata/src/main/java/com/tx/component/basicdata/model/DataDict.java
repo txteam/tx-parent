@@ -6,7 +6,6 @@
  */
 package com.tx.component.basicdata.model;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -95,16 +94,6 @@ public class DataDict implements EntryAble<EntityEntry>, ConfigInitAble,
     @OneToMany
     @Transient
     private List<EntityEntry> entryList = new ArrayList<>();
-
-    private BigDecimal amount;
-
-    public BigDecimal getAmount() {
-        return amount;
-    }
-
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
-    }
 
     /**
      * @return 返回 id
