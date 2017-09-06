@@ -7,15 +7,8 @@
 package com.tx.core.generator.util;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -56,7 +49,7 @@ public class GeneratorUtils {
     public static Map<String, FieldView> generateFieldViewMapping(
             JpaMetaClass<?> jpaMetaClass, SqlSource<?> sqlSource,
             String[][] uniqueGetterNamesArray) {
-        Map<String, FieldView> fieldViewMap = new HashMap<String, FieldView>();
+        Map<String, FieldView> fieldViewMap = new LinkedHashMap<>();
         String pkFieldName = jpaMetaClass.getPkGetterName();
         Set<String> updateAbleGetterSet = sqlSource.getUpdateAblePropertyNames();
         Map<String, String[]> uniqueGetterNameMap = new HashMap<String, String[]>();

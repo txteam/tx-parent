@@ -6,14 +6,7 @@
  */
 package com.tx.core.reflection;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.WeakHashMap;
+import java.util.*;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -185,15 +178,37 @@ public class JpaMetaClass<T> {
         Map<String, JpaColumnInfo> getter2columnInfoMapping = new LinkedHashMap<String, JpaColumnInfo>();
         Map<String, String> column2realGetterMapping = new LinkedHashMap<String, String>();
 
+        //根据写的顺序生成
+        Set<String> fieldNames = classReflector.getFieldNames();
+        Set<String> getterNames  = classReflector.getGetterNames();
+
+        Set<String> newFieldName = new LinkedHashSet<>();
+
+        for(String fieldName:fieldNames){
+            if(getterNames.contains(fieldName)){
+                newFieldName.add(fieldName);
+            }
+        }
+        for( String fieldName:getterNames){
+            if(!newFieldName.contains(fieldName)){
+                newFieldName.add(fieldName);
+            }
+        }
+        getterNames = newFieldName;
+
+        Set<String> fieldNameSet = classReflector.getFieldNames();
         //TODO classRefector.getFiledMapping 顺序可以考虑
-        for (String getterNameTemp : this.classReflector.getGetterNames()) {
+        for (String getterNameTemp : newFieldName) {
+            if(!getterNames.contains(getterNameTemp)){
+                continue;
+            }
             //是否需要忽略对应字段
             if (isNeedSkip(type, getterNameTemp, this.classReflector.getGetterType(getterNameTemp))) {
                 continue;
             }
 
             Class<?> getterType = this.classReflector.getGetterType(getterNameTemp);
-            //Field getterField = this.classReflector.getFiled(getterNameTemp);
+            //Field getterField = this.classReflector.getField(getterNameTemp);
             //Method getterMethod = this.classReflector.getGetterMethod(getterNameTemp);
             JpaColumnInfo jpaColumnInfo = parseGetter(getterNameTemp, getterType, type, this.classReflector);
 
@@ -204,13 +219,13 @@ public class JpaMetaClass<T> {
         }
 
         List<String> getterNameList = new ArrayList<>(getter2columnInfoMapping.keySet());
-        Collections.sort(getterNameList, nameComparator);
+//        Collections.sort(getterNameList, nameComparator);
         for (String keyTemp : getterNameList) {
             JpaColumnInfo columnInfoTemp = getter2columnInfoMapping.get(keyTemp);
             this.getter2columnInfoMapping.put(keyTemp, columnInfoTemp);
         }
         List<String> columnNameList = new ArrayList<>(column2realGetterMapping.keySet());
-        Collections.sort(columnNameList, nameComparator);
+//        Collections.sort(columnNameList, nameComparator);
         for (String keyTemp : columnNameList) {
             String getterNameTemp = column2realGetterMapping.get(keyTemp);
             this.column2realGetterMapping.put(keyTemp, getterNameTemp);
@@ -253,8 +268,8 @@ public class JpaMetaClass<T> {
         jpaColumnInfo.setRealGetterType(getterType);
         //设置对应数据库字段类型长度等几个
         jpaColumnInfo.setLength(255);
-        jpaColumnInfo.setPrecision(0);
-        jpaColumnInfo.setScale(0);
+        jpaColumnInfo.setPrecision(16);
+        jpaColumnInfo.setScale(2);
 
         //根据是否为简单类型
         if (JdbcUtils.isSupportedSimpleType(getterType)) {
@@ -603,6 +618,8 @@ public class JpaMetaClass<T> {
             map.put("PARENTID","父类ID");
             map.put("MODIFYABLE","是否可以修改");
             map.put("REMARK","备注");
+            map.put("DESCRIPTION","描述");
+            map.put("AMOUNT","金额");
             map.put("CODE","编码");
             map.put("NAME","名称");
             map.put("CREATEDATE","创建时间");
