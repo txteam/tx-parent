@@ -378,8 +378,14 @@ function enableFun(id,name){
 							readonly="readonly"
 							onclick="WdatePicker({readOnly:true,dateFmt:'yyyy-MM-dd HH:mm:ss'})"/>
 					</td>
-	</#if>
-	<#if conditionInfo.queryConditionJavaType.simpleName != "Date">
+	<#elseif conditionInfo.queryConditionJavaType.simpleName == "boolean">
+					<td><select id="${conditionInfo.queryConditionKey}" name="${conditionInfo.queryConditionKey}"/>
+							<option value="">全部</option>
+							<option value="1">是</option>
+							<option value="0">否</option>
+						</select>
+					</td>
+	<#elseif conditionInfo.queryConditionJavaType.simpleName != "Date">
 					<td><input id="${conditionInfo.queryConditionKey}" name="${conditionInfo.queryConditionKey}"/></td>
 	</#if>
 	<#if (conditionInfo_has_next && conditionInfo_index%2 == 1)>

@@ -8,12 +8,7 @@ package com.tx.core.reflection;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.WeakHashMap;
+import java.util.*;
 
 import org.apache.commons.lang3.ClassUtils;
 import org.springframework.util.LinkedMultiValueMap;
@@ -183,11 +178,11 @@ public class ClassReflector<T> {
     
     private Class<T> type;
     
-    private Set<String> setterNames = new HashSet<String>();
+    private Set<String> setterNames = new LinkedHashSet<String>();
     
-    private Set<String> getterNames = new HashSet<String>();
+    private Set<String> getterNames = new LinkedHashSet<String>();
     
-    private Set<String> fieldNames = new HashSet<String>();
+    private Set<String> fieldNames = new LinkedHashSet<>();
     
     private MultiValueMap<String, Field> fieldMapping = new LinkedMultiValueMap<String, Field>();
     
@@ -224,10 +219,10 @@ public class ClassReflector<T> {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public Field getFiled(String fieldName) {
+    public Field getField(String fieldName) {
         return this.fieldMapping.getFirst(fieldName);
     }
-    
+
     /**
       * 获取字段列表
       *<功能详细描述>
@@ -252,7 +247,7 @@ public class ClassReflector<T> {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public Class<?> getFiledType(String fieldName) {
+    public Class<?> getFieldType(String fieldName) {
         return this.fieldTypeMapping.get(fieldName);
     }
     

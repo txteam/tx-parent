@@ -438,7 +438,7 @@ public class ReflectionUtils {
             }
         }
         
-        Field field = reflector.getFiled(getterName);
+        Field field = reflector.getField(getterName);
         if (field != null) {
             res = field.getAnnotation(annotationType);
         }
