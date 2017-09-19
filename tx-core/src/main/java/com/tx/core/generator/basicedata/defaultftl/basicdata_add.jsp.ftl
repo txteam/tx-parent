@@ -6,9 +6,13 @@
 <html xmlns:form="http://www.w3.org/1999/html">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>add${view.entitySimpleName}</title>
+<title>添加${view.entitySimpleName}</title>
 <%@include file="../includes/commonHead.jsp" %>
 
+<style>
+	table th {width: 25%}
+	table td{width: 75%}
+</style>
 <script type="text/javascript" >
 $(document).ready(function(){
 	parent.DialogUtils.progress('close');
@@ -57,8 +61,8 @@ function cancelFun(){
 			<#if validPropertyName != fieldView.fieldName>
 				<tr>
 					<!--//TODO:修改字段是否必填,修改其中文名-->
-					<th class="narrow" width="20%"><#if fieldView.fieldComment?? >${fieldView.fieldComment}<#else >${fieldView.fieldName}</#if>:<#if fieldView.isRequired()><span class="tRed">*</span></#if></th>
-					<td width="80%">
+					<th class="narrow" ><#if fieldView.fieldComment?? >${fieldView.fieldComment}<#else >${fieldView.fieldName}</#if>:<#if fieldView.isRequired()><span class="tRed">*</span></#if></th>
+					<td >
 						<#if fieldView.javaType.simpleName =="boolean" || fieldView.javaType.simpleName == 'Boolean'>
 							<form:select path="${fieldView.fieldName}" cssClass="text" <#if fieldView.validateExpression?exists>
                                          data-rule="${fieldView.fieldName}:${fieldView.validateExpression}"</#if>>
