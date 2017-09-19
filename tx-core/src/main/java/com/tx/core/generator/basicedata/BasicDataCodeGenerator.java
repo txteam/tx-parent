@@ -72,7 +72,7 @@ public class BasicDataCodeGenerator {
     
     private static String queryListTemplateFilePath = "com/tx/core/generator/basicedata/defaultftl/basicdata_queryList.jsp.ftl";
 
-//    private static String detailTemplateFilePath = "com/tx/core/generator/basicedata/defaultftl/basicdata_detail.jsp.ftl";
+    private static String detailTemplateFilePath = "com/tx/core/generator/basicedata/defaultftl/basicdata_detail.jsp.ftl";
 
     private static String addTemplateFilePath = "com/tx/core/generator/basicedata/defaultftl/basicdata_add.jsp.ftl";
     
@@ -372,6 +372,13 @@ public class BasicDataCodeGenerator {
                 data,
                 codeBaseFolder + "/main/webapp/WEB-INF/view/" + packageName
                         + "/add" + jpaMetaClass.getEntitySimpleName() + ".jsp");
+
+        FreeMarkerUtils.fprint(loadTemplateClass,
+                detailTemplateFilePath,
+                data,
+                codeBaseFolder + "/main/webapp/WEB-INF/view/" + packageName
+                        + "/detail" + jpaMetaClass.getEntitySimpleName() + ".jsp");
+
         FreeMarkerUtils.fprint(loadTemplateClass,
                 updateTemplateFilePath,
                 data,

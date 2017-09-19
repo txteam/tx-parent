@@ -6,6 +6,7 @@
  */
 package ${service.basePackage}.service;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,7 +63,7 @@ public class ${service.entitySimpleName}Service {
 <#if !StringUtils.isEmpty(validPropertyName)>
 		${service.lowerCaseEntitySimpleName}.set${validPropertyName?cap_first}(true);
 </#if>
-        
+        ${service.lowerCaseEntitySimpleName}.setCreateDate(new Date());
         //调用数据持久层对实体进行持久化操作
         this.${service.lowerCaseEntitySimpleName}Dao.insert(${service.lowerCaseEntitySimpleName});
     }

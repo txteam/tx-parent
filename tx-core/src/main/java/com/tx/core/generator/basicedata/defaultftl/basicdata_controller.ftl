@@ -138,6 +138,25 @@ public class ${view.entitySimpleName}Controller {
         return "/${packageName}/update${view.entitySimpleName}";
     }
 
+    /**
+    * 跳转到编辑${view.entitySimpleName}页面
+    *<功能详细描述>
+    * @return [参数说明]
+    *
+    * @return String [返回类型说明]
+    * @exception throws [异常类型] [异常说明]
+    * @see [类、类#方法、类#成员]
+    */
+    @RequestMapping("/toView${view.entitySimpleName}")
+    public String toViewById${view.entitySimpleName}(
+    @RequestParam("${view.lowerCaseEntitySimpleName}${view.upCaseIdPropertyName}") String ${view.lowerCaseEntitySimpleName}${view.upCaseIdPropertyName},
+    ModelMap response) {
+${view.entitySimpleName} res${view.entitySimpleName} = this.${view.lowerCaseEntitySimpleName}Service.findBy${view.upCaseIdPropertyName}(${view.lowerCaseEntitySimpleName}${view.upCaseIdPropertyName});
+    response.put("${view.lowerCaseEntitySimpleName}", res${view.entitySimpleName});
+
+    return "/${packageName}/detail${view.entitySimpleName}";
+    }
+
 <#if !ObjectUtils.isEmpty(uniqueGetterNamesArray)>
 	<#list uniqueGetterNamesArray as uniqueGetterNames>
     /**

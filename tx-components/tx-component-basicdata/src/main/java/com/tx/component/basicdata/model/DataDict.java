@@ -177,7 +177,7 @@ public class DataDict implements EntryAble<EntityEntry>, ConfigInitAble,
     public boolean isValid() {
         return valid;
     }
-    
+
     /**
      * @param 对valid进行赋值
      */

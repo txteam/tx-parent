@@ -44,6 +44,7 @@ var entityName = '${view.entitySimpleName}';
 
 $(document).ready(function(){
 	var  $editALink = $("#editALink");
+	var  $viewALink = $("#viewALink");
 	var  $deleteALink = $("#deleteALink");
 <#if !StringUtils.isEmpty(validPropertyName)>
 	var  $enableALink = $("#enableALink");
@@ -53,7 +54,11 @@ $(document).ready(function(){
 	grid = $('#grid').datagrid({
 		url : '${r"${contextPath}"}/${view.lowerCaseEntitySimpleName}/query<#if isPagedList>PagedList<#else>List</#if>.action',
 		fit : true,
-		fitColumns : true,
+	<#if (fieldViewMapping?size gt 15) >
+	    fitColumns : false,
+	<#else >
+        fitColumns : true,
+	</#if>
 		border : false,
 		idField : 'id',
 		checkOnSelect : false,
@@ -63,8 +68,8 @@ $(document).ready(function(){
 		singleSelect : true,
 <#if isPagedList>
 		pagination : true,
-		pageSize : 10,
-		pageList : [ 10, 20, 30, 40, 50 ],
+		pageSize : 15,
+		pageList : [ 15, 20, 30, 40, 50 ],
 		loadFilter: function(data){
 			var res = {total:0,rows:[]};
 			if(!$.ObjectUtils.isEmpty(data)
@@ -102,6 +107,8 @@ $(document).ready(function(){
 	   			}
 	   			return text;
 			}
+			<#elseif fieldView.javaType.enum>
+		 //  ,formatter: baseJsonformatter
 			</#if>
 		}<#if fieldView_has_next>,</#if>
 		<#else>
@@ -110,7 +117,7 @@ $(document).ready(function(){
 			field : '${fieldView.fieldName}.${fieldView.foreignKeyFieldName}',
 			<%!//FIXME: 修改属性中文名 --%>
 			title : '${fieldView.fieldName}.${fieldView.foreignKeyFieldName}',
-			width : 200
+			width : 100
 		}<#if fieldView_has_next>,</#if>
 		</#if>
 	</#if>
@@ -119,28 +126,33 @@ $(document).ready(function(){
 		,{
 			field : 'action',
 			title : '操作',
-			width : 220,
+			width : 100,
 			formatter : function(value, row, index) {
 				var str = '&nbsp;';
 <#if !StringUtils.isEmpty(validPropertyName)>
 				if(!row.${validPropertyName} && $.canEnable){
 					str += $.formatString('<img onclick="enableFun(\'{0}\',\'{1}\');" src="{2}" title="启用"/>', row[idFieldName], row[nameFieldName], '${r"${contextPath}"}/style/images/extjs_icons/control/control_play_blue.png');
-					str += '&nbsp;';
+					str += '&nbsp;&nbsp;';
 				}
 </#if>
+                str += $.formatString('<img onclick="viewFun(\'{0}\',\'{1}\');" src="{2}" title="详情"/>', row[idFieldName], row[nameFieldName], '${r"${contextPath}"}/style/images/extjs_icons/pencil_go.png');
+                str += '&nbsp;&nbsp;';
+
 				if($.canUpdate){
 					str += $.formatString('<img onclick="editFun(\'{0}\',\'{1}\');" src="{2}" title="编辑"/>', row[idFieldName], row[nameFieldName], '${r"${contextPath}"}/style/images/extjs_icons/pencil.png');
-					str += '&nbsp;';
+					str += '&nbsp;&nbsp;';
 				}
 				
 				if($.canDelete){
 					str += $.formatString('<img onclick="deleteFun(\'{0}\',\'{1}\');" src="{2}" title="删除"/>', row[idFieldName], row[nameFieldName], '${r"${contextPath}"}/style/images/extjs_icons/pencil_delete.png');
-					str += '&nbsp;';
+					str += '&nbsp;&nbsp;';
 				}
+
+
 <#if !StringUtils.isEmpty(validPropertyName)>
 				if(row.${validPropertyName} && $.canDisable){
 					str += $.formatString('<img onclick="disableFun(\'{0}\',\'{1}\');" src="{2}" title="禁用"/>', row[idFieldName], row[nameFieldName], '${r"${contextPath}"}/style/images/extjs_icons/control/control_stop_blue.png');
-					str += '&nbsp;';
+					str += '&nbsp;&nbsp;';
 				}
 </#if>
 				return str;
@@ -156,6 +168,7 @@ $(document).ready(function(){
 		},
 		onClickRow : function(index, row){
 			$editALink.linkbutton('enable');
+            $viewALink.linkbutton('enable');
 			$deleteALink.linkbutton('enable');
 <#if !StringUtils.isEmpty(validPropertyName)>
 			
@@ -177,10 +190,11 @@ $(document).ready(function(){
 			$(this).datagrid('tooltip');
 			
 			$editALink.linkbutton('disable');
+            $viewALink.linkbutton('disable');
 			$deleteALink.linkbutton('disable');
 <#if !StringUtils.isEmpty(validPropertyName)>
-
 			$enableALink.show();
+   			$viewALink.show();
 			$disableALink.show();
 			$enableALink.linkbutton('disable');
 			$disableALink.linkbutton('disable');
@@ -207,7 +221,7 @@ function addFun() {
 		"add${view.entitySimpleName}",
 		"新增" + entityName,
 		$.formatString("${r"${contextPath}"}/${view.lowerCaseEntitySimpleName}/toAdd${view.entitySimpleName}.action"),
-		450,${fieldViewMapping?size*30+50},function(){
+		500,${(fieldViewMapping?size*28+40)?string("#")},function(){
 			queryFun();
 	});
 	return false;
@@ -233,10 +247,36 @@ function editFun(id,name) {
 		"update${view.entitySimpleName}",
 		"编辑" + entityName + ":" + name,
 		$.formatString("${r"${contextPath}"}/${view.lowerCaseEntitySimpleName}/toUpdate${view.entitySimpleName}.action?${view.lowerCaseEntitySimpleName}Id={0}",id),
-		450,${fieldViewMapping?size*30+50},function(){
-			queryFun();
+            500,${(fieldViewMapping?size*28+40)?string("#")},function(){
+			//queryFun();
 	});
 	return false;
+}
+
+/**
+ * 详情
+ */
+function viewFun(id,name) {
+    if (id == undefined) {
+        var rows = grid.datagrid('getSelections');
+        id = rows[0][idFieldName];
+        name = rows[0][nameFieldName];
+    }
+    if($.ObjectUtils.isEmpty(id)){
+        DialogUtils.alert("没有选中的" + entityName);
+        return ;
+    }
+    DialogUtils.progress({
+        text : '加载中，请等待....'
+    });
+	DialogUtils.openModalDialog(
+		"view${view.entitySimpleName}",
+		"" + entityName + "详情:" + name,
+		$.formatString("${r"${contextPath}"}/${view.lowerCaseEntitySimpleName}/toView${view.entitySimpleName}.action?${view.lowerCaseEntitySimpleName}Id={0}",id),
+            900,${(fieldViewMapping?size/2*28+50)?string("#")},function(){
+			//queryFun();
+		});
+    return false;
 }
 /*
  * 删除
@@ -368,7 +408,7 @@ function enableFun(id,name){
 		<form id="queryForm" class="form">
 			<table class="table table-hover table-condensed">
 <#list view.queryConditionName2ConditionInfoMapping?values as conditionInfo>
-	<#if conditionInfo_index%2 = 0>
+	<#if conditionInfo_index%3 = 0>
 				<tr>
 	</#if>
 					<!--//FIXME: 修改查询条件中文名 -->
@@ -378,27 +418,27 @@ function enableFun(id,name){
 							readonly="readonly"
 							onclick="WdatePicker({readOnly:true,dateFmt:'yyyy-MM-dd HH:mm:ss'})"/>
 					</td>
-	<#elseif conditionInfo.queryConditionJavaType.simpleName == "boolean">
+	<#elseif conditionInfo.queryConditionJavaType.simpleName?uncap_first == "boolean">
 					<td><select id="${conditionInfo.queryConditionKey}" name="${conditionInfo.queryConditionKey}"/>
 							<option value="">全部</option>
 							<option value="1">是</option>
 							<option value="0">否</option>
 						</select>
 					</td>
-	<#elseif conditionInfo.queryConditionJavaType.simpleName != "Date">
+	<#else >
 					<td><input id="${conditionInfo.queryConditionKey}" name="${conditionInfo.queryConditionKey}"/></td>
 	</#if>
-	<#if (conditionInfo_has_next && conditionInfo_index%2 == 1)>
+	<#if (conditionInfo_has_next && (conditionInfo_index+1)%3 == 0)>
 				</tr>
 	</#if>
-	<#if (!conditionInfo_has_next && conditionInfo_index%2 == 0)>
+	<#if (!conditionInfo_has_next && conditionInfo_index%3 != 0)>
 					<th>&nbsp;</th>
 					<td>&nbsp;</td>
 				</tr>
 	</#if>
 </#list>
 				<tr>
-					<td colspan="4" class="button operRow">
+					<td colspan="6" class="button operRow">
 						<a id="queryBtn" onclick="queryFun();return false;" href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'search'">查询</a>
 					</td>
 				</tr>
@@ -416,6 +456,10 @@ function enableFun(id,name){
 		<c:if test='${r"${authContext.hasAuth("}"update_${view.lowerCaseEntitySimpleName}") }'>
 			<a id="editALink" onclick="editFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'pencil'">编辑</a>
 		</c:if>
+		<c:if test='${r"${authContext.hasAuth("}"view_${view.lowerCaseEntitySimpleName}") }'>
+			<a id="viewALink" onclick="viewFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'pencil_go'">详情</a>
+		</c:if>
+
 		<c:if test='${r"${authContext.hasAuth("}"delete_${view.lowerCaseEntitySimpleName}") }'>
 			<a id="deleteALink" onclick="deleteFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'pencil_delete'">删除</a>
 		</c:if>
