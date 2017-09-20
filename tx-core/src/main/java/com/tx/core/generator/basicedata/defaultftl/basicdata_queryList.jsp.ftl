@@ -6,7 +6,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>query${view.entitySimpleName}<#if isPagedList>Paged</#if>List</title>
+<title>查询${view.entityComment}<#if isPagedList>Paged</#if>List</title>
 <%@include file="../includes/commonHead.jsp" %>
 <script type="text/javascript" >
 //权限判定
@@ -40,7 +40,7 @@ var idFieldName = '${view.idPropertyName}';
 <%!//FIXME: 修改名字字段 --%>
 var nameFieldName = '${view.idPropertyName}'; 
 <%!//FIXME: 修改实体名称 --%>
-var entityName = '${view.entitySimpleName}'; 
+var entityName = '${view.entityComment}';
 
 $(document).ready(function(){
 	var  $editALink = $("#editALink");
@@ -291,7 +291,7 @@ function deleteFun(id,name) {
 		DialogUtils.alert("没有选中的" + entityName);
 		return false;
 	}
-	//判断是否确认删除指定的${view.entitySimpleName}
+	//判断是否确认删除指定的${view.entityComment}
 	DialogUtils.confirm("确认提醒" , 
     	$.formatString("是否确认删除{0}:[{1}]?",entityName,name) , 
     	function(data){
@@ -299,7 +299,7 @@ function deleteFun(id,name) {
 	    		DialogUtils.progress({
 	    	        text : '数据提交中，请等待....'
 	    		});
-	    		//如果确认删除指定的${view.entitySimpleName}
+	    		//如果确认删除指定的${view.entityComment}
 	    		$.post(
 			    		'${r"${contextPath}"}/${view.lowerCaseEntitySimpleName}/deleteBy${view.upCaseIdPropertyName}.action',
 			    		{${view.lowerCaseEntitySimpleName}Id:id},
@@ -331,7 +331,7 @@ function disableFun(id,name){
 		DialogUtils.alert("没有选中的" + entityName);
 		return false;
 	}
-	//判断是否确认禁用指定${view.entitySimpleName}
+	//判断是否确认禁用指定${view.entityComment}
 	DialogUtils.confirm(
     		"确认提醒" , 
     		$.formatString("是否确认禁用{0}:[{1}]?",entityName,name), 
@@ -340,7 +340,7 @@ function disableFun(id,name){
     		DialogUtils.progress({
     	        text : '数据提交中，请等待....'
     		});
-    		//如果确认禁用指定${view.entitySimpleName}
+    		//如果确认禁用指定${view.entityComment}
     		$.post(
 		    		'${r"${contextPath}"}/${view.lowerCaseEntitySimpleName}/disableBy${view.upCaseIdPropertyName}.action',
 		    		{${view.lowerCaseEntitySimpleName}Id:id},
@@ -371,7 +371,7 @@ function enableFun(id,name){
 		DialogUtils.alert("没有选中的" + entityName);
 		return false;
 	}
-	//判断是否确认禁用指定${view.entitySimpleName}
+	//判断是否确认禁用指定${view.entityComment}
 	DialogUtils.confirm(
     		"确认提醒" , 
     		$.formatString("是否确认启用{0}:[{1}]?",entityName,name), 
@@ -380,7 +380,7 @@ function enableFun(id,name){
     		DialogUtils.progress({
     	        text : '数据提交中，请等待....'
     		});
-    		//如果确认启用指定${view.entitySimpleName}
+    		//如果确认启用指定${view.entityComment}
     		$.post(
 		    		'${r"${contextPath}"}/${view.lowerCaseEntitySimpleName}/enableBy${view.upCaseIdPropertyName}.action',
 		    		{${view.lowerCaseEntitySimpleName}Id:id},

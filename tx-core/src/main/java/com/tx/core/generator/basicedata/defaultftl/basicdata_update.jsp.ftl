@@ -6,7 +6,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>update${view.entitySimpleName}</title>
+<title>更新${view.entityComment}</title>
 <%@include file="../includes/commonHead.jsp" %>
 
 <style>
@@ -29,10 +29,10 @@ $(document).ready(function(){
 			    success: function(data) {
 			    	DialogUtils.progress('close');
 					if(data){
-						parent.DialogUtils.tip("修改${view.lowerCaseEntitySimpleName}成功.");
+						parent.DialogUtils.tip("修改${view.entityComment}成功.");
 						parent.DialogUtils.closeDialogById("update${view.entitySimpleName}");
 					}else{
-						DialogUtils.alert("错误提示","修改${view.lowerCaseEntitySimpleName}失败.","error");
+						DialogUtils.alert("错误提示","修改${view.entityComment}失败.","error");
 					}
 			    } 
 			});
@@ -96,7 +96,7 @@ function cancelFun(){
 					<th class="narrow" width="20%">${fieldView.fieldName}.${fieldView.foreignKeyFieldName}</th>
 					<td width="80%">
 						//TODO:修改其显示逻辑
-						<form:input path="${fieldView.fieldName}" cssClass="text"/>
+						<form:input path="${fieldView.fieldName}.${fieldView.foreignKeyFieldName}" cssClass="text"/>
 					</td>
 				</tr>
 </#if>

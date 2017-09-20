@@ -130,6 +130,8 @@ public class MetaEntityEntry {
     
     /** 表名 */
     private final String tableName;
+
+    private final  String tableComment;
     
     /** 历史表：表名 */
     private final String hisTableName;
@@ -233,6 +235,8 @@ public class MetaEntityEntry {
         } else {
             this.tableName = tableName;
         }
+        this.tableComment = this.jpaMetaClass.getTableComment();
+
         try {
             this.beanInfo = Introspector.getBeanInfo(type);
             this.propertyDescriptors = beanInfo.getPropertyDescriptors();
