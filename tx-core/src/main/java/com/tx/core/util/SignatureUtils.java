@@ -51,8 +51,7 @@ public class SignatureUtils {
         String ipInfo = null;
         try {
             ipInfo = getIpAddressInfo();
-            if (ipInfo.startsWith("127.0.0.1")
-                    || ipInfo.startsWith("localhost")) {
+            if (ipInfo.startsWith("127.0.0.1") || ipInfo.startsWith("localhost")) {
                 ipInfo = getIpInfoHashCodeMD5();
             }
         } catch (UnknownHostException | SocketException e1) {
@@ -63,6 +62,7 @@ public class SignatureUtils {
         sb.append(getClassPathHashCodeMD5());
         
         String signature = sb.toString();
+        //String.valueOf(Math.abs(sb.toString().hashCode()));
         return signature;
     }
     
@@ -93,16 +93,13 @@ public class SignatureUtils {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    private static String getIpAddressInfo() throws SocketException,
-            UnknownHostException {
-        StringBuilder ipAddressInfoSB = new StringBuilder(
-                TxConstants.INITIAL_STR_LENGTH);
+    private static String getIpAddressInfo() throws SocketException, UnknownHostException {
+        StringBuilder ipAddressInfoSB = new StringBuilder(TxConstants.INITIAL_STR_LENGTH);
         InetAddress ia = InetAddress.getLocalHost();
         String address = ia.getHostAddress();
         ipAddressInfoSB.append(address).append("|");
         //获取网卡，获取地址
-        byte[] macBytes = NetworkInterface.getByInetAddress(ia)
-                .getHardwareAddress();
+        byte[] macBytes = NetworkInterface.getByInetAddress(ia).getHardwareAddress();
         StringBuffer sb = new StringBuffer("");
         for (int i = 0; i < macBytes.length; i++) {
             if (i != 0) {
