@@ -110,6 +110,8 @@ public class JpaMetaClass<T> {
     /** 对应表名 */
     private String tableName;
 
+    private String tableComment;
+
     /** 生成表名的简写，根据对象名生成  */
     private String simpleTableName;
 
@@ -280,9 +282,6 @@ public class JpaMetaClass<T> {
 
         if (ReflectionUtils.isHasAnnotationForGetter(type, getterName, Column.class)) {
             processWhenColumnAnnotationExist(getterName, type, jpaColumnInfo);
-        }
-        if (ReflectionUtils.isHasAnnotationForGetter(type, getterName, Comment.class)) {
-            processWhenCommentAnnotationExist(getterName, type, jpaColumnInfo);
         }
 
         //是否存在Column注解
@@ -568,6 +567,10 @@ public class JpaMetaClass<T> {
         this.entitySimpleName = this.type.getSimpleName();
         this.tableName = this.entitySimpleName;
 
+       Comment tableC = this.type.getAnnotation(Comment.class);
+       if(tableC!=null){
+           this.tableComment = tableC.value();
+       }
         //将类型截取掉
         this.modulePackageName = StringUtils.substringBeforeLast(this.type.getName(), ".");
         //将所在包
@@ -666,6 +669,10 @@ public class JpaMetaClass<T> {
         return tableName;
     }
 
+    public String getTableComment() {
+        return tableComment;
+    }
+
     /**
      * @return 返回 simpleTableName
      */
@@ -714,6 +721,8 @@ public class JpaMetaClass<T> {
     public Set<String> getSetterNames() {
         return this.classReflector.getSetterNames();
     }
+
+
 
     /**
      * 获取getter对应类型

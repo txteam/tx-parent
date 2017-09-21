@@ -10,8 +10,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.dialect.Dialect;
@@ -44,6 +44,8 @@ public class ViewerGeneratorModel {
     private String idPropertyName;
     
     private List<SqlMapColumn> sqlMapColumnList;
+
+    private String entityComment;
     
     /** 查询条件名与类型映射 */
     private Map<String, String> queryConditionName2TypeNameMapping = new HashMap<String, String>();
@@ -78,6 +80,10 @@ public class ViewerGeneratorModel {
         this.upCaseIdPropertyName = StringUtils.capitalize(jpaMetaClass.getPkGetterName());
         this.idPropertyName = sqlSource.getPkName();
         this.sqlMapColumnList = GeneratorUtils.generateSqlMapColumnList(jpaMetaClass);
+        this.entityComment = jpaMetaClass.getTableComment();
+        if(StringUtils.isEmpty(this.entityComment )){
+            this.entityComment = entitySimpleName;
+        }
         Map<String, SqlMapColumn> sqlMapColumnMap = new HashMap<String, SqlMapColumn>();
         for (SqlMapColumn sqlMapColumnTemp : this.sqlMapColumnList) {
             sqlMapColumnMap.put(sqlMapColumnTemp.getPropertyName(),
@@ -282,5 +288,13 @@ public class ViewerGeneratorModel {
     public void setUpdateAbleName2SqlMapColumnMapping(
             Map<String, SqlMapColumn> updateAbleName2SqlMapColumnMapping) {
         this.updateAbleName2SqlMapColumnMapping = updateAbleName2SqlMapColumnMapping;
+    }
+
+    public String getEntityComment() {
+        return entityComment;
+    }
+
+    public void setEntityComment(String entityComment) {
+        this.entityComment = entityComment;
     }
 }

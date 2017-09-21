@@ -62,6 +62,12 @@
 			<artifactId>jsoup</artifactId>
 			<optional>true</optional>
 		</dependency>
+		<!-- freemarker -->
+		<dependency>
+			<groupId>org.freemarker</groupId>
+			<artifactId>freemarker</artifactId>
+		</dependency>
+
 
 		<!-- junit -->
 		<dependency>

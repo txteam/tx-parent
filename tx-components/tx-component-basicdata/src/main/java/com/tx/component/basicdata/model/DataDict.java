@@ -38,6 +38,7 @@ import com.tx.core.support.initable.model.ConfigInitAble;
 @Entity
 @Table(name = "bd_data_dict")
 @BasicDataType(name = "数据字典", common = false, viewType = BasicDataViewTypeEnum.PAGEDLIST)
+@Comment("数据字典")
 public class DataDict implements EntryAble<EntityEntry>, ConfigInitAble,
         BasicData {
     
