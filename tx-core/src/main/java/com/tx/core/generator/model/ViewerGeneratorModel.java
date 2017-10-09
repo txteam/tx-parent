@@ -6,11 +6,7 @@
  */
 package com.tx.core.generator.model;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
@@ -51,7 +47,7 @@ public class ViewerGeneratorModel {
     private Map<String, String> queryConditionName2TypeNameMapping = new HashMap<String, String>();
     
     /** 查询条件名与ConditionInfo的映射 */
-    private Map<String, QueryConditionInfo> queryConditionName2ConditionInfoMapping = new HashMap<String, QueryConditionInfo>();
+    private Map<String, QueryConditionInfo> queryConditionName2ConditionInfoMapping = new LinkedHashMap<>();
     
     /** 可更新字段的键值关系 */
     private Map<String, String> updateKey2ValueMapping = new HashMap<String, String>();

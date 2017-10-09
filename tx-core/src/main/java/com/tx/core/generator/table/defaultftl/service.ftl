@@ -108,8 +108,6 @@ public class ${service.entitySimpleName}Service {
     
     /**
       * 根据${service.entitySimpleName}实体列表
-      * TODO:补充说明
-      * 
       * <功能详细描述>
       * @return [参数说明]
       * 
@@ -117,13 +115,10 @@ public class ${service.entitySimpleName}Service {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public List<${service.entitySimpleName}> queryList(/*TODO:自己定义条件*/) {
-        //TODO:判断条件合法性
+    public List<${service.entitySimpleName}> queryList(Map<String,Object> params) {
+        params = params == null ? new HashMap<String, Object>() : params;
         
-        //TODO:生成查询条件
-        Map<String, Object> params = new HashMap<String, Object>();
-        
-        //TODO:根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
+        //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
         List<${service.entitySimpleName}> resList = this.${service.lowerCaseEntitySimpleName}Dao.queryList(params);
         
         return resList;
@@ -131,8 +126,6 @@ public class ${service.entitySimpleName}Service {
     
     /**
      * 分页查询${service.entitySimpleName}实体列表
-     * TODO:补充说明
-     * 
      * <功能详细描述>
      * @return [参数说明]
      * 
@@ -140,14 +133,11 @@ public class ${service.entitySimpleName}Service {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    public PagedList<${service.entitySimpleName}> queryPagedList(/*TODO:自己定义条件*/int pageIndex,
+    public PagedList<${service.entitySimpleName}> queryPagedList(Map<String,Object> params,int pageIndex,
             int pageSize) {
-        //TODO:判断条件合法性
+        params = params == null ? new HashMap<String, Object>() : params;
         
-        //TODO:生成查询条件
-        Map<String, Object> params = new HashMap<String, Object>();
-        
-        //TODO:根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
+        //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
         PagedList<${service.entitySimpleName}> resPagedList = this.${service.lowerCaseEntitySimpleName}Dao.queryPagedList(params, pageIndex, pageSize);
         
         return resPagedList;
@@ -155,7 +145,6 @@ public class ${service.entitySimpleName}Service {
     
     /**
       * 查询${service.lowerCaseEntitySimpleName}列表总条数
-      * TODO:补充说明
       * <功能详细描述>
       * @return [参数说明]
       * 
@@ -163,13 +152,10 @@ public class ${service.entitySimpleName}Service {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public int count(/*TODO:自己定义条件*/){
-        //TODO:判断条件合法性
+    public int count(Map<String,Object> params){
+        params = params == null ? new HashMap<String, Object>() : params;
         
-        //TODO:生成查询条件
-        Map<String, Object> params = new HashMap<String, Object>();
-        
-        //TODO:根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
+        //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
         int res = this.${service.lowerCaseEntitySimpleName}Dao.count(params);
         
         return res;
@@ -187,12 +173,12 @@ public class ${service.entitySimpleName}Service {
      */
     @Transactional
     public boolean updateBy${service.upCaseIdPropertyName}(${service.entitySimpleName} ${service.lowerCaseEntitySimpleName}) {
-        //TODO:验证参数是否合法，必填字段是否填写，
+        //验证参数是否合法，必填字段是否填写，
         AssertUtils.notNull(${service.lowerCaseEntitySimpleName}, "${service.lowerCaseEntitySimpleName} is null.");
         AssertUtils.notEmpty(${service.lowerCaseEntitySimpleName}.get${service.upCaseIdPropertyName}(), "${service.lowerCaseEntitySimpleName}.${service.idPropertyName} is empty.");
         
         
-        //TODO:生成需要更新字段的hashMap
+        //生成需要更新字段的hashMap
         Map<String, Object> updateRowMap = new HashMap<String, Object>();
         updateRowMap.put("${service.idPropertyName}", ${service.lowerCaseEntitySimpleName}.get${service.upCaseIdPropertyName}());
         
@@ -210,7 +196,7 @@ public class ${service.entitySimpleName}Service {
         
         int updateRowCount = this.${service.lowerCaseEntitySimpleName}Dao.update(updateRowMap);
         
-        //TODO:如果需要大于1时，抛出异常并回滚，需要在这里修改
+        //如果需要大于1时，抛出异常并回滚，需要在这里修改
         return updateRowCount >= 1;
     }
 }

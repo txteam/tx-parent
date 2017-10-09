@@ -13,7 +13,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import com.tx.core.jdbc.model.QueryConditionInfo;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.dialect.Dialect;
@@ -84,7 +86,7 @@ public class BasicDataCodeGenerator {
       * @param basicDataType 数据库类型
       * @param dataSourceType
       * @param codeBaseFolder
-      * @param uniqueGetterNames
+      * @param uniqueGetterNamesArray
       * @param validGetterName [参数说明]
       * 
       * @return void [返回类型说明]
@@ -334,6 +336,28 @@ public class BasicDataCodeGenerator {
         Map<String, FieldView> fieldViewMapping = GeneratorUtils.generateFieldViewMapping(jpaMetaClass,
                 sqlSource,
                 uniqueGetterNamesArray);
+
+        Map<String,String> map = new HashedMap();
+        map.put("code","编码");
+        map.put("name","名称");
+        map.put("remark","备注");
+        map.put("id","ID");
+        map.put("modifyAble","是否可修改");
+        map.put("state","状态");
+        map.put("status","状态");
+        map.put("valid","是否有效");
+        //设置查询条件注释
+        for(QueryConditionInfo queryConditionInfo:viewModel.getQueryConditionName2ConditionInfoMapping().values()){
+            queryConditionInfo.setQueryConditionName(queryConditionInfo.getQueryConditionKey());
+            if(fieldViewMapping.containsKey(queryConditionInfo.getQueryConditionKey())){
+               FieldView temp = fieldViewMapping.get(queryConditionInfo.getQueryConditionKey());
+                queryConditionInfo.setQueryConditionName(temp.getFieldComment()==null?temp.getFieldName():temp.getFieldComment());
+            }
+//            else if(map.containsKey(queryConditionInfo.getQueryConditionKey())){
+//                queryConditionInfo.setQueryConditionName(map.get(queryConditionInfo.getQueryConditionKey()));
+//            }
+        }
+
         
         data.put("view", viewModel);
         data.put("validPropertyName", validPropertyName);

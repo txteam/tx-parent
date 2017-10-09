@@ -24,6 +24,8 @@ public class QueryConditionInfo {
     
     /** 查询条件 key值，读取至anno,如果不存在则为getterName 如果是可识别类型则为getterName.foreignKeyGetterName */
     private String queryConditionKey;
+
+    private String queryConditionName;
     
     /** javaType */
     private Class<?> queryConditionJavaType;
@@ -34,6 +36,14 @@ public class QueryConditionInfo {
     /** <默认构造函数> */
     public QueryConditionInfo() {
         super();
+    }
+
+    public String getQueryConditionName() {
+        return queryConditionName;
+    }
+
+    public void setQueryConditionName(String queryConditionName) {
+        this.queryConditionName = queryConditionName;
     }
 
     /** <默认构造函数> */

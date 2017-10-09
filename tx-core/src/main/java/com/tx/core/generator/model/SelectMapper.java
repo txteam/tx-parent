@@ -35,6 +35,8 @@ public class SelectMapper {
     private List<SqlMapColumn> sqlMapColumnList;
     
     private String findId;
+
+    private String findAndLockId;
     
     private String queryId;
     
@@ -60,6 +62,7 @@ public class SelectMapper {
                 + "Map";
         this.parameterType = jpaMetaClass.getEntityTypeName();
         this.findId = "find" + jpaMetaClass.getEntitySimpleName();
+        this.findId = "findAndLock" + jpaMetaClass.getEntitySimpleName();
         this.queryId = "query" + jpaMetaClass.getEntitySimpleName();
         
         this.tableName = jpaMetaClass.getTableName().toUpperCase();
@@ -226,5 +229,13 @@ public class SelectMapper {
      */
     public void setOtherCondition(Set<String> otherCondition) {
         this.otherCondition = otherCondition;
+    }
+
+    public String getFindAndLockId() {
+        return findAndLockId;
+    }
+
+    public void setFindAndLockId(String findAndLockId) {
+        this.findAndLockId = findAndLockId;
     }
 }

@@ -92,7 +92,6 @@ $(document).ready(function(){
 		<#if fieldView.simpleType>
 		{
 			field : '${fieldView.fieldName}',
-			<%!//FIXME: 修改属性中文名 --%>
 			title : <#if fieldView.fieldComment?? >'${fieldView.fieldComment}'<#else >'${fieldView.fieldName}'</#if>,
 			width : 200
 			<#if fieldView.date>
@@ -248,7 +247,7 @@ function editFun(id,name) {
 		"编辑" + entityName + ":" + name,
 		$.formatString("${r"${contextPath}"}/${view.lowerCaseEntitySimpleName}/toUpdate${view.entitySimpleName}.action?${view.lowerCaseEntitySimpleName}Id={0}",id),
             500,${(fieldViewMapping?size*28+40)?string("#")},function(){
-			//queryFun();
+			queryFun();
 	});
 	return false;
 }
@@ -273,7 +272,7 @@ function viewFun(id,name) {
 		"view${view.entitySimpleName}",
 		"" + entityName + "详情:" + name,
 		$.formatString("${r"${contextPath}"}/${view.lowerCaseEntitySimpleName}/toView${view.entitySimpleName}.action?${view.lowerCaseEntitySimpleName}Id={0}",id),
-            900,${(fieldViewMapping?size/2*28+50)?string("#")},function(){
+            900,${(fieldViewMapping?size/2*30+50)?string("#")},function(){
 			//queryFun();
 		});
     return false;
@@ -407,12 +406,12 @@ function enableFun(id,name){
 	<div data-options="region:'north',title:'查询条件',border:false" style="height: 140px; overflow: hidden;">
 		<form id="queryForm" class="form">
 			<table class="table table-hover table-condensed">
+                <!--//FIXME: 没显示中文名称，请在 字段上线加@Comment("字段名称")加上注释 -->
 <#list view.queryConditionName2ConditionInfoMapping?values as conditionInfo>
 	<#if conditionInfo_index%3 = 0>
 				<tr>
 	</#if>
-					<!--//FIXME: 修改查询条件中文名 -->
-					<th>${conditionInfo.queryConditionKey}</th>
+					<th>${conditionInfo.queryConditionName}</th>
 	<#if conditionInfo.queryConditionJavaType.simpleName == "Date">
 					<td><input id="${conditionInfo.queryConditionKey}" name="${conditionInfo.queryConditionKey}"
 							readonly="readonly"
@@ -423,6 +422,15 @@ function enableFun(id,name){
 							<option value="">全部</option>
 							<option value="1">是</option>
 							<option value="0">否</option>
+						</select>
+					</td>
+	<#elseif conditionInfo.queryConditionJavaType.enum >
+					<td><select id="${conditionInfo.queryConditionKey}" name="${conditionInfo.queryConditionKey}"/>
+							<option value="">全部</option>
+                        <option value="">-- 不限 --</option>
+                        <c:forEach items="${r"$"}{${conditionInfo.queryConditionKey}List}"  var="temp">
+                            <option value="${r"$"}{temp }">${r"$"}{temp.name }</option>
+                        </c:forEach>
 						</select>
 					</td>
 	<#else >
