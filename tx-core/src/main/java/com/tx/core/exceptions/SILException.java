@@ -66,11 +66,15 @@ public class SILException extends RuntimeException {
       * @see [类、类#方法、类#成员]
      */
     public final void setErrorCode(int errorCode) {
-        if (this.error() != null || this.errorCode() == null
-                || this.errorCode().intValue() >= 0) {
-            //当子类覆写了error()方法，或errorCode()方法时.setErrorCode方法将会失效<br/>
+        if(errorCode<=0 ){
             return;
         }
+//        if (this.error() != null ||
+//                this.errorCode() == null
+//                || this.errorCode().intValue() <= 0 ) {
+//            //当子类覆写了error()方法，或errorCode()方法时.setErrorCode方法将会失效<br/>
+//            return;
+//        }
         this.errorCode = errorCode;
     }
     
