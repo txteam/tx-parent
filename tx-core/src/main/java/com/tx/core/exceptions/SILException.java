@@ -69,7 +69,7 @@ public class SILException extends RuntimeException {
         if (this.error() != null || this.errorCode() == null
                 || this.errorCode().intValue() >= 0) {
             //当子类覆写了error()方法，或errorCode()方法时.setErrorCode方法将会失效<br/>
-            return;
+            //return;
         }
         this.errorCode = errorCode;
     }
