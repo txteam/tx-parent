@@ -1013,12 +1013,12 @@
 			<dependency>
 				<groupId>org.xhtmlrenderer</groupId>
 				<artifactId>flying-saucer-core</artifactId>
-				<version>9.1.5</version>
+				<version>9.1.7</version>
 			</dependency>
 			<dependency>
 				<groupId>org.xhtmlrenderer</groupId>
 				<artifactId>flying-saucer-pdf-itext5</artifactId>
-				<version>9.1.5</version>
+				<version>9.1.7</version>
 			</dependency>
 
 			<!-- Doc text deal jar JAVA读写 excel,word -->
