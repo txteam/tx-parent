@@ -275,9 +275,8 @@ public class DefaultTreeAbleBasicDataService<T extends TreeAbleBasicData<T>>
         
         String basicDataTypeCode = code();
         AssertUtils.notEmpty(basicDataTypeCode, "basicDataTypeCode is null.");
-        this.dataDictService.isExist(basicDataTypeCode, key2valueMap, excludeId);
-        
-        return false;
+        return  this.dataDictService.isExist(basicDataTypeCode, key2valueMap, excludeId);
+
     }
     
     /**

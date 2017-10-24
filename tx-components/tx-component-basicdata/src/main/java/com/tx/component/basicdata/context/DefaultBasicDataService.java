@@ -32,15 +32,14 @@ import com.tx.core.support.entrysupport.helper.EntryAbleUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class DefaultBasicDataService<T extends BasicData> extends
-        AbstractBasicDataService<T> {
-    
-    /** 对应类型 */
-    private Class<T> type;
+public class DefaultBasicDataService<T extends BasicData>
+        extends AbstractBasicDataService<T> {
     
     /** 数据字典业务层 */
     @Resource(name = "basicdata.dataDictService")
     protected DataDictService dataDictService;
+    /** 对应类型 */
+    private Class<T> type;
     
     /** <默认构造函数> */
     public DefaultBasicDataService() {
@@ -178,9 +177,8 @@ public class DefaultBasicDataService<T extends BasicData> extends
         String basicDataTypeCode = code();
         AssertUtils.notEmpty(basicDataTypeCode, "basicDataTypeCode is null.");
         
-        List<DataDict> dataDictList = this.dataDictService.queryList(basicDataTypeCode,
-                valid,
-                params);
+        List<DataDict> dataDictList = this.dataDictService
+                .queryList(basicDataTypeCode, valid, params);
         List<T> resList = new ArrayList<>();
         if (CollectionUtils.isEmpty(dataDictList)) {
             return resList;
@@ -208,11 +206,12 @@ public class DefaultBasicDataService<T extends BasicData> extends
         String basicDataTypeCode = code();
         AssertUtils.notEmpty(basicDataTypeCode, "basicDataTypeCode is null.");
         
-        PagedList<DataDict> dataDictPageList = this.dataDictService.queryPagedList(basicDataTypeCode,
-                valid,
-                params,
-                pageIndex,
-                pageSize);
+        PagedList<DataDict> dataDictPageList = this.dataDictService
+                .queryPagedList(basicDataTypeCode,
+                        valid,
+                        params,
+                        pageIndex,
+                        pageSize);
         
         PagedList<T> resPagedList = new PagedList<>();
         resPagedList.setCount(dataDictPageList.getCount());
@@ -244,9 +243,10 @@ public class DefaultBasicDataService<T extends BasicData> extends
         
         String basicDataTypeCode = code();
         AssertUtils.notEmpty(basicDataTypeCode, "basicDataTypeCode is null.");
-        this.dataDictService.isExist(basicDataTypeCode, key2valueMap, excludeId);
+        return this.dataDictService.isExist(basicDataTypeCode,
+                key2valueMap,
+                excludeId);
         
-        return false;
     }
     
     /**
