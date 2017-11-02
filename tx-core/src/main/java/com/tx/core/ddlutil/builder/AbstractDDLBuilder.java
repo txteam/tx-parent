@@ -304,7 +304,7 @@ public abstract class AbstractDDLBuilder<B extends DDLBuilder<B>> implements
         if (size <= 0) {
             size = 16;
         }
-        if (scale <= 0) {
+        if (scale < 0) {
             scale = 2;
         }
         JdbcTypeEnum jdbcType = JdbcTypeEnum.NUMERIC;
@@ -312,7 +312,7 @@ public abstract class AbstractDDLBuilder<B extends DDLBuilder<B>> implements
                 this.tableName, jdbcType, size, scale, required,
                 defaultValue == null ? null : defaultValue.toString());
         String columnType = this.ddlDialect.getDialect()
-                .getTypeName(jdbcType.getSqlType(), 1, 1, 0);
+                .getTypeName(jdbcType.getSqlType(), size, size, scale);
         tableColumn.setColumnType(columnType);
         
         addAndValidateNewColumn(tableColumn);
