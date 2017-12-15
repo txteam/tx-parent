@@ -284,6 +284,10 @@ public class JpaMetaClass<T> {
             processWhenColumnAnnotationExist(getterName, type, jpaColumnInfo);
         }
 
+        if (ReflectionUtils.isHasAnnotationForGetter(type, getterName, Comment.class)) {
+            processWhenCommentAnnotationExist(getterName, type, jpaColumnInfo);
+        }
+
         //是否存在Column注解
         if (ReflectionUtils.isHasAnnotationForGetter(type, getterName, ManyToOne.class)
                 || ReflectionUtils.isHasAnnotationForGetter(type, getterName, OneToOne.class)
