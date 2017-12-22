@@ -74,6 +74,12 @@ public class SILException extends RuntimeException {
         this.errorCode = errorCode;
     }
     
+    /** SILException构造函数 */
+    public SILException(int errorCode, String message) {
+        super(message);
+        this.setErrorCode(errorCode);
+    }
+    
     /**
      * 获取系统错误编码<br/>
      *      errorMessage用于异常抛送到页面后
@@ -88,7 +94,8 @@ public class SILException extends RuntimeException {
     public final int getErrorCode() {
         if (this.error() != null) {
             return this.error().getCode();
-        } else if (this.errorCode() != null && this.errorCode().intValue() >= 0) {
+        } else if (this.errorCode() != null
+                && this.errorCode().intValue() >= 0) {
             return this.errorCode();
         } else {
             return this.errorCode;
@@ -107,7 +114,8 @@ public class SILException extends RuntimeException {
      * @see [类、类#方法、类#成员]
      */
     public final String getErrorMessage() {
-        String errorMessage = ErrorCodeRegistry.INSTANCE.getErrorMessage(this.getErrorCode());
+        String errorMessage = ErrorCodeRegistry.INSTANCE
+                .getErrorMessage(this.getErrorCode());
         errorMessage = StringUtils.isEmpty(errorMessage) ? getMessage()
                 : errorMessage;
         return errorMessage;
@@ -142,8 +150,8 @@ public class SILException extends RuntimeException {
                 .append(this.getErrorMessage())
                 .append("\n");
         sb.append("\t message: ").append(super.getMessage()).append("\n");
-        sb.append("\t cause: ").append(super.getCause() == null ? ""
-                : super.getCause().toString());
+        sb.append("\t cause: ").append(
+                super.getCause() == null ? "" : super.getCause().toString());
         return sb.toString();
     }
 }
