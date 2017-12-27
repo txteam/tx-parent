@@ -2,7 +2,6 @@
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html >
 <html xmlns:form="http://www.w3.org/1999/html">
 <head>
@@ -40,15 +39,13 @@ function cancelFun(){
 				</#if>
 					<th class="narrow" ><#if fieldView.fieldComment?? >${fieldView.fieldComment}<#else >${fieldView.fieldName}</#if>:<#if fieldView.isRequired()><span class="tRed">*</span></#if></th>
 					<td >
-						<#if fieldView.javaType.simpleName?uncap_first =="boolean" >
+						<#if fieldView.javaType.simpleName =="boolean" || fieldView.javaType.simpleName == 'Boolean'>
 							<c:if test="${r"${"}${view.lowerCaseEntitySimpleName}.${fieldView.fieldName}}">
 								是
 							</c:if>
                             <c:if test="not ${r"${"}${view.lowerCaseEntitySimpleName}.${fieldView.fieldName}}">
                                 否
                             </c:if>
-						<#elseif fieldView.javaType.simpleName?uncap_first == "date" >
-                            <fmt:formatDate value="${r"${"}${view.lowerCaseEntitySimpleName}.${fieldView.fieldName}}" pattern="yyyy-MM-dd hh:mm:ss"/>
 						<#else >
 							${r"${"}${view.lowerCaseEntitySimpleName}.${fieldView.fieldName}}
 						</#if>

@@ -97,13 +97,7 @@ public class DataDictService extends AbstractEntityEntryAbleService<DataDict>
      * @see [类、类#方法、类#成员]
     */
     private List<DataDict> loadListFromExcelConfig() {
-        Workbook wb = null;
-        if (resourceLoader.getResource("classpath:init/basicdata/data_dict.xlsx").exists()) {
-            wb = ExcelReadUtils.getWorkBook("classpath:init/basicdata/data_dict.xlsx");
-        }else{
-            wb = ExcelReadUtils.getWorkBook("classpath*:init/basicdata/data_dict.xlsx");
-        }
-         
+        Workbook wb = ExcelReadUtils.getWorkBook("classpath*:init/basicdata/data_dict.xlsx");
         
         List<DataDict> resList = new ArrayList<>();
         int numberOfSheets = wb.getNumberOfSheets();
@@ -185,8 +179,7 @@ public class DataDictService extends AbstractEntityEntryAbleService<DataDict>
      */
     @Override
     public void afterPropertiesSet() throws Exception {
-        if (!resourceLoader.getResource("classpath:init/basicdata/data_dict.xlsx").exists()
-                && !resourceLoader.getResource("classpath*:init/basicdata/data_dict.xlsx").exists()) {
+        if (!resourceLoader.getResource("classpath*:init/basicdata/data_dict.xlsx").exists()) {
             return;
         }
         ConfigInitAbleHelper<DataDict> helper = new ConfigInitAbleHelper<DataDict>() {

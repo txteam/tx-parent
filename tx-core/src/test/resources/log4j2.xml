@@ -71,6 +71,9 @@
 		</Logger>
 
 		<!-- spy.sql -->
+		<Logger name="com.tx.core.log.p6spy.P6SpyLogbackLogger" level="INFO">
+			<AppenderRef ref="spy_sql_file" />
+		</Logger>
 
 		<Root level="DEBUG">
 			<AppenderRef ref="stdout" />

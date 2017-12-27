@@ -155,21 +155,21 @@ public class DDLUtilTest {
     
     public static void main(String[] args) {
         DataSourceFinder finder = new SimpleDataSourceFinder(
-                "com.mysql.jdbc.Driver", "jdbc:mysql://120.24.75.25:3306/mjs_lms?characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull",
+                "com.mysql.jdbc.Driver", "jdbc:mysql://120.24.75.25:3306/wtms_dbmjs05?characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull",
                 "pqy", "pqy");
         DataSource ds = finder.getDataSource();
         JdbcTemplate jt = new JdbcTemplate(ds);
+        
+        String tableName = "test_001";
         TableDDLExecutor ddlExecutor = new MysqlTableDDLExecutor(jt);
+        if (ddlExecutor.exists(tableName)) {
+            ddlExecutor.drop(tableName);
+        }
         
-        //String tableName = "task_execute_log";
-        //if (ddlExecutor.exists(tableName)) {
-        //    ddlExecutor.drop(tableName);
-        //  }
-        
-        DBTableDef def = ddlExecutor.findDBTableDetailByTableName("task_execute_log");
+        DBTableDef def = ddlExecutor.findDBTableDetailByTableName("core_file_definition");
         System.out.println(def.getTableName());
         
-        printCreateTableJavaCode(ddlExecutor, "task_execute_log");
+        printCreateTableJavaCode(ddlExecutor, "dt_table_column");
         //        boolean flag = ddlExecutor.exists("comm_message_tempalte");
         //        System.out.println("exists:" + flag);
         //        TableDef tab = ddlExecutor.findDBTableByTableName("comm_message_tempalte");
