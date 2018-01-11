@@ -62,7 +62,7 @@ public class SelectMapper {
                 + "Map";
         this.parameterType = jpaMetaClass.getEntityTypeName();
         this.findId = "find" + jpaMetaClass.getEntitySimpleName();
-        this.findId = "findAndLock" + jpaMetaClass.getEntitySimpleName();
+        this.findAndLockId = "findAndLock" + jpaMetaClass.getEntitySimpleName();
         this.queryId = "query" + jpaMetaClass.getEntitySimpleName();
         
         this.tableName = jpaMetaClass.getTableName().toUpperCase();
