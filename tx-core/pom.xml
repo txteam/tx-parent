@@ -223,11 +223,6 @@
 		<!-- redis -->
 		<!-- redis相关jar包：按需加载 -->
 		<dependency>
-			<groupId>org.springframework.data</groupId>
-			<artifactId>spring-data-redis</artifactId>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
 			<groupId>redis.clients</groupId>
 			<artifactId>jedis</artifactId>
 			<optional>true</optional>
