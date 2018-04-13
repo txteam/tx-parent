@@ -93,6 +93,7 @@
 				<artifactId>tx-core</artifactId>
 				<version>${tx-version}</version>
 			</dependency>
+			
 			<!-- tx-components -->
 			<dependency>
 				<groupId>com.tx</groupId>
