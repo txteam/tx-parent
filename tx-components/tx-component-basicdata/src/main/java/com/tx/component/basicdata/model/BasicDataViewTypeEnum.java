@@ -7,8 +7,6 @@
 package com.tx.component.basicdata.model;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.tx.core.lang.enums.BaseSimpleEnum;
-import com.tx.core.lang.enums.BaseSimpleEnumJsonSerializer;
 
 /**
  * 基础数据视图类型<br/>
@@ -19,8 +17,8 @@ import com.tx.core.lang.enums.BaseSimpleEnumJsonSerializer;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-@JsonSerialize(using = BaseSimpleEnumJsonSerializer.class)
-public enum BasicDataViewTypeEnum implements BaseSimpleEnum {
+@JsonSerialize(using = BasicDataEnumJsonSerializer.class)
+public enum BasicDataViewTypeEnum implements BasicDataEnum {
     LIST("LIST", "列表"),
     
     PAGEDLIST("LIST", "分页列表"),

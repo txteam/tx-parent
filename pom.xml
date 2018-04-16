@@ -269,7 +269,6 @@
 			<!-- <version>${poi.version}</version> -->
 			<!-- </dependency> -->
 
-
 			<!-- cxf -->
 			<dependency>
 				<groupId>org.apache.cxf</groupId>
@@ -654,22 +653,6 @@
 	</dependencyManagement>
 
 	<dependencies>
-		<!-- Test Dependencies -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
 	</dependencies>
 
 	<build>
