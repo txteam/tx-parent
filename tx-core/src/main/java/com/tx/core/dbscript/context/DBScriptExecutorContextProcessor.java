@@ -9,7 +9,7 @@ package com.tx.core.dbscript.context;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;

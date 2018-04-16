@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>com.tx</groupId>
 		<artifactId>tx-parent</artifactId>
-		<version>3.0.x-SNAPSHOT</version>
+		<version>5.0.x-SNAPSHOT</version>
 	</parent>
 
 	<properties>
@@ -50,8 +50,10 @@
 		<module>tx-component-communication</module>
 		<module>tx-component-basicdata</module>
 		<module>tx-component-file</module>
+		
 		<!-- 待完善模块 -->
 		<module>tx-component-servicelog</module>
+		
 		<!-- 准备废弃的模块 -->
 		<module>tx-component-rule</module>
 	</modules>

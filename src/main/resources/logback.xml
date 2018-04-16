@@ -1,81 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- 
-	scan:当此属性设置为true时，配置文件如果发生改变，将会被重新加载，默认值为true。 
-	scanPeriod:设置监测配置文件是否有修改的时间间隔，如果没有给出时间单位，默认单位是毫秒。
-		当scan为true时，此属性生效。默认的时间间隔为1分钟。 
-	debug:当此属性设置为true时，将打印出logback内部日志信息，实时查看logback运行状态。默认值为false。
- -->
 <configuration scan="true" scanPeriod="600 seconds">
-
-	<!-- 设置变量 -->
-	<property name="contentName" value="webdemo" />
-	<property name="commonPattern" value="[%yyyy-MM-dd HH:mm:ss] %-4relative [%thread] %-5level %logger{50} - %msg%n" />
+	<property name="contentName" value="tx-parent" />
+	
+	<property name="commonPattern" value=" [%thread] %-5level %logger{36} - %msg%n" />
 	<property name="logfile" value="d:/logs/webdemo" />
 	<property name="maxLogFileSize" value="10MB"></property>
 	<property name="maxLogFileNum" value="3"></property>
+	<timestamp key="date" datePattern="yyyy-MM-dd HH:mm:ss"/>
+	<property name="onlyMessagePattern" value=" %msg%n" />
 
-	<!-- 设置上下文名称 -->
 	<contextName>${contentName}</contextName>
 
-	<!-- 
-		ConsoleAppender:
-		把日志添加到控制台，有以下子节点：
-		<encoder>：对日志进行格式化。（具体参数稍后讲解 ）
-		<target>：字符串 System.out 或者 System.err ，默认 System.out ；
-	 -->
-	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+	<appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
 		<!-- encoder 默认配置为PatternLayoutEncoder -->
 		<encoder>
-			<pattern>${commonPattern}</pattern>
+			<pattern>%msg%n</pattern>
 		</encoder>
 	</appender>
 	
-	<!-- 
-		.FileAppender:
-		把日志添加到文件，有以下子节点：
-		<file>：被写入的文件名，可以是相对目录，也可以是绝对目录，如果上级目录不存在会自动创建，没有默认值。
-		<append>：如果是 true，日志被追加到文件结尾，如果是 false，清空现存文件，默认是true。
-		<encoder>：对记录事件进行格式化。（具体参数稍后讲解 ）
-		<prudent>：如果是 true，日志会被安全的写入文件，即使其他的FileAppender也在向此文件做写入操作，效率低，默认是 false。
-	 -->
-	<appender name="FILE" class="ch.qos.logback.core.FileAppender">  
-	    <file>${logfile}.log</file>  
-	    <append>true</append>  
-	    <encoder>  
-	      <pattern>${commonPattern}</pattern>  
-	    </encoder>  
-	</appender>
-	
-	<!-- 
-		RollingFileAppender:
-		滚动记录文件，先将日志记录到指定文件，当符合某个条件时，将日志记录到其他文件。有以下子节点：
-		<file>：被写入的文件名，可以是相对目录，也可以是绝对目录，如果上级目录不存在会自动创建，没有默认值。
-		<append>：如果是 true，日志被追加到文件结尾，如果是 false，清空现存文件，默认是true。
-		<encoder>：对记录事件进行格式化。（具体参数稍后讲解 ）
-		<rollingPolicy>:当发生滚动时，决定 RollingFileAppender 的行为，涉及文件移动和重命名。
-		<triggeringPolicy >: 告知 RollingFileAppender 合适激活滚动。
-		<prudent>：当为true时，不支持FixedWindowRollingPolicy。支持TimeBasedRollingPolicy，但是有两个限制，1不支持也不允许文件压缩，2不能设置file属性，必须留空。
-		 	rollingPolicy：
-				TimeBasedRollingPolicy： 最常用的滚动策略，它根据时间来制定滚动策略，既负责滚动也负责出发滚动。有以下子节点：
-				<fileNamePattern>:
-				必要节点，包含文件名及“%d”转换符， “%d”可以包含一个java.text.SimpleDateFormat指定的时间格式，如：%d{yyyy-MM}。如果直接使用 %d，默认格式是 yyyy-MM-dd。RollingFileAppender 的file字节点可有可无，通过设置file，可以为活动文件和归档文件指定不同位置，当前日志总是记录到file指定的文件（活动文件），活动文件的名字不会改变；如果没设置file，活动文件的名字会根据fileNamePattern 的值，每隔一段时间改变一次。“/”或者“\”会被当做目录分隔符。
-				<maxHistory>:
-				可选节点，控制保留的归档文件的最大数量，超出数量就删除旧文件。假设设置每个月滚动，且<maxHistory>是6，则只保存最近6个月的文件，删除之前的旧文件。注意，删除旧文件是，那些为了归档而创建的目录也会被删除。
-				FixedWindowRollingPolicy： 根据固定窗口算法重命名文件的滚动策略。有以下子节点：
-				<minIndex>:窗口索引最小值
-				<maxIndex>:窗口索引最大值，当用户指定的窗口过大时，会自动将窗口设置为12。
-				<fileNamePattern >:
-				必须包含“%i”例如，假设最小值和最大值分别为1和2，命名模式为 mylog%i.log,会产生归档文件mylog1.log和mylog2.log。还可以指定文件压缩选项，例如，mylog%i.log.gz 或者 没有log%i.log.zip
-				triggeringPolicy:
-				SizeBasedTriggeringPolicy： 查看当前活动文件的大小，如果超过指定大小会告知RollingFileAppender 触发当前活动文件滚动。只有一个节点:
-				<maxFileSize>:这是活动文件的大小，默认值是10MB。
-	 -->
-	<appender name="FILE"
+	<appender name="log_file"
 		class="ch.qos.logback.core.rolling.RollingFileAppender">
 		<file>${logfile}.log</file>
-		<!-- <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy"> 
-			<fileNamePattern>logFile.%d{yyyy-MM-dd}.log</fileNamePattern> <maxHistory>30</maxHistory> 
-			</rollingPolicy> -->
 		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
 			<fileNamePattern>${logfile}.%i.log.zip</fileNamePattern>
 			<minIndex>1</minIndex>
@@ -86,223 +31,61 @@
 			<maxFileSize>${maxLogFileSize}</maxFileSize>
 		</triggeringPolicy>
 		<encoder>
-			<pattern>${commonPattern}</pattern>
+			<pattern>${date}${commonPattern}</pattern>
 		</encoder>
-	</appender>  
+	</appender>
+	
+	<appender name="sql_file" class="ch.qos.logback.core.FileAppender">  
+	    <file>${logfile}.sql.log</file>  
+	    <append>false</append>  
+	    <encoder>  
+	      <pattern>${date}: ${commonPattern}</pattern>  
+	    </encoder>  
+	</appender>
+	
+	<appender name="spy_sql_file" class="ch.qos.logback.core.FileAppender">  
+	    <file>${logfile}.spy.sql.log</file>  
+	    <append>false</append>  
+	    <encoder>  
+	      <pattern>${date}: ${onlyMessagePattern}</pattern>  
+	    </encoder>  
+	</appender>
+	
+	<appender name="cxf_log_file" class="ch.qos.logback.core.FileAppender">  
+	    <file>${logfile}.cxf.log</file>  
+	    <append>false</append>  
+	    <encoder>  
+	      <pattern>${date}: ${onlyMessagePattern}</pattern>  
+	    </encoder>  
+	</appender>    
 
-	<!-- 
-		additivity:有设置addtivity，默认为true，将此loger的打印信息向上级传递
-		没有设置appender，此loger本身不打印任何信息。
-		  <logger name="xxx" level="INFO" additivity="false">  
-		    	<appender-ref ref="STDOUT"/>  
-		  </logger>
-	 -->
+
 	<!-- spring框架打印日志级别 -->
-	<logger name="org.springframework" level="INFO" />
-	<!-- springMVC答应日志级别 -->
-	<logger name="org.springframework.web" level="ERROR" />
-	<!-- cxf日志级别 -->
-	<logger name="org.apache.cxf" level="ERROR" />
+	<logger name="org.springframework" level="ERROR" /><!-- spring 日志级别 -->
+	<logger name="org.springframework.web" level="ERROR" /><!-- springMVC 日志级别 -->
+	<logger name="org.apache.cxf" level="ERROR" /><!-- cxf日志级别 -->
+	
+	<logger name="com.tx.component.basicdata.executor.BaseBasicDataExecutor" level="DEBUG" />
 	<!-- ehcache日志级别 -->
 	<logger name="net.sf.ehcache" level="ERROR" />
 	<!-- mybatis日志级别 -->
 	<logger name="org.apache.ibatis" level="ERROR" />
 	<logger name="org.mybais" level="ERROR" />
 	<!-- sql日志级别 -->
-	<logger name="java.sql.Connection" level="ERROR" />
+	<logger name="java.sql" level="ERROR">
+		<appender-ref ref="sql_file"/>
+	</logger>
+	<logger name="com.tx.core.log.p6spy" level="DEBUG">
+		<appender-ref ref="spy_sql_file"/>
+	</logger>
+	<logger name="org.apache.cxf.interceptor" level="DEBUG">
+		<appender-ref ref="cxf_log_file"/>
+	</logger>
+	
+	
 
 	<root level="INFO">
-		<appender-ref ref="STDOUT" />
+		<appender-ref ref="stdout" />
+		<appender-ref ref="log_file" />
 	</root>
-	
-	<!-- 
-		<pattern>里面的转换符说明：
-		 
-		转换符	作用
-		c {length } 
-		lo {length } 
-		logger {length } 
-		输出日志的logger名，可有一个整形参数，功能是缩短logger名，设置为0表示只输入logger最右边点符号之后的字符串。
-		Conversion specifier	Logger name	Result
-		%logger	mainPackage.sub.sample.Bar	mainPackage.sub.sample.Bar
-		%logger{0}	mainPackage.sub.sample.Bar	Bar
-		%logger{5}	mainPackage.sub.sample.Bar	m.s.s.Bar
-		%logger{10}	mainPackage.sub.sample.Bar	m.s.s.Bar
-		%logger{15}	mainPackage.sub.sample.Bar	m.s.sample.Bar
-		%logger{16}	mainPackage.sub.sample.Bar	m.sub.sample.Bar
-		%logger{26}	mainPackage.sub.sample.Bar	mainPackage.sub.sample.Bar
-		 
-		C {length } 
-		class {length } 
-		输出执行记录请求的调用者的全限定名。参数与上面的一样。尽量避免使用，除非执行速度不造成任何问题。
-		contextName 
-		cn 
-		输出上下文名称。
-		d {pattern } 
-		date {pattern } 
-		输出日志的打印日志，模式语法与java.text.SimpleDateFormat 兼容。
-		Conversion Pattern	Result
-		%d	2006-10-20 14:06:49,812
-		%date	2006-10-20 14:06:49,812
-		%date{ISO8601}	2006-10-20 14:06:49,812
-		%date{HH:mm:ss.SSS}	14:06:49.812
-		%date{dd MMM yyyy ;HH:mm:ss.SSS}	20 oct. 2006;14:06:49.812
-		F / file	输出执行记录请求的java源文件名。尽量避免使用，除非执行速度不造成任何问题。
-		caller{depth}caller{depth, evaluator-1, ... evaluator-n}	输出生成日志的调用者的位置信息，整数选项表示输出信息深度。
-		例如， %caller{2}   输出为：
-		0    [main] DEBUG - logging statement   Caller+0   at mainPackage.sub.sample.Bar.sampleMethodName(Bar.java:22)  Caller+1   at mainPackage.sub.sample.Bar.createLoggingRequest(Bar.java:17)
-		例如， %caller{3}   输出为：
-		16   [main] DEBUG - logging statement   Caller+0   at mainPackage.sub.sample.Bar.sampleMethodName(Bar.java:22)  Caller+1   at mainPackage.sub.sample.Bar.createLoggingRequest(Bar.java:17)  Caller+2   at mainPackage.ConfigTester.main(ConfigTester.java:38)
-		L / line	输出执行日志请求的行号。尽量避免使用，除非执行速度不造成任何问题。
-		m / msg / message	
-		输出应用程序提供的信息。
-		M / method	输出执行日志请求的方法名。尽量避免使用，除非执行速度不造成任何问题。
-		n	输出平台先关的分行符“\n”或者“\r\n”。
-		p / le / level	输出日志级别。
-		r / relative	输出从程序启动到创建日志记录的时间，单位是毫秒
-		t / thread	输出产生日志的线程名。
-		replace(p ){r, t}	
-		p 为日志内容，r 是正则表达式，将p 中符合r 的内容替换为t 。
-		例如， "%replace(%msg){'\s', ''}"	
-		
-		格式修饰符，与转换符共同使用：
-		可选的格式修饰符位于“%”和转换符之间。
-		第一个可选修饰符是左对齐 标志，符号是减号“-”；接着是可选的最小宽度 修饰符，用十进制数表示。如果字符小于最小宽度，则左填充或右填充，默认是左填充（即右对齐），填充符为空格。如果字符大于最小宽度，字符永远不会被截断。最大宽度 修饰符，符号是点号"."后面加十进制数。如果字符大于最大宽度，则从前面截断。点符号“.”后面加减号“-”在加数字，表示从尾部截断。
-		 
-		 
-		例如：%-4relative 表示，将输出从程序启动到创建日志记录的时间 进行左对齐 且最小宽度为4。
-	 -->
-	 <!-- 
-		***********************************************详解  <filter>*****************************************
-		 
-		<filter>:
-		过滤器，执行一个过滤器会有返回个枚举值，即DENY，NEUTRAL，ACCEPT其中之一。返回DENY，日志将立即被抛弃不再经过其他过滤器；返回NEUTRAL，有序列表里的下个过滤器过接着处理日志；返回ACCEPT，日志会被立即处理，不再经过剩余过滤器。
-		过滤器被添加到<Appender> 中，为<Appender> 添加一个或多个过滤器后，可以用任意条件对日志进行过滤。<Appender> 有多个过滤器时，按照配置顺序执行。
-		 
-		下面是几个常用的过滤器：
-		 
-		LevelFilter： 级别过滤器，根据日志级别进行过滤。如果日志级别等于配置级别，过滤器会根据onMath 和 onMismatch接收或拒绝日志。有以下子节点：
-		<level>:设置过滤级别
-		<onMatch>:用于配置符合过滤条件的操作
-		<onMismatch>:用于配置不符合过滤条件的操作
-		 
-		例如：将过滤器的日志级别配置为INFO，所有INFO级别的日志交给appender处理，非INFO级别的日志，被过滤掉。
-		Xml代码  
-		<configuration>   
-		  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">   
-		    <filter class="ch.qos.logback.classic.filter.LevelFilter">   
-		      <level>INFO</level>   
-		      <onMatch>ACCEPT</onMatch>   
-		      <onMismatch>DENY</onMismatch>   
-		    </filter>   
-		    <encoder>   
-		      <pattern>   
-		        %-4relative [%thread] %-5level %logger{30} - %msg%n   
-		      </pattern>   
-		    </encoder>   
-		  </appender>   
-		  <root level="DEBUG">   
-		    <appender-ref ref="CONSOLE" />   
-		  </root>   
-		</configuration>  
-		 
-		ThresholdFilter： 临界值过滤器，过滤掉低于指定临界值的日志。当日志级别等于或高于临界值时，过滤器返回NEUTRAL；当日志级别低于临界值时，日志会被拒绝。
-		例如：过滤掉所有低于INFO级别的日志。
-		Xml代码  
-		过滤掉 TRACE 和 DEBUG 级别的日志   
-		<configuration>   
-		  <appender name="CONSOLE"   
-		    class="ch.qos.logback.core.ConsoleAppender">   
-		    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">   
-		      <level>INFO</level>   
-		    </filter>   
-		    <encoder>   
-		      <pattern>   
-		        %-4relative [%thread] %-5level %logger{30} - %msg%n   
-		      </pattern>   
-		    </encoder>   
-		  </appender>   
-		  <root level="DEBUG">   
-		    <appender-ref ref="CONSOLE" />   
-		  </root>   
-		</configuration>  
-		 
-		EvaluatorFilter： 求值过滤器，评估、鉴别日志是否符合指定条件。有一下子节点：
-		<evaluator>:
-		鉴别器，常用的鉴别器是JaninoEventEvaluato，也是默认的鉴别器，它以任意的java布尔值表达式作为求值条件，求值条件在配置文件解释过成功被动态编译，布尔值表达式返回true就表示符合过滤条件。evaluator有个子标签<expression>，用于配置求值条件。
-		 
-		求值表达式作用于当前日志，logback向求值表达式暴露日志的各种字段：
-		Name	Type	Description
-		event	LoggingEvent	与记录请求相关联的原始记录事件，下面所有变量都来自event，例如，event.getMessage()返回下面"message"相同的字符串
-		message	String	日志的原始消息，例如，设有logger mylogger，"name"的值是"AUB"，对于 mylogger.info("Hello {}",name); "Hello {}"就是原始消息。
-		formatedMessage	String	日志被各式话的消息，例如，设有logger mylogger，"name"的值是"AUB"，对于 mylogger.info("Hello {}",name); "Hello Aub"就是格式化后的消息。
-		logger	String	logger 名。
-		loggerContext	LoggerContextVO	日志所属的logger上下文。
-		level	int	级别对应的整数值，所以 level > INFO 是正确的表达式。
-		timeStamp	long	创建日志的时间戳。
-		marker	Marker	与日志请求相关联的Marker对象，注意“Marker”有可能为null，所以你要确保它不能是null。
-		mdc	Map	包含创建日志期间的MDC所有值得map。访问方法是：mdc.get("myKey") 。mdc.get()返回的是Object不是String，要想调用String的方法就要强转，例如，
-		((String) mdc.get("k")).contains("val") .MDC可能为null，调用时注意。
-		throwable	java.lang.Throwable	如果没有异常与日志关联"throwable" 变量为 null. 不幸的是， "throwable" 不能被序列化。在远程系统上永远为null，对于与位置无关的表达式请使用下面的变量throwableProxy
-		throwableProxy	IThrowableProxy	与日志事件关联的异常代理。如果没有异常与日志事件关联，则变量"throwableProxy" 为 null. 当异常被关联到日志事件时，"throwableProxy" 在远程系统上不会为null
-		 
-		 
-		<onMatch>:用于配置符合过滤条件的操作
-		<onMismatch>:用于配置不符合过滤条件的操作
-		 
-		例如：过滤掉所有日志消息中不包含“billing”字符串的日志。
-		Xml代码  
-		默认为 ch.qos.logback.classic.boolex.JaninoEventEvaluator
-		<configuration>
-		  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">   
-		    <filter class="ch.qos.logback.core.filter.EvaluatorFilter">         
-		      <evaluator>
-		        <expression>return message.contains("billing");</expression>   
-		      </evaluator>   
-		      <OnMatch>ACCEPT </OnMatch>  
-		      <OnMismatch>DENY</OnMismatch>  
-		    </filter>   
-		    <encoder>   
-		      <pattern>   
-		        %-4relative [%thread] %-5level %logger - %msg%n   
-		      </pattern>   
-		    </encoder>   
-		  </appender>
-		  <root level="INFO">   
-		    <appender-ref ref="STDOUT" />   
-		  </root>   
-		</configuration>  
-		 
-		<matcher> ：
-		匹配器，尽管可以使用String类的matches()方法进行模式匹配，但会导致每次调用过滤器时都会创建一个新的Pattern对象，为了消除这种开销，可以预定义一个或多个matcher对象，定以后就可以在求值表达式中重复引用。<matcher>是<evaluator>的子标签。
-		<matcher>中包含两个子标签，一个是<name>，用于定义matcher的名字，求值表达式中使用这个名字来引用matcher；另一个是<regex>，用于配置匹配条件。
-		 
-		例如：
-		Xml代码  
-		filter out odd numbered statements
-		<configuration debug="true">
-			<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-				<filter class="ch.qos.logback.core.filter.EvaluatorFilter">
-					<evaluator>
-						<matcher>
-							<Name>odd</Name>
-							<regex>statement [13579]</regex>
-						</matcher>
-						<expression>odd.matches(formattedMessage)</expression>
-					</evaluator>
-					<OnMismatch>NEUTRAL</OnMismatch>
-					<OnMatch>DENY</OnMatch>
-				</filter>
-				<encoder>
-					<pattern>%-4relative [%thread] %-5level %logger - %msg%n</pattern>
-				</encoder>
-			</appender>
-	
-			<root level="DEBUG">
-				<appender-ref ref="STDOUT" />
-			</root>
-		</configuration>
-		其他Filter不太常用了，大家可以参见官网。
-	  -->
-
 </configuration>
