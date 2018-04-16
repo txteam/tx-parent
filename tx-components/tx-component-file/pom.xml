@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.tx</groupId>
 		<artifactId>tx-components</artifactId>
-		<version>3.0.x-SNAPSHOT</version>
+		<version>5.0.x-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>tx-component-file</artifactId>
@@ -89,34 +89,11 @@
 			<artifactId>p6spy</artifactId>
 		</dependency>
 
-		<!-- cache -->
-		<dependency>
-			<groupId>net.sf.ehcache</groupId>
-			<artifactId>ehcache-core</artifactId>
-		</dependency>
-
 		<!-- quartz -->
 		<dependency>
 			<groupId>org.quartz-scheduler</groupId>
 			<artifactId>quartz</artifactId>
 			<optional>true</optional>
-		</dependency>
-
-		<!-- j2ee -->
-		<dependency>
-			<groupId>org.apache.tomcat</groupId>
-			<artifactId>servlet-api</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.tomcat</groupId>
-			<artifactId>jsp-api</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.tomcat</groupId>
-			<artifactId>el-api</artifactId>
-			<scope>provided</scope>
 		</dependency>
 
 		<!-- freemarker -->
