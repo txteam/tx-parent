@@ -93,22 +93,6 @@
 			<optional>true</optional>
 		</dependency>
 		
-		<!-- j2ee -->
-		<dependency>
-			<groupId>org.apache.tomcat</groupId>
-			<artifactId>servlet-api</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.tomcat</groupId>
-			<artifactId>jsp-api</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.tomcat</groupId>
-			<artifactId>el-api</artifactId>
-			<scope>provided</scope>
-		</dependency>
 
 		<!-- test -->
 		<dependency>
