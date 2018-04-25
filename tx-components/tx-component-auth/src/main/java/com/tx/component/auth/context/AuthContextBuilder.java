@@ -19,7 +19,6 @@ import javax.annotation.Resource;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.cache.ehcache.EhCacheCache;
 import org.springframework.core.OrderComparator;
 
 import com.tx.component.auth.context.adminchecker.AdminChecker;
@@ -35,8 +34,6 @@ import com.tx.component.auth.persister.service.NotTempAuthItemRefImplService;
 import com.tx.core.dbscript.TableDefinition;
 import com.tx.core.dbscript.XMLTableDefinition;
 import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.support.cache.LazyCacheValueFactory;
-import com.tx.core.support.cache.TransactionAwareLazyEhCacheMap;
 
 /**
  * 权限容器构建器<br/>
@@ -211,34 +208,34 @@ public class AuthContextBuilder extends AuthContextConfigurator {
         }
         
         AssertUtils.notNull(ehcache, "ehcache is null.");
-        final AuthItemPersister finalauthItemPersister = this.authItemPersister;
-        resMap = new TransactionAwareLazyEhCacheMap<AuthItem>(
-                tempAuthItemMapping, new EhCacheCache(ehcache),
-                new LazyCacheValueFactory<String, AuthItem>() {
-                    
-                    @Override
-                    public AuthItem find(String authItemId) {
-                        AuthItem authItemTemp = finalauthItemPersister.findAuthItem(authItemId);
-                        if (authItemTemp != null) {
-                            return authItemTemp;
-                        } else {
-                            return null;
-                        }
-                    }
-                    
-                    @Override
-                    public Map<String, AuthItem> listMap() {
-                        Map<String, AuthItem> resMap = new HashMap<String, AuthItem>();
-                        Set<AuthItem> authItemSetTemp = finalauthItemPersister.listAuthItem();
-                        if (!CollectionUtils.isEmpty(authItemSetTemp)) {
-                            for (AuthItem authItemTemp : authItemSetTemp) {
-                                resMap.put(authItemTemp.getId(), authItemTemp);
-                            }
-                        }
-                        return resMap;
-                    }
-                    
-                }, false);
+//        final AuthItemPersister finalauthItemPersister = this.authItemPersister;
+//        resMap = new TransactionAwareLazyEhCacheMap<AuthItem>(
+//                tempAuthItemMapping, new EhCacheCache(ehcache),
+//                new LazyCacheValueFactory<String, AuthItem>() {
+//                    
+//                    @Override
+//                    public AuthItem find(String authItemId) {
+//                        AuthItem authItemTemp = finalauthItemPersister.findAuthItem(authItemId);
+//                        if (authItemTemp != null) {
+//                            return authItemTemp;
+//                        } else {
+//                            return null;
+//                        }
+//                    }
+//                    
+//                    @Override
+//                    public Map<String, AuthItem> listMap() {
+//                        Map<String, AuthItem> resMap = new HashMap<String, AuthItem>();
+//                        Set<AuthItem> authItemSetTemp = finalauthItemPersister.listAuthItem();
+//                        if (!CollectionUtils.isEmpty(authItemSetTemp)) {
+//                            for (AuthItem authItemTemp : authItemSetTemp) {
+//                                resMap.put(authItemTemp.getId(), authItemTemp);
+//                            }
+//                        }
+//                        return resMap;
+//                    }
+//                    
+//                }, false);
         //强制将lazy中list加载一次
         resMap.entrySet();
         

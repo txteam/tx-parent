@@ -1,14 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
+	<!-- relativePath元素中的地址–本地仓库–远程仓库 设定一个空值将始终从仓库中获取，不从本地路径获取 -->
 	<!-- 依赖于spring-boot-dependencies，如果升级改版本，需要根据官方依赖修改properties -->
-	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.0.1.RELEASE</version>
-		<!-- relativePath元素中的地址–本地仓库–远程仓库 设定一个空值将始终从仓库中获取，不从本地路径获取 -->
-		<relativePath />
-	</parent>
+	<!-- <parent> -->
+	<!-- <groupId>org.springframework.boot</groupId> -->
+	<!-- <artifactId>spring-boot-starter-parent</artifactId> -->
+	<!-- <version>2.0.1.RELEASE</version> -->
+	<!-- <relativePath /> -->
+	<!-- </parent> -->
 
 	<!-- tx-parent5.0版本开始，系统全面向微服务进行支撑 -->
 	<!-- tx-parent将专注于基础components,以及基础services的提供 -->
@@ -104,6 +104,63 @@
 
 	<dependencyManagement>
 		<dependencies>
+			<!-- Spring Cloud Spring Boot -->
+			<!-- Finchley 兼容Spring Boot 2.0.x，不兼容Spring Boot 1.5.x -->
+			<!-- Dalston和Edgware 兼容Spring Boot 1.5.x，不兼容Spring Boot 2.0.x -->
+			<!-- Camden 兼容Spring Boot 1.4.x，也兼容Spring Boot 1.5.x -->
+			<!-- Brixton 兼容Spring Boot 1.3.x，也兼容Spring Boot 1.4.x -->
+			<!-- Angel 兼容Spring Boot 1.2.x -->
+			<!-- 2.0.1.RELEASE Finchley.M9 -->
+			<!-- 1.5.12.RELEASE Dalston.RC1 -->
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-dependencies</artifactId>
+				<version>1.5.12.RELEASE</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>Dalston.RC1</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+
+			<!-- 2.0.1含有 1.5.12不含的jar包 -->
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-lang3</artifactId>
+				<version>3.7</version>
+				<exclusions>
+					<exclusion>
+						<artifactId>commons-logging</artifactId>
+						<groupId>commons-logging</groupId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-dbcp2</artifactId>
+				<version>2.1.1</version>
+				<exclusions>
+					<exclusion>
+						<artifactId>commons-logging</artifactId>
+						<groupId>commons-logging</groupId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.quartz-scheduler</groupId>
+				<artifactId>quartz</artifactId>
+				<version>2.3.0</version>
+			</dependency>
+			<dependency>
+				<groupId>org.quartz-scheduler</groupId>
+				<artifactId>quartz-jobs</artifactId>
+				<version>2.3.0</version>
+			</dependency>
+
 			<!-- tx-core -->
 			<dependency>
 				<groupId>com.tx</groupId>
@@ -397,10 +454,6 @@
 			<!-- <artifactId>commons-dbcp2</artifactId> -->
 			<!-- </dependency> -->
 			<!-- <dependency> -->
-			<!-- <groupId>org.apache.commons</groupId> -->
-			<!-- <artifactId>commons-lang3</artifactId> -->
-			<!-- </dependency> -->
-			<!-- <dependency> -->
 			<!-- <groupId>commons-pool</groupId> -->
 			<!-- <artifactId>commons-pool</artifactId> -->
 			<!-- </dependency> -->
@@ -411,6 +464,10 @@
 			<!-- <dependency> -->
 			<!-- <groupId>org.apache.httpcomponents</groupId> -->
 			<!-- <artifactId>httpclient</artifactId> -->
+			<!-- </dependency> -->
+			<!-- <dependency> -->
+			<!-- <groupId>org.apache.commons</groupId> -->
+			<!-- <artifactId>commons-lang3</artifactId> -->
 			<!-- </dependency> -->
 
 			<!-- spring-data 依賴 spring-data-releasetrain import -->
