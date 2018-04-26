@@ -49,7 +49,7 @@ import com.tx.core.util.UUIDUtils;
  * @since [产品/模块版本]
  */
 public class GlobalConfigPropertiesPersister extends
-        BaseConfigPropertiesPersister {
+        AbstractConfigPropertiesPersister {
     
     /** 配置属性项持久层 */
     private ConfigPropertyItemDao configPropertyItemDao;

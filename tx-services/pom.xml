@@ -13,11 +13,11 @@
 		<skipTests>true</skipTests>
 	</properties>
 
-	<artifactId>tx-components</artifactId>
+	<artifactId>tx-services</artifactId>
 	<packaging>pom</packaging>
 
-	<name>tx-components</name>
-	<description>tx-components</description>
+	<name>tx-services</name>
+	<description>tx-services</description>
 
 	<build>
 		<pluginManagement>
@@ -44,17 +44,6 @@
 	</build>
 
 	<modules>
-		<!-- 有价值模块 -->
-		<module>tx-component-auth</module>
-		<module>tx-component-basicdata</module>
-		<module>tx-component-configuration</module>
-		<module>tx-component-servicelog</module>
-		
-		<!-- 待完善模块 -->
-		<module>tx-component-communication</module>
-		<module>tx-component-file</module>
-		
-		<!-- 准备废弃的模块 -->
-		<!-- <module>tx-component-rule</module> -->
+	
 	</modules>
 </project>

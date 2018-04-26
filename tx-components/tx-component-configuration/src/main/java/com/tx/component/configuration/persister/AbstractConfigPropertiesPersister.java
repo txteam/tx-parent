@@ -11,9 +11,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -21,6 +18,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.Resource;
@@ -46,12 +45,12 @@ import com.tx.core.util.XstreamUtils;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public abstract class BaseConfigPropertiesPersister implements
+public abstract class AbstractConfigPropertiesPersister implements
         ConfigPropertiesPersister, ApplicationContextAware, InitializingBean,
         BeanNameAware {
     
     /** 系统日志记录器 */
-    protected Logger logger = LoggerFactory.getLogger(BaseConfigPropertiesPersister.class);
+    protected Logger logger = LoggerFactory.getLogger(AbstractConfigPropertiesPersister.class);
     
     /** 配置文件解析句柄 */
     private static XStream configContextParser = XstreamUtils.getXstream(ConfigContextConfig.class);
