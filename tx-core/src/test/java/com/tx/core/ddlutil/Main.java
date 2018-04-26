@@ -1,3 +1,4 @@
+package com.tx.core.ddlutil;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Time;
@@ -26,9 +27,7 @@ import com.tx.core.util.JdbcUtils;
  * @since [产品/模块版本]
  */
 public class Main {
-    public static void main1(String[] args) {
-        
-    }
+    
     
     public static void main(String[] args) {
         System.out.println(Integer.class == int.class);
