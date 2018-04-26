@@ -8,8 +8,6 @@ package com.tx.component.auth.context;
 
 import javax.sql.DataSource;
 
-import net.sf.ehcache.Ehcache;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -68,7 +66,7 @@ public class AuthContextConfigurator implements InitializingBean,
     @Bean(name = "authContext")
     public AuthContextFactory authContext() {
         AuthContextFactory authContextFactory = new AuthContextFactory();
-        authContextFactory.setEhcache(this.ehcache);
+        //authContextFactory.setEhcache(this.ehcache);
         authContextFactory.setDatabaseSchemaUpdate(databaseSchemaUpdate);
         authContextFactory.setDataSource(dataSource);
         authContextFactory.setDbScriptExecutorContext(dbScriptExecutorContext);
@@ -135,7 +133,7 @@ public class AuthContextConfigurator implements InitializingBean,
     protected AuthChecker defaultAuthChecker;
     
     /** 权限项缓存对应的缓存生成器 */
-    protected Ehcache ehcache;
+    //protected Ehcache ehcache;
     
     /** 系统id 64，用以与其他系统区分 */
     protected String systemId;
@@ -204,12 +202,12 @@ public class AuthContextConfigurator implements InitializingBean,
         this.defaultAuthChecker = defaultAuthChecker;
     }
     
-    /**
-     * @param 对cache进行赋值
-     */
-    public void setEhcache(Ehcache ehcache) {
-        this.ehcache = ehcache;
-    }
+//    /**
+//     * @param 对cache进行赋值
+//     */
+//    public void setEhcache(Ehcache ehcache) {
+//        this.ehcache = ehcache;
+//    }
     
     /**
      * @param 对systemId进行赋值

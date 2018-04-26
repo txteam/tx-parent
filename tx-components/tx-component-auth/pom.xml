@@ -41,18 +41,6 @@
 			<optional>true</optional>
 		</dependency>
 
-		<!-- hibernate -->
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-core</artifactId>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-ehcache</artifactId>
-			<optional>true</optional>
-		</dependency>
-
 		<!-- mybatis -->
 		<dependency>
 			<groupId>org.mybatis</groupId>
@@ -63,24 +51,25 @@
 			<artifactId>mybatis-spring</artifactId>
 		</dependency>
 
+		<!-- json xml -->
+		<!-- <dependency> -->
+		<!-- <groupId>com.fasterxml.jackson.core</groupId> -->
+		<!-- <artifactId>jackson-databind</artifactId> -->
+		<!-- <optional>true</optional> -->
+		<!-- </dependency> -->
+		<dependency>
+			<groupId>com.thoughtworks.xstream</groupId>
+			<artifactId>xstream</artifactId>
+		</dependency>
+
 		<!-- freemarker -->
 		<dependency>
 			<groupId>org.freemarker</groupId>
 			<artifactId>freemarker</artifactId>
 			<optional>true</optional>
-			<scope>compile</scope>
 		</dependency>
 
-		<!-- json xml -->
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>com.thoughtworks.xstream</groupId>
-			<artifactId>xstream</artifactId>
-		</dependency>
+
 
 		<!-- postgresql jdbc optional:true -->
 		<dependency>
@@ -93,7 +82,7 @@
 			<artifactId>h2</artifactId>
 			<optional>true</optional>
 		</dependency>
-		
+
 
 		<!-- test -->
 		<dependency>

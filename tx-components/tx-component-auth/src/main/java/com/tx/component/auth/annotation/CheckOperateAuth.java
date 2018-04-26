@@ -64,7 +64,7 @@ public @interface CheckOperateAuth {
     
     /**
       * 是否可配置，对应权限是否可赋给超级管理员以外的人员 
-      *<功能详细描述>
+      * <功能详细描述>
       * @return [参数说明]
       * 
       * @return boolean [返回类型说明]

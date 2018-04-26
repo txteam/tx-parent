@@ -595,7 +595,7 @@
 			<!-- Dom4j Dependencies -->
 			<!-- spring-boot-dependencies 中已包含 -->
 			<!-- <dependency> -->
-			<!-- <groupId>org.dom4j</groupId> -->
+			<!-- <groupId>dom4j</groupId> -->
 			<!-- <artifactId>dom4j</artifactId> -->
 			<!-- </dependency> -->
 

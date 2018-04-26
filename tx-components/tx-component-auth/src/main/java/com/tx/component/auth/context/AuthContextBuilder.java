@@ -109,33 +109,34 @@ public class AuthContextBuilder extends AuthContextConfigurator {
         }
         
         //加载超级管理员认证器
-        Collection<AdminChecker> adminCheckers = this.applicationContext.getBeansOfType(AdminChecker.class)
-                .values();
+        Collection<AdminChecker> adminCheckers = this.applicationContext
+                .getBeansOfType(AdminChecker.class).values();
         loadAdminChecker(adminCheckers);
         //加载权限检查器
         logger.info("      加载权限检查器...");
         //读取系统中注册的权限检查器
-        Collection<AuthChecker> authCheckers = this.applicationContext.getBeansOfType(AuthChecker.class)
-                .values();
+        Collection<AuthChecker> authCheckers = this.applicationContext
+                .getBeansOfType(AuthChecker.class).values();
         loadAuthChecker(authCheckers);
         
         //向容器中注册加载器
         logger.info("      加载权限项加载器...");
         //读取系统中注册的加载器
-        Collection<AuthLoader> authLoaders = this.applicationContext.getBeansOfType(AuthLoader.class)
-                .values();
+        Collection<AuthLoader> authLoaders = this.applicationContext
+                .getBeansOfType(AuthLoader.class).values();
         loadAuthLoader(authLoaders);
         
         //权限加载器处理器，处理权限加载器加载权限完成后的一些后置处理逻辑
-        Collection<AuthItemLoaderProcessor> loaderProcessors = this.applicationContext.getBeansOfType(AuthItemLoaderProcessor.class)
-                .values();
+        Collection<AuthItemLoaderProcessor> loaderProcessors = this.applicationContext
+                .getBeansOfType(AuthItemLoaderProcessor.class).values();
         this.authLoaderProcessorList = new ArrayList<>();
         if (!CollectionUtils.isEmpty(loaderProcessors)) {
             for (AuthItemLoaderProcessor processorTemp : loaderProcessors) {
                 this.authLoaderProcessorList.add(processorTemp);
             }
         }
-        Collections.sort(this.authLoaderProcessorList, OrderComparator.INSTANCE);
+        Collections.sort(this.authLoaderProcessorList,
+                OrderComparator.INSTANCE);
         
         logger.info("      加载权限项...");
         this.authItemMapping = loadAuthItems(this.authLoaderList,
@@ -163,21 +164,23 @@ public class AuthContextBuilder extends AuthContextConfigurator {
         for (AuthLoader authLoaderTemp : authLoaders) {
             //加载权限项
             @SuppressWarnings("unchecked")
-            Set<AuthItem> authItemSet = authLoaderTemp.loadAuthItems((Map<String, AuthItem>) MapUtils.unmodifiableMap(tempAuthItemMapping));
+            Set<AuthItem> authItemSet = authLoaderTemp
+                    .loadAuthItems((Map<String, AuthItem>) MapUtils
+                            .unmodifiableMap(tempAuthItemMapping));
             if (CollectionUtils.isEmpty(authItemSet)) {
                 continue;
             }
             for (AuthItemLoaderProcessor processor : loaderProcessors) {
                 //将处理完成的权限集合一并压入
-                authItemSet.addAll(processor.postProcessAfterLoad(tempAuthItemMapping,
-                        authItemSet));
+                authItemSet.addAll(processor.postProcessAfterLoad(
+                        tempAuthItemMapping, authItemSet));
             }
             
             for (AuthItem authItem : authItemSet) {
                 AssertUtils.notNull(authItem, "authItem is null.");
                 AssertUtils.notEmpty(authItem.getId(), "authItem.id is empty.");
-                AssertUtils.notTrue(authItem.getId()
-                        .equals(authItem.getParentId()),
+                AssertUtils.notTrue(
+                        authItem.getId().equals(authItem.getParentId()),
                         "authItem.id equals authItem.parentId.authItem.id:{},parentId:{}",
                         authItem.getId(),
                         authItem.getParentId());
@@ -190,7 +193,8 @@ public class AuthContextBuilder extends AuthContextConfigurator {
                 } else {
                     //如果低优先级加载器加载的权限项目name,parentId指定了值，而先前的未指定的情况时
                     //用新的覆盖旧的，如果旧值存在，则忽略新值
-                    AuthItem realItemTemp = tempAuthItemMapping.get(authItem.getId());
+                    AuthItem realItemTemp = tempAuthItemMapping
+                            .get(authItem.getId());
                     if (realItemTemp instanceof AuthItemImpl) {
                         AuthItemImpl realItemImplTemp = (AuthItemImpl) realItemTemp;
                         if (StringUtils.isEmpty(realItemImplTemp.getName())
@@ -198,8 +202,10 @@ public class AuthContextBuilder extends AuthContextConfigurator {
                                         .equals(realItemImplTemp.getName())) {
                             realItemImplTemp.setName(authItem.getName());
                         }
-                        if (StringUtils.isEmpty(realItemImplTemp.getParentId())) {
-                            realItemImplTemp.setParentId(authItem.getParentId());
+                        if (StringUtils
+                                .isEmpty(realItemImplTemp.getParentId())) {
+                            realItemImplTemp
+                                    .setParentId(authItem.getParentId());
                         }
                     }
                     realItemTemp.getData().putAll(authItem.getData());
@@ -207,35 +213,35 @@ public class AuthContextBuilder extends AuthContextConfigurator {
             }
         }
         
-        AssertUtils.notNull(ehcache, "ehcache is null.");
-//        final AuthItemPersister finalauthItemPersister = this.authItemPersister;
-//        resMap = new TransactionAwareLazyEhCacheMap<AuthItem>(
-//                tempAuthItemMapping, new EhCacheCache(ehcache),
-//                new LazyCacheValueFactory<String, AuthItem>() {
-//                    
-//                    @Override
-//                    public AuthItem find(String authItemId) {
-//                        AuthItem authItemTemp = finalauthItemPersister.findAuthItem(authItemId);
-//                        if (authItemTemp != null) {
-//                            return authItemTemp;
-//                        } else {
-//                            return null;
-//                        }
-//                    }
-//                    
-//                    @Override
-//                    public Map<String, AuthItem> listMap() {
-//                        Map<String, AuthItem> resMap = new HashMap<String, AuthItem>();
-//                        Set<AuthItem> authItemSetTemp = finalauthItemPersister.listAuthItem();
-//                        if (!CollectionUtils.isEmpty(authItemSetTemp)) {
-//                            for (AuthItem authItemTemp : authItemSetTemp) {
-//                                resMap.put(authItemTemp.getId(), authItemTemp);
-//                            }
-//                        }
-//                        return resMap;
-//                    }
-//                    
-//                }, false);
+        //        AssertUtils.notNull(ehcache, "ehcache is null.");
+        //        final AuthItemPersister finalauthItemPersister = this.authItemPersister;
+        //        resMap = new TransactionAwareLazyEhCacheMap<AuthItem>(
+        //                tempAuthItemMapping, new EhCacheCache(ehcache),
+        //                new LazyCacheValueFactory<String, AuthItem>() {
+        //                    
+        //                    @Override
+        //                    public AuthItem find(String authItemId) {
+        //                        AuthItem authItemTemp = finalauthItemPersister.findAuthItem(authItemId);
+        //                        if (authItemTemp != null) {
+        //                            return authItemTemp;
+        //                        } else {
+        //                            return null;
+        //                        }
+        //                    }
+        //                    
+        //                    @Override
+        //                    public Map<String, AuthItem> listMap() {
+        //                        Map<String, AuthItem> resMap = new HashMap<String, AuthItem>();
+        //                        Set<AuthItem> authItemSetTemp = finalauthItemPersister.listAuthItem();
+        //                        if (!CollectionUtils.isEmpty(authItemSetTemp)) {
+        //                            for (AuthItem authItemTemp : authItemSetTemp) {
+        //                                resMap.put(authItemTemp.getId(), authItemTemp);
+        //                            }
+        //                        }
+        //                        return resMap;
+        //                    }
+        //                    
+        //                }, false);
         //强制将lazy中list加载一次
         resMap.entrySet();
         
@@ -282,9 +288,12 @@ public class AuthContextBuilder extends AuthContextConfigurator {
             TableDefinition authRefHisTableDefinition = new XMLTableDefinition(
                     authRefHisDefinitionLocation, replaceDataMap);
             
-            this.dbScriptExecutorContext.createOrUpdateTable(authItemTableDefinition);
-            this.dbScriptExecutorContext.createOrUpdateTable(authRefTableDefinition);
-            this.dbScriptExecutorContext.createOrUpdateTable(authRefHisTableDefinition);
+            this.dbScriptExecutorContext
+                    .createOrUpdateTable(authItemTableDefinition);
+            this.dbScriptExecutorContext
+                    .createOrUpdateTable(authRefTableDefinition);
+            this.dbScriptExecutorContext
+                    .createOrUpdateTable(authRefHisTableDefinition);
             
             logger.info(" 自动初始化权限容器表结构完成.表后缀名为：{}...", this.tableSuffix);
         }

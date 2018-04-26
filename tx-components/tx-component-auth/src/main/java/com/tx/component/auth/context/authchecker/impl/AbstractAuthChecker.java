@@ -24,7 +24,7 @@ import com.tx.component.auth.model.AuthItemRef;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public abstract class BaseAuthChecker implements AuthChecker {
+public abstract class AbstractAuthChecker implements AuthChecker {
     
     /**
      * 检查是否拥有某权限

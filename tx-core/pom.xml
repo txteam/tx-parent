@@ -45,6 +45,13 @@
 			<optional>true</optional>
 		</dependency>
 
+		<!-- cxf -->
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-spring-boot-starter-jaxws</artifactId>
+			<optional>true</optional>
+		</dependency>
+
 		<!-- srpingframework core -->
 		<!-- spring核心常用工具类包：依赖加载 -->
 		<dependency>
@@ -80,6 +87,18 @@
 		<dependency>
 			<groupId>commons-beanutils</groupId>
 			<artifactId>commons-beanutils</artifactId>
+		</dependency>
+
+		<!-- joda-time -->
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+		</dependency>
+
+		<!-- hibernate -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
 		</dependency>
 
 		<!-- commons -->
@@ -159,22 +178,11 @@
 			<optional>true</optional>
 		</dependency>
 
-		<!-- joda-time -->
-		<dependency>
-			<groupId>joda-time</groupId>
-			<artifactId>joda-time</artifactId>
-		</dependency>
-
 		<!-- freemarker -->
 		<dependency>
 			<groupId>org.freemarker</groupId>
 			<artifactId>freemarker</artifactId>
-		</dependency>
-
-		<!-- hibernate -->
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-core</artifactId>
+			<optional>true</optional>
 		</dependency>
 
 		<!-- pinyin -->
@@ -193,6 +201,11 @@
 		<dependency>
 			<groupId>com.thoughtworks.xstream</groupId>
 			<artifactId>xstream</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>dom4j</groupId>
+			<artifactId>dom4j</artifactId>
 			<optional>true</optional>
 		</dependency>
 
@@ -219,13 +232,6 @@
 		<dependency>
 			<groupId>org.quartz-scheduler</groupId>
 			<artifactId>quartz-jobs</artifactId>
-			<optional>true</optional>
-		</dependency>
-
-		<!-- cxf -->
-		<dependency>
-			<groupId>org.apache.cxf</groupId>
-			<artifactId>cxf-spring-boot-starter-jaxws</artifactId>
 			<optional>true</optional>
 		</dependency>
 
@@ -281,14 +287,6 @@
 
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-deploy-plugin</artifactId>
