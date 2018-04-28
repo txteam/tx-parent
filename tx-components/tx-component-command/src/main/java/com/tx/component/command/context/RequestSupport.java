@@ -9,7 +9,7 @@ package com.tx.component.command.context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.tx.core.model.ParameterizedTypeReference;
+import com.tx.core.util.typereference.ParameterizedTypeReference;
 
 /**
   * 操作请求支持器支持类<br/>

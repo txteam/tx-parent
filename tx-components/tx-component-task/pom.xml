@@ -8,9 +8,9 @@
 		<version>5.0.x-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>tx-component-command</artifactId>
+	<artifactId>tx-component-task</artifactId>
 	<packaging>jar</packaging>
-	<name>tx-component-command</name>
+	<name>tx-component-event</name>
 	<url>http://maven.apache.org</url>
 
 	<dependencies>
@@ -19,18 +19,6 @@
 			<artifactId>tx-core</artifactId>
 		</dependency>
 		
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-aop</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-jdbc</artifactId>
-		</dependency>
 	</dependencies>
 
 	<build>

@@ -9,7 +9,7 @@ package com.tx.component.command.context.injecthandler;
 import com.tx.component.command.context.CommandRequest;
 import com.tx.component.command.context.InjectHandler;
 import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.model.ParameterizedTypeReference;
+import com.tx.core.util.typereference.ParameterizedTypeReference;
 
 /**
  * 抽象的注入器实现<br/>

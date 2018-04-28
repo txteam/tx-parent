@@ -14,7 +14,7 @@ import com.tx.component.command.context.CommandReceiver;
 import com.tx.component.command.context.CommandRequest;
 import com.tx.component.command.context.CommandResponse;
 import com.tx.component.command.context.request.AbstractRequest;
-import com.tx.core.model.ParameterizedTypeReference;
+import com.tx.core.util.typereference.ParameterizedTypeReference;
 
 /**
  * 客户账户交易处理器<br/>
