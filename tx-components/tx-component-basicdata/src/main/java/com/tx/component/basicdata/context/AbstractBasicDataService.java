@@ -19,8 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.tx.component.basicdata.annotation.BasicDataType;
 import com.tx.component.basicdata.model.BasicData;
 import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.model.ParameterizedTypeReference;
 import com.tx.core.support.initable.helper.ConfigInitAbleHelper;
+import com.tx.core.util.typereference.ParameterizedTypeReference;
 
 /**
  * 基础数据业务层<br/>

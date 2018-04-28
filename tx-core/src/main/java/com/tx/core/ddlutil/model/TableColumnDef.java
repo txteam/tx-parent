@@ -1,6 +1,6 @@
 package com.tx.core.ddlutil.model;
 
-import com.tx.core.model.OrderedSupport;
+import com.tx.core.util.order.OrderedSupport;
 
 /**
   * 字段接口<br/>

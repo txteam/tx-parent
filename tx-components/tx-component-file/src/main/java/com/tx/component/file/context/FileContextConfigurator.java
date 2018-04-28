@@ -31,11 +31,11 @@ import com.tx.component.file.viewhandler.FileContextHttpRequestHandler;
 import com.tx.component.file.viewhandler.ViewHandlerRegistry;
 import com.tx.component.file.viewhandler.impl.DefaultViewHandler;
 import com.tx.component.file.viewhandler.impl.ThumbnailViewHandler;
-import com.tx.core.dbscript.model.DataSourceTypeEnum;
 import com.tx.core.ddlutil.executor.TableDDLExecutor;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.mybatis.support.MyBatisDaoSupport;
 import com.tx.core.mybatis.support.MyBatisDaoSupportHelper;
+import com.tx.core.util.dialect.DataSourceTypeEnum;
 
 /**
  * 文件容器配置器<br/>

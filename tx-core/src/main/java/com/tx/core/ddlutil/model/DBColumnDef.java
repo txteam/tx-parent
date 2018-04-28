@@ -46,10 +46,10 @@ public class DBColumnDef implements Serializable, TableColumnDef {
     private boolean required;
     
     /** 长度 */
-    private int size = 64;
+    private int size = 255;
     
     /** 精度. */
-    private int scale = 2;
+    private int scale = 0;
     
     /** 默认值. */
     private String defaultValue;

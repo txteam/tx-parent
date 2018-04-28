@@ -1,12 +1,16 @@
 package com.tx.core.ddlutil;
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
 import com.tx.core.util.JdbcUtils;
@@ -49,19 +53,31 @@ public class Main {
         System.out.println("Boolean : " + JdbcUtils.isSupportedSimpleType(Boolean.class));
         System.out.println("Character : " + JdbcUtils.isSupportedSimpleType(Character.class));
         
+        System.out.println("java.sql.Date : " + JdbcUtils.isSupportedSimpleType(java.sql.Date.class));
+        System.out.println("java.util.Date : " + JdbcUtils.isSupportedSimpleType(java.util.Date.class));
+        System.out.println("Timestamp : " + JdbcUtils.isSupportedSimpleType(Timestamp.class));
+        System.out.println("Time : " + JdbcUtils.isSupportedSimpleType(Time.class));
+        
         System.out.println("BigDecimal : " + JdbcUtils.isSupportedSimpleType(BigDecimal.class));
         System.out.println("String : " + JdbcUtils.isSupportedSimpleType(String.class));
         
         System.out.println("Map : " + JdbcUtils.isSupportedSimpleType(Map.class));
         System.out.println("Set : " + JdbcUtils.isSupportedSimpleType(Set.class));
+        System.out.println("List : " + JdbcUtils.isSupportedSimpleType(List.class));
         System.out.println("ArrayList : " + JdbcUtils.isSupportedSimpleType(ArrayList.class));
         System.out.println("HashMap : " + JdbcUtils.isSupportedSimpleType(HashMap.class));
-        
-        System.out.println("Date : " + JdbcUtils.isSupportedSimpleType(java.sql.Date.class));
-        System.out.println("java.util.Date : " + JdbcUtils.isSupportedSimpleType(java.util.Date.class));
-        System.out.println("Timestamp : " + JdbcUtils.isSupportedSimpleType(Timestamp.class));
-        System.out.println("Time : " + JdbcUtils.isSupportedSimpleType(Time.class));
+        System.out.println("HashSet : " + JdbcUtils.isSupportedSimpleType(HashSet.class));
         
         TypeHandlerRegistry typeHandlerRegistry = new TypeHandlerRegistry();
+        
+        Field field1 = FieldUtils.getDeclaredField(DDLTestDemo.class, "test_String", true);
+        System.out.println(field1);
+        Field field11 = FieldUtils.getField(DDLTestDemo.class, "test_String", true);
+        System.out.println(field11);
+        
+        Field field2 = FieldUtils.getDeclaredField(DDLTestDemo.class, "parentString", true);
+        System.out.println(field2);
+        Field field21 = FieldUtils.getField(DDLTestDemo.class, "parentString", true);
+        System.out.println(field21);
     }
 }

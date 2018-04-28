@@ -24,7 +24,7 @@ import com.tx.core.ddlutil.model.TableDef;
 import com.tx.core.ddlutil.model.TableIndexDef;
 import com.tx.core.exceptions.SILException;
 import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.model.OrderedSupportComparator;
+import com.tx.core.util.order.OrderedSupportComparator;
 
 /**
  * 创建表DDL构建器<br/>

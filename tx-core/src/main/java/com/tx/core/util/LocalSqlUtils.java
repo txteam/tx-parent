@@ -12,9 +12,9 @@ import java.util.List;
 import org.hibernate.dialect.Dialect;
 import org.springframework.beans.factory.InitializingBean;
 
-import com.tx.core.dbscript.model.DataSourceTypeEnum;
 import com.tx.core.exceptions.argument.ArgNullException;
 import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.util.dialect.DataSourceTypeEnum;
 
 /**
  * 本地sql工具类 <功能详细描述>

@@ -12,7 +12,6 @@ import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 
-import com.tx.core.datasource.finder.ConfigDataSourceFinder;
 import com.tx.core.datasource.finder.JNDIDataSourceFinder;
 
 /**
@@ -45,7 +44,7 @@ public class DataSourceFactoryBean implements
         super();
         datasourceFinderList = new ArrayList<DataSourceFinder>();
         datasourceFinderList.add(new JNDIDataSourceFinder());
-        datasourceFinderList.add(new ConfigDataSourceFinder());
+        //datasourceFinderList.add(new ConfigDataSourceFinder());
     }
     
     /**

@@ -25,7 +25,7 @@ import com.tx.core.ddlutil.model.TableColumnDef;
 import com.tx.core.ddlutil.model.TableDef;
 import com.tx.core.ddlutil.model.TableIndexDef;
 import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.model.OrderedSupportComparator;
+import com.tx.core.util.order.OrderedSupportComparator;
 
 /**
  * ddlutil模块中工具类<br/>
@@ -113,9 +113,9 @@ public abstract class TableDefHelper {
             return;
         }
         if (!StringUtils.isBlank(pkIndexColumnNames.toString())) {
-            AssertUtils.isTrue(pkIndexColumnNames.toString()
-                    .toUpperCase()
-                    .equals(pkColumnNames.toString().toUpperCase()),
+            AssertUtils.isTrue(
+                    pkIndexColumnNames.toString().toUpperCase().equals(
+                            pkColumnNames.toString().toUpperCase()),
                     "pkColumnNames should equal.byIndex:{} byColumn:{}",
                     new Object[] { pkIndexColumnNames.toString().toUpperCase(),
                             pkColumnNames.toString().toUpperCase() });
@@ -183,9 +183,9 @@ public abstract class TableDefHelper {
             }
         }
         if (!StringUtils.isBlank(pkIndexColumnNames.toString())) {
-            AssertUtils.isTrue(pkIndexColumnNames.toString()
-                    .toUpperCase()
-                    .equals(pkColumnNames.toString().toUpperCase()),
+            AssertUtils.isTrue(
+                    pkIndexColumnNames.toString().toUpperCase().equals(
+                            pkColumnNames.toString().toUpperCase()),
                     "pkColumnNames should equal.byIndex:{} byColumn:{}",
                     new Object[] { pkIndexColumnNames.toString().toUpperCase(),
                             pkColumnNames.toString().toUpperCase() });
@@ -231,9 +231,9 @@ public abstract class TableDefHelper {
                 pkColumnNames.append(",");
             }
         }
-        AssertUtils.isTrue(pkIndexColumnNames.toString()
-                .toUpperCase()
-                .equals(pkColumnNames.toString().toUpperCase()),
+        AssertUtils.isTrue(
+                pkIndexColumnNames.toString().toUpperCase().equals(
+                        pkColumnNames.toString().toUpperCase()),
                 "pkColumnNames should equals.byIndex:{} byColumn:{}",
                 new Object[] { pkIndexColumnNames.toString().toUpperCase(),
                         pkColumnNames.toString().toUpperCase() });
@@ -343,8 +343,9 @@ public abstract class TableDefHelper {
             TableColumnDef sourceCol) {
         AssertUtils.notNull(newCol, "newCol is null.");
         AssertUtils.notNull(sourceCol, "sourceCol is null.");
-        AssertUtils.isTrue(newCol.getColumnName()
-                .equalsIgnoreCase(sourceCol.getColumnName()),
+        AssertUtils.isTrue(
+                newCol.getColumnName()
+                        .equalsIgnoreCase(sourceCol.getColumnName()),
                 "newCol.columnName:{} should equalsIgnoreCase sourceCol.columnName:{}",
                 new Object[] { newCol.getColumnName(),
                         sourceCol.getColumnName() });
@@ -353,15 +354,15 @@ public abstract class TableDefHelper {
                 sourceCol.getJdbcType())) {
             return true;
         }
-        if (newCol.getSize() != sourceCol.getSize()) {
+        if (newCol.getSize() <= sourceCol.getSize()) {
             return true;
         }
-        if (newCol.getScale() != sourceCol.getScale()) {
+        if (newCol.getScale() <= sourceCol.getScale()) {
             return true;
         }
-        if (newCol.isRequired() != sourceCol.isRequired()) {
-            return true;
-        }
+        //        if (newCol.isRequired() != sourceCol.isRequired()) {
+        //            return true;
+        //        }
         if (!StringUtils.equals(newCol.getDefaultValue(),
                 sourceCol.getDefaultValue())) {
             return true;
@@ -369,52 +370,7 @@ public abstract class TableDefHelper {
         return false;
     }
     
-    /**
-     * 字段是否需要进行升级<br/>
-     * <功能详细描述>
-     * @param newCol
-     * @param sourceCol
-     * @return [参数说明]
-     * 
-     * @return boolean [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-    */
-    private static boolean isNeedUpdateForIndex(List<TableIndexDef> newIndexes,
-            List<TableIndexDef> sourceIndexes) {
-        AssertUtils.notEmpty(newIndexes, "newIndexes is empty.");
-        AssertUtils.notEmpty(sourceIndexes, "sourceIndexes is empty.");
-        
-        OrderedSupportComparator.sort(newIndexes);
-        OrderedSupportComparator.sort(sourceIndexes);
-        
-        StringBuilder sourceIndexColumns = new StringBuilder();
-        int index = 0;
-        for (TableIndexDef idx : sourceIndexes) {
-            sourceIndexColumns.append(idx.getColumnName());
-            if (++index < sourceIndexes.size()) {
-                sourceIndexColumns.append(",");
-            }
-        }
-        index = 0;
-        StringBuilder newIndexColumns = new StringBuilder();
-        for (TableIndexDef idx : newIndexes) {
-            newIndexColumns.append(idx.getColumnName());
-            if (++index < newIndexes.size()) {
-                newIndexColumns.append(",");
-            }
-        }
-        
-        boolean flag = isNeedUpdateForIndex(newIndexColumns.toString()
-                .toUpperCase(), sourceIndexColumns.toString().toUpperCase());
-        if (!flag) {
-            if (newIndexes.get(0).isUniqueKey() != sourceIndexes.get(0)
-                    .isUniqueKey()) {
-                return true;
-            }
-        }
-        return flag;
-    }
+    
     
     /**
      * 字段是否需要进行升级<br/>
@@ -430,7 +386,8 @@ public abstract class TableDefHelper {
     private static boolean isNeedUpdateForIndex(String newIndexColumns,
             String sourceIndexColumns) {
         AssertUtils.notEmpty(newIndexColumns, "newIndexColumns is empty.");
-        AssertUtils.notEmpty(sourceIndexColumns, "sourceIndexColumns is empty.");
+        AssertUtils.notEmpty(sourceIndexColumns,
+                "sourceIndexColumns is empty.");
         
         if (!newIndexColumns.equalsIgnoreCase(sourceIndexColumns)) {
             return true;
@@ -452,9 +409,8 @@ public abstract class TableDefHelper {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    public static boolean isNeedAlter(
-            List<? extends TableColumnDef> newColumns, TableDef sourceTable,
-            boolean isIncrementUpdate) {
+    public static boolean isNeedAlter(List<? extends TableColumnDef> newColumns,
+            TableDef sourceTable, boolean isIncrementUpdate) {
         AssertUtils.notEmpty(newColumns, "newColumns is empty.");
         AssertUtils.notNull(sourceTable, "sourceTable is null.");
         AssertUtils.notEmpty(sourceTable.getColumns(),
@@ -482,8 +438,7 @@ public abstract class TableDefHelper {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    public static boolean isNeedAlter(
-            List<? extends TableColumnDef> newColumns,
+    public static boolean isNeedAlter(List<? extends TableColumnDef> newColumns,
             List<? extends TableIndexDef> newIndexes, TableDef sourceTable,
             boolean isIncrementUpdate) {
         AssertUtils.notEmpty(newColumns, "newColumns is empty.");
@@ -513,8 +468,7 @@ public abstract class TableDefHelper {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public static boolean isNeedAlter(
-            List<? extends TableColumnDef> newColumns,
+    public static boolean isNeedAlter(List<? extends TableColumnDef> newColumns,
             List<? extends TableIndexDef> newIndexes, TableDef sourceTable,
             boolean isIncrementUpdate, boolean isIgnoreIndexChange) {
         AssertUtils.notEmpty(newColumns, "newColumns is empty.");
@@ -523,7 +477,8 @@ public abstract class TableDefHelper {
                 "sourceTable.columns is null.");
         
         AlterTableContent content = new AlterTableContent(newColumns,
-                newIndexes, sourceTable, isIncrementUpdate, isIgnoreIndexChange);
+                newIndexes, sourceTable, isIncrementUpdate,
+                isIgnoreIndexChange);
         boolean isNeedUpdate = content.isNeedAlter();
         return isNeedUpdate;
     }
@@ -547,7 +502,8 @@ public abstract class TableDefHelper {
             TableDef sourceTable, boolean isIncrementUpdate,
             boolean isIgnoreIndexChange) {
         AlterTableContent content = new AlterTableContent(newColumns,
-                newIndexes, sourceTable, isIncrementUpdate, isIgnoreIndexChange);
+                newIndexes, sourceTable, isIncrementUpdate,
+                isIgnoreIndexChange);
         return content;
     }
     
@@ -598,8 +554,8 @@ public abstract class TableDefHelper {
                 List<? extends TableIndexDef> newIndexes, TableDef sourceTable,
                 boolean isIncrementUpdate, boolean isIgnoreIndexChange) {
             this.newColumns = newColumns;
-            this.newIndexes = newIndexes == null ? new ArrayList<TableIndexDef>()
-                    : newIndexes;
+            this.newIndexes = newIndexes == null
+                    ? new ArrayList<TableIndexDef>() : newIndexes;
             this.sourceTable = sourceTable;
             this.isIncrementUpdate = isIncrementUpdate;
             this.isIgnoreIndexChange = isIgnoreIndexChange;
@@ -632,7 +588,8 @@ public abstract class TableDefHelper {
             //遍历新字段
             for (TableColumnDef newCol : this.newColumns) {
                 newMap.put(newCol.getColumnName().toUpperCase(), newCol);
-                if (!sourceMap.containsKey(newCol.getColumnName().toUpperCase())) {
+                if (!sourceMap
+                        .containsKey(newCol.getColumnName().toUpperCase())) {
                     //如果在原表中不存在对应的字段，则添加到需要新增的字段
                     this.alterAddColumns.add(newCol);
                 } else if (isNeedUpdateForColumn(newCol,
@@ -645,13 +602,14 @@ public abstract class TableDefHelper {
             for (TableColumnDef sourceCol : this.sourceTable.getColumns()) {
                 if (!isIncrementUpdate) {
                     //非增量升级
-                    if (!newMap.containsKey(sourceCol.getColumnName()
-                            .toUpperCase())) {
+                    if (!newMap.containsKey(
+                            sourceCol.getColumnName().toUpperCase())) {
                         this.alterDeleteColumns.add(sourceCol);
                     }
                 } else {
-                    if (!newMap.containsKey(sourceCol.getColumnName()
-                            .toUpperCase()) && sourceCol.isRequired()) {
+                    if (!newMap.containsKey(
+                            sourceCol.getColumnName().toUpperCase())
+                            && sourceCol.isRequired()) {
                         //如果是增量升级，需要把原来的必填设置修改为非必填
                         sourceCol.setRequired(false);
                         this.alterModifyColumns.add(sourceCol);
@@ -669,12 +627,14 @@ public abstract class TableDefHelper {
           * @see [类、类#方法、类#成员]
          */
         private void initAlterPrimaryKey() {
-            String newPrimaryKeyColumnNames = parsePrimaryKeyColumnNames(this.newColumns,
-                    this.newIndexes);
-            String sourcePrimaryKeyColumnNames = parsePrimaryKeyColumnNames(this.sourceTable.getColumns(),
+            String newPrimaryKeyColumnNames = parsePrimaryKeyColumnNames(
+                    this.newColumns, this.newIndexes);
+            String sourcePrimaryKeyColumnNames = parsePrimaryKeyColumnNames(
+                    this.sourceTable.getColumns(),
                     this.sourceTable.getIndexes());
             
-            if (newPrimaryKeyColumnNames.equalsIgnoreCase(sourcePrimaryKeyColumnNames)) {
+            if (newPrimaryKeyColumnNames
+                    .equalsIgnoreCase(sourcePrimaryKeyColumnNames)) {
                 this.isNeedModifyPrimaryKey = false;
             } else {
                 this.isNeedModifyPrimaryKey = true;
@@ -719,7 +679,8 @@ public abstract class TableDefHelper {
             }
             
             //遍历新字段
-            for (Entry<String, List<TableIndexDef>> entryTemp : newMap.entrySet()) {
+            for (Entry<String, List<TableIndexDef>> entryTemp : newMap
+                    .entrySet()) {
                 String indexName = entryTemp.getKey().toUpperCase();
                 if (!sourceMap.containsKey(indexName)) {
                     //如果在原表中不存在对应的字段，则添加到需要新增的字段
@@ -732,7 +693,8 @@ public abstract class TableDefHelper {
                 }
             }
             //遍历原字段
-            for (Entry<String, List<TableIndexDef>> entryTemp : sourceMap.entrySet()) {
+            for (Entry<String, List<TableIndexDef>> entryTemp : sourceMap
+                    .entrySet()) {
                 String indexName = entryTemp.getKey().toUpperCase();
                 if (!isIncrementUpdate) {
                     //非增量升级
@@ -833,10 +795,8 @@ public abstract class TableDefHelper {
     
     public static void main(String[] args) {
         Dialect dia = new MySQL5InnoDBDialect();
-        System.out.println(dia.getTypeName(JdbcTypeEnum.NUMERIC.getSqlType(),
-                10,
-                10,
-                2));
+        System.out.println(
+                dia.getTypeName(JdbcTypeEnum.NUMERIC.getSqlType(), 10, 10, 2));
         //System.out.println(dia.getTypeName(JdbcTypeEnum.DECIMAL.getSqlType(), 10, 10, 2));
     }
 }

@@ -17,7 +17,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.hibernate.dialect.Dialect;
 import org.springframework.util.ClassUtils;
 
-import com.tx.core.dbscript.model.DataSourceTypeEnum;
 import com.tx.core.generator.model.DBScriptMapper;
 import com.tx.core.generator.model.DaoGeneratorModel;
 import com.tx.core.generator.model.DeleteMapper;
@@ -31,6 +30,7 @@ import com.tx.core.reflection.JpaColumnInfo;
 import com.tx.core.reflection.JpaMetaClass;
 import com.tx.core.util.FreeMarkerUtils;
 import com.tx.core.util.JdbcUtils;
+import com.tx.core.util.dialect.DataSourceTypeEnum;
 
 /**
  * <功能简述>

@@ -257,35 +257,4 @@ public abstract class SILExceptionHelper {
         exception.setErrorCode(errorCode);
         return exception;
     }
-    
-    //    public static void a(){
-    //        b();
-    //    }
-    //    
-    //    public static void b(){
-    //        c();
-    //    }
-    //    
-    //    public static void c(){
-    //        RuntimeException re = d();
-    //        re.fillInStackTrace();
-    //        throw re;
-    //    }
-    //    
-    //    public static RuntimeException d(){
-    //        return newRE();
-    //    }
-    //    
-    //    public static RuntimeException newRE(){
-    //        return new RuntimeException("");
-    //    }
-    //    
-    //    public static void main(String[] args) {
-    //        try {
-    //            a();
-    //        } catch (Exception e) {
-    //            // TODO Auto-generated catch block
-    //            e.printStackTrace();
-    //        }
-    //    }
 }

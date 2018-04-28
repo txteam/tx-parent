@@ -6,8 +6,8 @@
  */
 package com.tx.core.generator.dbscript;
 
-import com.tx.core.dbscript.model.DataSourceTypeEnum;
 import com.tx.core.generator.JpaEntityFreeMarkerGenerator;
+import com.tx.core.util.dialect.DataSourceTypeEnum;
 
 /**
  * 业务日志数据脚本生成辅助器<br/>

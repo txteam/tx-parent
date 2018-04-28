@@ -18,7 +18,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import com.tx.core.datasource.DataSourceFinder;
 import com.tx.core.datasource.finder.SimpleDataSourceFinder;
-import com.tx.core.dbscript.model.DataSourceTypeEnum;
 import com.tx.core.ddlutil.builder.create.CreateTableDDLBuilder;
 import com.tx.core.ddlutil.executor.TableDDLExecutor;
 import com.tx.core.ddlutil.executor.impl.MysqlTableDDLExecutor;
@@ -28,6 +27,7 @@ import com.tx.core.mybatis.data.TestDemo;
 import com.tx.core.mybatis.support.MyBatisDaoSupport;
 import com.tx.core.mybatis.support.MyBatisDaoSupportHelper;
 import com.tx.core.util.UUIDUtils;
+import com.tx.core.util.dialect.DataSourceTypeEnum;
 
 /**
  * <功能简述>

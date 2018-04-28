@@ -23,7 +23,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.util.PropertyPlaceholderHelper;
 
-import com.tx.core.dbscript.model.DataSourceTypeEnum;
 import com.tx.core.ddlutil.builder.alter.AlterTableDDLBuilder;
 import com.tx.core.ddlutil.builder.alter.impl.AlterTableDDLBuilderFactoryRegistry;
 import com.tx.core.ddlutil.builder.create.CreateTableDDLBuilder;
@@ -37,6 +36,7 @@ import com.tx.core.ddlutil.model.TableDef;
 import com.tx.core.exceptions.SILException;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.util.SqlUtils;
+import com.tx.core.util.dialect.DataSourceTypeEnum;
 
 /**
  * Mysql 表相关 DDL执行器<br/>

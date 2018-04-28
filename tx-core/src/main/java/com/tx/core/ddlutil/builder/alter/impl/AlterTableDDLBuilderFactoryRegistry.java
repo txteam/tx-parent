@@ -9,11 +9,11 @@ package com.tx.core.ddlutil.builder.alter.impl;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.tx.core.dbscript.model.DataSourceTypeEnum;
 import com.tx.core.ddlutil.builder.alter.AlterTableDDLBuilderFactory;
 import com.tx.core.ddlutil.dialect.DDLDialect;
 import com.tx.core.ddlutil.dialect.MysqlDDLDialect;
 import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.util.dialect.DataSourceTypeEnum;
 
 /**
  * 注册工厂实例<br/>

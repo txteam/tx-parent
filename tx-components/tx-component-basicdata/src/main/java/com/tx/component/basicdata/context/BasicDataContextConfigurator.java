@@ -33,10 +33,10 @@ import com.tx.component.basicdata.dao.impl.BasicDataTypeDaoImpl;
 import com.tx.component.basicdata.dao.impl.DataDictDaoImpl;
 import com.tx.component.basicdata.service.BasicDataTypeService;
 import com.tx.component.basicdata.service.DataDictService;
-import com.tx.core.dbscript.model.DataSourceTypeEnum;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.mybatis.support.MyBatisDaoSupport;
 import com.tx.core.mybatis.support.MyBatisDaoSupportHelper;
+import com.tx.core.util.dialect.DataSourceTypeEnum;
 
 /**
  * 基础数据容器配置器<br/>

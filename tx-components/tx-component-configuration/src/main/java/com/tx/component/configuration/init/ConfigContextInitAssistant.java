@@ -22,13 +22,13 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import com.tx.core.dbscript.model.DataSourceTypeEnum;
 import com.tx.core.ddlutil.builder.DDLBuilder;
 import com.tx.core.ddlutil.builder.alter.AlterTableDDLBuilder;
 import com.tx.core.ddlutil.builder.create.CreateTableDDLBuilder;
 import com.tx.core.ddlutil.executor.TableDDLExecutor;
 import com.tx.core.ddlutil.executor.TableDDLExecutorFactory;
 import com.tx.core.exceptions.SILException;
+import com.tx.core.util.dialect.DataSourceTypeEnum;
 
 /**
  * <功能简述>

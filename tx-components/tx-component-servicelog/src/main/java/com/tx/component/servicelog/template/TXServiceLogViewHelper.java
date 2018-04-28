@@ -16,10 +16,10 @@ import java.util.Set;
 
 import org.springframework.util.ClassUtils;
 
-import com.tx.core.dbscript.model.DataSourceTypeEnum;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.reflection.JpaMetaClass;
 import com.tx.core.util.FreeMarkerUtils;
+import com.tx.core.util.dialect.DataSourceTypeEnum;
 
 /**
  * 业务日志视图逻辑生成器

@@ -32,12 +32,12 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public abstract class AbstractDDLBuilder<B extends DDLBuilder<B>> implements
-        DDLBuilder<B> {
+public abstract class AbstractDDLBuilder<B extends DDLBuilder<B>>
+        implements DDLBuilder<B> {
     
     /** 分行字符. */
-    private static final String LINE_SEPARATOR = System.getProperty("line.separator",
-            "\n");
+    private static final String LINE_SEPARATOR = System
+            .getProperty("line.separator", "\n");
     
     /** ddl方言类 */
     protected DDLDialect ddlDialect;
@@ -97,11 +97,11 @@ public abstract class AbstractDDLBuilder<B extends DDLBuilder<B>> implements
                 "ddlColumn.jdbcType is empty.");
         if (StringUtils.isEmpty(tableColumn.getColumnType())) {
             //字段类型
-            String columnType = this.ddlDialect.getDialect()
-                    .getTypeName(tableColumn.getJdbcType().getSqlType(),
-                            tableColumn.getSize(),
-                            tableColumn.getSize(),
-                            tableColumn.getScale());
+            String columnType = this.ddlDialect.getDialect().getTypeName(
+                    tableColumn.getJdbcType().getSqlType(),
+                    tableColumn.getSize(),
+                    tableColumn.getSize(),
+                    tableColumn.getScale());
             tableColumn.setColumnType(columnType);
         }
         
@@ -138,8 +138,8 @@ public abstract class AbstractDDLBuilder<B extends DDLBuilder<B>> implements
      * @return
      */
     @Override
-    public B newColumnOfVarchar(boolean primaryKey, String columnName,
-            int size, boolean required, String defaultValue) {
+    public B newColumnOfVarchar(boolean primaryKey, String columnName, int size,
+            boolean required, String defaultValue) {
         AssertUtils.notEmpty(columnName, "columnName is empty.");
         
         JdbcTypeEnum jdbcType = JdbcTypeEnum.VARCHAR;
@@ -156,7 +156,8 @@ public abstract class AbstractDDLBuilder<B extends DDLBuilder<B>> implements
             defaultValueString = "'" + defaultValue + "'";
         }
         DBColumnDef tableColumn = new DBColumnDef(primaryKey, columnName,
-                this.tableName, jdbcType, size, 0, required, defaultValueString);
+                this.tableName, jdbcType, size, 0, required,
+                defaultValueString);
         String columnType = this.ddlDialect.getDialect()
                 .getTypeName(jdbcType.getSqlType(), size, size, 0);
         tableColumn.setColumnType(columnType);
@@ -194,8 +195,8 @@ public abstract class AbstractDDLBuilder<B extends DDLBuilder<B>> implements
      * @return
      */
     @Override
-    public B newColumnOfInteger(boolean primaryKey, String columnName,
-            int size, boolean required, Integer defaultValue) {
+    public B newColumnOfInteger(boolean primaryKey, String columnName, int size,
+            boolean required, Integer defaultValue) {
         AssertUtils.notEmpty(columnName, "columnName is empty.");
         
         JdbcTypeEnum jdbcType = JdbcTypeEnum.INTEGER;
@@ -218,7 +219,8 @@ public abstract class AbstractDDLBuilder<B extends DDLBuilder<B>> implements
             defaultValueString = String.valueOf(defaultValue);
         }
         DBColumnDef tableColumn = new DBColumnDef(primaryKey, columnName,
-                this.tableName, jdbcType, size, 0, required, defaultValueString);
+                this.tableName, jdbcType, size, 0, required,
+                defaultValueString);
         String columnType = this.ddlDialect.getDialect()
                 .getTypeName(jdbcType.getSqlType(), size, size, 0);
         tableColumn.setColumnType(columnType);
@@ -268,16 +270,9 @@ public abstract class AbstractDDLBuilder<B extends DDLBuilder<B>> implements
         AssertUtils.notEmpty(columnName, "columnName is empty.");
         
         JdbcTypeEnum jdbcType = JdbcTypeEnum.BIT;
-        TableColumnDef tableColumn = new DBColumnDef(
-                false,
-                columnName,
-                this.tableName,
-                jdbcType,
-                1,
-                0,
-                required,
-                defaultValue != null ? (defaultValue.booleanValue() ? "1" : "0")
-                        : null);
+        TableColumnDef tableColumn = new DBColumnDef(false, columnName,
+                this.tableName, jdbcType, 1, 0, required, defaultValue != null
+                        ? (defaultValue.booleanValue() ? "1" : "0") : null);
         String columnType = this.ddlDialect.getDialect()
                 .getTypeName(jdbcType.getSqlType(), 1, 1, 0);
         tableColumn.setColumnType(columnType);
@@ -298,21 +293,24 @@ public abstract class AbstractDDLBuilder<B extends DDLBuilder<B>> implements
      * @return
      */
     @Override
-    public B newColumnOfBigDecimal(String columnName, int size, int scale,
+    public B newColumnOfBigDecimal(String columnName, int precision, int scale,
             boolean required, BigDecimal defaultValue) {
         AssertUtils.notEmpty(columnName, "columnName is empty.");
-        if (size <= 0) {
-            size = 16;
+        if (precision <= 0) {
+            precision = 16;
         }
-        if (scale <= 0) {
+        if (scale < 0) {
             scale = 2;
         }
         JdbcTypeEnum jdbcType = JdbcTypeEnum.NUMERIC;
         TableColumnDef tableColumn = new DBColumnDef(false, columnName,
-                this.tableName, jdbcType, size, scale, required,
+                this.tableName, jdbcType, precision, scale, required,
                 defaultValue == null ? null : defaultValue.toString());
-        String columnType = this.ddlDialect.getDialect()
-                .getTypeName(jdbcType.getSqlType(), 1, 1, 0);
+        String columnType = this.ddlDialect.getDialect().getTypeName(
+                jdbcType.getSqlType(),
+                tableColumn.getSize(),
+                tableColumn.getSize(),
+                tableColumn.getScale());
         tableColumn.setColumnType(columnType);
         
         addAndValidateNewColumn(tableColumn);
@@ -342,8 +340,9 @@ public abstract class AbstractDDLBuilder<B extends DDLBuilder<B>> implements
         
         //判断是否有重复的表字段
         for (TableColumnDef tc : this.columns) {
-            AssertUtils.notTrue(StringUtils.equalsIgnoreCase(tc.getColumnName(),
-                    tableColumn.getColumnName()),
+            AssertUtils.notTrue(
+                    StringUtils.equalsIgnoreCase(tc.getColumnName(),
+                            tableColumn.getColumnName()),
                     "Duplicate column.columnName:{}",
                     tableColumn.getColumnName());
         }
@@ -441,8 +440,8 @@ public abstract class AbstractDDLBuilder<B extends DDLBuilder<B>> implements
         //判断是否有重复的索引字段
         for (TableIndexDef tidx : this.indexes) {
             //当indexName与columnName都相当时认为是重复的索引
-            AssertUtils.notTrue(StringUtils.equalsIgnoreCase(tidx.getIndexName(),
-                    tableIndex.getIndexName())
+            AssertUtils.notTrue(StringUtils.equalsIgnoreCase(
+                    tidx.getIndexName(), tableIndex.getIndexName())
                     && StringUtils.equalsIgnoreCase(tidx.getColumnName(),
                             tableIndex.getColumnName()),
                     "Duplicate index:indexName:{} columnName:{}",
