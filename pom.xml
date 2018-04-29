@@ -3,12 +3,12 @@
 
 	<!-- relativePath元素中的地址–本地仓库–远程仓库 设定一个空值将始终从仓库中获取，不从本地路径获取 -->
 	<!-- 依赖于spring-boot-dependencies，如果升级改版本，需要根据官方依赖修改properties -->
-	<!-- <parent> -->
-	<!-- <groupId>org.springframework.boot</groupId> -->
-	<!-- <artifactId>spring-boot-starter-parent</artifactId> -->
-	<!-- <version>2.0.1.RELEASE</version> -->
-	<!-- <relativePath /> -->
-	<!-- </parent> -->
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-dependencies</artifactId>
+		<version>1.5.12.RELEASE</version>
+		<relativePath />
+	</parent>
 
 	<!-- tx-parent5.0版本开始，系统全面向微服务进行支撑 -->
 	<!-- tx-parent将专注于基础components,以及基础services的提供 -->
@@ -112,13 +112,13 @@
 			<!-- Angel 兼容Spring Boot 1.2.x -->
 			<!-- 2.0.1.RELEASE Finchley.M9 -->
 			<!-- 1.5.12.RELEASE Dalston.RC1 -->
-			<dependency>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-dependencies</artifactId>
-				<version>1.5.12.RELEASE</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
+			<!-- <dependency> -->
+			<!-- <groupId>org.springframework.boot</groupId> -->
+			<!-- <artifactId>spring-boot-dependencies</artifactId> -->
+			<!-- <version>1.5.12.RELEASE</version> -->
+			<!-- <type>pom</type> -->
+			<!-- <scope>import</scope> -->
+			<!-- </dependency> -->
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-dependencies</artifactId>
@@ -743,46 +743,44 @@
 		<pluginManagement>
 			<plugins>
 				<!-- compliler -->
+				<!-- The -source argument for the Java compiler.Default value is: 1.8. -->
+				<!-- The -target argument for the Java compiler.Default value is: 1.8. -->
+				<!-- The -encoding argument for the Java compiler.Default value is: ${project.build.sourceEncoding}. -->
+				<!-- Set to true to show compilation warnings. Default value is: false. -->
+				<!--<showWarnings>true</showWarnings> -->
+				<!--<showDeprecation>true</showDeprecation> -->
+				<!-- 发出编译警告和错误时是否停止 -->
+				<!-- <failOnError>false</failOnError> -->
+				<!-- <compilerArguments> -->
+				<!-- <extdirs>${basedir}/src/main/webapp/WEB-INF/lib</extdirs> -->
+				<!-- </compilerArguments> -->
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
 					<inherited>true</inherited>
 					<configuration>
 						<verbose>true</verbose>
-						<!-- The -source argument for the Java compiler.Default value is: 1.8. -->
 						<source>1.8</source>
-						<!-- The -target argument for the Java compiler.Default value is: 1.8. -->
 						<target>1.8</target>
-						<!-- The -encoding argument for the Java compiler.Default value is: ${project.build.sourceEncoding}. -->
-						<encoding>UTF-8</encoding>
-						<!-- Set to true to show compilation warnings. Default value is: false. -->
-						<!--<showWarnings>true</showWarnings> -->
-						<!--<showDeprecation>true</showDeprecation> -->
-						<!-- 发出编译警告和错误时是否停止 -->
-						<!-- <failOnError>false</failOnError> -->
-						<!-- <compilerArguments> -->
-						<!-- <extdirs>${basedir}/src/main/webapp/WEB-INF/lib</extdirs> -->
-						<!-- </compilerArguments> -->
-					</configuration>
-				</plugin>
-				<!-- resources -->
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-resources-plugin</artifactId>
-					<inherited>true</inherited>
-					<configuration>
 						<encoding>UTF-8</encoding>
 					</configuration>
 				</plugin>
-				<!-- javadoc -->
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-javadoc-plugin</artifactId>
-					<inherited>true</inherited>
-					<configuration>
-						<encoding>UTF-8</encoding>
-					</configuration>
-				</plugin>
+				<!-- <plugin> -->
+				<!-- <groupId>org.apache.maven.plugins</groupId> -->
+				<!-- <artifactId>maven-javadoc-plugin</artifactId> -->
+				<!-- <inherited>true</inherited> -->
+				<!-- <configuration> -->
+				<!-- <encoding>UTF-8</encoding> -->
+				<!-- </configuration> -->
+				<!-- </plugin> -->
+				<!-- <plugin> -->
+				<!-- <groupId>org.apache.maven.plugins</groupId> -->
+				<!-- <artifactId>maven-resources-plugin</artifactId> -->
+				<!-- <inherited>true</inherited> -->
+				<!-- <configuration> -->
+				<!-- <encoding>UTF-8</encoding> -->
+				<!-- </configuration> -->
+				<!-- </plugin> -->
 
 				<!-- sonar -->
 				<plugin>
