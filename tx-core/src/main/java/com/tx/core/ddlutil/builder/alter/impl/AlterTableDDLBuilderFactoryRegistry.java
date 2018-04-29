@@ -30,7 +30,7 @@ public class AlterTableDDLBuilderFactoryRegistry {
     protected static Map<DataSourceTypeEnum, AlterTableDDLBuilderFactory> type2factoryMap = new HashMap<>();
     
     static {
-        DDLDialect mysqlDialect = new MysqlDDLDialect();
+        DDLDialect mysqlDialect = MysqlDDLDialect.INSTANCE;
         AlterTableDDLBuilderFactoryRegistry.registeFactory(DataSourceTypeEnum.MYSQL,
                 new MysqlAlterTableDDLBuilder(mysqlDialect));
         AlterTableDDLBuilderFactoryRegistry.registeFactory(DataSourceTypeEnum.MySQL5InnoDBDialect,

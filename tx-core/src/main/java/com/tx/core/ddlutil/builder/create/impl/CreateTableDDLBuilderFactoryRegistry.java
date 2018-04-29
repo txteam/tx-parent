@@ -30,7 +30,7 @@ public class CreateTableDDLBuilderFactoryRegistry {
     protected static Map<DataSourceTypeEnum, CreateTableDDLBuilderFactory> type2factoryMap = new HashMap<>();
     
     static {
-        DDLDialect mysqlDialect = new MysqlDDLDialect();
+        DDLDialect mysqlDialect = MysqlDDLDialect.INSTANCE;
         CreateTableDDLBuilderFactoryRegistry.registeFactory(DataSourceTypeEnum.MYSQL,
                 new MysqlCreateTableDDLBuilder(mysqlDialect));
         CreateTableDDLBuilderFactoryRegistry.registeFactory(DataSourceTypeEnum.MySQL5InnoDBDialect,

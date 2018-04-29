@@ -4,7 +4,7 @@
  * 修改时间:  2018年4月27日
  * <修改描述:>
  */
-package com.tx.core.ddlutil;
+package com.tx.test.ddlutil.model;
 
 import java.math.BigDecimal;
 import java.sql.Time;

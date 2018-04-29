@@ -4,7 +4,7 @@
  * 修改时间:  2016年11月18日
  * <修改描述:>
  */
-package com.tx.core.mybatis;
+package com.tx.test.mybatis;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,12 +22,12 @@ import com.tx.core.ddlutil.builder.create.CreateTableDDLBuilder;
 import com.tx.core.ddlutil.executor.TableDDLExecutor;
 import com.tx.core.ddlutil.executor.impl.MysqlTableDDLExecutor;
 import com.tx.core.mybatis.builder.MapperBuilderAssistantExtention;
-import com.tx.core.mybatis.data.Demo;
-import com.tx.core.mybatis.data.TestDemo;
 import com.tx.core.mybatis.support.MyBatisDaoSupport;
 import com.tx.core.mybatis.support.MyBatisDaoSupportHelper;
 import com.tx.core.util.UUIDUtils;
 import com.tx.core.util.dialect.DataSourceTypeEnum;
+import com.tx.test.mybatis.model.Demo;
+import com.tx.test.mybatis.model.TestDemo;
 
 /**
  * <功能简述>

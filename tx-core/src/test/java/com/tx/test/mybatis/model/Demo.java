@@ -4,7 +4,7 @@
  * 修改时间:  2012-12-9
  * <修改描述:>
  */
-package com.tx.core.mybatis.data;
+package com.tx.test.mybatis.model;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;

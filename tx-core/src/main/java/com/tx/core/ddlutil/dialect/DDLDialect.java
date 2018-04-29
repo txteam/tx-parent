@@ -8,6 +8,8 @@ package com.tx.core.ddlutil.dialect;
 
 import org.hibernate.dialect.Dialect;
 
+import com.tx.core.ddlutil.model.JdbcTypeEnum;
+
 /**
  * DDL方言类
  * <功能详细描述>
@@ -25,6 +27,66 @@ public abstract class DDLDialect {
     public DDLDialect() {
         super();
     }
+    
+    /**
+     * 获取类型对应的JdbcType<br/>
+     * <功能详细描述>
+     * @param type
+     * @return [参数说明]
+     * 
+     * @return JdbcTypeEnum [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    public abstract JdbcTypeEnum getJdbcType(Class<?> type);
+    
+    /**
+    * 根据类型
+    * <功能详细描述>
+    * @param type
+    * @return [参数说明]
+    * 
+    * @return int [返回类型说明]
+    * @exception throws [异常类型] [异常说明]
+    * @see [类、类#方法、类#成员]
+    */
+    public abstract int getDefaultLengthByType(Class<?> type);
+    
+    /**
+    * 获取默认的Scale值<br/>
+    * <功能详细描述>
+    * @param type
+    * @return [参数说明]
+    * 
+    * @return int [返回类型说明]
+    * @exception throws [异常类型] [异常说明]
+    * @see [类、类#方法、类#成员]
+    */
+    public abstract int getDefaultScaleByType(Class<?> type);
+    
+    /**
+    * 根据类型
+    * <功能详细描述>
+    * @param type
+    * @return [参数说明]
+    * 
+    * @return int [返回类型说明]
+    * @exception throws [异常类型] [异常说明]
+    * @see [类、类#方法、类#成员]
+    */
+    public abstract int getDefaultLengthByName(Class<?> type, String name);
+    
+    /**
+    * 获取默认的Scale值<br/>
+    * <功能详细描述>
+    * @param type
+    * @return [参数说明]
+    * 
+    * @return int [返回类型说明]
+    * @exception throws [异常类型] [异常说明]
+    * @see [类、类#方法、类#成员]
+    */
+    public abstract int getDefaultScaleByName(Class<?> type, String name);
     
     /**
       * 是否生成sql注释<br/>

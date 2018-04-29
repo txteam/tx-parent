@@ -59,27 +59,10 @@ public abstract class JPAEntityDDLHelper {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public static TableDef analyzeToTableDefDetail(Class<?> type) {
-        AssertUtils.notNull(type, "type is null.");
-        
-        TableDef tableDef = analyzeToTableDefDetail(type, null);
-        return tableDef;
-    }
-    
-    /**
-     * 解析类型为表定义详细实例<br/>
-     *    ：实例中将含有对应的索引以及字段和索引<br/>
-     * <功能详细描述>
-     * @param type
-     * @return [参数说明]
-     * 
-     * @return TableDef [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
     public static TableDef analyzeToTableDefDetail(Class<?> type,
             DDLDialect ddlDialect) {
         AssertUtils.notNull(type, "type is null.");
+        AssertUtils.notNull(ddlDialect, "ddlDialect is null.");
         
         if (TYPE_2_TABLEDEF_MAP.containsKey(type)) {
             return TYPE_2_TABLEDEF_MAP.get(type);
@@ -87,6 +70,7 @@ public abstract class JPAEntityDDLHelper {
         JPAEntityTableDef tableDef = doAnalyzeToTableDefDetail(type,
                 ddlDialect);
         TYPE_2_TABLEDEF_MAP.put(type, tableDef);
+        
         return tableDef;
     }
     
@@ -106,7 +90,6 @@ public abstract class JPAEntityDDLHelper {
         
         List<JPAEntityColumnDef> columnDefs = doAnalyzeCoumnDefs(
                 tableDef.getTableName(), type, ddlDialect);//解析字段集合
-        
         tableDef.setColumns(columnDefs);
         
         return tableDef;
@@ -258,19 +241,17 @@ public abstract class JPAEntityDDLHelper {
             }
         }
         
-        JdbcTypeEnum jdbcType = JPAEntityTypeRegistry.getJdbcType(javaType);//获取对应的jdbcType
+        JdbcTypeEnum jdbcType = ddlDialect.getJdbcType(javaType);//获取对应的jdbcType
         if (!hasAnnotation) {
-            int defaultSizeByType = JPAEntityTypeRegistry
-                    .getDefaultLengthByType(javaType);
-            int defaultScaleByType = JPAEntityTypeRegistry
-                    .getDefaultScaleByType(javaType);
+            int defaultSizeByType = ddlDialect.getDefaultLengthByType(javaType);
+            int defaultScaleByType = ddlDialect.getDefaultScaleByType(javaType);
             size = defaultSizeByType >= 0 ? defaultSizeByType : size;
             scale = defaultScaleByType >= 0 ? defaultScaleByType : scale;
             
-            int defaultSizeByName = JPAEntityTypeRegistry
-                    .getDefaultLengthByName(javaType, propertyName);
-            int defaultScaleByName = JPAEntityTypeRegistry
-                    .getDefaultScaleByName(javaType, propertyName);
+            int defaultSizeByName = ddlDialect.getDefaultLengthByName(javaType,
+                    propertyName);
+            int defaultScaleByName = ddlDialect.getDefaultScaleByName(javaType,
+                    propertyName);
             size = defaultSizeByName >= 0 ? defaultSizeByName : size;
             scale = defaultScaleByName >= 0 ? defaultScaleByName : scale;
         }

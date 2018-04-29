@@ -13,6 +13,8 @@ import java.util.Map.Entry;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
@@ -38,6 +40,9 @@ import com.tx.core.util.order.OrderedSupportComparator;
 public abstract class AbstractCreateTableDDLBuilder extends
         AbstractDDLBuilder<CreateTableDDLBuilder> implements
         CreateTableDDLBuilder, CreateTableDDLBuilderFactory {
+    
+    /** 日志记录器 */
+    private Logger logger = LoggerFactory.getLogger(CreateTableDDLBuilder.class);
     
     /** <默认构造函数> */
     public AbstractCreateTableDDLBuilder(DDLDialect ddlDialect) {
@@ -107,6 +112,11 @@ public abstract class AbstractCreateTableDDLBuilder extends
             throw new SILException("generate create table sql exception.", e);
         }
         String createSql = this.writer.toString();
+        
+        logger.info("---------------- generate create table ddl start ----------------");
+        logger.info(createSql);
+        logger.info("-----------------generate create table ddl end   ---------------");
+        
         return createSql;
     }
     

@@ -4,7 +4,7 @@
  * 修改时间:  2016年11月18日
  * <修改描述:>
  */
-package com.tx.core.mybatis.data;
+package com.tx.test.mybatis.model;
 
 import java.util.Date;
 

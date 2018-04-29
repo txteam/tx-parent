@@ -4,7 +4,7 @@
  * 修改时间:  2012-12-9
  * <修改描述:>
  */
-package com.tx.core.mybatis;
+package com.tx.test.mybatis;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,9 +12,9 @@ import java.util.Map;
 import org.apache.ibatis.reflection.MetaObject;
 import org.hibernate.annotations.common.reflection.java.JavaReflectionManager;
 
-import com.tx.core.mybatis.data.Demo;
-import com.tx.core.mybatis.data.TestDemo;
 import com.tx.core.util.MetaObjectUtils;
+import com.tx.test.mybatis.model.Demo;
+import com.tx.test.mybatis.model.TestDemo;
 
 
 /**
