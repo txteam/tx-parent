@@ -93,6 +93,8 @@
 		<poi.version>3.17</poi.version>
 
 		<!-- 参考spring-boot-dependencies中版本信息 -->
+		<java.version>1.8</java.version>
+
 		<spring.version>5.0.5.RELEASE</spring.version>
 		<hibernate.version>5.2.16.Final</hibernate.version>
 		<hibernate-validator.version>6.0.9.Final</hibernate-validator.version>
@@ -754,17 +756,6 @@
 				<!-- <compilerArguments> -->
 				<!-- <extdirs>${basedir}/src/main/webapp/WEB-INF/lib</extdirs> -->
 				<!-- </compilerArguments> -->
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-compiler-plugin</artifactId>
-					<inherited>true</inherited>
-					<configuration>
-						<verbose>true</verbose>
-						<source>1.8</source>
-						<target>1.8</target>
-						<encoding>UTF-8</encoding>
-					</configuration>
-				</plugin>
 				<!-- <plugin> -->
 				<!-- <groupId>org.apache.maven.plugins</groupId> -->
 				<!-- <artifactId>maven-javadoc-plugin</artifactId> -->
@@ -781,12 +772,23 @@
 				<!-- <encoding>UTF-8</encoding> -->
 				<!-- </configuration> -->
 				<!-- </plugin> -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<inherited>true</inherited>
+					<configuration>
+						<verbose>true</verbose>
+						<source>1.8</source>
+						<target>1.8</target>
+						<encoding>UTF-8</encoding>
+					</configuration>
+				</plugin>
 
 				<!-- sonar -->
 				<plugin>
 					<groupId>org.codehaus.sonar</groupId>
 					<artifactId>sonar-maven3-plugin</artifactId>
-					<version>3.3</version>
+					<version>4.5.7</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
