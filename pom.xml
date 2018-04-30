@@ -850,6 +850,6 @@
 
 	<modules>
 		<module>tx-core</module>
-		<!-- <module>tx-components</module> -->
+		<module>tx-components</module>
 	</modules>
 </project>

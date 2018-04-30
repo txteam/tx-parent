@@ -1,19 +1,17 @@
 package com.tx.component.command.context;
 
 import org.springframework.beans.factory.FactoryBean;
-import org.springframework.stereotype.Component;
 
 /**
-  * 
-  * <功能简述>
-  * <功能详细描述>
-  * 
-  * @author  bobby
-  * @version  [版本号, 2015年11月30日]
-  * @see  [相关类/方法]
-  * @since  [产品/模块版本]
+ * 命令容器工厂类<br/>
+ * <功能详细描述>
+ * 
+ * @author  bobby
+ * @version  [版本号, 2015年11月30日]
+ * @see  [相关类/方法]
+ * @since  [产品/模块版本]
  */
-@Component("commandContext")
+//@Component("commandContext")
 public class CommandContextFactory extends CommandContext implements
         FactoryBean<CommandContext> {
     

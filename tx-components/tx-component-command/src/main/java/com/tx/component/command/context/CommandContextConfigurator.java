@@ -6,7 +6,6 @@
  */
 package com.tx.component.command.context;
 
-import javax.annotation.Resource;
 import javax.sql.DataSource;
 
 import org.slf4j.Logger;
@@ -46,10 +45,10 @@ public class CommandContextConfigurator implements ApplicationContextAware,
     protected static String beanName;
     
     /** 数据源 */
-    @Resource(name = "dataSource")
+    //@Resource(name = "dataSource")
     private DataSource dataSource;
     
-    @Resource(name = "transactionManager")
+    //@Resource(name = "transactionManager")
     protected PlatformTransactionManager txManager;
     
     protected TransactionTemplate transactionTemplate;
@@ -84,5 +83,47 @@ public class CommandContextConfigurator implements ApplicationContextAware,
         this.transactionTemplate = new TransactionTemplate(this.txManager,
                 new DefaultTransactionDefinition(
                         TransactionDefinition.PROPAGATION_REQUIRED));
+    }
+
+    /**
+     * @return 返回 dataSource
+     */
+    public DataSource getDataSource() {
+        return dataSource;
+    }
+
+    /**
+     * @param 对dataSource进行赋值
+     */
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
+    /**
+     * @return 返回 txManager
+     */
+    public PlatformTransactionManager getTxManager() {
+        return txManager;
+    }
+
+    /**
+     * @param 对txManager进行赋值
+     */
+    public void setTxManager(PlatformTransactionManager txManager) {
+        this.txManager = txManager;
+    }
+
+    /**
+     * @return 返回 transactionTemplate
+     */
+    public TransactionTemplate getTransactionTemplate() {
+        return transactionTemplate;
+    }
+
+    /**
+     * @param 对transactionTemplate进行赋值
+     */
+    public void setTransactionTemplate(TransactionTemplate transactionTemplate) {
+        this.transactionTemplate = transactionTemplate;
     }
 }
