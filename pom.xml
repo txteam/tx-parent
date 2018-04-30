@@ -173,6 +173,11 @@
 			<!-- tx-components -->
 			<dependency>
 				<groupId>com.tx</groupId>
+				<artifactId>tx-component-command</artifactId>
+				<version>${tx.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.tx</groupId>
 				<artifactId>tx-component-configuration</artifactId>
 				<version>${tx.version}</version>
 			</dependency>
@@ -183,17 +188,18 @@
 			</dependency>
 			<dependency>
 				<groupId>com.tx</groupId>
+				<artifactId>tx-component-auth</artifactId>
+				<version>${tx.version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>com.tx</groupId>
 				<artifactId>tx-component-communication</artifactId>
 				<version>${tx.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.tx</groupId>
 				<artifactId>tx-component-file</artifactId>
-				<version>${tx.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.tx</groupId>
-				<artifactId>tx-component-auth</artifactId>
 				<version>${tx.version}</version>
 			</dependency>
 

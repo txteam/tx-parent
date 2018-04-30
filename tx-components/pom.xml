@@ -48,10 +48,9 @@
 		<module>tx-component-basicdata</module>
 		<module>tx-component-configuration</module>
 		<module>tx-component-servicelog</module>
-
-		<!-- 待完善模块 -->
-		<!-- <module>tx-component-communication</module> -->
-		<!-- <module>tx-component-file</module> -->
+		
+		<module>tx-component-event</module>
+		<module>tx-component-command</module>
 
 		<!-- 准备废弃的模块 -->
 		<!-- <module>tx-component-rule</module> -->
