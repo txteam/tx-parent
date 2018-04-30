@@ -4,12 +4,12 @@
 
 	<parent>
 		<groupId>com.tx</groupId>
-		<artifactId>tx-components</artifactId>
+		<artifactId>tx-services</artifactId>
 		<version>5.0.x-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>tx-component-communication</artifactId>
-	<name>tx-component-communication</name>
+	<artifactId>tx-service-communication</artifactId>
+	<name>communication</name>
 	<packaging>jar</packaging>
 	<url>http://maven.apache.org</url>
 

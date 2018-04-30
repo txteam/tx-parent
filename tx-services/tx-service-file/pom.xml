@@ -7,9 +7,9 @@
 		<version>5.0.x-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>tx-component-file</artifactId>
+	<artifactId>tx-service-file</artifactId>
 	<packaging>jar</packaging>
-	<name>tx-component-file</name>
+	<name>tx-service-file</name>
 	<url>http://maven.apache.org</url>
 
 	<dependencies>
