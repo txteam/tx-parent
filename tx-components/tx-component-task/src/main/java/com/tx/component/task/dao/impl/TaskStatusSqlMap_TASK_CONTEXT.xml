@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper 
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="taskStatus">
+
+	<!-- auto generate default resultMap -->
+	<resultMap id="taskStatusMap" 
+		type="com.tx.component.task.model.TaskStatus">
+	</resultMap>
+	
+	<sql id="findSql">
+		SELECT 
+				TTS.id,
+				TTS.taskId,
+				TTS.status,
+				TTS.signature,
+				TTS.attributes,
+				TTS.nextFireDate,
+				TTS.successStartDate,
+				TTS.successEndDate,
+				TTS.successConsuming,
+				TTS.successCount,
+				TTS.failStartDate,
+				TTS.failEndDate,
+				TTS.failConsuming,
+				TTS.failCount,
+				TTS.result,
+				TTS.startDate,
+				TTS.endDate,
+				TTS.consuming,
+				TTS.executeCount,
+				TTS.lastUpdateDate,
+				TTS.createDate
+		  FROM TASK_STATUS TTS
+		 WHERE
+		<trim prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
+	            AND TTS.ID = #{id}
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(taskId)">  
+	            AND TTS.TASKID = #{taskId}
+	        </if>
+		</trim>
+	</sql>
+	
+	<!-- auto generate default find -->
+	<select id="findAndlockTaskStatus" 
+		parameterType="com.tx.component.task.model.TaskStatus"
+		resultMap="taskStatusMap">
+		<include refid="findSql"></include>
+		FOR UPDATE
+	</select>
+	
+	<!-- auto generate default find -->
+	<select id="findTaskStatus" 
+		parameterType="com.tx.component.task.model.TaskStatus"
+		resultMap="taskStatusMap">
+		<include refid="findSql"></include>
+	</select>
+	
+	<!-- auto generate default query -->
+	<select id="queryTaskStatus" 
+		parameterType="java.util.Map"
+		resultMap="taskStatusMap">
+		SELECT 
+				TTS.id,
+				TTS.taskId,
+				TTS.status,
+				TTS.signature,
+				TTS.attributes,
+				TTS.nextFireDate,
+				TTS.successStartDate,
+				TTS.successEndDate,
+				TTS.successConsuming,
+				TTS.successCount,
+				TTS.failStartDate,
+				TTS.failEndDate,
+				TTS.failConsuming,
+				TTS.failCount,
+				TTS.result,
+				TTS.startDate,
+				TTS.endDate,
+				TTS.consuming,
+				TTS.executeCount,
+				TTS.lastUpdateDate,
+				TTS.createDate
+		  FROM TASK_STATUS TTS
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(taskId)">  
+	            <![CDATA[ AND TTS.TASKID = #{taskId} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
+	            <![CDATA[ AND TTS.ID = #{id} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(result)">  
+	            <![CDATA[ AND TTS.RESULT = #{result} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(status)">  
+	            <![CDATA[ AND TTS.STATUS = #{status} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(signature)">  
+	            <![CDATA[ AND TTS.SIGNATURE = #{signature} ]]>
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(taskIds)">  
+	            AND TTS.TASKID IN <foreach collection="taskIds" item="taskIdTemp" open="(" close=")" separator=",">#{taskIdTemp}</foreach>
+			</if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(excludeId)">
+				<![CDATA[ AND TTS.ID <> #{excludeId} ]]>
+			</if>
+		</trim>
+		<choose>  
+	        <when test="@com.tx.core.util.OgnlUtils@isNotEmpty(orderSql)">  
+	            ORDER BY ${orderSql}
+	        </when>
+	        <otherwise>  
+	            ORDER BY ID
+	        </otherwise>  
+	    </choose>
+	</select>
+	
+		<!-- auto generate default count -->
+	<select id="queryTaskStatusCount" 
+		parameterType="java.util.Map"
+		resultType="java.lang.Integer">
+		SELECT COUNT(1)
+		  FROM TASK_STATUS TTS
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(taskId)">  
+	            <![CDATA[ AND TTS.TASKID = #{taskId} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
+	            <![CDATA[ AND TTS.ID = #{id} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(result)">  
+	            <![CDATA[ AND TTS.RESULT = #{result} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(status)">  
+	            <![CDATA[ AND TTS.STATUS = #{status} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(signature)">  
+	            <![CDATA[ AND TTS.SIGNATURE = #{signature} ]]>
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(taskIds)">  
+	            AND TTS.TASKID IN <foreach collection="taskIds" item="taskIdTemp" open="(" close=")" separator=",">#{taskIdTemp}</foreach>
+			</if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(excludeId)">
+				<![CDATA[ AND TTS.ID <> #{excludeId} ]]>
+			</if>
+		</trim>
+	</select>
+    
+    <!-- auto generate default insert -->
+    <insert id="insertTaskStatus" 
+		parameterType="com.tx.component.task.model.TaskStatus">
+		INSERT INTO TASK_STATUS
+		(
+			id,
+			taskId,
+			status,
+			signature,
+			attributes,
+			nextFireDate,
+			successStartDate,
+			successEndDate,
+			successConsuming,
+			failStartDate,
+			failEndDate,
+			failConsuming,
+			result,
+			startDate,
+			endDate,
+			consuming,
+			executeCount,
+			failCount,
+			successCount,
+			lastUpdateDate,
+			createDate
+		)
+		VALUES
+		(
+			#{id},
+			#{taskId},
+			#{status},
+			#{signature},
+			#{attributes},
+			#{nextFireDate},
+			#{successStartDate},
+			#{successEndDate},
+			#{successConsuming},
+			#{failStartDate},
+			#{failEndDate},
+			#{failConsuming},
+			#{result},
+			#{startDate},
+			#{endDate},
+			#{consuming},
+			#{executeCount},
+			#{failCount},
+			#{successCount},
+			#{lastUpdateDate},
+			#{createDate}
+		)
+	</insert>
+	
+	<!-- auto generate default delete -->
+	<delete id="deleteTaskStatus" 
+		parameterType="com.tx.component.task.model.TaskStatus">
+		DELETE FROM TASK_STATUS  WHERE
+		<trim prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
+	            AND id = #{id}
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(taskId)">  
+	            AND TASKID = #{taskId}
+	        </if>
+		</trim>
+	</delete>
+
+	<!-- auto generate default update -->
+	<update id="updateTaskStatus"
+	    parameterType="java.util.Map">  
+	    UPDATE TASK_STATUS 
+	    <trim prefix="SET" suffixOverrides=",">
+			<!-- <if test="_parameter.containsKey('taskId')"> -->
+			<!-- taskId = #{taskId,javaType=java.lang.String}, -->
+			<!-- </if> -->
+			<!--<if test="_parameter.containsKey('createDate')"> -->
+	    	<!--	createDate = #{createDate,javaType=java.util.Date}, -->
+	    	<!--</if> -->
+			<if test="_parameter.containsKey('status')">
+	    		status = #{status,javaType=com.tx.component.task.model.TaskStatusEnum},
+	    	</if>	
+			<if test="_parameter.containsKey('signature')">
+	    		signature = #{signature,javaType=java.lang.String},
+	    	</if>	
+			<if test="_parameter.containsKey('attributes')">
+	    		attributes = #{attributes,javaType=java.lang.String},
+	    	</if>	
+	    	<if test="_parameter.containsKey('nextFireDate')">
+	    		nextFireDate = #{nextFireDate,javaType=java.util.Date},
+	    	</if>
+			<if test="_parameter.containsKey('successStartDate')">
+	    		successStartDate = #{successStartDate,javaType=java.util.Date},
+	    	</if>	
+			<if test="_parameter.containsKey('successEndDate')">
+	    		successEndDate = #{successEndDate,javaType=java.util.Date},
+	    	</if>	
+			<if test="_parameter.containsKey('successConsuming')">
+	    		successConsuming = #{successConsuming,javaType=java.lang.Long},
+	    	</if>	
+	    	<if test="_parameter.containsKey('successCount')">
+	    		successCount = #{successCount,javaType=int},
+	    	</if>
+			<if test="_parameter.containsKey('failStartDate')">
+	    		failStartDate = #{failStartDate,javaType=java.util.Date},
+	    	</if>	
+			<if test="_parameter.containsKey('failEndDate')">
+	    		failEndDate = #{failEndDate,javaType=java.util.Date},
+	    	</if>	
+			<if test="_parameter.containsKey('failConsuming')">
+	    		failConsuming = #{failConsuming,javaType=java.lang.Long},
+	    	</if>	
+	    	<if test="_parameter.containsKey('failCount')">
+	    		failCount = #{failCount,javaType=int},
+	    	</if>
+			<if test="_parameter.containsKey('result')">
+	    		result = #{result,javaType=com.tx.component.task.model.TaskResultEnum},
+	    	</if>	
+			<if test="_parameter.containsKey('startDate')">
+	    		startDate = #{startDate,javaType=java.util.Date},
+	    	</if>	
+			<if test="_parameter.containsKey('endDate')">
+	    		endDate = #{endDate,javaType=java.util.Date},
+	    	</if>	
+			<if test="_parameter.containsKey('consuming')">
+	    		consuming = #{consuming,javaType=java.lang.Long},
+	    	</if>
+			<if test="_parameter.containsKey('executeCount')">
+	    		executeCount = #{executeCount,javaType=int},
+	    	</if>
+			<if test="_parameter.containsKey('lastUpdateDate')">
+	    		lastUpdateDate = #{lastUpdateDate,javaType=java.util.Date},
+	    	</if>
+	    </trim>
+	    WHERE
+		<trim prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
+	            AND ID = #{id}
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(taskId)">  
+	            AND TASKID = #{taskId}
+	        </if>
+		</trim>
+	</update>  
+
+</mapper>
+<!--
+sqlMap生成描述:
+
+-->

@@ -8,13 +8,9 @@ package com.tx.core.ddlutil.builder.create;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.List;
-import java.util.Map.Entry;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
@@ -37,12 +33,9 @@ import com.tx.core.util.order.OrderedSupportComparator;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public abstract class AbstractCreateTableDDLBuilder extends
-        AbstractDDLBuilder<CreateTableDDLBuilder> implements
-        CreateTableDDLBuilder, CreateTableDDLBuilderFactory {
-    
-    /** 日志记录器 */
-    private Logger logger = LoggerFactory.getLogger(CreateTableDDLBuilder.class);
+public abstract class AbstractCreateTableDDLBuilder
+        extends AbstractDDLBuilder<CreateTableDDLBuilder>
+        implements CreateTableDDLBuilder, CreateTableDDLBuilderFactory {
     
     /** <默认构造函数> */
     public AbstractCreateTableDDLBuilder(DDLDialect ddlDialect) {
@@ -50,12 +43,14 @@ public abstract class AbstractCreateTableDDLBuilder extends
     }
     
     /** <默认构造函数> */
-    public AbstractCreateTableDDLBuilder(String tableName, DDLDialect ddlDialect) {
+    public AbstractCreateTableDDLBuilder(String tableName,
+            DDLDialect ddlDialect) {
         super(tableName, ddlDialect);
     }
     
     /** <默认构造函数> */
-    public AbstractCreateTableDDLBuilder(TableDef table, DDLDialect ddlDialect) {
+    public AbstractCreateTableDDLBuilder(TableDef table,
+            DDLDialect ddlDialect) {
         super(table, ddlDialect);
     }
     
@@ -105,21 +100,24 @@ public abstract class AbstractCreateTableDDLBuilder extends
     @Override
     public String createSql() {
         try {
-            TableDefHelper.preProcess(this);
-            
             doBuildCreateSql();
         } catch (IOException e) {
             throw new SILException("generate create table sql exception.", e);
         }
         String createSql = this.writer.toString();
         
-        logger.info("---------------- generate create table ddl start ----------------");
-        logger.info(createSql);
-        logger.info("-----------------generate create table ddl end   ---------------");
-        
         return createSql;
     }
     
+    /**
+     * 构建创建表sql
+     * <功能详细描述>
+     * @throws IOException [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
     protected void doBuildCreateSql() throws IOException {
         this.writer = new StringWriter();
         
@@ -130,8 +128,10 @@ public abstract class AbstractCreateTableDDLBuilder extends
         
         //写入表：增加字段
         writeCreateTableAddColumnsStmt();
+        
         //写入表：增加主键
         writeCreateTablePrimaryKeyStmt();
+        
         //写入表：增加索引
         writeCreateIndexesStmt();
         
@@ -149,9 +149,11 @@ public abstract class AbstractCreateTableDDLBuilder extends
       * @see [类、类#方法、类#成员]
      */
     protected void writeCreateTableComment() throws IOException {
-        printComment("-----------------------------------------------------------------------");
+        printComment(
+                "-----------------------------------------------------------------------");
         printComment(this.tableName);
-        printComment("-----------------------------------------------------------------------");
+        printComment(
+                "-----------------------------------------------------------------------");
     }
     
     /**
@@ -203,8 +205,8 @@ public abstract class AbstractCreateTableDDLBuilder extends
      */
     protected void writeCreateTablePrimaryKeyStmt() throws IOException {
         //遍历索引，获取其中主键
-        String primaryNames = TableDefHelper.parsePrimaryKeyColumnNames(columns,
-                indexes);
+        String primaryNames = TableDefHelper
+                .parsePrimaryKeyColumnNames(columns);
         
         //如果主键名集合为空
         if (StringUtils.isBlank(primaryNames)) {
@@ -234,7 +236,7 @@ public abstract class AbstractCreateTableDDLBuilder extends
     protected void writeColumn(TableColumnDef column) throws IOException {
         print(column.getColumnName());
         print(" ");
-        print(column.getColumnType());
+        print(column.getColumnType(this.ddlDialect));
         
         if (!StringUtils.isEmpty(column.getDefaultValue())) {
             print(" default ");
@@ -261,37 +263,45 @@ public abstract class AbstractCreateTableDDLBuilder extends
         }
         MultiValueMap<String, TableIndexDef> idxMutiMap = new LinkedMultiValueMap<>();
         OrderedSupportComparator.sort(this.indexes);
+        
         for (TableIndexDef idx : this.indexes) {
-            if (idx.isPrimaryKey()) {
-                continue;
-            }
             idxMutiMap.add(idx.getIndexName().toUpperCase(), idx);
+            writeIndex(idx.isUniqueKey(),
+                    idx.getIndexName().toUpperCase(),
+                    idx.getColumnNames());
         }
         
-        for (Entry<String, List<TableIndexDef>> entryTemp : idxMutiMap.entrySet()) {
-            String indexName = entryTemp.getKey();
-            TableIndexDef idxFirst = idxMutiMap.getFirst(indexName);
-            boolean unique = idxFirst.isUniqueKey();
-            
-            writeIndex(unique, indexName, entryTemp.getValue());
-        }
+        //        for (TableIndexDef idx : this.indexes) {
+        //            if (idx.isPrimaryKey()) {
+        //                continue;
+        //            }
+        //            idxMutiMap.add(idx.getIndexName().toUpperCase(), idx);
+        //        }
+        //        
+        //        for (Entry<String, List<TableIndexDef>> entryTemp : idxMutiMap
+        //                .entrySet()) {
+        //            String indexName = entryTemp.getKey();
+        //            TableIndexDef idxFirst = idxMutiMap.getFirst(indexName);
+        //            boolean unique = idxFirst.isUniqueKey();
+        //            
+        //            writeIndex(unique, indexName, entryTemp.getValue());
+        //        }
     }
     
     /**
-      * 写入索引<br/>
-      * <功能详细描述>
-      * @param unique
-      * @param indexName
-      * @param ddlIndexes
-      * @throws IOException [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
+     * 写入索引<br/>
+     * <功能详细描述>
+     * @param unique
+     * @param indexName
+     * @param ddlIndexes
+     * @throws IOException [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
     protected void writeIndex(boolean unique, String indexName,
-            List<TableIndexDef> ddlIndexes) throws IOException {
-        OrderedSupportComparator.sort(ddlIndexes);
+            String columnNames) throws IOException {
         if (unique) {
             println(",");
             print("   ");//输出缩进
@@ -299,16 +309,7 @@ public abstract class AbstractCreateTableDDLBuilder extends
             print(indexName);
             print(" ");
             print("(");
-            
-            int index = 0;
-            int columnSize = ddlIndexes.size();
-            for (TableIndexDef idx : ddlIndexes) {
-                print(idx.getColumnName());
-                if (++index < columnSize) {
-                    print(",");
-                }
-            }
-            
+            print(columnNames);
             print(")");
         } else {
             println(",");
@@ -317,19 +318,64 @@ public abstract class AbstractCreateTableDDLBuilder extends
             print(indexName);
             print(" ");
             print("(");
-            
-            int index = 0;
-            int columnSize = ddlIndexes.size();
-            for (TableIndexDef idx : ddlIndexes) {
-                print(idx.getColumnName());
-                if (++index < columnSize) {
-                    print(",");
-                }
-            }
-            
+            print(columnNames);
             print(")");
         }
     }
+    
+    //    /**
+    //      * 写入索引<br/>
+    //      * <功能详细描述>
+    //      * @param unique
+    //      * @param indexName
+    //      * @param ddlIndexes
+    //      * @throws IOException [参数说明]
+    //      * 
+    //      * @return void [返回类型说明]
+    //      * @exception throws [异常类型] [异常说明]
+    //      * @see [类、类#方法、类#成员]
+    //     */
+    //    protected void writeIndex(boolean unique, String indexName,
+    //            List<TableIndexDef> ddlIndexes) throws IOException {
+    //        OrderedSupportComparator.sort(ddlIndexes);
+    //        if (unique) {
+    //            println(",");
+    //            print("   ");//输出缩进
+    //            print("UNIQUE KEY ");
+    //            print(indexName);
+    //            print(" ");
+    //            print("(");
+    //            
+    //            int index = 0;
+    //            int columnSize = ddlIndexes.size();
+    //            for (TableIndexDef idx : ddlIndexes) {
+    //                print(idx.getColumnName());
+    //                if (++index < columnSize) {
+    //                    print(",");
+    //                }
+    //            }
+    //            
+    //            print(")");
+    //        } else {
+    //            println(",");
+    //            print("   ");//输出缩进
+    //            print("INDEX ");
+    //            print(indexName);
+    //            print(" ");
+    //            print("(");
+    //            
+    //            int index = 0;
+    //            int columnSize = ddlIndexes.size();
+    //            for (TableIndexDef idx : ddlIndexes) {
+    //                print(idx.getColumnName());
+    //                if (++index < columnSize) {
+    //                    print(",");
+    //                }
+    //            }
+    //            
+    //            print(")");
+    //        }
+    //    }
     
     /**
      * 写入创建表结束节点<br/>

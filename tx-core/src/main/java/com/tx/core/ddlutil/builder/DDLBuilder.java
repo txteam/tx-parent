@@ -182,20 +182,20 @@ public interface DDLBuilder<B extends DDLBuilder<B>> {
     public abstract B newIndex(boolean unique, String indexName,
             String... columnNames);
     
-    /**
-     * 新增表索引<br/>
-     * <功能详细描述>
-     * @param unique
-     * @param indexName
-     * @param columnNames
-     * @return [参数说明]
-     * 
-     * @return CreateTableDDLBuilder [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-    */
-    public abstract B newIndex(boolean primaryKey, boolean unique,
-            String indexName, String... columnNames);
+    //    /**
+    //     * 新增表索引<br/>
+    //     * <功能详细描述>
+    //     * @param unique
+    //     * @param indexName
+    //     * @param columnNames
+    //     * @return [参数说明]
+    //     * 
+    //     * @return CreateTableDDLBuilder [返回类型说明]
+    //     * @exception throws [异常类型] [异常说明]
+    //     * @see [类、类#方法、类#成员]
+    //    */
+    //    public abstract B newIndex(boolean primaryKey, boolean unique,
+    //            String indexName, String... columnNames);
     
     /**
       * 获取所有字段的定义

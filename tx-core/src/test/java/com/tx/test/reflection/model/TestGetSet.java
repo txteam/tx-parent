@@ -4,7 +4,7 @@
  * 修改时间:  2013-9-27
  * <修改描述:>
  */
-package com.tx.core.reflection.model;
+package com.tx.test.reflection.model;
 
 import java.beans.PropertyDescriptor;
 

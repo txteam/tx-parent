@@ -1,4 +1,4 @@
-package com.tx.core.util;
+package com.tx.test.util;
 
 import java.util.ArrayList;
 import java.util.List;

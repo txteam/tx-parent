@@ -19,7 +19,6 @@ import org.springframework.util.MultiValueMap;
 import com.tx.core.ddlutil.builder.AbstractDDLBuilder;
 import com.tx.core.ddlutil.dialect.DDLDialect;
 import com.tx.core.ddlutil.helper.TableDefHelper;
-import com.tx.core.ddlutil.helper.TableDefHelper.AlterTableContent;
 import com.tx.core.ddlutil.model.TableColumnDef;
 import com.tx.core.ddlutil.model.TableDef;
 import com.tx.core.ddlutil.model.TableIndexDef;
@@ -148,8 +147,7 @@ public abstract class AbstractAlterTableDDLBuilder extends
      * @return
      */
     @Override
-    public boolean isNeedAlter(boolean isIncrementUpdate,
-            boolean isIgnoreIndexChange) {
+    public boolean isNeedAlter(boolean isIncrementUpdate) {
         AlterTableContent content = TableDefHelper.buildAlterTableContent(this.columns,
                 this.indexes,
                 this.sourceTable,
@@ -219,6 +217,7 @@ public abstract class AbstractAlterTableDDLBuilder extends
                 content.getPrimaryKeyName());
         //删除索引
         writeAlterDropIndex(content.getAlterDeleteIndexes());
+        
         //增加字段
         writeAlterAddColumnsStmt(content.getAlterAddColumns());
         //修改字段
@@ -422,7 +421,7 @@ public abstract class AbstractAlterTableDDLBuilder extends
     protected void writeColumn(TableColumnDef column) throws IOException {
         print(column.getColumnName());
         print(" ");
-        print(column.getColumnType());
+        print(column.getColumnType(this.ddlDialect));
         
         if (!StringUtils.isEmpty(column.getDefaultValue())) {
             print(" default ");

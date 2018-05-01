@@ -6,8 +6,6 @@
  */
 package com.tx.component.command.starter;
 
-import javax.sql.DataSource;
-
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -22,19 +20,20 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "command")
 public class CommandContextProperties {
     
-    private DataSource datasource;
+    /** 数据源名 */
+    private String datasource;
 
     /**
      * @return 返回 datasource
      */
-    public DataSource getDatasource() {
+    public String getDatasource() {
         return datasource;
     }
 
     /**
      * @param 对datasource进行赋值
      */
-    public void setDatasource(DataSource datasource) {
+    public void setDatasource(String datasource) {
         this.datasource = datasource;
     }
 }

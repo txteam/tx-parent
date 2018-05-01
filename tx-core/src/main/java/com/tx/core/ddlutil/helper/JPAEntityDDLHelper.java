@@ -16,6 +16,7 @@ import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -23,6 +24,7 @@ import javax.persistence.Transient;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.context.annotation.Primary;
 
 import com.tx.core.ddlutil.dialect.DDLDialect;
 import com.tx.core.ddlutil.model.JPAEntityColumnDef;
@@ -195,6 +197,7 @@ public abstract class JPAEntityDDLHelper {
         int size = 255;
         int scale = 0;
         boolean required = false;
+        boolean primaryKey = false;
         
         boolean hasAnnotation = false;
         //获取字段
@@ -216,6 +219,19 @@ public abstract class JPAEntityDDLHelper {
                 required = !columnAnno.nullable();
                 size = Math.max(columnAnno.length(), columnAnno.precision());
                 scale = columnAnno.scale();
+            }
+            if (field.isAnnotationPresent(Id.class)) {
+                primaryKey = true;
+            }
+            if (field.isAnnotationPresent(
+                    org.springframework.data.annotation.Id.class)) {
+                primaryKey = true;
+            }
+            if (field.isAnnotationPresent(Primary.class)) {
+                primaryKey = true;
+            }
+            if (field.isAnnotationPresent(Primary.class)) {
+                primaryKey = true;
             }
         }
         
@@ -239,6 +255,19 @@ public abstract class JPAEntityDDLHelper {
                 size = Math.max(columnAnno.length(), columnAnno.precision());
                 scale = columnAnno.scale();
             }
+            if (readMethod.isAnnotationPresent(Id.class)) {
+                primaryKey = true;
+            }
+            if (readMethod.isAnnotationPresent(
+                    org.springframework.data.annotation.Id.class)) {
+                primaryKey = true;
+            }
+            if (readMethod.isAnnotationPresent(Primary.class)) {
+                primaryKey = true;
+            }
+            if (readMethod.isAnnotationPresent(Primary.class)) {
+                primaryKey = true;
+            }
         }
         
         JdbcTypeEnum jdbcType = ddlDialect.getJdbcType(javaType);//获取对应的jdbcType
@@ -257,12 +286,8 @@ public abstract class JPAEntityDDLHelper {
         }
         
         colDef = new JPAEntityColumnDef(columnName, javaType, jdbcType, size,
-                scale, required);
+                scale, required, primaryKey);
         colDef.setComment(columnComment);
-        if (ddlDialect != null) {
-            colDef.setColumnType(ddlDialect.getDialect()
-                    .getTypeName(jdbcType.getSqlType(), size, size, scale));
-        }
         return colDef;
     }
 }

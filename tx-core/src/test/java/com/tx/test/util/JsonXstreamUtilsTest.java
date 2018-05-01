@@ -4,7 +4,7 @@
  * 修改时间:  2015年5月12日
  * <修改描述:>
  */
-package com.tx.core.util;
+package com.tx.test.util;
 
 import java.util.List;
 

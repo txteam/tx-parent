@@ -6,10 +6,16 @@
  */
 package com.tx.component.command.starter;
 
+import javax.sql.DataSource;
+
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -31,10 +37,24 @@ import com.tx.core.exceptions.util.AssertUtils;
 @Configuration
 @EnableConfigurationProperties(value = CommandContextProperties.class)
 @ConditionalOnClass(CommandContext.class)
-public class CommandContextAutoConfiguration {
+@ConditionalOnProperty(prefix = "command", name = "datasource")
+public class CommandContextAutoConfiguration
+        implements ApplicationContextAware {
     
     @Autowired
     private CommandContextProperties commandContextProperties;
+    
+    private ApplicationContext applicationContext;
+    
+    /**
+     * @param arg0
+     * @throws BeansException
+     */
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext)
+            throws BeansException {
+        this.applicationContext = applicationContext;
+    }
     
     /**
      * 当命令容器不存在时<br/>
@@ -51,8 +71,12 @@ public class CommandContextAutoConfiguration {
         AssertUtils.notNull(commandContextProperties.getDatasource(),
                 "命令容器需要配置其数据源: command.datasource");
         
+        DataSource datasource = this.applicationContext.getBean(
+                DataSource.class, commandContextProperties.getDatasource());
+        AssertUtils.notNull(datasource, "命令容器需要配置其数据源: dataSource is null");
+        
         CommandContextFactory factory = new CommandContextFactory();
-        factory.setDataSource(commandContextProperties.getDatasource());
+        factory.setDataSource(datasource);
         
         return factory;
     }

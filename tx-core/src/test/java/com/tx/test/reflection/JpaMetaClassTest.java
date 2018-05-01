@@ -4,12 +4,13 @@ s * 描          述:  <描述>
  * 修改时间:  2013-10-9
  * <修改描述:>
  */
-package com.tx.core.reflection;
+package com.tx.test.reflection;
 
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.tx.core.reflection.model.TestGetSet;
+import com.tx.core.reflection.JpaMetaClass;
+import com.tx.test.reflection.model.TestGetSet;
 
 
  /**

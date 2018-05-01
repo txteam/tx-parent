@@ -229,7 +229,6 @@ public class MysqlDDLDialect extends DDLDialect {
         registeClass2Scale(Class.class, 0);
         
         registeClass(CharSequence.class, JdbcTypeEnum.VARCHAR);
-        
         registeClass(Number.class, JdbcTypeEnum.NUMERIC);
     }
     
