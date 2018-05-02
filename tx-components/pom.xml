@@ -38,16 +38,16 @@
 
 	<modules>
 		<!-- 有价值模块 -->
-		
+
 		<module>tx-component-command</module>
-		
-<!-- 		<module>tx-component-event</module> -->
-<!-- 		<module>tx-component-auth</module> -->
-<!-- 		<module>tx-component-basicdata</module> -->
-<!-- 		<module>tx-component-configuration</module> -->
-<!-- 		<module>tx-component-servicelog</module> -->
-		
-		
+
+		<!-- <module>tx-component-event</module> -->
+		<!-- <module>tx-component-auth</module> -->
+		<!-- <module>tx-component-basicdata</module> -->
+		<!-- <module>tx-component-configuration</module> -->
+		<!-- <module>tx-component-servicelog</module> -->
+
+
 		<!-- 准备废弃的模块 -->
 		<!-- <module>tx-component-rule</module> -->
 	</modules>

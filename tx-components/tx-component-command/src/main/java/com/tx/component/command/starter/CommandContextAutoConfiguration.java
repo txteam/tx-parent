@@ -18,13 +18,13 @@ import org.springframework.boot.autoconfigure.transaction.TransactionAutoConfigu
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import com.tx.component.command.context.CommandContext;
 import com.tx.component.command.context.CommandContextFactory;
 import com.tx.component.command.context.HelperFactory;
 import com.tx.component.strategy.context.StrategyContext;
 import com.tx.component.strategy.context.StrategyContextFactory;
-import com.tx.core.exceptions.util.AssertUtils;
 
 /**
  * 命令容器配置器<br/>
@@ -37,20 +37,27 @@ import com.tx.core.exceptions.util.AssertUtils;
  */
 @Configuration
 @EnableConfigurationProperties(value = CommandContextProperties.class)
-@ConditionalOnProperty(prefix = "command", value = "enable", matchIfMissing = true)
 @ConditionalOnBean(DataSource.class)
 @AutoConfigureAfter({ DataSourceAutoConfiguration.class,
-    DataSourceTransactionManagerAutoConfiguration.class,
+        DataSourceTransactionManagerAutoConfiguration.class,
         TransactionAutoConfiguration.class })
+@ConditionalOnProperty(prefix = "command", value = "enable", havingValue="true")
 public class CommandContextAutoConfiguration {
     
+    @SuppressWarnings("unused")
     private CommandContextProperties properties;
     
+    private DataSource datasource;
+    
+    private PlatformTransactionManager txManager;
+    
     /** <默认构造函数> */
-    public CommandContextAutoConfiguration(
-            CommandContextProperties properties) {
+    public CommandContextAutoConfiguration(CommandContextProperties properties,
+            DataSource datasource, PlatformTransactionManager txManager) {
         super();
         this.properties = properties;
+        this.datasource = datasource;
+        this.txManager = txManager;
     }
     
     /**
@@ -65,21 +72,9 @@ public class CommandContextAutoConfiguration {
     @Bean("commandContext")
     @ConditionalOnMissingBean(CommandContext.class)
     public CommandContextFactory commandContext() {
-        AssertUtils.notNull(properties.getDatasource(),
-                "命令容器需要配置其数据源: command.datasource");
-        
-        //DataSource ds = 
-        //        Map<String, DataSource> dsMap = this.applicationContext
-        //                .getBeansOfType(DataSource.class);
-        //        for (String beanNameTemp : dsMap.keySet()) {
-        //            System.out.println(beanNameTemp);
-        //        }
-        //        DataSource datasource = this.applicationContext.getBean(
-        //                DataSource.class, commandContextProperties.getDatasource());
-        //        AssertUtils.notNull(datasource, "命令容器需要配置其数据源: dataSource is null");
-        
         CommandContextFactory factory = new CommandContextFactory();
-        factory.setDataSource(null);
+        factory.setDataSource(this.datasource);
+        factory.setTxManager(txManager);
         
         return factory;
     }
@@ -111,7 +106,7 @@ public class CommandContextAutoConfiguration {
      * @see [类、类#方法、类#成员]
      */
     @Bean("helperFactory")
-    public HelperFactory helperFactory(){
+    public HelperFactory helperFactory() {
         HelperFactory helperFactory = new HelperFactory();
         return helperFactory;
     }

@@ -47,8 +47,10 @@ public class CommandContextConfigurator
     /** 数据源 */
     private DataSource dataSource;
     
+    /** 事务管理器 */
     protected PlatformTransactionManager txManager;
     
+    /** 事务template */
     protected TransactionTemplate transactionTemplate;
     
     /**
@@ -84,6 +86,9 @@ public class CommandContextConfigurator
         
         //构建
         doBuild();
+        
+        //初始化容器
+        doInitContext();
     }
     
     /**
@@ -94,7 +99,20 @@ public class CommandContextConfigurator
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    protected void doBuild() {
+    protected void doBuild() throws Exception {
+        
+    }
+    
+    /**
+     * 初始化容器<br/>
+     * <功能详细描述>
+     * @throws Exception [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    protected void doInitContext() throws Exception {
         
     }
     
@@ -124,20 +142,5 @@ public class CommandContextConfigurator
      */
     public void setTxManager(PlatformTransactionManager txManager) {
         this.txManager = txManager;
-    }
-    
-    /**
-     * @return 返回 transactionTemplate
-     */
-    public TransactionTemplate getTransactionTemplate() {
-        return transactionTemplate;
-    }
-    
-    /**
-     * @param 对transactionTemplate进行赋值
-     */
-    public void setTransactionTemplate(
-            TransactionTemplate transactionTemplate) {
-        this.transactionTemplate = transactionTemplate;
     }
 }
