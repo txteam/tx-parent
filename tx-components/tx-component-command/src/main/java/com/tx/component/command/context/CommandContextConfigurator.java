@@ -45,10 +45,8 @@ public class CommandContextConfigurator
     protected static String beanName;
     
     /** 数据源 */
-    //@Resource(name = "dataSource")
     private DataSource dataSource;
     
-    //@Resource(name = "transactionManager")
     protected PlatformTransactionManager txManager;
     
     protected TransactionTemplate transactionTemplate;

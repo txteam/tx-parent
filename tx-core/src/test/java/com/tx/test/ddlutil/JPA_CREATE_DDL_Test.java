@@ -27,7 +27,6 @@ import com.tx.core.ddlutil.helper.JPAEntityDDLHelper;
 import com.tx.core.ddlutil.model.DBTableDef;
 import com.tx.core.ddlutil.model.TableColumnDef;
 import com.tx.core.ddlutil.model.TableDef;
-import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.test.ddlutil.model.ColumnCompareInfo;
 import com.tx.test.ddlutil.model.DDLTestDemo;
 

@@ -6,23 +6,22 @@
  */
 package com.tx.component.command.starter;
 
-import java.util.Map;
-
 import javax.sql.DataSource;
 
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
+import org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.tx.component.command.context.CommandContext;
 import com.tx.component.command.context.CommandContextFactory;
+import com.tx.component.command.context.HelperFactory;
 import com.tx.component.strategy.context.StrategyContext;
 import com.tx.component.strategy.context.StrategyContextFactory;
 import com.tx.core.exceptions.util.AssertUtils;
@@ -38,25 +37,20 @@ import com.tx.core.exceptions.util.AssertUtils;
  */
 @Configuration
 @EnableConfigurationProperties(value = CommandContextProperties.class)
-@ConditionalOnProperty(prefix = "command", name = "datasource")
-//@ConditionalOnBean(DataSource.class)
-//@ConditionalOnClass(CommandContext.class)
-public class CommandContextAutoConfiguration
-        implements ApplicationContextAware {
+@ConditionalOnProperty(prefix = "command", value = "enable", matchIfMissing = true)
+@ConditionalOnBean(DataSource.class)
+@AutoConfigureAfter({ DataSourceAutoConfiguration.class,
+    DataSourceTransactionManagerAutoConfiguration.class,
+        TransactionAutoConfiguration.class })
+public class CommandContextAutoConfiguration {
     
-    @Autowired
-    private CommandContextProperties commandContextProperties;
+    private CommandContextProperties properties;
     
-    private ApplicationContext applicationContext;
-    
-    /**
-     * @param arg0
-     * @throws BeansException
-     */
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext)
-            throws BeansException {
-        this.applicationContext = applicationContext;
+    /** <默认构造函数> */
+    public CommandContextAutoConfiguration(
+            CommandContextProperties properties) {
+        super();
+        this.properties = properties;
     }
     
     /**
@@ -71,17 +65,18 @@ public class CommandContextAutoConfiguration
     @Bean("commandContext")
     @ConditionalOnMissingBean(CommandContext.class)
     public CommandContextFactory commandContext() {
-        AssertUtils.notNull(commandContextProperties.getDatasource(),
+        AssertUtils.notNull(properties.getDatasource(),
                 "命令容器需要配置其数据源: command.datasource");
         
-//        Map<String, DataSource> dsMap = this.applicationContext
-//                .getBeansOfType(DataSource.class);
-//        for (String beanNameTemp : dsMap.keySet()) {
-//            System.out.println(beanNameTemp);
-//        }
-//        DataSource datasource = this.applicationContext.getBean(
-//                DataSource.class, commandContextProperties.getDatasource());
-//        AssertUtils.notNull(datasource, "命令容器需要配置其数据源: dataSource is null");
+        //DataSource ds = 
+        //        Map<String, DataSource> dsMap = this.applicationContext
+        //                .getBeansOfType(DataSource.class);
+        //        for (String beanNameTemp : dsMap.keySet()) {
+        //            System.out.println(beanNameTemp);
+        //        }
+        //        DataSource datasource = this.applicationContext.getBean(
+        //                DataSource.class, commandContextProperties.getDatasource());
+        //        AssertUtils.notNull(datasource, "命令容器需要配置其数据源: dataSource is null");
         
         CommandContextFactory factory = new CommandContextFactory();
         factory.setDataSource(null);
@@ -104,5 +99,20 @@ public class CommandContextAutoConfiguration
         StrategyContextFactory factory = new StrategyContextFactory();
         
         return factory;
+    }
+    
+    /**
+     * 帮助类工厂类<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return HelperFactory [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @Bean("helperFactory")
+    public HelperFactory helperFactory(){
+        HelperFactory helperFactory = new HelperFactory();
+        return helperFactory;
     }
 }

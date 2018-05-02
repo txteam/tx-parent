@@ -12,7 +12,6 @@ import java.util.Iterator;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.stereotype.Component;
 
 import com.tx.core.exceptions.util.AssertUtils;
 
@@ -25,7 +24,6 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-@Component("helperFactory")
 public class HelperFactory implements ApplicationContextAware {
     
     private static ApplicationContext applicationContext;

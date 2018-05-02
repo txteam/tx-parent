@@ -20,8 +20,25 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "command")
 public class CommandContextProperties {
     
+    /** 命令容器是否启动 */
+    private boolean enable;
+    
     /** 数据源名 */
     private String datasource;
+
+    /**
+     * @return 返回 enable
+     */
+    public boolean isEnable() {
+        return enable;
+    }
+
+    /**
+     * @param 对enable进行赋值
+     */
+    public void setEnable(boolean enable) {
+        this.enable = enable;
+    }
 
     /**
      * @return 返回 datasource
