@@ -52,9 +52,8 @@ public class CommandContextBuilder extends CommandContextConfigurator {
      * @throws Exception
      */
     @Override
-    public void afterPropertiesSet() throws Exception {
-        logger.info("开始初始化投资项目操作容器: ......");
-        super.afterPropertiesSet();
+    protected void doBuild() {
+        logger.info("命令调度容器开始构建: ......");
         
         //加载容器中存在的Support
         logger.info("   开始加载操作接收器支撑处理器......");
@@ -72,7 +71,7 @@ public class CommandContextBuilder extends CommandContextConfigurator {
         }
         
         //加载容器中存在的InjectAwareSupport
-        logger.info("   开始加注入器......");
+        logger.info("   开始加注入句柄......");
         this.injectHandlerSet.addAll(loadInjectHandlers());
         
         //加载容器中存在的InjectAwareSupport

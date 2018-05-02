@@ -43,7 +43,7 @@ import com.tx.test.ddlutil.model.DDLTestDemo;
 public class JPA_CREATE_DDL_Test {
     
     public static void main(String[] args) {
-        AssertUtils.isTrue(false, "11");
+        //AssertUtils.isTrue(false, "11");
         
         DataSourceFinder finder = new SimpleDataSourceFinder(
                 "com.mysql.jdbc.Driver",

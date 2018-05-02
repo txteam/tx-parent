@@ -32,8 +32,8 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class CommandContextConfigurator implements ApplicationContextAware,
-        InitializingBean, BeanNameAware {
+public class CommandContextConfigurator
+        implements ApplicationContextAware, InitializingBean, BeanNameAware {
     
     /** 日志记录器 */
     protected Logger logger = LoggerFactory.getLogger(CommandContext.class);
@@ -83,47 +83,63 @@ public class CommandContextConfigurator implements ApplicationContextAware,
         this.transactionTemplate = new TransactionTemplate(this.txManager,
                 new DefaultTransactionDefinition(
                         TransactionDefinition.PROPAGATION_REQUIRED));
+        
+        //构建
+        doBuild();
     }
-
+    
+    /**
+     * 执行构建<br/>
+     * <功能详细描述> [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    protected void doBuild() {
+        
+    }
+    
     /**
      * @return 返回 dataSource
      */
     public DataSource getDataSource() {
         return dataSource;
     }
-
+    
     /**
      * @param 对dataSource进行赋值
      */
     public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
     }
-
+    
     /**
      * @return 返回 txManager
      */
     public PlatformTransactionManager getTxManager() {
         return txManager;
     }
-
+    
     /**
      * @param 对txManager进行赋值
      */
     public void setTxManager(PlatformTransactionManager txManager) {
         this.txManager = txManager;
     }
-
+    
     /**
      * @return 返回 transactionTemplate
      */
     public TransactionTemplate getTransactionTemplate() {
         return transactionTemplate;
     }
-
+    
     /**
      * @param 对transactionTemplate进行赋值
      */
-    public void setTransactionTemplate(TransactionTemplate transactionTemplate) {
+    public void setTransactionTemplate(
+            TransactionTemplate transactionTemplate) {
         this.transactionTemplate = transactionTemplate;
     }
 }
