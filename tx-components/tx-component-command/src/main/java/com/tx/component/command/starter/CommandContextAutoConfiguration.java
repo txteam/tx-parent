@@ -6,11 +6,13 @@
  */
 package com.tx.component.command.starter;
 
+import java.util.Map;
+
 import javax.sql.DataSource;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -36,8 +38,9 @@ import com.tx.core.exceptions.util.AssertUtils;
  */
 @Configuration
 @EnableConfigurationProperties(value = CommandContextProperties.class)
-@ConditionalOnClass(CommandContext.class)
 @ConditionalOnProperty(prefix = "command", name = "datasource")
+//@ConditionalOnBean(DataSource.class)
+//@ConditionalOnClass(CommandContext.class)
 public class CommandContextAutoConfiguration
         implements ApplicationContextAware {
     
@@ -71,12 +74,17 @@ public class CommandContextAutoConfiguration
         AssertUtils.notNull(commandContextProperties.getDatasource(),
                 "命令容器需要配置其数据源: command.datasource");
         
-        DataSource datasource = this.applicationContext.getBean(
-                DataSource.class, commandContextProperties.getDatasource());
-        AssertUtils.notNull(datasource, "命令容器需要配置其数据源: dataSource is null");
+//        Map<String, DataSource> dsMap = this.applicationContext
+//                .getBeansOfType(DataSource.class);
+//        for (String beanNameTemp : dsMap.keySet()) {
+//            System.out.println(beanNameTemp);
+//        }
+//        DataSource datasource = this.applicationContext.getBean(
+//                DataSource.class, commandContextProperties.getDatasource());
+//        AssertUtils.notNull(datasource, "命令容器需要配置其数据源: dataSource is null");
         
         CommandContextFactory factory = new CommandContextFactory();
-        factory.setDataSource(datasource);
+        factory.setDataSource(null);
         
         return factory;
     }
