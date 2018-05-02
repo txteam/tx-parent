@@ -17,6 +17,13 @@
 	</properties>
 
 	<dependencies>
+		<!-- ConfigurationProperties Need -->
+		<dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+	
 		<!-- spring-boot-starter -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

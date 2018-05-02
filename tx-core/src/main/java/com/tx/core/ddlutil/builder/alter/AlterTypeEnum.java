@@ -6,19 +6,20 @@
  */
 package com.tx.core.ddlutil.builder.alter;
 
-
- /**
-  * <功能简述>
-  * <功能详细描述>
-  * 
-  * @author  Administrator
-  * @version  [版本号, 2018年5月2日]
-  * @see  [相关类/方法]
-  * @since  [产品/模块版本]
-  */
+/**
+ * <功能简述>
+ * <功能详细描述>
+ * 
+ * @author  Administrator
+ * @version  [版本号, 2018年5月2日]
+ * @see  [相关类/方法]
+ * @since  [产品/模块版本]
+ */
 public enum AlterTypeEnum {
     
     MODIFY,
+    
+    MODIFY_TO_NULLABLE,
     
     ADD,
     

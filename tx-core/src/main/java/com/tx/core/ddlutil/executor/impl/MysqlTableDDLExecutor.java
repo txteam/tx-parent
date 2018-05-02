@@ -20,6 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -38,6 +39,7 @@ import com.tx.core.ddlutil.model.JdbcTypeEnum;
 import com.tx.core.ddlutil.model.TableDef;
 import com.tx.core.exceptions.SILException;
 import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.util.MessageUtils;
 import com.tx.core.util.SqlUtils;
 import com.tx.core.util.dialect.DataSourceTypeEnum;
 
@@ -140,21 +142,10 @@ public class MysqlTableDDLExecutor
             + "TIDX.SEQ_IN_INDEX as 'orderPriority' "
             + "FROM information_schema.`STATISTICS` TIDX "
             + "LEFT JOIN information_schema.`TABLE_CONSTRAINTS` TCONS ON (TIDX.TABLE_SCHEMA = TCONS.CONSTRAINT_SCHEMA AND TIDX.TABLE_NAME = TCONS.TABLE_NAME AND TIDX.INDEX_NAME = TCONS.CONSTRAINT_NAME) "
-            + "WHERE TIDX.TABLE_NAME = 'test_ddl_test_demo' AND TIDX.TABLE_SCHEMA = 'test' "
+            + "WHERE TIDX.TABLE_NAME = ? AND TIDX.TABLE_SCHEMA = ? "
             + "AND (TCONS.CONSTRAINT_TYPE is null or 'PRIMARY KEY' <> TCONS.CONSTRAINT_TYPE) "
             + "ORDER BY TIDX.INDEX_NAME,TIDX.SEQ_IN_INDEX "
             + ") T GROUP BY indexName,tableName,uniqueKey ";
-    //            "SELECT "
-    //            + "TIDX.INDEX_NAME AS 'indexName', "
-    //            + "TIDX.COLUMN_NAME AS 'columnName', TIDX.TABLE_NAME AS 'tableName', "
-    //            + "(CASE WHEN TIDX.NON_UNIQUE = 1 THEN 0 ELSE 1 END ) AS 'uniqueKey',"
-    //            + "TIDX.SEQ_IN_INDEX as 'orderPriority', "
-    //            + "(CASE WHEN TCONS.CONSTRAINT_TYPE = 'PRIMARY KEY' THEN 'Y' ELSE 'N' END ) AS 'primaryKey' "
-    //            + "FROM information_schema.`STATISTICS` TIDX "
-    //            + "LEFT JOIN information_schema.`TABLE_CONSTRAINTS` TCONS ON (TIDX.TABLE_SCHEMA = TCONS.CONSTRAINT_SCHEMA AND TIDX.TABLE_NAME = TCONS.TABLE_NAME AND TIDX.INDEX_NAME = TCONS.CONSTRAINT_NAME) "
-    //            + "WHERE TIDX.TABLE_NAME = ? AND TIDX.TABLE_SCHEMA = ? "
-    //            + "ORDER BY TIDX.INDEX_NAME,TIDX.SEQ_IN_INDEX";
-    //private static final Map<String, ConstraintTypeEnum> constraintTypeMap = EnumUtils.getEnumMap(ConstraintTypeEnum.class);
     
     //DDLindexRowMap
     private static final RowMapper<DBIndexDef> ddlIndexRowMapper = new RowMapper<DBIndexDef>() {
@@ -267,14 +258,14 @@ public class MysqlTableDDLExecutor
     }
     
     /**
-      * 根据表名判断表是否存在<br/>
-      * <功能详细描述>
-      * @param tableName
-      * @return [参数说明]
-      * 
-      * @return boolean [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 根据表名判断表是否存在<br/>
+     * <功能详细描述>
+     * @param tableName
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     @Override
     public boolean exists(String tableName) {
@@ -309,8 +300,6 @@ public class MysqlTableDDLExecutor
         String dropSql = placeholderHelper.replacePlaceholders(SQL_DROP_TABLE,
                 props);
         
-        this.jdbcTemplate.execute(dropSql);
-        
         //打印删除表日志:
         StringBuilder sb = new StringBuilder(TxConstants.INITIAL_STR_LENGTH);
         sb.append("删除数据库表:").append(tableName).append("\t\n");
@@ -324,6 +313,10 @@ public class MysqlTableDDLExecutor
                 .append("------------------------------end")
                 .append("\t\n");
         logger.info(sb.toString());
+        
+        this.jdbcTemplate.execute(dropSql);
+        
+        logger.info("删除数据库表:{}成功.", tableName);
     }
     
     /**
@@ -354,22 +347,31 @@ public class MysqlTableDDLExecutor
         String backupSql = placeholderHelper
                 .replacePlaceholders(SQL_BACKUP_TABLE, props);
         
-        this.jdbcTemplate.execute(backupSql);
-        
         //打印备份表日志:
         StringBuilder sb = new StringBuilder(TxConstants.INITIAL_STR_LENGTH);
-        
-        sb.append("备份数据库表:").append(tableName).append(" to ").append(backupTableName).append("\t\n");
+        sb.append("备份数据库表:")
+                .append(tableName)
+                .append(" to ")
+                .append(backupTableName)
+                .append("\t\n");
         sb.append("------备份表:")
-                .append(tableName).append(" to ").append(backupTableName)
+                .append(tableName)
+                .append(" to ")
+                .append(backupTableName)
                 .append("----------------------------start")
                 .append("\t\n");
         sb.append(backupSql).append("\t\n");
         sb.append("------备份表:")
-        .append(tableName).append(" to ").append(backupTableName)
+                .append(tableName)
+                .append(" to ")
+                .append(backupTableName)
                 .append("------------------------------end")
                 .append("\t\n");
         logger.info(sb.toString());
+        
+        this.jdbcTemplate.execute(backupSql);
+        
+        logger.info("备份数据库表:{} to {} 成功.", tableName, backupTableName);
     }
     
     /**
@@ -388,18 +390,11 @@ public class MysqlTableDDLExecutor
                 "table is exist.tableName:{}",
                 builder.tableName());
         
-        String createSql = SqlUtils.format(builder.createSql());
-        
-        String[] createSqls = StringUtils.splitByWholeSeparator(createSql, ";");
-        for (String createSqlTemp : createSqls) {
-            if (!StringUtils.isBlank(createSqlTemp)) {
-                this.jdbcTemplate.execute(createSqlTemp);
-            }
-        }
+        String createSql = builder.createSql();
         
         //打印创建表日志:
         StringBuilder sb = new StringBuilder(TxConstants.INITIAL_STR_LENGTH);
-        sb.append("根据表创建器创建数据库表:").append(builder.tableName()).append("\t\n");
+        sb.append("创建数据库表:").append(builder.tableName()).append("\t\n");
         sb.append("------创建表:")
                 .append(builder.tableName())
                 .append("----------------------------start")
@@ -410,6 +405,16 @@ public class MysqlTableDDLExecutor
                 .append("------------------------------end")
                 .append("\t\n");
         logger.info(sb.toString());
+        
+        createSql = SqlUtils.format(builder.createSql());
+        String[] createSqls = StringUtils.splitByWholeSeparator(createSql, ";");
+        for (String createSqlTemp : createSqls) {
+            if (!StringUtils.isBlank(createSqlTemp)) {
+                this.jdbcTemplate.execute(createSqlTemp);
+            }
+        }
+        
+        logger.info("创建数据库表: {} 成功.", builder.tableName());
     }
     
     /**
@@ -432,53 +437,46 @@ public class MysqlTableDDLExecutor
         if (StringUtils.isBlank(alterSql)) {
             return;
         }
+        
+        //打印修改表日志:
+        StringBuilder sb = new StringBuilder(TxConstants.INITIAL_STR_LENGTH);
+        sb.append("修改数据库表:").append(builder.tableName()).append("\t\n");
+        sb.append("------修改表:")
+                .append(builder.tableName())
+                .append("----------------------------start")
+                .append("\t\n");
+        sb.append(alterSql).append("\t\n");
+        sb.append("------修改表:")
+                .append(builder.tableName())
+                .append("------------------------------end")
+                .append("\t\n");
+        logger.info(sb.toString());
+        
         alterSql = SqlUtils.format(alterSql);
-        String[] alterSqls = StringUtils.splitByWholeSeparator(alterSql, ";");
-        for (String alterSqlTemp : alterSqls) {
-            if (!StringUtils.isBlank(alterSqlTemp)) {
-                this.jdbcTemplate.execute(alterSqlTemp);
+        try {
+            String[] alterSqls = StringUtils.splitByWholeSeparator(alterSql,
+                    ";");
+            for (String alterSqlTemp : alterSqls) {
+                if (!StringUtils.isBlank(alterSqlTemp)) {
+                    this.jdbcTemplate.execute(alterSqlTemp);
+                }
             }
+            
+            logger.info("修改数据库表: {} 成功.", builder.tableName());
+        } catch (DataAccessException e) {
+            logger.error(MessageUtils.format("修改数据库表: {} 异常.异常信息:{}.",
+                    builder.tableName(),
+                    e.getMessage()), e);
+            
+            throw new SILException(MessageUtils.format("修改数据库表: {} 异常.异常信息:{}.",
+                    builder.tableName(),
+                    e.getMessage()), e);
+        } catch (SILException e) {
+            logger.error(MessageUtils.format("修改数据库表: {} 异常.异常信息:{}.",
+                    builder.tableName(),
+                    e.getMessage()), e);
+            throw e;
         }
-    }
-    
-    @Override
-    public void alter(AlterTableDDLBuilder builder, boolean isIncrementUpdate) {
-        AssertUtils.notNull(builder, "builder is null.");
-        AssertUtils.isTrue(exists(builder.tableName()),
-                "table is not exist.tableName:{}",
-                builder.tableName());
-        
-        String alterSql = SqlUtils.format(
-                builder.alterSql(isIncrementUpdate, isIgnoreIndexChange));
-        
-        String[] alterSqls = StringUtils.splitByWholeSeparator(alterSql, ";");
-        for (String alterSqlTemp : alterSqls) {
-            if (!StringUtils.isBlank(alterSqlTemp)) {
-                this.jdbcTemplate.execute(alterSqlTemp);
-            }
-        }
-    }
-    
-    /**
-     * @param newTableDef
-     * @param oldTableDef
-     */
-    @Override
-    public boolean isNeedUpdate(TableDef newTableDef, TableDef oldTableDef) {
-        boolean flag = isNeedUpdate(newTableDef, oldTableDef);
-        return flag;
-    }
-    
-    /**
-     * @param newTableDef
-     * @param oldTableDef
-     * @param isIncrementalUpgrade
-     */
-    @Override
-    public boolean isNeedUpdate(TableDef newTableDef, TableDef oldTableDef,
-            boolean isIncrementalUpgrade) {
-        
-        return false;
     }
     
     /**

@@ -31,10 +31,13 @@ public class SILException extends RuntimeException {
     /** 注释内容 */
     private static final long serialVersionUID = 4629630103815146373L;
     
+    /** 错误码注册表 */
+    protected static final ErrorCodeRegistry REGISTRY = ErrorCodeRegistry.INSTANCE;
+    
     /** 注册错误编码 */
     protected static final void registeErrorCode(int errorCode,
             String errorMessage) {
-        ErrorCodeRegistry.INSTANCE.registeErrorCode(errorCode, errorMessage);
+        REGISTRY.registeErrorCode(errorCode, errorMessage);
     }
     
     /** 错误 */

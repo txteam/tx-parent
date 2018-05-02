@@ -4,7 +4,7 @@
  * 修改时间:  2018年4月29日
  * <修改描述:>
  */
-package com.tx.test.ddlutil;
+package com.tx.test.ddlutil.model;
 
 import com.tx.core.ddlutil.model.TableColumnDef;
 

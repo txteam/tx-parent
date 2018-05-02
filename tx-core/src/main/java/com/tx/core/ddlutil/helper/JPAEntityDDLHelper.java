@@ -144,19 +144,20 @@ public abstract class JPAEntityDDLHelper {
     }
     
     /**
-      * 解析字段集合定义<br/>
-      * <功能详细描述>
-      * @param type
-      * @return [参数说明]
-      * 
-      * @return List<JPAEntityColumnDef> [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 解析字段集合定义<br/>
+     * <功能详细描述>
+     * @param type
+     * @return [参数说明]
+     * 
+     * @return List<JPAEntityColumnDef> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     private static List<JPAEntityColumnDef> doAnalyzeCoumnDefs(String tableName,
             Class<?> type, DDLDialect ddlDialect) {
         List<JPAEntityColumnDef> colDefList = new ArrayList<>();
         
+        boolean hasPrimaryKey = false;
         PropertyDescriptor[] pds = BeanUtils.getPropertyDescriptors(type);
         for (PropertyDescriptor pd : pds) {
             if (pd.getReadMethod() == null || pd.getWriteMethod() == null) {
@@ -170,6 +171,36 @@ public abstract class JPAEntityDDLHelper {
             
             if (colDef != null) {
                 colDefList.add(colDef);
+                if (colDef.isPrimaryKey()) {
+                    hasPrimaryKey = true;//如果已经有字段被设置为了主键
+                }
+            }
+        }
+        
+        if (!hasPrimaryKey) {
+            //如果没有主键：判断是否有id,code这样的字段
+            //如果有id
+            for (JPAEntityColumnDef col : colDefList) {
+                if (StringUtils.equalsAnyIgnoreCase("id",
+                        col.getColumnName())) {
+                    col.setPrimaryKey(true);
+                    col.setRequired(true);
+                    hasPrimaryKey = true;
+                    break;
+                }
+            }
+        }
+        if (!hasPrimaryKey) {
+            //如果没有主键：判断是否有id,code这样的字段
+            //如果有code
+            for (JPAEntityColumnDef col : colDefList) {
+                if (StringUtils.equalsAnyIgnoreCase("code",
+                        col.getColumnName())) {
+                    col.setPrimaryKey(true);
+                    col.setRequired(true);
+                    hasPrimaryKey = true;
+                    break;
+                }
             }
         }
         return colDefList;
@@ -198,7 +229,6 @@ public abstract class JPAEntityDDLHelper {
         int scale = 0;
         boolean required = false;
         boolean primaryKey = false;
-        
         boolean hasAnnotation = false;
         //获取字段
         Field field = FieldUtils.getField(type, propertyName, true);
@@ -225,9 +255,6 @@ public abstract class JPAEntityDDLHelper {
             }
             if (field.isAnnotationPresent(
                     org.springframework.data.annotation.Id.class)) {
-                primaryKey = true;
-            }
-            if (field.isAnnotationPresent(Primary.class)) {
                 primaryKey = true;
             }
             if (field.isAnnotationPresent(Primary.class)) {
@@ -288,6 +315,7 @@ public abstract class JPAEntityDDLHelper {
         colDef = new JPAEntityColumnDef(columnName, javaType, jdbcType, size,
                 scale, required, primaryKey);
         colDef.setComment(columnComment);
+        
         return colDef;
     }
 }

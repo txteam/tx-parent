@@ -171,7 +171,8 @@ public abstract class AbstractColumnDef implements TableColumnDef {
      */
     @Override
     public String getColumnType(DDLDialect ddlDialect) {
-        String columnType = ddlDialect.getDialect().getcolumn
-        return null;
+        String columnType = ddlDialect.getDialect()
+                .getTypeName(jdbcType.getSqlType(), size, size, scale);
+        return columnType;
     }
 }
