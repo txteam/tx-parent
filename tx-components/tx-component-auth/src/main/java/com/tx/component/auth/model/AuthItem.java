@@ -27,35 +27,35 @@ public interface AuthItem extends TreeAble<List<AuthItem>, AuthItem>,
     String getId();
     
     /**
-      * 获取权限关联项id 
-      *<功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return String [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 获取权限关联项id 
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     String getRefId();
     
     /**
-      * 权限项目引用类型  
-      * <功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return String [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 权限项目引用类型  
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     String getRefType();
     
     /**
-      * 获取权限项系统id
-      *<功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return String [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 获取权限项系统id
+     *<功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     String getSystemId();
     
@@ -96,24 +96,24 @@ public interface AuthItem extends TreeAble<List<AuthItem>, AuthItem>,
     boolean isViewAble();
     
     /**
-      * 是否可编辑
-      * <功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return boolean [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 是否可编辑
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     boolean isEditAble();
     
     /**
-      * 是否能进行配置
-      * <功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return boolean [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 是否能进行配置
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     boolean isConfigAble();
     
@@ -124,24 +124,24 @@ public interface AuthItem extends TreeAble<List<AuthItem>, AuthItem>,
     boolean isValid();
     
     /**
-      * 是否为虚拟权限
-      *<功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return boolean [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 是否为虚拟权限
+     *<功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     public boolean isVirtual();
     
     /**
-      * 获取权限项的其他数据<br/>
-      *<功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return Map<String,String> [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 获取权限项的其他数据<br/>
+     *<功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return Map<String,String> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     public Map<String, String> getData();
     
@@ -152,7 +152,7 @@ public interface AuthItem extends TreeAble<List<AuthItem>, AuthItem>,
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
+     */
     void setSystemId(String systemId);
     
 }

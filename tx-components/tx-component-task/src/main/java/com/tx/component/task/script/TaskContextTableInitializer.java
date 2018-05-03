@@ -4,9 +4,7 @@
  * 修改时间:  2017年10月15日
  * <修改描述:>
  */
-package com.tx.component.task.context;
-
-import java.math.BigDecimal;
+package com.tx.component.task.script;
 
 import javax.annotation.Resource;
 
@@ -59,19 +57,22 @@ public class TaskContextTableInitializer implements InitializingBean {
         DDLBuilder<?> ddlBuilder = null;
         
         if (this.tableDDLExecutor.exists(tableName)) {
-            alterDDLBuilder = this.tableDDLExecutor.generateAlterTableDDLBuilder(tableName);
+            alterDDLBuilder = this.tableDDLExecutor
+                    .generateAlterTableDDLBuilder(tableName);
             ddlBuilder = alterDDLBuilder;
         } else {
-            createDDLBuilder = this.tableDDLExecutor.generateCreateTableDDLBuilder(tableName);
+            createDDLBuilder = this.tableDDLExecutor
+                    .generateCreateTableDDLBuilder(tableName);
             ddlBuilder = createDDLBuilder;
         }
         
         td_task_def(ddlBuilder);//写入表结构
-        ddlBuilder.newIndex(true, "idx_task_def_00", "code");
-        ddlBuilder.newIndex(false, "idx_task_def_01", "createDate");
+        ddlBuilder.newIndex(true, "idx_code", "code");
+        ddlBuilder.newIndex(false, "idx_createDate", "createDate");
         
-        if (alterDDLBuilder != null && alterDDLBuilder.isNeedAlter(false, false)) {
-            this.tableDDLExecutor.alter(alterDDLBuilder, false, false);
+        if (alterDDLBuilder != null
+                && alterDDLBuilder.compare().isNeedAlter()) {
+            this.tableDDLExecutor.alter(alterDDLBuilder);
         } else if (createDDLBuilder != null) {
             this.tableDDLExecutor.create(createDDLBuilder);
         }
@@ -120,19 +121,22 @@ public class TaskContextTableInitializer implements InitializingBean {
         DDLBuilder<?> ddlBuilder = null;
         
         if (this.tableDDLExecutor.exists(tableName)) {
-            alterDDLBuilder = this.tableDDLExecutor.generateAlterTableDDLBuilder(tableName);
+            alterDDLBuilder = this.tableDDLExecutor
+                    .generateAlterTableDDLBuilder(tableName);
             ddlBuilder = alterDDLBuilder;
         } else {
-            createDDLBuilder = this.tableDDLExecutor.generateCreateTableDDLBuilder(tableName);
+            createDDLBuilder = this.tableDDLExecutor
+                    .generateCreateTableDDLBuilder(tableName);
             ddlBuilder = createDDLBuilder;
         }
         
         td_task_status(ddlBuilder);//写入表结构
-        ddlBuilder.newIndex(true, "idx_task_status_00", "taskId");
-        ddlBuilder.newIndex(false, "idx_task_status_01", "createDate");
+        ddlBuilder.newIndex(true, "idx_taskId", "taskId");
+        ddlBuilder.newIndex(false, "idx_createDate", "createDate");
         
-        if (alterDDLBuilder != null && alterDDLBuilder.isNeedAlter(false, false)) {
-            this.tableDDLExecutor.alter(alterDDLBuilder, false, false);
+        if (alterDDLBuilder != null
+                && alterDDLBuilder.compare().isNeedAlter()) {
+            this.tableDDLExecutor.alter(alterDDLBuilder);
         } else if (createDDLBuilder != null) {
             this.tableDDLExecutor.create(createDDLBuilder);
         }
@@ -154,19 +158,19 @@ public class TaskContextTableInitializer implements InitializingBean {
                 .newColumnOfVarchar("result", 64, false, null)
                 .newColumnOfDate("startDate", false, true)
                 .newColumnOfDate("endDate", false, true)
-                .newColumnOfBigDecimal("consuming", 8, 0, false, BigDecimal.ZERO)//size 原值 32
+                .newColumnOfInteger("consuming", 19, false, 0)//size 原值 32
                 .newColumnOfVarchar("signature", 128, false, null)
                 .newColumnOfVarchar("attributes", 1024, false, null)
                 .newColumnOfDate("nextFireDate", false, false)
-                .newColumnOfBigDecimal("executeCount", 8, 0, false, BigDecimal.ZERO)
+                .newColumnOfInteger("executeCount", 8, false, 0)
                 .newColumnOfDate("successStartDate", false, false)
                 .newColumnOfDate("successEndDate", false, false)
-                .newColumnOfBigDecimal("successConsuming", 8, 0, false, BigDecimal.ZERO)//size 原值 32
-                .newColumnOfBigDecimal("successCount", 8, 0, false, BigDecimal.ZERO)
+                .newColumnOfInteger("successConsuming", 19, false, 0)//size 原值 32
+                .newColumnOfInteger("successCount", 8, false, 0)
                 .newColumnOfDate("failStartDate", false, false)
                 .newColumnOfDate("failEndDate", false, false)
-                .newColumnOfBigDecimal("failConsuming", 8, 0, false, BigDecimal.ZERO)//size 原值 32
-                .newColumnOfBigDecimal("failCount", 8, 0, false, BigDecimal.ZERO)
+                .newColumnOfInteger("failConsuming", 19, false, 0)//size 原值 32
+                .newColumnOfInteger("failCount", 8, false, 0)
                 .newColumnOfDate("lastUpdateDate", true, true)
                 .newColumnOfDate("createDate", true, true);
     }
@@ -187,19 +191,22 @@ public class TaskContextTableInitializer implements InitializingBean {
         DDLBuilder<?> ddlBuilder = null;
         
         if (this.tableDDLExecutor.exists(tableName)) {
-            alterDDLBuilder = this.tableDDLExecutor.generateAlterTableDDLBuilder(tableName);
+            alterDDLBuilder = this.tableDDLExecutor
+                    .generateAlterTableDDLBuilder(tableName);
             ddlBuilder = alterDDLBuilder;
         } else {
-            createDDLBuilder = this.tableDDLExecutor.generateCreateTableDDLBuilder(tableName);
+            createDDLBuilder = this.tableDDLExecutor
+                    .generateCreateTableDDLBuilder(tableName);
             ddlBuilder = createDDLBuilder;
         }
         
         task_execute_log(ddlBuilder);//写入表结构
-        ddlBuilder.newIndex(false, "idx_task_execute_log_00", "taskId");
-        ddlBuilder.newIndex(false, "idx_task_execute_log_01", "startDate");
+        ddlBuilder.newIndex(false, "idx_taskId", "taskId");
+        ddlBuilder.newIndex(false, "idx_startDate", "startDate");
         
-        if (alterDDLBuilder != null && alterDDLBuilder.isNeedAlter(false, false)) {
-            this.tableDDLExecutor.alter(alterDDLBuilder, false, false);
+        if (alterDDLBuilder != null
+                && alterDDLBuilder.compare().isNeedAlter()) {
+            this.tableDDLExecutor.alter(alterDDLBuilder);
         } else if (createDDLBuilder != null) {
             this.tableDDLExecutor.create(createDDLBuilder);
         }
@@ -222,10 +229,10 @@ public class TaskContextTableInitializer implements InitializingBean {
                 .newColumnOfVarchar("code", 64, true, null)
                 .newColumnOfVarchar("name", 64, true, null)
                 .newColumnOfVarchar("remark", 512, false, null)
-                .newColumnOfVarchar("result", 64, false, null)
-                .newColumnOfDate("startDate", false, true)
-                .newColumnOfDate("endDate", false, true)
-                .newColumnOfBigDecimal("consuming", 32, 0, false, BigDecimal.ZERO)
+                .newColumnOfVarchar("result", 64, true, null)
+                .newColumnOfDate("startDate", true, true)
+                .newColumnOfDate("endDate", true, true)
+                .newColumnOfInteger("consuming", 19, true, 0)
                 .newColumnOfVarchar("signature", 128, false, null)
                 .newColumnOfVarchar("attributes", 512, false, null);
     }

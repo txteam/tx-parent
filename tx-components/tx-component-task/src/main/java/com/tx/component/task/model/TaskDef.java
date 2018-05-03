@@ -15,7 +15,7 @@ import javax.persistence.Table;
 
 import com.tx.core.jdbc.sqlsource.annotation.QueryConditionEqual;
 import com.tx.core.jdbc.sqlsource.annotation.UpdateAble;
-import com.tx.core.model.OrderedSupport;
+import com.tx.core.util.order.OrderedSupport;
 
 /**
  * 事务定义<br/>

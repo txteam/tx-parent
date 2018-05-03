@@ -30,8 +30,6 @@ import com.tx.core.jdbc.sqlsource.annotation.UpdateAble;
 @Table(name = "task_execute_log")
 public class TaskExecuteLog {
     
-    
-    
     /** 日志id */
     @Id
     private String id;

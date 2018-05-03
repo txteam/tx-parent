@@ -22,7 +22,6 @@ import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Scope;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -50,12 +49,12 @@ import com.tx.component.task.service.impl.TaskDetailServiceImpl;
 import com.tx.component.task.service.impl.TaskExecuteLogServiceImpl;
 import com.tx.component.task.service.impl.TaskStatusServiceImpl;
 import com.tx.component.task.timedtask.TimedTaskExecutorFactory;
-import com.tx.core.dbscript.model.DataSourceTypeEnum;
 import com.tx.core.ddlutil.executor.TableDDLExecutor;
 import com.tx.core.ddlutil.executor.TableDDLExecutorFactory;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.mybatis.support.MyBatisDaoSupport;
 import com.tx.core.mybatis.support.MyBatisDaoSupportHelper;
+import com.tx.core.util.dialect.DataSourceTypeEnum;
 
 /**
  * 事务容器配置器<br/>

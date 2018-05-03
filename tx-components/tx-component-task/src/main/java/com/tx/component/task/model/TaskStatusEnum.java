@@ -7,8 +7,8 @@
 package com.tx.component.task.model;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.tx.component.basicdata.model.BasicDataEnum;
-import com.tx.component.basicdata.model.BasicDataEnumJsonSerializer;
+import com.tx.core.support.json.BaseEnum;
+import com.tx.core.support.json.BaseEnumJsonSerializer;
 
 /**
  * 事务定义枚举<br/>
@@ -19,8 +19,8 @@ import com.tx.component.basicdata.model.BasicDataEnumJsonSerializer;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-@JsonSerialize(using = BasicDataEnumJsonSerializer.class)
-public enum TaskStatusEnum implements BasicDataEnum {
+@JsonSerialize(using = BaseEnumJsonSerializer.class)
+public enum TaskStatusEnum implements BaseEnum {
     
     /**
      * 事务容器在被激发后

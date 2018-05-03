@@ -32,7 +32,6 @@ import com.tx.component.auth.persister.dao.impl.AuthItemRefImplDaoImpl;
 import com.tx.component.auth.persister.service.AuthItemImplService;
 import com.tx.component.auth.persister.service.AuthItemRefImplService;
 import com.tx.component.auth.persister.service.NotTempAuthItemRefImplService;
-import com.tx.core.dbscript.context.DBScriptExecutorContext;
 import com.tx.core.exceptions.util.AssertUtils;
 
 /**
@@ -66,10 +65,7 @@ public class AuthContextConfigurator implements InitializingBean,
     @Bean(name = "authContext")
     public AuthContextFactory authContext() {
         AuthContextFactory authContextFactory = new AuthContextFactory();
-        //authContextFactory.setEhcache(this.ehcache);
-        authContextFactory.setDatabaseSchemaUpdate(databaseSchemaUpdate);
         authContextFactory.setDataSource(dataSource);
-        authContextFactory.setDbScriptExecutorContext(dbScriptExecutorContext);
         authContextFactory.setDefaultAuthChecker(defaultAuthChecker);
         authContextFactory.setJdbcTemplate(jdbcTemplate);
         authContextFactory.setPlatformTransactionManager(platformTransactionManager);
@@ -132,20 +128,11 @@ public class AuthContextConfigurator implements InitializingBean,
     /** 默认的权限检查器 */
     protected AuthChecker defaultAuthChecker;
     
-    /** 权限项缓存对应的缓存生成器 */
-    //protected Ehcache ehcache;
-    
     /** 系统id 64，用以与其他系统区分 */
     protected String systemId;
     
     /** 表后缀名 */
     protected String tableSuffix;
-    
-    /** 数据库脚本是否自动执行 */
-    protected boolean databaseSchemaUpdate = false;
-    
-    /** 数据脚本自动执行器 */
-    protected DBScriptExecutorContext dbScriptExecutorContext;
     
     /** 当前spring容器 */
     protected ApplicationContext applicationContext;
@@ -221,28 +208,6 @@ public class AuthContextConfigurator implements InitializingBean,
      */
     public void setTableSuffix(String tableSuffix) {
         this.tableSuffix = tableSuffix;
-    }
-    
-    /**
-     * @param 对databaseSchemaUpdate进行赋值
-     */
-    public void setDatabaseSchemaUpdate(boolean databaseSchemaUpdate) {
-        this.databaseSchemaUpdate = databaseSchemaUpdate;
-    }
-    
-    /**
-     * @return 返回 dbScriptExecutorContext
-     */
-    public DBScriptExecutorContext getDbScriptExecutorContext() {
-        return dbScriptExecutorContext;
-    }
-    
-    /**
-     * @param 对dbScriptExecutorContext进行赋值
-     */
-    public void setDbScriptExecutorContext(
-            DBScriptExecutorContext dbScriptExecutorContext) {
-        this.dbScriptExecutorContext = dbScriptExecutorContext;
     }
     
     /**
