@@ -22,18 +22,36 @@ public class CommandContextProperties {
     
     /** 命令容器是否启动 */
     private boolean enable;
-
+    
+    /** 事务管理器bean名称 */
+    private String transactionManagerBeanName;
+    
     /**
      * @return 返回 enable
      */
     public boolean isEnable() {
         return enable;
     }
-
+    
     /**
      * @param 对enable进行赋值
      */
     public void setEnable(boolean enable) {
         this.enable = enable;
+    }
+    
+    /**
+     * @return 返回 transactionManagerBeanName
+     */
+    public String getTransactionManagerBeanName() {
+        return transactionManagerBeanName;
+    }
+    
+    /**
+     * @param 对transactionManagerBeanName进行赋值
+     */
+    public void setTransactionManagerBeanName(
+            String transactionManagerBeanName) {
+        this.transactionManagerBeanName = transactionManagerBeanName;
     }
 }

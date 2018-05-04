@@ -22,4 +22,8 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(BasicDataContextProperties.class)
 public class BasicDataContextAutoConfiguration {
     
+    public static class TableIniti{
+        
+    }
+    
 }

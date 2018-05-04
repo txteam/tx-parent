@@ -39,8 +39,8 @@ public class BasicDataContextTableInitializer implements InitializingBean {
     public void afterPropertiesSet() throws Exception {
         //初始化表定义
         table_bd_basic_data_type();
-        table_td_task_status();
-        table_task_execute_log();
+        table_bd_data_dict();
+        table_bd_data_dict_entry();
     }
     
     /**
@@ -52,25 +52,27 @@ public class BasicDataContextTableInitializer implements InitializingBean {
      * @see [类、类#方法、类#成员]
      */
     private void table_bd_basic_data_type() {
-        String tableName = "task_def";
+        String tableName = "bd_basic_data_type";
         
         CreateTableDDLBuilder createDDLBuilder = null;
         AlterTableDDLBuilder alterDDLBuilder = null;
         DDLBuilder<?> ddlBuilder = null;
         
         if (this.tableDDLExecutor.exists(tableName)) {
-            alterDDLBuilder = this.tableDDLExecutor.generateAlterTableDDLBuilder(tableName);
+            alterDDLBuilder = this.tableDDLExecutor
+                    .generateAlterTableDDLBuilder(tableName);
             ddlBuilder = alterDDLBuilder;
         } else {
-            createDDLBuilder = this.tableDDLExecutor.generateCreateTableDDLBuilder(tableName);
+            createDDLBuilder = this.tableDDLExecutor
+                    .generateCreateTableDDLBuilder(tableName);
             ddlBuilder = createDDLBuilder;
         }
         
         bd_basic_data_type(ddlBuilder);//写入表结构
         
-        
-        if (alterDDLBuilder != null && alterDDLBuilder.isNeedAlter(false, false)) {
-            this.tableDDLExecutor.alter(alterDDLBuilder, false, false);
+        if (alterDDLBuilder != null
+                && alterDDLBuilder.compare().isNeedAlter()) {
+            this.tableDDLExecutor.alter(alterDDLBuilder);
         } else if (createDDLBuilder != null) {
             this.tableDDLExecutor.create(createDDLBuilder);
         }
@@ -109,26 +111,21 @@ public class BasicDataContextTableInitializer implements InitializingBean {
         create index idx_bd_basic_data_type_02 on bd_basic_data_type(module);
         */
         ddlBuilder.newColumnOfVarchar(true, "id", 64, true, null)
-                .newColumnOfVarchar("type", 64, true, null)
+                .newColumnOfVarchar("type", 128, true, null)
                 .newColumnOfVarchar("code", 64, true, null)
-                
-                
-                
-                .newColumnOfVarchar("parentCode", 64, false, null)
-                .newColumnOfVarchar("className", 256, true, null)
-                .newColumnOfVarchar("beanName", 128, true, null)
-                .newColumnOfVarchar("methodName", 128, true, null)
-                .newColumnOfVarchar("factory", 128, false, "DEFAULT")
-                .newColumnOfVarchar("attributes", 1024, false, null)
+                .newColumnOfVarchar("module", 64, true, null)
                 .newColumnOfVarchar("name", 64, true, null)
-                .newColumnOfVarchar("remark", 512, false, null)
+                .newColumnOfVarchar("tableName", 256, true, null)
+                .newColumnOfBoolean("modifyAble", true, true)
                 .newColumnOfBoolean("valid", true, true)
-                .newColumnOfBoolean("executable", true, false)
-                .newColumnOfInteger("orderPriority", 16, true, 0)
+                .newColumnOfBoolean("common", true, true)
+                .newColumnOfVarchar("viewType", 64, true, null)
+                .newColumnOfVarchar("remark", 512, false, null)
                 .newColumnOfDate("lastUpdateDate", true, true)
                 .newColumnOfDate("createDate", true, true);
-        ddlBuilder.newIndex(true, "idx_task_def_00", "code");
-        ddlBuilder.newIndex(false, "idx_task_def_01", "createDate");
+        ddlBuilder.newIndex(true, "idx_type", "type");
+        ddlBuilder.newIndex(false, "idx_code", "code");
+        ddlBuilder.newIndex(false, "idx_module", "module");
     }
     
     /**
@@ -139,27 +136,28 @@ public class BasicDataContextTableInitializer implements InitializingBean {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    private void table_td_task_status() {
-        String tableName = "task_status";
+    public void table_bd_data_dict() {
+        String tableName = "bd_data_dict";
         
         CreateTableDDLBuilder createDDLBuilder = null;
         AlterTableDDLBuilder alterDDLBuilder = null;
         DDLBuilder<?> ddlBuilder = null;
         
         if (this.tableDDLExecutor.exists(tableName)) {
-            alterDDLBuilder = this.tableDDLExecutor.generateAlterTableDDLBuilder(tableName);
+            alterDDLBuilder = this.tableDDLExecutor
+                    .generateAlterTableDDLBuilder(tableName);
             ddlBuilder = alterDDLBuilder;
         } else {
-            createDDLBuilder = this.tableDDLExecutor.generateCreateTableDDLBuilder(tableName);
+            createDDLBuilder = this.tableDDLExecutor
+                    .generateCreateTableDDLBuilder(tableName);
             ddlBuilder = createDDLBuilder;
         }
         
-        td_task_status(ddlBuilder);//写入表结构
-        ddlBuilder.newIndex(true, "idx_task_status_00", "taskId");
-        ddlBuilder.newIndex(false, "idx_task_status_01", "createDate");
+        bd_data_dict(ddlBuilder);//写入表结构
         
-        if (alterDDLBuilder != null && alterDDLBuilder.isNeedAlter(false, false)) {
-            this.tableDDLExecutor.alter(alterDDLBuilder, false, false);
+        if (alterDDLBuilder != null
+                && alterDDLBuilder.compare().isNeedAlter()) {
+            this.tableDDLExecutor.alter(alterDDLBuilder);
         } else if (createDDLBuilder != null) {
             this.tableDDLExecutor.create(createDDLBuilder);
         }
@@ -174,28 +172,39 @@ public class BasicDataContextTableInitializer implements InitializingBean {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    private void td_task_status(DDLBuilder<?> ddlBuilder) {
+    public static void bd_data_dict(DDLBuilder<?> ddlBuilder) {
+        /*
+        drop table if exists bd_data_dict;
+        create table bd_data_dict(
+            id varchar(64) not null,
+            basicDataTypeCode varchar(64) not null,
+            parentId varchar(64),
+            code varchar(64) not null,
+            valid bit not null default 1,
+            modifyAble bit not null default 1,
+            name varchar(64) not null,
+            remark varchar(256),
+            lastUpdateDate datetime not null default now(),
+            createDate datetime not null default now(),
+            primary key(id)
+        );
+        create unique index idx_bd_data_dict_00 on bd_data_dict(code,basicDataTypeCode);
+        create index idx_bd_data_dict_01 on bd_data_dict(basicDataTypeCode);
+        create index idx_bd_data_dict_02 on bd_data_dict(parentId);
+        */
         ddlBuilder.newColumnOfVarchar(true, "id", 64, true, null)
-                .newColumnOfVarchar("taskId", 64, true, null)
-                .newColumnOfVarchar("status", 64, true, null)
-                .newColumnOfVarchar("result", 64, false, null)
-                .newColumnOfDate("startDate", false, true)
-                .newColumnOfDate("endDate", false, true)
-                .newColumnOfBigDecimal("consuming", 8, 0, false, BigDecimal.ZERO)//size 原值 32
-                .newColumnOfVarchar("signature", 128, false, null)
-                .newColumnOfVarchar("attributes", 1024, false, null)
-                .newColumnOfDate("nextFireDate", false, false)
-                .newColumnOfBigDecimal("executeCount", 8, 0, false, BigDecimal.ZERO)
-                .newColumnOfDate("successStartDate", false, false)
-                .newColumnOfDate("successEndDate", false, false)
-                .newColumnOfBigDecimal("successConsuming", 8, 0, false, BigDecimal.ZERO)//size 原值 32
-                .newColumnOfBigDecimal("successCount", 8, 0, false, BigDecimal.ZERO)
-                .newColumnOfDate("failStartDate", false, false)
-                .newColumnOfDate("failEndDate", false, false)
-                .newColumnOfBigDecimal("failConsuming", 8, 0, false, BigDecimal.ZERO)//size 原值 32
-                .newColumnOfBigDecimal("failCount", 8, 0, false, BigDecimal.ZERO)
+                .newColumnOfVarchar("parentId", 64, false, null)
+                .newColumnOfVarchar("basicDataTypeCode", 64, true, null)
+                .newColumnOfVarchar("code", 64, true, null)
+                .newColumnOfBoolean("modifyAble", true, true)
+                .newColumnOfBoolean("valid", true, true)
+                .newColumnOfVarchar("name", 64, true, null)
+                .newColumnOfVarchar("remark", 512, false, null)
                 .newColumnOfDate("lastUpdateDate", true, true)
                 .newColumnOfDate("createDate", true, true);
+        ddlBuilder.newIndex(true, "idx_task_status_00", "code,basicDataTypeCode");
+        ddlBuilder.newIndex(false, "idx_basicDataTypeCode", "basicDataTypeCode");
+        ddlBuilder.newIndex(false, "idx_parentId", "parentId");
     }
     
     /**
@@ -206,27 +215,29 @@ public class BasicDataContextTableInitializer implements InitializingBean {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    private void table_task_execute_log() {
-        String tableName = "task_execute_log";
+    private void table_bd_data_dict_entry() {
+        String tableName = "bd_data_dict_entry";
         
         CreateTableDDLBuilder createDDLBuilder = null;
         AlterTableDDLBuilder alterDDLBuilder = null;
         DDLBuilder<?> ddlBuilder = null;
         
         if (this.tableDDLExecutor.exists(tableName)) {
-            alterDDLBuilder = this.tableDDLExecutor.generateAlterTableDDLBuilder(tableName);
+            alterDDLBuilder = this.tableDDLExecutor
+                    .generateAlterTableDDLBuilder(tableName);
             ddlBuilder = alterDDLBuilder;
         } else {
-            createDDLBuilder = this.tableDDLExecutor.generateCreateTableDDLBuilder(tableName);
+            createDDLBuilder = this.tableDDLExecutor
+                    .generateCreateTableDDLBuilder(tableName);
             ddlBuilder = createDDLBuilder;
         }
         
-        task_execute_log(ddlBuilder);//写入表结构
-        ddlBuilder.newIndex(false, "idx_task_execute_log_00", "taskId");
-        ddlBuilder.newIndex(false, "idx_task_execute_log_01", "startDate");
+        bd_data_dict_entry(ddlBuilder);//写入表结构
         
-        if (alterDDLBuilder != null && alterDDLBuilder.isNeedAlter(false, false)) {
-            this.tableDDLExecutor.alter(alterDDLBuilder, false, false);
+        
+        if (alterDDLBuilder != null
+                && alterDDLBuilder.compare().isNeedAlter()) {
+            this.tableDDLExecutor.alter(alterDDLBuilder);
         } else if (createDDLBuilder != null) {
             this.tableDDLExecutor.create(createDDLBuilder);
         }
@@ -241,7 +252,18 @@ public class BasicDataContextTableInitializer implements InitializingBean {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    private void task_execute_log(DDLBuilder<?> ddlBuilder) {
+    private void bd_data_dict_entry(DDLBuilder<?> ddlBuilder) {
+        /*
+        drop table if exists bd_data_dict_entry;
+        CREATE TABLE bd_data_dict_entry(
+            id varchar(64) not null,
+            entityId varchar(64) not null,
+            entryKey varchar(64) not null,
+            entryValue varchar(255),
+            primary key(id)
+        );
+        create unique index idx_bd_data_dict_entry_00 ON bd_data_dict_entry(entityId,entryKey);
+         */
         ddlBuilder.newColumnOfVarchar(true, "id", 64, true, null)
                 .newColumnOfVarchar("operatorId", 64, false, null)
                 .newColumnOfVarchar("vcid", 64, false, null)
@@ -252,8 +274,14 @@ public class BasicDataContextTableInitializer implements InitializingBean {
                 .newColumnOfVarchar("result", 64, false, null)
                 .newColumnOfDate("startDate", false, true)
                 .newColumnOfDate("endDate", false, true)
-                .newColumnOfBigDecimal("consuming", 32, 0, false, BigDecimal.ZERO)
+                .newColumnOfBigDecimal("consuming",
+                        32,
+                        0,
+                        false,
+                        BigDecimal.ZERO)
                 .newColumnOfVarchar("signature", 128, false, null)
                 .newColumnOfVarchar("attributes", 512, false, null);
+        ddlBuilder.newIndex(false, "idx_task_execute_log_00", "taskId");
+        ddlBuilder.newIndex(false, "idx_task_execute_log_01", "startDate");
     }
 }

@@ -8,17 +8,24 @@ package com.tx.component.command.starter;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
 import org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import com.tx.component.command.context.CommandContext;
 import com.tx.component.command.context.CommandContextFactory;
@@ -41,23 +48,90 @@ import com.tx.component.strategy.context.StrategyContextFactory;
 @AutoConfigureAfter({ DataSourceAutoConfiguration.class,
         DataSourceTransactionManagerAutoConfiguration.class,
         TransactionAutoConfiguration.class })
-@ConditionalOnProperty(prefix = "command", value = "enable", havingValue="true")
-public class CommandContextAutoConfiguration {
+@ConditionalOnProperty(prefix = "command", value = "enable", havingValue = "true")
+public class CommandContextAutoConfiguration
+        implements ApplicationContextAware, InitializingBean {
     
-    @SuppressWarnings("unused")
+    private ApplicationContext applicationContext;
+    
     private CommandContextProperties properties;
     
-    private DataSource datasource;
-    
-    private PlatformTransactionManager txManager;
+    private PlatformTransactionManager transactionManager;
     
     /** <默认构造函数> */
-    public CommandContextAutoConfiguration(CommandContextProperties properties,
-            DataSource datasource, PlatformTransactionManager txManager) {
+    public CommandContextAutoConfiguration(
+            CommandContextProperties properties) {
         super();
         this.properties = properties;
-        this.datasource = datasource;
-        this.txManager = txManager;
+    }
+    
+    /**
+     * @param applicationContext
+     * @throws BeansException
+     */
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext)
+            throws BeansException {
+        this.applicationContext = applicationContext;
+    }
+    
+    /**
+     * @throws Exception
+     */
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        if (StringUtils.isNotBlank(properties.getTransactionManagerBeanName())
+                && this.applicationContext.containsBean(
+                        properties.getTransactionManagerBeanName())) {
+            this.transactionManager = this.applicationContext.getBean(
+                    properties.getTransactionManagerBeanName(),
+                    PlatformTransactionManager.class);
+        }
+    }
+    
+    /**
+     * 该类会优先加载<br/>
+     * <功能详细描述>
+     * 
+     * @author  Administrator
+     * @version  [版本号, 2018年5月5日]
+     * @see  [相关类/方法]
+     * @since  [产品/模块版本]
+     */
+    @Configuration
+    @ConditionalOnSingleCandidate(PlatformTransactionManager.class)
+    public static class TransactionTemplateConfiguration {
+        
+        private final PlatformTransactionManager txManager;
+        
+        public TransactionTemplateConfiguration(
+                PlatformTransactionManager transactionManager) {
+            this.txManager = transactionManager;
+        }
+        
+        @Bean
+        @ConditionalOnMissingBean
+        public TransactionTemplate transactionTemplate() {
+            return new TransactionTemplate(this.txManager);
+        }
+        
+        /**
+         * 当命令容器不存在时<br/>
+         * <功能详细描述>
+         * @return [参数说明]
+         * 
+         * @return CommandContextFactory [返回类型说明]
+         * @exception throws [异常类型] [异常说明]
+         * @see [类、类#方法、类#成员]
+         */
+        @Bean("commandContext")
+        @ConditionalOnMissingBean(CommandContext.class)
+        public CommandContextFactory commandContext() {
+            CommandContextFactory factory = new CommandContextFactory();
+            factory.setTxManager(this.txManager);
+            
+            return factory;
+        }
     }
     
     /**
@@ -73,8 +147,7 @@ public class CommandContextAutoConfiguration {
     @ConditionalOnMissingBean(CommandContext.class)
     public CommandContextFactory commandContext() {
         CommandContextFactory factory = new CommandContextFactory();
-        factory.setDataSource(this.datasource);
-        factory.setTxManager(txManager);
+        factory.setTxManager(this.transactionManager);
         
         return factory;
     }
@@ -108,6 +181,7 @@ public class CommandContextAutoConfiguration {
     @Bean("helperFactory")
     public HelperFactory helperFactory() {
         HelperFactory helperFactory = new HelperFactory();
+        
         return helperFactory;
     }
 }

@@ -6,8 +6,6 @@
  */
 package com.tx.component.command.context;
 
-import javax.sql.DataSource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -15,7 +13,6 @@ import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
@@ -44,14 +41,14 @@ public class CommandContextConfigurator
     /** beanName */
     protected static String beanName;
     
-    /** 数据源 */
-    private DataSource dataSource;
-    
     /** 事务管理器 */
     protected PlatformTransactionManager txManager;
     
     /** 事务template */
     protected TransactionTemplate transactionTemplate;
+    
+    //  /** 数据源 */
+    //    private DataSource dataSource;
     
     /**
      * @param name
@@ -76,10 +73,11 @@ public class CommandContextConfigurator
      */
     @Override
     public void afterPropertiesSet() throws Exception {
-        AssertUtils.notNull(dataSource, "dataSource is null.");
-        if (this.txManager == null) {
-            this.txManager = new DataSourceTransactionManager(this.dataSource);
-        }
+        AssertUtils.notNull(this.txManager, "txManager is null.");
+        
+        //        if (this.txManager == null) {
+        //            this.txManager = new DataSourceTransactionManager(this.dataSource);
+        //        }
         this.transactionTemplate = new TransactionTemplate(this.txManager,
                 new DefaultTransactionDefinition(
                         TransactionDefinition.PROPAGATION_REQUIRED));
@@ -116,19 +114,19 @@ public class CommandContextConfigurator
         
     }
     
-    /**
-     * @return 返回 dataSource
-     */
-    public DataSource getDataSource() {
-        return dataSource;
-    }
-    
-    /**
-     * @param 对dataSource进行赋值
-     */
-    public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
+    //    /**
+    //     * @return 返回 dataSource
+    //     */
+    //    public DataSource getDataSource() {
+    //        return dataSource;
+    //    }
+    //    
+    //    /**
+    //     * @param 对dataSource进行赋值
+    //     */
+    //    public void setDataSource(DataSource dataSource) {
+    //        this.dataSource = dataSource;
+    //    }
     
     /**
      * @return 返回 txManager
