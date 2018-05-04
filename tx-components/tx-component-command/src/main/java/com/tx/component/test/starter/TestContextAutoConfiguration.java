@@ -146,6 +146,12 @@ public class TestContextAutoConfiguration
                     "TestContextAutoInnerImportRegistrar constrution. called");
         }
         
+        @PostConstruct
+        public void afterPropertiesSet() {
+            System.out.println(
+                    "TestContextAutoInnerImportRegistrar afterPropertiesSet. called");
+        }
+        
         @Override
         public void registerBeanDefinitions(
                 AnnotationMetadata importingClassMetadata,
