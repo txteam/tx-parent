@@ -38,7 +38,7 @@ public class BasicDataContextTableInitializer implements InitializingBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         //初始化表定义
-        table_td_task_def();
+        table_bd_basic_data_type();
         table_td_task_status();
         table_task_execute_log();
     }
@@ -50,8 +50,8 @@ public class BasicDataContextTableInitializer implements InitializingBean {
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
-    private void table_td_task_def() {
+     */
+    private void table_bd_basic_data_type() {
         String tableName = "task_def";
         
         CreateTableDDLBuilder createDDLBuilder = null;
@@ -66,9 +66,8 @@ public class BasicDataContextTableInitializer implements InitializingBean {
             ddlBuilder = createDDLBuilder;
         }
         
-        td_task_def(ddlBuilder);//写入表结构
-        ddlBuilder.newIndex(true, "idx_task_def_00", "code");
-        ddlBuilder.newIndex(false, "idx_task_def_01", "createDate");
+        bd_basic_data_type(ddlBuilder);//写入表结构
+        
         
         if (alterDDLBuilder != null && alterDDLBuilder.isNeedAlter(false, false)) {
             this.tableDDLExecutor.alter(alterDDLBuilder, false, false);
@@ -86,9 +85,35 @@ public class BasicDataContextTableInitializer implements InitializingBean {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    private void td_task_def(DDLBuilder<?> ddlBuilder) {
+    public static void bd_basic_data_type(DDLBuilder<?> ddlBuilder) {
+        /*
+        drop table if exists bd_basic_data_type;
+        create table bd_basic_data_type(
+            id varchar(64) not null,
+            type varchar(128) not null,
+            code varchar(64) not null,
+            module varchar(64) not null,
+            name varchar(64) not null,
+            tableName varchar(64) not null,
+            modifyAble bit not null default 0,
+            valid bit not null default 1,
+            common bit not null default 1,
+            viewType varchar(64) not null,
+            remark varchar(512),
+            createDate datetime not null default now(),
+            lastUpdateDate datetime not null default now(),
+            primary key(id)
+        );
+        create unique index idx_bd_basic_data_type_00 on bd_basic_data_type(type);
+        create index idx_bd_basic_data_type_01 on bd_basic_data_type(code);
+        create index idx_bd_basic_data_type_02 on bd_basic_data_type(module);
+        */
         ddlBuilder.newColumnOfVarchar(true, "id", 64, true, null)
+                .newColumnOfVarchar("type", 64, true, null)
                 .newColumnOfVarchar("code", 64, true, null)
+                
+                
+                
                 .newColumnOfVarchar("parentCode", 64, false, null)
                 .newColumnOfVarchar("className", 256, true, null)
                 .newColumnOfVarchar("beanName", 128, true, null)
@@ -102,6 +127,8 @@ public class BasicDataContextTableInitializer implements InitializingBean {
                 .newColumnOfInteger("orderPriority", 16, true, 0)
                 .newColumnOfDate("lastUpdateDate", true, true)
                 .newColumnOfDate("createDate", true, true);
+        ddlBuilder.newIndex(true, "idx_task_def_00", "code");
+        ddlBuilder.newIndex(false, "idx_task_def_01", "createDate");
     }
     
     /**
