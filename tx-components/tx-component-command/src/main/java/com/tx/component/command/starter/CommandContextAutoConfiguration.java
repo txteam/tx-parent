@@ -25,13 +25,13 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.support.TransactionTemplate;
 
 import com.tx.component.command.context.CommandContext;
 import com.tx.component.command.context.CommandContextFactory;
 import com.tx.component.command.context.HelperFactory;
 import com.tx.component.strategy.context.StrategyContext;
 import com.tx.component.strategy.context.StrategyContextFactory;
+import com.tx.core.exceptions.util.AssertUtils;
 
 /**
  * 命令容器配置器<br/>
@@ -109,12 +109,6 @@ public class CommandContextAutoConfiguration
             this.txManager = transactionManager;
         }
         
-        @Bean
-        @ConditionalOnMissingBean
-        public TransactionTemplate transactionTemplate() {
-            return new TransactionTemplate(this.txManager);
-        }
-        
         /**
          * 当命令容器不存在时<br/>
          * <功能详细描述>
@@ -146,6 +140,9 @@ public class CommandContextAutoConfiguration
     @Bean("commandContext")
     @ConditionalOnMissingBean(CommandContext.class)
     public CommandContextFactory commandContext() {
+        AssertUtils.notNull(this.transactionManager,
+                "transactionManager在系统中非唯一.需要手工通过command.transactionManagerBeanName指定transactionManager的BeanName.");
+        
         CommandContextFactory factory = new CommandContextFactory();
         factory.setTxManager(this.transactionManager);
         
