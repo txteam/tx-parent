@@ -8,6 +8,8 @@ package com.tx.component.config;
 
 import org.springframework.beans.factory.annotation.Value;
 
+import com.tx.component.configuration.context.ConfigContext;
+
 
  /**
   * <功能简述>
@@ -22,4 +24,10 @@ public class TestService {
     
     @Value("${helloworldservice.url}")
     private String url;
+    
+    public void test(){
+        ConfigContext.getContext().getValue("111");
+        
+        ConfigContext.getContext().getAllConfigProperty();
+    }
 }

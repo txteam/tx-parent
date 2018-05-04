@@ -12,9 +12,6 @@ import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 
-import com.tx.core.datasource.finder.ConfigDataSourceFinder;
-import com.tx.core.datasource.finder.JNDIDataSourceFinder;
-
 /**
  * jndi数据源工厂类<br/>
  * 从[数据源查找生成器]列表中遍历返回数据源,直到一个可用的数据源则停止遍历
@@ -44,8 +41,8 @@ public class DataSourceFactoryBean implements
     public DataSourceFactoryBean() {
         super();
         datasourceFinderList = new ArrayList<DataSourceFinder>();
-        datasourceFinderList.add(new JNDIDataSourceFinder());
-        datasourceFinderList.add(new ConfigDataSourceFinder());
+        //datasourceFinderList.add(new JNDIDataSourceFinder());
+        //datasourceFinderList.add(new ConfigDataSourceFinder());
     }
     
     /**

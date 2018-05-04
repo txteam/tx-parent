@@ -9,8 +9,8 @@ import java.io.IOException;
 import org.apache.commons.io.FileUtils;
 
 import com.tx.component.basicdata.model.DataDict;
-import com.tx.core.dbscript.model.DataSourceTypeEnum;
 import com.tx.core.generator.basicedata.BasicDataCodeGenerator;
+import com.tx.core.util.dialect.DataSourceTypeEnum;
 
 /**
  * 基础数据生成类<br/>

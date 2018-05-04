@@ -1,21 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>com.tx</groupId>
 		<artifactId>tx-parent</artifactId>
-		<version>3.0.x-SNAPSHOT</version>
+		<version>5.0.x-SNAPSHOT</version>
 	</parent>
-
-	<properties>
-		<!-- lib info -->
-		<skipTests>true</skipTests>
-	</properties>
 
 	<artifactId>tx-components</artifactId>
 	<packaging>pom</packaging>
-
 	<name>tx-components</name>
 	<description>tx-components</description>
 
@@ -45,14 +38,17 @@
 
 	<modules>
 		<!-- 有价值模块 -->
-		<module>tx-component-configuration</module>
-		<module>tx-component-auth</module>
-		<module>tx-component-communication</module>
-		<module>tx-component-basicdata</module>
-		<module>tx-component-file</module>
-		<!-- 待完善模块 -->
-		<module>tx-component-servicelog</module>
+
+		<module>tx-component-command</module>
+
+		<!-- <module>tx-component-event</module> -->
+		<!-- <module>tx-component-auth</module> -->
+		<!-- <module>tx-component-basicdata</module> -->
+		<!-- <module>tx-component-configuration</module> -->
+		<!-- <module>tx-component-servicelog</module> -->
+
+
 		<!-- 准备废弃的模块 -->
-		<module>tx-component-rule</module>
+		<!-- <module>tx-component-rule</module> -->
 	</modules>
 </project>

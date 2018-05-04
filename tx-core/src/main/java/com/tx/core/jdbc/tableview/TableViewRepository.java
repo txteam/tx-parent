@@ -21,8 +21,8 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.model.ParameterizedTypeReference;
 import com.tx.core.paged.model.PagedList;
+import com.tx.core.util.typereference.ParameterizedTypeReference;
 
 /**
  * 视图逻辑层继承基础类，目的在于降低View对象的编码量<br/>

@@ -8,24 +8,19 @@ package com.tx.core.ddlutil.builder.alter;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 
 import com.tx.core.ddlutil.builder.AbstractDDLBuilder;
 import com.tx.core.ddlutil.dialect.DDLDialect;
-import com.tx.core.ddlutil.helper.TableDefHelper;
-import com.tx.core.ddlutil.helper.TableDefHelper.AlterTableContent;
 import com.tx.core.ddlutil.model.TableColumnDef;
 import com.tx.core.ddlutil.model.TableDef;
-import com.tx.core.ddlutil.model.TableIndexDef;
 import com.tx.core.exceptions.SILException;
 import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.model.OrderedSupportComparator;
+import com.tx.core.util.order.OrderedSupportComparator;
 
 /**
  * 抽象的修改表DDL构建器<br/>
@@ -36,9 +31,9 @@ import com.tx.core.model.OrderedSupportComparator;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public abstract class AbstractAlterTableDDLBuilder extends
-        AbstractDDLBuilder<AlterTableDDLBuilder> implements
-        AlterTableDDLBuilder, AlterTableDDLBuilderFactory {
+public abstract class AbstractAlterTableDDLBuilder
+        extends AbstractDDLBuilder<AlterTableDDLBuilder>
+        implements AlterTableDDLBuilder, AlterTableDDLBuilderFactory {
     
     /** 待修改表 */
     private final TableDef sourceTable;
@@ -65,8 +60,8 @@ public abstract class AbstractAlterTableDDLBuilder extends
     }
     
     /** <默认构造函数> */
-    public AbstractAlterTableDDLBuilder(TableDef newTable,
-            TableDef sourceTable, DDLDialect ddlDialect) {
+    public AbstractAlterTableDDLBuilder(TableDef newTable, TableDef sourceTable,
+            DDLDialect ddlDialect) {
         super(newTable, ddlDialect);
         
         AssertUtils.notNull(newTable, "newTable is null.");
@@ -75,8 +70,9 @@ public abstract class AbstractAlterTableDDLBuilder extends
         AssertUtils.notNull(sourceTable, "sourceTable is null.");
         AssertUtils.notEmpty(sourceTable.getTableName(),
                 "sourceTable.tableName is empty.");
-        AssertUtils.isTrue(newTable.getTableName()
-                .equalsIgnoreCase(sourceTable.getTableName()),
+        AssertUtils.isTrue(
+                newTable.getTableName()
+                        .equalsIgnoreCase(sourceTable.getTableName()),
                 "newTable.tableName:{} should equalsIgnoreCase sourceTable.tableName:{}",
                 new Object[] { newTable.getTableName(),
                         sourceTable.getTableName() });
@@ -121,8 +117,9 @@ public abstract class AbstractAlterTableDDLBuilder extends
         AssertUtils.notNull(sourceTableDef, "sourceTableDef is null.");
         AssertUtils.notEmpty(sourceTableDef.getTableName(),
                 "sourceTableDef.tableName is empty.");
-        AssertUtils.isTrue(newTableDef.getTableName()
-                .equalsIgnoreCase(sourceTableDef.getTableName()),
+        AssertUtils.isTrue(
+                newTableDef.getTableName()
+                        .equalsIgnoreCase(sourceTableDef.getTableName()),
                 "newTableDef.tableName:{} should equalsIgnoreCase sourceTableDef.tableName:{}.",
                 new Object[] { newTableDef.getTableName(),
                         sourceTableDef.getTableName() });
@@ -138,25 +135,14 @@ public abstract class AbstractAlterTableDDLBuilder extends
      * @return
      */
     @Override
-    public boolean isNeedAlter() {
-        boolean flag = isNeedAlter(true, false);
-        return flag;
-    }
-    
-    /**
-     * @param isIncrementUpdate
-     * @return
-     */
-    @Override
-    public boolean isNeedAlter(boolean isIncrementUpdate,
-            boolean isIgnoreIndexChange) {
-        AlterTableContent content = TableDefHelper.buildAlterTableContent(this.columns,
-                this.indexes,
-                this.sourceTable,
-                isIncrementUpdate,
-                isIgnoreIndexChange);
-        boolean flag = content.isNeedAlter();
-        return flag;
+    public AlterTableComparetor compare() {
+        AlterTableComparetor comparetor = new AlterTableComparetor();
+        comparetor.setSourceTableDef(this.sourceTable);
+        comparetor.setTargetTableColumns(this.columns);
+        comparetor.setTargetTableIndexes(this.indexes);
+        comparetor.compare();
+        
+        return comparetor;
     }
     
     /**
@@ -164,31 +150,21 @@ public abstract class AbstractAlterTableDDLBuilder extends
      */
     @Override
     public final String alterSql() {
-        String alterSql = alterSql(true, false);
-        return alterSql;
-    }
-    
-    /**
-     * @param isIncrementUpdate
-     * @return
-     */
-    @Override
-    public final String alterSql(boolean isIncrementUpdate,
-            boolean isIgnoreIndexChange) {
+        AlterTableComparetor comparetor = new AlterTableComparetor();
+        comparetor.setSourceTableDef(this.sourceTable);
+        comparetor.setTargetTableColumns(this.columns);
+        comparetor.setTargetTableIndexes(this.indexes);
+        comparetor.compare();
+        
         try {
-            TableDefHelper.preProcess(this);
-            AlterTableContent content = TableDefHelper.buildAlterTableContent(this.columns,
-                    this.indexes,
-                    this.sourceTable,
-                    isIncrementUpdate,
-                    isIgnoreIndexChange);
-            
-            doBuildAlterSql(content);
+            doBuildAlterSql(comparetor);
         } catch (IOException e) {
-            throw new SILException("generate create table sql exception.", e);
+            throw new SILException("generate alter table sql exception.", e);
         }
-        String createSql = this.writer.toString();
-        return createSql;
+        
+        String alterSql = this.writer.toString();
+        
+        return alterSql;
     }
     
     /**
@@ -201,10 +177,11 @@ public abstract class AbstractAlterTableDDLBuilder extends
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    protected void doBuildAlterSql(AlterTableContent content)
+    protected void doBuildAlterSql(AlterTableComparetor comparetor)
             throws IOException {
         this.writer = new StringWriter();
-        if (!content.isNeedAlter()) {
+        
+        if (!comparetor.isNeedAlter()) {
             return;
         }
         
@@ -214,21 +191,24 @@ public abstract class AbstractAlterTableDDLBuilder extends
         writeAlterStartStmt();
         
         //删除主键
-        boolean isNeedDropPrimaryKey = content.isNeedModifyPrimaryKey();
-        writeAlterDropPrimaryKey(isNeedDropPrimaryKey,
-                content.getPrimaryKeyName());
+        if (comparetor.isNeedModifyPrimaryKey()) {
+            writeAlterDropPrimaryKey();
+        }
         //删除索引
-        writeAlterDropIndex(content.getAlterDeleteIndexes());
+        writeAlterDropIndex(comparetor.getAlterTableIndexes());
+        
         //增加字段
-        writeAlterAddColumnsStmt(content.getAlterAddColumns());
+        writeAlterAddColumnsStmt(comparetor.getAlterTableColumns());
         //修改字段
-        writeAlterModifyColumnsStmt(content.getAlterModifyColumns());
-        //删除字段
-        writeAlterDropColumnsStmt(content.getAlterDeleteColumns());
+        writeAlterModifyColumnsStmt(comparetor.getAlterTableColumns());
+        
         //增加主键
-        writeAlterAddPrimaryKey(isNeedDropPrimaryKey,
-                content.getPrimaryKeyColumnNames());
+        if (comparetor.isNeedModifyPrimaryKey()) {
+            writeAlterAddPrimaryKey(comparetor.getPrimaryKeyColumnNames());
+        }
+        
         //增加索引
+        writeAlterAddIndexesStmt(comparetor.getAlterTableIndexes());
         
         //写入修改表结束
         writeAlterEndStmt();
@@ -276,13 +256,12 @@ public abstract class AbstractAlterTableDDLBuilder extends
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    protected void writeAlterDropPrimaryKey(boolean isNeedDropPrimaryKey,
-            String primaryKeyName) throws IOException {
-        if (!isNeedDropPrimaryKey) {
-            return;
-        }
-        AssertUtils.notEmpty(primaryKeyName, "primaryKeyName is empty.");
-        
+    protected void writeAlterDropPrimaryKey() throws IOException {
+        //String primaryKeyName
+        //        if (!isNeedDropPrimaryKey) {
+        //            return;
+        //        }
+        //AssertUtils.notEmpty(primaryKeyName, "primaryKeyName is empty.");
         //print("   DROP CONSTRAINT ");//输出缩进
         //print(primaryKeyName);
         //println(",");
@@ -300,9 +279,9 @@ public abstract class AbstractAlterTableDDLBuilder extends
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    protected void writeAlterAddPrimaryKey(boolean isNeedDropPrimaryKey,
-            String primaryKeyColumnNames) throws IOException {
-        if (!isNeedDropPrimaryKey || StringUtils.isEmpty(primaryKeyColumnNames)) {
+    protected void writeAlterAddPrimaryKey(String primaryKeyColumnNames)
+            throws IOException {
+        if (StringUtils.isEmpty(primaryKeyColumnNames)) {
             return;
         }
         
@@ -312,49 +291,30 @@ public abstract class AbstractAlterTableDDLBuilder extends
     }
     
     /**
-     * 写入删除主键<br/>
-     * <功能详细描述>
-     * @param isNeedDropPrimaryKey
-     * @param primaryKey
-     * @throws IOException [参数说明]
-     * 
-     * @return void [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-    */
-    protected void writeAlterDropIndex(List<TableIndexDef> needDropIndexes)
-            throws IOException {
-        if (CollectionUtils.isEmpty(needDropIndexes)) {
-            return;
-        }
-        
-        MultiValueMap<String, TableIndexDef> indexNames = new LinkedMultiValueMap<>();
-        for (TableIndexDef index : needDropIndexes) {
-            indexNames.add(index.getIndexName().toUpperCase(), index);
-        }
-        
-        for (Entry<String, List<TableIndexDef>> entry : indexNames.entrySet()) {
-            print("   DROP INDEX ");//输出缩进
-            print(entry.getValue().get(0).getIndexName());
-            println(",");
-        }
-    }
-    
-    /**
-     * 增加字段
+     * 增加字段<br/>
      * <功能详细描述>
      * @throws IOException [参数说明]
      * 
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
-    protected void writeAlterAddColumnsStmt(List<TableColumnDef> addColumns)
-            throws IOException {
+     */
+    protected void writeAlterAddColumnsStmt(
+            List<AlterTableColumn> alterTableColumns) throws IOException {
+        List<TableColumnDef> addColumns = new ArrayList<>();
+        for (AlterTableColumn col : alterTableColumns) {
+            if (!col.isNeedAlter()) {
+                continue;
+            }
+            if (!AlterTypeEnum.ADD.equals(col.getAlterType())) {
+                continue;
+            }
+            addColumns.add(col.getTargetColumn());
+        }
+        
         if (CollectionUtils.isEmpty(addColumns)) {
             return;
         }
-        
         OrderedSupportComparator.sort(addColumns);
         for (TableColumnDef column : addColumns) {
             print("   ADD COLUMN ");//输出缩进
@@ -371,9 +331,27 @@ public abstract class AbstractAlterTableDDLBuilder extends
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
+     */
     protected void writeAlterModifyColumnsStmt(
-            List<TableColumnDef> modifyColumns) throws IOException {
+            List<AlterTableColumn> alterTableColumns) throws IOException {
+        List<TableColumnDef> modifyColumns = new ArrayList<>();
+        for (AlterTableColumn col : alterTableColumns) {
+            if (!col.isNeedAlter()) {
+                continue;
+            }
+            if (!AlterTypeEnum.MODIFY.equals(col.getAlterType())
+                    && !AlterTypeEnum.MODIFY_TO_NULLABLE
+                            .equals(col.getAlterType())) {
+                continue;
+            }
+            if (col.getTargetColumn() != null) {
+                modifyColumns.add(col.getTargetColumn());
+            } else {
+                col.getSourceColumn().setRequired(false);
+                modifyColumns.add(col.getSourceColumn());
+            }
+        }
+        
         if (CollectionUtils.isEmpty(modifyColumns)) {
             return;
         }
@@ -382,29 +360,6 @@ public abstract class AbstractAlterTableDDLBuilder extends
         for (TableColumnDef column : modifyColumns) {
             print("   MODIFY COLUMN ");//输出缩进
             writeColumn(column);
-            println(",");
-        }
-    }
-    
-    /**
-     * 删除字段
-     * <功能详细描述>
-     * @throws IOException [参数说明]
-     * 
-     * @return void [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-    */
-    protected void writeAlterDropColumnsStmt(List<TableColumnDef> deleteColumns)
-            throws IOException {
-        if (CollectionUtils.isEmpty(deleteColumns)) {
-            return;
-        }
-        
-        OrderedSupportComparator.sort(deleteColumns);
-        for (TableColumnDef column : deleteColumns) {
-            print("   DROP COLUMN ");//输出缩进
-            print(column.getColumnName());
             println(",");
         }
     }
@@ -422,7 +377,7 @@ public abstract class AbstractAlterTableDDLBuilder extends
     protected void writeColumn(TableColumnDef column) throws IOException {
         print(column.getColumnName());
         print(" ");
-        print(column.getColumnType());
+        print(column.getColumnType(this.ddlDialect));
         
         if (!StringUtils.isEmpty(column.getDefaultValue())) {
             print(" default ");
@@ -435,6 +390,38 @@ public abstract class AbstractAlterTableDDLBuilder extends
     }
     
     /**
+     * 写入删除主键<br/>
+     * <功能详细描述>
+     * @param isNeedDropPrimaryKey
+     * @param primaryKey
+     * @throws IOException [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    protected void writeAlterDropIndex(List<AlterTableIndex> alterTableIndexes)
+            throws IOException {
+        if (CollectionUtils.isEmpty(alterTableIndexes)) {
+            return;
+        }
+        
+        for (AlterTableIndex index : alterTableIndexes) {
+            if (!index.isNeedAlter()) {
+                continue;
+            }
+            if (!AlterTypeEnum.DROP.equals(index.getAlterType())
+                    && !AlterTypeEnum.MODIFY.equals(index.getAlterType())) {
+                continue;
+            }
+            
+            print("   DROP INDEX ");//输出缩进
+            print(index.getIndexName());
+            println(",");
+        }
+    }
+    
+    /**
      * 写入索引创建语句<br/>
      * <功能详细描述>
      * @throws IOException [参数说明]
@@ -443,59 +430,30 @@ public abstract class AbstractAlterTableDDLBuilder extends
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    protected void writeAlterAddIndexesStmt(List<TableIndexDef> addIndexes)
-            throws IOException {
-        if (CollectionUtils.isEmpty(addIndexes)) {
+    protected void writeAlterAddIndexesStmt(
+            List<AlterTableIndex> alterTableIndexes) throws IOException {
+        if (CollectionUtils.isEmpty(alterTableIndexes)) {
             return;
         }
         
-        MultiValueMap<String, TableIndexDef> idxMutiMap = new LinkedMultiValueMap<>();
-        OrderedSupportComparator.sort(addIndexes);
-        for (TableIndexDef idx : addIndexes) {
-            if (idx.isPrimaryKey()) {
+        for (AlterTableIndex index : alterTableIndexes) {
+            if (!index.isNeedAlter()) {
                 continue;
             }
-            idxMutiMap.add(idx.getIndexName(), idx);
-        }
-        
-        for (Entry<String, List<TableIndexDef>> entryTemp : idxMutiMap.entrySet()) {
-            String indexName = entryTemp.getKey();
-            TableIndexDef idxFirst = idxMutiMap.getFirst(indexName);
-            boolean unique = idxFirst.isUniqueKey();
-            
-            writeAddIndex(unique, indexName, entryTemp.getValue());
-        }
-    }
-    
-    /**
-     * 写入表索引<br/>
-     * <功能详细描述>
-     * @param unique
-     * @param indexName
-     * @param ddlIndex
-     * @throws IOException [参数说明]
-     * 
-     * @return void [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-    */
-    protected void writeAddIndex(boolean unique, String indexName,
-            List<TableIndexDef> ddlIndexes) throws IOException {
-        print(unique ? "   ADD INDEX " : "   ADD UNIQUE INDEX ");
-        print(indexName);
-        print(" ON ");
-        print("(");
-        
-        int primaryColumnSize = ddlIndexes.size();
-        int primaryIndex = 0;
-        for (TableIndexDef column : ddlIndexes) {
-            print(column.getColumnName());
-            if ((++primaryIndex) < primaryColumnSize) {
-                print(",");
+            if (!AlterTypeEnum.ADD.equals(index.getAlterType())
+                    && !AlterTypeEnum.MODIFY.equals(index.getAlterType())) {
+                continue;
             }
+            
+            print(index.getTargetIndex().isUniqueKey() ? "   ADD INDEX "
+                    : "   ADD UNIQUE INDEX ");
+            print(index.getTargetIndex().getIndexName());
+            print(" ON ");
+            print("(");
+            print(index.getTargetIndex().getColumnNames());
+            print(")");
+            println(",");
         }
-        print(")");
-        println(",");
     }
     
     /** 
@@ -513,50 +471,4 @@ public abstract class AbstractAlterTableDDLBuilder extends
     public TableDef sourceTable() {
         return sourceTable;
     }
-    
-    //  /**
-    //  * 写入索引创建语句<br/>
-    //  * <功能详细描述>
-    //  * @throws IOException [参数说明]
-    //  * 
-    //  * @return void [返回类型说明]
-    //  * @exception throws [异常类型] [异常说明]
-    //  * @see [类、类#方法、类#成员]
-    //  */
-    // protected void writeDropIndexesStmt(List<TableIndexDef> needDropIndexes)
-    //         throws IOException {
-    //     if (CollectionUtils.isEmpty(needDropIndexes)) {
-    //         return;
-    //     }
-    //     
-    //     MultiValueMap<String, TableIndexDef> idxMutiMap = new LinkedMultiValueMap<>();
-    //     for (TableIndexDef idex : needDropIndexes) {
-    //         idxMutiMap.add(idex.getIndexName(), idex);
-    //     }
-    //     
-    //     for (Entry<String, List<TableIndexDef>> entryTemp : idxMutiMap.entrySet()) {
-    //         String indexName = entryTemp.getKey();
-    //         //删除索引
-    //         writeDropIndex(indexName);
-    //     }
-    // }
-    // 
-    // /**
-    //   * 删除表索引<br/>
-    //   * <功能详细描述>
-    //   * @param indexName
-    //   * @throws IOException [参数说明]
-    //   * 
-    //   * @return void [返回类型说明]
-    //   * @exception throws [异常类型] [异常说明]
-    //   * @see [类、类#方法、类#成员]
-    //  */
-    // //ALTER TABLE table_name DROP INDEX index_name;
-    // protected void writeDropIndex(String indexName) throws IOException {
-    //     print("ALTER TABLE ");
-    //     print(this.tableName);
-    //     print(" DROP INDEX ");
-    //     print(indexName);
-    //     println(";");
-    // }
 }

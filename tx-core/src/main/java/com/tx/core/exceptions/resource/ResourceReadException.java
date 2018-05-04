@@ -8,7 +8,6 @@ package com.tx.core.exceptions.resource;
 
 import com.tx.core.exceptions.ErrorCode;
 import com.tx.core.exceptions.SILErrorCodeEnum;
-import com.tx.core.exceptions.SILException;
 
 
  /**

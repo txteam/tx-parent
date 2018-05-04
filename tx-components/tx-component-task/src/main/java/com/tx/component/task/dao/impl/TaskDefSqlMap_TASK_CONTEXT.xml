@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper 
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="taskDef">
+
+	<!-- auto generate default resultMap -->
+	<resultMap id="taskDefMap" 
+		type="com.tx.component.task.model.TaskDef">
+	</resultMap>
+	
+	<sql id="findSql">
+		SELECT 
+				TTD.id,
+				TTD.code,
+				TTD.parentCode,
+				TTD.factory,
+				TTD.className,
+				TTD.methodName,
+				TTD.valid,
+				TTD.executable,
+				TTD.attributes,
+				TTD.beanName,
+				TTD.name,
+				TTD.orderPriority,
+				TTD.lastUpdateDate,
+				TTD.createDate,
+				TTD.remark
+		  FROM TASK_DEF TTD
+		 WHERE
+		<trim prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
+	            AND TTD.ID = #{id}
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(code)">  
+	            AND TTD.CODE = #{code}
+	        </if>
+		</trim>
+	</sql>
+	
+	<!-- auto generate default find -->
+	<select id="findAndlockTaskDef" 
+		parameterType="com.tx.component.task.model.TaskDef"
+		resultMap="taskDefMap">
+		<include refid="findSql"></include>
+		FOR UPDATE
+	</select>
+	
+	<!-- auto generate default find -->
+	<select id="findTaskDef" 
+		parameterType="com.tx.component.task.model.TaskDef"
+		resultMap="taskDefMap">
+		<include refid="findSql"></include>
+	</select>
+	
+	<!-- auto generate default query -->
+	<select id="queryTaskDef" 
+		parameterType="java.util.Map"
+		resultMap="taskDefMap">
+		SELECT 
+				TTD.id,
+				TTD.code,
+				TTD.parentCode,
+				TTD.factory,
+				TTD.className,
+				TTD.methodName,
+				TTD.valid,
+				TTD.executable,
+				TTD.attributes,
+				TTD.beanName,
+				TTD.name,
+				TTD.orderPriority,
+				TTD.lastUpdateDate,
+				TTD.createDate,
+				TTD.remark
+		  FROM TASK_DEF TTD
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(valid)">  
+	            <![CDATA[ AND TTD.VALID = #{valid} ]]>
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(executable)">  
+	            <![CDATA[ AND TTD.EXECUTABLE = #{executable} ]]>
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(parentCode)">  
+	            <![CDATA[ AND TTD.PARENTCODE = #{parentCode} ]]>
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(beanName)">  
+	            <![CDATA[ AND TTD.BEANNAME = #{beanName} ]]>
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(className)">  
+	            <![CDATA[ AND TTD.CLASSNAME = #{className} ]]>
+	        </if>
+	       	<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(methodName)">  
+	            <![CDATA[ AND TTD.METHODNAME = #{methodName} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(factory)">  
+	            <![CDATA[ AND TTD.FACTORY = #{factory} ]]>
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(name)">  
+	            <![CDATA[ AND TTD.NAME = #{name} ]]>
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
+	            <![CDATA[ AND TTD.ID = #{id} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(code)">  
+	            <![CDATA[ AND TTD.CODE = #{code} ]]>
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(taskIds)">  
+	            AND TTD.ID IN <foreach collection="taskIds" item="taskIdTemp" open="(" close=")" separator=",">#{taskIdTemp}</foreach>
+			</if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(taskCodes)">  
+	            AND TTD.CODE IN <foreach collection="taskCodes" item="taskCodeTemp" open="(" close=")" separator=",">#{taskCodeTemp}</foreach>
+			</if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(excludeId)">
+				<![CDATA[ AND TTD.ID <> #{excludeId} ]]>
+			</if>
+		</trim>
+		<choose>  
+	        <when test="@com.tx.core.util.OgnlUtils@isNotEmpty(orderSql)">  
+	            ORDER BY ${orderSql}
+	        </when>
+	        <otherwise>  
+	            ORDER BY ID
+	        </otherwise>  
+	    </choose>
+	</select>
+	
+		<!-- auto generate default count -->
+	<select id="queryTaskDefCount" 
+		parameterType="java.util.Map"
+		resultType="java.lang.Integer">
+		SELECT COUNT(1)
+		  FROM TASK_DEF TTD
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(valid)">  
+	            <![CDATA[ AND TTD.VALID = #{valid} ]]>
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(executable)">  
+	            <![CDATA[ AND TTD.EXECUTABLE = #{executable} ]]>
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(parentCode)">  
+	            <![CDATA[ AND TTD.PARENTCODE = #{parentCode} ]]>
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(beanName)">  
+	            <![CDATA[ AND TTD.BEANNAME = #{beanName} ]]>
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(className)">  
+	            <![CDATA[ AND TTD.CLASSNAME = #{className} ]]>
+	        </if>
+	       	<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(methodName)">  
+	            <![CDATA[ AND TTD.METHODNAME = #{methodName} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(factory)">  
+	            <![CDATA[ AND TTD.FACTORY = #{factory} ]]>
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(name)">  
+	            <![CDATA[ AND TTD.NAME = #{name} ]]>
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
+	            <![CDATA[ AND TTD.ID = #{id} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(code)">  
+	            <![CDATA[ AND TTD.CODE = #{code} ]]>
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(taskIds)">  
+	            AND TTD.ID IN <foreach collection="taskIds" item="taskIdTemp" open="(" close=")" separator=",">#{taskIdTemp}</foreach>
+			</if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(taskCodes)">  
+	            AND TTD.CODE IN <foreach collection="taskCodes" item="taskCodeTemp" open="(" close=")" separator=",">#{taskCodeTemp}</foreach>
+			</if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(excludeId)">
+				<![CDATA[ AND TTD.ID <> #{excludeId} ]]>
+			</if>
+		</trim>
+	</select>
+    
+    <!-- auto generate default insert -->
+    <insert id="insertTaskDef" 
+		parameterType="com.tx.component.task.model.TaskDef">
+		INSERT INTO TASK_DEF
+		(
+			id,
+			code,
+			parentCode,
+			valid,
+			attributes,
+			beanName,
+			executable,
+			factory,
+			className,
+			methodName,
+			name,
+			orderPriority,
+			lastUpdateDate,
+			createDate,
+			remark
+		)
+		VALUES
+		(
+			#{id},
+			#{code},
+			#{parentCode},
+			#{valid},
+			#{attributes},
+			#{beanName},
+			#{executable},
+			#{factory},
+			#{className},
+			#{methodName},
+			#{name},
+			#{orderPriority},
+			#{lastUpdateDate},
+			#{createDate},
+			#{remark}
+		)
+	</insert>
+	
+	<!-- auto generate default delete -->
+	<delete id="deleteTaskDef" 
+		parameterType="com.tx.component.task.model.TaskDef">
+		DELETE FROM TASK_DEF  WHERE
+		<trim prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
+	            AND id = #{id}
+	        </if>
+		</trim>
+	</delete>
+
+	<!-- auto generate default update -->
+	<update id="updateTaskDef"
+	    parameterType="java.util.Map">  
+	    UPDATE TASK_DEF 
+	    <trim prefix="SET" suffixOverrides=",">
+			<!--  	<if test="_parameter.containsKey('code')"> -->
+			<!--  		code = #{code,javaType=java.lang.String}, -->
+			<!--  	</if>	 -->
+	    	<if test="_parameter.containsKey('parentCode')">
+	    		parentCode = #{parentCode,javaType=java.lang.String},
+	    	</if>
+			<if test="_parameter.containsKey('valid')">
+	    		valid = #{valid,javaType=boolean},
+	    	</if>	
+	    	<if test="_parameter.containsKey('executable')">
+	    		executable = #{executable,javaType=boolean},
+	    	</if>
+			<if test="_parameter.containsKey('attributes')">
+	    		attributes = #{attributes,javaType=java.lang.String},
+	    	</if>	
+			<if test="_parameter.containsKey('beanName')">
+	    		beanName = #{beanName,javaType=java.lang.String},
+	    	</if>
+	    	<if test="_parameter.containsKey('className')">
+	    		className = #{className,javaType=java.lang.String},
+	    	</if>	
+			<if test="_parameter.containsKey('methodName')">
+	    		methodName = #{methodName,javaType=java.lang.String},
+	    	</if>
+			<if test="_parameter.containsKey('factory')">
+	    		factory = #{factory,javaType=java.lang.String},
+	    	</if>
+			<if test="_parameter.containsKey('name')">
+	    		name = #{name,javaType=java.lang.String},
+	    	</if>	
+			<if test="_parameter.containsKey('orderPriority')">
+	    		orderPriority = #{orderPriority,javaType=int},
+	    	</if>
+			<if test="_parameter.containsKey('remark')">
+	    		remark = #{remark,javaType=java.lang.String},
+	    	</if>	
+	    	<if test="_parameter.containsKey('lastUpdateDate')">
+	    		lastUpdateDate = #{lastUpdateDate,javaType=java.util.Date},
+	    	</if>
+	    </trim>
+	    WHERE
+		<trim prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
+	            AND ID = #{id}
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(code)">  
+	            AND CODE = #{code}
+	        </if>
+		</trim>
+	</update>  
+
+</mapper>
+<!--
+sqlMap生成描述:
+
+-->

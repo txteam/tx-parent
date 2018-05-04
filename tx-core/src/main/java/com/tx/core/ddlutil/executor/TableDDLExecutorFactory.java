@@ -15,9 +15,9 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import com.tx.core.dbscript.model.DataSourceTypeEnum;
 import com.tx.core.ddlutil.executor.impl.MysqlTableDDLExecutor;
 import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.util.dialect.DataSourceTypeEnum;
 
 /**
  * 表DDL处理器工厂类<br/>

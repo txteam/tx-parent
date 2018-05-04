@@ -143,7 +143,6 @@ public class ClassReflector<T> {
         }
         
         //将接口中Method写入
-        @SuppressWarnings("unchecked")
         List<Class<?>> interfaceClasses = ClassUtils.getAllInterfaces(type);
         for(Class<?> interfaceClassTemp : interfaceClasses) {
             Method[] methods = interfaceClassTemp.getMethods();

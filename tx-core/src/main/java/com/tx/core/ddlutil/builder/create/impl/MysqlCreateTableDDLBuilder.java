@@ -69,4 +69,6 @@ public class MysqlCreateTableDDLBuilder extends AbstractCreateTableDDLBuilder {
                 tableDef, ddlDialect);
         return builder;
     }
+    
+    
 }

@@ -29,7 +29,8 @@ import com.tx.core.ddlutil.model.TableDef;
  */
 public interface TableDDLExecutor {
     
-    static final Logger logger = LoggerFactory.getLogger(TableDDLExecutor.class);
+    static final Logger logger = LoggerFactory
+            .getLogger(TableDDLExecutor.class);
     
     /**
      * 根据表名判断表是否存在<br/>
@@ -88,45 +89,44 @@ public interface TableDDLExecutor {
     */
     public void alter(AlterTableDDLBuilder builder);
     
-    /**
-      * 根据修改表的Builder执行修改表逻辑<br/>
-      * <功能详细描述>
-      * @param builder
-      * @param isIncrementUpdate
-      * @param isIgnoreIndexChange [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    public void alter(AlterTableDDLBuilder builder, boolean isIncrementUpdate,
-            boolean isIgnoreIndexChange);
-    
-    /**
-      * 判断是否需要升级(仅考虑增量升级，减少字段，减少字段长度无需进行升级)<br/>
-      * <功能详细描述>
-      * @param newTableDef
-      * @param oldTableDef [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    public boolean isNeedUpdate(TableDef newTableDef, TableDef oldTableDef);
-    
-    /**
-      * 判断是否需要升级<br/>
-      * <功能详细描述>
-      * @param newTableDef
-      * @param oldTableDef
-      * @param isIncrementalUpgrade [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    public boolean isNeedUpdate(TableDef newTableDef, TableDef oldTableDef,
-            boolean isIncrementalUpgrade,boolean isIgnoreIndexChange);
+    //    /**
+    //      * 根据修改表的Builder执行修改表逻辑<br/>
+    //      * <功能详细描述>
+    //      * @param builder
+    //      * @param isIncrementUpdate
+    //      * @param isIgnoreIndexChange [参数说明]
+    //      * 
+    //      * @return void [返回类型说明]
+    //      * @exception throws [异常类型] [异常说明]
+    //      * @see [类、类#方法、类#成员]
+    //     */
+    //    public void alter(AlterTableDDLBuilder builder, boolean isIncrementUpdate);
+    //    
+    //    /**
+    //      * 判断是否需要升级(仅考虑增量升级，减少字段，减少字段长度无需进行升级)<br/>
+    //      * <功能详细描述>
+    //      * @param newTableDef
+    //      * @param oldTableDef [参数说明]
+    //      * 
+    //      * @return void [返回类型说明]
+    //      * @exception throws [异常类型] [异常说明]
+    //      * @see [类、类#方法、类#成员]
+    //     */
+    //    public boolean isNeedUpdate(TableDef newTableDef, TableDef oldTableDef);
+    //    
+    //    /**
+    //      * 判断是否需要升级<br/>
+    //      * <功能详细描述>
+    //      * @param newTableDef
+    //      * @param oldTableDef
+    //      * @param isIncrementalUpgrade [参数说明]
+    //      * 
+    //      * @return void [返回类型说明]
+    //      * @exception throws [异常类型] [异常说明]
+    //      * @see [类、类#方法、类#成员]
+    //     */
+    //    public boolean isNeedUpdate(TableDef newTableDef, TableDef oldTableDef,
+    //            boolean isIncrementalUpgrade);
     
     /**
       * 根据表名查询对应的DDLTable详情，查询期间将会查询对应的索引以及字段<br/>
@@ -186,7 +186,8 @@ public interface TableDDLExecutor {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public CreateTableDDLBuilder generateCreateTableDDLBuilder(String tableName);
+    public CreateTableDDLBuilder generateCreateTableDDLBuilder(
+            String tableName);
     
     /**
      * 生成创建表的Builder对象<br/>

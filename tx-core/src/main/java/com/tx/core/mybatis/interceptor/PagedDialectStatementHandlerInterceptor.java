@@ -29,8 +29,8 @@ import org.hibernate.dialect.Dialect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.tx.core.dbscript.model.DataSourceTypeEnum;
 import com.tx.core.util.MetaObjectUtils;
+import com.tx.core.util.dialect.DataSourceTypeEnum;
 
 /**
  * 数据库分页容器处理器

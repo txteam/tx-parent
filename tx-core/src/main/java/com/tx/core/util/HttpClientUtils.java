@@ -18,7 +18,7 @@ import java.util.Map.Entry;
 import java.util.WeakHashMap;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;

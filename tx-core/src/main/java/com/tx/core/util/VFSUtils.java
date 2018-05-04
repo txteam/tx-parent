@@ -172,8 +172,8 @@ public class VFSUtils {
                     return IOUtils.toByteArray(in);
                 }
             } else {
-                throw new FileNotFoundException("File '" + sftpFilePath
-                        + "' does not exist");
+                throw new FileNotFoundException(
+                        "File '" + sftpFilePath + "' does not exist");
             }
         } catch (FileSystemException e) {
             throw fail(sftpFilePath, e);
@@ -215,8 +215,8 @@ public class VFSUtils {
                     return IOUtils.toString(in, encoding);
                 }
             } else {
-                throw new FileNotFoundException("File '" + sftpFilePath
-                        + "' does not exist");
+                throw new FileNotFoundException(
+                        "File '" + sftpFilePath + "' does not exist");
             }
         } catch (FileSystemException e) {
             throw fail(sftpFilePath, e);
@@ -274,8 +274,8 @@ public class VFSUtils {
                     return IOUtils.readLines(in, encoding);
                 }
             } else {
-                throw new FileNotFoundException("File '" + sftpFilePath
-                        + "' does not exist");
+                throw new FileNotFoundException(
+                        "File '" + sftpFilePath + "' does not exist");
             }
         } catch (FileSystemException e) {
             throw fail(sftpFilePath, e);
@@ -312,8 +312,8 @@ public class VFSUtils {
      * @throws IOException IO 异常
      * @see [类、类#方法、类#成员]
      */
-    public static void copyFileToFile(String sftpFilePath, String sourceFilePath)
-            throws IOException {
+    public static void copyFileToFile(String sftpFilePath,
+            String sourceFilePath) throws IOException {
         if (StringUtils.isEmpty(sftpFilePath)) {
             throw new IOException("File '" + sftpFilePath + "' is empty.");
         }
@@ -328,7 +328,8 @@ public class VFSUtils {
                 throw new IOException("File '" + sftpFilePath + "' is exists.");
             }
             
-            fileObj.copyFrom(sourceFileObj, new FileTypeSelector(FileType.FILE));
+            fileObj.copyFrom(sourceFileObj,
+                    new FileTypeSelector(FileType.FILE));
             
         } catch (FileSystemException e) {
             throw fail(sftpFilePath, e);
@@ -430,9 +431,9 @@ public class VFSUtils {
     
     public static void main(String[] args) throws Exception {
         // org.apache.commons.vfs2.FileSystemException: Badly formed URI "sftp://yxxd:yxxd@113.200.27.110:2021/REPAY_INFO-32166948-5-20150629-1hgei3bnqooeo005.xml".
-        VFSUtils.copyFileToFile("sftp://yxxd:yxxd@113.200.27.110:2021/1.xml", "/Users/rain/Develop/temp/cqdatasubmission/request/1b60tvtnqujno000.xml");
-//        VFSUtils.copyFileToFile("sftp://yxxd:yxxd@113.200.27.110:2021/test-20150629.txt", "/Users/rain/Develop//logs/skillgame.cxf.log");
-        
+        VFSUtils.copyFileToFile("sftp://yxxd:yxxd@113.200.27.110:2021/1.xml",
+                "/Users/rain/Develop/temp/cqdatasubmission/request/1b60tvtnqujno000.xml");
+        //        VFSUtils.copyFileToFile("sftp://yxxd:yxxd@113.200.27.110:2021/test-20150629.txt", "/Users/rain/Develop//logs/skillgame.cxf.log");
         
         //        VFSUtils.writeStringToFile("sftp://yxxd:yxxd@113.200.27.110:2021/test-20150626.txt",
         //                "测试",

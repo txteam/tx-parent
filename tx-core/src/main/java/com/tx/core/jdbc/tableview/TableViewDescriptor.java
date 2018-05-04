@@ -7,7 +7,7 @@
 package com.tx.core.jdbc.tableview;
 
 import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.model.TableView;
+import com.tx.core.generator.annotation.TableView;
 import com.tx.core.reflection.JpaMetaClass;
 
 

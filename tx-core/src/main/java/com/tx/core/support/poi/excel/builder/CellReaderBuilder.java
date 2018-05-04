@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.collections.map.LRUMap;
+import org.apache.commons.collections4.map.LRUMap;
 import org.apache.commons.lang3.ArrayUtils;
 
 import com.tx.core.TxConstants;

@@ -36,7 +36,7 @@ public class GeneratorUtils {
 
     /**
      * 生成页面显示行信息
-     *<功能详细描述>
+     * <功能详细描述>
      * @param jpaMetaClass
      * @param sqlSource
      * @param uniqueGetterNamesArray

@@ -173,22 +173,14 @@ public class BasicDataServiceRegistry implements ApplicationContextAware,
         String beanName = generateServiceBeanName(type);
         
         if (type.isAssignableFrom(TreeAbleBasicData.class)) {
-            //Class<?> defaultServiceType = DefaultTreeAbleBasicDataServiceFactory.class;
             Class<?> defaultServiceType = DefaultTreeAbleBasicDataService.class;
             
-            //                        AnnotatedGenericBeanDefinition bd = new AnnotatedGenericBeanDefinition(
-            //                                defaultServiceType);
-            //                        bd.setAttribute("type", type);
-            //                        registerBeanDefinition(beanName, bd);
             BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(defaultServiceType);
             builder.addPropertyValue("type", type);
             registerBeanDefinition(beanName, builder.getBeanDefinition());
         } else {
             Class<?> defaultServiceType = DefaultBasicDataService.class;
-            //                        AnnotatedGenericBeanDefinition bd = new AnnotatedGenericBeanDefinition(
-            //                                defaultServiceType);
-            //                        bd.setAttribute("type", type);
-            //                        registerBeanDefinition(beanName, bd);
+            
             BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(defaultServiceType);
             builder.addPropertyValue("type", type);
             registerBeanDefinition(beanName, builder.getBeanDefinition());

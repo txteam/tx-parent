@@ -16,7 +16,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.collections.map.LRUMap;
+import org.apache.commons.collections4.map.LRUMap;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -43,9 +43,9 @@ public class RedirectResourceAccessFilter extends OncePerRequestFilter {
      */
     private Map<String, String> redirectPathPatternMap = new HashMap<String, String>();
     
-    private LRUMap notNeedRedirectPathMapCache;
+    private LRUMap<String, String> notNeedRedirectPathMapCache;
     
-    private LRUMap needRedirectPathMapCache;
+    private LRUMap<String, String> needRedirectPathMapCache;
     
     /** 辅助处理类 */
     /**
@@ -66,8 +66,8 @@ public class RedirectResourceAccessFilter extends OncePerRequestFilter {
         super.initFilterBean();
         
         //根据配置大小，生成缓存大小
-        needRedirectPathMapCache = new LRUMap(maxCacheSize);
-        notNeedRedirectPathMapCache = new LRUMap(maxCacheSize);
+        needRedirectPathMapCache = new LRUMap<>(maxCacheSize);
+        notNeedRedirectPathMapCache = new LRUMap<>(maxCacheSize);
         
         //antPathMatcher.co
     }
@@ -89,11 +89,12 @@ public class RedirectResourceAccessFilter extends OncePerRequestFilter {
         //根据缓存判断是否应该被重定向
         if (isNeedRedirectByCache(servletPath)) {
             //获取重定向地址
-            String redirectPath = getFromCache(needRedirectPathMapCache,servletPath);
+            String redirectPath = getFromCache(needRedirectPathMapCache,
+                    servletPath);
             //由于存在缓存被刷新的情况，这里如果没有取到对应值，则认为应该被重新提取
             if (!StringUtils.isEmpty(redirectPath)) {
                 //再次刷新缓存击中次数
-                putInCache(needRedirectPathMapCache,servletPath,redirectPath);
+                putInCache(needRedirectPathMapCache, servletPath, redirectPath);
                 //如果不为空，则直接将请求转向
                 request.getRequestDispatcher(redirectPath).forward(request,
                         response);
@@ -103,21 +104,25 @@ public class RedirectResourceAccessFilter extends OncePerRequestFilter {
         //根据缓存判断是否不需要进行重定向
         if (isNotNeedRedirectByCache(servletPath)) {
             //再次舒心缓存非击中次数
-            putInCache(notNeedRedirectPathMapCache,servletPath,null);
+            putInCache(notNeedRedirectPathMapCache, servletPath, null);
             //如果根据缓存判断出不需要进行重定向，则直接进行扭转
             filterChain.doFilter(request, response);
             return;
         }
         
         //根据缓存未能判断成功的情况
-        for(Entry<String, String> entryTemp : redirectPathPatternMap.entrySet()){
-            if(antPathMatcher.match(entryTemp.getKey(), servletPath)){
-                String extractPath = antPathMatcher.extractPathWithinPattern(entryTemp.getKey(), servletPath);
-                String redirectPath = entryTemp.getValue().endsWith("/") ? entryTemp.getValue() : entryTemp.getValue() + "/";
+        for (Entry<String, String> entryTemp : redirectPathPatternMap
+                .entrySet()) {
+            if (antPathMatcher.match(entryTemp.getKey(), servletPath)) {
+                String extractPath = antPathMatcher.extractPathWithinPattern(
+                        entryTemp.getKey(), servletPath);
+                String redirectPath = entryTemp.getValue().endsWith("/")
+                        ? entryTemp.getValue() : entryTemp.getValue() + "/";
                 //获得重定向路径
-                redirectPath = StringUtils.applyRelativePath(redirectPath, extractPath);
+                redirectPath = StringUtils.applyRelativePath(redirectPath,
+                        extractPath);
                 //再次刷新缓存击中次数
-                putInCache(needRedirectPathMapCache,servletPath,redirectPath);
+                putInCache(needRedirectPathMapCache, servletPath, redirectPath);
                 //跳转向重定向路径
                 request.getRequestDispatcher(redirectPath).forward(request,
                         response);
@@ -126,7 +131,7 @@ public class RedirectResourceAccessFilter extends OncePerRequestFilter {
         }
         //如果都不匹配则认为不应该被缓存
         //再次舒心缓存非击中次数
-        putInCache(notNeedRedirectPathMapCache,servletPath,null);
+        putInCache(notNeedRedirectPathMapCache, servletPath, null);
         //如果根据缓存判断出不需要进行重定向，则直接进行扭转
         filterChain.doFilter(request, response);
         return;
@@ -143,7 +148,8 @@ public class RedirectResourceAccessFilter extends OncePerRequestFilter {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    private void putInCache(LRUMap map,String key,String value){
+    private void putInCache(LRUMap<String, String> map, String key,
+            String value) {
         synchronized (map) {
             map.put(key, value);
         }
@@ -160,9 +166,10 @@ public class RedirectResourceAccessFilter extends OncePerRequestFilter {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    private synchronized String getFromCache(LRUMap map,String key){
+    private synchronized String getFromCache(LRUMap<String, String> map,
+            String key) {
         synchronized (map) {
-            return (String)map.get(key);
+            return (String) map.get(key);
         }
     }
     

@@ -24,8 +24,8 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.dao.support.PersistenceExceptionTranslator;
 
-import com.tx.core.dbscript.model.DataSourceTypeEnum;
 import com.tx.core.mybatis.interceptor.PagedDialectStatementHandlerInterceptor;
+import com.tx.core.util.dialect.DataSourceTypeEnum;
 
 /**
  * 辅助构建MybatisDaoSupport实例<br/>

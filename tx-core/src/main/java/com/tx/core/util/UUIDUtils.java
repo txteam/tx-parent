@@ -6,20 +6,12 @@
  */
 package com.tx.core.util;
 
-import java.io.Serializable;
-import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.lang3.StringUtils;
-import org.hibernate.HibernateException;
-import org.hibernate.engine.spi.SharedSessionContractImplementor;
-import org.hibernate.id.AbstractUUIDGenerator;
 import org.hibernate.id.IdentifierGenerator;
 import org.hibernate.id.UUIDHexGenerator;
-
-import com.tx.core.exceptions.SILException;
 
 /**
  * 生成UUID唯一键工具类<br/>
@@ -34,7 +26,7 @@ public class UUIDUtils {
     
     private static final IdentifierGenerator generator = new UUIDHexGenerator();
     
-    private static final IdentifierGenerator generator16 = new UUID16HexGenerator();
+    //private static final IdentifierGenerator generator16 = new UUID16HexGenerator();
     
     //0-9共含有10个字符
     private static final Map<Integer, Character> integer2characterMap = new HashMap<Integer, Character>();
@@ -67,9 +59,9 @@ public class UUIDUtils {
         return generator.generate(null, null).toString();
     }
     
-    public static String generateUUID16() {
+    /*    public static String generateUUID16() {
         return generator16.generate(null, null).toString();
-    }
+    }*/
     
     public static void main(String[] args) {
         for (int i = 0; i <= 255; i++) {
@@ -78,7 +70,8 @@ public class UUIDUtils {
         
         System.out.println("-----------------");
         
-        for (Entry<Integer, Character> entry : integer2characterMap.entrySet()) {
+        for (Entry<Integer, Character> entry : integer2characterMap
+                .entrySet()) {
             System.out.println(entry.getKey() + " : " + entry.getValue());
         }
     }
@@ -91,60 +84,60 @@ public class UUIDUtils {
         return "UUIDUtils []";
     }
     
-    public static class UUID16HexGenerator extends AbstractUUIDGenerator {
-        
-        private static int count = 0;
-        
-        private static int maxCount = Integer.parseInt("zzz", 36);
-        
-        private synchronized int count() {
-            if (count > maxCount) {
-                count = 0;
-            }
-            return count++;
-        }
-        
-        public UUID16HexGenerator() {
-            super();
-        }
-        
-        /**
-         * @param session
-         * @param object
-         * @return
-         * @throws HibernateException
-         */
-        @Override
-        public Serializable generate(SharedSessionContractImplementor session, Object object)
-                throws HibernateException {
-            // IP地址,36进制,7位
-            // 时间戳(单位毫秒),36进制,6位
-            // 同时间调用的自增长数字 36进制(zzz,46655) - 3位
-            
-            long currentTimeMillis = System.currentTimeMillis();
-            String str1 = Long.toString(getHostAddressBy36(), 36); // IP地址,32进制,7位
-            String str2 = Long.toString(currentTimeMillis / 1000, 36); // 时间戳(单位毫秒),32进制,6位
-            String str3 = StringUtils.leftPad(Long.toString(count(), 36), 3, '0'); // 同时间调用的自增长数字 32进制(zzz,46655) - 3位
-            
-            StringBuilder sb = new StringBuilder();
-            sb.append(str1).append(str2).append(str3);
-            return StringUtils.right(sb.toString(), 16);
-        }
-        
-        private long getHostAddressBy36() {
-            String addr = "127.0.0.1";
-            try {
-                addr = ComputerEnvironment.getLocalHostAddress();
-            } catch (UnknownHostException e) {
-                throw new SILException("本机网络地址获取错误 : " + e.getMessage(), e);
-            }
-            StringBuilder sb = new StringBuilder();
-            String[] split = addr.split("\\.");
-            for (String string : split) {
-                sb.append(Integer.toString(Integer.parseInt(string), 16));
-            }
-            
-            return Long.parseLong(sb.toString(), 16);
-        }
-    }
+    //    public static class UUID16HexGenerator extends AbstractUUIDGenerator {
+    //        
+    //        private static int count = 0;
+    //        
+    //        private static int maxCount = Integer.parseInt("zzz", 36);
+    //        
+    //        private synchronized int count() {
+    //            if (count > maxCount) {
+    //                count = 0;
+    //            }
+    //            return count++;
+    //        }
+    //        
+    //        public UUID16HexGenerator() {
+    //            super();
+    //        }
+    //        
+    //        /**
+    //         * @param session
+    //         * @param object
+    //         * @return
+    //         * @throws HibernateException
+    //         */
+    //        @Override
+    //        public Serializable generate(SharedSessionContractImplementor session, Object object)
+    //                throws HibernateException {
+    //            // IP地址,36进制,7位
+    //            // 时间戳(单位毫秒),36进制,6位
+    //            // 同时间调用的自增长数字 36进制(zzz,46655) - 3位
+    //            
+    //            long currentTimeMillis = System.currentTimeMillis();
+    //            String str1 = Long.toString(getHostAddressBy36(), 36); // IP地址,32进制,7位
+    //            String str2 = Long.toString(currentTimeMillis / 1000, 36); // 时间戳(单位毫秒),32进制,6位
+    //            String str3 = StringUtils.leftPad(Long.toString(count(), 36), 3, '0'); // 同时间调用的自增长数字 32进制(zzz,46655) - 3位
+    //            
+    //            StringBuilder sb = new StringBuilder();
+    //            sb.append(str1).append(str2).append(str3);
+    //            return StringUtils.right(sb.toString(), 16);
+    //        }
+    //        
+    //        private long getHostAddressBy36() {
+    //            String addr = "127.0.0.1";
+    //            try {
+    //                addr = ComputerEnvironment.getLocalHostAddress();
+    //            } catch (UnknownHostException e) {
+    //                throw new SILException("本机网络地址获取错误 : " + e.getMessage(), e);
+    //            }
+    //            StringBuilder sb = new StringBuilder();
+    //            String[] split = addr.split("\\.");
+    //            for (String string : split) {
+    //                sb.append(Integer.toString(Integer.parseInt(string), 16));
+    //            }
+    //            
+    //            return Long.parseLong(sb.toString(), 16);
+    //        }
+    //    }
 }

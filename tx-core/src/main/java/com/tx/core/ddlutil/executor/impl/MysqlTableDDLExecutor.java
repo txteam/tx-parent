@@ -17,13 +17,16 @@ import javax.sql.DataSource;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.util.PropertyPlaceholderHelper;
 
-import com.tx.core.dbscript.model.DataSourceTypeEnum;
+import com.tx.core.TxConstants;
 import com.tx.core.ddlutil.builder.alter.AlterTableDDLBuilder;
 import com.tx.core.ddlutil.builder.alter.impl.AlterTableDDLBuilderFactoryRegistry;
 import com.tx.core.ddlutil.builder.create.CreateTableDDLBuilder;
@@ -36,7 +39,9 @@ import com.tx.core.ddlutil.model.JdbcTypeEnum;
 import com.tx.core.ddlutil.model.TableDef;
 import com.tx.core.exceptions.SILException;
 import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.util.MessageUtils;
 import com.tx.core.util.SqlUtils;
+import com.tx.core.util.dialect.DataSourceTypeEnum;
 
 /**
  * Mysql 表相关 DDL执行器<br/>
@@ -47,8 +52,11 @@ import com.tx.core.util.SqlUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class MysqlTableDDLExecutor implements TableDDLExecutor,
-        InitializingBean {
+public class MysqlTableDDLExecutor
+        implements TableDDLExecutor, InitializingBean {
+    
+    //日志记录器
+    private Logger logger = LoggerFactory.getLogger(TableDDLExecutor.class);
     
     //根据表名判断表是否存在.
     private static final String SQL_TABLE_IS_EXISTS = "SELECT COUNT(1) FROM INFORMATION_SCHEMA.`TABLES` TAB "
@@ -73,8 +81,7 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
             + "( CASE WHEN TCOL.IS_NULLABLE = 'NO' THEN 'Y' ELSE 'N' END ) AS 'required', "
             + "( CASE WHEN TCOL.DATA_TYPE = 'int' THEN 'integer' ELSE TCOL.DATA_TYPE END ) AS 'jdbcType', "
             + "( CASE WHEN TCOL.CHARACTER_MAXIMUM_LENGTH IS NULL THEN TCOL.NUMERIC_PRECISION ELSE TCOL.CHARACTER_MAXIMUM_LENGTH END ) AS size, "
-            + "TCOL.NUMERIC_SCALE AS 'scale', "
-            + "( CASE "
+            + "TCOL.NUMERIC_SCALE AS 'scale', " + "( CASE "
             + "     WHEN TCOL.DATA_TYPE = 'bit' AND TCOL.COLUMN_DEFAULT = 'b''1''' THEN 1 "
             + "     WHEN TCOL.DATA_TYPE = 'bit' AND TCOL.COLUMN_DEFAULT = 'b''0''' THEN 0 "
             + "     WHEN TCOL.DATA_TYPE = 'datetime' AND TCOL.COLUMN_DEFAULT = 'CURRENT_TIMESTAMP' THEN 'now()' "
@@ -86,10 +93,10 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
     //查询出的column定义的RowMapper
     private static final RowMapper<DBColumnDef> ddlColumnRowMapper = new RowMapper<DBColumnDef>() {
         @Override
-        public DBColumnDef mapRow(ResultSet rs, int rowNum) throws SQLException {
+        public DBColumnDef mapRow(ResultSet rs, int rowNum)
+                throws SQLException {
             DBColumnDef col = new DBColumnDef();
             col.setColumnName(rs.getString("columnName"));
-            col.setColumnType(rs.getString("columnType"));
             col.setTableName(rs.getString("tableName"));
             
             col.setPrimaryKey(rs.getBoolean("primaryKey"));
@@ -116,6 +123,8 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
                         defaultValue = "1";//"true";
                     } else if (StringUtils.equals("b'0'", defaultValue)) {
                         defaultValue = "0";//"false";
+                    } else if (StringUtils.equals("''", defaultValue)) {
+                        defaultValue = "";
                     }
                     break;
             }
@@ -125,18 +134,18 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
     };
     
     //查询索引SQL
-    private static final String SQL_QUERY_INDEX_BY_TABLENAME = "SELECT "
-            + "TIDX.INDEX_NAME AS 'indexName', "
-            + "TIDX.COLUMN_NAME AS 'columnName', TIDX.TABLE_NAME AS 'tableName', "
-            + "(CASE WHEN TIDX.NON_UNIQUE = 1 THEN 0 ELSE 1 END ) AS 'uniqueKey',"
-            + "TIDX.SEQ_IN_INDEX as 'orderPriority', "
-            + "(CASE WHEN TCONS.CONSTRAINT_TYPE = 'PRIMARY KEY' THEN 'Y' ELSE 'N' END ) AS 'primaryKey' "
+    private static final String SQL_QUERY_INDEX_BY_TABLENAME = " SELECT T.indexName,T.tableName,T.uniqueKey,GROUP_CONCAT(T.columnName) as columnNames from ( "
+            + "SELECT " + "TIDX.INDEX_NAME AS 'indexName', "
+            + "TIDX.COLUMN_NAME AS 'columnName', "
+            + "TIDX.TABLE_NAME AS 'tableName', "
+            + "(CASE WHEN TIDX.NON_UNIQUE = 1 THEN 0 ELSE 1 END ) AS 'uniqueKey', "
+            + "TIDX.SEQ_IN_INDEX as 'orderPriority' "
             + "FROM information_schema.`STATISTICS` TIDX "
             + "LEFT JOIN information_schema.`TABLE_CONSTRAINTS` TCONS ON (TIDX.TABLE_SCHEMA = TCONS.CONSTRAINT_SCHEMA AND TIDX.TABLE_NAME = TCONS.TABLE_NAME AND TIDX.INDEX_NAME = TCONS.CONSTRAINT_NAME) "
             + "WHERE TIDX.TABLE_NAME = ? AND TIDX.TABLE_SCHEMA = ? "
-            + "ORDER BY TIDX.INDEX_NAME,TIDX.SEQ_IN_INDEX";
-    
-    //private static final Map<String, ConstraintTypeEnum> constraintTypeMap = EnumUtils.getEnumMap(ConstraintTypeEnum.class);
+            + "AND (TCONS.CONSTRAINT_TYPE is null or 'PRIMARY KEY' <> TCONS.CONSTRAINT_TYPE) "
+            + "ORDER BY TIDX.INDEX_NAME,TIDX.SEQ_IN_INDEX "
+            + ") T GROUP BY indexName,tableName,uniqueKey ";
     
     //DDLindexRowMap
     private static final RowMapper<DBIndexDef> ddlIndexRowMapper = new RowMapper<DBIndexDef>() {
@@ -144,13 +153,9 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
         public DBIndexDef mapRow(ResultSet rs, int rowNum) throws SQLException {
             DBIndexDef ddlIndex = new DBIndexDef();
             ddlIndex.setIndexName(rs.getString("indexName"));
-            ddlIndex.setColumnName(rs.getString("columnName"));
             ddlIndex.setTableName(rs.getString("tableName"));
             ddlIndex.setUniqueKey(rs.getBoolean("uniqueKey"));
-            ddlIndex.setOrderPriority(rs.getInt("orderPriority"));
-            //String constraintType = rs.getString("constraintType");
-            //constraintTypeMap.get(constraintType)
-            ddlIndex.setPrimaryKey(rs.getBoolean("primaryKey"));
+            ddlIndex.setColumnNames(rs.getString("columnNames"));
             return ddlIndex;
         }
     };
@@ -160,13 +165,6 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
     
     //BACKUP表
     private static final String SQL_BACKUP_TABLE = "CREATE TABLE ${backupTableName} AS SELECT * FROM ${tableName}";
-    
-    //查詢表的主鍵名稱
-    @SuppressWarnings("unused")
-    private static final String SQL_FIND_PRIMARYKEY_NAME = "SELECT TCONS.CONSTRAINT_NAME "
-            + "FROM information_schema.TABLE_CONSTRAINTS TCONS "
-            + "WHERE TCONS.TABLE_NAME = ? and TCONS.TABLE_SCHEMA = ? "
-            + "AND TCONS.CONSTRAINT_TYPE = 'PRIMARY KEY'";
     
     private static PropertyPlaceholderHelper placeholderHelper = new PropertyPlaceholderHelper(
             "${", "}");
@@ -260,14 +258,14 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
     }
     
     /**
-      * 根据表名判断表是否存在<br/>
-      * <功能详细描述>
-      * @param tableName
-      * @return [参数说明]
-      * 
-      * @return boolean [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 根据表名判断表是否存在<br/>
+     * <功能详细描述>
+     * @param tableName
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     @Override
     public boolean exists(String tableName) {
@@ -302,7 +300,23 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
         String dropSql = placeholderHelper.replacePlaceholders(SQL_DROP_TABLE,
                 props);
         
+        //打印删除表日志:
+        StringBuilder sb = new StringBuilder(TxConstants.INITIAL_STR_LENGTH);
+        sb.append("删除数据库表:").append(tableName).append("\t\n");
+        sb.append("------删除表:")
+                .append(tableName)
+                .append("----------------------------start")
+                .append("\t\n");
+        sb.append(dropSql).append("\t\n");
+        sb.append("------删除表:")
+                .append(tableName)
+                .append("------------------------------end")
+                .append("\t\n");
+        logger.info(sb.toString());
+        
         this.jdbcTemplate.execute(dropSql);
+        
+        logger.info("删除数据库表:{}成功.", tableName);
     }
     
     /**
@@ -330,10 +344,34 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
         Properties props = new Properties();
         props.put("tableName", tableName);
         props.put("backupTableName", backupTableName);
-        String backupSql = placeholderHelper.replacePlaceholders(SQL_BACKUP_TABLE,
-                props);
+        String backupSql = placeholderHelper
+                .replacePlaceholders(SQL_BACKUP_TABLE, props);
+        
+        //打印备份表日志:
+        StringBuilder sb = new StringBuilder(TxConstants.INITIAL_STR_LENGTH);
+        sb.append("备份数据库表:")
+                .append(tableName)
+                .append(" to ")
+                .append(backupTableName)
+                .append("\t\n");
+        sb.append("------备份表:")
+                .append(tableName)
+                .append(" to ")
+                .append(backupTableName)
+                .append("----------------------------start")
+                .append("\t\n");
+        sb.append(backupSql).append("\t\n");
+        sb.append("------备份表:")
+                .append(tableName)
+                .append(" to ")
+                .append(backupTableName)
+                .append("------------------------------end")
+                .append("\t\n");
+        logger.info(sb.toString());
         
         this.jdbcTemplate.execute(backupSql);
+        
+        logger.info("备份数据库表:{} to {} 成功.", tableName, backupTableName);
     }
     
     /**
@@ -352,16 +390,31 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
                 "table is exist.tableName:{}",
                 builder.tableName());
         
-        String createSql = SqlUtils.format(builder.createSql());
+        String createSql = builder.createSql();
         
-        logger.info("execute sql:" + createSql);
+        //打印创建表日志:
+        StringBuilder sb = new StringBuilder(TxConstants.INITIAL_STR_LENGTH);
+        sb.append("创建数据库表:").append(builder.tableName()).append("\t\n");
+        sb.append("------创建表:")
+                .append(builder.tableName())
+                .append("----------------------------start")
+                .append("\t\n");
+        sb.append(createSql).append("\t\n");
+        sb.append("------创建表:")
+                .append(builder.tableName())
+                .append("------------------------------end")
+                .append("\t\n");
+        logger.info(sb.toString());
         
+        createSql = SqlUtils.format(builder.createSql());
         String[] createSqls = StringUtils.splitByWholeSeparator(createSql, ";");
         for (String createSqlTemp : createSqls) {
             if (!StringUtils.isBlank(createSqlTemp)) {
                 this.jdbcTemplate.execute(createSqlTemp);
             }
         }
+        
+        logger.info("创建数据库表: {} 成功.", builder.tableName());
     }
     
     /**
@@ -384,53 +437,46 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
         if (StringUtils.isBlank(alterSql)) {
             return;
         }
+        
+        //打印修改表日志:
+        StringBuilder sb = new StringBuilder(TxConstants.INITIAL_STR_LENGTH);
+        sb.append("修改数据库表:").append(builder.tableName()).append("\t\n");
+        sb.append("------修改表:")
+                .append(builder.tableName())
+                .append("----------------------------start")
+                .append("\t\n");
+        sb.append(alterSql).append("\t\n");
+        sb.append("------修改表:")
+                .append(builder.tableName())
+                .append("------------------------------end")
+                .append("\t\n");
+        logger.info(sb.toString());
+        
         alterSql = SqlUtils.format(alterSql);
-        String[] alterSqls = StringUtils.splitByWholeSeparator(alterSql, ";");
-        for (String alterSqlTemp : alterSqls) {
-            if (!StringUtils.isBlank(alterSqlTemp)) {
-                this.jdbcTemplate.execute(alterSqlTemp);
+        try {
+            String[] alterSqls = StringUtils.splitByWholeSeparator(alterSql,
+                    ";");
+            for (String alterSqlTemp : alterSqls) {
+                if (!StringUtils.isBlank(alterSqlTemp)) {
+                    this.jdbcTemplate.execute(alterSqlTemp);
+                }
             }
+            
+            logger.info("修改数据库表: {} 成功.", builder.tableName());
+        } catch (DataAccessException e) {
+            logger.error(MessageUtils.format("修改数据库表: {} 异常.异常信息:{}.",
+                    builder.tableName(),
+                    e.getMessage()), e);
+            
+            throw new SILException(MessageUtils.format("修改数据库表: {} 异常.异常信息:{}.",
+                    builder.tableName(),
+                    e.getMessage()), e);
+        } catch (SILException e) {
+            logger.error(MessageUtils.format("修改数据库表: {} 异常.异常信息:{}.",
+                    builder.tableName(),
+                    e.getMessage()), e);
+            throw e;
         }
-    }
-    
-    public void alter(AlterTableDDLBuilder builder, boolean isIncrementUpdate,
-            boolean isIgnoreIndexChange) {
-        AssertUtils.notNull(builder, "builder is null.");
-        AssertUtils.isTrue(exists(builder.tableName()),
-                "table is not exist.tableName:{}",
-                builder.tableName());
-        
-        String alterSql = SqlUtils.format(builder.alterSql(isIncrementUpdate,
-                isIgnoreIndexChange));
-        
-        String[] alterSqls = StringUtils.splitByWholeSeparator(alterSql, ";");
-        for (String alterSqlTemp : alterSqls) {
-            if (!StringUtils.isBlank(alterSqlTemp)) {
-                this.jdbcTemplate.execute(alterSqlTemp);
-            }
-        }
-    }
-    
-    /**
-     * @param newTableDef
-     * @param oldTableDef
-     */
-    @Override
-    public boolean isNeedUpdate(TableDef newTableDef, TableDef oldTableDef) {
-        boolean flag = isNeedUpdate(newTableDef, oldTableDef);
-        return flag;
-    }
-    
-    /**
-     * @param newTableDef
-     * @param oldTableDef
-     * @param isIncrementalUpgrade
-     */
-    @Override
-    public boolean isNeedUpdate(TableDef newTableDef, TableDef oldTableDef,
-            boolean isIncrementalUpgrade, boolean isIgnoreIndexChange) {
-        
-        return false;
     }
     
     /**
@@ -447,7 +493,8 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
     public DBTableDef findDBTableDetailByTableName(String tableName) {
         AssertUtils.notEmpty(tableName, "tableName is empty.");
         
-        List<DBTableDef> ddlTableList = this.jdbcTemplate.query(SQL_FIND_TABLE_BY_TABLENAME,
+        List<DBTableDef> ddlTableList = this.jdbcTemplate.query(
+                SQL_FIND_TABLE_BY_TABLENAME,
                 new Object[] { tableName, this.schema },
                 ddlTableRowMapper);
         if (CollectionUtils.isEmpty(ddlTableList)) {
@@ -477,7 +524,8 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
     public DBTableDef findDBTableByTableName(String tableName) {
         AssertUtils.notEmpty(tableName, "tableName is empty.");
         
-        List<DBTableDef> ddlTableList = this.jdbcTemplate.query(SQL_FIND_TABLE_BY_TABLENAME,
+        List<DBTableDef> ddlTableList = this.jdbcTemplate.query(
+                SQL_FIND_TABLE_BY_TABLENAME,
                 new Object[] { tableName, this.schema },
                 ddlTableRowMapper);
         if (CollectionUtils.isEmpty(ddlTableList)) {
@@ -501,7 +549,8 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
     public List<DBColumnDef> queryDBColumnsByTableName(String tableName) {
         AssertUtils.notEmpty(tableName, "tableName is empty.");
         
-        List<DBColumnDef> ddlColumnList = this.jdbcTemplate.query(SQL_QUERY_COLUMN_BY_TABLENAME,
+        List<DBColumnDef> ddlColumnList = this.jdbcTemplate.query(
+                SQL_QUERY_COLUMN_BY_TABLENAME,
                 new Object[] { tableName, this.schema },
                 ddlColumnRowMapper);
         return ddlColumnList;
@@ -521,7 +570,8 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
     public List<DBIndexDef> queryDBIndexesByTableName(String tableName) {
         AssertUtils.notEmpty(tableName, "tableName is empty.");
         
-        List<DBIndexDef> ddlIndexList = this.jdbcTemplate.query(SQL_QUERY_INDEX_BY_TABLENAME,
+        List<DBIndexDef> ddlIndexList = this.jdbcTemplate.query(
+                SQL_QUERY_INDEX_BY_TABLENAME,
                 new Object[] { tableName, this.schema },
                 ddlIndexRowMapper);
         return ddlIndexList;
@@ -538,11 +588,12 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
      * @see [类、类#方法、类#成员]
     */
     @Override
-    public CreateTableDDLBuilder generateCreateTableDDLBuilder(String tableName) {
+    public CreateTableDDLBuilder generateCreateTableDDLBuilder(
+            String tableName) {
         AssertUtils.notEmpty(tableName, "tableName is empty.");
         
-        CreateTableDDLBuilder builder = CreateTableDDLBuilderFactoryRegistry.getFactory(DataSourceTypeEnum.MYSQL)
-                .newInstance(tableName);
+        CreateTableDDLBuilder builder = CreateTableDDLBuilderFactoryRegistry
+                .getFactory(DataSourceTypeEnum.MYSQL).newInstance(tableName);
         return builder;
     }
     
@@ -555,8 +606,8 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
         AssertUtils.notNull(table, "table is null.");
         AssertUtils.notEmpty(table.getTableName(), "table.tableName is empty.");
         
-        CreateTableDDLBuilder builder = CreateTableDDLBuilderFactoryRegistry.getFactory(DataSourceTypeEnum.MYSQL)
-                .newInstance(table);
+        CreateTableDDLBuilder builder = CreateTableDDLBuilderFactoryRegistry
+                .getFactory(DataSourceTypeEnum.MYSQL).newInstance(table);
         return builder;
     }
     
@@ -578,7 +629,8 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
                 tableName);
         
         TableDef sourceTableDef = findDBTableDetailByTableName(tableName);
-        AlterTableDDLBuilder builder = AlterTableDDLBuilderFactoryRegistry.getFactory(DataSourceTypeEnum.MYSQL)
+        AlterTableDDLBuilder builder = AlterTableDDLBuilderFactoryRegistry
+                .getFactory(DataSourceTypeEnum.MYSQL)
                 .newInstance(sourceTableDef);
         return builder;
     }
@@ -588,7 +640,8 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
      * @return
      */
     @Override
-    public AlterTableDDLBuilder generateAlterTableDDLBuilder(TableDef newTable) {
+    public AlterTableDDLBuilder generateAlterTableDDLBuilder(
+            TableDef newTable) {
         AssertUtils.notNull(newTable, "table is null.");
         AssertUtils.notEmpty(newTable.getTableName(),
                 "newTable.tableName is empty.");
@@ -596,8 +649,10 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
                 "table is not exist.tableName:{}",
                 newTable.getTableName());
         
-        TableDef sourceTableDef = findDBTableDetailByTableName(newTable.getTableName());
-        AlterTableDDLBuilder builder = AlterTableDDLBuilderFactoryRegistry.getFactory(DataSourceTypeEnum.MYSQL)
+        TableDef sourceTableDef = findDBTableDetailByTableName(
+                newTable.getTableName());
+        AlterTableDDLBuilder builder = AlterTableDDLBuilderFactoryRegistry
+                .getFactory(DataSourceTypeEnum.MYSQL)
                 .newInstance(newTable, sourceTableDef);
         return builder;
     }
@@ -618,13 +673,15 @@ public class MysqlTableDDLExecutor implements TableDDLExecutor,
         AssertUtils.notEmpty(sourceTable.getTableName(),
                 "sourceTable.tableName is empty.");
         
-        AssertUtils.isTrue(newTable.getTableName()
-                .equalsIgnoreCase(sourceTable.getTableName()),
+        AssertUtils.isTrue(
+                newTable.getTableName()
+                        .equalsIgnoreCase(sourceTable.getTableName()),
                 "newTable.tableName:{} should equalsIgnoreCase sourceTable.tableName:{}",
                 new Object[] { newTable.getTableName(),
                         sourceTable.getTableName() });
         
-        AlterTableDDLBuilder builder = AlterTableDDLBuilderFactoryRegistry.getFactory(DataSourceTypeEnum.MYSQL)
+        AlterTableDDLBuilder builder = AlterTableDDLBuilderFactoryRegistry
+                .getFactory(DataSourceTypeEnum.MYSQL)
                 .newInstance(newTable, sourceTable);
         return builder;
     }

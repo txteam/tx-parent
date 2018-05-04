@@ -29,7 +29,7 @@ import com.tx.core.util.MessageUtils;
  * @since [产品/模块版本]
  */
 public class LocalConfigPropertiesPersister extends
-        BaseConfigPropertiesPersister {
+        AbstractConfigPropertiesPersister {
     
     @Override
     protected ConfigPropertyTypeEnum configPropertyType() {

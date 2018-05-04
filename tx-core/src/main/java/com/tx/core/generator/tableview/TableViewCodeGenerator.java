@@ -19,7 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.ClassUtils;
 
-import com.tx.core.dbscript.model.DataSourceTypeEnum;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.generator.basicedata.BasicDataCodeGenerator;
 import com.tx.core.generator.model.DaoGeneratorModel;
@@ -33,6 +32,7 @@ import com.tx.core.jdbc.sqlsource.SqlSource;
 import com.tx.core.jdbc.sqlsource.SqlSourceBuilder;
 import com.tx.core.reflection.JpaMetaClass;
 import com.tx.core.util.FreeMarkerUtils;
+import com.tx.core.util.dialect.DataSourceTypeEnum;
 
 /**
  * <功能简述>

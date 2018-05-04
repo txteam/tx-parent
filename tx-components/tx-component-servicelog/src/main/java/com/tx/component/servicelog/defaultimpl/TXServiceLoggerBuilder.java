@@ -34,7 +34,6 @@ import com.tx.component.servicelog.context.logger.ServiceLogPersister;
 import com.tx.component.servicelog.context.logger.ServiceLogQuerier;
 import com.tx.component.servicelog.exceptions.UnsupportedServiceLoggerTypeException;
 import com.tx.component.servicelog.logger.TXServiceLog;
-import com.tx.core.dbscript.model.DataSourceTypeEnum;
 import com.tx.core.exceptions.SILException;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.jdbc.sqlsource.SqlSource;
@@ -42,6 +41,7 @@ import com.tx.core.jdbc.sqlsource.SqlSourceBuilder;
 import com.tx.core.paged.model.PagedList;
 import com.tx.core.util.MessageUtils;
 import com.tx.core.util.UUIDUtils;
+import com.tx.core.util.dialect.DataSourceTypeEnum;
 
 /**
  * 业务日志记录器的构建器在这里是利用SqlSource对业务日志记录器进行构建<br/>
