@@ -66,21 +66,6 @@ import com.tx.core.util.dialect.DataSourceTypeEnum;
  */
 public class TaskContextConfiguration implements ApplicationContextAware, InitializingBean, BeanFactoryAware {
     
-//    /**
-//     * 表初始化器<br/>
-//     * <功能详细描述>
-//     * @return [参数说明]
-//     * 
-//     * @return TaskContextTableInitializer [返回类型说明]
-//     * @exception throws [异常类型] [异常说明]
-//     * @see [类、类#方法、类#成员]
-//     */
-//    @Bean(name = "taskContext.taskContextTableInitializer")
-//    public TaskContextTableInitializer taskContextTableInitializer() {
-//        TaskContextTableInitializer bean = new TaskContextTableInitializer();
-//        return bean;
-//    }
-    
     /**
      * 注册文件容器<br/>
      * <功能详细描述>

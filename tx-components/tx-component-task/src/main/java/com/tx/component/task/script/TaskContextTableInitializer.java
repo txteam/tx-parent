@@ -49,7 +49,7 @@ public class TaskContextTableInitializer implements InitializingBean {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    private void table_td_task_def() {
+    public void table_td_task_def() {
         String tableName = "task_def";
         
         CreateTableDDLBuilder createDDLBuilder = null;
@@ -67,9 +67,6 @@ public class TaskContextTableInitializer implements InitializingBean {
         }
         
         td_task_def(ddlBuilder);//写入表结构
-        ddlBuilder.newIndex(true, "idx_code", "code");
-        ddlBuilder.newIndex(false, "idx_createDate", "createDate");
-        
         if (alterDDLBuilder != null
                 && alterDDLBuilder.compare().isNeedAlter()) {
             this.tableDDLExecutor.alter(alterDDLBuilder);
@@ -87,7 +84,7 @@ public class TaskContextTableInitializer implements InitializingBean {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    private void td_task_def(DDLBuilder<?> ddlBuilder) {
+    public static void td_task_def(DDLBuilder<?> ddlBuilder) {
         ddlBuilder.newColumnOfVarchar(true, "id", 64, true, null)
                 .newColumnOfVarchar("code", 64, true, null)
                 .newColumnOfVarchar("parentCode", 64, false, null)
@@ -103,6 +100,8 @@ public class TaskContextTableInitializer implements InitializingBean {
                 .newColumnOfInteger("orderPriority", 16, true, 0)
                 .newColumnOfDate("lastUpdateDate", true, true)
                 .newColumnOfDate("createDate", true, true);
+        ddlBuilder.newIndex(true, "idx_code", "code");
+        ddlBuilder.newIndex(false, "idx_createDate", "createDate");
     }
     
     /**
@@ -113,7 +112,7 @@ public class TaskContextTableInitializer implements InitializingBean {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    private void table_td_task_status() {
+    public void table_td_task_status() {
         String tableName = "task_status";
         
         CreateTableDDLBuilder createDDLBuilder = null;
@@ -131,8 +130,6 @@ public class TaskContextTableInitializer implements InitializingBean {
         }
         
         td_task_status(ddlBuilder);//写入表结构
-        ddlBuilder.newIndex(true, "idx_taskId", "taskId");
-        ddlBuilder.newIndex(false, "idx_createDate", "createDate");
         
         if (alterDDLBuilder != null
                 && alterDDLBuilder.compare().isNeedAlter()) {
@@ -151,7 +148,7 @@ public class TaskContextTableInitializer implements InitializingBean {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    private void td_task_status(DDLBuilder<?> ddlBuilder) {
+    public static void td_task_status(DDLBuilder<?> ddlBuilder) {
         ddlBuilder.newColumnOfVarchar(true, "id", 64, true, null)
                 .newColumnOfVarchar("taskId", 64, true, null)
                 .newColumnOfVarchar("status", 64, true, null)
@@ -173,6 +170,8 @@ public class TaskContextTableInitializer implements InitializingBean {
                 .newColumnOfInteger("failCount", 8, false, 0)
                 .newColumnOfDate("lastUpdateDate", true, true)
                 .newColumnOfDate("createDate", true, true);
+        ddlBuilder.newIndex(true, "idx_taskId", "taskId");
+        ddlBuilder.newIndex(false, "idx_createDate", "createDate");
     }
     
     /**
@@ -183,7 +182,7 @@ public class TaskContextTableInitializer implements InitializingBean {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    private void table_task_execute_log() {
+    public void table_task_execute_log() {
         String tableName = "task_execute_log";
         
         CreateTableDDLBuilder createDDLBuilder = null;
@@ -201,8 +200,6 @@ public class TaskContextTableInitializer implements InitializingBean {
         }
         
         task_execute_log(ddlBuilder);//写入表结构
-        ddlBuilder.newIndex(false, "idx_taskId", "taskId");
-        ddlBuilder.newIndex(false, "idx_startDate", "startDate");
         
         if (alterDDLBuilder != null
                 && alterDDLBuilder.compare().isNeedAlter()) {
@@ -221,7 +218,7 @@ public class TaskContextTableInitializer implements InitializingBean {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    private void task_execute_log(DDLBuilder<?> ddlBuilder) {
+    public static void task_execute_log(DDLBuilder<?> ddlBuilder) {
         ddlBuilder.newColumnOfVarchar(true, "id", 64, true, null)
                 .newColumnOfVarchar("operatorId", 64, false, null)
                 .newColumnOfVarchar("vcid", 64, false, null)
@@ -235,5 +232,7 @@ public class TaskContextTableInitializer implements InitializingBean {
                 .newColumnOfInteger("consuming", 19, true, 0)
                 .newColumnOfVarchar("signature", 128, false, null)
                 .newColumnOfVarchar("attributes", 512, false, null);
+        ddlBuilder.newIndex(false, "idx_taskId", "taskId");
+        ddlBuilder.newIndex(false, "idx_startDate", "startDate");
     }
 }
