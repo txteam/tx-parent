@@ -6,7 +6,11 @@
  */
 package com.tx.component.basicdata.starter;
 
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -20,6 +24,29 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @EnableConfigurationProperties(BasicDataContextProperties.class)
-public class BasicDataContextAutoConfiguration {
+public class BasicDataContextAutoConfiguration implements ApplicationContextAware,
+InitializingBean{
+
+    /**
+     * @throws Exception
+     */
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        // TODO Auto-generated method stub
+        
+    }
+
+    /**
+     * @param applicationContext
+     * @throws BeansException
+     */
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext)
+            throws BeansException {
+        // TODO Auto-generated method stub
+        
+    }
+    
+    
     
 }

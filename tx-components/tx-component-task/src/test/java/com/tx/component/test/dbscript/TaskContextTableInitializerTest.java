@@ -4,7 +4,7 @@
  * 修改时间:  2018年5月1日
  * <修改描述:>
  */
-package com.tx.component.task.test;
+package com.tx.component.test.dbscript;
 
 import javax.sql.DataSource;
 
@@ -12,7 +12,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import com.tx.component.task.script.TaskContextTableInitializer;
 import com.tx.core.datasource.DataSourceFinder;
-import com.tx.core.datasource.finder.SimpleDataSourceFinder;
+import com.tx.core.datasource.finder.TomcatDataSourceFinder;
 import com.tx.core.ddlutil.builder.DDLBuilder;
 import com.tx.core.ddlutil.builder.alter.AlterTableDDLBuilder;
 import com.tx.core.ddlutil.builder.create.CreateTableDDLBuilder;
@@ -31,7 +31,7 @@ import com.tx.core.ddlutil.executor.impl.MysqlTableDDLExecutor;
 public class TaskContextTableInitializerTest {
     
     public static void main(String[] args) {
-        DataSourceFinder finder = new SimpleDataSourceFinder(
+        DataSourceFinder finder = new TomcatDataSourceFinder(
                 "com.mysql.jdbc.Driver",
                 "jdbc:mysql://120.24.75.25:3306/test?characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull",
                 "pqy", "pqy");
