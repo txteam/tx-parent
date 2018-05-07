@@ -80,11 +80,11 @@ public class CommandContextAutoConfiguration
      */
     @Override
     public void afterPropertiesSet() throws Exception {
-        if (StringUtils.isNotBlank(properties.getTransactionManagerBeanName())
+        if (StringUtils.isNotBlank(properties.getTransactionManager())
                 && this.applicationContext.containsBean(
-                        properties.getTransactionManagerBeanName())) {
+                        properties.getTransactionManager())) {
             this.transactionManager = this.applicationContext.getBean(
-                    properties.getTransactionManagerBeanName(),
+                    properties.getTransactionManager(),
                     PlatformTransactionManager.class);
         }
     }

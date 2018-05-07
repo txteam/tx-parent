@@ -24,7 +24,7 @@ public class CommandContextProperties {
     private boolean enable;
     
     /** 事务管理器bean名称 */
-    private String transactionManagerBeanName;
+    private String transactionManager;
     
     /**
      * @return 返回 enable
@@ -41,17 +41,16 @@ public class CommandContextProperties {
     }
     
     /**
-     * @return 返回 transactionManagerBeanName
+     * @return 返回 transactionManager
      */
-    public String getTransactionManagerBeanName() {
-        return transactionManagerBeanName;
+    public String getTransactionManager() {
+        return transactionManager;
     }
     
     /**
-     * @param 对transactionManagerBeanName进行赋值
+     * @param 对transactionManager进行赋值
      */
-    public void setTransactionManagerBeanName(
-            String transactionManagerBeanName) {
-        this.transactionManagerBeanName = transactionManagerBeanName;
+    public void setTransactionManager(String transactionManager) {
+        this.transactionManager = transactionManager;
     }
 }

@@ -21,8 +21,8 @@ import org.springframework.cache.CacheManager;
  * @since  [产品/模块版本]
  */
 @ConfigurationProperties(prefix = "basicdata")
-public class BasicDataContextProperties {
-    
+public class BasicDataContextProperties{
+
     /** 基础包集合 */
     private String basePackages = "com.tx";
     

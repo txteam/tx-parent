@@ -202,8 +202,12 @@ public class BasicDataContextTableInitializer implements InitializingBean {
                 .newColumnOfVarchar("remark", 512, false, null)
                 .newColumnOfDate("lastUpdateDate", true, true)
                 .newColumnOfDate("createDate", true, true);
-        ddlBuilder.newIndex(true, "idx_task_status_00", "code,basicDataTypeCode");
-        ddlBuilder.newIndex(false, "idx_basicDataTypeCode", "basicDataTypeCode");
+        ddlBuilder.newIndex(true,
+                "idx_task_status_00",
+                "code,basicDataTypeCode");
+        ddlBuilder.newIndex(false,
+                "idx_basicDataTypeCode",
+                "basicDataTypeCode");
         ddlBuilder.newIndex(false, "idx_parentId", "parentId");
     }
     
@@ -234,7 +238,6 @@ public class BasicDataContextTableInitializer implements InitializingBean {
         
         bd_data_dict_entry(ddlBuilder);//写入表结构
         
-        
         if (alterDDLBuilder != null
                 && alterDDLBuilder.compare().isNeedAlter()) {
             this.tableDDLExecutor.alter(alterDDLBuilder);
@@ -252,7 +255,7 @@ public class BasicDataContextTableInitializer implements InitializingBean {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    private void bd_data_dict_entry(DDLBuilder<?> ddlBuilder) {
+    public static void bd_data_dict_entry(DDLBuilder<?> ddlBuilder) {
         /*
         drop table if exists bd_data_dict_entry;
         CREATE TABLE bd_data_dict_entry(
