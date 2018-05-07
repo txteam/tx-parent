@@ -6,8 +6,6 @@
  */
 package com.tx.component.basicdata.dbscript;
 
-import java.math.BigDecimal;
-
 import javax.annotation.Resource;
 
 import org.springframework.beans.factory.InitializingBean;
@@ -202,9 +200,7 @@ public class BasicDataContextTableInitializer implements InitializingBean {
                 .newColumnOfVarchar("remark", 512, false, null)
                 .newColumnOfDate("lastUpdateDate", true, true)
                 .newColumnOfDate("createDate", true, true);
-        ddlBuilder.newIndex(true,
-                "idx_task_status_00",
-                "code,basicDataTypeCode");
+        ddlBuilder.newIndex(true, "idx_data_dict_00", "code,basicDataTypeCode");
         ddlBuilder.newIndex(false,
                 "idx_basicDataTypeCode",
                 "basicDataTypeCode");
@@ -268,23 +264,9 @@ public class BasicDataContextTableInitializer implements InitializingBean {
         create unique index idx_bd_data_dict_entry_00 ON bd_data_dict_entry(entityId,entryKey);
          */
         ddlBuilder.newColumnOfVarchar(true, "id", 64, true, null)
-                .newColumnOfVarchar("operatorId", 64, false, null)
-                .newColumnOfVarchar("vcid", 64, false, null)
-                .newColumnOfVarchar("taskId", 64, true, null)
-                .newColumnOfVarchar("code", 64, true, null)
-                .newColumnOfVarchar("name", 64, true, null)
-                .newColumnOfVarchar("remark", 512, false, null)
-                .newColumnOfVarchar("result", 64, false, null)
-                .newColumnOfDate("startDate", false, true)
-                .newColumnOfDate("endDate", false, true)
-                .newColumnOfBigDecimal("consuming",
-                        32,
-                        0,
-                        false,
-                        BigDecimal.ZERO)
-                .newColumnOfVarchar("signature", 128, false, null)
-                .newColumnOfVarchar("attributes", 512, false, null);
-        ddlBuilder.newIndex(false, "idx_task_execute_log_00", "taskId");
-        ddlBuilder.newIndex(false, "idx_task_execute_log_01", "startDate");
+                .newColumnOfVarchar("entityId", 64, true, null)
+                .newColumnOfVarchar("entryKey", 64, true, null)
+                .newColumnOfVarchar("entryValue", 255, false, null);
+        ddlBuilder.newIndex(true, "idx_dict_entry_00", "entityId,entryKey");
     }
 }

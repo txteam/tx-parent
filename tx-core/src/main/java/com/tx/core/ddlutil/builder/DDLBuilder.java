@@ -165,7 +165,7 @@ public interface DDLBuilder<B extends DDLBuilder<B>> {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public abstract B newIndex(String indexName, String... columnNames);
+    public abstract B newIndex(String indexName, String columnNames);
     
     /**
       * 新增表索引<br/>
@@ -180,7 +180,7 @@ public interface DDLBuilder<B extends DDLBuilder<B>> {
       * @see [类、类#方法、类#成员]
      */
     public abstract B newIndex(boolean unique, String indexName,
-            String... columnNames);
+            String columnNames);
     
     //    /**
     //     * 新增表索引<br/>

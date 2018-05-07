@@ -342,7 +342,7 @@ public abstract class AbstractDDLBuilder<B extends DDLBuilder<B>>
      * @return
      */
     @Override
-    public B newIndex(String indexName, String... columnNames) {
+    public B newIndex(String indexName, String columnNames) {
         newIndex(false, indexName, columnNames);
         
         @SuppressWarnings("unchecked")
@@ -357,16 +357,14 @@ public abstract class AbstractDDLBuilder<B extends DDLBuilder<B>>
      * @return
      */
     @Override
-    public B newIndex(boolean unique, String indexName, String... columnNames) {
+    public B newIndex(boolean unique, String indexName, String columnNames) {
         AssertUtils.notEmpty(indexName, "indexName is empty.");
         AssertUtils.notEmpty(columnNames, "columnNames is empty.");
         
-        for (String columnName : columnNames) {
-            DBIndexDef newIndex = new DBIndexDef(indexName, columnName, unique,
-                    this.tableName);
-            
-            addAndValidateNewIndex(newIndex);
-        }
+        DBIndexDef newIndex = new DBIndexDef(indexName, columnNames, unique,
+                this.tableName);
+        
+        addAndValidateNewIndex(newIndex);
         
         @SuppressWarnings("unchecked")
         B builder = (B) this;
@@ -396,7 +394,8 @@ public abstract class AbstractDDLBuilder<B extends DDLBuilder<B>>
                     StringUtils.equalsIgnoreCase(tidx.getIndexName(),
                             tableIndex.getIndexName()),
                     "Duplicate index:indexName:{} columnName:{}",
-                    tableIndex.getIndexName());
+                    tableIndex.getIndexName(),
+                    tidx.getColumnNames());
         }
         
         this.indexes.add(tableIndex);//添加字段

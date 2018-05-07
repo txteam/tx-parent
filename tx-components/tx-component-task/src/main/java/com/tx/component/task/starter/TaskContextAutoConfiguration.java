@@ -57,7 +57,7 @@ public class TaskContextAutoConfiguration {
         this.txManager = txManager;
     }
     
-    @Bean("taskContext.TableInitializer")
+    @Bean("taskContext.tableInitializer")
     public TaskContextTableInitializer tableInitializer(){
         TaskContextTableInitializer initializer = new TaskContextTableInitializer();
         return initializer;
