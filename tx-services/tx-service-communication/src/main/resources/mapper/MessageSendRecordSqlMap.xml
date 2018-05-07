@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper 
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tx.component.communication.dao.MessageSendRecordDao">
+
+	<!-- auto generate default resultMap -->
+	<resultMap id="messageSendRecordMap" 
+		type="com.tx.component.communication.model.MessageSendRecord">
+	</resultMap>
+	
+	<!-- auto generate default find -->
+	<select id="findMessageSendRecord" 
+		parameterType="com.tx.component.communication.model.MessageSendRecord"
+		resultMap="messageSendRecordMap">
+		SELECT 
+				TMSR.ID,
+				TMSR.ERRORMESSAGE,
+				TMSR.CONTENTTEMPLATECODE,
+				TMSR.LASTSENDDATE,
+				TMSR.RECEIVER,
+				TMSR.STATUS,
+				TMSR.REMARK,
+				TMSR.TYPE,
+				TMSR.CONTENTFILEID,
+				TMSR.CONTENTTEMPLATEFILEID,
+				TMSR.CONTENTTEMPLATEID,
+				TMSR.CONTENT,
+				TMSR.FAILCOUNT,
+				TMSR.TITLE,
+				TMSR.ERRORCODE,
+				TMSR.SENDAGAINWHENFAIL,
+				TMSR.CREATEDATE,
+				TMSR.SUCCESS,
+				TMSR.REQUESTIP
+		  FROM COMM_MESSAGE_SEND_RECORD TMSR
+		 WHERE
+		<trim prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
+	            AND TMSR.ID = #{id}
+	        </if>
+		</trim>
+	</select>
+
+
+	<!-- auto generate default query -->
+	<select id="queryMessageSendRecord"
+		parameterType="java.util.Map"
+		resultMap="messageSendRecordMap">
+		SELECT 
+				TMSR.ID,
+				TMSR.ERRORMESSAGE,
+				TMSR.CONTENTTEMPLATECODE,
+				TMSR.LASTSENDDATE,
+				TMSR.RECEIVER,
+				TMSR.STATUS,
+				TMSR.REMARK,
+				TMSR.TYPE,
+				TMSR.CONTENTFILEID,
+				TMSR.CONTENTTEMPLATEFILEID,
+				TMSR.CONTENTTEMPLATEID,
+				TMSR.CONTENT,
+				TMSR.FAILCOUNT,
+				TMSR.TITLE,
+				TMSR.ERRORCODE,
+				TMSR.SENDAGAINWHENFAIL,
+				TMSR.CREATEDATE,
+				TMSR.SUCCESS,
+				TMSR.REQUESTIP
+		  FROM COMM_MESSAGE_SEND_RECORD TMSR
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(type)">  
+	            <![CDATA[ AND TMSR.TYPE = #{type,jdbcType=VARCHAR} ]]>
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(receiver)">  
+	            <![CDATA[ AND TMSR.RECEIVER = #{receiver,jdbcType=VARCHAR} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(maxCreateDate)">  
+	            <![CDATA[ AND TMSR.CREATEDATE < #{maxCreateDate,jdbcType=TIMESTAMP} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(status)">  
+	            <![CDATA[ AND TMSR.STATUS = #{status,jdbcType=VARCHAR} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(minCreateDate)">  
+	            <![CDATA[ AND TMSR.CREATEDATE >= #{minCreateDate,jdbcType=TIMESTAMP} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(excludeId)">
+				<![CDATA[ AND TMSR.ID <> #{excludeId,javaType=java.lang.String} ]]>
+			</if>
+		</trim>
+		<choose>  
+	        <when test="@com.tx.core.util.OgnlUtils@isNotEmpty(orderSql)">  
+	            ORDER BY ${orderSql}
+	        </when>
+	        <otherwise>  
+	            ORDER BY CREATEDATE DESC
+	        </otherwise>  
+	    </choose>
+	</select>
+	
+		<!-- auto generate default count -->
+	<select id="queryMessageSendRecordCount" 
+		parameterType="java.util.Map"
+		resultType="java.lang.Integer">
+		SELECT COUNT(1)
+		  FROM COMM_MESSAGE_SEND_RECORD TMSR
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(type)">  
+	            <![CDATA[ AND TMSR.TYPE = #{type,jdbcType=VARCHAR} ]]>
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(receiver)">  
+	            <![CDATA[ AND TMSR.RECEIVER = #{receiver,jdbcType=VARCHAR} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(maxCreateDate)">  
+	            <![CDATA[ AND TMSR.CREATEDATE < #{maxCreateDate,jdbcType=TIMESTAMP} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(status)">  
+	            <![CDATA[ AND TMSR.STATUS = #{status,jdbcType=VARCHAR} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(minCreateDate)">  
+	            <![CDATA[ AND TMSR.CREATEDATE >= #{minCreateDate,jdbcType=TIMESTAMP} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(excludeId)">
+				<![CDATA[ AND TMSR.ID <> #{excludeId,javaType=java.lang.String} ]]>
+			</if>
+		</trim>
+	</select>
+    
+    <!-- auto generate default insert -->
+    <insert id="insertMessageSendRecord" 
+		parameterType="com.tx.component.communication.model.MessageSendRecord">
+		INSERT INTO COMM_MESSAGE_SEND_RECORD
+		(
+			ID,
+			ERRORMESSAGE,
+			CONTENTTEMPLATECODE,
+			LASTSENDDATE,
+			RECEIVER,
+			STATUS,
+			REMARK,
+			TYPE,
+			CONTENTFILEID,
+			CONTENTTEMPLATEFILEID,
+			CONTENTTEMPLATEID,
+			CONTENT,
+			FAILCOUNT,
+			TITLE,
+			ERRORCODE,
+			SENDAGAINWHENFAIL,
+			CREATEDATE,
+			SUCCESS,
+			REQUESTIP
+		)
+		VALUES
+		(
+			#{id},
+			#{errorMessage},
+			#{contentTemplateCode},
+			#{lastSendDate},
+			#{receiver},
+			#{status},
+			#{remark},
+			#{type},
+			#{contentFileId},
+			#{contentTemplateFileId},
+			#{contentTemplateId},
+			#{content},
+			#{failCount},
+			#{title},
+			#{errorCode},
+			#{sendAgainWhenFail},
+			#{createDate},
+			#{success},
+			#{requestIp}
+		)
+	</insert>
+	
+	<!-- auto generate default delete -->
+	<delete id="deleteMessageSendRecord" 
+		parameterType="com.tx.component.communication.model.MessageSendRecord">
+		DELETE FROM COMM_MESSAGE_SEND_RECORD  WHERE
+		<trim prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
+	            AND ID = #{id}
+	        </if>
+		</trim>
+	</delete>
+
+	<!-- auto generate default update -->
+	<update id="updateMessageSendRecord"
+	    parameterType="java.util.Map">  
+	    UPDATE COMM_MESSAGE_SEND_RECORD 
+	    <trim prefix="SET" suffixOverrides=",">
+			<if test="_parameter.containsKey('errorMessage')">
+	    		ERRORMESSAGE = #{errorMessage,javaType=java.lang.String},
+	    	</if>	
+			<if test="_parameter.containsKey('contentTemplateCode')">
+	    		CONTENTTEMPLATECODE = #{contentTemplateCode,javaType=java.lang.String},
+	    	</if>	
+			<if test="_parameter.containsKey('lastSendDate')">
+	    		LASTSENDDATE = #{lastSendDate,javaType=java.util.Date},
+	    	</if>	
+			<if test="_parameter.containsKey('receiver')">
+	    		RECEIVER = #{receiver,javaType=java.lang.String},
+	    	</if>	
+			<if test="_parameter.containsKey('status')">
+	    		STATUS = #{status,javaType=com.tx.component.communication.model.MessageSendStatusEnum},
+	    	</if>	
+			<if test="_parameter.containsKey('remark')">
+	    		REMARK = #{remark,javaType=java.lang.String},
+	    	</if>	
+			<if test="_parameter.containsKey('type')">
+	    		TYPE = #{type,javaType=com.tx.component.communication.model.MessageTypeEnum},
+	    	</if>	
+			<if test="_parameter.containsKey('contentFileId')">
+	    		CONTENTFILEID = #{contentFileId,javaType=java.lang.String},
+	    	</if>	
+			<if test="_parameter.containsKey('contentTemplateFileId')">
+	    		CONTENTTEMPLATEFILEID = #{contentTemplateFileId,javaType=java.lang.String},
+	    	</if>	
+			<if test="_parameter.containsKey('contentTemplateId')">
+	    		CONTENTTEMPLATEID = #{contentTemplateId,javaType=java.lang.String},
+	    	</if>	
+			<if test="_parameter.containsKey('content')">
+	    		CONTENT = #{content,javaType=java.lang.String},
+	    	</if>	
+			<if test="_parameter.containsKey('failCount')">
+	    		FAILCOUNT = #{failCount,javaType=int},
+	    	</if>	
+			<if test="_parameter.containsKey('title')">
+	    		TITLE = #{title,javaType=java.lang.String},
+	    	</if>	
+			<if test="_parameter.containsKey('errorCode')">
+	    		ERRORCODE = #{errorCode,javaType=java.lang.String},
+	    	</if>	
+			<if test="_parameter.containsKey('sendAgainWhenFail')">
+	    		SENDAGAINWHENFAIL = #{sendAgainWhenFail,javaType=boolean},
+	    	</if>	
+			<if test="_parameter.containsKey('createDate')">
+	    		CREATEDATE = #{createDate,javaType=java.util.Date},
+	    	</if>	
+			<if test="_parameter.containsKey('success')">
+	    		SUCCESS = #{success,javaType=boolean},
+	    	</if>
+	    	<if test="_parameter.containsKey('requestIp')">
+	    		REQUESTIP #{requestIp,javaType=boolean},
+	    	</if>	
+	    </trim>
+	    WHERE ID = #{id} 
+	</update>  
+
+</mapper>
+<!--
+sqlMap生成描述:
+
+-->

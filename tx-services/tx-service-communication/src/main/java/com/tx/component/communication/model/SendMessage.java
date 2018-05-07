@@ -23,6 +23,7 @@ public class SendMessage {
     
     /** 发送消息的唯一键 */
     private String id;
+
     
     /** 消息发送策略 */
     private SendMessageStrategyEnum strategy = SendMessageStrategyEnum.NORMAL;
