@@ -6,9 +6,13 @@
  */
 package com.tx.component.communication.boot;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+import org.springframework.context.annotation.ImportResource;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 /**
   * <功能简述>
@@ -19,8 +23,12 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
   */
-@SpringBootApplication
-@EnableEurekaClient
+
+@SpringBootApplication(scanBasePackages = "com.tx.component.communication")
+//@EnableEurekaClient
+//@EnableWebMvc
+@MapperScan("com.tx.component.communication.dao")
+@ImportResource(locations = {"classpath:spring/beans-*.xml"})
 public class CommunicationBootApplication {
 
     public static void main(String[] args) {

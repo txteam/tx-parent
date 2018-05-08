@@ -252,18 +252,18 @@ public class HttpClientUtils {
             String response = post(url, requestMessage,"UTF-8","UTF-8");
             return response;
         }
-        
+
         public String post(String url, String requestMessage,
-                String requestEncoding, String responseEncoding) {
+                           String requestEncoding, String responseEncoding,Map<String,String> headerMap) {
             String resStr = "";
-            
+
             HttpEntity requestEntity = null;
             //            try {
             requestEntity = new StringEntity(requestMessage, requestEncoding);
             //            } catch (UnsupportedEncodingException e) {
             //                throw new BeforeHttpExcuteException("Http请求参数字符集转换异常.", e);
             //            }
-            
+
             HttpResponse response = null;
             // 创建httppost
             HttpPost httppost = new HttpPost(url);
@@ -271,11 +271,17 @@ public class HttpClientUtils {
                 httppost.setHeader("accept", "*/*");
                 //httppost.setHeader(name, value);"Charset", "UTF-8"
                 httppost.setHeader("connection", "Keep-Alive");
-                
+
+                if(headerMap!=null && headerMap.size()>0){
+                    for(Map.Entry<String,String> entry:headerMap.entrySet() ){
+                        httppost.setHeader(entry.getKey(), entry.getValue());
+                    }
+                }
+
                 httppost.setEntity(requestEntity);
-                
+
                 response = this.httpClient.execute(httppost);
-                
+
                 int statusCode = response.getStatusLine().getStatusCode();
                 String reasonPhrase = response.getStatusLine()
                         .getReasonPhrase();
@@ -289,7 +295,7 @@ public class HttpClientUtils {
                     }
                 }
                 HttpEntity entity = response.getEntity();
-                
+
                 if (entity != null) {
                     try {
                         Charset responseCharset = Charset.forName(responseEncoding);
@@ -334,6 +340,11 @@ public class HttpClientUtils {
                 }
             }
             return resStr;
+        }
+        
+        public String post(String url, String requestMessage,
+                String requestEncoding, String responseEncoding) {
+           return post(url,requestMessage,requestEncoding,responseEncoding,null);
         }
         
         public String post(String url, Map<String, String> params){
