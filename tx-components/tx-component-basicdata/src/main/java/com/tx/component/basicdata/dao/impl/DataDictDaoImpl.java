@@ -31,6 +31,11 @@ public class DataDictDaoImpl implements DataDictDao {
     @Resource(name = "basicdata.myBatisDaoSupport")
     private MyBatisDaoSupport myBatisDaoSupport;
     
+    /** <默认构造函数> */
+    public DataDictDaoImpl() {
+        super();
+    }
+
     /**
      * @param condition
      */

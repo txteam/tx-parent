@@ -18,7 +18,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
-import org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -44,10 +43,9 @@ import com.tx.core.exceptions.util.AssertUtils;
  */
 @Configuration
 @EnableConfigurationProperties(value = CommandContextProperties.class)
-@ConditionalOnBean(DataSource.class)
+@ConditionalOnBean({ DataSource.class, PlatformTransactionManager.class })
 @AutoConfigureAfter({ DataSourceAutoConfiguration.class,
-        DataSourceTransactionManagerAutoConfiguration.class,
-        TransactionAutoConfiguration.class })
+        DataSourceTransactionManagerAutoConfiguration.class })
 @ConditionalOnProperty(prefix = "command", value = "enable", havingValue = "true")
 public class CommandContextAutoConfiguration
         implements ApplicationContextAware, InitializingBean {
@@ -81,8 +79,8 @@ public class CommandContextAutoConfiguration
     @Override
     public void afterPropertiesSet() throws Exception {
         if (StringUtils.isNotBlank(properties.getTransactionManager())
-                && this.applicationContext.containsBean(
-                        properties.getTransactionManager())) {
+                && this.applicationContext
+                        .containsBean(properties.getTransactionManager())) {
             this.transactionManager = this.applicationContext.getBean(
                     properties.getTransactionManager(),
                     PlatformTransactionManager.class);

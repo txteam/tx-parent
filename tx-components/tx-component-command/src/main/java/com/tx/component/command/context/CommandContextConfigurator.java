@@ -42,13 +42,10 @@ public class CommandContextConfigurator
     protected static String beanName;
     
     /** 事务管理器 */
-    protected PlatformTransactionManager txManager;
+    protected PlatformTransactionManager transactionManager;
     
     /** 事务template */
     protected TransactionTemplate transactionTemplate;
-    
-    //  /** 数据源 */
-    //    private DataSource dataSource;
     
     /**
      * @param name
@@ -73,12 +70,9 @@ public class CommandContextConfigurator
      */
     @Override
     public void afterPropertiesSet() throws Exception {
-        AssertUtils.notNull(this.txManager, "txManager is null.");
+        AssertUtils.notNull(this.transactionManager, "transactionManager is null.");
         
-        //        if (this.txManager == null) {
-        //            this.txManager = new DataSourceTransactionManager(this.dataSource);
-        //        }
-        this.transactionTemplate = new TransactionTemplate(this.txManager,
+        this.transactionTemplate = new TransactionTemplate(this.transactionManager,
                 new DefaultTransactionDefinition(
                         TransactionDefinition.PROPAGATION_REQUIRED));
         
@@ -114,31 +108,17 @@ public class CommandContextConfigurator
         
     }
     
-    //    /**
-    //     * @return 返回 dataSource
-    //     */
-    //    public DataSource getDataSource() {
-    //        return dataSource;
-    //    }
-    //    
-    //    /**
-    //     * @param 对dataSource进行赋值
-    //     */
-    //    public void setDataSource(DataSource dataSource) {
-    //        this.dataSource = dataSource;
-    //    }
-    
     /**
      * @return 返回 txManager
      */
     public PlatformTransactionManager getTxManager() {
-        return txManager;
+        return transactionManager;
     }
     
     /**
      * @param 对txManager进行赋值
      */
     public void setTxManager(PlatformTransactionManager txManager) {
-        this.txManager = txManager;
+        this.transactionManager = txManager;
     }
 }
