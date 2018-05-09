@@ -6,6 +6,7 @@ import com.tx.component.communication.model.MessageSendStatusEnum;
 import com.tx.component.communication.model.MessageTypeEnum;
 import com.tx.component.communication.service.MessageSendRecordService;
 import com.tx.component.communication.service.SMSMessageSendService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,10 +35,10 @@ public class CommunicationController {
     @Resource
     private MessageSendRecordService messageSendRecordService;
 
-    @RequestMapping("/")
-    public String index() {
-        return "index";
-    }
+//    @RequestMapping("/")
+//    public String index() {
+//        return "swagger-ui";
+//    }
 
     /**
      * 消息发送
@@ -53,6 +54,7 @@ public class CommunicationController {
      */
     @RequestMapping("/sendSms")
     @ResponseBody
+    @ApiOperation(value = "短信发送", notes = "根据定义的短信模板，发送短信")
     public Map<String, String> sendSms(String receiver,
                                        String title,
                                        String smsTemplateContent,
@@ -65,15 +67,15 @@ public class CommunicationController {
         try {
             smsMessageSendService.sendSMS(receiver, title, smsTemplateContent, smsTemplateCode, requestIp, params);
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
         return null;
     }
 
-    @RequestMapping("/toQueryMessageSendRecordPagedList")
-    public String toQueryMessageSendRecordPagedList() {
-        return "queryMessageSendRecordPagedList";
-    }
+//    @RequestMapping("/toQueryMessageSendRecordPagedList")
+//    public String toQueryMessageSendRecordPagedList() {
+//        return "queryMessageSendRecordPagedList";
+//    }
 
 
     /**
@@ -91,6 +93,7 @@ public class CommunicationController {
      */
     @ResponseBody
     @RequestMapping("/queryMessageSendRecordPagedList")
+    @ApiOperation(value = "消息发送查询", notes = "消息发送分页查询")
     public PageInfo<MessageSendRecord> queryMessageSendRecordPagedList(
             @RequestParam MultiValueMap<String, String> request,
             @RequestParam(value = "type", required = false) MessageTypeEnum type,

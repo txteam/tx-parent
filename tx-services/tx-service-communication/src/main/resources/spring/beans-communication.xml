@@ -16,7 +16,7 @@
 
     <bean id="JuheSMSSendCodeDialect"
           class="com.tx.component.communication.senddialect.sms.juhe.JuheSMSSendCodeDialect">
-        <property name="appKey" value="8a608be2966ea043528c35099fa2a735---"></property>
+        <property name="appKey" value="8a608be2966ea043528c35099fa2a735"></property>
     </bean>
 
 

@@ -34,10 +34,7 @@ spring:
 
 
 
-        
-mybatis:
-  mapper-locations: classpath:mapper/*SqlMap.xml
-  type-aliases-package: com.tx.component.communication.model
+
 
 #pagehelper分页插件
 pagehelper:
@@ -47,3 +44,7 @@ pagehelper:
     params: count=countSql
 
 debug: true
+
+mybatis:
+  mapper-locations: classpath*:mapper/*SqlMap.xml
+  check-config-location: true

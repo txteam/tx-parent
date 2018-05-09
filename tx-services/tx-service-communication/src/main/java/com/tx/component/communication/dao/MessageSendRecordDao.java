@@ -11,6 +11,7 @@ import com.tx.component.communication.model.MessageSendRecord;
 import com.tx.core.mybatis.model.Order;
 import com.tx.core.paged.model.PagedList;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.SelectKey;
 
 import java.util.List;
 import java.util.Map;
@@ -24,7 +25,7 @@ import java.util.Map;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-@Mapper
+//@Mapper
 public interface MessageSendRecordDao {
     
     /**
@@ -125,7 +126,7 @@ public interface MessageSendRecordDao {
       * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public Page<MessageSendRecord> queryMessageSendRecordPagedList(Map<String, Object> params);
+//    public Page<MessageSendRecord> queryMessageSendRecordPagedList(Map<String, Object> params);
     
     /**
       * 分页查询MessageSendRecord列表，传入排序字段
