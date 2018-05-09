@@ -35,6 +35,10 @@
     <script type="text/javascript"
             src="${request.contextPath}/js/jquery-easyui-extension/jeasyui.extensions.datagrid.min.js"></script>
     <script type="text/javascript" src="${request.contextPath}/js/extEasyUI.js" charset="utf-8"></script>
+
+    <!-- other -->
+    <script type="text/javascript" src="${request.contextPath}/js/datePicker/WdatePicker.js" type="text/javascript" charset="utf-8"></script>
+
     <script type="text/javascript" src="${request.contextPath}/js/commons.js" charset="utf-8"></script>
 
     <style>
