@@ -36,7 +36,7 @@ import com.tx.component.basicdata.dao.BasicDataTypeDao;
 import com.tx.component.basicdata.dao.DataDictDao;
 import com.tx.component.basicdata.dao.impl.BasicDataTypeDaoImpl;
 import com.tx.component.basicdata.dao.impl.DataDictDaoImpl;
-import com.tx.component.basicdata.dbscript.BasicDataContextTableInitializer;
+import com.tx.component.basicdata.script.BasicDataContextTableInitializer;
 import com.tx.component.basicdata.service.BasicDataTypeService;
 import com.tx.component.basicdata.service.DataDictService;
 import com.tx.core.ddlutil.executor.TableDDLExecutor;

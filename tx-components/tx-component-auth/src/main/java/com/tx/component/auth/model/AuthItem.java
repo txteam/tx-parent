@@ -15,144 +15,134 @@ import com.tx.core.tree.model.TreeAble;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
  */
-public interface AuthItem extends TreeAble<List<AuthItem>, AuthItem>,
-        Serializable {
+public interface AuthItem
+        extends TreeAble<List<AuthItem>, AuthItem>, Serializable {
     
     /**
      * 权限项唯一键key 
      * 约定权限项目分割符为"_"
-     * 如权限为"wd_"
+     * 如权限为"wd_"<br/>
+     * 
      * @return 返回 id
      */
     String getId();
     
     /**
-     * 获取权限关联项id 
+     * 父级权限id<br/>
      * <功能详细描述>
-     * @return [参数说明]
      * 
-     * @return String [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    String getRefId();
-    
-    /**
-     * 权限项目引用类型  
-     * <功能详细描述>
      * @return [参数说明]
-     * 
-     * @return String [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    String getRefType();
-    
-    /**
-     * 获取权限项系统id
-     *<功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return String [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    String getSystemId();
-    
-    /**
-     * 父级权限id
-     * @return 返回 parentId 
      */
     String getParentId();
     
     /**
-     * 权限名
-     * @return 返回 name
-     */
-    String getName();
-    
-    /**
-     * 获取权限描述
-     * @return 返回 description
-     */
-    String getDescription();
-    
-    /**
-     * 返回子权限
-     * @return 返回 childs
-     */
-    List<AuthItem> getChilds();
-    
-    /**
-     * 获取权限类型
-     * @return 返回 authType
+     * 获取权限类型<br/>
+     * 
+     * @return [参数说明]
      */
     String getAuthType();
     
     /**
-     * 判断是否可见
-     * @return 返回 isAbstract
+     * 获取权限关联项id<br/>
+     * <功能详细描述>
+     * 
+     * @return String [返回类型说明]
+     */
+    String getRefId();
+    
+    /**
+     * 权限项目引用类型  <br/>
+     * <功能详细描述>
+     * 
+     * @return [参数说明]
+     */
+    String getRefType();
+    
+    /**
+     * 获取权限项系统id<br/>
+     * <功能详细描述>
+     * 
+     * @return [参数说明]
+     */
+    String getModule();
+    
+    /**
+     * 权限名<br/>
+     * <功能详细描述>
+     * 
+     * @return [参数说明]
+     */
+    String getName();
+    
+    /**
+     * 获取权限描述<br/>
+     * <功能详细描述>
+     * 
+     * @return [参数说明]
+     */
+    String getRemark();
+    
+    /**
+     * 判断是否可见<br/>
+     * <功能详细描述>
+     * 
+     * @return [参数说明]
      */
     boolean isViewAble();
     
     /**
-     * 是否可编辑
+     * 该权限是否有效<br/>
      * <功能详细描述>
-     * @return [参数说明]
      * 
-     * @return boolean [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    boolean isEditAble();
-    
-    /**
-     * 是否能进行配置
-     * <功能详细描述>
      * @return [参数说明]
-     * 
-     * @return boolean [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    boolean isConfigAble();
-    
-    /**
-     * 该权限是否有效
-     * @return 返回 isValid
      */
     boolean isValid();
     
     /**
-     * 是否为虚拟权限
-     *<功能详细描述>
-     * @return [参数说明]
+     * 是否可编辑<br/>
+     * <功能详细描述>
      * 
-     * @return boolean [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
+     * @return boolean 
      */
-    public boolean isVirtual();
+    boolean isModifyAble();
     
     /**
-     * 获取权限项的其他数据<br/>
-     *<功能详细描述>
-     * @return [参数说明]
+     * 是否能进行配置<br/>
+     * <功能详细描述>
      * 
-     * @return Map<String,String> [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
+     * @return boolean 
      */
-    public Map<String, String> getData();
+    boolean isConfigAble();
+    
+    /**
+     * 获取子权限<br/>
+     * <功能详细描述>
+     * 
+     * @return String [返回类型说明]
+     */
+    List<AuthItem> getChilds();
+    
+    /**
+     * 获取权限项的其他数据(json)<br/>
+     * <功能详细描述>
+     * 
+     * @return Map<String,String> 
+     */
+    public String getAttributes();
     
     /**
      * 社区权限所属系统<br/>
-     *<功能详细描述> [参数说明]
+     * <功能详细描述> [参数说明]
      * 
      * @return void [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
      */
-    void setSystemId(String systemId);
+    void setModule(String module);
     
+    /**
+     * 获取权限项的其他数据(json)<br/>
+     * <功能详细描述>
+     * 
+     * @return Map<String,String> 
+     */
+    public Map<String, String> getAttributesMap();
 }

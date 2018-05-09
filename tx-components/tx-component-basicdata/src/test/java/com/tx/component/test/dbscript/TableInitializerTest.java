@@ -10,7 +10,7 @@ import javax.sql.DataSource;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import com.tx.component.basicdata.dbscript.BasicDataContextTableInitializer;
+import com.tx.component.basicdata.script.BasicDataContextTableInitializer;
 import com.tx.core.datasource.DataSourceFinder;
 import com.tx.core.datasource.finder.TomcatDataSourceFinder;
 import com.tx.core.ddlutil.builder.DDLBuilder;

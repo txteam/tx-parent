@@ -10,6 +10,7 @@ import javax.annotation.Resource;
 
 import org.springframework.beans.factory.InitializingBean;
 
+import com.tx.core.ddlutil.TableInitializer;
 import com.tx.core.ddlutil.builder.DDLBuilder;
 import com.tx.core.ddlutil.builder.alter.AlterTableDDLBuilder;
 import com.tx.core.ddlutil.builder.create.CreateTableDDLBuilder;
@@ -24,7 +25,8 @@ import com.tx.core.ddlutil.executor.TableDDLExecutor;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
   */
-public class TaskContextTableInitializer implements InitializingBean {
+public class TaskContextTableInitializer
+        implements InitializingBean, TableInitializer {
     
     /** 表DDL执行器 */
     @Resource(name = "taskContext.tableDDLExecutor")
@@ -35,6 +37,15 @@ public class TaskContextTableInitializer implements InitializingBean {
      */
     @Override
     public void afterPropertiesSet() throws Exception {
+        //初始化表定义
+        initialize();
+    }
+    
+    /**
+     * 
+     */
+    @Override
+    public void initialize() {
         //初始化表定义
         table_td_task_def();
         table_td_task_status();

@@ -4,10 +4,11 @@
  * 修改时间:  2017年10月15日
  * <修改描述:>
  */
-package com.tx.component.basicdata.dbscript;
+package com.tx.component.basicdata.script;
 
 import org.springframework.beans.factory.InitializingBean;
 
+import com.tx.core.ddlutil.TableInitializer;
 import com.tx.core.ddlutil.builder.DDLBuilder;
 import com.tx.core.ddlutil.builder.alter.AlterTableDDLBuilder;
 import com.tx.core.ddlutil.builder.create.CreateTableDDLBuilder;
@@ -22,7 +23,8 @@ import com.tx.core.ddlutil.executor.TableDDLExecutor;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
   */
-public class BasicDataContextTableInitializer implements InitializingBean {
+public class BasicDataContextTableInitializer
+        implements InitializingBean, TableInitializer {
     
     /** 表DDL执行器 */
     protected TableDDLExecutor tableDDLExecutor;
@@ -43,6 +45,15 @@ public class BasicDataContextTableInitializer implements InitializingBean {
      */
     @Override
     public void afterPropertiesSet() throws Exception {
+        //初始化表定义
+        initialize();
+    }
+    
+    /**
+     * 
+     */
+    @Override
+    public void initialize() {
         //初始化表定义
         table_bd_basic_data_type();
         table_bd_data_dict();

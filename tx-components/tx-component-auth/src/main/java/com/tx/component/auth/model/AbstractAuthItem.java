@@ -11,11 +11,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.persistence.Table;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -31,19 +29,12 @@ import com.tx.core.util.ObjectUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-@Entity
-@Table(name = "auth_authitem")
-public class AuthItemImpl implements AuthItem {
+public abstract class AbstractAuthItem implements AuthItem {
     
     /** 注释内容 */
-    private static final long serialVersionUID = -5205952448154970380L;
+    private static final long serialVersionUID = 2870014183031122725L;
     
-    /** 
-     * 权限项唯一键key 
-     * 约定权限项目分割符为"_"
-     * 如权限为"wd_"
-     * 不同的权限项,id也不能重复
-     */
+    /** 权限项唯一键key : 约定权限项目分割符为"_" 如权限为"wd_" 不同的权限项,id也不能重复 */
     @Id
     private String id;
     
@@ -63,21 +54,10 @@ public class AuthItemImpl implements AuthItem {
     private String name;
     
     /** 权限项目描述 */
-    private String description;
+    private String remark;
     
-    /** 
-     * 权限类型
-     * 后续根据需要可以扩展相应的权限大类
-     * 比如 
-     *      产品权限
-     *      流程环节权限
-     *      通过多个纬度的权限交叉可以达到多纬度的授权体系
-     */
+    /** 权限类型 后续根据需要可以扩展相应的权限大类   比如: 产品权限\流程环节权限\通过多个纬度的权限交叉可以达到多纬度的授权体系*/
     private String authType;
-    
-    /** 子权限列表 */
-    @OneToMany(fetch = FetchType.LAZY)
-    private List<AuthItem> childs = new ArrayList<AuthItem>();
     
     /** 是否有效，默认为true,权限可停用 */
     private boolean valid = true;
@@ -94,18 +74,22 @@ public class AuthItemImpl implements AuthItem {
     /** 是否是虚拟权限，即不是真正的权限项 */
     private boolean virtual = false;
     
-    /** xml中attribute的其他属性 */
-    private Map<String, String> data = new HashMap<>();
+    /** 属性值 */
+    private String attributes;
+    
+    /** 子权限列表 */
+    @OneToMany(fetch = FetchType.LAZY)
+    private List<AuthItem> childs = new ArrayList<AuthItem>();
     
     /** <默认构造函数> */
-    public AuthItemImpl() {
+    public AbstractAuthItem() {
         super();
     }
     
     /**
      * <默认构造函数>
      */
-    public AuthItemImpl(Map<String, Object> authItemRowMap) {
+    public AbstractAuthItem(Map<String, Object> authItemRowMap) {
         super();
         if (authItemRowMap.containsKey("id")) {
             this.id = (String) authItemRowMap.get("id");
@@ -113,14 +97,14 @@ public class AuthItemImpl implements AuthItem {
         if (authItemRowMap.containsKey("parentId")) {
             this.parentId = (String) authItemRowMap.get("parentId");
         }
-        if (authItemRowMap.containsKey("systemId")) {
-            this.systemId = (String) authItemRowMap.get("systemId");
+        if (authItemRowMap.containsKey("module")) {
+            this.module = (String) authItemRowMap.get("module");
         }
         if (authItemRowMap.containsKey("name")) {
             this.name = (String) authItemRowMap.get("name");
         }
-        if (authItemRowMap.containsKey("description")) {
-            this.description = (String) authItemRowMap.get("description");
+        if (authItemRowMap.containsKey("remark")) {
+            this.remark = (String) authItemRowMap.get("remark");
         }
         if (authItemRowMap.containsKey("authType")) {
             this.authType = (String) authItemRowMap.get("authType");
@@ -129,7 +113,8 @@ public class AuthItemImpl implements AuthItem {
             this.valid = (boolean) authItemRowMap.containsKey("valid");
         }
         if (authItemRowMap.containsKey(configAble)) {
-            this.configAble = (boolean) authItemRowMap.containsKey("configAble");
+            this.configAble = (boolean) authItemRowMap
+                    .containsKey("configAble");
         }
         if (authItemRowMap.containsKey(viewAble)) {
             this.viewAble = (boolean) authItemRowMap.containsKey("viewAble");
@@ -142,13 +127,13 @@ public class AuthItemImpl implements AuthItem {
     /**
      * <默认构造函数>
      */
-    public AuthItemImpl(AuthItem otherAuthItem) {
+    public AbstractAuthItem(AuthItem otherAuthItem) {
         super();
         this.id = otherAuthItem.getId();
         this.parentId = otherAuthItem.getParentId();
-        this.systemId = otherAuthItem.getSystemId();
+        this.module = otherAuthItem.getModule();
         this.name = otherAuthItem.getName();
-        this.description = otherAuthItem.getDescription();
+        this.remark = otherAuthItem.getRemark();
         this.authType = otherAuthItem.getAuthType();
         this.valid = otherAuthItem.isValid();
         this.configAble = otherAuthItem.isConfigAble();
@@ -157,10 +142,10 @@ public class AuthItemImpl implements AuthItem {
     }
     
     /** <默认构造函数> */
-    public AuthItemImpl(String id, String systemId, String authType) {
+    public AbstractAuthItem(String id, String module, String authType) {
         super();
         this.id = id;
-        this.systemId = systemId;
+        this.module = module;
         this.authType = authType;
     }
     
@@ -188,17 +173,19 @@ public class AuthItemImpl implements AuthItem {
     }
     
     /**
-     * @return 返回 systemId
+     * @return 返回 module
      */
-    public String getSystemId() {
-        return systemId;
+    @Override
+    public String getModule() {
+        return module;
     }
     
     /**
-     * @param 对systemId进行赋值
+     * @param 对module进行赋值
      */
-    public void setSystemId(String systemId) {
-        this.systemId = systemId;
+    @Override
+    public void setModule(String module) {
+        this.module = module;
     }
     
     /**
@@ -220,18 +207,18 @@ public class AuthItemImpl implements AuthItem {
     }
     
     /**
-     * @return
+     * @return 返回 remark
      */
     @Override
-    public String getDescription() {
-        return description;
+    public String getRemark() {
+        return remark;
     }
     
     /**
-     * @param description
+     * @param 对remark进行赋值
      */
-    public void setDescription(String description) {
-        this.description = description;
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
     
     /**
@@ -334,56 +321,44 @@ public class AuthItemImpl implements AuthItem {
     public String getRefId() {
         return refId;
     }
-
+    
     /**
      * @param 对refId进行赋值
      */
     public void setRefId(String refId) {
         this.refId = refId;
     }
-
+    
     /**
      * @return 返回 refType
      */
     public String getRefType() {
         return refType;
     }
-
+    
     /**
      * @param 对refType进行赋值
      */
     public void setRefType(String refType) {
         this.refType = refType;
     }
-
+    
     /**
      * @return 返回 virtual
      */
     public boolean isVirtual() {
         return virtual;
     }
-
+    
     /**
      * @param 对virtual进行赋值
      */
     public void setVirtual(boolean virtual) {
         this.virtual = virtual;
     }
-
-    /**
-     * @return 返回 data
-     */
-    public Map<String, String> getData() {
-        return data;
-    }
-
-    /**
-     * @param 对data进行赋值
-     */
-    public void setData(Map<String, String> data) {
-        this.data = data;
-    }
-
+    
+    
+    
     /**
      * @param obj
      * @return
