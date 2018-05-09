@@ -11,8 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,7 +39,6 @@ public class DefaultTreeAbleBasicDataService<T extends TreeAbleBasicData<T>>
     private Class<T> type;
     
     /** 数据字典业务层 */
-    @Resource(name = "basicdata.dataDictService")
     protected DataDictService dataDictService;
     
     /** <默认构造函数> */
@@ -315,5 +312,19 @@ public class DefaultTreeAbleBasicDataService<T extends TreeAbleBasicData<T>>
     public boolean enableById(String id) {
         boolean flag = this.dataDictService.enableById(id);
         return flag;
+    }
+
+    /**
+     * @param 对type进行赋值
+     */
+    public void setType(Class<T> type) {
+        this.type = type;
+    }
+
+    /**
+     * @param 对dataDictService进行赋值
+     */
+    public void setDataDictService(DataDictService dataDictService) {
+        this.dataDictService = dataDictService;
     }
 }

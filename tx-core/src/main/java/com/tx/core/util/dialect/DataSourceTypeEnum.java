@@ -41,7 +41,7 @@ public enum DataSourceTypeEnum {
     /**
      * MYSQL
      */
-    MYSQL("MYSQL", DialectUtils.mySQL5Dialect),
+    MYSQL("MYSQL", DialectUtils.mySQL5InnoDBDialect),
     /**
      * MYSQL
      */

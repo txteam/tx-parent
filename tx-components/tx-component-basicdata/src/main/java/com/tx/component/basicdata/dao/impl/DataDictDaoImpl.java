@@ -9,8 +9,6 @@ package com.tx.component.basicdata.dao.impl;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import com.tx.component.basicdata.dao.DataDictDao;
 import com.tx.component.basicdata.model.DataDict;
 import com.tx.core.mybatis.model.Order;
@@ -28,12 +26,17 @@ import com.tx.core.paged.model.PagedList;
  */
 public class DataDictDaoImpl implements DataDictDao {
     
-    @Resource(name = "basicdata.myBatisDaoSupport")
     private MyBatisDaoSupport myBatisDaoSupport;
     
     /** <默认构造函数> */
     public DataDictDaoImpl() {
         super();
+    }
+    
+    /** <默认构造函数> */
+    public DataDictDaoImpl(MyBatisDaoSupport myBatisDaoSupport) {
+        super();
+        this.myBatisDaoSupport = myBatisDaoSupport;
     }
 
     /**

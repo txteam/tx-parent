@@ -54,6 +54,7 @@ public class MetaEntityEntry {
     //实例表后缀
     private static final String hisTableNameSuffix = "_his";
 
+    //表创建模板
     private static final String CREATE_SQL_TEMPLATE = (new StringBuilder(
             "CREATE TABLE  ")).append("{} ")
             .append("( id varchar(64) not null, ")
@@ -62,9 +63,6 @@ public class MetaEntityEntry {
             .append(" entryValue varchar(256),")
             .append("  primary key(id))")
             .toString();
-
-
-
 
     //插入语句模板
     //"INSERT INTO {} (id ,entityId ,entryKey ,entryValue {}) VALUES(:id ,:entityId ,:entryKey ,:entryValue {})";
@@ -149,6 +147,7 @@ public class MetaEntityEntry {
     /** insert语句 */
     private final String sqlOfInsert;
 
+    /** 创建表语句 */
     private final String sqlOfCreateTable;
     
     /** insertToHis语句 */

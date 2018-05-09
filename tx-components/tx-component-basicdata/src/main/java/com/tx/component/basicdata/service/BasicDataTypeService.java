@@ -11,8 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,8 +35,18 @@ public class BasicDataTypeService {
     @SuppressWarnings("unused")
     private Logger logger = LoggerFactory.getLogger(BasicDataTypeService.class);
     
-    @Resource(name = "basicdata.basicDataTypeDao")
     private BasicDataTypeDao basicDataTypeDao;
+    
+    /** <默认构造函数> */
+    public BasicDataTypeService() {
+        super();
+    }
+    
+    /** <默认构造函数> */
+    public BasicDataTypeService(BasicDataTypeDao basicDataTypeDao) {
+        super();
+        this.basicDataTypeDao = basicDataTypeDao;
+    }
     
     /**
      * 将basicDataType实例插入数据库中保存
@@ -183,9 +191,8 @@ public class BasicDataTypeService {
         params.put("valid", valid);
         
         //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
-        PagedList<BasicDataType> resPagedList = this.basicDataTypeDao.queryPagedList(params,
-                pageIndex,
-                pageSize);
+        PagedList<BasicDataType> resPagedList = this.basicDataTypeDao
+                .queryPagedList(params, pageIndex, pageSize);
         
         return resPagedList;
     }

@@ -207,7 +207,7 @@ public class AlterTableIndex {
         
         if (this.targetIndex == null) {
             this.alterType = AlterTypeEnum.DROP;
-            this.needAlter = false;
+            this.needAlter = true;
             this.remark = "刪除索引:" + this.sourceIndex.getIndexName();
             return;
         }

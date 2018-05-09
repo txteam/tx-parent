@@ -6,17 +6,13 @@
  */
 package com.tx.core.support.entrysupport.support;
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.sql.DataSource;
 
-import org.apache.commons.collections.map.HashedMap;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.support.entrysupport.model.EntityEntry;
@@ -51,9 +47,13 @@ public class EntityEntrySupportFactory {
      */
     @SuppressWarnings("unchecked")
     public static <ENTRY extends EntityEntry> EntityEntrySupport<ENTRY> getSupport(
-            Class<ENTRY> type, String tableName, DataSource dataSource) {
+            Class<ENTRY> type, String tableName, DataSource dataSource,
+            TransactionTemplate transactionTemplate) {
         AssertUtils.notEmpty(tableName, "tableName is empty.");
         AssertUtils.notNull(type, "type is null.");
+        AssertUtils.notNull(dataSource, "dataSource is null.");
+        AssertUtils.notNull(transactionTemplate,
+                "transactionTemplate is null.");
         
         tableName = tableName.toLowerCase();//将表名toLowerCase
         
@@ -66,6 +66,7 @@ public class EntityEntrySupportFactory {
         
         synchronized (type2supportMap) {
             NamedParameterJdbcTemplate jdbcTemplate = null;
+            
             if (dataSource2namedParameterJdbcTemplateMap
                     .containsKey(dataSource)) {
                 jdbcTemplate = dataSource2namedParameterJdbcTemplateMap
@@ -78,46 +79,11 @@ public class EntityEntrySupportFactory {
                         jdbcTemplate);
             }
             
-            support = new EntityEntrySupport<>(type, tableName, jdbcTemplate);
-            //验证表是否存在，若不存在则创建表
-            Connection connection = null;
-            try {
-                connection = dataSource.getConnection();
-                DatabaseMetaData databaseMetaData = connection.getMetaData();
-                String dataBaseName = connection.getCatalog();
-                ResultSet rsTables = databaseMetaData.getTables(dataBaseName,
-                        null,
-                        tableName,
-                        new String[] { "TABLE" });
-                if (!rsTables.next()) {
-                    //创建表
-                    String CREATE_SQL_TEMPLATE = (new StringBuilder(
-                            "CREATE TABLE  ")).append(tableName )
-                                    .append(" ( id varchar(64) not null, ")
-                                    .append(" entityId varchar(64) not null,")
-                                    .append(" entryKey varchar(64) not null,")
-                                    .append(" entryValue varchar(256),")
-                                    .append("  primary key(id))")
-                                    .toString();
-                    
-                    Map<String, Object> params = new HashedMap();
-                    jdbcTemplate.update(CREATE_SQL_TEMPLATE, params);
-                }
-                
-            } catch (SQLException e) {
-                e.printStackTrace();
-            } finally {
-                if (connection != null) {
-                    try {
-                        connection.close();
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-            
+            support = new EntityEntrySupport<>(type, tableName, jdbcTemplate,
+                    transactionTemplate);
             type2supportMap.put(tableName, support);
         }
+        
         return support;
     }
     
@@ -131,12 +97,14 @@ public class EntityEntrySupportFactory {
      * @return EntityEntrySupport<ENTRY> [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
+     */
     public static EntityEntrySupport<EntityEntry> getSupport(String tableName,
-            DataSource dataSource) {
+            DataSource dataSource, TransactionTemplate transactionTemplate) {
         EntityEntrySupport<EntityEntry> support = getSupport(EntityEntry.class,
                 tableName,
-                dataSource);
+                dataSource,
+                transactionTemplate);
+        
         return support;
     }
 }

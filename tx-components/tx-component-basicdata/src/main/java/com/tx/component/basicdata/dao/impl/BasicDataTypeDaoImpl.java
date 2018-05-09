@@ -9,8 +9,6 @@ package com.tx.component.basicdata.dao.impl;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import com.tx.component.basicdata.dao.BasicDataTypeDao;
 import com.tx.component.basicdata.model.BasicDataType;
 import com.tx.core.mybatis.model.Order;
@@ -28,18 +26,26 @@ import com.tx.core.paged.model.PagedList;
  */
 public class BasicDataTypeDaoImpl implements BasicDataTypeDao {
     
-    @Resource(name = "basicdata.myBatisDaoSupport")
     private MyBatisDaoSupport myBatisDaoSupport;
+    
+    /** <默认构造函数> */
+    public BasicDataTypeDaoImpl() {
+        super();
+    }
+    
+    /** <默认构造函数> */
+    public BasicDataTypeDaoImpl(MyBatisDaoSupport myBatisDaoSupport) {
+        super();
+        this.myBatisDaoSupport = myBatisDaoSupport;
+    }
     
     /**
      * @param condition
      */
     @Override
     public void batchInsert(List<BasicDataType> condition) {
-        this.myBatisDaoSupport.batchInsertUseUUID("basicDataType.insertBasicDataType",
-                condition,
-                "id",
-                true);
+        this.myBatisDaoSupport.batchInsertUseUUID(
+                "basicDataType.insertBasicDataType", condition, "id", true);
     }
     
     /**
@@ -57,9 +63,8 @@ public class BasicDataTypeDaoImpl implements BasicDataTypeDao {
      */
     @Override
     public void insert(BasicDataType condition) {
-        this.myBatisDaoSupport.insertUseUUID("basicDataType.insertBasicDataType",
-                condition,
-                "id");
+        this.myBatisDaoSupport.insertUseUUID(
+                "basicDataType.insertBasicDataType", condition, "id");
     }
     
     /**
@@ -68,8 +73,8 @@ public class BasicDataTypeDaoImpl implements BasicDataTypeDao {
      */
     @Override
     public int delete(BasicDataType condition) {
-        return this.myBatisDaoSupport.delete("basicDataType.deleteBasicDataType",
-                condition);
+        return this.myBatisDaoSupport
+                .delete("basicDataType.deleteBasicDataType", condition);
     }
     
     /**
@@ -78,8 +83,8 @@ public class BasicDataTypeDaoImpl implements BasicDataTypeDao {
      */
     @Override
     public BasicDataType find(BasicDataType condition) {
-        return this.myBatisDaoSupport.<BasicDataType> find("basicDataType.findBasicDataType",
-                condition);
+        return this.myBatisDaoSupport.<BasicDataType> find(
+                "basicDataType.findBasicDataType", condition);
     }
     
     /**
@@ -88,8 +93,8 @@ public class BasicDataTypeDaoImpl implements BasicDataTypeDao {
      */
     @Override
     public List<BasicDataType> queryList(Map<String, Object> params) {
-        return this.myBatisDaoSupport.<BasicDataType> queryList("basicDataType.queryBasicDataType",
-                params);
+        return this.myBatisDaoSupport.<BasicDataType> queryList(
+                "basicDataType.queryBasicDataType", params);
     }
     
     /**
@@ -100,9 +105,8 @@ public class BasicDataTypeDaoImpl implements BasicDataTypeDao {
     @Override
     public List<BasicDataType> queryList(Map<String, Object> params,
             List<Order> orderList) {
-        return this.myBatisDaoSupport.<BasicDataType> queryList("basicDataType.queryBasicDataType",
-                params,
-                orderList);
+        return this.myBatisDaoSupport.<BasicDataType> queryList(
+                "basicDataType.queryBasicDataType", params, orderList);
     }
     
     /**
@@ -111,8 +115,8 @@ public class BasicDataTypeDaoImpl implements BasicDataTypeDao {
      */
     @Override
     public int count(Map<String, Object> params) {
-        return this.myBatisDaoSupport.<Integer> find("basicDataType.queryBasicDataTypeCount",
-                params);
+        return this.myBatisDaoSupport.<Integer> find(
+                "basicDataType.queryBasicDataTypeCount", params);
     }
     
     /**
@@ -124,7 +128,8 @@ public class BasicDataTypeDaoImpl implements BasicDataTypeDao {
     @Override
     public PagedList<BasicDataType> queryPagedList(Map<String, Object> params,
             int pageIndex, int pageSize) {
-        return this.myBatisDaoSupport.<BasicDataType> queryPagedList("basicDataType.queryBasicDataType",
+        return this.myBatisDaoSupport.<BasicDataType> queryPagedList(
+                "basicDataType.queryBasicDataType",
                 params,
                 pageIndex,
                 pageSize);
@@ -140,7 +145,8 @@ public class BasicDataTypeDaoImpl implements BasicDataTypeDao {
     @Override
     public PagedList<BasicDataType> queryPagedList(Map<String, Object> params,
             int pageIndex, int pageSize, List<Order> orderList) {
-        return this.myBatisDaoSupport.<BasicDataType> queryPagedList("basicDataType.queryBasicDataType",
+        return this.myBatisDaoSupport.<BasicDataType> queryPagedList(
+                "basicDataType.queryBasicDataType",
                 params,
                 pageIndex,
                 pageSize,
@@ -153,7 +159,7 @@ public class BasicDataTypeDaoImpl implements BasicDataTypeDao {
      */
     @Override
     public int update(Map<String, Object> updateRowMap) {
-        return this.myBatisDaoSupport.update("basicDataType.updateBasicDataType",
-                updateRowMap);
+        return this.myBatisDaoSupport
+                .update("basicDataType.updateBasicDataType", updateRowMap);
     }
 }

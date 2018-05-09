@@ -6,8 +6,6 @@
  */
 package com.tx.component.basicdata.dbscript;
 
-import javax.annotation.Resource;
-
 import org.springframework.beans.factory.InitializingBean;
 
 import com.tx.core.ddlutil.builder.DDLBuilder;
@@ -27,8 +25,18 @@ import com.tx.core.ddlutil.executor.TableDDLExecutor;
 public class BasicDataContextTableInitializer implements InitializingBean {
     
     /** 表DDL执行器 */
-    @Resource(name = "taskContext.tableDDLExecutor")
     protected TableDDLExecutor tableDDLExecutor;
+    
+    /** <默认构造函数> */
+    public BasicDataContextTableInitializer() {
+        super();
+    }
+    
+    /** <默认构造函数> */
+    public BasicDataContextTableInitializer(TableDDLExecutor tableDDLExecutor) {
+        super();
+        this.tableDDLExecutor = tableDDLExecutor;
+    }
     
     /**
      * @throws Exception
@@ -104,8 +112,8 @@ public class BasicDataContextTableInitializer implements InitializingBean {
             lastUpdateDate datetime not null default now(),
             primary key(id)
         );
-        create unique index idx_bd_basic_data_type_00 on bd_basic_data_type(type);
-        create index idx_bd_basic_data_type_01 on bd_basic_data_type(code);
+        create unique index idx_bd_basic_data_type_00 on bd_basic_data_type(type,module);
+        create index idx_bd_basic_data_type_01 on bd_basic_data_type(type,type);
         create index idx_bd_basic_data_type_02 on bd_basic_data_type(module);
         */
         ddlBuilder.newColumnOfVarchar(true, "id", 64, true, null)
@@ -121,8 +129,8 @@ public class BasicDataContextTableInitializer implements InitializingBean {
                 .newColumnOfVarchar("remark", 512, false, null)
                 .newColumnOfDate("lastUpdateDate", true, true)
                 .newColumnOfDate("createDate", true, true);
+        ddlBuilder.newIndex(true, "idx_code", "code,type");
         ddlBuilder.newIndex(true, "idx_type", "type");
-        ddlBuilder.newIndex(false, "idx_code", "code");
         ddlBuilder.newIndex(false, "idx_module", "module");
     }
     

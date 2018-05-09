@@ -10,8 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,7 +34,6 @@ public class DefaultBasicDataService<T extends BasicData>
         extends AbstractBasicDataService<T> {
     
     /** 数据字典业务层 */
-    @Resource(name = "basicdata.dataDictService")
     protected DataDictService dataDictService;
     /** 对应类型 */
     private Class<T> type;

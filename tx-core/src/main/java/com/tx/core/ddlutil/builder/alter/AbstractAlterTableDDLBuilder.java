@@ -445,10 +445,11 @@ public abstract class AbstractAlterTableDDLBuilder
                 continue;
             }
             
-            print(index.getTargetIndex().isUniqueKey() ? "   ADD INDEX "
-                    : "   ADD UNIQUE INDEX ");
+            print(index.getTargetIndex().isUniqueKey() ? "   ADD UNIQUE INDEX "
+                    : "   ADD INDEX ");
             print(index.getTargetIndex().getIndexName());
-            print(" ON ");
+            //print(" ON ");
+            print(" ");
             print("(");
             print(index.getTargetIndex().getColumnNames());
             print(")");
