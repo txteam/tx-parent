@@ -10,7 +10,7 @@ import java.util.Map;
 
 import com.tx.component.event.event.Event;
 import com.tx.component.event.event.EventCallbackHandler;
-import com.tx.component.event.event.impl.SimpleEvent;
+import com.tx.component.event.event.impl.EventImpl;
 import com.tx.component.event.listener.EventListener;
 import com.tx.component.event.listener.EventListenerHandler;
 import com.tx.component.event.listener.EventListenerScopeEnum;
@@ -115,7 +115,7 @@ public class EventContext extends EventContextBuilder {
     public void trigger(String eventType, Map<String, Object> params,
             EventCallbackHandler callback) {
         AssertUtils.notEmpty(eventType, "eventType is empty.");
-        Event event = new SimpleEvent(eventType, callback);
+        Event event = new EventImpl(eventType, callback);
         
         doTrigger(event, params);
     }

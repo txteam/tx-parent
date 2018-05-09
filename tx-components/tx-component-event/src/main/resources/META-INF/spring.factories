@@ -1,1 +1,1 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.tx.component.command.starter.CommandContextAutoConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.tx.component.event.starter.EventContextAutoConfiguration

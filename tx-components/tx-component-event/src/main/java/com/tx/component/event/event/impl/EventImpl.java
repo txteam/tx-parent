@@ -8,7 +8,6 @@ package com.tx.component.event.event.impl;
 
 import java.util.Map;
 
-import com.tx.component.event.event.Event;
 import com.tx.component.event.event.EventCallbackHandler;
 import com.tx.core.exceptions.util.AssertUtils;
 
@@ -21,7 +20,7 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class SimpleEvent implements Event {
+public class EventImpl extends AbstractEvent {
     
     /** 事件类型名 */
     private String type;
@@ -30,16 +29,20 @@ public class SimpleEvent implements Event {
     private EventCallbackHandler callback;
     
     /** <默认构造函数> */
-    public SimpleEvent(String type) {
+    public EventImpl() {
+        super();
+    }
+    
+    /** <默认构造函数> */
+    public EventImpl(String type) {
         super();
         this.type = type;
     }
     
     /** <默认构造函数> */
-    public SimpleEvent(String type, EventCallbackHandler callback) {
-        super();
-        this.type = type;
-        this.callback = callback;
+    public EventImpl(String type, EventCallbackHandler callback) {
+        super(type, callback);
+        // TODO Auto-generated constructor stub
     }
     
     /**
@@ -65,7 +68,7 @@ public class SimpleEvent implements Event {
      */
     @Override
     public void callback(Map<String, Object> params) {
-        if(this.callback != null){
+        if (this.callback != null) {
             this.callback.handle(params);
         }
     }

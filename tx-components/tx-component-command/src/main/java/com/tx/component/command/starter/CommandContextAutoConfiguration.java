@@ -15,7 +15,6 @@ import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -84,47 +83,50 @@ public class CommandContextAutoConfiguration
             this.transactionManager = this.applicationContext.getBean(
                     properties.getTransactionManager(),
                     PlatformTransactionManager.class);
+        } else {
+            this.transactionManager = this.applicationContext
+                    .getBean(PlatformTransactionManager.class);
         }
     }
     
-    /**
-     * 该类会优先加载<br/>
-     * <功能详细描述>
-     * 
-     * @author  Administrator
-     * @version  [版本号, 2018年5月5日]
-     * @see  [相关类/方法]
-     * @since  [产品/模块版本]
-     */
-    @Configuration
-    @ConditionalOnSingleCandidate(PlatformTransactionManager.class)
-    public static class TransactionTemplateConfiguration {
-        
-        private final PlatformTransactionManager txManager;
-        
-        public TransactionTemplateConfiguration(
-                PlatformTransactionManager transactionManager) {
-            this.txManager = transactionManager;
-        }
-        
-        /**
-         * 当命令容器不存在时<br/>
-         * <功能详细描述>
-         * @return [参数说明]
-         * 
-         * @return CommandContextFactory [返回类型说明]
-         * @exception throws [异常类型] [异常说明]
-         * @see [类、类#方法、类#成员]
-         */
-        @Bean("commandContext")
-        @ConditionalOnMissingBean(CommandContext.class)
-        public CommandContextFactory commandContext() {
-            CommandContextFactory factory = new CommandContextFactory();
-            factory.setTxManager(this.txManager);
-            
-            return factory;
-        }
-    }
+    //    /**
+    //     * 该类会优先加载<br/>
+    //     * <功能详细描述>
+    //     * 
+    //     * @author  Administrator
+    //     * @version  [版本号, 2018年5月5日]
+    //     * @see  [相关类/方法]
+    //     * @since  [产品/模块版本]
+    //     */
+    //    @Configuration
+    //    @ConditionalOnSingleCandidate(PlatformTransactionManager.class)
+    //    public static class CommandContextOnSingleConfiguration {
+    //        
+    //        private final PlatformTransactionManager txManager;
+    //        
+    //        public CommandContextOnSingleConfiguration(
+    //                PlatformTransactionManager transactionManager) {
+    //            this.txManager = transactionManager;
+    //        }
+    //        
+    //        /**
+    //         * 当命令容器不存在时<br/>
+    //         * <功能详细描述>
+    //         * @return [参数说明]
+    //         * 
+    //         * @return CommandContextFactory [返回类型说明]
+    //         * @exception throws [异常类型] [异常说明]
+    //         * @see [类、类#方法、类#成员]
+    //         */
+    //        @Bean("commandContext")
+    //        @ConditionalOnMissingBean(CommandContext.class)
+    //        public CommandContextFactory commandContext() {
+    //            CommandContextFactory factory = new CommandContextFactory();
+    //            factory.setTxManager(this.txManager);
+    //            
+    //            return factory;
+    //        }
+    //    }
     
     /**
      * 当命令容器不存在时<br/>

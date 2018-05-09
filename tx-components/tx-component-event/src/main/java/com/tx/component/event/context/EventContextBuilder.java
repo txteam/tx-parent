@@ -102,7 +102,6 @@ public class EventContextBuilder extends EventContextConfigurator {
             //TODO:根据配置判断，在不存在对应事件支持类的情况时是否应当抛出异常
             return;
         }
-        
         EventListenerSupport support = eventListenerSupportMap.get(event.type());
         
         //执行事件触发逻辑

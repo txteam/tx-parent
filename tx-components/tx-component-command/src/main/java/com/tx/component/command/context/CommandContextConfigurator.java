@@ -70,6 +70,8 @@ public class CommandContextConfigurator
      */
     @Override
     public void afterPropertiesSet() throws Exception {
+        logger.info("命令调度容器开始构建: ......");
+        
         AssertUtils.notNull(this.transactionManager, "transactionManager is null.");
         
         this.transactionTemplate = new TransactionTemplate(this.transactionManager,
@@ -81,6 +83,8 @@ public class CommandContextConfigurator
         
         //初始化容器
         doInitContext();
+        
+        logger.info("命令调度容器构建完成: ......");
     }
     
     /**
