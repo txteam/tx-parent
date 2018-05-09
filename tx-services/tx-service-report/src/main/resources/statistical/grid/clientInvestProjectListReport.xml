@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<report
+        xmlns="http://wtms.com/xml/statistical-1.0.xsd"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://wtms.com/xml/statistical-1.0.xsd"
+        code="clientInvestProjectListReport" type="pagedListGrid" name="用户投资列表"
+>
+
+
+    <!-- 设计考虑根据report可以生成对应的页面：考虑技术：freemarker -->
+    <!-- sql解析：利用Mybatis进行支撑：该支撑后期我来支撑，需要升级Mybatis -> 3.4 版本，现在tx-parent有兼容问题 -->
+    <!-- report.type 要求能够通过实现接口进行扩展 -->
+    <!-- report.conditions.item.type 要求能够通过实现接口进行扩展 -->
+    <!-- report.views.item.type 要求能够通过实现接口进行扩展 -->
+
+    <!-- code:必填：值不能重复 -->
+    <!-- type:非必填：默认值为pagedListGrid 其他支持类型：listGrid|pagedListGrid 要求该类型支撑线性扩展1111 -->
+    <!-- name:非必填：如果为空取code值 -->
+
+    <!-- 页面附加的javascript:非必填 -->
+    <script></script>
+
+    <!-- cols：非必填： 默认为2 如果条件项小于3，则自动修改对应值，如果为3的倍数，则为3，如果为2的倍数则为2 -->
+    <conditions cols="3">
+        <!-- type:非必填： 默认为input 可选值:input|input_datetime|input_date  :预制类型要求能够扩展，如果没有预制的允许通过js等进行支撑 -->
+        <!-- class:非必填：默认为text -->
+        <!-- default:非必填：默认填写值 -->
+        <!-- readOnly:非必填：默认为false -->
+        <item id="clientId" name="投资月份" type="input" readOnly="true"
+              onClick="WdatePicker({readOnly:true,dateFmt:'yyyy-MM' })"/>
+        <item id="assetSum" name="开始时间" type="input_date"/>
+        <item id="maxInvestDate" name="结束时间" type="input_date"/>
+
+        <!--<item id="mobilePhoneNumber" name="手机号码" type="input"/>-->
+        <item id="investProjectProductName" name="投资产品名称2" type="select"
+              sqlMapperId="clientInvestProjectListReport.queryProductList" labelName="name" labelValue="code"/>
+        <item id="investProjectProductName" name="投资产品名称" type="select" items="{A:产品A},{B:产品B}"/>
+        <item id="investProductId" name="时间" type="select" enumClass="com.tx.component.basicdata.model.TimeUnitTypeEnum"
+              labelName="name"/>
+
+        <!--		<item id="investProductId" name="投资产品名称" type="select" datasource="" lableName="" lableValue=""/>
+                <item id="investProductStatus" name="投资产品名称" type="select" items=""/>-->
+    </conditions>
+
+    <!-- fitColumns:非必填，默认值为false -->
+    <views fitColumns="false" sqlMapperId="queryInvestProject">
+        <!-- formatter: -->
+        <!-- width:非必填：默认值为 150 -->
+        <!-- hidden:非必填：false -->
+        <!-- frozen:非必填：false -->
+        <item column="clientId" name="客户id"/>
+        <item column="loginName" name="登录名" statisticalType="count"/>
+        <item column="userName" name="用户名" statisticalType="count"/>
+        <item column="assetSum" name="资产总额" statisticalType="sum" type="number"/>
+        <item column="availableSum" name="可用资金" statisticalType="sum" type="number"/>
+        <item column="sum" name="资金" statisticalType="sum" type="number"/>
+    </views>
+
+    <sqlMappers>
+        <!-- datebaseId:非必填: 如果不填则databaseId为默认值 -->
+        <sqlMapper id="queryInvestProject">
+            SELECT
+            cca.clientId,
+            cca.assetSum,
+            cca.availableSum,
+            abs(cca.sum) as sum,
+            cl.userName,
+            cl.loginName
+            FROM
+            cla_client_account cca
+            JOIN cl_baseclientinfo cl ON cca.clientId = cl.id
+            where 1 = 1
+            <!--<trim prefixOverrides="AND | OR">-->
+            <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(userName)">
+                <![CDATA[ AND  cl.userName  like concat('%', #{userName} ,'%' ) ]]>
+            </if>
+
+            <!--</trim>-->
+        </sqlMapper>
+
+        <datasource id="queryProductList">
+            select name,code from pro_product
+        </datasource>
+
+    </sqlMappers>
+
+
+</report>
+
+

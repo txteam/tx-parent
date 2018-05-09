@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+		<report
+				xmlns="http://wtms.com/xml/statistical-1.0.xsd"
+                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                xsi:schemaLocation="http://wtms.com/xml/statistical-1.0.xsd"
+		code="rechargeDetailReport" type="pagedListGrid"  name="充值明细报表"
+		>
+
+
+<!-- 设计考虑根据report可以生成对应的页面：考虑技术：freemarker -->
+<!-- sql解析：利用Mybatis进行支撑：该支撑后期我来支撑，需要升级Mybatis -> 3.4 版本，现在tx-parent有兼容问题 -->
+<!-- report.type 要求能够通过实现接口进行扩展 -->
+<!-- report.conditions.item.type 要求能够通过实现接口进行扩展 -->
+<!-- report.views.item.type 要求能够通过实现接口进行扩展 -->
+
+<!-- code:必填：值不能重复 -->
+<!-- type:非必填：默认值为pagedListGrid 其他支持类型：listGrid|pagedListGrid 要求该类型支撑线性扩展1111 -->
+<!-- name:非必填：如果为空取code值 -->
+
+	<!-- 页面附加的javascript:非必填 -->
+	<script></script>
+
+	<!-- cols：非必填： 默认为2 如果条件项小于3，则自动修改对应值，如果为3的倍数，则为3，如果为2的倍数则为2 -->
+	<conditions cols="2">
+		<item id="clientName" name="客户名称" value="" type="input"/>
+		<item id="clientLoginName" name="客户登陆名称" value="" type="input"/>
+		<item id="paymentChannel" name="交易渠道" type="select"
+			  enumClass="com.tx.component.basicdata.model.PaymentChannelEnum"
+			  labelName="name" items="{:====全部====}"/>
+		<item cssClass="Wdate" name="开始时间" id="minCreateDate"
+			   type="input_date"
+			  cssStyle="width:38%"/>
+
+		<item cssClass="Wdate" name="结束时间"  type="input_date"
+			  id="maxCreateDate"
+			  cssStyle="width:38%"/>
+
+
+
+	</conditions>
+	
+	<!-- fitColumns:非必填，默认值为false -->
+	<views fitColumns="false" sqlMapperId="queryTradingSummaryReport" >
+		<!-- formatter: -->
+		<!-- width:非必填：默认值为 150 -->
+		<!-- hidden:非必填：false -->
+		<!-- frozen:非必填：false -->
+		<item column="clientname" name="客户名称" />
+		<item column="mobilePhoneNumber" name="电话号码" />
+		<item column="clientloginname" name="客户登陆名"   />
+		<item column="paymentchannel" name="交易渠道"  type="enum" enumClass="com.tx.component.basicdata.model.PaymentChannelEnum" refValue="name" />
+        <item column="beforeSum" name="交易前金额"/>
+		<item column="sum" name="成交金额"   type="number" statisticalType="sum"/>
+        <item column="afterSum" name="交易后金额"  type="number" />
+        <item column="status" name="状态" type="enum" enumClass="com.tx.local.clientaccount.model.RechargeStatusEnum" refValue="name"   />
+        <item column="serialnumber" name="流水号"   />
+		<item column="type" name="类型" type="enum" enumClass="com.tx.local.clientaccount.model.RechargeTypeEnum" refValue="name"    />
+		<item column="createdate" name="创建时间" type="date"      />
+	</views>
+
+	<sqlMappers >
+		<!-- datebaseId:非必填: 如果不填则databaseId为默认值 -->
+		<sqlMapper id="queryTradingSummaryReport" >
+			<![CDATA[
+			SELECT
+			trr.id,
+			trr.paymentorderid,
+			trr.clientaccountitemid,
+			trr.paymentchannel,
+			trr.clientaccountid,
+			trr.clientid,
+			TRR.finishTradingRecordSN,
+			TRR.afterSum,
+			trr.sum,
+			trr.beforeSum,
+			trr.createdate,
+			trr.remark,
+			trr.serialnumber,
+			trr. status,
+			trr.type,
+			cbci.username as clientname,
+			cbci.mobilePhoneNumber as mobilePhoneNumber,
+			cbci.loginname as clientloginname
+			FROM
+			cla_recharge_record TRR
+			LEFT JOIN cl_client_info CBCI ON CBCI.ID = TRR.CLIENTID
+			WHERE 1 =1
+			]]>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(clientName)">
+				<![CDATA[ AND CBCI.USERNAME like concat('%', #{clientName} ,'%' ) ]]>
+			</if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(clientLoginName)">
+				<![CDATA[ AND CBCI.LOGINNAME like concat('%', #{clientLoginName} ,'%' ) ]]>
+			</if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(maxCreateDate)">
+				<![CDATA[ AND TRR.CREATEDATE <  DATE_ADD(#{maxCreateDate},INTERVAL 1 DAY)  ]]>
+			</if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(minCreateDate)">
+				<![CDATA[ AND TRR.CREATEDATE >= #{minCreateDate,jdbcType=TIMESTAMP} ]]>
+			</if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(paymentChannel)">
+				<![CDATA[ AND TRR.paymentchannel = #{paymentChannel,jdbcType=VARCHAR} ]]>
+			</if>
+			ORDER BY TRR.CREATEDATE DESC
+		</sqlMapper>
+
+
+
+	</sqlMappers>
+
+
+
+</report>
+
+

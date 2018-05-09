@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+		<report
+				xmlns="http://wtms.com/xml/statistical-1.0.xsd"
+                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                xsi:schemaLocation="http://wtms.com/xml/statistical-1.0.xsd"
+		code="waitSettleByDateChartReport" type="EChart"  name="待结算图表" subType="Line" >
+
+	<!-- 页面附加的javascript:非必填 -->
+	<script></script>
+
+	<!-- cols：非必填： 默认为2 如果条件项小于3，则自动修改对应值，如果为3的倍数，则为3，如果为2的倍数则为2 -->
+	<conditions cols="3">
+
+	</conditions>
+	<views fitColumns="false" sqlMapperId="queryCashoutChart" />
+	<!--<echart sqlMapperId="queryCashoutChart" ></echart>-->
+	<sqlMappers >
+		<!-- datebaseId:非必填: 如果不填则databaseId为默认值 -->
+		<sqlMapper id="queryCashoutChart" datasourceId="">
+			SELECT
+			DATE_FORMAT(
+			TIAID.nextSettleDate,
+			'%Y-%m-%d'
+			) AS `NAME`,
+			sum(TIAID.waitReceiveAmount) AS `VALUE`
+
+			FROM
+			IA_INVEST_ACCOUNT_ITEM TIAID
+			LEFT JOIN cl_client_info cl ON TIAID.clientId = cl.id
+			LEFT JOIN inv_invest_project p ON TIAID.investProjectId = p.id
+			WHERE
+			TIAID. STATUS = 'AC'
+			GROUP BY
+			DATE_FORMAT(
+			TIAID.nextSettleDate,
+			'%Y-%m-%d'
+			)
+		</sqlMapper>
+	</sqlMappers>
+
+
+
+</report>
+
+
