@@ -92,12 +92,6 @@ public class BasicDataContextAutoConfiguration
     /** cacheManager */
     protected CacheManager cacheManager;
     
-    /** 单例对象注册方法 */
-    protected SingletonBeanRegistry singletonBeanRegistry;
-    
-    /** Bean定义注册机 */
-    protected BeanDefinitionRegistry beanDefinitionRegistry;
-    
     /** <默认构造函数> */
     public BasicDataContextAutoConfiguration(
             BasicDataContextProperties properties) {
@@ -115,46 +109,46 @@ public class BasicDataContextAutoConfiguration
         this.applicationContext = applicationContext;
     }
     
-    /**
-     * @param beanFactory
-     * @throws BeansException
-     */
-    @Override
-    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-        AssertUtils.isInstanceOf(BeanDefinitionRegistry.class,
-                beanFactory,
-                "beanFactory is not BeanDefinitionRegistry instance.");
-        this.beanDefinitionRegistry = (BeanDefinitionRegistry) beanFactory;
-        
-        AssertUtils.isInstanceOf(SingletonBeanRegistry.class,
-                beanFactory,
-                "beanFactory is not SingletonBeanRegistry instance.");
-        this.singletonBeanRegistry = (SingletonBeanRegistry) beanFactory;
-    }
-    
-    /**
-     * @desc 向spring容器注册BeanDefinition
-     * @param beanName
-     * @param beanDefinition
-     */
-    protected void registerBeanDefinition(String beanName,
-            BeanDefinition beanDefinition) {
-        if (!this.beanDefinitionRegistry.containsBeanDefinition(beanName)) {
-            this.beanDefinitionRegistry.registerBeanDefinition(beanName,
-                    beanDefinition);
-        }
-    }
-    
-    /**
-     * @desc 向spring容器注册bean
-     * @param beanName
-     * @param beanDefinition
-     */
-    protected void registerSingletonBean(String beanName, Object bean) {
-        if (!this.singletonBeanRegistry.containsSingleton(beanName)) {
-            this.singletonBeanRegistry.registerSingleton(beanName, bean);
-        }
-    }
+    //    /**
+    //     * @param beanFactory
+    //     * @throws BeansException
+    //     */
+    //    @Override
+    //    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+    //        AssertUtils.isInstanceOf(BeanDefinitionRegistry.class,
+    //                beanFactory,
+    //                "beanFactory is not BeanDefinitionRegistry instance.");
+    //        this.beanDefinitionRegistry = (BeanDefinitionRegistry) beanFactory;
+    //        
+    //        AssertUtils.isInstanceOf(SingletonBeanRegistry.class,
+    //                beanFactory,
+    //                "beanFactory is not SingletonBeanRegistry instance.");
+    //        this.singletonBeanRegistry = (SingletonBeanRegistry) beanFactory;
+    //    }
+    //    
+    //    /**
+    //     * @desc 向spring容器注册BeanDefinition
+    //     * @param beanName
+    //     * @param beanDefinition
+    //     */
+    //    protected void registerBeanDefinition(String beanName,
+    //            BeanDefinition beanDefinition) {
+    //        if (!this.beanDefinitionRegistry.containsBeanDefinition(beanName)) {
+    //            this.beanDefinitionRegistry.registerBeanDefinition(beanName,
+    //                    beanDefinition);
+    //        }
+    //    }
+    //    
+    //    /**
+    //     * @desc 向spring容器注册bean
+    //     * @param beanName
+    //     * @param beanDefinition
+    //     */
+    //    protected void registerSingletonBean(String beanName, Object bean) {
+    //        if (!this.singletonBeanRegistry.containsSingleton(beanName)) {
+    //            this.singletonBeanRegistry.registerSingleton(beanName, bean);
+    //        }
+    //    }
     
     /**
      * @throws Exception
@@ -202,12 +196,9 @@ public class BasicDataContextAutoConfiguration
             this.packages = this.properties.getBasePackages();
         }
         
-        registerSingletonBean("basicdata.cacheManager", this.cacheManager);
-        registerSingletonBean("basicdata.dataSource", this.dataSource);
-        registerSingletonBean("basicdata.transactionManager",
-                this.transactionManager);
-        registerSingletonBean("basicdata.transactionTemplate",
-                this.transactionTemplate);
+        //        registerSingletonBean("basicdata.dataSource", this.dataSource);
+        //        registerSingletonBean("basicdata.transactionTemplate",
+        //                this.transactionTemplate);
     }
     
     /**
@@ -302,9 +293,10 @@ public class BasicDataContextAutoConfiguration
     */
     @Bean(name = "basicdata.basicDataServiceSupportCacheProxyCreator")
     public BasicDataServiceSupportCacheProxyCreator basicDataServiceSupportCacheProxyCreator() {
-        BasicDataServiceSupportCacheProxyCreator processor = new BasicDataServiceSupportCacheProxyCreator();
+        BasicDataServiceSupportCacheProxyCreator creator = new BasicDataServiceSupportCacheProxyCreator(
+                this.cacheManager);
         
-        return processor;
+        return creator;
     }
     
     /**

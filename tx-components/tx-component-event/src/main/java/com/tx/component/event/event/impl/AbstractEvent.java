@@ -21,7 +21,7 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class BaseEvent implements Event {
+public abstract class AbstractEvent implements Event {
     
     /** 事件类型名 */
     private String type;
@@ -30,19 +30,19 @@ public class BaseEvent implements Event {
     private EventCallbackHandler callback;
     
     /** <默认构造函数> */
-    public BaseEvent() {
+    public AbstractEvent() {
         super();
         this.type = this.getClass().getName();
     }
     
     /** <默认构造函数> */
-    public BaseEvent(String type) {
+    public AbstractEvent(String type) {
         super();
         this.type = type;
     }
     
     /** <默认构造函数> */
-    public BaseEvent(String type, EventCallbackHandler callback) {
+    public AbstractEvent(String type, EventCallbackHandler callback) {
         super();
         this.type = type;
         this.callback = callback;
@@ -71,7 +71,7 @@ public class BaseEvent implements Event {
      */
     @Override
     public void callback(Map<String, Object> params) {
-        if(this.callback != null){
+        if (this.callback != null) {
             this.callback.handle(params);
         }
     }

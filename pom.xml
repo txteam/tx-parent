@@ -1,6 +1,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
+	<!-- 作为tx-parent 的微服务基础框架： 考虑到：项目进度，以及前期系统搭建的技术债务问题 多数据源，以及多数据源事务，跨库的公共能力协调 数据一致性问题，在该版本中不作太多的设计调整 考虑后台公库，待后期业务需要再进行系统框架演进即可 -->
+
 	<!-- relativePath元素中的地址–本地仓库–远程仓库 设定一个空值将始终从仓库中获取，不从本地路径获取 -->
 	<!-- 依赖于spring-boot-dependencies，如果升级改版本，需要根据官方依赖修改properties -->
 	<parent>
@@ -198,7 +200,11 @@
 				<artifactId>tx-component-auth</artifactId>
 				<version>${tx.version}</version>
 			</dependency>
-
+			<dependency>
+				<groupId>com.tx</groupId>
+				<artifactId>tx-component-event</artifactId>
+				<version>${tx.version}</version>
+			</dependency>
 			<dependency>
 				<groupId>com.tx</groupId>
 				<artifactId>tx-component-communication</artifactId>

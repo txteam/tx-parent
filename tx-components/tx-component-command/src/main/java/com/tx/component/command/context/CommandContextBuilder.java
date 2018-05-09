@@ -53,8 +53,6 @@ public class CommandContextBuilder extends CommandContextConfigurator {
      */
     @Override
     protected void doBuild() {
-        logger.info("命令调度容器开始构建: ......");
-        
         //加载容器中存在的Support
         logger.info("   开始加载操作接收器支撑处理器......");
         this.rawType2supportMap.putAll(loadRawType2SupportMap());
@@ -78,8 +76,6 @@ public class CommandContextBuilder extends CommandContextConfigurator {
         logger.info("   开始加选择器......");
         this.receiverSelectorList.addAll(loadReceiverSelectors());
         Collections.sort(this.receiverSelectorList, OrderComparator.INSTANCE);
-        
-        logger.info("命令调度容器构建完成: ......");
     }
     
     /**

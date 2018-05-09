@@ -6,8 +6,6 @@
  */
 package com.tx.component.basicdata.context;
 
-import javax.annotation.Resource;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.aop.TargetSource;
 import org.springframework.aop.framework.ProxyFactory;
@@ -18,7 +16,7 @@ import org.springframework.cache.CacheManager;
 import com.tx.core.spring.interceptor.ServiceSupportCacheInterceptor;
 
 /**
- * 基础数据业务层环绕
+ * 基础数据业务层环绕<br/>
  * <功能详细描述>
  * 
  * @author  Administrator
@@ -32,7 +30,7 @@ public class BasicDataServiceSupportCacheProxyCreator extends
     /** 注释内容 */
     private static final long serialVersionUID = 2087861805320061268L;
     
-    @Resource(name = "basicdata.cacheManager")
+    /** 缓存manager */
     private CacheManager cacheManager;
     
     /** <默认构造函数> */
@@ -40,6 +38,12 @@ public class BasicDataServiceSupportCacheProxyCreator extends
         super();
     }
     
+    /** <默认构造函数> */
+    public BasicDataServiceSupportCacheProxyCreator(CacheManager cacheManager) {
+        super();
+        this.cacheManager = cacheManager;
+    }
+
     /**
      * @param beanClass
      * @param beanName
