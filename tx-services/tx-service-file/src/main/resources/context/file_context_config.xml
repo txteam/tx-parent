@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<file_context_config>
+	<file_module_config>
+		<file_module module="content">
+			<permission>PRIVATE</permission>
+			<driver>systemfile:{path:"/home/share/wtp/upload/indexconfig"}</driver>
+		</file_module>
+		<file_module module="clientinfo">
+			<permission>PRIVATE</permission>
+			<driver>systemfile:{path:"/home/share/wtp/upload/indexconfig"}</driver>
+		</file_module>
+		<file_module module="basicdata">
+			<permission>PRIVATE</permission>
+			<driver>systemfile:{path:"/home/share/wtp/upload/indexconfig"}</driver>
+		</file_module>
+		<file_module module="institution">
+			<permission>PRIVATE</permission>
+			<driver>systemfile:{path:"/home/share/wtp/upload/indexconfig"}</driver>
+		</file_module>
+		<file_module module="wtweb">
+			<permission>PRIVATE</permission>
+			<driver>systemfile:{path:"/home/share/wtp/upload/indexconfig"}</driver>
+		</file_module>				
+		<!--<file_module module="clientinfo">-->
+			<!--<permission>PUBLIC_READ</permission>-->
+			<!--<driver>ossfile:{accessDomain:"http://clientinfo.oss-cn-shenzhen.aliyuncs.com",endpoint:"http://oss-cn-shenzhen.aliyuncs.com",accessKeyId:"LTAIqiYuWr9WAkWa",secretAccessKey:"e4tyMfOU9IGiiDwWlc6gidT8siQek1",bucketName:"clientinfo"}</driver>-->
+		<!--</file_module>-->
+		<!--<file_module module="basicdata">-->
+			<!--<permission>PUBLIC_READ</permission>-->
+			<!--<driver>ossfile:{accessDomain:"http://basicdata.oss-cn-shenzhen.aliyuncs.com",endpoint:"http://oss-cn-shenzhen.aliyuncs.com",accessKeyId:"LTAIqiYuWr9WAkWa",secretAccessKey:"e4tyMfOU9IGiiDwWlc6gidT8siQek1",bucketName:"basicdata"}</driver>-->
+		<!--</file_module>-->
+	</file_module_config>
+</file_context_config>

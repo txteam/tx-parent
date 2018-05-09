@@ -66,14 +66,14 @@
 //            bos.close();
 //            
 //            if (tmpFile.length() > maxSize) {
-//                tmpFile.delete();
+//                tmpFile.deleteFileDefinition();
 //                return new BaseState(false, AppInfo.MAX_SIZE);
 //            }
 //            
 //            state = saveTmpFile(tmpFile, path);
 //            
 //            if (!state.isSuccess()) {
-//                tmpFile.delete();
+//                tmpFile.deleteFileDefinition();
 //            }
 //            
 //            return state;
@@ -106,7 +106,7 @@
 //            state = saveTmpFile(tmpFile, path);
 //            
 //            if (!state.isSuccess()) {
-//                tmpFile.delete();
+//                tmpFile.deleteFileDefinition();
 //            }
 //            
 //            return state;
