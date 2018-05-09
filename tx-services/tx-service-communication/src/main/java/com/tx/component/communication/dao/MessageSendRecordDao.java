@@ -96,8 +96,8 @@ public interface MessageSendRecordDao {
       * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public List<MessageSendRecord> queryMessageSendRecord(Map<String, Object> params,
-                                                          List<Order> orderList);
+//    public List<MessageSendRecord> queryMessageSendRecord(Map<String, Object> params,
+//                                                          List<Order> orderList);
     
     /**
       * 根据条件查询MessageSendRecord列表总数
@@ -110,42 +110,11 @@ public interface MessageSendRecordDao {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public int countMessageSendRecord(Map<String, Object> params);
+    public int queryMessageSendRecordCount(Map<String, Object> params);
     
-    /**
-      * 分页查询MessageSendRecord列表
-      * auto generate
-      * <功能详细描述>
-      * @param params
-      * @param pageIndex
-      * @param pageSize
-      * @return [参数说明]
-      * 
-      * @return PagedList<MessageSendRecord> [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    //auto generate
-//    public Page<MessageSendRecord> queryMessageSendRecordPagedList(Map<String, Object> params);
+
     
-    /**
-      * 分页查询MessageSendRecord列表，传入排序字段
-      * auto generate
-      * <功能详细描述>
-      * @param params
-      * @param pageIndex
-      * @param pageSize
-      * @param orderList
-      * @return [参数说明]
-      * 
-      * @return PagedList<MessageSendRecord> [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    //auto generate
-    public PagedList<MessageSendRecord> queryMessageSendRecordPagedList(Map<String, Object> params,
-                                                                        int pageIndex, int pageSize, List<Order> orderList);
-    
+
     
     /**
       * 更新MessageSendRecord实体，

@@ -193,7 +193,7 @@ public class MessageSendRecordService {
         params.put("excludeId", excludeId);
 
         //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
-        int res = this.messageSendRecordDao.countMessageSendRecord(params);
+        int res = this.messageSendRecordDao.queryMessageSendRecordCount(params);
 
         return res > 0;
     }
