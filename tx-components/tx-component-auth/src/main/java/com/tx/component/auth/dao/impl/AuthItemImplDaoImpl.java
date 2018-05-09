@@ -4,7 +4,7 @@
  * 修改时间:  
  * <修改描述:>
  */
-package com.tx.component.auth.persister.dao.impl;
+package com.tx.component.auth.dao.impl;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -21,8 +21,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 
-import com.tx.component.auth.model.AuthItemImpl;
-import com.tx.component.auth.persister.dao.AuthItemImplDao;
+import com.tx.component.auth.dao.AuthItemImplDao;
+import com.tx.component.auth.model.AuthItem;
 import com.tx.core.TxConstants;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.util.ObjectUtils;
@@ -72,7 +72,7 @@ public class AuthItemImplDaoImpl implements AuthItemImplDao {
      * @param condition
      */
     @Override
-    public void insertAuthItemImpl(final AuthItemImpl condition,
+    public void insertAuthItemImpl(final AuthItem condition,
             String tableSuffix) {
         StringBuilder sb = new StringBuilder(TxConstants.INITIAL_STR_LENGTH);
         sb.append("INSERT INTO AUTH_AUTHITEM").append(tableSuffix).append("(");
@@ -120,7 +120,7 @@ public class AuthItemImplDaoImpl implements AuthItemImplDao {
      * @return
      */
     @Override
-    public int deleteAuthItemImpl(final AuthItemImpl condition,
+    public int deleteAuthItemImpl(final AuthItem condition,
             String tableSuffix) {
         StringBuilder sb = new StringBuilder(TxConstants.INITIAL_STR_LENGTH);
         sb.append("DELETE FROM AUTH_AUTHITEM").append(tableSuffix);
@@ -147,7 +147,7 @@ public class AuthItemImplDaoImpl implements AuthItemImplDao {
      * @return
      */
     @Override
-    public AuthItemImpl findAuthItemImpl(AuthItemImpl condition,
+    public AuthItem findAuthItemImpl(AuthItem condition,
             String tableSuffix) {
         StringBuilder sb = new StringBuilder(TxConstants.INITIAL_STR_LENGTH);
         sb.append("SELECT ");
@@ -165,8 +165,8 @@ public class AuthItemImplDaoImpl implements AuthItemImplDao {
         sb.append(" FROM AUTH_AUTHITEM").append(tableSuffix).append(" TAII");
         sb.append(" WHERE TAII.ID = ? AND TAII.SYSTEMID = ?");
         
-        List<AuthItemImpl> authItemList = this.jdbcTemplate.query(sb.toString(), new Object[] { condition.getId(), condition.getSystemId() },authItemRowMapper);
-        AuthItemImpl res = DataAccessUtils.singleResult(authItemList);
+        List<AuthItem> authItemList = this.jdbcTemplate.query(sb.toString(), new Object[] { condition.getId(), condition.getSystemId() },authItemRowMapper);
+        AuthItem res = DataAccessUtils.singleResult(authItemList);
         return res;
     }
     
@@ -175,7 +175,7 @@ public class AuthItemImplDaoImpl implements AuthItemImplDao {
      * @return
      */
     @Override
-    public List<AuthItemImpl> queryAuthItemImplList(
+    public List<AuthItem> queryAuthItemImplList(
             final Map<String, Object> params, String tableSuffix) {
         StringBuilder sb = new StringBuilder(TxConstants.INITIAL_STR_LENGTH);
         sb.append("SELECT ");
@@ -226,7 +226,7 @@ public class AuthItemImplDaoImpl implements AuthItemImplDao {
             sb.append(" WHERE ").append(conditionSb.substring(4));
         }
         
-        List<AuthItemImpl> resList = this.jdbcTemplate.query(sb.toString(),
+        List<AuthItem> resList = this.jdbcTemplate.query(sb.toString(),
                 new PreparedStatementSetter() {
                     
                     @Override
@@ -365,11 +365,11 @@ public class AuthItemImplDaoImpl implements AuthItemImplDao {
         return resInt;
     }
     
-    private static RowMapper<AuthItemImpl> authItemRowMapper = new RowMapper<AuthItemImpl>() {
+    private static RowMapper<AuthItem> authItemRowMapper = new RowMapper<AuthItem>() {
         @Override
-        public AuthItemImpl mapRow(ResultSet rs, int rowNum)
+        public AuthItem mapRow(ResultSet rs, int rowNum)
                 throws SQLException {
-            AuthItemImpl res = new AuthItemImpl();
+            AuthItem res = new AuthItem();
             res.setId(rs.getString("ID"));
             res.setRefId(rs.getString("REFID"));
             res.setRefType(rs.getString("REFTYPE"));

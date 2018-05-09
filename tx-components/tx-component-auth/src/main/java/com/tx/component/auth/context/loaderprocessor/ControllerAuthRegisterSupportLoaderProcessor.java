@@ -29,8 +29,8 @@ import com.tx.component.auth.annotation.CheckOperateAuth;
 import com.tx.component.auth.context.AuthItemLoaderProcessor;
 import com.tx.component.auth.context.AuthTypeItemContext;
 import com.tx.component.auth.exceptions.AuthContextInitException;
+import com.tx.component.auth.model.Auth;
 import com.tx.component.auth.model.AuthItem;
-import com.tx.component.auth.model.AuthItemImpl;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.util.ClassScanUtils;
 import com.tx.core.util.MessageUtils;
@@ -50,10 +50,10 @@ public class ControllerAuthRegisterSupportLoaderProcessor implements
     private static final String CONTROLLER_AUTH_LOAD = "controller_auth_load";
     
     /** 存放controller中权限项映射 */
-    private static final MultiValueMap<String, AuthItem> parentId2authItemMap = new LinkedMultiValueMap<String, AuthItem>();
+    private static final MultiValueMap<String, Auth> parentId2authItemMap = new LinkedMultiValueMap<String, Auth>();
     
     /** 存放controller中权限项映射 */
-    private static final Map<String, AuthItem> id2authItemMap = new HashMap<String, AuthItem>();
+    private static final Map<String, Auth> id2authItemMap = new HashMap<String, Auth>();
     
     /** 如果某权限设置了controller的权限加载时，不存在时是否抛出异常 */
     private boolean throwExceptionWhenNotExist = false;
@@ -75,7 +75,7 @@ public class ControllerAuthRegisterSupportLoaderProcessor implements
         
         for (Class<?> controllerClassTemp : controllerClasses) {
             //根据controller class加载权限
-            AuthItemImpl beanAuthItem = null;
+            AuthItem beanAuthItem = null;
             if (controllerClassTemp.isAnnotationPresent(CheckOperateAuth.class)) {
                 beanAuthItem = buildAuthItem(ClassUtils.getShortClassName(controllerClassTemp),
                         "",
@@ -97,7 +97,7 @@ public class ControllerAuthRegisterSupportLoaderProcessor implements
                     continue;
                 }
                 
-                AuthItemImpl methodAuthItem = buildAuthItem(ClassUtils.getShortClassName(controllerClassTemp.getClass()),
+                AuthItem methodAuthItem = buildAuthItem(ClassUtils.getShortClassName(controllerClassTemp.getClass()),
                         methodTemp.getName(),
                         parentAuthKey,
                         methodTemp.getAnnotation(CheckOperateAuth.class));
@@ -115,7 +115,7 @@ public class ControllerAuthRegisterSupportLoaderProcessor implements
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    private void putAuthItem(AuthItemImpl authItem) {
+    private void putAuthItem(AuthItem authItem) {
         if (StringUtils.isEmpty(authItem.getId())) {
             return;
         }
@@ -141,14 +141,14 @@ public class ControllerAuthRegisterSupportLoaderProcessor implements
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    private AuthItemImpl buildAuthItem(String beanSimpleName,
+    private AuthItem buildAuthItem(String beanSimpleName,
             String methodName, String parentAuthKey,
             CheckOperateAuth checkOperateAuthAnno) {
         AssertUtils.notNull(checkOperateAuthAnno,
                 "checkOperateAuthAnno is null");
         
         //根据菜单生成对应权限项
-        AuthItemImpl authItem = new AuthItemImpl();
+        AuthItem authItem = new AuthItem();
         authItem.setAuthType(AuthTypeItemContext.getContext()
                 .registeAuthTypeItem("AUTHTYPE_OPERATE", "操作权限", "", true, true)
                 .getAuthType());
@@ -188,11 +188,11 @@ public class ControllerAuthRegisterSupportLoaderProcessor implements
      * @throws AuthContextInitException
      */
     @Override
-    public Set<AuthItem> postProcessAfterLoad(
-            Map<String, AuthItem> beforeLoadAuthItemMapping,
-            Set<AuthItem> authItemSet) throws AuthContextInitException {
-        Set<AuthItem> newAuthItemSet = new HashSet<>();
-        for (AuthItem authTemp : authItemSet) {
+    public Set<Auth> postProcessAfterLoad(
+            Map<String, Auth> beforeLoadAuthItemMapping,
+            Set<Auth> authItemSet) throws AuthContextInitException {
+        Set<Auth> newAuthItemSet = new HashSet<>();
+        for (Auth authTemp : authItemSet) {
             if (MapUtils.isEmpty(authTemp.getData())
                     || !authTemp.getData().containsKey(CONTROLLER_AUTH_LOAD)
                     || BooleanUtils.isTrue(StringUtils.isEmpty(authTemp.getData()
@@ -229,14 +229,14 @@ public class ControllerAuthRegisterSupportLoaderProcessor implements
       * @see [类、类#方法、类#成员]
      */
     private void nestedLoadChildAuthItem(Set<String> parentAuthItemIdSet,
-            Set<AuthItem> newAuthItemSet) {
+            Set<Auth> newAuthItemSet) {
         Set<String> parentAuthItemIdSetTemp = new HashSet<>();
         for (String parentAuthItemIdTemp : parentAuthItemIdSet) {
-            List<AuthItem> authItemList = parentId2authItemMap.get(parentAuthItemIdTemp);
+            List<Auth> authItemList = parentId2authItemMap.get(parentAuthItemIdTemp);
             if (CollectionUtils.isEmpty(authItemList)) {
                 continue;
             }
-            for (AuthItem authItemTemp : authItemList) {
+            for (Auth authItemTemp : authItemList) {
                 newAuthItemSet.add(authItemTemp);
                 parentAuthItemIdSetTemp.add(authItemTemp.getId());
             }

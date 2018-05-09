@@ -4,7 +4,7 @@
  * 修改时间:  
  * <修改描述:>
  */
-package com.tx.component.auth.persister.dao.impl;
+package com.tx.component.auth.dao.impl;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -25,10 +25,10 @@ import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.util.MultiValueMap;
 
+import com.tx.component.auth.dao.AuthItemRefImplDao;
+import com.tx.component.auth.model.Auth;
 import com.tx.component.auth.model.AuthItem;
-import com.tx.component.auth.model.AuthItemImpl;
-import com.tx.component.auth.model.AuthItemRefImpl;
-import com.tx.component.auth.persister.dao.AuthItemRefImplDao;
+import com.tx.component.auth.model.AuthItemRef;
 import com.tx.core.TxConstants;
 import com.tx.core.exceptions.SILException;
 import com.tx.core.exceptions.util.AssertUtils;
@@ -85,7 +85,7 @@ public class AuthItemRefImplDaoImpl implements AuthItemRefImplDao {
      * @param condition
      */
     @Override
-    public void insertAuthItemRefImpl(final AuthItemRefImpl authItemRef,
+    public void insertAuthItemRefImpl(final AuthItemRef authItemRef,
             String tableSuffix) {
         authItemRef.setId(UUIDUtils.generateUUID());
         
@@ -150,7 +150,7 @@ public class AuthItemRefImplDaoImpl implements AuthItemRefImplDao {
      */
     @Override
     public void batchInsertAuthItemRefImplToHis(
-            final List<AuthItemRefImpl> condition, String tableSuffix) {
+            final List<AuthItemRef> condition, String tableSuffix) {
         if (CollectionUtils.isEmpty(condition)) {
             return;
         }
@@ -180,7 +180,7 @@ public class AuthItemRefImplDaoImpl implements AuthItemRefImplDao {
                     @Override
                     public void setValues(PreparedStatement ps, int index)
                             throws SQLException {
-                        AuthItemRefImpl authItemRef = condition.get(index);
+                        AuthItemRef authItemRef = condition.get(index);
                         
                         int parameterIndex = 0;
                         ps.setString(++parameterIndex, authItemRef.getId());
@@ -227,7 +227,7 @@ public class AuthItemRefImplDaoImpl implements AuthItemRefImplDao {
      */
     @Override
     public void batchInsertAuthItemRefImpl(
-            final List<AuthItemRefImpl> condition, String tableSuffix) {
+            final List<AuthItemRef> condition, String tableSuffix) {
         if (CollectionUtils.isEmpty(condition)) {
             return;
         }
@@ -255,7 +255,7 @@ public class AuthItemRefImplDaoImpl implements AuthItemRefImplDao {
                     @Override
                     public void setValues(PreparedStatement ps, int index)
                             throws SQLException {
-                        AuthItemRefImpl authItemRef = condition.get(index);
+                        AuthItemRef authItemRef = condition.get(index);
                         authItemRef.setId(UUIDUtils.generateUUID());
                         
                         int parameterIndex = 0;
@@ -306,7 +306,7 @@ public class AuthItemRefImplDaoImpl implements AuthItemRefImplDao {
      * @return
      */
     @Override
-    public int deleteAuthItemRefImpl(final AuthItemRefImpl condition,
+    public int deleteAuthItemRefImpl(final AuthItemRef condition,
             String tableSuffix) {
         AssertUtils.notNull(condition, "deleteCondition is null.");
         
@@ -327,7 +327,7 @@ public class AuthItemRefImplDaoImpl implements AuthItemRefImplDao {
             conditionSb.append(" AND AUTHREFTYPE = ? ");
         }
         if (condition.getAuthItem() != null) {
-            AuthItem authItem = condition.getAuthItem();
+            Auth authItem = condition.getAuthItem();
             if (!StringUtils.isEmpty(authItem.getId())) {
                 conditionSb.append(" AND AUTHID = ?");
             }
@@ -362,7 +362,7 @@ public class AuthItemRefImplDaoImpl implements AuthItemRefImplDao {
                                     condition.getAuthRefType());
                         }
                         if (condition.getAuthItem() != null) {
-                            AuthItem authItem = condition.getAuthItem();
+                            Auth authItem = condition.getAuthItem();
                             if (!StringUtils.isEmpty(authItem.getId())) {
                                 ps.setString(++parameterIndex, authItem.getId());
                             }
@@ -386,7 +386,7 @@ public class AuthItemRefImplDaoImpl implements AuthItemRefImplDao {
      */
     @Override
     public void batchDeleteAuthItemRefImpl(
-            final List<AuthItemRefImpl> authItemRefImplList, String tableSuffix) {
+            final List<AuthItemRef> authItemRefImplList, String tableSuffix) {
         if (CollectionUtils.isEmpty(authItemRefImplList)) {
             return;
         }
@@ -408,14 +408,14 @@ public class AuthItemRefImplDaoImpl implements AuthItemRefImplDao {
                     @Override
                     public void setValues(PreparedStatement ps, int i)
                             throws SQLException {
-                        AuthItemRefImpl condition = authItemRefImplList.get(i);
+                        AuthItemRef condition = authItemRefImplList.get(i);
                         
                         int parameterIndex = 0;
                         ps.setBoolean(++parameterIndex, condition.isTemp());
                         ps.setString(++parameterIndex, condition.getRefId());
                         ps.setString(++parameterIndex,
                                 condition.getAuthRefType());
-                        AuthItem authItem = condition.getAuthItem();
+                        Auth authItem = condition.getAuthItem();
                         ps.setString(++parameterIndex, authItem.getId());
                         ps.setString(++parameterIndex, authItem.getAuthType());
                         ps.setString(++parameterIndex, authItem.getSystemId());
@@ -433,7 +433,7 @@ public class AuthItemRefImplDaoImpl implements AuthItemRefImplDao {
      * @return
      */
     @Override
-    public List<AuthItemRefImpl> queryAuthItemRefImplList(
+    public List<AuthItemRef> queryAuthItemRefImplList(
             final Map<String, Object> params, String tableSuffix) {
         StringBuilder sb = new StringBuilder(TxConstants.INITIAL_STR_LENGTH);
         sb.append("SELECT ");
@@ -498,7 +498,7 @@ public class AuthItemRefImplDaoImpl implements AuthItemRefImplDao {
             conditionSb.append(" AND TAIRI.REFID = ?");
         }
         if (params.get("authItem") != null) {
-            AuthItem authItem = (AuthItem) params.get("authItem");
+            Auth authItem = (Auth) params.get("authItem");
             if (!ObjectUtils.isEmpty(authItem.getId())) {
                 conditionSb.append(" AND TAIRI.AUTHID = ?");
             }
@@ -514,7 +514,7 @@ public class AuthItemRefImplDaoImpl implements AuthItemRefImplDao {
             sb.append(" WHERE ").append(conditionSb.substring(4));
         }
         
-        List<AuthItemRefImpl> authItemRefList = this.jdbcTemplate.query(sb.toString(),
+        List<AuthItemRef> authItemRefList = this.jdbcTemplate.query(sb.toString(),
                 new PreparedStatementSetter() {
                     
                     @Override
@@ -562,7 +562,7 @@ public class AuthItemRefImplDaoImpl implements AuthItemRefImplDao {
                                     (String) params.get("refId"));
                         }
                         if (params.get("authItem") != null) {
-                            AuthItem authItem = (AuthItem) params.get("authItem");
+                            Auth authItem = (Auth) params.get("authItem");
                             if (!ObjectUtils.isEmpty(authItem.getId())) {
                                 ps.setString(++parameterIndex, authItem.getId());
                             }
@@ -620,7 +620,7 @@ public class AuthItemRefImplDaoImpl implements AuthItemRefImplDao {
     /**
      * 权限引用实例与查询结果映射关系
      */
-    private static final RowMapper<AuthItemRefImpl> authItemRefImplRowMapper = new RowMapper<AuthItemRefImpl>() {
+    private static final RowMapper<AuthItemRef> authItemRefImplRowMapper = new RowMapper<AuthItemRef>() {
         
         /**
          * @param rs
@@ -629,14 +629,14 @@ public class AuthItemRefImplDaoImpl implements AuthItemRefImplDao {
          * @throws SQLException
          */
         @Override
-        public AuthItemRefImpl mapRow(ResultSet rs, int rowNum)
+        public AuthItemRef mapRow(ResultSet rs, int rowNum)
                 throws SQLException {
-            AuthItemRefImpl res = new AuthItemRefImpl();
+            AuthItemRef res = new AuthItemRef();
             res.setId(rs.getString("ID"));
             String authItemId = rs.getString("AUTHID");
             String systemId = rs.getString("SYSTEMID");
             String authType = rs.getString("AUTHTYPE");
-            res.setAuthItem(new AuthItemImpl(authItemId, systemId, authType));
+            res.setAuthItem(new AuthItem(authItemId, systemId, authType));
             res.setAuthRefType(rs.getString("AUTHREFTYPE"));
             res.setCreateOperId(rs.getString("CREATEOPERID"));
             res.setRefId(rs.getString("REFID"));

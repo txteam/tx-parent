@@ -8,7 +8,7 @@ package com.tx.component.auth.context.authchecker;
 
 import java.util.List;
 
-import com.tx.component.auth.model.AuthItemRef;
+import com.tx.component.auth.model.AuthRef;
 
 /**
  * <权限核查器>
@@ -48,5 +48,5 @@ public interface AuthChecker {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public boolean isHasAuth(List<AuthItemRef> authItemRefList, Object... objects);
+    public boolean isHasAuth(List<AuthRef> authItemRefList, Object... objects);
 }

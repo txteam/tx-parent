@@ -9,7 +9,7 @@ package com.tx.component.auth.context.authchecker.impl;
 import java.util.List;
 
 import com.tx.component.auth.AuthConstant;
-import com.tx.component.auth.model.AuthItemRef;
+import com.tx.component.auth.model.AuthRef;
 
 /**
  * 默认的权限检测器<br/>
@@ -42,7 +42,7 @@ public class DefaultAuthChecker extends AbstractAuthChecker {
      * @see [类、类#方法、类#成员]
     */
     @Override
-    public boolean judgeIsHasAuth(List<AuthItemRef> authItemRefList,
+    public boolean judgeIsHasAuth(List<AuthRef> authItemRefList,
             Object... objects) {
         return true;
     }

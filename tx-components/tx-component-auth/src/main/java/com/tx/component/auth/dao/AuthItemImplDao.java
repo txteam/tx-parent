@@ -4,12 +4,12 @@
  * 修改时间:  
  * <修改描述:>
  */
-package com.tx.component.auth.persister.dao;
+package com.tx.component.auth.dao;
 
 import java.util.List;
 import java.util.Map;
 
-import com.tx.component.auth.model.AuthItemImpl;
+import com.tx.component.auth.model.AuthItem;
 
 /**
  * AuthItemImpl持久层
@@ -34,7 +34,7 @@ public interface AuthItemImplDao {
       * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public void insertAuthItemImpl(AuthItemImpl condition,String tableSuffix);
+    public void insertAuthItemImpl(AuthItem condition,String tableSuffix);
     
     /**
       * 删除AuthItemImpl对象
@@ -49,7 +49,7 @@ public interface AuthItemImplDao {
       * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public int deleteAuthItemImpl(AuthItemImpl condition, String tableSuffix);
+    public int deleteAuthItemImpl(AuthItem condition, String tableSuffix);
     
     /**
       * 查询AuthItemImpl实体
@@ -64,7 +64,7 @@ public interface AuthItemImplDao {
       * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public AuthItemImpl findAuthItemImpl(AuthItemImpl condition,String tableSuffix);
+    public AuthItem findAuthItemImpl(AuthItem condition,String tableSuffix);
     
     /**
       * 根据条件查询AuthItemImpl列表
@@ -79,7 +79,7 @@ public interface AuthItemImplDao {
       * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public List<AuthItemImpl> queryAuthItemImplList(Map<String, Object> params, String tableSuffix);
+    public List<AuthItem> queryAuthItemImplList(Map<String, Object> params, String tableSuffix);
     
     /**
       * 更新AuthItemImpl实体，

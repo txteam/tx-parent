@@ -13,9 +13,9 @@ import java.util.Set;
 import javax.annotation.Resource;
 
 import com.tx.component.auth.context.AuthTypeItemContext;
+import com.tx.component.auth.model.Auth;
 import com.tx.component.auth.model.AuthItem;
-import com.tx.component.auth.model.AuthItemImpl;
-import com.tx.component.auth.persister.service.AuthItemImplService;
+import com.tx.component.auth.service.AuthItemService;
 
 /**
  * 权限加载器，从DB中进行加载<br/>
@@ -33,7 +33,7 @@ public class AuthItemPersister{
     private String systemId;
     
     @Resource(name = "authItemImplService")
-    private AuthItemImplService authItemImplService;
+    private AuthItemService authItemImplService;
     
     /** <默认构造函数> */
     public AuthItemPersister() {
@@ -49,7 +49,7 @@ public class AuthItemPersister{
 
     /** <默认构造函数> */
     public AuthItemPersister(String tableSuffix, String systemId,
-            AuthItemImplService authItemService) {
+            AuthItemService authItemService) {
         super();
         this.tableSuffix = tableSuffix;
         this.systemId = systemId;
@@ -60,8 +60,8 @@ public class AuthItemPersister{
      * @param authItemId
      * @return
      */
-    public AuthItem findAuthItem(String authItemId) {
-        AuthItem authItem = this.authItemImplService.findAuthItemImplById(authItemId,
+    public Auth findAuthItem(String authItemId) {
+        Auth authItem = this.authItemImplService.findAuthItemImplById(authItemId,
                 systemId,
                 tableSuffix);
         return authItem;
@@ -71,15 +71,15 @@ public class AuthItemPersister{
      * 从数据库中加载权限项
      * @return
      */
-    public Set<AuthItem> listAuthItem() {
-        Set<AuthItem> resSet = new HashSet<AuthItem>();
-        List<AuthItemImpl> authItemImplList = this.authItemImplService.queryAllAuthItemListBySystemId(systemId,
+    public Set<Auth> listAuthItem() {
+        Set<Auth> resSet = new HashSet<Auth>();
+        List<AuthItem> authItemImplList = this.authItemImplService.queryAllAuthItemListBySystemId(systemId,
                 tableSuffix);
         if (authItemImplList == null) {
             return resSet;
         }
         
-        for (AuthItemImpl authItemTemp : authItemImplList) {
+        for (AuthItem authItemTemp : authItemImplList) {
             AuthTypeItemContext.getContext()
                     .registeAuthTypeItem(authItemTemp.getAuthType());
             resSet.add(authItemTemp);
@@ -104,7 +104,7 @@ public class AuthItemPersister{
     /**
      * @param 对authItemService进行赋值
      */
-    public void setAuthItemService(AuthItemImplService authItemService) {
+    public void setAuthItemService(AuthItemService authItemService) {
         this.authItemImplService = authItemService;
     }
 }

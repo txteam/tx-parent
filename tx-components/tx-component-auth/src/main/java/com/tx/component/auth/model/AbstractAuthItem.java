@@ -29,7 +29,7 @@ import com.tx.core.util.ObjectUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public abstract class AbstractAuthItem implements AuthItem {
+public abstract class AbstractAuthItem implements Auth {
     
     /** 注释内容 */
     private static final long serialVersionUID = 2870014183031122725L;
@@ -79,7 +79,7 @@ public abstract class AbstractAuthItem implements AuthItem {
     
     /** 子权限列表 */
     @OneToMany(fetch = FetchType.LAZY)
-    private List<AuthItem> childs = new ArrayList<AuthItem>();
+    private List<Auth> childs = new ArrayList<Auth>();
     
     /** <默认构造函数> */
     public AbstractAuthItem() {
@@ -127,7 +127,7 @@ public abstract class AbstractAuthItem implements AuthItem {
     /**
      * <默认构造函数>
      */
-    public AbstractAuthItem(AuthItem otherAuthItem) {
+    public AbstractAuthItem(Auth otherAuthItem) {
         super();
         this.id = otherAuthItem.getId();
         this.parentId = otherAuthItem.getParentId();
@@ -225,7 +225,7 @@ public abstract class AbstractAuthItem implements AuthItem {
      * @return
      */
     @Override
-    public List<AuthItem> getChilds() {
+    public List<Auth> getChilds() {
         return childs;
     }
     
@@ -233,7 +233,7 @@ public abstract class AbstractAuthItem implements AuthItem {
      * @param childs
      */
     @Override
-    public void setChilds(List<AuthItem> childs) {
+    public void setChilds(List<Auth> childs) {
         this.childs = childs;
     }
     

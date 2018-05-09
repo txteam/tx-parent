@@ -6,7 +6,7 @@
  */
 package com.tx.component.auth.context.register;
 
-import com.tx.component.auth.model.AuthItemRef;
+import com.tx.component.auth.model.AuthRef;
 
 
  /**
@@ -41,5 +41,5 @@ public interface AuthRefRegister {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-   public void registeAuthRef(AuthItemRef authItemRef);
+   public void registeAuthRef(AuthRef authItemRef);
 }

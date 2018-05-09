@@ -37,8 +37,8 @@ import org.springframework.core.io.Resource;
 import com.tx.component.auth.context.AuthTypeItemContext;
 import com.tx.component.auth.context.loader.AuthLoader;
 import com.tx.component.auth.exceptions.AuthContextInitException;
+import com.tx.component.auth.model.Auth;
 import com.tx.component.auth.model.AuthItem;
-import com.tx.component.auth.model.AuthItemImpl;
 import com.tx.core.exceptions.util.AssertUtils;
 
 /**
@@ -149,9 +149,9 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
      * @return
      */
     @Override
-    public Set<AuthItem> loadAuthItems(
-            Map<String, AuthItem> sourceAuthItemMapping) {
-        Set<AuthItem> authItemSet = new HashSet<AuthItem>(
+    public Set<Auth> loadAuthItems(
+            Map<String, Auth> sourceAuthItemMapping) {
+        Set<Auth> authItemSet = new HashSet<Auth>(
                 loadAuthItemConfig().values());
         return authItemSet;
     }
@@ -165,7 +165,7 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    private Map<String, AuthItemImpl> loadAuthItemConfig() {
+    private Map<String, AuthItem> loadAuthItemConfig() {
         // 加载配置资源列表
         List<Resource> configResourceList = null;
         try {
@@ -179,7 +179,7 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
         }
         
         // 初始化局部权限映射以及，根权限树
-        Map<String, AuthItemImpl> authItemMap = new HashMap<String, AuthItemImpl>();
+        Map<String, AuthItem> authItemMap = new HashMap<String, AuthItem>();
         
         // 配置权限列表
         if (configResourceList == null || configResourceList.size() == 0) {
@@ -231,7 +231,7 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
       * @see [类、类#方法、类#成员]
      */
     private void loadAuthItemConfigFromAuthTypeElement(
-            Map<String, AuthItemImpl> authItemMap, List<Element> authTypeElList) {
+            Map<String, AuthItem> authItemMap, List<Element> authTypeElList) {
         if (CollectionUtils.isEmpty(authTypeElList)) {
             return;
         }
@@ -284,7 +284,7 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
      * @see [类、类#方法、类#成员]
      */
     private void loadAuthItemConfigFromAuthElement(String parentElAuthType,
-            AuthItemImpl parentAuthItem, Map<String, AuthItemImpl> authItemMap,
+            AuthItem parentAuthItem, Map<String, AuthItem> authItemMap,
             List<Element> authElList) {
         if (CollectionUtils.isEmpty(authElList)) {
             return;
@@ -324,7 +324,7 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
             //向权限类型容器中注册权限类型
             AuthTypeItemContext.getContext().registeAuthTypeItem(authType);
             
-            AuthItemImpl newAuthItem = null;
+            AuthItem newAuthItem = null;
             if (authItemMap.containsKey(id)) {
                 // 如果对应权限已经存在则获取对应权限
                 newAuthItem = authItemMap.get(id);
@@ -384,12 +384,12 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    private AuthItemImpl createChildAuthItem(AuthItem parentAuthItem,
+    private AuthItem createChildAuthItem(Auth parentAuthItem,
             String id, String authType, String name, String description,
             boolean isValid, boolean isViewAble, boolean isEditAble,
             boolean isConfigAble, boolean isVirtual) {
         //创建权限实体
-        AuthItemImpl authItem = new AuthItemImpl();
+        AuthItem authItem = new AuthItem();
         authItem.setId(id);
         authItem.setName(name);
         authItem.setDescription(description);

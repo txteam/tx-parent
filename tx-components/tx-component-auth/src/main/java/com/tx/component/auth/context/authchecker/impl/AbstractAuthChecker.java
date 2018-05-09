@@ -13,7 +13,7 @@ import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 
 import com.tx.component.auth.context.authchecker.AuthChecker;
-import com.tx.component.auth.model.AuthItemRef;
+import com.tx.component.auth.model.AuthRef;
 
 /**
  * 基础权限核查器<br/>
@@ -35,12 +35,12 @@ public abstract class AbstractAuthChecker implements AuthChecker {
      * @return
      */
     @Override
-    public boolean isHasAuth(List<AuthItemRef> authItemRefList,
+    public boolean isHasAuth(List<AuthRef> authItemRefList,
             Object... objects) {
         if (!CollectionUtils.isEmpty(authItemRefList)) {
             Date now = new Date();
-            List<AuthItemRef> validAuthItemRefList = new ArrayList<AuthItemRef>();
-            for (AuthItemRef authItemRefTemp : authItemRefList) {
+            List<AuthRef> validAuthItemRefList = new ArrayList<AuthRef>();
+            for (AuthRef authItemRefTemp : authItemRefList) {
                 if (!authItemRefTemp.isTemp()) {
                     validAuthItemRefList.add(authItemRefTemp);
                 } else {
@@ -70,5 +70,5 @@ public abstract class AbstractAuthChecker implements AuthChecker {
       * @see [类、类#方法、类#成员]
      */
     protected abstract boolean judgeIsHasAuth(
-            List<AuthItemRef> authItemRefList, Object... objects);
+            List<AuthRef> authItemRefList, Object... objects);
 }

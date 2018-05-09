@@ -4,12 +4,12 @@
  * 修改时间:  
  * <修改描述:>
  */
-package com.tx.component.auth.persister.dao;
+package com.tx.component.auth.dao;
 
 import java.util.List;
 import java.util.Map;
 
-import com.tx.component.auth.model.AuthItemRefImpl;
+import com.tx.component.auth.model.AuthItemRef;
 
 /**
  * AuthItemRefImpl持久层
@@ -32,7 +32,7 @@ public interface AuthItemRefImplDao {
      * @see [类、类#方法、类#成员]
     */
     public void batchInsertAuthItemRefImplToHis(
-            List<AuthItemRefImpl> condition, String tableSuffix);
+            List<AuthItemRef> condition, String tableSuffix);
     
     /**
       * 插入AuthItemRefImpl对象实体
@@ -45,7 +45,7 @@ public interface AuthItemRefImplDao {
       * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public void insertAuthItemRefImpl(AuthItemRefImpl condition,
+    public void insertAuthItemRefImpl(AuthItemRef condition,
             String tableSuffix);
     
     /**
@@ -57,7 +57,7 @@ public interface AuthItemRefImplDao {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public void batchInsertAuthItemRefImpl(List<AuthItemRefImpl> condition,
+    public void batchInsertAuthItemRefImpl(List<AuthItemRef> condition,
             String tableSuffix);
     
     /**
@@ -72,7 +72,7 @@ public interface AuthItemRefImplDao {
       * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public int deleteAuthItemRefImpl(AuthItemRefImpl condition,
+    public int deleteAuthItemRefImpl(AuthItemRef condition,
             String tableSuffix);
     
     /**
@@ -85,7 +85,7 @@ public interface AuthItemRefImplDao {
       * @see [类、类#方法、类#成员]
      */
     public void batchDeleteAuthItemRefImpl(
-            List<AuthItemRefImpl> authItemRefImplList, String tableSuffix);
+            List<AuthItemRef> authItemRefImplList, String tableSuffix);
     
     /**
       * 根据条件查询AuthItemRefImpl列表
@@ -99,7 +99,7 @@ public interface AuthItemRefImplDao {
       * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public List<AuthItemRefImpl> queryAuthItemRefImplList(
+    public List<AuthItemRef> queryAuthItemRefImplList(
             Map<String, Object> params, String tableSuffix);
     
     /**

@@ -8,7 +8,7 @@ package com.tx.component.auth.context.loaderprocessor.childauth;
 
 import java.util.Set;
 
-import com.tx.component.auth.model.AuthItem;
+import com.tx.component.auth.model.Auth;
 
 /**
  * 子数据权限注册器<br/>
@@ -30,5 +30,5 @@ public interface ChildAuthRegister {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    public Set<AuthItem> loadAuthItems(AuthItem authItem);
+    public Set<Auth> loadAuthItems(Auth authItem);
 }

@@ -177,7 +177,45 @@ public class AuthContextTableInitializer
     }
     
     public static void auth_authref(DDLBuilder<?> ddlBuilder) {
-        
+        /*
+        create table auth_authref${tableSuffix}(
+            id varchar2(64) not null,
+            refid  varchar2(255) not null,
+            authreftype varchar2(64) not null,
+            authid varchar2(255) not null,
+            systemid varchar2(64) not null,
+            authType varchar2(64) not null,
+            createdate date default sysdate not null,
+            enddate date,
+            effectiveDate date,
+            invalidDate date,
+            createoperid varchar2(64),
+            temp number(1) not null default 0,
+            primary key(id)
+        );
+        create unique index idx_auth_authref_00 on auth_authref${tableSuffix}(refid,authreftype,authid,systemid,authType,temp);
+        create index idx_auth_authref_01 on auth_authref${tableSuffix}(systemid,refid);
+        create index idx_auth_authref_02 on auth_authref${tableSuffix}(systemid,refid,authreftype);
+        create index idx_auth_authref_03 on auth_authref${tableSuffix}(systemid,authid);
+        create index idx_auth_authref_04 on auth_authref${tableSuffix}(systemid,authid,authreftype);
+        create index idx_auth_authref_05 on auth_authref${tableSuffix}(systemid,authreftype);
+        create index idx_auth_authref_06 on auth_authref${tableSuffix}(effectiveDate);
+        create index idx_auth_authref_07 on auth_authref${tableSuffix}(invalidDate);
+        */
+        ddlBuilder.newColumnOfVarchar(true, "id", 64, true, null)
+                .newColumnOfVarchar("module", 64, true, null)
+                .newColumnOfVarchar("authType", 64, true, null)
+                .newColumnOfVarchar("refId", 64, false, null)
+                .newColumnOfVarchar("refType", 64, false, null)
+                .newColumnOfVarchar("parentId", 64, false, null)
+                .newColumnOfVarchar("name", 255, true, null)
+                .newColumnOfVarchar("remark", 512, false, null)
+                .newColumnOfBoolean("modifyAble", true, true)
+                .newColumnOfBoolean("valid", true, true)
+                .newColumnOfBoolean("viewAble", true, true)
+                .newColumnOfBoolean("configAble", true, true);
+        ddlBuilder.newIndex(false, "idx_parentId", "parentId");
+        ddlBuilder.newIndex(false, "idx_module", "module");
     }
     
     private void table_auth_authref_his() {
@@ -197,7 +235,7 @@ public class AuthContextTableInitializer
             ddlBuilder = createDDLBuilder;
         }
         
-        bd_basic_data_type(ddlBuilder);//写入表结构
+        auth_authref_his(ddlBuilder);//写入表结构
         
         if (alterDDLBuilder != null
                 && alterDDLBuilder.compare().isNeedAlter()) {
@@ -208,6 +246,29 @@ public class AuthContextTableInitializer
     }
     
     public static void auth_authref_his(DDLBuilder<?> ddlBuilder) {
+        /*
+        create table auth_authref_his${tableSuffix}(
+            id varchar2(64) not null,
+            refId varchar2(255) not null,
+            authreftype varchar2(64) not null,
+            authid varchar2(255) not null,
+            systemid varchar2(64) not null,
+            authType varchar2(64) not null,
+            createdate date default sysdate not null,
+            enddate date not null,
+            effectiveDate date,
+            invalidDate date,
+            createoperid varchar2(64),
+            temp number(1) not null default 0
+        );
+        create index idx_auth_ref_his01 on auth_authref_his${tableSuffix}(systemid,refid);
+        create index idx_auth_ref_his02 on auth_authref_his${tableSuffix}(systemid,refid,authreftype);
+        create index idx_auth_ref_his03 on auth_authref_his${tableSuffix}(systemid,authid);
+        create index idx_auth_ref_his04 on auth_authref_his${tableSuffix}(systemid,authid,authreftype);
+        create index idx_auth_ref_his05 on auth_authref_his${tableSuffix}(systemid,authreftype);
+        create index idx_auth_ref_his06 on auth_authref_his${tableSuffix}(effectiveDate);
+        create index idx_auth_ref_his07 on auth_authref_his${tableSuffix}(invalidDate);
+        */
         
     }
 }

@@ -26,7 +26,7 @@ import com.tx.core.exceptions.util.AssertUtils;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
   */
-public class AuthItemWraperByAdapter<T> implements AuthItem{
+public class AuthItemWraperByAdapter<T> implements Auth{
     
     /** 注释内容 */
     private static final long serialVersionUID = 2463898805204658642L;
@@ -35,7 +35,7 @@ public class AuthItemWraperByAdapter<T> implements AuthItem{
     private T object;
     
     /** 上级权限 */
-    private AuthItem parentAuthItem;
+    private Auth parentAuthItem;
     
     /** 被代理对象到权限的适配器 */
     private AuthItemAdapter<T> adapter;
@@ -45,13 +45,13 @@ public class AuthItemWraperByAdapter<T> implements AuthItem{
     
     /** 子权限列表 */
     @OneToMany(fetch = FetchType.LAZY)
-    private List<AuthItem> childs = new ArrayList<AuthItem>();
+    private List<Auth> childs = new ArrayList<Auth>();
     
     /** xml中attribute的其他属性 */
     private Map<String, String> data = new HashMap<>();
     
     /** <默认构造函数> */
-    public AuthItemWraperByAdapter(AuthItemAdapter<T> adapter, T object,AuthItem parentAuthItem) {
+    public AuthItemWraperByAdapter(AuthItemAdapter<T> adapter, T object,Auth parentAuthItem) {
         super();
         AssertUtils.notNull(adapter,"adapter is null.");
         AssertUtils.notNull(adapter,"object is null.");
@@ -104,8 +104,8 @@ public class AuthItemWraperByAdapter<T> implements AuthItem{
      * @return
      */
     @Override
-    public String getDescription() {
-        return this.adapter.getDescription(this.object, this.parentAuthItem);
+    public String getRemark() {
+        return this.adapter.getRemark(this.object, this.parentAuthItem);
     }
     
     /**
@@ -128,7 +128,7 @@ public class AuthItemWraperByAdapter<T> implements AuthItem{
      * @return
      */
     @Override
-    public boolean isEditAble() {
+    public boolean isModifyAble() {
         return false;
     }
 
@@ -173,14 +173,14 @@ public class AuthItemWraperByAdapter<T> implements AuthItem{
     /**
      * @return 返回 childs
      */
-    public List<AuthItem> getChilds() {
+    public List<Auth> getChilds() {
         return childs;
     }
 
     /**
      * @param 对childs进行赋值
      */
-    public void setChilds(List<AuthItem> childs) {
+    public void setChilds(List<Auth> childs) {
         this.childs = childs;
     }
 

@@ -6,8 +6,6 @@
  */
 package com.tx.component.task.script;
 
-import javax.annotation.Resource;
-
 import org.springframework.beans.factory.InitializingBean;
 
 import com.tx.core.ddlutil.TableInitializer;
@@ -29,8 +27,18 @@ public class TaskContextTableInitializer
         implements InitializingBean, TableInitializer {
     
     /** 表DDL执行器 */
-    @Resource(name = "taskContext.tableDDLExecutor")
     protected TableDDLExecutor tableDDLExecutor;
+    
+    /** <默认构造函数> */
+    public TaskContextTableInitializer() {
+        super();
+    }
+    
+    /** <默认构造函数> */
+    public TaskContextTableInitializer(TableDDLExecutor tableDDLExecutor) {
+        super();
+        this.tableDDLExecutor = tableDDLExecutor;
+    }
     
     /**
      * @throws Exception

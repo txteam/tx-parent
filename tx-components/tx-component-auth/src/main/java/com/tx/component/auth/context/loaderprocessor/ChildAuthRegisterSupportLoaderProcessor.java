@@ -21,7 +21,7 @@ import org.springframework.util.ClassUtils;
 import com.tx.component.auth.context.AuthItemLoaderProcessor;
 import com.tx.component.auth.context.loaderprocessor.childauth.ChildAuthRegister;
 import com.tx.component.auth.exceptions.AuthContextInitException;
-import com.tx.component.auth.model.AuthItem;
+import com.tx.component.auth.model.Auth;
 import com.tx.core.util.MessageUtils;
 
 /**
@@ -55,11 +55,11 @@ public class ChildAuthRegisterSupportLoaderProcessor implements
      * @throws AuthContextInitException
      */
     @Override
-    public Set<AuthItem> postProcessAfterLoad(
-            Map<String, AuthItem> beforeLoadAuthItemMapping,
-            Set<AuthItem> authItemSet) throws AuthContextInitException {
-        Set<AuthItem> newAuthItemSet = new HashSet<>();
-        for (AuthItem authTemp : authItemSet) {
+    public Set<Auth> postProcessAfterLoad(
+            Map<String, Auth> beforeLoadAuthItemMapping,
+            Set<Auth> authItemSet) throws AuthContextInitException {
+        Set<Auth> newAuthItemSet = new HashSet<>();
+        for (Auth authTemp : authItemSet) {
             if (MapUtils.isEmpty(authTemp.getData())
                     || !authTemp.getData().containsKey(CHILD_AUTH_REGISTER)
                     || StringUtils.isEmpty(authTemp.getData()
@@ -71,7 +71,7 @@ public class ChildAuthRegisterSupportLoaderProcessor implements
             registerTemp = getChildAuthRegisterByRegisterName(registerName,
                     registerTemp);
             
-            Set<AuthItem> resSet = registerTemp.loadAuthItems(authTemp);
+            Set<Auth> resSet = registerTemp.loadAuthItems(authTemp);
             if (!CollectionUtils.isEmpty(resSet)) {
                 newAuthItemSet.addAll(resSet);
             }

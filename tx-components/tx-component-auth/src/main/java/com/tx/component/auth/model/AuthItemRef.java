@@ -1,104 +1,306 @@
+/*
+ * 描          述:  <描述>
+ * 修  改   人:  PengQingyang
+ * 修改时间:  2012-12-1
+ * <修改描述:>
+ */
 package com.tx.component.auth.model;
 
-import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+import org.slf4j.helpers.MessageFormatter;
+
+import com.tx.component.auth.AuthConstant;
+import com.tx.core.util.ObjectUtils;
+
 /**
-  * 权限项引用
-  * <功能详细描述>
-  * 
-  * @author  brady
-  * @version  [版本号, 2013-3-21]
-  * @see  [相关类/方法]
-  * @since  [产品/模块版本]
+ * 权限引用项
+ *     可以是： 角色权限
+ *             职位权限
+ *             ...可以赋予权限的主体
+ * <功能详细描述>
+ * 
+ * @author  PengQingyang
+ * @version  [版本号, 2012-12-1]
+ * @see  [相关类/方法]
+ * @since  [产品/模块版本]
  */
-public interface AuthItemRef extends Serializable{
+@Entity
+@Table(name = "auth_authref")
+public class AuthItemRef implements AuthRef {
+    
+    /** 注释内容 */
+    private static final long serialVersionUID = -7928952142014599323L;
     
     /**
-      * 权限引用项唯一键<br/>
+     * <默认构造函数>
+     */
+    public AuthItemRef() {
+        super();
+    }
+    
+    /**
+     * <默认构造函数>
+     */
+    public AuthItemRef(AuthItem authItem) {
+        super();
+        this.authItemImpl = authItem;
+        this.authRefType = AuthConstant.AUTHREFTYPE_OPERATOR;
+    }
+    
+    /** 权限引用唯一键盘，全局唯一 */
+    private String id;
+    
+    /** 权限引用类型 */
+    private String authRefType;
+    
+    /** 权限引用唯一键 */
+    @Id
+    private String refId;
+    
+    /** 
+     * 权限引用对应的权限id
+     */
+    @ManyToOne
+    @Column(name = "authId")
+    private AuthItem authItemImpl;
+    
+    /**
+     * 权限授予人
+     */
+    private String createOperId;
+    
+    /** 权限引用项的创建(授予)时间 */
+    private Date createDate;
+    
+    /** 权限引用项结束时间  */
+    private Date endDate;
+    
+    /** 生效时间 */
+    private Date effectiveDate;
+    
+    /** 系统自动判定的无效时间:系统在查询具体是否存在引用过程中将根据该时间动态计算 */
+    private Date invalidDate;
+    
+    /** 是否是临时权限 */
+    private Boolean temp;
+    
+    /**
+     * @return
+     */
+    @Override
+    public String getAuthRefType() {
+        return this.authRefType;
+    }
+    
+    /**
+     * @return
+     */
+    @Override
+    public String getRefId() {
+        return this.refId;
+    }
+    
+    /**
+     * @return 返回 id
+     */
+    public String getId() {
+        return id;
+    }
+    
+    /**
+     * @param 对id进行赋值
+     */
+    public void setId(String id) {
+        this.id = id;
+    }
+    
+    /**
+     * @return 返回 authItemImpl
+     */
+    public AuthItem getAuthItemImpl() {
+        return authItemImpl;
+    }
+    
+    /**
+     * @param 对authItemImpl进行赋值
+     */
+    public void setAuthItemImpl(AuthItem authItemImpl) {
+        this.authItemImpl = authItemImpl;
+    }
+    
+    /**
+     * @return
+     */
+    @Override
+    public Auth getAuthItem() {
+        return this.authItemImpl;
+    }
+    
+    /**
+      * 设置权限项
       *<功能详细描述>
-      * @return [参数说明]
+      * @param authItem [参数说明]
       * 
-      * @return String [返回类型说明]
+      * @return void [返回类型说明]
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    String getId();
+    public void setAuthItem(Auth authItem) {
+        if (authItem instanceof AuthItem) {
+            this.authItemImpl = (AuthItem) authItem;
+        } else {
+            this.authItemImpl = new AuthItem(authItem);
+        }
+    }
     
     /**
-     * 权限引用项的类型<br/>
-     * 利用该类型<br/>
-     * 实现           人员权限   AUTHREFTYPE_OPERATOR          <br/>
-     *         临时权限   AUTHREFTYPE_OPERATOR_TEMP     <br/>
-     *         角色权限   AUTHREFTYPE_ROLE              <br/>
-     *         职位权限   ...
-     *         ...
-     * 这里用String虽没有int查询快，但能让sql可读性增强
-     * @return 返回 authRefType
+     * @return
      */
-    String getAuthRefType();
+    @Override
+    public String getCreateOperId() {
+        return createOperId;
+    }
     
     /**
-     * @return 返回 authItem实例
+     * @param 对createOperId进行赋值
      */
-    AuthItem getAuthItem();
+    public void setCreateOperId(String createOperId) {
+        this.createOperId = createOperId;
+    }
     
     /**
-     * 权限关联项id 
-     * 可以是角色的id,
-     * 可以是职位的id
-     * ....
-     * @return 返回 refId
+     * @return
      */
-    String getRefId();
+    @Override
+    public Date getCreateDate() {
+        return createDate;
+    }
     
     /**
-     * @return 返回 createOperId
+     * @param 对createDate进行赋值
      */
-    String getCreateOperId();
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
+    }
     
     /**
-     * @return 返回 createDate
+     * @return
      */
-    Date getCreateDate();
+    @Override
+    public Date getEndDate() {
+        return endDate;
+    }
     
     /**
-     * @return 返回 endDate
+     * @param 对endDate进行赋值
      */
-    Date getEndDate();
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
     
     /**
-      * 返回权限引用项生效时间
-      * when isTemp() == true 有效
-      *<功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return Date [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * @param 对authRefType进行赋值
      */
-    Date getEffectiveDate();
+    public void setAuthRefType(String authRefType) {
+        this.authRefType = authRefType;
+    }
     
     /**
-     * 返回权限引用项生效时间
-     * when isTemp() == true 有效
-     *<功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return Date [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-    */
-   Date getInvalidDate();
-   
-   /**
-     * 是否是临时权限引用
-     *<功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return boolean [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-    */
-   Boolean isTemp();
+     * @param 对refId进行赋值
+     */
+    public void setRefId(String refId) {
+        this.refId = refId;
+    }
+    
+    /**
+     * @return 返回 effectiveDate
+     */
+    public Date getEffectiveDate() {
+        return effectiveDate;
+    }
+    
+    /**
+     * @param 对effectiveDate进行赋值
+     */
+    public void setEffectiveDate(Date effectiveDate) {
+        this.effectiveDate = effectiveDate;
+    }
+    
+    /**
+     * @return 返回 invalidDate
+     */
+    public Date getInvalidDate() {
+        return invalidDate;
+    }
+    
+    /**
+     * @param 对invalidDate进行赋值
+     */
+    public void setInvalidDate(Date invalidDate) {
+        this.invalidDate = invalidDate;
+    }
+
+    public Boolean getTemp() {
+        return temp;
+    }
+
+    public Boolean isTemp(){
+        return temp;
+    }
+
+
+    /**
+     * @param 对temp进行赋值
+     */
+    public void setTemp(Boolean temp) {
+        this.temp = temp;
+    }
+    
+    /**
+     * @param obj
+     * @return
+     */
+    @Override
+    public boolean equals(Object obj) {
+        boolean flag = ObjectUtils.equals(this,
+                obj,
+                "id",
+                "authItem",
+                "authRefType",
+                "refId",
+                "temp");
+        return flag;
+    }
+    
+    /**
+     * @return
+     */
+    @Override
+    public int hashCode() {
+        int hashCode = ObjectUtils.generateHashCode(super.hashCode(),
+                this,
+                "id",
+                "authItem",
+                "authRefType",
+                "refId",
+                "temp");
+        return hashCode;
+    }
+    
+    /**
+     * @return
+     */
+    @Override
+    public String toString() {
+        return MessageFormatter.arrayFormat("authItemRef: {refId{},authRefType:{},authItem:{},,}",
+                new Object[] { this.refId, this.authRefType, this.authItemImpl })
+                .getMessage();
+    }
 }

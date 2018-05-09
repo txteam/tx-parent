@@ -42,7 +42,7 @@ public class AuthTypeItem implements Serializable, Ordered {
     private boolean isConfigAble = true;
     
     /** 权限项列表 */
-    private List<AuthItem> authItemList;
+    private List<Auth> authItemList;
     
     private int orderIndex = 0;
     
@@ -115,14 +115,14 @@ public class AuthTypeItem implements Serializable, Ordered {
     /**
      * @return 返回 authItemList
      */
-    public List<AuthItem> getAuthItemList() {
+    public List<Auth> getAuthItemList() {
         return authItemList;
     }
     
     /**
      * @param 对authItemList进行赋值
      */
-    public void setAuthItemList(List<AuthItem> authItemList) {
+    public void setAuthItemList(List<Auth> authItemList) {
         this.authItemList = authItemList;
     }
     

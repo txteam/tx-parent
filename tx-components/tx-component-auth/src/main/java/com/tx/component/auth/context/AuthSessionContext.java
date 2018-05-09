@@ -20,8 +20,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
-import com.tx.component.auth.model.AuthItem;
-import com.tx.component.auth.model.AuthItemRef;
+import com.tx.component.auth.model.Auth;
+import com.tx.component.auth.model.AuthRef;
 import com.tx.component.auth.model.CurrentSessionContext;
 import com.tx.core.exceptions.util.AssertUtils;
 
@@ -206,12 +206,12 @@ public abstract class AuthSessionContext {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    public static void putAuthRefToSession(List<AuthItemRef> authItemRefList) {
-        MultiValueMap<String, AuthItemRef> authItemRefMap = new LinkedMultiValueMap<String, AuthItemRef>();
+    public static void putAuthRefToSession(List<AuthRef> authItemRefList) {
+        MultiValueMap<String, AuthRef> authItemRefMap = new LinkedMultiValueMap<String, AuthRef>();
         //如果当前不存在会话，者直接跳过该逻辑
         if (!CollectionUtils.isEmpty(authItemRefList)) {
             //如果当前人员不含有权限，也会压入一个空的权限引用map
-            for (AuthItemRef refTemp : authItemRefList) {
+            for (AuthRef refTemp : authItemRefList) {
                 authItemRefMap.add(refTemp.getAuthItem().getId(), refTemp);
             }
         }
@@ -232,12 +232,12 @@ public abstract class AuthSessionContext {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public static MultiValueMap<String, AuthItemRef> getAuthRefMultiValueMapFromSession() {
+    public static MultiValueMap<String, AuthRef> getAuthRefMultiValueMapFromSession() {
         @SuppressWarnings("unchecked")
-        MultiValueMap<String, AuthItemRef> authItemRefMap = (MultiValueMap<String, AuthItemRef>) currentSessionContext.get()
+        MultiValueMap<String, AuthRef> authItemRefMap = (MultiValueMap<String, AuthRef>) currentSessionContext.get()
                 .getSession()
                 .getAttribute(SESSION_KEY_CURRENT_OPERATOR_AUTHREF_MULTIVALUEMAP);
-        return authItemRefMap == null ? new LinkedMultiValueMap<String, AuthItemRef>()
+        return authItemRefMap == null ? new LinkedMultiValueMap<String, AuthRef>()
                 : authItemRefMap;
     }
     
@@ -251,12 +251,12 @@ public abstract class AuthSessionContext {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public static List<AuthItemRef> getAuthRefListFromSession(String authItemId) {
+    public static List<AuthRef> getAuthRefListFromSession(String authItemId) {
         @SuppressWarnings("unchecked")
-        MultiValueMap<String, AuthItemRef> authItemRefMap = (MultiValueMap<String, AuthItemRef>) currentSessionContext.get()
+        MultiValueMap<String, AuthRef> authItemRefMap = (MultiValueMap<String, AuthRef>) currentSessionContext.get()
                 .getSession()
                 .getAttribute(SESSION_KEY_CURRENT_OPERATOR_AUTHREF_MULTIVALUEMAP);
-        List<AuthItemRef> authItemRefList = null;
+        List<AuthRef> authItemRefList = null;
         if (authItemRefMap != null) {
             authItemRefList = authItemRefMap.get(authItemId);
         }
@@ -272,12 +272,12 @@ public abstract class AuthSessionContext {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public static List<AuthItem> getAuthItemListDependAuthRefOfSession() {
-        Map<String, AuthItem> authItemMapping = AuthContext.getContext()
+    public static List<Auth> getAuthItemListDependAuthRefOfSession() {
+        Map<String, Auth> authItemMapping = AuthContext.getContext()
                 .getAllAuthItemMapping();
         
-        List<AuthItem> authItemList = new ArrayList<AuthItem>();
-        MultiValueMap<String, AuthItemRef> authRefMulMap = getAuthRefMultiValueMapFromSession();
+        List<Auth> authItemList = new ArrayList<Auth>();
+        MultiValueMap<String, AuthRef> authRefMulMap = getAuthRefMultiValueMapFromSession();
         for (String authIdTemp : authRefMulMap.keySet()) {
             if (!authItemMapping.containsKey(authIdTemp)) {
                 continue;
@@ -297,20 +297,20 @@ public abstract class AuthSessionContext {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public static List<AuthItem> getAuthItemListByParentIdFromSession(
+    public static List<Auth> getAuthItemListByParentIdFromSession(
             String parentId) {
         AssertUtils.notEmpty(parentId, "parentId is empty.");
         
-        Map<String, AuthItem> authItemMapping = AuthContext.getContext()
+        Map<String, Auth> authItemMapping = AuthContext.getContext()
                 .getAllAuthItemMapping();
         
-        List<AuthItem> resList = new ArrayList<AuthItem>();
-        MultiValueMap<String, AuthItemRef> authRefMulMap = getAuthRefMultiValueMapFromSession();
+        List<Auth> resList = new ArrayList<Auth>();
+        MultiValueMap<String, AuthRef> authRefMulMap = getAuthRefMultiValueMapFromSession();
         for (String authIdTemp : authRefMulMap.keySet()) {
             if (!authItemMapping.containsKey(authIdTemp)) {
                 continue;
             }
-            AuthItem authItemTemp = authItemMapping.get(authIdTemp);
+            Auth authItemTemp = authItemMapping.get(authIdTemp);
             if (parentId.equals(authItemTemp.getParentId())) {
                 resList.add(authItemTemp);
             }
@@ -329,22 +329,22 @@ public abstract class AuthSessionContext {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public static List<AuthItem> getAuthItemListByAuthTypeAndParentIdFromSession(
+    public static List<Auth> getAuthItemListByAuthTypeAndParentIdFromSession(
             String authType, String parentId) {
         AssertUtils.notEmpty(parentId, "parentId is empty.");
         AssertUtils.notEmpty(authType, "authType is empty.");
         
-        Map<String, AuthItem> authItemMapping = AuthContext.getContext()
+        Map<String, Auth> authItemMapping = AuthContext.getContext()
                 .getAllAuthItemMapping();
         
-        List<AuthItem> resList = new ArrayList<AuthItem>();
-        MultiValueMap<String, AuthItemRef> authRefMulMap = getAuthRefMultiValueMapFromSession();
+        List<Auth> resList = new ArrayList<Auth>();
+        MultiValueMap<String, AuthRef> authRefMulMap = getAuthRefMultiValueMapFromSession();
         for (String authIdTemp : authRefMulMap.keySet()) {
             if (!authItemMapping.containsKey(authIdTemp)) {
                 continue;
             }
             
-            AuthItem authItemTemp = authItemMapping.get(authIdTemp);
+            Auth authItemTemp = authItemMapping.get(authIdTemp);
             if (parentId.equals(authItemTemp.getParentId())
                     && authType.equals(authItemTemp.getAuthType())) {
                 resList.add(authItemTemp);
@@ -362,21 +362,21 @@ public abstract class AuthSessionContext {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public static List<AuthItem> getPerpetualAuthItemListDependAuthRefOfSession() {
-        Map<String, AuthItem> authItemMapping = AuthContext.getContext()
+    public static List<Auth> getPerpetualAuthItemListDependAuthRefOfSession() {
+        Map<String, Auth> authItemMapping = AuthContext.getContext()
                 .getAllAuthItemMapping();
         
-        List<AuthItem> authItemList = new ArrayList<AuthItem>();
-        MultiValueMap<String, AuthItemRef> authRefMulMap = getAuthRefMultiValueMapFromSession();
-        for (Entry<String, List<AuthItemRef>> entryTemp : authRefMulMap.entrySet()) {
+        List<Auth> authItemList = new ArrayList<Auth>();
+        MultiValueMap<String, AuthRef> authRefMulMap = getAuthRefMultiValueMapFromSession();
+        for (Entry<String, List<AuthRef>> entryTemp : authRefMulMap.entrySet()) {
             if (!authItemMapping.containsKey(entryTemp.getKey())) {
                 continue;
             }
             
-            AuthItem authItemTemp = authItemMapping.get(entryTemp.getKey());
-            List<AuthItemRef> authItemRefListTemp = entryTemp.getValue();
+            Auth authItemTemp = authItemMapping.get(entryTemp.getKey());
+            List<AuthRef> authItemRefListTemp = entryTemp.getValue();
             if (!CollectionUtils.isEmpty(authItemRefListTemp)) {
-                for (AuthItemRef authItemRefTemp : authItemRefListTemp) {
+                for (AuthRef authItemRefTemp : authItemRefListTemp) {
                     if (!authItemRefTemp.isTemp()) {
                         //只压入非临时权限
                         authItemList.add(authItemTemp);

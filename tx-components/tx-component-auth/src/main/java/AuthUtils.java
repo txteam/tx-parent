@@ -4,7 +4,7 @@
  * 修改时间:  2015年11月8日
  * <修改描述:>
  */
-package auth;
+
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -18,7 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.tx.component.auth.AuthConstant;
 import com.tx.component.auth.context.AuthContext;
 import com.tx.component.auth.context.AuthSessionContext;
-import com.tx.component.auth.model.AuthItem;
+import com.tx.component.auth.model.Auth;
 import com.tx.core.exceptions.util.AssertUtils;
 
 /**
@@ -29,7 +29,7 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class AuthContextUtils {
+public class AuthUtils {
     
     /**
       * 判断是否设置了根据指定属性的数据权限查询<br/>
@@ -184,11 +184,11 @@ public class AuthContextUtils {
     public static Set<String> getChildDataAuthRefIdsByAuthKey(String authKey) {
         AssertUtils.notEmpty(authKey, "authKey is empty.");
         Set<String> resSet = new HashSet<>();
-        Set<AuthItem> authItemSet = getChildDataAuthItemListByAuthKey(authKey);
+        Set<Auth> authItemSet = getChildDataAuthItemListByAuthKey(authKey);
         if (CollectionUtils.isEmpty(authItemSet)) {
             return resSet;
         }
-        for (AuthItem authTemp : authItemSet) {
+        for (Auth authTemp : authItemSet) {
             if (StringUtils.isEmpty(authTemp.getRefId())) {
                 continue;
             }
@@ -208,9 +208,9 @@ public class AuthContextUtils {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public static Set<AuthItem> getChildDataAuthItemListByAuthKey(String authKey) {
+    public static Set<Auth> getChildDataAuthItemListByAuthKey(String authKey) {
         AssertUtils.notEmpty(authKey, "authKey is empty.");
-        Set<AuthItem> resSet = getChildAuthItemListByAuthTypeAndParentId(AuthConstant.AUTHTYPE_DATA,
+        Set<Auth> resSet = getChildAuthItemListByAuthTypeAndParentId(AuthConstant.AUTHTYPE_DATA,
                 authKey);
         return resSet;
     }
@@ -226,13 +226,13 @@ public class AuthContextUtils {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public static Set<AuthItem> getChildAuthItemListByAuthTypeAndParentId(
+    public static Set<Auth> getChildAuthItemListByAuthTypeAndParentId(
             String authType, String parentId) {
         AssertUtils.notEmpty(parentId, "parentId is empty.");
         AssertUtils.notEmpty(authType, "authType is empty.");
         
-        Set<AuthItem> resSet = new HashSet<AuthItem>();
-        List<AuthItem> authItems = AuthSessionContext.getAuthItemListByAuthTypeAndParentIdFromSession(authType,
+        Set<Auth> resSet = new HashSet<Auth>();
+        List<Auth> authItems = AuthSessionContext.getAuthItemListByAuthTypeAndParentIdFromSession(authType,
                 parentId);
         nestedLoadChildAuthItems(authType, authItems, resSet);
         return resSet;
@@ -249,10 +249,10 @@ public class AuthContextUtils {
       * @see [类、类#方法、类#成员]
      */
     private static void nestedLoadChildAuthItems(String authType,
-            List<AuthItem> authItems, Set<AuthItem> resSet) {
-        List<AuthItem> newAuthItems = new ArrayList<AuthItem>();
-        for (AuthItem authItemTemp : authItems) {
-            List<AuthItem> authItems3 = AuthSessionContext.getAuthItemListByAuthTypeAndParentIdFromSession(authType,
+            List<Auth> authItems, Set<Auth> resSet) {
+        List<Auth> newAuthItems = new ArrayList<Auth>();
+        for (Auth authItemTemp : authItems) {
+            List<Auth> authItems3 = AuthSessionContext.getAuthItemListByAuthTypeAndParentIdFromSession(authType,
                     authItemTemp.getId());
             if (CollectionUtils.isNotEmpty(authItems3)) {
                 newAuthItems.addAll(authItems3);
@@ -276,11 +276,11 @@ public class AuthContextUtils {
      * @see [类、类#方法、类#成员]
     */
     @Deprecated
-    public static Set<AuthItem> getChildAuthItemListByParentId(String parentId) {
+    public static Set<Auth> getChildAuthItemListByParentId(String parentId) {
         AssertUtils.notEmpty(parentId, "parentId is empty.");
         
-        Set<AuthItem> resSet = new HashSet<AuthItem>();
-        List<AuthItem> authItems = AuthSessionContext.getAuthItemListByParentIdFromSession(parentId);
+        Set<Auth> resSet = new HashSet<Auth>();
+        List<Auth> authItems = AuthSessionContext.getAuthItemListByParentIdFromSession(parentId);
         nestedLoadChildAuthItems(authItems, resSet);
         return resSet;
     }
@@ -295,11 +295,11 @@ public class AuthContextUtils {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    private static void nestedLoadChildAuthItems(List<AuthItem> authItems,
-            Set<AuthItem> resSet) {
-        List<AuthItem> newAuthItems = new ArrayList<AuthItem>();
-        for (AuthItem authItemTemp : authItems) {
-            List<AuthItem> authItems3 = AuthSessionContext.getAuthItemListByParentIdFromSession(authItemTemp.getId());
+    private static void nestedLoadChildAuthItems(List<Auth> authItems,
+            Set<Auth> resSet) {
+        List<Auth> newAuthItems = new ArrayList<Auth>();
+        for (Auth authItemTemp : authItems) {
+            List<Auth> authItems3 = AuthSessionContext.getAuthItemListByParentIdFromSession(authItemTemp.getId());
             if (CollectionUtils.isNotEmpty(authItems3)) {
                 newAuthItems.addAll(authItems3);
             } else {

@@ -24,7 +24,7 @@ public interface AuthItemAdapter<T> {
      * 
      * @return 返回 id
      */
-    String getId(T object, AuthItem parentAuthItem);
+    String getId(T object, Auth parentAuthItem);
     
     /**
      * 获取权限类型<br/>
@@ -36,7 +36,7 @@ public interface AuthItemAdapter<T> {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    String getAuthType(T object, AuthItem parentAuthItem);
+    String getAuthType(T object, Auth parentAuthItem);
     
     /**
      * 父级权限id<br/>
@@ -48,7 +48,7 @@ public interface AuthItemAdapter<T> {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    String getParentId(T object, AuthItem parentAuthItem);
+    String getParentId(T object, Auth parentAuthItem);
     
     /**
      * 获取权限关联项id <br/>
@@ -58,7 +58,7 @@ public interface AuthItemAdapter<T> {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    String getRefId(T object, AuthItem parentAuthItem);
+    String getRefId(T object, Auth parentAuthItem);
     
     /**
       * 权限项目引用类型<br/>
@@ -68,7 +68,7 @@ public interface AuthItemAdapter<T> {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    String getRefType(T object, AuthItem parentAuthItem);
+    String getRefType(T object, Auth parentAuthItem);
     
     /**
      * 获取权限项名<br/>
@@ -80,7 +80,7 @@ public interface AuthItemAdapter<T> {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    String getName(T object, AuthItem parentAuthItem);
+    String getName(T object, Auth parentAuthItem);
     
     /**
      * 获取权限描述<br/>
@@ -92,7 +92,7 @@ public interface AuthItemAdapter<T> {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    String getRemark(T object, AuthItem parentAuthItem);
+    String getRemark(T object, Auth parentAuthItem);
     
     /**
      * 获取权限项所属模块<br/>
@@ -105,5 +105,5 @@ public interface AuthItemAdapter<T> {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    String getModule(T object, AuthItem parentAuthItem);
+    String getModule(T object, Auth parentAuthItem);
 }

@@ -25,12 +25,12 @@ import com.tx.component.auth.context.adminchecker.AdminChecker;
 import com.tx.component.auth.context.authchecker.AuthChecker;
 import com.tx.component.auth.context.authchecker.impl.DefaultAuthChecker;
 import com.tx.component.auth.context.loader.AuthLoader;
+import com.tx.component.auth.model.Auth;
 import com.tx.component.auth.model.AuthItem;
-import com.tx.component.auth.model.AuthItemImpl;
 import com.tx.component.auth.persister.AuthItemPersister;
-import com.tx.component.auth.persister.service.AuthItemImplService;
-import com.tx.component.auth.persister.service.AuthItemRefImplService;
-import com.tx.component.auth.persister.service.NotTempAuthItemRefImplService;
+import com.tx.component.auth.service.AuthItemService;
+import com.tx.component.auth.service.AuthItemRefImplService;
+import com.tx.component.auth.service.NotTempAuthItemRefImplService;
 import com.tx.core.dbscript.TableDefinition;
 import com.tx.core.dbscript.XMLTableDefinition;
 import com.tx.core.exceptions.util.AssertUtils;
@@ -75,14 +75,14 @@ public class AuthContextBuilder extends AuthContextConfigurator {
      * key为权限项唯一键（key,id）<br/>
      * value为具体的权限项
      */
-    protected Map<String, AuthItem> authItemMapping;
+    protected Map<String, Auth> authItemMapping;
     
     @Resource(name = "authItemPersister")
     private AuthItemPersister authItemPersister;
     
     /** 权限项业务层 */
     @Resource(name = "authItemImplService")
-    protected AuthItemImplService authItemImplService;
+    protected AuthItemService authItemImplService;
     
     /** 权限引用项业务层 */
     @Resource(name = "authItemRefImplService")
@@ -154,18 +154,18 @@ public class AuthContextBuilder extends AuthContextConfigurator {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    private Map<String, AuthItem> loadAuthItems(List<AuthLoader> authLoaders,
+    private Map<String, Auth> loadAuthItems(List<AuthLoader> authLoaders,
             List<AuthItemLoaderProcessor> loaderProcessors) {
-        Map<String, AuthItem> resMap = null;
+        Map<String, Auth> resMap = null;
         
-        Map<String, AuthItem> tempAuthItemMapping = new HashMap<String, AuthItem>();
+        Map<String, Auth> tempAuthItemMapping = new HashMap<String, Auth>();
         //一句加载器order值进行排序，根据优先级进行加载
         Collections.sort(authLoaders, OrderComparator.INSTANCE);
         for (AuthLoader authLoaderTemp : authLoaders) {
             //加载权限项
             @SuppressWarnings("unchecked")
-            Set<AuthItem> authItemSet = authLoaderTemp
-                    .loadAuthItems((Map<String, AuthItem>) MapUtils
+            Set<Auth> authItemSet = authLoaderTemp
+                    .loadAuthItems((Map<String, Auth>) MapUtils
                             .unmodifiableMap(tempAuthItemMapping));
             if (CollectionUtils.isEmpty(authItemSet)) {
                 continue;
@@ -176,7 +176,7 @@ public class AuthContextBuilder extends AuthContextConfigurator {
                         tempAuthItemMapping, authItemSet));
             }
             
-            for (AuthItem authItem : authItemSet) {
+            for (Auth authItem : authItemSet) {
                 AssertUtils.notNull(authItem, "authItem is null.");
                 AssertUtils.notEmpty(authItem.getId(), "authItem.id is empty.");
                 AssertUtils.notTrue(
@@ -193,10 +193,10 @@ public class AuthContextBuilder extends AuthContextConfigurator {
                 } else {
                     //如果低优先级加载器加载的权限项目name,parentId指定了值，而先前的未指定的情况时
                     //用新的覆盖旧的，如果旧值存在，则忽略新值
-                    AuthItem realItemTemp = tempAuthItemMapping
+                    Auth realItemTemp = tempAuthItemMapping
                             .get(authItem.getId());
-                    if (realItemTemp instanceof AuthItemImpl) {
-                        AuthItemImpl realItemImplTemp = (AuthItemImpl) realItemTemp;
+                    if (realItemTemp instanceof AuthItem) {
+                        AuthItem realItemImplTemp = (AuthItem) realItemTemp;
                         if (StringUtils.isEmpty(realItemImplTemp.getName())
                                 || realItemImplTemp.getId()
                                         .equals(realItemImplTemp.getName())) {

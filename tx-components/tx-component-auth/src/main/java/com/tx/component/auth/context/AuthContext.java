@@ -21,10 +21,10 @@ import org.springframework.util.MultiValueMap;
 
 import com.tx.component.auth.context.authchecker.AuthChecker;
 import com.tx.component.auth.exceptions.AuthContextInitException;
+import com.tx.component.auth.model.Auth;
 import com.tx.component.auth.model.AuthItem;
-import com.tx.component.auth.model.AuthItemImpl;
+import com.tx.component.auth.model.AuthRef;
 import com.tx.component.auth.model.AuthItemRef;
-import com.tx.component.auth.model.AuthItemRefImpl;
 import com.tx.core.TxConstants;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.util.MessageUtils;
@@ -87,11 +87,11 @@ public class AuthContext extends AuthContextBuilder {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public Map<String, AuthItem> getAllAuthItemMapping() {
-        Map<String, AuthItem> resMap = new HashMap<>(
+    public Map<String, Auth> getAllAuthItemMapping() {
+        Map<String, Auth> resMap = new HashMap<>(
                 TxConstants.INITIAL_MAP_SIZE);
         
-        for (Entry<String, AuthItem> entryTemp : authItemMapping.entrySet()) {
+        for (Entry<String, Auth> entryTemp : authItemMapping.entrySet()) {
             resMap.put(entryTemp.getKey(), entryTemp.getValue());
         }
         return resMap;
@@ -108,20 +108,20 @@ public class AuthContext extends AuthContextBuilder {
       * @see [类、类#方法、类#成员]
      */
     @SuppressWarnings("unchecked")
-    public List<AuthItem> getAuthItemListByAuthType(String authType) {
+    public List<Auth> getAuthItemListByAuthType(String authType) {
         AssertUtils.notEmpty(authType, "authType is empty.");
-        List<AuthItem> resList = new ArrayList<>(
+        List<Auth> resList = new ArrayList<>(
                 TxConstants.INITIAL_CONLLECTION_SIZE);
         
-        for (AuthItem authItemTemp : authItemMapping.values()) {
+        for (Auth authItemTemp : authItemMapping.values()) {
             if (authType.equals(authItemTemp.getAuthType())) {
                 resList.add(authItemTemp);
             }
         }
-        return (List<AuthItem>) ListUtils.unmodifiableList(resList);
+        return (List<Auth>) ListUtils.unmodifiableList(resList);
     }
     
-    public List<AuthItem> getAuthItemListByAuthTypeAndParentId(String authType,
+    public List<Auth> getAuthItemListByAuthTypeAndParentId(String authType,
             String parentId) {
         throw new RuntimeException("xx");
     }
@@ -136,12 +136,12 @@ public class AuthContext extends AuthContextBuilder {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public Map<String, AuthItem> getAuthItemMapByAuthType(String authType) {
+    public Map<String, Auth> getAuthItemMapByAuthType(String authType) {
         AssertUtils.notEmpty(authType, "authType is empty.");
-        Map<String, AuthItem> resMap = new HashMap<>(
+        Map<String, Auth> resMap = new HashMap<>(
                 TxConstants.INITIAL_MAP_SIZE);
         
-        for (Entry<String, AuthItem> entryTemp : authItemMapping.entrySet()) {
+        for (Entry<String, Auth> entryTemp : authItemMapping.entrySet()) {
             if (authType.equals(entryTemp.getValue().getAuthType())) {
                 resMap.put(entryTemp.getKey(), entryTemp.getValue());
             }
@@ -162,7 +162,7 @@ public class AuthContext extends AuthContextBuilder {
         AssertUtils.notEmpty(refType2RefIdMapping,
                 "refType2RefIdMapping is empty");
         
-        List<AuthItemRef> authItemRefList = null;
+        List<AuthRef> authItemRefList = null;
         
         boolean isSuperAdmin = false;
         String adminRefType = null;
@@ -180,9 +180,9 @@ public class AuthContext extends AuthContextBuilder {
         
         if (isSuperAdmin) {
             //如果是超级管理员则拥有所有权限项的引用
-            authItemRefList = new ArrayList<AuthItemRef>();
-            for (AuthItem authItemTemp : authItemMapping.values()) {
-                AuthItemRefImpl newAuthItemRefTemp = new AuthItemRefImpl();
+            authItemRefList = new ArrayList<AuthRef>();
+            for (Auth authItemTemp : authItemMapping.values()) {
+                AuthItemRef newAuthItemRefTemp = new AuthItemRef();
                 newAuthItemRefTemp.setAuthItem(authItemTemp);
                 newAuthItemRefTemp.setAuthRefType(adminRefType);
                 newAuthItemRefTemp.setRefId(adminRefId);
@@ -194,12 +194,12 @@ public class AuthContext extends AuthContextBuilder {
             }
         } else {
             //如果不是超级管理员，根据引用表查询得到相关的权限引用
-            authItemRefList = new ArrayList<AuthItemRef>();
-            List<AuthItemRefImpl> refImplList = this.authItemRefImplService.queryAuthItemRefListByRefType2RefIdMapping(refType2RefIdMapping,
+            authItemRefList = new ArrayList<AuthRef>();
+            List<AuthItemRef> refImplList = this.authItemRefImplService.queryAuthItemRefListByRefType2RefIdMapping(refType2RefIdMapping,
                     this.systemId,
                     this.tableSuffix);
             if (refImplList != null) {
-                for (AuthItemRefImpl refImplTemp : refImplList) {
+                for (AuthItemRef refImplTemp : refImplList) {
                     loadAuthItemRef(refImplTemp);
                 }
             }
@@ -219,12 +219,12 @@ public class AuthContext extends AuthContextBuilder {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    private void loadAuthItemRef(AuthItemRefImpl refImpl) {
+    private void loadAuthItemRef(AuthItemRef refImpl) {
         if (refImpl == null || refImpl.getAuthItem() == null) {
             return;
         }
         
-        AuthItem realAuthItem = authItemMapping.get(refImpl.getAuthItem()
+        Auth realAuthItem = authItemMapping.get(refImpl.getAuthItem()
                 .getId());
         if (realAuthItem != null) {
             refImpl.setAuthItem(realAuthItem);
@@ -241,7 +241,7 @@ public class AuthContext extends AuthContextBuilder {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public AuthItem getAuthItemFromContextById(String authItemId) {
+    public Auth getAuthItemFromContextById(String authItemId) {
         return authItemMapping.get(authItemId);
     }
     
@@ -284,7 +284,7 @@ public class AuthContext extends AuthContextBuilder {
             return true;
         }
         //检查对应权限的权限类型是否正确
-        AuthItem authItem = authItemMapping.get(authKey);
+        Auth authItem = authItemMapping.get(authKey);
         if (authItem == null) {
             throw new AuthContextInitException(
                     MessageUtils.format("The authKey:{} AuthItem is not exists.",
@@ -297,7 +297,7 @@ public class AuthContext extends AuthContextBuilder {
         }
         
         //如果当前权限引用依赖有效时间，则判断该权限引用是否还有效
-        List<AuthItemRef> authItemRefList = AuthSessionContext.getAuthRefListFromSession(authItem.getId());
+        List<AuthRef> authItemRefList = AuthSessionContext.getAuthRefListFromSession(authItem.getId());
         if (!CollectionUtils.isEmpty(authItemRefList)) {
             //根据权限类型获取对应的权限检查器映射
             AuthChecker authChecker = null;
@@ -323,7 +323,7 @@ public class AuthContext extends AuthContextBuilder {
       * @see [类、类#方法、类#成员]
      */
     @Transactional
-    public AuthItem registerAuth(AuthItem authItem) {
+    public Auth registerAuth(Auth authItem) {
         AssertUtils.notNull(authItem, "authItem is null");
         //参数合法性验证
         //参数合法性验证
@@ -333,13 +333,13 @@ public class AuthContext extends AuthContextBuilder {
             isNeedNew = true;
         }
         
-        AuthItemImpl res = null;
+        AuthItem res = null;
         if (isNeedNew) {
             AssertUtils.notNull(authItem, "authItemImpl is null");
             AssertUtils.notEmpty(authItem.getAuthType(), "authType is empty.");
             
             //构建注册实体
-            AuthItemImpl newAuthItemImpl = new AuthItemImpl();
+            AuthItem newAuthItemImpl = new AuthItem();
             newAuthItemImpl.setId(authItem.getId());
             newAuthItemImpl.setParentId(authItem.getParentId());
             newAuthItemImpl.setAuthType(authItem.getAuthType());
@@ -391,7 +391,7 @@ public class AuthContext extends AuthContextBuilder {
       * @see [类、类#方法、类#成员]
      */
     @Transactional
-    public AuthItem registerAuth(String id, String parentId, String name,
+    public Auth registerAuth(String id, String parentId, String name,
             String description, String authType, boolean valid,
             boolean configAble, boolean viewAble, boolean editAble) {
         //参数合法性验证
@@ -400,9 +400,9 @@ public class AuthContext extends AuthContextBuilder {
             isNeedNew = true;
         }
         
-        AuthItemImpl res = null;
+        AuthItem res = null;
         if (isNeedNew) {
-            AuthItemImpl newAuthItemImpl = new AuthItemImpl();
+            AuthItem newAuthItemImpl = new AuthItem();
             newAuthItemImpl.setId(id);
             newAuthItemImpl.setParentId(parentId);
             newAuthItemImpl.setName(name);
@@ -451,7 +451,7 @@ public class AuthContext extends AuthContextBuilder {
       * @see [类、类#方法、类#成员]
      */
     @Transactional
-    public AuthItem registerAuth(String id, String name, String description,
+    public Auth registerAuth(String id, String name, String description,
             String authType, boolean valid) {
         //参数合法性验证
         boolean isNeedNew = false;
@@ -459,9 +459,9 @@ public class AuthContext extends AuthContextBuilder {
             isNeedNew = true;
         }
         
-        AuthItemImpl res = null;
+        AuthItem res = null;
         if (isNeedNew) {
-            AuthItemImpl newAuthItemImpl = new AuthItemImpl();
+            AuthItem newAuthItemImpl = new AuthItem();
             newAuthItemImpl.setId(id);
             newAuthItemImpl.setName(name);
             newAuthItemImpl.setAuthType(authType);
@@ -501,12 +501,12 @@ public class AuthContext extends AuthContextBuilder {
       * @see [类、类#方法、类#成员]
      */
     @Transactional
-    public AuthItem registerAuth(String name, String description,
+    public Auth registerAuth(String name, String description,
             String authType) {
         //参数合法性验证
         AssertUtils.notEmpty(authType, "authType is empty.");
         
-        AuthItemImpl newAuthItemImpl = new AuthItemImpl();
+        AuthItem newAuthItemImpl = new AuthItem();
         newAuthItemImpl.setAuthType(authType);
         newAuthItemImpl.setDescription(description);
         
@@ -536,13 +536,13 @@ public class AuthContext extends AuthContextBuilder {
      * @see [类、类#方法、类#成员]
     */
     @Transactional
-    public AuthItem registerAuth(String name, String description,
+    public Auth registerAuth(String name, String description,
             String authType, boolean isValid, boolean isConfigAble,
             boolean isEditAble, boolean isViewAble) {
         //参数合法性验证
         AssertUtils.notEmpty(authType, "authType is empty.");
         
-        AuthItemImpl newAuthItemImpl = new AuthItemImpl();
+        AuthItem newAuthItemImpl = new AuthItem();
         newAuthItemImpl.setAuthType(authType);
         newAuthItemImpl.setDescription(description);
         newAuthItemImpl.setName(name);
@@ -566,7 +566,7 @@ public class AuthContext extends AuthContextBuilder {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    private AuthItemImpl doRegisteNewAuth(final AuthItemImpl authItemImpl) {
+    private AuthItem doRegisteNewAuth(final AuthItem authItemImpl) {
         AssertUtils.notNull(authItemImpl, "authItemImpl is null");
         AssertUtils.notEmpty(authItemImpl.getAuthType(), "authType is empty.");
         
@@ -595,13 +595,13 @@ public class AuthContext extends AuthContextBuilder {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    private AuthItemImpl doRegisteSaveAuth(
+    private AuthItem doRegisteSaveAuth(
             final Map<String, Object> authItemRowMap) {
         AssertUtils.notNull(authItemRowMap, "authItemRowMap is null");
         AssertUtils.notEmpty((String) authItemRowMap.get("id"),
                 "authItemRowMap.id is empty.");
         
-        final AuthItemImpl authItemImpl = this.authItemImplService.saveAuthItemImplByAuthItemRowMap(authItemRowMap,
+        final AuthItem authItemImpl = this.authItemImplService.saveAuthItemImplByAuthItemRowMap(authItemRowMap,
                 this.systemId,
                 this.tableSuffix);
         
@@ -768,14 +768,14 @@ public class AuthContext extends AuthContextBuilder {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public List<AuthItemRef> queryAuthItemRefListByAuthRefTypeAndRefId(
+    public List<AuthRef> queryAuthItemRefListByAuthRefTypeAndRefId(
             String authRefType, String refId) {
-        List<AuthItemRefImpl> authItemRefImplList = this.notTempAuthItemRefImplService.queryAuthItemRefListByRefTypeAndRefId(authRefType,
+        List<AuthItemRef> authItemRefImplList = this.notTempAuthItemRefImplService.queryAuthItemRefListByRefTypeAndRefId(authRefType,
                 refId,
                 this.systemId,
                 this.tableSuffix);
         
-        List<AuthItemRef> resList = changeAuthItemRefImplListToAuthItemRefList(authItemRefImplList);
+        List<AuthRef> resList = changeAuthItemRefImplListToAuthItemRefList(authItemRefImplList);
         return resList;
     }
     
@@ -790,14 +790,14 @@ public class AuthContext extends AuthContextBuilder {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public List<AuthItemRef> queryAuthItemRefListByAuthRefTypeAndAuthItemId(
+    public List<AuthRef> queryAuthItemRefListByAuthRefTypeAndAuthItemId(
             String authRefType, String authItemId) {
-        List<AuthItemRefImpl> authItemRefImplList = this.notTempAuthItemRefImplService.queryAuthItemRefListByRefTypeAndAuthItemId(authRefType,
+        List<AuthItemRef> authItemRefImplList = this.notTempAuthItemRefImplService.queryAuthItemRefListByRefTypeAndAuthItemId(authRefType,
                 authItemId,
                 this.systemId,
                 this.tableSuffix);
         
-        List<AuthItemRef> resList = changeAuthItemRefImplListToAuthItemRefList(authItemRefImplList);
+        List<AuthRef> resList = changeAuthItemRefImplListToAuthItemRefList(authItemRefImplList);
         return resList;
     }
     
@@ -812,13 +812,13 @@ public class AuthContext extends AuthContextBuilder {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public List<AuthItemRef> queryAuthItemRefListByRefType2RefIdMapping(
+    public List<AuthRef> queryAuthItemRefListByRefType2RefIdMapping(
             MultiValueMap<String, String> refType2RefIdMapping) {
-        List<AuthItemRefImpl> authItemRefImplList = this.authItemRefImplService.queryAuthItemRefListByRefType2RefIdMapping(refType2RefIdMapping,
+        List<AuthItemRef> authItemRefImplList = this.authItemRefImplService.queryAuthItemRefListByRefType2RefIdMapping(refType2RefIdMapping,
                 this.systemId,
                 this.tableSuffix);
         
-        List<AuthItemRef> resList = changeAuthItemRefImplListToAuthItemRefList(authItemRefImplList);
+        List<AuthRef> resList = changeAuthItemRefImplListToAuthItemRefList(authItemRefImplList);
         return resList;
     }
     
@@ -833,14 +833,14 @@ public class AuthContext extends AuthContextBuilder {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    private List<AuthItemRef> changeAuthItemRefImplListToAuthItemRefList(
-            List<AuthItemRefImpl> authItemRefImplList) {
-        List<AuthItemRef> resList = new ArrayList<AuthItemRef>();
+    private List<AuthRef> changeAuthItemRefImplListToAuthItemRefList(
+            List<AuthItemRef> authItemRefImplList) {
+        List<AuthRef> resList = new ArrayList<AuthRef>();
         if (CollectionUtils.isEmpty(authItemRefImplList)) {
             return resList;
         }
         
-        for (AuthItemRefImpl authItemRefTemp : authItemRefImplList) {
+        for (AuthItemRef authItemRefTemp : authItemRefImplList) {
             if (authItemMapping.containsKey(authItemRefTemp.getAuthItem()
                     .getId())) {
                 authItemRefTemp.setAuthItem(authItemMapping.get(authItemRefTemp.getAuthItem()

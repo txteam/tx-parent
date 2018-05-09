@@ -24,14 +24,14 @@ import com.tx.component.auth.context.authchecker.AuthChecker;
 import com.tx.component.auth.context.loader.impl.XmlAuthLoader;
 import com.tx.component.auth.context.loaderprocessor.ChildAuthRegisterSupportLoaderProcessor;
 import com.tx.component.auth.context.loaderprocessor.ControllerAuthRegisterSupportLoaderProcessor;
+import com.tx.component.auth.dao.AuthItemImplDao;
+import com.tx.component.auth.dao.AuthItemRefImplDao;
+import com.tx.component.auth.dao.impl.AuthItemImplDaoImpl;
+import com.tx.component.auth.dao.impl.AuthItemRefImplDaoImpl;
 import com.tx.component.auth.persister.AuthItemPersister;
-import com.tx.component.auth.persister.dao.AuthItemImplDao;
-import com.tx.component.auth.persister.dao.AuthItemRefImplDao;
-import com.tx.component.auth.persister.dao.impl.AuthItemImplDaoImpl;
-import com.tx.component.auth.persister.dao.impl.AuthItemRefImplDaoImpl;
-import com.tx.component.auth.persister.service.AuthItemImplService;
-import com.tx.component.auth.persister.service.AuthItemRefImplService;
-import com.tx.component.auth.persister.service.NotTempAuthItemRefImplService;
+import com.tx.component.auth.service.AuthItemService;
+import com.tx.component.auth.service.AuthItemRefImplService;
+import com.tx.component.auth.service.NotTempAuthItemRefImplService;
 import com.tx.core.exceptions.util.AssertUtils;
 
 /**
@@ -96,8 +96,8 @@ public class AuthContextConfigurator implements InitializingBean,
     }
     
     @Bean(name = "authItemImplService")
-    public AuthItemImplService authItemImplService() {
-        AuthItemImplService authItemImplService = new AuthItemImplService(
+    public AuthItemService authItemImplService() {
+        AuthItemService authItemImplService = new AuthItemService(
                 this.platformTransactionManager);
         return authItemImplService;
     }

@@ -30,7 +30,7 @@ public abstract class AbstractAuthItemAdapter<T> implements AuthItemAdapter<T> {
      * @return
      */
     @Override
-    public String getId(T object, AuthItem parentAuthItem) {
+    public String getId(T object, Auth parentAuthItem) {
         AssertUtils.notNull(parentAuthItem, "parentAuthItem is null.");
         AssertUtils.notNull(object, "object is null.");
         AssertUtils.isTrue(PropertyUtils.isReadable(object, "id"),
@@ -52,7 +52,7 @@ public abstract class AbstractAuthItemAdapter<T> implements AuthItemAdapter<T> {
      * @return
      */
     @Override
-    public String getRefId(T object, AuthItem parentAuthItem) {
+    public String getRefId(T object, Auth parentAuthItem) {
         AssertUtils.notNull(parentAuthItem, "parentAuthItem is null.");
         AssertUtils.notNull(object, "object is null.");
         AssertUtils.isTrue(PropertyUtils.isReadable(object, "id"), "object.id is not readAble.");
@@ -72,7 +72,7 @@ public abstract class AbstractAuthItemAdapter<T> implements AuthItemAdapter<T> {
      * @return
      */
     @Override
-    public String getName(T object, AuthItem parentAuthItem) {
+    public String getName(T object, Auth parentAuthItem) {
         AssertUtils.notNull(parentAuthItem, "parentAuthItem is null.");
         AssertUtils.notNull(object, "object is null.");
         AssertUtils.isTrue(PropertyUtils.isReadable(object, "name"), "object.name is not readAble.");
@@ -92,7 +92,7 @@ public abstract class AbstractAuthItemAdapter<T> implements AuthItemAdapter<T> {
      * @return
      */
     @Override
-    public String getDescription(T object, AuthItem parentAuthItem) {
+    public String getDescription(T object, Auth parentAuthItem) {
         AssertUtils.notNull(parentAuthItem, "parentAuthItem is null.");
         AssertUtils.notNull(object, "object is null.");
         AssertUtils.isTrue(PropertyUtils.isReadable(object, "description")
@@ -130,7 +130,7 @@ public abstract class AbstractAuthItemAdapter<T> implements AuthItemAdapter<T> {
      * @return
      */
     @Override
-    public String getAuthType(T object, AuthItem parentAuthItem) {
+    public String getAuthType(T object, Auth parentAuthItem) {
         AssertUtils.notNull(object,
                 "parentAuthItem is null.must overwrite getAuthType().");
         return parentAuthItem.getAuthType();

@@ -4,7 +4,7 @@
  * 修改时间:  
  * <修改描述:>
  */
-package com.tx.component.auth.persister.service;
+package com.tx.component.auth.service;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -25,10 +25,10 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.tx.component.auth.context.AuthContext;
 import com.tx.component.auth.context.AuthSessionContext;
-import com.tx.component.auth.model.AuthItem;
-import com.tx.component.auth.model.AuthItemRefImpl;
-import com.tx.component.auth.persister.dao.AuthItemRefImplDao;
-import com.tx.component.auth.persister.dao.impl.AuthItemRefImplDaoImpl;
+import com.tx.component.auth.dao.AuthItemRefImplDao;
+import com.tx.component.auth.dao.impl.AuthItemRefImplDaoImpl;
+import com.tx.component.auth.model.Auth;
+import com.tx.component.auth.model.AuthItemRef;
 import com.tx.core.exceptions.util.AssertUtils;
 
 /**
@@ -89,7 +89,7 @@ public class NotTempAuthItemRefImplService {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public List<AuthItemRefImpl> queryAuthItemRefListByRefTypeAndRefId(
+    public List<AuthItemRef> queryAuthItemRefListByRefTypeAndRefId(
             String authRefType, String refId, String systemId,
             String tableSuffix) {
         AssertUtils.notEmpty(refId, "refId is empty.");
@@ -102,7 +102,7 @@ public class NotTempAuthItemRefImplService {
         params.put("systemId", systemId);
         params.put("temp", false);
         
-        List<AuthItemRefImpl> authItemRefImplList = this.authItemRefImplDao.queryAuthItemRefImplList(params,
+        List<AuthItemRef> authItemRefImplList = this.authItemRefImplDao.queryAuthItemRefImplList(params,
                 tableSuffix);
         
         return authItemRefImplList;
@@ -120,7 +120,7 @@ public class NotTempAuthItemRefImplService {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public List<AuthItemRefImpl> queryAuthItemRefListByAuthTypeAndRefTypeAndRefId(
+    public List<AuthItemRef> queryAuthItemRefListByAuthTypeAndRefTypeAndRefId(
             String authType, String authRefType, String refId, String systemId,
             String tableSuffix) {
         AssertUtils.notEmpty(refId, "refId is empty.");
@@ -134,7 +134,7 @@ public class NotTempAuthItemRefImplService {
         params.put("systemId", systemId);
         params.put("temp", false);
         
-        List<AuthItemRefImpl> authItemRefImplList = this.authItemRefImplDao.queryAuthItemRefImplList(params,
+        List<AuthItemRef> authItemRefImplList = this.authItemRefImplDao.queryAuthItemRefImplList(params,
                 tableSuffix);
         
         return authItemRefImplList;
@@ -151,7 +151,7 @@ public class NotTempAuthItemRefImplService {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public List<AuthItemRefImpl> queryAuthItemRefListByRefTypeAndAuthItemId(
+    public List<AuthItemRef> queryAuthItemRefListByRefTypeAndAuthItemId(
             String authRefType, String authItemId, String systemId,
             String tableSuffix) {
         AssertUtils.notEmpty(authRefType, "authRefType is empty.");
@@ -163,7 +163,7 @@ public class NotTempAuthItemRefImplService {
         params.put("systemId", systemId);
         params.put("temp", false);
         
-        List<AuthItemRefImpl> authItemRefImplList = this.authItemRefImplDao.queryAuthItemRefImplList(params,
+        List<AuthItemRef> authItemRefImplList = this.authItemRefImplDao.queryAuthItemRefImplList(params,
                 tableSuffix);
         
         return authItemRefImplList;
@@ -181,7 +181,7 @@ public class NotTempAuthItemRefImplService {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public List<AuthItemRefImpl> queryAuthItemRefListByAuthTypeAndRefTypeAndAuthItemId(
+    public List<AuthItemRef> queryAuthItemRefListByAuthTypeAndRefTypeAndAuthItemId(
             String authType, String authRefType, String authItemId,
             String systemId, String tableSuffix) {
         AssertUtils.notEmpty(authRefType, "authRefType is empty.");
@@ -195,7 +195,7 @@ public class NotTempAuthItemRefImplService {
         params.put("systemId", systemId);
         params.put("temp", false);
         
-        List<AuthItemRefImpl> authItemRefImplList = this.authItemRefImplDao.queryAuthItemRefImplList(params,
+        List<AuthItemRef> authItemRefImplList = this.authItemRefImplDao.queryAuthItemRefImplList(params,
                 tableSuffix);
         
         return authItemRefImplList;
@@ -223,12 +223,12 @@ public class NotTempAuthItemRefImplService {
         }
         
         List<String> srcAuthRefIds = new ArrayList<String>();
-        List<AuthItemRefImpl> authItemRefImplList = queryAuthItemRefListByRefTypeAndAuthItemId(authRefType,
+        List<AuthItemRef> authItemRefImplList = queryAuthItemRefListByRefTypeAndAuthItemId(authRefType,
                 authItemId,
                 systemId,
                 tableSuffix);
         if (authItemRefImplList != null) {
-            for (AuthItemRefImpl refTemp : authItemRefImplList) {
+            for (AuthItemRef refTemp : authItemRefImplList) {
                 srcAuthRefIds.add(refTemp.getRefId());
             }
         }
@@ -278,13 +278,13 @@ public class NotTempAuthItemRefImplService {
         }
         
         List<String> srcAuthRefIds = new ArrayList<String>();
-        List<AuthItemRefImpl> authItemRefImplList = queryAuthItemRefListByRefTypeAndAuthItemId(authRefType,
+        List<AuthItemRef> authItemRefImplList = queryAuthItemRefListByRefTypeAndAuthItemId(authRefType,
                 authItemId,
                 systemId,
                 tableSuffix);
-        Map<String, AuthItemRefImpl> dbAuthItemRefMap = new HashMap<String, AuthItemRefImpl>();
+        Map<String, AuthItemRef> dbAuthItemRefMap = new HashMap<String, AuthItemRef>();
         if (authItemRefImplList != null) {
-            for (AuthItemRefImpl refTemp : authItemRefImplList) {
+            for (AuthItemRef refTemp : authItemRefImplList) {
                 srcAuthRefIds.add(refTemp.getRefId());
                 dbAuthItemRefMap.put(refTemp.getRefId(), refTemp);
             }
@@ -294,7 +294,7 @@ public class NotTempAuthItemRefImplService {
         List<String> needDeleteRefIds = ListUtils.intersection(srcAuthRefIds,
                 deleteRefIdList);
         //生成需要插入权限引用历史表的数据
-        List<AuthItemRefImpl> needInsertToHis = new ArrayList<AuthItemRefImpl>();
+        List<AuthItemRef> needInsertToHis = new ArrayList<AuthItemRef>();
         for (String needDeleteRefIdTemp : needDeleteRefIds) {
             if (dbAuthItemRefMap.containsKey(needDeleteRefIdTemp)) {
                 needInsertToHis.add(dbAuthItemRefMap.get(needDeleteRefIdTemp));
@@ -346,13 +346,13 @@ public class NotTempAuthItemRefImplService {
         }
         
         List<String> srcAuthRefIds = new ArrayList<String>();
-        List<AuthItemRefImpl> authItemRefImplList = queryAuthItemRefListByRefTypeAndAuthItemId(authRefType,
+        List<AuthItemRef> authItemRefImplList = queryAuthItemRefListByRefTypeAndAuthItemId(authRefType,
                 authItemId,
                 systemId,
                 tableSuffix);
-        Map<String, AuthItemRefImpl> dbAuthItemRefMap = new HashMap<String, AuthItemRefImpl>();
+        Map<String, AuthItemRef> dbAuthItemRefMap = new HashMap<String, AuthItemRef>();
         if (authItemRefImplList != null) {
-            for (AuthItemRefImpl refTemp : authItemRefImplList) {
+            for (AuthItemRef refTemp : authItemRefImplList) {
                 srcAuthRefIds.add(refTemp.getRefId());
                 dbAuthItemRefMap.put(refTemp.getRefId(), refTemp);
             }
@@ -365,7 +365,7 @@ public class NotTempAuthItemRefImplService {
         List<String> needDeleteRefIds = ListUtils.intersection(srcAuthRefIds,
                 deleteRefIdList);
         //生成需要插入权限引用历史表的数据
-        List<AuthItemRefImpl> needInsertToHis = new ArrayList<AuthItemRefImpl>();
+        List<AuthItemRef> needInsertToHis = new ArrayList<AuthItemRef>();
         for (String needDeleteRefIdTemp : needDeleteRefIds) {
             if (dbAuthItemRefMap.containsKey(needDeleteRefIdTemp)) {
                 needInsertToHis.add(dbAuthItemRefMap.get(needDeleteRefIdTemp));
@@ -419,13 +419,13 @@ public class NotTempAuthItemRefImplService {
         }
         
         List<String> srcAuthRefIds = new ArrayList<String>();
-        List<AuthItemRefImpl> authItemRefImplList = queryAuthItemRefListByRefTypeAndAuthItemId(authRefType,
+        List<AuthItemRef> authItemRefImplList = queryAuthItemRefListByRefTypeAndAuthItemId(authRefType,
                 authItemId,
                 systemId,
                 tableSuffix);
-        Map<String, AuthItemRefImpl> dbAuthItemRefMap = new HashMap<String, AuthItemRefImpl>();
+        Map<String, AuthItemRef> dbAuthItemRefMap = new HashMap<String, AuthItemRef>();
         if (authItemRefImplList != null) {
-            for (AuthItemRefImpl refTemp : authItemRefImplList) {
+            for (AuthItemRef refTemp : authItemRefImplList) {
                 srcAuthRefIds.add(refTemp.getRefId());
                 dbAuthItemRefMap.put(refTemp.getRefId(), refTemp);
             }
@@ -438,7 +438,7 @@ public class NotTempAuthItemRefImplService {
         List<String> needInsertRefIds = ListUtils.subtract(refIdList,
                 srcAuthRefIds);
         //生成需要插入权限引用历史表的数据
-        List<AuthItemRefImpl> needInsertToHis = new ArrayList<AuthItemRefImpl>();
+        List<AuthItemRef> needInsertToHis = new ArrayList<AuthItemRef>();
         for (String needDeleteRefIdTemp : needDeleteRefIds) {
             if (dbAuthItemRefMap.containsKey(needDeleteRefIdTemp)) {
                 needInsertToHis.add(dbAuthItemRefMap.get(needDeleteRefIdTemp));
@@ -493,13 +493,13 @@ public class NotTempAuthItemRefImplService {
         
         //存储前,获取原有的权限引用
         List<String> srcAuthItemIds = new ArrayList<String>();
-        List<AuthItemRefImpl> authItemRefImplList = queryAuthItemRefListByRefTypeAndRefId(authRefType,
+        List<AuthItemRef> authItemRefImplList = queryAuthItemRefListByRefTypeAndRefId(authRefType,
                 refId,
                 systemId,
                 tableSuffix);
-        Map<String, AuthItemRefImpl> dbAuthItemRefMap = new HashMap<String, AuthItemRefImpl>();
+        Map<String, AuthItemRef> dbAuthItemRefMap = new HashMap<String, AuthItemRef>();
         if (authItemRefImplList != null) {
-            for (AuthItemRefImpl refTemp : authItemRefImplList) {
+            for (AuthItemRef refTemp : authItemRefImplList) {
                 srcAuthItemIds.add(refTemp.getAuthItem().getId());
                 dbAuthItemRefMap.put(refTemp.getAuthItem().getId(), refTemp);
             }
@@ -513,7 +513,7 @@ public class NotTempAuthItemRefImplService {
         List<String> needInsertAuthItemIds = ListUtils.subtract(authItemIds,
                 srcAuthItemIds);
         //生成需要插入权限引用历史表的数据
-        List<AuthItemRefImpl> needInsertToHis = new ArrayList<AuthItemRefImpl>();
+        List<AuthItemRef> needInsertToHis = new ArrayList<AuthItemRef>();
         for (String needDeleteAuthItemIdTemp : needDeleteAuthItemIds) {
             if (dbAuthItemRefMap.containsKey(needDeleteAuthItemIdTemp)
                     && AuthContext.getContext()
@@ -573,14 +573,14 @@ public class NotTempAuthItemRefImplService {
         
         //存储前,获取原有的权限引用
         List<String> srcAuthItemIds = new ArrayList<String>();
-        List<AuthItemRefImpl> authItemRefImplList = queryAuthItemRefListByAuthTypeAndRefTypeAndRefId(authType,
+        List<AuthItemRef> authItemRefImplList = queryAuthItemRefListByAuthTypeAndRefTypeAndRefId(authType,
                 authRefType,
                 refId,
                 systemId,
                 tableSuffix);
-        Map<String, AuthItemRefImpl> dbAuthItemRefMap = new HashMap<String, AuthItemRefImpl>();
+        Map<String, AuthItemRef> dbAuthItemRefMap = new HashMap<String, AuthItemRef>();
         if (authItemRefImplList != null) {
-            for (AuthItemRefImpl refTemp : authItemRefImplList) {
+            for (AuthItemRef refTemp : authItemRefImplList) {
                 srcAuthItemIds.add(refTemp.getAuthItem().getId());
                 dbAuthItemRefMap.put(refTemp.getAuthItem().getId(), refTemp);
             }
@@ -594,7 +594,7 @@ public class NotTempAuthItemRefImplService {
         List<String> needInsertAuthItemIds = ListUtils.subtract(authItemIds,
                 srcAuthItemIds);
         //生成需要插入权限引用历史表的数据
-        List<AuthItemRefImpl> needInsertToHis = new ArrayList<AuthItemRefImpl>();
+        List<AuthItemRef> needInsertToHis = new ArrayList<AuthItemRef>();
         for (String needDeleteAuthItemIdTemp : needDeleteAuthItemIds) {
             if (dbAuthItemRefMap.containsKey(needDeleteAuthItemIdTemp)
                     && AuthContext.getContext()
@@ -651,9 +651,9 @@ public class NotTempAuthItemRefImplService {
         AssertUtils.notEmpty(systemId, "systemId is empty.");
         
         //如果存在需要删除的权限引用项
-        List<AuthItemRefImpl> authItemRefList = new ArrayList<AuthItemRefImpl>();
+        List<AuthItemRef> authItemRefList = new ArrayList<AuthItemRef>();
         for (String authItemIdTemp : needDeleteAuthItemIds) {
-            AuthItemRefImpl authItemRef = new AuthItemRefImpl();
+            AuthItemRef authItemRef = new AuthItemRef();
             authItemRef.setTemp(false);
             authItemRef.setAuthRefType(authRefType);
             authItemRef.setRefId(refId);
@@ -663,7 +663,7 @@ public class NotTempAuthItemRefImplService {
                     .containsKey(authItemIdTemp)) {
                 continue;
             }
-            AuthItem authItemTemp = AuthContext.getContext()
+            Auth authItemTemp = AuthContext.getContext()
                     .getAuthItemFromContextById(authItemIdTemp);
             AssertUtils.notNull(authItemTemp,
                     "authItem is null.authItemId:{}",
@@ -703,16 +703,16 @@ public class NotTempAuthItemRefImplService {
             return;
         }
         
-        AuthItem authItem = AuthContext.getContext()
+        Auth authItem = AuthContext.getContext()
                 .getAuthItemFromContextById(authItemId);
         AssertUtils.notNull(authItem,
                 "authItem is null.authItemId:{}",
                 authItemId);
         
         //如果存在需要删除的权限引用项
-        List<AuthItemRefImpl> authItemRefList = new ArrayList<AuthItemRefImpl>();
+        List<AuthItemRef> authItemRefList = new ArrayList<AuthItemRef>();
         for (String refIdTemp : needDeleteRefIds) {
-            AuthItemRefImpl authItemRef = new AuthItemRefImpl();
+            AuthItemRef authItemRef = new AuthItemRef();
             authItemRef.setTemp(false);
             
             authItemRef.setAuthRefType(authRefType);
@@ -744,13 +744,13 @@ public class NotTempAuthItemRefImplService {
             String tableSuffix) {
         AssertUtils.notEmpty(systemId, "systemId is empty");
         
-        List<AuthItemRefImpl> authItemRefList = new ArrayList<AuthItemRefImpl>();
+        List<AuthItemRef> authItemRefList = new ArrayList<AuthItemRef>();
         
         //取得当前登录人员id
         String currentOperatorId = AuthSessionContext.getOperatorIdFromSession();
         
         for (String authItemIdTemp : needInsertAuthItemIds) {
-            AuthItemRefImpl authItemRef = new AuthItemRefImpl();
+            AuthItemRef authItemRef = new AuthItemRef();
             authItemRef.setTemp(false);
             authItemRef.setCreateDate(new Date());
             authItemRef.setCreateOperId(currentOperatorId);
@@ -763,7 +763,7 @@ public class NotTempAuthItemRefImplService {
                 continue;
             }
             
-            AuthItem authItemTemp = AuthContext.getContext()
+            Auth authItemTemp = AuthContext.getContext()
                     .getAuthItemFromContextById(authItemIdTemp);
             AssertUtils.notNull(authItemTemp,
                     "authItem is null.authItemId:{}",
@@ -793,7 +793,7 @@ public class NotTempAuthItemRefImplService {
             String authItemId, List<String> needInsertRefIds, String systemId,
             String tableSuffix) {
         AssertUtils.notEmpty(systemId, "systemId is empty");
-        List<AuthItemRefImpl> authItemRefList = new ArrayList<AuthItemRefImpl>();
+        List<AuthItemRef> authItemRefList = new ArrayList<AuthItemRef>();
         //跳过系统中不存在的权限
         if (!AuthContext.getContext()
                 .getAllAuthItemMapping()
@@ -801,7 +801,7 @@ public class NotTempAuthItemRefImplService {
             return;
         }
         //取得当前登录人员id
-        AuthItem authItem = AuthContext.getContext()
+        Auth authItem = AuthContext.getContext()
                 .getAuthItemFromContextById(authItemId);
         AssertUtils.notNull(authItem,
                 "authItem is null.authItemId:{}",
@@ -809,7 +809,7 @@ public class NotTempAuthItemRefImplService {
         
         String currentOperatorId = AuthSessionContext.getOperatorIdFromSession();
         for (String refIdTemp : needInsertRefIds) {
-            AuthItemRefImpl authItemRef = new AuthItemRefImpl();
+            AuthItemRef authItemRef = new AuthItemRef();
             authItemRef.setTemp(false);
             authItemRef.setCreateDate(new Date());
             authItemRef.setCreateOperId(currentOperatorId);
@@ -836,7 +836,7 @@ public class NotTempAuthItemRefImplService {
       * @see [类、类#方法、类#成员]
      */
     private void batchInsertAuthItemRefToHis(
-            List<AuthItemRefImpl> needInsertToHisAuthItemRefImpls,
+            List<AuthItemRef> needInsertToHisAuthItemRefImpls,
             String tableSuffix) {
         this.authItemRefImplDao.batchInsertAuthItemRefImplToHis(needInsertToHisAuthItemRefImpls,
                 tableSuffix);

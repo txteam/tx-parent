@@ -9,7 +9,7 @@ package com.tx.component.auth.context;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-import com.tx.component.auth.model.AuthItemRef;
+import com.tx.component.auth.model.AuthRef;
 
 /**
  * 权限全局容器（web容器）上下文
@@ -32,7 +32,7 @@ public class AuthGlobalContainerContext {
      * 对应map从session中回收后，在该map中会随着GC被回收掉
      */
     @SuppressWarnings("unused")
-    private Map<String, Map<String, AuthItemRef>> operatorSessionAuthMapMapping = new WeakHashMap<String, Map<String, AuthItemRef>>();
+    private Map<String, Map<String, AuthRef>> operatorSessionAuthMapMapping = new WeakHashMap<String, Map<String, AuthRef>>();
     
     /** <默认构造函数> */
     public AuthGlobalContainerContext() {

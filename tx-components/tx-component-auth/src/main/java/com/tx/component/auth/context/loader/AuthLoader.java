@@ -11,7 +11,7 @@ import java.util.Set;
 
 import org.springframework.core.Ordered;
 
-import com.tx.component.auth.model.AuthItem;
+import com.tx.component.auth.model.Auth;
 
 
  /**
@@ -34,5 +34,5 @@ public interface AuthLoader extends Ordered{
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public Set<AuthItem> loadAuthItems(Map<String, AuthItem> authItemMapping);
+    public Set<Auth> loadAuthItems(Map<String, Auth> authItemMapping);
 }

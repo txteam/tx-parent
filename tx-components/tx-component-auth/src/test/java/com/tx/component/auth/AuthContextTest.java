@@ -21,7 +21,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.tx.component.auth.context.AuthContext;
 import com.tx.component.auth.context.AuthSessionContext;
-import com.tx.component.auth.model.AuthItemRef;
+import com.tx.component.auth.model.AuthRef;
 
 /**
  * 权限容器测试
@@ -87,10 +87,10 @@ public class AuthContextTest {
                 "test1",
                 refIdList);
         
-        List<AuthItemRef> resList1 = authContext.queryAuthItemRefListByAuthRefTypeAndRefId(AuthConstant.AUTHREFTYPE_OPERATOR,
+        List<AuthRef> resList1 = authContext.queryAuthItemRefListByAuthRefTypeAndRefId(AuthConstant.AUTHREFTYPE_OPERATOR,
                 "111");
         Assert.assertTrue(resList1.size() > 0);
-        List<AuthItemRef> resList2 = authContext.queryAuthItemRefListByAuthRefTypeAndAuthItemId(AuthConstant.AUTHREFTYPE_OPERATOR,
+        List<AuthRef> resList2 = authContext.queryAuthItemRefListByAuthRefTypeAndAuthItemId(AuthConstant.AUTHREFTYPE_OPERATOR,
                 "test1");
         Assert.assertTrue(resList2.size() > 0);
         
@@ -112,10 +112,10 @@ public class AuthContextTest {
                 "test2",
                 refIdList);
         
-        List<AuthItemRef> resList1 = authContext.queryAuthItemRefListByAuthRefTypeAndRefId(AuthConstant.AUTHREFTYPE_OPERATOR,
+        List<AuthRef> resList1 = authContext.queryAuthItemRefListByAuthRefTypeAndRefId(AuthConstant.AUTHREFTYPE_OPERATOR,
                 "1111");
         Assert.assertTrue(resList1.size() > 0);
-        List<AuthItemRef> resList2 = authContext.queryAuthItemRefListByAuthRefTypeAndAuthItemId(AuthConstant.AUTHREFTYPE_OPERATOR,
+        List<AuthRef> resList2 = authContext.queryAuthItemRefListByAuthRefTypeAndAuthItemId(AuthConstant.AUTHREFTYPE_OPERATOR,
                 "test2");
         Assert.assertTrue(resList2.size() > 0);
         

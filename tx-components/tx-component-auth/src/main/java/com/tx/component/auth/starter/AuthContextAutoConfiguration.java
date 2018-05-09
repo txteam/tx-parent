@@ -1,10 +1,10 @@
 /*
  * 描          述:  <描述>
  * 修  改   人:  Administrator
- * 修改时间:  2018年5月3日
+ * 修改时间:  2018年5月9日
  * <修改描述:>
  */
-package com.tx.component.task.starter;
+package com.tx.component.auth.starter;
 
 import javax.sql.DataSource;
 
@@ -18,7 +18,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
-import org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -26,32 +25,32 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import com.tx.component.task.script.TaskContextTableInitializer;
+import com.tx.component.auth.script.AuthContextTableInitializer;
 import com.tx.core.ddlutil.executor.TableDDLExecutor;
 import com.tx.core.exceptions.util.AssertUtils;
 
 /**
- * 任务容器自动配置类<br/>
+ * <功能简述>
  * <功能详细描述>
  * 
  * @author  Administrator
- * @version  [版本号, 2018年5月3日]
+ * @version  [版本号, 2018年5月9日]
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
 @Configuration
-@EnableConfigurationProperties(value = TaskContextProperties.class)
+@EnableConfigurationProperties(value = AuthContextProperties.class)
 @ConditionalOnBean({ DataSource.class, PlatformTransactionManager.class })
 @AutoConfigureAfter({ DataSourceAutoConfiguration.class,
         DataSourceTransactionManagerAutoConfiguration.class })
-@ConditionalOnProperty(prefix = "task", value = "enable", havingValue = "true")
-public class TaskContextAutoConfiguration
+@ConditionalOnProperty(prefix = "auth", value = "enable", havingValue = "true")
+public class AuthContextAutoConfiguration
         implements InitializingBean, ApplicationContextAware {
     
     private ApplicationContext applicationContext;
     
     /** 任务容器属性 */
-    private TaskContextProperties properties;
+    private AuthContextProperties properties;
     
     /** 数据源 */
     private DataSource dataSource;
@@ -60,7 +59,7 @@ public class TaskContextAutoConfiguration
     private PlatformTransactionManager transactionManager;
     
     /** <默认构造函数> */
-    public TaskContextAutoConfiguration(TaskContextProperties properties) {
+    public AuthContextAutoConfiguration(AuthContextProperties properties) {
         super();
         this.properties = properties;
     }
@@ -121,21 +120,31 @@ public class TaskContextAutoConfiguration
     @Configuration
     @ConditionalOnBean({ TableDDLExecutor.class })
     @ConditionalOnSingleCandidate(TableDDLExecutor.class)
-    @ConditionalOnProperty(prefix = "task", value = "table-auto-initialize", havingValue = "true")
-    @ConditionalOnMissingBean(TaskContextTableInitializer.class)
-    public static class TaskContextTableInitializerConfiguration {
+    @ConditionalOnProperty(prefix = "auth", value = "table-auto-initialize", havingValue = "true")
+    @ConditionalOnMissingBean(AuthContextTableInitializer.class)
+    public static class AuthContextTableInitializerConfiguration {
         
         /** 表ddl自动执行器 */
         private TableDDLExecutor tableDDLExecutor;
         
-        public TaskContextTableInitializerConfiguration(
+        /** <默认构造函数> */
+        public AuthContextTableInitializerConfiguration(
                 TableDDLExecutor tableDDLExecutor) {
             this.tableDDLExecutor = tableDDLExecutor;
         }
         
-        @Bean("taskContext.tableInitializer")
-        public TaskContextTableInitializer tableInitializer() {
-            TaskContextTableInitializer initializer = new TaskContextTableInitializer(
+        /**
+         * 权限相关表初始化<br/>
+         * <功能详细描述>
+         * @return [参数说明]
+         * 
+         * @return AuthContextTableInitializer [返回类型说明]
+         * @exception throws [异常类型] [异常说明]
+         * @see [类、类#方法、类#成员]
+         */
+        @Bean("auth.tableInitializer")
+        public AuthContextTableInitializer tableInitializer() {
+            AuthContextTableInitializer initializer = new AuthContextTableInitializer(
                     this.tableDDLExecutor);
             return initializer;
         }

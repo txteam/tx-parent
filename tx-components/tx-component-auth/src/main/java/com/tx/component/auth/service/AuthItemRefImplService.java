@@ -4,7 +4,7 @@
  * 修改时间:  
  * <修改描述:>
  */
-package com.tx.component.auth.persister.service;
+package com.tx.component.auth.service;
 
 import java.util.HashMap;
 import java.util.List;
@@ -21,10 +21,10 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.util.MultiValueMap;
 
 import com.tx.component.auth.context.AuthContext;
-import com.tx.component.auth.model.AuthItem;
-import com.tx.component.auth.model.AuthItemRefImpl;
-import com.tx.component.auth.persister.dao.AuthItemRefImplDao;
-import com.tx.component.auth.persister.dao.impl.AuthItemRefImplDaoImpl;
+import com.tx.component.auth.dao.AuthItemRefImplDao;
+import com.tx.component.auth.dao.impl.AuthItemRefImplDaoImpl;
+import com.tx.component.auth.model.Auth;
+import com.tx.component.auth.model.AuthItemRef;
 import com.tx.core.exceptions.util.AssertUtils;
 
 /**
@@ -84,7 +84,7 @@ public class AuthItemRefImplService {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public List<AuthItemRefImpl> queryAuthItemRefListByRefType2RefIdMapping(
+    public List<AuthItemRef> queryAuthItemRefListByRefType2RefIdMapping(
             MultiValueMap<String, String> refType2RefIdMapping, String systemId,
             String tableSuffix) {
         AssertUtils.notEmpty(refType2RefIdMapping,
@@ -97,7 +97,7 @@ public class AuthItemRefImplService {
         params.put("systemId", systemId);
         
         //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
-        List<AuthItemRefImpl> authItemRefImplList = this.authItemRefImplDao.queryAuthItemRefImplList(params,
+        List<AuthItemRef> authItemRefImplList = this.authItemRefImplDao.queryAuthItemRefImplList(params,
                 tableSuffix);
         
         return authItemRefImplList;
@@ -120,8 +120,8 @@ public class AuthItemRefImplService {
         AssertUtils.notEmpty(authItemId, "authItemId is empty.");
         AssertUtils.notEmpty(systemId, "systemId is empty");
         
-        AuthItemRefImpl condition = new AuthItemRefImpl();
-        AuthItem authItemTemp = AuthContext.getContext()
+        AuthItemRef condition = new AuthItemRef();
+        Auth authItemTemp = AuthContext.getContext()
                 .getAuthItemFromContextById(authItemId);
         condition.setAuthItem(authItemTemp);
         condition.setTemp(null);
