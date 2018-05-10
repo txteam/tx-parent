@@ -15,13 +15,13 @@ import com.tx.core.tree.model.TreeAble;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
  */
-public interface Auth
-        extends TreeAble<List<Auth>, Auth>, Serializable {
+public interface Auth extends TreeAble<List<Auth>, Auth>, Serializable {
     
     /**
      * 权限项唯一键key 
      * 约定权限项目分割符为"_"
      * 如权限为"wd_"<br/>
+     * <功能详细描述>
      * 
      * @return 返回 id
      */
@@ -37,6 +37,7 @@ public interface Auth
     
     /**
      * 获取权限类型<br/>
+     * <功能详细描述>
      * 
      * @return [参数说明]
      */
@@ -145,4 +146,28 @@ public interface Auth
      * @return Map<String,String> 
      */
     public Map<String, String> getAttributesMap();
+    
+    /**
+     * 获取属性值<br/>
+     * <功能详细描述>
+     * @param key
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public String getAttribute(String key);
+    
+    /**
+     * 设置属性值<br/>
+     * <功能详细描述>
+     * @param key
+     * @param value [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public void setAttribute(String key, String value);
 }

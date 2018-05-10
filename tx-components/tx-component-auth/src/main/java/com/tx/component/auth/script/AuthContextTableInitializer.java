@@ -8,11 +8,11 @@ package com.tx.component.auth.script;
 
 import org.springframework.beans.factory.InitializingBean;
 
-import com.tx.core.ddlutil.TableInitializer;
 import com.tx.core.ddlutil.builder.DDLBuilder;
 import com.tx.core.ddlutil.builder.alter.AlterTableDDLBuilder;
 import com.tx.core.ddlutil.builder.create.CreateTableDDLBuilder;
 import com.tx.core.ddlutil.executor.TableDDLExecutor;
+import com.tx.core.ddlutil.initializer.AbstractTableInitializer;
 
 /**
  * 权限容器表初始<br/>
@@ -23,8 +23,8 @@ import com.tx.core.ddlutil.executor.TableDDLExecutor;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class AuthContextTableInitializer
-        implements InitializingBean, TableInitializer {
+public class AuthContextTableInitializer extends AbstractTableInitializer
+        implements InitializingBean {
     
     /** 表DDL执行器 */
     protected TableDDLExecutor tableDDLExecutor;
@@ -53,7 +53,7 @@ public class AuthContextTableInitializer
      * 
      */
     @Override
-    public void initialize() {
+    public void tables() {
         //初始化表定义
         table_auth_authitem();
         table_auth_authref();

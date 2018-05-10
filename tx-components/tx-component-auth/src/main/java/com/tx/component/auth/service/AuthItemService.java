@@ -19,7 +19,7 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import com.tx.component.auth.dao.AuthItemImplDao;
+import com.tx.component.auth.dao.AuthItemDao;
 import com.tx.component.auth.dao.impl.AuthItemImplDaoImpl;
 import com.tx.component.auth.model.AuthItem;
 import com.tx.core.exceptions.util.AssertUtils;
@@ -44,7 +44,7 @@ public class AuthItemService {
     
     /** 权限项持久层 */
     @Resource(name = "authItemImplDao")
-    private AuthItemImplDao authItemDao;
+    private AuthItemDao authItemDao;
     
     /** <默认构造函数> */
     public AuthItemService() {

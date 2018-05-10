@@ -20,7 +20,7 @@ import com.tx.component.auth.model.AuthItemRef;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public interface AuthItemRefImplDao {
+public interface AuthItemRefDao {
     
     /**
      * 批量插入权限项引用

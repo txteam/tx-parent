@@ -1,5 +1,5 @@
 /*
- * 描          述:  <描述>
+x * 描          述:  <描述>
  * 修  改   人:  
  * 修改时间:  2012-11-30
  * <修改描述:>
@@ -94,15 +94,13 @@ public class AuthItem implements Auth {
     /** 是否是虚拟权限，即不是真正的权限项 */
     private boolean virtual = false;
     
-    /** xml中attribute的其他属性 */
-    private Map<String, String> data = new HashMap<>();
+    /** 权限额外的参数 */
+    private String attributes;
     
     /** <默认构造函数> */
     public AuthItem() {
         super();
     }
-    
-    
     
     /**
      * <默认构造函数>
@@ -112,8 +110,8 @@ public class AuthItem implements Auth {
         if (authItemRowMap.containsKey("id")) {
             this.id = (String) authItemRowMap.get("id");
         }
-        if (authItemRowMap.containsKey("parentId")) {
-            this.parentId = (String) authItemRowMap.get("parentId");
+        if (authItemRowMap.containsKey("authType")) {
+            this.authType = (String) authItemRowMap.get("authType");
         }
         if (authItemRowMap.containsKey("module")) {
             this.module = (String) authItemRowMap.get("module");
@@ -124,8 +122,8 @@ public class AuthItem implements Auth {
         if (authItemRowMap.containsKey("remark")) {
             this.remark = (String) authItemRowMap.get("remark");
         }
-        if (authItemRowMap.containsKey("authType")) {
-            this.authType = (String) authItemRowMap.get("authType");
+        if (authItemRowMap.containsKey("parentId")) {
+            this.parentId = (String) authItemRowMap.get("parentId");
         }
         if (authItemRowMap.containsKey(valid)) {
             this.valid = (boolean) authItemRowMap.containsKey("valid");
@@ -376,19 +374,28 @@ public class AuthItem implements Auth {
     }
     
     /**
-     * @return 返回 data
+     * @return 返回 attributes
      */
-    public Map<String, String> getData() {
-        return data;
+    public String getAttributes() {
+        return attributes;
     }
-    
+
     /**
-     * @param 对data进行赋值
+     * @param 对attributes进行赋值
      */
-    public void setData(Map<String, String> data) {
-        this.data = data;
+    public void setAttributes(String attributes) {
+        this.attributes = attributes;
     }
-    
+
+    /**
+     * @return
+     */
+    @Override
+    public Map<String, String> getAttributesMap() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
     /**
      * @param obj
      * @return

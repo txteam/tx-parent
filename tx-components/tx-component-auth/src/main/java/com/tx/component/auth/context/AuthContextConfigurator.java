@@ -24,8 +24,8 @@ import com.tx.component.auth.context.authchecker.AuthChecker;
 import com.tx.component.auth.context.loader.impl.XmlAuthLoader;
 import com.tx.component.auth.context.loaderprocessor.ChildAuthRegisterSupportLoaderProcessor;
 import com.tx.component.auth.context.loaderprocessor.ControllerAuthRegisterSupportLoaderProcessor;
-import com.tx.component.auth.dao.AuthItemImplDao;
-import com.tx.component.auth.dao.AuthItemRefImplDao;
+import com.tx.component.auth.dao.AuthItemDao;
+import com.tx.component.auth.dao.AuthItemRefDao;
 import com.tx.component.auth.dao.impl.AuthItemImplDaoImpl;
 import com.tx.component.auth.dao.impl.AuthItemRefImplDaoImpl;
 import com.tx.component.auth.persister.AuthItemPersister;
@@ -75,15 +75,15 @@ public class AuthContextConfigurator implements InitializingBean,
     }
     
     @Bean(name = "authItemRefImplDao")
-    public AuthItemRefImplDao authItemRefImplDao() {
-        AuthItemRefImplDao authItemRefImplDao = new AuthItemRefImplDaoImpl(
+    public AuthItemRefDao authItemRefImplDao() {
+        AuthItemRefDao authItemRefImplDao = new AuthItemRefImplDaoImpl(
                 this.jdbcTemplate, this.dataSource);
         return authItemRefImplDao;
     }
     
     @Bean(name = "authItemImplDao")
-    public AuthItemImplDao authItemImplDao() {
-        AuthItemImplDao authItemImplDao = new AuthItemImplDaoImpl(
+    public AuthItemDao authItemImplDao() {
+        AuthItemDao authItemImplDao = new AuthItemImplDaoImpl(
                 this.jdbcTemplate, this.dataSource);
         return authItemImplDao;
     }

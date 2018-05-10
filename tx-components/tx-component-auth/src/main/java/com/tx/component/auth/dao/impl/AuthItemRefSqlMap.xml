@@ -2,10 +2,10 @@
 <!DOCTYPE mapper 
 	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="authItemRefImpl">
+<mapper namespace="authItemRef">
 
 	<!-- auto generate default resultMap -->
-	<resultMap id="authItemRefImplMap" 
+	<resultMap id="authItemRefMap" 
 		type="com.tx.component.auth.model.AuthItemRefImpl">
 		<result property="authItemImpl.id" column="authItem_id"/>
 		<result property="authItemImpl.authType" column="authItem_authType"/>

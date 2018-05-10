@@ -21,7 +21,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.util.MultiValueMap;
 
 import com.tx.component.auth.context.AuthContext;
-import com.tx.component.auth.dao.AuthItemRefImplDao;
+import com.tx.component.auth.dao.AuthItemRefDao;
 import com.tx.component.auth.dao.impl.AuthItemRefImplDaoImpl;
 import com.tx.component.auth.model.Auth;
 import com.tx.component.auth.model.AuthItemRef;
@@ -44,7 +44,7 @@ public class AuthItemRefImplService {
     
     /** 权限引用项持久层 */
     @Resource(name = "authItemRefImplDao")
-    private AuthItemRefImplDao authItemRefImplDao;
+    private AuthItemRefDao authItemRefImplDao;
     
     /** <默认构造函数> */
     public AuthItemRefImplService() {
