@@ -4,26 +4,28 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
-  * 权限项引用
-  * <功能详细描述>
-  * 
-  * @author  brady
-  * @version  [版本号, 2013-3-21]
-  * @see  [相关类/方法]
-  * @since  [产品/模块版本]
+ * 权限项引用<br/>
+ * <功能详细描述>
+ * 
+ * @author  brady
+ * @version  [版本号, 2013-3-21]
+ * @see  [相关类/方法]
+ * @since  [产品/模块版本]
  */
-public interface AuthRef extends Serializable{
+public interface AuthRef extends Serializable {
     
     /**
-      * 权限引用项唯一键<br/>
-      *<功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return String [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 权限引用项唯一键<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     String getId();
+    
+    
     
     /**
      * 权限引用项的类型<br/>
@@ -36,12 +38,7 @@ public interface AuthRef extends Serializable{
      * 这里用String虽没有int查询快，但能让sql可读性增强
      * @return 返回 authRefType
      */
-    String getAuthRefType();
-    
-    /**
-     * @return 返回 authItem实例
-     */
-    Auth getAuthItem();
+    String getRefType();
     
     /**
      * 权限关联项id 
@@ -53,31 +50,46 @@ public interface AuthRef extends Serializable{
     String getRefId();
     
     /**
+     * 创建人员id<br/>
+     * 
      * @return 返回 createOperId
      */
-    String getCreateOperId();
+    String getCreateOperatorId();
     
     /**
+     * 创建时间<br/>
+     * 
      * @return 返回 createDate
      */
     Date getCreateDate();
     
-    /**
-     * @return 返回 endDate
-     */
-    Date getEndDate();
+    
+    
+    
+    
+    
+    
+    
+    
     
     /**
-      * 返回权限引用项生效时间
-      * when isTemp() == true 有效
-      *<功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return Date [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 获取权限id<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
-    Date getEffectiveDate();
+    String getAuthId();
+    
+    
+    
+    
+    
+    
+    
+    
     
     /**
      * 返回权限引用项生效时间
@@ -89,16 +101,33 @@ public interface AuthRef extends Serializable{
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-   Date getInvalidDate();
-   
-   /**
+    Date getEffectiveDate();
+    
+    /**
+    * 返回权限引用项生效时间
+    * when isTemp() == true 有效
+    *<功能详细描述>
+    * @return [参数说明]
+    * 
+    * @return Date [返回类型说明]
+    * @exception throws [异常类型] [异常说明]
+    * @see [类、类#方法、类#成员]
+    */
+    Date getInvalidDate();
+    
+    /**
+     * @return 返回 endDate
+     */
+    Date getEndDate();
+    
+    /**
      * 是否是临时权限引用
-     *<功能详细描述>
+     * <功能详细描述>
      * @return [参数说明]
      * 
      * @return boolean [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-   Boolean isTemp();
+    Boolean isTemp();
 }

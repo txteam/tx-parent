@@ -51,7 +51,8 @@ public class SignatureUtils {
         String ipInfo = null;
         try {
             ipInfo = getIpAddressInfo();
-            if (ipInfo.startsWith("127.0.0.1") || ipInfo.startsWith("localhost")) {
+            if (ipInfo.startsWith("127.0.0.1")
+                    || ipInfo.startsWith("localhost")) {
                 ipInfo = getIpInfoHashCodeMD5();
             }
         } catch (UnknownHostException | SocketException e1) {
@@ -62,7 +63,9 @@ public class SignatureUtils {
         sb.append(getClassPathHashCodeMD5());
         
         String signature = sb.toString();
-        //String.valueOf(Math.abs(sb.toString().hashCode()));
+        //if (signature.length() > 64) {
+        //    signature = String.valueOf(Math.abs(sb.toString().hashCode()));
+        //}
         return signature;
     }
     
@@ -77,7 +80,8 @@ public class SignatureUtils {
      */
     private static String getClassPathHashCodeMD5() {
         String classpath = SignatureUtils.class.getResource("/").getPath();
-        String classpathHashCode = String.valueOf(Math.abs(classpath.hashCode()));
+        String classpathHashCode = String
+                .valueOf(Math.abs(classpath.hashCode()));
         return MD5Utils.encode(classpathHashCode);
     }
     
@@ -93,13 +97,16 @@ public class SignatureUtils {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    private static String getIpAddressInfo() throws SocketException, UnknownHostException {
-        StringBuilder ipAddressInfoSB = new StringBuilder(TxConstants.INITIAL_STR_LENGTH);
+    private static String getIpAddressInfo()
+            throws SocketException, UnknownHostException {
+        StringBuilder ipAddressInfoSB = new StringBuilder(
+                TxConstants.INITIAL_STR_LENGTH);
         InetAddress ia = InetAddress.getLocalHost();
         String address = ia.getHostAddress();
         ipAddressInfoSB.append(address).append("|");
         //获取网卡，获取地址
-        byte[] macBytes = NetworkInterface.getByInetAddress(ia).getHardwareAddress();
+        byte[] macBytes = NetworkInterface.getByInetAddress(ia)
+                .getHardwareAddress();
         StringBuffer sb = new StringBuffer("");
         for (int i = 0; i < macBytes.length; i++) {
             if (i != 0) {
@@ -130,7 +137,8 @@ public class SignatureUtils {
      */
     private static String getIpInfoHashCodeMD5() {
         // 根据当前机器的mac地址以及应用所在目录生成签名
-        List<IpConfigInfo> ipConfigInfos = ComputerEnvironment.getIpConfigInfoList();
+        List<IpConfigInfo> ipConfigInfos = ComputerEnvironment
+                .getIpConfigInfoList();
         Set<String> macSet = new TreeSet<String>();
         Set<String> ipAddressSet = new TreeSet<String>();
         

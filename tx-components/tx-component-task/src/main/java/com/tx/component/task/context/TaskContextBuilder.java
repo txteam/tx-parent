@@ -45,19 +45,4 @@ public class TaskContextBuilder extends TaskContextConfiguration implements Bean
         // 生成服务签名（ip信息 + classpath信息）
         this.signature = String.valueOf(Math.abs(SignatureUtils.generateSignature().hashCode()));
     }
-    
-    /**
-     * @param args
-     * @throws UnknownHostException 
-     * @throws SocketException 
-     */
-    public static void main(String[] args) throws UnknownHostException, SocketException {
-        //得到IP，输出PC-201309011313/122.206.73.83
-        //InetAddress ia = InetAddress.getLocalHost();
-        //System.out.println(ia);
-        //getLocalMac(ia);
-        
-        System.out.println(SignatureUtils.generateSignature().length());
-        System.out.println(SignatureUtils.generateSignature());
-    }
 }

@@ -7,7 +7,7 @@ import java.util.Map;
 import com.tx.core.tree.model.TreeAble;
 
 /**
-  * 权限项接口
+  * 权限项接口<br/>
   * <功能详细描述>
   * 
   * @author  brady
@@ -84,14 +84,6 @@ public interface Auth extends TreeAble<List<Auth>, Auth>, Serializable {
     String getRemark();
     
     /**
-     * 判断是否可见<br/>
-     * <功能详细描述>
-     * 
-     * @return [参数说明]
-     */
-    boolean isViewAble();
-    
-    /**
      * 该权限是否有效<br/>
      * <功能详细描述>
      * 
@@ -145,7 +137,7 @@ public interface Auth extends TreeAble<List<Auth>, Auth>, Serializable {
      * 
      * @return Map<String,String> 
      */
-    public Map<String, String> getAttributesMap();
+    public Map<String, Object> getAttributesMap();
     
     /**
      * 获取属性值<br/>
@@ -157,7 +149,7 @@ public interface Auth extends TreeAble<List<Auth>, Auth>, Serializable {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public String getAttribute(String key);
+    public Object getAttribute(String key);
     
     /**
      * 设置属性值<br/>
@@ -169,5 +161,5 @@ public interface Auth extends TreeAble<List<Auth>, Auth>, Serializable {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public void setAttribute(String key, String value);
+    public void setAttribute(String key, Object value);
 }

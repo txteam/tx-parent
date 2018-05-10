@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.persistence.FetchType;
 import javax.persistence.Id;
@@ -17,6 +18,8 @@ import javax.persistence.OneToMany;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.alibaba.fastjson.JSONObject;
+import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.util.ObjectUtils;
 
 /**
@@ -65,14 +68,8 @@ public abstract class AbstractAuthItem implements Auth {
     /** 是否可配置 */
     private boolean configAble = true;
     
-    /** 是否可见 */
-    private boolean viewAble = true;
-    
     /** 是否可编辑 */
-    private boolean editAble = false;
-    
-    /** 是否是虚拟权限，即不是真正的权限项 */
-    private boolean virtual = false;
+    private boolean modifyAble = false;
     
     /** 属性值 */
     private String attributes;
@@ -86,9 +83,7 @@ public abstract class AbstractAuthItem implements Auth {
         super();
     }
     
-    /**
-     * <默认构造函数>
-     */
+    /** <默认构造函数> */
     public AbstractAuthItem(Map<String, Object> authItemRowMap) {
         super();
         if (authItemRowMap.containsKey("id")) {
@@ -109,6 +104,7 @@ public abstract class AbstractAuthItem implements Auth {
         if (authItemRowMap.containsKey("authType")) {
             this.authType = (String) authItemRowMap.get("authType");
         }
+        
         if (authItemRowMap.containsKey(valid)) {
             this.valid = (boolean) authItemRowMap.containsKey("valid");
         }
@@ -116,17 +112,13 @@ public abstract class AbstractAuthItem implements Auth {
             this.configAble = (boolean) authItemRowMap
                     .containsKey("configAble");
         }
-        if (authItemRowMap.containsKey(viewAble)) {
-            this.viewAble = (boolean) authItemRowMap.containsKey("viewAble");
-        }
-        if (authItemRowMap.containsKey(editAble)) {
-            this.editAble = (boolean) authItemRowMap.containsKey("editAble");
+        if (authItemRowMap.containsKey(modifyAble)) {
+            this.modifyAble = (boolean) authItemRowMap
+                    .containsKey("modifyAble");
         }
     }
     
-    /**
-     * <默认构造函数>
-     */
+    /** <默认构造函数> */
     public AbstractAuthItem(Auth otherAuthItem) {
         super();
         this.id = otherAuthItem.getId();
@@ -135,10 +127,10 @@ public abstract class AbstractAuthItem implements Auth {
         this.name = otherAuthItem.getName();
         this.remark = otherAuthItem.getRemark();
         this.authType = otherAuthItem.getAuthType();
+        
         this.valid = otherAuthItem.isValid();
         this.configAble = otherAuthItem.isConfigAble();
-        this.viewAble = otherAuthItem.isViewAble();
-        this.editAble = otherAuthItem.isEditAble();
+        this.modifyAble = otherAuthItem.isModifyAble();
     }
     
     /** <默认构造函数> */
@@ -173,6 +165,13 @@ public abstract class AbstractAuthItem implements Auth {
     }
     
     /**
+     * @param parentId
+     */
+    public void setParentId(String parentId) {
+        this.parentId = parentId;
+    }
+    
+    /**
      * @return 返回 module
      */
     @Override
@@ -193,10 +192,10 @@ public abstract class AbstractAuthItem implements Auth {
      */
     @Override
     public String getName() {
-        if (StringUtils.isEmpty(name)) {
-            return id;
+        if (StringUtils.isEmpty(this.name)) {
+            return this.id;
         }
-        return name;
+        return this.name;
     }
     
     /**
@@ -225,22 +224,6 @@ public abstract class AbstractAuthItem implements Auth {
      * @return
      */
     @Override
-    public List<Auth> getChilds() {
-        return childs;
-    }
-    
-    /**
-     * @param childs
-     */
-    @Override
-    public void setChilds(List<Auth> childs) {
-        this.childs = childs;
-    }
-    
-    /**
-     * @return
-     */
-    @Override
     public String getAuthType() {
         return authType;
     }
@@ -253,15 +236,9 @@ public abstract class AbstractAuthItem implements Auth {
     }
     
     /**
-     * @param parentId
-     */
-    public void setParentId(String parentId) {
-        this.parentId = parentId;
-    }
-    
-    /**
      * @return 返回 valid
      */
+    @Override
     public boolean isValid() {
         return valid;
     }
@@ -274,9 +251,31 @@ public abstract class AbstractAuthItem implements Auth {
     }
     
     /**
+     * @return 返回 modifyAble
+     */
+    @Override
+    public boolean isModifyAble() {
+        if (!this.valid) {
+            return true;
+        }
+        return modifyAble;
+    }
+    
+    /**
+     * @param 对modifyAble进行赋值
+     */
+    public void setModifyAble(boolean modifyAble) {
+        this.modifyAble = modifyAble;
+    }
+    
+    /**
      * @return 返回 configAble
      */
+    @Override
     public boolean isConfigAble() {
+        if (!this.valid) {
+            return false;
+        }
         return configAble;
     }
     
@@ -285,34 +284,6 @@ public abstract class AbstractAuthItem implements Auth {
      */
     public void setConfigAble(boolean configAble) {
         this.configAble = configAble;
-    }
-    
-    /**
-     * @return 返回 viewAble
-     */
-    public boolean isViewAble() {
-        return viewAble;
-    }
-    
-    /**
-     * @param 对viewAble进行赋值
-     */
-    public void setViewAble(boolean viewAble) {
-        this.viewAble = viewAble;
-    }
-    
-    /**
-     * @return 返回 editAble
-     */
-    public boolean isEditAble() {
-        return editAble;
-    }
-    
-    /**
-     * @param 对editAble进行赋值
-     */
-    public void setEditAble(boolean editAble) {
-        this.editAble = editAble;
     }
     
     /**
@@ -344,20 +315,80 @@ public abstract class AbstractAuthItem implements Auth {
     }
     
     /**
-     * @return 返回 virtual
+     * @return 返回 attributes
      */
-    public boolean isVirtual() {
-        return virtual;
+    public String getAttributes() {
+        return attributes;
     }
     
     /**
-     * @param 对virtual进行赋值
+     * @param 对attributes进行赋值
      */
-    public void setVirtual(boolean virtual) {
-        this.virtual = virtual;
+    public void setAttributes(String attributes) {
+        this.attributes = attributes;
     }
     
+    /**
+     * @return
+     */
+    @Override
+    public List<Auth> getChilds() {
+        return childs;
+    }
     
+    /**
+     * @param childs
+     */
+    @Override
+    public void setChilds(List<Auth> childs) {
+        this.childs = childs;
+    }
+    
+    /**
+     * @return
+     */
+    @Override
+    public Map<String, Object> getAttributesMap() {
+        Map<String, Object> resMap = new HashMap<>();
+        JSONObject attrJson = JSONObject.parseObject(this.attributes);
+        if (attrJson == null) {
+            return resMap;
+        }
+        
+        for (Entry<String, Object> entry : attrJson.entrySet()) {
+            resMap.put(entry.getKey(), entry.getValue());
+        }
+        return resMap;
+    }
+    
+    /**
+     * @param key
+     * @return
+     */
+    @Override
+    public Object getAttribute(String key) {
+        if (StringUtils.isBlank(key)) {
+            return null;
+        }
+        Map<String, Object> attrMap = getAttributesMap();
+        Object value = attrMap.get(key);
+        return value;
+    }
+    
+    /**
+     * @param key
+     * @param value
+     */
+    @Override
+    public void setAttribute(String key, Object value) {
+        AssertUtils.notEmpty(key, "key is empty.");
+        AssertUtils.notNull(value, "value is null.");
+        
+        Map<String, Object> attrMap = getAttributesMap();
+        attrMap.put(key, value);
+        
+        this.attributes = JSONObject.toJSONString(attrMap);
+    }
     
     /**
      * @param obj
@@ -365,7 +396,7 @@ public abstract class AbstractAuthItem implements Auth {
      */
     @Override
     public boolean equals(Object obj) {
-        return ObjectUtils.equals(this, obj, "systemId", "id", "authType");
+        return ObjectUtils.equals(this, obj, "id", "authType", "module");
     }
     
     /**
@@ -375,9 +406,9 @@ public abstract class AbstractAuthItem implements Auth {
     public int hashCode() {
         int resHashCode = ObjectUtils.generateHashCode(super.hashCode(),
                 this,
-                "systemId",
                 "id",
-                "authType");
+                "authType",
+                "module");
         return resHashCode;
     }
 }

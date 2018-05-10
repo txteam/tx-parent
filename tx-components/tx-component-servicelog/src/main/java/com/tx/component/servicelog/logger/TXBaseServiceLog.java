@@ -154,4 +154,6 @@ public abstract class TXBaseServiceLog implements TXServiceLog {
     public void setVcid(String vcid) {
         this.vcid = vcid;
     }
+    
+    
 }
