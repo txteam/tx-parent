@@ -120,14 +120,6 @@ public class AuthItemWraperByAdapter<T> implements Auth{
      * @return
      */
     @Override
-    public boolean isViewAble() {
-        return true;
-    }
-
-    /**
-     * @return
-     */
-    @Override
     public boolean isModifyAble() {
         return false;
     }

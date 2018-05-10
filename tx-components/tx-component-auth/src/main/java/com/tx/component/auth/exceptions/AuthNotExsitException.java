@@ -7,7 +7,6 @@
 package com.tx.component.auth.exceptions;
 
 import com.tx.core.exceptions.ErrorCode;
-import com.tx.core.exceptions.SILException;
 
 /**
  * 权限定义不存在异常<br/>
@@ -20,7 +19,7 @@ import com.tx.core.exceptions.SILException;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class AuthItemNotExsitException extends SILException {
+public class AuthNotExsitException extends AuthContextException {
     
     /** 注释内容 */
     private static final long serialVersionUID = -2814953773924819958L;
@@ -37,7 +36,7 @@ public class AuthItemNotExsitException extends SILException {
     }
     
     /** <默认构造函数> */
-    public AuthItemNotExsitException(String authItemKey) {
+    public AuthNotExsitException(String authItemKey) {
         super(authItemKey + "权限项未定义");
         this.authItemKey = authItemKey;
     }
