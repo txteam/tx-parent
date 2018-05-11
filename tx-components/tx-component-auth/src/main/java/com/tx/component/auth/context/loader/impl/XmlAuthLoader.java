@@ -53,25 +53,17 @@ import com.tx.core.exceptions.util.AssertUtils;
 public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
     
     /** 日志记录器 */
-    private static final Logger logger = LoggerFactory.getLogger(XmlAuthLoader.class);
+    private static final Logger logger = LoggerFactory
+            .getLogger(XmlAuthLoader.class);
     
     /** 权限类型节点名  */
-    private final static String AUTHTYPE_ELEMENT_NAME = "authType";
-    
-    /** 权限项名 */
-    private final static String AUTH_ELEMENT_NAME = "auth";
+    private final static String AUTHTYPE_ELEMENT_NAME = "name";
     
     /** 权限节点authType */
     private final static String AUTH_ELEMENT_ATTR_AUTHTYPE = "authType";
     
-    /** 权限节点isValid */
-    private final static String AUTH_ELEMENT_ATTR_ISVALID = "valid";
-    
-    /** 节点isEditAble */
-    private final static String AUTH_ELEMENT_ATTR_ISEDITABLE = "editAble";
-    
-    /** 节点isEditAble */
-    private final static String AUTH_ELEMENT_ATTR_ISVIRTUAL = "virtual";
+    /** 权限项名 */
+    private final static String AUTH_ELEMENT_NAME = "auth";
     
     /** 节点id */
     private final static String ELEMENT_ATTR_ID = "key";
@@ -80,10 +72,10 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
     private final static String ELEMENT_ATTR_NAME = "name";
     
     /** 节点description */
-    private final static String ELEMENT_ATTR_DESCRIPTION = "description";
+    private final static String ELEMENT_ATTR_REMARK = "remark";
     
-    /** 节点isViewAble */
-    private final static String ELEMENT_ATTR_ISVIEWABLE = "viewAble";
+    /** 节点isEditAble */
+    private final static String AUTH_ELEMENT_ATTR_ISMODIFYABLE = "modifyAble";
     
     /** 节点isConfigAble */
     private final static String ELEMENT_ATTR_ISCONFIGABLE = "configAble";
@@ -94,20 +86,18 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
     /** Auth的节点属性集合 */
     private final static Set<String> AUTH_ELEMENT_ATTR_SET = new HashSet<>(
             Arrays.asList(AUTH_ELEMENT_ATTR_AUTHTYPE,
-                    AUTH_ELEMENT_ATTR_ISVALID,
-                    AUTH_ELEMENT_ATTR_ISEDITABLE,
-                    AUTH_ELEMENT_ATTR_ISVIRTUAL,
+                    AUTH_ELEMENT_ATTR_ISMODIFYABLE,
                     ELEMENT_ATTR_ID,
                     ELEMENT_ATTR_NAME,
-                    ELEMENT_ATTR_DESCRIPTION,
-                    ELEMENT_ATTR_ISVIEWABLE,
+                    ELEMENT_ATTR_REMARK,
                     ELEMENT_ATTR_ISCONFIGABLE,
                     ELEMENT_ATTR_ORDER));
     
     private ApplicationContext applicationContext;
     
     /** 权限配置地址 */
-    private String[] authConfigLocaions = new String[] { "classpath*:authcontext/*_auth_config.xml" };
+    private String[] authConfigLocaions = new String[] {
+            "classpath*:authcontext/*_auth_config.xml,classpath*:auth/*_auth_config.xml" };
     
     /** 加载器运行顺序 */
     private int order = Ordered.HIGHEST_PRECEDENCE + 1;
@@ -149,8 +139,7 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
      * @return
      */
     @Override
-    public Set<Auth> loadAuthItems(
-            Map<String, Auth> sourceAuthItemMapping) {
+    public Set<Auth> loadAuthItems(Map<String, Auth> sourceAuthItemMapping) {
         Set<Auth> authItemSet = new HashSet<Auth>(
                 loadAuthItemConfig().values());
         return authItemSet;
@@ -197,7 +186,8 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
                 
                 //处理auth节点
                 @SuppressWarnings("unchecked")
-                List<Element> authElList = rootElement.elements(AUTH_ELEMENT_NAME);
+                List<Element> authElList = rootElement
+                        .elements(AUTH_ELEMENT_NAME);
                 //根据配置资源加载权限
                 loadAuthItemConfigFromAuthElement(null,
                         null,
@@ -206,7 +196,8 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
                 
                 //处理authType节点
                 @SuppressWarnings("unchecked")
-                List<Element> authTypeElList = rootElement.elements(AUTHTYPE_ELEMENT_NAME);
+                List<Element> authTypeElList = rootElement
+                        .elements(AUTHTYPE_ELEMENT_NAME);
                 //加载权限项
                 loadAuthItemConfigFromAuthTypeElement(authItemMap,
                         authTypeElList);
@@ -240,16 +231,15 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
             // 读取权限配置的属性值
             String authType = authTypeElTemp.attributeValue(ELEMENT_ATTR_ID);
             String name = authTypeElTemp.attributeValue(ELEMENT_ATTR_NAME);
-            String description = authTypeElTemp.attributeValue(ELEMENT_ATTR_DESCRIPTION);
-            int orderIndex = NumberUtils.toInt(authTypeElTemp.attributeValue(ELEMENT_ATTR_NAME),
-                    0);
-            Boolean isViewAbleObj = BooleanUtils.toBooleanObject(authTypeElTemp.attributeValue(ELEMENT_ATTR_ISVIEWABLE));
-            Boolean isConfigAbleObj = BooleanUtils.toBooleanObject(authTypeElTemp.attributeValue(ELEMENT_ATTR_ISCONFIGABLE));
+            String description = authTypeElTemp
+                    .attributeValue(ELEMENT_ATTR_REMARK);
+            int orderIndex = NumberUtils
+                    .toInt(authTypeElTemp.attributeValue(ELEMENT_ATTR_NAME), 0);
+            Boolean isConfigAbleObj = BooleanUtils.toBooleanObject(
+                    authTypeElTemp.attributeValue(ELEMENT_ATTR_ISCONFIGABLE));
             
-            boolean isViewAble = isViewAbleObj != null ? isViewAbleObj.booleanValue()
-                    : true;
-            boolean isConfigAble = isConfigAbleObj != null ? isConfigAbleObj.booleanValue()
-                    : true;
+            boolean isConfigAble = isConfigAbleObj != null
+                    ? isConfigAbleObj.booleanValue() : true;
             
             //注册权限类型
             AuthTypeItemContext.getContext().registeAuthTypeItem(authType,
@@ -261,7 +251,8 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
             
             //权限ElTemp
             @SuppressWarnings("unchecked")
-            List<Element> authTypeElListTemp = authTypeElTemp.elements(AUTH_ELEMENT_NAME);
+            List<Element> authTypeElListTemp = authTypeElTemp
+                    .elements(AUTH_ELEMENT_NAME);
             // 迭代生成子权限
             loadAuthItemConfigFromAuthElement(authType,
                     null,
@@ -295,25 +286,31 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
             // 读取权限配置的属性值
             String id = authElTemp.attributeValue(ELEMENT_ATTR_ID);
             String name = authElTemp.attributeValue(ELEMENT_ATTR_NAME);
-            String description = authElTemp.attributeValue(ELEMENT_ATTR_DESCRIPTION);
-            Boolean isValidObj = BooleanUtils.toBooleanObject(authElTemp.attributeValue(AUTH_ELEMENT_ATTR_ISVALID));
-            Boolean isViewAbleObj = BooleanUtils.toBooleanObject(authElTemp.attributeValue(ELEMENT_ATTR_ISVIEWABLE));
-            Boolean isEditAbleObj = BooleanUtils.toBooleanObject(authElTemp.attributeValue(AUTH_ELEMENT_ATTR_ISEDITABLE));
-            Boolean isConfigAbleObj = BooleanUtils.toBooleanObject(authElTemp.attributeValue(ELEMENT_ATTR_ISCONFIGABLE));
-            Boolean isVirtualObj = BooleanUtils.toBooleanObject(authElTemp.attributeValue(AUTH_ELEMENT_ATTR_ISVIRTUAL));
+            String description = authElTemp.attributeValue(ELEMENT_ATTR_REMARK);
+            Boolean isValidObj = BooleanUtils.toBooleanObject(
+                    authElTemp.attributeValue(AUTH_ELEMENT_ATTR_ISVALID));
+            Boolean isViewAbleObj = BooleanUtils.toBooleanObject(
+                    authElTemp.attributeValue(ELEMENT_ATTR_ISVIEWABLE));
+            Boolean isEditAbleObj = BooleanUtils.toBooleanObject(
+                    authElTemp.attributeValue(AUTH_ELEMENT_ATTR_ISMODIFYABLE));
+            Boolean isConfigAbleObj = BooleanUtils.toBooleanObject(
+                    authElTemp.attributeValue(ELEMENT_ATTR_ISCONFIGABLE));
+            Boolean isVirtualObj = BooleanUtils.toBooleanObject(
+                    authElTemp.attributeValue(AUTH_ELEMENT_ATTR_ISVIRTUAL));
             
             boolean isValid = isValidObj != null ? isValidObj.booleanValue()
                     : true;
-            boolean isViewAble = isViewAbleObj != null ? isViewAbleObj.booleanValue()
-                    : true;
-            boolean isEditAble = isEditAbleObj != null ? isEditAbleObj.booleanValue()
-                    : false;
-            boolean isConfigAble = isConfigAbleObj != null ? isConfigAbleObj.booleanValue()
-                    : true;
-            boolean isVirtual = isVirtualObj != null ? isVirtualObj.booleanValue()
-                    : false;
+            boolean isViewAble = isViewAbleObj != null
+                    ? isViewAbleObj.booleanValue() : true;
+            boolean isEditAble = isEditAbleObj != null
+                    ? isEditAbleObj.booleanValue() : false;
+            boolean isConfigAble = isConfigAbleObj != null
+                    ? isConfigAbleObj.booleanValue() : true;
+            boolean isVirtual = isVirtualObj != null
+                    ? isVirtualObj.booleanValue() : false;
             
-            String authType = authElTemp.attributeValue(AUTH_ELEMENT_ATTR_AUTHTYPE);
+            String authType = authElTemp
+                    .attributeValue(AUTH_ELEMENT_ATTR_AUTHTYPE);
             if (StringUtils.isEmpty(authType)) {
                 authType = parentElAuthType;
             }
@@ -357,7 +354,8 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
             
             //权限ElTemp
             @SuppressWarnings("unchecked")
-            List<Element> authTypeElListTemp = authElTemp.elements(AUTH_ELEMENT_NAME);
+            List<Element> authTypeElListTemp = authElTemp
+                    .elements(AUTH_ELEMENT_NAME);
             // 迭代生成子权限
             loadAuthItemConfigFromAuthElement(newAuthItem.getAuthType(),
                     newAuthItem,
@@ -384,10 +382,10 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    private AuthItem createChildAuthItem(Auth parentAuthItem,
-            String id, String authType, String name, String description,
-            boolean isValid, boolean isViewAble, boolean isEditAble,
-            boolean isConfigAble, boolean isVirtual) {
+    private AuthItem createChildAuthItem(Auth parentAuthItem, String id,
+            String authType, String name, String description, boolean isValid,
+            boolean isViewAble, boolean isEditAble, boolean isConfigAble,
+            boolean isVirtual) {
         //创建权限实体
         AuthItem authItem = new AuthItem();
         authItem.setId(id);
@@ -434,7 +432,8 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
     private List<Resource> getConfigResourceList() throws IOException {
         List<Resource> configResourceList = new ArrayList<Resource>();
         for (String location : this.authConfigLocaions) {
-            Resource[] resources = this.applicationContext.getResources(location);
+            Resource[] resources = this.applicationContext
+                    .getResources(location);
             if (resources == null || resources.length == 0) {
                 continue;
             }

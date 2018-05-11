@@ -25,7 +25,7 @@ public interface AuthItemDao {
     /**
      * 插入AuthItemImpl对象实体
      * 1、auto generate
-     *<功能详细描述>
+     * <功能详细描述>
      * @param condition
      * @param tableSuffix [参数说明]
      * 

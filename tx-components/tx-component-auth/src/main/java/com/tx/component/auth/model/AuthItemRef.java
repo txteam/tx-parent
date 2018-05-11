@@ -44,9 +44,9 @@ public class AuthItemRef implements AuthRef {
     }
     
     /** <默认构造函数> */
-    public AuthItemRef(AuthItem authItem) {
+    public AuthItemRef(Auth auth) {
         super();
-        this.authItemImpl = authItem;
+        this.auth = auth;
     }
     
     /** 权限引用唯一键盘，全局唯一 */
@@ -74,18 +74,128 @@ public class AuthItemRef implements AuthRef {
     private Date effectiveDate;
     
     /** 系统自动判定的无效时间:系统在查询具体是否存在引用过程中将根据该时间动态计算 */
-    private Date invalidDate;
+    private Date expiryDate;
     
     /**
      * @return
      */
     @Override
-    public String getAuthRefType() {
-        return this.authRefType;
+    public String getId() {
+        return this.id;
     }
-    
-    
-    
+
+    /**
+     * @return
+     */
+    @Override
+    public String getRefType() {
+        return this.refType;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public String getRefId() {
+        return this.refId;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public Auth getAuth() {
+        return this.auth;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public String getCreateOperatorId() {
+        return this.createOperatorId;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public Date getCreateDate() {
+        return this.createDate;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public Date getEffectiveDate() {
+        return this.effectiveDate;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public Date getExpiryDate() {
+        return this.expiryDate;
+    }
+
+    /**
+     * @param 对id进行赋值
+     */
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    /**
+     * @param 对refType进行赋值
+     */
+    public void setRefType(String refType) {
+        this.refType = refType;
+    }
+
+    /**
+     * @param 对refId进行赋值
+     */
+    public void setRefId(String refId) {
+        this.refId = refId;
+    }
+
+    /**
+     * @param 对auth进行赋值
+     */
+    public void setAuth(Auth auth) {
+        this.auth = auth;
+    }
+
+    /**
+     * @param 对createOperatorId进行赋值
+     */
+    public void setCreateOperatorId(String createOperatorId) {
+        this.createOperatorId = createOperatorId;
+    }
+
+    /**
+     * @param 对createDate进行赋值
+     */
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
+    }
+
+    /**
+     * @param 对effectiveDate进行赋值
+     */
+    public void setEffectiveDate(Date effectiveDate) {
+        this.effectiveDate = effectiveDate;
+    }
+
+    /**
+     * @param 对expiryDate进行赋值
+     */
+    public void setExpiryDate(Date expiryDate) {
+        this.expiryDate = expiryDate;
+    }
+
     /**
      * @param obj
      * @return
@@ -95,7 +205,6 @@ public class AuthItemRef implements AuthRef {
         boolean flag = ObjectUtils.equals(this,
                 obj,
                 "id",
-                "authItem",
                 "authRefType",
                 "refId",
                 "temp");
