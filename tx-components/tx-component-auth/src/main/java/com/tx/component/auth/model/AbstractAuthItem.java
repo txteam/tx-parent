@@ -41,17 +41,20 @@ public abstract class AbstractAuthItem implements Auth {
     @Id
     private String id;
     
+    /** 权限类型 后续根据需要可以扩展相应的权限大类   比如: 产品权限\流程环节权限\通过多个纬度的权限交叉可以达到多纬度的授权体系*/
+    private String authType;
+    
+    /** 系统唯一id */
+    private String module;
+    
+    /** 父级权限id */
+    private String parentId;
+    
     /** 引用id */
     private String refId;
     
     /** 引用类型 */
     private String refType;
-    
-    /** 父级权限id */
-    private String parentId;
-    
-    /** 系统唯一id */
-    private String module;
     
     /** 权限项名 */
     private String name;
@@ -59,8 +62,7 @@ public abstract class AbstractAuthItem implements Auth {
     /** 权限项目描述 */
     private String remark;
     
-    /** 权限类型 后续根据需要可以扩展相应的权限大类   比如: 产品权限\流程环节权限\通过多个纬度的权限交叉可以达到多纬度的授权体系*/
-    private String authType;
+    
     
     /** 是否有效，默认为true,权限可停用 */
     private boolean valid = true;

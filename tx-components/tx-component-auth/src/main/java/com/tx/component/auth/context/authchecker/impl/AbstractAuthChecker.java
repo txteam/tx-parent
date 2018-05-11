@@ -40,14 +40,18 @@ public abstract class AbstractAuthChecker implements AuthChecker {
         if (!CollectionUtils.isEmpty(authItemRefList)) {
             Date now = new Date();
             List<AuthRef> validAuthItemRefList = new ArrayList<AuthRef>();
+            
             for (AuthRef authItemRefTemp : authItemRefList) {
-                if (!authItemRefTemp.isTemp()) {
+                if (authItemRefTemp.getExpiryDate() == null) {
+                    //没有到期时间表示非临时权限
                     validAuthItemRefList.add(authItemRefTemp);
                 } else {
                     if (now.compareTo(authItemRefTemp.getEffectiveDate()) >= 0
-                            && now.compareTo(authItemRefTemp.getInvalidDate()) <= 0) {
+                            && now.compareTo(authItemRefTemp.getExpiryDate()) <= 0) {
+                        //生效时间到了，到期时间未到
                         validAuthItemRefList.add(authItemRefTemp);
                     } else {
+                        //生效时间未到，或到期时间已到
                         continue;
                     }
                 }

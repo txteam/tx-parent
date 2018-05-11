@@ -27,39 +27,24 @@ public class AuthTypeItem implements Serializable, Ordered {
     private static final long serialVersionUID = 7942093110803351685L;
     
     /** 权限类型  */
-    private String authType;
+    private String id;
+    
+    /** 权限类型归属模块 */
+    private String module;
     
     /** 权限类型名  */
-    private String name = "";
+    private String name;
     
     /** 权限类型描述 */
-    private String description = "";
+    private String remark;
     
     /** 是否可见 */
-    private boolean isViewAble = true;
-    
-    /** 是否可在统一权限管理界面进行编辑  */
-    private boolean isConfigAble = true;
+    private boolean viewAble = true;
     
     /** 权限项列表 */
     private List<Auth> authItemList;
     
     private int orderIndex = 0;
-    
-    /**
-     * 使AuthType构造函数为包内可见，使外部不能通过new去创建AuthTypeItem
-     * <默认构造函数>
-     */
-    public AuthTypeItem(String authType, String name, String description,
-            boolean isViewAble, boolean isConfigAble, int orderIndex) {
-        super();
-        this.authType = authType;
-        this.name = name;
-        this.description = description;
-        this.isViewAble = isViewAble;
-        this.isConfigAble = isConfigAble;
-        this.orderIndex = orderIndex;
-    }
     
     /**
      * 使AuthType构造函数为包内可见，使外部不能通过new去创建AuthTypeItem
@@ -76,6 +61,23 @@ public class AuthTypeItem implements Serializable, Ordered {
     public String getAuthType() {
         return authType;
     }
+    
+    /**
+     * 使AuthType构造函数为包内可见，使外部不能通过new去创建AuthTypeItem
+     * <默认构造函数>
+     */
+    public AuthTypeItem(String authType, String name, String description,
+            boolean isViewAble, boolean isConfigAble, int orderIndex) {
+        super();
+        this.authType = authType;
+        this.name = name;
+        this.description = description;
+        this.isViewAble = isViewAble;
+        this.isConfigAble = isConfigAble;
+        this.orderIndex = orderIndex;
+    }
+    
+    
     
     /**
      * @param 对authType进行赋值

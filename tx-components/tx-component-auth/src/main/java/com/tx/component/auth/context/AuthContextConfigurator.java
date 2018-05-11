@@ -47,81 +47,6 @@ import com.tx.core.exceptions.util.AssertUtils;
 public class AuthContextConfigurator implements InitializingBean,
         ApplicationContextAware {
     
-    /** 增加对Controller权限加载的支持 */
-    @Bean(name = "auth.controllerAuthRegisterSupportLoaderProcessor")
-    public AuthItemLoaderProcessor controllerAuthRegisterSupportLoaderProcessor(){
-        ControllerAuthRegisterSupportLoaderProcessor processor = new ControllerAuthRegisterSupportLoaderProcessor();
-        processor.setBasePackages(scanControllerAuthBasePackages);
-        return processor;
-    }
-    
-    /** 增加对子权限加载的支撑 */
-    @Bean(name = "auth.childAuthRegisterSupportLoaderProcessor")
-    public AuthItemLoaderProcessor childAuthRegisterSupportLoaderProcessor() {
-        ChildAuthRegisterSupportLoaderProcessor processor = new ChildAuthRegisterSupportLoaderProcessor();
-        return processor;
-    }
-    
-    @Bean(name = "authContext")
-    public AuthContextFactory authContext() {
-        AuthContextFactory authContextFactory = new AuthContextFactory();
-        authContextFactory.setDataSource(dataSource);
-        authContextFactory.setDefaultAuthChecker(defaultAuthChecker);
-        authContextFactory.setJdbcTemplate(jdbcTemplate);
-        authContextFactory.setPlatformTransactionManager(platformTransactionManager);
-        authContextFactory.setSystemId(systemId);
-        authContextFactory.setTableSuffix(tableSuffix);
-        return authContextFactory;
-    }
-    
-    @Bean(name = "authItemRefImplDao")
-    public AuthItemRefDao authItemRefImplDao() {
-        AuthItemRefDao authItemRefImplDao = new AuthItemRefImplDaoImpl(
-                this.jdbcTemplate, this.dataSource);
-        return authItemRefImplDao;
-    }
-    
-    @Bean(name = "authItemImplDao")
-    public AuthItemDao authItemImplDao() {
-        AuthItemDao authItemImplDao = new AuthItemImplDaoImpl(
-                this.jdbcTemplate, this.dataSource);
-        return authItemImplDao;
-    }
-    
-    @Bean(name = "authItemRefImplService")
-    public AuthItemRefImplService authItemRefImplService() {
-        AuthItemRefImplService authItemRefImplService = new AuthItemRefImplService(
-                this.platformTransactionManager);
-        return authItemRefImplService;
-    }
-    
-    @Bean(name = "authItemImplService")
-    public AuthItemService authItemImplService() {
-        AuthItemService authItemImplService = new AuthItemService(
-                this.platformTransactionManager);
-        return authItemImplService;
-    }
-    
-    @Bean(name = "authItemPersister")
-    public AuthItemPersister authItemPersister() {
-        AuthItemPersister authItemPersister = new AuthItemPersister(
-                this.tableSuffix, this.systemId);
-        return authItemPersister;
-    }
-    
-    @Bean(name = "xmlAuthLoader")
-    public XmlAuthLoader xmlAuthLoader() {
-        XmlAuthLoader xmlAuthLoader = new XmlAuthLoader(this.authConfigLocaions);
-        return xmlAuthLoader;
-    }
-    
-    @Bean(name = "notTempAuthItemRefImplService")
-    public NotTempAuthItemRefImplService notTempAuthItemRefImplService() {
-        NotTempAuthItemRefImplService notTempAuthItemRefImplService = new NotTempAuthItemRefImplService(
-                this.platformTransactionManager);
-        return notTempAuthItemRefImplService;
-    }
-    
     /** 日志记录器 */
     protected static final Logger logger = LoggerFactory.getLogger(AuthContextConfigurator.class);
     
@@ -188,13 +113,6 @@ public class AuthContextConfigurator implements InitializingBean,
     public void setDefaultAuthChecker(AuthChecker defaultAuthChecker) {
         this.defaultAuthChecker = defaultAuthChecker;
     }
-    
-//    /**
-//     * @param 对cache进行赋值
-//     */
-//    public void setEhcache(Ehcache ehcache) {
-//        this.ehcache = ehcache;
-//    }
     
     /**
      * @param 对systemId进行赋值

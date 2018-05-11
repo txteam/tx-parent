@@ -25,7 +25,20 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import com.tx.component.auth.context.AuthContextFactory;
+import com.tx.component.auth.context.AuthItemImplDaoImpl;
+import com.tx.component.auth.context.AuthItemLoaderProcessor;
+import com.tx.component.auth.context.AuthItemPersister;
+import com.tx.component.auth.context.AuthItemRefImplDaoImpl;
+import com.tx.component.auth.context.loader.impl.XmlAuthLoader;
+import com.tx.component.auth.context.loaderprocessor.ChildAuthRegisterSupportLoaderProcessor;
+import com.tx.component.auth.context.loaderprocessor.ControllerAuthRegisterSupportLoaderProcessor;
+import com.tx.component.auth.dao.AuthItemDao;
+import com.tx.component.auth.dao.AuthItemRefDao;
 import com.tx.component.auth.script.AuthContextTableInitializer;
+import com.tx.component.auth.service.AuthItemRefImplService;
+import com.tx.component.auth.service.AuthItemService;
+import com.tx.component.auth.service.NotTempAuthItemRefImplService;
 import com.tx.core.ddlutil.executor.TableDDLExecutor;
 import com.tx.core.exceptions.util.AssertUtils;
 
@@ -148,6 +161,84 @@ public class AuthContextAutoConfiguration
                     this.tableDDLExecutor);
             return initializer;
         }
+    }
+    
+    
+    
+    
+    /** 增加对Controller权限加载的支持 */
+    @Bean(name = "auth.controllerAuthRegisterSupportLoaderProcessor")
+    public AuthItemLoaderProcessor controllerAuthRegisterSupportLoaderProcessor(){
+        ControllerAuthRegisterSupportLoaderProcessor processor = new ControllerAuthRegisterSupportLoaderProcessor();
+        processor.setBasePackages(scanControllerAuthBasePackages);
+        return processor;
+    }
+    
+    /** 增加对子权限加载的支撑 */
+    @Bean(name = "auth.childAuthRegisterSupportLoaderProcessor")
+    public AuthItemLoaderProcessor childAuthRegisterSupportLoaderProcessor() {
+        ChildAuthRegisterSupportLoaderProcessor processor = new ChildAuthRegisterSupportLoaderProcessor();
+        return processor;
+    }
+    
+    @Bean(name = "authContext")
+    public AuthContextFactory authContext() {
+        AuthContextFactory authContextFactory = new AuthContextFactory();
+        authContextFactory.setDataSource(dataSource);
+        authContextFactory.setDefaultAuthChecker(defaultAuthChecker);
+        authContextFactory.setJdbcTemplate(jdbcTemplate);
+        authContextFactory.setPlatformTransactionManager(platformTransactionManager);
+        authContextFactory.setSystemId(systemId);
+        authContextFactory.setTableSuffix(tableSuffix);
+        return authContextFactory;
+    }
+    
+    @Bean(name = "authItemRefImplDao")
+    public AuthItemRefDao authItemRefImplDao() {
+        AuthItemRefDao authItemRefImplDao = new AuthItemRefImplDaoImpl(
+                this.jdbcTemplate, this.dataSource);
+        return authItemRefImplDao;
+    }
+    
+    @Bean(name = "authItemImplDao")
+    public AuthItemDao authItemImplDao() {
+        AuthItemDao authItemImplDao = new AuthItemImplDaoImpl(
+                this.jdbcTemplate, this.dataSource);
+        return authItemImplDao;
+    }
+    
+    @Bean(name = "authItemRefImplService")
+    public AuthItemRefImplService authItemRefImplService() {
+        AuthItemRefImplService authItemRefImplService = new AuthItemRefImplService(
+                this.platformTransactionManager);
+        return authItemRefImplService;
+    }
+    
+    @Bean(name = "authItemImplService")
+    public AuthItemService authItemImplService() {
+        AuthItemService authItemImplService = new AuthItemService(
+                this.platformTransactionManager);
+        return authItemImplService;
+    }
+    
+    @Bean(name = "authItemPersister")
+    public AuthItemPersister authItemPersister() {
+        AuthItemPersister authItemPersister = new AuthItemPersister(
+                this.tableSuffix, this.systemId);
+        return authItemPersister;
+    }
+    
+    @Bean(name = "xmlAuthLoader")
+    public XmlAuthLoader xmlAuthLoader() {
+        XmlAuthLoader xmlAuthLoader = new XmlAuthLoader(this.authConfigLocaions);
+        return xmlAuthLoader;
+    }
+    
+    @Bean(name = "notTempAuthItemRefImplService")
+    public NotTempAuthItemRefImplService notTempAuthItemRefImplService() {
+        NotTempAuthItemRefImplService notTempAuthItemRefImplService = new NotTempAuthItemRefImplService(
+                this.platformTransactionManager);
+        return notTempAuthItemRefImplService;
     }
     
 }
