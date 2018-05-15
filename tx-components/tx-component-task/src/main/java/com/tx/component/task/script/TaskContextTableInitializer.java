@@ -55,8 +55,8 @@ public class TaskContextTableInitializer extends AbstractTableInitializer
     @Override
     public void tables() {
         //初始化表定义
-        table_td_task_def();
-        table_td_task_status();
+        table_task_def();
+        table_task_status();
         table_task_execute_log();
     }
     
@@ -68,7 +68,7 @@ public class TaskContextTableInitializer extends AbstractTableInitializer
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    public void table_td_task_def() {
+    public void table_task_def() {
         String tableName = "task_def";
         
         CreateTableDDLBuilder createDDLBuilder = null;
@@ -85,7 +85,7 @@ public class TaskContextTableInitializer extends AbstractTableInitializer
             ddlBuilder = createDDLBuilder;
         }
         
-        td_task_def(ddlBuilder);//写入表结构
+        task_def(ddlBuilder);//写入表结构
         if (alterDDLBuilder != null
                 && alterDDLBuilder.compare().isNeedAlter()) {
             this.tableDDLExecutor.alter(alterDDLBuilder);
@@ -103,14 +103,14 @@ public class TaskContextTableInitializer extends AbstractTableInitializer
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    public static void td_task_def(DDLBuilder<?> ddlBuilder) {
+    public static void task_def(DDLBuilder<?> ddlBuilder) {
         ddlBuilder.newColumnOfVarchar(true, "id", 64, true, null)
                 .newColumnOfVarchar("code", 64, true, null)
                 .newColumnOfVarchar("parentCode", 64, false, null)
                 .newColumnOfVarchar("className", 256, true, null)
                 .newColumnOfVarchar("beanName", 128, true, null)
                 .newColumnOfVarchar("methodName", 128, true, null)
-                .newColumnOfVarchar("factory", 128, false, "DEFAULT")
+                .newColumnOfVarchar("module", 64, true, null)
                 .newColumnOfVarchar("attributes", 1024, false, null)
                 .newColumnOfVarchar("name", 64, true, null)
                 .newColumnOfVarchar("remark", 512, false, null)
@@ -119,7 +119,10 @@ public class TaskContextTableInitializer extends AbstractTableInitializer
                 .newColumnOfInteger("orderPriority", 16, true, 0)
                 .newColumnOfDate("lastUpdateDate", true, true)
                 .newColumnOfDate("createDate", true, true);
+        
         ddlBuilder.newIndex(true, "idx_code", "code");
+        ddlBuilder.newIndex(false, "idx_parentCode", "parentCode");
+        ddlBuilder.newIndex(false, "idx_module", "module");
         ddlBuilder.newIndex(false, "idx_createDate", "createDate");
     }
     
@@ -131,7 +134,7 @@ public class TaskContextTableInitializer extends AbstractTableInitializer
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    public void table_td_task_status() {
+    public void table_task_status() {
         String tableName = "task_status";
         
         CreateTableDDLBuilder createDDLBuilder = null;
@@ -148,7 +151,7 @@ public class TaskContextTableInitializer extends AbstractTableInitializer
             ddlBuilder = createDDLBuilder;
         }
         
-        td_task_status(ddlBuilder);//写入表结构
+        task_status(ddlBuilder);//写入表结构
         
         if (alterDDLBuilder != null
                 && alterDDLBuilder.compare().isNeedAlter()) {
@@ -167,7 +170,7 @@ public class TaskContextTableInitializer extends AbstractTableInitializer
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    public static void td_task_status(DDLBuilder<?> ddlBuilder) {
+    public static void task_status(DDLBuilder<?> ddlBuilder) {
         ddlBuilder.newColumnOfVarchar(true, "id", 64, true, null)
                 .newColumnOfVarchar("taskId", 64, true, null)
                 .newColumnOfVarchar("status", 64, true, null)

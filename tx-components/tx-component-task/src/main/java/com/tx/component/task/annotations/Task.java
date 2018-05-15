@@ -38,11 +38,11 @@ public @interface Task {
     /** 任务关键字 */
     String code();
     
-    /** 任务名 */
-    String name() default "";
-    
     /** 父级任务编码 */
     String parentCode() default "";
+    
+    /** 任务名 */
+    String name() default "";
     
     /** 任务备注 */
     String remark() default "";

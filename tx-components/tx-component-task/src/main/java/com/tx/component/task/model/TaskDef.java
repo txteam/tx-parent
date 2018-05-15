@@ -59,10 +59,10 @@ public class TaskDef implements OrderedSupport, Serializable {
     @QueryConditionEqual
     private String methodName;
     
-    /** 任务组：对应到task的factory:不同的动态任务将会有不同的factory,如果factory不存在，则启动期间需要禁用相关任务？ */
+    /** module: 所属模块 */
     @UpdateAble
     @QueryConditionEqual
-    private String factory;
+    private String module;
     
     /** 任务描述的参数Map */
     @UpdateAble
@@ -128,19 +128,19 @@ public class TaskDef implements OrderedSupport, Serializable {
     }
     
     /**
-     * @return 返回 factory
+     * @return 返回 module
      */
-    public String getFactory() {
-        return factory;
+    public String getModule() {
+        return module;
     }
-    
+
     /**
-     * @param 对factory进行赋值
+     * @param 对module进行赋值
      */
-    public void setFactory(String factory) {
-        this.factory = factory;
+    public void setModule(String module) {
+        this.module = module;
     }
-    
+
     /**
      * @return 返回 code
      */

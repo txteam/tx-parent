@@ -35,7 +35,7 @@ public abstract class AbstractDataDict implements BasicData {
     
     /** 类型编码 */
     @QueryConditionEqual
-    private String basicDataTypeCode;
+    private String type;
     
     /** 编码 */
     @QueryConditionEqual
@@ -83,19 +83,19 @@ public abstract class AbstractDataDict implements BasicData {
     }
     
     /**
-     * @return 返回 basicDataTypeCode
+     * @return 返回 type
      */
-    public String getBasicDataTypeCode() {
-        return basicDataTypeCode;
+    public String getType() {
+        return type;
     }
-    
+
     /**
-     * @param 对basicDataTypeCode进行赋值
+     * @param 对type进行赋值
      */
-    public void setBasicDataTypeCode(String basicDataTypeCode) {
-        this.basicDataTypeCode = basicDataTypeCode;
+    public void setType(String type) {
+        this.type = type;
     }
-    
+
     /**
      * @return 返回 code
      */

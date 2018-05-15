@@ -21,7 +21,7 @@ import org.springframework.core.Ordered;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class AuthTypeItem implements Serializable, Ordered {
+public class AuthTypeItem implements Serializable{
     
     /** 注释内容 */
     private static final long serialVersionUID = 7942093110803351685L;
@@ -42,7 +42,7 @@ public class AuthTypeItem implements Serializable, Ordered {
     private boolean viewAble = true;
     
     /** 权限项列表 */
-    private List<Auth> authItemList;
+    private List<Auth> authList;
     
     private int orderIndex = 0;
     

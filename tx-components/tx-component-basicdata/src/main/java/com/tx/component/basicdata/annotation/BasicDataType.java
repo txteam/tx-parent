@@ -40,17 +40,6 @@ public @interface BasicDataType {
     String code() default "";
     
     /**
-      * 所属模块
-      * <功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return String [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    String module() default "";
-    
-    /**
       * 基础数据名称<br/>
       * <功能详细描述>
       * @return [参数说明]

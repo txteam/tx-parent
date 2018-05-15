@@ -23,6 +23,9 @@ public class BasicDataContextProperties {
     /** 命令容器是否启动 */
     private boolean enable;
     
+    /** 容器所属模块：当该值为空时，使用spring.application.name的内容 */
+    private String module;
+    
     /** 基础包集合 */
     private String basePackages = "com.tx";
     
@@ -120,5 +123,19 @@ public class BasicDataContextProperties {
      */
     public void setTransactionManager(String transactionManager) {
         this.transactionManager = transactionManager;
+    }
+
+    /**
+     * @return 返回 module
+     */
+    public String getModule() {
+        return module;
+    }
+
+    /**
+     * @param 对module进行赋值
+     */
+    public void setModule(String module) {
+        this.module = module;
     }
 }

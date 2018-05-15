@@ -41,9 +41,10 @@
 		<module>tx-component-command</module>
 		<module>tx-component-event</module>
 		<module>tx-component-basicdata</module>
+		
 		<module>tx-component-task</module>
-		<module>tx-component-auth</module>
-		<module>tx-component-servicelog</module>
+<!-- 		<module>tx-component-servicelog</module> -->
+<!-- 		<module>tx-component-auth</module> -->
 		
 		<!-- 准备废弃的模块 -->
 		<!-- <module>tx-component-configuration</module> -->

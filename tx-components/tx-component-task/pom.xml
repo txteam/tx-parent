@@ -44,6 +44,13 @@
 			<artifactId>mysql-connector-java</artifactId>
 			<optional>true</optional>
 		</dependency>
+		
+		<!-- generator -->
+		<dependency>
+			<groupId>org.freemarker</groupId>
+			<artifactId>freemarker</artifactId>
+			<optional>true</optional>
+		</dependency>
 
 		<!-- ConfigurationProperties Need -->
 		<dependency>

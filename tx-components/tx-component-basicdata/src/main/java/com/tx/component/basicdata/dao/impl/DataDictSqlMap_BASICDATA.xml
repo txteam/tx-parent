@@ -17,7 +17,7 @@
 		SELECT 
 				TDD.id,
 				TDD.parentId,
-				TDD.basicDataTypeCode,
+				TDD.type,
 				TDD.code,
 				TDD.createDate,
 				TDD.lastUpdateDate,
@@ -31,8 +31,8 @@
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
 	            AND TDD.ID = #{id}
 	        </if>
-	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(basicDataTypeCode)">  
-	            <![CDATA[ AND TDD.BASICDATATYPECODE = #{basicDataTypeCode,jdbcType=VARCHAR} ]]>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(type)">  
+	            <![CDATA[ AND TDD.type = #{type,jdbcType=VARCHAR} ]]>
 	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(code)">  
 	            <![CDATA[ AND TDD.CODE = #{code,jdbcType=VARCHAR} ]]>
@@ -47,7 +47,7 @@
 		SELECT 
 				TDD.id,
 				TDD.parentId,
-				TDD.basicDataTypeCode,
+				TDD.type,
 				TDD.code,
 				TDD.createDate,
 				TDD.lastUpdateDate,
@@ -57,8 +57,8 @@
 				TDD.remark
 		  FROM BD_DATA_DICT TDD
 		<trim prefix="WHERE" prefixOverrides="AND | OR">
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(basicDataTypeCode)">  
-	            <![CDATA[ AND TDD.BASICDATATYPECODE = #{basicDataTypeCode,jdbcType=VARCHAR} ]]>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(type)">  
+	            <![CDATA[ AND TDD.TYPE = #{type,jdbcType=VARCHAR} ]]>
 	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(parentId)">  
 	            <![CDATA[ AND TDD.PARENTID = #{parentId,jdbcType=VARCHAR} ]]>
@@ -99,8 +99,8 @@
 		SELECT COUNT(1)
 		  FROM BD_DATA_DICT TDD
 		<trim prefix="WHERE" prefixOverrides="AND | OR">
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(basicDataTypeCode)">  
-	            <![CDATA[ AND TDD.BASICDATATYPECODE = #{basicDataTypeCode,jdbcType=VARCHAR} ]]>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(type)">  
+	            <![CDATA[ AND TDD.TYPE = #{type,jdbcType=VARCHAR} ]]>
 	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(parentId)">  
 	            <![CDATA[ AND TDD.PARENTID = #{parentId,jdbcType=VARCHAR} ]]>
@@ -132,7 +132,7 @@
 		INSERT INTO BD_DATA_DICT
 		(
 			id,
-			basicDataTypeCode,
+			type,
 			parentId,
 			code,
 			name,
@@ -145,7 +145,7 @@
 		VALUES
 		(
 			#{id},
-			#{basicDataTypeCode},
+			#{type},
 			#{parentId},
 			#{code},
 			#{name},
@@ -171,8 +171,8 @@
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(code)">  
 	            AND CODE = #{code,jdbcType=VARCHAR}
 	        </if>
-	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(basicDataTypeCode)">  
-	            AND BASICDATATYPECODE = #{basicDataTypeCode,jdbcType=VARCHAR}
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(type)">  
+	            AND TYPE = #{type,jdbcType=VARCHAR}
 	        </if>
 		</trim>
 	</delete>
@@ -185,8 +185,8 @@
 			<if test="_parameter.containsKey('parentId')">
 	    		parentId = #{parentId,javaType=java.lang.String},
 	    	</if>
-			<if test="_parameter.containsKey('basicDataTypeCode')">
-	    		basicDataTypeCode = #{basicDataTypeCode,javaType=java.lang.String},
+			<if test="_parameter.containsKey('type')">
+	    		type = #{type,javaType=java.lang.String},
 	    	</if>	
 			<if test="_parameter.containsKey('code')">
 	    		code = #{code,javaType=java.lang.String},

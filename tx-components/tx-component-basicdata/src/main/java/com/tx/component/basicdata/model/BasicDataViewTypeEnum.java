@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
  */
 @JsonSerialize(using = BasicDataEnumJsonSerializer.class)
 public enum BasicDataViewTypeEnum implements BasicDataEnum {
+    
     LIST("LIST", "列表"),
     
     PAGEDLIST("LIST", "分页列表"),

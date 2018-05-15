@@ -194,7 +194,7 @@ public class BasicDataContextTableInitializer extends AbstractTableInitializer
         drop table if exists bd_data_dict;
         create table bd_data_dict(
             id varchar(64) not null,
-            basicDataTypeCode varchar(64) not null,
+            type varchar(64) not null,
             parentId varchar(64),
             code varchar(64) not null,
             valid bit not null default 1,
@@ -205,13 +205,13 @@ public class BasicDataContextTableInitializer extends AbstractTableInitializer
             createDate datetime not null default now(),
             primary key(id)
         );
-        create unique index idx_bd_data_dict_00 on bd_data_dict(code,basicDataTypeCode);
-        create index idx_bd_data_dict_01 on bd_data_dict(basicDataTypeCode);
-        create index idx_bd_data_dict_02 on bd_data_dict(parentId);
+        create unique index idx_bd_data_dict_00 on bd_data_dict(code,type);
+        create index idx_type on bd_data_dict(type);
+        create index idx_parentId on bd_data_dict(parentId);
         */
         ddlBuilder.newColumnOfVarchar(true, "id", 64, true, null)
                 .newColumnOfVarchar("parentId", 64, false, null)
-                .newColumnOfVarchar("basicDataTypeCode", 64, true, null)
+                .newColumnOfVarchar("type", 64, true, null)
                 .newColumnOfVarchar("code", 64, true, null)
                 .newColumnOfBoolean("modifyAble", true, true)
                 .newColumnOfBoolean("valid", true, true)
@@ -219,10 +219,10 @@ public class BasicDataContextTableInitializer extends AbstractTableInitializer
                 .newColumnOfVarchar("remark", 512, false, null)
                 .newColumnOfDate("lastUpdateDate", true, true)
                 .newColumnOfDate("createDate", true, true);
-        ddlBuilder.newIndex(true, "idx_data_dict_00", "code,basicDataTypeCode");
+        ddlBuilder.newIndex(true, "idx_data_dict_00", "code,type");
         ddlBuilder.newIndex(false,
-                "idx_basicDataTypeCode",
-                "basicDataTypeCode");
+                "idx_type",
+                "type");
         ddlBuilder.newIndex(false, "idx_parentId", "parentId");
     }
     

@@ -11,6 +11,7 @@ import javax.sql.DataSource;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -94,6 +95,13 @@ public class BasicDataContextAutoConfiguration
     /** transactionTemplate: 如果存在事务则在当前事务中执行 */
     private TransactionTemplate transactionTemplate;
     
+    /** 容器所属模块：当该值为空时，使用spring.application.name的内容 */
+    private String module;
+    
+    /** application.name */
+    @Value(value = "${spring.application.name}")
+    private String applicationName;
+    
     /** <默认构造函数> */
     public BasicDataContextAutoConfiguration(
             BasicDataContextProperties properties) {
@@ -164,6 +172,13 @@ public class BasicDataContextAutoConfiguration
         if (!StringUtils.isEmpty(this.properties.getMybatisConfigLocation())) {
             this.mybatisConfigLocation = this.properties
                     .getMybatisConfigLocation();
+        }
+        
+        if (!StringUtils.isBlank(this.properties.getModule())) {
+            this.module = this.properties.getModule();
+        }
+        if (!StringUtils.isBlank(this.applicationName)) {
+            this.module = this.applicationName;
         }
         
         this.transactionTemplate = new TransactionTemplate(
@@ -325,7 +340,7 @@ public class BasicDataContextAutoConfiguration
             BasicDataTypeService basicDataTypeService,
             DataDictService dataDictService) {
         BasicDataServiceRegistry serviceFactory = new BasicDataServiceRegistry(
-                this.basePackages, this.transactionTemplate,
+                this.module, this.basePackages, this.transactionTemplate,
                 basicDataTypeService, dataDictService);
         
         return serviceFactory;

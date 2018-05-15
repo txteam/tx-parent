@@ -84,7 +84,7 @@ public class TaskContextTableInitializerTest {
             ddlBuilder = createDDLBuilder;
         }
         
-        TaskContextTableInitializer.td_task_def(ddlBuilder);//写入表结构
+        TaskContextTableInitializer.task_def(ddlBuilder);//写入表结构
         
         if (alterDDLBuilder != null
                 && alterDDLBuilder.compare().isNeedAlter()) {
@@ -125,7 +125,7 @@ public class TaskContextTableInitializerTest {
             ddlBuilder = createDDLBuilder;
         }
         
-        TaskContextTableInitializer.td_task_status(ddlBuilder);//写入表结构
+        TaskContextTableInitializer.task_status(ddlBuilder);//写入表结构
         
         if (alterDDLBuilder != null
                 && alterDDLBuilder.compare().isNeedAlter()) {

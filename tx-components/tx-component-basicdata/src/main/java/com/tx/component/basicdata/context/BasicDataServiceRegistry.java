@@ -72,6 +72,8 @@ public class BasicDataServiceRegistry
     
     private AliasRegistry aliasRegistry;
     
+    private String module;
+    
     private String basePackages = "com.tx";
     
     private BasicDataTypeService basicDataTypeService;
@@ -86,11 +88,14 @@ public class BasicDataServiceRegistry
     }
     
     /** <默认构造函数> */
-    public BasicDataServiceRegistry(String basePackages,
+    public BasicDataServiceRegistry(String module, String basePackages,
             TransactionTemplate transactionTemplate,
             BasicDataTypeService basicDataTypeService,
             DataDictService dataDictService) {
         super();
+        AssertUtils.notEmpty(module, "module is null.");
+        
+        this.module = module;
         this.basePackages = basePackages;
         this.basicDataTypeService = basicDataTypeService;
         this.dataDictService = dataDictService;
@@ -454,7 +459,7 @@ public class BasicDataServiceRegistry
                     bdType.setTableName(tableName);
                     bdType.setName(name);
                     bdType.setModifyAble(false);
-                    bdType.setModule("basicdata");
+                    bdType.setModule(module);
                     
                     if (type.isAnnotationPresent(
                             com.tx.component.basicdata.annotation.BasicDataType.class)) {
@@ -468,9 +473,6 @@ public class BasicDataServiceRegistry
                         
                         if (StringUtils.isNotEmpty(anno.name())) {
                             bdType.setName(anno.name());//覆写名称
-                        }
-                        if (StringUtils.isNotEmpty(anno.module())) {
-                            bdType.setModule(anno.module().toLowerCase());//覆写模块名称
                         }
                     }
                     resListOfCfg.add(bdType);

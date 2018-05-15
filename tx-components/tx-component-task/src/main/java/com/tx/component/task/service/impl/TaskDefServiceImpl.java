@@ -208,7 +208,7 @@ public class TaskDefServiceImpl implements TaskDefService {
         updateRowMap.put("orderPriority", taskDef.getOrderPriority());
         
         updateRowMap.put("parentCode", taskDef.getParentCode());
-        updateRowMap.put("factory", taskDef.getFactory());
+        updateRowMap.put("module", taskDef.getModule());
         updateRowMap.put("beanName", taskDef.getBeanName());
         updateRowMap.put("className", taskDef.getClassName());
         updateRowMap.put("methodName", taskDef.getMethodName());
