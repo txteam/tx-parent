@@ -42,7 +42,7 @@
 		<module>tx-component-event</module>
 		<module>tx-component-basicdata</module>
 		
-		<module>tx-component-task</module>
+<!-- 		<module>tx-component-task</module> -->
 <!-- 		<module>tx-component-servicelog</module> -->
 <!-- 		<module>tx-component-auth</module> -->
 		
