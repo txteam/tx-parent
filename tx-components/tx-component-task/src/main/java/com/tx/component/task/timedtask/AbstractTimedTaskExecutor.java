@@ -52,14 +52,14 @@ public abstract class AbstractTimedTaskExecutor<T extends TimedTask> implements 
         AssertUtils.notNull(this.task, "task is null.");
         
         //获取任务的下次执行时间
-        Date nextFireDate = TaskSessionContext.getSession().getNextFireDate();
+        Date nextFireDate = TaskSessionContext.getExecution().getNextFireDate();
         if(nextFireDate != null && executeDate.compareTo(nextFireDate) < 0){
             //下次执行时间未到，则能够执行
             nextFireDate = executeDate;
         }else{
             nextFireDate = doExecute(executeDate);
             //写入下次执行时间
-            TaskSessionContext.getSession().setNextFireDate(nextFireDate);
+            TaskSessionContext.getExecution().setNextFireDate(nextFireDate);
         }
         
         return nextFireDate;

@@ -88,7 +88,7 @@ public class IterableTimedTaskExecutor<T> extends AbstractTimedTaskExecutor<Iter
             });
         }
         
-        if (this.task.isNeedValidateCount()) {
+        if (this.task.isNeedCheckCount()) {
             AssertUtils.isTrue(count == executeCount,
                     "执行前检测到的待执行任务与最终执行了的任务数量不同.count:{} executeCount:{}",
                     new Object[] { count, executeCount });

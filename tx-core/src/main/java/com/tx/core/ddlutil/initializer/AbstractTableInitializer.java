@@ -6,6 +6,8 @@
  */
 package com.tx.core.ddlutil.initializer;
 
+import com.tx.core.TxConstants;
+
 /**
  * 抽象表初始化器<br/>
  * <功能详细描述>
@@ -33,78 +35,144 @@ public abstract class AbstractTableInitializer implements TableInitializer {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public void initialize() {
-        tables();
-        sequences();
-        packages();
-        functions();
-        procedures();
-        triggers();
-        views();
-        initdatas();
-        jobs();
+    public String initialize(boolean tableAutoInitialize) {
+        StringBuilder sb = new StringBuilder(TxConstants.INITIAL_STR_LENGTH);
+        
+        sb.append(COMMENT_PREFIX)
+                .append("----------tables----------")
+                .append(COMMENT_SUFFIX)
+                .append(LINE_SEPARATOR);
+        sb.append(tables(tableAutoInitialize));
+        sb.append(LINE_SEPARATOR);
+        
+        sb.append(COMMENT_PREFIX)
+                .append("----------sequences----------")
+                .append(COMMENT_SUFFIX)
+                .append(LINE_SEPARATOR);
+        sb.append(sequences(tableAutoInitialize));
+        sb.append(LINE_SEPARATOR);
+        
+        sb.append(COMMENT_PREFIX)
+                .append("----------packages----------")
+                .append(COMMENT_SUFFIX)
+                .append(LINE_SEPARATOR);
+        sb.append(packages(tableAutoInitialize));
+        sb.append(LINE_SEPARATOR);
+        
+        sb.append(COMMENT_PREFIX)
+                .append("----------functions----------")
+                .append(COMMENT_SUFFIX)
+                .append(LINE_SEPARATOR);
+        sb.append(functions(tableAutoInitialize));
+        sb.append(LINE_SEPARATOR);
+        
+        sb.append(COMMENT_PREFIX)
+                .append("----------procedures----------")
+                .append(COMMENT_SUFFIX)
+                .append(LINE_SEPARATOR);
+        sb.append(procedures(tableAutoInitialize));
+        sb.append(LINE_SEPARATOR);
+        
+        sb.append(COMMENT_PREFIX)
+                .append("----------triggers----------")
+                .append(COMMENT_SUFFIX)
+                .append(LINE_SEPARATOR);
+        sb.append(triggers(tableAutoInitialize));
+        sb.append(LINE_SEPARATOR);
+        
+        sb.append(COMMENT_PREFIX)
+                .append("----------views----------")
+                .append(COMMENT_SUFFIX)
+                .append(LINE_SEPARATOR);
+        sb.append(views(tableAutoInitialize));
+        sb.append(LINE_SEPARATOR);
+        
+        sb.append(COMMENT_PREFIX)
+                .append("----------initdatas----------")
+                .append(COMMENT_SUFFIX)
+                .append(LINE_SEPARATOR);
+        sb.append(initdatas(tableAutoInitialize));
+        sb.append(LINE_SEPARATOR);
+        
+        sb.append(COMMENT_PREFIX)
+                .append("----------jobs----------")
+                .append(COMMENT_SUFFIX)
+                .append(LINE_SEPARATOR);
+        sb.append(jobs(tableAutoInitialize));
+        sb.append(LINE_SEPARATOR);
+        
+        return sb.toString();
     }
     
     /**
      * 
      */
     @Override
-    public void tables() {
+    public String tables(boolean tableAutoInitialize) {
+        return "";
     }
     
     /**
      * 
      */
     @Override
-    public void sequences() {
+    public String sequences(boolean tableAutoInitialize) {
+        return "";
     }
     
     /**
      * 
      */
     @Override
-    public void packages() {
+    public String packages(boolean tableAutoInitialize) {
+        return "";
     }
     
     /**
      * 
      */
     @Override
-    public void functions() {
+    public String functions(boolean tableAutoInitialize) {
+        return "";
     }
     
     /**
      * 
      */
     @Override
-    public void procedures() {
+    public String procedures(boolean tableAutoInitialize) {
+        return "";
     }
     
     /**
      * 
      */
     @Override
-    public void triggers() {
+    public String triggers(boolean tableAutoInitialize) {
+        return "";
     }
     
     /**
      * 
      */
     @Override
-    public void views() {
+    public String views(boolean tableAutoInitialize) {
+        return "";
     }
     
     /**
      * 
      */
     @Override
-    public void initdatas() {
+    public String initdatas(boolean tableAutoInitialize) {
+        return "";
     }
     
     /**
      * 
      */
     @Override
-    public void jobs() {
+    public String jobs(boolean tableAutoInitialize) {
+        return "";
     }
 }

@@ -8,6 +8,7 @@ package com.tx.component.basicdata.script;
 
 import org.springframework.beans.factory.InitializingBean;
 
+import com.tx.core.TxConstants;
 import com.tx.core.ddlutil.builder.DDLBuilder;
 import com.tx.core.ddlutil.builder.alter.AlterTableDDLBuilder;
 import com.tx.core.ddlutil.builder.create.CreateTableDDLBuilder;
@@ -27,7 +28,10 @@ public class BasicDataContextTableInitializer extends AbstractTableInitializer
         implements InitializingBean {
     
     /** 表DDL执行器 */
-    protected TableDDLExecutor tableDDLExecutor;
+    private TableDDLExecutor tableDDLExecutor;
+    
+    /** 是否自动执行 */
+    private boolean tableAutoInitialize = false;
     
     /** <默认构造函数> */
     public BasicDataContextTableInitializer() {
@@ -40,24 +44,53 @@ public class BasicDataContextTableInitializer extends AbstractTableInitializer
         this.tableDDLExecutor = tableDDLExecutor;
     }
     
+    /** <默认构造函数> */
+    public BasicDataContextTableInitializer(TableDDLExecutor tableDDLExecutor,
+            boolean tableAutoInitialize) {
+        super();
+        this.tableDDLExecutor = tableDDLExecutor;
+        this.tableAutoInitialize = tableAutoInitialize;
+    }
+    
     /**
      * @throws Exception
      */
     @Override
     public void afterPropertiesSet() throws Exception {
         //初始化表定义
-        initialize();
+        initialize(this.tableAutoInitialize);
     }
     
     /**
      * 
      */
     @Override
-    public void tables() {
+    public String tables(boolean tableAutoInitialize) {
         //初始化表定义
-        table_bd_basic_data_type();
-        table_bd_data_dict();
-        table_bd_data_dict_entry();
+        StringBuilder sb = new StringBuilder(TxConstants.INITIAL_STR_LENGTH);
+        
+        sb.append(COMMENT_PREFIX)
+                .append("----------table:bd_basic_data_type----------")
+                .append(COMMENT_SUFFIX)
+                .append(LINE_SEPARATOR);
+        sb.append(table_bd_basic_data_type(tableAutoInitialize));
+        sb.append(LINE_SEPARATOR);
+        
+        sb.append(COMMENT_PREFIX)
+                .append("----------table:bd_data_dict----------")
+                .append(COMMENT_SUFFIX)
+                .append(LINE_SEPARATOR);
+        sb.append(table_bd_data_dict(tableAutoInitialize));
+        sb.append(LINE_SEPARATOR);
+        
+        sb.append(COMMENT_PREFIX)
+                .append("----------table:bd_data_dict_entry----------")
+                .append(COMMENT_SUFFIX)
+                .append(LINE_SEPARATOR);
+        sb.append(table_bd_data_dict_entry(tableAutoInitialize));
+        sb.append(LINE_SEPARATOR);
+        
+        return sb.toString();
     }
     
     /**
@@ -68,7 +101,7 @@ public class BasicDataContextTableInitializer extends AbstractTableInitializer
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    private void table_bd_basic_data_type() {
+    private String table_bd_basic_data_type(boolean tableAutoInitialize) {
         String tableName = "bd_basic_data_type";
         
         CreateTableDDLBuilder createDDLBuilder = null;
@@ -90,9 +123,12 @@ public class BasicDataContextTableInitializer extends AbstractTableInitializer
         if (alterDDLBuilder != null
                 && alterDDLBuilder.compare().isNeedAlter()) {
             this.tableDDLExecutor.alter(alterDDLBuilder);
+            return alterDDLBuilder.alterSql();
         } else if (createDDLBuilder != null) {
             this.tableDDLExecutor.create(createDDLBuilder);
+            return createDDLBuilder.createSql();
         }
+        return "";
     }
     
     /**
@@ -153,7 +189,7 @@ public class BasicDataContextTableInitializer extends AbstractTableInitializer
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    public void table_bd_data_dict() {
+    public String table_bd_data_dict(boolean tableAutoInitialize) {
         String tableName = "bd_data_dict";
         
         CreateTableDDLBuilder createDDLBuilder = null;
@@ -175,9 +211,12 @@ public class BasicDataContextTableInitializer extends AbstractTableInitializer
         if (alterDDLBuilder != null
                 && alterDDLBuilder.compare().isNeedAlter()) {
             this.tableDDLExecutor.alter(alterDDLBuilder);
+            return alterDDLBuilder.alterSql();
         } else if (createDDLBuilder != null) {
             this.tableDDLExecutor.create(createDDLBuilder);
+            return createDDLBuilder.createSql();
         }
+        return "";
     }
     
     /**
@@ -220,9 +259,7 @@ public class BasicDataContextTableInitializer extends AbstractTableInitializer
                 .newColumnOfDate("lastUpdateDate", true, true)
                 .newColumnOfDate("createDate", true, true);
         ddlBuilder.newIndex(true, "idx_data_dict_00", "code,type");
-        ddlBuilder.newIndex(false,
-                "idx_type",
-                "type");
+        ddlBuilder.newIndex(false, "idx_type", "type");
         ddlBuilder.newIndex(false, "idx_parentId", "parentId");
     }
     
@@ -234,7 +271,7 @@ public class BasicDataContextTableInitializer extends AbstractTableInitializer
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    private void table_bd_data_dict_entry() {
+    private String table_bd_data_dict_entry(boolean tableAutoInitialize) {
         String tableName = "bd_data_dict_entry";
         
         CreateTableDDLBuilder createDDLBuilder = null;
@@ -256,9 +293,12 @@ public class BasicDataContextTableInitializer extends AbstractTableInitializer
         if (alterDDLBuilder != null
                 && alterDDLBuilder.compare().isNeedAlter()) {
             this.tableDDLExecutor.alter(alterDDLBuilder);
+            return alterDDLBuilder.alterSql();
         } else if (createDDLBuilder != null) {
             this.tableDDLExecutor.create(createDDLBuilder);
+            return createDDLBuilder.createSql();
         }
+        return "";
     }
     
     /**

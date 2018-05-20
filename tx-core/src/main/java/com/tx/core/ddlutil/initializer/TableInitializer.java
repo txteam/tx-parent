@@ -19,6 +19,12 @@ import org.springframework.core.PriorityOrdered;
  */
 public interface TableInitializer extends PriorityOrdered {
     
+    String COMMENT_PREFIX = "-- ";
+    
+    String COMMENT_SUFFIX = " ";
+    
+    String LINE_SEPARATOR = System.getProperty("line.separator", "\n");
+    
     /**
      * 初始化表<br/>
      * <功能详细描述> [参数说明]
@@ -27,7 +33,7 @@ public interface TableInitializer extends PriorityOrdered {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public void initialize();
+    public String initialize(boolean tableAutoInitialize);
     
     /**
      * 表初始化器table<br/>
@@ -37,7 +43,7 @@ public interface TableInitializer extends PriorityOrdered {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public void tables();
+    public String tables(boolean tableAutoInitialize);
     
     /**
      * 初始化sequences<br/>
@@ -47,7 +53,7 @@ public interface TableInitializer extends PriorityOrdered {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public void sequences();
+    public String sequences(boolean tableAutoInitialize);
     
     /**
      * 初始化包package<br/>
@@ -57,7 +63,7 @@ public interface TableInitializer extends PriorityOrdered {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public void packages();
+    public String packages(boolean tableAutoInitialize);
     
     /**
      * 表初始化器function<br/>
@@ -67,7 +73,7 @@ public interface TableInitializer extends PriorityOrdered {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public void functions();
+    public String functions(boolean tableAutoInitialize);
     
     /**
      * 初始化存储过程<br/>
@@ -77,7 +83,7 @@ public interface TableInitializer extends PriorityOrdered {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public void procedures();
+    public String procedures(boolean tableAutoInitialize);
     
     /**
      * 初始化触发器<br/>
@@ -87,7 +93,7 @@ public interface TableInitializer extends PriorityOrdered {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public void triggers();
+    public String triggers(boolean tableAutoInitialize);
     
     /**
      * 初始化视图逻辑层<br/>
@@ -97,7 +103,7 @@ public interface TableInitializer extends PriorityOrdered {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public void views();
+    public String views(boolean tableAutoInitialize);
     
     /**
      * 表初始化器<br/>
@@ -107,7 +113,7 @@ public interface TableInitializer extends PriorityOrdered {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public void initdatas();
+    public String initdatas(boolean tableAutoInitialize);
     
     /**
      * 初始化任务<br/>
@@ -117,6 +123,6 @@ public interface TableInitializer extends PriorityOrdered {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public void jobs();
+    public String jobs(boolean tableAutoInitialize);
     
 }

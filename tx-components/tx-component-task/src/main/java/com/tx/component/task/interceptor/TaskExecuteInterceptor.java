@@ -55,10 +55,12 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class TaskExecuteInterceptor implements MethodInterceptor, InitializingBean {
+public class TaskExecuteInterceptor
+        implements MethodInterceptor, InitializingBean {
     
     /** 日志记录器 */
-    private Logger logger = LoggerFactory.getLogger(TaskExecuteInterceptor.class);
+    private Logger logger = LoggerFactory
+            .getLogger(TaskExecuteInterceptor.class);
     
     /** 任务定义映射 */
     private Map<Method, TaskDef> taskDefMap;
@@ -89,7 +91,6 @@ public class TaskExecuteInterceptor implements MethodInterceptor, InitializingBe
     private TaskExecuteLogService taskExecuteLogService;
     
     /** transactionManager */
-    @Resource(name = "taskContext.transactionManager")
     private PlatformTransactionManager transactionManager;
     
     /** <默认构造函数> */
@@ -98,9 +99,14 @@ public class TaskExecuteInterceptor implements MethodInterceptor, InitializingBe
     }
     
     /** <默认构造函数> */
-    public TaskExecuteInterceptor(Map<Method, TaskDef> taskDefMap) {
+    public TaskExecuteInterceptor(PlatformTransactionManager transactionManager,
+            Map<Method, TaskDef> taskDefMap) {
         super();
+        AssertUtils.notNull(transactionManager, "transactionManager is null.");
+        AssertUtils.notEmpty(taskDefMap, "taskDefMap is empty.");
+        
         this.taskDefMap = taskDefMap;
+        this.transactionManager = transactionManager;
     }
     
     /**
@@ -108,12 +114,16 @@ public class TaskExecuteInterceptor implements MethodInterceptor, InitializingBe
      */
     @Override
     public void afterPropertiesSet() throws Exception {
-        this.transactionTemplate = new TransactionTemplate(this.transactionManager,
-                new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRED));
+        this.transactionTemplate = new TransactionTemplate(
+                this.transactionManager, new DefaultTransactionDefinition(
+                        TransactionDefinition.PROPAGATION_REQUIRED));
+        
         this.taskStatusTT = new TransactionTemplate(this.transactionManager,
-                new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRES_NEW));
+                new DefaultTransactionDefinition(
+                        TransactionDefinition.PROPAGATION_REQUIRES_NEW));
         this.taskExecuteLogTT = new TransactionTemplate(this.transactionManager,
-                new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRES_NEW));
+                new DefaultTransactionDefinition(
+                        TransactionDefinition.PROPAGATION_REQUIRES_NEW));
     }
     
     /**
@@ -131,7 +141,9 @@ public class TaskExecuteInterceptor implements MethodInterceptor, InitializingBe
             //初始化任务定义
             TaskDef taskTemp = initTaskDef(entryTemp.getValue());
             this.taskDefMap.put(entryTemp.getKey(), taskTemp);
-            TaskContextRegistry.INSTANCE.registeTask(taskTemp,entryTemp.getKey());
+            TaskContextRegistry.INSTANCE.registeTask(taskTemp,
+                    entryTemp.getKey());
+            
             //初始化任务状态
             initTaskStatus(taskTemp);
         }
@@ -154,15 +166,24 @@ public class TaskExecuteInterceptor implements MethodInterceptor, InitializingBe
         
         TaskDef hisTaskDef = this.taskDefService.findByCode(taskDef.getCode());
         if (hisTaskDef != null) {
-            if (!StringUtils.equals(taskDef.getParentCode(), hisTaskDef.getParentCode())
-                    || !StringUtils.equals(taskDef.getBeanName(), hisTaskDef.getBeanName())
-                    || !StringUtils.equals(taskDef.getClassName(), hisTaskDef.getClassName())
-                    || !StringUtils.equals(taskDef.getMethodName(), hisTaskDef.getMethodName())
-                    || !StringUtils.equals(taskDef.getName(), hisTaskDef.getName())
-                    || !StringUtils.equals(taskDef.getRemark(), hisTaskDef.getRemark())
-                    || taskDef.getOrderPriority() != hisTaskDef.getOrderPriority()/* 任务优先级不等  */
+            if (!StringUtils.equals(taskDef.getModule(), hisTaskDef.getModule())
+                    || !StringUtils.equals(taskDef.getParentCode(),
+                            hisTaskDef.getParentCode())
+                    || !StringUtils.equals(taskDef.getBeanName(),
+                            hisTaskDef.getBeanName())
+                    || !StringUtils.equals(taskDef.getClassName(),
+                            hisTaskDef.getClassName())
+                    || !StringUtils.equals(taskDef.getMethodName(),
+                            hisTaskDef.getMethodName())
+                    || !StringUtils.equals(taskDef.getName(),
+                            hisTaskDef.getName())
+                    || !StringUtils.equals(taskDef.getRemark(),
+                            hisTaskDef.getRemark())
+                    || taskDef.getOrderPriority() != hisTaskDef
+                            .getOrderPriority()/* 任务优先级不等  */
                     || !taskDef.isValid() /* 任务无效  */) {
                 //如果任务注解内容有所变化
+                hisTaskDef.setModule(taskDef.getModule());
                 hisTaskDef.setParentCode(taskDef.getParentCode());
                 hisTaskDef.setName(taskDef.getName());
                 hisTaskDef.setBeanName(taskDef.getBeanName());
@@ -185,13 +206,13 @@ public class TaskExecuteInterceptor implements MethodInterceptor, InitializingBe
     }
     
     /**
-      * 初始化任务状态<br/>
-      * <功能详细描述>
-      * @param taskDef [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 初始化任务状态<br/>
+     * <功能详细描述>
+     * @param taskDef [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     private void initTaskStatus(TaskDef taskDef) {
         AssertUtils.notNull(taskDef, "taskDef is null.");
@@ -202,16 +223,34 @@ public class TaskExecuteInterceptor implements MethodInterceptor, InitializingBe
         String taskId = taskDef.getId();
         TaskStatus taskStatus = this.taskStatusService.findByTaskId(taskId);
         if (taskStatus != null) {
-            if (!StringUtils.isEmpty(taskStatus.getSignature())
-                    && !taskContext.getSignature().equals(taskStatus.getSignature())) {
+            if (StringUtils.isEmpty(taskStatus.getSignature())) {
+                if (TaskStatusEnum.WAIT_EXECUTE
+                        .equals(taskStatus.getStatus())) {
+                    //如果任务签名为空，状态为待执行，则不用进行更新,
+                    return;
+                } else {
+                    //如果签名为空，而状态非待执行，表示系统出现异常.此时应该抛出异常
+                    AssertUtils.isTrue(
+                            TaskStatusEnum.WAIT_EXECUTE
+                                    .equals(taskStatus.getStatus()),
+                            "taskId:{}.signature is empty.but status is :{}",
+                            new Object[] { taskId, taskStatus.getStatus() });
+                }
+            } else if (!taskContext.getSignature()
+                    .equals(taskStatus.getSignature())) {
                 //签名不一致，不能进行修改
                 return;
-            }
-            if (TaskStatusEnum.EXECUTING.equals(taskStatus.getStatus())) {
+            } else if (!StringUtils.isEmpty(taskStatus.getSignature())
+                    && taskContext.getSignature()
+                            .equals(taskStatus.getSignature())
+                    && TaskStatusEnum.EXECUTING
+                            .equals(taskStatus.getStatus())) {
+                //当前容器刚启动，如果发现状态为执行中，则认为上一次待执行的任务结果为未完成，状态更新为待执行
                 taskStatus.setStatus(TaskStatusEnum.WAIT_EXECUTE);
                 taskStatus.setResult(TaskResultEnum.UNCOMPLETED);
-                taskStatus.setEndDate(new Date());
+                taskStatus.setEndDate(now);
             }
+            //如果有签名，则系统都需要將系统签名修改为空
             taskStatus.setLastUpdateDate(now);
             taskStatus.setSignature(null);//将签名更新为空
             this.taskStatusService.updateById(taskStatus);
@@ -247,12 +286,14 @@ public class TaskExecuteInterceptor implements MethodInterceptor, InitializingBe
         if (TransactionSynchronizationManager.isSynchronizationActive()) {
             res = doInvokeTask(invocation, finalTask);
         } else {
-            res = this.transactionTemplate.execute(new TransactionCallback<Object>() {
-                @Override
-                public Object doInTransaction(TransactionStatus status) {
-                    return doInvokeTask(invocation, finalTask);
-                }
-            });
+            res = this.transactionTemplate
+                    .execute(new TransactionCallback<Object>() {
+                        @Override
+                        public Object doInTransaction(
+                                TransactionStatus status) {
+                            return doInvokeTask(invocation, finalTask);
+                        }
+                    });
         }
         return res;
     }
@@ -279,6 +320,9 @@ public class TaskExecuteInterceptor implements MethodInterceptor, InitializingBe
         Date startDate = new Date();
         Map<String, Object> statusUpdateRowMap = new HashMap<>();
         statusUpdateRowMap.put("startDate", startDate);
+        statusUpdateRowMap.put("endDate", null);
+        statusUpdateRowMap.put("consuming", null);
+        statusUpdateRowMap.put("result", TaskResultEnum.UNCOMPLETED);
         TaskStatus taskStatus = updateTaskStatusWithNewRequire(taskId,
                 TaskStatusEnum.WAIT_EXECUTE,
                 TaskStatusEnum.EXECUTING,
@@ -294,9 +338,8 @@ public class TaskExecuteInterceptor implements MethodInterceptor, InitializingBe
         try {
             //调度处理
             res = invocation.proceed();
-            isSuccess = true;
             
-            nextFireDate = TaskSessionContext.getSession().getNextFireDate();
+            isSuccess = true;
         } catch (SILException e) {
             logger.error(e.getErrorMessage());
             
@@ -308,28 +351,35 @@ public class TaskExecuteInterceptor implements MethodInterceptor, InitializingBe
             isSuccess = false;
             throw new SILException(e.getMessage(), e);
         } finally {
-            Map<String, String> taskStatusAttributeMap = TaskSessionContext.close();//关闭会话
+            Map<String, String> taskStatusAttributeMap = TaskSessionContext
+                    .close();//关闭会话
             
             Date endDate = new Date();
             long consuming = endDate.getTime() - startDate.getTime();
             statusUpdateRowMap.put("startDate", startDate);
             statusUpdateRowMap.put("endDate", endDate);
             statusUpdateRowMap.put("consuming", consuming);
-            statusUpdateRowMap.put("result", isSuccess ? TaskResultEnum.SUCCESS : TaskResultEnum.FAIL);//运行时结果
-            statusUpdateRowMap.put("executeCount", taskStatus.getExecuteCount() + 1);//执行次数+1
-            String taskStatusAttributes = JSONObject.toJSONString(taskStatusAttributeMap);
+            statusUpdateRowMap.put("result",
+                    isSuccess ? TaskResultEnum.SUCCESS : TaskResultEnum.FAIL);//运行时结果
+            statusUpdateRowMap.put("executeCount",
+                    taskStatus.getExecuteCount() + 1);//执行次数+1
+            String taskStatusAttributes = JSONObject
+                    .toJSONString(taskStatusAttributeMap);
             statusUpdateRowMap.put("attributes", taskStatusAttributes);
             statusUpdateRowMap.put("nextFireDate", nextFireDate);
+            
             if (isSuccess) {
                 statusUpdateRowMap.put("successStartDate", startDate);
                 statusUpdateRowMap.put("successEndDate", endDate);
                 statusUpdateRowMap.put("successConsuming", consuming);
-                statusUpdateRowMap.put("successCount", taskStatus.getSuccessCount() + 1);
+                statusUpdateRowMap.put("successCount",
+                        taskStatus.getSuccessCount() + 1);
             } else {
                 statusUpdateRowMap.put("failStartDate", startDate);
                 statusUpdateRowMap.put("failEndDate", endDate);
                 statusUpdateRowMap.put("failConsuming", consuming);
-                statusUpdateRowMap.put("failCount", taskStatus.getFailCount() + 1);
+                statusUpdateRowMap.put("failCount",
+                        taskStatus.getFailCount() + 1);
             }
             
             //更新任务状态
@@ -362,47 +412,58 @@ public class TaskExecuteInterceptor implements MethodInterceptor, InitializingBe
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    private TaskStatus updateTaskStatusWithNewRequire(final String taskId, final TaskStatusEnum sourceStatus,
-            final TaskStatusEnum targetStatus, final String signature, final Map<String, Object> statusUpdateRowMap) {
-        final Map<String, Object> finalStatusUpdateRowMap = statusUpdateRowMap == null ? new HashMap<String, Object>()
-                : statusUpdateRowMap;
+    private TaskStatus updateTaskStatusWithNewRequire(final String taskId,
+            final TaskStatusEnum sourceStatus,
+            final TaskStatusEnum targetStatus, final String signature,
+            final Map<String, Object> statusUpdateRowMap) {
+        final Map<String, Object> finalStatusUpdateRowMap = statusUpdateRowMap == null
+                ? new HashMap<String, Object>() : statusUpdateRowMap;
         final TaskStatusService finalTaskStatusService = this.taskStatusService;
-        TaskStatus status = this.taskStatusTT.execute(new TransactionCallback<TaskStatus>() {
-            /**
-             * @param status
-             * @return
-             */
-            @Override
-            public TaskStatus doInTransaction(TransactionStatus status) {
-                AssertUtils.notEmpty(taskId, "taskId is empty.");
-                AssertUtils.notNull(targetStatus, "targetStatus is empty.");
-                
-                TaskStatus taskStatus = finalTaskStatusService.findAndlockByTaskId(taskId);
-                //如果原状态不为空，则需要判断原状态是否和传入的一致(如果原状态为空，或，非空的原状 ==实际状态)
-                AssertUtils.isTrue(sourceStatus == null || sourceStatus.equals(taskStatus.getStatus()),
-                        "任务状态应为待执行.taskId:{} ; taskStatus.id:{} ; sourceStatus:{} ; taskStatus.status:{}",
-                        new Object[] { taskStatus.getTaskId(), taskStatus.getId(), sourceStatus,
-                                taskStatus.getStatus() });
-                
-                BeanWrapper taskStatusBW = PropertyAccessorFactory.forBeanPropertyAccess(taskStatus);
-                for (Entry<String, Object> entryTemp : finalStatusUpdateRowMap.entrySet()) {
-                    String key = entryTemp.getKey();
-                    Object value = entryTemp.getValue();
-                    if ("id".equals(key)) {
-                        continue;
+        TaskStatus status = this.taskStatusTT
+                .execute(new TransactionCallback<TaskStatus>() {
+                    /**
+                     * @param status
+                     * @return
+                     */
+                    @Override
+                    public TaskStatus doInTransaction(
+                            TransactionStatus status) {
+                        AssertUtils.notEmpty(taskId, "taskId is empty.");
+                        AssertUtils.notNull(targetStatus,
+                                "targetStatus is empty.");
+                        
+                        TaskStatus taskStatus = finalTaskStatusService
+                                .findAndlockByTaskId(taskId);
+                        //如果原状态不为空，则需要判断原状态是否和传入的一致(如果原状态为空，或，非空的原状 ==实际状态)
+                        AssertUtils.isTrue(
+                                sourceStatus == null || sourceStatus
+                                        .equals(taskStatus.getStatus()),
+                                "任务状态应为待执行.taskId:{} ; taskStatus.id:{} ; sourceStatus:{} ; taskStatus.status:{}",
+                                new Object[] { taskStatus.getTaskId(),
+                                        taskStatus.getId(), sourceStatus,
+                                        taskStatus.getStatus() });
+                        
+                        BeanWrapper taskStatusBW = PropertyAccessorFactory
+                                .forBeanPropertyAccess(taskStatus);
+                        for (Entry<String, Object> entryTemp : finalStatusUpdateRowMap
+                                .entrySet()) {
+                            String key = entryTemp.getKey();
+                            Object value = entryTemp.getValue();
+                            if ("id".equals(key)) {
+                                continue;
+                            }
+                            if (!taskStatusBW.isWritableProperty(key)) {
+                                continue;
+                            }
+                            taskStatusBW.setPropertyValue(key, value);
+                        }
+                        taskStatus.setStatus(targetStatus);
+                        
+                        finalTaskStatusService.updateById(taskStatus);
+                        return taskStatus;
                     }
-                    if (!taskStatusBW.isWritableProperty(key)) {
-                        continue;
-                    }
-                    taskStatusBW.setPropertyValue(key, value);
-                }
-                taskStatus.setStatus(targetStatus);
-                
-                finalTaskStatusService.updateById(taskStatus);
-                return taskStatus;
-            }
-            
-        });
+                    
+                });
         return status;
     }
     
@@ -420,30 +481,34 @@ public class TaskExecuteInterceptor implements MethodInterceptor, InitializingBe
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    private void logWithNewRequire(final TaskDef taskDef, final Date startDate, final Date endDate,
-            final String taskStatusAttributes, final TaskResultEnum result, final String signature) {
+    private void logWithNewRequire(final TaskDef taskDef, final Date startDate,
+            final Date endDate, final String taskStatusAttributes,
+            final TaskResultEnum result, final String signature) {
         final TaskExecuteLogService finalTaskExecuteLogService = this.taskExecuteLogService;
         try {
-            this.taskExecuteLogTT.execute(new TransactionCallbackWithoutResult() {
-                
-                @Override
-                protected void doInTransactionWithoutResult(TransactionStatus status) {
-                    TaskExecuteLog log = new TaskExecuteLog();
-                    log.setTaskId(taskDef.getId());
-                    log.setCode(taskDef.getCode());
-                    log.setName(taskDef.getName());
-                    log.setRemark(taskDef.getRemark());
-                    
-                    log.setStartDate(startDate);
-                    log.setEndDate(endDate);
-                    log.setConsuming(endDate.getTime() - endDate.getTime());
-                    log.setAttributes(taskStatusAttributes);
-                    log.setResult(result);
-                    log.setSignature(signature);
-                    
-                    finalTaskExecuteLogService.insert(log);
-                }
-            });
+            this.taskExecuteLogTT
+                    .execute(new TransactionCallbackWithoutResult() {
+                        
+                        @Override
+                        protected void doInTransactionWithoutResult(
+                                TransactionStatus status) {
+                            TaskExecuteLog log = new TaskExecuteLog();
+                            log.setTaskId(taskDef.getId());
+                            log.setCode(taskDef.getCode());
+                            log.setName(taskDef.getName());
+                            log.setRemark(taskDef.getRemark());
+                            
+                            log.setStartDate(startDate);
+                            log.setEndDate(endDate);
+                            log.setConsuming(
+                                    endDate.getTime() - endDate.getTime());
+                            log.setAttributes(taskStatusAttributes);
+                            log.setResult(result);
+                            log.setSignature(signature);
+                            
+                            finalTaskExecuteLogService.insert(log);
+                        }
+                    });
         } catch (TransactionException e) {
             logger.error("log error.errorMessage:" + e.getMessage(), e);
         }
@@ -464,30 +529,10 @@ public class TaskExecuteInterceptor implements MethodInterceptor, InitializingBe
     }
     
     /**
-     * @param 对transactionManager进行赋值
-     */
-    public void setTransactionManager(PlatformTransactionManager transactionManager) {
-        this.transactionManager = transactionManager;
-    }
-    
-    /**
      * @param 对taskContext进行赋值
      */
     public void setTaskContext(TaskContext taskContext) {
         this.taskContext = taskContext;
     }
-    
-    /**
-     * @return 返回 taskDefMap
-     */
-    public Map<Method, TaskDef> getTaskDefMap() {
-        return taskDefMap;
-    }
-    
-    /**
-     * @param 对taskDefMap进行赋值
-     */
-    public void setTaskDefMap(Map<Method, TaskDef> taskDefMap) {
-        this.taskDefMap = taskDefMap;
-    }
+
 }

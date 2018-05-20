@@ -22,6 +22,8 @@ import org.springframework.transaction.support.TransactionSynchronizationAdapter
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import com.alibaba.fastjson.JSONObject;
+import com.tx.component.task.delegate.TaskDelegateExecution;
+import com.tx.component.task.delegate.impl.TaskDelegateExecutionImpl;
 import com.tx.component.task.model.TaskDef;
 import com.tx.component.task.model.TaskStatus;
 import com.tx.core.TxConstants;
@@ -41,38 +43,43 @@ public class TaskSessionContext {
     public static final String STATUS_ATTRIBUTE_KEY_NEXT_FIRE_DATE = "nextFireDate";
     
     /** 日志记录句柄 */
-    private static Logger logger = LoggerFactory.getLogger(TaskSessionContext.class);
+    private static Logger logger = LoggerFactory
+            .getLogger(TaskSessionContext.class);
     
     /** 当前线程中的操作容器实例 */
-    private static ThreadLocal<Stack<TaskSessionContext>> context = new ThreadLocal<Stack<TaskSessionContext>>() {
+    private static ThreadLocal<Stack<TaskDelegateExecution>> context = new ThreadLocal<Stack<TaskDelegateExecution>>() {
         /**
          * @return
          */
         @Override
-        protected Stack<TaskSessionContext> initialValue() {
-            logger.debug("TaskSessionContext: current thread: {}. task session start.",
+        protected Stack<TaskDelegateExecution> initialValue() {
+            logger.info(
+                    "TaskSessionContext: current thread: {}. task session start.",
                     String.valueOf(Thread.currentThread().getId()));
             
             //该会话必须在事务中进行执行,存在此逻辑，可写入会话执行完毕后强制清理线程变量
-            AssertUtils.isTrue(TransactionSynchronizationManager.isSynchronizationActive(), "必须在事务中进行执行");
+            AssertUtils.isTrue(
+                    TransactionSynchronizationManager.isSynchronizationActive(),
+                    "必须在事务中进行执行");
             
             //new 堆栈
-            Stack<TaskSessionContext> stack = new Stack<TaskSessionContext>();
+            Stack<TaskDelegateExecution> stack = new Stack<TaskDelegateExecution>();
             
             //注册自动会话结束期间强制回收
-            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
-                /**
-                 * @param status
-                 */
-                @Override
-                public void afterCompletion(int status) {
-                    //清空堆栈
-                    stack.clear();
-                    //移除线程变量
-                    remove();
-                }
-            });
-            
+            TransactionSynchronizationManager.registerSynchronization(
+                    new TransactionSynchronizationAdapter() {
+                        /**
+                         * @param status
+                         */
+                        @Override
+                        public void afterCompletion(int status) {
+                            //清空堆栈
+                            stack.clear();
+                            //移除线程变量
+                            remove();
+                        }
+                    });
+                    
             return stack;
         }
         
@@ -81,8 +88,10 @@ public class TaskSessionContext {
          */
         @Override
         public void remove() {
-            logger.debug("TaskSessionContext: current thread: {}. task session end.",
+            logger.debug(
+                    "TaskSessionContext: current thread: {}. task session end.",
                     String.valueOf(Thread.currentThread().getId()));
+            
             super.remove();
         }
     };
@@ -99,12 +108,13 @@ public class TaskSessionContext {
     */
     public static void open(TaskDef taskDef, TaskStatus taskStatus) {
         //获取堆栈
-        Stack<TaskSessionContext> stack = TaskSessionContext.context.get();
         logger.debug("TaskSessionContext: open.");
+        Stack<TaskDelegateExecution> stack = TaskSessionContext.context.get();
         
         //构建新的堆栈
-        TaskSessionContext newSessionContext = new TaskSessionContext(taskDef, taskStatus);
-        stack.push(newSessionContext);
+        TaskDelegateExecution execution = new TaskDelegateExecutionImpl(taskDef,
+                taskStatus);
+        stack.push(execution);
     }
     
     /**
@@ -115,12 +125,11 @@ public class TaskSessionContext {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public static Map<String, String> close() {
-        Stack<TaskSessionContext> stack = TaskSessionContext.context.get();
+    public static TaskDelegateExecution close() {
+        Stack<TaskDelegateExecution> stack = TaskSessionContext.context.get();
         
         //将出栈的会话进行清理
-        TaskSessionContext closeProcessSessionContext = stack.pop();
-        Map<String, String> jobDataMap = closeProcessSessionContext.getTaskStatusAttributesMap();
+        TaskDelegateExecution execution = stack.pop();
         closeProcessSessionContext.clear();
         
         //如果堆栈顶部仍然存在交易，则对该交易重新进行持久
@@ -143,13 +152,13 @@ public class TaskSessionContext {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public static TaskSessionContext getSession() {
-        Stack<TaskSessionContext> stack = TaskSessionContext.context.get();
+    public static TaskDelegateExecution getExecution() {
+        Stack<TaskDelegateExecution> stack = TaskSessionContext.context.get();
         if (stack.isEmpty()) {
             return null;
         }
-        TaskSessionContext currentProcessSessionContext = stack.peek();
-        return currentProcessSessionContext;
+        TaskDelegateExecution execution = stack.peek();
+        return execution;
     }
     
     /** 任务定义 */
@@ -176,26 +185,33 @@ public class TaskSessionContext {
         
         this.taskDef = taskDef;
         String taskDefAtrributes = taskDef.getAttributes();
-        JSONObject taskDefAtrributesJsonObject = JSONObject.parseObject(taskDefAtrributes);
-        Map<String, String> taskDefAttsMap = new HashMap<>(TxConstants.INITIAL_MAP_SIZE);
+        JSONObject taskDefAtrributesJsonObject = JSONObject
+                .parseObject(taskDefAtrributes);
+        Map<String, String> taskDefAttsMap = new HashMap<>(
+                TxConstants.INITIAL_MAP_SIZE);
         if (taskDefAtrributesJsonObject != null) {
             for (String keyTemp : taskDefAtrributesJsonObject.keySet()) {
-                taskDefAttsMap.put(keyTemp, taskDefAtrributesJsonObject.getString(keyTemp));
+                taskDefAttsMap.put(keyTemp,
+                        taskDefAtrributesJsonObject.getString(keyTemp));
             }
         }
         this.taskDefAttributesMap = MapUtils.unmodifiableMap(taskDefAttsMap);
         
-        this.taskStatusAttributesMap = new HashMap<String, String>(TxConstants.INITIAL_MAP_SIZE);
+        this.taskStatusAttributesMap = new HashMap<String, String>(
+                TxConstants.INITIAL_MAP_SIZE);
         String taskStatusAtrributes = taskStatus.getAttributes();
-        JSONObject taskStatusAtrributesJsonObject = JSONObject.parseObject(taskStatusAtrributes);
+        JSONObject taskStatusAtrributesJsonObject = JSONObject
+                .parseObject(taskStatusAtrributes);
         if (taskStatusAtrributesJsonObject != null) {
             for (String keyTemp : taskStatusAtrributesJsonObject.keySet()) {
-                this.taskStatusAttributesMap.put(keyTemp, taskStatusAtrributesJsonObject.getString(keyTemp));
+                this.taskStatusAttributesMap.put(keyTemp,
+                        taskStatusAtrributesJsonObject.getString(keyTemp));
             }
         }
         this.nextFireDate = getNextFireDate();
         
-        this.attributes = new HashMap<String, Object>(TxConstants.INITIAL_MAP_SIZE);
+        this.attributes = new HashMap<String, Object>(
+                TxConstants.INITIAL_MAP_SIZE);
     }
     
     /**
@@ -211,7 +227,8 @@ public class TaskSessionContext {
         this.nextFireDate = nextFireDate;
         if (nextFireDate != null) {
             setTaskStatusAttribute(STATUS_ATTRIBUTE_KEY_NEXT_FIRE_DATE,
-                    DateFormatUtils.format(nextFireDate, "yyyy-MM-dd HH:mm:ss"));
+                    DateFormatUtils.format(nextFireDate,
+                            "yyyy-MM-dd HH:mm:ss"));
         }
     }
     
@@ -226,12 +243,14 @@ public class TaskSessionContext {
      * @see [类、类#方法、类#成员]
      */
     public Date getNextFireDate() {
-        String nextFireDateString = getTaskStatusAttribute(STATUS_ATTRIBUTE_KEY_NEXT_FIRE_DATE);
+        String nextFireDateString = getTaskStatusAttribute(
+                STATUS_ATTRIBUTE_KEY_NEXT_FIRE_DATE);
         if (StringUtils.isEmpty(nextFireDateString)) {
             return null;
         } else {
             try {
-                this.nextFireDate = DateUtils.parseDate(nextFireDateString, "yyyy-MM-dd HH:mm:ss");
+                this.nextFireDate = DateUtils.parseDate(nextFireDateString,
+                        "yyyy-MM-dd HH:mm:ss");
             } catch (ParseException e) {
                 this.nextFireDate = null;
             }
@@ -285,7 +304,8 @@ public class TaskSessionContext {
     /**
      * @param 对taskStatusAttributesMap进行赋值
      */
-    public void setTaskStatusAttributesMap(Map<String, String> taskStatusAttributesMap) {
+    public void setTaskStatusAttributesMap(
+            Map<String, String> taskStatusAttributesMap) {
         this.taskStatusAttributesMap = taskStatusAttributesMap;
     }
     

@@ -10,14 +10,14 @@ import com.tx.component.task.model.TaskDef;
 import com.tx.component.task.model.TaskStatus;
 
 /**
-  * 任务委托执行环境<br/>
-  * <功能详细描述>
-  * 
-  * @author  Administrator
-  * @version  [版本号, 2018年5月3日]
-  * @see  [相关类/方法]
-  * @since  [产品/模块版本]
-  */
+ * 任务委托执行环境<br/>
+ * <功能详细描述>
+ * 
+ * @author  Administrator
+ * @version  [版本号, 2018年5月3日]
+ * @see  [相关类/方法]
+ * @since  [产品/模块版本]
+ */
 public interface TaskDelegateExecution {
     
     /**
