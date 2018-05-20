@@ -6,6 +6,8 @@
  */
 package com.tx.component.task.delegate;
 
+import java.util.Map;
+
 import com.tx.component.task.model.TaskDef;
 import com.tx.component.task.model.TaskStatus;
 
@@ -52,4 +54,96 @@ public interface TaskDelegateExecution {
      * @see [类、类#方法、类#成员]
      */
     TaskStatus getTaskStatus();
+    
+    /**
+     * 获取任务属性Map<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return Map<String,Object> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    Map<String, Object> getTaskAttributeMap();
+    
+    /**
+     * 获取任务属性值<br/>
+     * <功能详细描述>
+     * @param key
+     * @return [参数说明]
+     * 
+     * @return Object [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    Object getTaskAttribute(String key);
+    
+    /**
+     * 获取任务状态属性<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    String getTaskStatusAttributes();
+    
+    /**
+     * 获取任务属性Map<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return Map<String,Object> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    Map<String, Object> getTaskStatusAttributeMap();
+    
+    /**
+     * 获取任务属性值<br/>
+     * <功能详细描述>
+     * @param key
+     * @return [参数说明]
+     * 
+     * @return Object [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    Object getTaskStatusAttribute(String key);
+    
+    /**
+     * 设置任务状态属性<br/>
+     * <功能详细描述>
+     * @param key
+     * @param value [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    void setTaskStatusAttribute(String key, String value);
+    
+    /**
+     * 获取执行期属性<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return Map<String,Object> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    Map<String, Object> getAttributes();
+    
+    /**
+     * 设置属性值<br/>
+     * <功能详细描述>
+     * @param key
+     * @param value [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    void setAttribute(String key, Object value);
 }

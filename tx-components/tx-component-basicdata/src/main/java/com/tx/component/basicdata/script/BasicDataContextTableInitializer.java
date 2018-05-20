@@ -122,10 +122,14 @@ public class BasicDataContextTableInitializer extends AbstractTableInitializer
         
         if (alterDDLBuilder != null
                 && alterDDLBuilder.compare().isNeedAlter()) {
-            this.tableDDLExecutor.alter(alterDDLBuilder);
+            if(tableAutoInitialize){
+                this.tableDDLExecutor.alter(alterDDLBuilder);
+            }
             return alterDDLBuilder.alterSql();
         } else if (createDDLBuilder != null) {
-            this.tableDDLExecutor.create(createDDLBuilder);
+            if(tableAutoInitialize){
+                this.tableDDLExecutor.create(createDDLBuilder);
+            }
             return createDDLBuilder.createSql();
         }
         return "";
@@ -210,10 +214,14 @@ public class BasicDataContextTableInitializer extends AbstractTableInitializer
         
         if (alterDDLBuilder != null
                 && alterDDLBuilder.compare().isNeedAlter()) {
-            this.tableDDLExecutor.alter(alterDDLBuilder);
+            if(tableAutoInitialize){
+                this.tableDDLExecutor.alter(alterDDLBuilder);
+            }
             return alterDDLBuilder.alterSql();
         } else if (createDDLBuilder != null) {
-            this.tableDDLExecutor.create(createDDLBuilder);
+            if(tableAutoInitialize){
+                this.tableDDLExecutor.create(createDDLBuilder);
+            }
             return createDDLBuilder.createSql();
         }
         return "";
@@ -292,10 +300,14 @@ public class BasicDataContextTableInitializer extends AbstractTableInitializer
         
         if (alterDDLBuilder != null
                 && alterDDLBuilder.compare().isNeedAlter()) {
-            this.tableDDLExecutor.alter(alterDDLBuilder);
+            if(tableAutoInitialize){
+                this.tableDDLExecutor.alter(alterDDLBuilder);
+            }
             return alterDDLBuilder.alterSql();
         } else if (createDDLBuilder != null) {
-            this.tableDDLExecutor.create(createDDLBuilder);
+            if(tableAutoInitialize){
+                this.tableDDLExecutor.create(createDDLBuilder);
+            }
             return createDDLBuilder.createSql();
         }
         return "";

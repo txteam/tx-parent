@@ -35,6 +35,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import com.alibaba.fastjson.JSONObject;
 import com.tx.component.task.context.TaskContext;
 import com.tx.component.task.context.TaskSessionContext;
+import com.tx.component.task.delegate.TaskDelegateExecution;
 import com.tx.component.task.model.TaskDef;
 import com.tx.component.task.model.TaskExecuteLog;
 import com.tx.component.task.model.TaskResultEnum;
@@ -351,8 +352,8 @@ public class TaskExecuteInterceptor
             isSuccess = false;
             throw new SILException(e.getMessage(), e);
         } finally {
-            Map<String, String> taskStatusAttributeMap = TaskSessionContext
-                    .close();//关闭会话
+            TaskDelegateExecution execution = TaskSessionContext.close();
+            AssertUtils.isTrue(task == execution.getTask(), "线程变量中的任务应该为统一对象.");
             
             Date endDate = new Date();
             long consuming = endDate.getTime() - startDate.getTime();
@@ -363,9 +364,7 @@ public class TaskExecuteInterceptor
                     isSuccess ? TaskResultEnum.SUCCESS : TaskResultEnum.FAIL);//运行时结果
             statusUpdateRowMap.put("executeCount",
                     taskStatus.getExecuteCount() + 1);//执行次数+1
-            String taskStatusAttributes = JSONObject
-                    .toJSONString(taskStatusAttributeMap);
-            statusUpdateRowMap.put("attributes", taskStatusAttributes);
+            statusUpdateRowMap.put("attributes", execution.getTaskStatusAttributes());
             statusUpdateRowMap.put("nextFireDate", nextFireDate);
             
             if (isSuccess) {

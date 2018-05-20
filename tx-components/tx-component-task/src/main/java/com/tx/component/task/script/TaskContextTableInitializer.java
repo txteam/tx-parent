@@ -74,21 +74,21 @@ public class TaskContextTableInitializer extends AbstractTableInitializer
                 .append("----------table:task_def----------")
                 .append(COMMENT_SUFFIX)
                 .append(LINE_SEPARATOR);
-        table_task_def();
+        table_task_def(tableAutoInitialize);
         sb.append(LINE_SEPARATOR);
         
         sb.append(COMMENT_PREFIX)
                 .append("----------table:task_status----------")
                 .append(COMMENT_SUFFIX)
                 .append(LINE_SEPARATOR);
-        table_task_status();
+        table_task_status(tableAutoInitialize);
         sb.append(LINE_SEPARATOR);
         
         sb.append(COMMENT_PREFIX)
                 .append("----------table:task_execute_log----------")
                 .append(COMMENT_SUFFIX)
                 .append(LINE_SEPARATOR);
-        table_task_execute_log();
+        table_task_execute_log(tableAutoInitialize);
         sb.append(LINE_SEPARATOR);
         
         return sb.toString();
@@ -102,7 +102,7 @@ public class TaskContextTableInitializer extends AbstractTableInitializer
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    public String table_task_def() {
+    public String table_task_def(boolean tableAutoInitialize) {
         String tableName = "task_def";
         
         CreateTableDDLBuilder createDDLBuilder = null;
@@ -123,10 +123,14 @@ public class TaskContextTableInitializer extends AbstractTableInitializer
         
         if (alterDDLBuilder != null
                 && alterDDLBuilder.compare().isNeedAlter()) {
-            this.tableDDLExecutor.alter(alterDDLBuilder);
+            if (tableAutoInitialize) {
+                this.tableDDLExecutor.alter(alterDDLBuilder);
+            }
             return alterDDLBuilder.alterSql();
         } else if (createDDLBuilder != null) {
-            this.tableDDLExecutor.create(createDDLBuilder);
+            if (tableAutoInitialize) {
+                this.tableDDLExecutor.create(createDDLBuilder);
+            }
             return createDDLBuilder.createSql();
         }
         return "";
@@ -172,7 +176,7 @@ public class TaskContextTableInitializer extends AbstractTableInitializer
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    public String table_task_status() {
+    public String table_task_status(boolean tableAutoInitialize) {
         String tableName = "task_status";
         
         CreateTableDDLBuilder createDDLBuilder = null;
@@ -193,10 +197,14 @@ public class TaskContextTableInitializer extends AbstractTableInitializer
         
         if (alterDDLBuilder != null
                 && alterDDLBuilder.compare().isNeedAlter()) {
-            this.tableDDLExecutor.alter(alterDDLBuilder);
+            if (tableAutoInitialize) {
+                this.tableDDLExecutor.alter(alterDDLBuilder);
+            }
             return alterDDLBuilder.alterSql();
         } else if (createDDLBuilder != null) {
-            this.tableDDLExecutor.create(createDDLBuilder);
+            if (tableAutoInitialize) {
+                this.tableDDLExecutor.create(createDDLBuilder);
+            }
             return createDDLBuilder.createSql();
         }
         return "";
@@ -245,7 +253,7 @@ public class TaskContextTableInitializer extends AbstractTableInitializer
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    public String table_task_execute_log() {
+    public String table_task_execute_log(boolean tableAutoInitialize) {
         String tableName = "task_execute_log";
         
         CreateTableDDLBuilder createDDLBuilder = null;
@@ -266,10 +274,14 @@ public class TaskContextTableInitializer extends AbstractTableInitializer
         
         if (alterDDLBuilder != null
                 && alterDDLBuilder.compare().isNeedAlter()) {
-            this.tableDDLExecutor.alter(alterDDLBuilder);
+            if (tableAutoInitialize) {
+                this.tableDDLExecutor.alter(alterDDLBuilder);
+            }
             return alterDDLBuilder.alterSql();
         } else if (createDDLBuilder != null) {
-            this.tableDDLExecutor.create(createDDLBuilder);
+            if (tableAutoInitialize) {
+                this.tableDDLExecutor.create(createDDLBuilder);
+            }
             return createDDLBuilder.createSql();
         }
         return "";
