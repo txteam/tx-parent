@@ -23,6 +23,15 @@ public class TaskContextProperties {
     /** 命令容器是否启动 */
     private boolean enable;
     
+    /** 容器所属模块：当该值为空时，使用spring.application.name的内容 */
+    private String module;
+    
+    /** 基础包集合 */
+    private String basePackages = "com.tx";
+    
+    /** mybatis配置文件 */
+    private String mybatisConfigLocation = "classpath:context/mybatis-config.xml";
+    
     /** 数据源 */
     private String dataSource;
     

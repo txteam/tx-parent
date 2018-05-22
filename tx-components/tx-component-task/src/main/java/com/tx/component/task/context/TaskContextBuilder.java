@@ -6,9 +6,6 @@
  */
 package com.tx.component.task.context;
 
-import java.net.SocketException;
-import java.net.UnknownHostException;
-
 import org.springframework.beans.factory.BeanNameAware;
 
 import com.tx.core.util.SignatureUtils;

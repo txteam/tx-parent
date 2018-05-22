@@ -14,7 +14,7 @@
 				TTD.id,
 				TTD.code,
 				TTD.parentCode,
-				TTD.factory,
+				TTD.module,
 				TTD.className,
 				TTD.methodName,
 				TTD.valid,
@@ -61,7 +61,7 @@
 				TTD.id,
 				TTD.code,
 				TTD.parentCode,
-				TTD.factory,
+				TTD.module,
 				TTD.className,
 				TTD.methodName,
 				TTD.valid,
@@ -93,8 +93,8 @@
 	       	<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(methodName)">  
 	            <![CDATA[ AND TTD.METHODNAME = #{methodName} ]]>
 	        </if>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(factory)">  
-	            <![CDATA[ AND TTD.FACTORY = #{factory} ]]>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(module)">  
+	            <![CDATA[ AND TTD.MODULE = #{module} ]]>
 	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(name)">  
 	            <![CDATA[ AND TTD.NAME = #{name} ]]>
@@ -150,8 +150,8 @@
 	       	<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(methodName)">  
 	            <![CDATA[ AND TTD.METHODNAME = #{methodName} ]]>
 	        </if>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(factory)">  
-	            <![CDATA[ AND TTD.FACTORY = #{factory} ]]>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(module)">  
+	            <![CDATA[ AND TTD.MODULE = #{module} ]]>
 	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(name)">  
 	            <![CDATA[ AND TTD.NAME = #{name} ]]>
@@ -186,7 +186,7 @@
 			attributes,
 			beanName,
 			executable,
-			factory,
+			module,
 			className,
 			methodName,
 			name,
@@ -204,7 +204,7 @@
 			#{attributes},
 			#{beanName},
 			#{executable},
-			#{factory},
+			#{module},
 			#{className},
 			#{methodName},
 			#{name},
@@ -255,8 +255,8 @@
 			<if test="_parameter.containsKey('methodName')">
 	    		methodName = #{methodName,javaType=java.lang.String},
 	    	</if>
-			<if test="_parameter.containsKey('factory')">
-	    		factory = #{factory,javaType=java.lang.String},
+			<if test="_parameter.containsKey('module')">
+	    		module = #{module,javaType=java.lang.String},
 	    	</if>
 			<if test="_parameter.containsKey('name')">
 	    		name = #{name,javaType=java.lang.String},

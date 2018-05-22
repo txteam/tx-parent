@@ -106,18 +106,31 @@ public class TaskDelegateExecutionImpl implements TaskDelegateExecution {
      * @return
      */
     @Override
-    public String getTaskStatusAttributes() {
-        // TODO Auto-generated method stub
-        return null;
+    public Map<String, Object> getTaskStatusAttributeMap() {
+        JSONObject json = JSONObject
+                .parseObject(this.taskStatus.getAttributes());
+        
+        Map<String, Object> resMap = new HashMap<>();
+        if (json == null) {
+            return resMap;
+        }
+        
+        for (Entry<String, Object> entryTemp : json.entrySet()) {
+            resMap.put(entryTemp.getKey(), entryTemp.getValue());
+        }
+        return resMap;
     }
     
     /**
      * @return
      */
     @Override
-    public Map<String, Object> getTaskStatusAttributeMap() {
-        // TODO Auto-generated method stub
-        return null;
+    public String getTaskStatusAttributes() {
+        Map<String, Object> statusAttributesMap = getTaskAttributeMap();
+        
+        String taskStatusAttributes = JSONObject
+                .toJSONString(statusAttributesMap);
+        return taskStatusAttributes;
     }
     
     /**
@@ -126,8 +139,11 @@ public class TaskDelegateExecutionImpl implements TaskDelegateExecution {
      */
     @Override
     public Object getTaskStatusAttribute(String key) {
-        // TODO Auto-generated method stub
-        return null;
+        AssertUtils.notEmpty(key, "key is empty.");
+        
+        Map<String, Object> statusAttributesMap = getTaskAttributeMap();
+        Object value = statusAttributesMap.get(key);
+        return value;
     }
     
     /**
@@ -135,11 +151,12 @@ public class TaskDelegateExecutionImpl implements TaskDelegateExecution {
      * @param value
      */
     @Override
-    public void setTaskStatusAttribute(String key, String value) {
-        // TODO Auto-generated method stub
+    public void setTaskStatusAttribute(String key, Object value) {
+        AssertUtils.notEmpty(key, "key is empty.");
+        AssertUtils.notNull(value, "value is null.");
         
     }
-
+    
     /**
      * @return 返回 attributes
      */
@@ -156,5 +173,58 @@ public class TaskDelegateExecutionImpl implements TaskDelegateExecution {
         AssertUtils.notEmpty(key, "key is empty.");
         
         this.attributes.put(key, value);
+    }
+    
+    /**
+     * 设置值<br/>
+     * <功能详细描述>
+     * @param key
+     * @param value [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @Override
+    public <T> void setAttributeValue(String key, T value) {
+        AssertUtils.notEmpty(key, "key is empty.");
+        
+        if (value == null) {
+            return;
+        }
+        if (this.attributes == null) {
+            return;
+        }
+        this.attributes.put(key, value);
+    }
+    
+    /**
+     * 从线程中获取对应的Key值
+     * <功能详细描述>
+     * @param key
+     * @param type
+     * @return [参数说明]
+     * 
+     * @return T [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> T getAttributeValue(String key, Class<T> type) {
+        AssertUtils.notEmpty(key, "key is empty.");
+        AssertUtils.notNull(type, "type is null.");
+        
+        if (this.attributes == null) {
+            return null;
+        }
+        Object value = this.attributes.get(key);
+        
+        if (value != null) {
+            AssertUtils.isTrue(type.isInstance(value),
+                    "value:{} should be instance of type:{}.",
+                    new Object[] { value, type });
+        }
+        return (T) value;
     }
 }

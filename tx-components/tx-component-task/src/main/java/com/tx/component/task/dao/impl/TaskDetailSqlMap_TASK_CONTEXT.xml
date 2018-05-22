@@ -17,7 +17,7 @@
 				TTD.id,
 				TTD.code,
 				TTD.parentCode,
-				TTD.factory,
+				TTD.module,
 				TTD.beanName,
 				TTD.className,
 				TTD.methodName,
@@ -70,7 +70,7 @@
 				TTD.id,
 				TTD.code,
 				TTD.parentCode,
-				TTD.factory,
+				TTD.module,
 				TTD.beanName,
 				TTD.className,
 				TTD.methodName,
@@ -121,8 +121,8 @@
 	       	<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(methodName)">  
 	            <![CDATA[ AND TTD.METHODNAME = #{methodName} ]]>
 	        </if>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(factory)">  
-	            <![CDATA[ AND TTD.FACTORY = #{factory} ]]>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(module)">  
+	            <![CDATA[ AND TTD.MODULE = #{module} ]]>
 	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(name)">  
 	            <![CDATA[ AND TTD.NAME = #{name} ]]>
@@ -191,8 +191,8 @@
 	       	<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(methodName)">  
 	            <![CDATA[ AND TTD.METHODNAME = #{methodName} ]]>
 	        </if>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(factory)">  
-	            <![CDATA[ AND TTD.FACTORY = #{factory} ]]>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(module)">  
+	            <![CDATA[ AND TTD.MODULE = #{module} ]]>
 	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(name)">  
 	            <![CDATA[ AND TTD.NAME = #{name} ]]>

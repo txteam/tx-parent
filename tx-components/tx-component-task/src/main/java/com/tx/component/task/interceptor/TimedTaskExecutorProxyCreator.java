@@ -57,7 +57,7 @@ public class TimedTaskExecutorProxyCreator extends ProxyProcessorSupport
     /** <默认构造函数> */
     public TimedTaskExecutorProxyCreator() {
         super();
-        //默认支持类代理 setProxyTargetClass(false);,TimedTask都是基于接口的实现，这里无需
+        //默认支持类代理 setProxyTargetClass(false);TimedTask都是基于接口的实现，这里无需
     }
     
     /**

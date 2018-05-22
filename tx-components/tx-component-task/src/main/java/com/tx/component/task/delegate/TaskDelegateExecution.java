@@ -122,7 +122,7 @@ public interface TaskDelegateExecution {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    void setTaskStatusAttribute(String key, String value);
+    void setTaskStatusAttribute(String key, Object value);
     
     /**
      * 获取执行期属性<br/>
@@ -146,4 +146,8 @@ public interface TaskDelegateExecution {
      * @see [类、类#方法、类#成员]
      */
     void setAttribute(String key, Object value);
+    
+    <T> void setAttributeValue(String key, T value);
+    
+    <T> T getAttributeValue(String key, Class<T> type);
 }

@@ -35,6 +35,7 @@ import com.tx.component.command.starter.CommandContextProperties;
 import com.tx.component.test.bean.TestBean;
 import com.tx.component.test.bean.TestBeanImport;
 import com.tx.component.test.bean.TestBeanRegiste;
+import com.tx.component.test.service.TestBeanService;
 
 /**
  * 命令容器配置器<br/>
@@ -47,7 +48,7 @@ import com.tx.component.test.bean.TestBeanRegiste;
  */
 //@Configuration
 @ConditionalOnClass(CommandContext.class)
-@Import({TestBeanImport.class,TestContextImportConfiguration.class})
+@Import({ TestBeanImport.class, TestContextImportConfiguration.class })
 public class TestContextAutoConfiguration
         implements InitializingBean, ApplicationContextAware {
     
@@ -83,8 +84,9 @@ public class TestContextAutoConfiguration
         System.out
                 .println("TestContextAutoConfiguration @PostConstruct. called");
         
-        Map<String, DataSource> datasourceMap = this.applicationContext.getBeansOfType(DataSource.class);
-        for(String datasourceName : datasourceMap.keySet()){
+        Map<String, DataSource> datasourceMap = this.applicationContext
+                .getBeansOfType(DataSource.class);
+        for (String datasourceName : datasourceMap.keySet()) {
             System.out.println("datasouce name:" + datasourceName);
         }
     }
@@ -199,6 +201,22 @@ public class TestContextAutoConfiguration
         return bean;
     }
     
+    @Bean
+    public TestAutoProxyCreator testAutoProxyCreator() {
+        TestAutoProxyCreator proxyCreator = new TestAutoProxyCreator();
+        return proxyCreator;
+    }
     
+    @Bean
+    public TestBeanService testBeanService1() {
+        TestBeanService bean = new TestBeanService("testBeanService1");
+        return bean;
+    }
+    
+    @Bean
+    public TestBeanService testBeanService2() {
+        TestBeanService bean = new TestBeanService("testBeanService2");
+        return bean;
+    }
     
 }

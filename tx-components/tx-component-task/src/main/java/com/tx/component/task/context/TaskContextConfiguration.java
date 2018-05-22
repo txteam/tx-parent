@@ -66,76 +66,11 @@ import com.tx.core.util.dialect.DataSourceTypeEnum;
  */
 public class TaskContextConfiguration implements ApplicationContextAware, InitializingBean, BeanFactoryAware {
     
-    
-    
     /** 日志容器 */
     protected Logger logger = LoggerFactory.getLogger(TaskContextConfiguration.class);
     
     /** spring容器句柄 */
     protected static ApplicationContext applicationContext;
-    
-    /** 单例对象注册方法 */
-    protected SingletonBeanRegistry singletonBeanRegistry;
-    
-    /** Bean定义注册机 */
-    protected BeanDefinitionRegistry beanDefinitionRegistry;
-    
-    /** mybatis的配置文件所在目录 */
-    private String mybatisConfigLocation = "classpath:context/mybatis-config.xml";
-    
-    /** 数据源类型 */
-    protected DataSourceTypeEnum dataSourceType = DataSourceTypeEnum.MYSQL;
-    
-    /** 数据源 */
-    protected DataSource dataSource;
-    
-    /** transactionManager */
-    private PlatformTransactionManager transactionManager;
-    
-    /** 缓存Manager */
-    protected CacheManager cacheManager;
-    
-    /** 表定义执行器 */
-    protected TableDDLExecutor tableDDLExecutor;
-    
-    /**
-     * @desc 向spring容器注册BeanDefinition
-     * @param beanName
-     * @param beanDefinition
-     */
-    protected void registerBeanDefinition(String beanName, BeanDefinition beanDefinition) {
-        if (!this.beanDefinitionRegistry.containsBeanDefinition(beanName)) {
-            this.beanDefinitionRegistry.registerBeanDefinition(beanName, beanDefinition);
-        }
-    }
-    
-    /**
-     * @desc 向spring容器注册bean
-     * @param beanName
-     * @param beanDefinition
-     */
-    protected void registerSingletonBean(String beanName, Object bean) {
-        if (!this.singletonBeanRegistry.containsSingleton(beanName)) {
-            this.singletonBeanRegistry.registerSingleton(beanName, bean);
-        }
-    }
-    
-    /**
-     * @param beanFactory
-     * @throws BeansException
-     */
-    @Override
-    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-        AssertUtils.isInstanceOf(BeanDefinitionRegistry.class,
-                beanFactory,
-                "beanFactory is not BeanDefinitionRegistry instance.");
-        this.beanDefinitionRegistry = (BeanDefinitionRegistry) beanFactory;
-        
-        AssertUtils.isInstanceOf(SingletonBeanRegistry.class,
-                beanFactory,
-                "beanFactory is not SingletonBeanRegistry instance.");
-        this.singletonBeanRegistry = (SingletonBeanRegistry) beanFactory;
-    }
     
     /**
      * @param applicationContext
@@ -154,29 +89,14 @@ public class TaskContextConfiguration implements ApplicationContextAware, Initia
         logger.info("开始初始化事务执行容器...");
         
         //表定义执行器
-        
         AssertUtils.notNull(this.dataSource, "dataSource is null.");
-        registerSingletonBean("taskContext.dataSource", this.dataSource);
-        
-        if (this.tableDDLExecutor == null) {
-            this.tableDDLExecutor = TableDDLExecutorFactory.buildTableDDLExecutor(this.dataSourceType, this.dataSource);
-        }
-        registerSingletonBean("taskContext.tableDDLExecutor", this.tableDDLExecutor);
-        
-        //缓存容器
-        if (this.cacheManager == null) {
-            this.cacheManager = new ConcurrentMapCacheManager();
-        }
-        registerSingletonBean("taskContext.cacheManager", this.cacheManager);
-        
-        //缓存容器
-        if (this.transactionManager == null) {
-            this.transactionManager = new DataSourceTransactionManager(this.dataSource);
-        }
-        registerSingletonBean("taskContext.transactionManager", this.transactionManager);
+        AssertUtils.notNull(this.dataSource, "dataSource is null.");
         
         //执行构建
         doBuild();
+        
+        //初始化容器
+        doInitContext();
         
         logger.info("事务执行容器初始化完毕...");
     }
@@ -204,40 +124,4 @@ public class TaskContextConfiguration implements ApplicationContextAware, Initia
     */
     protected void doInitContext() throws Exception {
     }
-    
-    /**
-     * @param 对dataSourceType进行赋值
-     */
-    public void setDataSourceType(DataSourceTypeEnum dataSourceType) {
-        this.dataSourceType = dataSourceType;
-    }
-    
-    /**
-     * @param 对dataSource进行赋值
-     */
-    public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
-    
-    /**
-     * @param 对cacheManager进行赋值
-     */
-    public void setCacheManager(CacheManager cacheManager) {
-        this.cacheManager = cacheManager;
-    }
-    
-    /**
-     * @param 对tableDDLExecutor进行赋值
-     */
-    public void setTableDDLExecutor(TableDDLExecutor tableDDLExecutor) {
-        this.tableDDLExecutor = tableDDLExecutor;
-    }
-    
-    /**
-     * @param 对mybatisConfigLocation进行赋值
-     */
-    public void setMybatisConfigLocation(String mybatisConfigLocation) {
-        this.mybatisConfigLocation = mybatisConfigLocation;
-    }
-    
 }

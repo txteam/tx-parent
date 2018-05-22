@@ -15,7 +15,7 @@ package com.tx.component.task.interfaces;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public interface Task {
+public interface TaskExecutor {
     
     /** 排序值 */
     public int order();
@@ -53,25 +53,4 @@ public interface Task {
      * @see [类、类#方法、类#成员]
      */
     public String className();
-    
-    /**
-     * 方法名<br/>
-     * <功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return String [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public String methodName();
-    
-    /**
-     * 任务执行<br/>
-     * <功能详细描述> [参数说明]
-     * 
-     * @return void [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public void execute();
 }

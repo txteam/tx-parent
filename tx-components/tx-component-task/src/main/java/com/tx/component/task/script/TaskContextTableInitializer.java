@@ -300,6 +300,7 @@ public class TaskContextTableInitializer extends AbstractTableInitializer
         ddlBuilder.newColumnOfVarchar(true, "id", 64, true, null)
                 .newColumnOfVarchar("operatorId", 64, false, null)
                 .newColumnOfVarchar("vcid", 64, false, null)
+                .newColumnOfVarchar("module", 64, true, null)
                 .newColumnOfVarchar("taskId", 64, true, null)
                 .newColumnOfVarchar("code", 64, true, null)
                 .newColumnOfVarchar("name", 64, true, null)

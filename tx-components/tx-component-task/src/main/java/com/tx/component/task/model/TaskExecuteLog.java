@@ -42,6 +42,10 @@ public class TaskExecuteLog {
     @QueryConditionEqual
     private String code;
     
+    /** 所属模块 */
+    @QueryConditionEqual
+    private String module;
+    
     /** 事务名 */
     @UpdateAble
     @QueryConditionEqual
@@ -241,28 +245,42 @@ public class TaskExecuteLog {
     public void setSignature(String signature) {
         this.signature = signature;
     }
-
+    
+    /**
+     * @return 返回 module
+     */
+    public String getModule() {
+        return module;
+    }
+    
+    /**
+     * @param 对module进行赋值
+     */
+    public void setModule(String module) {
+        this.module = module;
+    }
+    
     /**
      * @return 返回 operatorId
      */
     public String getOperatorId() {
         return operatorId;
     }
-
+    
     /**
      * @param 对operatorId进行赋值
      */
     public void setOperatorId(String operatorId) {
         this.operatorId = operatorId;
     }
-
+    
     /**
      * @return 返回 vcid
      */
     public String getVcid() {
         return vcid;
     }
-
+    
     /**
      * @param 对vcid进行赋值
      */
