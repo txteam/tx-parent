@@ -11,8 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,10 +33,21 @@ import com.tx.core.paged.model.PagedList;
 public class TaskStatusServiceImpl implements TaskStatusService {
     
     @SuppressWarnings("unused")
-    private Logger logger = LoggerFactory.getLogger(TaskStatusServiceImpl.class);
+    private Logger logger = LoggerFactory
+            .getLogger(TaskStatusServiceImpl.class);
     
-    @Resource(name = "taskContext.taskStatusDao")
     private TaskStatusDao taskStatusDao;
+    
+    /** <默认构造函数> */
+    public TaskStatusServiceImpl() {
+        super();
+    }
+    
+    /** <默认构造函数> */
+    public TaskStatusServiceImpl(TaskStatusDao taskStatusDao) {
+        super();
+        this.taskStatusDao = taskStatusDao;
+    }
     
     /**
      * @param taskStatus
@@ -48,8 +57,10 @@ public class TaskStatusServiceImpl implements TaskStatusService {
     public void insert(TaskStatus taskStatus) {
         //验证参数是否合法
         AssertUtils.notNull(taskStatus, "taskStatus is null.");
-        AssertUtils.notEmpty(taskStatus.getTaskId(), "taskStatus.taskId is empty.");
-        AssertUtils.notNull(taskStatus.getStatus(), "taskStatus.status is null.");
+        AssertUtils.notEmpty(taskStatus.getTaskId(),
+                "taskStatus.taskId is empty.");
+        AssertUtils.notNull(taskStatus.getStatus(),
+                "taskStatus.status is null.");
         
         //为添加的数据需要填入默认值的字段填入默认值
         Date now = new Date();
@@ -147,14 +158,16 @@ public class TaskStatusServiceImpl implements TaskStatusService {
      * @return
      */
     @Override
-    public PagedList<TaskStatus> queryPagedList(Map<String, Object> params, int pageIndex, int pageSize) {
+    public PagedList<TaskStatus> queryPagedList(Map<String, Object> params,
+            int pageIndex, int pageSize) {
         //T判断条件合法性
         
         //生成查询条件
         params = params == null ? new HashMap<String, Object>() : params;
         
         //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
-        PagedList<TaskStatus> resPagedList = this.taskStatusDao.queryPagedList(params, pageIndex, pageSize);
+        PagedList<TaskStatus> resPagedList = this.taskStatusDao
+                .queryPagedList(params, pageIndex, pageSize);
         
         return resPagedList;
     }

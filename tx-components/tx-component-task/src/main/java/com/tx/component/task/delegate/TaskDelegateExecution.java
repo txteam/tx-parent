@@ -6,8 +6,10 @@
  */
 package com.tx.component.task.delegate;
 
+import java.util.Date;
 import java.util.Map;
 
+import com.alibaba.fastjson.JSONObject;
 import com.tx.component.task.model.TaskDef;
 import com.tx.component.task.model.TaskStatus;
 
@@ -64,19 +66,7 @@ public interface TaskDelegateExecution {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    Map<String, Object> getTaskAttributeMap();
-    
-    /**
-     * 获取任务属性值<br/>
-     * <功能详细描述>
-     * @param key
-     * @return [参数说明]
-     * 
-     * @return Object [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    Object getTaskAttribute(String key);
+    JSONObject getTaskAttributeJSONObject();
     
     /**
      * 获取任务状态属性<br/>
@@ -98,19 +88,7 @@ public interface TaskDelegateExecution {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    Map<String, Object> getTaskStatusAttributeMap();
-    
-    /**
-     * 获取任务属性值<br/>
-     * <功能详细描述>
-     * @param key
-     * @return [参数说明]
-     * 
-     * @return Object [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    Object getTaskStatusAttribute(String key);
+    JSONObject getTaskStatusAttributeJSONObject();
     
     /**
      * 设置任务状态属性<br/>
@@ -123,6 +101,28 @@ public interface TaskDelegateExecution {
      * @see [类、类#方法、类#成员]
      */
     void setTaskStatusAttribute(String key, Object value);
+    
+    /**
+     * 获取下次执行时间
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return Date [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    Date getNextFireDate();
+    
+    /**
+     * 设置下次执行时间<br/>
+     * <功能详细描述>
+     * @param nextFireDate [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    void setNextFireDate(Date nextFireDate);
     
     /**
      * 获取执行期属性<br/>
@@ -147,7 +147,49 @@ public interface TaskDelegateExecution {
      */
     void setAttribute(String key, Object value);
     
+    /**
+     * 设置属性值<br/>
+     * <功能详细描述>
+     * @param key
+     * @param value [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
     <T> void setAttributeValue(String key, T value);
     
+    /**
+     * 获取属性值<br/>
+     * <功能详细描述>
+     * @param key
+     * @param type
+     * @return [参数说明]
+     * 
+     * @return T [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
     <T> T getAttributeValue(String key, Class<T> type);
+    
+    /**
+     * 是否被跳过<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public boolean isSkip();
+
+    /**
+     * 设置当前方法执行期间被跳过<br/>
+     * <功能详细描述> [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public void setSkip();
 }

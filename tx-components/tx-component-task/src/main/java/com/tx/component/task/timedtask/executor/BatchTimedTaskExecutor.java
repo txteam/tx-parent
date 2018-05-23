@@ -11,8 +11,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Queue;
 
-import javax.annotation.Resource;
-
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -33,24 +31,22 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class BatchTimedTaskExecutor<T> extends AbstractTimedTaskExecutor<BatchTimedTask<T>>
+public class BatchTimedTaskExecutor<T>
+        extends AbstractTimedTaskExecutor<BatchTimedTask<T>>
         implements InitializingBean {
-    
-    /** 事务管理器 */
-    @Resource(name = "taskContext.transactionManager")
-    private PlatformTransactionManager transactionManager;
     
     /** 事务模板类 */
     private TransactionTemplate transactionTemplate;
     
     /** <默认构造函数> */
-    public BatchTimedTaskExecutor(BatchTimedTask<T> task) {
-        super(task);
+    public BatchTimedTaskExecutor() {
+        super();
     }
     
     /** <默认构造函数> */
-    public BatchTimedTaskExecutor() {
-        super();
+    public BatchTimedTaskExecutor(String beanName, BatchTimedTask<T> task,
+            PlatformTransactionManager transactionManager) {
+        super(beanName, task, transactionManager);
     }
     
     /**
@@ -58,8 +54,14 @@ public class BatchTimedTaskExecutor<T> extends AbstractTimedTaskExecutor<BatchTi
      */
     @Override
     public void afterPropertiesSet() throws Exception {
-        this.transactionTemplate = new TransactionTemplate(this.transactionManager,
-                new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRES_NEW));
+        AssertUtils.notEmpty(this.beanName, "beanName is empty.");
+        AssertUtils.notNull(this.task, "task is null.");
+        AssertUtils.notNull(this.transactionManager,
+                "transactionManager is null.");
+        
+        this.transactionTemplate = new TransactionTemplate(
+                this.transactionManager, new DefaultTransactionDefinition(
+                        TransactionDefinition.PROPAGATION_REQUIRES_NEW));
     }
     
     /**
@@ -76,19 +78,24 @@ public class BatchTimedTaskExecutor<T> extends AbstractTimedTaskExecutor<BatchTi
         final int batchSize = this.task.getBatchSize();
         
         while (!dataQueue.isEmpty()) {
-            this.transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-                @Override
-                protected void doInTransactionWithoutResult(TransactionStatus status) {
-                    for (int i = 0; i < batchSize && !dataQueue.isEmpty(); i++) {
-                        T data = dataQueue.poll();//移除并返问队列头部的元素
-                        finalTask.execute(data, executeDate);
-                    }
-                }
-            });
+            this.transactionTemplate
+                    .execute(new TransactionCallbackWithoutResult() {
+                        @Override
+                        protected void doInTransactionWithoutResult(
+                                TransactionStatus status) {
+                            for (int i = 0; i < batchSize
+                                    && !dataQueue.isEmpty(); i++) {
+                                T data = dataQueue.poll();//移除并返问队列头部的元素
+                                finalTask.execute(data, executeDate);
+                            }
+                        }
+                    });
         }
         
         Date nextExecuteDate = this.task.getNextDate(executeDate);
-        AssertUtils.notNull(nextExecuteDate, "nextExecutDate is null.task:{}", this.task.getCode());
+        AssertUtils.notNull(nextExecuteDate,
+                "nextExecutDate is null.task:{}",
+                this.task.getCode());
         return nextExecuteDate;
     }
 }

@@ -25,6 +25,9 @@ public enum TaskResultEnum implements BaseEnum{
     /** 未执行完成 */
     UNCOMPLETED("UNCOMPLETED","未执行完成"),
     
+    /** 未执行 */
+    UNNEED_EXECUTED("UNNEED_EXECUTED","无需执行"),
+    
     /** 成功 */
     SUCCESS("SUCCESS","成功"),
     

@@ -9,8 +9,6 @@ package com.tx.component.task.timedtask.executor;
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -34,23 +32,20 @@ import com.tx.core.exceptions.util.AssertUtils;
 public class IterableTimedTaskExecutor<T> extends AbstractTimedTaskExecutor<IterableTimedTask<T>>
         implements InitializingBean {
     
-    /** 事务管理器 */
-    @Resource(name = "taskContext.transactionManager")
-    private PlatformTransactionManager transactionManager;
-    
     /** 事务模板类 */
     private TransactionTemplate transactionTemplate;
-    
-    /** <默认构造函数> */
-    public IterableTimedTaskExecutor(IterableTimedTask<T> task) {
-        super(task);
-    }
     
     /** <默认构造函数> */
     public IterableTimedTaskExecutor() {
         super();
     }
     
+    /** <默认构造函数> */
+    public IterableTimedTaskExecutor(String beanName, IterableTimedTask<T> task,
+            PlatformTransactionManager transactionManager) {
+        super(beanName, task, transactionManager);
+    }
+
     /**
      * @throws Exception
      */

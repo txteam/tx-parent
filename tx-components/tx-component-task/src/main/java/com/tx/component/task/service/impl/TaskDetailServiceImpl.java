@@ -10,8 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,10 +31,21 @@ import com.tx.core.paged.model.PagedList;
 public class TaskDetailServiceImpl implements TaskDetailService {
     
     @SuppressWarnings("unused")
-    private Logger logger = LoggerFactory.getLogger(TaskDetailServiceImpl.class);
+    private Logger logger = LoggerFactory
+            .getLogger(TaskDetailServiceImpl.class);
     
-    @Resource(name = "taskContext.taskDetailDao")
     private TaskDetailDao taskDetailDao;
+    
+    /** <默认构造函数> */
+    public TaskDetailServiceImpl() {
+        super();
+    }
+    
+    /** <默认构造函数> */
+    public TaskDetailServiceImpl(TaskDetailDao taskDetailDao) {
+        super();
+        this.taskDetailDao = taskDetailDao;
+    }
     
     /**
      * @param taskCode
@@ -90,12 +99,14 @@ public class TaskDetailServiceImpl implements TaskDetailService {
      * @return
      */
     @Override
-    public PagedList<TaskDetail> queryPagedList(Map<String, Object> params, int pageIndex, int pageSize) {
+    public PagedList<TaskDetail> queryPagedList(Map<String, Object> params,
+            int pageIndex, int pageSize) {
         //生成查询条件
         params = params == null ? new HashMap<String, Object>() : params;
         
         //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
-        PagedList<TaskDetail> resPagedList = this.taskDetailDao.queryPagedList(params, pageIndex, pageSize);
+        PagedList<TaskDetail> resPagedList = this.taskDetailDao
+                .queryPagedList(params, pageIndex, pageSize);
         
         return resPagedList;
     }

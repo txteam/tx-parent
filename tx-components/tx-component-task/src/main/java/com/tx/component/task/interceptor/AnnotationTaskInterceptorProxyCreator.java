@@ -8,31 +8,28 @@ package com.tx.component.task.interceptor;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-
-import javax.annotation.Resource;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.aop.TargetSource;
-import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.aop.framework.autoproxy.AbstractAutoProxyCreator;
 import org.springframework.aop.support.AopUtils;
-import org.springframework.aop.target.SingletonTargetSource;
 import org.springframework.beans.BeansException;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.ReflectionUtils.MethodCallback;
 
 import com.tx.component.task.annotations.Task;
+import com.tx.component.task.context.TaskContextRegistry;
 import com.tx.component.task.interfaces.TaskExecutor;
 import com.tx.component.task.model.TaskDef;
-import com.tx.core.TxConstants;
+import com.tx.core.exceptions.util.AssertUtils;
 
 /**
  * 动态表业务层缓存创建器<br/>
@@ -49,44 +46,50 @@ public class AnnotationTaskInterceptorProxyCreator
     /** 注释内容 */
     private static final long serialVersionUID = 5717953769982845279L;
     
-    private final Set<String> targetSourcedBeans =
-            Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>(16));
+    /** 模块 */
+    private String module;
     
-    private final Map<Object, Boolean> advisedBeans = new ConcurrentHashMap<Object, Boolean>(256);
-    
-    @Resource(name = "taskContext.taskExecuteInterceptorFactory")
+    /** 任务执行拦截器工厂 */
     private TaskExecuteInterceptorFactory taskExecuteInterceptorFactory;
+    
+    /** 被代理的bean名称集合 */
+    private Map<String, Map<Method, TaskDef>> proxyBeanNameMap = new ConcurrentHashMap<>();
     
     /** <默认构造函数> */
     public AnnotationTaskInterceptorProxyCreator() {
         super();
     }
     
-    /** 为对象生成代理对象 */
-    protected Object wrapIfNecessary(Object bean, String beanName, Object cacheKey) {
-        if (beanName != null && this.targetSourcedBeans.contains(beanName)) {
-            return bean;
+    /** <默认构造函数> */
+    public AnnotationTaskInterceptorProxyCreator(String module,
+            TaskExecuteInterceptorFactory taskExecuteInterceptorFactory) {
+        super();
+        AssertUtils.notEmpty(module, "module is empty.");
+        AssertUtils.notNull(taskExecuteInterceptorFactory,
+                "taskExecuteInterceptorFactory is null.");
+        
+        this.module = module;
+        this.taskExecuteInterceptorFactory = taskExecuteInterceptorFactory;
+    }
+    
+    @Override
+    public Object postProcessAfterInitialization(Object bean, String beanName)
+            throws BeansException {
+        Object afterBean = super.postProcessAfterInitialization(bean, beanName);
+        if (!proxyBeanNameMap.containsKey(beanName)) {
+            return afterBean;
         }
-        if (Boolean.FALSE.equals(this.advisedBeans.get(cacheKey))) {
-            return bean;
+        
+        //如果是被代理的bean的代理后实例
+        for (Entry<Method, TaskDef> entryTemp : proxyBeanNameMap.get(beanName)
+                .entrySet()) {
+            //注册入实体
+            TaskContextRegistry.INSTANCE.registeTask(afterBean,
+                    entryTemp.getKey(),
+                    entryTemp.getValue());
         }
-        if (isInfrastructureClass(bean.getClass()) || shouldSkip(bean.getClass(), beanName)) {
-            this.advisedBeans.put(cacheKey, Boolean.FALSE);
-            return bean;
-        }
-
-        // Create proxy if we have advice.
-        Object[] specificInterceptors = getAdvicesAndAdvisorsForBean(bean.getClass(), beanName, null);
-        if (specificInterceptors != DO_NOT_PROXY) {
-            this.advisedBeans.put(cacheKey, Boolean.TRUE);
-            Object proxy = createProxy(
-                    bean.getClass(), beanName, specificInterceptors, new SingletonTargetSource(bean));
-            this.proxyTypes.put(cacheKey, proxy.getClass());
-            return proxy;
-        }
-
-        this.advisedBeans.put(cacheKey, Boolean.FALSE);
-        return bean;
+        
+        return afterBean;
     }
     
     /**
@@ -100,76 +103,203 @@ public class AnnotationTaskInterceptorProxyCreator
     protected Object[] getAdvicesAndAdvisorsForBean(Class<?> beanClass,
             String beanName, TargetSource customTargetSource)
             throws BeansException {
-        
-        if (AopUtils.isAopProxy(beanClass)
-                || this.nonAnnotatedClasses.containsKey(beanClass)) {
+        if (StringUtils.isEmpty(beanName)) {
+            //如果beanName is empty时，不会产生代理对象
+            return DO_NOT_PROXY;
+        }
+        Set<Method> taskMethods = new HashSet<>();
+        //如果非Executor的实现
+        ReflectionUtils.doWithMethods(beanClass, new MethodCallback() {
+            public void doWith(Method method)
+                    throws IllegalArgumentException, IllegalAccessException {
+                if (!Modifier.isPublic(method.getModifiers())) {
+                    //如果非public方法则直接返回
+                    return;
+                }
+                
+                Task taskAnnotation = AnnotationUtils.getAnnotation(method,
+                        Task.class);
+                if (taskAnnotation != null) {
+                    taskMethods.add(method);
+                }
+            }
+        });
+        if (taskMethods.isEmpty()) {
+            //如果taskMethod is empty时，不会产生代理对象
             return DO_NOT_PROXY;
         }
         
-        Map<Method, TaskDef> method2taskMap = new HashMap<>();
-        if(TaskExecutor.class.isAssignableFrom(beanClass)){
-            customTargetSource.getTarget();
-        }else{
-            //如果非Executor的实现
-            ReflectionUtils.doWithMethods(beanClass, new MethodCallback() {
-                public void doWith(Method method)
-                        throws IllegalArgumentException, IllegalAccessException {
-                    if (!Modifier.isPublic(method.getModifiers())) {
-                        //如果非public方法则直接返回
-                        return;
-                    }
-                    
-                    Task taskAnnotation = AnnotationUtils.getAnnotation(method,
-                            Task.class);
-                    if (taskAnnotation != null) {
-                        TaskDef taskTemp = new TaskDef();
-                        
-                        taskTemp.setBeanName(beanName);
-                        taskTemp.setClassName(beanClass.getName());
-                        taskTemp.setMethodName(method.getName());
-                        
-                        taskTemp.setCode(taskAnnotation.code());
-                        taskTemp.setParentCode(taskAnnotation.parentCode());
-                        taskTemp.setName(taskAnnotation.name());
-                        taskTemp.setRemark(taskAnnotation.remark());
-                        taskTemp.setOrderPriority(taskAnnotation.order());
-                        
-                        //如果为无参构造函数，并且没有父级任务，则可执行
-                        //如果有parentCode，则不能执行，//如果参数数量 == 0，则可执行，//如果参数数量 > 0,则不可执行
-                        taskTemp.setValid(true);
-                        taskTemp.setExecutable(StringUtils.isEmpty(taskAnnotation.parentCode())
-                                && ArrayUtils.isEmpty(method.getParameterTypes()));
-                        
-                        method2taskMap.put(method, taskTemp);
-                    }
-                }
-            });
-        }
+        Object bean = getBeanFactory().getBean(beanName);
+        AssertUtils.notNull(bean, "bean is null.beanName:{}", beanName);
         
-        final Set<Method> annotatedMethods = new LinkedHashSet<Method>(
-                TxConstants.INITIAL_CONLLECTION_SIZE);
+        //生成方法到任务的映射
+        Map<Method, TaskDef> method2taskMap = createMethod2TaskMap(bean,
+                beanName,
+                taskMethods,
+                beanClass);
         
+        //标记便于登记
+        proxyBeanNameMap.put(beanName, method2taskMap);//标记哪些bean的方法会被代理
         
+        //构建拦截器
+        TaskExecuteInterceptor interceptor = this.taskExecuteInterceptorFactory
+                .newInterceptor(method2taskMap);
+        Object[] interceptors = new Object[] { interceptor };
         
-        
-        if (!annotatedMethods.isEmpty()) {
-            TaskExecuteInterceptor interceptor = this.taskExecuteInterceptorFactory
-                    .newInterceptor(beanName,
-                            beanClass.getName(),
-                            annotatedMethods);
-            Object[] interceptors = new Object[] { interceptor };
-            return interceptors;
-        }
-        //如果不含有Task注解的的class无需进行代理
-        this.nonAnnotatedClasses.put(beanClass, Boolean.TRUE);
-        return DO_NOT_PROXY;
+        return interceptors;
     }
     
     /**
-     * @param proxyFactory
+     * 创建方法到任务的映射<br/>
+     * <功能详细描述>
+     * @param bean
+     * @param beanClass
+     * @param taskMethods
+     * @return [参数说明]
+     * 
+     * @return Map<Method,TaskDef> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
-    @Override
-    protected void customizeProxyFactory(ProxyFactory proxyFactory) {
-        proxyFactory.setProxyTargetClass(true);
+    private Map<Method, TaskDef> createMethod2TaskMap(Object bean,
+            String beanName, Set<Method> taskMethods, Class<?> beanClass) {
+        AssertUtils.notNull(bean, "bean is null.");
+        AssertUtils.notNull(bean, "bean is null.");
+        AssertUtils.notEmpty(taskMethods, "taskMethods is null.");
+        
+        Map<Method, TaskDef> resMap = null;
+        if (bean instanceof TaskExecutor) {
+            resMap = doCreateMethod2TaskMapByTaskExecutor((TaskExecutor) bean,
+                    beanName,
+                    taskMethods,
+                    beanClass);
+        } else {
+            resMap = doCreateMethod2TaskMap(bean,
+                    beanName,
+                    taskMethods,
+                    beanClass);
+        }
+        return resMap;
+    }
+    
+    /**
+     * 创建方法对任务的映射<br/>
+     * <功能详细描述>
+     * @param bean
+     * @param beanName
+     * @param taskMethods
+     * @param beanClass
+     * @return [参数说明]
+     * 
+     * @return Map<Method,TaskDef> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    private Map<Method, TaskDef> doCreateMethod2TaskMapByTaskExecutor(
+            TaskExecutor bean, String beanName, Set<Method> taskMethods,
+            Class<?> beanClass) {
+        Map<Method, TaskDef> method2taskMap = new HashMap<>();
+        for (Method method : taskMethods) {
+            Task taskAnnotation = AnnotationUtils.getAnnotation(method,
+                    Task.class);
+            AssertUtils.notNull(taskAnnotation, "taskAnnotation is null.");
+            
+            TaskDef taskTemp = new TaskDef();
+            
+            taskTemp.setMethodName(method.getName());
+            
+            //默认使用annotation的值
+            taskTemp.setParentCode(taskAnnotation.parentCode());
+            taskTemp.setName(taskAnnotation.name());
+            taskTemp.setRemark(taskAnnotation.remark());
+            taskTemp.setOrderPriority(taskAnnotation.order());
+            
+            AssertUtils.notEmpty(bean.code(), "bean.code() is empty");
+            //code,order使用executor实现值
+            taskTemp.setCode(bean.code());
+            taskTemp.setOrderPriority(bean.order());
+            
+            //如果executor有对应值，则进行覆盖
+            if (!StringUtils.isBlank(bean.className())) {
+                taskTemp.setClassName(bean.className());
+            }
+            if (!StringUtils.isBlank(bean.beanName())) {
+                taskTemp.setClassName(bean.beanName());
+            }
+            if (!StringUtils.isBlank(bean.parentCode())) {
+                taskTemp.setClassName(bean.parentCode());
+            }
+            if (!StringUtils.isBlank(bean.name())) {
+                taskTemp.setClassName(bean.name());
+            }
+            if (!StringUtils.isBlank(bean.remark())) {
+                taskTemp.setClassName(bean.remark());
+            }
+            
+            //所属模块
+            taskTemp.setModule(this.module);
+            
+            //如果为无参构造函数，并且没有父级任务，则可执行
+            //如果有parentCode，则不能执行，//如果参数数量 == 0，则可执行，//如果参数数量 > 0,则不可执行
+            taskTemp.setValid(true);
+            taskTemp.setExecutable(
+                    StringUtils.isEmpty(taskAnnotation.parentCode())
+                            && ArrayUtils.isEmpty(method.getParameterTypes()));
+            
+            method2taskMap.put(method, taskTemp);
+        }
+        return method2taskMap;
+    }
+    
+    /**
+     * 创建方法对任务的映射<br/>
+     * <功能详细描述>
+     * @param bean
+     * @param beanName
+     * @param taskMethods
+     * @param beanClass
+     * @return [参数说明]
+     * 
+     * @return Map<Method,TaskDef> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    private Map<Method, TaskDef> doCreateMethod2TaskMap(Object bean,
+            String beanName, Set<Method> taskMethods, Class<?> beanClass) {
+        Map<Method, TaskDef> method2taskMap = new HashMap<>();
+        for (Method method : taskMethods) {
+            Task taskAnnotation = AnnotationUtils.getAnnotation(method,
+                    Task.class);
+            AssertUtils.notNull(taskAnnotation, "taskAnnotation is null.");
+            
+            TaskDef taskTemp = new TaskDef();
+            taskTemp.setBeanName(beanName);
+            taskTemp.setMethodName(method.getName());
+            
+            AssertUtils.notEmpty(taskAnnotation.code(),
+                    "taskAnnotation.code() is empty");
+            taskTemp.setCode(taskAnnotation.code());
+            
+            taskTemp.setParentCode(taskAnnotation.parentCode());
+            taskTemp.setName(taskAnnotation.name());
+            taskTemp.setRemark(taskAnnotation.remark());
+            taskTemp.setOrderPriority(taskAnnotation.order());
+            
+            //所属模块
+            taskTemp.setModule(this.module);
+            
+            //获取被代理的类名
+            taskTemp.setClassName(AopUtils.getTargetClass(bean).getName());
+            
+            //如果为无参构造函数，并且没有父级任务，则可执行
+            //如果有parentCode，则不能执行，//如果参数数量 == 0，则可执行，//如果参数数量 > 0,则不可执行
+            taskTemp.setValid(true);
+            taskTemp.setExecutable(
+                    StringUtils.isEmpty(taskAnnotation.parentCode())
+                            && ArrayUtils.isEmpty(method.getParameterTypes()));
+            
+            method2taskMap.put(method, taskTemp);
+        }
+        return method2taskMap;
     }
 }

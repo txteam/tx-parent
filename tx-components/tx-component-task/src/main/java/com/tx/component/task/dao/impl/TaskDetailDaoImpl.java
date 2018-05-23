@@ -9,8 +9,6 @@ package com.tx.component.task.dao.impl;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import com.tx.component.task.dao.TaskDetailDao;
 import com.tx.component.task.model.TaskDetail;
 import com.tx.core.mybatis.model.Order;
@@ -28,8 +26,18 @@ import com.tx.core.paged.model.PagedList;
   */
 public class TaskDetailDaoImpl implements TaskDetailDao {
     
-    @Resource(name = "taskContext.myBatisDaoSupport")
     private MyBatisDaoSupport myBatisDaoSupport;
+    
+    /** <默认构造函数> */
+    public TaskDetailDaoImpl() {
+        super();
+    }
+    
+    /** <默认构造函数> */
+    public TaskDetailDaoImpl(MyBatisDaoSupport myBatisDaoSupport) {
+        super();
+        this.myBatisDaoSupport = myBatisDaoSupport;
+    }
     
     /**
      * @param condition
@@ -37,7 +45,8 @@ public class TaskDetailDaoImpl implements TaskDetailDao {
      */
     @Override
     public TaskDetail find(TaskDetail condition) {
-        return this.myBatisDaoSupport.<TaskDetail>find("taskDetail.findTaskDetail", condition);
+        return this.myBatisDaoSupport
+                .<TaskDetail> find("taskDetail.findTaskDetail", condition);
     }
     
     /**
@@ -46,7 +55,8 @@ public class TaskDetailDaoImpl implements TaskDetailDao {
      */
     @Override
     public List<TaskDetail> queryList(Map<String, Object> params) {
-        return this.myBatisDaoSupport.<TaskDetail>queryList("taskDetail.queryTaskDetail", params);
+        return this.myBatisDaoSupport
+                .<TaskDetail> queryList("taskDetail.queryTaskDetail", params);
     }
     
     /**
@@ -55,8 +65,10 @@ public class TaskDetailDaoImpl implements TaskDetailDao {
      * @return
      */
     @Override
-    public List<TaskDetail> queryList(Map<String, Object> params, List<Order> orderList) {
-        return this.myBatisDaoSupport.<TaskDetail>queryList("taskDetail.queryTaskDetail", params, orderList);
+    public List<TaskDetail> queryList(Map<String, Object> params,
+            List<Order> orderList) {
+        return this.myBatisDaoSupport.<TaskDetail> queryList(
+                "taskDetail.queryTaskDetail", params, orderList);
     }
     
     /**
@@ -65,7 +77,8 @@ public class TaskDetailDaoImpl implements TaskDetailDao {
      */
     @Override
     public int count(Map<String, Object> params) {
-        return this.myBatisDaoSupport.<Integer>find("taskDetail.queryTaskDetailCount", params);
+        return this.myBatisDaoSupport
+                .<Integer> find("taskDetail.queryTaskDetailCount", params);
     }
     
     /**
@@ -75,11 +88,10 @@ public class TaskDetailDaoImpl implements TaskDetailDao {
      * @return
      */
     @Override
-    public PagedList<TaskDetail> queryPagedList(Map<String, Object> params, int pageIndex, int pageSize) {
-        return this.myBatisDaoSupport.<TaskDetail>queryPagedList("taskDetail.queryTaskDetail",
-                params,
-                pageIndex,
-                pageSize);
+    public PagedList<TaskDetail> queryPagedList(Map<String, Object> params,
+            int pageIndex, int pageSize) {
+        return this.myBatisDaoSupport.<TaskDetail> queryPagedList(
+                "taskDetail.queryTaskDetail", params, pageIndex, pageSize);
     }
     
     /**
@@ -90,9 +102,10 @@ public class TaskDetailDaoImpl implements TaskDetailDao {
      * @return
      */
     @Override
-    public PagedList<TaskDetail> queryPagedList(Map<String, Object> params, int pageIndex, int pageSize,
-            List<Order> orderList) {
-        return this.myBatisDaoSupport.<TaskDetail>queryPagedList("taskDetail.queryTaskDetail",
+    public PagedList<TaskDetail> queryPagedList(Map<String, Object> params,
+            int pageIndex, int pageSize, List<Order> orderList) {
+        return this.myBatisDaoSupport.<TaskDetail> queryPagedList(
+                "taskDetail.queryTaskDetail",
                 params,
                 pageIndex,
                 pageSize,

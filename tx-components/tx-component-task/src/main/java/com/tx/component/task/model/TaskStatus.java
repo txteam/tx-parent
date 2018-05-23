@@ -109,6 +109,7 @@ public class TaskStatus implements Serializable {
     private String attributes;
     
     /** 下次执行时间：如果当前时间大于该事件，则事务可以被启动,冗余字段，在attributes中也会记录 */
+    //用于锁定重复执行，一旦检测到当前时间未到下次执行时间，或具备业务意义的时间对比该时间，不应该执行，可直接跳过，或抛出异常？
     @UpdateAble
     private Date nextFireDate;
     

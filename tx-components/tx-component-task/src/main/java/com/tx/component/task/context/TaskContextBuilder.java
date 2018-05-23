@@ -39,7 +39,6 @@ public class TaskContextBuilder extends TaskContextConfiguration implements Bean
      */
     @Override
     public void doBuild() throws Exception {
-        // 生成服务签名（ip信息 + classpath信息）
-        this.signature = String.valueOf(Math.abs(SignatureUtils.generateSignature().hashCode()));
+        
     }
 }

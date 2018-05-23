@@ -7,7 +7,6 @@
 package com.tx.component.task.context;
 
 import com.tx.component.task.TaskConstants;
-import com.tx.component.task.interceptor.TaskContextRegistry;
 import com.tx.component.task.service.TaskDefService;
 import com.tx.component.task.service.TaskDetailService;
 import com.tx.component.task.service.TaskExecuteLogService;

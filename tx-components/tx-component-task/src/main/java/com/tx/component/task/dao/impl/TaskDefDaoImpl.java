@@ -9,8 +9,6 @@ package com.tx.component.task.dao.impl;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import com.tx.component.task.dao.TaskDefDao;
 import com.tx.component.task.model.TaskDef;
 import com.tx.core.mybatis.model.Order;
@@ -28,23 +26,38 @@ import com.tx.core.paged.model.PagedList;
  */
 public class TaskDefDaoImpl implements TaskDefDao {
     
-    @Resource(name = "taskContext.myBatisDaoSupport")
     private MyBatisDaoSupport myBatisDaoSupport;
     
-    /**
-     * @param condition
-     */
-    @Override
-    public void batchInsert(List<TaskDef> condition){
-        this.myBatisDaoSupport.batchInsertUseUUID("taskDef.insertTaskDef", condition, "id",true);
+    /** <默认构造函数> */
+    public TaskDefDaoImpl() {
+        super();
+    }
+    
+    /** <默认构造函数> */
+    public TaskDefDaoImpl(MyBatisDaoSupport myBatisDaoSupport) {
+        super();
+        this.myBatisDaoSupport = myBatisDaoSupport;
     }
     
     /**
      * @param condition
      */
     @Override
-    public void batchUpdate(List<Map<String,Object>> updateRowMapList){
-        this.myBatisDaoSupport.batchUpdate("taskDef.updateTaskDef", updateRowMapList,true);
+    public void batchInsert(List<TaskDef> condition) {
+        this.myBatisDaoSupport.batchInsertUseUUID("taskDef.insertTaskDef",
+                condition,
+                "id",
+                true);
+    }
+    
+    /**
+     * @param condition
+     */
+    @Override
+    public void batchUpdate(List<Map<String, Object>> updateRowMapList) {
+        this.myBatisDaoSupport.batchUpdate("taskDef.updateTaskDef",
+                updateRowMapList,
+                true);
     }
     
     /**
@@ -52,7 +65,9 @@ public class TaskDefDaoImpl implements TaskDefDao {
      */
     @Override
     public void insert(TaskDef condition) {
-        this.myBatisDaoSupport.insertUseUUID("taskDef.insertTaskDef", condition, "id");
+        this.myBatisDaoSupport.insertUseUUID("taskDef.insertTaskDef",
+                condition,
+                "id");
     }
     
     /**
@@ -61,7 +76,8 @@ public class TaskDefDaoImpl implements TaskDefDao {
      */
     @Override
     public int delete(TaskDef condition) {
-        return this.myBatisDaoSupport.delete("taskDef.deleteTaskDef", condition);
+        return this.myBatisDaoSupport.delete("taskDef.deleteTaskDef",
+                condition);
     }
     
     /**
@@ -70,16 +86,18 @@ public class TaskDefDaoImpl implements TaskDefDao {
      */
     @Override
     public TaskDef findAndlock(TaskDef condition) {
-        return this.myBatisDaoSupport.<TaskDef> find("taskDef.findAndlockTaskDef", condition);
+        return this.myBatisDaoSupport
+                .<TaskDef> find("taskDef.findAndlockTaskDef", condition);
     }
-
+    
     /**
      * @param condition
      * @return
      */
     @Override
     public TaskDef find(TaskDef condition) {
-        return this.myBatisDaoSupport.<TaskDef> find("taskDef.findTaskDef", condition);
+        return this.myBatisDaoSupport.<TaskDef> find("taskDef.findTaskDef",
+                condition);
     }
     
     /**
@@ -88,8 +106,8 @@ public class TaskDefDaoImpl implements TaskDefDao {
      */
     @Override
     public List<TaskDef> queryList(Map<String, Object> params) {
-        return this.myBatisDaoSupport.<TaskDef> queryList("taskDef.queryTaskDef",
-                params);
+        return this.myBatisDaoSupport
+                .<TaskDef> queryList("taskDef.queryTaskDef", params);
     }
     
     /**
@@ -100,9 +118,8 @@ public class TaskDefDaoImpl implements TaskDefDao {
     @Override
     public List<TaskDef> queryList(Map<String, Object> params,
             List<Order> orderList) {
-        return this.myBatisDaoSupport.<TaskDef> queryList("taskDef.queryTaskDef",
-                params,
-                orderList);
+        return this.myBatisDaoSupport
+                .<TaskDef> queryList("taskDef.queryTaskDef", params, orderList);
     }
     
     /**
@@ -111,8 +128,8 @@ public class TaskDefDaoImpl implements TaskDefDao {
      */
     @Override
     public int count(Map<String, Object> params) {
-        return this.myBatisDaoSupport.<Integer> find("taskDef.queryTaskDefCount",
-                params);
+        return this.myBatisDaoSupport
+                .<Integer> find("taskDef.queryTaskDefCount", params);
     }
     
     /**
@@ -124,10 +141,8 @@ public class TaskDefDaoImpl implements TaskDefDao {
     @Override
     public PagedList<TaskDef> queryPagedList(Map<String, Object> params,
             int pageIndex, int pageSize) {
-        return this.myBatisDaoSupport.<TaskDef> queryPagedList("taskDef.queryTaskDef",
-                params,
-                pageIndex,
-                pageSize);
+        return this.myBatisDaoSupport.<TaskDef> queryPagedList(
+                "taskDef.queryTaskDef", params, pageIndex, pageSize);
     }
     
     /**
@@ -140,11 +155,8 @@ public class TaskDefDaoImpl implements TaskDefDao {
     @Override
     public PagedList<TaskDef> queryPagedList(Map<String, Object> params,
             int pageIndex, int pageSize, List<Order> orderList) {
-        return this.myBatisDaoSupport.<TaskDef> queryPagedList("taskDef.queryTaskDef",
-                params,
-                pageIndex,
-                pageSize,
-                orderList);
+        return this.myBatisDaoSupport.<TaskDef> queryPagedList(
+                "taskDef.queryTaskDef", params, pageIndex, pageSize, orderList);
     }
     
     /**
@@ -153,6 +165,7 @@ public class TaskDefDaoImpl implements TaskDefDao {
      */
     @Override
     public int update(Map<String, Object> updateRowMap) {
-        return this.myBatisDaoSupport.update("taskDef.updateTaskDef", updateRowMap);
+        return this.myBatisDaoSupport.update("taskDef.updateTaskDef",
+                updateRowMap);
     }
 }

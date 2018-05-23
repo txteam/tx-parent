@@ -187,7 +187,7 @@
 			</dependency>
 			<dependency>
 				<groupId>com.tx</groupId>
-				<artifactId>tx-component-configuration</artifactId>
+				<artifactId>tx-component-event</artifactId>
 				<version>${tx.version}</version>
 			</dependency>
 			<dependency>
@@ -197,12 +197,31 @@
 			</dependency>
 			<dependency>
 				<groupId>com.tx</groupId>
+				<artifactId>tx-component-task</artifactId>
+				<version>${tx.version}</version>
+			</dependency>
+			
+			<!-- 待改进模块 -->
+			<dependency>
+				<groupId>com.tx</groupId>
+				<artifactId>tx-component-servicelog</artifactId>
+				<version>${tx.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.tx</groupId>
 				<artifactId>tx-component-auth</artifactId>
 				<version>${tx.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.tx</groupId>
-				<artifactId>tx-component-event</artifactId>
+				<artifactId>tx-component-rule</artifactId>
+				<version>${tx.version}</version>
+			</dependency>
+			
+			<!-- 废弃模块 -->
+			<dependency>
+				<groupId>com.tx</groupId>
+				<artifactId>tx-component-configuration</artifactId>
 				<version>${tx.version}</version>
 			</dependency>
 			<dependency>
@@ -215,19 +234,7 @@
 				<artifactId>tx-component-file</artifactId>
 				<version>${tx.version}</version>
 			</dependency>
-
-			<!-- 待改进模块 -->
-			<dependency>
-				<groupId>com.tx</groupId>
-				<artifactId>tx-component-servicelog</artifactId>
-				<version>${tx.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.tx</groupId>
-				<artifactId>tx-component-rule</artifactId>
-				<version>${tx.version}</version>
-			</dependency>
-
+			
 			<!-- cglib dependency by mybatis -->
 			<dependency>
 				<groupId>cglib</groupId>

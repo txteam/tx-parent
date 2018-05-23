@@ -9,8 +9,6 @@ package com.tx.component.task.dao.impl;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import com.tx.component.task.dao.TaskStatusDao;
 import com.tx.component.task.model.TaskStatus;
 import com.tx.core.mybatis.model.Order;
@@ -28,8 +26,18 @@ import com.tx.core.paged.model.PagedList;
  */
 public class TaskStatusDaoImpl implements TaskStatusDao {
     
-    @Resource(name = "taskContext.myBatisDaoSupport")
     private MyBatisDaoSupport myBatisDaoSupport;
+    
+    /** <默认构造函数> */
+    public TaskStatusDaoImpl() {
+        super();
+    }
+    
+    /** <默认构造函数> */
+    public TaskStatusDaoImpl(MyBatisDaoSupport myBatisDaoSupport) {
+        super();
+        this.myBatisDaoSupport = myBatisDaoSupport;
+    }
     
     /**
      * @param condition
@@ -78,8 +86,8 @@ public class TaskStatusDaoImpl implements TaskStatusDao {
      */
     @Override
     public TaskStatus find(TaskStatus condition) {
-        return this.myBatisDaoSupport.<TaskStatus> find("taskStatus.findTaskStatus",
-                condition);
+        return this.myBatisDaoSupport
+                .<TaskStatus> find("taskStatus.findTaskStatus", condition);
     }
     
     /**
@@ -88,8 +96,8 @@ public class TaskStatusDaoImpl implements TaskStatusDao {
      */
     @Override
     public TaskStatus findAndlock(TaskStatus condition) {
-        return this.myBatisDaoSupport.<TaskStatus> find("taskStatus.findAndlockTaskStatus",
-                condition);
+        return this.myBatisDaoSupport.<TaskStatus> find(
+                "taskStatus.findAndlockTaskStatus", condition);
     }
     
     /**
@@ -98,8 +106,8 @@ public class TaskStatusDaoImpl implements TaskStatusDao {
      */
     @Override
     public List<TaskStatus> queryList(Map<String, Object> params) {
-        return this.myBatisDaoSupport.<TaskStatus> queryList("taskStatus.queryTaskStatus",
-                params);
+        return this.myBatisDaoSupport
+                .<TaskStatus> queryList("taskStatus.queryTaskStatus", params);
     }
     
     /**
@@ -110,9 +118,8 @@ public class TaskStatusDaoImpl implements TaskStatusDao {
     @Override
     public List<TaskStatus> queryList(Map<String, Object> params,
             List<Order> orderList) {
-        return this.myBatisDaoSupport.<TaskStatus> queryList("taskStatus.queryTaskStatus",
-                params,
-                orderList);
+        return this.myBatisDaoSupport.<TaskStatus> queryList(
+                "taskStatus.queryTaskStatus", params, orderList);
     }
     
     /**
@@ -121,8 +128,8 @@ public class TaskStatusDaoImpl implements TaskStatusDao {
      */
     @Override
     public int count(Map<String, Object> params) {
-        return this.myBatisDaoSupport.<Integer> find("taskStatus.queryTaskStatusCount",
-                params);
+        return this.myBatisDaoSupport
+                .<Integer> find("taskStatus.queryTaskStatusCount", params);
     }
     
     /**
@@ -134,10 +141,8 @@ public class TaskStatusDaoImpl implements TaskStatusDao {
     @Override
     public PagedList<TaskStatus> queryPagedList(Map<String, Object> params,
             int pageIndex, int pageSize) {
-        return this.myBatisDaoSupport.<TaskStatus> queryPagedList("taskStatus.queryTaskStatus",
-                params,
-                pageIndex,
-                pageSize);
+        return this.myBatisDaoSupport.<TaskStatus> queryPagedList(
+                "taskStatus.queryTaskStatus", params, pageIndex, pageSize);
     }
     
     /**
@@ -150,7 +155,8 @@ public class TaskStatusDaoImpl implements TaskStatusDao {
     @Override
     public PagedList<TaskStatus> queryPagedList(Map<String, Object> params,
             int pageIndex, int pageSize, List<Order> orderList) {
-        return this.myBatisDaoSupport.<TaskStatus> queryPagedList("taskStatus.queryTaskStatus",
+        return this.myBatisDaoSupport.<TaskStatus> queryPagedList(
+                "taskStatus.queryTaskStatus",
                 params,
                 pageIndex,
                 pageSize,
@@ -166,5 +172,5 @@ public class TaskStatusDaoImpl implements TaskStatusDao {
         return this.myBatisDaoSupport.update("taskStatus.updateTaskStatus",
                 updateRowMap);
     }
-
+    
 }

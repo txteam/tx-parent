@@ -9,8 +9,6 @@ package com.tx.component.task.dao.impl;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import com.tx.component.task.dao.TaskExecuteLogDao;
 import com.tx.component.task.model.TaskExecuteLog;
 import com.tx.core.mybatis.model.Order;
@@ -28,23 +26,35 @@ import com.tx.core.paged.model.PagedList;
  */
 public class TaskExecuteLogDaoImpl implements TaskExecuteLogDao {
     
-    @Resource(name = "taskContext.myBatisDaoSupport")
     private MyBatisDaoSupport myBatisDaoSupport;
     
-    /**
-     * @param condition
-     */
-    @Override
-    public void batchInsert(List<TaskExecuteLog> condition){
-        this.myBatisDaoSupport.batchInsertUseUUID("taskExecuteLog.insertTaskExecuteLog", condition, "id",true);
+    /** <默认构造函数> */
+    public TaskExecuteLogDaoImpl() {
+        super();
+    }
+    
+    /** <默认构造函数> */
+    public TaskExecuteLogDaoImpl(MyBatisDaoSupport myBatisDaoSupport) {
+        super();
+        this.myBatisDaoSupport = myBatisDaoSupport;
     }
     
     /**
      * @param condition
      */
     @Override
-    public void batchUpdate(List<Map<String,Object>> updateRowMapList){
-        this.myBatisDaoSupport.batchUpdate("taskExecuteLog.updateTaskExecuteLog", updateRowMapList,true);
+    public void batchInsert(List<TaskExecuteLog> condition) {
+        this.myBatisDaoSupport.batchInsertUseUUID(
+                "taskExecuteLog.insertTaskExecuteLog", condition, "id", true);
+    }
+    
+    /**
+     * @param condition
+     */
+    @Override
+    public void batchUpdate(List<Map<String, Object>> updateRowMapList) {
+        this.myBatisDaoSupport.batchUpdate(
+                "taskExecuteLog.updateTaskExecuteLog", updateRowMapList, true);
     }
     
     /**
@@ -52,7 +62,8 @@ public class TaskExecuteLogDaoImpl implements TaskExecuteLogDao {
      */
     @Override
     public void insert(TaskExecuteLog condition) {
-        this.myBatisDaoSupport.insertUseUUID("taskExecuteLog.insertTaskExecuteLog", condition, "id");
+        this.myBatisDaoSupport.insertUseUUID(
+                "taskExecuteLog.insertTaskExecuteLog", condition, "id");
     }
     
     /**
@@ -61,7 +72,8 @@ public class TaskExecuteLogDaoImpl implements TaskExecuteLogDao {
      */
     @Override
     public int delete(TaskExecuteLog condition) {
-        return this.myBatisDaoSupport.delete("taskExecuteLog.deleteTaskExecuteLog", condition);
+        return this.myBatisDaoSupport
+                .delete("taskExecuteLog.deleteTaskExecuteLog", condition);
     }
     
     /**
@@ -70,7 +82,8 @@ public class TaskExecuteLogDaoImpl implements TaskExecuteLogDao {
      */
     @Override
     public TaskExecuteLog find(TaskExecuteLog condition) {
-        return this.myBatisDaoSupport.<TaskExecuteLog> find("taskExecuteLog.findTaskExecuteLog", condition);
+        return this.myBatisDaoSupport.<TaskExecuteLog> find(
+                "taskExecuteLog.findTaskExecuteLog", condition);
     }
     
     /**
@@ -79,8 +92,8 @@ public class TaskExecuteLogDaoImpl implements TaskExecuteLogDao {
      */
     @Override
     public List<TaskExecuteLog> queryList(Map<String, Object> params) {
-        return this.myBatisDaoSupport.<TaskExecuteLog> queryList("taskExecuteLog.queryTaskExecuteLog",
-                params);
+        return this.myBatisDaoSupport.<TaskExecuteLog> queryList(
+                "taskExecuteLog.queryTaskExecuteLog", params);
     }
     
     /**
@@ -91,9 +104,8 @@ public class TaskExecuteLogDaoImpl implements TaskExecuteLogDao {
     @Override
     public List<TaskExecuteLog> queryList(Map<String, Object> params,
             List<Order> orderList) {
-        return this.myBatisDaoSupport.<TaskExecuteLog> queryList("taskExecuteLog.queryTaskExecuteLog",
-                params,
-                orderList);
+        return this.myBatisDaoSupport.<TaskExecuteLog> queryList(
+                "taskExecuteLog.queryTaskExecuteLog", params, orderList);
     }
     
     /**
@@ -102,8 +114,8 @@ public class TaskExecuteLogDaoImpl implements TaskExecuteLogDao {
      */
     @Override
     public int count(Map<String, Object> params) {
-        return this.myBatisDaoSupport.<Integer> find("taskExecuteLog.queryTaskExecuteLogCount",
-                params);
+        return this.myBatisDaoSupport.<Integer> find(
+                "taskExecuteLog.queryTaskExecuteLogCount", params);
     }
     
     /**
@@ -115,7 +127,8 @@ public class TaskExecuteLogDaoImpl implements TaskExecuteLogDao {
     @Override
     public PagedList<TaskExecuteLog> queryPagedList(Map<String, Object> params,
             int pageIndex, int pageSize) {
-        return this.myBatisDaoSupport.<TaskExecuteLog> queryPagedList("taskExecuteLog.queryTaskExecuteLog",
+        return this.myBatisDaoSupport.<TaskExecuteLog> queryPagedList(
+                "taskExecuteLog.queryTaskExecuteLog",
                 params,
                 pageIndex,
                 pageSize);
@@ -131,7 +144,8 @@ public class TaskExecuteLogDaoImpl implements TaskExecuteLogDao {
     @Override
     public PagedList<TaskExecuteLog> queryPagedList(Map<String, Object> params,
             int pageIndex, int pageSize, List<Order> orderList) {
-        return this.myBatisDaoSupport.<TaskExecuteLog> queryPagedList("taskExecuteLog.queryTaskExecuteLog",
+        return this.myBatisDaoSupport.<TaskExecuteLog> queryPagedList(
+                "taskExecuteLog.queryTaskExecuteLog",
                 params,
                 pageIndex,
                 pageSize,
@@ -144,6 +158,7 @@ public class TaskExecuteLogDaoImpl implements TaskExecuteLogDao {
      */
     @Override
     public int update(Map<String, Object> updateRowMap) {
-        return this.myBatisDaoSupport.update("taskExecuteLog.updateTaskExecuteLog", updateRowMap);
+        return this.myBatisDaoSupport
+                .update("taskExecuteLog.updateTaskExecuteLog", updateRowMap);
     }
 }

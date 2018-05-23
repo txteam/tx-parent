@@ -12,8 +12,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.annotation.Resource;
-
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.apache.commons.lang3.StringUtils;
@@ -33,7 +31,6 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 import org.springframework.transaction.support.TransactionTemplate;
 
 import com.alibaba.fastjson.JSONObject;
-import com.tx.component.task.context.TaskContext;
 import com.tx.component.task.context.TaskSessionContext;
 import com.tx.component.task.delegate.TaskDelegateExecution;
 import com.tx.component.task.model.TaskDef;
@@ -63,6 +60,21 @@ public class TaskExecuteInterceptor
     private Logger logger = LoggerFactory
             .getLogger(TaskExecuteInterceptor.class);
     
+    /** 签名 */
+    private String signature;
+    
+    /** 任务定义业务层 */
+    private TaskDefService taskDefService;
+    
+    /** 任务状态业务层 */
+    private TaskStatusService taskStatusService;
+    
+    /** 任务执行日志业务层 */
+    private TaskExecuteLogService taskExecuteLogService;
+    
+    /** transactionManager */
+    private PlatformTransactionManager transactionManager;
+    
     /** 任务定义映射 */
     private Map<Method, TaskDef> taskDefMap;
     
@@ -75,46 +87,42 @@ public class TaskExecuteInterceptor
     /** 事务句柄 */
     private TransactionTemplate taskExecuteLogTT;
     
-    /** 任务容器 */
-    @Resource(name = "taskContext")
-    private TaskContext taskContext;
-    
-    /** 任务定义业务层 */
-    @Resource(name = "taskContext.taskDefService")
-    private TaskDefService taskDefService;
-    
-    /** 任务状态业务层 */
-    @Resource(name = "taskContext.taskStatusService")
-    private TaskStatusService taskStatusService;
-    
-    /** 任务执行日志业务层 */
-    @Resource(name = "taskContext.taskExecuteLogService")
-    private TaskExecuteLogService taskExecuteLogService;
-    
-    /** transactionManager */
-    private PlatformTransactionManager transactionManager;
-    
     /** <默认构造函数> */
     public TaskExecuteInterceptor() {
         super();
     }
     
     /** <默认构造函数> */
-    public TaskExecuteInterceptor(PlatformTransactionManager transactionManager,
+    public TaskExecuteInterceptor(String signature,
+            TaskDefService taskDefService, TaskStatusService taskStatusService,
+            TaskExecuteLogService taskExecuteLogService,
+            PlatformTransactionManager transactionManager,
             Map<Method, TaskDef> taskDefMap) {
         super();
-        AssertUtils.notNull(transactionManager, "transactionManager is null.");
+        AssertUtils.notEmpty(signature, "signature is empty.");
         AssertUtils.notEmpty(taskDefMap, "taskDefMap is empty.");
+        AssertUtils.notNull(taskDefService, "taskDefService is null.");
+        AssertUtils.notNull(taskStatusService, "taskStatusService is null.");
+        AssertUtils.notNull(taskExecuteLogService,
+                "taskExecuteLogService is null.");
+        AssertUtils.notNull(transactionManager, "transactionManager is null.");
+        
+        this.signature = signature;
+        this.taskDefService = taskDefService;
+        this.taskStatusService = taskStatusService;
+        this.taskExecuteLogService = taskExecuteLogService;
+        this.transactionManager = transactionManager;
         
         this.taskDefMap = taskDefMap;
-        this.transactionManager = transactionManager;
+        
+        afterPropertiesSet();
     }
     
     /**
      * @throws Exception
      */
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         this.transactionTemplate = new TransactionTemplate(
                 this.transactionManager, new DefaultTransactionDefinition(
                         TransactionDefinition.PROPAGATION_REQUIRED));
@@ -125,6 +133,8 @@ public class TaskExecuteInterceptor
         this.taskExecuteLogTT = new TransactionTemplate(this.transactionManager,
                 new DefaultTransactionDefinition(
                         TransactionDefinition.PROPAGATION_REQUIRES_NEW));
+        
+        initializing();
     }
     
     /**
@@ -142,8 +152,6 @@ public class TaskExecuteInterceptor
             //初始化任务定义
             TaskDef taskTemp = initTaskDef(entryTemp.getValue());
             this.taskDefMap.put(entryTemp.getKey(), taskTemp);
-            TaskContextRegistry.INSTANCE.registeTask(taskTemp,
-                    entryTemp.getKey());
             
             //初始化任务状态
             initTaskStatus(taskTemp);
@@ -234,16 +242,14 @@ public class TaskExecuteInterceptor
                     AssertUtils.isTrue(
                             TaskStatusEnum.WAIT_EXECUTE
                                     .equals(taskStatus.getStatus()),
-                            "taskId:{}.signature is empty.but status is :{}",
+                            "taskId:{}.signature is empty.status should is 'WAIT_EXECUTE'.but status is :{}",
                             new Object[] { taskId, taskStatus.getStatus() });
                 }
-            } else if (!taskContext.getSignature()
-                    .equals(taskStatus.getSignature())) {
+            } else if (!this.signature.equals(taskStatus.getSignature())) {
                 //签名不一致，不能进行修改
                 return;
             } else if (!StringUtils.isEmpty(taskStatus.getSignature())
-                    && taskContext.getSignature()
-                            .equals(taskStatus.getSignature())
+                    && this.signature.equals(taskStatus.getSignature())
                     && TaskStatusEnum.EXECUTING
                             .equals(taskStatus.getStatus())) {
                 //当前容器刚启动，如果发现状态为执行中，则认为上一次待执行的任务结果为未完成，状态更新为待执行
@@ -327,7 +333,7 @@ public class TaskExecuteInterceptor
         TaskStatus taskStatus = updateTaskStatusWithNewRequire(taskId,
                 TaskStatusEnum.WAIT_EXECUTE,
                 TaskStatusEnum.EXECUTING,
-                taskContext.getSignature(),
+                this.signature,
                 statusUpdateRowMap);
         
         boolean isSuccess = false;
@@ -335,7 +341,6 @@ public class TaskExecuteInterceptor
         
         //事务开始执行,如果在开启期间出现异常，则不需要配对的关闭
         TaskSessionContext.open(task, taskStatus);
-        Date nextFireDate = null;
         try {
             //调度处理
             res = invocation.proceed();
@@ -353,32 +358,40 @@ public class TaskExecuteInterceptor
             throw new SILException(e.getMessage(), e);
         } finally {
             TaskDelegateExecution execution = TaskSessionContext.close();
-            AssertUtils.isTrue(task == execution.getTask(), "线程变量中的任务应该为统一对象.");
+            AssertUtils.isTrue(task == execution.getTask(), "线程变量中的任务应该为同一对象.");
+            AssertUtils.isTrue(taskStatus == execution.getTaskStatus(), "线程变量中的任务状态应该为同一对象.");
+            Date nextFireDate = execution.getNextFireDate();
+            String taskStatusAttributes = execution.getTaskStatusAttributes();
             
             Date endDate = new Date();
             long consuming = endDate.getTime() - startDate.getTime();
             statusUpdateRowMap.put("startDate", startDate);
             statusUpdateRowMap.put("endDate", endDate);
             statusUpdateRowMap.put("consuming", consuming);
-            statusUpdateRowMap.put("result",
-                    isSuccess ? TaskResultEnum.SUCCESS : TaskResultEnum.FAIL);//运行时结果
-            statusUpdateRowMap.put("executeCount",
-                    taskStatus.getExecuteCount() + 1);//执行次数+1
-            statusUpdateRowMap.put("attributes", execution.getTaskStatusAttributes());
-            statusUpdateRowMap.put("nextFireDate", nextFireDate);
-            
-            if (isSuccess) {
-                statusUpdateRowMap.put("successStartDate", startDate);
-                statusUpdateRowMap.put("successEndDate", endDate);
-                statusUpdateRowMap.put("successConsuming", consuming);
-                statusUpdateRowMap.put("successCount",
-                        taskStatus.getSuccessCount() + 1);
-            } else {
-                statusUpdateRowMap.put("failStartDate", startDate);
-                statusUpdateRowMap.put("failEndDate", endDate);
-                statusUpdateRowMap.put("failConsuming", consuming);
-                statusUpdateRowMap.put("failCount",
-                        taskStatus.getFailCount() + 1);
+            if(!execution.isSkip()){
+                statusUpdateRowMap.put("result",
+                        isSuccess ? TaskResultEnum.SUCCESS : TaskResultEnum.FAIL);//运行时结果
+                statusUpdateRowMap.put("executeCount",
+                        taskStatus.getExecuteCount() + 1);//执行次数+1
+                
+                statusUpdateRowMap.put("attributes", taskStatusAttributes);
+                statusUpdateRowMap.put("nextFireDate", nextFireDate);
+                
+                if (isSuccess) {
+                    statusUpdateRowMap.put("successStartDate", startDate);
+                    statusUpdateRowMap.put("successEndDate", endDate);
+                    statusUpdateRowMap.put("successConsuming", consuming);
+                    statusUpdateRowMap.put("successCount",
+                            taskStatus.getSuccessCount() + 1);
+                } else {
+                    statusUpdateRowMap.put("failStartDate", startDate);
+                    statusUpdateRowMap.put("failEndDate", endDate);
+                    statusUpdateRowMap.put("failConsuming", consuming);
+                    statusUpdateRowMap.put("failCount",
+                            taskStatus.getFailCount() + 1);
+                }
+            }else{
+                statusUpdateRowMap.put("result",TaskResultEnum.UNNEED_EXECUTED);//运行时结果
             }
             
             //更新任务状态
@@ -394,7 +407,7 @@ public class TaskExecuteInterceptor
                     endDate,
                     taskStatusAttributes,
                     isSuccess ? TaskResultEnum.SUCCESS : TaskResultEnum.FAIL,
-                    taskContext.getSignature());
+                    this.signature);
         }
         return res;
     }
@@ -528,10 +541,43 @@ public class TaskExecuteInterceptor
     }
     
     /**
-     * @param 对taskContext进行赋值
+     * @param 对signature进行赋值
      */
-    public void setTaskContext(TaskContext taskContext) {
-        this.taskContext = taskContext;
+    public void setSignature(String signature) {
+        this.signature = signature;
     }
-
+    
+    /**
+     * @param 对taskExecuteLogService进行赋值
+     */
+    public void setTaskExecuteLogService(
+            TaskExecuteLogService taskExecuteLogService) {
+        this.taskExecuteLogService = taskExecuteLogService;
+    }
+    
+    /**
+     * @param 对transactionManager进行赋值
+     */
+    public void setTransactionManager(
+            PlatformTransactionManager transactionManager) {
+        this.transactionManager = transactionManager;
+    }
+    
+    /**
+     * @param 对taskDefMap进行赋值
+     */
+    public void setTaskDefMap(Map<Method, TaskDef> taskDefMap) {
+        this.taskDefMap = taskDefMap;
+    }
+    
+    public static void main(String[] args) {
+        Map<String, Object> testMap = new HashMap<>();
+        testMap.put("createDate", new Date());
+        
+        String json = JSONObject.toJSONString(testMap);
+        System.out.println(json);
+        
+        Object createDate = JSONObject.parseObject(json).get("createDate");
+        System.out.println(createDate);
+    }
 }

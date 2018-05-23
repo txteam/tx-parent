@@ -6,9 +6,9 @@
  */
 package com.tx.component.task.delegate.impl;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import com.alibaba.fastjson.JSONObject;
 import com.tx.component.task.delegate.TaskDelegateExecution;
@@ -35,6 +35,9 @@ public class TaskDelegateExecutionImpl implements TaskDelegateExecution {
     
     /** 会话中传递的参数实例 */
     private final Map<String, Object> attributes;
+    
+    /** 跳过标志位 */
+    private boolean skipFlag = false;
     
     /** <默认构造函数> */
     public TaskDelegateExecutionImpl(TaskDef taskDef, TaskStatus taskStatus) {
@@ -76,49 +79,30 @@ public class TaskDelegateExecutionImpl implements TaskDelegateExecution {
      * @return
      */
     @Override
-    public Map<String, Object> getTaskAttributeMap() {
-        JSONObject json = JSONObject.parseObject(this.taskDef.getAttributes());
+    public JSONObject getTaskAttributeJSONObject() {
+        JSONObject jsonObject = JSONObject
+                .parseObject(this.taskDef.getAttributes());
         
-        Map<String, Object> resMap = new HashMap<>();
-        if (json == null) {
-            return resMap;
+        if (jsonObject == null) {
+            return new JSONObject();
         }
         
-        for (Entry<String, Object> entryTemp : json.entrySet()) {
-            resMap.put(entryTemp.getKey(), entryTemp.getValue());
-        }
-        return resMap;
-    }
-    
-    /**
-     * @param key
-     * @return
-     */
-    @Override
-    public Object getTaskAttribute(String key) {
-        AssertUtils.notEmpty(key, "key is empty.");
-        
-        Map<String, Object> resMap = getTaskAttributeMap();
-        return resMap.get(key);
+        return jsonObject;
     }
     
     /**
      * @return
      */
     @Override
-    public Map<String, Object> getTaskStatusAttributeMap() {
-        JSONObject json = JSONObject
+    public JSONObject getTaskStatusAttributeJSONObject() {
+        JSONObject jsonObject = JSONObject
                 .parseObject(this.taskStatus.getAttributes());
         
-        Map<String, Object> resMap = new HashMap<>();
-        if (json == null) {
-            return resMap;
+        if (jsonObject == null) {
+            return new JSONObject();
         }
         
-        for (Entry<String, Object> entryTemp : json.entrySet()) {
-            resMap.put(entryTemp.getKey(), entryTemp.getValue());
-        }
-        return resMap;
+        return jsonObject;
     }
     
     /**
@@ -126,24 +110,10 @@ public class TaskDelegateExecutionImpl implements TaskDelegateExecution {
      */
     @Override
     public String getTaskStatusAttributes() {
-        Map<String, Object> statusAttributesMap = getTaskAttributeMap();
+        JSONObject jsonObject = getTaskAttributeJSONObject();
         
-        String taskStatusAttributes = JSONObject
-                .toJSONString(statusAttributesMap);
+        String taskStatusAttributes = jsonObject.toJSONString();
         return taskStatusAttributes;
-    }
-    
-    /**
-     * @param key
-     * @return
-     */
-    @Override
-    public Object getTaskStatusAttribute(String key) {
-        AssertUtils.notEmpty(key, "key is empty.");
-        
-        Map<String, Object> statusAttributesMap = getTaskAttributeMap();
-        Object value = statusAttributesMap.get(key);
-        return value;
     }
     
     /**
@@ -155,6 +125,27 @@ public class TaskDelegateExecutionImpl implements TaskDelegateExecution {
         AssertUtils.notEmpty(key, "key is empty.");
         AssertUtils.notNull(value, "value is null.");
         
+        JSONObject jsonObject = getTaskAttributeJSONObject();
+        jsonObject.put(key, value);
+        
+        String taskStatusAttributes = jsonObject.toJSONString();
+        this.taskStatus.setAttributes(taskStatusAttributes);
+    }
+    
+    /**
+     * @return
+     */
+    @Override
+    public Date getNextFireDate() {
+        return this.taskStatus.getNextFireDate();
+    }
+    
+    /**
+     * @param nextFireDate
+     */
+    @Override
+    public void setNextFireDate(Date nextFireDate) {
+        this.taskStatus.setNextFireDate(nextFireDate);
     }
     
     /**
@@ -226,5 +217,21 @@ public class TaskDelegateExecutionImpl implements TaskDelegateExecution {
                     new Object[] { value, type });
         }
         return (T) value;
+    }
+    
+    /**
+     * @return 返回 skipFlag
+     */
+    @Override
+    public boolean isSkip() {
+        return skipFlag;
+    }
+    
+    /**
+     * @param 对skipFlag进行赋值
+     */
+    @Override
+    public void setSkip() {
+        this.skipFlag = true;
     }
 }

@@ -8,6 +8,8 @@ package com.tx.component.task.timedtask.executor;
 
 import java.util.Date;
 
+import org.springframework.transaction.PlatformTransactionManager;
+
 import com.tx.component.task.timedtask.AbstractTimedTaskExecutor;
 import com.tx.component.task.timedtask.task.SimpleTimedTask;
 
@@ -20,16 +22,18 @@ import com.tx.component.task.timedtask.task.SimpleTimedTask;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class SimpleTimedTaskExecutor extends AbstractTimedTaskExecutor<SimpleTimedTask> {
-    
-    /** <默认构造函数> */
-    public SimpleTimedTaskExecutor(SimpleTimedTask task) {
-        super(task);
-    }
+public class SimpleTimedTaskExecutor
+        extends AbstractTimedTaskExecutor<SimpleTimedTask> {
     
     /** <默认构造函数> */
     public SimpleTimedTaskExecutor() {
         super();
+    }
+    
+    /** <默认构造函数> */
+    public SimpleTimedTaskExecutor(String beanName, SimpleTimedTask task,
+            PlatformTransactionManager transactionManager) {
+        super(beanName, task, transactionManager);
     }
     
     /**

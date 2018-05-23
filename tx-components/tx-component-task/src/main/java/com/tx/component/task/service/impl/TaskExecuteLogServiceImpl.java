@@ -10,8 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,10 +32,21 @@ import com.tx.core.paged.model.PagedList;
 public class TaskExecuteLogServiceImpl implements TaskExecuteLogService {
     
     @SuppressWarnings("unused")
-    private Logger logger = LoggerFactory.getLogger(TaskExecuteLogServiceImpl.class);
+    private Logger logger = LoggerFactory
+            .getLogger(TaskExecuteLogServiceImpl.class);
     
-    @Resource(name = "taskContext.taskExecuteLogDao")
     private TaskExecuteLogDao taskExecuteLogDao;
+    
+    /** <默认构造函数> */
+    public TaskExecuteLogServiceImpl() {
+        super();
+    }
+    
+    /** <默认构造函数> */
+    public TaskExecuteLogServiceImpl(TaskExecuteLogDao taskExecuteLogDao) {
+        super();
+        this.taskExecuteLogDao = taskExecuteLogDao;
+    }
     
     /**
      * @param taskExecuteLog
@@ -47,10 +56,14 @@ public class TaskExecuteLogServiceImpl implements TaskExecuteLogService {
     public void insert(TaskExecuteLog taskExecuteLog) {
         //验证参数是否合法
         AssertUtils.notNull(taskExecuteLog, "taskExecuteLog is null.");
-        AssertUtils.notEmpty(taskExecuteLog.getTaskId(), "taskExecuteLog.taskId is empty.");
-        AssertUtils.notEmpty(taskExecuteLog.getCode(), "taskExecuteLog.code is empty.");
-        AssertUtils.notEmpty(taskExecuteLog.getName(), "taskExecuteLog.name is empty.");
-        AssertUtils.notNull(taskExecuteLog.getResult(), "taskExecuteLog.result is null.");
+        AssertUtils.notEmpty(taskExecuteLog.getTaskId(),
+                "taskExecuteLog.taskId is empty.");
+        AssertUtils.notEmpty(taskExecuteLog.getCode(),
+                "taskExecuteLog.code is empty.");
+        AssertUtils.notEmpty(taskExecuteLog.getName(),
+                "taskExecuteLog.name is empty.");
+        AssertUtils.notNull(taskExecuteLog.getResult(),
+                "taskExecuteLog.result is null.");
         
         //为添加的数据需要填入默认值的字段填入默认值
         
@@ -114,14 +127,16 @@ public class TaskExecuteLogServiceImpl implements TaskExecuteLogService {
      * @return
      */
     @Override
-    public PagedList<TaskExecuteLog> queryPagedList(Map<String, Object> params, int pageIndex, int pageSize) {
+    public PagedList<TaskExecuteLog> queryPagedList(Map<String, Object> params,
+            int pageIndex, int pageSize) {
         //T判断条件合法性
         
         //生成查询条件
         params = params == null ? new HashMap<String, Object>() : params;
         
         //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
-        PagedList<TaskExecuteLog> resPagedList = this.taskExecuteLogDao.queryPagedList(params, pageIndex, pageSize);
+        PagedList<TaskExecuteLog> resPagedList = this.taskExecuteLogDao
+                .queryPagedList(params, pageIndex, pageSize);
         
         return resPagedList;
     }
@@ -155,7 +170,8 @@ public class TaskExecuteLogServiceImpl implements TaskExecuteLogService {
     public boolean updateById(TaskExecuteLog taskExecuteLog) {
         //验证参数是否合法，必填字段是否填写，
         AssertUtils.notNull(taskExecuteLog, "taskExecuteLog is null.");
-        AssertUtils.notEmpty(taskExecuteLog.getId(), "taskExecuteLog.id is empty.");
+        AssertUtils.notEmpty(taskExecuteLog.getId(),
+                "taskExecuteLog.id is empty.");
         
         //生成需要更新字段的hashMap
         Map<String, Object> updateRowMap = new HashMap<String, Object>();

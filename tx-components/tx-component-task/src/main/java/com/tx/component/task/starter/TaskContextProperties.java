@@ -9,14 +9,14 @@ package com.tx.component.task.starter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
-  * 命令容器配置<br/>
-  * <功能详细描述>
-  * 
-  * @author  Administrator
-  * @version  [版本号, 2018年5月1日]
-  * @see  [相关类/方法]
-  * @since  [产品/模块版本]
-  */
+ * 命令容器配置<br/>
+ * <功能详细描述>
+ * 
+ * @author  Administrator
+ * @version  [版本号, 2018年5月1日]
+ * @see  [相关类/方法]
+ * @since  [产品/模块版本]
+ */
 @ConfigurationProperties(prefix = "task")
 public class TaskContextProperties {
     
@@ -80,4 +80,45 @@ public class TaskContextProperties {
         this.transactionManager = transactionManager;
     }
     
+    /**
+     * @return 返回 module
+     */
+    public String getModule() {
+        return module;
+    }
+    
+    /**
+     * @param 对module进行赋值
+     */
+    public void setModule(String module) {
+        this.module = module;
+    }
+    
+    /**
+     * @return 返回 basePackages
+     */
+    public String getBasePackages() {
+        return basePackages;
+    }
+    
+    /**
+     * @param 对basePackages进行赋值
+     */
+    public void setBasePackages(String basePackages) {
+        this.basePackages = basePackages;
+    }
+    
+    /**
+     * @return 返回 mybatisConfigLocation
+     */
+    public String getMybatisConfigLocation() {
+        return mybatisConfigLocation;
+    }
+    
+    /**
+     * @param 对mybatisConfigLocation进行赋值
+     */
+    public void setMybatisConfigLocation(String mybatisConfigLocation) {
+        this.mybatisConfigLocation = mybatisConfigLocation;
+    }
 }
