@@ -8,7 +8,6 @@ package com.tx.component.basicdata.context;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.aop.TargetSource;
-import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.aop.framework.autoproxy.AbstractAutoProxyCreator;
 import org.springframework.beans.BeansException;
 import org.springframework.cache.CacheManager;
@@ -77,11 +76,11 @@ public class BasicDataServiceSupportCacheProxyCreator extends
         return DO_NOT_PROXY;
     }
     
-    /**
-     * @param proxyFactory
-     */
-    @Override
-    protected void customizeProxyFactory(ProxyFactory proxyFactory) {
-        proxyFactory.setProxyTargetClass(true);
-    }
+//    /**
+//     * @param proxyFactory
+//     */
+//    @Override
+//    protected void customizeProxyFactory(ProxyFactory proxyFactory) {
+//        proxyFactory.setProxyTargetClass(true);
+//    }
 }
