@@ -19,16 +19,21 @@
 	<dependencies>
 		<!-- ConfigurationProperties Need -->
 		<dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-configuration-processor</artifactId>
-            <optional>true</optional>
-        </dependency>
-	
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-configuration-processor</artifactId>
+			<optional>true</optional>
+		</dependency>
+
 		<!-- spring-boot-starter -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter</artifactId>
 		</dependency>
+		<!-- handlerMethod依赖 -->
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.springframework</groupId> -->
+<!-- 			<artifactId>spring-web</artifactId> -->
+<!-- 		</dependency> -->
 
 		<!-- spring-boot-starter-* optional:true -->
 		<dependency>
@@ -58,7 +63,7 @@
 			<artifactId>cxf-spring-boot-starter-jaxws</artifactId>
 			<optional>true</optional>
 		</dependency>
-		
+
 		<!-- mybatis -->
 		<dependency>
 			<groupId>org.mybatis.spring.boot</groupId>

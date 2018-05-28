@@ -25,6 +25,19 @@ import com.tx.component.task.timedtask.AbstractTimedTask;
 public abstract class IterableTimedTask<T> extends AbstractTimedTask {
     
     /**
+     * 如果为迭代任务，可能会出现内部系统错误造成无限循环，利用该值计数大道该值后抛出异常<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return int [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public int getMaxBatchCount() {
+        return 1000;
+    }
+    
+    /**
      * 获取单个业务元处理的数目<br/>
      *     默认单个任务元处理10个
      * @return [参数说明]
@@ -38,53 +51,28 @@ public abstract class IterableTimedTask<T> extends AbstractTimedTask {
     }
     
     /**
-     * 是否需要验证总条数<br/>
-     * <功能详细描述>
+     * 是否存在下一批任务
+     *<功能详细描述>
+     * @param executeDate
      * @return [参数说明]
      * 
      * @return boolean [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public boolean isNeedCheckCount(){
-        return true;
-    }
+    public abstract boolean hasNextAdapter(Object... args);
     
     /**
-      * 获取批量任务总数<br/> 
-      *<功能详细描述>
-      * @param executeDate
-      * @return [参数说明]
-      * 
-      * @return int [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 下一批数据<br/> 
+     * <功能详细描述>
+     * @param executeDate
+     * @return [参数说明]
+     * 
+     * @return List<T> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
-    public abstract int count(Date executeDate);
-    
-    /**
-      * 是否存在下一批任务
-      *<功能详细描述>
-      * @param executeDate
-      * @return [参数说明]
-      * 
-      * @return boolean [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    public abstract boolean hasNext(Date executeDate);
-    
-    /**
-      * 下一批数据<br/> 
-      * <功能详细描述>
-      * @param executeDate
-      * @return [参数说明]
-      * 
-      * @return List<T> [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    public abstract List<T> next(Date executeDate);
+    public abstract List<T> nextAdapter(int batchSize, Object... args);
     
     /**
      * 获取下次可执行时间<br/>
@@ -95,8 +83,8 @@ public abstract class IterableTimedTask<T> extends AbstractTimedTask {
      * @return Date [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
-    public abstract Date getNextDate(Date executeDate);
+     */
+    public abstract Date getNextDateAdapter(Object... args);
     
     /**
       * 事务执行句柄<br/>
@@ -108,5 +96,5 @@ public abstract class IterableTimedTask<T> extends AbstractTimedTask {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public abstract void execute(T data, Date executeDate);
+    public abstract void executeAdapter(T data, Object... args);
 }

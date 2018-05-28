@@ -47,7 +47,7 @@ public abstract class BatchTimedTask<T> extends AbstractTimedTask {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public abstract List<T> getList(Date executeDate);
+    public abstract List<T> getListAdapter(Object... args);
     
     /**
      * 获取下次可执行时间<br/>
@@ -59,7 +59,7 @@ public abstract class BatchTimedTask<T> extends AbstractTimedTask {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    public abstract Date getNextDate(Date executeDate);
+    public abstract Date getNextDateAdapter(Object... args);
     
     /**
      * 事务执行句柄<br/>
@@ -72,5 +72,5 @@ public abstract class BatchTimedTask<T> extends AbstractTimedTask {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public abstract void execute(T data, Date executeDate);
+    public abstract void executeAdapter(T data, Object... args);
 }

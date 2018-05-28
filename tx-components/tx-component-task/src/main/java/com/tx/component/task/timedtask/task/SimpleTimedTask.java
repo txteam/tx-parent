@@ -34,5 +34,5 @@ public abstract class SimpleTimedTask extends AbstractTimedTask {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public abstract Date execute(Date executeDate);
+    public abstract Date executeAdapter(Object... args);
 }

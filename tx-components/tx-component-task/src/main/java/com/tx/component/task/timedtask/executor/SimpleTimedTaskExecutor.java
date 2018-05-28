@@ -8,7 +8,13 @@ package com.tx.component.task.timedtask.executor;
 
 import java.util.Date;
 
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import com.tx.component.task.timedtask.AbstractTimedTaskExecutor;
 import com.tx.component.task.timedtask.task.SimpleTimedTask;
@@ -22,8 +28,11 @@ import com.tx.component.task.timedtask.task.SimpleTimedTask;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class SimpleTimedTaskExecutor
-        extends AbstractTimedTaskExecutor<SimpleTimedTask> {
+public class SimpleTimedTaskExecutor extends
+        AbstractTimedTaskExecutor<SimpleTimedTask> implements InitializingBean {
+    
+    /** 事务模板类 */
+    private TransactionTemplate transactionTemplateOfRequiresNew;
     
     /** <默认构造函数> */
     public SimpleTimedTaskExecutor() {
@@ -37,12 +46,31 @@ public class SimpleTimedTaskExecutor
     }
     
     /**
+     * @throws Exception
+     */
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        this.transactionTemplateOfRequiresNew = new TransactionTemplate(
+                this.transactionManager, new DefaultTransactionDefinition(
+                        TransactionDefinition.PROPAGATION_REQUIRES_NEW));
+    }
+    
+    /**
      * @param executeDate
      * @return
      */
     @Override
-    public Date doExecute(Date executeDate) {
-        Date nextExecuteDate = this.task.execute(executeDate);
+    public Date doExecute(final Object... args) {
+        final SimpleTimedTask finalTask = this.task;
+        
+        Date nextExecuteDate = this.transactionTemplateOfRequiresNew
+                .execute(new TransactionCallback<Date>() {
+                    @Override
+                    public Date doInTransaction(TransactionStatus status) {
+                        return finalTask.executeAdapter(args);
+                    }
+                });
+        
         return nextExecuteDate;
     }
 }

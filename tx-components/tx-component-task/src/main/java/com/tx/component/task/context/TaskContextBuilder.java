@@ -8,8 +8,6 @@ package com.tx.component.task.context;
 
 import org.springframework.beans.factory.BeanNameAware;
 
-import com.tx.core.util.SignatureUtils;
-
 /**
  * 事务容器构建器<br/>
  * 

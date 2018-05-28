@@ -36,7 +36,7 @@ public class BatchTimedTaskExecutor<T>
         implements InitializingBean {
     
     /** 事务模板类 */
-    private TransactionTemplate transactionTemplate;
+    private TransactionTemplate transactionTemplateOfRequiresNew;
     
     /** <默认构造函数> */
     public BatchTimedTaskExecutor() {
@@ -44,9 +44,9 @@ public class BatchTimedTaskExecutor<T>
     }
     
     /** <默认构造函数> */
-    public BatchTimedTaskExecutor(String beanName, BatchTimedTask<T> task,
+    public BatchTimedTaskExecutor(String taskBeanName, BatchTimedTask<T> task,
             PlatformTransactionManager transactionManager) {
-        super(beanName, task, transactionManager);
+        super(taskBeanName, task, transactionManager);
     }
     
     /**
@@ -54,12 +54,12 @@ public class BatchTimedTaskExecutor<T>
      */
     @Override
     public void afterPropertiesSet() throws Exception {
-        AssertUtils.notEmpty(this.beanName, "beanName is empty.");
+        AssertUtils.notEmpty(this.taskBeanName, "beanName is empty.");
         AssertUtils.notNull(this.task, "task is null.");
         AssertUtils.notNull(this.transactionManager,
                 "transactionManager is null.");
         
-        this.transactionTemplate = new TransactionTemplate(
+        this.transactionTemplateOfRequiresNew = new TransactionTemplate(
                 this.transactionManager, new DefaultTransactionDefinition(
                         TransactionDefinition.PROPAGATION_REQUIRES_NEW));
     }
@@ -69,16 +69,16 @@ public class BatchTimedTaskExecutor<T>
      * @return
      */
     @Override
-    public Date doExecute(Date executeDate) {
+    public Date doExecute(final Object... args) {
         //获取任务总数，用以核对最后执行任务数量
-        List<T> dataList = this.task.getList(executeDate);
+        List<T> dataList = this.task.getListAdapter(args);
         final Queue<T> dataQueue = new ArrayDeque<>(dataList);
         
         final BatchTimedTask<T> finalTask = this.task;
         final int batchSize = this.task.getBatchSize();
         
         while (!dataQueue.isEmpty()) {
-            this.transactionTemplate
+            this.transactionTemplateOfRequiresNew
                     .execute(new TransactionCallbackWithoutResult() {
                         @Override
                         protected void doInTransactionWithoutResult(
@@ -86,16 +86,14 @@ public class BatchTimedTaskExecutor<T>
                             for (int i = 0; i < batchSize
                                     && !dataQueue.isEmpty(); i++) {
                                 T data = dataQueue.poll();//移除并返问队列头部的元素
-                                finalTask.execute(data, executeDate);
+                                finalTask.executeAdapter(data, args);
                             }
                         }
                     });
         }
         
-        Date nextExecuteDate = this.task.getNextDate(executeDate);
-        AssertUtils.notNull(nextExecuteDate,
-                "nextExecutDate is null.task:{}",
-                this.task.getCode());
+        Date nextExecuteDate = this.task.getNextDateAdapter(args);
+        
         return nextExecuteDate;
     }
 }

@@ -38,7 +38,7 @@ public class ConcurrentBatchTimedTaskExecutor<T>
         implements InitializingBean {
     
     /** 事务模板类 */
-    private TransactionTemplate transactionTemplate;
+    private TransactionTemplate transactionTemplateOfRequiresNew;
     
     /** 任务执行器 */
     private ThreadPoolTaskExecutor taskExecutor;
@@ -49,10 +49,10 @@ public class ConcurrentBatchTimedTaskExecutor<T>
     }
     
     /** <默认构造函数> */
-    public ConcurrentBatchTimedTaskExecutor(String beanName,
+    public ConcurrentBatchTimedTaskExecutor(String taskBeanName,
             ConcurrentBatchTimedTask<T> task,
             PlatformTransactionManager transactionManager) {
-        super(beanName, task, transactionManager);
+        super(taskBeanName, task, transactionManager);
     }
     
     /**
@@ -60,12 +60,12 @@ public class ConcurrentBatchTimedTaskExecutor<T>
      */
     @Override
     public void afterPropertiesSet() throws Exception {
-        AssertUtils.notEmpty(this.beanName, "beanName is empty.");
+        AssertUtils.notEmpty(this.taskBeanName, "beanName is empty.");
         AssertUtils.notNull(this.task, "task is null.");
         AssertUtils.notNull(this.transactionManager,
                 "transactionManager is null.");
         
-        this.transactionTemplate = new TransactionTemplate(
+        this.transactionTemplateOfRequiresNew = new TransactionTemplate(
                 this.transactionManager, new DefaultTransactionDefinition(
                         TransactionDefinition.PROPAGATION_REQUIRES_NEW));
         
@@ -80,9 +80,9 @@ public class ConcurrentBatchTimedTaskExecutor<T>
      * @return
      */
     @Override
-    public Date doExecute(final Date executeDate) {
+    public Date doExecute(final Object... args) {
         //获取任务总数，用以核对最后执行任务数量
-        List<T> dataList = this.task.getList(executeDate);
+        List<T> dataList = this.task.getListAdapter(args);
         int count = dataList.size();
         final int batchSize = this.task.getPoolSize();
         final Queue<T> dataQueue = new ConcurrentLinkedQueue<>(dataList);
@@ -94,7 +94,7 @@ public class ConcurrentBatchTimedTaskExecutor<T>
             final ConcurrentBatchTimedTask<T> finalTask = this.task;
             final ThreadPoolTaskExecutor finalTaskExecutor = this.taskExecutor;
             
-            final TransactionTemplate finalFT = this.transactionTemplate;
+            final TransactionTemplate finalFT = this.transactionTemplateOfRequiresNew;
             
             activeThreadNumber.getAndIncrement();//增加计数器
             taskExecutor.execute(new Runnable() {
@@ -114,8 +114,8 @@ public class ConcurrentBatchTimedTaskExecutor<T>
                                                         && !dataQueue
                                                                 .isEmpty(); i++) {
                                                     T data = dataQueue.poll();//移除并返问队列头部的元素
-                                                    finalTask.execute(data,
-                                                            executeDate);
+                                                    finalTask.executeAdapter(data,
+                                                            args);
                                                 }
                                             }
                                         });
@@ -136,10 +136,8 @@ public class ConcurrentBatchTimedTaskExecutor<T>
                 //doNothing
             }
         }
-        Date nextExecuteDate = this.task.getNextDate(executeDate);
-        AssertUtils.notNull(nextExecuteDate,
-                "nextExecutDate is null.task:{}",
-                this.task.getCode());
+        
+        Date nextExecuteDate = this.task.getNextDateAdapter(args);
         
         return nextExecuteDate;
     }

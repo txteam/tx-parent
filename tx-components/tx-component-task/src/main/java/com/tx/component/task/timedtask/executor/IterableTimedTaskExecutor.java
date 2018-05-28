@@ -14,7 +14,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import com.tx.component.task.timedtask.AbstractTimedTaskExecutor;
@@ -29,11 +29,12 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class IterableTimedTaskExecutor<T> extends AbstractTimedTaskExecutor<IterableTimedTask<T>>
+public class IterableTimedTaskExecutor<T>
+        extends AbstractTimedTaskExecutor<IterableTimedTask<T>>
         implements InitializingBean {
     
     /** 事务模板类 */
-    private TransactionTemplate transactionTemplate;
+    private TransactionTemplate transactionTemplateOfRequiresNew;
     
     /** <默认构造函数> */
     public IterableTimedTaskExecutor() {
@@ -41,18 +42,20 @@ public class IterableTimedTaskExecutor<T> extends AbstractTimedTaskExecutor<Iter
     }
     
     /** <默认构造函数> */
-    public IterableTimedTaskExecutor(String beanName, IterableTimedTask<T> task,
+    public IterableTimedTaskExecutor(String taskBeanName,
+            IterableTimedTask<T> task,
             PlatformTransactionManager transactionManager) {
-        super(beanName, task, transactionManager);
+        super(taskBeanName, task, transactionManager);
     }
-
+    
     /**
      * @throws Exception
      */
     @Override
     public void afterPropertiesSet() throws Exception {
-        this.transactionTemplate = new TransactionTemplate(this.transactionManager,
-                new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRES_NEW));
+        this.transactionTemplateOfRequiresNew = new TransactionTemplate(
+                this.transactionManager, new DefaultTransactionDefinition(
+                        TransactionDefinition.PROPAGATION_REQUIRES_NEW));
     }
     
     /**
@@ -60,36 +63,39 @@ public class IterableTimedTaskExecutor<T> extends AbstractTimedTaskExecutor<Iter
      * @return
      */
     @Override
-    public Date doExecute(Date executeDate) {
+    public Date doExecute(final Object... args) {
         //获取任务总数，用以核对最后执行任务数量
-        int count = this.task.count(executeDate);
-        int executeCount = 0;
+        boolean hasNextAdapter = this.task.hasNextAdapter(args);
         
-        while (this.task.hasNext(executeDate)) {
-            List<T> dataList = this.task.next(executeDate);
-            executeCount += dataList.size();
-            AssertUtils.isTrue(executeCount <= count,
-                    "executeCount:{} should min than count:{}",
-                    new Object[] { executeCount, count });
-            
+        //迭代取值
+        int batchIndex = 0;
+        while (hasNextAdapter) {
             final IterableTimedTask<T> finalTask = this.task;
-            this.transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-                @Override
-                protected void doInTransactionWithoutResult(TransactionStatus status) {
-                    for (T data : dataList) {
-                        finalTask.execute(data, executeDate);
-                    }
-                }
-            });
+            
+            hasNextAdapter = this.transactionTemplateOfRequiresNew
+                    .execute(new TransactionCallback<Boolean>() {
+                        //考虑到mysql的事务隔离性，nextAdapter,以及hasNextAdapter应该放入事务中进行取值
+                        @Override
+                        public Boolean doInTransaction(
+                                TransactionStatus status) {
+                            List<T> dataList = finalTask.nextAdapter(
+                                    finalTask.getBatchSize(), args);
+                            
+                            for (T data : dataList) {
+                                finalTask.executeAdapter(data, args);
+                            }
+                            return finalTask.hasNextAdapter(args);
+                        }
+                    });
+            
+            batchIndex = batchIndex + 1;
+            
+            AssertUtils.isTrue(batchIndex < this.task.getMaxBatchCount(),
+                    "任务执行异常，超过预期最大次数.需要修改batchSize或maxBatchCount.或是程序中出现异常导致无限循环.");
         }
         
-        if (this.task.isNeedCheckCount()) {
-            AssertUtils.isTrue(count == executeCount,
-                    "执行前检测到的待执行任务与最终执行了的任务数量不同.count:{} executeCount:{}",
-                    new Object[] { count, executeCount });
-        }
-        Date nextExecuteDate = this.task.getNextDate(executeDate);
-        AssertUtils.notNull(nextExecuteDate, "nextExecutDate is null.task:{}", this.task.getCode());
+        Date nextExecuteDate = this.task.getNextDateAdapter(args);
+        
         return nextExecuteDate;
     }
 }

@@ -360,6 +360,7 @@ public class TaskExecuteInterceptor
             TaskDelegateExecution execution = TaskSessionContext.close();
             AssertUtils.isTrue(task == execution.getTask(), "线程变量中的任务应该为同一对象.");
             AssertUtils.isTrue(taskStatus == execution.getTaskStatus(), "线程变量中的任务状态应该为同一对象.");
+            
             Date nextFireDate = execution.getNextFireDate();
             String taskStatusAttributes = execution.getTaskStatusAttributes();
             
@@ -368,12 +369,12 @@ public class TaskExecuteInterceptor
             statusUpdateRowMap.put("startDate", startDate);
             statusUpdateRowMap.put("endDate", endDate);
             statusUpdateRowMap.put("consuming", consuming);
+            
             if(!execution.isSkip()){
                 statusUpdateRowMap.put("result",
                         isSuccess ? TaskResultEnum.SUCCESS : TaskResultEnum.FAIL);//运行时结果
                 statusUpdateRowMap.put("executeCount",
                         taskStatus.getExecuteCount() + 1);//执行次数+1
-                
                 statusUpdateRowMap.put("attributes", taskStatusAttributes);
                 statusUpdateRowMap.put("nextFireDate", nextFireDate);
                 
@@ -398,7 +399,7 @@ public class TaskExecuteInterceptor
             updateTaskStatusWithNewRequire(taskId,
                     TaskStatusEnum.EXECUTING,
                     TaskStatusEnum.WAIT_EXECUTE,
-                    null,
+                    null,//将签名更新为空
                     statusUpdateRowMap);
             
             //记录执行日志
@@ -470,6 +471,7 @@ public class TaskExecuteInterceptor
                             taskStatusBW.setPropertyValue(key, value);
                         }
                         taskStatus.setStatus(targetStatus);
+                        taskStatus.setSignature(signature);
                         
                         finalTaskStatusService.updateById(taskStatus);
                         return taskStatus;

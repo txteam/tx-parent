@@ -4,10 +4,12 @@
  * 修改时间:  2016年2月15日
  * <修改描述:>
  */
-package com.tx.core.support.methodinvoke.support;
+package com.tx.core.method.request;
 
 import java.util.Iterator;
 import java.util.Map;
+
+import org.springframework.util.MultiValueMap;
 
 /**
  * Invoke请求对象<br/>
@@ -21,14 +23,14 @@ import java.util.Map;
 public interface InvokeRequest {
     
     /**
-      * 获取指定参数名的参数对象
-      * <功能详细描述>
-      * @param paramName
-      * @return [参数说明]
-      * 
-      * @return String [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 获取指定参数名的参数对象
+     * <功能详细描述>
+     * @param paramName
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     Object getParameter(String paramName);
     
@@ -88,5 +90,16 @@ public interface InvokeRequest {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    Map<String, Object[]> getParameterMap();
+    Map<String, Object> getParameterMap();
+    
+    /**
+     * 获取参数映射<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return LinkedMultiValueMap<String,Object> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    MultiValueMap<String, Object> getParameterMultiValueMap();
 }

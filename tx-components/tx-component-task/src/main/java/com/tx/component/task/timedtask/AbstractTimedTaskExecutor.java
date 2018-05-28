@@ -20,28 +20,27 @@ import com.tx.component.task.context.TaskContext;
 import com.tx.component.task.context.TaskSessionContext;
 import com.tx.component.task.interfaces.TaskExecutor;
 import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.util.typereference.ParameterizedTypeReference;
 
 /**
-* 任务执行器的的抽象类实现
-* <功能详细描述>
-* 
-* @author  Tim.PengQY
-* @version  [版本号, 2017年10月16日]
-* @see  [相关类/方法]
-* @since  [产品/模块版本]
-*/
-public abstract class AbstractTimedTaskExecutor<T extends TimedTask>
-        extends ParameterizedTypeReference<T> implements TaskExecutor {
+ * 任务执行器的的抽象类实现
+ * <功能详细描述>
+ * 
+ * @author  Tim.PengQY
+ * @version  [版本号, 2017年10月16日]
+ * @see  [相关类/方法]
+ * @since  [产品/模块版本]
+ */
+public abstract class AbstractTimedTaskExecutor<TASK extends TimedTask>
+        implements TaskExecutor {
     
     /** 日志记录器 */
     protected Logger logger = LoggerFactory.getLogger(TaskContext.class);
     
     /** beanName */
-    protected String beanName;
+    protected String taskBeanName;
     
     /** 任务实例 */
-    protected T task;
+    protected TASK task;
     
     /** 事务manager */
     protected PlatformTransactionManager transactionManager;
@@ -52,45 +51,35 @@ public abstract class AbstractTimedTaskExecutor<T extends TimedTask>
     }
     
     /** <默认构造函数> */
-    public AbstractTimedTaskExecutor(String beanName, T task,
+    public AbstractTimedTaskExecutor(String taskBeanName, TASK task,
             PlatformTransactionManager transactionManager) {
         super();
-        AssertUtils.notEmpty(beanName, "beanName is empty.");
+        AssertUtils.notEmpty(taskBeanName, "taskBeanName is empty.");
         AssertUtils.notNull(task, "task is null.");
         AssertUtils.notNull(transactionManager, "transactionManager is null.");
         
-        this.beanName = beanName;
+        this.taskBeanName = taskBeanName;
         this.task = task;
         this.transactionManager = transactionManager;
     }
-    
-    //public void is
     
     /**
      * @param executeDate
      * @return
      */
     @Task
-    public Date execute(Date executeDate) {
+    public void execute(final Object... args) {
         AssertUtils.notNull(this.task, "task is null.");
         
-        //获取任务的下次执行时间
-        Date nextFireDate = TaskSessionContext.getExecution().getNextFireDate();
-        if (nextFireDate != null && executeDate.compareTo(nextFireDate) < 0) {
-            TaskSessionContext.getExecution().setSkip();//设置当前任务实际是被跳过执行的
-            return nextFireDate;
-        }
+        //任务执行以后，并返回下次执行时间
+        Date nextFireDate = doExecute(args);
         
-        //执行任务
-        nextFireDate = doExecute(executeDate);
-        //写入下次执行时间
+        //设置下次执行时间
         TaskSessionContext.getExecution().setNextFireDate(nextFireDate);
-        
-        return nextFireDate;
     }
     
     /** 子类的任务执行 */
-    protected abstract Date doExecute(Date executeDate);
+    protected abstract Date doExecute(Object... args);
     
     /**
      * @return
@@ -151,21 +140,21 @@ public abstract class AbstractTimedTaskExecutor<T extends TimedTask>
      */
     @Override
     public String beanName() {
-        AssertUtils.notEmpty(this.beanName, "beanName is empty.");
-        return this.beanName;
+        AssertUtils.notEmpty(this.taskBeanName, "beanName is empty.");
+        return this.taskBeanName;
     }
     
     /**
      * @param 对beanName进行赋值
      */
-    public void setBeanName(String beanName) {
-        this.beanName = beanName;
+    public void setTaskBeanName(String taskBeanName) {
+        this.taskBeanName = taskBeanName;
     }
     
     /**
      * @param 对task进行赋值
      */
-    public void setTask(T task) {
+    public void setTask(TASK task) {
         this.task = task;
     }
     
