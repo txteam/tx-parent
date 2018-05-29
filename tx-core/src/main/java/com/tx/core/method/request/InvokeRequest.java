@@ -44,10 +44,6 @@ public interface InvokeRequest {
     */
     <T> T[] getParameterValues(String paramName, Class<T> type);
     
-    
-    
-    
-    
     /**
      * 获取指定参数名的参数对象
      * <功能详细描述>
@@ -60,8 +56,6 @@ public interface InvokeRequest {
      */
     Object getParameter(String paramName);
     
-    
-    
     /**
       * 获取所有的参数值
       * <功能详细描述>
@@ -73,8 +67,6 @@ public interface InvokeRequest {
       * @see [类、类#方法、类#成员]
      */
     Object[] getParameterValues(String paramName);
-    
-    
     
     /**
       * 获取参数名集合的迭代器<br/>
@@ -96,5 +88,5 @@ public interface InvokeRequest {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    Map<String, Object> getParameterMap();
+    Map<String, Object[]> getParameterMap();
 }

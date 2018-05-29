@@ -68,10 +68,7 @@ public class RequestJsonParamMethodArgumentResolver
         Object attribute = JSONObject.parseObject(parameterValue,
                 parameter.getParameterType());
         if (attribute == null) {
-            attribute = createAttribute(name,
-                    parameter,
-                    binderFactory,
-                    webRequest);
+            return null;
         }
         
         //创建WebDataBinder
@@ -133,23 +130,6 @@ public class RequestJsonParamMethodArgumentResolver
                 break;
             }
         }
-    }
-    
-    /**
-     * Extension point to create the model attribute if not found in the model.
-     * The default implementation uses the default constructor.
-     * 
-     * @param attributeName the name of the attribute (never {@code null})
-     * @param parameter the method parameter
-     * @param binderFactory for creating WebDataBinder instance
-     * @param webRequest the current request
-     * @return the created model attribute (never {@code null})
-     */
-    private Object createAttribute(String attributeName,
-            MethodParameter parameter, WebDataBinderFactory binderFactory,
-            NativeWebRequest webRequest) throws Exception {
-        
-        return BeanUtils.instantiateClass(parameter.getParameterType());
     }
     
     /**

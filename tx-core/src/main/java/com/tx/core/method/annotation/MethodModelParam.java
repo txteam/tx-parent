@@ -12,6 +12,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.springframework.core.annotation.AliasFor;
+
 /**
  * 参数设置类<br/>
  * <功能详细描述>
@@ -25,25 +27,19 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface MethodModelParam {
+    
     /**
      * 参数默认名称<br/>
-     * <功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return String [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
+     * Alias for {@link #name}.
      */
+    @AliasFor("name")
     String value() default "";
     
     /**
-     * 是否必填<br/>
-     * <功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return boolean [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
+     * 参数默认名称<br/>
+     * The name of the request parameter to bind to.
+     * @since 4.2
      */
-    boolean required() default false;
+    @AliasFor("value")
+    String name() default "";
 }

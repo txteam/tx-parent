@@ -15,6 +15,8 @@ import org.springframework.core.MethodParameter;
 import org.springframework.core.ParameterNameDiscoverer;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
+
+import com.tx.core.exceptions.argument.ArgIllegalException;
 import com.tx.core.method.request.InvokeRequest;
 import com.tx.core.method.resolver.MethodArgumentResolverComposite;
 
@@ -94,6 +96,7 @@ public class InvocableHandlerMethod extends HandlerMethod {
         }
         
         Object returnValue = doInvoke(args);
+        
         if (logger.isTraceEnabled()) {
             logger.trace("Method ["
                     + ClassUtils.getQualifiedMethodName(getMethod(),
@@ -112,39 +115,42 @@ public class InvocableHandlerMethod extends HandlerMethod {
         
         MethodParameter[] parameters = getMethodParameters();
         Object[] args = new Object[parameters.length];
-        for (int i = 0; i < parameters.length; i++) {
-            MethodParameter parameter = parameters[i];
+        
+        for (int index = 0; index < parameters.length; index++) {
+            MethodParameter parameter = parameters[index];
             parameter.initParameterNameDiscovery(this.parameterNameDiscoverer);
             
-            //如果从额外出的参数中检测出类型一致的参数则优先适配
-            args[i] = resolveProvidedArgument(parameter, providedArgs);
+            //如果从额外出的参数中检测出位置一致，并且类型一致的参数 则优先适配
+            args[index] = resolveProvidedArgument(index,
+                    parameter,
+                    providedArgs);
             
-            if (args[i] != null) {
+            if (args[index] != null) {
                 continue;
             }
             
             //如果没有，则从调用请求中获取值
             if (this.argumentResolvers.supportsParameter(parameter)) {
                 try {
-                    args[i] = this.argumentResolvers.resolveArgument(parameter,
-                            request);
+                    args[index] = this.argumentResolvers
+                            .resolveArgument(parameter, request);
                     continue;
                 } catch (Exception ex) {
                     if (logger.isDebugEnabled()) {
                         logger.debug(getArgumentResolutionErrorMessage(
-                                "Failed to resolve", i), ex);
+                                "Failed to resolve", index), ex);
                     }
                     throw ex;
                 }
             }
             
-            if (args[i] == null) {
+            if (args[index] == null) {
                 throw new IllegalStateException(
                         "Could not resolve method parameter at index "
                                 + parameter.getParameterIndex() + " in "
                                 + parameter.getMethod().toGenericString() + ": "
                                 + getArgumentResolutionErrorMessage(
-                                        "No suitable resolver for", i));
+                                        "No suitable resolver for", index));
             }
         }
         return args;
@@ -178,15 +184,18 @@ public class InvocableHandlerMethod extends HandlerMethod {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    private Object resolveProvidedArgument(MethodParameter parameter,
+    private Object resolveProvidedArgument(int index, MethodParameter parameter,
             Object... providedArgs) {
         if (providedArgs == null) {
             return null;
         }
-        for (Object providedArg : providedArgs) {
-            if (parameter.getParameterType().isInstance(providedArg)) {
-                return providedArg;
-            }
+        if (index >= providedArgs.length) {
+            return null;
+        }
+        
+        Object providedArg = providedArgs[index];
+        if (parameter.getParameterType().isInstance(providedArg)) {
+            return providedArg;
         }
         return null;
     }
@@ -202,11 +211,13 @@ public class InvocableHandlerMethod extends HandlerMethod {
             assertTargetBean(getBridgedMethod(), getBean(), args);
             String text = (ex.getMessage() != null ? ex.getMessage()
                     : "Illegal argument");
-            throw new IllegalStateException(
-                    getInvocationErrorMessage(text, args), ex);
+            
+            throw new ArgIllegalException(getInvocationErrorMessage(text, args),
+                    ex);
         } catch (InvocationTargetException ex) {
             // Unwrap for HandlerExceptionResolvers ...
             Throwable targetException = ex.getTargetException();
+            
             if (targetException instanceof RuntimeException) {
                 throw (RuntimeException) targetException;
             } else if (targetException instanceof Error) {
@@ -239,7 +250,8 @@ public class InvocableHandlerMethod extends HandlerMethod {
                     + targetBeanClass.getName()
                     + "'. If the controller requires proxying "
                     + "(e.g. due to @Transactional), please use class-based proxying.";
-            throw new IllegalStateException(
+            
+            throw new ArgIllegalException(
                     getInvocationErrorMessage(text, args));
         }
     }
@@ -284,6 +296,7 @@ public class InvocableHandlerMethod extends HandlerMethod {
         sb.append("Method [")
                 .append(getBridgedMethod().toGenericString())
                 .append("]\n");
+        
         return sb.toString();
     }
 }
