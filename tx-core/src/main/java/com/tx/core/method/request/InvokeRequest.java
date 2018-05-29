@@ -9,8 +9,6 @@ package com.tx.core.method.request;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.springframework.util.MultiValueMap;
-
 /**
  * Invoke请求对象<br/>
  * <功能详细描述>
@@ -31,8 +29,24 @@ public interface InvokeRequest {
      * @return String [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-     */
-    Object getParameter(String paramName);
+    */
+    <T> T getParameter(String paramName, Class<T> type);
+    
+    /**
+     * 获取所有的参数值
+     * <功能详细描述>
+     * @param paramName
+     * @return [参数说明]
+     * 
+     * @return String[] [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    <T> T[] getParameterValues(String paramName, Class<T> type);
+    
+    
+    
+    
     
     /**
      * 获取指定参数名的参数对象
@@ -43,8 +57,10 @@ public interface InvokeRequest {
      * @return String [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
-    <T> T getParameter(String paramName, Class<T> type);
+     */
+    Object getParameter(String paramName);
+    
+    
     
     /**
       * 获取所有的参数值
@@ -58,17 +74,7 @@ public interface InvokeRequest {
      */
     Object[] getParameterValues(String paramName);
     
-    /**
-     * 获取所有的参数值
-     * <功能详细描述>
-     * @param paramName
-     * @return [参数说明]
-     * 
-     * @return String[] [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-    */
-    <T> T[] getParameterValues(String paramName, Class<T> type);
+    
     
     /**
       * 获取参数名集合的迭代器<br/>
@@ -91,15 +97,4 @@ public interface InvokeRequest {
       * @see [类、类#方法、类#成员]
      */
     Map<String, Object> getParameterMap();
-    
-    /**
-     * 获取参数映射<br/>
-     * <功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return LinkedMultiValueMap<String,Object> [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    MultiValueMap<String, Object> getParameterMultiValueMap();
 }

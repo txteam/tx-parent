@@ -19,7 +19,7 @@ import com.tx.core.method.request.InvokeRequest;
 import com.tx.core.method.resolver.MethodArgumentResolverComposite;
 
 /**
-  * <功能简述>
+  * 可调用的HandlerMethod<br/>
   * <功能详细描述>
   * 
   * @author  Administrator
@@ -244,6 +244,17 @@ public class InvocableHandlerMethod extends HandlerMethod {
         }
     }
     
+    /**
+     * 获取注入的错误消息<br/>
+     * <功能详细描述>
+     * @param text
+     * @param resolvedArgs
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
     private String getInvocationErrorMessage(String text,
             Object[] resolvedArgs) {
         StringBuilder sb = new StringBuilder(getDetailedErrorMessage(text));

@@ -4,7 +4,7 @@
  * 修改时间:  2016年1月4日
  * <修改描述:>
  */
-package com.tx.core.method.annotations;
+package com.tx.core.method.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -24,7 +24,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface MethodJsonParam {
+public @interface MethodParam {
     /**
      * 参数默认名称<br/>
      * <功能详细描述>

@@ -4,7 +4,7 @@
  * 修改时间:  2016年1月4日
  * <修改描述:>
  */
-package com.tx.core.method.annotations;
+package com.tx.core.method.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -24,7 +24,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface MethodModelParam {
+public @interface MethodModelAttribute {
     /**
      * 参数默认名称<br/>
      * <功能详细描述>
@@ -46,15 +46,4 @@ public @interface MethodModelParam {
      * @see [类、类#方法、类#成员]
      */
     boolean required() default false;
-    
-    /**
-     * 参数默认值<br/>
-     * <功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return String [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    String defaultValue() default "";
 }

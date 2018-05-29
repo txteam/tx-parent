@@ -142,11 +142,11 @@ public class MapInvokeRequest implements InvokeRequest {
         return resMap;
     }
     
-    /**
-     * @return
-     */
-    @Override
-    public MultiValueMap<String, Object> getParameterMultiValueMap() {
-        return this.multiValueMap;
-    }
+//    /**
+//     * @return
+//     */
+//    @Override
+//    public MultiValueMap<String, Object> getParameterMultiValueMap() {
+//        return this.multiValueMap;
+//    }
 }
