@@ -28,21 +28,30 @@ public class MethodInvokeUtilsTest {
         MethodTestService service = new MethodTestService();
         
         HandlerMethod hm1 = new HandlerMethod(service, "test1");
-        
-        HandlerMethodInvokeUtils.invokeHandlerMethod(hm1, null, null);
+        HandlerMethodInvokeUtils.invokeHandlerMethod(hm1, null);
         
         HandlerMethod hm2 = new HandlerMethod(service, "test2", String.class,
                 String.class);
-        
         System.out.println("result:" + HandlerMethodInvokeUtils
                 .invokeHandlerMethod(hm2, null, null, "test2_1"));
         System.out.println("result:" + HandlerMethodInvokeUtils
-                .invokeHandlerMethod(hm2, null, "test2_2"));
-        
+                .invokeHandlerMethod(hm2, null, null, "test2_2"));
+        System.out.println("result:" + HandlerMethodInvokeUtils
+                .invokeHandlerMethod(hm2, null, "test2_3"));
         Map<String, Object> params = new HashMap<>();
-        params.put("test1", "test2-3-1");
-        params.put("test2", "test2-3-2");
+        params.put("test1", "test2-4-1");
+        params.put("test2", "test2-4-2");
         System.out.println("result:" + HandlerMethodInvokeUtils
                 .invokeHandlerMethod(hm2, params));
+        
+        HandlerMethod hm3 = new HandlerMethod(service, "test3", String.class,
+                String.class);
+        params = new HashMap<>();
+        params.put("test1", "test3-1-1");
+        params.put("test2", "test3-1-2");
+        params.put("test3", "test3-1-3");
+        System.out.println("result:" + HandlerMethodInvokeUtils
+                .invokeHandlerMethod(hm3, params));
+        
     }
 }

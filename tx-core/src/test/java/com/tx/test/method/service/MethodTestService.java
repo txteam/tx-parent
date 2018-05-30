@@ -6,6 +6,8 @@
  */
 package com.tx.test.method.service;
 
+import com.tx.core.method.annotation.MethodParam;
+import com.tx.core.util.MessageUtils;
 
 /**
  * <功能简述>
@@ -18,12 +20,17 @@ package com.tx.test.method.service;
  */
 public class MethodTestService {
     
-    public void test1(){
+    public void test1() {
         System.out.println("test1 called.");
     }
     
-    public String test2(String test1,String test2){
-        System.out.println("test2 called.");
+    public String test2(String test1, String test2) {
+        System.out.println(MessageUtils.format("test2 called. test1:'{}' test2:'{}'",test1,test2));
+        return test2;
+    }
+    
+    public String test3(String test1, @MethodParam("test3") String test2) {
+        System.out.println(MessageUtils.format("test3 called. test1:'{}' test2:'{}'",test1,test2));
         return test2;
     }
 }
