@@ -6,6 +6,7 @@
  */
 package com.tx.core.method.resolver;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,10 +20,14 @@ import org.springframework.core.MethodParameter;
 import org.springframework.core.OrderComparator;
 import org.springframework.core.Ordered;
 import org.springframework.core.ParameterNameDiscoverer;
-import org.springframework.util.Assert;
 
 import com.tx.core.TxConstants;
+import com.tx.core.method.exceptions.MethodArgResolveException;
 import com.tx.core.method.request.InvokeRequest;
+import com.tx.core.method.resolver.impl.MethodModelAttributeMethodArgumentResolver;
+import com.tx.core.method.resolver.impl.MethodModelParamMethodArgumentResolver;
+import com.tx.core.method.resolver.impl.MethodParamMapMethodArgumentResolver;
+import com.tx.core.method.resolver.impl.MethodParamMethodArgumentResolver;
 
 /**
   * <功能简述>
@@ -34,6 +39,12 @@ import com.tx.core.method.request.InvokeRequest;
   * @since  [产品/模块版本]
   */
 public class MethodArgumentResolverComposite implements MethodArgumentResolver {
+    
+    public static final MethodArgumentResolverComposite DEFAULT_INSTANCE = new MethodArgumentResolverComposite(
+            Arrays.asList((new MethodModelAttributeMethodArgumentResolver()),
+                    (new MethodModelParamMethodArgumentResolver()),
+                    (new MethodParamMapMethodArgumentResolver()),
+                    (new MethodParamMethodArgumentResolver())));
     
     /** 日志记录器 */
     private final Logger logger = LoggerFactory.getLogger(getClass());
@@ -47,6 +58,20 @@ public class MethodArgumentResolverComposite implements MethodArgumentResolver {
     /** 通过该功能能提高方法实际调用时参数匹配时的效率 */
     private final Map<MethodParameter, MethodArgumentResolver> argumentResolverCache = new ConcurrentHashMap<MethodParameter, MethodArgumentResolver>(
             TxConstants.INITIAL_MAP_SIZE);
+    
+    /** <默认构造函数> */
+    public MethodArgumentResolverComposite() {
+        super();
+    }
+    
+    /** <默认构造函数> */
+    public MethodArgumentResolverComposite(
+            List<MethodArgumentResolver> argumentResolvers) {
+        super();
+        
+        //添加解析器
+        this.addResolvers(argumentResolvers);
+    }
     
     /**
      * @return
@@ -114,9 +139,10 @@ public class MethodArgumentResolverComposite implements MethodArgumentResolver {
         MethodArgumentResolver resolver = getArgumentResolver(parameter);
         
         //参数解析器不能为空
-        Assert.notNull(resolver,
-                "Unknown parameter type ["
-                        + parameter.getParameterType().getName() + "]");
+        if (resolver == null) {
+            throw new MethodArgResolveException("Unknown parameter type ["
+                    + parameter.getParameterType().getName() + "]");
+        }
         
         return resolver.resolveArgument(parameter, invokeRequest);
     }

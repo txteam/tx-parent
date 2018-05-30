@@ -21,7 +21,7 @@ import java.util.Map;
  */
 public class BatchResult {
     
-    private boolean isSuccessAll = true;
+    private boolean success = true;
     
     private int totalNum = 0;
     
@@ -36,19 +36,19 @@ public class BatchResult {
     private Map<Integer, String> errorMessageRownumIndexMapping = new HashMap<Integer, String>();
     
     /**
-     * @return 返回 isSuccessAll
+     * @return 返回 success
      */
-    public boolean isSuccessAll() {
-        return isSuccessAll;
+    public boolean isSuccess() {
+        return success;
     }
-    
+
     /**
-     * @param 对isSuccessAll进行赋值
+     * @param 对success进行赋值
      */
-    public void setSuccessAll(boolean isSuccessAll) {
-        this.isSuccessAll = isSuccessAll;
+    public void setSuccess(boolean success) {
+        this.success = success;
     }
-    
+
     /**
      * @return 返回 errorNum
      */
@@ -65,7 +65,8 @@ public class BatchResult {
      */
     public void addErrorInfoWhenException(Object parameter, int rownumIndex,
             Exception ex) {
-        isSuccessAll = false;
+        success = false;
+        
         this.errorRownumParameterMapping.put(rownumIndex, parameter);
         this.errorRownumIndexList.add(rownumIndex);
         errorExceptionRownumIndexMapping.put(rownumIndex, ex);

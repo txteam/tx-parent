@@ -29,8 +29,8 @@ public interface InvokeRequest {
      * @return String [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
-    <T> T getParameter(String paramName, Class<T> type);
+     */
+    Object getParameter(String paramName);
     
     /**
      * 获取所有的参数值
@@ -41,52 +41,28 @@ public interface InvokeRequest {
      * @return String[] [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
-    <T> T[] getParameterValues(String paramName, Class<T> type);
-    
-    /**
-     * 获取指定参数名的参数对象
-     * <功能详细描述>
-     * @param paramName
-     * @return [参数说明]
-     * 
-     * @return String [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    Object getParameter(String paramName);
-    
-    /**
-      * 获取所有的参数值
-      * <功能详细描述>
-      * @param paramName
-      * @return [参数说明]
-      * 
-      * @return String[] [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
      */
     Object[] getParameterValues(String paramName);
     
     /**
-      * 获取参数名集合的迭代器<br/>
-      * <功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return Iterator<String> [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 获取参数名集合的迭代器<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return Iterator<String> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     Iterator<String> getParameterNames();
     
     /**
-      * 获取参数映射<br/>
-      * <功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return Map<String,Object[]> [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 获取参数映射<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return Map<String,Object[]> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     Map<String, Object[]> getParameterMap();
 }

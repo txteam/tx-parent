@@ -7,20 +7,23 @@
 package com.tx.core.method.resolver.impl;
 
 import java.lang.annotation.Annotation;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.TreeMap;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.core.Conventions;
 import org.springframework.core.MethodParameter;
-import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.DataBinder;
 import org.springframework.validation.annotation.Validated;
 
-import com.tx.core.method.annotation.MethodModelAttribute;
+import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.method.annotation.MethodModelParam;
 import com.tx.core.method.exceptions.MethodArgResolveBindException;
 import com.tx.core.method.request.InvokeRequest;
 import com.tx.core.method.resolver.MethodArgumentResolver;
@@ -34,11 +37,11 @@ import com.tx.core.method.resolver.MethodArgumentResolver;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class MethodModelAttributeMethodArgumentResolver
+public class MethodModelParamMethodArgumentResolver
         implements MethodArgumentResolver {
     
     /** 日志记录器 */
-    protected final Log logger = LogFactory.getLog(getClass());
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
     
     /**
      * Class constructor.
@@ -46,7 +49,7 @@ public class MethodModelAttributeMethodArgumentResolver
      * return values are considered model attributes with or without a
      * {@code @ModelAttribute} annotation
      */
-    public MethodModelAttributeMethodArgumentResolver() {
+    public MethodModelParamMethodArgumentResolver() {
     }
     
     /**
@@ -54,7 +57,7 @@ public class MethodModelAttributeMethodArgumentResolver
      */
     @Override
     public int getOrder() {
-        return Ordered.HIGHEST_PRECEDENCE + 1;
+        return 0;
     }
     
     /**
@@ -63,9 +66,8 @@ public class MethodModelAttributeMethodArgumentResolver
      */
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        return (parameter.hasParameterAnnotation(MethodModelAttribute.class)
-                || (!parameter.hasParameterAnnotations() && !BeanUtils
-                        .isSimpleProperty(parameter.getParameterType())));
+        return (parameter.hasParameterAnnotation(MethodModelParam.class)
+                && !BeanUtils.isSimpleProperty(parameter.getParameterType()));
     }
     
     /**
@@ -84,12 +86,13 @@ public class MethodModelAttributeMethodArgumentResolver
         Object attribute = createAttribute(name, parameter, request);
         
         DataBinder binder = new DataBinder(attribute, name);
-        binder.bind(new MutablePropertyValues(request.getParameterMap()));
+        binder.bind(new MutablePropertyValues(getParametersStartingWith(request, name + ".")));
         
         if (binder.getTarget() != null) {
             validateIfApplicable(binder, parameter);
-            if (binder.getBindingResult().hasErrors()   ) {
-                throw new MethodArgResolveBindException(binder.getBindingResult());
+            if (binder.getBindingResult().hasErrors()) {
+                throw new MethodArgResolveBindException(
+                        binder.getBindingResult());
             }
         }
         
@@ -152,11 +155,37 @@ public class MethodModelAttributeMethodArgumentResolver
      * @return the derived name
      */
     private static String getNameForParameter(MethodParameter parameter) {
-        MethodModelAttribute ann = parameter
-                .getParameterAnnotation(MethodModelAttribute.class);
+        MethodModelParam ann = parameter
+                .getParameterAnnotation(MethodModelParam.class);
         String name = (ann != null ? ann.value() : null);
         return (StringUtils.hasText(name) ? name
                 : Conventions.getVariableNameForParameter(parameter));
+    }
+    
+    private static Map<String, Object[]> getParametersStartingWith(
+            InvokeRequest request, String prefix) {
+        AssertUtils.notNull(request, "Request must not be null");
+        
+        Iterator<String> paramNames = request.getParameterNames();
+        Map<String, Object[]> params = new TreeMap<String, Object[]>();
+        if (prefix == null) {
+            prefix = "";
+        }
+        while (paramNames != null && paramNames.hasNext()) {
+            String paramName = paramNames.next();
+            
+            if ("".equals(prefix) || paramName.startsWith(prefix)) {
+                String unprefixed = paramName.substring(prefix.length());
+                
+                Object[] values = request.getParameterValues(paramName);
+                if (values == null || values.length == 0) {
+                    continue;
+                } 
+                
+                params.put(unprefixed, values);
+            }
+        }
+        return params;
     }
     
 }

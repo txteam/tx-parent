@@ -35,16 +35,5 @@ public @interface ServiceLog {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    String name() default "";
-    
-    /**
-     * 基础数据类型备注<br/>
-     * <功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return String [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    String remark() default "";
+    String tablename() default "";
 }

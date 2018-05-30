@@ -14,7 +14,6 @@ import org.springframework.util.StringUtils;
 
 import com.tx.core.method.annotation.MethodParam;
 import com.tx.core.method.request.InvokeRequest;
-import com.tx.core.method.resolver.MethodArgumentResolver;
 
 /**
  * 参数具@EventListenerParam注解的方法参数解析器<br/>
@@ -26,7 +25,7 @@ import com.tx.core.method.resolver.MethodArgumentResolver;
  * @since  [产品/模块版本]
  */
 public class MethodParamMethodArgumentResolver
-        implements MethodArgumentResolver {
+        extends AbstractNamedValueMethodArgumentResolver {
     
     /**
      * @return
@@ -43,28 +42,63 @@ public class MethodParamMethodArgumentResolver
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
         if (parameter.hasParameterAnnotation(MethodParam.class)) {
-            if (Map.class.isAssignableFrom(parameter.nestedIfOptional().getNestedParameterType())) {
-                String paramName = parameter.getParameterAnnotation(MethodParam.class).name();
+            if (Map.class.isAssignableFrom(
+                    parameter.nestedIfOptional().getNestedParameterType())) {
+                String paramName = parameter
+                        .getParameterAnnotation(MethodParam.class).name();
                 return StringUtils.hasText(paramName);
-            }else {
+            } else {
                 return true;
             }
-        }else{
+        } else {
             parameter = parameter.nestedIfOptional();
-            return BeanUtils.isSimpleProperty(parameter.getNestedParameterType());
+            return (!parameter.hasParameterAnnotations() && BeanUtils
+                    .isSimpleProperty(parameter.getNestedParameterType()));
         }
     }
-
+    
     /**
-     * @param methodParameter
-     * @param invokeRequest
+     * @param name
+     * @param parameter
+     * @param request
      * @return
-     * @throws Exception
      */
     @Override
-    public Object resolveArgument(MethodParameter methodParameter,
-            InvokeRequest invokeRequest) throws Exception {
-        // TODO Auto-generated method stub
-        return null;
+    protected Object resolveName(String name, MethodParameter parameter,
+            InvokeRequest request) {
+        Object arg = null;
+        
+        Object[] paramValues = request.getParameterValues(name);
+        if (paramValues != null) {
+            arg = (paramValues.length == 1 ? paramValues[0] : paramValues);
+        }
+        
+        return arg;
+    }
+    
+    /**
+     * Create the {@link NamedValueInfo} object for the given method parameter. Implementations typically
+     * retrieve the method annotation by means of {@link MethodParameter#getParameterAnnotation(Class)}.
+     * 
+     * @param parameter the method parameter
+     * @return the named value information
+     */
+    protected NamedValueInfo createNamedValueInfo(MethodParameter parameter) {
+        MethodParam ann = parameter.getParameterAnnotation(MethodParam.class);
+        
+        return (ann != null ? new MethodParamNamedValueInfo(ann)
+                : new MethodParamNamedValueInfo());
+    }
+    
+    protected static class MethodParamNamedValueInfo extends NamedValueInfo {
+        /** <默认构造函数> */
+        public MethodParamNamedValueInfo() {
+            super("", false);
+        }
+        
+        /** <默认构造函数> */
+        public MethodParamNamedValueInfo(MethodParam annotation) {
+            super(annotation.name(), annotation.required());
+        }
     }
 }

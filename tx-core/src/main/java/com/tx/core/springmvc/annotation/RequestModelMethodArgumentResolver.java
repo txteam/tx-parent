@@ -24,7 +24,7 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
 /**
- * RquestMode
+ * RquestMode<br/>
  * <功能详细描述>
  * 
  * @author  Administrator
@@ -47,6 +47,8 @@ public class RequestModelMethodArgumentResolver
     }
     
     /**
+     * 解析参数<br/>
+     * 
      * @param parameter
      * @param mavContainer
      * @param webRequest
@@ -62,11 +64,16 @@ public class RequestModelMethodArgumentResolver
         String name = getNameForParameter(parameter);
         
         //设置参数，如果不存在，则自动创建该对象
-        Object attribute = createAttribute(name, parameter, binderFactory, webRequest);
+        Object attribute = createAttribute(name,
+                parameter,
+                binderFactory,
+                webRequest);
         
         //创建WebDataBinder
         //WebDataBinder binder = new RequestModelDataBinder(name, attribute,name);
-        WebDataBinder binder = binderFactory.createBinder(webRequest, attribute, name);
+        WebDataBinder binder = binderFactory.createBinder(webRequest,
+                attribute,
+                name);
         binder.setFieldDefaultPrefix((name != null ? name + "." : null));
         
         if (binder.getTarget() != null) {

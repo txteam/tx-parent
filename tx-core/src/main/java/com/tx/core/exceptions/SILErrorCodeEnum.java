@@ -69,6 +69,20 @@ public enum SILErrorCodeEnum implements ErrorCode {
     RESOURCE_WRITE_ERROR(123002, "资源写入异常"),
     /* -------　Resource异常 end   ------- */
     
+    /* -------　method invoke异常 start ------- */
+    METHOD_INVOKE_ACCESS_ERROR(151001,"方法注入访问异常"),
+    
+    METHOD_INVOKE_ARG_ILLEGAL_ERROR(151002,"方法参数异常"),
+    
+    METHOD_INVOKE_TARGET_ERROR(151003,"方法参数异常"),
+    
+    METHOD_INVOKE_ARG_RESOLVE_ERROR(151101,"方法参数解析异常"),
+    
+    METHOD_INVOKE_ARG_RESOLVE_BIND_ERROR(151101,"方法参数解析异常"),
+    
+    
+    /* -------　method invoke异常 end   ------- */
+    
     /* -------　Remote异常 start ------- */
     REMOTE_ACCESS_ERROR(130000, "资源访问异常"),
     
@@ -82,6 +96,8 @@ public enum SILErrorCodeEnum implements ErrorCode {
     
     HTTP_SOCKET_ERROR(131004, "发送HTTP请求异常")
     /* -------　Remote异常 end   ------- */
+    
+    
     
     /* -------　context异常 start ------- */
     

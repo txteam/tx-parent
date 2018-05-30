@@ -34,21 +34,21 @@ public class HandlerMethod {
     
     /** 日志记录句柄 */
     protected final Logger logger = LoggerFactory.getLogger(getClass());
-
+    
     private final Object bean;
-
+    
     private final BeanFactory beanFactory;
-
+    
     private final Class<?> beanType;
-
+    
     private final Method method;
-
+    
     private final Method bridgedMethod;
-
+    
     private final MethodParameter[] parameters;
-
+    
     private final HandlerMethod resolvedFromHandlerMethod;
-
+    
     /**
      * Create an instance from a bean instance and a method.
      */
@@ -65,12 +65,13 @@ public class HandlerMethod {
         
         this.resolvedFromHandlerMethod = null;
     }
-
+    
     /**
      * Create an instance from a bean instance, method name, and parameter types.
      * @throws NoSuchMethodException when the method cannot be found
      */
-    public HandlerMethod(Object bean, String methodName, Class<?>... parameterTypes) throws NoSuchMethodException {
+    public HandlerMethod(Object bean, String methodName,
+            Class<?>... parameterTypes) throws NoSuchMethodException {
         Assert.notNull(bean, "Bean is required");
         Assert.notNull(methodName, "Method name is required");
         
@@ -78,18 +79,20 @@ public class HandlerMethod {
         this.beanFactory = null;
         this.beanType = ClassUtils.getUserClass(bean);
         this.method = bean.getClass().getMethod(methodName, parameterTypes);
-        this.bridgedMethod = BridgeMethodResolver.findBridgedMethod(this.method);
+        this.bridgedMethod = BridgeMethodResolver
+                .findBridgedMethod(this.method);
         this.parameters = initMethodParameters();
         
         this.resolvedFromHandlerMethod = null;
     }
-
+    
     /**
      * Create an instance from a bean name, a method, and a {@code BeanFactory}.
      * The method {@link #createWithResolvedBean()} may be used later to
      * re-create the {@code HandlerMethod} with an initialized bean.
      */
-    public HandlerMethod(String beanName, BeanFactory beanFactory, Method method) {
+    public HandlerMethod(String beanName, BeanFactory beanFactory,
+            Method method) {
         Assert.hasText(beanName, "Bean name is required");
         Assert.notNull(beanFactory, "BeanFactory is required");
         Assert.notNull(method, "Method is required");
@@ -103,7 +106,7 @@ public class HandlerMethod {
         
         this.resolvedFromHandlerMethod = null;
     }
-
+    
     /**
      * Copy constructor for use in subclasses.
      */
@@ -118,7 +121,7 @@ public class HandlerMethod {
         
         this.resolvedFromHandlerMethod = handlerMethod.resolvedFromHandlerMethod;
     }
-
+    
     /**
      * Re-create HandlerMethod with the resolved handler.
      */
@@ -134,7 +137,7 @@ public class HandlerMethod {
         
         this.resolvedFromHandlerMethod = handlerMethod;
     }
-
+    
     private MethodParameter[] initMethodParameters() {
         int count = this.bridgedMethod.getParameterTypes().length;
         MethodParameter[] result = new MethodParameter[count];
@@ -145,21 +148,21 @@ public class HandlerMethod {
         }
         return result;
     }
-
+    
     /**
      * Returns the bean for this handler method.
      */
     public Object getBean() {
         return this.bean;
     }
-
+    
     /**
      * Returns the method for this handler method.
      */
     public Method getMethod() {
         return this.method;
     }
-
+    
     /**
      * This method returns the type of the handler for this handler method.
      * <p>Note that if the bean type is a CGLIB-generated class, the original
@@ -168,7 +171,7 @@ public class HandlerMethod {
     public Class<?> getBeanType() {
         return this.beanType;
     }
-
+    
     /**
      * If the bean method is a bridge method, this method returns the bridged
      * (user-defined) method. Otherwise it returns the same method as {@link #getMethod()}.
@@ -176,14 +179,14 @@ public class HandlerMethod {
     protected Method getBridgedMethod() {
         return this.bridgedMethod;
     }
-
+    
     /**
      * Returns the method parameters for this handler method.
      */
     public MethodParameter[] getMethodParameters() {
         return this.parameters;
     }
-
+    
     /**
      * Return the HandlerMethod from which this HandlerMethod instance was
      * resolved via {@link #createWithResolvedBean()}.
@@ -191,28 +194,28 @@ public class HandlerMethod {
     public HandlerMethod getResolvedFromHandlerMethod() {
         return this.resolvedFromHandlerMethod;
     }
-
+    
     /**
      * Return the HandlerMethod return type.
      */
     public MethodParameter getReturnType() {
         return new HandlerMethodParameter(-1);
     }
-
+    
     /**
      * Return the actual return value type.
      */
     public MethodParameter getReturnValueType(Object returnValue) {
         return new ReturnValueMethodParameter(returnValue);
     }
-
+    
     /**
      * Returns {@code true} if the method return type is void, {@code false} otherwise.
      */
     public boolean isVoid() {
         return Void.TYPE.equals(getReturnType().getParameterType());
     }
-
+    
     /**
      * Returns a single annotation on the underlying method traversing its super methods
      * if no annotation can be found on the given method itself.
@@ -222,20 +225,23 @@ public class HandlerMethod {
      * @return the annotation, or {@code null} if none found
      * @see AnnotatedElementUtils#findMergedAnnotation
      */
-    public <A extends Annotation> A getMethodAnnotation(Class<A> annotationType) {
-        return AnnotatedElementUtils.findMergedAnnotation(this.method, annotationType);
+    public <A extends Annotation> A getMethodAnnotation(
+            Class<A> annotationType) {
+        return AnnotatedElementUtils.findMergedAnnotation(this.method,
+                annotationType);
     }
-
+    
     /**
      * Return whether the parameter is declared with the given annotation type.
      * @param annotationType the annotation type to look for
      * @since 4.3
      * @see AnnotatedElementUtils#hasAnnotation
      */
-    public <A extends Annotation> boolean hasMethodAnnotation(Class<A> annotationType) {
+    public <A extends Annotation> boolean hasMethodAnnotation(
+            Class<A> annotationType) {
         return AnnotatedElementUtils.hasAnnotation(this.method, annotationType);
     }
-
+    
     /**
      * If the provided instance contains a bean name rather than an object instance,
      * the bean name is resolved before a {@link HandlerMethod} is created and returned.
@@ -249,17 +255,17 @@ public class HandlerMethod {
         
         return new HandlerMethod(this, handler);
     }
-
+    
     /**
      * Return a short representation of this handler method for log message purposes.
      * @since 4.3
      */
     public String getShortLogMessage() {
         int args = this.method.getParameterTypes().length;
-        return getBeanType().getName() + "#" + this.method.getName() + "[" + args + " args]";
+        return getBeanType().getName() + "#" + this.method.getName() + "["
+                + args + " args]";
     }
-
-
+    
     @Override
     public boolean equals(Object other) {
         if (this == other) {
@@ -269,77 +275,80 @@ public class HandlerMethod {
             return false;
         }
         HandlerMethod otherMethod = (HandlerMethod) other;
-        return (this.bean.equals(otherMethod.bean) && this.method.equals(otherMethod.method));
+        return (this.bean.equals(otherMethod.bean)
+                && this.method.equals(otherMethod.method));
     }
-
+    
     @Override
     public int hashCode() {
         return (this.bean.hashCode() * 31 + this.method.hashCode());
     }
-
+    
     @Override
     public String toString() {
         return this.method.toGenericString();
     }
-
-
+    
     /**
      * A MethodParameter with HandlerMethod-specific behavior.
      */
     protected class HandlerMethodParameter extends SynthesizingMethodParameter {
-
+        
         public HandlerMethodParameter(int index) {
             super(HandlerMethod.this.bridgedMethod, index);
         }
-
+        
         protected HandlerMethodParameter(HandlerMethodParameter original) {
             super(original);
         }
-
+        
         @Override
         public Class<?> getContainingClass() {
             return HandlerMethod.this.getBeanType();
         }
-
+        
         @Override
-        public <T extends Annotation> T getMethodAnnotation(Class<T> annotationType) {
+        public <T extends Annotation> T getMethodAnnotation(
+                Class<T> annotationType) {
             return HandlerMethod.this.getMethodAnnotation(annotationType);
         }
-
+        
         @Override
-        public <T extends Annotation> boolean hasMethodAnnotation(Class<T> annotationType) {
+        public <T extends Annotation> boolean hasMethodAnnotation(
+                Class<T> annotationType) {
             return HandlerMethod.this.hasMethodAnnotation(annotationType);
         }
-
+        
         @Override
         public HandlerMethodParameter clone() {
             return new HandlerMethodParameter(this);
         }
     }
-
-
+    
     /**
      * A MethodParameter for a HandlerMethod return type based on an actual return value.
      */
     private class ReturnValueMethodParameter extends HandlerMethodParameter {
-
+        
         private final Object returnValue;
-
+        
         public ReturnValueMethodParameter(Object returnValue) {
             super(-1);
             this.returnValue = returnValue;
         }
-
-        protected ReturnValueMethodParameter(ReturnValueMethodParameter original) {
+        
+        protected ReturnValueMethodParameter(
+                ReturnValueMethodParameter original) {
             super(original);
             this.returnValue = original.returnValue;
         }
-
+        
         @Override
         public Class<?> getParameterType() {
-            return (this.returnValue != null ? this.returnValue.getClass() : super.getParameterType());
+            return (this.returnValue != null ? this.returnValue.getClass()
+                    : super.getParameterType());
         }
-
+        
         @Override
         public ReturnValueMethodParameter clone() {
             return new ReturnValueMethodParameter(this);

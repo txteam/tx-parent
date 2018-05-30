@@ -43,6 +43,7 @@
 		<module>tx-component-basicdata</module>
 		<module>tx-component-task</module>
 		
+		<!-- 待完善的模块 -->
 		<!-- <module>tx-component-servicelog</module> -->
 		<!-- <module>tx-component-auth</module> -->
 

@@ -10,13 +10,19 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.ParameterNameDiscoverer;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 
-import com.tx.core.exceptions.argument.ArgIllegalException;
+import com.tx.core.exceptions.SILException;
+import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.method.exceptions.MethodArgResolveException;
+import com.tx.core.method.exceptions.MethodInvokeAccessException;
+import com.tx.core.method.exceptions.MethodInvokeArgIllegalException;
+import com.tx.core.method.exceptions.MethodInvokeTargetException;
 import com.tx.core.method.request.InvokeRequest;
 import com.tx.core.method.resolver.MethodArgumentResolverComposite;
 
@@ -32,7 +38,7 @@ import com.tx.core.method.resolver.MethodArgumentResolverComposite;
 public class InvocableHandlerMethod extends HandlerMethod {
     
     /** 参数解析器 */
-    private MethodArgumentResolverComposite argumentResolvers = new MethodArgumentResolverComposite();
+    private MethodArgumentResolverComposite argumentResolvers = MethodArgumentResolverComposite.DEFAULT_INSTANCE;
     
     /** 参数名发现器 */
     private ParameterNameDiscoverer parameterNameDiscoverer = new DefaultParameterNameDiscoverer();
@@ -84,8 +90,9 @@ public class InvocableHandlerMethod extends HandlerMethod {
      * or if the method raised an exception
      */
     public Object invokeForRequest(InvokeRequest request,
-            Object... providedArgs) throws Exception {
+            Object... providedArgs) {
         
+        //获取方法参数
         Object[] args = getMethodArgumentValues(request, providedArgs);
         
         if (logger.isTraceEnabled()) {
@@ -111,7 +118,7 @@ public class InvocableHandlerMethod extends HandlerMethod {
      * Get the method argument values for the current request.
      */
     private Object[] getMethodArgumentValues(InvokeRequest request,
-            Object... providedArgs) throws Exception {
+            Object... providedArgs) {
         
         MethodParameter[] parameters = getMethodParameters();
         Object[] args = new Object[parameters.length];
@@ -121,9 +128,16 @@ public class InvocableHandlerMethod extends HandlerMethod {
             parameter.initParameterNameDiscovery(this.parameterNameDiscoverer);
             
             //如果从额外出的参数中检测出位置一致，并且类型一致的参数 则优先适配
-            args[index] = resolveProvidedArgument(index,
-                    parameter,
-                    providedArgs);
+            if (!ArrayUtils.isEmpty(providedArgs)) {
+                if (parameters.length == providedArgs.length) {
+                    args[index] = resolveProvidedArgumentByIndex(index,
+                            parameter,
+                            providedArgs);
+                } else {
+                    args[index] = resolveProvidedArgumentByType(parameter,
+                            providedArgs);
+                }
+            }
             
             if (args[index] != null) {
                 continue;
@@ -135,17 +149,18 @@ public class InvocableHandlerMethod extends HandlerMethod {
                     args[index] = this.argumentResolvers
                             .resolveArgument(parameter, request);
                     continue;
-                } catch (Exception ex) {
-                    if (logger.isDebugEnabled()) {
-                        logger.debug(getArgumentResolutionErrorMessage(
-                                "Failed to resolve", index), ex);
-                    }
+                } catch (MethodArgResolveException ex) {
                     throw ex;
+                } catch (Exception ex) {
+                    throw new MethodArgResolveException(
+                            getArgumentResolutionErrorMessage(
+                                    "Failed to resolve", index),
+                            ex);
                 }
             }
             
             if (args[index] == null) {
-                throw new IllegalStateException(
+                throw new MethodArgResolveException(
                         "Could not resolve method parameter at index "
                                 + parameter.getParameterIndex() + " in "
                                 + parameter.getMethod().toGenericString() + ": "
@@ -174,22 +189,48 @@ public class InvocableHandlerMethod extends HandlerMethod {
     }
     
     /**
-      * 尝试从提供的参数值列表中解析方法参数
-      * <功能详细描述>
-      * @param parameter
-      * @param providedArgs
-      * @return [参数说明]
-      * 
-      * @return Object [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    private Object resolveProvidedArgument(int index, MethodParameter parameter,
+     * 尝试从提供的参数值列表中解析方法参数<br/.
+     *    根据类型优先匹配的原则，获取参数.(适用于参数个数不一致的情况)
+     * <功能详细描述>
+     * @param parameter
+     * @param providedArgs
+     * @return [参数说明]
+     * 
+     * @return Object [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    private Object resolveProvidedArgumentByType(MethodParameter parameter,
             Object... providedArgs) {
         if (providedArgs == null) {
             return null;
         }
-        if (index >= providedArgs.length) {
+        for (Object providedArg : providedArgs) {
+            if (parameter.getParameterType().isInstance(providedArg)) {
+                return providedArg;
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * 尝试从提供的参数值列表中解析方法参数<br/>
+     *  适用于参数个数一致的情况<br/>
+     * <功能详细描述>
+     * @param parameter
+     * @param providedArgs
+     * @return [参数说明]
+     * 
+     * @return Object [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    private Object resolveProvidedArgumentByIndex(int index,
+            MethodParameter parameter, Object... providedArgs) {
+        AssertUtils.isTrue(index < providedArgs.length,
+                "index:{} should less than arg.length:{}",
+                new Object[] { index, providedArgs.length });
+        if (ArrayUtils.isEmpty(providedArgs)) {
             return null;
         }
         
@@ -203,31 +244,31 @@ public class InvocableHandlerMethod extends HandlerMethod {
     /**
      * Invoke the handler method with the given argument values.
      */
-    protected Object doInvoke(Object... args) throws Exception {
+    protected Object doInvoke(Object... args) {
         ReflectionUtils.makeAccessible(getBridgedMethod());
+        
         try {
             return getBridgedMethod().invoke(getBean(), args);
+        } catch (IllegalAccessException e) {
+            throw new MethodInvokeAccessException("invoke access exception.",
+                    e);
         } catch (IllegalArgumentException ex) {
             assertTargetBean(getBridgedMethod(), getBean(), args);
+            
             String text = (ex.getMessage() != null ? ex.getMessage()
                     : "Illegal argument");
-            
-            throw new ArgIllegalException(getInvocationErrorMessage(text, args),
-                    ex);
+            throw new MethodInvokeArgIllegalException(
+                    getInvocationErrorMessage(text, args), ex);
         } catch (InvocationTargetException ex) {
-            // Unwrap for HandlerExceptionResolvers ...
             Throwable targetException = ex.getTargetException();
             
-            if (targetException instanceof RuntimeException) {
-                throw (RuntimeException) targetException;
-            } else if (targetException instanceof Error) {
-                throw (Error) targetException;
-            } else if (targetException instanceof Exception) {
-                throw (Exception) targetException;
+            if (targetException instanceof SILException) {
+                throw (SILException) targetException;
             } else {
                 String text = getInvocationErrorMessage(
                         "Failed to invoke handler method", args);
-                throw new IllegalStateException(text, targetException);
+                throw new MethodInvokeTargetException(text, ex,
+                        targetException);
             }
         }
     }
@@ -251,7 +292,7 @@ public class InvocableHandlerMethod extends HandlerMethod {
                     + "'. If the controller requires proxying "
                     + "(e.g. due to @Transactional), please use class-based proxying.";
             
-            throw new ArgIllegalException(
+            throw new MethodInvokeAccessException(
                     getInvocationErrorMessage(text, args));
         }
     }
