@@ -7,6 +7,7 @@
 package com.tx.component.servicelog.exceptions;
 
 import com.tx.core.exceptions.ErrorCode;
+import com.tx.core.exceptions.SILException;
 
 /**
  * 不支持的业务日志类型异常<br/>
@@ -16,8 +17,7 @@ import com.tx.core.exceptions.ErrorCode;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public class UnsupportedServiceLoggerTypeException extends
-        ServiceLoggerException {
+public class ServiceLoggerBuildException extends SILException {
     
     private static final long serialVersionUID = 3062103647172437045L;
     
@@ -26,21 +26,21 @@ public class UnsupportedServiceLoggerTypeException extends
      */
     @Override
     protected ErrorCode error() {
-        return SLCErrorCodeEnum.UNSUPPORTED_SERVICE_LOGGER_TYPE_ERROR;
+        return SLCErrorCodeEnum.SERVICE_LOGGER_BUILD_ERROR;
     }
     
     /** <默认构造函数> */
-    public UnsupportedServiceLoggerTypeException() {
+    public ServiceLoggerBuildException() {
         super();
     }
     
     /** <默认构造函数> */
-    public UnsupportedServiceLoggerTypeException(String message, Throwable cause) {
+    public ServiceLoggerBuildException(String message, Throwable cause) {
         super(message, cause);
     }
     
     /** <默认构造函数> */
-    public UnsupportedServiceLoggerTypeException(String message) {
+    public ServiceLoggerBuildException(String message) {
         super(message);
     }
 }

@@ -24,9 +24,9 @@ public enum SLCErrorCodeEnum implements ErrorCode {
     
     SERVICE_LOGGER_CONTEXT_INIT_ERROR(211100, "业务日志容器初始化异常"),
     
-    UNSUPPORTED_SERVICE_LOGGER_TYPE_ERROR(211200, "不支持的业务日志类型"),
+    SERVICE_LOGGER_BUILD_ERROR(211200, "不支持的业务日志类型"),
     
-    SERVICE_LOGGER_PERSIST_ERROR(211300, "业务日志持久化异常")
+    SERVICE_LOGGER_DATA_ACCESS_ERROR(211300, "业务日志持久化异常")
     /* -------　业务日志异常 end   ------- */
     ;
     

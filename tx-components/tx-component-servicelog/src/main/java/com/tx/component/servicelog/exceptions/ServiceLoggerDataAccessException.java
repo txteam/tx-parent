@@ -7,6 +7,7 @@
 package com.tx.component.servicelog.exceptions;
 
 import com.tx.core.exceptions.ErrorCode;
+import com.tx.core.exceptions.SILException;
 
 /**
  * 业务日志异常 <br />
@@ -17,7 +18,7 @@ import com.tx.core.exceptions.ErrorCode;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public class ServiceLoggerPersistException extends ServiceLoggerException {
+public class ServiceLoggerDataAccessException extends SILException {
     
     /** 注释内容 */
     private static final long serialVersionUID = 7818559066881329564L;
@@ -31,21 +32,21 @@ public class ServiceLoggerPersistException extends ServiceLoggerException {
      */
     @Override
     protected ErrorCode error() {
-        return SLCErrorCodeEnum.SERVICE_LOGGER_PERSIST_ERROR;
+        return SLCErrorCodeEnum.SERVICE_LOGGER_DATA_ACCESS_ERROR;
     }
     
     /** <默认构造函数> */
-    public ServiceLoggerPersistException() {
+    public ServiceLoggerDataAccessException() {
         super();
     }
     
     /** <默认构造函数> */
-    public ServiceLoggerPersistException(String message, Throwable cause) {
+    public ServiceLoggerDataAccessException(String message, Throwable cause) {
         super(message, cause);
     }
     
     /** <默认构造函数> */
-    public ServiceLoggerPersistException(String message) {
+    public ServiceLoggerDataAccessException(String message) {
         super(message);
     }
     

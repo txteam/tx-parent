@@ -63,8 +63,7 @@ public interface ServiceLogger<T> {
     public abstract PagedList<T> queryPagedList(Map<String, Object> params, int pageIndex, int pageSize);
     
     /**
-     * 
-     * 日志查询
+     * 日志查询<br/>
      *
      * @param id 日志 id
      *            

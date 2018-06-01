@@ -7,6 +7,7 @@
 package com.tx.component.servicelog.exceptions;
 
 import com.tx.core.exceptions.ErrorCode;
+import com.tx.core.exceptions.SILException;
 
 /**
  * 日志容器初始化异常
@@ -16,7 +17,7 @@ import com.tx.core.exceptions.ErrorCode;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public class SLContextInitException extends ServiceLoggerException {
+public class ServiceLoggerContextInitException extends SILException {
     
     /** 序列号 */
     private static final long serialVersionUID = 7697466145862922735L;
@@ -30,17 +31,17 @@ public class SLContextInitException extends ServiceLoggerException {
     }
     
     /** <默认构造函数> */
-    public SLContextInitException() {
+    public ServiceLoggerContextInitException() {
         super();
     }
     
     /** <默认构造函数> */
-    public SLContextInitException(String message, Throwable cause) {
+    public ServiceLoggerContextInitException(String message, Throwable cause) {
         super(message, cause);
     }
     
     /** <默认构造函数> */
-    public SLContextInitException(String message) {
+    public ServiceLoggerContextInitException(String message) {
         super(message);
     }
 }

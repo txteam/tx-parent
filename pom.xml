@@ -108,6 +108,18 @@
 
 	<dependencyManagement>
 		<dependencies>
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-starter</artifactId>
+				<version>1.5.12.RELEASE</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-starter-logging</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+
 			<!-- Spring Cloud Spring Boot -->
 			<!-- Finchley 兼容Spring Boot 2.0.x，不兼容Spring Boot 1.5.x -->
 			<!-- Dalston和Edgware 兼容Spring Boot 1.5.x，不兼容Spring Boot 2.0.x -->
@@ -200,7 +212,7 @@
 				<artifactId>tx-component-task</artifactId>
 				<version>${tx.version}</version>
 			</dependency>
-			
+
 			<!-- 待改进模块 -->
 			<dependency>
 				<groupId>com.tx</groupId>
@@ -217,7 +229,7 @@
 				<artifactId>tx-component-rule</artifactId>
 				<version>${tx.version}</version>
 			</dependency>
-			
+
 			<!-- 废弃模块 -->
 			<dependency>
 				<groupId>com.tx</groupId>
@@ -234,7 +246,7 @@
 				<artifactId>tx-component-file</artifactId>
 				<version>${tx.version}</version>
 			</dependency>
-			
+
 			<!-- cglib dependency by mybatis -->
 			<dependency>
 				<groupId>cglib</groupId>

@@ -32,7 +32,7 @@ import com.tx.component.servicelog.context.ServiceLoggerSessionContext;
 import com.tx.component.servicelog.context.logger.ServiceLogDecorate;
 import com.tx.component.servicelog.context.logger.ServiceLogPersister;
 import com.tx.component.servicelog.context.logger.ServiceLogQuerier;
-import com.tx.component.servicelog.exceptions.UnsupportedServiceLoggerTypeException;
+import com.tx.component.servicelog.exceptions.ServiceLoggerBuildException;
 import com.tx.component.servicelog.logger.TXServiceLog;
 import com.tx.core.exceptions.SILException;
 import com.tx.core.exceptions.util.AssertUtils;
@@ -172,7 +172,7 @@ public class TXServiceLoggerBuilder extends BaseServiceLoggerBuilder implements
                     other.setOperatorName((String) context.getAttribute("operatorName"));
                     other.setOperatorLoginName((String) context.getAttribute("operatorLoginName"));
                 } else {
-                    throw new UnsupportedServiceLoggerTypeException(
+                    throw new ServiceLoggerBuildException(
                             MessageUtils.format("srcObject:{} not support.",
                                     new Object[] { srcObj }));
                 }

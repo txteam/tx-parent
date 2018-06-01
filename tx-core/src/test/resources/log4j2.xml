@@ -2,9 +2,9 @@
 <Configuration monitorInterval="300">
 	<Properties>
 		<property name="content_name" value="tx-x" />
-		<property name="log_path" value="d:/logs/${content_name}" />
 		
-		<property name="common_pattern" value="[%d{yyyy-MM-dd HH:mm:ss,SSS}]  [%t] %-5level %logger{36} - %msg %n" />
+		<property name="common_pattern" value="[%d{yyyy-MM-dd HH:mm:ss,SSS}] %-5p %m%n" />
+		<property name="log_path" value="d:/logs/${content_name}" />
 		<property name="max_log_file_size" value="10MB"></property>
 		<property name="max_log_file_num" value="5"></property>
 	</Properties>
@@ -13,10 +13,6 @@
 		<Console name="stdout" target="SYSTEM_OUT">
 			<PatternLayout pattern="${common_pattern}" />
 		</Console>
-		
-		<File name="spy_sql_file" fileName="${log_path}.spy.sql.log" append="false">
-			<PatternLayout pattern="[%d{HH:mm:ss,SSS}] %msg" />
-		</File>
 
 		<RollingFile name="log_file" append="true" fileName="${log_path}.log" filePattern="${log_path}/$${date:yyyy-MM-dd}/log.%d{yyyy--MM--dd}.%i.log.gz">
 			<PatternLayout pattern="${common_pattern}" />
@@ -45,6 +41,14 @@
 				<SizeBasedTriggeringPolicy size="${max_log_file_size}" />
 			</Policies>
 		</RollingFile>
+
+		<File name="sql_file" fileName="${log_path}.sql.log" append="false">
+			<PatternLayout pattern="${common_pattern}" />
+		</File>
+
+		<File name="spy_sql_file" fileName="${log_path}.spy.sql.log" append="false">
+			<PatternLayout pattern="${common_pattern}" />
+		</File>
 	</Appenders>
 
 	<!-- 日志类别 -->

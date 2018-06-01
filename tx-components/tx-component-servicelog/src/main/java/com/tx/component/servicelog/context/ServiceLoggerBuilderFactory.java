@@ -14,7 +14,7 @@ import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 
 import com.tx.component.servicelog.defaultimpl.TXServiceLoggerBuilder;
-import com.tx.component.servicelog.exceptions.UnsupportedServiceLoggerTypeException;
+import com.tx.component.servicelog.exceptions.ServiceLoggerBuildException;
 
 /**
  * 日志建造者工厂
@@ -85,7 +85,7 @@ public class ServiceLoggerBuilderFactory extends ServiceLoggerConfigurator {
                 }
             }
         }
-        throw new UnsupportedServiceLoggerTypeException("unknow serviceLoggerBuilder!");
+        throw new ServiceLoggerBuildException("unknow serviceLoggerBuilder!");
     }
     
     /** 业务日志实例建造者 */

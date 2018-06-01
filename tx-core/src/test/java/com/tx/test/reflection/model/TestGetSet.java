@@ -10,7 +10,6 @@ import java.beans.PropertyDescriptor;
 
 import javax.persistence.Id;
 
-import org.apache.ibatis.reflection.MetaClass;
 import org.springframework.beans.BeanUtils;
 
 

@@ -8,7 +8,7 @@ package com.tx.component.servicelog.testmodel;
 
 import javax.persistence.Table;
 
-import com.tx.component.servicelog.logger.TXBaseServiceLog;
+import com.tx.component.servicelog.logger.AbstractServiceLog;
 
 /**
  * 人员登录日志<br/>
@@ -20,7 +20,7 @@ import com.tx.component.servicelog.logger.TXBaseServiceLog;
  * @since  [产品/模块版本]
  */
 @Table(name = "mainframe_login_log")
-public class LoginLog extends TXBaseServiceLog {
+public class LoginLog extends AbstractServiceLog {
     
     /** 登录类型 0:登入 1：登出 */
     private String type = "0";

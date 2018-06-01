@@ -12,6 +12,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.springframework.core.annotation.AliasFor;
+
 /**
  * 基础数据模型<br/>
  * <功能详细描述>
@@ -27,6 +29,18 @@ import java.lang.annotation.Target;
 public @interface ServiceLog {
     
     /**
+     * 对应的数据对象表名<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @AliasFor("tablename")
+    String value() default "";
+    
+    /**
      * 基础数据名称<br/>
      * <功能详细描述>
      * @return [参数说明]
@@ -35,5 +49,6 @@ public @interface ServiceLog {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
+    @AliasFor("value")
     String tablename() default "";
 }
