@@ -4,7 +4,7 @@
  * 修改时间:  2013-9-22
  * <修改描述:>
  */
-package com.tx.component.servicelog.logger;
+package com.tx.component.servicelog.model;
 
 import java.util.Date;
 

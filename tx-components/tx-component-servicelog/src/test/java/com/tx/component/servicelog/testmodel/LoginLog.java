@@ -8,7 +8,7 @@ package com.tx.component.servicelog.testmodel;
 
 import javax.persistence.Table;
 
-import com.tx.component.servicelog.logger.AbstractServiceLog;
+import com.tx.component.servicelog.model.AbstractServiceLog;
 
 /**
  * 人员登录日志<br/>

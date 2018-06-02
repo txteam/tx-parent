@@ -56,9 +56,6 @@ public class ServiceLoggerParser<T> implements Serializable, Cloneable {
     /** 方言类 */
     private Dialect dialect;
     
-    /** 对应类的反射器 */
-    private ClassReflector<T> classReflector;
-    
     /** 表名 */
     private String tableName;
     
