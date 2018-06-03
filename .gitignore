@@ -1,69 +1,85 @@
 /target
 /.settings
 /.classpath
-/.DS_Store
 
 /tx-core/target
 /tx-core/.settings
 /tx-core/.classpath
-/tx-core/.DS_Store
+/tx-core/.project
+/tx-core/.factorypath
 
 /tx-components/target
 /tx-components/.settings
 /tx-components/.classpath
-/tx-components/.DS_Store
+/tx-components/.project
+/tx-components/.factorypath
 
 /tx-components/tx-component-command/target
 /tx-components/tx-component-command/.settings
 /tx-components/tx-component-command/.classpath
-/tx-components/tx-component-command/.DS_Store
+/tx-components/tx-component-command/.project
+/tx-components/tx-component-command/.factorypath
 
 /tx-components/tx-component-event/target
 /tx-components/tx-component-event/.settings
 /tx-components/tx-component-event/.classpath
-/tx-components/tx-component-event/.DS_Store
+/tx-components/tx-component-event/.project
+/tx-components/tx-component-event/.factorypath
 
 /tx-components/tx-component-basicdata/target
 /tx-components/tx-component-basicdata/.settings
 /tx-components/tx-component-basicdata/.classpath
-/tx-components/tx-component-basicdata/.DS_Store
+/tx-components/tx-component-basicdata/.project
+/tx-components/tx-component-basicdata/.factorypath
 
 /tx-components/tx-component-task/target
 /tx-components/tx-component-task/.settings
 /tx-components/tx-component-task/.classpath
-/tx-components/tx-component-task/.DS_Store
+/tx-components/tx-component-task/.project
+/tx-components/tx-component-task/.factorypath
 
 /tx-components/tx-component-auth/target
 /tx-components/tx-component-auth/.settings
 /tx-components/tx-component-auth/.classpath
-/tx-components/tx-component-auth/.DS_Store
+/tx-components/tx-component-auth/.project
+/tx-components/tx-component-auth/.factorypath
 
 /tx-components/tx-component-servicelogger/target
 /tx-components/tx-component-servicelogger/.settings
 /tx-components/tx-component-servicelogger/.classpath
-/tx-components/tx-component-servicelogger/.DS_Store
+/tx-components/tx-component-servicelogger/.project
+/tx-components/tx-component-servicelogger/.factorypath
 
 /tx-services/target
 /tx-services/.settings
 /tx-services/.classpath
-/tx-services/.DS_Store
+/tx-services/.project
+/tx-services/.factorypath
 
 /tx-services/tx-service-communication/target
 /tx-services/tx-service-communication/.settings
 /tx-services/tx-service-communication/.classpath
-/tx-services/tx-service-communication/.DS_Store
+/tx-services/tx-service-communication/.factorypath
+/tx-services/tx-service-communication/.project
 
 /tx-services/tx-service-file/target
 /tx-services/tx-service-file/.settings
 /tx-services/tx-service-file/.classpath
-/tx-services/tx-service-file/.DS_Store
+/tx-services/tx-service-file/.project
+/tx-services/tx-service-file/.factorypath
 
 
 /tx-components/tx-component-config/target
 /tx-components/tx-component-config/.settings
+/tx-components/tx-component-config/.classpath
+/tx-components/tx-component-config/.project
 
 /tx-components/tx-component-rule/target
 /tx-components/tx-component-rule/.settings
+/tx-components/tx-component-rule/.classpath
+/tx-components/tx-component-rule/.project
 
 /tx-components/tx-component-sequence/target
 /tx-components/tx-component-sequence/.settings
+/tx-components/tx-component-sequence/.classpath
+/tx-components/tx-component-sequence/.project
