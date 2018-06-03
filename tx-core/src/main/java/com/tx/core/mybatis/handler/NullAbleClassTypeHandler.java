@@ -107,7 +107,8 @@ public class NullAbleClassTypeHandler extends BaseTypeHandler<Class<?>> {
             try {
                 type = Class.forName(className);
             } catch (ClassNotFoundException e) {
-                logger.warn("Class.forName exception.className:{}", className);
+                type = null;
+                //logger.info("Class.forName exception.className:{}", className);
             }
             return type;
         }

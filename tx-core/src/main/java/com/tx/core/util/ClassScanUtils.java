@@ -188,7 +188,7 @@ public class ClassScanUtils {
             
             try {
                 //VFS.getInstance();
-                VFS vfs = new SpringVFS();
+                VFS vfs = VFS.getInstance();//new SpringVFS();
                 List<String> children = vfs.list(path);
                 for (String child : children) {
                     if (child.endsWith(".class")) {
