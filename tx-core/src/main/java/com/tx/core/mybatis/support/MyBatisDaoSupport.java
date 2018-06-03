@@ -16,7 +16,6 @@ import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSessionFactory;
-import org.apache.ibatis.session.SqlSessionManager;
 import org.hibernate.id.IdentifierGenerator;
 import org.hibernate.id.UUIDHexGenerator;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -45,16 +44,12 @@ public class MyBatisDaoSupport implements InitializingBean {
     
     private Logger logger = LoggerFactory.getLogger(MyBatisDaoSupport.class);
     
-    /**
-     * 默认在batch功能执行过程中批量持久的条数
-     */
+    /** 默认在batch功能执行过程中批量持久的条数 */
     private static final int defaultDoFlushSize = 100;
     
     private static final IdentifierGenerator generator = new UUIDHexGenerator();
     
     private SqlSessionTemplate sqlSessionTemplate;
-    
-    private SqlSessionTemplate batchSqlSessionTemplate;
     
     private SqlSessionFactory sqlSessionFactory = null;
     
@@ -63,6 +58,18 @@ public class MyBatisDaoSupport implements InitializingBean {
     /** <默认构造函数> */
     public MyBatisDaoSupport() {
         super();
+    }
+    
+    /** <默认构造函数> */
+    public MyBatisDaoSupport(SqlSessionFactory sqlSessionFactory) {
+        super();
+        this.sqlSessionFactory = sqlSessionFactory;
+    }
+    
+    /** <默认构造函数> */
+    public MyBatisDaoSupport(SqlSessionTemplate sqlSessionTemplate) {
+        super();
+        this.sqlSessionTemplate = sqlSessionTemplate;
     }
     
     /** <默认构造函数> */
@@ -85,25 +92,20 @@ public class MyBatisDaoSupport implements InitializingBean {
         AssertUtils.notNull(sqlSessionTemplate, "sqlSessionTemplate is null.");
         
         if (this.sqlSessionFactory == null) {
-            this.sqlSessionFactory = this.sqlSessionTemplate.getSqlSessionFactory();
+            this.sqlSessionFactory = this.sqlSessionTemplate
+                    .getSqlSessionFactory();
         }
         if (this.sqlSessionTemplate == null) {
-            this.sqlSessionTemplate = new SqlSessionTemplate(
-                    this.sqlSessionFactory, ExecutorType.SIMPLE,
-                    this.exceptionTranslator);
-        } else if (this.exceptionTranslator == null) {
-            this.exceptionTranslator = this.sqlSessionTemplate.getPersistenceExceptionTranslator();
-        }
-        
-        //创建batchSqlSessionFactory
-        if (batchSqlSessionTemplate != null) {
-            AssertUtils.isTrue(this.sqlSessionTemplate.getSqlSessionFactory() != this.batchSqlSessionTemplate.getSqlSessionFactory(),
-                    "batchSqlSessionTemplate.sqlSessionFactory == sqlSessionTemplate.sqlSessionFactory");
-        } else {
-            SqlSessionFactory batchSqlSessionFactory = SqlSessionManager.newInstance(this.sqlSessionFactory);
-            batchSqlSessionTemplate = new SqlSessionTemplate(
-                    batchSqlSessionFactory, ExecutorType.BATCH,
-                    this.exceptionTranslator);
+            if (this.exceptionTranslator == null) {
+                this.sqlSessionTemplate = new SqlSessionTemplate(
+                        this.sqlSessionFactory, ExecutorType.SIMPLE);
+                this.exceptionTranslator = this.sqlSessionTemplate
+                        .getPersistenceExceptionTranslator();
+            } else {
+                this.sqlSessionTemplate = new SqlSessionTemplate(
+                        this.sqlSessionFactory, ExecutorType.SIMPLE,
+                        this.exceptionTranslator);
+            }
         }
     }
     
@@ -301,8 +303,8 @@ public class MyBatisDaoSupport implements InitializingBean {
         
         // 构建Count查询列表中数目
         String queryCountStatement = statement + "Count";
-        int count = (Integer) this.sqlSessionTemplate.selectOne(queryCountStatement,
-                parameter);
+        int count = (Integer) this.sqlSessionTemplate
+                .selectOne(queryCountStatement, parameter);
         result.setCount(count);
         if (count <= 0) {
             return result;
@@ -339,8 +341,8 @@ public class MyBatisDaoSupport implements InitializingBean {
         // 构建Count查询列表中数目
         if (count < 0) {
             String queryCountStatement = statement + "Count";
-            count = (Integer) this.sqlSessionTemplate.selectOne(queryCountStatement,
-                    parameter);
+            count = (Integer) this.sqlSessionTemplate
+                    .selectOne(queryCountStatement, parameter);
         }
         result.setCount(count);
         if (count <= 0) {
@@ -423,8 +425,8 @@ public class MyBatisDaoSupport implements InitializingBean {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public <K, V> Map<K, V> queryToMapByPage(String statement,
-            Object parameter, String mapKey, int pageIndex, int pageSize) {
+    public <K, V> Map<K, V> queryToMapByPage(String statement, Object parameter,
+            String mapKey, int pageIndex, int pageSize) {
         int offset = pageSize * (pageIndex - 1);
         int limit = pageSize * pageIndex;
         
@@ -471,10 +473,12 @@ public class MyBatisDaoSupport implements InitializingBean {
             String keyPropertyName) {
         if (!StringUtils.isEmpty(keyPropertyName)) {
             //如果指定了keyProperty
-            BeanWrapper bw = PropertyAccessorFactory.forBeanPropertyAccess(parameter);
+            BeanWrapper bw = PropertyAccessorFactory
+                    .forBeanPropertyAccess(parameter);
             if (bw.isWritableProperty(keyPropertyName)
                     && String.class.equals(bw.getPropertyType(keyPropertyName))
-                    && StringUtils.isEmpty((String) bw.getPropertyValue(keyPropertyName))) {
+                    && StringUtils.isEmpty(
+                            (String) bw.getPropertyValue(keyPropertyName))) {
                 bw.setPropertyValue(keyPropertyName, generateUUID());
             }
         }
@@ -546,18 +550,20 @@ public class MyBatisDaoSupport implements InitializingBean {
             String keyProperty) {
         if (!StringUtils.isEmpty(keyProperty)) {
             //如果指定了keyProperty
-            BeanWrapper bw = PropertyAccessorFactory.forBeanPropertyAccess(parameter);
+            BeanWrapper bw = PropertyAccessorFactory
+                    .forBeanPropertyAccess(parameter);
             if (bw.isWritableProperty(keyProperty)
                     && String.class.equals(bw.getPropertyType(keyProperty))
-                    && StringUtils.isEmpty((String) bw.getPropertyValue(keyProperty))) {
+                    && StringUtils.isEmpty(
+                            (String) bw.getPropertyValue(keyProperty))) {
                 bw.setPropertyValue(keyProperty, generateUUID());
             }
         }
         
         if (parameter != null) {
-            this.batchSqlSessionTemplate.insert(statement, parameter);
+            this.sqlSessionTemplate.insert(statement, parameter);
         } else {
-            this.batchSqlSessionTemplate.insert(statement);
+            this.sqlSessionTemplate.insert(statement);
         }
     }
     
@@ -627,9 +633,11 @@ public class MyBatisDaoSupport implements InitializingBean {
                         throw ex;
                     }
                     
-                    BatchExecutorException e = (BatchExecutorException) ex.getCause();
+                    BatchExecutorException e = (BatchExecutorException) ex
+                            .getCause();
                     // 如果为忽略错误异常则记录警告日志即可，无需打印堆栈，如果需要堆栈，需将日志级别配置为debug
-                    logger.warn("batchInsert hanppend Exception:{},the exception be igorned.",
+                    logger.warn(
+                            "batchInsert hanppend Exception:{},the exception be igorned.",
                             ex.toString());
                     if (logger.isDebugEnabled()) {
                         logger.debug(ex.toString(), ex);
@@ -721,9 +729,11 @@ public class MyBatisDaoSupport implements InitializingBean {
                         throw ex;
                     }
                     
-                    BatchExecutorException e = (BatchExecutorException) ex.getCause();
+                    BatchExecutorException e = (BatchExecutorException) ex
+                            .getCause();
                     // 如果为忽略错误异常则记录警告日志即可，无需打印堆栈，如果需要堆栈，需将日志级别配置为debug
-                    logger.warn("batchInsert hanppend Exception:{},the exception be igorned.",
+                    logger.warn(
+                            "batchInsert hanppend Exception:{},the exception be igorned.",
                             ex.toString());
                     if (logger.isDebugEnabled()) {
                         logger.debug(ex.toString(), ex);
@@ -798,9 +808,9 @@ public class MyBatisDaoSupport implements InitializingBean {
      */
     private void updateForBatch(String statement, Object parameter) {
         if (parameter != null) {
-            this.batchSqlSessionTemplate.update(statement, parameter);
+            this.sqlSessionTemplate.update(statement, parameter);
         } else {
-            this.batchSqlSessionTemplate.update(statement);
+            this.sqlSessionTemplate.update(statement);
         }
     }
     
@@ -867,9 +877,11 @@ public class MyBatisDaoSupport implements InitializingBean {
                         throw ex;
                     }
                     
-                    BatchExecutorException e = (BatchExecutorException) ex.getCause();
+                    BatchExecutorException e = (BatchExecutorException) ex
+                            .getCause();
                     // 如果为忽略错误异常则记录警告日志即可，无需打印堆栈，如果需要堆栈，需将日志级别配置为debug
-                    logger.warn("batchUpdate hanppend Exception:{},the exception be igorned.",
+                    logger.warn(
+                            "batchUpdate hanppend Exception:{},the exception be igorned.",
                             ex.toString());
                     if (logger.isDebugEnabled()) {
                         logger.debug(ex.toString(), ex);
@@ -1030,7 +1042,8 @@ public class MyBatisDaoSupport implements InitializingBean {
                     }
                     
                     // 如果为忽略错误异常则记录警告日志即可，无需打印堆栈，如果需要堆栈，需将日志级别配置为debug
-                    logger.warn("batchSave hanppend Exception:{},the exception be igorned.",
+                    logger.warn(
+                            "batchSave hanppend Exception:{},the exception be igorned.",
                             ex.toString());
                     if (logger.isDebugEnabled()) {
                         logger.debug(ex.toString(), ex);
@@ -1068,7 +1081,10 @@ public class MyBatisDaoSupport implements InitializingBean {
      */
     public void query(String statement, Object parameter, RowBounds rowBounds,
             ResultHandler<?> handler) {
-        this.sqlSessionTemplate.select(statement, parameter, rowBounds, handler);
+        this.sqlSessionTemplate.select(statement,
+                parameter,
+                rowBounds,
+                handler);
     }
     
     /**
@@ -1123,9 +1139,9 @@ public class MyBatisDaoSupport implements InitializingBean {
      */
     public void deleteForBatch(String statement, Object parameter) {
         if (parameter != null) {
-            this.batchSqlSessionTemplate.delete(statement, parameter);
+            this.sqlSessionTemplate.delete(statement, parameter);
         } else {
-            this.batchSqlSessionTemplate.delete(statement);
+            this.sqlSessionTemplate.delete(statement);
         }
     }
     
@@ -1192,9 +1208,11 @@ public class MyBatisDaoSupport implements InitializingBean {
                         throw ex;
                     }
                     
-                    BatchExecutorException e = (BatchExecutorException) ex.getCause();
+                    BatchExecutorException e = (BatchExecutorException) ex
+                            .getCause();
                     // 如果为忽略错误异常则记录警告日志即可，无需打印堆栈，如果需要堆栈，需将日志级别配置为debug
-                    logger.warn("batchUpdate hanppend Exception:{},the exception be igorned.",
+                    logger.warn(
+                            "batchUpdate hanppend Exception:{},the exception be igorned.",
                             ex.toString());
                     if (logger.isDebugEnabled()) {
                         logger.debug(ex.toString(), ex);
@@ -1229,7 +1247,7 @@ public class MyBatisDaoSupport implements InitializingBean {
      * @see [类、类#方法、类#成员]
      */
     private List<org.apache.ibatis.executor.BatchResult> flushBatchStatements() {
-        return this.batchSqlSessionTemplate.flushStatements();
+        return this.sqlSessionTemplate.flushStatements();
     }
     
     /**
@@ -1272,21 +1290,6 @@ public class MyBatisDaoSupport implements InitializingBean {
     }
     
     /**
-     * @return 返回 batchSqlSessionTemplate
-     */
-    public SqlSessionTemplate getBatchSqlSessionTemplate() {
-        return batchSqlSessionTemplate;
-    }
-    
-    /**
-     * @param 对batchSqlSessionTemplate进行赋值
-     */
-    public void setBatchSqlSessionTemplate(
-            SqlSessionTemplate batchSqlSessionTemplate) {
-        this.batchSqlSessionTemplate = batchSqlSessionTemplate;
-    }
-    
-    /**
      * @return 返回 exceptionTranslator
      */
     public PersistenceExceptionTranslator getExceptionTranslator() {
@@ -1307,4 +1310,6 @@ public class MyBatisDaoSupport implements InitializingBean {
     public void setSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
         this.sqlSessionFactory = sqlSessionFactory;
     }
+    
+    
 }

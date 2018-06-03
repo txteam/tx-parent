@@ -15,6 +15,17 @@ import com.tx.core.paged.model.PagedList;
 public interface LoggerService<T> {
     
     /**
+     * 业务日志类型<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return Class<T> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public Class<T> type();
+    
+    /**
      * 记录业务日志<br/>
      * 
      * @param serviceLogInstance [参数说明]

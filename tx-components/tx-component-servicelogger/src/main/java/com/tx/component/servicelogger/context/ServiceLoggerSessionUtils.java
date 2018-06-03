@@ -6,6 +6,7 @@
  */
 package com.tx.component.servicelogger.context;
 
+import org.springframework.transaction.support.TransactionSynchronizationAdapter;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import com.tx.core.exceptions.util.AssertUtils;
@@ -19,19 +20,33 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class ServiceLoggerSessionFactory {
+public class ServiceLoggerSessionUtils {
     
-    public static final ServiceLoggerSessionFactory INSTANCE = new ServiceLoggerSessionFactory();
+    public static final ServiceLoggerSessionUtils INSTANCE = new ServiceLoggerSessionUtils();
     
     /** <默认构造函数> */
-    private ServiceLoggerSessionFactory() {
+    private ServiceLoggerSessionUtils() {
         super();
     }
     
+    /**
+     * 获取日志会话<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return ServiceLoggerSession [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
     public static ServiceLoggerSession getLoggerSession() {
+        AssertUtils.isTrue(
+                TransactionSynchronizationManager.isSynchronizationActive(),
+                "日志会话应存在于事务开启后调用.");
+        
         Object loggerSession = TransactionSynchronizationManager
                 .getResource(INSTANCE);
         
+        //从线程变量中获取业务日志会话
         if (loggerSession != null) {
             AssertUtils.isTrue(
                     ServiceLoggerSession.class.isInstance(loggerSession),
@@ -39,6 +54,15 @@ public class ServiceLoggerSessionFactory {
             
             return (ServiceLoggerSession) loggerSession;
         }
+        
+        //如果事务的现成变量中
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
+            
+            @Override
+            public void afterCompletion(int status) {
+                super.afterCompletion(status);
+            }
+        });
         
         return null;
     }

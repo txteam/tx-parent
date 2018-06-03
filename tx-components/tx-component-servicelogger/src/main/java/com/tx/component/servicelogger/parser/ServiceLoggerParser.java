@@ -59,12 +59,6 @@ public class ServiceLoggerParser<T> implements Serializable, Cloneable {
     /** 表名 */
     private String tableName;
     
-    /** 主键属性名 */
-    private String pkName;
-    
-    /** 添加排序条件 */
-    private String order;
-    
     /** <默认构造函数> */
     public ServiceLoggerParser(Class<T> type, Dialect dialect) {
         super();
