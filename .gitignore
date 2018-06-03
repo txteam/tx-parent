@@ -68,6 +68,12 @@
 /tx-services/tx-service-file/.project
 /tx-services/tx-service-file/.factorypath
 
+/tx-services/tx-service-report/target
+/tx-services/tx-service-report/.settings
+/tx-services/tx-service-report/.classpath
+/tx-services/tx-service-report/.project
+/tx-services/tx-service-report/.factorypath
+
 
 /tx-components/tx-component-config/target
 /tx-components/tx-component-config/.settings
