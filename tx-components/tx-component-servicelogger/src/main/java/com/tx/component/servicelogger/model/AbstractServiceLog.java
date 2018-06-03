@@ -10,7 +10,7 @@ import java.util.Date;
 
 import javax.persistence.Id;
 
-import com.tx.component.servicelogger.annotation.ServiceLog;
+import com.tx.component.servicelogger.annotation.ServiceLogger;
 
 /**
  * 基础业务日志类
@@ -20,7 +20,7 @@ import com.tx.component.servicelogger.annotation.ServiceLog;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-@ServiceLog
+@ServiceLogger
 public abstract class AbstractServiceLog {
     
     /** 业务日志id */

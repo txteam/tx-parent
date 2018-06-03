@@ -26,7 +26,7 @@ import org.springframework.core.annotation.AliasFor;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE })
 @Inherited
-public @interface ServiceLog {
+public @interface ServiceLogger {
     
     /**
      * 对应的数据对象表名<br/>
