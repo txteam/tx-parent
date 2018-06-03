@@ -33,29 +33,37 @@
 /tx-components/tx-component-task/.classpath
 /tx-components/tx-component-task/.DS_Store
 
+/tx-components/tx-component-auth/target
+/tx-components/tx-component-auth/.settings
+/tx-components/tx-component-auth/.classpath
+/tx-components/tx-component-auth/.DS_Store
 
+/tx-components/tx-component-servicelogger/target
+/tx-components/tx-component-servicelogger/.settings
+/tx-components/tx-component-servicelogger/.classpath
+/tx-components/tx-component-servicelogger/.DS_Store
+
+/tx-services/target
+/tx-services/.settings
+/tx-services/.classpath
+/tx-services/.DS_Store
+
+/tx-services/tx-service-communication/target
+/tx-services/tx-service-communication/.settings
+/tx-services/tx-service-communication/.classpath
+/tx-services/tx-service-communication/.DS_Store
+
+/tx-services/tx-service-file/target
+/tx-services/tx-service-file/.settings
+/tx-services/tx-service-file/.classpath
+/tx-services/tx-service-file/.DS_Store
 
 
 /tx-components/tx-component-config/target
 /tx-components/tx-component-config/.settings
 
-/tx-components/tx-component-auth/target
-/tx-components/tx-component-auth/.settings
-
-/tx-components/tx-component-servicelogger/target
-/tx-components/tx-component-servicelogger/.settings
-
 /tx-components/tx-component-rule/target
 /tx-components/tx-component-rule/.settings
-
-/tx-components/tx-component-workflow/target
-/tx-components/tx-component-workflow/.settings
-
-/tx-components/tx-component-template/target
-/tx-components/tx-component-template/.settings
-
-/tx-components/tx-component-communication/target
-/tx-components/tx-component-communication/.settings
 
 /tx-components/tx-component-sequence/target
 /tx-components/tx-component-sequence/.settings
