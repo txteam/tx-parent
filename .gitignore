@@ -3,25 +3,47 @@
 /.classpath
 /.DS_Store
 
-.DS_Store
-
 /tx-core/target
 /tx-core/.settings
+/tx-core/.classpath
+/tx-core/.DS_Store
 
 /tx-components/target
 /tx-components/.settings
+/tx-components/.classpath
+/tx-components/.DS_Store
+
+/tx-components/tx-component-command/target
+/tx-components/tx-component-command/.settings
+/tx-components/tx-component-command/.classpath
+/tx-components/tx-component-command/.DS_Store
+
+/tx-components/tx-component-event/target
+/tx-components/tx-component-event/.settings
+/tx-components/tx-component-event/.classpath
+/tx-components/tx-component-event/.DS_Store
+
+/tx-components/tx-component-basicdata/target
+/tx-components/tx-component-basicdata/.settings
+/tx-components/tx-component-basicdata/.classpath
+/tx-components/tx-component-basicdata/.DS_Store
+
+/tx-components/tx-component-task/target
+/tx-components/tx-component-task/.settings
+/tx-components/tx-component-task/.classpath
+/tx-components/tx-component-task/.DS_Store
+
+
+
 
 /tx-components/tx-component-config/target
 /tx-components/tx-component-config/.settings
 
-/tx-components/tx-component-basicdata/target
-/tx-components/tx-component-basicdata/.settings
-
 /tx-components/tx-component-auth/target
 /tx-components/tx-component-auth/.settings
 
-/tx-components/tx-component-servicelog/target
-/tx-components/tx-component-servicelog/.settings
+/tx-components/tx-component-servicelogger/target
+/tx-components/tx-component-servicelogger/.settings
 
 /tx-components/tx-component-rule/target
 /tx-components/tx-component-rule/.settings
@@ -34,12 +56,6 @@
 
 /tx-components/tx-component-communication/target
 /tx-components/tx-component-communication/.settings
-
-/tx-components/tx-component-command/target
-/tx-components/tx-component-command/.settings
-
-/tx-components/tx-component-event/target
-/tx-components/tx-component-event/.settings
 
 /tx-components/tx-component-sequence/target
 /tx-components/tx-component-sequence/.settings
