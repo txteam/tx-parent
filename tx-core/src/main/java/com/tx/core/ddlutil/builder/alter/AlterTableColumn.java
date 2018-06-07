@@ -79,7 +79,7 @@ public class AlterTableColumn {
             this.columnName = sourceColumn.getColumnName().toUpperCase();
         } else {
             AssertUtils.isTrue(
-                    StringUtils.equalsAnyIgnoreCase(this.columnName,
+                    StringUtils.equalsIgnoreCase(this.columnName,
                             sourceColumn.getColumnName()),
                     "sourceColumn.columnName is not match.");
         }
@@ -104,7 +104,7 @@ public class AlterTableColumn {
             this.columnName = targetColumn.getColumnName().toUpperCase();
         } else {
             AssertUtils.isTrue(
-                    StringUtils.equalsAnyIgnoreCase(this.columnName,
+                    StringUtils.equalsIgnoreCase(this.columnName,
                             targetColumn.getColumnName()),
                     "targetColumn.columnName is not match.");
         }
@@ -304,8 +304,7 @@ public class AlterTableColumn {
             return;
         }
         
-        if (!StringUtils.equalsAnyIgnoreCase(
-                this.sourceColumn.getDefaultValue(),
+        if (!StringUtils.equalsIgnoreCase(this.sourceColumn.getDefaultValue(),
                 this.targetColumn.getDefaultValue())) {
             this.strictMatch = false;
             this.needAlter = true;

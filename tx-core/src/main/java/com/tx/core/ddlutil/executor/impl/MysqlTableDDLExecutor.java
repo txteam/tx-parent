@@ -389,6 +389,7 @@ public class MysqlTableDDLExecutor
         AssertUtils.isTrue(!exists(builder.tableName()),
                 "table is exist.tableName:{}",
                 builder.tableName());
+        AssertUtils.notEmpty(builder.getColumns(), "table.columns is empty.");
         
         String createSql = builder.createSql();
         

@@ -1,360 +1,278 @@
-///*
-// * 描          述:  <描述>
-// * 修  改   人:  Administrator
-// * 修改时间:  2016年11月17日
-// * <修改描述:>
-// */
-//package com.tx.core.mybatis.support;
-//
-//import java.util.List;
-//import java.util.Map;
-//
-//import org.apache.commons.lang3.reflect.FieldUtils;
-//import org.apache.ibatis.builder.MapperBuilderAssistant;
-//import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
-//import org.apache.ibatis.executor.keygen.KeyGenerator;
-//import org.apache.ibatis.executor.keygen.NoKeyGenerator;
-//import org.apache.ibatis.mapping.MappedStatement;
-//import org.apache.ibatis.mapping.ResultFlag;
-//import org.apache.ibatis.mapping.ResultMap;
-//import org.apache.ibatis.mapping.ResultMapping;
-//import org.apache.ibatis.mapping.ResultSetType;
-//import org.apache.ibatis.mapping.SqlCommandType;
-//import org.apache.ibatis.mapping.SqlSource;
-//import org.apache.ibatis.mapping.StatementType;
-//import org.apache.ibatis.scripting.LanguageDriver;
-//import org.apache.ibatis.session.Configuration;
-//import org.apache.ibatis.type.JdbcType;
-//import org.apache.ibatis.type.TypeHandler;
-//
-//import com.tx.core.exceptions.SILException;
-//import com.tx.core.exceptions.util.AssertUtils;
-//
-///**
-// * Mapper构建助手扩展类<br/>
-// *    该逻辑的调用，在设计上应该避免在修改statement期间出现业务调用的情况，不然可能出现不可预知的错误<br/>
-// * <功能详细描述>
-// * 
-// * @author  Administrator
-// * @version  [版本号, 2016年11月17日]
-// * @see  [相关类/方法]
-// * @since  [产品/模块版本]
-// */
-//public class EntityMapperBuilderAssistant extends MapperBuilderAssistant {
-//    
-//    /** <默认构造函数> */
-//    @SuppressWarnings("unchecked")
-//    public EntityMapperBuilderAssistant(Configuration configuration,
-//            String resource) {
-//        super(configuration, resource);
-//    }
-//    
-//    /**
-//     * 保存MappedStatement<br/>
-//     * <功能详细描述>
-//     * @param id
-//     * @param sqlCommandType
-//     * @param sql
-//     * @param parameterType
-//     * @param resultType
-//     * @return [参数说明]
-//     * 
-//     * @return MappedStatement [返回类型说明]
-//     * @exception throws [异常类型] [异常说明]
-//     * @see [类、类#方法、类#成员]
-//    */
-//    public MappedStatement addInsertMappedStatement(String id, String sql, Class<?> parameterType) {
-//        AssertUtils.notEmpty(id, "id is empty.");
-//        AssertUtils.notEmpty(sql, "sql is empty.");
-//        AssertUtils.notNull(parameterType, "parameterType is null.");
-//        
-//        StatementType statementType = StatementType.PREPARED;
-//        ResultSetType resultSetType = ResultSetType.FORWARD_ONLY;
-//        Integer fetchSize = null;
-//        Integer timeout = null;
-//        
-//        boolean flushCache = !isSelect;
-//        boolean useCache = isSelect;
-//        boolean resultOrdered = false;
-//        
-//        String keyProperty = null;
-//        String keyColumn = null;
-//        String databaseId = null;
-//        String resultSets = null;
-//        String resultMap = null;
-//        Class<?> resultType = null;
-//        
-//        String parameterMap = null;
-//        
-//        KeyGenerator keyGenerator = (configuration.isUseGeneratedKeys() && SqlCommandType.INSERT.equals(sqlCommandType)) ? new Jdbc3KeyGenerator()
-//                : new NoKeyGenerator();
-//        LanguageDriver lang = getLanguageDriver(null);
-//        
-//        SqlSource sqlSource = lang.createSqlSource(configuration,
-//                sql,
-//                parameterType);
-//        
-//        id = applyCurrentNamespace(id, false);//获取对应的statement的id
-//        if (configuration.hasStatement(id, false)) {
-//            //如果已经含有了，需要将对应的statement移除
-//            this.mappedStatements.remove(id);
-//        }
-//        MappedStatement statement = addMappedStatement(id,
-//                sqlSource,
-//                statementType,
-//                sqlCommandType,
-//                fetchSize,
-//                timeout,
-//                parameterMap,
-//                parameterType,
-//                resultMap,
-//                resultType,
-//                resultSetType,
-//                flushCache,
-//                useCache,
-//                resultOrdered,
-//                keyGenerator,
-//                keyProperty,
-//                keyColumn,
-//                databaseId,
-//                lang,
-//                resultSets);
-//        return statement;
-//    }
-//    
-//    /**
-//      * 保存MappedStatement<br/>
-//      * <功能详细描述>
-//      * @param id
-//      * @param sqlCommandType
-//      * @param sql
-//      * @param parameterType
-//      * @param resultType
-//      * @return [参数说明]
-//      * 
-//      * @return MappedStatement [返回类型说明]
-//      * @exception throws [异常类型] [异常说明]
-//      * @see [类、类#方法、类#成员]
-//     */
-//    public MappedStatement saveMappedStatement(String id,
-//            SqlCommandType sqlCommandType, String sql, Class<?> parameterType,
-//            Class<?> resultType) {
-//        AssertUtils.notEmpty(id, "id is empty.");
-//        AssertUtils.notEmpty(sql, "sql is empty.");
-//        AssertUtils.notNull(sqlCommandType, "sqlCommandType is null.");
-//        AssertUtils.notNull(parameterType, "parameterType is null.");
-//        AssertUtils.notNull(resultType, "resultType is null.");
-//        
-//        StatementType statementType = StatementType.PREPARED;
-//        ResultSetType resultSetType = ResultSetType.FORWARD_ONLY;
-//        Integer fetchSize = null;
-//        Integer timeout = null;
-//        
-//        boolean isSelect = sqlCommandType == SqlCommandType.SELECT;
-//        boolean flushCache = !isSelect;
-//        boolean useCache = isSelect;
-//        boolean resultOrdered = false;
-//        
-//        String keyProperty = null;
-//        String keyColumn = null;
-//        String databaseId = null;
-//        String resultSets = null;
-//        String resultMap = null;
-//        
-//        String parameterMap = null;
-//        
-//        KeyGenerator keyGenerator = (configuration.isUseGeneratedKeys() && SqlCommandType.INSERT.equals(sqlCommandType)) ? new Jdbc3KeyGenerator()
-//                : new NoKeyGenerator();
-//        LanguageDriver lang = getLanguageDriver(null);
-//        
-//        SqlSource sqlSource = lang.createSqlSource(configuration,
-//                sql,
-//                parameterType);
-//        
-//        id = applyCurrentNamespace(id, false);//获取对应的statement的id
-//        if (configuration.hasStatement(id, false)) {
-//            //如果已经含有了，需要将对应的statement移除
-//            this.mappedStatements.remove(id);
-//        }
-//        MappedStatement statement = addMappedStatement(id,
-//                sqlSource,
-//                statementType,
-//                sqlCommandType,
-//                fetchSize,
-//                timeout,
-//                parameterMap,
-//                parameterType,
-//                resultMap,
-//                resultType,
-//                resultSetType,
-//                flushCache,
-//                useCache,
-//                resultOrdered,
-//                keyGenerator,
-//                keyProperty,
-//                keyColumn,
-//                databaseId,
-//                lang,
-//                resultSets);
-//        return statement;
-//    }
-//    
-//    /**
-//      * 保存MappedStatement
-//      * <功能详细描述>
-//      * @param id
-//      * @param sqlCommandType
-//      * @param sql
-//      * @param parameterType
-//      * @param resultMapId
-//      * @param resultType
-//      * @param resultMappings
-//      * @return [参数说明]
-//      * 
-//      * @return MappedStatement [返回类型说明]
-//      * @exception throws [异常类型] [异常说明]
-//      * @see [类、类#方法、类#成员]
-//     */
-//    public MappedStatement saveMappedStatement(String id,
-//            SqlCommandType sqlCommandType, String sql, Class<?> parameterType,
-//            String resultMapId) {
-//        AssertUtils.notEmpty(id, "id is empty.");
-//        AssertUtils.notEmpty(sql, "sql is empty.");
-//        AssertUtils.notNull(sqlCommandType, "sqlCommandType is null.");
-//        AssertUtils.notNull(parameterType, "parameterType is null.");
-//        AssertUtils.notEmpty(resultMapId, "resultMapId is empty.");
-//        
-//        StatementType statementType = StatementType.PREPARED;
-//        ResultSetType resultSetType = ResultSetType.FORWARD_ONLY;
-//        Integer fetchSize = null;
-//        Integer timeout = null;
-//        
-//        boolean isSelect = sqlCommandType == SqlCommandType.SELECT;
-//        boolean flushCache = !isSelect;
-//        boolean useCache = isSelect;
-//        boolean resultOrdered = false;
-//        
-//        String keyProperty = null;
-//        String keyColumn = null;
-//        String databaseId = null;
-//        String resultSets = null;
-//        Class<?> resultType = null;
-//        
-//        String parameterMap = null;
-//        
-//        KeyGenerator keyGenerator = (configuration.isUseGeneratedKeys() && SqlCommandType.INSERT.equals(sqlCommandType)) ? new Jdbc3KeyGenerator()
-//                : new NoKeyGenerator();
-//        LanguageDriver lang = getLanguageDriver(null);
-//        
-//        SqlSource sqlSource = lang.createSqlSource(configuration,
-//                sql,
-//                parameterType);
-//        
-//        id = applyCurrentNamespace(id, false);//获取对应的statement的id
-//        if (configuration.hasStatement(id, false)) {
-//            //如果已经含有了，需要将对应的statement移除
-//            this.mappedStatements.remove(id);
-//        }
-//        MappedStatement statement = addMappedStatement(id,
-//                sqlSource,
-//                statementType,
-//                sqlCommandType,
-//                fetchSize,
-//                timeout,
-//                parameterMap,
-//                parameterType,
-//                resultMapId,
-//                resultType,
-//                resultSetType,
-//                flushCache,
-//                useCache,
-//                resultOrdered,
-//                keyGenerator,
-//                keyProperty,
-//                keyColumn,
-//                databaseId,
-//                lang,
-//                resultSets);
-//        return statement;
-//    }
-//    
-//    /**
-//     * 保存MappedStatement
-//     * <功能详细描述>
-//     * @param id
-//     * @param sqlCommandType
-//     * @param sql
-//     * @param parameterType
-//     * @param resultMapId
-//     * @param resultType
-//     * @param resultMappings
-//     * @return [参数说明]
-//     * 
-//     * @return MappedStatement [返回类型说明]
-//     * @exception throws [异常类型] [异常说明]
-//     * @see [类、类#方法、类#成员]
-//    */
-//    public ResultMap saveResultMap(String resultMapId, Class<?> resultType,
-//            List<ResultMapping> resultMappings) {
-//        AssertUtils.notEmpty(resultMapId, "resultMapId is empty.");
-//        AssertUtils.notNull(resultType, "resultType is null.");
-//        AssertUtils.notEmpty(resultMapId, "resultMapId is empty.");
-//        AssertUtils.notNull(resultMappings, "resultMappings is null.");
-//        
-//        resultMapId = applyCurrentNamespace(resultMapId, false);//获取对应的statement的id
-//        if (configuration.hasResultMap(resultMapId)) {
-//            //如果已经含有了，需要将对应的statement移除
-//            this.resultMaps.remove(resultMapId);
-//        }
-//        ResultMap resultMap = addResultMap(resultMapId,
-//                resultType,
-//                null,
-//                null,
-//                resultMappings,
-//                true);
-//        
-//        return resultMap;
-//    }
-//    
-//    /**
-//      * 构建ResultMapping
-//      * <功能详细描述>
-//      * @param resultType
-//      * @param property
-//      * @param javaType
-//      * @param column
-//      * @param jdbcType
-//      * @return [参数说明]
-//      * 
-//      * @return ResultMapping [返回类型说明]
-//      * @exception throws [异常类型] [异常说明]
-//      * @see [类、类#方法、类#成员]
-//     */
-//    public ResultMapping buildResultMapping(Class<?> resultType,
-//            String property, Class<?> javaType, String column, JdbcType jdbcType) {
-//        String nestedSelect = null;//是否存在nestedSelect
-//        String nestedResultMap = null;//
-//        String notNullColumn = null;
-//        String columnPrefix = null;
-//        Class<? extends TypeHandler<?>> typeHandler = null;
-//        List<ResultFlag> flags = null; //??
-//        String resultSet = null;
-//        String foreignColumn = null;
-//        boolean lazy = true;
-//        ResultMapping rm = super.buildResultMapping(resultType,
-//                property,
-//                column,
-//                javaType,
-//                jdbcType,
-//                nestedSelect,
-//                nestedResultMap,
-//                notNullColumn,
-//                columnPrefix,
-//                typeHandler,
-//                flags,
-//                resultSet,
-//                foreignColumn,
-//                lazy);
-//        return rm;
-//    }
-//}
+/*
+ * 描          述:  <描述>
+ * 修  改   人:  Administrator
+ * 修改时间:  2016年11月17日
+ * <修改描述:>
+ */
+package com.tx.core.mybatis.support;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.session.Configuration;
+import org.springframework.beans.BeanUtils;
+
+import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.mybatis.builder.AbstractEntityMapperBuilderAssistant;
+import com.tx.core.mybatis.sqlbuilder.SqlMapSQLBuilder;
+import com.tx.core.util.JPAParseUtils;
+import com.tx.core.util.JPAParseUtils.JPAColumnInfo;
+
+/**
+ * Mapper构建助手扩展类<br/>
+ *    该逻辑的调用，在设计上应该避免在修改statement期间出现业务调用的情况，不然可能出现不可预知的错误<br/>
+ * <功能详细描述>
+ * 
+ * @author  Administrator
+ * @version  [版本号, 2016年11月17日]
+ * @see  [相关类/方法]
+ * @since  [产品/模块版本]
+ */
+public class EntityMapperBuilderAssistant
+        extends AbstractEntityMapperBuilderAssistant {
+    
+    //表名
+    protected String tableName;
+    
+    //表字段
+    protected List<JPAColumnInfo> tableColumns;
+    
+    //排序字段
+    protected List<String> orderBys;
+    
+    //queryOrderBy
+    protected String queryOrderBy;
+    
+    //主键字段
+    protected List<JPAColumnInfo> primaryKeyColumns;
+    
+    //非主键字段
+    protected List<JPAColumnInfo> notPrimaryKeyColumns;
+    
+    /** <默认构造函数> */
+    public EntityMapperBuilderAssistant(Configuration configuration,
+            Class<?> beanType) {
+        super(configuration, beanType);
+        
+        //被解析生成的类型应该不是一个simpleValueType
+        AssertUtils.isTrue(!BeanUtils.isSimpleValueType(beanType),
+                "type is simpleValueType.");
+        
+        //解析表名
+        this.tableName = JPAParseUtils.parseTableName(this.beanType);
+        this.tableColumns = JPAParseUtils.parseTableColumns(this.beanType);
+        
+        //主键字段以及非主键字段集合记录
+        this.primaryKeyColumns = new ArrayList<>();
+        this.notPrimaryKeyColumns = new ArrayList<>();
+        for (JPAColumnInfo column : this.tableColumns) {
+            if (column.isPrimaryKey()) {
+                this.primaryKeyColumns.add(column);
+            } else {
+                this.notPrimaryKeyColumns.add(column);
+            }
+            
+            //判断是否具备typeHandler,也不存在嵌套属性描述时需要抛出异常
+            if (!hasTypeHandler(column.getPropertyDescriptor())) {
+                //如果不具备typeHandler，那么nestedPropertyDescriptor就不该为空
+                AssertUtils.isTrue(column.getNestedPropertyDescriptor() != null,
+                        "对应属性不存在类型处理器，且解析嵌套属性失败.beanType:{} property:{}",
+                        new Object[] { this.beanType,
+                                column.getPropertyDescriptor().getName() });
+            }
+        }
+        
+        //必须存在主键字段
+        AssertUtils.notEmpty(this.primaryKeyColumns,
+                "实体无法判断主键字段，不支持自动生成SqlMap.type:{}",
+                new Object[] { this.beanType });
+        
+        //解析排序字段
+        this.orderBys = JPAParseUtils.parseOrderBys(beanType,
+                this.tableColumns,
+                "createDate",
+                "id");
+        this.queryOrderBy = JPAParseUtils.parseOrderBy(beanType,
+                this.tableColumns,
+                "createDate",
+                "id");
+    }
+    
+    /**
+     * @return
+     */
+    @Override
+    protected String getInsertSQL() {
+        SqlMapSQLBuilder sql = new SqlMapSQLBuilder();
+        sql.INSERT_INTO(this.tableName);
+        
+        for (JPAColumnInfo column : this.tableColumns) {
+            if (!column.isInsertable()) {
+                continue;
+            }
+            String columnName = column.getColumnName();
+            String propertyName = column.getNestedPropertyName();
+            sql.VALUES(columnName, formatProperty(propertyName));
+        }
+        
+        String insertSQL = sql.toString();
+        return insertSQL;
+    }
+    
+    /**
+     * @return
+     */
+    @Override
+    protected String getDeleteSQL() {
+        SqlMapSQLBuilder sql = new SqlMapSQLBuilder();
+        sql.DELETE_FROM(this.tableName);
+        
+        for (JPAColumnInfo column : this.primaryKeyColumns) {
+            String columnName = column.getColumnName();
+            String propertyName = column.getNestedPropertyName();
+            
+            String whereItem = formatWhereAndItem(columnName,
+                    " = ",
+                    propertyName);
+            sql.WHERE(whereItem);
+        }
+        
+        String deleteSQL = sql.toString();
+        return deleteSQL;
+    }
+    
+    /**
+     * @return
+     */
+    @Override
+    protected String getUpdateSQL() {
+        SqlMapSQLBuilder sql = new SqlMapSQLBuilder();
+        sql.UPDATE(this.tableName);
+        for (JPAColumnInfo column : this.notPrimaryKeyColumns) {
+            if (!column.isUpdatable()) {
+                continue;
+            }
+            String columnName = column.getColumnName();
+            String propertyName = column.getNestedPropertyName();
+            Class<?> javaType = column.getNestedPropertyType();
+            
+            String setItem = formatSetItem(propertyName, columnName, javaType);
+            sql.SET(setItem);
+        }
+        for (JPAColumnInfo column : this.primaryKeyColumns) {
+            String columnName = column.getColumnName();
+            String propertyName = column.getNestedPropertyName();
+            
+            String whereItem = formatWhereAndItem(columnName,
+                    " = ",
+                    propertyName);
+            sql.WHERE(whereItem);
+        }
+        
+        String updateSQL = sql.toString();
+        return updateSQL;
+    }
+    
+    /**
+     * @return
+     */
+    @Override
+    protected Map<String, String> getCustomizeColumn2PropertyMap() {
+        Map<String, String> column2propertyMap = new HashMap<>();
+        for (JPAColumnInfo column : this.tableColumns) {
+            String columnName = column.getColumnName();
+            String propertyName = column.getNestedPropertyName();
+            
+            //如果字段名和属性名不匹配时才回缴入customizeColumn2PropertyMap
+            if (!StringUtils.equalsIgnoreCase(columnName, propertyName)) {
+                column2propertyMap.put(columnName, propertyName);
+            }
+        }
+        
+        return column2propertyMap;
+    }
+    
+    /**
+     * @return
+     */
+    @Override
+    protected String getFindSQL() {
+        SqlMapSQLBuilder sql = new SqlMapSQLBuilder();
+        for (JPAColumnInfo column : this.tableColumns) {
+            String columnName = column.getColumnName();
+            //查询字段
+            sql.FIND(columnName);
+        }
+        sql.FROM(this.tableName);
+        for (JPAColumnInfo column : this.primaryKeyColumns) {
+            String columnName = column.getColumnName();
+            String propertyName = column.getNestedPropertyName();
+            
+            String whereItem = formatWhereAndItem(columnName,
+                    " = ",
+                    propertyName);
+            sql.WHERE(whereItem);
+        }
+        
+        String findSQL = sql.toString();
+        return findSQL;
+    }
+    
+    /**
+     * @return
+     */
+    @Override
+    protected String getQuerySQL() {
+        SqlMapSQLBuilder sql = new SqlMapSQLBuilder();
+        for (JPAColumnInfo column : this.tableColumns) {
+            String columnName = column.getColumnName();
+            //查询字段
+            sql.QUERY(columnName);
+        }
+        sql.FROM(this.tableName);
+        for (JPAColumnInfo column : this.tableColumns) {
+            String columnName = column.getColumnName();
+            String propertyName = column.getNestedPropertyName();
+            
+            String whereItem = formatWhereAndItem(columnName,
+                    " = ",
+                    propertyName);
+            sql.WHERE(whereItem);
+        }
+        //        if(!CollectionUtils.isEmpty(this.orderBys)){
+        //            for(String orderByTemp : this.orderBys){
+        //                sql.ORDER_BY(orderByTemp);
+        //            }
+        //        }
+        sql.ORDER_BY(this.queryOrderBy);
+        
+        String querySQL = sql.toString();
+        return querySQL;
+    }
+    
+    /**
+     * @return
+     */
+    @Override
+    protected String getCountSQL() {
+        SqlMapSQLBuilder sql = new SqlMapSQLBuilder();
+        sql.COUNT();
+        sql.FROM(this.tableName);
+        for (JPAColumnInfo column : this.tableColumns) {
+            String columnName = column.getColumnName();
+            String propertyName = column.getNestedPropertyName();
+            
+            String whereItem = formatWhereAndItem(columnName,
+                    " = ",
+                    propertyName);
+            sql.WHERE(whereItem);
+        }
+        
+        String countSQL = sql.toString();
+        return countSQL;
+    }
+    
+}

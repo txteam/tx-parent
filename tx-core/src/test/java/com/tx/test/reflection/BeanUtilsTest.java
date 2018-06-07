@@ -9,7 +9,7 @@ package com.tx.test.reflection;
 import java.beans.PropertyDescriptor;
 
 import org.springframework.beans.BeanUtils;
-import org.springframework.core.convert.TypeDescriptor;
+import org.springframework.util.ReflectionUtils;
 
 import com.tx.test.reflection.model.TestReflection;
 
@@ -28,10 +28,16 @@ public class BeanUtilsTest {
         for(PropertyDescriptor pd : BeanUtils.getPropertyDescriptors(TestReflection.class)){
             if(pd.getWriteMethod() != null && pd.getReadMethod() != null){
                 System.out.println(pd.getName());
+                
+                if(ReflectionUtils.findField(TestReflection.class, pd.getName()) == null){
+                    System.out.println("unknowfield:" + pd.getName());
+                }
             }else{
                 System.out.println(pd.getName() + ". wm is null " + (pd.getWriteMethod() == null)
                         + ". rm is null " + (pd.getReadMethod() == null));
             }
+            
+            
             
         }
     }

@@ -91,7 +91,7 @@ public class AlterTableComparetor {
         String targetPrimaryKeyColumnNames = TableDefHelper
                 .parsePrimaryKeyColumnNames(targetTableColumns);
         
-        this.needModifyPrimaryKey = !StringUtils.equalsAnyIgnoreCase(
+        this.needModifyPrimaryKey = !StringUtils.equalsIgnoreCase(
                 sourcePrimaryKeyColumnNames, targetPrimaryKeyColumnNames);
         this.primaryKeyColumnNames = targetPrimaryKeyColumnNames;
         if (this.needModifyPrimaryKey) {

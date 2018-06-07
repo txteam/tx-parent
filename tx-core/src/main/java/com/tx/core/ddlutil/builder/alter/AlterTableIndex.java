@@ -51,7 +51,7 @@ public class AlterTableIndex {
         
         setSourceColumn(sourceIndex);
     }
-
+    
     /**
      * 设置原字段<br/>
      * <功能详细描述>
@@ -71,7 +71,7 @@ public class AlterTableIndex {
             this.indexName = sourceIndex.getIndexName().toUpperCase();
         } else {
             AssertUtils.isTrue(
-                    StringUtils.equalsAnyIgnoreCase(this.indexName,
+                    StringUtils.equalsIgnoreCase(this.indexName,
                             sourceIndex.getIndexName()),
                     "sourceIndex.indexName is not match.");
         }
@@ -96,7 +96,7 @@ public class AlterTableIndex {
             this.indexName = targetIndex.getIndexName().toUpperCase();
         } else {
             AssertUtils.isTrue(
-                    StringUtils.equalsAnyIgnoreCase(this.indexName,
+                    StringUtils.equalsIgnoreCase(this.indexName,
                             targetIndex.getIndexName()),
                     "targetIndex.columnName is not match.");
         }

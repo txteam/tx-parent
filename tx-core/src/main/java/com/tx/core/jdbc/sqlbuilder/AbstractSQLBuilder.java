@@ -6,6 +6,8 @@
  */
 package com.tx.core.jdbc.sqlbuilder;
 
+import java.util.Arrays;
+
 /**
  * Sql构建器<br/>
  * <功能详细描述>
@@ -17,24 +19,46 @@ package com.tx.core.jdbc.sqlbuilder;
  */
 public abstract class AbstractSQLBuilder<T> {
     
-    private static final String AND = ") \nAND (";
-    
-    private static final String OR = ") \nOR (";
-    
     private SQLStatement sql;
     
     /** <默认构造函数> */
     public AbstractSQLBuilder() {
         super();
+        
         this.sql = initSQLStatement();
     }
     
+    /**
+     * 获取当前对象自身的句柄<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return T [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public abstract T getSelf();
+    
+    /**
+     * 提供给子类扩展SQLStatement<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return SQLStatement [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
     protected SQLStatement initSQLStatement() {
         SQLStatement sqlStatement = new SQLStatement();
         return sqlStatement;
     }
     
-    public abstract T getSelf();
+    public T STATEMENT_TYPE(SQLStatementTypeEnum StatementType) {
+        if (StatementType != null) {
+            sql().statementType = StatementType;
+        }
+        return getSelf();
+    }
     
     public T UPDATE(String table) {
         sql().statementType = SQLStatementTypeEnum.UPDATE;
@@ -44,6 +68,11 @@ public abstract class AbstractSQLBuilder<T> {
     
     public T SET(String sets) {
         sql().sets.add(sets);
+        return getSelf();
+    }
+    
+    public T SET(String... sets) {
+        sql().sets.addAll(Arrays.asList(sets));
         return getSelf();
     }
     
@@ -59,13 +88,94 @@ public abstract class AbstractSQLBuilder<T> {
         return getSelf();
     }
     
+    public T INTO_COLUMNS(String... columns) {
+        sql().columns.addAll(Arrays.asList(columns));
+        return getSelf();
+    }
+    
+    public T INTO_VALUES(String... values) {
+        sql().values.addAll(Arrays.asList(values));
+        return getSelf();
+    }
+    
+    public T FIND(String columns) {
+        sql().statementType = SQLStatementTypeEnum.FIND;
+        sql().select.add(columns);
+        return getSelf();
+    }
+    
+    public T FIND(String... columns) {
+        sql().statementType = SQLStatementTypeEnum.FIND;
+        sql().select.addAll(Arrays.asList(columns));
+        return getSelf();
+    }
+    
+    public T FIND_DISTINCT(String columns) {
+        sql().distinct = true;
+        FIND(columns);
+        return getSelf();
+    }
+    
+    public T FIND_DISTINCT(String... columns) {
+        sql().distinct = true;
+        FIND(columns);
+        return getSelf();
+    }
+    
+    public T QUERY(String columns) {
+        sql().statementType = SQLStatementTypeEnum.QUERY;
+        sql().select.add(columns);
+        return getSelf();
+    }
+    
+    public T QUERY(String... columns) {
+        sql().statementType = SQLStatementTypeEnum.QUERY;
+        sql().select.addAll(Arrays.asList(columns));
+        return getSelf();
+    }
+    
+    public T QUERY_DISTINCT(String columns) {
+        sql().distinct = true;
+        QUERY(columns);
+        return getSelf();
+    }
+    
+    public T QUERY_DISTINCT(String... columns) {
+        sql().distinct = true;
+        QUERY(columns);
+        return getSelf();
+    }
+    
+    public T COUNT() {
+        sql().statementType = SQLStatementTypeEnum.COUNT;
+        return getSelf();
+    }
+    
+    public T COUNT(String columns) {
+        sql().statementType = SQLStatementTypeEnum.COUNT;
+        sql().select.add(columns);
+        return getSelf();
+    }
+    
     public T SELECT(String columns) {
         sql().statementType = SQLStatementTypeEnum.SELECT;
         sql().select.add(columns);
         return getSelf();
     }
     
+    public T SELECT(String... columns) {
+        sql().statementType = SQLStatementTypeEnum.SELECT;
+        sql().select.addAll(Arrays.asList(columns));
+        return getSelf();
+    }
+    
     public T SELECT_DISTINCT(String columns) {
+        sql().distinct = true;
+        SELECT(columns);
+        return getSelf();
+    }
+    
+    public T SELECT_DISTINCT(String... columns) {
         sql().distinct = true;
         SELECT(columns);
         return getSelf();
@@ -82,8 +192,18 @@ public abstract class AbstractSQLBuilder<T> {
         return getSelf();
     }
     
+    public T FROM(String... tables) {
+        sql().tables.addAll(Arrays.asList(tables));
+        return getSelf();
+    }
+    
     public T JOIN(String join) {
         sql().join.add(join);
+        return getSelf();
+    }
+    
+    public T JOIN(String... joins) {
+        sql().join.addAll(Arrays.asList(joins));
         return getSelf();
     }
     
@@ -92,8 +212,18 @@ public abstract class AbstractSQLBuilder<T> {
         return getSelf();
     }
     
+    public T INNER_JOIN(String... joins) {
+        sql().innerJoin.addAll(Arrays.asList(joins));
+        return getSelf();
+    }
+    
     public T LEFT_OUTER_JOIN(String join) {
         sql().leftOuterJoin.add(join);
+        return getSelf();
+    }
+    
+    public T LEFT_OUTER_JOIN(String... joins) {
+        sql().leftOuterJoin.addAll(Arrays.asList(joins));
         return getSelf();
     }
     
@@ -102,8 +232,18 @@ public abstract class AbstractSQLBuilder<T> {
         return getSelf();
     }
     
+    public T RIGHT_OUTER_JOIN(String... joins) {
+        sql().rightOuterJoin.addAll(Arrays.asList(joins));
+        return getSelf();
+    }
+    
     public T OUTER_JOIN(String join) {
         sql().outerJoin.add(join);
+        return getSelf();
+    }
+    
+    public T OUTER_JOIN(String... joins) {
+        sql().outerJoin.addAll(Arrays.asList(joins));
         return getSelf();
     }
     
@@ -114,17 +254,22 @@ public abstract class AbstractSQLBuilder<T> {
     }
     
     public T OR() {
-        sql().lastList.add(OR);
+        sql().lastList.add(SQLStatement.OR);
         return getSelf();
     }
     
     public T AND() {
-        sql().lastList.add(AND);
+        sql().lastList.add(SQLStatement.AND);
         return getSelf();
     }
     
     public T GROUP_BY(String columns) {
         sql().groupBy.add(columns);
+        return getSelf();
+    }
+    
+    public T GROUP_BY(String... columns) {
+        sql().groupBy.addAll(Arrays.asList(columns));
         return getSelf();
     }
     
@@ -134,12 +279,23 @@ public abstract class AbstractSQLBuilder<T> {
         return getSelf();
     }
     
+    public T HAVING(String... conditions) {
+        sql().having.addAll(Arrays.asList(conditions));
+        sql().lastList = sql().having;
+        return getSelf();
+    }
+    
     public T ORDER_BY(String columns) {
         sql().orderBy.add(columns);
         return getSelf();
     }
     
-    private SQLStatement sql() {
+    public T ORDER_BY(String... columns) {
+        sql().orderBy.addAll(Arrays.asList(columns));
+        return getSelf();
+    }
+    
+    protected SQLStatement sql() {
         return sql;
     }
     

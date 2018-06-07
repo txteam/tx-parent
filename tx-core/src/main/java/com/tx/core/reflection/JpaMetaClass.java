@@ -559,7 +559,7 @@ public class JpaMetaClass<T> {
      * 解析实体
      * 解析实体对象，获取类名，对应数据库表名等信息
      * <功能详细描述>
-     * @param type [参数说明]
+     * @param beanType [参数说明]
      *
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]

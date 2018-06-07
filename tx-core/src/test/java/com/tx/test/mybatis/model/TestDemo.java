@@ -8,6 +8,10 @@ package com.tx.test.mybatis.model;
 
 import java.util.Date;
 
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
 /**
  * <功能简述>
  * <功能详细描述>
@@ -17,8 +21,10 @@ import java.util.Date;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class TestDemo {
-    
+@Table(name="test_demo")
+public class TestDemo extends TestDemoSuper{
+   
+    @Id
     private String id;
     
     private String code;
@@ -27,6 +33,7 @@ public class TestDemo {
     
     private String remark;
     
+    @Column(name = "demo_code")
     private Demo demo;
     
     private Date createDate;
@@ -88,42 +95,42 @@ public class TestDemo {
     public void setRemark(String remark) {
         this.remark = remark;
     }
-
+    
     /**
      * @return 返回 code
      */
     public String getCode() {
         return code;
     }
-
+    
     /**
      * @param 对code进行赋值
      */
     public void setCode(String code) {
         this.code = code;
     }
-
+    
     /**
      * @return 返回 lastUpdateDate
      */
     public Date getLastUpdateDate() {
         return lastUpdateDate;
     }
-
+    
     /**
      * @param 对lastUpdateDate进行赋值
      */
     public void setLastUpdateDate(Date lastUpdateDate) {
         this.lastUpdateDate = lastUpdateDate;
     }
-
+    
     /**
      * @return 返回 demo
      */
     public Demo getDemo() {
         return demo;
     }
-
+    
     /**
      * @param 对demo进行赋值
      */

@@ -184,7 +184,7 @@ public class JdbcUtils {
      * @param ps
      * @param parameterIndex
      * @param value
-     * @param type
+     * @param beanType
      * @throws SQLException [参数说明]
      * 
      * @return void [返回类型说明]

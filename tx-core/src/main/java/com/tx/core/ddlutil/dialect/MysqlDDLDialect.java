@@ -171,23 +171,23 @@ public class MysqlDDLDialect extends DDLDialect {
         
         registeClass(Float.class, JdbcTypeEnum.NUMERIC);
         registeClass2Length(Float.class, 16);
-        registeClass2Scale(Float.class, 8);
+        registeClass2Scale(Float.class, 4);
         
         registeClass(float.class, JdbcTypeEnum.NUMERIC);
         registeClass2Length(float.class, 16);
-        registeClass2Scale(float.class, 8);
+        registeClass2Scale(float.class, 4);
         
         registeClass(Double.class, JdbcTypeEnum.NUMERIC);
         registeClass2Length(Double.class, 32);
-        registeClass2Scale(Double.class, 16);
+        registeClass2Scale(Double.class, 8);
         
         registeClass(double.class, JdbcTypeEnum.NUMERIC);
         registeClass2Length(double.class, 32);
-        registeClass2Scale(double.class, 16);
+        registeClass2Scale(double.class, 8);
         
         registeClass(BigDecimal.class, JdbcTypeEnum.NUMERIC);
         registeClass2Length(BigDecimal.class, 32);
-        registeClass2Scale(BigDecimal.class, 16);
+        registeClass2Scale(BigDecimal.class, 8);
         registeColumnName2Scale(BigDecimal.class,
                 Pattern.compile("^.*amount$", Pattern.CASE_INSENSITIVE),
                 2);

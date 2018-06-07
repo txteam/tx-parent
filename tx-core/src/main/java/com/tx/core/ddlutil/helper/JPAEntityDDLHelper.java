@@ -6,25 +6,12 @@
  */
 package com.tx.core.ddlutil.helper;
 
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.reflect.FieldUtils;
-import org.springframework.beans.BeanUtils;
-import org.springframework.context.annotation.Primary;
 
 import com.tx.core.ddlutil.dialect.DDLDialect;
 import com.tx.core.ddlutil.model.JPAEntityColumnDef;
@@ -32,6 +19,8 @@ import com.tx.core.ddlutil.model.JPAEntityTableDef;
 import com.tx.core.ddlutil.model.JdbcTypeEnum;
 import com.tx.core.ddlutil.model.TableDef;
 import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.util.JPAParseUtils;
+import com.tx.core.util.JPAParseUtils.JPAColumnInfo;
 
 /**
  * JPA实体表工具类<br/>
@@ -110,23 +99,8 @@ public abstract class JPAEntityDDLHelper {
      */
     private static JPAEntityTableDef doAnalyzeTableDef(Class<?> type) {
         //没有注解的时候默认使用类名当作表名
-        String tableName = type.getSimpleName();
+        String tableName = JPAParseUtils.parseTableName(type);
         String comment = "";
-        //如果存在javax注解中的Entity读取其Name
-        //org.hibernate.annotations.Entity该类中不含有表名，不进行解析
-        if (type.isAnnotationPresent(Entity.class)) {
-            String entityName = type.getAnnotation(Entity.class).name();
-            if (!StringUtils.isEmpty(entityName)) {
-                tableName = entityName.toUpperCase();
-            }
-        }
-        if (type.isAnnotationPresent(Table.class)) {
-            //如果含有注解：javax.persistence.Table
-            String annoTableName = type.getAnnotation(Table.class).name();
-            if (!StringUtils.isEmpty(annoTableName)) {
-                tableName = annoTableName.toUpperCase();
-            }
-        }
         if (type.isAnnotationPresent(org.hibernate.annotations.Table.class)) {
             //如果含有注解：javax.persistence.Table
             String annoTableComment = type
@@ -156,52 +130,12 @@ public abstract class JPAEntityDDLHelper {
     private static List<JPAEntityColumnDef> doAnalyzeCoumnDefs(String tableName,
             Class<?> type, DDLDialect ddlDialect) {
         List<JPAEntityColumnDef> colDefList = new ArrayList<>();
-        
-        boolean hasPrimaryKey = false;
-        PropertyDescriptor[] pds = BeanUtils.getPropertyDescriptors(type);
-        for (PropertyDescriptor pd : pds) {
-            if (pd.getReadMethod() == null || pd.getWriteMethod() == null) {
-                //writeMethod、readMethod都存在的属性才认为需要建为对象字段
-                continue;
-            }
+        for (JPAColumnInfo column : JPAParseUtils.parseTableColumns(type)) {
             JPAEntityColumnDef colDef = doAnalyzeCoumnDef(tableName,
                     type,
-                    pd,
+                    column,
                     ddlDialect);
-            
-            if (colDef != null) {
-                colDefList.add(colDef);
-                if (colDef.isPrimaryKey()) {
-                    hasPrimaryKey = true;//如果已经有字段被设置为了主键
-                }
-            }
-        }
-        
-        if (!hasPrimaryKey) {
-            //如果没有主键：判断是否有id,code这样的字段
-            //如果有id
-            for (JPAEntityColumnDef col : colDefList) {
-                if (StringUtils.equalsAnyIgnoreCase("id",
-                        col.getColumnName())) {
-                    col.setPrimaryKey(true);
-                    col.setRequired(true);
-                    hasPrimaryKey = true;
-                    break;
-                }
-            }
-        }
-        if (!hasPrimaryKey) {
-            //如果没有主键：判断是否有id,code这样的字段
-            //如果有code
-            for (JPAEntityColumnDef col : colDefList) {
-                if (StringUtils.equalsAnyIgnoreCase("code",
-                        col.getColumnName())) {
-                    col.setPrimaryKey(true);
-                    col.setRequired(true);
-                    hasPrimaryKey = true;
-                    break;
-                }
-            }
+            colDefList.add(colDef);
         }
         return colDefList;
     }
@@ -218,98 +152,44 @@ public abstract class JPAEntityDDLHelper {
       * @see [类、类#方法、类#成员]
      */
     private static JPAEntityColumnDef doAnalyzeCoumnDef(String tableName,
-            Class<?> type, PropertyDescriptor pd, DDLDialect ddlDialect) {
+            Class<?> type, JPAColumnInfo column, DDLDialect ddlDialect) {
         JPAEntityColumnDef colDef = null;
         
         String columnComment = "";
-        String propertyName = pd.getName();
-        String columnName = propertyName;
-        Class<?> javaType = pd.getPropertyType();
+        String propertyName = column.getNestedPropertyName();
+        Class<?> javaType = column.getNestedPropertyType();
+        String columnName = column.getColumnName();
+        boolean required = !column.isNullable();
+        boolean primaryKey = column.isPrimaryKey();
+        JdbcTypeEnum jdbcType = ddlDialect.getJdbcType(javaType);//获取对应的jdbcType
+        
         int size = 255;
         int scale = 0;
-        boolean required = false;
-        boolean primaryKey = false;
-        boolean hasAnnotation = false;
-        //获取字段
-        Field field = FieldUtils.getField(type, propertyName, true);
-        if (field != null) {
-            if (field.isAnnotationPresent(Transient.class)) {
-                //如果含有忽略的字段则跳过该字段
-                return null;
-            }
-            if (field.isAnnotationPresent(OneToMany.class)) {
-                //如果含有忽略的字段则跳过该字段
-                return null;
-            }
-            if (field.isAnnotationPresent(Column.class)) {
-                hasAnnotation = true;
-                Column columnAnno = field.getAnnotation(Column.class);
-                columnName = StringUtils.isBlank(columnAnno.name()) ? columnName
-                        : columnAnno.name();
-                required = !columnAnno.nullable();
-                size = Math.max(columnAnno.length(), columnAnno.precision());
-                scale = columnAnno.scale();
-            }
-            if (field.isAnnotationPresent(Id.class)) {
-                primaryKey = true;
-            }
-            if (field.isAnnotationPresent(
-                    org.springframework.data.annotation.Id.class)) {
-                primaryKey = true;
-            }
-            if (field.isAnnotationPresent(Primary.class)) {
-                primaryKey = true;
-            }
-        }
         
-        //获取读方法
-        Method readMethod = pd.getReadMethod();
-        if (readMethod != null) {
-            if (readMethod.isAnnotationPresent(Transient.class)) {
-                //如果含有忽略的字段则跳过该字段
-                return null;
-            }
-            if (readMethod.isAnnotationPresent(OneToMany.class)) {
-                //如果含有忽略的字段则跳过该字段
-                return null;
-            }
-            if (readMethod.isAnnotationPresent(Column.class)) {
-                hasAnnotation = true;
-                Column columnAnno = readMethod.getAnnotation(Column.class);
-                columnName = StringUtils.isBlank(columnAnno.name()) ? columnName
-                        : columnAnno.name();
-                required = !columnAnno.nullable();
-                size = Math.max(columnAnno.length(), columnAnno.precision());
-                scale = columnAnno.scale();
-            }
-            if (readMethod.isAnnotationPresent(Id.class)) {
-                primaryKey = true;
-            }
-            if (readMethod.isAnnotationPresent(
-                    org.springframework.data.annotation.Id.class)) {
-                primaryKey = true;
-            }
-            if (readMethod.isAnnotationPresent(Primary.class)) {
-                primaryKey = true;
-            }
-            if (readMethod.isAnnotationPresent(Primary.class)) {
-                primaryKey = true;
-            }
-        }
-        
-        JdbcTypeEnum jdbcType = ddlDialect.getJdbcType(javaType);//获取对应的jdbcType
-        if (!hasAnnotation) {
+        //根据类型取默认值
+        {
             int defaultSizeByType = ddlDialect.getDefaultLengthByType(javaType);
             int defaultScaleByType = ddlDialect.getDefaultScaleByType(javaType);
             size = defaultSizeByType >= 0 ? defaultSizeByType : size;
             scale = defaultScaleByType >= 0 ? defaultScaleByType : scale;
-            
+        }
+        
+        //根据名称取值+
+        {
             int defaultSizeByName = ddlDialect.getDefaultLengthByName(javaType,
                     propertyName);
             int defaultScaleByName = ddlDialect.getDefaultScaleByName(javaType,
                     propertyName);
             size = defaultSizeByName >= 0 ? defaultSizeByName : size;
             scale = defaultScaleByName >= 0 ? defaultScaleByName : scale;
+        }
+        
+        //如果存在注解则根据注解取值
+        if (column.getColumnAnnotation() != null) {
+            size = column.getPrecision() > 0 ? column.getPrecision() : size;//次优先使用pricision的值
+            size = column.getLength() != 255 ? column.getLength() : size;//优先使用length值
+            //在注解中scale默认为0,此处判断如果>0,就说明一定通过注解写入了其他值，并且我们前面的逻辑已经让默认值为0了，如果此处==0，则使用上面得到的值即可
+            scale = column.getScale() > 0 ? column.getScale() : size;
         }
         
         colDef = new JPAEntityColumnDef(columnName, javaType, jdbcType, size,

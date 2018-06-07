@@ -44,12 +44,13 @@
 		<module>tx-component-task</module>
 		
 		<!-- 待完善的模块 -->
-		<!-- <module>tx-component-servicelog</module> -->
-		
+		<!-- <module>tx-component-servicelogger</module> -->
+		<!-- <module>tx-component-session</module> -->
 		<!-- <module>tx-component-auth</module> -->
 		
 		<!-- 准备废弃的模块 -->
 		<!-- <module>tx-component-configuration</module> -->
 		<!-- <module>tx-component-rule</module> -->
+		<!-- <module>tx-component-sequence</module> -->
 	</modules>
 </project>

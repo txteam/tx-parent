@@ -57,4 +57,12 @@ public class TestReflection extends TestReflectionSuper {
     public void setLastUpdateDate(Date lastUpdateDate) {
         this.lastUpdateDate = lastUpdateDate;
     }
+    
+    public String getUnExistField(){
+        return "";
+    }
+    
+    public void setUnExistField(String unExistField){
+        return ;
+    }
 }

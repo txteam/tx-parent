@@ -75,7 +75,6 @@ public abstract class AbstractDDLBuilder<B extends DDLBuilder<B>>
         
         AssertUtils.notNull(table, "table is null.");
         AssertUtils.notEmpty(table.getTableName(), "table.tableName is empty.");
-        AssertUtils.notEmpty(table.getColumns(), "table.columns is empty.");
         
         this.tableName = table.getTableName();
         this.columns.clear();

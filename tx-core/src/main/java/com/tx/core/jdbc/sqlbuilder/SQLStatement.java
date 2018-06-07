@@ -20,9 +20,9 @@ import java.util.List;
  */
 public class SQLStatement {
     
-    private static final String AND = ") \nAND (";
+    public static final String AND = ") \nAND (";
     
-    private static final String OR = ") \nOR (";
+    public static final String OR = ") \nOR (";
     
     protected boolean distinct;
     
@@ -64,7 +64,7 @@ public class SQLStatement {
     }
     
     /**
-     * 拼接Sql的构建器<br/>
+     * sql拼接<br/>
      * <功能详细描述>
      * @param builder
      * @param keyword
@@ -76,47 +76,9 @@ public class SQLStatement {
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
-    protected final void sqlClause(SafeAppendable builder, String append) {
-        builder.append(append);
-    }
-    
-    /**
-      * 拼接Sql的构建器<br/>
-      * <功能详细描述>
-      * @param builder
-      * @param keyword
-      * @param parts
-      * @param open
-      * @param close
-      * @param conjunction [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
      */
-    protected final void sqlClause(SafeAppendable builder, String keyword,
+    protected void sqlClause(SafeAppendable builder, String keyword,
             List<String> parts, String open, String close, String conjunction) {
-        sqlClause(builder, keyword, parts, open, close, conjunction, "", "");
-    }
-    
-    /**
-     * 拼接Sql的构建器<br/>
-     * <功能详细描述>
-     * @param builder
-     * @param keyword
-     * @param parts
-     * @param open
-     * @param close
-     * @param conjunction [参数说明]
-     * 
-     * @return void [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-    */
-    protected final void sqlClause(SafeAppendable builder, String keyword,
-            List<String> parts, String open, String close, String conjunction,
-            String partopen, String partclose) {
         if (!parts.isEmpty()) {
             if (!builder.isEmpty()) {
                 builder.append("\n");
@@ -131,7 +93,7 @@ public class SQLStatement {
                         && !last.equals(AND) && !last.equals(OR)) {
                     builder.append(conjunction);
                 }
-                builder.append(partopen).append(part).append(partclose);
+                builder.append(part);
                 last = part;
             }
             builder.append(close);
@@ -139,14 +101,56 @@ public class SQLStatement {
     }
     
     /**
-      * 构建查询Sql
-      * <功能详细描述>
-      * @param builder
-      * @return [参数说明]
-      * 
-      * @return String [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * findSql<br/>
+     * <功能详细描述>
+     * @param builder
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    protected String findSQL(SafeAppendable builder) {
+        return selectSQL(builder);
+    }
+    
+    /**
+     * querySQL
+     * <功能详细描述>
+     * @param builder
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    protected String querySQL(SafeAppendable builder) {
+        return selectSQL(builder);
+    }
+    
+    /**
+     * countSQL
+     * <功能详细描述>
+     * @param builder
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    protected String countSQL(SafeAppendable builder) {
+        return selectSQL(builder);
+    }
+    
+    /**
+     * 构建查询Sql
+     * <功能详细描述>
+     * @param builder
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     protected String selectSQL(SafeAppendable builder) {
         if (distinct) {
@@ -156,6 +160,76 @@ public class SQLStatement {
         }
         
         sqlClause(builder, "FROM", tables, "", "", ", ");
+        joins(builder);
+        sqlClause(builder, "WHERE", where, "(", ")", " AND ");
+        sqlClause(builder, "GROUP BY", groupBy, "", "", ", ");
+        sqlClause(builder, "HAVING", having, "(", ")", " AND ");
+        sqlClause(builder, "ORDER BY", orderBy, "", "", ", ");
+        return builder.toString();
+    }
+    
+    /**
+     * 插入Sql
+     * <功能详细描述>
+     * @param builder
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    protected String insertSQL(SafeAppendable builder) {
+        sqlClause(builder, "INSERT INTO", tables, "", "", "");
+        sqlClause(builder, "", columns, "(", ")", ", ");
+        sqlClause(builder, "VALUES", values, "(", ")", ", ");
+        return builder.toString();
+    }
+    
+    /**
+     * 删除Sql
+     * <功能详细描述>
+     * @param builder
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    protected String deleteSQL(SafeAppendable builder) {
+        sqlClause(builder, "DELETE FROM", tables, "", "", "");
+        sqlClause(builder, "WHERE", where, "(", ")", " AND ");
+        return builder.toString();
+    }
+    
+    /**
+     * 更新Sql
+     * <功能详细描述>
+     * @param builder
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    protected String updateSQL(SafeAppendable builder) {
+        
+        sqlClause(builder, "UPDATE", tables, "", "", "");
+        joins(builder);
+        sqlClause(builder, "SET", sets, "", "", ", ");
+        sqlClause(builder, "WHERE", where, "(", ")", " AND ");
+        return builder.toString();
+    }
+    
+    /**
+     * 关联表<br/>
+     * <功能详细描述>
+     * @param builder [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    protected void joins(SafeAppendable builder) {
         sqlClause(builder, "JOIN", join, "", "", "\nJOIN ");
         sqlClause(builder, "INNER JOIN", innerJoin, "", "", "\nINNER JOIN ");
         sqlClause(builder, "OUTER JOIN", outerJoin, "", "", "\nOUTER JOIN ");
@@ -171,62 +245,6 @@ public class SQLStatement {
                 "",
                 "",
                 "\nRIGHT OUTER JOIN ");
-        sqlClause(builder, "WHERE", where, "(", ")", " AND ");
-        sqlClause(builder, "GROUP BY", groupBy, "", "", ", ");
-        sqlClause(builder, "HAVING", having, "(", ")", " AND ");
-        sqlClause(builder, "ORDER BY", orderBy, "", "", ", ");
-        return builder.toString();
-    }
-    
-    /**
-      * 插入Sql
-      * <功能详细描述>
-      * @param builder
-      * @return [参数说明]
-      * 
-      * @return String [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    protected String insertSQL(SafeAppendable builder) {
-        sqlClause(builder, "INSERT INTO", tables, "", "", "");
-        sqlClause(builder, "", columns, "(", ")", ", ");
-        sqlClause(builder, "VALUES", values, "(", ")", ", ");
-        return builder.toString();
-    }
-    
-    /**
-      * 删除Sql
-      * <功能详细描述>
-      * @param builder
-      * @return [参数说明]
-      * 
-      * @return String [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    protected String deleteSQL(SafeAppendable builder) {
-        sqlClause(builder, "DELETE FROM", tables, "", "", "");
-        sqlClause(builder, "WHERE", where, "(", ")", " AND ");
-        return builder.toString();
-    }
-    
-    /**
-      * 更新Sql
-      * <功能详细描述>
-      * @param builder
-      * @return [参数说明]
-      * 
-      * @return String [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    protected String updateSQL(SafeAppendable builder) {
-        
-        sqlClause(builder, "UPDATE", tables, "", "", "");
-        sqlClause(builder, "SET", sets, "", "", ", ");
-        sqlClause(builder, "WHERE", where, "(", ")", " AND ");
-        return builder.toString();
     }
     
     /**
@@ -264,10 +282,141 @@ public class SQLStatement {
                 answer = updateSQL(builder);
                 break;
             
+            case FIND:
+                answer = findSQL(builder);
+                break;
+            
+            case QUERY:
+                answer = querySQL(builder);
+                break;
+            
+            case COUNT:
+                answer = countSQL(builder);
+                break;
+            
             default:
                 answer = null;
         }
         
         return answer;
+    }
+
+    /**
+     * @return 返回 distinct
+     */
+    public boolean isDistinct() {
+        return distinct;
+    }
+
+    /**
+     * @return 返回 statementType
+     */
+    public SQLStatementTypeEnum getStatementType() {
+        return statementType;
+    }
+
+    /**
+     * @return 返回 sets
+     */
+    public List<String> getSets() {
+        return sets;
+    }
+
+    /**
+     * @return 返回 select
+     */
+    public List<String> getSelect() {
+        return select;
+    }
+
+    /**
+     * @return 返回 tables
+     */
+    public List<String> getTables() {
+        return tables;
+    }
+
+    /**
+     * @return 返回 join
+     */
+    public List<String> getJoin() {
+        return join;
+    }
+
+    /**
+     * @return 返回 innerJoin
+     */
+    public List<String> getInnerJoin() {
+        return innerJoin;
+    }
+
+    /**
+     * @return 返回 outerJoin
+     */
+    public List<String> getOuterJoin() {
+        return outerJoin;
+    }
+
+    /**
+     * @return 返回 leftOuterJoin
+     */
+    public List<String> getLeftOuterJoin() {
+        return leftOuterJoin;
+    }
+
+    /**
+     * @return 返回 rightOuterJoin
+     */
+    public List<String> getRightOuterJoin() {
+        return rightOuterJoin;
+    }
+
+    /**
+     * @return 返回 where
+     */
+    public List<String> getWhere() {
+        return where;
+    }
+
+    /**
+     * @return 返回 having
+     */
+    public List<String> getHaving() {
+        return having;
+    }
+
+    /**
+     * @return 返回 groupBy
+     */
+    public List<String> getGroupBy() {
+        return groupBy;
+    }
+
+    /**
+     * @return 返回 orderBy
+     */
+    public List<String> getOrderBy() {
+        return orderBy;
+    }
+
+    /**
+     * @return 返回 lastList
+     */
+    public List<String> getLastList() {
+        return lastList;
+    }
+
+    /**
+     * @return 返回 columns
+     */
+    public List<String> getColumns() {
+        return columns;
+    }
+
+    /**
+     * @return 返回 values
+     */
+    public List<String> getValues() {
+        return values;
     }
 }

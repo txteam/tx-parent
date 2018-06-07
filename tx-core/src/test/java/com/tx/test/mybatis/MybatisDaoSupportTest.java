@@ -13,7 +13,6 @@ import javax.sql.DataSource;
 
 import org.apache.ibatis.mapping.ResultMapping;
 import org.apache.ibatis.mapping.SqlCommandType;
-import org.apache.ibatis.type.JdbcType;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import com.tx.core.datasource.DataSourceFinder;
@@ -42,22 +41,24 @@ public class MybatisDaoSupportTest {
     
     public static void main(String[] args) throws Exception {
         DataSourceFinder finder = new SimpleDataSourceFinder(
-                "com.mysql.jdbc.Driver", "jdbc:mysql://localhost:3306/wtms_db",
-                "root", "root");
+                "com.mysql.jdbc.Driver",
+                "jdbc:mysql://120.24.75.25:3306/test_pqy", "pqy", "pqy");
         DataSource ds = finder.getDataSource();
         
         JdbcTemplate jt = new JdbcTemplate(ds);
-        MyBatisDaoSupport myBatisDaoSupport = MyBatisDaoSupportHelper.buildMyBatisDaoSupport("classpath:context/mybatis-config.xml",
-                null,
-                DataSourceTypeEnum.MySQL5InnoDBDialect,
-                ds);
+        MyBatisDaoSupport myBatisDaoSupport = MyBatisDaoSupportHelper
+                .buildMyBatisDaoSupport("classpath:context/mybatis-config.xml",
+                        null,
+                        DataSourceTypeEnum.MySQL5InnoDBDialect,
+                        ds);
         
         String tableName = "test_001";
         TableDDLExecutor ddlExecutor = new MysqlTableDDLExecutor(jt);
         if (ddlExecutor.exists(tableName)) {
             ddlExecutor.drop(tableName);
         }
-        CreateTableDDLBuilder createBuilder = ddlExecutor.generateCreateTableDDLBuilder(tableName);
+        CreateTableDDLBuilder createBuilder = ddlExecutor
+                .generateCreateTableDDLBuilder(tableName);
         createBuilder.newColumnOfVarchar(true, "id", 64, true, null);
         createBuilder.newColumnOfVarchar("code", 64, true, null);
         createBuilder.newColumnOfVarchar("name", 64, false, null);
@@ -126,27 +127,27 @@ public class MybatisDaoSupportTest {
                 "select id,code from test_001",
                 TestDemo.class,
                 resultMapId);
-        List<TestDemo> tdList = myBatisDaoSupport.queryList(namespace + "."
-                + queryStatementId, null);
+        List<TestDemo> tdList = myBatisDaoSupport
+                .queryList(namespace + "." + queryStatementId, null);
         for (TestDemo tdTemp : tdList) {
-            System.out.println(tdTemp.getId()
-                    + " | "
-                    + tdTemp.getCode()
-                    + " | "
-                    + tdTemp.getName()
-                    + " | "
-                    + tdTemp.getRemark()
-                    + " | "
-                    + (tdTemp.getDemo() == null ? "null" : tdTemp.getDemo()
-                            .getId()));
+            System.out.println(tdTemp.getId() + " | " + tdTemp.getCode() + " | "
+                    + tdTemp.getName() + " | " + tdTemp.getRemark() + " | "
+                    + (tdTemp.getDemo() == null ? "null"
+                            : tdTemp.getDemo().getId()));
         }
         
         resultMappings.clear();
-        resultMappings.add(ass.buildResultMapping(TestDemo.class,
+        //        resultMappings.add(ass.buildResultMapping(TestDemo.class,
+        //                "demo.id",
+        //                String.class,//TestDemo.class
+        //                "demoId",
+        //                JdbcType.VARCHAR));
+        resultMappings.add(ass.buildResultMapping(null,
                 "demo.id",
-                String.class,//TestDemo.class
+                null, //TestDemo.class
                 "demoId",
-                JdbcType.VARCHAR));
+                null));
+        
         ass.saveResultMap(resultMapId, TestDemo.class, resultMappings);
         ass.saveMappedStatement(queryStatementId,
                 SqlCommandType.SELECT,
@@ -157,16 +158,10 @@ public class MybatisDaoSupportTest {
                 null);
         System.out.println();
         for (TestDemo tdTemp : tdList) {
-            System.out.println(tdTemp.getId()
-                    + " | "
-                    + tdTemp.getCode()
-                    + " | "
-                    + tdTemp.getName()
-                    + " | "
-                    + tdTemp.getRemark()
-                    + " | "
-                    + (tdTemp.getDemo() == null ? "null" : tdTemp.getDemo()
-                            .getId()));
+            System.out.println(tdTemp.getId() + " | " + tdTemp.getCode() + " | "
+                    + tdTemp.getName() + " | " + tdTemp.getRemark() + " | "
+                    + (tdTemp.getDemo() == null ? "null"
+                            : tdTemp.getDemo().getId()));
         }
     }
 }

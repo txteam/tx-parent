@@ -101,7 +101,7 @@
 		</trim>
 		<choose>  
 	        <when test="@com.tx.core.util.OgnlUtils@isNotEmpty(orderSql)">  
-	            ORDER BY #{orderSql}
+	            ORDER BY ${orderSql}
 	        </when>
 	        <otherwise>  
 	            ORDER BY AUTHREFTYPE,AUTHID

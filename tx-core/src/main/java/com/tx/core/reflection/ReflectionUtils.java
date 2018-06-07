@@ -217,7 +217,7 @@ public class ReflectionUtils {
       * 根据字段名推论得出字段对应的get方法<br/>
       *<功能详细描述>
       * @param fieldName
-      * @param type [参数说明]
+      * @param beanType [参数说明]
       * 
       * @return void [返回类型说明]
       * @exception throws [异常类型] [异常说明]
@@ -245,7 +245,7 @@ public class ReflectionUtils {
      * 根据字段名推论得出字段对应的get方法<br/>
      *<功能详细描述>
      * @param fieldName
-     * @param type [参数说明]
+     * @param beanType [参数说明]
      * 
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]

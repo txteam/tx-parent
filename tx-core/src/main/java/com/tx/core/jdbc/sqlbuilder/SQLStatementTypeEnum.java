@@ -22,5 +22,11 @@ public enum SQLStatementTypeEnum {
     
     SELECT,
     
+    FIND,
+    
+    QUERY,
+    
+    COUNT,
+    
     UPDATE;
 }

@@ -36,24 +36,25 @@ public class JPAEntityColumnDef extends AbstractColumnDef
         super();
     }
     
-    /** <默认构造函数> */
-    public JPAEntityColumnDef(String columnName, Class<?> javaType,
-            JdbcTypeEnum jdbcType, int size, int scale, boolean required) {
-        super();
-        setColumnName(columnName);
-        setJdbcType(jdbcType);
-        setSize(size);
-        setScale(scale);
-        setRequired(required);
-        setPrimaryKey(false);
-        setDefaultValue(null);
-        
-        this.javaType = javaType;
-    }
+    //    /** <默认构造函数> */
+    //    public JPAEntityColumnDef(String columnName, Class<?> javaType,
+    //            JdbcTypeEnum jdbcType, int size, int scale, boolean required) {
+    //        super();
+    //        setColumnName(columnName);
+    //        setJdbcType(jdbcType);
+    //        setSize(size);
+    //        setScale(scale);
+    //        setRequired(required);
+    //        setPrimaryKey(false);
+    //        setDefaultValue(null);
+    //        
+    //        this.javaType = javaType;
+    //    }
     
     /** <默认构造函数> */
     public JPAEntityColumnDef(String columnName, Class<?> javaType,
-            JdbcTypeEnum jdbcType, int size, int scale, boolean required,boolean primaryKey) {
+            JdbcTypeEnum jdbcType, int size, int scale, boolean required,
+            boolean primaryKey) {
         super();
         setColumnName(columnName);
         setJdbcType(jdbcType);
