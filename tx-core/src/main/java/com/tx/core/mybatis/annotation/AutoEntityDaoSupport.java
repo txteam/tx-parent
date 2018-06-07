@@ -90,7 +90,4 @@ public @interface AutoEntityDaoSupport {
      * @see [类、类#方法、类#成员]
      */
     String countSQL() default "";
-    
-    ///**
-    String queryCondition() default "";
 }

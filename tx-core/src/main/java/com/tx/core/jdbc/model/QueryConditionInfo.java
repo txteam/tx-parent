@@ -35,7 +35,16 @@ public class QueryConditionInfo {
     public QueryConditionInfo() {
         super();
     }
-
+    
+    /** <默认构造函数> */
+    public QueryConditionInfo(QueryConditionTypeEnum queryConditionType,
+            String queryConditionKey, JdbcType queryConditionJdbcType) {
+        super();
+        this.queryConditionType = queryConditionType;
+        this.queryConditionKey = queryConditionKey;
+        this.queryConditionJdbcType = queryConditionJdbcType;
+    }
+    
     /** <默认构造函数> */
     public QueryConditionInfo(QueryConditionTypeEnum queryConditionType,
             String queryConditionKey, Class<?> queryConditionJavaType,
@@ -46,56 +55,57 @@ public class QueryConditionInfo {
         this.queryConditionJavaType = queryConditionJavaType;
         this.queryConditionJdbcType = queryConditionJdbcType;
     }
-
+    
     /**
      * @return 返回 queryConditionType
      */
     public QueryConditionTypeEnum getQueryConditionType() {
         return queryConditionType;
     }
-
+    
     /**
      * @param 对queryConditionType进行赋值
      */
-    public void setQueryConditionType(QueryConditionTypeEnum queryConditionType) {
+    public void setQueryConditionType(
+            QueryConditionTypeEnum queryConditionType) {
         this.queryConditionType = queryConditionType;
     }
-
+    
     /**
      * @return 返回 queryConditionKey
      */
     public String getQueryConditionKey() {
         return queryConditionKey;
     }
-
+    
     /**
      * @param 对queryConditionKey进行赋值
      */
     public void setQueryConditionKey(String queryConditionKey) {
         this.queryConditionKey = queryConditionKey;
     }
-
+    
     /**
      * @return 返回 queryConditionJavaType
      */
     public Class<?> getQueryConditionJavaType() {
         return queryConditionJavaType;
     }
-
+    
     /**
      * @param 对queryConditionJavaType进行赋值
      */
     public void setQueryConditionJavaType(Class<?> queryConditionJavaType) {
         this.queryConditionJavaType = queryConditionJavaType;
     }
-
+    
     /**
      * @return 返回 queryConditionJdbcType
      */
     public JdbcType getQueryConditionJdbcType() {
         return queryConditionJdbcType;
     }
-
+    
     /**
      * @param 对queryConditionJdbcType进行赋值
      */
