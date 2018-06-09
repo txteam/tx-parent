@@ -52,11 +52,11 @@ import com.tx.core.exceptions.util.AssertUtils;
 public abstract class AbstractEntityMapperBuilderAssistant
         extends MapperBuilderAssistant {
     
-    /** <if test=\"@com.tx.core.util.OgnlUtils@isNotEmpty({})\"><![CDATA[ AND {} {} #{{}} ]]></if>*/
-    protected static final String FORMATTER_OF_WHERE_AND_ITEM = "<if test=\"@com.tx.core.util.OgnlUtils@isNotEmpty({})\"><![CDATA[ AND {} {} #{{}} ]]></if>";
+    /** <if test=\"{} != null\"><if test=\"@com.tx.core.util.OgnlUtils@isNotEmpty({})\"><![CDATA[ AND {} {} #{{}} ]]></if></if>*/
+    protected static final String FORMATTER_OF_NESTED_WHERE_ITEM = "<if test=\"{} != null\"><if test=\"@com.tx.core.util.OgnlUtils@isNotEmpty({})\"><![CDATA[ {} {} {} #{{}} ]]></if></if>";
     
     /** <if test=\"@com.tx.core.util.OgnlUtils@isNotEmpty({})\"><![CDATA[ AND {} {} #{{}} ]]></if>*/
-    protected static final String FORMATTER_OF_WHERE_OR_ITEM = "<if test=\"@com.tx.core.util.OgnlUtils@isNotEmpty({})\"><![CDATA[ OR {} {} #{{}} ]]></if>";
+    protected static final String FORMATTER_OF_WHERE_ITEM = "<if test=\"@com.tx.core.util.OgnlUtils@isNotEmpty({})\"><![CDATA[ {} {} {} #{{}} ]]></if>";
     
     /** <if test=\"_parameter.containsKey('{}')\"> {} = #{{},jdbcType={}}, </if> */
     protected static final String FORMATTER_OF_SET_ITEM = "<if test=\"_parameter.containsKey('{}')\"> {} = #{{},javaType={}}, </if>";
@@ -94,6 +94,8 @@ public abstract class AbstractEntityMapperBuilderAssistant
     /** 对应的类类型 */
     protected Class<?> beanType;
     
+    private String currentNamespace;
+    
     /** 已经存在mappedStatements */
     private Map<String, MappedStatement> mappedStatements;
     
@@ -120,7 +122,8 @@ public abstract class AbstractEntityMapperBuilderAssistant
         
         this.beanType = beanType;
         //设置namespace
-        setCurrentNamespace(beanType.getName());
+        this.currentNamespace = beanType.getName();
+        setCurrentNamespace(this.currentNamespace);
     }
     
     /**
@@ -193,14 +196,15 @@ public abstract class AbstractEntityMapperBuilderAssistant
      * @see [类、类#方法、类#成员]
     */
     protected String formatWhereAndItem(String columnName, String condition,
-            String propertyName) {
+            String nestedPropertyName) {
         AssertUtils.notEmpty(columnName, "columnName is empty.");
         AssertUtils.notEmpty(condition, "condition is empty.");
-        AssertUtils.notEmpty(propertyName, "propertyName is empty.");
+        AssertUtils.notEmpty(nestedPropertyName,
+                "nestedPropertyName is empty.");
         
-        return MessageFormatter.arrayFormat(FORMATTER_OF_WHERE_AND_ITEM,
-                new Object[] { propertyName, columnName, condition,
-                        propertyName })
+        return MessageFormatter.arrayFormat(FORMATTER_OF_WHERE_ITEM,
+                new Object[] { nestedPropertyName, "AND", columnName, condition,
+                        nestedPropertyName })
                 .getMessage();
     }
     
@@ -216,14 +220,66 @@ public abstract class AbstractEntityMapperBuilderAssistant
      * @see [类、类#方法、类#成员]
     */
     protected String formatWhereOrItem(String columnName, String condition,
-            String propertyName) {
+            String nestedPropertyName) {
+        AssertUtils.notEmpty(columnName, "columnName is empty.");
+        AssertUtils.notEmpty(condition, "condition is empty.");
+        AssertUtils.notEmpty(nestedPropertyName, "propertyName is empty.");
+        
+        return MessageFormatter.arrayFormat(FORMATTER_OF_WHERE_ITEM,
+                new Object[] { nestedPropertyName, "OR", columnName, condition,
+                        nestedPropertyName })
+                .getMessage();
+    }
+    
+    /**
+     * 格式化WhereCondition条件<br/>
+     * <功能详细描述>
+     * @param columnName
+     * @param propertyName
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    protected String formatNestedWhereAndItem(String columnName,
+            String condition, String propertyName, String nestedPropertyName) {
         AssertUtils.notEmpty(columnName, "columnName is empty.");
         AssertUtils.notEmpty(condition, "condition is empty.");
         AssertUtils.notEmpty(propertyName, "propertyName is empty.");
+        AssertUtils.notEmpty(nestedPropertyName,
+                "nestedPropertyName is empty.");
         
-        return MessageFormatter.arrayFormat(FORMATTER_OF_WHERE_OR_ITEM,
-                new Object[] { propertyName, columnName, condition,
-                        propertyName })
+        return MessageFormatter
+                .arrayFormat(FORMATTER_OF_NESTED_WHERE_ITEM,
+                        new Object[] { propertyName, nestedPropertyName, "AND",
+                                columnName, condition, nestedPropertyName })
+                .getMessage();
+    }
+    
+    /**
+     * 格式化WhereCondition条件<br/>
+     * <功能详细描述>
+     * @param columnName
+     * @param propertyName
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    protected String formatNestedWhereOrItem(String columnName,
+            String condition, String propertyName, String nestedPropertyName) {
+        AssertUtils.notEmpty(columnName, "columnName is empty.");
+        AssertUtils.notEmpty(condition, "condition is empty.");
+        AssertUtils.notEmpty(propertyName, "propertyName is empty.");
+        AssertUtils.notEmpty(nestedPropertyName,
+                "nestedPropertyName is empty.");
+        
+        return MessageFormatter
+                .arrayFormat(FORMATTER_OF_NESTED_WHERE_ITEM,
+                        new Object[] { propertyName, nestedPropertyName, "OR",
+                                columnName, condition, nestedPropertyName })
                 .getMessage();
     }
     
@@ -239,15 +295,18 @@ public abstract class AbstractEntityMapperBuilderAssistant
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    protected String formatSetItem(String property, String columnName,
-            Class<?> javaType) {
+    protected String formatSetItem(String columnName, String propertyName,
+            String nestedPropertyName, Class<?> javaType) {
         AssertUtils.notEmpty(columnName, "columnName is empty.");
-        AssertUtils.notEmpty(property, "property is empty.");
+        AssertUtils.notEmpty(propertyName, "propertyName is empty.");
+        AssertUtils.notEmpty(nestedPropertyName,
+                "nestedPropertyName is empty.");
         AssertUtils.notNull(javaType, "javaType is null.");
         
-        return MessageFormatter.arrayFormat(FORMATTER_OF_SET_ITEM,
-                new Object[] { property, columnName, property,
-                        javaType.getName() })
+        return MessageFormatter
+                .arrayFormat(FORMATTER_OF_SET_ITEM,
+                        new Object[] { propertyName, columnName,
+                                nestedPropertyName, javaType.getName() })
                 .getMessage();
     }
     
@@ -263,7 +322,8 @@ public abstract class AbstractEntityMapperBuilderAssistant
         String namespace = this.getCurrentNamespace();
         
         logger.info("");
-        logger.info("<!-- --------------- 自动注册SqlMap:'{}' START --------------- -->",
+        logger.info(
+                "<!-- --------------- 自动注册SqlMap:'{}' START --------------- -->",
                 namespace);
         
         //添加resultMap
@@ -287,7 +347,9 @@ public abstract class AbstractEntityMapperBuilderAssistant
             
             logger.info("<!-- ---insertSQL:--- -->");
             logger.info(insertSQL);
-            addInsertMappedStatement("insert", insertSQL, this.beanType);
+            addInsertMappedStatement(getInsertStatementName(),
+                    insertSQL,
+                    this.beanType);
         }
         
         String deleteSQL = getDeleteSQL();
@@ -296,7 +358,9 @@ public abstract class AbstractEntityMapperBuilderAssistant
             
             logger.info("<!-- ---deleteSQL:--- -->");
             logger.info(deleteSQL);
-            addDeleteMappedStatement("delete", deleteSQL, this.beanType);
+            addDeleteMappedStatement(getDeleteStatementName(),
+                    deleteSQL,
+                    this.beanType);
         }
         
         String updateSQL = getUpdateSQL();
@@ -305,7 +369,9 @@ public abstract class AbstractEntityMapperBuilderAssistant
             
             logger.info("<!-- ---updateSQL:--- -->");
             logger.info(updateSQL);
-            addUpdateMappedStatement("update", updateSQL, Map.class);
+            addUpdateMappedStatement(getUpdateStatementName(),
+                    updateSQL,
+                    Map.class);
         }
         
         String findSQL = getFindSQL();
@@ -314,7 +380,10 @@ public abstract class AbstractEntityMapperBuilderAssistant
             
             logger.info("<!-- ---findSQL:--- -->");
             logger.info(findSQL);
-            addFindMappedStatement("find", findSQL, this.beanType, resultMapId);
+            addFindMappedStatement(getFindStatementName(),
+                    findSQL,
+                    this.beanType,
+                    resultMapId);
         }
         
         String querySQL = getQuerySQL();
@@ -323,7 +392,10 @@ public abstract class AbstractEntityMapperBuilderAssistant
             
             logger.info("<!-- ---querySQL:--- -->");
             logger.info(querySQL);
-            addFindMappedStatement("query", querySQL, Map.class, resultMapId);
+            addFindMappedStatement(getQueryStatementName(),
+                    querySQL,
+                    Map.class,
+                    resultMapId);
         }
         
         String countSQL = getCountSQL();
@@ -332,15 +404,95 @@ public abstract class AbstractEntityMapperBuilderAssistant
             
             logger.info("<!-- ---queryCountSQL:--- -->");
             logger.info(countSQL);
-            addCountMappedStatement("queryCount",
+            addCountMappedStatement(getCountStatmentName(),
                     countSQL,
                     Map.class,
                     Integer.class);
         }
         
-        logger.info("<!-- --------------- 自动注册SqlMap:'{}'   END --------------- -->",
+        logger.info(
+                "<!-- --------------- 自动注册SqlMap:'{}'   END --------------- -->",
                 namespace);
         logger.info("");
+    }
+    
+    /**
+     * 获取insertSatement的name
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public String getInsertStatementName() {
+        return this.currentNamespace + ".insert";
+    }
+    
+    /**
+     * 获取deleteStatement的name
+     *<功能简述>
+     *<功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public String getDeleteStatementName() {
+        return this.currentNamespace + ".delete";
+    }
+    
+    /**
+     * 获取updateStatement的name
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public String getUpdateStatementName() {
+        return this.currentNamespace + ".update";
+    }
+    
+    /**
+     * 获取findStatment的name
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public String getFindStatementName() {
+        return this.currentNamespace + ".find";
+    }
+    
+    /**
+     * 获取queryStatment的name
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public String getQueryStatementName() {
+        return this.currentNamespace + ".query";
+    }
+    
+    /**
+     * 获取countStatment的name
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public String getCountStatmentName() {
+        return this.currentNamespace + "." + getQueryStatementName() + "Count";
     }
     
     /**

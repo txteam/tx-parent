@@ -24,9 +24,9 @@ import java.lang.annotation.Target;
  */
 @Documented
 @Inherited
-@Target(ElementType.PARAMETER)
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface AutoEntityDaoSupport {
+public @interface EntityAutoPersistSupport {
     
     /**
      * 插入语句<br/>

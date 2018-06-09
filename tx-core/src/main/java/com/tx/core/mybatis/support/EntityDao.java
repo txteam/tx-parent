@@ -6,6 +6,7 @@
  */
 package com.tx.core.mybatis.support;
 
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +23,17 @@ import com.tx.core.paged.model.PagedList;
  * @since  [产品/模块版本]
  */
 public interface EntityDao<T> {
+    
+    /**
+     * 获取泛型类型<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return Type [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public Type getRawType();
     
     /**
      * 批量插入对象实体

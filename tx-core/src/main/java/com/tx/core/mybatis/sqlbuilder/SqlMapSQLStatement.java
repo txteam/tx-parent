@@ -23,9 +23,9 @@ import com.tx.core.jdbc.sqlbuilder.SafeAppendable;
  */
 public class SqlMapSQLStatement extends SQLStatement {
     
-    public static final String SQL_MAP_AND = "</trim>) \nAND (<trim prefixOverrides=\"AND | OR\">";
+    //public static final String SQL_MAP_AND = "</trim>) \nAND (<trim prefixOverrides=\"AND | OR\">";
     
-    public static final String SQL_MAP_OR = "</trim>) \nOR (<trim prefixOverrides=\"AND | OR\">";
+    //public static final String SQL_MAP_OR = "</trim>) \nOR (<trim prefixOverrides=\"AND | OR\">";
     
     /**
      * sql拼接<br/>
@@ -50,16 +50,16 @@ public class SqlMapSQLStatement extends SQLStatement {
             builder.append(keyword);
             builder.append(" ");
             builder.append(open);
-            String last = "________";
+            //String last = "________";
             for (int i = 0, n = parts.size(); i < n; i++) {
                 String part = parts.get(i);
-                if (i > 0 && !part.equals(SQL_MAP_AND)
-                        && !part.equals(SQL_MAP_OR) && !last.equals(SQL_MAP_AND)
-                        && !last.equals(SQL_MAP_OR)) {
+                if (i > 0
+                //&& !part.equals(SQL_MAP_AND) && !part.equals(SQL_MAP_OR) && !last.equals(SQL_MAP_AND) && !last.equals(SQL_MAP_OR)
+                ) {
                     builder.append(conjunction);
                 }
                 builder.append(part);
-                last = part;
+                //last = part;
             }
             builder.append(close);
         }
@@ -137,12 +137,19 @@ public class SqlMapSQLStatement extends SQLStatement {
         sqlClause(builder, "SELECT", Arrays.asList("COUNT(1)"), "", "", ", ");
         sqlClause(builder, "FROM", tables, "", "", ", ");
         joins(builder);
+        //        sqlClause(builder,
+        //                "",
+        //                where,
+        //                "(<trim prefix=\"WHERE\" prefixOverrides=\"AND | OR\">",
+        //                "</trim>)",
+        //                " ");
         sqlClause(builder,
                 "",
                 where,
-                "(<trim prefix=\"WHERE\" prefixOverrides=\"AND | OR\">",
-                "</trim>)",
+                "<trim prefix=\"WHERE\" prefixOverrides=\"AND | OR\">",
+                "</trim>",
                 " ");
+        
         sqlClause(builder, "GROUP BY", groupBy, "", "", ", ");
         sqlClause(builder, "HAVING", having, "(", ")", " AND ");
         return builder.toString();
@@ -161,11 +168,17 @@ public class SqlMapSQLStatement extends SQLStatement {
         }
         sqlClause(builder, "FROM", tables, "", "", ", ");
         joins(builder);
+        //        sqlClause(builder,
+        //                "",
+        //                where,
+        //                "(<trim prefix=\"WHERE\" prefixOverrides=\"AND | OR\">",
+        //                "</trim>)",
+        //                " ");
         sqlClause(builder,
                 "",
                 where,
-                "(<trim prefix=\"WHERE\" prefixOverrides=\"AND | OR\">",
-                "</trim>)",
+                "<trim prefix=\"WHERE\" prefixOverrides=\"AND | OR\">",
+                "</trim>",
                 " ");
         sqlClause(builder, "GROUP BY", groupBy, "", "", ", ");
         sqlClause(builder, "HAVING", having, "(", ")", " AND ");
