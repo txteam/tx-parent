@@ -88,7 +88,8 @@ public class JPAParseUtils {
      * @see [类、类#方法、类#成员]
      */
     public static List<String> parseOrderBys(Class<?> beanType,
-            List<JPAColumnInfo> columnInfos,String... defaultOrderByColumnNames) {
+            List<JPAColumnInfo> columnInfos,
+            String... defaultOrderByColumnNames) {
         AssertUtils.notNull(beanType, "beanType is null.");
         AssertUtils.notEmpty(columnInfos, "columnInfos is null.");
         
@@ -96,20 +97,21 @@ public class JPAParseUtils {
         List<String> orderBys = new ArrayList<>();
         for (JPAColumnInfo columnInfo : columnInfos) {
             String orderBy = parseOrderBy(beanType, columnInfo);
-            if(StringUtils.isEmpty(orderBy)){
+            if (StringUtils.isEmpty(orderBy)) {
                 continue;
             }
             orderBys.add(orderBy);
         }
         
         //如果有默认的排序字段
-        if(!ArrayUtils.isEmpty(defaultOrderByColumnNames)){
-            for(String name : defaultOrderByColumnNames){
-                if(StringUtils.isEmpty(name)){
+        if (!ArrayUtils.isEmpty(defaultOrderByColumnNames)) {
+            for (String name : defaultOrderByColumnNames) {
+                if (StringUtils.isEmpty(name)) {
                     continue;
                 }
-                for(JPAColumnInfo columnTemp : columnInfos){
-                    if(!StringUtils.equalsIgnoreCase(name, columnTemp.getPropertyDescriptor().getName())){
+                for (JPAColumnInfo columnTemp : columnInfos) {
+                    if (!StringUtils.equalsIgnoreCase(name,
+                            columnTemp.getPropertyDescriptor().getName())) {
                         continue;
                     }
                     orderBys.add(columnTemp.getColumnName() + " ASC");
@@ -118,9 +120,9 @@ public class JPAParseUtils {
         }
         
         //如果默认的字段都不存在，则默认以主键为排序字段
-        if(CollectionUtils.isEmpty(orderBys)){
-            for(JPAColumnInfo columnTemp : columnInfos){
-                if(!columnTemp.isPrimaryKey()){
+        if (CollectionUtils.isEmpty(orderBys)) {
+            for (JPAColumnInfo columnTemp : columnInfos) {
+                if (!columnTemp.isPrimaryKey()) {
                     continue;
                 }
                 orderBys.add(columnTemp.getColumnName() + " ASC");
@@ -141,26 +143,28 @@ public class JPAParseUtils {
      * @see [类、类#方法、类#成员]
      */
     public static String parseOrderBy(Class<?> beanType,
-            List<JPAColumnInfo> columnInfos,String... defaultOrderByColumnNames) {
+            List<JPAColumnInfo> columnInfos,
+            String... defaultOrderByColumnNames) {
         AssertUtils.notNull(beanType, "beanType is null.");
         AssertUtils.notEmpty(columnInfos, "columnInfos is null.");
         
         //解析jpa属性
         for (JPAColumnInfo columnInfo : columnInfos) {
             String orderBy = parseOrderBy(beanType, columnInfo);
-            if(!StringUtils.isEmpty(orderBy)){
+            if (!StringUtils.isEmpty(orderBy)) {
                 return orderBy;
             }
         }
         
         //如果有默认的排序字段
-        if(!ArrayUtils.isEmpty(defaultOrderByColumnNames)){
-            for(String name : defaultOrderByColumnNames){
-                if(StringUtils.isEmpty(name)){
+        if (!ArrayUtils.isEmpty(defaultOrderByColumnNames)) {
+            for (String name : defaultOrderByColumnNames) {
+                if (StringUtils.isEmpty(name)) {
                     continue;
                 }
-                for(JPAColumnInfo columnTemp : columnInfos){
-                    if(!StringUtils.equalsIgnoreCase(name, columnTemp.getPropertyDescriptor().getName())){
+                for (JPAColumnInfo columnTemp : columnInfos) {
+                    if (!StringUtils.equalsIgnoreCase(name,
+                            columnTemp.getPropertyDescriptor().getName())) {
                         continue;
                     }
                     return columnTemp.getColumnName() + " ASC";
@@ -169,8 +173,8 @@ public class JPAParseUtils {
         }
         
         //如果默认的字段都不存在，则默认以主键为排序字段
-        for(JPAColumnInfo columnTemp : columnInfos){
-            if(!columnTemp.isPrimaryKey()){
+        for (JPAColumnInfo columnTemp : columnInfos) {
+            if (!columnTemp.isPrimaryKey()) {
                 continue;
             }
             return columnTemp.getColumnName() + " ASC";
@@ -409,18 +413,20 @@ public class JPAParseUtils {
         Method readMethod = propertyDescriptor.getReadMethod();
         if (readMethod.isAnnotationPresent(OrderBy.class)) {
             OrderBy orderByAnnotation = readMethod.getAnnotation(OrderBy.class);
-            if(StringUtils.isEmpty(orderByAnnotation.value())){
+            if (StringUtils.isEmpty(orderByAnnotation.value())) {
                 orderBy = columnInfo.getColumnName() + " ASC";
-            }else{
+            } else {
                 orderBy = orderByAnnotation.value();
             }
             return orderBy;
         }
-        if (readMethod.isAnnotationPresent(org.hibernate.annotations.OrderBy.class)) {
-            org.hibernate.annotations.OrderBy orderByAnnotation = readMethod.getAnnotation(org.hibernate.annotations.OrderBy.class);
-            if(StringUtils.isEmpty(orderByAnnotation.clause())){
+        if (readMethod
+                .isAnnotationPresent(org.hibernate.annotations.OrderBy.class)) {
+            org.hibernate.annotations.OrderBy orderByAnnotation = readMethod
+                    .getAnnotation(org.hibernate.annotations.OrderBy.class);
+            if (StringUtils.isEmpty(orderByAnnotation.clause())) {
                 orderBy = columnInfo.getColumnName() + " ASC";
-            }else{
+            } else {
                 orderBy = orderByAnnotation.clause();
             }
             return orderBy;
@@ -429,25 +435,27 @@ public class JPAParseUtils {
         //如果存在字段，则字段上有注解需要跳过时，则跳过该字段
         Field field = ReflectionUtils.findField(beanType,
                 propertyDescriptor.getName());
-        if(field == null){
+        if (field == null) {
             return orderBy;
         }
         
         //如果存在对应的字段
         if (field.isAnnotationPresent(OrderBy.class)) {
             OrderBy orderByAnnotation = field.getAnnotation(OrderBy.class);
-            if(StringUtils.isEmpty(orderByAnnotation.value())){
+            if (StringUtils.isEmpty(orderByAnnotation.value())) {
                 orderBy = columnInfo.getColumnName() + " ASC";
-            }else{
+            } else {
                 orderBy = orderByAnnotation.value();
             }
             return orderBy;
         }
-        if (field.isAnnotationPresent(org.hibernate.annotations.OrderBy.class)) {
-            org.hibernate.annotations.OrderBy orderByAnnotation = field.getAnnotation(org.hibernate.annotations.OrderBy.class);
-            if(StringUtils.isEmpty(orderByAnnotation.clause())){
+        if (field
+                .isAnnotationPresent(org.hibernate.annotations.OrderBy.class)) {
+            org.hibernate.annotations.OrderBy orderByAnnotation = field
+                    .getAnnotation(org.hibernate.annotations.OrderBy.class);
+            if (StringUtils.isEmpty(orderByAnnotation.clause())) {
                 orderBy = columnInfo.getColumnName() + " ASC";
-            }else{
+            } else {
                 orderBy = orderByAnnotation.clause();
             }
             return orderBy;
@@ -703,6 +711,45 @@ public class JPAParseUtils {
          */
         public void setColumnAnnotation(Column columnAnnotation) {
             this.columnAnnotation = columnAnnotation;
+        }
+        
+        /**
+         * 是否含有嵌套属性<br/>
+         * <功能详细描述>
+         * @return [参数说明]
+         * 
+         * @return boolean [返回类型说明]
+         * @exception throws [异常类型] [异常说明]
+         * @see [类、类#方法、类#成员]
+         */
+        public boolean hasNestedProperty() {
+            return this.nestedPropertyDescriptor != null;
+        }
+        
+        /**
+         * 获取属性名<br/>
+         * <功能详细描述>
+         * @return [参数说明]
+         * 
+         * @return String [返回类型说明]
+         * @exception throws [异常类型] [异常说明]
+         * @see [类、类#方法、类#成员]
+         */
+        public String getPropertyName() {
+            return this.propertyDescriptor.getName();
+        }
+        
+        /**
+         * 获取属性类型<br/>
+         * <功能详细描述>
+         * @return [参数说明]
+         * 
+         * @return Class<?> [返回类型说明]
+         * @exception throws [异常类型] [异常说明]
+         * @see [类、类#方法、类#成员]
+         */
+        public Class<?> getPropertyType() {
+            return this.propertyDescriptor.getPropertyType();
         }
         
         /**

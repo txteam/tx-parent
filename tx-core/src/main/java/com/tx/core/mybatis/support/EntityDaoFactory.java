@@ -6,6 +6,12 @@
  */
 package com.tx.core.mybatis.support;
 
+import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.FactoryBean;
+import org.springframework.beans.factory.InitializingBean;
 
 /**
  * 实体持久层注册器<br/>
@@ -16,6 +22,78 @@ package com.tx.core.mybatis.support;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class EntityDaoFactory {
+public class EntityDaoFactory<T>
+        implements FactoryBean<EntityDao<T>>, InitializingBean {
     
+    private Logger logger = LoggerFactory.getLogger(EntityDaoFactory.class);
+    
+    private Class<T> beanType;
+    
+    private MyBatisDaoSupport myBatisDaoSupport;
+    
+    protected SqlSessionFactory sqlSessionFactory;
+    
+    protected Configuration configuration;
+    
+    private EntityMapperBuilderAssistant assistant;
+    
+    private EntityDao<T> entityDao;
+    
+    /** <默认构造函数> */
+    public EntityDaoFactory(Class<T> beanType,
+            MyBatisDaoSupport myBatisDaoSupport) {
+        super();
+        this.beanType = beanType;
+        this.myBatisDaoSupport = myBatisDaoSupport;
+        
+        this.sqlSessionFactory = this.myBatisDaoSupport.getSqlSessionFactory();
+        this.configuration = this.myBatisDaoSupport.getSqlSessionFactory()
+                .getConfiguration();
+    }
+    
+    /**
+     * @throws Exception
+     */
+    @Override
+    public void afterPropertiesSet() {
+        logger.info("始构建实体自动持久层，开始.beanType:{}", this.beanType.getName());
+        
+        //构建SqlMap
+        this.assistant = new EntityMapperBuilderAssistant(this.configuration,
+                beanType);
+        this.assistant.registe();
+        logger.info("构建实体自动持久层：sqlmap:{}",
+                this.assistant.getCurrentNamespace());
+        
+        //构建Dao
+        this.entityDao = new DefaultEntityDaoImpl<>(this.beanType,
+                this.myBatisDaoSupport, this.assistant);
+        
+        logger.info("构建实体自动持久层：完成.beanType:{}", this.beanType.getName());
+    }
+    
+    /**
+     * @return
+     */
+    @Override
+    public Class<?> getObjectType() {
+        return EntityDao.class;
+    }
+    
+    /**
+     * @return
+     */
+    @Override
+    public boolean isSingleton() {
+        return true;
+    }
+    
+    /**
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public EntityDao<T> getObject() throws Exception {
+        return this.entityDao;
+    }
 }

@@ -83,6 +83,12 @@ public class EntityMapperBuilderAssistant
                         new Object[] { this.beanType,
                                 column.getPropertyDescriptor().getName() });
             }
+            
+            if (column.isPrimaryKey()) {
+                //虽然可以支持，但是变化情况太复杂，而且暂时想不到哪里有常用的应用场景，所以暂时如果出现这种情况就抛出异常
+                AssertUtils.isTrue(!column.hasNestedProperty(),
+                        "主键不支持具有嵌套属性的情况.");
+            }
         }
         
         //必须存在主键字段
@@ -99,6 +105,23 @@ public class EntityMapperBuilderAssistant
                 this.tableColumns,
                 "createDate",
                 "id");
+    }
+    
+    /**
+     * 获取主键属性名列表<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return List<String> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public List<String> getPrimaryProperyNameList() {
+        List<String> resList = new ArrayList<>();
+        for (JPAColumnInfo column : this.primaryKeyColumns) {
+            resList.add(column.getNestedPropertyName());
+        }
+        return resList;
     }
     
     /**
@@ -156,11 +179,16 @@ public class EntityMapperBuilderAssistant
                 continue;
             }
             String columnName = column.getColumnName();
-            String propertyName = column.getNestedPropertyName();
+            String propertyName = column.getPropertyName();
+            String nestedPropertyName = column.getNestedPropertyName();
             Class<?> javaType = column.getNestedPropertyType();
             
-            String setItem = formatSetItem(propertyName, columnName, javaType);
+            String setItem = formatSetItem(columnName,
+                    propertyName,
+                    nestedPropertyName,
+                    javaType);
             sql.SET(setItem);
+            
         }
         for (JPAColumnInfo column : this.primaryKeyColumns) {
             String columnName = column.getColumnName();
@@ -233,20 +261,9 @@ public class EntityMapperBuilderAssistant
             sql.QUERY(columnName);
         }
         sql.FROM(this.tableName);
-        for (JPAColumnInfo column : this.tableColumns) {
-            String columnName = column.getColumnName();
-            String propertyName = column.getNestedPropertyName();
-            
-            String whereItem = formatWhereAndItem(columnName,
-                    " = ",
-                    propertyName);
-            sql.WHERE(whereItem);
-        }
-        //        if(!CollectionUtils.isEmpty(this.orderBys)){
-        //            for(String orderByTemp : this.orderBys){
-        //                sql.ORDER_BY(orderByTemp);
-        //            }
-        //        }
+        
+        buildQueryCondition(sql);//构建查询条件
+        
         sql.ORDER_BY(this.queryOrderBy);
         
         String querySQL = sql.toString();
@@ -261,18 +278,54 @@ public class EntityMapperBuilderAssistant
         SqlMapSQLBuilder sql = new SqlMapSQLBuilder();
         sql.COUNT();
         sql.FROM(this.tableName);
-        for (JPAColumnInfo column : this.tableColumns) {
-            String columnName = column.getColumnName();
-            String propertyName = column.getNestedPropertyName();
-            
-            String whereItem = formatWhereAndItem(columnName,
-                    " = ",
-                    propertyName);
-            sql.WHERE(whereItem);
-        }
+        
+        buildQueryCondition(sql);//构建查询条件
         
         String countSQL = sql.toString();
         return countSQL;
+    }
+    
+    /** 
+     * 构建查询条件<br/>
+     * <功能详细描述>
+     * @param sql [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    protected void buildQueryCondition(SqlMapSQLBuilder sql) {
+        for (JPAColumnInfo column : this.tableColumns) {
+            String columnName = column.getColumnName();
+            String propertyName = column.getPropertyName();
+            String nestedPropertyName = column.getNestedPropertyName();
+            
+            if (column.hasNestedProperty()) {
+                String whereItem = formatNestedWhereAndItem(columnName,
+                        " = ",
+                        propertyName,
+                        nestedPropertyName);
+                sql.WHERE(whereItem);
+            } else {
+                String whereItem = formatWhereAndItem(columnName,
+                        " = ",
+                        propertyName);
+                sql.WHERE(whereItem);
+            }
+            
+            //这里以后可以做成子类可扩展的
+            if ("createDate".equals(propertyName)) {
+                String minWhereItem = formatWhereAndItem(columnName,
+                        " >= ",
+                        "minCreateDate");
+                sql.WHERE(minWhereItem);
+                
+                String maxWhereItem = formatWhereAndItem(columnName,
+                        " < ",
+                        "maxCreateDate");
+                sql.WHERE(maxWhereItem);
+            }
+        }
     }
     
 }

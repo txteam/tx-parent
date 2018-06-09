@@ -12,6 +12,8 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.tx.core.mybatis.annotation.EntityAutoPersistSupport;
+
 /**
  * <功能简述>
  * <功能详细描述>
@@ -21,6 +23,7 @@ import javax.persistence.Table;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
+@EntityAutoPersistSupport
 @Table(name="test_demo")
 public class TestDemo extends TestDemoSuper{
    

@@ -6,6 +6,7 @@
  */
 package com.tx.core.mybatis.sqlbuilder;
 
+import com.tx.core.exceptions.SILException;
 import com.tx.core.jdbc.sqlbuilder.AbstractSQLBuilder;
 import com.tx.core.jdbc.sqlbuilder.SQLStatement;
 
@@ -46,8 +47,10 @@ public class SqlMapSQLBuilder extends AbstractSQLBuilder<SqlMapSQLBuilder> {
      * @return
      */
     public SqlMapSQLBuilder OR() {
-        sql().getLastList().add(SqlMapSQLStatement.SQL_MAP_OR);
-        return getSelf();
+        throw new SILException("不支持的操作.");
+        
+        //sql().getLastList().add(SqlMapSQLStatement.SQL_MAP_OR);
+        //return getSelf();
     }
     
     /**
@@ -55,26 +58,9 @@ public class SqlMapSQLBuilder extends AbstractSQLBuilder<SqlMapSQLBuilder> {
      * @return
      */
     public SqlMapSQLBuilder AND() {
-        sql().getLastList().add(SqlMapSQLStatement.SQL_MAP_AND);
-        return getSelf();
+        throw new SILException("不支持的操作.");
+        
+        //sql().getLastList().add(SqlMapSQLStatement.SQL_MAP_AND);
+        //return getSelf();
     }
-    
-    //    public static void main(String[] args) {
-    //        SqlMapSQLBuilder sql = new SqlMapSQLBuilder();
-    //        sql.SELECT("id");
-    //        sql.SELECT("code");
-    //        sql.SELECT("name");
-    //        sql.FROM("test_table");
-    //        
-    //        sql.WHERE("AND code1 = #{code1}");
-    //        sql.WHERE("AND code2 = #{code2}");
-    //        sql.WHERE("AND code3 = #{code3}");
-    //        sql.WHERE("AND code = #{code}");
-    //        
-    //        sql.AND();
-    //        sql.WHERE("AND andcode11 = #{andcode11}");
-    //        sql.WHERE("AND andcode12 = #{andcode12}");
-    //        
-    //        System.out.println(sql.toString());
-    //    }
 }
