@@ -2,27 +2,107 @@
 <!-- --------------- 自动注册SqlMap:'com.tx.test.mybatis.model.TestDemo' START --------------- -->
 <!-- ---insertSQL:--- -->
 <script>INSERT INTO TEST_DEMO
- (code, createDate, demo_code, id, lastUpdateDate, name, remark, superBigDeceimal, superBoolean, superDemoId, superInt, superIntegerObject, superIsBooleanObject)
-VALUES (#{code}, #{createDate}, #{demo.code}, #{id}, #{lastUpdateDate}, #{name}, #{remark}, #{superBigDeceimal}, #{superBoolean}, #{superDemo.id}, #{superInt}, #{superIntegerObject}, #{superIsBooleanObject})</script>
+	(code, createDate, demo_code, id, lastUpdateDate, name, remark, superBigDeceimal, superBoolean, superDemoId, superInt, superIntegerObject, superIsBooleanObject)
+	VALUES (#{code}, #{createDate}, #{demo.code}, #{id}, #{lastUpdateDate}, #{name}, #{remark}, #{superBigDeceimal}, #{superBoolean}, #{superDemo.id}, #{superInt}, #{superIntegerObject}, #{superIsBooleanObject})
+</script>
 <!-- ---deleteSQL:--- -->
-<script>DELETE FROM TEST_DEMO
-WHERE (<trim prefixOverrides="AND | OR"><if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)"><![CDATA[ AND id  =  #{id} ]]></if></trim>)</script>
+<script>
+	DELETE FROM TEST_DEMO
+	WHERE (
+	<trim prefixOverrides="AND | OR">
+		<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)"><![CDATA[ AND id  =  #{id} ]]></if>
+	</trim>
+	)
+</script>
 <!-- ---updateSQL:--- -->
-<script>UPDATE TEST_DEMO
-SET <trim suffixOverrides=","><if test="_parameter.containsKey('code')"> code = #{code,javaType=java.lang.String}, </if> <if test="_parameter.containsKey('createDate')"> createDate = #{createDate,javaType=java.util.Date}, </if> <if test="_parameter.containsKey('demo')"> demo_code = #{demo.code,javaType=java.lang.String}, </if> <if test="_parameter.containsKey('lastUpdateDate')"> lastUpdateDate = #{lastUpdateDate,javaType=java.util.Date}, </if> <if test="_parameter.containsKey('name')"> name = #{name,javaType=java.lang.String}, </if> <if test="_parameter.containsKey('remark')"> remark = #{remark,javaType=java.lang.String}, </if> <if test="_parameter.containsKey('superBigDeceimal')"> superBigDeceimal = #{superBigDeceimal,javaType=java.math.BigDecimal}, </if> <if test="_parameter.containsKey('superBoolean')"> superBoolean = #{superBoolean,javaType=boolean}, </if> <if test="_parameter.containsKey('superDemo')"> superDemoId = #{superDemo.id,javaType=java.lang.String}, </if> <if test="_parameter.containsKey('superInt')"> superInt = #{superInt,javaType=int}, </if> <if test="_parameter.containsKey('superIntegerObject')"> superIntegerObject = #{superIntegerObject,javaType=java.lang.Integer}, </if> <if test="_parameter.containsKey('superIsBooleanObject')"> superIsBooleanObject = #{superIsBooleanObject,javaType=java.lang.Boolean}, </if></trim>
-WHERE (<trim prefixOverrides="AND | OR"><if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)"><![CDATA[ AND id  =  #{id} ]]></if></trim>)</script>
+<script>
+	UPDATE TEST_DEMO
+	SET
+	<trim suffixOverrides=",">
+		<if test="_parameter.containsKey('code')"> code = #{code,javaType=java.lang.String}, </if>
+		<if test="_parameter.containsKey('createDate')"> createDate = #{createDate,javaType=java.util.Date}, </if>
+		<if test="_parameter.containsKey('demo')"> demo_code = #{demo.code,javaType=java.lang.String}, </if>
+		<if test="_parameter.containsKey('lastUpdateDate')"> lastUpdateDate = #{lastUpdateDate,javaType=java.util.Date}, </if>
+		<if test="_parameter.containsKey('name')"> name = #{name,javaType=java.lang.String}, </if>
+		<if test="_parameter.containsKey('remark')"> remark = #{remark,javaType=java.lang.String}, </if>
+		<if test="_parameter.containsKey('superBigDeceimal')"> superBigDeceimal = #{superBigDeceimal,javaType=java.math.BigDecimal}, </if>
+		<if test="_parameter.containsKey('superBoolean')"> superBoolean = #{superBoolean,javaType=boolean}, </if>
+		<if test="_parameter.containsKey('superDemo')"> superDemoId = #{superDemo.id,javaType=java.lang.String}, </if>
+		<if test="_parameter.containsKey('superInt')"> superInt = #{superInt,javaType=int}, </if>
+		<if test="_parameter.containsKey('superIntegerObject')"> superIntegerObject = #{superIntegerObject,javaType=java.lang.Integer}, </if>
+		<if test="_parameter.containsKey('superIsBooleanObject')"> superIsBooleanObject = #{superIsBooleanObject,javaType=java.lang.Boolean}, </if>
+	</trim>
+	WHERE (
+	<trim prefixOverrides="AND | OR">
+		<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)"><![CDATA[ AND id  =  #{id} ]]></if>
+	</trim>
+	)
+</script>
 <!-- ---findSQL:--- -->
-<script>SELECT code, createDate, demo_code, id, lastUpdateDate, name, remark, superBigDeceimal, superBoolean, superDemoId, superInt, superIntegerObject, superIsBooleanObject
-FROM TEST_DEMO
-WHERE (<trim prefixOverrides="AND | OR"><if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)"><![CDATA[ AND id  =  #{id} ]]></if></trim>)</script>
+<script>
+	SELECT code, createDate, demo_code, id, lastUpdateDate, name, remark, superBigDeceimal, superBoolean, superDemoId, superInt, superIntegerObject, superIsBooleanObject
+	FROM TEST_DEMO
+	WHERE (
+	<trim prefixOverrides="AND | OR">
+		<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)"><![CDATA[ AND id  =  #{id} ]]></if>
+	</trim>
+	)
+</script>
 <!-- ---querySQL:--- -->
-<script>SELECT code, createDate, demo_code, id, lastUpdateDate, name, remark, superBigDeceimal, superBoolean, superDemoId, superInt, superIntegerObject, superIsBooleanObject
-FROM TEST_DEMO
- <trim prefix="WHERE" prefixOverrides="AND | OR"><if test="@com.tx.core.util.OgnlUtils@isNotEmpty(code)"><![CDATA[ AND code  =  #{code} ]]></if> <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(createDate)"><![CDATA[ AND createDate  =  #{createDate} ]]></if> <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(minCreateDate)"><![CDATA[ AND createDate  >=  #{minCreateDate} ]]></if> <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(maxCreateDate)"><![CDATA[ AND createDate  <  #{maxCreateDate} ]]></if> <if test="demo != null"><if test="@com.tx.core.util.OgnlUtils@isNotEmpty(demo.code)"><![CDATA[ AND demo_code  =  #{demo.code} ]]></if></if> <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)"><![CDATA[ AND id  =  #{id} ]]></if> <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(lastUpdateDate)"><![CDATA[ AND lastUpdateDate  =  #{lastUpdateDate} ]]></if> <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(name)"><![CDATA[ AND name  =  #{name} ]]></if> <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(remark)"><![CDATA[ AND remark  =  #{remark} ]]></if> <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(superBigDeceimal)"><![CDATA[ AND superBigDeceimal  =  #{superBigDeceimal} ]]></if> <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(superBoolean)"><![CDATA[ AND superBoolean  =  #{superBoolean} ]]></if> <if test="superDemo != null"><if test="@com.tx.core.util.OgnlUtils@isNotEmpty(superDemo.id)"><![CDATA[ AND superDemoId  =  #{superDemo.id} ]]></if></if> <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(superInt)"><![CDATA[ AND superInt  =  #{superInt} ]]></if> <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(superIntegerObject)"><![CDATA[ AND superIntegerObject  =  #{superIntegerObject} ]]></if> <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(superIsBooleanObject)"><![CDATA[ AND superIsBooleanObject  =  #{superIsBooleanObject} ]]></if></trim>
- <choose><when test="@com.tx.core.util.OgnlUtils@isNotEmpty(orderSql)">ORDER BY ${orderSql}</when><otherwise>ORDER BY createDate ASC</otherwise></choose></script>
+<script>
+	SELECT code, createDate, demo_code, id, lastUpdateDate, name, remark, superBigDeceimal, superBoolean, superDemoId, superInt, superIntegerObject, superIsBooleanObject
+	FROM TEST_DEMO
+	<trim prefix="WHERE" prefixOverrides="AND | OR">
+		<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(code)"><![CDATA[ AND code  =  #{code} ]]></if>
+		<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(createDate)"><![CDATA[ AND createDate  =  #{createDate} ]]></if>
+		<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(minCreateDate)"><![CDATA[ AND createDate  >=  #{minCreateDate} ]]></if>
+		<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(maxCreateDate)"><![CDATA[ AND createDate  <  #{maxCreateDate} ]]></if>
+		<if test="demo != null">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(demo.code)"><![CDATA[ AND demo_code  =  #{demo.code} ]]></if>
+		</if>
+		<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)"><![CDATA[ AND id  =  #{id} ]]></if>
+		<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(lastUpdateDate)"><![CDATA[ AND lastUpdateDate  =  #{lastUpdateDate} ]]></if>
+		<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(name)"><![CDATA[ AND name  =  #{name} ]]></if>
+		<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(remark)"><![CDATA[ AND remark  =  #{remark} ]]></if>
+		<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(superBigDeceimal)"><![CDATA[ AND superBigDeceimal  =  #{superBigDeceimal} ]]></if>
+		<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(superBoolean)"><![CDATA[ AND superBoolean  =  #{superBoolean} ]]></if>
+		<if test="superDemo != null">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(superDemo.id)"><![CDATA[ AND superDemoId  =  #{superDemo.id} ]]></if>
+		</if>
+		<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(superInt)"><![CDATA[ AND superInt  =  #{superInt} ]]></if>
+		<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(superIntegerObject)"><![CDATA[ AND superIntegerObject  =  #{superIntegerObject} ]]></if>
+		<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(superIsBooleanObject)"><![CDATA[ AND superIsBooleanObject  =  #{superIsBooleanObject} ]]></if>
+	</trim>
+	<choose>
+		<when test="@com.tx.core.util.OgnlUtils@isNotEmpty(orderSql)">ORDER BY ${orderSql}</when>
+		<otherwise>ORDER BY createDate ASC</otherwise>
+	</choose>
+</script>
 <!-- ---queryCountSQL:--- -->
-<script>SELECT COUNT(1)
-FROM TEST_DEMO
- <trim prefix="WHERE" prefixOverrides="AND | OR"><if test="@com.tx.core.util.OgnlUtils@isNotEmpty(code)"><![CDATA[ AND code  =  #{code} ]]></if> <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(createDate)"><![CDATA[ AND createDate  =  #{createDate} ]]></if> <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(minCreateDate)"><![CDATA[ AND createDate  >=  #{minCreateDate} ]]></if> <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(maxCreateDate)"><![CDATA[ AND createDate  <  #{maxCreateDate} ]]></if> <if test="demo != null"><if test="@com.tx.core.util.OgnlUtils@isNotEmpty(demo.code)"><![CDATA[ AND demo_code  =  #{demo.code} ]]></if></if> <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)"><![CDATA[ AND id  =  #{id} ]]></if> <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(lastUpdateDate)"><![CDATA[ AND lastUpdateDate  =  #{lastUpdateDate} ]]></if> <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(name)"><![CDATA[ AND name  =  #{name} ]]></if> <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(remark)"><![CDATA[ AND remark  =  #{remark} ]]></if> <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(superBigDeceimal)"><![CDATA[ AND superBigDeceimal  =  #{superBigDeceimal} ]]></if> <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(superBoolean)"><![CDATA[ AND superBoolean  =  #{superBoolean} ]]></if> <if test="superDemo != null"><if test="@com.tx.core.util.OgnlUtils@isNotEmpty(superDemo.id)"><![CDATA[ AND superDemoId  =  #{superDemo.id} ]]></if></if> <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(superInt)"><![CDATA[ AND superInt  =  #{superInt} ]]></if> <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(superIntegerObject)"><![CDATA[ AND superIntegerObject  =  #{superIntegerObject} ]]></if> <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(superIsBooleanObject)"><![CDATA[ AND superIsBooleanObject  =  #{superIsBooleanObject} ]]></if></trim></script>
-<!-- --------------- 自动注册SqlMap:'com.tx.test.mybatis.model.TestDemo'   END --------------- -->
+<script>
+	SELECT COUNT(1)
+	FROM TEST_DEMO
+	<trim prefix="WHERE" prefixOverrides="AND | OR">
+		<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(code)"><![CDATA[ AND code  =  #{code} ]]></if>
+		<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(createDate)"><![CDATA[ AND createDate  =  #{createDate} ]]></if>
+		<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(minCreateDate)"><![CDATA[ AND createDate  >=  #{minCreateDate} ]]></if>
+		<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(maxCreateDate)"><![CDATA[ AND createDate  <  #{maxCreateDate} ]]></if>
+		<if test="demo != null">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(demo.code)"><![CDATA[ AND demo_code  =  #{demo.code} ]]></if>
+		</if>
+		<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)"><![CDATA[ AND id  =  #{id} ]]></if>
+		<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(lastUpdateDate)"><![CDATA[ AND lastUpdateDate  =  #{lastUpdateDate} ]]></if>
+		<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(name)"><![CDATA[ AND name  =  #{name} ]]></if>
+		<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(remark)"><![CDATA[ AND remark  =  #{remark} ]]></if>
+		<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(superBigDeceimal)"><![CDATA[ AND superBigDeceimal  =  #{superBigDeceimal} ]]></if>
+		<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(superBoolean)"><![CDATA[ AND superBoolean  =  #{superBoolean} ]]></if>
+		<if test="superDemo != null">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(superDemo.id)"><![CDATA[ AND superDemoId  =  #{superDemo.id} ]]></if>
+		</if>
+		<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(superInt)"><![CDATA[ AND superInt  =  #{superInt} ]]></if>
+		<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(superIntegerObject)"><![CDATA[ AND superIntegerObject  =  #{superIntegerObject} ]]></if>
+		<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(superIsBooleanObject)"><![CDATA[ AND superIsBooleanObject  =  #{superIsBooleanObject} ]]></if>
+	</trim>
+</script>
+<!-- --------------- 自动注册SqlMap:'com.tx.test.mybatis.model.TestDemo' END --------------- -->
 
