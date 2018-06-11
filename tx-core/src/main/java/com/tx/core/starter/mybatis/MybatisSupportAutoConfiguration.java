@@ -4,7 +4,7 @@
  * 修改时间:  2018年6月3日
  * <修改描述:>
  */
-package com.tx.core.mybatis.starter;
+package com.tx.core.starter.mybatis;
 
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
@@ -17,9 +17,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.tx.core.mybatis.support.MyBatisDaoSupport;
+import com.tx.core.starter.util.CoreUtilAutoConfiguration;
 
 /**
- * <功能简述>
+ * mybatisSupport自动配置类<br/>
  * <功能详细描述>
  * 
  * @author  Administrator
@@ -28,10 +29,12 @@ import com.tx.core.mybatis.support.MyBatisDaoSupport;
  * @since  [产品/模块版本]
  */
 @Configuration
-@ConditionalOnClass({ SqlSessionFactory.class, SqlSessionFactoryBean.class,
-        MyBatisDaoSupport.class })
-@ConditionalOnBean({ SqlSessionFactory.class })
-@AutoConfigureAfter(MybatisAutoConfiguration.class)
+@ConditionalOnClass({ MybatisAutoConfiguration.class, SqlSessionFactory.class,
+        SqlSessionFactoryBean.class })
+@ConditionalOnBean({ SqlSessionFactory.class, SqlSessionTemplate.class,
+        MybatisAutoConfiguration.class })
+@AutoConfigureAfter({ CoreUtilAutoConfiguration.class,
+        MybatisAutoConfiguration.class })
 public class MybatisSupportAutoConfiguration {
     
     /**

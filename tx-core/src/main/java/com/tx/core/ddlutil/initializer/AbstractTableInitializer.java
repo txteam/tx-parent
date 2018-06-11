@@ -7,6 +7,7 @@
 package com.tx.core.ddlutil.initializer;
 
 import com.tx.core.TxConstants;
+import com.tx.core.ddlutil.executor.TableDDLExecutor;
 
 /**
  * 抽象表初始化器<br/>
@@ -18,6 +19,11 @@ import com.tx.core.TxConstants;
  * @since  [产品/模块版本]
  */
 public abstract class AbstractTableInitializer implements TableInitializer {
+    
+    /** <默认构造函数> */
+    public AbstractTableInitializer() {
+        super();
+    }
     
     /**
      * @return
@@ -35,70 +41,71 @@ public abstract class AbstractTableInitializer implements TableInitializer {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public String initialize(boolean tableAutoInitialize) {
+    public String initialize(TableDDLExecutor tableDDLExecutor,
+            boolean tableAutoInitialize) {
         StringBuilder sb = new StringBuilder(TxConstants.INITIAL_STR_LENGTH);
         
         sb.append(COMMENT_PREFIX)
                 .append("----------tables----------")
                 .append(COMMENT_SUFFIX)
                 .append(LINE_SEPARATOR);
-        sb.append(tables(tableAutoInitialize));
+        sb.append(tables(tableDDLExecutor, tableAutoInitialize));
         sb.append(LINE_SEPARATOR);
         
         sb.append(COMMENT_PREFIX)
                 .append("----------sequences----------")
                 .append(COMMENT_SUFFIX)
                 .append(LINE_SEPARATOR);
-        sb.append(sequences(tableAutoInitialize));
+        sb.append(sequences(tableDDLExecutor, tableAutoInitialize));
         sb.append(LINE_SEPARATOR);
         
         sb.append(COMMENT_PREFIX)
                 .append("----------packages----------")
                 .append(COMMENT_SUFFIX)
                 .append(LINE_SEPARATOR);
-        sb.append(packages(tableAutoInitialize));
+        sb.append(packages(tableDDLExecutor, tableAutoInitialize));
         sb.append(LINE_SEPARATOR);
         
         sb.append(COMMENT_PREFIX)
                 .append("----------functions----------")
                 .append(COMMENT_SUFFIX)
                 .append(LINE_SEPARATOR);
-        sb.append(functions(tableAutoInitialize));
+        sb.append(functions(tableDDLExecutor, tableAutoInitialize));
         sb.append(LINE_SEPARATOR);
         
         sb.append(COMMENT_PREFIX)
                 .append("----------procedures----------")
                 .append(COMMENT_SUFFIX)
                 .append(LINE_SEPARATOR);
-        sb.append(procedures(tableAutoInitialize));
+        sb.append(procedures(tableDDLExecutor, tableAutoInitialize));
         sb.append(LINE_SEPARATOR);
         
         sb.append(COMMENT_PREFIX)
                 .append("----------triggers----------")
                 .append(COMMENT_SUFFIX)
                 .append(LINE_SEPARATOR);
-        sb.append(triggers(tableAutoInitialize));
+        sb.append(triggers(tableDDLExecutor, tableAutoInitialize));
         sb.append(LINE_SEPARATOR);
         
         sb.append(COMMENT_PREFIX)
                 .append("----------views----------")
                 .append(COMMENT_SUFFIX)
                 .append(LINE_SEPARATOR);
-        sb.append(views(tableAutoInitialize));
+        sb.append(views(tableDDLExecutor, tableAutoInitialize));
         sb.append(LINE_SEPARATOR);
         
         sb.append(COMMENT_PREFIX)
                 .append("----------initdatas----------")
                 .append(COMMENT_SUFFIX)
                 .append(LINE_SEPARATOR);
-        sb.append(initdatas(tableAutoInitialize));
+        sb.append(initdatas(tableDDLExecutor, tableAutoInitialize));
         sb.append(LINE_SEPARATOR);
         
         sb.append(COMMENT_PREFIX)
                 .append("----------jobs----------")
                 .append(COMMENT_SUFFIX)
                 .append(LINE_SEPARATOR);
-        sb.append(jobs(tableAutoInitialize));
+        sb.append(jobs(tableDDLExecutor, tableAutoInitialize));
         sb.append(LINE_SEPARATOR);
         
         return sb.toString();
@@ -108,7 +115,8 @@ public abstract class AbstractTableInitializer implements TableInitializer {
      * 
      */
     @Override
-    public String tables(boolean tableAutoInitialize) {
+    public String tables(TableDDLExecutor tableDDLExecutor,
+            boolean tableAutoInitialize) {
         return "";
     }
     
@@ -116,7 +124,8 @@ public abstract class AbstractTableInitializer implements TableInitializer {
      * 
      */
     @Override
-    public String sequences(boolean tableAutoInitialize) {
+    public String sequences(TableDDLExecutor tableDDLExecutor,
+            boolean tableAutoInitialize) {
         return "";
     }
     
@@ -124,7 +133,8 @@ public abstract class AbstractTableInitializer implements TableInitializer {
      * 
      */
     @Override
-    public String packages(boolean tableAutoInitialize) {
+    public String packages(TableDDLExecutor tableDDLExecutor,
+            boolean tableAutoInitialize) {
         return "";
     }
     
@@ -132,7 +142,8 @@ public abstract class AbstractTableInitializer implements TableInitializer {
      * 
      */
     @Override
-    public String functions(boolean tableAutoInitialize) {
+    public String functions(TableDDLExecutor tableDDLExecutor,
+            boolean tableAutoInitialize) {
         return "";
     }
     
@@ -140,7 +151,8 @@ public abstract class AbstractTableInitializer implements TableInitializer {
      * 
      */
     @Override
-    public String procedures(boolean tableAutoInitialize) {
+    public String procedures(TableDDLExecutor tableDDLExecutor,
+            boolean tableAutoInitialize) {
         return "";
     }
     
@@ -148,7 +160,8 @@ public abstract class AbstractTableInitializer implements TableInitializer {
      * 
      */
     @Override
-    public String triggers(boolean tableAutoInitialize) {
+    public String triggers(TableDDLExecutor tableDDLExecutor,
+            boolean tableAutoInitialize) {
         return "";
     }
     
@@ -156,7 +169,8 @@ public abstract class AbstractTableInitializer implements TableInitializer {
      * 
      */
     @Override
-    public String views(boolean tableAutoInitialize) {
+    public String views(TableDDLExecutor tableDDLExecutor,
+            boolean tableAutoInitialize) {
         return "";
     }
     
@@ -164,7 +178,8 @@ public abstract class AbstractTableInitializer implements TableInitializer {
      * 
      */
     @Override
-    public String initdatas(boolean tableAutoInitialize) {
+    public String initdatas(TableDDLExecutor tableDDLExecutor,
+            boolean tableAutoInitialize) {
         return "";
     }
     
@@ -172,7 +187,8 @@ public abstract class AbstractTableInitializer implements TableInitializer {
      * 
      */
     @Override
-    public String jobs(boolean tableAutoInitialize) {
+    public String jobs(TableDDLExecutor tableDDLExecutor,
+            boolean tableAutoInitialize) {
         return "";
     }
 }

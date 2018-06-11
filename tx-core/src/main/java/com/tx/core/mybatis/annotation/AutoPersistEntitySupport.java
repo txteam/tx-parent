@@ -26,7 +26,7 @@ import java.lang.annotation.Target;
 @Inherited
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface EntityAutoPersistSupport {
+public @interface AutoPersistEntitySupport {
     
     /**
      * 插入语句<br/>

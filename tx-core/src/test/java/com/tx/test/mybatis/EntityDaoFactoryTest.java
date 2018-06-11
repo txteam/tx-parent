@@ -26,7 +26,6 @@ import com.tx.core.ddlutil.helper.JPAEntityDDLHelper;
 import com.tx.core.ddlutil.model.TableDef;
 import com.tx.core.mybatis.support.EntityDao;
 import com.tx.core.mybatis.support.EntityDaoFactory;
-import com.tx.core.mybatis.support.EntityMapperBuilderAssistant;
 import com.tx.core.mybatis.support.MyBatisDaoSupport;
 import com.tx.core.mybatis.support.MyBatisDaoSupportHelper;
 import com.tx.core.util.UUIDUtils;
@@ -97,6 +96,17 @@ public class EntityDaoFactoryTest {
         td2.setRemark("testRemark");
         dao.insert(td2);
         
+        String id3 = UUIDUtils.generateUUID();
+        TestDemo td3 = new TestDemo();
+        td3.setId(id3);
+        td3.setCode("testCode");
+        td3.setName("testName");
+        td3.setSuperDemo(new Demo());
+        td3.getSuperDemo().setId("3.superDemo.id");
+        td3.setDemo(new Demo());
+        td3.getDemo().setCode("3.demo.code");
+        dao.insert(td3);
+        
         Demo superDemo = new Demo();
         superDemo.setId("superDemoId1");
         superDemo.setCode("superDemoCode1");
@@ -130,5 +140,7 @@ public class EntityDaoFactoryTest {
                     + " | " + (tdTemp.getDemo() == null ? null
                             : tdTemp.getDemo().getCode()));
         }
+        
+        dao.delete(td3);
     }
 }

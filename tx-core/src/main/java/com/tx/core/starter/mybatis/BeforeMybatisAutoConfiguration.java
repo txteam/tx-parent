@@ -4,7 +4,7 @@
  * 修改时间:  2018年6月3日
  * <修改描述:>
  */
-package com.tx.core.mybatis.starter;
+package com.tx.core.starter.mybatis;
 
 import javax.sql.DataSource;
 
@@ -19,6 +19,7 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 
 import com.tx.core.mybatis.interceptor.PagedDialectStatementHandlerInterceptor;
+import com.tx.core.starter.util.CoreUtilAutoConfiguration;
 import com.tx.core.util.dialect.DataSourceTypeEnum;
 
 /**
@@ -31,13 +32,14 @@ import com.tx.core.util.dialect.DataSourceTypeEnum;
  * @since  [产品/模块版本]
  */
 @org.springframework.context.annotation.Configuration
-@ConditionalOnClass({ SqlSessionFactory.class, SqlSessionFactoryBean.class })
+@ConditionalOnClass({ MybatisAutoConfiguration.class, SqlSessionFactory.class,
+        SqlSessionFactoryBean.class, })
 @ConditionalOnBean(DataSource.class)
-@AutoConfigureAfter(DataSourceAutoConfiguration.class)
+@AutoConfigureAfter({CoreUtilAutoConfiguration.class,DataSourceAutoConfiguration.class})
 @AutoConfigureBefore(MybatisAutoConfiguration.class)
 public class BeforeMybatisAutoConfiguration {
     
-    @Bean
+    @Bean("pagedDialectStatementHandlerInterceptor")
     public PagedDialectStatementHandlerInterceptor pagedDialectStatementHandlerInterceptor() {
         PagedDialectStatementHandlerInterceptor interceptor = new PagedDialectStatementHandlerInterceptor();
         interceptor.setDataSourceType(DataSourceTypeEnum.MYSQL);

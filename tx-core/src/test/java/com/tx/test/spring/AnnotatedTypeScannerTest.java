@@ -8,7 +8,7 @@ package com.tx.test.spring;
 
 import org.springframework.data.util.AnnotatedTypeScanner;
 
-import com.tx.core.mybatis.annotation.EntityAutoPersistSupport;
+import com.tx.core.mybatis.annotation.AutoPersistEntitySupport;
 
 /**
  * <功能简述>
@@ -22,7 +22,7 @@ import com.tx.core.mybatis.annotation.EntityAutoPersistSupport;
 public class AnnotatedTypeScannerTest {
     
     public static void main(String[] args) {
-        AnnotatedTypeScanner scanner = new AnnotatedTypeScanner(EntityAutoPersistSupport.class);
+        AnnotatedTypeScanner scanner = new AnnotatedTypeScanner(AutoPersistEntitySupport.class);
         
         System.out.println(scanner.findTypes("com.tx").size());
     }

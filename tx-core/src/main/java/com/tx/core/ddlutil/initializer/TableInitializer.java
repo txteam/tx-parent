@@ -8,6 +8,8 @@ package com.tx.core.ddlutil.initializer;
 
 import org.springframework.core.PriorityOrdered;
 
+import com.tx.core.ddlutil.executor.TableDDLExecutor;
+
 /**
  * 表初始化器<br/>
  * <功能详细描述>
@@ -33,7 +35,8 @@ public interface TableInitializer extends PriorityOrdered {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public String initialize(boolean tableAutoInitialize);
+    public String initialize(TableDDLExecutor tableDDLExecutor,
+            boolean tableAutoInitialize);
     
     /**
      * 表初始化器table<br/>
@@ -43,7 +46,8 @@ public interface TableInitializer extends PriorityOrdered {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public String tables(boolean tableAutoInitialize);
+    public String tables(TableDDLExecutor tableDDLExecutor,
+            boolean tableAutoInitialize);
     
     /**
      * 初始化sequences<br/>
@@ -53,7 +57,8 @@ public interface TableInitializer extends PriorityOrdered {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public String sequences(boolean tableAutoInitialize);
+    public String sequences(TableDDLExecutor tableDDLExecutor,
+            boolean tableAutoInitialize);
     
     /**
      * 初始化包package<br/>
@@ -63,7 +68,8 @@ public interface TableInitializer extends PriorityOrdered {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public String packages(boolean tableAutoInitialize);
+    public String packages(TableDDLExecutor tableDDLExecutor,
+            boolean tableAutoInitialize);
     
     /**
      * 表初始化器function<br/>
@@ -73,7 +79,8 @@ public interface TableInitializer extends PriorityOrdered {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public String functions(boolean tableAutoInitialize);
+    public String functions(TableDDLExecutor tableDDLExecutor,
+            boolean tableAutoInitialize);
     
     /**
      * 初始化存储过程<br/>
@@ -83,7 +90,8 @@ public interface TableInitializer extends PriorityOrdered {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public String procedures(boolean tableAutoInitialize);
+    public String procedures(TableDDLExecutor tableDDLExecutor,
+            boolean tableAutoInitialize);
     
     /**
      * 初始化触发器<br/>
@@ -93,7 +101,8 @@ public interface TableInitializer extends PriorityOrdered {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public String triggers(boolean tableAutoInitialize);
+    public String triggers(TableDDLExecutor tableDDLExecutor,
+            boolean tableAutoInitialize);
     
     /**
      * 初始化视图逻辑层<br/>
@@ -103,7 +112,8 @@ public interface TableInitializer extends PriorityOrdered {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public String views(boolean tableAutoInitialize);
+    public String views(TableDDLExecutor tableDDLExecutor,
+            boolean tableAutoInitialize);
     
     /**
      * 表初始化器<br/>
@@ -113,7 +123,8 @@ public interface TableInitializer extends PriorityOrdered {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public String initdatas(boolean tableAutoInitialize);
+    public String initdatas(TableDDLExecutor tableDDLExecutor,
+            boolean tableAutoInitialize);
     
     /**
      * 初始化任务<br/>
@@ -123,6 +134,7 @@ public interface TableInitializer extends PriorityOrdered {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public String jobs(boolean tableAutoInitialize);
+    public String jobs(TableDDLExecutor tableDDLExecutor,
+            boolean tableAutoInitialize);
     
 }

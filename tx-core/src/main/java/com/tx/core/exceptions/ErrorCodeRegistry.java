@@ -16,6 +16,7 @@ import java.util.Set;
 import org.apache.commons.lang3.reflect.ConstructorUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 
 import com.tx.core.util.ClassScanUtils;
 
@@ -28,9 +29,10 @@ import com.tx.core.util.ClassScanUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class ErrorCodeRegistry {
+public class ErrorCodeRegistry implements InitializingBean {
     
-    private static Logger logger = LoggerFactory.getLogger(ErrorCodeRegistry.class);
+    private static Logger logger = LoggerFactory
+            .getLogger(ErrorCodeRegistry.class);
     
     /** 错误编码注册表 */
     public static final ErrorCodeRegistry INSTANCE = new ErrorCodeRegistry();
@@ -42,11 +44,17 @@ public class ErrorCodeRegistry {
     private final Map<Integer, Class<? extends SILException>> code2typeMap;
     
     /** <默认构造函数> */
-    private ErrorCodeRegistry() {
+    public ErrorCodeRegistry() {
         super();
         this.code2messageMap = new HashMap<Integer, String>();
         this.code2typeMap = new HashMap<Integer, Class<? extends SILException>>();
-        
+    }
+    
+    /**
+     * @throws Exception
+     */
+    @Override
+    public void afterPropertiesSet() throws Exception {
         //根据异常编码枚举类初始化异常错误信息<br/>
         initByErrorCodeEnumTypes();
         
@@ -56,8 +64,8 @@ public class ErrorCodeRegistry {
     
     /** 启动根据封装的错误编码与错误消息之间的映射 */
     public final void initByErrorCodeEnumTypes() {
-        Set<Class<? extends ErrorCode>> errorCodeClassSet = ClassScanUtils.scanByParentClass(ErrorCode.class,
-                "com.tx");
+        Set<Class<? extends ErrorCode>> errorCodeClassSet = ClassScanUtils
+                .scanByParentClass(ErrorCode.class, "com.tx");
         for (Class<? extends ErrorCode> classTemp : errorCodeClassSet) {
             if (!classTemp.isEnum()) {
                 continue;
@@ -71,8 +79,8 @@ public class ErrorCodeRegistry {
     
     /** 启动根据封装的异常类进行初始化 */
     public final void initBySILExceptionTypes() {
-        Set<Class<? extends SILException>> silExceptionClassSet = ClassScanUtils.scanByParentClass(SILException.class,
-                "com.tx");
+        Set<Class<? extends SILException>> silExceptionClassSet = ClassScanUtils
+                .scanByParentClass(SILException.class, "com.tx");
         for (Class<? extends SILException> classTemp : silExceptionClassSet) {
             if (SILException.class.equals(classTemp)
                     || Modifier.isAbstract(classTemp.getModifiers())) {
@@ -80,12 +88,14 @@ public class ErrorCodeRegistry {
             }
             
             //如果有无参构造函数，则读取对应的错误编码，以及错误信息进行注册
-            Constructor<? extends SILException> constructor = ConstructorUtils.getMatchingAccessibleConstructor(classTemp);
+            Constructor<? extends SILException> constructor = ConstructorUtils
+                    .getMatchingAccessibleConstructor(classTemp);
             if (constructor == null) {
                 continue;
             }
             try {
-                SILException exceptionInstance = ConstructorUtils.invokeConstructor(classTemp);
+                SILException exceptionInstance = ConstructorUtils
+                        .invokeConstructor(classTemp);
                 //注册错误编码
                 registeErrorCode(exceptionInstance.errorCode(),
                         exceptionInstance.errorMessage(),

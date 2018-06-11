@@ -12,6 +12,7 @@ import java.util.Map;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.executor.BatchExecutorException;
+import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
@@ -1263,37 +1264,10 @@ public class MyBatisDaoSupport implements InitializingBean {
     }
     
     /**
-     * <获取sqlSessionFactory> <功能详细描述>
-     * 
-     * @return [参数说明]
-     * 
-     * @return SqlSessionFactory [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public SqlSessionFactory getSqlSessionFactory() {
-        return this.sqlSessionTemplate.getSqlSessionFactory();
-    }
-    
-    /**
-     * @return 返回 sqlSessionTemplate
-     */
-    public SqlSessionTemplate getSqlSessionTemplate() {
-        return sqlSessionTemplate;
-    }
-    
-    /**
      * @param 对sqlSessionTemplate进行赋值
      */
     public void setSqlSessionTemplate(SqlSessionTemplate sqlSessionTemplate) {
         this.sqlSessionTemplate = sqlSessionTemplate;
-    }
-    
-    /**
-     * @return 返回 exceptionTranslator
-     */
-    public PersistenceExceptionTranslator getExceptionTranslator() {
-        return exceptionTranslator;
     }
     
     /**
@@ -1309,6 +1283,51 @@ public class MyBatisDaoSupport implements InitializingBean {
      */
     public void setSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
         this.sqlSessionFactory = sqlSessionFactory;
+    }
+    
+    /**
+     * @return 返回 exceptionTranslator
+     */
+    public PersistenceExceptionTranslator getExceptionTranslator() {
+        return exceptionTranslator;
+    }
+    
+    /**
+     * 获取sqlSessionFactory
+     * @return [参数说明]
+     * 
+     * @return SqlSessionFactory [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public SqlSessionFactory getSqlSessionFactory() {
+        return this.sqlSessionTemplate.getSqlSessionFactory();
+    }
+    
+    /**
+     * sqlSessionTemplate
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return SqlSessionTemplate [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public SqlSessionTemplate getSqlSessionTemplate() {
+        return sqlSessionTemplate;
+    }
+    
+    /**
+     * 获取Mybatis对应的sqlSessionFactory中的Configuration<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return Configuration [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public Configuration getConfiguration(){
+        return this.sqlSessionFactory.getConfiguration();
     }
     
     

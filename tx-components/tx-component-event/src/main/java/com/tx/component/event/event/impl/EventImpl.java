@@ -42,7 +42,6 @@ public class EventImpl extends AbstractEvent {
     /** <默认构造函数> */
     public EventImpl(String type, EventCallbackHandler callback) {
         super(type, callback);
-        // TODO Auto-generated constructor stub
     }
     
     /**

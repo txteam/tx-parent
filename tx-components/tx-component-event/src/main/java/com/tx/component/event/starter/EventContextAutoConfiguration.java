@@ -29,6 +29,7 @@ import com.tx.component.event.context.loader.AnnotationEventListenerLoader;
 import com.tx.component.event.listener.resolver.impl.EventListenerMethodEventArgumentResolver;
 import com.tx.component.event.listener.resolver.impl.EventListenerParamMapMethodArgumentResolver;
 import com.tx.component.event.listener.resolver.impl.EventListenerParamMethodArgumentResolver;
+import com.tx.core.starter.util.CoreUtilAutoConfiguration;
 
 /**
  * 命令容器配置器<br/>
@@ -42,7 +43,8 @@ import com.tx.component.event.listener.resolver.impl.EventListenerParamMethodArg
 @Configuration
 @EnableConfigurationProperties(value = EventContextProperties.class)
 @ConditionalOnBean({ DataSource.class, PlatformTransactionManager.class })
-@AutoConfigureAfter({ DataSourceAutoConfiguration.class,
+@AutoConfigureAfter({ CoreUtilAutoConfiguration.class,
+        DataSourceAutoConfiguration.class,
         DataSourceTransactionManagerAutoConfiguration.class })
 @ConditionalOnProperty(prefix = "event", value = "enable", havingValue = "true")
 public class EventContextAutoConfiguration
