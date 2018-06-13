@@ -4,7 +4,7 @@
  * 修改时间:  2018年5月9日
  * <修改描述:>
  */
-package com.tx.core.ddlutil.initializer;
+package com.tx.core.dbscript.initializer;
 
 import org.springframework.core.PriorityOrdered;
 

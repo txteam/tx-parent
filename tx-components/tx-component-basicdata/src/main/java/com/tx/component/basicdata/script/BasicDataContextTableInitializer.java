@@ -9,11 +9,11 @@ package com.tx.component.basicdata.script;
 import org.springframework.beans.factory.InitializingBean;
 
 import com.tx.core.TxConstants;
+import com.tx.core.dbscript.initializer.AbstractTableInitializer;
 import com.tx.core.ddlutil.builder.DDLBuilder;
 import com.tx.core.ddlutil.builder.alter.AlterTableDDLBuilder;
 import com.tx.core.ddlutil.builder.create.CreateTableDDLBuilder;
 import com.tx.core.ddlutil.executor.TableDDLExecutor;
-import com.tx.core.ddlutil.initializer.AbstractTableInitializer;
 
 /**
   * 任务容器表初始器<br/>
@@ -58,7 +58,9 @@ public class BasicDataContextTableInitializer extends AbstractTableInitializer
     @Override
     public void afterPropertiesSet() throws Exception {
         //初始化表定义
-        initialize(this.tableDDLExecutor, this.tableAutoInitialize);
+        if (this.tableDDLExecutor != null) {
+            initialize(this.tableDDLExecutor, this.tableAutoInitialize);
+        }
     }
     
     /**

@@ -8,7 +8,7 @@ package com.tx.core.jdbc.model;
 
 
  /**
-  * 查询条件类型
+  * 查询条件类型<br/>
   * <功能详细描述>
   * 
   * @author  Administrator

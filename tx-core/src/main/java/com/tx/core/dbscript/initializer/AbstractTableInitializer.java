@@ -4,7 +4,7 @@
  * 修改时间:  2018年5月10日
  * <修改描述:>
  */
-package com.tx.core.ddlutil.initializer;
+package com.tx.core.dbscript.initializer;
 
 import com.tx.core.TxConstants;
 import com.tx.core.ddlutil.executor.TableDDLExecutor;

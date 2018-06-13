@@ -10,11 +10,11 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.tx.core.dbscript.initializer.AbstractTableInitializer;
 import com.tx.core.ddlutil.builder.alter.AlterTableDDLBuilder;
 import com.tx.core.ddlutil.builder.create.CreateTableDDLBuilder;
 import com.tx.core.ddlutil.executor.TableDDLExecutor;
 import com.tx.core.ddlutil.helper.JPAEntityDDLHelper;
-import com.tx.core.ddlutil.initializer.AbstractTableInitializer;
 import com.tx.core.ddlutil.model.TableDef;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.util.ClassScanUtils;
