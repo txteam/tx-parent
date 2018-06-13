@@ -217,13 +217,13 @@
 				<artifactId>tx-component-servicelogger</artifactId>
 				<version>${tx.version}</version>
 			</dependency>
-
-			<!-- 待改进模块 -->
 			<dependency>
 				<groupId>com.tx</groupId>
-				<artifactId>tx-component-auth</artifactId>
+				<artifactId>tx-component-security</artifactId>
 				<version>${tx.version}</version>
 			</dependency>
+
+			<!-- 待改进模块 -->
 			<dependency>
 				<groupId>com.tx</groupId>
 				<artifactId>tx-component-rule</artifactId>

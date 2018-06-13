@@ -9,7 +9,7 @@
 
 	<artifactId>tx-component-task</artifactId>
 	<packaging>jar</packaging>
-	<name>tx-component-event</name>
+	<name>tx-component-task</name>
 	<url>http://maven.apache.org</url>
 
 	<dependencies>

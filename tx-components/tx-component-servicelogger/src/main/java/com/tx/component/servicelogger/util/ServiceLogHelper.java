@@ -20,7 +20,7 @@ import com.tx.component.servicelogger.model.AbstractServiceLog;
 public class ServiceLogHelper {
     
     /**
-     * 记录日志
+     * 记录日志<br/>
      *
      * @param log
      *            

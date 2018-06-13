@@ -38,11 +38,11 @@
 /tx-components/tx-component-task/.project
 /tx-components/tx-component-task/.factorypath
 
-/tx-components/tx-component-auth/target
-/tx-components/tx-component-auth/.settings
-/tx-components/tx-component-auth/.classpath
-/tx-components/tx-component-auth/.project
-/tx-components/tx-component-auth/.factorypath
+/tx-components/tx-component-security/target
+/tx-components/tx-component-security/.settings
+/tx-components/tx-component-security/.classpath
+/tx-components/tx-component-security/.project
+/tx-components/tx-component-security/.factorypath
 
 /tx-components/tx-component-servicelogger/target
 /tx-components/tx-component-servicelogger/.settings

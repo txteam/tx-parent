@@ -42,15 +42,15 @@
 		<module>tx-component-event</module>
 		<module>tx-component-basicdata</module>
 		<module>tx-component-task</module>
+		<module>tx-component-security</module>
+		<module>tx-component-servicelogger</module>
 		
 		<!-- 待完善的模块 -->
-		<!-- <module>tx-component-servicelogger</module> -->
-		<!-- <module>tx-component-session</module> -->
-		<!-- <module>tx-component-auth</module> -->
+		<!-- <module>tx-component-configuration</module> -->
+		<!-- <module>tx-component-sequence</module> -->
 		
 		<!-- 准备废弃的模块 -->
-		<!-- <module>tx-component-configuration</module> -->
 		<!-- <module>tx-component-rule</module> -->
-		<!-- <module>tx-component-sequence</module> -->
+		
 	</modules>
 </project>

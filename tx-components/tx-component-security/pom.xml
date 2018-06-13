@@ -7,9 +7,9 @@
 		<version>5.0.x-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>tx-component-auth</artifactId>
+	<artifactId>tx-component-security</artifactId>
 	<packaging>jar</packaging>
-	<name>tx-component-auth</name>
+	<name>tx-component-security</name>
 	<url>http://maven.apache.org</url>
 
 	<properties>
