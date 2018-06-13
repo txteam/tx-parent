@@ -17,7 +17,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-@ConfigurationProperties(prefix = "basicdata")
+@ConfigurationProperties(prefix = "tx.basicdata")
 public class BasicDataContextProperties {
     
     /** 命令容器是否启动 */

@@ -46,7 +46,7 @@ import com.tx.core.starter.util.CoreUtilAutoConfiguration;
 @AutoConfigureAfter({ CoreUtilAutoConfiguration.class,
         DataSourceAutoConfiguration.class,
         DataSourceTransactionManagerAutoConfiguration.class })
-@ConditionalOnProperty(prefix = "event", value = "enable", havingValue = "true")
+@ConditionalOnProperty(prefix = "tx.event", value = "enable", havingValue = "true")
 public class EventContextAutoConfiguration
         implements ApplicationContextAware, InitializingBean {
     

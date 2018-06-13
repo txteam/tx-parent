@@ -35,10 +35,20 @@ import com.tx.core.util.dialect.DataSourceTypeEnum;
 @ConditionalOnClass({ MybatisAutoConfiguration.class, SqlSessionFactory.class,
         SqlSessionFactoryBean.class, })
 @ConditionalOnBean(DataSource.class)
-@AutoConfigureAfter({CoreUtilAutoConfiguration.class,DataSourceAutoConfiguration.class})
+@AutoConfigureAfter({ CoreUtilAutoConfiguration.class,
+        DataSourceAutoConfiguration.class })
 @AutoConfigureBefore(MybatisAutoConfiguration.class)
 public class BeforeMybatisAutoConfiguration {
     
+    /**
+     * 写入分页插件<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return PagedDialectStatementHandlerInterceptor [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
     @Bean("pagedDialectStatementHandlerInterceptor")
     public PagedDialectStatementHandlerInterceptor pagedDialectStatementHandlerInterceptor() {
         PagedDialectStatementHandlerInterceptor interceptor = new PagedDialectStatementHandlerInterceptor();

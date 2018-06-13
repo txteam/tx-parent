@@ -7,7 +7,6 @@
 package com.tx.component.servicelogger.util;
 
 import com.tx.component.servicelogger.context.ServiceLoggerContext;
-import com.tx.component.servicelogger.logger.TxLoaclFileServiceLog;
 import com.tx.component.servicelogger.model.AbstractServiceLog;
 
 /**

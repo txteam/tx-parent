@@ -17,7 +17,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
   */
-@ConfigurationProperties(prefix = "event")
+@ConfigurationProperties(prefix = "tx.event")
 public class EventContextProperties {
     
     /** 命令容器是否启动 */

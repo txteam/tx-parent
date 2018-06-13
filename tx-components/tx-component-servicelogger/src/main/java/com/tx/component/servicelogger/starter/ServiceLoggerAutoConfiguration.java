@@ -1,5 +1,5 @@
 package com.tx.component.servicelogger.starter;
 
-public class ServiceLogAutoConfiguration {
+public class ServiceLoggerAutoConfiguration {
     
 }

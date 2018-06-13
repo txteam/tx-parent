@@ -6,6 +6,7 @@
  */
 package com.tx.core.starter.util;
 
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
@@ -23,6 +24,7 @@ import com.tx.core.util.ClassScanUtils;
  * @since  [产品/模块版本]
  */
 @Configuration
+@EnableConfigurationProperties
 public class CoreUtilAutoConfiguration {
     
     /**
@@ -35,7 +37,7 @@ public class CoreUtilAutoConfiguration {
      * @see [类、类#方法、类#成员]
      */
     @Bean(name = "classScanUtils")
-    public ClassScanUtils classScanUtils(){
+    public ClassScanUtils classScanUtils() {
         return new ClassScanUtils();
     }
     
@@ -50,7 +52,7 @@ public class CoreUtilAutoConfiguration {
      */
     @Bean(name = "errorCodeRegistry")
     @DependsOn("classScanUtils")
-    public ErrorCodeRegistry errorCodeRegistry(){
+    public ErrorCodeRegistry errorCodeRegistry() {
         return new ErrorCodeRegistry();
     }
 }

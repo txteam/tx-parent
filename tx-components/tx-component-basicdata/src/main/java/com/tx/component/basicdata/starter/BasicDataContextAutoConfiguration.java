@@ -60,7 +60,7 @@ import com.tx.core.util.dialect.DataSourceTypeEnum;
 @ConditionalOnBean({ DataSource.class, PlatformTransactionManager.class })
 @AutoConfigureAfter({ DataSourceAutoConfiguration.class,
         DataSourceTransactionManagerAutoConfiguration.class })
-@ConditionalOnProperty(prefix = "basicdata", value = "enable", havingValue = "true")
+@ConditionalOnProperty(prefix = "tx.basicdata", value = "enable", havingValue = "true")
 public class BasicDataContextAutoConfiguration
         implements ApplicationContextAware, InitializingBean {
     

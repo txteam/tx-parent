@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
-import org.springframework.beans.factory.FactoryBean;
+import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.SingletonBeanRegistry;
@@ -51,26 +51,27 @@ import com.tx.core.util.ClassScanUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class BasicDataServiceRegistry
-        implements ApplicationContextAware, InitializingBean,
-        FactoryBean<BasicDataServiceRegistry>, BeanFactoryAware {
+public class BasicDataServiceRegistry implements ApplicationContextAware,
+        InitializingBean, BeanFactoryAware, BeanNameAware {
     
     private Logger logger = LoggerFactory
             .getLogger(BasicDataServiceRegistry.class);
     
-    private static BasicDataServiceRegistry factory;
+    private static String beanName;
+    
+    private static ApplicationContext applicationContext;
+    
+    private static BasicDataServiceRegistry instance;
     
     private static Map<Class<?>, BasicDataService<?>> type2serviceMap = new HashMap<Class<?>, BasicDataService<?>>();
     
     private static Map<String, BasicDataService<?>> typecode2serviceMap = new HashMap<String, BasicDataService<?>>();
     
-    private ApplicationContext applicationContext;
-    
-    private SingletonBeanRegistry singletonBeanRegistry;
+    private AliasRegistry aliasRegistry;
     
     private BeanDefinitionRegistry beanDefinitionRegistry;
     
-    private AliasRegistry aliasRegistry;
+    private SingletonBeanRegistry singletonBeanRegistry;
     
     private String module;
     
@@ -103,6 +104,49 @@ public class BasicDataServiceRegistry
     }
     
     /**
+     * 单例基础数据工厂类<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return BasicDataServiceFactory [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    public static BasicDataServiceRegistry getInstance() {
+        AssertUtils.notEmpty(BasicDataServiceRegistry.beanName,
+                "beanName is empty.");
+        
+        if (BasicDataServiceRegistry.instance == null) {
+            BasicDataServiceRegistry.instance = applicationContext.getBean(
+                    BasicDataServiceRegistry.beanName,
+                    BasicDataServiceRegistry.class);
+        }
+        
+        AssertUtils.notNull(BasicDataServiceRegistry.instance,
+                "instance not inited.");
+        
+        return instance;
+    }
+    
+    /**
+     * @param name
+     */
+    @Override
+    public void setBeanName(String beanName) {
+        BasicDataServiceRegistry.beanName = beanName;
+    }
+    
+    /**
+     * @param applicationContext
+     * @throws BeansException
+     */
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext)
+            throws BeansException {
+        BasicDataServiceRegistry.applicationContext = applicationContext;
+    }
+    
+    /**
      * @param beanFactory
      * @throws BeansException
      */
@@ -113,15 +157,16 @@ public class BasicDataServiceRegistry
                 "beanFactory is not BeanDefinitionRegistry instance.");
         this.beanDefinitionRegistry = (BeanDefinitionRegistry) beanFactory;
         
+        AssertUtils.isInstanceOf(AliasRegistry.class,
+                beanFactory,
+                "beanFactory is not SingletonBeanRegistry instance.");
+        this.aliasRegistry = (AliasRegistry) beanFactory;
+        
         AssertUtils.isInstanceOf(SingletonBeanRegistry.class,
                 beanFactory,
                 "beanFactory is not SingletonBeanRegistry instance.");
         this.singletonBeanRegistry = (SingletonBeanRegistry) beanFactory;
         
-        AssertUtils.isInstanceOf(AliasRegistry.class,
-                beanFactory,
-                "beanFactory is not SingletonBeanRegistry instance.");
-        this.aliasRegistry = (AliasRegistry) beanFactory;
     }
     
     /**
@@ -199,7 +244,7 @@ public class BasicDataServiceRegistry
         }
         
         //利用有参构造函数,(Object) type
-        BasicDataService service = (BasicDataService) this.applicationContext
+        BasicDataService service = (BasicDataService) BasicDataServiceRegistry.applicationContext
                 .getBean(beanName);
         return service;
     }
@@ -221,72 +266,13 @@ public class BasicDataServiceRegistry
     }
     
     /**
-      * 单例基础数据工厂类<br/>
-      * <功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return BasicDataServiceFactory [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    public static BasicDataServiceRegistry getFactory() {
-        AssertUtils.notNull(BasicDataServiceRegistry.factory,
-                "factory not inited.");
-        
-        return factory;
-    }
-    
-    /**
-     * @return
-     * @throws Exception
-     */
-    @Override
-    public BasicDataServiceRegistry getObject() throws Exception {
-        if (BasicDataServiceRegistry.factory == null) {
-            return this;
-        } else {
-            return BasicDataServiceRegistry.factory;
-        }
-    }
-    
-    /**
-     * @return
-     */
-    @Override
-    public Class<?> getObjectType() {
-        return BasicDataServiceRegistry.class;
-    }
-    
-    /**
-     * @return
-     */
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-    
-    /**
-     * @param applicationContext
-     * @throws BeansException
-     */
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext)
-            throws BeansException {
-        this.applicationContext = applicationContext;
-    }
-    
-    /**
      * @throws Exception
      */
     @Override
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public void afterPropertiesSet() throws Exception {
-        AssertUtils.isNull(BasicDataServiceRegistry.factory,
-                "factory already inited.");
-        BasicDataServiceRegistry.factory = this;
-        
         //查找spring容器中已经存在的业务层
-        Map<String, BasicDataService> basicDataServiceMap = this.applicationContext
+        Map<String, BasicDataService> basicDataServiceMap = BasicDataServiceRegistry.applicationContext
                 .getBeansOfType(BasicDataService.class);
         for (Entry<String, BasicDataService> entry : basicDataServiceMap
                 .entrySet()) {
@@ -299,7 +285,9 @@ public class BasicDataServiceRegistry
             String alias = generateServiceBeanName(service.type());
             //注册单例Bean进入Spring容器
             //registerSingletonBean(beanName, service);
-            registerAlise(beanName, alias);
+            if (!beanName.equals(alias)) {
+                registerAlise(beanName, alias);
+            }
             
             //注册处理的业务类型
             registeType2Service(service);

@@ -46,7 +46,7 @@ import com.tx.core.starter.util.CoreUtilAutoConfiguration;
 @ConditionalOnBean({ DataSource.class, PlatformTransactionManager.class })
 @AutoConfigureAfter({ CoreUtilAutoConfiguration.class,DataSourceAutoConfiguration.class,
         DataSourceTransactionManagerAutoConfiguration.class })
-@ConditionalOnProperty(prefix = "command", value = "enable", havingValue = "true")
+@ConditionalOnProperty(prefix = "tx.command", value = "enable", havingValue = "true")
 public class CommandContextAutoConfiguration
         implements ApplicationContextAware, InitializingBean {
     

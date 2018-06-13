@@ -63,7 +63,7 @@ public class BasicDataContextBuilder extends BasicDataContextConfigurator
             Class<BDTYPE> type) {
         AssertUtils.notNull(type, "type is null.");
         
-        BasicDataService<BDTYPE> service = BasicDataServiceRegistry.getFactory()
+        BasicDataService<BDTYPE> service = BasicDataServiceRegistry.getInstance()
                 .getBasicDataService(type);
         return service;
     }
@@ -82,7 +82,7 @@ public class BasicDataContextBuilder extends BasicDataContextConfigurator
             Class<BDTYPE> type) {
         AssertUtils.notNull(type, "type is null.");
         
-        TreeAbleBasicDataService<BDTYPE> service = (TreeAbleBasicDataService<BDTYPE>) BasicDataServiceRegistry.getFactory()
+        TreeAbleBasicDataService<BDTYPE> service = (TreeAbleBasicDataService<BDTYPE>) BasicDataServiceRegistry.getInstance()
                 .getBasicDataService(type);
         return service;
     }

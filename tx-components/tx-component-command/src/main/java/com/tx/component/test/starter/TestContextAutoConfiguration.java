@@ -133,7 +133,7 @@ public class TestContextAutoConfiguration
     //public TestContextAutoInnerConfiguration1 testContextAutoInnerConfiguration1(){}
     public static class TestContextAutoInnerImportRegistrar
             implements BeanFactoryAware, ImportBeanDefinitionRegistrar,
-            ResourceLoaderAware {
+            ResourceLoaderAware,InitializingBean {
         
         @SuppressWarnings("unused")
         private BeanFactory beanFactory;
@@ -142,6 +142,7 @@ public class TestContextAutoConfiguration
         private ResourceLoader resourceLoader;
         
         /** <默认构造函数> */
+        //第一个被调用
         public TestContextAutoInnerImportRegistrar() {
             super();
             System.out.println(
@@ -154,6 +155,13 @@ public class TestContextAutoConfiguration
                     "TestContextAutoInnerImportRegistrar afterPropertiesSet. called");
         }
         
+        @PostConstruct
+        public void postConstruct() {
+            System.out.println(
+                    "TestContextAutoInnerImportRegistrar postConstruct. called");
+        }
+        
+        //低而个被调用
         @Override
         public void registerBeanDefinitions(
                 AnnotationMetadata importingClassMetadata,
@@ -162,6 +170,8 @@ public class TestContextAutoConfiguration
                     .genericBeanDefinition(TestBeanRegiste.class)
                     .getBeanDefinition();
             
+            System.out.println(
+                    "TestContextAutoInnerImportRegistrar registerBeanDefinitions. called");
             registry.registerBeanDefinition("testRegiste", bd);
         }
         
@@ -182,6 +192,7 @@ public class TestContextAutoConfiguration
     public static class TestContextAutoInnerConfiguration2 {
         
         /** <默认构造函数> */
+        //第一个被调用
         public TestContextAutoInnerConfiguration2() {
             super();
             System.out.println(
@@ -220,3 +231,39 @@ public class TestContextAutoConfiguration
     }
     
 }
+//TestContextAutoInnerImportRegistrar constrution. called
+//TestContextAutoInnerImportRegistrar registerBeanDefinitions. called
+//TestContextAutoConfiguration constrution. called
+//TestContextAutoConfiguration @PostConstruct. called
+//datasouce name:dataSource
+//TestContextAutoConfiguration afterPropertiesSet. called
+//TestContextAutoInnerConfiguration1 constrution. called
+//TestContextAutoInnerConfiguration1 afterPropertiesSet. called
+//test bean cons.3
+//test bean afterPropertiesSet.3
+//TestContextAutoInnerConfiguration2 constrution. called
+//TestContextAutoInnerConfiguration2 afterPropertiesSet. called
+//test bean registe cons.
+//test bean registe afterPropertiesSet.
+//test bean import cons.
+//test bean import afterPropertiesSet.
+//TestContextImportInnerConfiguration constrution. called
+//test bean cons.testBeanImport3
+//test bean afterPropertiesSet.testBeanImport3
+//TestContextImportConfiguration constrution. called
+//TestContextAutoConfiguration @PostConstruct. called
+//TestContextAutoConfiguration afterPropertiesSet. called
+//test bean cons.testBeanImport1
+//test bean afterPropertiesSet.testBeanImport1
+//test bean cons.testBeanImport2
+//test bean afterPropertiesSet.testBeanImport2
+//test bean cons.1
+//test bean afterPropertiesSet.1
+//test bean cons.2
+//test bean afterPropertiesSet.2
+//test service cons.testBeanService1
+//beanClass: com.tx.component.test.service.TestBeanService$$EnhancerBySpringCGLIB$$d874d61e
+//customTargetSource: null
+//test service cons.testBeanService2
+//beanClass: com.tx.component.test.service.TestBeanService$$EnhancerBySpringCGLIB$$d874d61e
+//customTargetSource: null

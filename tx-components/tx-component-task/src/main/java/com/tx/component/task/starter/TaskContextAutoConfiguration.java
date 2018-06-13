@@ -68,7 +68,7 @@ import com.tx.core.util.dialect.DataSourceTypeEnum;
 @ConditionalOnBean({ DataSource.class, PlatformTransactionManager.class })
 @AutoConfigureAfter({ DataSourceAutoConfiguration.class,
         DataSourceTransactionManagerAutoConfiguration.class })
-@ConditionalOnProperty(prefix = "task", value = "enable", havingValue = "true")
+@ConditionalOnProperty(prefix = "tx.task", value = "enable", havingValue = "true")
 public class TaskContextAutoConfiguration
         implements InitializingBean, ApplicationContextAware {
     

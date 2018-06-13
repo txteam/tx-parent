@@ -8,6 +8,8 @@ package com.tx.core.mybatis.annotation;
 
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.tx.core.ddlutil.builder.alter.AlterTableDDLBuilder;
 import com.tx.core.ddlutil.builder.create.CreateTableDDLBuilder;
 import com.tx.core.ddlutil.executor.TableDDLExecutor;
@@ -15,6 +17,7 @@ import com.tx.core.ddlutil.helper.JPAEntityDDLHelper;
 import com.tx.core.ddlutil.initializer.AbstractTableInitializer;
 import com.tx.core.ddlutil.model.TableDef;
 import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.util.ClassScanUtils;
 
 /**
  * 自动持久化实体表初始化实现<br/>
@@ -28,9 +31,17 @@ import com.tx.core.exceptions.util.AssertUtils;
 public class AutoPersistEntityTableInitializer
         extends AbstractTableInitializer {
     
+    private String basePackages = "com.tx";
+    
     /** <默认构造函数> */
     public AutoPersistEntityTableInitializer() {
         super();
+    }
+    
+    /** <默认构造函数> */
+    public AutoPersistEntityTableInitializer(String basePackages) {
+        super();
+        this.basePackages = basePackages;
     }
     
     /**
@@ -42,7 +53,10 @@ public class AutoPersistEntityTableInitializer
             boolean tableAutoInitialize) {
         AssertUtils.notNull(tableDDLExecutor, "tableDDLExecutor is null.");
         
-        Set<Class<?>> typeSet = null;
+        String[] basePackageArray = StringUtils
+                .splitByWholeSeparator(basePackages.trim(), ",");
+        Set<Class<?>> typeSet = ClassScanUtils.scanByAnnotation(
+                AutoPersistEntitySupport.class, basePackageArray);
         
         StringBuilder sb = new StringBuilder();
         for (Class<?> type : typeSet) {
@@ -106,5 +120,18 @@ public class AutoPersistEntityTableInitializer
         }
         return "";
     }
-    
+
+    /**
+     * @return 返回 basePackages
+     */
+    public String getBasePackages() {
+        return basePackages;
+    }
+
+    /**
+     * @param 对basePackages进行赋值
+     */
+    public void setBasePackages(String basePackages) {
+        this.basePackages = basePackages;
+    }
 }

@@ -10,6 +10,7 @@ import java.lang.annotation.Annotation;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -18,6 +19,8 @@ import org.springframework.context.EnvironmentAware;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.env.Environment;
+import org.springframework.core.env.StandardEnvironment;
+import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.type.classreading.CachingMetadataReaderFactory;
 import org.springframework.core.type.classreading.MetadataReaderFactory;
@@ -41,7 +44,8 @@ public class ClassScanUtils
         implements ResourceLoaderAware, EnvironmentAware, InitializingBean {
     
     /** 日志记录器 */
-    protected static Logger logger = LoggerFactory.getLogger(ClassScanUtils.class);
+    protected static Logger logger = LoggerFactory
+            .getLogger(ClassScanUtils.class);
     
     private static ResourceLoader resourceLoader;
     
@@ -49,7 +53,7 @@ public class ClassScanUtils
     
     private static MetadataReaderFactory metadataReaderFactory;
     
-    private static boolean initialized = true;
+    private static boolean initialized = false;
     
     /**
      * @param environment
@@ -73,6 +77,7 @@ public class ClassScanUtils
      */
     @Override
     public void afterPropertiesSet() throws Exception {
+        //生成MetadataReaderFactory
         ClassScanUtils.metadataReaderFactory = new CachingMetadataReaderFactory(
                 resourceLoader);
         
@@ -93,27 +98,36 @@ public class ClassScanUtils
     public static Set<Class<?>> scanByAnnotation(
             Class<? extends Annotation> annotationType,
             String... basePackages) {
-        AssertUtils.isTrue(ClassScanUtils.initialized,
-                "工具类尚未被初始化，如果需要使用该工具类，需要考虑在使用的Bean中添加对工具类Bean的依赖:[classScanUtils]");
+        Environment environment = ClassScanUtils.environment;
+        MetadataReaderFactory metadataReaderFactory = ClassScanUtils.metadataReaderFactory;
+        ResourceLoader resourceLoader = ClassScanUtils.resourceLoader;
+        if (!ClassScanUtils.initialized) {
+            environment = new StandardEnvironment();
+            resourceLoader = new DefaultResourceLoader();
+            metadataReaderFactory = new CachingMetadataReaderFactory(
+                    resourceLoader);
+        }
         
         AssertUtils.notNull(annotationType, "annotationType is null.");
         AssertUtils.notEmpty(basePackages, "basePackages is null.");
         
         ClassPathScanningCandidateComponentProvider provider = new ClassPathScanningCandidateComponentProvider(
-                false, ClassScanUtils.environment);
-        provider.setMetadataReaderFactory(ClassScanUtils.metadataReaderFactory);
+                false, environment);
+        provider.setMetadataReaderFactory(metadataReaderFactory);
         provider.addIncludeFilter(
                 new AnnotationTypeFilter(annotationType, true, true));
         
         Set<Class<?>> types = new HashSet<Class<?>>();
         for (String basePackage : basePackages) {
+            if (StringUtils.isBlank(basePackage)) {
+                continue;
+            }
             for (BeanDefinition definition : provider
-                    .findCandidateComponents(basePackage)) {
+                    .findCandidateComponents(basePackage.trim())) {
                 try {
                     types.add(ClassUtils.forName(definition.getBeanClassName(),
-                            ClassScanUtils.resourceLoader == null ? null
-                                    : ClassScanUtils.resourceLoader
-                                            .getClassLoader()));
+                            resourceLoader == null ? null
+                                    : resourceLoader.getClassLoader()));
                 } catch (ClassNotFoundException o_O) {
                     throw new IllegalStateException(o_O);
                 }
@@ -135,29 +149,39 @@ public class ClassScanUtils
      * @see [类、类#方法、类#成员]
     */
     @SuppressWarnings("unchecked")
-    public static <T> Set<Class<? extends T>> scanByParentClass(Class<T> targetType,
-            String... basePackages) {
-        AssertUtils.isTrue(ClassScanUtils.initialized,
-                "工具类尚未被初始化，如果需要使用该工具类，需要考虑在使用的Bean中添加对工具类Bean的依赖:[classScanUtils]");
+    public static <T> Set<Class<? extends T>> scanByParentClass(
+            Class<T> targetType, String... basePackages) {
+        Environment environment = ClassScanUtils.environment;
+        MetadataReaderFactory metadataReaderFactory = ClassScanUtils.metadataReaderFactory;
+        ResourceLoader resourceLoader = ClassScanUtils.resourceLoader;
+        if (!ClassScanUtils.initialized) {
+            environment = new StandardEnvironment();
+            resourceLoader = new DefaultResourceLoader();
+            metadataReaderFactory = new CachingMetadataReaderFactory(
+                    resourceLoader);
+        }
         
         AssertUtils.notNull(targetType, "targetType is null.");
         AssertUtils.notEmpty(basePackages, "basePackages is null.");
         
         ClassPathScanningCandidateComponentProvider provider = new ClassPathScanningCandidateComponentProvider(
-                false, ClassScanUtils.environment);
-        provider.setMetadataReaderFactory(ClassScanUtils.metadataReaderFactory);
-        provider.addIncludeFilter(
-                new AssignableTypeFilter(targetType));
+                false, environment);
+        provider.setMetadataReaderFactory(metadataReaderFactory);
+        provider.addIncludeFilter(new AssignableTypeFilter(targetType));
         
         Set<Class<? extends T>> types = new HashSet<Class<? extends T>>();
         for (String basePackage : basePackages) {
+            if (StringUtils.isBlank(basePackage)) {
+                continue;
+            }
+            
             for (BeanDefinition definition : provider
-                    .findCandidateComponents(basePackage)) {
+                    .findCandidateComponents(basePackage.trim())) {
                 try {
-                    types.add((Class<? extends T>)ClassUtils.forName(definition.getBeanClassName(),
-                            ClassScanUtils.resourceLoader == null ? null
-                                    : ClassScanUtils.resourceLoader
-                                            .getClassLoader()));
+                    types.add((Class<? extends T>) ClassUtils.forName(
+                            definition.getBeanClassName(),
+                            resourceLoader == null ? null
+                                    : resourceLoader.getClassLoader()));
                 } catch (ClassNotFoundException o_O) {
                     throw new IllegalStateException(o_O);
                 }
