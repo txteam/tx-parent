@@ -4,7 +4,7 @@
  * 修改时间:  2013-10-8
  * <修改描述:>
  */
-package com.tx.component.servicelogger.template;
+package com.tx.component.servicelogger.generator;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -29,13 +29,13 @@ import com.tx.core.util.dialect.DataSourceTypeEnum;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public class TXServiceLogViewHelper {
+public class ServiceLoggerGenerator {
     
-    private static Class<?> loadTemplateClass = TXServiceLogDBScriptHelper.class;
+    private static Class<?> loadTemplateClass = ServiceLoggerGenerator.class;
     
-    private static String controllerTemplateFilePath = "com/tx/component/servicelog/template/serviceLogController.ftl";
+    private static String controllerTemplateFilePath = "com/tx/component/servicelogger/generator/serviceLoggerController.ftl";
     
-    private static String jspTemplateFilePath = "com/tx/component/servicelog/template/queryServiceLogPagedList.ftl";
+    private static String jspTemplateFilePath = "com/tx/component/servicelogger/generator/queryServiceLoggerPagedList.ftl";
     
     /**
      * 生成对应日志对象的脚本
@@ -49,10 +49,8 @@ public class TXServiceLogViewHelper {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public static void generate(
-            String resultFolderPath,
-            Class<?> serviceLogType,
-            DataSourceTypeEnum dataSourceType,
+    public static void generate(String resultFolderPath,
+            Class<?> serviceLogType, DataSourceTypeEnum dataSourceType,
             String encode) {
         //校验业务日志类型:是否具有无参构造函数
         checkServiceLogType(serviceLogType);
@@ -91,14 +89,13 @@ public class TXServiceLogViewHelper {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    private static void generateQueryJSP(
-            String resultFolderPath,
-            JpaMetaClass<?> jpaMetaClass,
-            Map<String, Object> params) {
-        String outFilePath = resultFolderPath + "/main/webapp/WEB-INF/view/" + jpaMetaClass.getModulePackageSimpleName() + "/query" + jpaMetaClass.getEntitySimpleName() + "PagedList.jsp";
+    private static void generateQueryJSP(String resultFolderPath,
+            JpaMetaClass<?> jpaMetaClass, Map<String, Object> params) {
+        String outFilePath = resultFolderPath + "/main/webapp/WEB-INF/view/"
+                + jpaMetaClass.getModulePackageSimpleName() + "/query"
+                + jpaMetaClass.getEntitySimpleName() + "PagedList.jsp";
         
-        FreeMarkerUtils.fprint(
-                loadTemplateClass,
+        FreeMarkerUtils.fprint(loadTemplateClass,
                 jspTemplateFilePath,
                 params,
                 outFilePath,
@@ -116,16 +113,15 @@ public class TXServiceLogViewHelper {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    private static void generateController(
-            String resultFolderPath,
-            JpaMetaClass<?> jpaMetaClass,
-            Map<String, Object> params) {
-        String filePath = ClassUtils.convertClassNameToResourcePath(jpaMetaClass.getEntityTypeName()) + "/../servicelog/controller";
+    private static void generateController(String resultFolderPath,
+            JpaMetaClass<?> jpaMetaClass, Map<String, Object> params) {
+        String filePath = ClassUtils.convertClassNameToResourcePath(
+                jpaMetaClass.getEntityTypeName()) + "/../servicelog/controller";
         filePath = org.springframework.util.StringUtils.cleanPath(filePath);
-        String outFilePath = resultFolderPath + "/main/java/" + filePath + "/" + jpaMetaClass.getEntitySimpleName() + "Controller.java";
+        String outFilePath = resultFolderPath + "/main/java/" + filePath + "/"
+                + jpaMetaClass.getEntitySimpleName() + "Controller.java";
         
-        FreeMarkerUtils.fprint(
-                loadTemplateClass,
+        FreeMarkerUtils.fprint(loadTemplateClass,
                 controllerTemplateFilePath,
                 params,
                 outFilePath,
@@ -146,23 +142,29 @@ public class TXServiceLogViewHelper {
         try {
             constructor = serviceLogType.getConstructor();
         } catch (SecurityException e) {
-            AssertUtils.isTrue(false, "业务日志类：{},必须具有一个无参构造函数", new Object[] { serviceLogType });
+            AssertUtils.isTrue(false,
+                    "业务日志类：{},必须具有一个无参构造函数",
+                    new Object[] { serviceLogType });
         } catch (NoSuchMethodException e) {
-            AssertUtils.isTrue(false, "业务日志类：{},必须具有一个无参构造函数", new Object[] { serviceLogType });
+            AssertUtils.isTrue(false,
+                    "业务日志类：{},必须具有一个无参构造函数",
+                    new Object[] { serviceLogType });
         }
-        AssertUtils.notNull(constructor, "业务日志类：{},必须具有一个无参构造函数", new Object[] { serviceLogType });
+        AssertUtils.notNull(constructor,
+                "业务日志类：{},必须具有一个无参构造函数",
+                new Object[] { serviceLogType });
     }
     
     public static void setLoadTemplateClass(Class<?> loadTemplateClass) {
-        TXServiceLogViewHelper.loadTemplateClass = loadTemplateClass;
+        ServiceLoggerGenerator.loadTemplateClass = loadTemplateClass;
     }
     
     public static void setControllerTemplateFilePath(
             String controllerTemplateFilePath) {
-        TXServiceLogViewHelper.controllerTemplateFilePath = controllerTemplateFilePath;
+        ServiceLoggerGenerator.controllerTemplateFilePath = controllerTemplateFilePath;
     }
     
     public static void setJspTemplateFilePath(String jspTemplateFilePath) {
-        TXServiceLogViewHelper.jspTemplateFilePath = jspTemplateFilePath;
+        ServiceLoggerGenerator.jspTemplateFilePath = jspTemplateFilePath;
     }
 }
