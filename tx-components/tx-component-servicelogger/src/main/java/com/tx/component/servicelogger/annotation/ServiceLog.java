@@ -1,7 +1,7 @@
 /*
  * 描          述:  <描述>
- * 修  改   人:  brady
- * 修改时间:  2013-8-14
+ * 修  改   人:  Administrator
+ * 修改时间:  2018年6月14日
  * <修改描述:>
  */
 package com.tx.component.servicelogger.annotation;
@@ -15,19 +15,18 @@ import java.lang.annotation.Target;
 import org.springframework.core.annotation.AliasFor;
 
 /**
- * 基础数据模型<br/>
+ * <功能简述>
  * <功能详细描述>
  * 
- * @author  brady
- * @version  [版本号, 2013-8-14]
+ * @author  Administrator
+ * @version  [版本号, 2018年6月14日]
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE })
 @Inherited
-public @interface ServiceLogger {
-    
+public @interface ServiceLog {
     /**
      * 对应的数据对象表名<br/>
      * <功能详细描述>
@@ -61,26 +60,6 @@ public @interface ServiceLogger {
      * @see [类、类#方法、类#成员]
      */
     String insertSQL() default "";
-    
-    /**
-     * 删除语句<br/>
-     * <功能详细描述>
-     * 
-     * @return String [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    String deleteSQL() default "";
-    
-    /**
-     * 更新语句<br/>
-     * <功能详细描述>
-     * 
-     * @return String [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    String updateSQL() default "";
     
     /**
      * 查询语句<br/>

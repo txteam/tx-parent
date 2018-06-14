@@ -8,11 +8,11 @@ package com.tx.component.auth.script;
 
 import org.springframework.beans.factory.InitializingBean;
 
+import com.tx.core.dbscript.initializer.AbstractTableInitializer;
 import com.tx.core.ddlutil.builder.DDLBuilder;
 import com.tx.core.ddlutil.builder.alter.AlterTableDDLBuilder;
 import com.tx.core.ddlutil.builder.create.CreateTableDDLBuilder;
 import com.tx.core.ddlutil.executor.TableDDLExecutor;
-import com.tx.core.ddlutil.initializer.AbstractTableInitializer;
 
 /**
  * 权限容器表初始<br/>
@@ -48,12 +48,13 @@ public class AuthContextTableInitializer extends AbstractTableInitializer
         //初始化表定义
         initialize();
     }
-    
+
     /**
      * 
      */
     @Override
-    public void tables() {
+    public String tables(TableDDLExecutor tableDDLExecutor,
+            boolean tableAutoInitialize) {
         //初始化表定义
         table_auth_authitem();
         table_auth_authref();
@@ -68,7 +69,8 @@ public class AuthContextTableInitializer extends AbstractTableInitializer
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    private void table_auth_authitem() {
+    private void table_auth_authitem(TableDDLExecutor tableDDLExecutor,
+            boolean tableAutoInitialize) {
         String tableName = "auth_authitem";
         
         CreateTableDDLBuilder createDDLBuilder = null;
@@ -148,7 +150,8 @@ public class AuthContextTableInitializer extends AbstractTableInitializer
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    private void table_auth_authref() {
+    private void table_auth_authref(TableDDLExecutor tableDDLExecutor,
+            boolean tableAutoInitialize) {
         String tableName = "auth_authref";
         
         CreateTableDDLBuilder createDDLBuilder = null;
@@ -217,7 +220,8 @@ public class AuthContextTableInitializer extends AbstractTableInitializer
         ddlBuilder.newIndex(false, "idx_module", "module");
     }
     
-    private void table_auth_authref_his() {
+    private void table_auth_authref_his(TableDDLExecutor tableDDLExecutor,
+            boolean tableAutoInitialize) {
         String tableName = "bd_basic_data_type";
         
         CreateTableDDLBuilder createDDLBuilder = null;

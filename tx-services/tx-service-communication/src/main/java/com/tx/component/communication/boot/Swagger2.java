@@ -1,4 +1,4 @@
-package com.tx.component.boot;
+package com.tx.component.communication.boot;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

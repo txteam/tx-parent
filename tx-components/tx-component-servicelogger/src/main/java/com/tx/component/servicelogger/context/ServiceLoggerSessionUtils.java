@@ -43,27 +43,31 @@ public class ServiceLoggerSessionUtils {
                 TransactionSynchronizationManager.isSynchronizationActive(),
                 "日志会话应存在于事务开启后调用.");
         
-        Object loggerSession = TransactionSynchronizationManager
+        Object loggerSessionObject = TransactionSynchronizationManager
                 .getResource(INSTANCE);
-        
         //从线程变量中获取业务日志会话
-        if (loggerSession != null) {
+        if (loggerSessionObject != null) {
             AssertUtils.isTrue(
-                    ServiceLoggerSession.class.isInstance(loggerSession),
+                    ServiceLoggerSession.class.isInstance(loggerSessionObject),
                     "logger session should is LoggerSession instance.");
             
-            return (ServiceLoggerSession) loggerSession;
+            return (ServiceLoggerSession) loggerSessionObject;
         }
         
-        //如果事务的现成变量中
-        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
-            
-            @Override
-            public void afterCompletion(int status) {
-                super.afterCompletion(status);
-            }
-        });
+        ServiceLoggerSession loggerSession = new ServiceLoggerSession();
+        TransactionSynchronizationManager.bindResource(INSTANCE, loggerSession);
         
-        return null;
+        //如果事务的现成变量中
+        TransactionSynchronizationManager.registerSynchronization(
+                new TransactionSynchronizationAdapter() {
+                    
+                    @Override
+                    public void afterCompletion(int status) {
+                        TransactionSynchronizationManager
+                                .unbindResource(INSTANCE);
+                    }
+                });
+        
+        return loggerSession;
     }
 }

@@ -4,7 +4,7 @@
  * 修改时间:  2018年6月9日
  * <修改描述:>
  */
-package com.tx.core.mybatis.support;
+package com.tx.component.servicelogger.support;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,9 +26,12 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.AliasRegistry;
+import org.springframework.transaction.support.TransactionTemplate;
 
+import com.tx.component.servicelogger.annotation.ServiceLog;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.mybatis.annotation.AutoPersistEntitySupport;
+import com.tx.core.mybatis.support.MyBatisDaoSupport;
 import com.tx.core.util.ClassScanUtils;
 
 /**
@@ -40,16 +43,17 @@ import com.tx.core.util.ClassScanUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class EntityDaoRegistrar implements ApplicationContextAware,
+public class ServiceLoggerRegistry implements ApplicationContextAware,
         InitializingBean, BeanFactoryAware, BeanNameAware {
     
-    private Logger logger = LoggerFactory.getLogger(EntityDaoRegistrar.class);
+    private Logger logger = LoggerFactory
+            .getLogger(ServiceLoggerRegistry.class);
     
     private static String beanName;
     
     private static ApplicationContext applicationContext;
     
-    private static EntityDaoRegistrar instance;
+    private static ServiceLoggerRegistry instance;
     
     private AliasRegistry aliasRegistry;
     
@@ -61,7 +65,7 @@ public class EntityDaoRegistrar implements ApplicationContextAware,
     private static Map<Class<?>, String> type2nameMap = new HashMap<Class<?>, String>();
     
     /** 实体持久层实现映射 */
-    private static Map<String, EntityDao<?>> name2daoMap = new HashMap<String, EntityDao<?>>();
+    private static Map<String, ServiceLogger<?>> name2serviceMap = new HashMap<String, ServiceLogger<?>>();
     
     /** 扫描包范围 */
     private String basePackages;
@@ -69,17 +73,22 @@ public class EntityDaoRegistrar implements ApplicationContextAware,
     /** mybatisDaoSupport句柄 */
     private MyBatisDaoSupport myBatisDaoSupport;
     
+    /** transactionTemplate句柄 */
+    private TransactionTemplate transactionTemplate;
+    
     /** <默认构造函数> */
-    public EntityDaoRegistrar() {
+    public ServiceLoggerRegistry() {
         super();
     }
     
     /** <默认构造函数> */
-    public EntityDaoRegistrar(String basePackages,
-            MyBatisDaoSupport myBatisDaoSupport) {
+    public ServiceLoggerRegistry(String basePackages,
+            MyBatisDaoSupport myBatisDaoSupport,
+            TransactionTemplate transactionTemplate) {
         super();
         this.basePackages = basePackages;
         this.myBatisDaoSupport = myBatisDaoSupport;
+        this.transactionTemplate = transactionTemplate;
     }
     
     /**
@@ -91,15 +100,18 @@ public class EntityDaoRegistrar implements ApplicationContextAware,
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    public static EntityDaoRegistrar getInstance() {
-        AssertUtils.notEmpty(EntityDaoRegistrar.beanName, "beanName is empty.");
+    public static ServiceLoggerRegistry getInstance() {
+        AssertUtils.notEmpty(ServiceLoggerRegistry.beanName,
+                "beanName is empty.");
         
-        if (EntityDaoRegistrar.instance == null) {
-            EntityDaoRegistrar.instance = applicationContext.getBean(
-                    EntityDaoRegistrar.beanName, EntityDaoRegistrar.class);
+        if (ServiceLoggerRegistry.instance == null) {
+            ServiceLoggerRegistry.instance = applicationContext.getBean(
+                    ServiceLoggerRegistry.beanName,
+                    ServiceLoggerRegistry.class);
         }
         
-        AssertUtils.notNull(EntityDaoRegistrar.instance, "factory not inited.");
+        AssertUtils.notNull(ServiceLoggerRegistry.instance,
+                "factory not inited.");
         
         return instance;
     }
@@ -113,27 +125,29 @@ public class EntityDaoRegistrar implements ApplicationContextAware,
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    public static EntityDao<?> getEntityDao(Class<?> modelType) {
+    @SuppressWarnings("unchecked")
+    public static <T> ServiceLogger<T> getLoggerService(Class<T> modelType) {
         AssertUtils.notNull(modelType, "modelType is null.");
         AssertUtils.isTrue(type2nameMap.containsKey(modelType),
                 "type2nameMap is not contains:{}",
                 new Object[] { modelType });
         
-        AssertUtils.notNull(EntityDaoRegistrar.applicationContext,
+        AssertUtils.notNull(ServiceLoggerRegistry.applicationContext,
                 "applicationContext is null.");
         
         //实体持久层Bean名称
         String entityDaoName = type2nameMap.get(modelType);
-        EntityDao<?> entityDao = null;
-        if (name2daoMap.containsKey(entityDaoName)) {
-            entityDao = name2daoMap.get(entityDaoName);
+        ServiceLogger<T> loggerService = null;
+        if (name2serviceMap.containsKey(entityDaoName)) {
+            loggerService = (ServiceLogger<T>) name2serviceMap
+                    .get(entityDaoName);
         } else {
-            entityDao = applicationContext.getBean(entityDaoName,
-                    EntityDao.class);
-            name2daoMap.put(entityDaoName, entityDao);
+            loggerService = (ServiceLogger<T>) applicationContext
+                    .getBean(entityDaoName, Logger.class);
+            name2serviceMap.put(entityDaoName, loggerService);
         }
         
-        return entityDao;
+        return loggerService;
     }
     
     /**
@@ -143,7 +157,7 @@ public class EntityDaoRegistrar implements ApplicationContextAware,
     @Override
     public void setApplicationContext(ApplicationContext applicationContext)
             throws BeansException {
-        EntityDaoRegistrar.applicationContext = applicationContext;
+        ServiceLoggerRegistry.applicationContext = applicationContext;
     }
     
     /**
@@ -151,7 +165,7 @@ public class EntityDaoRegistrar implements ApplicationContextAware,
      */
     @Override
     public void setBeanName(String beanName) {
-        EntityDaoRegistrar.beanName = beanName;
+        ServiceLoggerRegistry.beanName = beanName;
     }
     
     /**
@@ -225,22 +239,23 @@ public class EntityDaoRegistrar implements ApplicationContextAware,
     @Override
     public void afterPropertiesSet() throws Exception {
         //查找spring容器中已经存在的业务层
-        Map<String, EntityDao> basicDataServiceMap = EntityDaoRegistrar.applicationContext
-                .getBeansOfType(EntityDao.class);
-        for (Entry<String, EntityDao> entry : basicDataServiceMap.entrySet()) {
-            EntityDao<?> dao = entry.getValue();
+        Map<String, ServiceLogger> loggerServiceMap = ServiceLoggerRegistry.applicationContext
+                .getBeansOfType(ServiceLogger.class);
+        
+        for (Entry<String, ServiceLogger> entry : loggerServiceMap.entrySet()) {
+            ServiceLogger dao = entry.getValue();
             String beanName = entry.getKey();
-            if (dao.getRawType() == null
-                    || !Class.class.isInstance(dao.getRawType())
-                    || Object.class.equals(dao.getRawType())) {
+            if (dao.getLoggerType() == null
+                    || !Class.class.isInstance(dao.getLoggerType())
+                    || Object.class.equals(dao.getLoggerType())) {
                 continue;
             }
-            Class<?> beanType = (Class<?>) dao.getRawType();
-            if (!beanType.isAnnotationPresent(AutoPersistEntitySupport.class)) {
+            Class<?> beanType = (Class<?>) dao.getLoggerType();
+            if (!beanType.isAnnotationPresent(ServiceLog.class)) {
                 continue;
             }
             
-            String generateDaoName = generateDaoNameByType(beanType);
+            String generateDaoName = generateServiceLoggerNameByType(beanType);
             //注册单例Bean进入Spring容器
             //registerSingletonBean(beanName, service);
             if (!beanName.equals(generateDaoName)) {
@@ -248,7 +263,7 @@ public class EntityDaoRegistrar implements ApplicationContextAware,
             }
             
             //注册处理的业务类型
-            EntityDaoRegistrar.type2nameMap.put(beanType, generateDaoName);
+            ServiceLoggerRegistry.type2nameMap.put(beanType, generateDaoName);
         }
         
         //扫描遍历，如果已经存在持久层的实体类，则不再添加
@@ -259,13 +274,14 @@ public class EntityDaoRegistrar implements ApplicationContextAware,
         
         for (Class<?> beanType : types) {
             //注册实体持久层
-            BeanDefinition daoBeanDefinition = generateEntityDaoBeanDefinition(
-                    beanType, myBatisDaoSupport);
-            String entityDaoName = generateDaoNameByType(beanType);
+            BeanDefinition daoBeanDefinition = generateServiceLoggerBeanDefinition(
+                    beanType, this.myBatisDaoSupport, this.transactionTemplate);
+            String loggerServiceName = generateServiceLoggerNameByType(
+                    beanType);
             
-            registerBeanDefinition(entityDaoName, daoBeanDefinition);
+            registerBeanDefinition(loggerServiceName, daoBeanDefinition);
             
-            EntityDaoRegistrar.type2nameMap.put(beanType, entityDaoName);
+            ServiceLoggerRegistry.type2nameMap.put(beanType, loggerServiceName);
         }
     }
     
@@ -280,15 +296,17 @@ public class EntityDaoRegistrar implements ApplicationContextAware,
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    private BeanDefinition generateEntityDaoBeanDefinition(Class<?> beanType,
-            MyBatisDaoSupport myBatisDaoSupport) {
+    private BeanDefinition generateServiceLoggerBeanDefinition(
+            Class<?> beanType, MyBatisDaoSupport myBatisDaoSupport,
+            TransactionTemplate transactionTemplate) {
         AssertUtils.notNull(beanType, "beanType is null.");
         AssertUtils.notNull(myBatisDaoSupport, "myBatisDaoSupport is null.");
         
         BeanDefinitionBuilder builder = BeanDefinitionBuilder
-                .genericBeanDefinition(EntityDaoFactory.class);
+                .genericBeanDefinition(ServiceLoggerFactory.class);
         builder.addConstructorArgValue(beanType);
         builder.addConstructorArgValue(myBatisDaoSupport);
+        builder.addConstructorArgValue(transactionTemplate);
         
         return builder.getBeanDefinition();
     }
@@ -303,7 +321,7 @@ public class EntityDaoRegistrar implements ApplicationContextAware,
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    private String generateDaoNameByType(Class<?> beanType) {
+    private String generateServiceLoggerNameByType(Class<?> beanType) {
         AssertUtils.notNull(beanType, "beanType is null.");
         
         String beanName = beanType.getName() + "Dao";

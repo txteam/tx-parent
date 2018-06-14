@@ -24,6 +24,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import com.tx.component.task.TaskConstants;
@@ -125,11 +126,11 @@ public class TaskContextAutoConfiguration
     @Override
     public void afterPropertiesSet() throws Exception {
         //设置dataSource
-        if (StringUtils.isNotBlank(this.properties.getDataSource())
+        if (StringUtils.isNotBlank(this.properties.getDataSourceRef())
                 && this.applicationContext
-                        .containsBean(this.properties.getDataSource())) {
-            this.dataSource = this.applicationContext
-                    .getBean(this.properties.getDataSource(), DataSource.class);
+                        .containsBean(this.properties.getDataSourceRef())) {
+            this.dataSource = this.applicationContext.getBean(
+                    this.properties.getDataSourceRef(), DataSource.class);
         } else if (this.applicationContext.getBeansOfType(DataSource.class)
                 .size() == 1) {
             this.dataSource = this.applicationContext.getBean(DataSource.class);
@@ -138,16 +139,19 @@ public class TaskContextAutoConfiguration
                 "dataSource is null.存在多个数据源，需要通过basicdata.dataSource指定使用的数据源,或为数据源设置为Primary.");
         
         //设置transactionManager
-        if (StringUtils.isNotBlank(this.properties.getTransactionManager())
+        if (StringUtils.isNotBlank(this.properties.getTransactionManagerRef())
                 && this.applicationContext.containsBean(
-                        this.properties.getTransactionManager())) {
+                        this.properties.getTransactionManagerRef())) {
             this.transactionManager = this.applicationContext.getBean(
-                    this.properties.getTransactionManager(),
+                    this.properties.getTransactionManagerRef(),
                     PlatformTransactionManager.class);
         } else if (this.applicationContext
                 .getBeansOfType(PlatformTransactionManager.class).size() == 1) {
             this.transactionManager = this.applicationContext
                     .getBean(PlatformTransactionManager.class);
+        } else {
+            this.transactionManager = new DataSourceTransactionManager(
+                    this.dataSource);
         }
         AssertUtils.notEmpty(this.transactionManager,
                 "transactionManager is null.存在多个事务管理器，需要通过basicdata.transactionManager指定使用的数据源,或为数据源设置为Primary.");
@@ -164,7 +168,8 @@ public class TaskContextAutoConfiguration
         }
         
         // 生成服务签名（ip信息 + classpath信息）
-        this.signature = String.valueOf(Math.abs(SignatureUtils.generateSignature().hashCode()));
+        this.signature = String.valueOf(
+                Math.abs(SignatureUtils.generateSignature().hashCode()));
         
         this.myBatisDaoSupport = MyBatisDaoSupportHelper.buildMyBatisDaoSupport(
                 this.mybatisConfigLocation,
@@ -395,19 +400,19 @@ public class TaskContextAutoConfiguration
         return bean;
     }
     
-//    /**
-//     * 初始化定时任务执行器工厂<br/>
-//     * <功能详细描述>
-//     * @return [参数说明]
-//     * 
-//     * @return TimedTaskExecutorFactory [返回类型说明]
-//     * @exception throws [异常类型] [异常说明]
-//     * @see [类、类#方法、类#成员]
-//     */
-//    @Bean(name = "taskContext.timedTaskExecutorFactory")
-//    public TimedTaskExecutorFactory timedTaskExecutorFactory() {
-//        TimedTaskExecutorFactory bean = new TimedTaskExecutorFactory();
-//        return bean;
-//    }
+    //    /**
+    //     * 初始化定时任务执行器工厂<br/>
+    //     * <功能详细描述>
+    //     * @return [参数说明]
+    //     * 
+    //     * @return TimedTaskExecutorFactory [返回类型说明]
+    //     * @exception throws [异常类型] [异常说明]
+    //     * @see [类、类#方法、类#成员]
+    //     */
+    //    @Bean(name = "taskContext.timedTaskExecutorFactory")
+    //    public TimedTaskExecutorFactory timedTaskExecutorFactory() {
+    //        TimedTaskExecutorFactory bean = new TimedTaskExecutorFactory();
+    //        return bean;
+    //    }
     
 }

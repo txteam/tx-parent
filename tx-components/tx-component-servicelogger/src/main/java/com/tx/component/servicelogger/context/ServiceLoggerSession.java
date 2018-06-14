@@ -6,6 +6,7 @@
  */
 package com.tx.component.servicelogger.context;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -21,6 +22,12 @@ public class ServiceLoggerSession{
     /** 线程变量属性 */
     private Map<String, Object> attributes;
     
+    /** <默认构造函数> */
+    public ServiceLoggerSession() {
+        super();
+        this.attributes = new HashMap<>();
+    }
+
     /**
      * 获取线程变量中的属性值
      * 

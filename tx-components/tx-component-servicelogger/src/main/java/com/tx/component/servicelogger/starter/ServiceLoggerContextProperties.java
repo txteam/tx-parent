@@ -4,7 +4,7 @@
  * 修改时间:  2018年4月27日
  * <修改描述:>
  */
-package com.tx.component.basicdata.starter;
+package com.tx.component.servicelogger.starter;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -17,8 +17,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-@ConfigurationProperties(prefix = "tx.basicdata")
-public class BasicDataContextProperties {
+@ConfigurationProperties(prefix = "tx.servicelogger")
+public class ServiceLoggerContextProperties {
     
     /** 命令容器是否启动 */
     private boolean enable;
@@ -32,11 +32,11 @@ public class BasicDataContextProperties {
     /** mybatis配置文件 */
     private String mybatisConfigLocation = "classpath:context/mybatis-config.xml";
     
-    /** cacheManager */
-    private String cacheManagerRef;
-    
     /** 数据源:dataSource */
     private String dataSourceRef;
+    
+    /** 数据源:dataSource */
+    private String mybatisDaoSupportRef;
     
     /** transactionManager */
     protected String transactionManagerRef;
@@ -70,48 +70,6 @@ public class BasicDataContextProperties {
     }
     
     /**
-     * @return 返回 cacheManagerRef
-     */
-    public String getCacheManagerRef() {
-        return cacheManagerRef;
-    }
-    
-    /**
-     * @param 对cacheManagerRef进行赋值
-     */
-    public void setCacheManagerRef(String cacheManagerRef) {
-        this.cacheManagerRef = cacheManagerRef;
-    }
-    
-    /**
-     * @return 返回 dataSourceRef
-     */
-    public String getDataSourceRef() {
-        return dataSourceRef;
-    }
-    
-    /**
-     * @param 对dataSourceRef进行赋值
-     */
-    public void setDataSourceRef(String dataSourceRef) {
-        this.dataSourceRef = dataSourceRef;
-    }
-    
-    /**
-     * @return 返回 transactionManagerRef
-     */
-    public String getTransactionManagerRef() {
-        return transactionManagerRef;
-    }
-    
-    /**
-     * @param 对transactionManagerRef进行赋值
-     */
-    public void setTransactionManagerRef(String transactionManagerRef) {
-        this.transactionManagerRef = transactionManagerRef;
-    }
-    
-    /**
      * @return 返回 mybatisConfigLocation
      */
     public String getMybatisConfigLocation() {
@@ -138,4 +96,47 @@ public class BasicDataContextProperties {
     public void setModule(String module) {
         this.module = module;
     }
+    
+    /**
+     * @return 返回 dataSourceRef
+     */
+    public String getDataSourceRef() {
+        return dataSourceRef;
+    }
+    
+    /**
+     * @param 对dataSourceRef进行赋值
+     */
+    public void setDataSourceRef(String dataSourceRef) {
+        this.dataSourceRef = dataSourceRef;
+    }
+    
+    /**
+     * @return 返回 mybatisDaoSupportRef
+     */
+    public String getMybatisDaoSupportRef() {
+        return mybatisDaoSupportRef;
+    }
+    
+    /**
+     * @param 对mybatisDaoSupportRef进行赋值
+     */
+    public void setMybatisDaoSupportRef(String mybatisDaoSupportRef) {
+        this.mybatisDaoSupportRef = mybatisDaoSupportRef;
+    }
+    
+    /**
+     * @return 返回 transactionManagerRef
+     */
+    public String getTransactionManagerRef() {
+        return transactionManagerRef;
+    }
+    
+    /**
+     * @param 对transactionManagerRef进行赋值
+     */
+    public void setTransactionManagerRef(String transactionManagerRef) {
+        this.transactionManagerRef = transactionManagerRef;
+    }
+    
 }

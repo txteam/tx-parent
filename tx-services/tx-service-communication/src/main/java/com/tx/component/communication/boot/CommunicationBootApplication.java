@@ -4,7 +4,7 @@
  * 修改时间:  2018年5月4日
  * <修改描述:>
  */
-package com.tx.component.boot;
+package com.tx.component.communication.boot;
 
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;

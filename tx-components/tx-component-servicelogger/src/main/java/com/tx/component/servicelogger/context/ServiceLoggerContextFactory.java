@@ -17,20 +17,33 @@ import org.springframework.beans.factory.FactoryBean;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public class ServiceLoggerContextFactory
-        extends ServiceLoggerContext
+public class ServiceLoggerContextFactory extends ServiceLoggerContext
         implements FactoryBean<ServiceLoggerContext> {
-        
+    
+    /**
+     * @return
+     * @throws Exception
+     */
     @Override
     public ServiceLoggerContext getObject() throws Exception {
-        return ServiceLoggerContext.getContext();
+        if (ServiceLoggerContext.context == null) {
+            return this;
+        } else {
+            return ServiceLoggerContext.context;
+        }
     }
     
+    /**
+     * @return
+     */
     @Override
     public Class<?> getObjectType() {
         return ServiceLoggerContext.class;
     }
     
+    /**
+     * @return
+     */
     @Override
     public boolean isSingleton() {
         return true;

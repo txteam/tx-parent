@@ -6,16 +6,12 @@
  */
 package com.tx.component.basicdata.context;
 
-import javax.sql.DataSource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.cache.CacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.transaction.PlatformTransactionManager;
 
 /**
  * 基础数据容器配置器<br/>
@@ -35,17 +31,17 @@ public class BasicDataContextConfigurator
     /** spring容器句柄 */
     protected static ApplicationContext applicationContext;
     
-    /** 包名 */
-    protected String packages = "com.tx";
-    
-    /** 数据源:dataSource */
-    protected DataSource dataSource;
-    
-    /** transactionManager */
-    protected PlatformTransactionManager transactionManager;
-    
-    /** cacheManager */
-    protected CacheManager cacheManager;
+    //    /** 包名 */
+    //    protected String basePackages = "com.tx";
+    //    
+    //    /** 数据源:dataSource */
+    //    protected DataSource dataSource;
+    //    
+    //    /** transactionManager */
+    //    protected PlatformTransactionManager transactionManager;
+    //    
+    //    /** cacheManager */
+    //    protected CacheManager cacheManager;
     
     /**
      * @param applicationContext
@@ -74,49 +70,17 @@ public class BasicDataContextConfigurator
     }
     
     /**
-      * 基础数据容器构建
-      * <功能详细描述>
-      * @throws Exception [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 基础数据容器构建<br/>
      */
     protected void doBuild() throws Exception {
         
     }
     
+    /**
+     * 容器初始化<br/>
+     */
     protected void doInitContext() throws Exception {
         
-    }
-    
-    /**
-     * @param 对packages进行赋值
-     */
-    public void setPackages(String packages) {
-        this.packages = packages;
-    }
-    
-    /**
-     * @param 对dataSource进行赋值
-     */
-    public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
-    
-    /**
-     * @param 对transactionManager进行赋值
-     */
-    public void setTransactionManager(
-            PlatformTransactionManager transactionManager) {
-        this.transactionManager = transactionManager;
-    }
-    
-    /**
-     * @param 对cacheManager进行赋值
-     */
-    public void setCacheManager(CacheManager cacheManager) {
-        this.cacheManager = cacheManager;
     }
     
 }

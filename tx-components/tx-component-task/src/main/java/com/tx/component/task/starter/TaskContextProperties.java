@@ -33,10 +33,10 @@ public class TaskContextProperties {
     private String mybatisConfigLocation = "classpath:context/mybatis-config.xml";
     
     /** 数据源 */
-    private String dataSource;
+    private String dataSourceRef;
     
     /** 事务管理器 */
-    private String transactionManager;
+    private String transactionManagerRef;
     
     /**
      * @return 返回 enable
@@ -53,33 +53,33 @@ public class TaskContextProperties {
     }
     
     /**
-     * @return 返回 dataSource
+     * @return 返回 dataSourceRef
      */
-    public String getDataSource() {
-        return dataSource;
+    public String getDataSourceRef() {
+        return dataSourceRef;
     }
-    
+
     /**
-     * @param 对dataSource进行赋值
+     * @param 对dataSourceRef进行赋值
      */
-    public void setDataSource(String dataSource) {
-        this.dataSource = dataSource;
+    public void setDataSourceRef(String dataSourceRef) {
+        this.dataSourceRef = dataSourceRef;
     }
-    
+
     /**
-     * @return 返回 transactionManager
+     * @return 返回 transactionManagerRef
      */
-    public String getTransactionManager() {
-        return transactionManager;
+    public String getTransactionManagerRef() {
+        return transactionManagerRef;
     }
-    
+
     /**
-     * @param 对transactionManager进行赋值
+     * @param 对transactionManagerRef进行赋值
      */
-    public void setTransactionManager(String transactionManager) {
-        this.transactionManager = transactionManager;
+    public void setTransactionManagerRef(String transactionManagerRef) {
+        this.transactionManagerRef = transactionManagerRef;
     }
-    
+
     /**
      * @return 返回 module
      */

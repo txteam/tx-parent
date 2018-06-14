@@ -25,7 +25,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.mybatis.support.EntityDaoRegistrar;
+import com.tx.core.mybatis.support.EntityDaoRegistry;
 import com.tx.core.mybatis.support.MyBatisDaoSupport;
 import com.tx.core.starter.util.CoreUtilAutoConfiguration;
 
@@ -129,8 +129,8 @@ public class MybatisSupportAutoConfiguration
      */
     @ConditionalOnMissingBean
     @Bean("entityDaoRegistrar")
-    public EntityDaoRegistrar entityDaoRegistrar() {
-        EntityDaoRegistrar bean = new EntityDaoRegistrar(
+    public EntityDaoRegistry entityDaoRegistrar() {
+        EntityDaoRegistry bean = new EntityDaoRegistry(
                 properties.getBasePackages(), this.myBatisDaoSupport);
         return bean;
     }

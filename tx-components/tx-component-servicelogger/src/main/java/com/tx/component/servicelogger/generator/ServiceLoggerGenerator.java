@@ -55,6 +55,7 @@ public class ServiceLoggerGenerator {
         //校验业务日志类型:是否具有无参构造函数
         checkServiceLogType(serviceLogType);
         
+        //JPAParseUtils.pa
         JpaMetaClass<?> jpaMetaClass = JpaMetaClass.forClass(serviceLogType);
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("jpaMetaClass", jpaMetaClass);

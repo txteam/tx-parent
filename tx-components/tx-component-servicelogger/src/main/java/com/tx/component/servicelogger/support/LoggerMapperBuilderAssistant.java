@@ -4,7 +4,7 @@
  * 修改时间:  2016年11月17日
  * <修改描述:>
  */
-package com.tx.core.mybatis.support;
+package com.tx.component.servicelogger.support;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,8 +16,8 @@ import org.apache.ibatis.session.Configuration;
 import org.springframework.beans.BeanUtils;
 import org.springframework.core.annotation.AnnotationUtils;
 
+import com.tx.component.servicelogger.annotation.ServiceLog;
 import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.mybatis.annotation.AutoPersistEntitySupport;
 import com.tx.core.mybatis.builder.AbstractEntityMapperBuilderAssistant;
 import com.tx.core.mybatis.sqlbuilder.SqlMapSQLBuilder;
 import com.tx.core.util.JPAParseUtils;
@@ -33,11 +33,11 @@ import com.tx.core.util.JPAParseUtils.JPAColumnInfo;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class EntityMapperBuilderAssistant
+public class LoggerMapperBuilderAssistant
         extends AbstractEntityMapperBuilderAssistant {
     
     /** 注解信息 */
-    protected AutoPersistEntitySupport annotation;
+    protected ServiceLog annotation;
     
     //表名
     protected String tableName;
@@ -58,7 +58,7 @@ public class EntityMapperBuilderAssistant
     protected List<JPAColumnInfo> notPrimaryKeyColumns;
     
     /** <默认构造函数> */
-    public EntityMapperBuilderAssistant(Configuration configuration,
+    public LoggerMapperBuilderAssistant(Configuration configuration,
             Class<?> beanType) {
         super(configuration, beanType);
         
@@ -66,15 +66,16 @@ public class EntityMapperBuilderAssistant
         AssertUtils.isTrue(!BeanUtils.isSimpleValueType(beanType),
                 "type:{} is simpleValueType.",
                 new Object[] { beanType });
-        AssertUtils.isTrue(
-                beanType.isAnnotationPresent(AutoPersistEntitySupport.class),
+        AssertUtils.isTrue(beanType.isAnnotationPresent(ServiceLog.class),
                 "type:{} annotation is not exist.",
                 new Object[] { beanType });
         
         //解析表名
         this.annotation = AnnotationUtils.findAnnotation(beanType,
-                AutoPersistEntitySupport.class);
-        this.tableName = JPAParseUtils.parseTableName(this.beanType);
+                ServiceLog.class);
+        this.tableName = StringUtils.isBlank(this.annotation.tablename())
+                ? JPAParseUtils.parseTableName(this.beanType)
+                : this.annotation.tablename();
         this.tableColumns = JPAParseUtils.parseTableColumns(this.beanType);
         
         //主键字段以及非主键字段集合记录
@@ -166,25 +167,7 @@ public class EntityMapperBuilderAssistant
      */
     @Override
     protected String getDeleteSQL() {
-        if (StringUtils.isNotBlank(annotation.deleteSQL())) {
-            return annotation.insertSQL();
-        }
-        
-        SqlMapSQLBuilder sql = new SqlMapSQLBuilder();
-        sql.DELETE_FROM(this.tableName);
-        
-        for (JPAColumnInfo column : this.primaryKeyColumns) {
-            String columnName = column.getColumnName();
-            String propertyName = column.getNestedPropertyName();
-            
-            String whereItem = formatWhereAndItem(columnName,
-                    " = ",
-                    propertyName);
-            sql.WHERE(whereItem);
-        }
-        
-        String deleteSQL = sql.toString();
-        return deleteSQL;
+        return null;
     }
     
     /**
@@ -192,40 +175,7 @@ public class EntityMapperBuilderAssistant
      */
     @Override
     protected String getUpdateSQL() {
-        if (StringUtils.isNotBlank(annotation.updateSQL())) {
-            return annotation.updateSQL();
-        }
-        
-        SqlMapSQLBuilder sql = new SqlMapSQLBuilder();
-        sql.UPDATE(this.tableName);
-        for (JPAColumnInfo column : this.notPrimaryKeyColumns) {
-            if (!column.isUpdatable()) {
-                continue;
-            }
-            String columnName = column.getColumnName();
-            String propertyName = column.getPropertyName();
-            String nestedPropertyName = column.getNestedPropertyName();
-            Class<?> javaType = column.getNestedPropertyType();
-            
-            String setItem = formatSetItem(columnName,
-                    propertyName,
-                    nestedPropertyName,
-                    javaType);
-            sql.SET(setItem);
-            
-        }
-        for (JPAColumnInfo column : this.primaryKeyColumns) {
-            String columnName = column.getColumnName();
-            String propertyName = column.getNestedPropertyName();
-            
-            String whereItem = formatWhereAndItem(columnName,
-                    " = ",
-                    propertyName);
-            sql.WHERE(whereItem);
-        }
-        
-        String updateSQL = sql.toString();
-        return updateSQL;
+        return null;
     }
     
     /**

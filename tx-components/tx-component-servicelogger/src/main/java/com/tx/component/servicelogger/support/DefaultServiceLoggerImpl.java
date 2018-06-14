@@ -4,16 +4,20 @@
  * 修改时间:  2018年6月9日
  * <修改描述:>
  */
-package com.tx.core.mybatis.support;
+package com.tx.component.servicelogger.support;
 
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.mybatis.model.Order;
+import com.tx.core.mybatis.support.MyBatisDaoSupport;
 import com.tx.core.paged.model.PagedList;
 
 /**
@@ -25,7 +29,7 @@ import com.tx.core.paged.model.PagedList;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class DefaultEntityDaoImpl<T> implements EntityDao<T> {
+public class DefaultServiceLoggerImpl<T> implements ServiceLogger<T> {
     
     /** bean类型 */
     private Class<T> beanType;
@@ -33,20 +37,27 @@ public class DefaultEntityDaoImpl<T> implements EntityDao<T> {
     /** mybatis句柄 */
     private MyBatisDaoSupport myBatisDaoSupport;
     
+    /** 事务模板句柄 */
+    private TransactionTemplate transactionTemplate;
+    
     /** 实体Mpper构建辅助类 */
-    private EntityMapperBuilderAssistant assistant;
+    private LoggerMapperBuilderAssistant assistant;
     
     /** <默认构造函数> */
-    public DefaultEntityDaoImpl(Class<T> beanType,
+    public DefaultServiceLoggerImpl(Class<T> beanType,
             MyBatisDaoSupport myBatisDaoSupport,
-            EntityMapperBuilderAssistant assistant) {
+            TransactionTemplate transactionTemplate,
+            LoggerMapperBuilderAssistant assistant) {
         super();
         AssertUtils.notNull(beanType, "beanType is null.");
         AssertUtils.notNull(myBatisDaoSupport, "myBatisDaoSupport is null.");
+        AssertUtils.notNull(transactionTemplate,
+                "transactionTemplate is null.");
         AssertUtils.notNull(assistant, "assistant is null.");
         
         this.beanType = beanType;
         this.myBatisDaoSupport = myBatisDaoSupport;
+        this.transactionTemplate = transactionTemplate;
         this.assistant = assistant;
     }
     
@@ -54,7 +65,7 @@ public class DefaultEntityDaoImpl<T> implements EntityDao<T> {
      * @return
      */
     @Override
-    public Type getEntityType() {
+    public Type getLoggerType() {
         return this.beanType;
     }
     
@@ -62,7 +73,28 @@ public class DefaultEntityDaoImpl<T> implements EntityDao<T> {
      * @param condition
      */
     @Override
-    public void batchInsert(List<T> objectList) {
+    public void batchInsert(final List<T> objectList) {
+        this.transactionTemplate
+                .execute(new TransactionCallbackWithoutResult() {
+                    
+                    @Override
+                    protected void doInTransactionWithoutResult(
+                            TransactionStatus status) {
+                        doBatchInsert(objectList);
+                    }
+                });
+    }
+    
+    /**
+     * 批量插入<br/>
+     * <功能详细描述>
+     * @param objectList [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    private void doBatchInsert(List<T> objectList) {
         List<String> primaryPropertyList = this.assistant
                 .getPrimaryProperyNameList();
         if (CollectionUtils.isEmpty(primaryPropertyList)
@@ -83,6 +115,27 @@ public class DefaultEntityDaoImpl<T> implements EntityDao<T> {
      */
     @Override
     public void insert(T condition) {
+        this.transactionTemplate
+                .execute(new TransactionCallbackWithoutResult() {
+                    
+                    @Override
+                    protected void doInTransactionWithoutResult(
+                            TransactionStatus status) {
+                        doInsert(condition);
+                    }
+                });
+    }
+    
+    /**
+     * 插入数据<br/>
+     * <功能详细描述>
+     * @param condition [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    private void doInsert(T condition) {
         List<String> primaryPropertyList = this.assistant
                 .getPrimaryProperyNameList();
         if (CollectionUtils.isEmpty(primaryPropertyList)
@@ -95,25 +148,6 @@ public class DefaultEntityDaoImpl<T> implements EntityDao<T> {
                     condition,
                     primaryPropertyList.get(0));
         }
-    }
-    
-    /**
-     * @param condition
-     * @return
-     */
-    @Override
-    public int delete(T condition) {
-        return this.myBatisDaoSupport
-                .delete(this.assistant.getDeleteStatementName(), condition);
-    }
-    
-    /**
-     * @param condition
-     */
-    @Override
-    public void batchDelete(List<T> condition) {
-        this.myBatisDaoSupport.batchDelete(
-                this.assistant.getDeleteStatementName(), condition, true);
     }
     
     /**
@@ -193,23 +227,31 @@ public class DefaultEntityDaoImpl<T> implements EntityDao<T> {
     }
     
     /**
-     * @param updateRowMap
-     * @return
+     * @param 对beanType进行赋值
      */
-    @Override
-    public int update(Map<String, Object> updateRowMap) {
-        return this.myBatisDaoSupport
-                .update(this.assistant.getUpdateStatementName(), updateRowMap);
+    public void setBeanType(Class<T> beanType) {
+        this.beanType = beanType;
     }
     
     /**
-     * @param updateRowMapList
+     * @param 对myBatisDaoSupport进行赋值
      */
-    @Override
-    public void batchUpdate(List<Map<String, Object>> updateRowMapList) {
-        this.myBatisDaoSupport.batchUpdate(
-                this.assistant.getUpdateStatementName(),
-                updateRowMapList,
-                true);
+    public void setMyBatisDaoSupport(MyBatisDaoSupport myBatisDaoSupport) {
+        this.myBatisDaoSupport = myBatisDaoSupport;
+    }
+    
+    /**
+     * @param 对transactionTemplate进行赋值
+     */
+    public void setTransactionTemplate(
+            TransactionTemplate transactionTemplate) {
+        this.transactionTemplate = transactionTemplate;
+    }
+    
+    /**
+     * @param 对assistant进行赋值
+     */
+    public void setAssistant(LoggerMapperBuilderAssistant assistant) {
+        this.assistant = assistant;
     }
 }
