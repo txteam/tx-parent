@@ -6,6 +6,8 @@
  */
 package com.tx.component.servicelogger.context;
 
+import org.springframework.beans.factory.BeanNameAware;
+
 /**
  * 业务日志工厂
  * 
@@ -14,7 +16,17 @@ package com.tx.component.servicelogger.context;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public class ServiceLoggerBuilder extends ServiceLoggerConfigurator {
+public class ServiceLoggerBuilder extends ServiceLoggerConfigurator
+        implements BeanNameAware {
     
+    protected static String beanName;
+    
+    /**
+     * @param name
+     */
+    @Override
+    public void setBeanName(String name) {
+        ServiceLoggerBuilder.beanName = name;
+    }
     
 }

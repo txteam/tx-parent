@@ -58,7 +58,7 @@ public class BasicDataContextTableInitializer extends AbstractTableInitializer
     @Override
     public void afterPropertiesSet() throws Exception {
         //初始化表定义
-        if (this.tableDDLExecutor != null) {
+        if (this.tableDDLExecutor != null && this.tableAutoInitialize) {
             initialize(this.tableDDLExecutor, this.tableAutoInitialize);
         }
     }

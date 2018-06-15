@@ -9,6 +9,7 @@ package com.tx.component.servicelogger.dbscript;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.annotation.AnnotationUtils;
 
 import com.tx.component.servicelogger.annotation.ServiceLog;
@@ -31,9 +32,15 @@ import com.tx.core.util.ClassScanUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class ServiceLoggerTableInitializer extends AbstractTableInitializer {
+public class ServiceLoggerTableInitializer extends AbstractTableInitializer implements InitializingBean{
     
     private String basePackages = "com.tx";
+    
+    /** 表DDL执行器 */
+    private TableDDLExecutor tableDDLExecutor;
+    
+    /** 是否自动执行 */
+    private boolean tableAutoInitialize = false;
     
     /** <默认构造函数> */
     public ServiceLoggerTableInitializer() {
@@ -41,11 +48,31 @@ public class ServiceLoggerTableInitializer extends AbstractTableInitializer {
     }
     
     /** <默认构造函数> */
-    public ServiceLoggerTableInitializer(String basePackages) {
+    public ServiceLoggerTableInitializer(TableDDLExecutor tableDDLExecutor) {
         super();
-        this.basePackages = basePackages;
+        this.tableDDLExecutor = tableDDLExecutor;
     }
     
+    /** <默认构造函数> */
+    public ServiceLoggerTableInitializer(TableDDLExecutor tableDDLExecutor,
+            boolean tableAutoInitialize) {
+        super();
+        this.tableDDLExecutor = tableDDLExecutor;
+        this.tableAutoInitialize = tableAutoInitialize;
+    }
+    
+    
+    
+    /**
+     * @throws Exception
+     */
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        if(this.tableDDLExecutor != null && this.tableAutoInitialize){
+            initialize(this.tableDDLExecutor, this.tableAutoInitialize);
+        }
+    }
+
     /**
      * @param tableAutoInitialize
      * @return
@@ -141,5 +168,33 @@ public class ServiceLoggerTableInitializer extends AbstractTableInitializer {
      */
     public void setBasePackages(String basePackages) {
         this.basePackages = basePackages;
+    }
+
+    /**
+     * @return 返回 tableDDLExecutor
+     */
+    public TableDDLExecutor getTableDDLExecutor() {
+        return tableDDLExecutor;
+    }
+
+    /**
+     * @param 对tableDDLExecutor进行赋值
+     */
+    public void setTableDDLExecutor(TableDDLExecutor tableDDLExecutor) {
+        this.tableDDLExecutor = tableDDLExecutor;
+    }
+
+    /**
+     * @return 返回 tableAutoInitialize
+     */
+    public boolean isTableAutoInitialize() {
+        return tableAutoInitialize;
+    }
+
+    /**
+     * @param 对tableAutoInitialize进行赋值
+     */
+    public void setTableAutoInitialize(boolean tableAutoInitialize) {
+        this.tableAutoInitialize = tableAutoInitialize;
     }
 }

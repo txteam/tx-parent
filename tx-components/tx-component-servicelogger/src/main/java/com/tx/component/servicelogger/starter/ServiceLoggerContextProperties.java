@@ -29,9 +29,6 @@ public class ServiceLoggerContextProperties {
     /** 基础包集合 */
     private String basePackages = "com.tx";
     
-    /** mybatis配置文件 */
-    private String mybatisConfigLocation = "classpath:context/mybatis-config.xml";
-    
     /** 数据源:dataSource */
     private String dataSourceRef;
     
@@ -39,7 +36,10 @@ public class ServiceLoggerContextProperties {
     private String mybatisDaoSupportRef;
     
     /** transactionManager */
-    protected String transactionManagerRef;
+    private String transactionManagerRef;
+    
+    /** 表是否自动初始化 */
+    private boolean tableAutoInitialize;
     
     /**
      * @return 返回 enable
@@ -67,20 +67,6 @@ public class ServiceLoggerContextProperties {
      */
     public void setBasePackages(String basePackages) {
         this.basePackages = basePackages;
-    }
-    
-    /**
-     * @return 返回 mybatisConfigLocation
-     */
-    public String getMybatisConfigLocation() {
-        return mybatisConfigLocation;
-    }
-    
-    /**
-     * @param 对mybatisConfigLocation进行赋值
-     */
-    public void setMybatisConfigLocation(String mybatisConfigLocation) {
-        this.mybatisConfigLocation = mybatisConfigLocation;
     }
     
     /**
@@ -138,5 +124,18 @@ public class ServiceLoggerContextProperties {
     public void setTransactionManagerRef(String transactionManagerRef) {
         this.transactionManagerRef = transactionManagerRef;
     }
-    
+
+    /**
+     * @return 返回 tableAutoInitialize
+     */
+    public boolean isTableAutoInitialize() {
+        return tableAutoInitialize;
+    }
+
+    /**
+     * @param 对tableAutoInitialize进行赋值
+     */
+    public void setTableAutoInitialize(boolean tableAutoInitialize) {
+        this.tableAutoInitialize = tableAutoInitialize;
+    }
 }

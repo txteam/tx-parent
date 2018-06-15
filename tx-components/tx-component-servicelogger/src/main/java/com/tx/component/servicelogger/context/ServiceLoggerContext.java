@@ -6,9 +6,6 @@
  */
 package com.tx.component.servicelogger.context;
 
-import org.springframework.beans.factory.InitializingBean;
-
-import com.tx.component.servicelogger.support.ServiceLogger;
 import com.tx.core.exceptions.util.AssertUtils;
 
 /**
@@ -28,40 +25,47 @@ public class ServiceLoggerContext extends ServiceLoggerBuilder {
     }
     
     public static ServiceLoggerContext getContext() {
-        AssertUtils.notNull(context, "MRSContext is null. maybe not inited!");
+        if (ServiceLoggerContext.context != null) {
+            return ServiceLoggerContext.context;
+        }
+        synchronized (ServiceLoggerContext.class) {
+            ServiceLoggerContext.context = applicationContext.getBean(beanName,
+                    ServiceLoggerContext.class);
+        }
+        AssertUtils.notNull(ServiceLoggerContext.context, "context is null.");
         return ServiceLoggerContext.context;
     }
     
-    /**
-     * 
-     * 获取日志对象
-     *
-     * @param logObjectType
-     *            
-     * @return ServiceLogger<T> [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     * @version [版本号, 2015年11月24日]
-     * @author rain
-     */
-    public static <T> ServiceLogger<T> getLogger(Class<T> logObjectType) {
-        return ServiceLoggerContext.getContext().getServiceLogger(logObjectType);
-    }
-    
-    /**
-     * 
-     * 记录日志<br>
-     *
-     * @param log 日志
-     * @param logObjectType 日志类型
-     *            
-     * @return void [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     * @version [版本号, 2015年12月17日]
-     * @author rain
-     */
-    public static <T> void log(T log, Class<T> logObjectType) {
-        ServiceLoggerContext.getLogger(logObjectType).log(log);
-    }
+    //    /**
+    //     * 获取日志对象<br/>
+    //     *
+    //     * @param logObjectType
+    //     *            
+    //     * @return ServiceLogger<T> [返回类型说明]
+    //     * @exception throws [异常类型] [异常说明]
+    //     * @see [类、类#方法、类#成员]
+    //     * @version [版本号, 2015年11月24日]
+    //     * @author rain
+    //     */
+    //    public static <T> ServiceLogger<T> getLogger(Class<T> beanType) {
+    //        ServiceLoggerRegistry.getInstance().getLoggerService(beanType);
+    //        return ServiceLoggerRegistry.getServiceLogger(logObjectType);
+    //    }
+    //    
+    //    /**
+    //     * 
+    //     * 记录日志<br>
+    //     *
+    //     * @param log 日志
+    //     * @param logObjectType 日志类型
+    //     *            
+    //     * @return void [返回类型说明]
+    //     * @exception throws [异常类型] [异常说明]
+    //     * @see [类、类#方法、类#成员]
+    //     * @version [版本号, 2015年12月17日]
+    //     * @author rain
+    //     */
+    //    public static <T> void log(T log, Class<T> logObjectType) {
+    //        ServiceLoggerContext.getLogger(logObjectType).log(log);
+    //    }
 }

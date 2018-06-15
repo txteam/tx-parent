@@ -206,7 +206,7 @@ public class BasicDataContextAutoConfiguration
     @Configuration
     @ConditionalOnBean({ TableDDLExecutor.class })
     @ConditionalOnSingleCandidate(TableDDLExecutor.class)
-    @ConditionalOnProperty(prefix = "basicdata", value = "table-auto-initialize", havingValue = "true")
+    @ConditionalOnProperty(prefix = "tx.basicdata", value = "table-auto-initialize", havingValue = "true")
     @ConditionalOnMissingBean(BasicDataContextTableInitializer.class)
     public static class BasicDataContextTableInitializerConfiguration {
         
@@ -230,7 +230,7 @@ public class BasicDataContextAutoConfiguration
         @Bean("basicdata.tableInitializer")
         public BasicDataContextTableInitializer tableInitializer() {
             BasicDataContextTableInitializer initializer = new BasicDataContextTableInitializer(
-                    tableDDLExecutor);
+                    tableDDLExecutor, true);
             
             return initializer;
         }

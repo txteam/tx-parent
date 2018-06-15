@@ -190,7 +190,7 @@ public class TaskContextAutoConfiguration
     @Configuration
     @ConditionalOnBean({ TableDDLExecutor.class })
     @ConditionalOnSingleCandidate(TableDDLExecutor.class)
-    @ConditionalOnProperty(prefix = "task", value = "table-auto-initialize", havingValue = "true")
+    @ConditionalOnProperty(prefix = "tx.task", value = "table-auto-initialize", havingValue = "true")
     @ConditionalOnMissingBean(TaskContextTableInitializer.class)
     public static class TaskContextTableInitializerConfiguration {
         
@@ -205,7 +205,7 @@ public class TaskContextAutoConfiguration
         @Bean("taskContext.tableInitializer")
         public TaskContextTableInitializer tableInitializer() {
             TaskContextTableInitializer initializer = new TaskContextTableInitializer(
-                    this.tableDDLExecutor);
+                    this.tableDDLExecutor, true);
             return initializer;
         }
     }

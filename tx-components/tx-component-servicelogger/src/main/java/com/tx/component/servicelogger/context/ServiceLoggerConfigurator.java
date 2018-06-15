@@ -7,6 +7,8 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+import com.tx.component.servicelogger.support.ServiceLoggerRegistry;
+
 /**
  * 业务日志<br/>
  * 1、用以提供业务日志记录功能
@@ -24,11 +26,21 @@ public class ServiceLoggerConfigurator
             .getLogger(ServiceLoggerContext.class);
     
     /** spring容器 */
-    protected ApplicationContext applicationContext;
+    protected static ApplicationContext applicationContext;
     
-    /** */
+    /** 业务日志句柄注册表 */
+    protected ServiceLoggerRegistry serviceLoggerRegistry;
+    
+    /** <默认构造函数> */
     protected ServiceLoggerConfigurator() {
         super();
+    }
+    
+    /** <默认构造函数> */
+    protected ServiceLoggerConfigurator(
+            ServiceLoggerRegistry serviceLoggerRegistry) {
+        super();
+        this.serviceLoggerRegistry = serviceLoggerRegistry;
     }
     
     /**
@@ -38,7 +50,7 @@ public class ServiceLoggerConfigurator
     @Override
     public void setApplicationContext(ApplicationContext applicationContext)
             throws BeansException {
-        this.applicationContext = applicationContext;
+        ServiceLoggerConfigurator.applicationContext = applicationContext;
     }
     
     @Override
@@ -66,5 +78,20 @@ public class ServiceLoggerConfigurator
      */
     protected void doInitContext() throws Exception {
         
+    }
+
+    /**
+     * @return 返回 serviceLoggerRegistry
+     */
+    public ServiceLoggerRegistry getServiceLoggerRegistry() {
+        return serviceLoggerRegistry;
+    }
+
+    /**
+     * @param 对serviceLoggerRegistry进行赋值
+     */
+    public void setServiceLoggerRegistry(
+            ServiceLoggerRegistry serviceLoggerRegistry) {
+        this.serviceLoggerRegistry = serviceLoggerRegistry;
     }
 }
