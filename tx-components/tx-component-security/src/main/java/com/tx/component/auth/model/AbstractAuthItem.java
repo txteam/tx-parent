@@ -62,8 +62,6 @@ public abstract class AbstractAuthItem implements Auth {
     /** 权限项目描述 */
     private String remark;
     
-    
-    
     /** 是否有效，默认为true,权限可停用 */
     private boolean valid = true;
     
@@ -350,15 +348,15 @@ public abstract class AbstractAuthItem implements Auth {
      * @return
      */
     @Override
-    public Map<String, Object> getAttributesMap() {
-        Map<String, Object> resMap = new HashMap<>();
+    public Map<String, String> getAttributesMap() {
+        Map<String, String> resMap = new HashMap<>();
         JSONObject attrJson = JSONObject.parseObject(this.attributes);
         if (attrJson == null) {
             return resMap;
         }
         
         for (Entry<String, Object> entry : attrJson.entrySet()) {
-            resMap.put(entry.getKey(), entry.getValue());
+            resMap.put(entry.getKey(), attrJson.getString(entry.getKey()));
         }
         return resMap;
     }
@@ -368,7 +366,7 @@ public abstract class AbstractAuthItem implements Auth {
      * @return
      */
     @Override
-    public Object getAttribute(String key) {
+    public String getAttribute(String key) {
         if (StringUtils.isBlank(key)) {
             return null;
         }

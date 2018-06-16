@@ -2,8 +2,8 @@ package com.tx.component.auth.model;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 
+import com.alibaba.fastjson.JSONObject;
 import com.tx.core.tree.model.TreeAble;
 
 /**
@@ -44,6 +44,44 @@ public interface Auth extends TreeAble<List<Auth>, Auth>, Serializable {
     String getAuthType();
     
     /**
+     * 获取权限项模块<br/>
+     * <功能详细描述>
+     * 
+     * @return [参数说明]
+     */
+    String getModule();
+    
+    /**
+     * 社区权限所属系统<br/>
+     * <功能详细描述> [参数说明]
+     * 
+     * @return void [返回类型说明]
+     */
+    void setModule(String module);
+    
+    /**
+     * 获取权限版本<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return int [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    int getVersion();
+    
+    /**
+     * 设置权限版本<br/>
+     * <功能详细描述>
+     * @param version [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    void setVersion(int version);
+    
+    /**
      * 获取权限关联项id<br/>
      * <功能详细描述>
      * 
@@ -58,14 +96,6 @@ public interface Auth extends TreeAble<List<Auth>, Auth>, Serializable {
      * @return [参数说明]
      */
     String getRefType();
-    
-    /**
-     * 获取权限项系统id<br/>
-     * <功能详细描述>
-     * 
-     * @return [参数说明]
-     */
-    String getModule();
     
     /**
      * 权限名<br/>
@@ -108,6 +138,14 @@ public interface Auth extends TreeAble<List<Auth>, Auth>, Serializable {
     boolean isConfigAble();
     
     /**
+     * 获取权限项的其他数据(json)<br/>
+     * <功能详细描述>
+     * 
+     * @return Map<String,String> 
+     */
+    public String getAttributes();
+    
+    /**
      * 获取子权限<br/>
      * <功能详细描述>
      * 
@@ -121,23 +159,7 @@ public interface Auth extends TreeAble<List<Auth>, Auth>, Serializable {
      * 
      * @return Map<String,String> 
      */
-    public String getAttributes();
-    
-    /**
-     * 社区权限所属系统<br/>
-     * <功能详细描述> [参数说明]
-     * 
-     * @return void [返回类型说明]
-     */
-    void setModule(String module);
-    
-    /**
-     * 获取权限项的其他数据(json)<br/>
-     * <功能详细描述>
-     * 
-     * @return Map<String,String> 
-     */
-    public Map<String, Object> getAttributesMap();
+    public JSONObject getAttributesJSONObject();
     
     /**
      * 获取属性值<br/>
@@ -149,7 +171,7 @@ public interface Auth extends TreeAble<List<Auth>, Auth>, Serializable {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public Object getAttribute(String key);
+    public String getAttribute(String key);
     
     /**
      * 设置属性值<br/>
@@ -161,5 +183,5 @@ public interface Auth extends TreeAble<List<Auth>, Auth>, Serializable {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public void setAttribute(String key, Object value);
+    public void setAttribute(String key, String value);
 }

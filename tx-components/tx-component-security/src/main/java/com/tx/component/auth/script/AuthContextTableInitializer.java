@@ -8,6 +8,7 @@ package com.tx.component.auth.script;
 
 import org.springframework.beans.factory.InitializingBean;
 
+import com.tx.core.TxConstants;
 import com.tx.core.dbscript.initializer.AbstractTableInitializer;
 import com.tx.core.ddlutil.builder.DDLBuilder;
 import com.tx.core.ddlutil.builder.alter.AlterTableDDLBuilder;
@@ -27,7 +28,10 @@ public class AuthContextTableInitializer extends AbstractTableInitializer
         implements InitializingBean {
     
     /** 表DDL执行器 */
-    protected TableDDLExecutor tableDDLExecutor;
+    private TableDDLExecutor tableDDLExecutor;
+    
+    /** 表是否自动初始化 */
+    private boolean tableAutoInitialize = false;
     
     /** <默认构造函数> */
     public AuthContextTableInitializer() {
@@ -40,15 +44,25 @@ public class AuthContextTableInitializer extends AbstractTableInitializer
         this.tableDDLExecutor = tableDDLExecutor;
     }
     
+    /** <默认构造函数> */
+    public AuthContextTableInitializer(TableDDLExecutor tableDDLExecutor,
+            boolean tableAutoInitialize) {
+        super();
+        this.tableDDLExecutor = tableDDLExecutor;
+        this.tableAutoInitialize = tableAutoInitialize;
+    }
+    
     /**
      * @throws Exception
      */
     @Override
     public void afterPropertiesSet() throws Exception {
         //初始化表定义
-        initialize();
+        if (this.tableDDLExecutor != null && this.tableAutoInitialize) {
+            initialize(tableDDLExecutor, tableAutoInitialize);
+        }
     }
-
+    
     /**
      * 
      */
@@ -56,9 +70,31 @@ public class AuthContextTableInitializer extends AbstractTableInitializer
     public String tables(TableDDLExecutor tableDDLExecutor,
             boolean tableAutoInitialize) {
         //初始化表定义
-        table_auth_authitem();
-        table_auth_authref();
-        table_auth_authref_his();
+        StringBuilder sb = new StringBuilder(TxConstants.INITIAL_STR_LENGTH);
+        
+        //初始化表定义
+        sb.append(COMMENT_PREFIX)
+                .append("----------table:auth_authitem----------")
+                .append(COMMENT_SUFFIX)
+                .append(LINE_SEPARATOR);
+        table_auth_authitem(tableDDLExecutor, tableAutoInitialize);
+        sb.append(LINE_SEPARATOR);
+        
+        sb.append(COMMENT_PREFIX)
+                .append("----------table:auth_authref----------")
+                .append(COMMENT_SUFFIX)
+                .append(LINE_SEPARATOR);
+        table_auth_authref(tableDDLExecutor, tableAutoInitialize);
+        sb.append(LINE_SEPARATOR);
+        
+        sb.append(COMMENT_PREFIX)
+                .append("----------table:table_auth_authref_his----------")
+                .append(COMMENT_SUFFIX)
+                .append(LINE_SEPARATOR);
+        table_auth_authref_his(tableDDLExecutor, tableAutoInitialize);
+        sb.append(LINE_SEPARATOR);
+        
+        return sb.toString();
     }
     
     /**
@@ -69,7 +105,7 @@ public class AuthContextTableInitializer extends AbstractTableInitializer
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    private void table_auth_authitem(TableDDLExecutor tableDDLExecutor,
+    private String table_auth_authitem(TableDDLExecutor tableDDLExecutor,
             boolean tableAutoInitialize) {
         String tableName = "auth_authitem";
         
@@ -91,10 +127,17 @@ public class AuthContextTableInitializer extends AbstractTableInitializer
         
         if (alterDDLBuilder != null
                 && alterDDLBuilder.compare().isNeedAlter()) {
-            this.tableDDLExecutor.alter(alterDDLBuilder);
+            if (tableAutoInitialize) {
+                tableDDLExecutor.alter(alterDDLBuilder);
+            }
+            return alterDDLBuilder.alterSql();
         } else if (createDDLBuilder != null) {
-            this.tableDDLExecutor.create(createDDLBuilder);
+            if (tableAutoInitialize) {
+                tableDDLExecutor.create(createDDLBuilder);
+            }
+            return createDDLBuilder.createSql();
         }
+        return "";
     }
     
     /**
@@ -150,7 +193,7 @@ public class AuthContextTableInitializer extends AbstractTableInitializer
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    private void table_auth_authref(TableDDLExecutor tableDDLExecutor,
+    private String table_auth_authref(TableDDLExecutor tableDDLExecutor,
             boolean tableAutoInitialize) {
         String tableName = "auth_authref";
         
@@ -172,10 +215,17 @@ public class AuthContextTableInitializer extends AbstractTableInitializer
         
         if (alterDDLBuilder != null
                 && alterDDLBuilder.compare().isNeedAlter()) {
-            this.tableDDLExecutor.alter(alterDDLBuilder);
+            if (tableAutoInitialize) {
+                tableDDLExecutor.alter(alterDDLBuilder);
+            }
+            return alterDDLBuilder.alterSql();
         } else if (createDDLBuilder != null) {
-            this.tableDDLExecutor.create(createDDLBuilder);
+            if (tableAutoInitialize) {
+                tableDDLExecutor.create(createDDLBuilder);
+            }
+            return createDDLBuilder.createSql();
         }
+        return "";
     }
     
     public static void auth_authref(DDLBuilder<?> ddlBuilder) {
@@ -220,7 +270,7 @@ public class AuthContextTableInitializer extends AbstractTableInitializer
         ddlBuilder.newIndex(false, "idx_module", "module");
     }
     
-    private void table_auth_authref_his(TableDDLExecutor tableDDLExecutor,
+    private String table_auth_authref_his(TableDDLExecutor tableDDLExecutor,
             boolean tableAutoInitialize) {
         String tableName = "bd_basic_data_type";
         
@@ -242,10 +292,17 @@ public class AuthContextTableInitializer extends AbstractTableInitializer
         
         if (alterDDLBuilder != null
                 && alterDDLBuilder.compare().isNeedAlter()) {
-            this.tableDDLExecutor.alter(alterDDLBuilder);
+            if (tableAutoInitialize) {
+                tableDDLExecutor.alter(alterDDLBuilder);
+            }
+            return alterDDLBuilder.alterSql();
         } else if (createDDLBuilder != null) {
-            this.tableDDLExecutor.create(createDDLBuilder);
+            if (tableAutoInitialize) {
+                tableDDLExecutor.create(createDDLBuilder);
+            }
+            return createDDLBuilder.createSql();
         }
+        return "";
     }
     
     public static void auth_authref_his(DDLBuilder<?> ddlBuilder) {
