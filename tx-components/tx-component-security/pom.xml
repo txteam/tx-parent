@@ -31,11 +31,7 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-zuul</artifactId>
-		</dependency>
-
+		
 		<!-- spring-boot -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -64,6 +60,13 @@
 		<dependency>
 			<groupId>com.thoughtworks.xstream</groupId>
 			<artifactId>xstream</artifactId>
+		</dependency>
+		
+		<!-- zuul依赖 -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-zuul</artifactId>
+			<optional>true</optional>
 		</dependency>
 
 		<!-- freemarker -->
