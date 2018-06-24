@@ -19,4 +19,10 @@ public interface SecurityConstants {
     
     /** 内部系统间 header_token_name */
     String JWT_INTERNAL_HEADER_TOKEN_NAME = "jwt_internal_token";
+    
+    /** 刷新token */
+    String REFRESH_TOKEN_NAME = "refresh_token";
+    
+    /** 访问token */
+    String ACCESS_TOKEN_NAME = "access_token";
 }
