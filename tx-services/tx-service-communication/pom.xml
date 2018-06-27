@@ -16,17 +16,22 @@
 
 
     <dependencies>
-
+		<!-- swagger -->
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger2</artifactId>
             <version>2.6.1</version>
         </dependency>
-
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger-ui</artifactId>
             <version>2.6.1</version>
+        </dependency>
+        
+        <!-- tx -->
+        <dependency>
+            <groupId>com.tx</groupId>
+            <artifactId>tx-core</artifactId>
         </dependency>
 
         <!-- aliyun -->
@@ -51,17 +56,10 @@
             <version>3.1.0</version>
         </dependency>
 
-        <!-- tx -->
-        <dependency>
-            <groupId>com.tx</groupId>
-            <artifactId>tx-core</artifactId>
-        </dependency>
-
-        <!-- 单元测试依赖类 -->
+        <!-- xstream -->
         <dependency>
             <groupId>com.thoughtworks.xstream</groupId>
             <artifactId>xstream</artifactId>
-            <optional>true</optional>
         </dependency>
 
         <!-- spring-cloud -->
@@ -83,7 +81,6 @@
             <groupId>org.mybatis.spring.boot</groupId>
             <artifactId>mybatis-spring-boot-starter</artifactId>
         </dependency>
-
 
         <!-- jdbc -->
         <dependency>

@@ -171,8 +171,10 @@ public class AuthContextTableInitializer extends AbstractTableInitializer
         create index idx_module on auth_authitem(module);
         */
         ddlBuilder.newColumnOfVarchar(true, "id", 64, true, null)
-                .newColumnOfVarchar("module", 64, true, null)
                 .newColumnOfVarchar("authType", 64, true, null)
+                .newColumnOfVarchar("module", 64, true, null)
+                .newColumnOfInteger("version", size, false, false);
+                
                 .newColumnOfVarchar("parentId", 64, false, null)
                 .newColumnOfVarchar("refId", 64, false, null)
                 .newColumnOfVarchar("refType", 64, false, null)

@@ -85,7 +85,7 @@ public interface AuthItemDao {
      * 更新AuthItemImpl实体，
      * auto generate
      * 1、传入AuthItemImpl中主键不能为空
-     *<功能详细描述>
+     * <功能详细描述>
      * @param updateRowMap
      * @param tableSuffix
      * @return [参数说明]

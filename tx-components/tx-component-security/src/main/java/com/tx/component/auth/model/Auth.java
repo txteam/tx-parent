@@ -3,7 +3,7 @@ package com.tx.component.auth.model;
 import java.io.Serializable;
 import java.util.List;
 
-import com.alibaba.fastjson.JSONObject;
+import com.tx.core.support.json.JSONAttributesSupport;
 import com.tx.core.tree.model.TreeAble;
 
 /**
@@ -15,7 +15,8 @@ import com.tx.core.tree.model.TreeAble;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
  */
-public interface Auth extends TreeAble<List<Auth>, Auth>, Serializable {
+public interface Auth extends JSONAttributesSupport, TreeAble<List<Auth>, Auth>,
+        Serializable {
     
     /**
      * 权限项唯一键key 
@@ -138,50 +139,10 @@ public interface Auth extends TreeAble<List<Auth>, Auth>, Serializable {
     boolean isConfigAble();
     
     /**
-     * 获取权限项的其他数据(json)<br/>
-     * <功能详细描述>
-     * 
-     * @return Map<String,String> 
-     */
-    public String getAttributes();
-    
-    /**
      * 获取子权限<br/>
      * <功能详细描述>
      * 
      * @return String [返回类型说明]
      */
     List<Auth> getChilds();
-    
-    /**
-     * 获取权限项的其他数据(json)<br/>
-     * <功能详细描述>
-     * 
-     * @return Map<String,String> 
-     */
-    public JSONObject getAttributesJSONObject();
-    
-    /**
-     * 获取属性值<br/>
-     * <功能详细描述>
-     * @param key
-     * @return [参数说明]
-     * 
-     * @return String [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public String getAttribute(String key);
-    
-    /**
-     * 设置属性值<br/>
-     * <功能详细描述>
-     * @param key
-     * @param value [参数说明]
-     * 
-     * @return void [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public void setAttribute(String key, String value);
 }

@@ -6,8 +6,6 @@ x * 描          述:  <描述>
  */
 package com.tx.component.auth.model;
 
-import java.util.Map;
-
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
@@ -34,17 +32,8 @@ public class AuthItem extends AbstractAuthItem {
     }
     
     /** <默认构造函数> */
-    public AuthItem(Auth otherAuthItem) {
-        super(otherAuthItem);
+    public AuthItem(String id, String authType, String module, int version) {
+        super(id, authType, module, version);
     }
-
-    /** <默认构造函数> */
-    public AuthItem(Map<String, Object> authItemRowMap) {
-        super(authItemRowMap);
-    }
-
-    /** <默认构造函数> */
-    public AuthItem(String id, String module, String authType) {
-        super(id, module, authType);
-    }
+    
 }

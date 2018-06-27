@@ -17,9 +17,16 @@
 	</properties>
 
 	<dependencies>
+		<!-- tx-core -->
 		<dependency>
 			<groupId>com.tx</groupId>
 			<artifactId>tx-core</artifactId>
+		</dependency>
+
+		<!-- Redis -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-redis</artifactId>
 		</dependency>
 
 		<!-- jwt、security、zuul -->
@@ -31,7 +38,7 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
-		
+
 		<!-- spring-boot -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -50,18 +57,19 @@
 			<artifactId>mybatis-spring-boot-starter</artifactId>
 		</dependency>
 
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-tomcat</artifactId>
-			<optional>true</optional>
-		</dependency>
-
 		<!-- json xml -->
 		<dependency>
 			<groupId>com.thoughtworks.xstream</groupId>
 			<artifactId>xstream</artifactId>
 		</dependency>
-		
+
+		<!-- mysql -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<optional>true</optional>
+		</dependency>
+
 		<!-- zuul依赖 -->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
@@ -73,13 +81,6 @@
 		<dependency>
 			<groupId>org.freemarker</groupId>
 			<artifactId>freemarker</artifactId>
-			<optional>true</optional>
-		</dependency>
-
-		<!-- postgresql jdbc optional:true -->
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
 			<optional>true</optional>
 		</dependency>
 

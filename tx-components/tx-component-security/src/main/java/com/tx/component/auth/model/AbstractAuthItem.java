@@ -7,10 +7,7 @@
 package com.tx.component.auth.model;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.persistence.FetchType;
 import javax.persistence.Id;
@@ -18,8 +15,6 @@ import javax.persistence.OneToMany;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.alibaba.fastjson.JSONObject;
-import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.util.ObjectUtils;
 
 /**
@@ -46,6 +41,9 @@ public abstract class AbstractAuthItem implements Auth {
     
     /** 系统唯一id */
     private String module;
+    
+    /** 权限项版本 */
+    private int version;
     
     /** 父级权限id */
     private String parentId;
@@ -84,61 +82,122 @@ public abstract class AbstractAuthItem implements Auth {
     }
     
     /** <默认构造函数> */
-    public AbstractAuthItem(Map<String, Object> authItemRowMap) {
+    public AbstractAuthItem(String id, String authType) {
         super();
-        if (authItemRowMap.containsKey("id")) {
-            this.id = (String) authItemRowMap.get("id");
-        }
-        if (authItemRowMap.containsKey("parentId")) {
-            this.parentId = (String) authItemRowMap.get("parentId");
-        }
-        if (authItemRowMap.containsKey("module")) {
-            this.module = (String) authItemRowMap.get("module");
-        }
-        if (authItemRowMap.containsKey("name")) {
-            this.name = (String) authItemRowMap.get("name");
-        }
-        if (authItemRowMap.containsKey("remark")) {
-            this.remark = (String) authItemRowMap.get("remark");
-        }
-        if (authItemRowMap.containsKey("authType")) {
-            this.authType = (String) authItemRowMap.get("authType");
-        }
-        
-        if (authItemRowMap.containsKey(valid)) {
-            this.valid = (boolean) authItemRowMap.containsKey("valid");
-        }
-        if (authItemRowMap.containsKey(configAble)) {
-            this.configAble = (boolean) authItemRowMap
-                    .containsKey("configAble");
-        }
-        if (authItemRowMap.containsKey(modifyAble)) {
-            this.modifyAble = (boolean) authItemRowMap
-                    .containsKey("modifyAble");
-        }
+        this.id = id;
+        this.authType = authType;
     }
     
     /** <默认构造函数> */
-    public AbstractAuthItem(Auth otherAuthItem) {
-        super();
-        this.id = otherAuthItem.getId();
-        this.parentId = otherAuthItem.getParentId();
-        this.module = otherAuthItem.getModule();
-        this.name = otherAuthItem.getName();
-        this.remark = otherAuthItem.getRemark();
-        this.authType = otherAuthItem.getAuthType();
-        
-        this.valid = otherAuthItem.isValid();
-        this.configAble = otherAuthItem.isConfigAble();
-        this.modifyAble = otherAuthItem.isModifyAble();
-    }
-    
-    /** <默认构造函数> */
-    public AbstractAuthItem(String id, String module, String authType) {
+    public AbstractAuthItem(String id, String authType, String module,
+            int version) {
         super();
         this.id = id;
         this.module = module;
         this.authType = authType;
+        this.version = version;
+    }
+    
+    /** <默认构造函数> */
+    public AbstractAuthItem(String id, String authType, String module,
+            int version, String name) {
+        super();
+        this.id = id;
+        this.module = module;
+        this.authType = authType;
+        this.version = version;
+        this.name = name;
+    }
+    
+    /** <默认构造函数> */
+    public AbstractAuthItem(String id, String authType, String module,
+            int version, String name, String refType, String refId) {
+        super();
+        this.id = id;
+        this.module = module;
+        this.authType = authType;
+        this.version = version;
+        this.name = name;
+        this.refType = refType;
+        this.refId = refId;
+    }
+    
+    /**
+     * @param id
+     */
+    public void setId(String id) {
+        this.id = id;
+    }
+    
+    /**
+     * @param parentId
+     */
+    public void setParentId(String parentId) {
+        this.parentId = parentId;
+    }
+    
+    /**
+     * @param name
+     */
+    
+    public void setName(String name) {
+        this.name = name;
+    }
+    
+    /**
+     * @param 对remark进行赋值
+     */
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+    
+    /**
+     * @param authType
+     */
+    public void setAuthType(String authType) {
+        this.authType = authType;
+    }
+    
+    /**
+     * @param 对valid进行赋值
+     */
+    public void setValid(boolean valid) {
+        this.valid = valid;
+    }
+    
+    /**
+     * @param 对modifyAble进行赋值
+     */
+    public void setModifyAble(boolean modifyAble) {
+        this.modifyAble = modifyAble;
+    }
+    
+    /**
+     * @param 对configAble进行赋值
+     */
+    public void setConfigAble(boolean configAble) {
+        this.configAble = configAble;
+    }
+    
+    /**
+     * @param 对refId进行赋值
+     */
+    public void setRefId(String refId) {
+        this.refId = refId;
+    }
+    
+    /**
+     * @param 对refType进行赋值
+     */
+    public void setRefType(String refType) {
+        this.refType = refType;
+    }
+    
+    /**
+     * @param 对version进行赋值
+     */
+    public void setVersion(int version) {
+        this.version = version;
     }
     
     /**
@@ -150,25 +209,11 @@ public abstract class AbstractAuthItem implements Auth {
     }
     
     /**
-     * @param id
-     */
-    public void setId(String id) {
-        this.id = id;
-    }
-    
-    /**
-     * @return
+     * @return 返回 version
      */
     @Override
-    public String getParentId() {
-        return parentId;
-    }
-    
-    /**
-     * @param parentId
-     */
-    public void setParentId(String parentId) {
-        this.parentId = parentId;
+    public int getVersion() {
+        return version;
     }
     
     /**
@@ -180,11 +225,19 @@ public abstract class AbstractAuthItem implements Auth {
     }
     
     /**
-     * @param 对module进行赋值
+     * @return
      */
     @Override
-    public void setModule(String module) {
-        this.module = module;
+    public String getAuthType() {
+        return authType;
+    }
+    
+    /**
+     * @return
+     */
+    @Override
+    public String getParentId() {
+        return parentId;
     }
     
     /**
@@ -199,10 +252,11 @@ public abstract class AbstractAuthItem implements Auth {
     }
     
     /**
-     * @param name
+     * @param 对module进行赋值
      */
-    public void setName(String name) {
-        this.name = name;
+    @Override
+    public void setModule(String module) {
+        this.module = module;
     }
     
     /**
@@ -214,40 +268,11 @@ public abstract class AbstractAuthItem implements Auth {
     }
     
     /**
-     * @param 对remark进行赋值
-     */
-    public void setRemark(String remark) {
-        this.remark = remark;
-    }
-    
-    /**
-     * @return
-     */
-    @Override
-    public String getAuthType() {
-        return authType;
-    }
-    
-    /**
-     * @param authType
-     */
-    public void setAuthType(String authType) {
-        this.authType = authType;
-    }
-    
-    /**
      * @return 返回 valid
      */
     @Override
     public boolean isValid() {
         return valid;
-    }
-    
-    /**
-     * @param 对valid进行赋值
-     */
-    public void setValid(boolean valid) {
-        this.valid = valid;
     }
     
     /**
@@ -262,13 +287,6 @@ public abstract class AbstractAuthItem implements Auth {
     }
     
     /**
-     * @param 对modifyAble进行赋值
-     */
-    public void setModifyAble(boolean modifyAble) {
-        this.modifyAble = modifyAble;
-    }
-    
-    /**
      * @return 返回 configAble
      */
     @Override
@@ -280,43 +298,25 @@ public abstract class AbstractAuthItem implements Auth {
     }
     
     /**
-     * @param 对configAble进行赋值
-     */
-    public void setConfigAble(boolean configAble) {
-        this.configAble = configAble;
-    }
-    
-    /**
      * @return 返回 refId
      */
+    @Override
     public String getRefId() {
         return refId;
     }
     
     /**
-     * @param 对refId进行赋值
-     */
-    public void setRefId(String refId) {
-        this.refId = refId;
-    }
-    
-    /**
      * @return 返回 refType
      */
+    @Override
     public String getRefType() {
         return refType;
     }
     
     /**
-     * @param 对refType进行赋值
-     */
-    public void setRefType(String refType) {
-        this.refType = refType;
-    }
-    
-    /**
      * @return 返回 attributes
      */
+    @Override
     public String getAttributes() {
         return attributes;
     }
@@ -324,6 +324,7 @@ public abstract class AbstractAuthItem implements Auth {
     /**
      * @param 对attributes进行赋值
      */
+    @Override
     public void setAttributes(String attributes) {
         this.attributes = attributes;
     }
@@ -345,58 +346,17 @@ public abstract class AbstractAuthItem implements Auth {
     }
     
     /**
-     * @return
-     */
-    @Override
-    public Map<String, String> getAttributesMap() {
-        Map<String, String> resMap = new HashMap<>();
-        JSONObject attrJson = JSONObject.parseObject(this.attributes);
-        if (attrJson == null) {
-            return resMap;
-        }
-        
-        for (Entry<String, Object> entry : attrJson.entrySet()) {
-            resMap.put(entry.getKey(), attrJson.getString(entry.getKey()));
-        }
-        return resMap;
-    }
-    
-    /**
-     * @param key
-     * @return
-     */
-    @Override
-    public String getAttribute(String key) {
-        if (StringUtils.isBlank(key)) {
-            return null;
-        }
-        Map<String, Object> attrMap = getAttributesMap();
-        Object value = attrMap.get(key);
-        return value;
-    }
-    
-    /**
-     * @param key
-     * @param value
-     */
-    @Override
-    public void setAttribute(String key, Object value) {
-        AssertUtils.notEmpty(key, "key is empty.");
-        AssertUtils.notNull(value, "value is null.");
-        
-        Map<String, Object> attrMap = getAttributesMap();
-        attrMap.put(key, value);
-        
-        this.attributes = JSONObject.toJSONString(attrMap);
-    }
-    
-    /**
      * @param obj
      * @return
      */
     @Override
     public boolean equals(Object obj) {
-        return ObjectUtils.equals(this, obj, "id", "authType", "module");
+        return ObjectUtils.equals(this,
+                obj,
+                "id",
+                "authType",
+                "module",
+                "version");
     }
     
     /**
@@ -408,7 +368,8 @@ public abstract class AbstractAuthItem implements Auth {
                 this,
                 "id",
                 "authType",
-                "module");
+                "module",
+                "version");
         return resHashCode;
     }
 }

@@ -164,6 +164,23 @@ public abstract class AbstractDDLBuilder<B extends DDLBuilder<B>>
      * @return
      */
     @Override
+    public B newColumnOfInteger(String columnName, boolean required,
+            Integer defaultValue) {
+        newColumnOfInteger(false, columnName, 10, required, defaultValue);
+        
+        @SuppressWarnings("unchecked")
+        B builder = (B) this;
+        return builder;
+    }
+    
+    /**
+     * @param columnName
+     * @param size
+     * @param required
+     * @param defaultValue
+     * @return
+     */
+    @Override
     public B newColumnOfInteger(String columnName, int size, boolean required,
             Integer defaultValue) {
         newColumnOfInteger(false, columnName, size, required, defaultValue);
