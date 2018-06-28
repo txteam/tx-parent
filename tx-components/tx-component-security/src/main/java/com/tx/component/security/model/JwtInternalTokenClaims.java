@@ -8,8 +8,6 @@ package com.tx.component.security.model;
 
 /**
  * JWT访问凭证<br/>
- *  
- * 
  * <功能详细描述>
  * 
  * @author  Administrator

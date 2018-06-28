@@ -48,21 +48,23 @@ public abstract class AbstractUserDetail implements UserDetails {
     }
     
     /**
+     * 用户帐户是否已过期。过期的帐号不能认证
+     * 这里默认为未过期
      * @return
      */
     @Override
     public boolean isAccountNonExpired() {
-        // TODO Auto-generated method stub
-        return false;
+        return true;
     }
     
     /**
+     * 用户账户是否未锁定，锁定的帐号不能认证
+     * 这里默认为未锁定
      * @return
      */
     @Override
     public boolean isAccountNonLocked() {
-        // TODO Auto-generated method stub
-        return false;
+        return true;
     }
     
     /**

@@ -4,7 +4,7 @@
  * 修改时间:  2018年6月15日
  * <修改描述:>
  */
-package com.tx.component.security.util;
+package com.tx.component.security.jwt;
 
 import java.io.Serializable;
 import java.security.Key;
@@ -172,6 +172,7 @@ public class JwtTokenUtils implements Serializable {
         Map<String, Object> claims = new HashMap<>();
         claims.put(CLAIM_KEY_USERNAME, userDetails.getUsername());
         claims.put(CLAIM_KEY_CREATED, new Date());
+        
         return generateToken(claims);
     }
     

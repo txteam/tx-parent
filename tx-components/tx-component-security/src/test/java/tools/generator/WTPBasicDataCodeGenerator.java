@@ -9,6 +9,7 @@ import java.io.IOException;
 import org.apache.commons.io.FileUtils;
 
 import com.tx.component.auth.model.AuthItem;
+import com.tx.component.security.model.JwtSigningKey;
 import com.tx.core.generator.basicedata.BasicDataCodeGenerator;
 import com.tx.core.util.dialect.DataSourceTypeEnum;
 
@@ -24,7 +25,7 @@ public class WTPBasicDataCodeGenerator {
     
     public static void main(String[] args) throws IOException {
         //基础数据类examineratifyrulecfgitem
-        Class<?> basicDataType = AuthItem.class;
+        Class<?> basicDataType = JwtSigningKey.class;
         //基础数据逻辑代码生成存放目录com.tx.component.basicdata.generator.
         String codeBaseFolder = "d:/generator/basicdata";
         FileUtils.forceMkdir(new File(codeBaseFolder));

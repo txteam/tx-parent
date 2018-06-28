@@ -173,18 +173,18 @@ public class AuthContextTableInitializer extends AbstractTableInitializer
         ddlBuilder.newColumnOfVarchar(true, "id", 64, true, null)
                 .newColumnOfVarchar("authType", 64, true, null)
                 .newColumnOfVarchar("module", 64, true, null)
-                .newColumnOfInteger("version", size, false, false);
-                
+                .newColumnOfInteger("version", 10, true, null)
                 .newColumnOfVarchar("parentId", 64, false, null)
-                .newColumnOfVarchar("refId", 64, false, null)
                 .newColumnOfVarchar("refType", 64, false, null)
+                .newColumnOfVarchar("refId", 64, false, null)
                 .newColumnOfVarchar("name", 255, true, null)
                 .newColumnOfVarchar("remark", 512, false, null)
-                .newColumnOfBoolean("modifyAble", true, true)
+                .newColumnOfBoolean("modifyAble", true, false)
                 .newColumnOfBoolean("valid", true, true)
                 .newColumnOfBoolean("configAble", true, true);
         ddlBuilder.newIndex(false, "idx_parentId", "parentId");
         ddlBuilder.newIndex(false, "idx_module", "module");
+        //ddlBuilder.newIndex(true, "idx_unique_auth_01", "");
     }
     
     /**
