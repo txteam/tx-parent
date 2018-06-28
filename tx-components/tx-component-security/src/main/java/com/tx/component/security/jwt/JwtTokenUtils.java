@@ -83,182 +83,167 @@ public class JwtTokenUtils implements Serializable {
     
     private static final String CLAIM_KEY_CREATED = "created";
     
-    public static SigningKeyResolver signingKeyReolver = new SigningKeyResolver() {
-        
-        @Override
-        public Key resolveSigningKey(JwsHeader header, String plaintext) {
-            // TODO Auto-generated method stub
-            return null;
-        }
-        
-        @Override
-        public Key resolveSigningKey(JwsHeader header, Claims claims) {
-            // TODO Auto-generated method stub
-            return null;
-        }
-    };
-    
-    /**
-     * 从Token中获取声明<br/>
-     * <功能详细描述>
-     * @param secret token签名key
-     * @param token token
-     * 
-     * @return Claims 可能会返回null
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public static Claims getClaimsFromToken(String token) {
-        Claims claims = null;
-        if (StringUtils.isBlank(token)) {
-            return claims;
-        }
-        
-        try {
-            claims = Jwts.parser()
-                    .setSigningKeyResolver(signingKeyResolver)
-                    .parseClaimsJws(token)
-                    .getBody();
-        } catch (Exception e) {
-            //ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException
-            logger.warn("parse claims error.token:{} error:{}",
-                    token,
-                    e.getMessage());
-            
-            //当解析异常时直接返回null
-            claims = null;
-        }
-        
-        return claims;
-    }
-    
-    /**
-     * 从Token中获取声明<br/>
-     * <功能详细描述>
-     * @param secret token签名key
-     * @param token token
-     * 
-     * @return Claims 可能会返回null
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public static Claims getClaimsFromToken(String secret, String token) {
-        AssertUtils.notEmpty(secret, "secret is empty.");
-        
-        Claims claims = null;
-        if (StringUtils.isBlank(token)) {
-            return claims;
-        }
-        
-        try {
-            claims = Jwts.parser()
-                    .setSigningKey(secret)
-                    .parseClaimsJws(token)
-                    .getBody();
-        } catch (Exception e) {
-            //ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException
-            logger.warn("parse claims error.token:{} error:{}",
-                    token,
-                    e.getMessage());
-            
-            //当解析异常时直接返回null
-            claims = null;
-        }
-        
-        return claims;
-    }
-    
-    public String generateToken(UserDetails userDetails) {
-        Map<String, Object> claims = new HashMap<>();
-        claims.put(CLAIM_KEY_USERNAME, userDetails.getUsername());
-        claims.put(CLAIM_KEY_CREATED, new Date());
-        
-        return generateToken(claims);
-    }
-    
-    String generateToken(Map<String, Object> claims) {
-        return Jwts.builder()
-                .setClaims(claims)
-                .setExpiration(generateExpirationDate())
-                .signWith(SignatureAlgorithm.HS512, secret)
-                .compact();
-    }
-    
-    public Boolean validateToken(String token, UserDetails userDetails) {
-        final String username = getUsernameFromToken(token);
-        final Date created = getCreatedDateFromToken(token);
-        
-        //        final Date expiration = getExpirationDateFromToken(token);  
-        return (username.equals(user.getUsername()) && !isTokenExpired(token)
-                && !isCreatedBeforeLastPasswordReset(created,
-                        user.getLastPasswordResetDate()));
-    }
-    
-    public String getUsernameFromToken(String token) {
-        String username;
-        try {
-            final Claims claims = getClaimsFromToken(token);
-            username = claims.getSubject();
-        } catch (Exception e) {
-            username = null;
-        }
-        return username;
-    }
-    
-    public Date getCreatedDateFromToken(String token) {
-        Date created;
-        try {
-            final Claims claims = getClaimsFromToken(token);
-            created = new Date((Long) claims.get(CLAIM_KEY_CREATED));
-        } catch (Exception e) {
-            created = null;
-        }
-        return created;
-    }
-    
-    public Date getExpirationDateFromToken(String token) {
-        Date expiration;
-        try {
-            final Claims claims = getClaimsFromToken(token);
-            expiration = claims.getExpiration();
-        } catch (Exception e) {
-            expiration = null;
-        }
-        return expiration;
-    }
-    
-    private Date generateExpirationDate() {
-        return new Date(System.currentTimeMillis() + expiration * 1000);
-    }
-    
-    private Boolean isTokenExpired(String token) {
-        final Date expiration = getExpirationDateFromToken(token);
-        return expiration.before(new Date());
-    }
-    
-    private Boolean isCreatedBeforeLastPasswordReset(Date created,
-            Date lastPasswordReset) {
-        return (lastPasswordReset != null && created.before(lastPasswordReset));
-    }
-    
-    
-    
-    public Boolean canTokenBeRefreshed(String token, Date lastPasswordReset) {
-        final Date created = getCreatedDateFromToken(token);
-        return !isCreatedBeforeLastPasswordReset(created, lastPasswordReset)
-                && !isTokenExpired(token);
-    }
-    
-    public String refreshToken(String token) {
-        String refreshedToken;
-        try {
-            final Claims claims = getClaimsFromToken(token);
-            claims.put(CLAIM_KEY_CREATED, new Date());
-            refreshedToken = generateToken(claims);
-        } catch (Exception e) {
-            refreshedToken = null;
-        }
-        return refreshedToken;
-    }
+    //    /**
+    //     * 从Token中获取声明<br/>
+    //     * <功能详细描述>
+    //     * @param secret token签名key
+    //     * @param token token
+    //     * 
+    //     * @return Claims 可能会返回null
+    //     * @exception throws [异常类型] [异常说明]
+    //     * @see [类、类#方法、类#成员]
+    //     */
+    //    public static Claims getClaimsFromToken(String token) {
+    //        Claims claims = null;
+    //        if (StringUtils.isBlank(token)) {
+    //            return claims;
+    //        }
+    //        
+    //        try {
+    //            claims = Jwts.parser()
+    //                    .setSigningKeyResolver(signingKeyResolver)
+    //                    .parseClaimsJws(token)
+    //                    .getBody();
+    //        } catch (Exception e) {
+    //            //ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException
+    //            logger.warn("parse claims error.token:{} error:{}",
+    //                    token,
+    //                    e.getMessage());
+    //            
+    //            //当解析异常时直接返回null
+    //            claims = null;
+    //        }
+    //        
+    //        return claims;
+    //    }
+    //    
+    //    /**
+    //     * 从Token中获取声明<br/>
+    //     * <功能详细描述>
+    //     * @param secret token签名key
+    //     * @param token token
+    //     * 
+    //     * @return Claims 可能会返回null
+    //     * @exception throws [异常类型] [异常说明]
+    //     * @see [类、类#方法、类#成员]
+    //     */
+    //    public static Claims getClaimsFromToken(String secret, String token) {
+    //        AssertUtils.notEmpty(secret, "secret is empty.");
+    //        
+    //        Claims claims = null;
+    //        if (StringUtils.isBlank(token)) {
+    //            return claims;
+    //        }
+    //        
+    //        try {
+    //            claims = Jwts.parser()
+    //                    .setSigningKey(secret)
+    //                    .parseClaimsJws(token)
+    //                    .getBody();
+    //        } catch (Exception e) {
+    //            //ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException
+    //            logger.warn("parse claims error.token:{} error:{}",
+    //                    token,
+    //                    e.getMessage());
+    //            
+    //            //当解析异常时直接返回null
+    //            claims = null;
+    //        }
+    //        
+    //        return claims;
+    //    }
+    //    
+    //    public String generateToken(UserDetails userDetails) {
+    //        Map<String, Object> claims = new HashMap<>();
+    //        claims.put(CLAIM_KEY_USERNAME, userDetails.getUsername());
+    //        claims.put(CLAIM_KEY_CREATED, new Date());
+    //        
+    //        return generateToken(claims);
+    //    }
+    //    
+    //    String generateToken(Map<String, Object> claims) {
+    //        return Jwts.builder()
+    //                .setClaims(claims)
+    //                .setExpiration(generateExpirationDate())
+    //                .signWith(SignatureAlgorithm.HS512, secret)
+    //                .compact();
+    //    }
+    //    
+    //    public Boolean validateToken(String token, UserDetails userDetails) {
+    //        final String username = getUsernameFromToken(token);
+    //        final Date created = getCreatedDateFromToken(token);
+    //        
+    //        //        final Date expiration = getExpirationDateFromToken(token);  
+    //        return (username.equals(user.getUsername()) && !isTokenExpired(token)
+    //                && !isCreatedBeforeLastPasswordReset(created,
+    //                        user.getLastPasswordResetDate()));
+    //    }
+    //    
+    //    public String getUsernameFromToken(String token) {
+    //        String username;
+    //        try {
+    //            final Claims claims = getClaimsFromToken(token);
+    //            username = claims.getSubject();
+    //        } catch (Exception e) {
+    //            username = null;
+    //        }
+    //        return username;
+    //    }
+    //    
+    //    public Date getCreatedDateFromToken(String token) {
+    //        Date created;
+    //        try {
+    //            final Claims claims = getClaimsFromToken(token);
+    //            created = new Date((Long) claims.get(CLAIM_KEY_CREATED));
+    //        } catch (Exception e) {
+    //            created = null;
+    //        }
+    //        return created;
+    //    }
+    //    
+    //    public Date getExpirationDateFromToken(String token) {
+    //        Date expiration;
+    //        try {
+    //            final Claims claims = getClaimsFromToken(token);
+    //            expiration = claims.getExpiration();
+    //        } catch (Exception e) {
+    //            expiration = null;
+    //        }
+    //        return expiration;
+    //    }
+    //    
+    //    private Date generateExpirationDate() {
+    //        return new Date(System.currentTimeMillis() + expiration * 1000);
+    //    }
+    //    
+    //    private Boolean isTokenExpired(String token) {
+    //        final Date expiration = getExpirationDateFromToken(token);
+    //        return expiration.before(new Date());
+    //    }
+    //    
+    //    private Boolean isCreatedBeforeLastPasswordReset(Date created,
+    //            Date lastPasswordReset) {
+    //        return (lastPasswordReset != null && created.before(lastPasswordReset));
+    //    }
+    //    
+    //    
+    //    
+    //    public Boolean canTokenBeRefreshed(String token, Date lastPasswordReset) {
+    //        final Date created = getCreatedDateFromToken(token);
+    //        return !isCreatedBeforeLastPasswordReset(created, lastPasswordReset)
+    //                && !isTokenExpired(token);
+    //    }
+    //    
+    //    public String refreshToken(String token) {
+    //        String refreshedToken;
+    //        try {
+    //            final Claims claims = getClaimsFromToken(token);
+    //            claims.put(CLAIM_KEY_CREATED, new Date());
+    //            refreshedToken = generateToken(claims);
+    //        } catch (Exception e) {
+    //            refreshedToken = null;
+    //        }
+    //        return refreshedToken;
+    //    }
     
 }

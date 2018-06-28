@@ -44,6 +44,9 @@ public class JwtSigningKey {
     /** 有效时间 */
     private long duration;
     
+    /** 是否有效 */
+    private boolean valid;
+    
     /**
      * @return 返回 id
      */

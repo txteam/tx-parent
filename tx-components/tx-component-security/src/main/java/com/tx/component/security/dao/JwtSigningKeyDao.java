@@ -4,17 +4,17 @@
  * 修改时间:  
  * <修改描述:>
  */
-package ${dao.basePackage};
+package com.tx.component.security.dao;
 
 import java.util.List;
 import java.util.Map;
 
 import com.tx.core.mybatis.model.Order;
 import com.tx.core.paged.model.PagedList;
-import ${dao.entityTypeName};
+import com.tx.component.security.model.JwtSigningKey;
 
 /**
- * ${dao.simpleEntityTypeName}持久层
+ * JwtSigningKey持久层
  * <功能详细描述>
  * 
  * @author  
@@ -22,10 +22,10 @@ import ${dao.entityTypeName};
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public interface ${dao.simpleEntityTypeName}Dao {
-
+public interface JwtSigningKeyDao {
+    
     /**
-     * 批量插入${dao.simpleEntityTypeName}对象实体
+     * 批量插入JwtSigningKey对象实体
      * 1、auto generate
      * <功能详细描述>
      * @param condition [参数说明]
@@ -35,24 +35,24 @@ public interface ${dao.simpleEntityTypeName}Dao {
      * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public void batchInsert(List<${dao.simpleEntityTypeName}> condition);    
+    public void batchInsert(List<JwtSigningKey> condition);
     
     /**
-     * 批量更新${dao.simpleEntityTypeName}实体，
+     * 批量更新JwtSigningKey实体，
      * auto generate
-     * 1、传入${dao.simpleEntityTypeName}中主键不能为空
+     * 1、传入JwtSigningKey中主键不能为空
      * <功能详细描述>
-     * @param update${dao.simpleEntityTypeName}RowMap
+     * @param updateJwtSigningKeyRowMap
      * @return [参数说明]
      * 
      * @return int [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public void batchUpdate(List<Map<String,Object>> updateRowMapList);
+    public void batchUpdate(List<Map<String, Object>> updateRowMapList);
     
     /**
-     * 插入${dao.simpleEntityTypeName}对象实体
+     * 插入JwtSigningKey对象实体
      * 1、auto generate
      * <功能详细描述>
      * @param condition [参数说明]
@@ -62,10 +62,10 @@ public interface ${dao.simpleEntityTypeName}Dao {
      * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public void insert(${dao.simpleEntityTypeName} condition);
+    public void insert(JwtSigningKey condition);
     
     /**
-     * 删除${dao.simpleEntityTypeName}对象
+     * 删除JwtSigningKey对象
      * 1、auto generate
      * 2、根据入参条件进行删除
      * <功能详细描述>
@@ -76,54 +76,54 @@ public interface ${dao.simpleEntityTypeName}Dao {
      * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public int delete(${dao.simpleEntityTypeName} condition);
+    public int delete(JwtSigningKey condition);
     
     /**
-     * 查询${dao.simpleEntityTypeName}实体
+     * 查询JwtSigningKey实体
      * auto generate
      * <功能详细描述>
      * @param condition
      * @return [参数说明]
      * 
-     * @return ${dao.simpleEntityTypeName} [返回类型说明]
+     * @return JwtSigningKey [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public ${dao.simpleEntityTypeName} find(${dao.simpleEntityTypeName} condition);
+    public JwtSigningKey find(JwtSigningKey condition);
     
     /**
-     * 根据条件查询${dao.simpleEntityTypeName}列表
+     * 根据条件查询JwtSigningKey列表
      * auto generate
      * <功能详细描述>
      * @param params
      * @return [参数说明]
      * 
-     * @return List<${dao.simpleEntityTypeName}> [返回类型说明]
+     * @return List<JwtSigningKey> [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public List<${dao.simpleEntityTypeName}> queryList(Map<String, Object> params);
+    public List<JwtSigningKey> queryList(Map<String, Object> params);
     
     /**
-     * 根据指定查询条件以及排序列查询${dao.simpleEntityTypeName}列表
+     * 根据指定查询条件以及排序列查询JwtSigningKey列表
      * auto generate
      * <功能详细描述>
      * @param params
      * @param orderList
      * @return [参数说明]
      * 
-     * @return List<${dao.simpleEntityTypeName}> [返回类型说明]
+     * @return List<JwtSigningKey> [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public List<${dao.simpleEntityTypeName}> queryList(Map<String, Object> params,
+    public List<JwtSigningKey> queryList(Map<String, Object> params,
             List<Order> orderList);
     
     /**
-     * 根据条件查询${dao.simpleEntityTypeName}列表总数
+     * 根据条件查询JwtSigningKey列表总数
      * auto generated
      * <功能详细描述>
      * @param params
@@ -136,7 +136,7 @@ public interface ${dao.simpleEntityTypeName}Dao {
     public int count(Map<String, Object> params);
     
     /**
-     * 分页查询${dao.simpleEntityTypeName}列表
+     * 分页查询JwtSigningKey列表
      * auto generate
      * <功能详细描述>
      * @param params
@@ -144,16 +144,16 @@ public interface ${dao.simpleEntityTypeName}Dao {
      * @param pageSize
      * @return [参数说明]
      * 
-     * @return PagedList<${dao.simpleEntityTypeName}> [返回类型说明]
+     * @return PagedList<JwtSigningKey> [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public PagedList<${dao.simpleEntityTypeName}> queryPagedList(Map<String, Object> params,
+    public PagedList<JwtSigningKey> queryPagedList(Map<String, Object> params,
             int pageIndex, int pageSize);
     
     /**
-     * 分页查询${dao.simpleEntityTypeName}列表，传入排序字段
+     * 分页查询JwtSigningKey列表，传入排序字段
      * auto generate
      * <功能详细描述>
      * @param params
@@ -162,21 +162,20 @@ public interface ${dao.simpleEntityTypeName}Dao {
      * @param orderList
      * @return [参数说明]
      * 
-     * @return PagedList<${dao.simpleEntityTypeName}> [返回类型说明]
+     * @return PagedList<JwtSigningKey> [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public PagedList<${dao.simpleEntityTypeName}> queryPagedList(Map<String, Object> params,
+    public PagedList<JwtSigningKey> queryPagedList(Map<String, Object> params,
             int pageIndex, int pageSize, List<Order> orderList);
     
-    
     /**
-     * 更新${dao.simpleEntityTypeName}实体，
+     * 更新JwtSigningKey实体，
      * auto generate
-     * 1、传入${dao.simpleEntityTypeName}中主键不能为空
+     * 1、传入JwtSigningKey中主键不能为空
      * <功能详细描述>
-     * @param update${dao.simpleEntityTypeName}RowMap
+     * @param updateJwtSigningKeyRowMap
      * @return [参数说明]
      * 
      * @return int [返回类型说明]

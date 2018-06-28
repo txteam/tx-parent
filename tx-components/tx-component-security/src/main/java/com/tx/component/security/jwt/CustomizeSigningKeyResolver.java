@@ -9,6 +9,7 @@ package com.tx.component.security.jwt;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwsHeader;
 import io.jsonwebtoken.SigningKeyResolverAdapter;
+import io.jsonwebtoken.impl.TextCodec;
 
 /**
  * 自定义签名解析器<br/>
@@ -29,9 +30,9 @@ public class CustomizeSigningKeyResolver extends SigningKeyResolverAdapter {
     @SuppressWarnings("rawtypes")
     @Override
     public byte[] resolveSigningKeyBytes(JwsHeader header, Claims claims) {
-        header.getOrDefault(key, defaultValue);
-        header.getOrDefault(key, defaultValue);
-        return super.resolveSigningKeyBytes(header, claims);
+        String base64EncodedKeyBytes = doGetBase64EncodedKeyBytes(header);
+        byte[] keyBytes = TextCodec.BASE64.decode(base64EncodedKeyBytes);
+        return keyBytes;
     }
     
     /**
@@ -42,9 +43,24 @@ public class CustomizeSigningKeyResolver extends SigningKeyResolverAdapter {
     @SuppressWarnings("rawtypes")
     @Override
     public byte[] resolveSigningKeyBytes(JwsHeader header, String payload) {
-        header.getOrDefault(key, defaultValue);
-        header.getOrDefault(key, defaultValue);
-        return super.resolveSigningKeyBytes(header, payload);
+        String base64EncodedKeyBytes = doGetBase64EncodedKeyBytes(header);
+        byte[] keyBytes = TextCodec.BASE64.decode(base64EncodedKeyBytes);
+        return keyBytes;
     }
     
+    /**
+     * 获取Base64EncodedKeyBytes<br/>
+     * <功能详细描述>
+     * @param header
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @SuppressWarnings("rawtypes")
+    protected String doGetBase64EncodedKeyBytes(JwsHeader header) {
+        String base64EncodedKeyBytes = "123321qQ";
+        return base64EncodedKeyBytes;
+    }
 }
