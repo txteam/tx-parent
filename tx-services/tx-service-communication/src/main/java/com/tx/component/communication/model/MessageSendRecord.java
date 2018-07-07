@@ -50,7 +50,7 @@ public class MessageSendRecord {
    /** title */
    private String title;
 
-   /** 短信内容 */
+   /** 内容 */
    private String content;
 
    /** 内容文件id */

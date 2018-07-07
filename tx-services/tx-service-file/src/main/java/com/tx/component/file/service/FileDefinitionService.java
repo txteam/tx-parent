@@ -6,19 +6,25 @@
  */
 package com.tx.component.file.service;
 
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
-import com.tx.component.file.dao.FileDefinitionDao;
-import com.tx.component.file.model.FileDefinition;
-import com.tx.core.exceptions.util.AssertUtils;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.annotation.Resource;
+
 import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import javax.annotation.Resource;
-import java.util.*;
+import com.tx.component.file.dao.FileDefinitionDao;
+import com.tx.component.file.model.FileDefinition;
+import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.paged.model.PagedList;
 
 /**
  * FileDefinition的业务层<br/>
@@ -31,15 +37,11 @@ import java.util.*;
  */
 public class FileDefinitionService {
 
-    /**
-     * 日志
-     */
+    /** 日志 */
     @SuppressWarnings("unused")
     private Logger logger = LoggerFactory.getLogger(FileDefinitionService.class);
 
-    /**
-     * 文件定义Dao层
-     */
+    /** 文件定义Dao层 */
     @Resource
     private FileDefinitionDao fileDefinitionDao;
 
@@ -205,7 +207,7 @@ public class FileDefinitionService {
      * @throws throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public PageInfo<FileDefinition> queryPagedList(String module,
+    public PagedList<FileDefinition> queryPagedList(String module,
                                                    String relativeFolder, String[] filenameExtensions,
                                                    Map<String, Object> params, int pageIndex, int pageSize) {
         AssertUtils.notEmpty(module, "module is empty.");

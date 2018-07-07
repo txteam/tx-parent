@@ -9,7 +9,7 @@ package com.tx.component.auth.dao;
 import java.util.List;
 import java.util.Map;
 
-import com.tx.component.auth.model.AuthItemRef;
+import com.tx.component.auth.model.AuthRefItem;
 
 /**
  * AuthItemRefImpl持久层
@@ -32,7 +32,7 @@ public interface AuthItemRefDao {
      * @see [类、类#方法、类#成员]
     */
     public void batchInsertAuthItemRefImplToHis(
-            List<AuthItemRef> condition, String tableSuffix);
+            List<AuthRefItem> condition, String tableSuffix);
     
     /**
       * 插入AuthItemRefImpl对象实体
@@ -45,7 +45,7 @@ public interface AuthItemRefDao {
       * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public void insertAuthItemRefImpl(AuthItemRef condition,
+    public void insertAuthItemRefImpl(AuthRefItem condition,
             String tableSuffix);
     
     /**
@@ -57,7 +57,7 @@ public interface AuthItemRefDao {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public void batchInsertAuthItemRefImpl(List<AuthItemRef> condition,
+    public void batchInsertAuthItemRefImpl(List<AuthRefItem> condition,
             String tableSuffix);
     
     /**
@@ -72,7 +72,7 @@ public interface AuthItemRefDao {
       * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public int deleteAuthItemRefImpl(AuthItemRef condition,
+    public int deleteAuthItemRefImpl(AuthRefItem condition,
             String tableSuffix);
     
     /**
@@ -85,7 +85,7 @@ public interface AuthItemRefDao {
       * @see [类、类#方法、类#成员]
      */
     public void batchDeleteAuthItemRefImpl(
-            List<AuthItemRef> authItemRefImplList, String tableSuffix);
+            List<AuthRefItem> authItemRefImplList, String tableSuffix);
     
     /**
       * 根据条件查询AuthItemRefImpl列表
@@ -99,7 +99,7 @@ public interface AuthItemRefDao {
       * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public List<AuthItemRef> queryAuthItemRefImplList(
+    public List<AuthRefItem> queryAuthItemRefImplList(
             Map<String, Object> params, String tableSuffix);
     
     /**

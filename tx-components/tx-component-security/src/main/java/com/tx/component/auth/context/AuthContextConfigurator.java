@@ -14,24 +14,12 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import com.tx.component.auth.context.authchecker.AuthChecker;
-import com.tx.component.auth.context.loader.impl.XmlAuthLoader;
-import com.tx.component.auth.context.loaderprocessor.ChildAuthRegisterSupportLoaderProcessor;
-import com.tx.component.auth.context.loaderprocessor.ControllerAuthRegisterSupportLoaderProcessor;
-import com.tx.component.auth.dao.AuthItemDao;
-import com.tx.component.auth.dao.AuthItemRefDao;
-import com.tx.component.auth.dao.impl.AuthItemImplDaoImpl;
-import com.tx.component.auth.dao.impl.AuthItemRefImplDaoImpl;
-import com.tx.component.auth.persister.AuthItemPersister;
-import com.tx.component.auth.service.AuthItemService;
-import com.tx.component.auth.service.AuthItemRefImplService;
-import com.tx.component.auth.service.NotTempAuthItemRefImplService;
 import com.tx.core.exceptions.util.AssertUtils;
 
 /**

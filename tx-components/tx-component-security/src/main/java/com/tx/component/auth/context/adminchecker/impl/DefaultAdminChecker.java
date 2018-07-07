@@ -6,7 +6,7 @@
  */
 package com.tx.component.auth.context.adminchecker.impl;
 
-import com.tx.component.auth.AuthConstant;
+import com.tx.component.auth.AuthConstants;
 import com.tx.component.auth.context.adminchecker.AdminChecker;
 
 /**
@@ -24,7 +24,7 @@ public class DefaultAdminChecker implements AdminChecker {
      */
     @Override
     public String refType() {
-        return AuthConstant.AUTHREFTYPE_DEFAULT;
+        return AuthConstants.AUTHREFTYPE_DEFAULT;
     }
 
     /**

@@ -30,9 +30,12 @@ public class JwtSigningKey {
     private String id;
     
     /** 类型:type */
-    private String type;
+    private String subject;
     
-    /** 签名:KeyCode */
+    /** 类型对应的有效期时常： 单位秒 */
+    private long expiration;
+    
+    /** 签名:code */
     private String signingKeyCode;
     
     /** 签名:key */
@@ -41,11 +44,11 @@ public class JwtSigningKey {
     /** 创建时间 */
     private Date createDate;
     
-    /** 有效时间 */
+    /** 有效时间：单位秒 */
     private long duration;
     
-    /** 是否有效 */
-    private boolean valid;
+    /** 是否有效：代码尽量保证有且仅有一个有效，已经过期的在创建新的值以后，再去禁用已经超过有效期的 */
+    private boolean valid = true;
     
     /**
      * @return 返回 id
@@ -62,17 +65,31 @@ public class JwtSigningKey {
     }
     
     /**
-     * @return 返回 type
+     * @return 返回 subject
      */
-    public String getType() {
-        return type;
+    public String getSubject() {
+        return subject;
     }
     
     /**
-     * @param 对type进行赋值
+     * @param 对subject进行赋值
      */
-    public void setType(String type) {
-        this.type = type;
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
+    
+    /**
+     * @return 返回 expiration
+     */
+    public long getExpiration() {
+        return expiration;
+    }
+    
+    /**
+     * @param 对expiration进行赋值
+     */
+    public void setExpiration(long expiration) {
+        this.expiration = expiration;
     }
     
     /**
@@ -130,4 +147,19 @@ public class JwtSigningKey {
     public void setDuration(long duration) {
         this.duration = duration;
     }
+    
+    /**
+     * @return 返回 valid
+     */
+    public boolean isValid() {
+        return valid;
+    }
+    
+    /**
+     * @param 对valid进行赋值
+     */
+    public void setValid(boolean valid) {
+        this.valid = valid;
+    }
+    
 }

@@ -17,5 +17,4 @@ package com.tx.component.security.model;
  */
 public class JwtInternalTokenClaims{
     
-    
 }

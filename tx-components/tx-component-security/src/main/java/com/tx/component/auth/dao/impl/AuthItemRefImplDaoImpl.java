@@ -1,3 +1,4 @@
+package com.tx.component.auth.dao.impl;
 ///*
 // * 描          述:  <描述>
 // * 修  改   人:  

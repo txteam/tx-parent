@@ -11,7 +11,7 @@ import java.util.Set;
 
 import org.springframework.core.Ordered;
 
-import com.tx.component.auth.exceptions.AuthContextInitException;
+import com.tx.component.auth.exception.AuthContextInitException;
 import com.tx.component.auth.model.Auth;
 
 /**

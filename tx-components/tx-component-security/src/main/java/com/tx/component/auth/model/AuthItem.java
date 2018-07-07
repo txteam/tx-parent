@@ -20,7 +20,7 @@ import javax.persistence.Table;
  * @since  [产品/模块版本]
  */
 @Entity
-@Table(name = "auth_authitem")
+@Table(name = "sec_authitem")
 public class AuthItem extends AbstractAuthItem {
     
     /** 注释内容 */

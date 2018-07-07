@@ -74,10 +74,10 @@ public class AuthContextTableInitializer extends AbstractTableInitializer
         
         //初始化表定义
         sb.append(COMMENT_PREFIX)
-                .append("----------table:auth_authitem----------")
+                .append("----------table:sec_authitem----------")
                 .append(COMMENT_SUFFIX)
                 .append(LINE_SEPARATOR);
-        table_auth_authitem(tableDDLExecutor, tableAutoInitialize);
+        table_sec_authitem(tableDDLExecutor, tableAutoInitialize);
         sb.append(LINE_SEPARATOR);
         
         sb.append(COMMENT_PREFIX)
@@ -105,9 +105,9 @@ public class AuthContextTableInitializer extends AbstractTableInitializer
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    private String table_auth_authitem(TableDDLExecutor tableDDLExecutor,
+    private String table_sec_authitem(TableDDLExecutor tableDDLExecutor,
             boolean tableAutoInitialize) {
-        String tableName = "auth_authitem";
+        String tableName = "sec_authitem";
         
         CreateTableDDLBuilder createDDLBuilder = null;
         AlterTableDDLBuilder alterDDLBuilder = null;
@@ -123,7 +123,7 @@ public class AuthContextTableInitializer extends AbstractTableInitializer
             ddlBuilder = createDDLBuilder;
         }
         
-        auth_authitem(ddlBuilder);//写入表结构
+        sec_authitem(ddlBuilder);//写入表结构
         
         if (alterDDLBuilder != null
                 && alterDDLBuilder.compare().isNeedAlter()) {
@@ -149,9 +149,9 @@ public class AuthContextTableInitializer extends AbstractTableInitializer
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public void auth_authitem(DDLBuilder<?> ddlBuilder) {
+    public void sec_authitem(DDLBuilder<?> ddlBuilder) {
         /*
-        create table auth_authitem
+        create table sec_authitem
         (
             id varchar(64) not null,              --权限项唯一键key 
             authType varchar(64) not null,        --权限类型
@@ -173,15 +173,17 @@ public class AuthContextTableInitializer extends AbstractTableInitializer
         ddlBuilder.newColumnOfVarchar(true, "id", 64, true, null)
                 .newColumnOfVarchar("authType", 64, true, null)
                 .newColumnOfVarchar("module", 64, true, null)
-                .newColumnOfInteger("version", 10, true, null)
+                .newColumnOfInteger("version", true, null)
                 .newColumnOfVarchar("parentId", 64, false, null)
                 .newColumnOfVarchar("refType", 64, false, null)
                 .newColumnOfVarchar("refId", 64, false, null)
                 .newColumnOfVarchar("name", 255, true, null)
                 .newColumnOfVarchar("remark", 512, false, null)
+                .newColumnOfVarchar("attributes", 1024, false, null)
                 .newColumnOfBoolean("modifyAble", true, false)
                 .newColumnOfBoolean("valid", true, true)
                 .newColumnOfBoolean("configAble", true, true);
+        ddlBuilder.newIndex(true, "idx_authitem_00", "id,module,version");
         ddlBuilder.newIndex(false, "idx_parentId", "parentId");
         ddlBuilder.newIndex(false, "idx_module", "module");
         //ddlBuilder.newIndex(true, "idx_unique_auth_01", "");
@@ -257,10 +259,13 @@ public class AuthContextTableInitializer extends AbstractTableInitializer
         create index idx_auth_authref_07 on auth_authref${tableSuffix}(invalidDate);
         */
         ddlBuilder.newColumnOfVarchar(true, "id", 64, true, null)
+                .newColumnOfVarchar("refType", 64, true, null)
+                .newColumnOfVarchar("refId", 64, true, null)
                 .newColumnOfVarchar("module", 64, true, null)
+        
+                
                 .newColumnOfVarchar("authType", 64, true, null)
-                .newColumnOfVarchar("refId", 64, false, null)
-                .newColumnOfVarchar("refType", 64, false, null)
+                
                 .newColumnOfVarchar("parentId", 64, false, null)
                 .newColumnOfVarchar("name", 255, true, null)
                 .newColumnOfVarchar("remark", 512, false, null)

@@ -6,23 +6,23 @@ s * 描          述:  <描述>
  */
 package com.tx.component.file.context;
 
-import com.github.pagehelper.PageInfo;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.core.io.Resource;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+
 import com.tx.component.file.FileContextConstants;
 import com.tx.component.file.helper.FileContextHelper;
 import com.tx.component.file.model.FileDefinition;
 import com.tx.component.file.resource.FileResource;
 import com.tx.core.exceptions.resource.ResourceIsExistException;
 import com.tx.core.exceptions.util.AssertUtils;
-import org.apache.commons.io.IOUtils;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.core.io.Resource;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-import java.util.Map;
+import com.tx.core.paged.model.PagedList;
 
 /**
  * 文件处理容器<br/>
@@ -41,13 +41,12 @@ import java.util.Map;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public class FileContext extends FileContextBuilder implements InitializingBean {
-
-    /**
-     * 文件容器自我引用
-     */
+public class FileContext extends FileContextBuilder
+        implements InitializingBean {
+    
+    /** 文件容器自我引用 */
     public static FileContext context;
-
+    
     /**
      * 返回自身唯一引用
      *
@@ -66,10 +65,10 @@ public class FileContext extends FileContextBuilder implements InitializingBean 
                     FileContext.class);
         }
         AssertUtils.notNull(FileContext.context, "context is null.");
-
+        
         return FileContext.context;
     }
-
+    
     /**
      * 保存文件<br/>
      * 如果文件已经存在，则复写当前文件<br/>
@@ -86,15 +85,16 @@ public class FileContext extends FileContextBuilder implements InitializingBean 
     public FileDefinition save(String relativePath, Resource resource) {
         AssertUtils.notEmpty(relativePath, "relativePath is null.");
         AssertUtils.notNull(resource, "input is null.");
-
-        FileDefinition fileDefinition = save(FileContextConstants.DEFAULT_MODULE,
+        
+        FileDefinition fileDefinition = save(
+                FileContextConstants.DEFAULT_MODULE,
                 relativePath,
                 resource,
                 null);
-
+        
         return fileDefinition;
     }
-
+    
     /**
      * 保存文件<br/>
      * 如果文件已经存在，则复写当前文件<br/>
@@ -110,18 +110,18 @@ public class FileContext extends FileContextBuilder implements InitializingBean 
      */
     @Transactional
     public FileDefinition save(String module, String relativePath,
-                               Resource resource) {
+            Resource resource) {
         AssertUtils.notEmpty(relativePath, "relativePath is null.");
         AssertUtils.notNull(resource, "input is null.");
-
+        
         FileDefinition fileDefinition = save(module,
                 relativePath,
                 resource,
                 null);
-
+        
         return fileDefinition;
     }
-
+    
     /**
      * 保存文件<br/>
      * 如果文件已经存在，则复写当前文件<br/>
@@ -137,18 +137,19 @@ public class FileContext extends FileContextBuilder implements InitializingBean 
      */
     @Transactional
     public FileDefinition save(String relativePath, Resource resource,
-                               String filename) {
+            String filename) {
         AssertUtils.notEmpty(relativePath, "relativePath is null.");
         AssertUtils.notNull(resource, "input is null.");
-
-        FileDefinition fileDefinition = save(FileContextConstants.DEFAULT_MODULE,
+        
+        FileDefinition fileDefinition = save(
+                FileContextConstants.DEFAULT_MODULE,
                 relativePath,
                 resource,
                 filename);
-
+        
         return fileDefinition;
     }
-
+    
     /**
      * 保存文件<br/>
      * 如果文件已经存在，则复写当前文件<br/>
@@ -166,31 +167,28 @@ public class FileContext extends FileContextBuilder implements InitializingBean 
      */
     @Transactional
     public FileDefinition save(String module, String relativePath,
-                               Resource resource, String filename) {
+            Resource resource, String filename) {
         relativePath = FileContextHelper.handleRelativePath(relativePath);
         AssertUtils.notEmpty(relativePath, "relativePath is null.");
         AssertUtils.notNull(resource, "resource is null.");
         AssertUtils.isExist(resource, "resource is not exsit.");
-
-        module = StringUtils.isEmpty(module) ? FileContextConstants.DEFAULT_MODULE
-                : module;
+        
+        module = StringUtils.isEmpty(module)
+                ? FileContextConstants.DEFAULT_MODULE : module;
         if (!StringUtils.isEmpty(filename)) {
-            relativePath = StringUtils.applyRelativePath(relativePath, filename);
+            relativePath = StringUtils.applyRelativePath(relativePath,
+                    filename);
         }
-
-        InputStream input = null;
+        
         FileDefinition fileDefinition = null;
-        try {
-            input = resource.getInputStream();
+        try (InputStream input = resource.getInputStream();) {
             fileDefinition = doSaveFile(module, relativePath, input);
         } catch (IOException e) {
             AssertUtils.wrap(e, "文件流处理异常.");
-        } finally {
-            IOUtils.closeQuietly(input);
         }
         return fileDefinition;
     }
-
+    
     /**
      * 添加文件资源<br/>
      * <功能详细描述>
@@ -207,14 +205,14 @@ public class FileContext extends FileContextBuilder implements InitializingBean 
             throws ResourceIsExistException {
         AssertUtils.notEmpty(relativePath, "relativePath is null.");
         AssertUtils.notNull(resource, "input is null.");
-
+        
         FileDefinition fileDefinition = add(FileContextConstants.DEFAULT_MODULE,
                 relativePath,
                 resource,
                 null);
         return fileDefinition;
     }
-
+    
     /**
      * 保存文件<br/>
      * 如果文件已经存在，则复写当前文件<br/>
@@ -230,18 +228,18 @@ public class FileContext extends FileContextBuilder implements InitializingBean 
      */
     @Transactional
     public FileDefinition add(String module, String relativePath,
-                              Resource resource) {
+            Resource resource) {
         AssertUtils.notEmpty(relativePath, "relativePath is null.");
         AssertUtils.notNull(resource, "input is null.");
-
+        
         FileDefinition fileDefinition = add(module,
                 relativePath,
                 resource,
                 null);
-
+        
         return fileDefinition;
     }
-
+    
     /**
      * 保存文件<br/>
      * 如果文件已经存在，则会抛出ResourceIsExistException<br/>
@@ -259,17 +257,17 @@ public class FileContext extends FileContextBuilder implements InitializingBean 
      */
     @Transactional
     public FileDefinition add(String relativePath, Resource resource,
-                              String filename) throws ResourceIsExistException {
+            String filename) throws ResourceIsExistException {
         AssertUtils.notEmpty(relativePath, "relativePath is null.");
         AssertUtils.notNull(resource, "input is null.");
-
+        
         FileDefinition fileDefinition = add(FileContextConstants.DEFAULT_MODULE,
                 relativePath,
                 resource,
                 filename);
         return fileDefinition;
     }
-
+    
     /**
      * 保存文件<br/>
      * 如果文件已经存在，则会抛出ResourceIsExistException<br/>
@@ -286,31 +284,30 @@ public class FileContext extends FileContextBuilder implements InitializingBean 
      */
     @Transactional
     public FileDefinition add(String module, String relativePath,
-                              Resource resource, String filename) throws ResourceIsExistException {
+            Resource resource, String filename)
+            throws ResourceIsExistException {
         relativePath = FileContextHelper.handleRelativePath(relativePath);
         AssertUtils.notEmpty(relativePath, "relativePath is null.");
         AssertUtils.notNull(resource, "resource is null.");
         AssertUtils.isExist(resource, "resource is not exsit.");
-
-        module = StringUtils.isEmpty(module) ? FileContextConstants.DEFAULT_MODULE
-                : module;
+        
+        module = StringUtils.isEmpty(module)
+                ? FileContextConstants.DEFAULT_MODULE : module;
         if (!StringUtils.isEmpty(filename)) {
-            relativePath = StringUtils.applyRelativePath(relativePath, filename);
+            relativePath = StringUtils.applyRelativePath(relativePath,
+                    filename);
         }
-
-        InputStream input = null;
+        
+        
         FileDefinition fileDefinition = null;
-        try {
-            input = resource.getInputStream();
+        try (InputStream input = resource.getInputStream()){
             fileDefinition = doAddFile(module, relativePath, input);
         } catch (IOException e) {
             AssertUtils.wrap(e, "文件流处理异常.");
-        } finally {
-            IOUtils.closeQuietly(input);
-        }
+        } 
         return fileDefinition;
     }
-
+    
     /**
      * 保存文件<br/>
      * 如果文件已经存在，则复写当前文件<br/>
@@ -327,15 +324,13 @@ public class FileContext extends FileContextBuilder implements InitializingBean 
     public FileDefinition save(String relativePath, InputStream input) {
         AssertUtils.notEmpty(relativePath, "relativePath is null.");
         AssertUtils.notNull(input, "input is null.");
-
-        FileDefinition fileDefinition = save(FileContextConstants.DEFAULT_MODULE,
-                relativePath,
-                input,
-                null);
-
+        
+        FileDefinition fileDefinition = save(
+                FileContextConstants.DEFAULT_MODULE, relativePath, input, null);
+        
         return fileDefinition;
     }
-
+    
     /**
      * 保存文件<br/>
      * 如果文件已经存在，则复写当前文件<br/>
@@ -351,15 +346,15 @@ public class FileContext extends FileContextBuilder implements InitializingBean 
      */
     @Transactional
     public FileDefinition save(String module, String relativePath,
-                               InputStream input) {
+            InputStream input) {
         AssertUtils.notEmpty(relativePath, "relativePath is null.");
         AssertUtils.notNull(input, "input is null.");
-
+        
         FileDefinition fileDefinition = save(module, relativePath, input, null);
-
+        
         return fileDefinition;
     }
-
+    
     /**
      * 保存文件<br/>
      * 如果文件已经存在，则复写当前文件<br/>
@@ -375,18 +370,19 @@ public class FileContext extends FileContextBuilder implements InitializingBean 
      */
     @Transactional
     public FileDefinition save(String relativePath, InputStream input,
-                               String filename) {
+            String filename) {
         AssertUtils.notEmpty(relativePath, "relativePath is null.");
         AssertUtils.notNull(input, "input is null.");
-
-        FileDefinition fileDefinition = save(FileContextConstants.DEFAULT_MODULE,
+        
+        FileDefinition fileDefinition = save(
+                FileContextConstants.DEFAULT_MODULE,
                 relativePath,
                 input,
                 filename);
-
+        
         return fileDefinition;
     }
-
+    
     /**
      * 保存文件<br/>
      * 如果文件已经存在，则复写当前文件<br/>
@@ -404,21 +400,22 @@ public class FileContext extends FileContextBuilder implements InitializingBean 
      */
     @Transactional
     public FileDefinition save(String module, String relativePath,
-                               InputStream input, String filename) {
+            InputStream input, String filename) {
         AssertUtils.notEmpty(relativePath, "relativePath is null.");
         AssertUtils.notNull(input, "input is null.");
-
-        module = StringUtils.isEmpty(module) ? FileContextConstants.DEFAULT_MODULE
-                : module;
+        
+        module = StringUtils.isEmpty(module)
+                ? FileContextConstants.DEFAULT_MODULE : module;
         if (!StringUtils.isEmpty(filename)) {
-            relativePath = StringUtils.applyRelativePath(relativePath, filename);
+            relativePath = StringUtils.applyRelativePath(relativePath,
+                    filename);
         }
-
+        
         FileDefinition fileDefinition = doSaveFile(module, relativePath, input);
-
+        
         return fileDefinition;
     }
-
+    
     /**
      * 添加文件资源<br/>
      * <功能详细描述>
@@ -435,14 +432,14 @@ public class FileContext extends FileContextBuilder implements InitializingBean 
             throws ResourceIsExistException {
         AssertUtils.notEmpty(relativePath, "relativePath is null.");
         AssertUtils.notNull(input, "input is null.");
-
+        
         FileDefinition fileDefinition = add(FileContextConstants.DEFAULT_MODULE,
                 relativePath,
                 input,
                 null);
         return fileDefinition;
     }
-
+    
     /**
      * 保存文件<br/>
      * 如果文件已经存在，则复写当前文件<br/>
@@ -458,15 +455,15 @@ public class FileContext extends FileContextBuilder implements InitializingBean 
      */
     @Transactional
     public FileDefinition add(String module, String relativePath,
-                              InputStream input) {
+            InputStream input) {
         AssertUtils.notEmpty(relativePath, "relativePath is null.");
         AssertUtils.notNull(input, "input is null.");
-
+        
         FileDefinition fileDefinition = add(module, relativePath, input, null);
-
+        
         return fileDefinition;
     }
-
+    
     /**
      * 保存文件<br/>
      * 如果文件已经存在，则会抛出ResourceIsExistException<br/>
@@ -484,17 +481,17 @@ public class FileContext extends FileContextBuilder implements InitializingBean 
      */
     @Transactional
     public FileDefinition add(String relativePath, InputStream input,
-                              String filename) throws ResourceIsExistException {
+            String filename) throws ResourceIsExistException {
         AssertUtils.notEmpty(relativePath, "relativePath is null.");
         AssertUtils.notNull(input, "input is null.");
-
+        
         FileDefinition fileDefinition = add(FileContextConstants.DEFAULT_MODULE,
                 relativePath,
                 input,
                 filename);
         return fileDefinition;
     }
-
+    
     /**
      * 保存文件<br/>
      * 如果文件已经存在，则会抛出ResourceIsExistException<br/>
@@ -511,20 +508,22 @@ public class FileContext extends FileContextBuilder implements InitializingBean 
      */
     @Transactional
     public FileDefinition add(String module, String relativePath,
-                              InputStream input, String filename) throws ResourceIsExistException {
+            InputStream input, String filename)
+            throws ResourceIsExistException {
         AssertUtils.notEmpty(relativePath, "relativePath is null.");
         AssertUtils.notNull(input, "input is null.");
-
-        module = StringUtils.isEmpty(module) ? FileContextConstants.DEFAULT_MODULE
-                : module;
+        
+        module = StringUtils.isEmpty(module)
+                ? FileContextConstants.DEFAULT_MODULE : module;
         if (!StringUtils.isEmpty(filename)) {
-            relativePath = StringUtils.applyRelativePath(relativePath, filename);
+            relativePath = StringUtils.applyRelativePath(relativePath,
+                    filename);
         }
-
+        
         FileDefinition fileDefinition = doAddFile(module, relativePath, input);
         return fileDefinition;
     }
-
+    
     /**
      * 根据文件定义id删除对应的文件定义及对应的资源<br/>
      * 删除对应数据库文件资源数据以及存储中对应的文件资源
@@ -537,11 +536,11 @@ public class FileContext extends FileContextBuilder implements InitializingBean 
     @Transactional
     public boolean deleteById(String fileDefinitionId) {
         AssertUtils.notEmpty(fileDefinitionId, "fileDefinitionId is empty.");
-
+        
         boolean flag = doDeleteById(fileDefinitionId);
         return flag;
     }
-
+    
     /**
      * 根据文件定义id删除对应的文件定义及对应的资源<br/>
      * 删除对应数据库文件资源数据以及存储中对应的文件资源
@@ -555,7 +554,7 @@ public class FileContext extends FileContextBuilder implements InitializingBean 
     public boolean deleteByByRelativePath(String module, String relativePath) {
         AssertUtils.notEmpty(module, "module is empty.");
         AssertUtils.notEmpty(relativePath, "relativePath is empty.");
-
+        
         FileDefinition fileDefinition = doFindByRelativePath(module,
                 relativePath);
         if (fileDefinition == null) {
@@ -564,7 +563,7 @@ public class FileContext extends FileContextBuilder implements InitializingBean 
         boolean flag = doDeleteById(fileDefinition.getId());
         return flag;
     }
-
+    
     /**
      * 根据文件定义id获取对应的文件定义实例对象<br/>
      * <功能详细描述>
@@ -576,12 +575,12 @@ public class FileContext extends FileContextBuilder implements InitializingBean 
      */
     public FileDefinition findById(String fileDefinitionId) {
         AssertUtils.notEmpty(fileDefinitionId, "fileDefinitionId is empty.");
-
+        
         FileDefinition res = doFindById(fileDefinitionId);
-
+        
         return res;
     }
-
+    
     /**
      * 根据文件id获取对应的文件定义(含fileResource)<br/>
      * <功能详细描述>
@@ -593,16 +592,16 @@ public class FileContext extends FileContextBuilder implements InitializingBean 
      */
     public FileDefinition findWithResourceById(String fileDefinitionId) {
         AssertUtils.notEmpty(fileDefinitionId, "fileDefinitionId is empty.");
-
+        
         FileDefinition fileDefinition = doFindById(fileDefinitionId);
         if (fileDefinition != null) {
             FileResource fileResource = doGetFileResource(fileDefinition);
             fileDefinition.setResource(fileResource);
         }
-
+        
         return fileDefinition;
     }
-
+    
     /**
      * 根据文件定义id获取文件定义对应的资源<br/>
      * <功能详细描述>
@@ -614,16 +613,16 @@ public class FileContext extends FileContextBuilder implements InitializingBean 
      */
     public FileResource getResourceById(String fileDefinitionId) {
         AssertUtils.notEmpty(fileDefinitionId, "fileDefinitionId is empty.");
-
+        
         FileDefinition fileDefinition = doFindById(fileDefinitionId);
         if (fileDefinition == null) {
             return null;
         }
-
+        
         FileResource fileResource = doGetFileResource(fileDefinition);
         return fileResource;
     }
-
+    
     /**
      * 根据所属模块以及存储相对路径目录查询对应的文件定义列表<br/>
      * <功能详细描述>
@@ -636,16 +635,16 @@ public class FileContext extends FileContextBuilder implements InitializingBean 
      * @see [类、类#方法、类#成员]
      */
     public List<FileDefinition> queryList(String module, String relativeFolder,
-                                          String[] filenameExtensions, Map<String, Object> params) {
+            String[] filenameExtensions, Map<String, Object> params) {
         AssertUtils.notEmpty(module, "module is empty.");
-
+        
         List<FileDefinition> resList = doQueryList(module,
                 relativeFolder,
                 filenameExtensions,
                 params);
         return resList;
     }
-
+    
     /**
      * 根据所属模块以及存储相对路径目录查询对应的文件定义列表<br/>
      * <功能详细描述>
@@ -657,12 +656,12 @@ public class FileContext extends FileContextBuilder implements InitializingBean 
      * @throws throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public PageInfo<FileDefinition> queryPagedList(String module,
-                                                   String relativeFolder, String[] filenameExtensions,
-                                                   Map<String, Object> params, int pageIndex, int pageSize) {
+    public PagedList<FileDefinition> queryPagedList(String module,
+            String relativeFolder, String[] filenameExtensions,
+            Map<String, Object> params, int pageIndex, int pageSize) {
         AssertUtils.notEmpty(module, "module is empty.");
-
-        PageInfo<FileDefinition> resPagedList = doQueryPagedList(module,
+        
+        PagedList<FileDefinition> resPagedList = doQueryPagedList(module,
                 relativeFolder,
                 filenameExtensions,
                 params,

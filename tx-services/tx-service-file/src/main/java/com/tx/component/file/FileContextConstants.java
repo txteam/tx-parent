@@ -9,6 +9,8 @@ package com.tx.component.file;
 
  /**
   * 文件容器常量<br/>
+  *    暂只支持oss存储，以及本地存储
+  *    如果需要，未来可以增加七牛云，FastDFS的能力支撑
   * <功能详细描述>
   * 
   * @author  Administrator

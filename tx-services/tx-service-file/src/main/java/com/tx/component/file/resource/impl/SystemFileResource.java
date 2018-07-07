@@ -114,9 +114,9 @@ public class SystemFileResource extends AbstractFileResource {
         try {
             //如果对应的文件资源已经存在，则进行替换
             if (this.fileSystemResource.exists()) {
-                throw new ResourceIsExistException(
-                        MessageUtils.format("resource is exist. path:{}",
-                                new Object[] { fileDefinition.getRelativePath() }));
+                throw new ResourceIsExistException(MessageUtils.format(
+                        "resource is exist. path:{}",
+                        new Object[] { fileDefinition.getRelativePath() }));
             }
             writeFile(this.fileSystemResource, inputStream);
         } catch (IOException e) {
@@ -150,12 +150,8 @@ public class SystemFileResource extends AbstractFileResource {
         AssertUtils.notNull(outputResource, "outputResource is null.");
         AssertUtils.notNull(inputStream, "inputStream is null.");
         
-        OutputStream output = null;
-        try {
-            output = outputResource.getOutputStream();
+        try (OutputStream output = outputResource.getOutputStream()) {
             IOUtils.copy(inputStream, output);
-        } finally {
-            IOUtils.closeQuietly(output);
         }
     }
 }

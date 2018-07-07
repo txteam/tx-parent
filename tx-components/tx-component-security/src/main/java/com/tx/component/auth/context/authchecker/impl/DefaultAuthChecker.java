@@ -8,7 +8,7 @@ package com.tx.component.auth.context.authchecker.impl;
 
 import java.util.List;
 
-import com.tx.component.auth.AuthConstant;
+import com.tx.component.auth.AuthConstants;
 import com.tx.component.auth.model.AuthRef;
 
 /**
@@ -27,7 +27,7 @@ public class DefaultAuthChecker extends AbstractAuthChecker {
      */
     @Override
     public String getCheckAuthType() {
-        return AuthConstant.AUTHTYPE_ABSTRACT_DEFAULT;
+        return AuthConstants.AUTHTYPE_ABSTRACT_DEFAULT;
     }
     
     /**

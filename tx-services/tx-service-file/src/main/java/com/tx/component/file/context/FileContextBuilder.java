@@ -6,7 +6,22 @@
  */
 package com.tx.component.file.context;
 
-import com.github.pagehelper.PageInfo;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.FileUtils;
+import org.springframework.beans.factory.BeanNameAware;
+import org.springframework.context.ResourceLoaderAware;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
+import org.springframework.util.StringUtils;
+
 import com.thoughtworks.xstream.XStream;
 import com.tx.component.file.config.FileContextConfig;
 import com.tx.component.file.config.FileModuleCfg;
@@ -25,23 +40,9 @@ import com.tx.core.ddlutil.builder.create.CreateTableDDLBuilder;
 import com.tx.core.ddlutil.executor.TableDDLExecutorFactory;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.exceptions.util.ExceptionWrapperUtils;
+import com.tx.core.paged.model.PagedList;
 import com.tx.core.util.UUIDUtils;
 import com.tx.core.util.XstreamUtils;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.io.FileUtils;
-import org.springframework.beans.factory.BeanNameAware;
-import org.springframework.context.ResourceLoaderAware;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
-import org.springframework.util.StringUtils;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * 文件容器构建器<br/>
@@ -303,12 +304,12 @@ public class FileContextBuilder extends FileContextConfigurator implements
      * @throws throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    protected PageInfo<FileDefinition> doQueryPagedList(String module,
+    protected PagedList<FileDefinition> doQueryPagedList(String module,
                                                         String relativeFolder, String[] filenameExtensions,
                                                         Map<String, Object> params, int pageIndex, int pageSize) {
         AssertUtils.notEmpty(module, "module is empty.");
 
-        PageInfo<FileDefinition> resPagedList = getFileDefinitionService().queryPagedList(module,
+        PagedList<FileDefinition> resPagedList = getFileDefinitionService().queryPagedList(module,
                 relativeFolder,
                 filenameExtensions,
                 params,

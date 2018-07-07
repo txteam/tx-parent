@@ -17,8 +17,13 @@ package com.tx.component.security;
  */
 public interface SecurityConstants {
     
+    /** jwt头部签名code */
+    String JWT_HEADER_SIGNING_KEY_CODE = "skcode";
+    
     /** 内部系统间 header_token_name */
     String JWT_INTERNAL_HEADER_TOKEN_NAME = "jwt_internal_token";
+    
+    
     
     /** 刷新token */
     String REFRESH_TOKEN_NAME = "refresh_token";

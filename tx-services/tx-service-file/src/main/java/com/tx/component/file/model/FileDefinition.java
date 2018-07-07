@@ -17,28 +17,25 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tx.component.file.resource.FileResource;
 import com.tx.core.jdbc.sqlsource.annotation.QueryConditionEqual;
 import com.tx.core.jdbc.sqlsource.annotation.UpdateAble;
+import com.tx.core.support.json.JSONAttributesSupport;
 
 /**
  * 文件定义<br/>
  * <功能详细描述>
  * 
- * @author Rain.he
- * @version [版本号, 2015年3月12日]
+ * @author Tim.pqy
+ * @version [版本号, 2018年7月7日]
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
 @Entity
-@Table(name = "core_file_definition")
-public class FileDefinition {
+@Table(name = "file_definition")
+public class FileDefinition implements JSONAttributesSupport {
     
     /** 文件的存储id */
     @Id
     @QueryConditionEqual
     private String id;
-    
-    /** 所属系统：容器初始化时唯一确定 */
-    @QueryConditionEqual
-    private String system;
     
     /** 所属模块:容器初始化时唯一确定，如果一个系统需要支撑多个模块 ,仅需要根据不同的module生成多个FileContext实现即可 */
     @QueryConditionEqual
@@ -59,9 +56,9 @@ public class FileDefinition {
     @UpdateAble
     private String filenameExtension;
     
-    /** 访问应用的url如果：写入的策略不支持url可以为空 */
-    @QueryConditionEqual
-    private String viewUrl;
+    /** 文件的额外存储属性 */
+    @UpdateAble
+    private String attributes;
     
     /** 删除时间 */
     @UpdateAble
@@ -91,20 +88,6 @@ public class FileDefinition {
      */
     public void setId(String id) {
         this.id = id;
-    }
-    
-    /**
-     * @return 返回 system
-     */
-    public String getSystem() {
-        return system;
-    }
-    
-    /**
-     * @param 对system进行赋值
-     */
-    public void setSystem(String system) {
-        this.system = system;
     }
     
     /**
@@ -164,20 +147,6 @@ public class FileDefinition {
     }
     
     /**
-     * @return 返回 viewUrl
-     */
-    public String getViewUrl() {
-        return viewUrl;
-    }
-    
-    /**
-     * @param 对viewUrl进行赋值
-     */
-    public void setViewUrl(String viewUrl) {
-        this.viewUrl = viewUrl;
-    }
-    
-    /**
      * @return 返回 lastUpdateDate
      */
     public Date getLastUpdateDate() {
@@ -217,6 +186,20 @@ public class FileDefinition {
      */
     public void setDeleteDate(Date deleteDate) {
         this.deleteDate = deleteDate;
+    }
+    
+    /**
+     * @return 返回 attributes
+     */
+    public String getAttributes() {
+        return attributes;
+    }
+    
+    /**
+     * @param 对attributes进行赋值
+     */
+    public void setAttributes(String attributes) {
+        this.attributes = attributes;
     }
     
     /**

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration monitorInterval="300">
+	<Properties>
+		<property name="content_name" value="file-server" />
+		<property name="log_path" value="${app.log.path}${content_name}" />
+
+		<property name="common_pattern" value="[%d{yyyy-MM-dd HH:mm:ss,SSS}] %-5level %class{36} %L %M -%msg%xEx%n" />
+		<property name="max_log_file_size" value="20MB"></property>
+		<property name="max_log_file_num" value="10"></property>
+	</Properties>
+
+	<Appenders>
+		<!-- 输出控制台日志的配置 -->
+		<Console name="stdout" target="SYSTEM_OUT">
+			<!--控制台只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch） -->
+			<ThresholdFilter level="trace" onMatch="ACCEPT" onMismatch="DENY" />
+			<!-- 输出日志的格式 -->
+			<PatternLayout pattern="${common_pattern}" />
+		</Console>
+
+		<!-- 文件会打印出所有信息，这个log每次运行程序会自动清空，由append属性决定，这个也挺有用的，适合临时测试用 -->
+		<!-- append为TRUE表示消息增加到指定文件中，false表示消息覆盖指定的文件内容，默认值是true -->
+		<File name="sql_log_file" fileName="${log_path}.sql.log" append="false">
+			<PatternLayout pattern="%msg%xEx%n" />
+		</File>
+		<File name="cache_log_file" fileName="${log_path}.cache.log" append="false">
+			<PatternLayout pattern="%msg%xEx%n" />
+		</File>
+
+		<!-- info,warning日志 -->
+		<RollingRandomAccessFile name="info_log_file" immediateFlush="false" fileName="${log_path}.info.log" filePattern="${log_path}/$${date:yyyy-MM}/info.%d{yyyy--MM--dd}.%i.log.gz">
+			<PatternLayout pattern="${common_pattern}" /><!-- 输出日志的格式 -->
+			<Policies>
+				<OnStartupTriggeringPolicy />
+				<TimeBasedTriggeringPolicy interval="1" modulate="true" />
+				<SizeBasedTriggeringPolicy size="${max_log_file_size}" />
+			</Policies>
+			<Filters>
+				<!-- 只记录info和warn级别信息 -->
+				<ThresholdFilter level="error" onMatch="DENY" onMismatch="NEUTRAL" />
+				<ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY" />
+			</Filters>
+			<!-- 指定每天的最大压缩包个数，默认7个，超过了会覆盖之前的 -->
+			<DefaultRolloverStrategy max="${max_log_file_num}" />
+		</RollingRandomAccessFile>
+
+		<!-- 打印错误日志 -->
+		<RollingFile name="error_log_file" append="true" fileName="${log_path}.error.log" filePattern="${log_path}/$${date:yyyy-MM-dd}/error.%d{yyyy--MM--dd}.%i.log.gz">
+			<PatternLayout pattern="${common_pattern}" />
+			<Filters>
+				<ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY" />
+			</Filters>
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="24" modulate="false" />
+				<SizeBasedTriggeringPolicy size="${max_log_file_size}" />
+			</Policies>
+		</RollingFile>
+	</Appenders>
+
+	<!-- 日志类别 -->
+	<Loggers>
+		<!-- spring框架打印日志级别 -->
+		<Logger name="org.springframework" level="ERROR" />
+
+		<!-- springMVC答应日志级别 -->
+		<Logger name="org.springframework.web" level="ERROR" />
+		<Logger name="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping" level="ERROR" />
+		<Logger name="org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver" level="ERROR" />
+		<Logger name="org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver" level="ERROR" />
+
+		<!-- mybatis日志级别 -->
+		<Logger name="org.apache.ibatis" level="ERROR" />
+		<Logger name="org.mybais" level="ERROR" />
+
+		<!-- sql日志级别 p6spy -->
+		<Logger name="p6spy" level="DEBUG">
+			<AppenderRef ref="sql_log_file" />
+		</Logger>
+
+		<Root level="INFO">
+			<AppenderRef ref="stdout" />
+			<AppenderRef ref="info_log_file" />
+			<AppenderRef ref="error_log_file" />
+		</Root>
+	</Loggers>
+</Configuration> 

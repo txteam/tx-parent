@@ -1,3 +1,5 @@
+debug: true
+
 server:
   port: 8080
 
@@ -31,19 +33,6 @@ spring:
         template-loader-path: classpath:/template/
         suffix: .ftl
         check-template-location: true
-
-
-
-
-
-#pagehelper分页插件
-pagehelper:
-    helperDialect: mysql
-    reasonable: true
-    supportMethodsArguments: true
-    params: count=countSql
-
-debug: true
 
 mybatis:
   mapper-locations: classpath*:mapper/*SqlMap.xml

@@ -13,17 +13,16 @@ import org.springframework.core.Ordered;
 
 import com.tx.component.auth.model.Auth;
 
-
- /**
-  * 权限加载器
-  * <功能详细描述>
-  * 
-  * @author  PengQingyang
-  * @version  [版本号, 2012-12-13]
-  * @see  [相关类/方法]
-  * @since  [产品/模块版本]
-  */
-public interface AuthLoader extends Ordered{
+/**
+ * 权限加载器<br/>
+ * <功能详细描述>
+ * 
+ * @author  PengQingyang
+ * @version  [版本号, 2012-12-13]
+ * @see  [相关类/方法]
+ * @since  [产品/模块版本]
+ */
+public interface AuthLoader extends Ordered {
     
     /**
       * 加载系统的所有权限项

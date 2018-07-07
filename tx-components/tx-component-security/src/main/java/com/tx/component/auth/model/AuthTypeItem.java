@@ -21,13 +21,13 @@ import org.springframework.core.Ordered;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class AuthTypeItem implements Serializable{
+public class AuthTypeItem implements Serializable, Ordered {
     
     /** 注释内容 */
     private static final long serialVersionUID = 7942093110803351685L;
     
     /** 权限类型  */
-    private String id;
+    private String authType;
     
     /** 权限类型归属模块 */
     private String module;
@@ -44,6 +44,7 @@ public class AuthTypeItem implements Serializable{
     /** 权限项列表 */
     private List<Auth> authList;
     
+    /** 排序值 */
     private int orderIndex = 0;
     
     /**
@@ -66,18 +67,15 @@ public class AuthTypeItem implements Serializable{
      * 使AuthType构造函数为包内可见，使外部不能通过new去创建AuthTypeItem
      * <默认构造函数>
      */
-    public AuthTypeItem(String authType, String name, String description,
-            boolean isViewAble, boolean isConfigAble, int orderIndex) {
+    public AuthTypeItem(String authType, String name, String remark,
+            boolean viewAble, int orderIndex) {
         super();
         this.authType = authType;
         this.name = name;
-        this.description = description;
-        this.isViewAble = isViewAble;
-        this.isConfigAble = isConfigAble;
+        this.remark = remark;
+        this.viewAble = viewAble;
         this.orderIndex = orderIndex;
     }
-    
-    
     
     /**
      * @param 对authType进行赋值
@@ -87,45 +85,59 @@ public class AuthTypeItem implements Serializable{
     }
     
     /**
-     * @return 返回 isViewAble
+     * @return 返回 module
+     */
+    public String getModule() {
+        return module;
+    }
+    
+    /**
+     * @param 对module进行赋值
+     */
+    public void setModule(String module) {
+        this.module = module;
+    }
+    
+    /**
+     * @return 返回 remark
+     */
+    public String getRemark() {
+        return remark;
+    }
+    
+    /**
+     * @param 对remark进行赋值
+     */
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+    
+    /**
+     * @return 返回 viewAble
      */
     public boolean isViewAble() {
-        return isViewAble;
+        return viewAble;
     }
     
     /**
-     * @param 对isViewAble进行赋值
+     * @param 对viewAble进行赋值
      */
-    public void setViewAble(boolean isViewAble) {
-        this.isViewAble = isViewAble;
+    public void setViewAble(boolean viewAble) {
+        this.viewAble = viewAble;
     }
     
     /**
-     * @return 返回 isConfigAble
+     * @return 返回 authList
      */
-    public boolean isConfigAble() {
-        return isConfigAble;
+    public List<Auth> getAuthList() {
+        return authList;
     }
     
     /**
-     * @param 对isConfigAble进行赋值
+     * @param 对authList进行赋值
      */
-    public void setConfigAble(boolean isConfigAble) {
-        this.isConfigAble = isConfigAble;
-    }
-    
-    /**
-     * @return 返回 authItemList
-     */
-    public List<Auth> getAuthItemList() {
-        return authItemList;
-    }
-    
-    /**
-     * @param 对authItemList进行赋值
-     */
-    public void setAuthItemList(List<Auth> authItemList) {
-        this.authItemList = authItemList;
+    public void setAuthList(List<Auth> authList) {
+        this.authList = authList;
     }
     
     /**
@@ -144,20 +156,6 @@ public class AuthTypeItem implements Serializable{
      */
     public void setName(String name) {
         this.name = name;
-    }
-    
-    /**
-     * @return 返回 description
-     */
-    public String getDescription() {
-        return description;
-    }
-    
-    /**
-     * @param 对description进行赋值
-     */
-    public void setDescription(String description) {
-        this.description = description;
     }
     
     /**

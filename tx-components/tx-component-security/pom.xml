@@ -23,13 +23,18 @@
 			<artifactId>tx-core</artifactId>
 		</dependency>
 
-		<!-- Redis -->
+		<!-- json xml -->
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-redis</artifactId>
+			<groupId>com.thoughtworks.xstream</groupId>
+			<artifactId>xstream</artifactId>
 		</dependency>
 
 		<!-- jwt、security、zuul -->
+		<!-- <dependency> -->
+		<!-- <groupId>com.auth0</groupId> -->
+		<!-- <artifactId>java-jwt</artifactId> -->
+		<!-- <version>3.4.0</version> -->
+		<!-- </dependency> -->
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt</artifactId>
@@ -56,11 +61,26 @@
 			<groupId>org.mybatis.spring.boot</groupId>
 			<artifactId>mybatis-spring-boot-starter</artifactId>
 		</dependency>
-
-		<!-- json xml -->
+		
+		<!-- feign -->
 		<dependency>
-			<groupId>com.thoughtworks.xstream</groupId>
-			<artifactId>xstream</artifactId>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-feign</artifactId>
+			<optional>true</optional>
+		</dependency>
+
+		<!-- Redis -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-redis</artifactId>
+			<optional>true</optional>
+		</dependency>
+
+		<!-- spring-session -->
+		<dependency>
+			<groupId>org.springframework.session</groupId>
+			<artifactId>spring-session-data-redis</artifactId>
+			<optional>true</optional>
 		</dependency>
 
 		<!-- mysql -->

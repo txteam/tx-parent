@@ -60,17 +60,20 @@ import com.tx.core.util.UUIDUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public abstract class AbstractUEditorController implements InitializingBean,
-        ApplicationContextAware {
+public abstract class AbstractUEditorController
+        implements InitializingBean, ApplicationContextAware {
     
     /** 日志记录器 */
-    protected Logger logger = LoggerFactory.getLogger(AbstractUEditorController.class);
+    protected Logger logger = LoggerFactory
+            .getLogger(AbstractUEditorController.class);
     
     /** callbackName正则表达式 */
-    private static final Pattern FILENAME_PATTERN = Pattern.compile("^\\w+?\\.[a-zA-Z]+$");
+    private static final Pattern FILENAME_PATTERN = Pattern
+            .compile("^\\w+?\\.[a-zA-Z]+$");
     
     /** callbackName正则表达式 */
-    private static final Pattern CALLBACK_PATTERN = Pattern.compile("^[a-zA-Z_]+[\\w0-9_]*$");
+    private static final Pattern CALLBACK_PATTERN = Pattern
+            .compile("^[a-zA-Z_]+[\\w0-9_]*$");
     
     /** spring applicationContext 句柄 */
     protected ApplicationContext applicationContext;
@@ -94,17 +97,15 @@ public abstract class AbstractUEditorController implements InitializingBean,
     @Override
     public void afterPropertiesSet() throws Exception {
         //启动期间加载Controller同级的目录中的配置文件
-        InputStream input = getClass().getResourceAsStream("config.js");
-        try {
+        try (InputStream input = getClass().getResourceAsStream("config.js");) {
             String configContext = IOUtils.toString(input, "UTF-8");
             //过滤输入字符串, 剔除多行注释以及替换掉反斜杠
             configContext = configContext.replaceAll("/\\*[\\s\\S]*?\\*/", "");
             //获取配置实例
-            this.configManager = UEditorConfigManager.newInstance(configContext);
+            this.configManager = UEditorConfigManager
+                    .newInstance(configContext);
         } catch (Exception e) {
             AssertUtils.wrap(e, "解析配置文件异常.");
-        } finally {
-            IOUtils.closeQuietly(input);
         }
     }
     
@@ -157,7 +158,8 @@ public abstract class AbstractUEditorController implements InitializingBean,
         String json = null;
         if (!StringUtils.isEmpty(callback) && !validateCallback(callback)) {
             //callback不为空，并且验证不通过时
-            return new DefaultUEditorResult(false, UEditorResultCode.ILLEGAL).toJSONString();
+            return new DefaultUEditorResult(false, UEditorResultCode.ILLEGAL)
+                    .toJSONString();
         }
         
         try {
@@ -165,11 +167,13 @@ public abstract class AbstractUEditorController implements InitializingBean,
         } catch (SILException e) {
             logger.error(e.getErrorMessage(), e);
             
-            return new DefaultUEditorResult(false, e.getErrorMessage()).toJSONString();
+            return new DefaultUEditorResult(false, e.getErrorMessage())
+                    .toJSONString();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             
-            return new DefaultUEditorResult(false, e.getMessage()).toJSONString();
+            return new DefaultUEditorResult(false, e.getMessage())
+                    .toJSONString();
         }
         
         //callback不为空，并且验证不通过时
@@ -284,7 +288,8 @@ public abstract class AbstractUEditorController implements InitializingBean,
     */
     protected String generateFilename(HttpServletRequest request,
             String fileType, String originalFilename) {
-        String filenameExtention = org.springframework.util.StringUtils.getFilenameExtension(originalFilename);
+        String filenameExtention = org.springframework.util.StringUtils
+                .getFilenameExtension(originalFilename);
         String filename = originalFilename;
         if (!FILENAME_PATTERN.matcher(originalFilename).matches()) {
             filename = UUIDUtils.generateUUID() + "." + filenameExtention;
@@ -453,7 +458,8 @@ public abstract class AbstractUEditorController implements InitializingBean,
      * @see [类、类#方法、类#成员]
      */
     private UEditorResult uploadBase64File(HttpServletRequest request,
-            Map<String, Object> config, String fileType, String originalFilename) {
+            Map<String, Object> config, String fileType,
+            String originalFilename) {
         AssertUtils.notEmpty(fileType, "fileType is empty.");
         AssertUtils.notEmpty(originalFilename, "originalFilename is empty.");
         
@@ -548,7 +554,8 @@ public abstract class AbstractUEditorController implements InitializingBean,
         }
         //生成存储相对路径
         String originalFilename = upfile.getOriginalFilename();
-        String filenameExtention = org.springframework.util.StringUtils.getFilenameExtension(originalFilename);
+        String filenameExtention = org.springframework.util.StringUtils
+                .getFilenameExtension(originalFilename);
         //验证文件扩展名是否合法
         if (!validateFilenameExtention(filenameExtention,
                 (String[]) config.get("allowFiles"))) {
@@ -611,7 +618,8 @@ public abstract class AbstractUEditorController implements InitializingBean,
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    protected boolean validateFilenameExtention(String type, String[] allowTypes) {
+    protected boolean validateFilenameExtention(String type,
+            String[] allowTypes) {
         if (StringUtils.isEmpty(type) || ArrayUtils.isEmpty(allowTypes)) {
             return false;
         }
@@ -634,7 +642,8 @@ public abstract class AbstractUEditorController implements InitializingBean,
       * @see [类、类#方法、类#成员]
      */
     protected MultipartFile getUploadFile(
-            MultipartHttpServletRequest multiRequest, Map<String, Object> config) {
+            MultipartHttpServletRequest multiRequest,
+            Map<String, Object> config) {
         String filedName = (String) config.get("fieldName");
         MultipartFile resFile = multiRequest.getFile(filedName);
         if (resFile != null) {
