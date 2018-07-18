@@ -14,7 +14,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * 
  * @author  Administrator
  * @version  [版本号, 2018年4月27日]
- * @see  [相关类/方法]
+ * @see  [相关类/方法]0
  * @since  [产品/模块版本]
  */
 @ConfigurationProperties(prefix = "tx.basicdata")
@@ -27,9 +27,9 @@ public class BasicDataContextProperties {
     private String module;
     
     /** 基础包集合 */
-    private String basePackages = "com.tx";
+    private String basePackages = "";
     
-    /** mybatis配置文件 */
+    /** mybatis配置文件:service需要该逻辑 */
     private String mybatisConfigLocation = "classpath:context/mybatis-config.xml";
     
     /** cacheManager */

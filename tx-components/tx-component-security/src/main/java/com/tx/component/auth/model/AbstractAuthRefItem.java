@@ -45,9 +45,6 @@ public abstract class AbstractAuthRefItem implements AuthRef {
     /** 权限引用对应的权限id */
     private Auth auth;
     
-    /** 权限所属模块 */
-    private String module;
-    
     /** 权限授予人*/
     private String createOperatorId;
     
@@ -132,14 +129,6 @@ public abstract class AbstractAuthRefItem implements AuthRef {
      * @return
      */
     @Override
-    public String getModule() {
-        return this.module;
-    }
-    
-    /**
-     * @return
-     */
-    @Override
     public Auth getAuth() {
         return this.auth;
     }
@@ -199,13 +188,6 @@ public abstract class AbstractAuthRefItem implements AuthRef {
      */
     public void setExpiryDate(Date expiryDate) {
         this.expiryDate = expiryDate;
-    }
-    
-    /**
-     * @param 对module进行赋值
-     */
-    public void setModule(String module) {
-        this.module = module;
     }
     
     /**

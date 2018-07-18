@@ -48,25 +48,6 @@ public interface AuthRef extends Serializable {
     String getRefId();
     
     /**
-     * 获取权限id<br/>
-     * <功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return String [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    String getAuthId();
-    
-    /**
-     * 获取权限项系统id<br/>
-     * <功能详细描述>
-     * 
-     * @return [参数说明]
-     */
-    String getModule();
-    
-    /**
      * 创建人员id<br/>
      * 
      * @return 返回 createOperId
@@ -114,4 +95,15 @@ public interface AuthRef extends Serializable {
      * @see [类、类#方法、类#成员]
      */
     Auth getAuth();
+    
+    /**
+     * 获取权限id<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    String getAuthId();
 }

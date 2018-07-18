@@ -31,18 +31,6 @@ public class BasicDataContextConfigurator
     /** spring容器句柄 */
     protected static ApplicationContext applicationContext;
     
-    //    /** 包名 */
-    //    protected String basePackages = "com.tx";
-    //    
-    //    /** 数据源:dataSource */
-    //    protected DataSource dataSource;
-    //    
-    //    /** transactionManager */
-    //    protected PlatformTransactionManager transactionManager;
-    //    
-    //    /** cacheManager */
-    //    protected CacheManager cacheManager;
-    
     /**
      * @param applicationContext
      * @throws BeansException

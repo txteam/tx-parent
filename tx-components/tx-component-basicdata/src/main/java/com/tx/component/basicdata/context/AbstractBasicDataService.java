@@ -31,9 +31,9 @@ import com.tx.core.util.typereference.ParameterizedTypeReference;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public abstract class AbstractBasicDataService<T extends BasicData> extends
-        ParameterizedTypeReference<T> implements BasicDataService<T>,
-        InitializingBean {
+public abstract class AbstractBasicDataService<T extends BasicData>
+        extends ParameterizedTypeReference<T>
+        implements BasicDataService<T>, InitializingBean {
     
     protected ConfigInitAbleHelper<T> configInitAbleHelper;
     
@@ -211,12 +211,23 @@ public abstract class AbstractBasicDataService<T extends BasicData> extends
         AssertUtils.notNull(type, "type is null.");
         
         String code = type.getSimpleName();
-        if (type.isAnnotationPresent(BasicDataType.class)
-                && StringUtils.isNotEmpty(type.getAnnotation(BasicDataType.class)
-                        .code())) {
-            code = type.getAnnotation(BasicDataType.class).code();
-        }
         return code;
+    }
+    
+    /**
+     * @return
+     */
+    @Override
+    public String module() {
+        Class<T> type = type();
+        AssertUtils.notNull(type, "type is null.");
+        
+        String module = "";
+        if (type.isAnnotationPresent(BasicDataType.class) && StringUtils
+                .isNotEmpty(type.getAnnotation(BasicDataType.class).module())) {
+            module = type.getAnnotation(BasicDataType.class).module();
+        }
+        return module;
     }
     
     /**
@@ -233,6 +244,9 @@ public abstract class AbstractBasicDataService<T extends BasicData> extends
         }
         if (type.isAnnotationPresent(org.hibernate.annotations.Table.class)) {
             tableName = type.getAnnotation(Table.class).name();
+        }
+        if (StringUtils.isEmpty(tableName)) {
+            tableName = "bd_data_dict";
         }
         return tableName;
     }

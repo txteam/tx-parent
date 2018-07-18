@@ -4,7 +4,7 @@
  * 修改时间:  2016年10月7日
  * <修改描述:>
  */
-package com.tx.component.basicdata.context;
+package com.tx.component.basicdata.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,10 +15,10 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.tx.component.basicdata.context.AbstractTreeAbleBasicDataService;
 import com.tx.component.basicdata.model.BasicData;
 import com.tx.component.basicdata.model.DataDict;
 import com.tx.component.basicdata.model.TreeAbleBasicData;
-import com.tx.component.basicdata.service.DataDictService;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.paged.model.PagedList;
 import com.tx.core.support.entrysupport.helper.EntryAbleUtils;
@@ -32,8 +32,11 @@ import com.tx.core.support.entrysupport.helper.EntryAbleUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class DefaultTreeAbleBasicDataService<T extends TreeAbleBasicData<T>>
+public class DefaultDBTreeAbleBasicDataService<T extends TreeAbleBasicData<T>>
         extends AbstractTreeAbleBasicDataService<T> {
+    
+    /** 所属模块 */
+    private String module;
     
     /** 对应类型 */
     private Class<T> type;
@@ -42,14 +45,8 @@ public class DefaultTreeAbleBasicDataService<T extends TreeAbleBasicData<T>>
     protected DataDictService dataDictService;
     
     /** <默认构造函数> */
-    public DefaultTreeAbleBasicDataService() {
+    public DefaultDBTreeAbleBasicDataService() {
         super();
-    }
-    
-    /** <默认构造函数> */
-    public DefaultTreeAbleBasicDataService(Class<T> type) {
-        super();
-        this.type = type;
     }
     
     /**
@@ -64,8 +61,16 @@ public class DefaultTreeAbleBasicDataService<T extends TreeAbleBasicData<T>>
      * @return
      */
     @Override
+    public String module() {
+        return this.module;
+    }
+    
+    /**
+     * @return
+     */
+    @Override
     public String tableName() {
-        return "bd_basic_data";
+        return "bd_data_dict";
     }
     
     /**
@@ -183,9 +188,8 @@ public class DefaultTreeAbleBasicDataService<T extends TreeAbleBasicData<T>>
      * @return
      */
     @Override
-    public PagedList<T> queryPagedListByParentId(String parentId,
-            Boolean valid, Map<String, Object> params, int pageIndex,
-            int pageSize) {
+    public PagedList<T> queryPagedListByParentId(String parentId, Boolean valid,
+            Map<String, Object> params, int pageIndex, int pageSize) {
         params = params == null ? new HashMap<String, Object>() : params;
         params.put("parentId", parentId);
         
@@ -206,9 +210,8 @@ public class DefaultTreeAbleBasicDataService<T extends TreeAbleBasicData<T>>
         String basicDataTypeCode = code();
         AssertUtils.notEmpty(basicDataTypeCode, "basicDataTypeCode is null.");
         
-        List<DataDict> dataDictList = this.dataDictService.queryList(basicDataTypeCode,
-                valid,
-                params);
+        List<DataDict> dataDictList = this.dataDictService
+                .queryList(basicDataTypeCode, valid, params);
         List<T> resList = new ArrayList<>();
         if (CollectionUtils.isEmpty(dataDictList)) {
             return resList;
@@ -236,11 +239,12 @@ public class DefaultTreeAbleBasicDataService<T extends TreeAbleBasicData<T>>
         String basicDataTypeCode = code();
         AssertUtils.notEmpty(basicDataTypeCode, "basicDataTypeCode is null.");
         
-        PagedList<DataDict> dataDictPageList = this.dataDictService.queryPagedList(basicDataTypeCode,
-                valid,
-                params,
-                pageIndex,
-                pageSize);
+        PagedList<DataDict> dataDictPageList = this.dataDictService
+                .queryPagedList(basicDataTypeCode,
+                        valid,
+                        params,
+                        pageIndex,
+                        pageSize);
         
         PagedList<T> resPagedList = new PagedList<>();
         resPagedList.setCount(dataDictPageList.getCount());
@@ -272,8 +276,10 @@ public class DefaultTreeAbleBasicDataService<T extends TreeAbleBasicData<T>>
         
         String basicDataTypeCode = code();
         AssertUtils.notEmpty(basicDataTypeCode, "basicDataTypeCode is null.");
-        return  this.dataDictService.isExist(basicDataTypeCode, key2valueMap, excludeId);
-
+        return this.dataDictService.isExist(basicDataTypeCode,
+                key2valueMap,
+                excludeId);
+        
     }
     
     /**
@@ -313,18 +319,25 @@ public class DefaultTreeAbleBasicDataService<T extends TreeAbleBasicData<T>>
         boolean flag = this.dataDictService.enableById(id);
         return flag;
     }
-
+    
     /**
      * @param 对type进行赋值
      */
     public void setType(Class<T> type) {
         this.type = type;
     }
-
+    
     /**
      * @param 对dataDictService进行赋值
      */
     public void setDataDictService(DataDictService dataDictService) {
         this.dataDictService = dataDictService;
+    }
+    
+    /**
+     * @param 对module进行赋值
+     */
+    public void setModule(String module) {
+        this.module = module;
     }
 }

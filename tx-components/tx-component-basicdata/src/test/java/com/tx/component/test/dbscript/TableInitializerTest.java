@@ -39,12 +39,12 @@ public class TableInitializerTest {
         JdbcTemplate jt = new JdbcTemplate(ds);
         TableDDLExecutor tableDDLExecutor = new MysqlTableDDLExecutor(jt);
         
-        //创建表
-        if (tableDDLExecutor.exists("bd_basic_data_type")) {
-            tableDDLExecutor.drop("bd_basic_data_type");
-        }
-        table_bd_basic_data_type(tableDDLExecutor);//创建表
-        table_bd_basic_data_type(tableDDLExecutor);//更新表
+        //        //创建表
+        //        if (tableDDLExecutor.exists("bd_basic_data_type")) {
+        //            tableDDLExecutor.drop("bd_basic_data_type");
+        //        }
+        //        table_bd_basic_data_type(tableDDLExecutor);//创建表
+        //        table_bd_basic_data_type(tableDDLExecutor);//更新表
         
         if (tableDDLExecutor.exists("bd_data_dict")) {
             tableDDLExecutor.drop("bd_data_dict");
@@ -59,45 +59,45 @@ public class TableInitializerTest {
         table_bd_data_dict_entry(tableDDLExecutor);//更新表
     }
     
-    /**
-     * 核心文件定义表<br/>
-     * <功能详细描述> [参数说明]
-     * 
-     * @return void [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-    */
-    private static void table_bd_basic_data_type(TableDDLExecutor tableDDLExecutor) {
-        String tableName = "bd_basic_data_type";
-        
-        CreateTableDDLBuilder createDDLBuilder = null;
-        AlterTableDDLBuilder alterDDLBuilder = null;
-        DDLBuilder<?> ddlBuilder = null;
-        
-        if (tableDDLExecutor.exists(tableName)) {
-            alterDDLBuilder = tableDDLExecutor
-                    .generateAlterTableDDLBuilder(tableName);
-            ddlBuilder = alterDDLBuilder;
-        } else {
-            createDDLBuilder = tableDDLExecutor
-                    .generateCreateTableDDLBuilder(tableName);
-            ddlBuilder = createDDLBuilder;
-        }
-        
-        BasicDataContextTableInitializer.bd_basic_data_type(ddlBuilder);//写入表结构
-        
-        if (alterDDLBuilder != null
-                && alterDDLBuilder.compare().isNeedAlter()) {
-            System.out.println("检测到需要升级.bd_basic_data_type");
-            tableDDLExecutor.alter(alterDDLBuilder);
-        } else if (createDDLBuilder != null) {
-            System.out.println("创建表成功.bd_basic_data_type");
-            tableDDLExecutor.create(createDDLBuilder);
-        } else {
-            System.out.println("无需进行升级.bd_basic_data_type");
-        }
-        
-    }
+    //    /**
+    //     * 核心文件定义表<br/>
+    //     * <功能详细描述> [参数说明]
+    //     * 
+    //     * @return void [返回类型说明]
+    //     * @exception throws [异常类型] [异常说明]
+    //     * @see [类、类#方法、类#成员]
+    //    */
+    //    private static void table_bd_basic_data_type(TableDDLExecutor tableDDLExecutor) {
+    //        String tableName = "bd_basic_data_type";
+    //        
+    //        CreateTableDDLBuilder createDDLBuilder = null;
+    //        AlterTableDDLBuilder alterDDLBuilder = null;
+    //        DDLBuilder<?> ddlBuilder = null;
+    //        
+    //        if (tableDDLExecutor.exists(tableName)) {
+    //            alterDDLBuilder = tableDDLExecutor
+    //                    .generateAlterTableDDLBuilder(tableName);
+    //            ddlBuilder = alterDDLBuilder;
+    //        } else {
+    //            createDDLBuilder = tableDDLExecutor
+    //                    .generateCreateTableDDLBuilder(tableName);
+    //            ddlBuilder = createDDLBuilder;
+    //        }
+    //        
+    //        BasicDataContextTableInitializer.bd_basic_data_type(ddlBuilder);//写入表结构
+    //        
+    //        if (alterDDLBuilder != null
+    //                && alterDDLBuilder.compare().isNeedAlter()) {
+    //            System.out.println("检测到需要升级.bd_basic_data_type");
+    //            tableDDLExecutor.alter(alterDDLBuilder);
+    //        } else if (createDDLBuilder != null) {
+    //            System.out.println("创建表成功.bd_basic_data_type");
+    //            tableDDLExecutor.create(createDDLBuilder);
+    //        } else {
+    //            System.out.println("无需进行升级.bd_basic_data_type");
+    //        }
+    //        
+    //    }
     
     /**
      * 核心文件定义表<br/>
@@ -107,8 +107,7 @@ public class TableInitializerTest {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    private static void table_bd_data_dict(
-            TableDDLExecutor tableDDLExecutor) {
+    private static void table_bd_data_dict(TableDDLExecutor tableDDLExecutor) {
         String tableName = "bd_data_dict";
         
         CreateTableDDLBuilder createDDLBuilder = null;

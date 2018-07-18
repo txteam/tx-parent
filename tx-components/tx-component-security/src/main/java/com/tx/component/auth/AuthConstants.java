@@ -37,13 +37,6 @@ public interface AuthConstants {
     
     /** 操作员权限引用项：组织权限引用 */
     public static final String AUTHREFTYPE_ORGANIZATION = "AUTHREFTYPE_ORGANIZATION";
-    
-    /** 操作员权限引用项：部门权限引用 */
-    public static final String AUTHREFTYPE_DEPARTMENT = "AUTHREFTYPE_DEPARTMENT";
-    
-    /** 操作员权限引用项：地区权限引用 */
-    public static final String AUTHREFTYPE_AREA = "AUTHREFTYPE_AREA";
-    
     //end-----------------------权限引用类型----------------------
     
     //start-----------------------权限类型----------------------
@@ -53,23 +46,14 @@ public interface AuthConstants {
     /** 权限类型：操作权限 */
     public final static String AUTHTYPE_OPERATE = "AUTHTYPE_OPERATE";
     
-    /** 权限类型：数据列权限 */
+    /** 权限类型：数据权限 */
     public final static String AUTHTYPE_DATA = "AUTHTYPE_DATA";
-    
-    /** 权限类型：数据列权限 */
-    public final static String AUTHTYPE_DATA_COLUMN = "AUTHTYPE_DATA_COLUMN";
-    
-    /** 权限类型: 数据行权限 */
-    public final static String AUTHTYPE_DATA_ROW = "AUTHTYPE_DATA_ROW";
-    
     //end-----------------------权限类型----------------------
     
     /** 常用的数据权限对应的属性名: vcid 虚中心 */
     public final static String QUERY_AUTH_PROPERTY_NAME_VCID = "vcid";
     
     public final static String QUERY_AUTH_PROPERTY_NAME_ORGANIZATIONID = "organizationId";
-    
-    public final static String QUERY_AUTH_PROPERTY_NAME_DISTRUCTID = "distructId";
     
     public final static String QUERY_AUTH_PROPERTY_NAME_PROVINCEID = "provinceId";
     

@@ -30,16 +30,20 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.AliasRegistry;
-import org.springframework.transaction.support.TransactionTemplate;
 
 import com.tx.component.basicdata.model.BasicData;
 import com.tx.component.basicdata.model.BasicDataType;
 import com.tx.component.basicdata.model.DataDict;
 import com.tx.component.basicdata.model.TreeAbleBasicData;
+import com.tx.component.basicdata.service.BasicDataRemoteService;
 import com.tx.component.basicdata.service.BasicDataTypeService;
 import com.tx.component.basicdata.service.DataDictService;
+import com.tx.component.basicdata.service.DefaultDBBasicDataService;
+import com.tx.component.basicdata.service.DefaultDBTreeAbleBasicDataService;
+import com.tx.component.basicdata.service.DefaultRemoteBasicDataService;
+import com.tx.component.basicdata.service.DefaultRemoteTreeAbleBasicDataService;
+import com.tx.component.basicdata.service.TreeAbleBasicDataRemoteService;
 import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.support.initable.helper.ConfigInitAbleHelper;
 import com.tx.core.util.ClassScanUtils;
 
 /**
@@ -65,7 +69,7 @@ public class BasicDataServiceRegistry implements ApplicationContextAware,
     
     private static Map<Class<?>, BasicDataService<?>> type2serviceMap = new HashMap<Class<?>, BasicDataService<?>>();
     
-    private static Map<String, BasicDataService<?>> typecode2serviceMap = new HashMap<String, BasicDataService<?>>();
+    private static Map<String, BasicDataService<?>> code2serviceMap = new HashMap<String, BasicDataService<?>>();
     
     private AliasRegistry aliasRegistry;
     
@@ -73,15 +77,23 @@ public class BasicDataServiceRegistry implements ApplicationContextAware,
     
     private SingletonBeanRegistry singletonBeanRegistry;
     
+    /** 所属模块：如果对象已经存在，module不等于当前模块，则默认调用remoteBasicDataSer */
     private String module;
     
+    /** 扫描包路径 */
     private String basePackages = "com.tx";
     
+    /** 基础数据类型 */
     private BasicDataTypeService basicDataTypeService;
     
+    /** 数据字典业务层 */
     private DataDictService dataDictService;
     
-    private TransactionTemplate transactionTemplate;
+    /** 基础数据远程调用消费逻辑层 */
+    private BasicDataRemoteService basicDataRemoteService;
+    
+    /** 基础数据远程调用消费逻辑层 */
+    private TreeAbleBasicDataRemoteService treeAbleBasicDataRemoteService;
     
     /** <默认构造函数> */
     public BasicDataServiceRegistry() {
@@ -90,9 +102,10 @@ public class BasicDataServiceRegistry implements ApplicationContextAware,
     
     /** <默认构造函数> */
     public BasicDataServiceRegistry(String module, String basePackages,
-            TransactionTemplate transactionTemplate,
             BasicDataTypeService basicDataTypeService,
-            DataDictService dataDictService) {
+            DataDictService dataDictService,
+            BasicDataRemoteService basicDataRemoteService,
+            TreeAbleBasicDataRemoteService treeAbleBasicDataRemoteService) {
         super();
         AssertUtils.notEmpty(module, "module is null.");
         
@@ -100,7 +113,8 @@ public class BasicDataServiceRegistry implements ApplicationContextAware,
         this.basePackages = basePackages;
         this.basicDataTypeService = basicDataTypeService;
         this.dataDictService = dataDictService;
-        this.transactionTemplate = transactionTemplate;
+        this.basicDataRemoteService = basicDataRemoteService;
+        this.treeAbleBasicDataRemoteService = treeAbleBasicDataRemoteService;
     }
     
     /**
@@ -212,32 +226,34 @@ public class BasicDataServiceRegistry implements ApplicationContextAware,
     }
     
     /**
-      * 构建默认的基础数据业务类<br/>
-      * <功能详细描述>
-      * @param type [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 构建默认的基础数据业务类<br/>
+     * <功能详细描述>
+     * @param type [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     @SuppressWarnings("rawtypes")
-    public BasicDataService buildDefaultBasicDataService(
+    public BasicDataService buildDefaultDBBasicDataService(String module,
             Class<? extends BasicData> type) {
         String beanName = generateServiceBeanName(type);
         
         if (type.isAssignableFrom(TreeAbleBasicData.class)) {
-            Class<?> defaultServiceType = DefaultTreeAbleBasicDataService.class;
+            Class<?> defaultServiceType = DefaultDBTreeAbleBasicDataService.class;
             
             BeanDefinitionBuilder builder = BeanDefinitionBuilder
                     .genericBeanDefinition(defaultServiceType);
+            builder.addPropertyValue("module", module);
             builder.addPropertyValue("type", type);
             builder.addPropertyValue("dataDictService", this.dataDictService);
             registerBeanDefinition(beanName, builder.getBeanDefinition());
         } else {
-            Class<?> defaultServiceType = DefaultBasicDataService.class;
+            Class<?> defaultServiceType = DefaultDBBasicDataService.class;
             
             BeanDefinitionBuilder builder = BeanDefinitionBuilder
                     .genericBeanDefinition(defaultServiceType);
+            builder.addPropertyValue("module", module);
             builder.addPropertyValue("type", type);
             builder.addPropertyValue("dataDictService", this.dataDictService);
             registerBeanDefinition(beanName, builder.getBeanDefinition());
@@ -246,6 +262,57 @@ public class BasicDataServiceRegistry implements ApplicationContextAware,
         //利用有参构造函数,(Object) type
         BasicDataService service = (BasicDataService) BasicDataServiceRegistry.applicationContext
                 .getBean(beanName);
+        return service;
+    }
+    
+    /**
+     * 构建默认的基础数据业务类<br/>
+     * <功能详细描述>
+     * @param type [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @SuppressWarnings("rawtypes")
+    public BasicDataService buildDefaultRemoteBasicDataService(String module,
+            Class<? extends BasicData> type) {
+        String beanName = generateServiceBeanName(type);
+        
+        //利用有参构造函数,(Object) type
+        BasicDataService service = null;
+        if (type.isAssignableFrom(TreeAbleBasicData.class)) {
+            if (this.treeAbleBasicDataRemoteService != null) {
+                Class<?> defaultServiceType = DefaultRemoteTreeAbleBasicDataService.class;
+                
+                BeanDefinitionBuilder builder = BeanDefinitionBuilder
+                        .genericBeanDefinition(defaultServiceType);
+                builder.addPropertyValue("module", module);
+                builder.addPropertyValue("type", type);
+                builder.addPropertyValue("client",
+                        this.treeAbleBasicDataRemoteService);
+                registerBeanDefinition(beanName, builder.getBeanDefinition());
+                
+                service = (BasicDataService) BasicDataServiceRegistry.applicationContext
+                        .getBean(beanName);
+            }
+            
+        } else {
+            if (this.basicDataRemoteService != null) {
+                Class<?> defaultServiceType = DefaultRemoteBasicDataService.class;
+                
+                BeanDefinitionBuilder builder = BeanDefinitionBuilder
+                        .genericBeanDefinition(defaultServiceType);
+                builder.addPropertyValue("module", module);
+                builder.addPropertyValue("type", type);
+                builder.addPropertyValue("client", this.basicDataRemoteService);
+                registerBeanDefinition(beanName, builder.getBeanDefinition());
+                
+                service = (BasicDataService) BasicDataServiceRegistry.applicationContext
+                        .getBean(beanName);
+            }
+        }
+        
         return service;
     }
     
@@ -317,10 +384,29 @@ public class BasicDataServiceRegistry implements ApplicationContextAware,
                 //如果已经存在对应的业务逻辑层
                 continue;
             }
-            BasicDataService<? extends BasicData> bdService = buildDefaultBasicDataService(
-                    bdType);
+            
+            BasicDataService<? extends BasicData> serviceTemp = null;
+            if (bdType.isAnnotationPresent(
+                    com.tx.component.basicdata.annotation.BasicDataType.class)
+                    && !StringUtils.isEmpty(bdType
+                            .getAnnotation(
+                                    com.tx.component.basicdata.annotation.BasicDataType.class)
+                            .module())
+                    && !this.module.equals(bdType
+                            .getAnnotation(
+                                    com.tx.component.basicdata.annotation.BasicDataType.class)
+                            .module())) {
+                serviceTemp = buildDefaultRemoteBasicDataService(this.module,
+                        bdType);
+            } else {
+                serviceTemp = buildDefaultDBBasicDataService(this.module,
+                        bdType);
+            }
+            
             //注册业务层逻辑
-            registeType2Service(bdService);
+            if (serviceTemp != null) {
+                registeType2Service(serviceTemp);
+            }
         }
         
         //初始化基础数据类型
@@ -338,151 +424,71 @@ public class BasicDataServiceRegistry implements ApplicationContextAware,
         AssertUtils.isTrue(!type2serviceMap.containsKey(service.type()),
                 "type:{} : service :{} is exist.",
                 new Object[] { service.type(), service });
-        AssertUtils.isTrue(!typecode2serviceMap.containsKey(service.code()),
-                "typecoe:{} : service :{} is exist.",
-                new Object[] { service.type(), service });
+        AssertUtils.isTrue(!code2serviceMap.containsKey(service.code()),
+                "code:{} : service :{} is exist.",
+                new Object[] { service.code(), service });
         
         type2serviceMap.put(service.type(), service);
-        typecode2serviceMap.put(service.code(), service);
+        code2serviceMap.put(service.code(), service);
     }
     
     /**
-      * 初始化基础数据类型<br/>
-      * <功能详细描述> [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 初始化基础数据类型<br/>
+     * <功能详细描述> [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     public void initBasicDataType() {
-        ConfigInitAbleHelper<BasicDataType> helper = new ConfigInitAbleHelper<BasicDataType>() {
-            /**
-             * @param ciaOfDBTemp
-             * @param ciaOfConfig
-             * @return
-             */
-            @Override
-            protected boolean isNeedUpdate(BasicDataType ciaOfDBTemp,
-                    BasicDataType ciaOfConfig) {
-                if (!StringUtils.equals(ciaOfDBTemp.getCode(),
-                        ciaOfConfig.getCode())) {
-                    return true;
-                }
-                if (!StringUtils.equals(ciaOfDBTemp.getName(),
-                        ciaOfConfig.getName())) {
-                    return true;
-                }
-                if (!StringUtils.equals(ciaOfDBTemp.getModule(),
-                        ciaOfConfig.getModule())) {
-                    return true;
-                }
-                if (!StringUtils.equals(ciaOfDBTemp.getTableName(),
-                        ciaOfConfig.getTableName())) {
-                    return true;
-                }
-                if (!StringUtils.equals(ciaOfDBTemp.getRemark(),
-                        ciaOfConfig.getRemark())) {
-                    return true;
-                }
-                if (ciaOfDBTemp.isCommon() != ciaOfConfig.isCommon()) {
-                    return true;
-                }
-                if (!ciaOfDBTemp.getViewType()
-                        .equals(ciaOfConfig.getViewType())) {
-                    return true;
-                }
-                return false;
+        List<BasicDataService<?>> services = getAllBasicDataServices();
+        List<BasicDataType> resListOfCfg = new ArrayList<>();
+        for (BasicDataService<? extends BasicData> s : services) {
+            Class<? extends BasicData> type = s.type();
+            String code = s.code();
+            String tableName = s.tableName();
+            String name = s.type().getSimpleName();
+            String moduleTemp = s.module();
+            AssertUtils.notNull(type,
+                    "type is null.BasicDataService:{}",
+                    new Object[] { s });
+            AssertUtils.notEmpty(code,
+                    "code is empty.BasicDataService:{}",
+                    new Object[] { s });
+            AssertUtils.notEmpty(tableName,
+                    "tableName is empty.BasicDataService:{}",
+                    new Object[] { s });
+            
+            BasicDataType bdType = new BasicDataType();
+            bdType.setCode(code);
+            bdType.setType(type);
+            bdType.setTableName(tableName);
+            bdType.setName(name);
+            bdType.setModifyAble(false);
+            if (StringUtils.isEmpty(moduleTemp)) {
+                bdType.setModule(this.module);
+            } else {
+                bdType.setModule(moduleTemp);
             }
             
-            /**
-             * @param ciaOfDB
-             * @param ciaOfCfg
-             */
-            @Override
-            protected void doBeforeUpdate(BasicDataType ciaOfDB,
-                    BasicDataType ciaOfCfg) {
-                ciaOfDB.setModule(ciaOfCfg.getModule());
-                ciaOfDB.setCode(ciaOfCfg.getCode());
-                ciaOfDB.setName(ciaOfCfg.getName());
-                ciaOfDB.setTableName(ciaOfCfg.getTableName());
-                ciaOfDB.setRemark(ciaOfCfg.getRemark());
+            if (type.isAnnotationPresent(
+                    com.tx.component.basicdata.annotation.BasicDataType.class)) {
+                com.tx.component.basicdata.annotation.BasicDataType anno = type
+                        .getAnnotation(
+                                com.tx.component.basicdata.annotation.BasicDataType.class);
+                //读取注解中值
+                bdType.setCommon(anno.common());
+                bdType.setViewType(anno.viewType());
+                bdType.setRemark(anno.remark());
                 
-                ciaOfDB.setCommon(ciaOfCfg.isCommon());
-                ciaOfDB.setViewType(ciaOfCfg.getViewType());
-            }
-            
-            @Override
-            protected String getSingleCode(BasicDataType cia) {
-                return cia.getType() != null ? cia.getType().getName()
-                        : cia.getCode();
-            }
-            
-            @Override
-            protected List<BasicDataType> queryListFromDB() {
-                return basicDataTypeService.queryList(null, null);
-            }
-            
-            @Override
-            protected List<BasicDataType> queryListFromConfig() {
-                List<BasicDataService<?>> services = getAllBasicDataServices();
-                List<BasicDataType> resListOfCfg = new ArrayList<>();
-                for (BasicDataService<? extends BasicData> s : services) {
-                    Class<? extends BasicData> type = s.type();
-                    String code = s.code();
-                    String tableName = s.tableName();
-                    String name = s.type().getSimpleName();
-                    AssertUtils.notNull(type,
-                            "type is null.BasicDataService:{}",
-                            new Object[] { s });
-                    AssertUtils.notEmpty(code,
-                            "code is empty.BasicDataService:{}",
-                            new Object[] { s });
-                    AssertUtils.notEmpty(tableName,
-                            "tableName is empty.BasicDataService:{}",
-                            new Object[] { s });
-                    
-                    BasicDataType bdType = new BasicDataType();
-                    bdType.setCode(code);
-                    bdType.setType(type);
-                    bdType.setTableName(tableName);
-                    bdType.setName(name);
-                    bdType.setModifyAble(false);
-                    bdType.setModule(module);
-                    
-                    if (type.isAnnotationPresent(
-                            com.tx.component.basicdata.annotation.BasicDataType.class)) {
-                        com.tx.component.basicdata.annotation.BasicDataType anno = type
-                                .getAnnotation(
-                                        com.tx.component.basicdata.annotation.BasicDataType.class);
-                        //读取注解中值
-                        bdType.setCommon(anno.common());
-                        bdType.setViewType(anno.viewType());
-                        bdType.setRemark(anno.remark());
-                        
-                        if (StringUtils.isNotEmpty(anno.name())) {
-                            bdType.setName(anno.name());//覆写名称
-                        }
-                    }
-                    resListOfCfg.add(bdType);
-                }
-                return resListOfCfg;
-            }
-            
-            @Override
-            protected void batchUpdate(List<BasicDataType> needUpdateList) {
-                for (BasicDataType bdType : needUpdateList) {
-                    basicDataTypeService.updateById(bdType);
+                if (StringUtils.isNotEmpty(anno.name())) {
+                    bdType.setName(anno.name());//覆写名称
                 }
             }
             
-            @Override
-            protected void batchInsert(List<BasicDataType> needInsertList) {
-                for (BasicDataType bdType : needInsertList) {
-                    basicDataTypeService.insert(bdType);
-                }
-            }
-        };
-        helper.init(this.transactionTemplate);
+            //resListOfCfg.add(bdType);
+            this.basicDataTypeService.insert(bdType);
+        }
     }
     
     /**

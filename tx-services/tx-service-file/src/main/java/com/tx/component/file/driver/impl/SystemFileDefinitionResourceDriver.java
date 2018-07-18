@@ -32,6 +32,9 @@ import com.tx.core.exceptions.util.ExceptionWrapperUtils;
 public class SystemFileDefinitionResourceDriver implements
         FileDefinitionResourceDriver {
     
+    /** 访问域名 */
+    private String accessDomain = "";
+    
     /** 存储逻辑 */
     private String path;
     
@@ -53,8 +56,9 @@ public class SystemFileDefinitionResourceDriver implements
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public SystemFileDefinitionResourceDriver(String path) {
+    public SystemFileDefinitionResourceDriver(String accessDomain,String path) {
         super();
+        this.accessDomain = accessDomain;
         this.path = path;
     }
     
@@ -122,6 +126,20 @@ public class SystemFileDefinitionResourceDriver implements
      */
     public void setPath(String path) {
         this.path = path;
+    }
+
+    /**
+     * @return 返回 accessDomain
+     */
+    public String getAccessDomain() {
+        return accessDomain;
+    }
+
+    /**
+     * @param 对accessDomain进行赋值
+     */
+    public void setAccessDomain(String accessDomain) {
+        this.accessDomain = accessDomain;
     }
     
     //public static void main(String[] args) {

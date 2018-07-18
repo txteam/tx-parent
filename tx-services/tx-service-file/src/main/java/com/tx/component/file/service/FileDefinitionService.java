@@ -272,7 +272,7 @@ public class FileDefinitionService {
 
         //需要更新的字段
         //updateRowMap.put("deleteDate", fileDefinition.getDeleteDate());
-        updateRowMap.put("viewUrl", fileDefinition.getViewUrl());
+        //updateRowMap.put("viewUrl", fileDefinition.getViewUrl());
         updateRowMap.put("relativePath", fileDefinition.getRelativePath());
         updateRowMap.put("filename", fileDefinition.getFilename());
         updateRowMap.put("filenameExtension",

@@ -4,12 +4,13 @@
  * 修改时间:  2016年10月3日
  * <修改描述:>
  */
-package com.tx.component.basicdata.context;
+package com.tx.component.basicdata.service;
 
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.tx.component.basicdata.model.BasicData;
 import com.tx.core.paged.model.PagedList;
@@ -23,40 +24,8 @@ import com.tx.core.paged.model.PagedList;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public interface BasicDataService<T extends BasicData> {
-    
-    /**
-     * 基础数据类型<br/>
-     * <功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return Class<T> [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public Class<T> type();
-    
-    /**
-     * 对应基础数据编码<br/>
-     * <功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return String [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public String code();
-    
-    /**
-     * 基础数据所属模块,可以为空,如果为空,则默认为当前系统所属模块<br/>
-     * <功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return String [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public String module();
+@RequestMapping(value = "/basicDataRemote")
+public interface BasicDataRemoteService {
     
     /**
      * 获取对应的表名<br/>
@@ -68,7 +37,8 @@ public interface BasicDataService<T extends BasicData> {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public String tableName();
+    @RequestMapping(value = "/tableName", method = RequestMethod.GET)
+    public <T extends BasicData> String tableName(Class<T> type);
     
     /**
      * 插入基础数据对象
@@ -79,7 +49,8 @@ public interface BasicDataService<T extends BasicData> {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public void insert(T data);
+    @RequestMapping(value = "/insert", method = RequestMethod.POST)
+    public <T extends BasicData> void insert(Class<T> type, T data);
     
     /**
      * 批量插入基础数据
@@ -90,7 +61,35 @@ public interface BasicDataService<T extends BasicData> {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public void batchInsert(List<T> dataList);
+    @RequestMapping(value = "/batchInsert", method = RequestMethod.POST)
+    public <T extends BasicData> void batchInsert(Class<T> type,
+            List<T> dataList);
+    
+    /**
+     * 根据id更新基础数据对象<br/>
+     * <功能详细描述>
+     * @param data
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @RequestMapping(value = "/updateById", method = RequestMethod.PUT)
+    public <T extends BasicData> boolean updateById(Class<T> type, T data);
+    
+    /**
+     * 批量更新基础数据<br/>
+     * <功能详细描述>
+     * @param dataList [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @RequestMapping(value = "/batchUpdate", method = RequestMethod.PUT)
+    public <T extends BasicData> void batchUpdate(Class<T> type,
+            List<T> dataList);
     
     /**
      * 根据id进行删除
@@ -102,7 +101,8 @@ public interface BasicDataService<T extends BasicData> {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public boolean deleteById(String id);
+    @RequestMapping(value = "/deleteById", method = RequestMethod.DELETE)
+    public <T extends BasicData> boolean deleteById(Class<T> type, String id);
     
     /**
      * 根据code进行删除
@@ -115,7 +115,9 @@ public interface BasicDataService<T extends BasicData> {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public boolean deleteByCode(String code);
+    @RequestMapping(value = "/deleteByCode", method = RequestMethod.DELETE)
+    public <T extends BasicData> boolean deleteByCode(Class<T> type,
+            String code);
     
     /**
      * 判断基础数据是否存在<br/>
@@ -128,7 +130,9 @@ public interface BasicDataService<T extends BasicData> {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public boolean isExist(Map<String, String> key2valueMap, String excludeId);
+    @RequestMapping(value = "/isExist", method = RequestMethod.GET)
+    public <T extends BasicData> boolean isExist(Class<T> type,
+            Map<String, String> key2valueMap, String excludeId);
     
     /**
      * 根据id查询基础数据实例<br/>
@@ -140,7 +144,8 @@ public interface BasicDataService<T extends BasicData> {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public T findById(String id);
+    @RequestMapping(value = "/findById", method = RequestMethod.GET)
+    public <T extends BasicData> T findById(Class<T> type, String id);
     
     /**
      * 根据code查询基础数据实例<br/>
@@ -152,7 +157,8 @@ public interface BasicDataService<T extends BasicData> {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public T findByCode(String code);
+    @RequestMapping(value = "/findByCode", method = RequestMethod.GET)
+    public <T extends BasicData> T findByCode(Class<T> type, String code);
     
     /**
      * 根据条件查询基础数据列表<br/>
@@ -165,7 +171,9 @@ public interface BasicDataService<T extends BasicData> {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public List<T> queryList(Boolean valid, Map<String, Object> params);
+    @RequestMapping(value = "/queryList", method = RequestMethod.GET)
+    public <T extends BasicData> List<T> queryList(Class<T> type, Boolean valid,
+            Map<String, Object> params);
     
     /**
      * 根据条件查询基础数据分页列表<br/>
@@ -180,31 +188,10 @@ public interface BasicDataService<T extends BasicData> {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public PagedList<T> queryPagedList(Boolean valid,
-            Map<String, Object> params, int pageIndex, int pageSize);
-    
-    /**
-     * 根据id更新基础数据对象<br/>
-     * <功能详细描述>
-     * @param data
-     * @return [参数说明]
-     * 
-     * @return boolean [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public boolean updateById(T data);
-    
-    /**
-     * 批量更新基础数据<br/>
-     * <功能详细描述>
-     * @param dataList [参数说明]
-     * 
-     * @return void [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public void batchUpdate(List<T> dataList);
+    @RequestMapping(value = "/queryPagedList", method = RequestMethod.GET)
+    public <T extends BasicData> PagedList<T> queryPagedList(Class<T> type,
+            Boolean valid, Map<String, Object> params, int pageIndex,
+            int pageSize);
     
     /**
      * 根据id禁用DataDict<br/>
@@ -216,8 +203,8 @@ public interface BasicDataService<T extends BasicData> {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @Transactional
-    public boolean disableById(String id);
+    @RequestMapping(value = "/disableById", method = RequestMethod.PATCH)
+    public <T extends BasicData> boolean disableById(Class<T> type, String id);
     
     /**
      * 根据id启用DataDict<br/>
@@ -229,6 +216,6 @@ public interface BasicDataService<T extends BasicData> {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @Transactional
-    public boolean enableById(String id);
+    @RequestMapping(value = "/enableById", method = RequestMethod.PATCH)
+    public <T extends BasicData> boolean enableById(Class<T> type, String id);
 }

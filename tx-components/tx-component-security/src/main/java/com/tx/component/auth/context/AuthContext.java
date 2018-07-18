@@ -852,44 +852,6 @@
 //    }
 //    
 //    /**
-//      * 卸载权限项
-//      * <功能详细描述>
-//      * @param authItemId [参数说明]
-//      * 
-//      * @return void [返回类型说明]
-//      * @exception throws [异常类型] [异常说明]
-//      * @see [类、类#方法、类#成员]
-//     */
-//    @Transactional
-//    public void unRegisterAuth(String authItemId) {
-//        AssertUtils.notEmpty(authItemId, "authItemId is empty.");
-//        
-//        //卸载权限项
-//        doUnRegisteAuth(authItemId);
-//    }
-//    
-//    /**
-//      * 卸载权限项<br/>
-//      * <功能详细描述>
-//      * @param authItemImpl
-//      * @return [参数说明]
-//      * 
-//      * @return String [返回类型说明]
-//      * @exception throws [异常类型] [异常说明]
-//      * @see [类、类#方法、类#成员]
-//     */
-//    private void doUnRegisteAuth(final String authItemId) {
-//        AssertUtils.notEmpty(authItemId, "authItemId is empty.");
-//        
-//        //持久化对应的权限项到数据库中
-//        this.authItemImplService.deleteById(authItemId,
-//                this.systemId,
-//                this.tableSuffix);
-//        
-//        authItemMapping.remove(authItemId);
-//    }
-//    
-//    /**
 //      * 判断是否拥有某权限<br/>
 //      * <功能详细描述>
 //      * @param authKey

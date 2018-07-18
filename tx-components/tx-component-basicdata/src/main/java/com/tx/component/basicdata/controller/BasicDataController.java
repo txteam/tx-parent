@@ -24,7 +24,6 @@
 //import org.springframework.beans.factory.InitializingBean;
 //import org.springframework.context.ResourceLoaderAware;
 //import org.springframework.core.io.ResourceLoader;
-//import org.springframework.stereotype.Controller;
 //import org.springframework.ui.ModelMap;
 //import org.springframework.util.MultiValueMap;
 //import org.springframework.web.bind.annotation.RequestMapping;
@@ -53,32 +52,29 @@
 // * @see  [相关类/方法]
 // * @since  [产品/模块版本]
 // */
-//@Controller("basicDataController")
 //@RequestMapping("/basicData")
-//public class BasicDataController implements InitializingBean,
-//        ResourceLoaderAware {
-//
-//    @Resource(name = "basicdata.basicDataServiceRegistry")
-//    private BasicDataServiceRegistry basicDataServiceRegistry;
-//
+//public class BasicDataController
+//        implements InitializingBean, ResourceLoaderAware {
+//    
 //    @Resource(name = "basicdata.basicDataTypeService")
 //    private BasicDataTypeService basicDataTypeService;
-//
+//    
 //    @Resource(name = "basicdata.dataDictService")
 //    private DataDictService dataDictService;
-//
+//    
+//    /** code2module的映射 */
+//    private static Map<String, BasicDataTypeModuleEnum> code2moduleMap = EnumUtils
+//            .getEnumMap(BasicDataTypeModuleEnum.class);
+//    
 //    /** 方法到编码到页面的映射关联 */
-//    private Map<BDPageTypeEnum, Map<String, Map<String, String>>> type2module2code2page = new HashMap<>();
-//
-//    /** 编码到类型的映射 */
-//    private Map<String, BasicDataType> commonCode2TypeMap = new HashMap<>();
-//
+//    private Map<BDPageTypeEnum, Map<String, Map<String, String>>> type2module2code2page = new HashMap<>();;
+//    
 //    /** 模块集合 */
 //    private Set<String> moduleSet;
-//
+//    
 //    /** 资源加载器 */
 //    private ResourceLoader resourceLoader;
-//
+//    
 //    /**
 //     * @param resourceLoader
 //     */
@@ -86,24 +82,41 @@
 //    public void setResourceLoader(ResourceLoader resourceLoader) {
 //        this.resourceLoader = resourceLoader;
 //    }
-//
+//    
 //    /**
 //     * @throws Exception
 //     */
 //    @Override
 //    public void afterPropertiesSet() throws Exception {
 //        this.moduleSet = new HashSet<>();
-//
+//        
 //        Map<String, Object> paramMap = new HashMap<>();
 //        paramMap.put("common", true);
-//        List<BasicDataType> bdtList = this.basicDataTypeService.queryList(true,
-//                paramMap);
+//        
+//        List<BasicDataType> bdtList = this.basicDataTypeService.queryList(module, common, code);
+//        
 //        for (BasicDataType bdt : bdtList) {
 //            this.commonCode2TypeMap.put(bdt.getCode(), bdt);
 //            this.moduleSet.add(bdt.getModule());
 //        }
 //    }
-//
+//    
+//    /**
+//     * 跳转到数据字典管理页面<br/>
+//     * <功能详细描述>
+//     * @param response
+//     * @return [参数说明]
+//     *
+//     * @return String [返回类型说明]
+//     * @exception throws [异常类型] [异常说明]
+//     * @see [类、类#方法、类#成员]
+//     */
+//    @RequestMapping("/toBasicDataMainframe")
+//    public String toDataDictMainframe(ModelMap response) {
+//        //加载数据类型
+//        return "/basicdata/basicDataMainframe";
+//    }
+//    
 //    /**
 //      * 获取通用的基础数据类型列表<br/>
 //      * <功能详细描述>
@@ -118,10 +131,10 @@
 //        paramMap.put("common", true);
 //        List<BasicDataType> bdtList = this.basicDataTypeService.queryList(true,
 //                paramMap);
-//
+//        
 //        return bdtList;
 //    }
-//
+//    
 //    /**
 //      * 获取基础数据类型树状数据列表<br/>
 //      * <功能详细描述>
@@ -134,7 +147,7 @@
 //    public List<BasicDataTypeTreeNode> getCommonBasicDataTypeTreeNodeList() {
 //        List<BasicDataTypeTreeNode> nodeList = new ArrayList<>();
 //        List<BasicDataType> bdtList = getCommonBasicDataTypeList();
-//
+//        
 //        for (BasicDataType bdt : bdtList) {
 //            nodeList.add(new BasicDataTypeTreeNode(bdt));
 //        }
@@ -144,29 +157,16 @@
 //        //对基础数据进行排序--降序
 //        nodeList.sort(new Comparator<BasicDataTypeTreeNode>() {
 //            @Override
-//            public int compare(BasicDataTypeTreeNode o1, BasicDataTypeTreeNode o2) {
+//            public int compare(BasicDataTypeTreeNode o1,
+//                    BasicDataTypeTreeNode o2) {
 //                return o2.getName().compareTo(o1.getName());
 //            }
 //        });
 //        return nodeList;
 //    }
-//
-//    /**
-//      * 跳转到数据字典管理页面<br/>
-//      * <功能详细描述>
-//      * @param response
-//      * @return [参数说明]
-//      *
-//      * @return String [返回类型说明]
-//      * @exception throws [异常类型] [异常说明]
-//      * @see [类、类#方法、类#成员]
-//     */
-//    @RequestMapping("/toBasicDataMainframe")
-//    public String toDataDictMainframe(ModelMap response) {
-//        //加载数据类型
-//        return "/basicdata/basicDataMainframe";
-//    }
-//
+//    
+//    
+//    
 //    /**
 //      * 查询common = true的基础数据类型
 //      * <功能详细描述>
@@ -183,7 +183,7 @@
 //        List<BasicDataTypeTreeNode> resList = getCommonBasicDataTypeTreeNodeList();
 //        return resList;
 //    }
-//
+//    
 //    /**
 //      * 跳转到查询DataDict列表页面<br/>
 //      *<功能详细描述>
@@ -199,23 +199,21 @@
 //            ModelMap response) {
 //        //基础数据类型集合
 //        response.put("basicDataTypes", getCommonBasicDataTypeList());
-//
+//        
 //        BDPageTypeEnum pageType = BDPageTypeEnum.QueryPagedList;
 //        String pageName = pageType.getDefaultPage();
 //        if (StringUtils.isEmpty(basicDataTypeCode)
 //                || !this.commonCode2TypeMap.containsKey(basicDataTypeCode)) {
 //            return "/basicdata/queryDataDictPagedList";
 //        }
-//
+//        
 //        BasicDataType bdType = this.commonCode2TypeMap.get(basicDataTypeCode);
 //        Class<?> type = bdType.getType();
 //        response.put("basicDataTypeCode", basicDataTypeCode);
 //        response.put("basicDataType", bdType);
 //        //基础数据类型
-//        AssertUtils.notNull(type,
-//                "未设置对应的处理类:{}",
-//                basicDataTypeCode);
-//
+//        AssertUtils.notNull(type, "未设置对应的处理类:{}", basicDataTypeCode);
+//        
 //        //跳转到查询页
 //        switch (bdType.getViewType()) {
 //            case PAGEDLIST:
@@ -231,7 +229,7 @@
 //        }
 //        return pageName;
 //    }
-//
+//    
 //    /**
 //      * 跳转到添加DataDict页面<br/>
 //      * <功能详细描述>
@@ -253,24 +251,24 @@
 //                    "basicDataTypeCode is error.{}",
 //                    basicDataTypeCode);
 //        }
-//
+//        
 //        //基础数据类型
 //        BasicDataType bdType = this.commonCode2TypeMap.get(basicDataTypeCode);
 //        response.put("basicDataTypeCode", basicDataTypeCode);//基础数据类型编码
 //        response.put("basicDataType", bdType);//基础数据类型编码
-//
+//        
 //        Class<?> type = bdType.getType();
 //        AssertUtils.notNull(type,
 //                "type is null.basicDataTypeCode:{}",
 //                basicDataTypeCode);
-//
+//        
 //        BasicData bd = (BasicData) ObjectUtils.newInstance(type);
 //        response.put("basicData", bd);
-//
+//        
 //        pageName = getPageName(bdType, BDPageTypeEnum.AddBasicData);
 //        return pageName;
 //    }
-//
+//    
 //    /**
 //     * 跳转到编辑DataDict页面
 //     *<功能详细描述>
@@ -292,15 +290,15 @@
 //                || !this.commonCode2TypeMap.containsKey(basicDataTypeCode)) {
 //            DataDict resDataDict = this.dataDictService.findById(id);
 //            AssertUtils.notNull(resDataDict, "resDataDict is null.id:{}", id);
-//
+//            
 //            basicDataTypeCode = resDataDict.getBasicDataTypeCode();
 //        }
-//
+//        
 //        //基础数据类型
 //        BasicDataType bdType = this.commonCode2TypeMap.get(basicDataTypeCode);
 //        response.put("basicDataTypeCode", basicDataTypeCode);//基础数据类型编码
 //        response.put("basicDataType", bdType);//基础数据类型编码
-//
+//        
 //        Class<? extends BasicData> type = bdType.getType();
 //        AssertUtils.notNull(type,
 //                "type is null.basicDataTypeCode:{}",
@@ -312,7 +310,7 @@
 //        pageName = getPageName(bdType, bdPageType);
 //        return pageName;
 //    }
-//
+//    
 //    /**
 //     * 判断DataDict:
 //     *  code
@@ -350,14 +348,14 @@
 //            }
 //            return resMap;
 //        }
-//
+//        
 //        //基础数据类型
 //        BasicDataType bdType = this.commonCode2TypeMap.get(basicDataTypeCode);
 //        Class<? extends BasicData> type = bdType.getType();
 //        AssertUtils.notNull(type,
 //                "type is null.basicDataTypeCode:{}",
 //                basicDataTypeCode);
-//
+//        
 //        BasicDataService<?> service = BasicDataContext.getContext()
 //                .getBasicDataService(type);
 //        boolean flag = service.isExist(key2valueMap, excludeDataDictId);
@@ -369,7 +367,7 @@
 //        }
 //        return resMap;
 //    }
-//
+//    
 //    /**
 //     * 查询DataDict列表<br/>
 //     * <功能详细描述>
@@ -391,28 +389,27 @@
 //        params.put("code", request.getFirst("code"));
 //        params.put("name", request.getFirst("name"));
 //        params.put("remark", request.getFirst("remark"));
-//
+//        
 //        if (StringUtils.isEmpty(basicDataTypeCode)
 //                || !this.commonCode2TypeMap.containsKey(basicDataTypeCode)) {
-//            List<DataDict> resList = this.dataDictService.queryList(basicDataTypeCode,
-//                    valid,
-//                    params);
+//            List<DataDict> resList = this.dataDictService
+//                    .queryList(basicDataTypeCode, valid, params);
 //            return resList;
 //        }
-//
+//        
 //        //基础数据类型
 //        BasicDataType bdType = this.commonCode2TypeMap.get(basicDataTypeCode);
 //        Class<? extends BasicData> type = bdType.getType();
 //        AssertUtils.notNull(type,
 //                "type is null.basicDataTypeCode:{}",
 //                basicDataTypeCode);
-//
+//        
 //        BasicDataService<?> service = BasicDataContext.getContext()
 //                .getBasicDataService(type);
 //        List<? extends BasicData> resList = service.queryList(valid, params);
 //        return resList;
 //    }
-//
+//    
 //    /**
 //     * 查询DataDict分页列表<br/>
 //     *<功能详细描述>
@@ -436,33 +433,32 @@
 //        params.put("code", request.getFirst("code"));
 //        params.put("name", request.getFirst("name"));
 //        params.put("remark", request.getFirst("remark"));
-//
+//        
 //        if (StringUtils.isEmpty(basicDataTypeCode)
 //                || !this.commonCode2TypeMap.containsKey(basicDataTypeCode)) {
-//            PagedList<DataDict> resPagedList = this.dataDictService.queryPagedList(basicDataTypeCode,
-//                    valid,
-//                    params,
-//                    pageIndex,
-//                    pageSize);
+//            PagedList<DataDict> resPagedList = this.dataDictService
+//                    .queryPagedList(basicDataTypeCode,
+//                            valid,
+//                            params,
+//                            pageIndex,
+//                            pageSize);
 //            return resPagedList;
 //        }
-//
+//        
 //        //基础数据类型
 //        BasicDataType bdType = this.commonCode2TypeMap.get(basicDataTypeCode);
 //        Class<? extends BasicData> type = bdType.getType();
 //        AssertUtils.notNull(type,
 //                "type is null.basicDataTypeCode:{}",
 //                basicDataTypeCode);
-//
-//        BasicDataService<? extends BasicData> service = BasicDataContext.getContext()
-//                .getBasicDataService(type);
-//        PagedList<? extends BasicData> resPagedList = service.queryPagedList(valid,
-//                params,
-//                pageIndex,
-//                pageSize);
+//        
+//        BasicDataService<? extends BasicData> service = BasicDataContext
+//                .getContext().getBasicDataService(type);
+//        PagedList<? extends BasicData> resPagedList = service
+//                .queryPagedList(valid, params, pageIndex, pageSize);
 //        return resPagedList;
 //    }
-//
+//    
 //    /**
 //     * 添加组织结构页面
 //     *<功能详细描述>
@@ -482,14 +478,14 @@
 //                || !this.commonCode2TypeMap.containsKey(basicDataTypeCode)) {
 //            return false;
 //        }
-//
+//        
 //        //基础数据类型
 //        BasicDataType bdType = this.commonCode2TypeMap.get(basicDataTypeCode);
 //        Class<? extends BasicData> type = bdType.getType();
 //        if (type == null) {
 //            return false;
 //        }
-//
+//        
 //        BasicData obj = ObjectUtils.newInstance(type);
 //        obj.setModifyAble(true);
 //        BeanWrapper bw = PropertyAccessorFactory.forBeanPropertyAccess(obj);
@@ -507,7 +503,7 @@
 //        service.insert(obj);
 //        return true;
 //    }
-//
+//    
 //    /**
 //      * 更新组织<br/>
 //      * <功能详细描述>
@@ -528,14 +524,14 @@
 //                || !this.commonCode2TypeMap.containsKey(basicDataTypeCode)) {
 //            return false;
 //        }
-//
+//        
 //        //基础数据类型
 //        BasicDataType bdType = this.commonCode2TypeMap.get(basicDataTypeCode);
 //        Class<? extends BasicData> type = bdType.getType();
 //        if (type == null) {
 //            return false;
 //        }
-//
+//        
 //        BasicData obj = ObjectUtils.newInstance(type);
 //        BeanWrapper bw = PropertyAccessorFactory.forBeanPropertyAccess(obj);
 //        for (PropertyDescriptor pd : bw.getPropertyDescriptors()) {
@@ -552,7 +548,7 @@
 //        service.updateById(obj);
 //        return true;
 //    }
-//
+//    
 //    /**
 //      * 删除指定DataDict<br/>
 //      *<功能详细描述>
@@ -576,21 +572,21 @@
 //            }
 //            basicDataTypeCode = dd.getBasicDataTypeCode();
 //        }
-//
+//        
 //        //基础数据类型
 //        BasicDataType bdType = this.commonCode2TypeMap.get(basicDataTypeCode);
 //        Class<? extends BasicData> type = bdType.getType();
 //        AssertUtils.notNull(type,
 //                "type is null.basicDataTypeCode:{}",
 //                basicDataTypeCode);
-//
-//        BasicDataService<? extends BasicData> service = BasicDataContext.getContext()
-//                .getBasicDataService(type);
+//        
+//        BasicDataService<? extends BasicData> service = BasicDataContext
+//                .getContext().getBasicDataService(type);
 //        boolean resFlag = service.deleteById(id);
 //        return resFlag;
 //    }
-//
-//    /**
+//    
+//     /**
 //      * 禁用DataDict
 //      * @param dataDictId
 //      * @return [参数说明]
@@ -598,7 +594,7 @@
 //      * @return boolean [返回类型说明]
 //      * @exception throws [异常类型] [异常说明]
 //      * @see [类、类#方法、类#成员]
-//     */
+//      */
 //    @ResponseBody
 //    @RequestMapping("/disableById")
 //    public boolean disableById(
@@ -612,21 +608,21 @@
 //            }
 //            basicDataTypeCode = dd.getBasicDataTypeCode();
 //        }
-//
+//        
 //        //基础数据类型
 //        BasicDataType bdType = this.commonCode2TypeMap.get(basicDataTypeCode);
 //        Class<? extends BasicData> type = bdType.getType();
 //        AssertUtils.notNull(type,
 //                "type is null.basicDataTypeCode:{}",
 //                basicDataTypeCode);
-//
-//        BasicDataService<? extends BasicData> service = BasicDataContext.getContext()
-//                .getBasicDataService(type);
+//        
+//        BasicDataService<? extends BasicData> service = BasicDataContext
+//                .getContext().getBasicDataService(type);
 //        boolean resFlag = service.disableById(id);
 //        return resFlag;
 //    }
-//
-//    /**
+//    
+//     /**
 //      * 启用DataDict<br/>
 //      *<功能详细描述>
 //      * @param dataDictId
@@ -635,7 +631,7 @@
 //      * @return boolean [返回类型说明]
 //      * @exception throws [异常类型] [异常说明]
 //      * @see [类、类#方法、类#成员]
-//     */
+//      */
 //    @ResponseBody
 //    @RequestMapping("/enableById")
 //    public boolean enableById(
@@ -649,20 +645,20 @@
 //            }
 //            basicDataTypeCode = dd.getBasicDataTypeCode();
 //        }
-//
+//        
 //        //基础数据类型
 //        BasicDataType bdType = this.commonCode2TypeMap.get(basicDataTypeCode);
 //        Class<? extends BasicData> type = bdType.getType();
 //        AssertUtils.notNull(type,
 //                "type is null.basicDataTypeCode:{}",
 //                basicDataTypeCode);
-//
-//        BasicDataService<? extends BasicData> service = BasicDataContext.getContext()
-//                .getBasicDataService(type);
+//        
+//        BasicDataService<? extends BasicData> service = BasicDataContext
+//                .getContext().getBasicDataService(type);
 //        boolean resFlag = service.enableById(id);
 //        return resFlag;
 //    }
-//
+//    
 //    /**
 //      * 基础数据页类型<br/>
 //      * <功能详细描述>
@@ -675,41 +671,41 @@
 //    protected static enum BDPageTypeEnum {
 //        //增加基础数据
 //        AddBasicData("add", "/basicdata/addBasicData"),
-//
+//        
 //        //更新基础数据
 //        UpdateBasicData("update", "/basicdata/updateBasicData"),
-//
+//        
 //        //查询树列表
-//        QueryTree("queryTree", "/basicdata/queryBasicDataPagedList"),
-//
+//        QueryTree("queryTree", "/basicdata/queryBasicDataTree"),
+//        
 //        //查询列表
 //        //如果类型为空的时候，跳转到基础数据列表《分页》
 //        QueryList("queryList", "/basicdata/queryBasicDataList"),
-//
+//        
 //        //查询分页列表
 //        //如果类型为空的时候，跳转到基础数据列表《分页》
 //        QueryPagedList("queryPagedList", "/basicdata/queryBasicDataPagedList");
-//
+//        
 //        /** 默认页面 */
 //        private final String pageName;
-//
+//        
 //        private final String defaultPage;
-//
+//        
 //        /** <默认构造函数> */
 //        private BDPageTypeEnum(String pageName, String defaultPage) {
 //            this.pageName = pageName;
 //            this.defaultPage = defaultPage;
 //        }
-//
+//        
 //        public String getPageName() {
 //            return pageName;
 //        }
-//
+//        
 //        public String getDefaultPage() {
 //            return defaultPage;
 //        }
 //    }
-//
+//    
 //    /**
 //      * 获取页面名称<br/>
 //      * <功能详细描述>
@@ -725,12 +721,12 @@
 //            BDPageTypeEnum pageType) {
 //        AssertUtils.notNull(baisBasicDataType, "baisBasicDataType is null.");
 //        AssertUtils.notNull(pageType, "methodName is null.");
-//
+//        
 //        String module = baisBasicDataType.getModule().toLowerCase();
 //        String code = baisBasicDataType.getCode().toLowerCase();
 //        AssertUtils.notEmpty(module, "module is empty.");
 //        AssertUtils.notEmpty(code, "code is empty.");
-//
+//        
 //        String page = "";
 //        if (!type2module2code2page.containsKey(pageType)) {
 //            type2module2code2page.put(pageType,
@@ -744,7 +740,7 @@
 //            page = type2module2code2page.get(pageType).get(module).get(code);
 //            return page;
 //        }
-//
+//        
 //        StringBuilder sb = new StringBuilder(TxConstants.INITIAL_STR_LENGTH);
 //        sb.append("/").append(module).append("/").append(code).append("/");
 //        sb.append(pageType.getPageName());
@@ -756,7 +752,7 @@
 //        type2module2code2page.get(pageType).get(module).put(code, page);
 //        return page;
 //    }
-//
+//    
 //    /**
 //      * 判断Jsp页面是否存在
 //      * <功能详细描述>
@@ -770,14 +766,15 @@
 //    private boolean isExistOfJspPage(String page) {
 //        StringBuilder jspPageSB = new StringBuilder("/WEB-INF/view");
 //        jspPageSB.append(page).append(".jsp");
-//        org.springframework.core.io.Resource jspPageResource = resourceLoader.getResource(jspPageSB.toString());
+//        org.springframework.core.io.Resource jspPageResource = resourceLoader
+//                .getResource(jspPageSB.toString());
 //        if (jspPageResource.exists()) {
 //            return true;
 //        } else {
 //            return false;
 //        }
 //    }
-//
+//    
 //    /**
 //      * 基础数据类型模块<br/>
 //      * <功能详细描述>
@@ -788,28 +785,40 @@
 //      * @since  [产品/模块版本]
 //     */
 //    public enum BasicDataTypeModuleEnum {
-//
+//        
 //        basicdata("basicdata", "基础数据"),
-//
+//        
+//        clientaccount("clientaccount", "客户账户"),
+//        
+//        clientinfo("clientinfo", "客户信息"),
+//        
+//        contract("contract", "合同"),
+//        
+//        msmainframe("msmainframe", "管理系统主框架"),
+//        
+//        ssmainframe("ssmainframe", "服务系统主框架"),
+//        
+//        apimainframe("apimainframe", "OPENAPI系统主框架"),
+//        
 //        collection("collection", "催收");
-//
+//        
 //        private final String key;
-//
+//        
 //        private final String name;
-//
+//        
 //        /** <默认构造函数> */
 //        private BasicDataTypeModuleEnum(String key, String name) {
 //            this.key = key;
 //            this.name = name;
 //        }
-//
+//        
 //        /**
 //         * @return 返回 key
 //         */
 //        public String getKey() {
 //            return key;
 //        }
-//
+//        
 //        /**
 //         * @return 返回 name
 //         */
@@ -817,9 +826,8 @@
 //            return name;
 //        }
 //    }
-//
-//    /** code2module的映射 */
-//    private static Map<String, BasicDataTypeModuleEnum> code2moduleMap = EnumUtils.getEnumMap(BasicDataTypeModuleEnum.class);
+//    
+//    
 //    
 //    /**
 //      * 基础数据树节点<br/>
@@ -831,6 +839,7 @@
 //      * @since  [产品/模块版本]
 //     */
 //    public static class BasicDataTypeTreeNode {
+//        
 //        private String id;
 //        
 //        private String parentId;

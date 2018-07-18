@@ -4,7 +4,7 @@
  * 修改时间:  2016年10月7日
  * <修改描述:>
  */
-package com.tx.component.basicdata.context;
+package com.tx.component.basicdata.service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,9 +14,10 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.tx.component.basicdata.context.AbstractBasicDataService;
+import com.tx.component.basicdata.context.BasicDataContext;
 import com.tx.component.basicdata.model.BasicData;
 import com.tx.component.basicdata.model.DataDict;
-import com.tx.component.basicdata.service.DataDictService;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.paged.model.PagedList;
 import com.tx.core.support.entrysupport.helper.EntryAbleUtils;
@@ -30,31 +31,21 @@ import com.tx.core.support.entrysupport.helper.EntryAbleUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class DefaultBasicDataService<T extends BasicData>
+public class DefaultDBBasicDataService<T extends BasicData>
         extends AbstractBasicDataService<T> {
     
-    /** 数据字典业务层 */
-    protected DataDictService dataDictService;
+    /** 所属模块 */
+    private String module;
+    
     /** 对应类型 */
     private Class<T> type;
     
-    /** <默认构造函数> */
-    public DefaultBasicDataService() {
-        super();
-    }
+    /** 数据字典业务层 */
+    protected DataDictService dataDictService;
     
     /** <默认构造函数> */
-    public DefaultBasicDataService(Class<T> type) {
+    public DefaultDBBasicDataService() {
         super();
-        this.type = type;
-    }
-    
-    /** <默认构造函数> */
-    public DefaultBasicDataService(Class<T> type,
-            DataDictService dataDictService) {
-        super();
-        this.type = type;
-        this.dataDictService = dataDictService;
     }
     
     /**
@@ -69,8 +60,16 @@ public class DefaultBasicDataService<T extends BasicData>
      * @return
      */
     @Override
+    public String module() {
+        return this.module;
+    }
+    
+    /**
+     * @return
+     */
+    @Override
     public String tableName() {
-        return "bd_basic_data";
+        return "bd_data_dict";
     }
     
     /**
@@ -296,5 +295,12 @@ public class DefaultBasicDataService<T extends BasicData>
      */
     public void setDataDictService(DataDictService dataDictService) {
         this.dataDictService = dataDictService;
+    }
+    
+    /**
+     * @param 对module进行赋值
+     */
+    public void setModule(String module) {
+        this.module = module;
     }
 }

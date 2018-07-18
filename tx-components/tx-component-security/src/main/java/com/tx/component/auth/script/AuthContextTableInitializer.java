@@ -84,14 +84,14 @@ public class AuthContextTableInitializer extends AbstractTableInitializer
                 .append("----------table:auth_authref----------")
                 .append(COMMENT_SUFFIX)
                 .append(LINE_SEPARATOR);
-        table_auth_authref(tableDDLExecutor, tableAutoInitialize);
+        table_sec_authref(tableDDLExecutor, tableAutoInitialize);
         sb.append(LINE_SEPARATOR);
         
         sb.append(COMMENT_PREFIX)
                 .append("----------table:table_auth_authref_his----------")
                 .append(COMMENT_SUFFIX)
                 .append(LINE_SEPARATOR);
-        table_auth_authref_his(tableDDLExecutor, tableAutoInitialize);
+        table_sec_authref_his(tableDDLExecutor, tableAutoInitialize);
         sb.append(LINE_SEPARATOR);
         
         return sb.toString();
@@ -153,27 +153,29 @@ public class AuthContextTableInitializer extends AbstractTableInitializer
         /*
         create table sec_authitem
         (
-            id varchar(64) not null,              --权限项唯一键key 
-            authType varchar(64) not null,        --权限类型
+            id varchar(128) not null,             --权限项唯一键key
             module varchar(64) not null,          --系统唯一键module
+            version integer not null,             --版本
+            authType varchar(64) not null,        --权限类型
             parentId varchar(64),                 --父级权限id
-            refId varchar(64),   
             refType varchar(64),
-            name varchar(256),                    --权限项名 
-            remark varchar(1024),                 --权限项目描述
-            viewAble bit not null default 1,      --是否可见
+            refId varchar(64),
+            name varchar(256) not null,           --权限项名 
+            remark varchar(512),                  --权限项目描述
+            attributes varchar(1024),             --权限项目描述
             modifyAble bit not null default 1,    --是否可编辑
             valid bit not null default 1,         --是否有效
             configAble bit not null default 1,    --是否可配置
-            primary key(id,systemid)
+            primary key(id)
         );
-        create index idx_parentId on auth_authitem(parentId);
-        create index idx_module on auth_authitem(module);
+        create unique index idx_un_authitem_00 on sec_authitem(id,module,version);
+        create index idx_parentId on sec_authitem(parentId);
+        create index idx_module on sec_authitem(module);
         */
-        ddlBuilder.newColumnOfVarchar(true, "id", 64, true, null)
-                .newColumnOfVarchar("authType", 64, true, null)
+        ddlBuilder.newColumnOfVarchar(true, "id", 128, true, null)
                 .newColumnOfVarchar("module", 64, true, null)
                 .newColumnOfInteger("version", true, null)
+                .newColumnOfVarchar("authType", 64, true, null)
                 .newColumnOfVarchar("parentId", 64, false, null)
                 .newColumnOfVarchar("refType", 64, false, null)
                 .newColumnOfVarchar("refId", 64, false, null)
@@ -183,7 +185,7 @@ public class AuthContextTableInitializer extends AbstractTableInitializer
                 .newColumnOfBoolean("modifyAble", true, false)
                 .newColumnOfBoolean("valid", true, true)
                 .newColumnOfBoolean("configAble", true, true);
-        ddlBuilder.newIndex(true, "idx_authitem_00", "id,module,version");
+        ddlBuilder.newIndex(true, "idx_un_authitem_00", "id,module,version");
         ddlBuilder.newIndex(false, "idx_parentId", "parentId");
         ddlBuilder.newIndex(false, "idx_module", "module");
         //ddlBuilder.newIndex(true, "idx_unique_auth_01", "");
@@ -197,9 +199,9 @@ public class AuthContextTableInitializer extends AbstractTableInitializer
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    private String table_auth_authref(TableDDLExecutor tableDDLExecutor,
+    private String table_sec_authref(TableDDLExecutor tableDDLExecutor,
             boolean tableAutoInitialize) {
-        String tableName = "auth_authref";
+        String tableName = "sec_authref";
         
         CreateTableDDLBuilder createDDLBuilder = null;
         AlterTableDDLBuilder alterDDLBuilder = null;
@@ -215,7 +217,7 @@ public class AuthContextTableInitializer extends AbstractTableInitializer
             ddlBuilder = createDDLBuilder;
         }
         
-        auth_authref(ddlBuilder);//写入表结构
+        sec_authref(ddlBuilder);//写入表结构
         
         if (alterDDLBuilder != null
                 && alterDDLBuilder.compare().isNeedAlter()) {
@@ -232,24 +234,29 @@ public class AuthContextTableInitializer extends AbstractTableInitializer
         return "";
     }
     
-    public static void auth_authref(DDLBuilder<?> ddlBuilder) {
+    /**
+     * 权限引用建表语句<br/>
+     * <功能详细描述>
+     * @param ddlBuilder [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void sec_authref(DDLBuilder<?> ddlBuilder) {
         /*
-        create table auth_authref${tableSuffix}(
+        create table sec_authref(
             id varchar2(64) not null,
-            refid  varchar2(255) not null,
-            authreftype varchar2(64) not null,
-            authid varchar2(255) not null,
-            systemid varchar2(64) not null,
-            authType varchar2(64) not null,
-            createdate date default sysdate not null,
-            enddate date,
-            effectiveDate date,
-            invalidDate date,
-            createoperid varchar2(64),
-            temp number(1) not null default 0,
+            authId varchar2(128) not null,
+            refType varchar2(64) not null,
+            refId  varchar2(64) not null,
+            createOperatorId varchar2(64),
+            createDate date default now() not null,
+            effectiveDate date not null,
+            expiryDate date,
             primary key(id)
         );
-        create unique index idx_auth_authref_00 on auth_authref${tableSuffix}(refid,authreftype,authid,systemid,authType,temp);
+        create unique index idx_sec_authref_00 on sec_authref(refid,authreftype,authid,systemid,authType,temp);
         create index idx_auth_authref_01 on auth_authref${tableSuffix}(systemid,refid);
         create index idx_auth_authref_02 on auth_authref${tableSuffix}(systemid,refid,authreftype);
         create index idx_auth_authref_03 on auth_authref${tableSuffix}(systemid,authid);
@@ -261,11 +268,10 @@ public class AuthContextTableInitializer extends AbstractTableInitializer
         ddlBuilder.newColumnOfVarchar(true, "id", 64, true, null)
                 .newColumnOfVarchar("refType", 64, true, null)
                 .newColumnOfVarchar("refId", 64, true, null)
-                .newColumnOfVarchar("module", 64, true, null)
+                .newColumnOfVarchar("authId", 128, true, null)
         
                 
                 .newColumnOfVarchar("authType", 64, true, null)
-                
                 .newColumnOfVarchar("parentId", 64, false, null)
                 .newColumnOfVarchar("name", 255, true, null)
                 .newColumnOfVarchar("remark", 512, false, null)
@@ -277,9 +283,20 @@ public class AuthContextTableInitializer extends AbstractTableInitializer
         ddlBuilder.newIndex(false, "idx_module", "module");
     }
     
-    private String table_auth_authref_his(TableDDLExecutor tableDDLExecutor,
+    /**
+     * 权限引用历史表<br/>
+     * <功能详细描述>
+     * @param tableDDLExecutor
+     * @param tableAutoInitialize
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    private String table_sec_authref_his(TableDDLExecutor tableDDLExecutor,
             boolean tableAutoInitialize) {
-        String tableName = "bd_basic_data_type";
+        String tableName = "sec_authref_his";
         
         CreateTableDDLBuilder createDDLBuilder = null;
         AlterTableDDLBuilder alterDDLBuilder = null;
@@ -336,6 +353,5 @@ public class AuthContextTableInitializer extends AbstractTableInitializer
         create index idx_auth_ref_his06 on auth_authref_his${tableSuffix}(effectiveDate);
         create index idx_auth_ref_his07 on auth_authref_his${tableSuffix}(invalidDate);
         */
-        
     }
 }

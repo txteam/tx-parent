@@ -25,16 +25,15 @@
 				TBDT.lastUpdateDate,
 				TBDT.name,
 				TBDT.tableName,
-				TBDT.remark,
-				TBDT.type
+				TBDT.remark
 		  FROM BD_BASIC_DATA_TYPE TBDT
 		 WHERE
 		<trim prefixOverrides="AND | OR">
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
 	            AND TBDT.ID = #{id}
 	        </if>
-	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(type)">  
-	            <![CDATA[ AND TBDT.TYPE = #{type,jdbcType=VARBINARY} ]]>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(code)">  
+	            <![CDATA[ AND TBDT.CODE = #{code,jdbcType=VARBINARY} ]]>
 	        </if>
 		</trim>
 	</select>
@@ -55,8 +54,7 @@
 				TBDT.lastUpdateDate,
 				TBDT.name,
 				TBDT.tableName,
-				TBDT.remark,
-				TBDT.type
+				TBDT.remark
 		  FROM BD_BASIC_DATA_TYPE TBDT
 		<trim prefix="WHERE" prefixOverrides="AND | OR">
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(modifyAble)">  
@@ -73,9 +71,6 @@
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(code)">  
 	            <![CDATA[ AND TBDT.CODE = #{code,jdbcType=VARCHAR} ]]>
-	        </if>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(type)">  
-	            <![CDATA[ AND TBDT.TYPE = #{type,jdbcType=VARBINARY} ]]>
 	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(viewType)">  
 	            <![CDATA[ AND TBDT.VIEWTYPE = #{viewType,jdbcType=VARBINARY} ]]>
@@ -122,9 +117,6 @@
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(code)">  
 	            <![CDATA[ AND TBDT.CODE = #{code,jdbcType=VARCHAR} ]]>
 	        </if>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(type)">  
-	            <![CDATA[ AND TBDT.TYPE = #{type,jdbcType=VARBINARY} ]]>
-	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(viewType)">  
 	            <![CDATA[ AND TBDT.VIEWTYPE = #{viewType,jdbcType=VARBINARY} ]]>
 	        </if>
@@ -156,8 +148,7 @@
 			viewType,
 			name,
 			remark,
-			tableName,
-			type
+			tableName
 		)
 		VALUES
 		(
@@ -172,20 +163,22 @@
 			#{viewType},
 			#{name},
 			#{remark},
-			#{tableName},
-			#{type}
+			#{tableName}
 		)
 	</insert>
 	
 	<!-- auto generate default delete -->
 	<delete id="deleteBasicDataType" 
 		parameterType="com.tx.component.basicdata.model.BasicDataType">
-		DELETE FROM BD_BASIC_DATA_TYPE  WHERE
+		DELETE FROM BD_BASIC_DATA_TYPE WHERE
 		<trim prefixOverrides="AND | OR">
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
-	            AND id = #{id}
+	            AND ID = #{id}
 	        </if>
-		</trim>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(code)">  
+	            <![CDATA[ AND CODE = #{code,jdbcType=VARBINARY} ]]>
+	        </if>
+		</trim> 
 	</delete>
 
 	<!-- auto generate default update -->
@@ -205,9 +198,6 @@
 	    	<if test="_parameter.containsKey('module')">
 	    		module = #{module,javaType=java.lang.String},
 	    	</if>
-			<if test="_parameter.containsKey('code')">
-	    		code = #{code,javaType=java.lang.String},
-	    	</if>
 	    	<if test="_parameter.containsKey('viewType')">
 	    		viewType = #{viewType,javaType=com.tx.component.basicdata.model.BasicDataViewTypeEnum},
 	    	</if>
@@ -224,7 +214,15 @@
 	    		lastUpdateDate = #{lastUpdateDate,javaType=java.util.Date},
 	    	</if>
 	    </trim>
-	    WHERE id = #{id} 
+	    WHERE
+	    <trim prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
+	            AND ID = #{id}
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(code)">  
+	            <![CDATA[ AND CODE = #{code,jdbcType=VARBINARY} ]]>
+	        </if>
+		</trim> 
 	</update>  
 
 </mapper>
