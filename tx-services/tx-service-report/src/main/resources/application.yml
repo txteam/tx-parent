@@ -32,10 +32,6 @@ spring:
         suffix: .ftl
         check-template-location: true
 
-
-
-
-
 #pagehelper分页插件
 pagehelper:
     helperDialect: mysql
