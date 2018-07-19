@@ -85,6 +85,7 @@ public class StatisticalReportController {
         response.put("conditionMap",
                 reportStatement.getConditionMap().getItems());
         response.put("viewMap", reportStatement.getViewMap().getItems());
+        response.put("paramMap", getParameterMap(request));
         response.put("reportCode", reportCode);
         abstractReportTypeHandler.initPageParams(response, reportStatement);
 
