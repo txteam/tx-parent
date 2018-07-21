@@ -8,6 +8,7 @@
         <xs:complexType>
             <xs:sequence>
                 <xs:element type="xs:string" name="script"/>
+
                 <xs:element type="conditions" name="conditions"/>
                 <xs:element type="views" name="views"/>
                 <xs:element type="sqlMappers" name="sqlMappers" />

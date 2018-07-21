@@ -100,7 +100,7 @@
             url: '${request.contextPath}/statisticalReport/queryData/${reportCode}.action',
             view: myview,
             fit: true,
-            fitColumns: false,
+            fitColumns: true,
             border: false,
             idField: 'id',
             checkOnSelect: false,
@@ -266,3 +266,4 @@
     </div>
 </div>
 </body>
+</html>
