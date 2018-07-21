@@ -35,7 +35,7 @@ public class DefaultRemoteTreeAbleBasicDataService<T extends TreeAbleBasicData<T
     private Class<T> type;
     
     /** 基础数据远程调用客户端 */
-    private TreeAbleBasicDataRemoteService client;
+    private BasicDataRemoteService client;
     
     /** <默认构造函数> */
     public DefaultRemoteTreeAbleBasicDataService() {
@@ -326,18 +326,18 @@ public class DefaultRemoteTreeAbleBasicDataService<T extends TreeAbleBasicData<T
     public void setType(Class<T> type) {
         this.type = type;
     }
-
+    
     /**
      * @param 对module进行赋值
      */
     public void setModule(String module) {
         this.module = module;
     }
-
+    
     /**
      * @param 对client进行赋值
      */
-    public void setClient(TreeAbleBasicDataRemoteService client) {
+    public void setClient(BasicDataRemoteService client) {
         this.client = client;
     }
 }

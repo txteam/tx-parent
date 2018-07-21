@@ -56,9 +56,11 @@
 //public class BasicDataController
 //        implements InitializingBean, ResourceLoaderAware {
 //    
+//    /** 基础数据类型业务层 */
 //    @Resource(name = "basicdata.basicDataTypeService")
 //    private BasicDataTypeService basicDataTypeService;
 //    
+//    /** */
 //    @Resource(name = "basicdata.dataDictService")
 //    private DataDictService dataDictService;
 //    

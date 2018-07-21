@@ -34,6 +34,8 @@ import org.springframework.transaction.support.TransactionTemplate;
 import com.tx.component.basicdata.context.BasicDataContextFactory;
 import com.tx.component.basicdata.context.BasicDataServiceRegistry;
 import com.tx.component.basicdata.context.BasicDataServiceSupportCacheProxyCreator;
+import com.tx.component.basicdata.controller.BasicDataRemoteController;
+import com.tx.component.basicdata.controller.BasicDataTypeController;
 import com.tx.component.basicdata.dao.DataDictDao;
 import com.tx.component.basicdata.dao.impl.DataDictDaoImpl;
 import com.tx.component.basicdata.script.BasicDataContextTableInitializer;
@@ -267,6 +269,21 @@ public class BasicDataContextAutoConfiguration
     //    }
     
     /**
+     * 基础数据类型业务层<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return BasicDataTypeService [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @Bean(name = "basicdata.basicDataTypeService")
+    public BasicDataTypeService basicDataTypeService() {
+        BasicDataTypeService basicDataTypeService = new BasicDataTypeService();
+        return basicDataTypeService;
+    }
+    
+    /**
      * 数据字典类持久层<br/>
      * <功能详细描述>
      * @return [参数说明]
@@ -348,8 +365,23 @@ public class BasicDataContextAutoConfiguration
             DataDictService dataDictService) {
         BasicDataServiceRegistry serviceFactory = new BasicDataServiceRegistry(
                 module, basePackages, basicDataTypeService, dataDictService,
-                null, null);
+                null);
         
         return serviceFactory;
+    }
+    
+    @Bean(name = "basicDataTypeController")
+    public BasicDataTypeController basicDataTypeController(
+            BasicDataTypeService basicDataTypeService) {
+        BasicDataTypeController controller = new BasicDataTypeController(
+                basicDataTypeService);
+        return controller;
+    }
+    
+    @Bean(name = "basicDataRemoteController")
+    public BasicDataRemoteController basicDataRemoteController(
+            BasicDataTypeService basicDataTypeService) {
+        BasicDataRemoteController controller = new BasicDataRemoteController();
+        return controller;
     }
 }

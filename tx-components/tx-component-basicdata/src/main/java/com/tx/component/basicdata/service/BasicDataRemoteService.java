@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.tx.component.basicdata.model.BasicData;
+import com.tx.component.basicdata.model.TreeAbleBasicData;
 import com.tx.core.paged.model.PagedList;
 
 /**
@@ -218,4 +219,40 @@ public interface BasicDataRemoteService {
      */
     @RequestMapping(value = "/enableById", method = RequestMethod.PATCH)
     public <T extends BasicData> boolean enableById(Class<T> type, String id);
+    
+    /**
+     * 根据条件查询基础数据列表<br/>
+     * <功能详细描述>
+     * @param parentId
+     * @param valid
+     * @param params
+     * @return [参数说明]
+     * 
+     * @return List<T> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @RequestMapping(value = "/queryListByParentId", method = RequestMethod.GET)
+    public <T extends TreeAbleBasicData<T>> List<T> queryListByParentId(
+            Class<T> type, String parentId, Boolean valid,
+            Map<String, Object> params);
+    
+    /**
+     * 根据条件查询基础数据分页列表<br/>
+     * <功能详细描述>
+     * @param parentId
+     * @param valid
+     * @param params
+     * @param pageIndex
+     * @param pageSize
+     * @return [参数说明]
+     * 
+     * @return PagedList<T> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @RequestMapping(value = "/queryPagedListByParentId", method = RequestMethod.GET)
+    public <T extends TreeAbleBasicData<T>> PagedList<T> queryPagedListByParentId(
+            Class<T> type, String parentId, Boolean valid,
+            Map<String, Object> params, int pageIndex, int pageSize);
 }

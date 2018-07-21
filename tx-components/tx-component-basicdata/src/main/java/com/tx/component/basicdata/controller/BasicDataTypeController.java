@@ -32,12 +32,23 @@ import io.swagger.annotations.ApiOperation;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-@Api(value = "/basicDataType", tags = "基础数据类型")
+@Api(value = "/basicDataType", tags = "基础数据类型API")
 @RequestMapping("/basicDataType")
 public class BasicDataTypeController {
     
     /** 基础数据类型业务层 */
     private BasicDataTypeService basicDataTypeService;
+    
+    /** <默认构造函数> */
+    public BasicDataTypeController() {
+        super();
+    }
+    
+    /** <默认构造函数> */
+    public BasicDataTypeController(BasicDataTypeService basicDataTypeService) {
+        super();
+        this.basicDataTypeService = basicDataTypeService;
+    }
     
     /**
     * 跳转到查询BasicDataType列表页面<br/>
@@ -68,7 +79,7 @@ public class BasicDataTypeController {
             @ApiImplicitParam(name = "common", value = "是否为通用类型", required = false, dataType = "Boolean"),
             @ApiImplicitParam(name = "code", value = "基础数据类型编码", required = false, dataType = "String") })
     @ResponseBody
-    @RequestMapping(value = "/queryList", method = RequestMethod.GET)
+    @RequestMapping(value = "/queryList", method = { RequestMethod.GET })
     public List<BasicDataType> queryList(
             @RequestParam(value = "module", required = false) String module,
             @RequestParam(value = "common", required = false) Boolean common,
@@ -111,7 +122,7 @@ public class BasicDataTypeController {
      * @see [类、类#方法、类#成员]
      */
     @ApiOperation(value = "根据基础数据类型查询基础数据类型实例", notes = "")
-    @ApiImplicitParam(name = "basicDataType", value = "基础数据类型", required = true, dataType = "Class")
+    @ApiImplicitParam(name = "basicDataType", value = "基础数据类型", required = true, dataType = "String", paramType = "query")
     @ResponseBody()
     @RequestMapping(value = "/findByType", method = RequestMethod.GET)
     public BasicDataType findByType(

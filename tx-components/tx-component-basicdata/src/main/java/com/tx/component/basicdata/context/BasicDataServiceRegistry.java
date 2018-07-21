@@ -42,7 +42,6 @@ import com.tx.component.basicdata.service.DefaultDBBasicDataService;
 import com.tx.component.basicdata.service.DefaultDBTreeAbleBasicDataService;
 import com.tx.component.basicdata.service.DefaultRemoteBasicDataService;
 import com.tx.component.basicdata.service.DefaultRemoteTreeAbleBasicDataService;
-import com.tx.component.basicdata.service.TreeAbleBasicDataRemoteService;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.util.ClassScanUtils;
 
@@ -92,9 +91,6 @@ public class BasicDataServiceRegistry implements ApplicationContextAware,
     /** 基础数据远程调用消费逻辑层 */
     private BasicDataRemoteService basicDataRemoteService;
     
-    /** 基础数据远程调用消费逻辑层 */
-    private TreeAbleBasicDataRemoteService treeAbleBasicDataRemoteService;
-    
     /** <默认构造函数> */
     public BasicDataServiceRegistry() {
         super();
@@ -104,8 +100,7 @@ public class BasicDataServiceRegistry implements ApplicationContextAware,
     public BasicDataServiceRegistry(String module, String basePackages,
             BasicDataTypeService basicDataTypeService,
             DataDictService dataDictService,
-            BasicDataRemoteService basicDataRemoteService,
-            TreeAbleBasicDataRemoteService treeAbleBasicDataRemoteService) {
+            BasicDataRemoteService basicDataRemoteService) {
         super();
         AssertUtils.notEmpty(module, "module is null.");
         
@@ -114,7 +109,6 @@ public class BasicDataServiceRegistry implements ApplicationContextAware,
         this.basicDataTypeService = basicDataTypeService;
         this.dataDictService = dataDictService;
         this.basicDataRemoteService = basicDataRemoteService;
-        this.treeAbleBasicDataRemoteService = treeAbleBasicDataRemoteService;
     }
     
     /**
@@ -282,35 +276,30 @@ public class BasicDataServiceRegistry implements ApplicationContextAware,
         //利用有参构造函数,(Object) type
         BasicDataService service = null;
         if (type.isAssignableFrom(TreeAbleBasicData.class)) {
-            if (this.treeAbleBasicDataRemoteService != null) {
-                Class<?> defaultServiceType = DefaultRemoteTreeAbleBasicDataService.class;
-                
-                BeanDefinitionBuilder builder = BeanDefinitionBuilder
-                        .genericBeanDefinition(defaultServiceType);
-                builder.addPropertyValue("module", module);
-                builder.addPropertyValue("type", type);
-                builder.addPropertyValue("client",
-                        this.treeAbleBasicDataRemoteService);
-                registerBeanDefinition(beanName, builder.getBeanDefinition());
-                
-                service = (BasicDataService) BasicDataServiceRegistry.applicationContext
-                        .getBean(beanName);
-            }
+            Class<?> defaultServiceType = DefaultRemoteTreeAbleBasicDataService.class;
+            
+            BeanDefinitionBuilder builder = BeanDefinitionBuilder
+                    .genericBeanDefinition(defaultServiceType);
+            builder.addPropertyValue("module", module);
+            builder.addPropertyValue("type", type);
+            builder.addPropertyValue("client", this.basicDataRemoteService);
+            registerBeanDefinition(beanName, builder.getBeanDefinition());
+            
+            service = (BasicDataService) BasicDataServiceRegistry.applicationContext
+                    .getBean(beanName);
             
         } else {
-            if (this.basicDataRemoteService != null) {
-                Class<?> defaultServiceType = DefaultRemoteBasicDataService.class;
-                
-                BeanDefinitionBuilder builder = BeanDefinitionBuilder
-                        .genericBeanDefinition(defaultServiceType);
-                builder.addPropertyValue("module", module);
-                builder.addPropertyValue("type", type);
-                builder.addPropertyValue("client", this.basicDataRemoteService);
-                registerBeanDefinition(beanName, builder.getBeanDefinition());
-                
-                service = (BasicDataService) BasicDataServiceRegistry.applicationContext
-                        .getBean(beanName);
-            }
+            Class<?> defaultServiceType = DefaultRemoteBasicDataService.class;
+            
+            BeanDefinitionBuilder builder = BeanDefinitionBuilder
+                    .genericBeanDefinition(defaultServiceType);
+            builder.addPropertyValue("module", module);
+            builder.addPropertyValue("type", type);
+            builder.addPropertyValue("client", this.basicDataRemoteService);
+            registerBeanDefinition(beanName, builder.getBeanDefinition());
+            
+            service = (BasicDataService) BasicDataServiceRegistry.applicationContext
+                    .getBean(beanName);
         }
         
         return service;
@@ -442,7 +431,7 @@ public class BasicDataServiceRegistry implements ApplicationContextAware,
      */
     public void initBasicDataType() {
         List<BasicDataService<?>> services = getAllBasicDataServices();
-        List<BasicDataType> resListOfCfg = new ArrayList<>();
+        //List<BasicDataType> resListOfCfg = new ArrayList<>();
         for (BasicDataService<? extends BasicData> s : services) {
             Class<? extends BasicData> type = s.type();
             String code = s.code();

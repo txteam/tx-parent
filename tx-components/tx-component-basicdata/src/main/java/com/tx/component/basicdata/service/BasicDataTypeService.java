@@ -9,9 +9,12 @@ package com.tx.component.basicdata.service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.collections4.Predicate;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,10 +39,10 @@ public class BasicDataTypeService {
     private Logger logger = LoggerFactory.getLogger(BasicDataTypeService.class);
     
     /** 类型到类型的映射 */
-    private Map<Class<?>, BasicDataType> type2typeMap;
+    private Map<Class<?>, BasicDataType> type2typeMap = new HashMap<>();
     
     /** 编码到类型的映射 */
-    private Map<String, BasicDataType> code2typeMap;
+    private Map<String, BasicDataType> code2typeMap = new HashMap<>();
     
     //private BasicDataTypeDao basicDataTypeDao;
     //
@@ -102,29 +105,44 @@ public class BasicDataTypeService {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public List<BasicDataType> queryList(String module, Boolean common,
-            String code) {
-        if(!StringUtils.isEmpty(code)){
+    public List<BasicDataType> queryList(final String module,
+            final Boolean common, final String code) {
+        if (!StringUtils.isEmpty(code)) {
             return Arrays.asList(code2typeMap.get(code));
         }
-        List<BasicDataType> filterResList1 = new ArrayList<>();
-        if(!StringUtils.isEmpty(module)){
-            for(BasicDataType typeTemp : code2typeMap.values()){
-                if(module.equals(typeTemp.getModule())){
-                    filterResList1.add(typeTemp);
-                }
-            }
-        }
-        List<BasicDataType> filterResList2 = new ArrayList<>();
-        if(common != null){
-            for(BasicDataType typeTemp : filterResList1){
-                if(common.booleanValue() == typeTemp.isCommon()){
-                    filterResList2.add(typeTemp);
-                }
-            }
-        }
         //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
-        List<BasicDataType> resList = filterResList2;
+        List<BasicDataType> resList = new ArrayList<>(code2typeMap.values());
+        
+        //根据module过滤
+        resList = ListUtils.predicatedList(resList,
+                new Predicate<BasicDataType>() {
+                    @Override
+                    public boolean evaluate(BasicDataType object) {
+                        if (StringUtils.isEmpty(module)) {
+                            return true;
+                        } else if (module.equals(object.getModule())) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }
+                });
+        
+        //根据module过滤
+        resList = ListUtils.predicatedList(resList,
+                new Predicate<BasicDataType>() {
+                    @Override
+                    public boolean evaluate(BasicDataType object) {
+                        if (common == null) {
+                            return true;
+                        } else if (common.booleanValue() == object.isCommon()) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }
+                });
+        
         return resList;
     }
     
