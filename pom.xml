@@ -106,7 +106,7 @@
 		<skipTests>true</skipTests><!-- projectInfo -->
 		
 		<!-- 覆盖默认父属性：改变版本 -->
-		<thymeleaf.version>3.0.0.RELEASE</thymeleaf.version>
+		<thymeleaf.version>3.0.9.RELEASE</thymeleaf.version>
  		<thymeleaf-layout-dialect.version>2.3.0</thymeleaf-layout-dialect.version>
 	</properties>
 
