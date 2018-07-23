@@ -10,10 +10,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.tx.component.basicdata.context.BasicDataContext;
 import com.tx.component.basicdata.context.BasicDataService;
 import com.tx.component.basicdata.context.TreeAbleBasicDataService;
@@ -53,7 +56,7 @@ public class BasicDataRemoteController {
      */
     @ApiOperation(value = "根据基础数据类获取数据库表名", notes = "")
     @ApiImplicitParam(name = "type", value = "基础数据类型", required = false, dataType = "Class", paramType = "path")
-    @RequestMapping(value = "/tableName/{type}", method = RequestMethod.GET)
+    @RequestMapping(value = "{type}/tableName", method = RequestMethod.GET)
     public <T extends BasicData> String tableName(@PathVariable Class<T> type) {
         AssertUtils.notNull(type, "type is null.");
         BasicDataService<T> service = BasicDataContext.getContext()
@@ -78,10 +81,11 @@ public class BasicDataRemoteController {
      */
     @ApiOperation(value = "增加基础数据实例", notes = "")
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "type", value = "基础数据类型", required = true, dataType = "Class", paramType = "query"),
-        @ApiImplicitParam(name = "data", value = "基础数据类型", required = true, dataType = "T")})
-    @RequestMapping(value = "/insert", method = RequestMethod.POST)
-    public <T extends BasicData> void insert(Class<T> type, T data) {
+            @ApiImplicitParam(name = "type", value = "基础数据类型", required = true, dataType = "Class", paramType = "query"),
+            @ApiImplicitParam(name = "data", value = "基础数据类型", required = true, dataType = "JSONObject") })
+    @RequestMapping(value = "{type}/insert", method = RequestMethod.POST)
+    public <T extends BasicData> void insert(Class<T> type,
+            @RequestBody JSONObject data) {
         AssertUtils.notNull(type, "type is null.");
         BasicDataService<T> service = BasicDataContext.getContext()
                 .getBasicDataService(type);
@@ -89,7 +93,8 @@ public class BasicDataRemoteController {
                 "service is not exist.type:{}",
                 new Object[] { type });
         
-        service.insert(data);
+        T object = data.toJavaObject(type);
+        service.insert(object);
     }
     
     /**
@@ -101,9 +106,13 @@ public class BasicDataRemoteController {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @RequestMapping(value = "/batchInsert", method = RequestMethod.POST)
+    @ApiOperation(value = "增加基础数据实例", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "type", value = "基础数据类型", required = true, dataType = "Class", paramType = "query"),
+            @ApiImplicitParam(name = "datas", value = "基础数据类型", required = true, dataType = "JSONArray") })
+    @RequestMapping(value = "{type}/batchInsert", method = RequestMethod.POST)
     public <T extends BasicData> void batchInsert(Class<T> type,
-            List<T> dataList) {
+            JSONArray datas) {
         AssertUtils.notNull(type, "type is null.");
         BasicDataService<T> service = BasicDataContext.getContext()
                 .getBasicDataService(type);
@@ -111,7 +120,7 @@ public class BasicDataRemoteController {
                 "service is not exist.type:{}",
                 new Object[] { type });
         
-        service.batchInsert(dataList);
+        //service.batchInsert(dataList);
     }
     
     /**
@@ -124,7 +133,7 @@ public class BasicDataRemoteController {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @RequestMapping(value = "/updateById", method = RequestMethod.PUT)
+    @RequestMapping(value = "{type}/updateById", method = RequestMethod.PUT)
     public <T extends BasicData> boolean updateById(Class<T> type, T data) {
         AssertUtils.notNull(type, "type is null.");
         BasicDataService<T> service = BasicDataContext.getContext()
@@ -146,7 +155,7 @@ public class BasicDataRemoteController {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @RequestMapping(value = "/batchUpdate", method = RequestMethod.PUT)
+    @RequestMapping(value = "{type}/batchUpdate", method = RequestMethod.PUT)
     public <T extends BasicData> void batchUpdate(Class<T> type,
             List<T> dataList) {
         AssertUtils.notNull(type, "type is null.");
@@ -171,10 +180,11 @@ public class BasicDataRemoteController {
      */
     @ApiOperation(value = "根据数据ID删除实例", notes = "")
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "type", value = "基础数据类型", required = true, dataType = "Class", paramType = "path"),
-        @ApiImplicitParam(name = "id", value = "基础数据ID", required = true, dataType = "String")})
-    @RequestMapping(value = "/deleteById", method = RequestMethod.DELETE)
-    public <T extends BasicData> boolean deleteById(@PathVariable Class<T> type, String id) {
+            @ApiImplicitParam(name = "type", value = "基础数据类型", required = true, dataType = "Class", paramType = "path"),
+            @ApiImplicitParam(name = "id", value = "基础数据ID", required = true, dataType = "String") })
+    @RequestMapping(value = "{type}/deleteById", method = RequestMethod.DELETE)
+    public <T extends BasicData> boolean deleteById(@PathVariable Class<T> type,
+            String id) {
         AssertUtils.notNull(type, "type is null.");
         BasicDataService<T> service = BasicDataContext.getContext()
                 .getBasicDataService(type);
@@ -197,7 +207,7 @@ public class BasicDataRemoteController {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @RequestMapping(value = "/deleteByCode", method = RequestMethod.DELETE)
+    @RequestMapping(value = "{type}/deleteByCode", method = RequestMethod.DELETE)
     public <T extends BasicData> boolean deleteByCode(Class<T> type,
             String code) {
         AssertUtils.notNull(type, "type is null.");
@@ -222,7 +232,7 @@ public class BasicDataRemoteController {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @RequestMapping(value = "/isExist", method = RequestMethod.GET)
+    @RequestMapping(value = "{type}/isExist", method = RequestMethod.GET)
     public <T extends BasicData> boolean isExist(Class<T> type,
             Map<String, String> key2valueMap, String excludeId) {
         AssertUtils.notNull(type, "type is null.");
@@ -246,7 +256,7 @@ public class BasicDataRemoteController {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @RequestMapping(value = "/findById", method = RequestMethod.GET)
+    @RequestMapping(value = "{type}/findById", method = RequestMethod.GET)
     public <T extends BasicData> T findById(Class<T> type, String id) {
         AssertUtils.notNull(type, "type is null.");
         BasicDataService<T> service = BasicDataContext.getContext()
@@ -269,7 +279,7 @@ public class BasicDataRemoteController {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @RequestMapping(value = "/findByCode", method = RequestMethod.GET)
+    @RequestMapping(value = "{type}/findByCode", method = RequestMethod.GET)
     public <T extends BasicData> T findByCode(Class<T> type, String code) {
         AssertUtils.notNull(type, "type is null.");
         BasicDataService<T> service = BasicDataContext.getContext()
@@ -293,7 +303,7 @@ public class BasicDataRemoteController {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @RequestMapping(value = "/queryList", method = RequestMethod.GET)
+    @RequestMapping(value = "{type}/queryList", method = RequestMethod.GET)
     public <T extends BasicData> List<T> queryList(Class<T> type, Boolean valid,
             Map<String, Object> params) {
         AssertUtils.notNull(type, "type is null.");
@@ -320,7 +330,7 @@ public class BasicDataRemoteController {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @RequestMapping(value = "/queryPagedList", method = RequestMethod.GET)
+    @RequestMapping(value = "{type}/queryPagedList", method = RequestMethod.GET)
     public <T extends BasicData> PagedList<T> queryPagedList(Class<T> type,
             Boolean valid, Map<String, Object> params, int pageIndex,
             int pageSize) {
@@ -348,7 +358,7 @@ public class BasicDataRemoteController {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @RequestMapping(value = "/disableById", method = RequestMethod.PATCH)
+    @RequestMapping(value = "{type}/disableById", method = RequestMethod.PATCH)
     public <T extends BasicData> boolean disableById(Class<T> type, String id) {
         AssertUtils.notNull(type, "type is null.");
         BasicDataService<T> service = BasicDataContext.getContext()
@@ -371,7 +381,7 @@ public class BasicDataRemoteController {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @RequestMapping(value = "/enableById", method = RequestMethod.PATCH)
+    @RequestMapping(value = "{type}/enableById", method = RequestMethod.PATCH)
     public <T extends BasicData> boolean enableById(Class<T> type, String id) {
         AssertUtils.notNull(type, "type is null.");
         BasicDataService<T> service = BasicDataContext.getContext()
@@ -396,7 +406,7 @@ public class BasicDataRemoteController {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @RequestMapping(value = "/queryListByParentId", method = RequestMethod.GET)
+    @RequestMapping(value = "{type}/queryListByParentId", method = RequestMethod.GET)
     public <T extends TreeAbleBasicData<T>> List<T> queryListByParentId(
             Class<T> type, String parentId, Boolean valid,
             Map<String, Object> params) {
@@ -425,7 +435,7 @@ public class BasicDataRemoteController {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @RequestMapping(value = "/queryPagedListByParentId", method = RequestMethod.GET)
+    @RequestMapping(value = "{type}/queryPagedListByParentId", method = RequestMethod.GET)
     public <T extends TreeAbleBasicData<T>> PagedList<T> queryPagedListByParentId(
             Class<T> type, String parentId, Boolean valid,
             Map<String, Object> params, int pageIndex, int pageSize) {
