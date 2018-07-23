@@ -47,13 +47,13 @@ public final class UEditorConfigManager {
     }
     
     /**
-      * 获取所有的配置
-      * <功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return JSONObject [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 获取所有的配置
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return JSONObject [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     public JSONObject getAllConfig() {
         return this.jsonConfig;

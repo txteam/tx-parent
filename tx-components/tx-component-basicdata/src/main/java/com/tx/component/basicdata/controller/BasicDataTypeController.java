@@ -73,7 +73,7 @@ public class BasicDataTypeController {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @ApiOperation(value = "查询基础数据类型列表", notes = "")
+    @ApiOperation(value = "查询列表", notes = "")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "module", value = "归属模块", required = false, dataType = "String"),
             @ApiImplicitParam(name = "common", value = "是否为通用类型", required = false, dataType = "Boolean"),
@@ -100,7 +100,7 @@ public class BasicDataTypeController {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @ApiOperation(value = "根据基础数据类型编码查询基础数据类型实例", notes = "")
+    @ApiOperation(value = "查询实例", notes = "")
     @ApiImplicitParam(name = "basicDataTypeCode", value = "基础数据类型编码", required = true, dataType = "String")
     @ResponseBody
     @RequestMapping(value = "/findByCode", method = RequestMethod.GET)
