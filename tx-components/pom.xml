@@ -51,6 +51,5 @@
 		
 		<!-- 准备废弃的模块 -->
 		<!-- <module>tx-component-rule</module> -->
-		
 	</modules>
 </project>
