@@ -104,10 +104,10 @@
 		<!-- 其他属性 -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding><!-- base info -->
 		<skipTests>true</skipTests><!-- projectInfo -->
-		
+
 		<!-- 覆盖默认父属性：改变版本 -->
 		<thymeleaf.version>3.0.9.RELEASE</thymeleaf.version>
- 		<thymeleaf-layout-dialect.version>2.3.0</thymeleaf-layout-dialect.version>
+		<thymeleaf-layout-dialect.version>2.3.0</thymeleaf-layout-dialect.version>
 	</properties>
 
 	<dependencyManagement>
@@ -142,7 +142,8 @@
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-dependencies</artifactId>
-				<version>Dalston.SR5</version>
+				<!-- <version>Dalston.SR5</version> -->
+				<version>Edgware.RELEASE</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>

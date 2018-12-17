@@ -29,17 +29,11 @@ public class BasicDataContextProperties {
     /** 基础包集合 */
     private String basePackages = "";
     
-    /** mybatis配置文件:service需要该逻辑 */
-    private String mybatisConfigLocation = "classpath:context/mybatis-config.xml";
-    
     /** cacheManager */
     private String cacheManagerRef;
     
-    /** 数据源:dataSource */
-    private String dataSourceRef;
-    
-    /** transactionManager */
-    protected String transactionManagerRef;
+    /** 服务端配置 */
+    private BasicDataContextServerProperties server;
     
     /**
      * @return 返回 enable
@@ -84,48 +78,6 @@ public class BasicDataContextProperties {
     }
     
     /**
-     * @return 返回 dataSourceRef
-     */
-    public String getDataSourceRef() {
-        return dataSourceRef;
-    }
-    
-    /**
-     * @param 对dataSourceRef进行赋值
-     */
-    public void setDataSourceRef(String dataSourceRef) {
-        this.dataSourceRef = dataSourceRef;
-    }
-    
-    /**
-     * @return 返回 transactionManagerRef
-     */
-    public String getTransactionManagerRef() {
-        return transactionManagerRef;
-    }
-    
-    /**
-     * @param 对transactionManagerRef进行赋值
-     */
-    public void setTransactionManagerRef(String transactionManagerRef) {
-        this.transactionManagerRef = transactionManagerRef;
-    }
-    
-    /**
-     * @return 返回 mybatisConfigLocation
-     */
-    public String getMybatisConfigLocation() {
-        return mybatisConfigLocation;
-    }
-    
-    /**
-     * @param 对mybatisConfigLocation进行赋值
-     */
-    public void setMybatisConfigLocation(String mybatisConfigLocation) {
-        this.mybatisConfigLocation = mybatisConfigLocation;
-    }
-    
-    /**
      * @return 返回 module
      */
     public String getModule() {
@@ -137,5 +89,19 @@ public class BasicDataContextProperties {
      */
     public void setModule(String module) {
         this.module = module;
+    }
+
+    /**
+     * @return 返回 server
+     */
+    public BasicDataContextServerProperties getServer() {
+        return server;
+    }
+
+    /**
+     * @param 对server进行赋值
+     */
+    public void setServer(BasicDataContextServerProperties server) {
+        this.server = server;
     }
 }

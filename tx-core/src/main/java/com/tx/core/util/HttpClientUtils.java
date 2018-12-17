@@ -24,6 +24,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.ParseException;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -220,7 +221,6 @@ public class HttpClientUtils {
             //而我只连接到xx时，到这个主机的并发最多只有200；而不是400；
             //而我连接到xx 和 xx时，到每个主机的并发最多只有200；即加起来是400（但不能超过400）；所以起作用的设置是DefaultMaxPerRout
             builder.setMaxConnPerRoute(maxConnectionsPerHost);
-            
             
             builder.setConnectionTimeToLive(this.connectionTimeout, TimeUnit.MILLISECONDS);
             //从连接池中取连接的超时时间
