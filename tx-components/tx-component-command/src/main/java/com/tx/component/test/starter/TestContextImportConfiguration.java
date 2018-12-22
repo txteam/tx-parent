@@ -37,12 +37,12 @@ public class TestContextImportConfiguration implements InitializingBean{
      */
     @Override
     public void afterPropertiesSet() throws Exception {
-        System.out.println("TestContextAutoConfiguration afterPropertiesSet. called");
+        System.out.println("TestContextImportConfiguration afterPropertiesSet. called");
     }
 
     @PostConstruct
     public void postConstruct(){
-        System.out.println("TestContextAutoConfiguration @PostConstruct. called");
+        System.out.println("TestContextImportConfiguration @PostConstruct. called");
     }
     
     @Bean

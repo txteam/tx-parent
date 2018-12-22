@@ -251,8 +251,8 @@ public class TestContextAutoConfiguration
 //test bean cons.testBeanImport3
 //test bean afterPropertiesSet.testBeanImport3
 //TestContextImportConfiguration constrution. called
-//TestContextAutoConfiguration @PostConstruct. called
-//TestContextAutoConfiguration afterPropertiesSet. called
+//TestContextImportConfiguration @PostConstruct. called
+//TestContextImportConfiguration afterPropertiesSet. called
 //test bean cons.testBeanImport1
 //test bean afterPropertiesSet.testBeanImport1
 //test bean cons.testBeanImport2
