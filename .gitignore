@@ -1,6 +1,7 @@
 /target
 /.settings
 /.classpath
+/bin
 
 /tx-core/target
 /tx-core/.settings
