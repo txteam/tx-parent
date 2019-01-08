@@ -124,12 +124,14 @@ public class BasicDataContextAutoConfiguration
      */
     @Override
     public void afterPropertiesSet() throws Exception {
+    	BasicDataContextServerProperties server = this.properties.getServer();
+    	
         //设置dataSource
-        if (StringUtils.isNotBlank(this.properties.getDataSourceRef())
+        if (server!=null && StringUtils.isNotBlank(server.getDataSourceRef())
                 && this.applicationContext
-                        .containsBean(this.properties.getDataSourceRef())) {
+                        .containsBean(server.getDataSourceRef())) {
             this.dataSource = this.applicationContext.getBean(
-                    this.properties.getDataSourceRef(), DataSource.class);
+            		server.getDataSourceRef(), DataSource.class);
         } else if (this.applicationContext.getBeansOfType(DataSource.class)
                 .size() == 1) {
             this.dataSource = this.applicationContext.getBean(DataSource.class);
@@ -138,11 +140,11 @@ public class BasicDataContextAutoConfiguration
                 "dataSource is null.存在多个数据源，需要通过basicdata.dataSource指定使用的数据源,或为数据源设置为Primary.");
         
         //设置transactionManager
-        if (StringUtils.isNotBlank(this.properties.getTransactionManagerRef())
+        if (server!=null && StringUtils.isNotBlank(server.getTransactionManagerRef())
                 && this.applicationContext.containsBean(
-                        this.properties.getTransactionManagerRef())) {
+                		server.getTransactionManagerRef())) {
             this.transactionManager = this.applicationContext.getBean(
-                    this.properties.getTransactionManagerRef(),
+            		server.getTransactionManagerRef(),
                     PlatformTransactionManager.class);
         } else if (this.applicationContext
                 .getBeansOfType(PlatformTransactionManager.class).size() == 1) {
@@ -172,9 +174,8 @@ public class BasicDataContextAutoConfiguration
         if (!StringUtils.isEmpty(this.properties.getBasePackages())) {
             this.basePackages = this.properties.getBasePackages();
         }
-        if (!StringUtils.isEmpty(this.properties.getMybatisConfigLocation())) {
-            this.mybatisConfigLocation = this.properties
-                    .getMybatisConfigLocation();
+        if (server!=null && !StringUtils.isEmpty(server.getMybatisConfigLocation())) {
+            this.mybatisConfigLocation = server.getMybatisConfigLocation();
         }
         
         if (!StringUtils.isBlank(this.properties.getModule())) {
