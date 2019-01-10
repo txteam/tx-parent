@@ -7,4 +7,4 @@ create table ${dbScriptMapper.tableName}(
 	${entryKey} ${dbScriptMapper.columnName2TypeNameMapping[entryKey]} <#if (dbScriptMapper.columnName2CommentMapping[entryKey])?? &&  (dbScriptMapper.columnName2CommentMapping[entryKey])?length gt 0> comment '${dbScriptMapper.columnName2CommentMapping[entryKey]}'</#if> ,
 </#list>
 	primary key(${dbScriptMapper.pkColumnName})
-);
+)<#if dbScriptMapper.tableComment??> comment '${dbScriptMapper.tableComment}'</#if>;

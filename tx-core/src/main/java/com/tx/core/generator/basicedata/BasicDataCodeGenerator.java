@@ -58,7 +58,11 @@ public class BasicDataCodeGenerator {
     
     private static Class<?> loadTemplateClass = BasicDataCodeGenerator.class;
     
+    /** mysql等数据库的建表模板 */
     private static String dbScriptTemplateFilePath = "com/tx/core/generator/basicedata/defaultftl/basicdata_dbscript.ftl";
+    
+    /** oracle数据库的建表模板 */
+    private static String dbScriptOracleTemplateFilePath = "com/tx/core/generator/basicedata/defaultftl/basicdata_dbscript_oracle.ftl";
     
     private static String sqlMapTemplateFilePath = "com/tx/core/generator/basicedata/defaultftl/basicdata_sqlMap.ftl";
     
@@ -538,7 +542,7 @@ public class BasicDataCodeGenerator {
                 DataSourceTypeEnum.ORACLE10G.getDialect(), false);
         data.put("dbScriptMapper", dbScriptMapper);
         FreeMarkerUtils.fprint(loadTemplateClass,
-                dbScriptTemplateFilePath,
+        		dbScriptOracleTemplateFilePath,
                 data,
                 codeBaseFolder + "/oracle/01basisScript/" + packageName + "/"
                         + sqlSource.getTableName().toLowerCase() + ".sql");

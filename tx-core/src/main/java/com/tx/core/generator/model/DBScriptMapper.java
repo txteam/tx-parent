@@ -36,6 +36,9 @@ public class DBScriptMapper {
     /** 表名 */
     private String tableName;
     
+    /** 表注释 */
+    private String tableComment;
+    
     /** 主键字段名 */
     private String pkColumnName;
     
@@ -58,17 +61,27 @@ public class DBScriptMapper {
             boolean nameToUpperCase) {
         super();
         this.nameToUpperCase = nameToUpperCase;
+        
+        //表注释
+        String tableComment = jpaMetaClass.getTableComment();
+        
         if (this.nameToUpperCase) {
             this.tableName = jpaMetaClass.getTableName().toUpperCase();
             this.pkColumnName = jpaMetaClass.getGetter2columnInfoMapping()
                     .get(jpaMetaClass.getPkGetterName())
                     .getColumnName()
                     .toUpperCase();
+            if(StringUtils.isNotEmpty(tableComment)) {
+            	this.tableComment = tableComment.toUpperCase();            	
+            }
         } else {
             this.tableName = jpaMetaClass.getTableName();
             this.pkColumnName = jpaMetaClass.getGetter2columnInfoMapping()
                     .get(jpaMetaClass.getPkGetterName())
                     .getColumnName();
+            if(StringUtils.isNotEmpty(tableComment)) {
+            	this.tableComment = tableComment;            	
+            }
         }
         Map<String, JpaColumnInfo> property2columnMap = jpaMetaClass.getGetter2columnInfoMapping();
         List<String> propertyList = new ArrayList<>(property2columnMap.keySet());
@@ -175,7 +188,15 @@ public class DBScriptMapper {
         this.columnName2CommentMapping = columnName2CommentMapping;
     }
     
-    public static void main(String[] args) {
+    public String getTableComment() {
+		return tableComment;
+	}
+
+	public void setTableComment(String tableComment) {
+		this.tableComment = tableComment;
+	}
+
+	public static void main(String[] args) {
         MySQL5InnoDBDialect d = new MySQL5InnoDBDialect();
         
         System.out.println(d.getTypeName(Types.BIT));
