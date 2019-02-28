@@ -17,60 +17,57 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @see  [相关类/方法]0
  * @since  [产品/模块版本]
  */
-@ConfigurationProperties(prefix = "tx.config")
+@ConfigurationProperties(prefix = "tx.basicdata.config")
 public class ConfigContextProperties {
     
-    /** 命令容器是否启动 */
-    private boolean enable;
+    /** 容器所属模块：当该值为空时，使用spring.application.name的内容 */
+    private String module;
     
-    
+    /** 配置路径 */
     private String configLocation;
     
-    /** 基础包集合 */
-    private String basePackages = "";
-    
-    /** cacheManager */
-    private String cacheManagerRef;
+    /** 服务器端url:可以为eureka重的应用名 */
+    private String serverUrl;
     
     /**
-     * @return 返回 enable
+     * @return 返回 configLocation
      */
-    public boolean isEnable() {
-        return enable;
+    public String getConfigLocation() {
+        return configLocation;
     }
     
     /**
-     * @param 对enable进行赋值
+     * @param 对configLocation进行赋值
      */
-    public void setEnable(boolean enable) {
-        this.enable = enable;
+    public void setConfigLocation(String configLocation) {
+        this.configLocation = configLocation;
     }
     
     /**
-     * @return 返回 basePackages
+     * @return 返回 module
      */
-    public String getBasePackages() {
-        return basePackages;
+    public String getModule() {
+        return module;
     }
     
     /**
-     * @param 对basePackages进行赋值
+     * @param 对module进行赋值
      */
-    public void setBasePackages(String basePackages) {
-        this.basePackages = basePackages;
+    public void setModule(String module) {
+        this.module = module;
     }
     
     /**
-     * @return 返回 cacheManagerRef
+     * @return 返回 serverUrl
      */
-    public String getCacheManagerRef() {
-        return cacheManagerRef;
+    public String getServerUrl() {
+        return serverUrl;
     }
     
     /**
-     * @param 对cacheManagerRef进行赋值
+     * @param 对serverUrl进行赋值
      */
-    public void setCacheManagerRef(String cacheManagerRef) {
-        this.cacheManagerRef = cacheManagerRef;
+    public void setServerUrl(String serverUrl) {
+        this.serverUrl = serverUrl;
     }
 }

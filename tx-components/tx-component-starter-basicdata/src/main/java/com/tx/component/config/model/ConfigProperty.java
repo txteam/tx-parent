@@ -9,11 +9,11 @@
 package com.tx.component.config.model;
 
 /**
- * 配置属性
+ * 配置属性<br/>
  * <功能详细描述>
  * 
  * @author  PengQingyang
- * @version  [版本号, 2012-10-5]
+ * @version  [版本号, 2019-02-01]
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
@@ -31,19 +31,19 @@ public interface ConfigProperty {
     public String getName();
     
     /**
-     * 获取配置的关键字key
-     *<功能详细描述>
+     * 获取配置的关键字code
+     * <功能详细描述>
      * @return [参数说明]
      * 
      * @return String [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public String getKey();
+    public String getCode();
     
     /**
      * 获取配置的实际值
-     *<功能详细描述>
+     * <功能详细描述>
      * @return [参数说明]
      * 
      * @return String [返回类型说明]
@@ -97,13 +97,24 @@ public interface ConfigProperty {
     public boolean isLeaf();
     
     /**
-     * 获取配置属性类型<br/>
-     *<功能详细描述>
+     * 所属模块<br/>
+     * <功能详细描述>
      * @return [参数说明]
      * 
-     * @return ConfigPropertyTypeEnum [返回类型说明]
+     * @return String [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public String getScope();
+    public String getModule();
+    
+    /**
+     * 版本<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public String getVersion();
 }

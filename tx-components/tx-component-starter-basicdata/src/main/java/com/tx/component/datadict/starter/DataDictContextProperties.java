@@ -4,12 +4,9 @@
  * 修改时间:  2018年4月27日
  * <修改描述:>
  */
-package com.tx.component.basicdata.starter;
+package com.tx.component.datadict.starter;
 
-import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-
-import com.tx.component.config.starter.ConfigContextProperties;
 
 /**
  * 基础数据容器默认配置<br/>
@@ -20,8 +17,8 @@ import com.tx.component.config.starter.ConfigContextProperties;
  * @see  [相关类/方法]0
  * @since  [产品/模块版本]
  */
-@ConfigurationProperties(prefix = "tx.basicdata")
-public class BasicDataContextProperties {
+@ConfigurationProperties(prefix = "tx.basicdata.datadict")
+public class DataDictContextProperties {
     
     /** 命令容器是否启动 */
     private boolean enable;
@@ -31,12 +28,6 @@ public class BasicDataContextProperties {
     
     /** 基础包集合 */
     private String basePackages = "";
-    
-    /** redis配置属性 */
-    private RedisProperties redisProperties;
-    
-    /** 配置容器属性 */
-    private ConfigContextProperties configContextProperties;
     
     /**
      * @return 返回 enable
@@ -67,20 +58,6 @@ public class BasicDataContextProperties {
     }
     
     /**
-     * @return 返回 redisProperties
-     */
-    public RedisProperties getRedisProperties() {
-        return redisProperties;
-    }
-
-    /**
-     * @param 对redisProperties进行赋值
-     */
-    public void setRedisProperties(RedisProperties redisProperties) {
-        this.redisProperties = redisProperties;
-    }
-
-    /**
      * @return 返回 module
      */
     public String getModule() {
@@ -92,19 +69,5 @@ public class BasicDataContextProperties {
      */
     public void setModule(String module) {
         this.module = module;
-    }
-
-    /**
-     * @return 返回 server
-     */
-    public BasicDataContextServerProperties getServer() {
-        return server;
-    }
-
-    /**
-     * @param 对server进行赋值
-     */
-    public void setServer(BasicDataContextServerProperties server) {
-        this.server = server;
     }
 }

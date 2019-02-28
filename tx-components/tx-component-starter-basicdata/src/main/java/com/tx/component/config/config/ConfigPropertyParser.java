@@ -11,7 +11,6 @@ import java.util.List;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
-import com.tx.component.config.model.ConfigPropertyScopeEnum;
 
 /**
  * 属性配置<br/>
@@ -33,25 +32,22 @@ public class ConfigPropertyParser {
     @XStreamAsAttribute
     private boolean modifyAble = false;
     
+    /** 关键字 */
+    @XStreamAsAttribute
+    private String code;
+    
     /** 配置资源名 */
     @XStreamAsAttribute
     private String name;
     
-    /** 关键字 */
-    @XStreamAsAttribute
-    private String key;
-    
     /** 配置资源描述信息 */
-    private String description;
+    private String remark;
     
     /** 实际值，如果在开发模式，则以该值为标准，在开发模式中，value值优先加载该值 */
     private String value;
     
     /** 属性值表达式 */
     private String validateExpression = "";
-    
-    /** 范围 */
-    private String scope = ConfigPropertyScopeEnum.LOCAL.getKey();
     
     /**
      * @return 返回 name
@@ -68,31 +64,31 @@ public class ConfigPropertyParser {
     }
     
     /**
-     * @return 返回 key
+     * @return 返回 code
      */
-    public String getKey() {
-        return key;
+    public String getCode() {
+        return code;
     }
     
     /**
-     * @param 对key进行赋值
+     * @param 对code进行赋值
      */
-    public void setKey(String key) {
-        this.key = key;
+    public void setCode(String code) {
+        this.code = code;
     }
     
     /**
-     * @return 返回 description
+     * @return 返回 remark
      */
-    public String getDescription() {
-        return description;
+    public String getRemark() {
+        return remark;
     }
     
     /**
-     * @param 对description进行赋值
+     * @param 对remark进行赋值
      */
-    public void setDescription(String description) {
-        this.description = description;
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
     
     /**
@@ -135,20 +131,6 @@ public class ConfigPropertyParser {
      */
     public void setModifyAble(boolean modifyAble) {
         this.modifyAble = modifyAble;
-    }
-    
-    /**
-     * @return 返回 scope
-     */
-    public String getScope() {
-        return scope;
-    }
-    
-    /**
-     * @param 对scope进行赋值
-     */
-    public void setScope(String scope) {
-        this.scope = scope;
     }
     
     /**

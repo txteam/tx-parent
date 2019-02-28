@@ -10,15 +10,13 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Id;
-
 /**
  * 配置属性项<br/>
  * 对应配置数据数据库统表存储的其中一项<br/>
  * <功能详细描述>
  * 
- * @author  wanxin
- * @version  [版本号, 2013-8-2]
+ * @author  pengqingyang
+ * @version  [版本号, 2019-02-01]
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
@@ -28,14 +26,13 @@ public class ConfigPropertyItem implements ConfigProperty, Serializable {
     private static final long serialVersionUID = 887600460642190895L;
     
     /** 数据库存储唯一键 */
-    @Id
     private String id;
     
     /** 配置属性名 */
     private String name;
     
     /** 配置属性key */
-    private String key;
+    private String code;
     
     /** 配置属性的值 */
     private String value;
@@ -52,9 +49,6 @@ public class ConfigPropertyItem implements ConfigProperty, Serializable {
     /** 是否叶节点 */
     private boolean leaf;
     
-    /** 配置信息范围 */
-    private String scope = ConfigPropertyScopeEnum.GLOBAL.getKey();
-    
     /** 创建时间 */
     private Date createDate;
     
@@ -63,6 +57,12 @@ public class ConfigPropertyItem implements ConfigProperty, Serializable {
     
     /** 子配置项 */
     private List<ConfigProperty> childs;
+    
+    /** 所属模块 */
+    private String module;
+    
+    /** 版本 */
+    private String version;
     
     /**
      * @return 返回 id
@@ -93,17 +93,17 @@ public class ConfigPropertyItem implements ConfigProperty, Serializable {
     }
     
     /**
-     * @return 返回 key
+     * @return 返回 code
      */
-    public String getKey() {
-        return key;
+    public String getCode() {
+        return code;
     }
     
     /**
-     * @param 对key进行赋值
+     * @param 对code进行赋值
      */
-    public void setKey(String key) {
-        this.key = key;
+    public void setCode(String code) {
+        this.code = code;
     }
     
     /**
@@ -126,14 +126,14 @@ public class ConfigPropertyItem implements ConfigProperty, Serializable {
     public String getRemark() {
         return remark;
     }
-
+    
     /**
      * @param 对remark进行赋值
      */
     public void setRemark(String remark) {
         this.remark = remark;
     }
-
+    
     /**
      * @return 返回 validateExpression
      */
@@ -177,20 +177,6 @@ public class ConfigPropertyItem implements ConfigProperty, Serializable {
     }
     
     /**
-     * @return 返回 scope
-     */
-    public String getScope() {
-        return scope;
-    }
-    
-    /**
-     * @param 对scope进行赋值
-     */
-    public void setScope(String scope) {
-        this.scope = scope;
-    }
-    
-    /**
      * @return 返回 childs
      */
     public List<ConfigProperty> getChilds() {
@@ -230,5 +216,33 @@ public class ConfigPropertyItem implements ConfigProperty, Serializable {
      */
     public boolean isModifyAble() {
         return modifyAble;
+    }
+
+    /**
+     * @return 返回 module
+     */
+    public String getModule() {
+        return module;
+    }
+
+    /**
+     * @param 对module进行赋值
+     */
+    public void setModule(String module) {
+        this.module = module;
+    }
+
+    /**
+     * @return 返回 version
+     */
+    public String getVersion() {
+        return version;
+    }
+
+    /**
+     * @param 对version进行赋值
+     */
+    public void setVersion(String version) {
+        this.version = version;
     }
 }

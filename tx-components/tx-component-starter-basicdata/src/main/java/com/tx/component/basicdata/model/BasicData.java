@@ -23,27 +23,57 @@ import com.tx.core.support.initable.model.ConfigInitAble;
 public interface BasicData extends ConfigInitAble, Serializable {
     
     /**
-     * @return 返回 id
+     * 获取唯一键<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     public String getId();
     
     /**
-     * @return 返回 name
+     * 获取名称<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     public String getName();
     
     /**
-     * @return 返回 remark
+     * 获取备注<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     public String getRemark();
     
     /**
-     * @return 返回 lastUpdateDate
+     * 获取最后更新时间<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return Date [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     public Date getLastUpdateDate();
     
     /**
-     * @return 返回 createDate
+     * 获取创建时间<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return Date [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     public Date getCreateDate();
     
@@ -79,4 +109,26 @@ public interface BasicData extends ConfigInitAble, Serializable {
      * @see [类、类#方法、类#成员]
      */
     public void setRemark(String remark);
+    
+    /**
+     * 获取视图类型<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return BasicDataViewTypeEnum [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public BasicDataViewTypeEnum getViewType();
+    
+    /**
+     * 设置视图类型<br/>
+     * <功能详细描述>
+     * @param viewType [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public void setViewType(BasicDataViewTypeEnum viewType);
 }

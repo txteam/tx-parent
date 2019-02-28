@@ -1,21 +1,21 @@
 /*
  * 描          述:  <描述>
  * 修  改   人:  Administrator
- * 修改时间:  2019年1月28日
+ * 修改时间:  2019年2月1日
  * <修改描述:>
  */
-package com.tx.component.config.client;
+package com.tx.component.basicdata.model;
 
 
 /**
- * 配置客户端仓库<br/>
+ * 基础数据仓库源<br/>
  * <功能详细描述>
  * 
  * @author  Administrator
- * @version  [版本号, 2019年1月28日]
+ * @version  [版本号, 2019年2月1日]
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public interface ConfigPropertyRepository {
+public class BasicDataRepositorySource {
     
 }

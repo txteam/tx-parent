@@ -9,6 +9,7 @@ package com.tx.component.datadict.annotation;
 import java.lang.annotation.Documented;
 
 
+
 /**
  * 数据字典实体类<br/>
  * <功能详细描述>
@@ -19,6 +20,6 @@ import java.lang.annotation.Documented;
  * @since  [产品/模块版本]
  */
 @Documented
-public @interface DataDictEntity {
+public @interface DataDictEntity{
     
 }

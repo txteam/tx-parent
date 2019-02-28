@@ -13,27 +13,25 @@
 	<url>http://maven.apache.org</url>
 
 	<dependencies>
-		<!-- tx-* -->
+		<!-- tx-core:基本工具类 -->
 		<dependency>
 			<groupId>com.tx</groupId>
 			<artifactId>tx-core</artifactId>
 		</dependency>
 
-		<!-- swagger2 -->
+		<!-- swagger2:内部暴露的接口注解 -->
 		<dependency>
 			<groupId>io.springfox</groupId>
 			<artifactId>springfox-swagger2</artifactId>
-			<optional>true</optional>
 		</dependency>
 
 		<!-- 根据xml加载初始化数据 -->
 		<dependency>
 			<groupId>com.thoughtworks.xstream</groupId>
 			<artifactId>xstream</artifactId>
-			<optional>true</optional>
 		</dependency>
 
-		<!-- spring boot -->
+		<!-- spring boot: web支持接口暴露 aop:编写缓存拦截 -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
@@ -44,13 +42,15 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-cache</artifactId>
+			<artifactId>spring-boot-starter-jdbc</artifactId>
 		</dependency>
-
-		<!-- tomcat -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-tomcat</artifactId>
+			<artifactId>spring-boot-starter-cache</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-redis</artifactId>
 		</dependency>
 
 		<!-- eureka -->
@@ -59,7 +59,7 @@
 			<artifactId>spring-cloud-starter-eureka</artifactId>
 			<optional>true</optional>
 		</dependency>
-
+		
 		<!-- feign -->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
@@ -67,47 +67,14 @@
 			<optional>true</optional>
 		</dependency>
 
-		<!-- mybatis -->
+		<!-- ConfigurationProperties Need -->
 		<dependency>
-			<groupId>org.mybatis.spring.boot</groupId>
-			<artifactId>mybatis-spring-boot-starter</artifactId>
-			<optional>true</optional>
-		</dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
 
-		<!-- poi -->
-		<dependency>
-			<groupId>org.apache.poi</groupId>
-			<artifactId>poi</artifactId>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.poi</groupId>
-			<artifactId>poi-ooxml</artifactId>
-			<optional>true</optional>
-		</dependency>
-
-		<!-- generator -->
-		<dependency>
-			<groupId>org.freemarker</groupId>
-			<artifactId>freemarker</artifactId>
-			<optional>true</optional>
-		</dependency>
-
-		<!-- mysql -->
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<optional>true</optional>
-		</dependency>
-
-		<!-- configurationProperties -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-configuration-processor</artifactId>
-			<optional>true</optional>
-		</dependency>
-
-		<!-- junit -->
+		<!-- test -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
