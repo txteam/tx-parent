@@ -14,7 +14,7 @@
 
 	<!-- tx-parent5.0版本开始，系统全面向微服务进行支撑 -->
 	<!-- tx-parent将专注于基础components,以及基础services的提供 -->
-	<version>5.0.x-SNAPSHOT</version>
+	<version>4.0.x-SNAPSHOT</version>
 	<groupId>com.tx</groupId>
 	<artifactId>tx-parent</artifactId>
 	<packaging>pom</packaging>
