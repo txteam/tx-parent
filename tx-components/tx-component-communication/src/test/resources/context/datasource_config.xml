@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+	<comment>datasource_config</comment>
+
+	<entry key="dataSource.dataSourceType">H2</entry>
+
+	<entry key="dataSource.url">jdbc:h2:mem:messagerouter</entry>
+	<entry key="dataSource.username">messagerouter</entry>
+	<entry key="dataSource.password">messagerouter</entry>
+	<entry key="dataSource.driverClassName">org.h2.Driver</entry>
+	<entry key="dataSource.validationQuery">SELECT 1 </entry>
+	
+	<entry key="dataSource.maxActive">30</entry>
+	<entry key="dataSource.maxIdle">5</entry>
+	<entry key="dataSource.maxWait">5000</entry>
+	
+</properties>

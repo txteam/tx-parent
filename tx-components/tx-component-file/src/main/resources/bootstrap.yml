@@ -1,0 +1,36 @@
+server:
+  port: ${app.port}
+  
+eureka:
+ client:
+  service-url:
+   defaultZone: ${app.eureka.url}
+   # 注册本工程为服务
+   registerWithEureka: true 
+   fetchRegistry: true
+   # 心跳间隔
+   # leaseRenewalIntervalInSeconds: 10 
+
+spring:
+  application:
+    name: monitor
+  cloud:
+    config:
+      name: monitor
+      #访问config server的地址
+      #uri: http://localhost:8001
+      #对应config server中配置文件的{profile}
+      profile: ${app.cloud.config.profile}
+      #对应config server中配置文件的{label}
+      label: ${app.cloud.config.label}
+      #uri: http://localhost:8000
+      discovery:
+        #表示使用服务发现组件中提供的Config Server，默认是false
+        #开启通过服务发现组件访问Config Server的功能
+        enabled: true
+        #指定Config Server在服务发现组件中的serviceId 默认是configserver
+        service-id: config-server
+  # profiles:
+  #  active: dev
+  # main:
+  #  banner-mode: off

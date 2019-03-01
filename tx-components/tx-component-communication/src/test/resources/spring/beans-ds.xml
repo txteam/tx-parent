@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.springframework.org/schema/beans" xmlns:context="http://www.springframework.org/schema/context" xmlns:jdbc="http://www.springframework.org/schema/jdbc" xsi:schemaLocation="
+		http://www.springframework.org/schema/jdbc
+		http://www.springframework.org/schema/jdbc/spring-jdbc-3.1.xsd  
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context-3.1.xsd       
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+	<bean id="tx.dataSource" class="com.tx.core.datasource.DataSourceFactoryBean" depends-on="initDBScriptExcutor">
+		<property name="supportP6spy" value="true" />
+		<property name="datasourceFinderList">
+			<list>
+				<bean class="com.tx.core.datasource.finder.DelegatingDataSourceImplFinder">
+					<property name="srcDatasource">
+						<ref bean="h2DataSource" />
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	<alias name="tx.dataSource" alias="dataSource" />
+
+	<bean id="h2DataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+		<!-- jdbc:h2:mem:webdemo -->
+		<!-- jdbc:h2:file:D:/h2/data/webdemo -->
+		<!-- <property name="url" value="${dataSource.url}" /> <property name="username" value="${dataSource.username}" /> <property name="password" value="${dataSource.password}" /> <property name="driverClassName" value="${dataSource.driverClassName}" /> <property name="validationQuery" value="${dataSource.validationQuery}"></property> <property name="maxActive" value="${dataSource.maxActive}" /> <property name="maxIdle" value="${dataSource.maxIdle}" /> <property name="maxWait" value="${dataSource.maxWait}" /> -->
+		<property name="url" value="#{config.getValue('dataSource.url')}" />
+		<property name="username" value="#{config.getValue('dataSource.username')}" />
+		<property name="password" value="#{config.getValue('dataSource.password')}" />
+		<property name="driverClassName" value="#{config.getValue('dataSource.driverClassName')}" />
+		<property name="validationQuery" value="#{config.getValue('dataSource.validationQuery')}"></property>
+
+		<property name="maxActive" value="#{config.getValue('dataSource.maxActive')}" />
+		<property name="maxIdle" value="#{config.getValue('dataSource.maxIdle')}" />
+		<property name="maxWait" value="#{config.getValue('dataSource.maxWait')}" />
+
+		<property name="removeAbandonedTimeout" value="180"></property>
+		<property name="defaultAutoCommit" value="true" />
+		<property name="removeAbandoned" value="true"></property>
+		<property name="testOnBorrow" value="true"></property>
+		<property name="logAbandoned" value="true"></property>
+	</bean>
+
+	<bean id="initDBScriptExcutor" class="com.tx.core.dbscript.executor.DBScriptAutoExecutor">
+		<property name="sqlScriptEncoding" value="GBK"></property>
+		<property name="dataSource">
+			<ref bean="h2DataSource" />
+		</property>
+		<property name="initScriptLocations">
+			<list>
+				<value>classpath:dbscript/h2.sql</value>
+			</list>
+		</property>
+	</bean>
+</beans>

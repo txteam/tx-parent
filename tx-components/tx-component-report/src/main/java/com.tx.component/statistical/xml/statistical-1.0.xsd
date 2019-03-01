@@ -1,0 +1,134 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<xs:schema
+        targetNamespace="http://wtms.com/xml/statistical-1.0.xsd"
+        elementFormDefault="qualified"
+        xmlns="http://wtms.com/xml/statistical-1.0.xsd"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="report">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element type="xs:string" name="script"/>
+
+                <xs:element type="conditions" name="conditions"/>
+                <xs:element type="views" name="views"/>
+                <xs:element type="sqlMappers" name="sqlMappers" />
+            </xs:sequence>
+            <xs:attribute type="xs:token" name="code" use="required"/>
+            <xs:attribute name="type" use="required">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="pagedListGrid"/>
+                        <xs:enumeration value="listGrid"/>
+                        <xs:enumeration value="EChart"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute name="subType" use="optional">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="Pie"/>
+                        <xs:enumeration value="Line"/>
+                        <xs:enumeration value="Lines"/>
+                        <xs:enumeration value="Bars"/>
+                        <xs:enumeration value="Maps"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+
+            <xs:attribute type="xs:string" name="name"/>
+
+        </xs:complexType>
+    </xs:element>
+
+
+    <xs:complexType name="conditions">
+        <xs:sequence>
+            <xs:element type="conditionItem" name="item" maxOccurs="unbounded" />
+        </xs:sequence>
+        <xs:attribute type="xs:string" name="cols" default="3"/>
+    </xs:complexType>
+    <xs:complexType name="views">
+        <xs:sequence>
+            <xs:element type="viewItem" name="item" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute type="xs:string" name="sqlMapperId" use="required"/>
+        <xs:attribute type="xs:string" name="fitColumns" use="optional"/>
+        <!--<xs:attribute type="xs:string" name="statisticalDatasource" use="optional"/>-->
+    </xs:complexType>
+    <xs:complexType name="sqlMappers">
+        <xs:sequence>
+            <xs:element type="sqlMapper" name="sqlMapper" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+
+    <xs:complexType name="viewItem">
+        <xs:attribute type="xs:string" name="column" use="required"/>
+        <xs:attribute type="xs:string" name="name" use="required"/>
+        <xs:attribute type="xs:string" name="formatterFun" use="optional"/>
+        <xs:attribute type="xs:string" name="statisticalType" use="optional"/>
+        <xs:attribute type="xs:string" name="frozen" use="optional"/>
+
+        <xs:attribute name="type" default="general">
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="general"/>
+                    <xs:enumeration value="date"/>
+                    <xs:enumeration value="enum"/>
+                    <xs:enumeration value="number"/>
+                    <!--<xs:enumeration value="money"/>-->
+                    <xs:enumeration value="boolean"/>
+                    <xs:enumeration value="json"/>
+                    <xs:enumeration value="alink"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute type="xs:string" name="enumClass" use="optional"/>
+        <xs:attribute type="xs:string" name="refValue" use="optional"/>
+    </xs:complexType>
+
+    <xs:complexType name="sqlMapper">
+        <xs:attribute type="xs:string" name="id" use="required"/>
+        <xs:attribute type="xs:string" name="needStatisticalScript" use="optional"/>
+        <xs:attribute type="xs:string" name="returnType" use="optional"/>
+        <xs:attribute type="xs:string" name="parameterType" use="optional"/>
+        <xs:attribute type="xs:string" name="datasourceId" use="optional"/>
+
+        <xs:sequence>
+            <xs:element type="if" name="if"/>
+        </xs:sequence>
+
+    </xs:complexType>
+    <xs:complexType name="if">
+        <xs:attribute type="xs:string" name="test" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="conditionItem">
+        <xs:attribute type="xs:string" name="value"/>
+        <xs:attribute type="xs:string" name="sqlMapperId"/>
+        <xs:attribute type="xs:string" name="labelName"/>
+        <xs:attribute type="xs:string" name="labelValue"/>
+        <xs:attribute type="xs:string" name="cssClass" use="optional"/>
+        <xs:attribute type="xs:string" name="cssStyle" use="optional"/>
+        <xs:attribute type="xs:string" name="enumClass"/>
+        <!--  <xs:attribute type="xs:string" name="labelName"/> -->
+
+        <xs:attribute type="xs:string" name="items"/>
+
+        <xs:attribute type="xs:string" name="id" use="required"/>
+        <xs:attribute type="xs:string" name="name" use="optional"/>
+        <xs:attribute name="type" use="required">
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="input"/>
+                    <xs:enumeration value="input_date"/>
+                    <xs:enumeration value="input_date_time"/>
+                    <xs:enumeration value="select"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute type="xs:string" name="onClick" use="optional"/>
+        <xs:attribute type="xs:string" name="readOnly" use="optional"/>
+    </xs:complexType>
+
+</xs:schema>

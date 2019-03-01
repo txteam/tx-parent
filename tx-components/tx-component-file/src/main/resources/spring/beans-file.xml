@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+    <bean id="fileContextConfigurator" class="com.tx.component.file.context.FileContextConfigurator">
+        <property name="dataSource">
+            <ref bean="dataSource"/>
+        </property>
+        <property name="location" value="/home/share/wtp/upload/indexconfig"></property>
+    </bean>
+
+    <bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="order" value="0"/>
+        <property name="urlMap">
+            <map>
+                <entry key="/filecontext/resource/**">
+                    <ref bean="fileContextHttpRequestHandler"/>
+                </entry>
+            </map>
+        </property>
+    </bean>
+
+</beans>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+	<comment>datasource_config</comment>	 
+	<entry key="dataSource.dataSourceType">MYSQL</entry>
+
+	<!-- 测试数据库 -->
+	<entry key="dataSource.url"><![CDATA[jdbc:mysql://192.168.85.103:3306/attachment?characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull]]></entry>
+	<entry key="dataSource.username">lms</entry>
+	<entry key="dataSource.password">zzxx1122</entry>
+	
+	<!-- 正式数据库 -->
+<!-- 	<entry key="dataSource.url"><![CDATA[jdbc:mysql://192.168.80.212:3306/attachment?characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull]]></entry> -->
+<!-- 	<entry key="dataSource.username">dbuser</entry> -->
+<!-- 	<entry key="dataSource.password">Myyaxin2015</entry> -->
+	
+	<entry key="dataSource.driverClassName">com.mysql.jdbc.Driver</entry>
+	<entry key="dataSource.validationQuery">SELECT 1 </entry>
+	
+	<entry key="dataSource.maxActive">30</entry>
+	<entry key="dataSource.maxIdle">5</entry>
+	<entry key="dataSource.maxWait">5000</entry>
+	
+</properties>

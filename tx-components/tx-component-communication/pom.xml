@@ -1,0 +1,177 @@
+<?xml version="1.0"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<artifactId>tx-services</artifactId>
+		<groupId>com.tx</groupId>
+		<version>5.0.x-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>tx-service-communication</artifactId>
+	<name>communication</name>
+	<packaging>jar</packaging>
+	<url>http://maven.apache.org</url>
+
+
+	<dependencies>
+		<!-- swagger -->
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger2</artifactId>
+			<version>2.6.1</version>
+		</dependency>
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger-ui</artifactId>
+			<version>2.6.1</version>
+		</dependency>
+
+		<!-- tx -->
+		<dependency>
+			<groupId>com.tx</groupId>
+			<artifactId>tx-core</artifactId>
+		</dependency>
+
+		<!-- aliyun -->
+		<dependency>
+			<groupId>alibaba</groupId>
+			<artifactId>alidayu</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.aliyun</groupId>
+			<artifactId>aliyun-java-sdk-dm</artifactId>
+			<version>3.0.0-rc3</version>
+		</dependency>
+		<dependency>
+			<groupId>com.aliyun</groupId>
+			<artifactId>aliyun-java-sdk-sms</artifactId>
+			<version>3.0.0-rc1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.aliyun</groupId>
+			<artifactId>aliyun-java-sdk-core</artifactId>
+			<version>3.1.0</version>
+		</dependency>
+
+		<!-- xstream -->
+		<dependency>
+			<groupId>com.thoughtworks.xstream</groupId>
+			<artifactId>xstream</artifactId>
+		</dependency>
+
+		<!-- spring-cloud -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-eureka</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-feign</artifactId>
+		</dependency>
+
+		<!-- mybatis -->
+		<dependency>
+			<groupId>org.mybatis.spring.boot</groupId>
+			<artifactId>mybatis-spring-boot-starter</artifactId>
+		</dependency>
+
+		<!-- jdbc -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+		</dependency>
+
+		<!-- <dependency> -->
+		<!-- <groupId>org.springframework.boot</groupId> -->
+		<!-- <artifactId>spring-boot-starter-freemarker</artifactId> -->
+		<!-- </dependency> -->
+		<!--<dependency> -->
+		<!--<groupId>org.springframework.boot</groupId> -->
+		<!--<artifactId>spring-boot-starter-thymeleaf</artifactId> -->
+		<!--</dependency> -->
+		<!-- 分页插件pagehelper -->
+		<!-- <dependency> -->
+		<!-- <groupId>com.github.pagehelper</groupId> -->
+		<!-- <artifactId>pagehelper</artifactId> -->
+		<!-- <version>5.0.0</version> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>com.github.pagehelper</groupId> -->
+		<!-- <artifactId>pagehelper-spring-boot-autoconfigure</artifactId> -->
+		<!-- <version>1.2.3</version> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>com.github.pagehelper</groupId> -->
+		<!-- <artifactId>pagehelper-spring-boot-starter</artifactId> -->
+		<!-- <version>1.2.3</version> -->
+		<!-- </dependency> -->
+
+
+		<!-- spring boot -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<optional>true</optional>
+		</dependency>
+
+		<!-- test -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		
+		<!--<dependency> -->
+		<!--<groupId>com.alibaba</groupId> -->
+		<!--<artifactId>druid-spring-boot-starter</artifactId> -->
+		<!--&lt;!&ndash;<version>1.1.0</version>&ndash;&gt; -->
+		<!--</dependency> -->
+	</dependencies>
+
+	<build>
+		<!--<resources> -->
+		<!--<resource> -->
+		<!--<directory>src/main/java</directory> -->
+		<!--<includes>**/*.xml</includes> -->
+		<!--</resource> -->
+		<!--</resources> -->
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<fork>true</fork><!-- fork:如果没有该配置，这个devtools不会起作用，即应用不会restart -->
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+			</plugin>
+
+			<!--<plugin> -->
+			<!--<groupId>org.springframework.boot</groupId> -->
+			<!--<artifactId>spring-boot-maven-plugin</artifactId> -->
+			<!--<dependencies> -->
+			<!--&lt;!&ndash; spring热部署 &ndash;&gt; -->
+			<!--<dependency> -->
+			<!--<groupId>org.springframework</groupId> -->
+			<!--<artifactId>springloaded</artifactId> -->
+			<!--<version></version> -->
+			<!--</dependency> -->
+			<!--</dependencies> -->
+			<!--</plugin> -->
+
+		</plugins>
+	</build>
+
+</project>

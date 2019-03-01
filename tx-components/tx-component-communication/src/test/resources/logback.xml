@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="5 seconds">
+
+	<property name="contentName" value="router" />
+	<property name="commonPattern" value="%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{100} - %msg%n" />
+	<property name="logfile" value="/Users/rain/Develop/JavaDev/logs/tx-component-messagerouter" />
+	<property name="maxLogFileSize" value="10MB"></property>
+	<property name="maxLogFileNum" value="3"></property>
+	<property name="onlyMessagePattern" value="%d{yyyy-MM-dd HH:mm:ss} %msg%n" />
+
+	<contextName>${contentName}</contextName>
+
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<!-- encoder 默认配置为PatternLayoutEncoder -->
+		<encoder>
+			<pattern>${commonPattern}</pattern>
+		</encoder>
+	</appender>
+	
+	<appender name="log_file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${logfile}.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+			<fileNamePattern>${logfile}.%i.log.zip</fileNamePattern>
+			<minIndex>1</minIndex>
+			<maxIndex>${maxLogFileNum}</maxIndex>
+		</rollingPolicy>
+		<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+			<maxFileSize>${maxLogFileSize}</maxFileSize>
+		</triggeringPolicy>
+		<encoder>
+			<pattern>${commonPattern}</pattern>
+		</encoder>
+	</appender>
+	
+	<appender name="sql_file" class="ch.qos.logback.core.FileAppender">  
+	    <file>${logfile}.sql.log</file>  
+	    <append>false</append>  
+	    <encoder>  
+	      <pattern>${commonPattern}</pattern>  
+	    </encoder>  
+	</appender>
+	
+	<appender name="spy_sql_file" class="ch.qos.logback.core.FileAppender">  
+	    <file>${logfile}.spy.sql.log</file>  
+	    <append>false</append>  
+	    <encoder>  
+	      <pattern>${onlyMessagePattern}</pattern>  
+	    </encoder>  
+	</appender>
+	
+	<appender name="cxf_log_file" class="ch.qos.logback.core.FileAppender">  
+	    <file>${logfile}.cxf.log</file>  
+	    <append>false</append>  
+	    <encoder>  
+	      <pattern>${onlyMessagePattern}</pattern>  
+	    </encoder>  
+	</appender>    
+
+
+	<!-- spring框架打印日志级别 -->
+	<logger name="org.springframework" level="ERROR" />
+	<!-- springMVC答应日志级别 -->
+	<logger name="org.springframework.web" level="ERROR" />
+	<logger name="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping" level="ERROR"></logger>
+	
+	<logger name="org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver" level="ERROR"></logger>
+	<logger name="org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver" level="ERROR"></logger>
+	
+	<!-- cxf日志级别 -->
+	<logger name="org.apache.cxf" level="ERROR" />
+	<!-- ehcache日志级别 -->
+	<logger name="net.sf.ehcache" level="ERROR" />
+	<!-- mybatis日志级别 -->
+	<logger name="org.apache.ibatis" level="ERROR" />
+	<logger name="org.mybais" level="ERROR" />
+	<!-- sql日志级别 -->
+	<logger name="java.sql" level="ERROR">
+		<appender-ref ref="sql_file"/>
+	</logger>
+	<logger name="org.apache.cxf.interceptor" level="DEBUG">
+		<appender-ref ref="cxf_log_file"/>
+	</logger>
+	<logger name="com.tx.core.log.p6spy.P6SpyLogbackLogger" level="INFO">
+		<appender-ref ref="spy_sql_file"/>
+	</logger>
+
+	<root level="DEBUG">
+		<appender-ref ref="log_file" />
+		<appender-ref ref="STDOUT" />
+	</root>
+</configuration>

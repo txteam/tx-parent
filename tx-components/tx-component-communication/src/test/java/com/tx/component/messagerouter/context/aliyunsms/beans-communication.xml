@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context" xsi:schemaLocation="
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context-3.1.xsd       
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+	<bean id="messageSendContent" class="com.tx.component.communication.context.MessageSenderContext">
+	</bean>
+
+	<bean id="aliyun.sms.messageSendHandler" class="com.tx.component.communication.sendhandler.smshandler.SMSMessageSendHandler">
+		<property name="dialect">
+			<bean id="aliyunSMSSendDialect" class="com.tx.component.communication.senddialect.sms.aliyun.AliyunSMSSendDialect">
+				<property name="accessKeyId" value="LTAItTQj5hMN5eD1"></property>
+				<property name="secret" value="8L8MXtQUb0wNUOlNNan0o9GrNpTCRc"></property>
+				<property name="smsTemplateMap">
+					<map>
+						<entry key="SMS_14246689" value="您的验证码是${code}。"></entry>
+					</map>
+				</property>
+				<property name="signNameMap">
+					<map>
+						<entry key="汽摩交易所" value="汽摩交易所"></entry>
+					</map>
+				</property>
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="aliyun.sms_code.messageSendHandler" class="com.tx.component.communication.sendhandler.smshandler.SMSCodeSendHandler">
+		<property name="dialect">
+			<bean id="aliyunSMSCodeSendDialect" class="com.tx.component.communication.senddialect.sms.aliyun.AliyunSMSCodeSendDialect">
+				<property name="accessKeyId" value="LTAItTQj5hMN5eD1"></property>
+				<property name="secret" value="8L8MXtQUb0wNUOlNNan0o9GrNpTCRc"></property>
+			</bean>
+		</property>
+	</bean>
+</beans>

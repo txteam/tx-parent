@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context" xsi:schemaLocation="
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context-3.1.xsd       
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+	<bean id="messageSendContent" class="com.tx.component.communication.context.MessageSenderContext">
+	</bean>
+
+	<bean id="alidayu.sms.messageSendHandler" class="com.tx.component.communication.sendhandler.smshandler.SMSMessageSendHandler">
+		<property name="dialect">
+			<bean id="aliyunSMSSendDialect" class="com.tx.component.communication.senddialect.sms.alidayu.AlidayuSMSSendDialect">
+				<property name="appKey" value="23343159"></property>
+				<property name="appSecret" value="1764783a98b40f91f9b73b5bfdcda872"></property>
+				<property name="smsTemplateMap">
+					<map>
+						<entry key="SMS_7310912" value="验证码${code}，您正在尝试变更${product}重要信息，请妥善保管账户信息。"></entry>
+					</map>
+				</property>
+				<property name="signNameMap">
+					<map>
+						<entry key="企账通" value="企账通"></entry>
+					</map>
+				</property>
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="alidayu.sms_code.messageSendHandler" class="com.tx.component.communication.sendhandler.smshandler.SMSCodeSendHandler">
+		<property name="dialect">
+			<bean id="aliyunSMSCodeSendDialect" class="com.tx.component.communication.senddialect.sms.alidayu.AlidayuSMSCodeSendDialect">
+				<property name="appKey" value="23343159"></property>
+				<property name="appSecret" value="1764783a98b40f91f9b73b5bfdcda872"></property>
+			</bean>
+		</property>
+	</bean>
+</beans>

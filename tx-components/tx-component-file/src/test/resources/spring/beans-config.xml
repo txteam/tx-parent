@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+	<!-- 配置容器 -->
+	<bean id="configContext" class="com.tx.component.configuration.context.ConfigContextFactory">
+		<!-- 开发模式 -->
+		<property name="develop" value="false" />
+		<!-- 配置文件列表 -->
+		<property name="configPropertiesPersisterList">
+			<list>
+				<!-- 本地配置文件 -->
+				<bean id="localConfigPropertiesPersister" class="com.tx.component.configuration.persister.LocalConfigPropertiesPersister">
+					<property name="location">
+						<value>classpath:config/local/*.xml</value>
+					</property>
+				</bean>
+				<!-- 全局配置文件 -->
+				<bean id="globalConfigPropertiesPersister" class="com.tx.component.configuration.persister.GlobalConfigPropertiesPersister">
+					<property name="dbScriptExecutorContext" ref="dbScriptExecutorContext" />
+					<property name="dataSource" ref="dataSource" />
+					<property name="systemId" value="atta" />
+					<property name="location">
+						<value>classpath:config/global/*.xml</value>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="configContextPlaceholderConfigurer" class="com.tx.component.configuration.context.ConfigContextPlaceholderConfigurer">
+		<property name="order" value="2147483647" />
+		<property name="configContext" ref="configContext" />
+	</bean>
+	
+	<!-- 配置器 -->
+	<bean id="config" class="com.tx.core.util.PropertiesReader">
+		<property name="location">
+			<value>classpath:context/datasource_config.xml</value>
+		</property>
+	</bean>
+
+</beans>

@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<menu_context_config>
+	<!-- 主菜单配置 -->
+	<menus_config type="mainMenu">
+
+	<!-- 一级菜单:附件系统 -->
+		<menu id="attachment_system" text="附件系统" authKey="attachment_system">
+			<menu id="testloanBillAttachment_system_upload" text="单据上传测试"
+				href="/loanBillAttachment/testLoanBillAttachmentUpload.action" authKey="testloanBillAttachment_system"
+				target="mainTabs" selectRefresh="false" />
+				
+			<menu id="toLoanBillAttachments_system_upload" text="附件列表"
+				href="/loanBillAttachment/toLoanBillAttachments.action" authKey="toLoanBillAttachments_system_upload"
+				target="mainTabs" selectRefresh="false" />
+				
+		</menu>
+	
+		<!-- 一级别菜单:系统配置 -->
+		<menu id="system_config" text="系统管理" authKey="system_config">
+			<menu id="menu_config" text="菜单管理"
+				href="/mainframe/toQueryAllMenuItemTreeList.action" authKey="menu_config"
+				target="mainTabs" selectRefresh="false" />
+			<menu id="config_configuration" text="配置项管理"
+				href="/configuration/toQueryConfigProperty.action" authKey="config_config"
+				target="mainTabs" selectRefresh="false" />
+			<menu id="system_monitor" text="系统监控" authKey="system_monitor_view"
+				target="mainTabs" selectRefresh="false">
+				<menu id="druid_monitor_result" text="druid监控视图" href="/druid"></menu>
+				<menu id="JavaMelody_monitor_result" text="JavaMelody监控视图"
+					href="/monitoring"></menu>
+			</menu>
+
+			<menu id="basicdata_config" text="基础数据项管理" authKey="basicdata_config"
+				target="mainTabs" selectRefresh="false">
+				<menu id="district_manange" text="区域数据"></menu>
+			</menu>
+
+			<menu id="operator_config_center" text="操作员管理中心" target="mainTabs"
+				authKey="operator_config_center">
+				<menu id="virtualCenter_config" text="虚中心管理" authKey="virtualCenter_manage"
+					href="/virtualCenter/toQueryVirtualCenterList.action" target="mainTabs"></menu>
+				<menu id="postType_config" text="职位类型管理" authKey="postType_manage"
+					href="/postType/toQueryPostTypeList.action" target="mainTabs"></menu>
+				<menu id="organization_config" text="组织结构管理" authKey="organization_manage"
+					href="/organization/toQueryOrganizationList.action" target="mainTabs"></menu>
+				<menu id="post_config" text="职位管理" href="/post/toQueryPostList.action"
+					authKey="post_manage" target="mainTabs"></menu>
+				<menu id="operator_config" text="操作员管理"
+					href="/operator/toQueryOperatorList.action" authKey="operator_manage"
+					target="mainTabs"></menu>
+				<menu id="auth_config" text="权限管理" href="/auth/toQueryAuthView.action"
+					authKey="auth_manage" target="mainTabs"></menu>
+			</menu>
+			
+			<menu id="servicelog_query_center" text="业务日志查询" target="mainTabs"
+				authKey="servicelog_query_center">
+				<menu id="query_login_log" text="登录日志"
+					href="/servicelog/mainframe/loginLog/toQueryLoginLogPagedList.action"
+					target="mainTabs"></menu>
+				<menu id="query_systemOper_log" text="系统操作日志"
+					href="/servicelog/mainframe/systemOperateLog/toQuerySystemOperateLogPagedList.action"
+					target="mainTabs"></menu>
+			</menu>
+		</menu>
+
+		<menu id="system_helper" text="帮助" authKey="system_helper" icon="plugin">
+			<menu id="dev_web_example" text="参考网站">
+				<menu id="web_validate_example" text="验证功能"
+					href="http://niceue.com/validator/#plugin_usage" target="mainTabs"
+					selectRefresh="false" />
+				<menu id="web_jquery.form" text="表单提交功能" href="http://jquery.malsup.com/form"
+					target="mainTabs" selectRefresh="false" />
+				<menu id="my97_date" text="日期控件"
+					href="http://www.my97.net/dp/demo/index.htm" target="mainTabs"
+					selectRefresh="false" />
+			</menu>
+			<menu id="standard_rule_manage" text="规范">
+				<menu id="java_code_standard_rule" text="java编码规范"
+					href="/standardRule/javaCodeRule" target="mainTabs" selectRefresh="false" />
+				<menu id="database_code_standard_rule" text="数据库编码规范"
+					href="/standardRule/databaseCodeRule" target="mainTabs"
+					selectRefresh="false" />
+				<menu id="project_standard_rule" text="项目命名规范"
+					href="/standardRule/projectNamedRule" target="mainTabs"
+					selectRefresh="false" />
+				<menu id="page_code_rule" text="页面编码规范" href="/standardRule/pageCodeRule"
+					target="mainTabs" selectRefresh="false" />
+			</menu>
+			<menu id="helper_manage" text="帮助">
+				<menu id="menuconfig_helper" text="置配菜单" href="/helper/menuConfigHelper"
+					target="mainTabs" selectRefresh="false" />
+				<menu id="authconfig_helper" text="配置权限" href="/helper/authConfigHelper"
+					target="mainTabs" selectRefresh="false" />
+				<menu id="servicelog_helper" text="业务日志" href="/helper/serviceLogHelper"
+					target="mainTabs" selectRefresh="false" />
+				<menu id="basicdata_helper" text="基础数据" href="/helper/basicdataHelper"
+					target="mainTabs" selectRefresh="false" />
+			</menu>
+
+			<menu id="code_example" text="范例">
+				<menu id="tree_grid_example" text="树表格范例" href="" target="mainTabs"
+					selectRefresh="false" />
+				<menu id="grid_example" text="表格范例" href="" target="mainTabs"
+					selectRefresh="false" />
+				<menu id="paged_grid_example" text="分页表格范例" href="" target="mainTabs"
+					selectRefresh="false" />
+				<menu id="workflow_paged_grid_example" text="流加载表格范例" href=""
+					target="mainTabs" selectRefresh="false" />
+				<menu id="dialog_example" text="对话框范例" href="" target="mainTabs"
+					selectRefresh="false" />
+				<menu id="query_page_example" text="查询页面范例" href="" target="mainTabs"
+					selectRefresh="false" />
+				<menu id="add_page_example" text="增加页面范例" href="" target="mainTabs"
+					selectRefresh="false" />
+				<menu id="update_page_example" text="update页面范例" href=""
+					target="mainTabs" selectRefresh="false" />
+				<menu id="query_and_update_page_example" text="查询操作共页面范例" href=""
+					target="mainTabs" selectRefresh="false" />
+				<menu id="global_event_example" text="触发捕获全局事件范例" href=""
+					target="mainTabs" selectRefresh="false" />
+				<menu id="check_auth_example" text="页面鉴权范例" href="" target="mainTabs"
+					selectRefresh="false" />
+				<menu id="get_config_example" text="获取配置值范例" href="" target="mainTabs"
+					selectRefresh="false" />
+				<menu id="get_basicdata_example" text="获取基础数据范例" href=""
+					target="mainTabs" selectRefresh="false" />
+			</menu>
+		</menu>
+
+		<menu id="control_panel" text="控制面板">
+			<menu id="MyCalandar" text="行事历"></menu>
+			<menu id="Notepad" text="记事本"></menu>
+			<menu id="modify_password" text="修改密码"></menu>
+			<menu id="modify_myself_info" text="修改个人信息"></menu>
+			<menu id="my_post" text="我的职位"></menu>
+			<menu id="my_auth" text="我的权限"></menu>
+		</menu>
+		<menu id="logout_center" text="注销">
+			<menu id="lock_window" text="锁定窗口"></menu>
+			<menu id="re_login" text="重新登录"></menu>
+			<menu id="logout" text="退出系统" target="triggerGlobalEvent"
+				eventType="logout"></menu>
+		</menu>
+	</menus_config>
+
+	<!-- 工具菜单配置：暂只支持两级菜单，更多级将不会被显示 -->
+	<menus_config type="toolMenu">
+		<!-- 一级别菜单:系统配置 -->
+	</menus_config>
+</menu_context_config>

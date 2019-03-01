@@ -1,6 +1,8 @@
 /target
 /.settings
 /.classpath
+/.project
+/.factorypath
 
 /tx-core/target
 /tx-core/.settings
@@ -50,35 +52,23 @@
 /tx-components/tx-component-servicelogger/.project
 /tx-components/tx-component-servicelogger/.factorypath
 
-/tx-services/target
-/tx-services/.settings
-/tx-services/.classpath
-/tx-services/.project
-/tx-services/.factorypath
+/tx-components/tx-component-communication/target
+/tx-components/tx-component-communication/.settings
+/tx-components/tx-component-communication/.classpath
+/tx-components/tx-component-communication/.factorypath
+/tx-components/tx-component-communication/.project
 
-/tx-services/tx-service-communication/target
-/tx-services/tx-service-communication/.settings
-/tx-services/tx-service-communication/.classpath
-/tx-services/tx-service-communication/.factorypath
-/tx-services/tx-service-communication/.project
+/tx-components/tx-component-file/target
+/tx-components/tx-component-file/.settings
+/tx-components/tx-component-file/.classpath
+/tx-components/tx-component-file/.project
+/tx-components/tx-component-file/.factorypath
 
-/tx-services/tx-service-file/target
-/tx-services/tx-service-file/.settings
-/tx-services/tx-service-file/.classpath
-/tx-services/tx-service-file/.project
-/tx-services/tx-service-file/.factorypath
-
-/tx-services/tx-service-report/target
-/tx-services/tx-service-report/.settings
-/tx-services/tx-service-report/.classpath
-/tx-services/tx-service-report/.project
-/tx-services/tx-service-report/.factorypath
-
-
-/tx-components/tx-component-config/target
-/tx-components/tx-component-config/.settings
-/tx-components/tx-component-config/.classpath
-/tx-components/tx-component-config/.project
+/tx-components/tx-component-report/target
+/tx-components/tx-component-report/.settings
+/tx-components/tx-component-report/.classpath
+/tx-components/tx-component-report/.project
+/tx-components/tx-component-report/.factorypath
 
 /tx-components/tx-component-rule/target
 /tx-components/tx-component-rule/.settings

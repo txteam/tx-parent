@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration monitorInterval="5">
+	
+	<Properties>
+		<property name="contentName" value="communication" />
+		<property name="commonPattern" value="[%d{yyyy-MM-dd HH:mm:ss,SSS}] %-5p %m%n" />
+		<property name="logfile" value="d:/logs/components-communication" />
+		<property name="maxLogFileSize" value="10MB"></property>
+		<property name="maxLogFileNum" value="3"></property>
+		<property name="onlyMessagePattern" value="%d{yyyy-MM-dd HH:mm:ss} %msg%n" />
+	</Properties>
+	
+	<Appenders>
+		<Console name="stdout" target="SYSTEM_OUT">
+			<PatternLayout pattern="${commonPattern}" />
+		</Console>
+		<RollingFile name="log_file" append="true" fileName="${log-path}/app.log"
+			filePattern="${log-path}/$${date:yyyy-MM-dd}/app.%d{yyyy-MM-dd-HH}.log.gz">
+			<PatternLayout pattern="${commonPattern}" />
+			<Policies>
+				<!-- 时间规则：每天（24小时）生成1个日志备份 -->
+				<!-- 注：如果用 TimeBasedTriggeringPolicy，filePattern必需带上 HH（小时），否则无法生成备份文件 -->
+				<TimeBasedTriggeringPolicy interval="24"
+					modulate="false" />
+				<!-- 大小规则：超过XXX大小生成1个日志备份 -->
+				<!-- <SizeBasedTriggeringPolicy size="10KB" /> -->
+			</Policies>
+			<DefaultRolloverStrategy max="3" />
+		</RollingFile>
+
+		<RollingFile name="logFile" append="true" fileName="${log-path}/app.log"
+			filePattern="${log-path}/$${date:yyyy-MM-dd}/app.%d{yyyy-MM-dd-HH}.log.gz">
+			<PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss,SSS}] %-5p %m%n" />
+			<Policies>
+				<!-- 时间规则：每天（24小时）生成1个日志备份 -->
+				<!-- 注：如果用 TimeBasedTriggeringPolicy，filePattern必需带上 HH（小时），否则无法生成备份文件 -->
+				<TimeBasedTriggeringPolicy interval="24"
+					modulate="false" />
+				<!-- 大小规则：超过XXX大小生成1个日志备份 -->
+				<!-- <SizeBasedTriggeringPolicy size="10KB" /> -->
+			</Policies>
+			<DefaultRolloverStrategy max="3" />
+		</RollingFile>
+		<RollingFile name="cachelog" append="true"
+			fileName="${log-path}/cachelog.log" filePattern="${log-path}/cachelog.log.%d{yyyy-MM-dd-HH}.log">
+			<PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss,SSS} %p %m%n" />
+			<Policies>
+				<!-- 时间规则：每天（24小时）生成1个日志备份 -->
+				<TimeBasedTriggeringPolicy interval="24"
+					modulate="true" />
+			</Policies>
+		</RollingFile>
+		<!-- 错误日志 (error) -->
+		<!-- <File name="errorFile" fileName="${log-path}/error.log" append="true"> 
+			<Filters> <ThresholdFilter level="error" onMatch="DENY" onMismatch="NEUTRAL" 
+			/> </Filters> <Filters> <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY" 
+			/> </Filters> <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss,SSS} %p %m%n" 
+			/> </File> -->
+	</Appenders>
+	
+	<Appenders>
+		<!-- 日志输出格式 ：<Console是控制台,<File是文件,<RollingRandomAccessFile按时间和文件大小生成多个日志,<JDBC是数据库,<Async异步 -->
+		<!-- Console 输出到控制台及格式 -->
+		<Console name="toConsole" target="SYSTEM_OUT">
+			<PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t]  %F %M %l- %-5level %logger{36} %msg%n" />
+		</Console>
+	</Appenders>
+
+	<Loggers><!-- 日志类别 -->
+		<!-- spring框架打印日志级别 -->
+		<Logger name="org.springframework" level="ERROR" />
+		
+		<!-- springMVC答应日志级别 -->
+		<Logger name="org.springframework.web" level="ERROR" />
+		<Logger name="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping" level="ERROR"></logger>
+		<Logger name="org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver" level="ERROR"></logger>
+		<Logger name="org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver" level="ERROR"></logger>
+		
+		<!-- cxf日志级别 -->
+		<Logger name="org.apache.cxf" level="ERROR" />
+		<!-- ehcache日志级别 -->
+		<Logger name="net.sf.ehcache" level="ERROR" />
+		<!-- mybatis日志级别 -->
+		<Logger name="org.apache.ibatis" level="ERROR" />
+		<Logger name="org.mybais" level="ERROR" />
+		<!-- sql日志级别 -->
+		<Logger name="java.sql" level="ERROR">
+			<AppenderRef ref="sql_file"/>
+		</Logger>
+		<Logger name="org.apache.cxf.interceptor" level="DEBUG">
+			<AppenderRef ref="cxf_log_file"/>
+		</Logger>
+		<Logger name="com.tx.core.log.p6spy.P6SpyLogbackLogger" level="INFO">
+			<AppenderRef ref="spy_sql_file"/>
+		</Logger>
+	
+		<root level="DEBUG">
+			<AppenderRef ref="log_file" />
+			<AppenderRef ref="stdout" />
+		</root>
+	</Loggers>
+</Configuration> 

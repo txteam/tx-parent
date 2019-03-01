@@ -1,0 +1,60 @@
+debug: false
+
+server:
+  port: 6010
+  
+#mybatis配置
+mybatis:
+  configLocation: classpath:context/mybatis-config.xml
+  mapperLocations: classpath*:com/tx/**/*SqlMap_FILE_CONTEXT.xml
+  typeHandlersPackage: com.tx.core.mybatis.handler
+
+spring:
+  application:
+    name: mszuul
+  #spring.aop配置
+  aop:
+    auto: true
+    proxy-target-class: true
+  #spring.datasource配置
+  datasource:
+    initialize: false
+    name: datasource
+    url: jdbc:mysql://120.24.75.25:3306/sap_db_dev
+    username: pqy
+    password: pqy
+    type: org.apache.tomcat.jdbc.pool.DataSource
+    tomcat:
+      driver-class-name: com.mysql.jdbc.Driver   
+      # 指定连接池等待连接返回的最大等待时间，毫秒单位
+      max-wait: 10000
+      # 指定连接池最大的空闲连接数量
+      max-idle: 10
+      # 指定必须保持连接的最小值(For DBCP and Tomcat connection pools)
+      min-idle: 5
+      #指定启动连接池时，初始建立的连接数量
+      initial-size: 5
+      validation-query: SELECT 1 FROM DUAL
+      # 获取连接时候验证，会影响性能
+      #validation-query有值时，test-on-borrow会默认为true.
+      #spring.datasource.tomcat.test-on-borrow=
+      #spring.datasource.tomcat.test-on-connect=
+      #spring.datasource.tomcat.test-on-return=
+      #验证连接的有效性
+      test-while-idle: true
+      #空闲连接回收的时间间隔，与test-while-idle一起使用，设置5分钟
+      time-between-eviction-runs-millis: 300000
+  thymeleaf:
+    cache: false
+    #prefix: classpath:/templates/
+    #suffix: .html
+    #mode: HTML5
+    #encoding: UTF-8
+    #content-type: text/html
+    
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://113.207.110.247:8761/eureka/
+      
+
