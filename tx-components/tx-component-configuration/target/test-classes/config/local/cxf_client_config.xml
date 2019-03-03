@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configContext>
+	<configGroup name="cxf客户端配置">
+		<configGroup name="身份证校验接口配置">
+			<config>
+				<name>超时时间</name>
+				<key>helloworldservice.timeout</key>
+				<value>2000</value>
+				<description>单位毫秒,小于或等于0，表示不限制超时时间</description>
+			</config>
+			<config>
+				<name>服务地址</name>
+				<key>helloworldservice.url</key>
+				<value>http://localhost:8080/HelloWorldService</value>
+				<developValue>http://localhost:8081/HelloWorldService</developValue>
+			</config>
+		</configGroup>
+		<configGroup name="测试可见接口">
+			<config>
+				<name>超时时间</name>
+				<key>test.viewable.timeout</key>
+				<value>2000</value>
+				<description>单位毫秒,小于或等于0，表示不限制超时时间</description>
+			</config>
+			<config>
+				<name>服务地址</name>
+				<key>test.viewable.url</key>
+				<value>http://localhost:8080/HelloWorldService</value>
+				<developValue>http://localhost:8081/HelloWorldService</developValue>
+			</config>
+		</configGroup>
+		<configGroup name="测试不可见接口" viewAble="false">
+			<config>
+				<name>超时时间</name>
+				<key>test.not_viewable.timeout</key>
+				<value>2000</value>
+				<description>单位毫秒,小于或等于0，表示不限制超时时间</description>
+			</config>
+			<config>
+				<name>服务地址</name>
+				<key>test.not_viewable.url</key>
+				<value>http://localhost:8080/HelloWorldService</value>
+				<developValue>http://localhost:8081/HelloWorldService</developValue>
+			</config>
+		</configGroup>
+	</configGroup>
+</configContext>

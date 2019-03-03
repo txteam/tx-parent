@@ -8,8 +8,6 @@ package com.tx.component.configuration.persister;
 
 import java.util.List;
 
-import net.sf.ehcache.Element;
-
 import com.tx.component.configuration.config.ConfigGroupParse;
 import com.tx.component.configuration.config.ConfigPropertyParse;
 import com.tx.component.configuration.context.ConfigContext;
@@ -28,8 +26,8 @@ import com.tx.core.util.MessageUtils;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public class LocalConfigPropertiesPersister extends
-        AbstractConfigPropertiesPersister {
+public class LocalConfigPropertiesPersister
+        extends AbstractConfigPropertiesPersister {
     
     @Override
     protected ConfigPropertyTypeEnum configPropertyType() {
@@ -45,8 +43,8 @@ public class LocalConfigPropertiesPersister extends
                 this, configPropertyType(), configGroupParse,
                 configPropertyParse);
         //压栈入缓存中
-        this.cache.put(new Element(configPropertyParse.getKey(),
-                configPropertyParse.getValue()));
+        this.cache.put(configPropertyParse.getKey(),
+                configPropertyParse.getValue());
         return configProperty;
     }
     
@@ -56,7 +54,8 @@ public class LocalConfigPropertiesPersister extends
             throw new NotExistException(MessageUtils.format("配置属性不存在。key:{}",
                     new Object[] { key }));
         }
-        String value = (String) this.cache.get(key).getValue();
+        String value = this.cache.get(key) == null ? null
+                : (String) this.cache.get(key).get();
         return value;
     }
     
@@ -75,8 +74,8 @@ public class LocalConfigPropertiesPersister extends
         @SuppressWarnings("unchecked")
         List<String> keys = (List<String>) this.cache.getKeys();
         for (String key : keys) {
-            logger.info("   加载本地系统参数:  {}={}", new Object[] { key,
-                    this.cache.get(key).getValue() });
+            logger.info("   加载本地系统参数:  {}={}",
+                    new Object[] { key, this.cache.get(key).getValue() });
         }
     }
     

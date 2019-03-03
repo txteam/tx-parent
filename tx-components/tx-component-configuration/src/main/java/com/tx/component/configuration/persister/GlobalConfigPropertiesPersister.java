@@ -63,13 +63,6 @@ public class GlobalConfigPropertiesPersister extends
     /** 系统id */
     private String systemId = "";
     
-    /** 脚本执行器容器 */
-    private DBScriptExecutorContext dbScriptExecutorContext;
-    
-    /** 配置属性项表定义 */
-    private TableDefinition configPropertyItemTableDefinition = new XMLTableDefinition(
-            "classpath:com/tx/component/configuration/script/config_context_table.xml");
-    
     /** 配置属性项映射实例 */
     private Map<String, ConfigPropertyItem> configPropertyItemMapping = new HashMap<String, ConfigPropertyItem>();
     
@@ -84,9 +77,6 @@ public class GlobalConfigPropertiesPersister extends
         if (this.platformTransactionManager == null) {
             this.platformTransactionManager = new DataSourceTransactionManager(
                     dataSource);
-        }
-        if (this.databaseSchemaUpdate && dbScriptExecutorContext != null) {
-            dbScriptExecutorContext.createOrUpdateTable(configPropertyItemTableDefinition);
         }
         /** 配置属性项持久层 */
         this.configPropertyItemDao = new ConfigPropertyItemDaoImpl(dataSource,
