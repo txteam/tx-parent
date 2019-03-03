@@ -72,14 +72,6 @@ public class BasicDataContextTableInitializer extends AbstractTableInitializer
         //初始化表定义
         StringBuilder sb = new StringBuilder(TxConstants.INITIAL_STR_LENGTH);
         
-        //        sb.append(COMMENT_PREFIX)
-        //                .append("----------table:bd_basic_data_type----------")
-        //                .append(COMMENT_SUFFIX)
-        //                .append(LINE_SEPARATOR);
-        //        sb.append(table_bd_basic_data_type(tableDDLExecutor,
-        //                tableAutoInitialize));
-        //        sb.append(LINE_SEPARATOR);
-        
         sb.append(COMMENT_PREFIX)
                 .append("----------table:bd_data_dict----------")
                 .append(COMMENT_SUFFIX)
@@ -95,101 +87,16 @@ public class BasicDataContextTableInitializer extends AbstractTableInitializer
                 tableAutoInitialize));
         sb.append(LINE_SEPARATOR);
         
+        //        sb.append(COMMENT_PREFIX)
+        //                .append("----------table:bd_basic_data_type----------")
+        //                .append(COMMENT_SUFFIX)
+        //                .append(LINE_SEPARATOR);
+        //        sb.append(table_bd_basic_data_type(tableDDLExecutor,
+        //                tableAutoInitialize));
+        //        sb.append(LINE_SEPARATOR);
+        
         return sb.toString();
     }
-    
-    //    /**
-    //     * 核心文件定义表<br/>
-    //     * <功能详细描述> [参数说明]
-    //     * 
-    //     * @return void [返回类型说明]
-    //     * @exception throws [异常类型] [异常说明]
-    //     * @see [类、类#方法、类#成员]
-    //     */
-    //    private String table_bd_basic_data_type(TableDDLExecutor tableDDLExecutor,
-    //            boolean tableAutoInitialize) {
-    //        String tableName = "bd_basic_data_type";
-    //        
-    //        CreateTableDDLBuilder createDDLBuilder = null;
-    //        AlterTableDDLBuilder alterDDLBuilder = null;
-    //        DDLBuilder<?> ddlBuilder = null;
-    //        
-    //        if (tableDDLExecutor.exists(tableName)) {
-    //            alterDDLBuilder = tableDDLExecutor
-    //                    .generateAlterTableDDLBuilder(tableName);
-    //            ddlBuilder = alterDDLBuilder;
-    //        } else {
-    //            createDDLBuilder = tableDDLExecutor
-    //                    .generateCreateTableDDLBuilder(tableName);
-    //            ddlBuilder = createDDLBuilder;
-    //        }
-    //        
-    //        bd_basic_data_type(ddlBuilder);//写入表结构
-    //        
-    //        if (alterDDLBuilder != null
-    //                && alterDDLBuilder.compare().isNeedAlter()) {
-    //            if (tableAutoInitialize) {
-    //                tableDDLExecutor.alter(alterDDLBuilder);
-    //            }
-    //            return alterDDLBuilder.alterSql();
-    //        } else if (createDDLBuilder != null) {
-    //            if (tableAutoInitialize) {
-    //                tableDDLExecutor.create(createDDLBuilder);
-    //            }
-    //            return createDDLBuilder.createSql();
-    //        }
-    //        return "";
-    //    }
-    //    
-    //    /**
-    //     * td_task_def的构建器<br/>
-    //     * <功能详细描述>
-    //     * @param ddlBuilder [参数说明]
-    //     * 
-    //     * @return void [返回类型说明]
-    //     * @exception throws [异常类型] [异常说明]
-    //     * @see [类、类#方法、类#成员]
-    //    */
-    //    public static void bd_basic_data_type(DDLBuilder<?> ddlBuilder) {
-    //        /*
-    //        drop table if exists bd_basic_data_type;
-    //        create table bd_basic_data_type(
-    //            id varchar(64) not null,
-    //            type varchar(128) not null,
-    //            code varchar(64) not null,
-    //            module varchar(64) not null,
-    //            name varchar(64) not null,
-    //            tableName varchar(64) not null,
-    //            modifyAble bit not null default 0,
-    //            valid bit not null default 1,
-    //            common bit not null default 1,
-    //            viewType varchar(64) not null,
-    //            remark varchar(512),
-    //            createDate datetime not null default now(),
-    //            lastUpdateDate datetime not null default now(),
-    //            primary key(id)
-    //        );
-    //        create unique index idx_bd_basic_data_type_00 on bd_basic_data_type(type,module);
-    //        create index idx_bd_basic_data_type_01 on bd_basic_data_type(type,type);
-    //        create index idx_bd_basic_data_type_02 on bd_basic_data_type(module);
-    //        */
-    //        ddlBuilder.newColumnOfVarchar(true, "id", 64, true, null)
-    //                .newColumnOfVarchar("type", 128, true, null)
-    //                .newColumnOfVarchar("code", 64, true, null)
-    //                .newColumnOfVarchar("module", 64, true, null)
-    //                .newColumnOfVarchar("name", 64, true, null)
-    //                .newColumnOfVarchar("tableName", 256, true, null)
-    //                .newColumnOfBoolean("modifyAble", true, true)
-    //                .newColumnOfBoolean("valid", true, true)
-    //                .newColumnOfBoolean("common", true, true)
-    //                .newColumnOfVarchar("viewType", 64, true, null)
-    //                .newColumnOfVarchar("remark", 512, false, null)
-    //                .newColumnOfDate("lastUpdateDate", true, true)
-    //                .newColumnOfDate("createDate", true, true);
-    //        ddlBuilder.newIndex(true, "idx_code", "code,type");
-    //        ddlBuilder.newIndex(true, "idx_type", "type");
-    //        ddlBuilder.newIndex(false, "idx_module", "module");
-    //    }
     
     /**
      * 核心文件定义表<br/>
@@ -198,7 +105,7 @@ public class BasicDataContextTableInitializer extends AbstractTableInitializer
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
+     */
     public String table_bd_data_dict(TableDDLExecutor tableDDLExecutor,
             boolean tableAutoInitialize) {
         String tableName = "bd_data_dict";
@@ -348,4 +255,97 @@ public class BasicDataContextTableInitializer extends AbstractTableInitializer
                 .newColumnOfVarchar("entryValue", 255, false, null);
         ddlBuilder.newIndex(true, "idx_dict_entry_00", "entityId,entryKey");
     }
+    
+    //  /**
+    //     * 核心文件定义表<br/>
+    //     * <功能详细描述> [参数说明]
+    //     * 
+    //     * @return void [返回类型说明]
+    //     * @exception throws [异常类型] [异常说明]
+    //     * @see [类、类#方法、类#成员]
+    //     */
+    //    private String table_bd_basic_data_type(TableDDLExecutor tableDDLExecutor,
+    //            boolean tableAutoInitialize) {
+    //        String tableName = "bd_basic_data_type";
+    //        
+    //        CreateTableDDLBuilder createDDLBuilder = null;
+    //        AlterTableDDLBuilder alterDDLBuilder = null;
+    //        DDLBuilder<?> ddlBuilder = null;
+    //        
+    //        if (tableDDLExecutor.exists(tableName)) {
+    //            alterDDLBuilder = tableDDLExecutor
+    //                    .generateAlterTableDDLBuilder(tableName);
+    //            ddlBuilder = alterDDLBuilder;
+    //        } else {
+    //            createDDLBuilder = tableDDLExecutor
+    //                    .generateCreateTableDDLBuilder(tableName);
+    //            ddlBuilder = createDDLBuilder;
+    //        }
+    //        
+    //        bd_basic_data_type(ddlBuilder);//写入表结构
+    //        
+    //        if (alterDDLBuilder != null
+    //                && alterDDLBuilder.compare().isNeedAlter()) {
+    //            if (tableAutoInitialize) {
+    //                tableDDLExecutor.alter(alterDDLBuilder);
+    //            }
+    //            return alterDDLBuilder.alterSql();
+    //        } else if (createDDLBuilder != null) {
+    //            if (tableAutoInitialize) {
+    //                tableDDLExecutor.create(createDDLBuilder);
+    //            }
+    //            return createDDLBuilder.createSql();
+    //        }
+    //        return "";
+    //    }
+    //    
+    //    /**
+    //     * td_task_def的构建器<br/>
+    //     * <功能详细描述>
+    //     * @param ddlBuilder [参数说明]
+    //     * 
+    //     * @return void [返回类型说明]
+    //     * @exception throws [异常类型] [异常说明]
+    //     * @see [类、类#方法、类#成员]
+    //    */
+    //    public static void bd_basic_data_type(DDLBuilder<?> ddlBuilder) {
+    //        /*
+    //        drop table if exists bd_basic_data_type;
+    //        create table bd_basic_data_type(
+    //            id varchar(64) not null,
+    //            type varchar(128) not null,
+    //            code varchar(64) not null,
+    //            module varchar(64) not null,
+    //            name varchar(64) not null,
+    //            tableName varchar(64) not null,
+    //            modifyAble bit not null default 0,
+    //            valid bit not null default 1,
+    //            common bit not null default 1,
+    //            viewType varchar(64) not null,
+    //            remark varchar(512),
+    //            createDate datetime not null default now(),
+    //            lastUpdateDate datetime not null default now(),
+    //            primary key(id)
+    //        );
+    //        create unique index idx_bd_basic_data_type_00 on bd_basic_data_type(type,module);
+    //        create index idx_bd_basic_data_type_01 on bd_basic_data_type(type,type);
+    //        create index idx_bd_basic_data_type_02 on bd_basic_data_type(module);
+    //        */
+    //        ddlBuilder.newColumnOfVarchar(true, "id", 64, true, null)
+    //                .newColumnOfVarchar("type", 128, true, null)
+    //                .newColumnOfVarchar("code", 64, true, null)
+    //                .newColumnOfVarchar("module", 64, true, null)
+    //                .newColumnOfVarchar("name", 64, true, null)
+    //                .newColumnOfVarchar("tableName", 256, true, null)
+    //                .newColumnOfBoolean("modifyAble", true, true)
+    //                .newColumnOfBoolean("valid", true, true)
+    //                .newColumnOfBoolean("common", true, true)
+    //                .newColumnOfVarchar("viewType", 64, true, null)
+    //                .newColumnOfVarchar("remark", 512, false, null)
+    //                .newColumnOfDate("lastUpdateDate", true, true)
+    //                .newColumnOfDate("createDate", true, true);
+    //        ddlBuilder.newIndex(true, "idx_code", "code,type");
+    //        ddlBuilder.newIndex(true, "idx_type", "type");
+    //        ddlBuilder.newIndex(false, "idx_module", "module");
+    //    }
 }

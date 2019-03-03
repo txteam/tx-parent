@@ -74,8 +74,10 @@
 /tx-components/tx-component-rule/.settings
 /tx-components/tx-component-rule/.classpath
 /tx-components/tx-component-rule/.project
+/tx-components/tx-component-rule/.factorypath
 
 /tx-components/tx-component-sequence/target
 /tx-components/tx-component-sequence/.settings
 /tx-components/tx-component-sequence/.classpath
 /tx-components/tx-component-sequence/.project
+/tx-components/tx-component-sequence/.factorypath
