@@ -23,9 +23,6 @@ public class ConfigContextProperties {
     
     /** 命令容器是否启动 */
     private boolean enable = true;
-    
-    /** 持久层属性 */
-    private ConfigContextPersisterProperties persister;
 
     /**
      * @return 返回 tableAutoInitialize
@@ -53,19 +50,5 @@ public class ConfigContextProperties {
      */
     public void setEnable(boolean enable) {
         this.enable = enable;
-    }
-
-    /**
-     * @return 返回 persister
-     */
-    public ConfigContextPersisterProperties getPersister() {
-        return persister;
-    }
-
-    /**
-     * @param 对persister进行赋值
-     */
-    public void setPersister(ConfigContextPersisterProperties persister) {
-        this.persister = persister;
     }
 }

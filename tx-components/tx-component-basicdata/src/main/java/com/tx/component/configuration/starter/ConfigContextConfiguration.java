@@ -6,35 +6,22 @@
  */
 package com.tx.component.configuration.starter;
 
-import javax.sql.DataSource;
-
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.cache.CacheManager;
-import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.support.TransactionTemplate;
 
-import com.tx.component.configuration.dao.ConfigPropertyItemDao;
 import com.tx.component.configuration.script.ConfigContextTableInitializer;
 import com.tx.component.configuration.service.ConfigPropertyItemService;
 import com.tx.core.ddlutil.executor.TableDDLExecutor;
 import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.mybatis.support.MyBatisDaoSupport;
-import com.tx.core.mybatis.support.MyBatisDaoSupportHelper;
-import com.tx.core.util.dialect.DataSourceTypeEnum;
 
 /**
  * 基础数据容器自动配置<br/>
@@ -45,6 +32,7 @@ import com.tx.core.util.dialect.DataSourceTypeEnum;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
+@Configuration
 public class ConfigContextConfiguration
         implements ApplicationContextAware, InitializingBean {
     
@@ -60,13 +48,18 @@ public class ConfigContextConfiguration
     /** 属性文件 */
     private ConfigContextProperties properties;
     
+    /** 配置属性项持久层 */
+    private ConfigPropertyItemService configPropertyItemService;
+    
     /** <默认构造函数> */
     public ConfigContextConfiguration(String module, CacheManager cacheManager,
-            ConfigContextProperties properties) {
+            ConfigContextProperties properties,
+            ConfigPropertyItemService configPropertyItemService) {
         super();
         this.module = module;
         this.cacheManager = cacheManager;
         this.properties = properties;
+        this.configPropertyItemService = configPropertyItemService;
     }
     
     /**
@@ -87,132 +80,7 @@ public class ConfigContextConfiguration
         AssertUtils.notEmpty(this.module, "module is empty.");
         AssertUtils.notNull(this.cacheManager, "cacheManager is null.");
         AssertUtils.notNull(this.properties, "properties is null.");
-    }
-    
-    /**
-     * 配置属性项业务层<br/>
-     * <功能详细描述>
-     * 
-     * @author  Administrator
-     * @version  [版本号, 2019年3月6日]
-     * @see  [相关类/方法]
-     * @since  [产品/模块版本]
-     */
-    @Configuration
-    @ConditionalOnMissingBean(ConfigPropertyItemService.class)
-    public static class ConfigContextPersisterConfiguration {
-        
-        @Bean
-        public ConfigPropertyItemService configPropertyItemService() {
-            return null;
-        }
-        
-        /**
-         * 持久化类型方案:默认为mybatis<br/>
-         * <功能详细描述>
-         * 
-         * @author  Administrator
-         * @version  [版本号, 2019年3月6日]
-         * @see  [相关类/方法]
-         * @since  [产品/模块版本]
-         */
-        @Configuration
-        @ConditionalOnMissingBean(ConfigPropertyItemDao.class)
-        @ConditionalOnProperty(prefix = "tx.basicdata.config.persister", value = "type", havingValue = "jpa")
-        public static class ConfigContextJPADaoConfiguration {
-            
-            @EntityScan(basePackages = {
-                    "com.tx.component.configuration.model" })
-            @EnableJpaRepositories(basePackages = {
-                    "com.tx.component.configuration.dao.jpa" })
-            public static class ConfigContextJPADaoImplConfiguration {
-                
-            }
-        }
-        
-        @Configuration
-        @ConditionalOnMissingBean(ConfigPropertyItemDao.class)
-        public static class ConfigContextMybatisDaoConfiguration
-                implements InitializingBean {
-            
-            /** 数据源:dataSource */
-            protected DataSource dataSource;
-            
-            /** transactionManager */
-            protected PlatformTransactionManager transactionManager;
-            
-            /** transactionTemplate: 如果存在事务则在当前事务中执行 */
-            private MyBatisDaoSupport myBatisDaoSupport;
-            
-            /** transactionTemplate: 如果存在事务则在当前事务中执行 */
-            private TransactionTemplate transactionTemplate;
-            
-            /**
-             * @throws Exception
-             */
-            @Override
-            public void afterPropertiesSet() throws Exception {
-                //设置transactionManager
-                //                if (StringUtils.isNotBlank(this.properties.getTransactionManagerRef())
-                //                        && this.applicationContext.containsBean(
-                //                                this.properties.getTransactionManagerRef())) {
-                //                    this.transactionManager = this.applicationContext.getBean(
-                //                            this.properties.getTransactionManagerRef(),
-                //                            PlatformTransactionManager.class);
-                //                } else if (this.applicationContext
-                //                        .getBeansOfType(PlatformTransactionManager.class).size() == 1) {
-                //                    this.transactionManager = this.applicationContext
-                //                            .getBean(PlatformTransactionManager.class);
-                //                } else {
-                //                    this.transactionManager = new DataSourceTransactionManager(
-                //                            this.dataSource);
-                //                }
-                //                AssertUtils.notEmpty(this.transactionManager,
-                //                        "transactionManager is null.存在多个事务管理器，需要通过basicdata.transactionManager指定使用的数据源,或为数据源设置为Primary.");
-                
-                //设置cacheManager
-                //                if (StringUtils.isNotBlank(this.properties.getCacheManagerRef())
-                //                        && this.applicationContext
-                //                                .containsBean(this.properties.getCacheManagerRef())) {
-                //                    this.cacheManager = new ConcurrentMapCacheManager();
-                //                } else if (this.applicationContext.getBeansOfType(CacheManager.class)
-                //                        .size() == 1) {
-                //                    this.cacheManager = this.applicationContext
-                //                            .getBean(CacheManager.class);
-                //                } else {
-                //                    this.cacheManager = new ConcurrentMapCacheManager();
-                //                }
-                //                
-                //                //初始化包名
-                //                if (!StringUtils.isEmpty(this.properties.getBasePackages())) {
-                //                    this.basePackages = this.properties.getBasePackages();
-                //                }
-                //                if (!StringUtils.isEmpty(this.properties.getMybatisConfigLocation())) {
-                //                    this.mybatisConfigLocation = this.properties
-                //                            .getMybatisConfigLocation();
-                //                }
-                //                
-                //                if (!StringUtils.isBlank(this.properties.getModule())) {
-                //                    this.module = this.properties.getModule();
-                //                }
-                //                if (!StringUtils.isBlank(this.applicationName)) {
-                //                    this.module = this.applicationName;
-                //                }
-                
-                //                this.transactionTemplate = new TransactionTemplate(
-                //                        this.transactionManager);
-                //                this.myBatisDaoSupport = MyBatisDaoSupportHelper.buildMyBatisDaoSupport(
-                //                        this.mybatisConfigLocation,
-                //                        this.mybatisMapperLocations,
-                //                        DataSourceTypeEnum.MYSQL,
-                //                        this.dataSource);
-            }
-            
-            @Bean
-            public ConfigPropertyItemDao configPropertyItemDao() {
-                return null;
-            }
-        }
+        AssertUtils.notNull(this.configPropertyItemService, "configPropertyItemService is null.");
     }
     
     /**
@@ -256,4 +124,125 @@ public class ConfigContextConfiguration
             return initializer;
         }
     }
+    
+    //    /**
+    //     * 配置属性项业务层<br/>
+    //     * <功能详细描述>
+    //     * 
+    //     * @author  Administrator
+    //     * @version  [版本号, 2019年3月6日]
+    //     * @see  [相关类/方法]
+    //     * @since  [产品/模块版本]
+    //     */
+    //    @Configuration
+    //    @ConditionalOnMissingBean(ConfigPropertyItemService.class)
+    //    public static class ConfigContextPersisterConfiguration {
+    //        
+    //        /**
+    //         * 持久化类型方案:默认为mybatis<br/>
+    //         * <功能详细描述>
+    //         * 
+    //         * @author  Administrator
+    //         * @version  [版本号, 2019年3月6日]
+    //         * @see  [相关类/方法]
+    //         * @since  [产品/模块版本]
+    //         */
+    //        @Configuration
+    //        @ConditionalOnMissingBean(ConfigPropertyItemDao.class)
+    //        @ConditionalOnProperty(prefix = "tx.basicdata.config.persister", value = "type", havingValue = "jpa")
+    //        public static class ConfigContextJPADaoConfiguration {
+    //            
+    //            @EntityScan(basePackages = {
+    //                    "com.tx.component.configuration.model" })
+    //            @EnableJpaRepositories(basePackages = {
+    //                    "com.tx.component.configuration.dao.jpa" })
+    //            public static class ConfigContextJPADaoImplConfiguration {
+    //                
+    //            }
+    //        }
+    //        
+    //        @Configuration
+    //        @ConditionalOnMissingBean(ConfigPropertyItemDao.class)
+    //        public static class ConfigContextMybatisDaoConfiguration
+    //                implements InitializingBean {
+    //            
+    //            /** 数据源:dataSource */
+    //            protected DataSource dataSource;
+    //            
+    //            /** transactionManager */
+    //            protected PlatformTransactionManager transactionManager;
+    //            
+    //            /** transactionTemplate: 如果存在事务则在当前事务中执行 */
+    //            private MyBatisDaoSupport myBatisDaoSupport;
+    //            
+    //            /** transactionTemplate: 如果存在事务则在当前事务中执行 */
+    //            private TransactionTemplate transactionTemplate;
+    //            
+    //            /**
+    //             * @throws Exception
+    //             */
+    //            @Override
+    //            public void afterPropertiesSet() throws Exception {
+    //                //设置transactionManager
+    //                //                if (StringUtils.isNotBlank(this.properties.getTransactionManagerRef())
+    //                //                        && this.applicationContext.containsBean(
+    //                //                                this.properties.getTransactionManagerRef())) {
+    //                //                    this.transactionManager = this.applicationContext.getBean(
+    //                //                            this.properties.getTransactionManagerRef(),
+    //                //                            PlatformTransactionManager.class);
+    //                //                } else if (this.applicationContext
+    //                //                        .getBeansOfType(PlatformTransactionManager.class).size() == 1) {
+    //                //                    this.transactionManager = this.applicationContext
+    //                //                            .getBean(PlatformTransactionManager.class);
+    //                //                } else {
+    //                //                    this.transactionManager = new DataSourceTransactionManager(
+    //                //                            this.dataSource);
+    //                //                }
+    //                //                AssertUtils.notEmpty(this.transactionManager,
+    //                //                        "transactionManager is null.存在多个事务管理器，需要通过basicdata.transactionManager指定使用的数据源,或为数据源设置为Primary.");
+    //                
+    //                //设置cacheManager
+    //                //                if (StringUtils.isNotBlank(this.properties.getCacheManagerRef())
+    //                //                        && this.applicationContext
+    //                //                                .containsBean(this.properties.getCacheManagerRef())) {
+    //                //                    this.cacheManager = new ConcurrentMapCacheManager();
+    //                //                } else if (this.applicationContext.getBeansOfType(CacheManager.class)
+    //                //                        .size() == 1) {
+    //                //                    this.cacheManager = this.applicationContext
+    //                //                            .getBean(CacheManager.class);
+    //                //                } else {
+    //                //                    this.cacheManager = new ConcurrentMapCacheManager();
+    //                //                }
+    //                //                
+    //                //                //初始化包名
+    //                //                if (!StringUtils.isEmpty(this.properties.getBasePackages())) {
+    //                //                    this.basePackages = this.properties.getBasePackages();
+    //                //                }
+    //                //                if (!StringUtils.isEmpty(this.properties.getMybatisConfigLocation())) {
+    //                //                    this.mybatisConfigLocation = this.properties
+    //                //                            .getMybatisConfigLocation();
+    //                //                }
+    //                //                
+    //                //                if (!StringUtils.isBlank(this.properties.getModule())) {
+    //                //                    this.module = this.properties.getModule();
+    //                //                }
+    //                //                if (!StringUtils.isBlank(this.applicationName)) {
+    //                //                    this.module = this.applicationName;
+    //                //                }
+    //                
+    //                //                this.transactionTemplate = new TransactionTemplate(
+    //                //                        this.transactionManager);
+    //                //                this.myBatisDaoSupport = MyBatisDaoSupportHelper.buildMyBatisDaoSupport(
+    //                //                        this.mybatisConfigLocation,
+    //                //                        this.mybatisMapperLocations,
+    //                //                        DataSourceTypeEnum.MYSQL,
+    //                //                        this.dataSource);
+    //            }
+    //            
+    //            @Bean
+    //            public ConfigPropertyItemDao configPropertyItemDao() {
+    //                return null;
+    //            }
+    //        }
+    //    }
 }

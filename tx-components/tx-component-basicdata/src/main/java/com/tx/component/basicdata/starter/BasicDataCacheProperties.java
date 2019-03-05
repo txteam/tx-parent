@@ -17,14 +17,16 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @see  [相关类/方法]0
  * @since  [产品/模块版本]
  */
-@ConfigurationProperties(prefix = "tx.basicdata.cache")
-public class CacheManagerProperties {
+//tx.basicdata.cache
+public class BasicDataCacheProperties {
     
     /** cacheManager */
+    //tx.basicdata.cache.cacheManagerRef
     private String cacheManagerRef;
     
     /** redis缓存属性 */
-    private RedisCacheManagerProperties redis;
+    //tx.basicdata.cache.redis
+    private BasicDataCacheRedisProperties redis;
 
     /**
      * @return 返回 cacheManagerRef

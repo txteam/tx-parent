@@ -17,6 +17,6 @@ import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
  * @see  [相关类/方法]0
  * @since  [产品/模块版本]
  */
-public class RedisCacheManagerProperties extends RedisProperties{
+public class BasicDataCacheRedisProperties extends RedisProperties{
     
 }

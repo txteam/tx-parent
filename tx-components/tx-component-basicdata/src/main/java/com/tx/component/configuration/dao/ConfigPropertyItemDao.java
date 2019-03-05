@@ -7,6 +7,7 @@
 package com.tx.component.configuration.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import com.tx.component.configuration.model.ConfigPropertyItem;
 
@@ -41,7 +42,7 @@ public interface ConfigPropertyItemDao {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public void update(ConfigPropertyItem configPropertyItem);
+    public void update(Map<String, Object> rowMap);
     
     /**
      * 根据系统id查询配置属性项列表 
@@ -53,5 +54,5 @@ public interface ConfigPropertyItemDao {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public List<ConfigPropertyItem> queryList();
+    public List<ConfigPropertyItem> queryList(Map<String, Object> params);
 }

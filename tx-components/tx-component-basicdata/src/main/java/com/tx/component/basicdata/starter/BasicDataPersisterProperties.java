@@ -4,7 +4,7 @@
  * 修改时间:  2018年4月27日
  * <修改描述:>
  */
-package com.tx.component.configuration.starter;
+package com.tx.component.basicdata.starter;
 
 /**
  * 基础数据容器默认配置<br/>
@@ -15,7 +15,7 @@ package com.tx.component.configuration.starter;
  * @see  [相关类/方法]0
  * @since  [产品/模块版本]
  */
-public class ConfigContextPersisterProperties {
+public class BasicDataPersisterProperties {
     
     /** persister type */
     private String type = "mybatis";

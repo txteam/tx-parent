@@ -64,14 +64,14 @@ public class BasicDataCacheConfiguration
     private ApplicationContext applicationContext;
     
     /** 缓存属性 */
-    private CacheManagerProperties properties;
+    private BasicDataCacheProperties properties;
     
     /** cacheManager */
     protected CacheManager cacheManager;
     
     /** <默认构造函数> */
     public BasicDataCacheConfiguration(
-           CacheManagerProperties  properties) {
+           BasicDataCacheProperties  properties) {
         super();
         this.properties = properties;
     }

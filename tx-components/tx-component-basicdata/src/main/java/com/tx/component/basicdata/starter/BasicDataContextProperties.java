@@ -41,6 +41,9 @@ public class BasicDataContextProperties {
     /** transactionManager */
     protected String transactionManagerRef;
     
+    private BasicDataPersisterProperties persister;
+    
+    
     /**
      * @return 返回 enable
      */
