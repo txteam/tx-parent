@@ -81,14 +81,14 @@ public class AuthContextTableInitializer extends AbstractTableInitializer
         sb.append(LINE_SEPARATOR);
         
         sb.append(COMMENT_PREFIX)
-                .append("----------table:auth_authref----------")
+                .append("----------table:sec_authref----------")
                 .append(COMMENT_SUFFIX)
                 .append(LINE_SEPARATOR);
         table_sec_authref(tableDDLExecutor, tableAutoInitialize);
         sb.append(LINE_SEPARATOR);
         
         sb.append(COMMENT_PREFIX)
-                .append("----------table:table_auth_authref_his----------")
+                .append("----------table:table_sec_authref_his----------")
                 .append(COMMENT_SUFFIX)
                 .append(LINE_SEPARATOR);
         table_sec_authref_his(tableDDLExecutor, tableAutoInitialize);

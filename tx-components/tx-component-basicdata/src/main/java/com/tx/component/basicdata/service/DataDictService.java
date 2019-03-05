@@ -51,8 +51,7 @@ import com.tx.core.support.poi.excel.ExcelReadUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class DataDictService extends AbstractEntityEntryAbleService<DataDict>
-        implements InitializingBean, ResourceLoaderAware {
+public class DataDictService implements InitializingBean, ResourceLoaderAware {
     
     @SuppressWarnings("unused")
     private Logger logger = LoggerFactory.getLogger(DataDictService.class);
@@ -60,8 +59,6 @@ public class DataDictService extends AbstractEntityEntryAbleService<DataDict>
     private ResourceLoader resourceLoader;
     
     private DataDictDao dataDictDao;
-    
-    private DataSource dataSource;
     
     private TransactionTemplate transactionTemplate;
     
@@ -71,25 +68,11 @@ public class DataDictService extends AbstractEntityEntryAbleService<DataDict>
     }
     
     /** <默认构造函数> */
-    public DataDictService(DataSource dataSource,
-            TransactionTemplate transactionTemplate, DataDictDao dataDictDao) {
+    public DataDictService(TransactionTemplate transactionTemplate,
+            DataDictDao dataDictDao) {
         super();
         this.dataDictDao = dataDictDao;
-        this.dataSource = dataSource;
         this.transactionTemplate = transactionTemplate;
-    }
-    
-    /**
-     * @throws Exception
-     */
-    @Override
-    protected EntityEntrySupport<EntityEntry> doBuildEntityEntrySupport()
-            throws Exception {
-        EntityEntrySupport<EntityEntry> entityEntrySupport = EntityEntrySupportFactory
-                .getSupport("bd_data_dict_entry",
-                        this.dataSource,
-                        this.transactionTemplate);
-        return entityEntrySupport;
     }
     
     /**
@@ -139,19 +122,19 @@ public class DataDictService extends AbstractEntityEntryAbleService<DataDict>
                     //如果code不存在，则跳过该非法行
                     continue;
                 }
-                String basicDataTypeCode = rowMap.get("basicDataTypeCode");
-                if (StringUtils.isEmpty(basicDataTypeCode)) {
-                    basicDataTypeCode = sheetName;
+                String basicDataType = rowMap.get("basicDataType");
+                if (StringUtils.isEmpty(basicDataType)) {
+                    basicDataType = sheetName;
                 }
-                ddTemp.setCode(code);
-                ddTemp.setBasicDataTypeCode(basicDataTypeCode);
                 
+                ddTemp.setCode(code);
+                ddTemp.setBasicDataType(basicDataType);
                 //其他属性字段
                 for (Entry<String, String> entryTemp : rowMap.entrySet()) {
                     String entryKey = entryTemp.getKey();
                     String entryValue = entryTemp.getValue();
                     if ("code".equals(entryKey)
-                            || "basicDataTypeCode".equals(entryKey)
+                            || "basicDataType".equals(entryKey)
                             || "class".equals(entryKey)) {
                         continue;
                     }
@@ -160,8 +143,8 @@ public class DataDictService extends AbstractEntityEntryAbleService<DataDict>
                         ddBW.setPropertyValue(entryKey, entryValue);
                     } else {
                         //如果不是
-                        EntityEntry ee = new EntityEntry(entryKey, entryValue);
-                        ddTemp.getEntryList().add(ee);
+                        ddTemp.getAttributeJSONObject().put(entryKey,
+                                entryValue);
                     }
                 }
                 
@@ -172,28 +155,16 @@ public class DataDictService extends AbstractEntityEntryAbleService<DataDict>
     }
     
     /**
-      * 从数据库中加载数据字典数据<br/>
-      * <功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return List<DataDict> [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 从数据库中加载数据字典数据<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return List<DataDict> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     private List<DataDict> loadListFromDB() {
-        MultiValueMap<String, EntityEntry> eeMultiMap = new LinkedMultiValueMap<>();
-        List<EntityEntry> entityEntryList = getEntityEntrySupport().queryList();
-        for (EntityEntry eeTemp : entityEntryList) {
-            eeMultiMap.add(eeTemp.getEntityId(), eeTemp);
-        }
-        
         List<DataDict> ddList = this.dataDictDao.queryList(null);
-        for (DataDict ddTemp : ddList) {
-            if (!eeMultiMap.containsKey(ddTemp.getId())) {
-                continue;
-            }
-            ddTemp.setEntryList(eeMultiMap.get(ddTemp.getId()));
-        }
         return ddList;
     }
     
@@ -207,6 +178,7 @@ public class DataDictService extends AbstractEntityEntryAbleService<DataDict>
                 .exists()) {
             return;
         }
+        
         ConfigInitAbleHelper<DataDict> helper = new ConfigInitAbleHelper<DataDict>() {
             /**
              * @param cia
@@ -215,12 +187,10 @@ public class DataDictService extends AbstractEntityEntryAbleService<DataDict>
             @Override
             protected String getSingleCode(DataDict cia) {
                 AssertUtils.notNull(cia, "cia is null.");
-                AssertUtils.notEmpty(cia.getBasicDataTypeCode(),
-                        "cia is null.");
+                AssertUtils.notEmpty(cia.getBasicDataType(), "cia is null.");
                 AssertUtils.notEmpty(cia.getCode(), "cia is null.");
                 
-                String code = cia.getBasicDataTypeCode() + "_" + cia.getCode();
-                code = code.toUpperCase();
+                String code = cia.getBasicDataType() + "_" + cia.getCode();
                 return code;
             }
             
@@ -240,8 +210,9 @@ public class DataDictService extends AbstractEntityEntryAbleService<DataDict>
             protected void doBeforeUpdate(DataDict ciaOfDB, DataDict ciaOfCfg) {
                 ciaOfDB.setName(ciaOfCfg.getName());
                 ciaOfDB.setRemark(ciaOfCfg.getRemark());
-                ciaOfDB.setBasicDataTypeCode(ciaOfCfg.getBasicDataTypeCode());
-                ciaOfDB.setEntryList(ciaOfCfg.getEntryList());
+                ciaOfDB.setBasicDataType(ciaOfCfg.getBasicDataType());
+                //设置额外属性
+                ciaOfDB.setAttributes(ciaOfCfg.getAttributes());
             }
             
             @Override
@@ -255,33 +226,9 @@ public class DataDictService extends AbstractEntityEntryAbleService<DataDict>
                         ciaOfCfg.getRemark())) {
                     return true;
                 }
-                if (ciaOfDB.getEntryList() != ciaOfCfg.getEntryList()) {
-                    if (ciaOfDB.getEntryList() == null
-                            || ciaOfCfg.getEntryList() == null) {
-                        return false;
-                    }
-                    Map<String, EntityEntry> dbEntryMap = new HashMap<>();
-                    Map<String, EntityEntry> cfgEntryMap = new HashMap<>();
-                    for (EntityEntry ee : ciaOfDB.getEntryList()) {
-                        dbEntryMap.put(ee.getEntryKey(), ee);
-                    }
-                    for (EntityEntry ee : ciaOfCfg.getEntryList()) {
-                        cfgEntryMap.put(ee.getEntryKey(), ee);
-                    }
-                    if (dbEntryMap.size() != cfgEntryMap.size()) {
-                        return false;
-                    }
-                    for (Entry<String, EntityEntry> dbeeEntry : dbEntryMap
-                            .entrySet()) {
-                        String key = dbeeEntry.getKey();
-                        EntityEntry dbee = dbeeEntry.getValue();
-                        if (!cfgEntryMap.containsKey(key)) {
-                            return false;
-                        } else if (!StringUtils.equals(dbee.getEntryValue(),
-                                cfgEntryMap.get(key).getEntryValue())) {
-                            return false;
-                        }
-                    }
+                if (!StringUtils.equals(ciaOfDB.getAttributes(),
+                        ciaOfCfg.getAttributes())) {
+                    return true;
                 }
                 return false;
             }
@@ -311,18 +258,20 @@ public class DataDictService extends AbstractEntityEntryAbleService<DataDict>
     }
     
     /**
-     * @param entity
+     * 为数据字典插入一条数据<br/>
+     * <功能详细描述>
+     * @param dataDict [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
-    @Override
-    protected void insertEntity(DataDict dataDict) {
+    @Transactional
+    public void insert(DataDict dataDict) {
         //验证参数是否合法
         AssertUtils.notNull(dataDict, "dataDict is null.");
         
         //为添加的数据需要填入默认值的字段填入默认值
-        dataDict.setValid(true);
-        //不能设置该值，该值在初始化自动插入逻辑中被用到，应当在初始化期间设置为true
-        //dataDict.setModifyAble(true);
-        
         Date now = new Date();
         dataDict.setCreateDate(now);
         dataDict.setLastUpdateDate(now);
@@ -335,8 +284,8 @@ public class DataDictService extends AbstractEntityEntryAbleService<DataDict>
      * @param entityId
      * @return
      */
-    @Override
-    protected boolean deleteEntityById(String id) {
+    @Transactional
+    protected boolean deleteById(String id) {
         AssertUtils.notEmpty(id, "id is empty.");
         
         DataDict condition = new DataDict();
@@ -375,11 +324,11 @@ public class DataDictService extends AbstractEntityEntryAbleService<DataDict>
      * @exception throws
      * @see [类、类#方法、类#成员]
      */
-    public DataDict findByCode(String basicDataTypeCode, String code) {
-        AssertUtils.notEmpty(basicDataTypeCode, "basicDataTypeCode is empty.");
+    public DataDict findByCode(String basicDataType, String code) {
+        AssertUtils.notEmpty(basicDataType, "basicDataType is empty.");
         AssertUtils.notEmpty(code, "code is empty.");
         
-        DataDict entity = findEntityByCode(basicDataTypeCode, code);
+        DataDict entity = findEntityByCode(basicDataType, code);
         
         //加载Entity的分项列表
         setupEntryList(entity);
@@ -419,13 +368,11 @@ public class DataDictService extends AbstractEntityEntryAbleService<DataDict>
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public List<DataDict> queryList(String basicDataTypeCode, Boolean valid,
+    public List<DataDict> queryList(String basicDataType, Boolean valid,
             Map<String, Object> params) {
-        //判断条件合法性
-        
         //生成查询条件
         params = params == null ? new HashMap<String, Object>() : params;
-        params.put("basicDataTypeCode", basicDataTypeCode);
+        params.put("basicDataType", basicDataType);
         params.put("valid", valid);
         
         //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
@@ -447,8 +394,6 @@ public class DataDictService extends AbstractEntityEntryAbleService<DataDict>
      */
     public List<DataDict> queryList(String basicDataTypeCode, String parentId,
             Boolean valid, Map<String, Object> params) {
-        //判断条件合法性
-        
         //生成查询条件
         params = params == null ? new HashMap<String, Object>() : params;
         params.put("basicDataTypeCode", basicDataTypeCode);
@@ -556,9 +501,8 @@ public class DataDictService extends AbstractEntityEntryAbleService<DataDict>
      * @param entity
      * @return
      */
-    @Override
     @Transactional
-    public boolean updateEntityById(DataDict dataDict) {
+    public boolean updateById(DataDict dataDict) {
         //验证参数是否合法，必填字段是否填写，
         AssertUtils.notNull(dataDict, "dataDict is null.");
         AssertUtils.notEmpty(dataDict.getId(), "dataDict.id is empty.");
@@ -568,10 +512,10 @@ public class DataDictService extends AbstractEntityEntryAbleService<DataDict>
         updateRowMap.put("id", dataDict.getId());
         
         //需要更新的字段
-        //updateRowMap.put("valid", false);
         updateRowMap.put("name", dataDict.getName());
         updateRowMap.put("remark", dataDict.getRemark());
         updateRowMap.put("modifyAble", dataDict.isModifyAble());
+        updateRowMap.put("valid", dataDict.isValid());
         updateRowMap.put("lastUpdateDate", new Date());
         
         int updateRowCount = this.dataDictDao.update(updateRowMap);
@@ -628,13 +572,6 @@ public class DataDictService extends AbstractEntityEntryAbleService<DataDict>
         this.dataDictDao.update(params);
         
         return true;
-    }
-    
-    /**
-     * @param 对dataSource进行赋值
-     */
-    public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
     }
     
     /**

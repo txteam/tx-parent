@@ -1,3 +1,0 @@
-# CUSTOM
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.tx.component.basicdata.starter.BasicDataContextAutoConfiguration

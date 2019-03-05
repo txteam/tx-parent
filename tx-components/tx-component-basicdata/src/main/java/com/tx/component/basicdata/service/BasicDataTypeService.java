@@ -44,14 +44,6 @@ public class BasicDataTypeService {
     /** 编码到类型的映射 */
     private Map<String, BasicDataType> code2typeMap = new HashMap<>();
     
-    //private BasicDataTypeDao basicDataTypeDao;
-    //
-    //  /** <默认构造函数> */
-    //  public BasicDataTypeService(BasicDataTypeDao basicDataTypeDao) {
-    //      super();
-    //      this.basicDataTypeDao = basicDataTypeDao;
-    //  }
-    
     /** <默认构造函数> */
     public BasicDataTypeService() {
         super();
@@ -82,8 +74,6 @@ public class BasicDataTypeService {
                 "basicDataType.tableName is Empty.");
         
         //为添加的数据需要填入默认值的字段填入默认值
-        basicDataType.setValid(true);
-        //basicDataType.setModifyAble(true);
         Date now = new Date();
         basicDataType.setCreateDate(now);
         basicDataType.setLastUpdateDate(now);
@@ -127,7 +117,6 @@ public class BasicDataTypeService {
                         }
                     }
                 });
-        
         //根据module过滤
         resList = ListUtils.predicatedList(resList,
                 new Predicate<BasicDataType>() {

@@ -30,4 +30,14 @@ public interface FileDefinitionResourceDriver extends InitializingBean {
      * @see [类、类#方法、类#成员]
      */
     public FileResource getResource(FileDefinition fileDefinition);
+    
+    /**
+     * 获取资源对象<br/>
+     * 
+     * @param fileDefinition 文件定义
+     * @return FileDefinitionResource 资源对象
+     * @exception [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public String getViewUrl(FileDefinition fileDefinition);
 }

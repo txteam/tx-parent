@@ -15,7 +15,6 @@ import javax.persistence.Table;
 
 import com.tx.core.jdbc.sqlsource.annotation.QueryConditionEqual;
 import com.tx.core.jdbc.sqlsource.annotation.UpdateAble;
-import com.tx.core.support.initable.model.ConfigInitAble;
 
 /**
  * 基础数据类型<br/>
@@ -28,7 +27,7 @@ import com.tx.core.support.initable.model.ConfigInitAble;
  */
 @Entity
 @Table(name = "bd_basic_data_type")
-public class BasicDataType implements ConfigInitAble, Serializable {
+public class BasicDataType implements Serializable {
     
     /** 注释内容 */
     private static final long serialVersionUID = 7400998214492770823L;
@@ -61,27 +60,14 @@ public class BasicDataType implements ConfigInitAble, Serializable {
     @QueryConditionEqual
     private String name;
     
-    @UpdateAble
-    @QueryConditionEqual
-    private boolean valid = true;
-    
-    @UpdateAble
-    @QueryConditionEqual
-    private boolean modifyAble = false;
-    
     /** 基础数据类型备注 */
     @UpdateAble
     private String remark;
     
-    /** 是否在通用的界面中进行数据维护 */
-    @UpdateAble
-    @QueryConditionEqual
-    private boolean common = true;
-    
     /** 是否分页显示 */
     @UpdateAble
     @QueryConditionEqual
-    private BasicDataViewTypeEnum viewType = BasicDataViewTypeEnum.LIST;
+    private BasicDataViewTypeEnum viewType = BasicDataViewTypeEnum.COMMON_LIST;
     
     /** 最后更新时间 */
     @UpdateAble
@@ -175,34 +161,6 @@ public class BasicDataType implements ConfigInitAble, Serializable {
     }
     
     /**
-     * @return 返回 valid
-     */
-    public boolean isValid() {
-        return valid;
-    }
-    
-    /**
-     * @param 对valid进行赋值
-     */
-    public void setValid(boolean valid) {
-        this.valid = valid;
-    }
-    
-    /**
-     * @return 返回 modifyAble
-     */
-    public boolean isModifyAble() {
-        return modifyAble;
-    }
-    
-    /**
-     * @param 对modifyAble进行赋值
-     */
-    public void setModifyAble(boolean modifyAble) {
-        this.modifyAble = modifyAble;
-    }
-    
-    /**
      * @return 返回 remark
      */
     public String getRemark() {
@@ -214,20 +172,6 @@ public class BasicDataType implements ConfigInitAble, Serializable {
      */
     public void setRemark(String remark) {
         this.remark = remark;
-    }
-    
-    /**
-     * @return 返回 common
-     */
-    public boolean isCommon() {
-        return common;
-    }
-    
-    /**
-     * @param 对common进行赋值
-     */
-    public void setCommon(boolean common) {
-        this.common = common;
     }
     
     /**

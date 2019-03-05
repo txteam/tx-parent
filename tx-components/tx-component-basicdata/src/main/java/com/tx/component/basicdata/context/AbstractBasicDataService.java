@@ -16,7 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.tx.component.basicdata.annotation.BasicDataType;
+import com.tx.component.basicdata.annotation.BasicDataEntity;
 import com.tx.component.basicdata.model.BasicData;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.support.initable.helper.ConfigInitAbleHelper;
@@ -223,9 +223,9 @@ public abstract class AbstractBasicDataService<T extends BasicData>
         AssertUtils.notNull(type, "type is null.");
         
         String module = "";
-        if (type.isAnnotationPresent(BasicDataType.class) && StringUtils
-                .isNotEmpty(type.getAnnotation(BasicDataType.class).module())) {
-            module = type.getAnnotation(BasicDataType.class).module();
+        if (type.isAnnotationPresent(BasicDataEntity.class) && StringUtils
+                .isNotEmpty(type.getAnnotation(BasicDataEntity.class).module())) {
+            module = type.getAnnotation(BasicDataEntity.class).module();
         }
         return module;
     }

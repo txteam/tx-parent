@@ -6,25 +6,18 @@
  */
 package com.tx.component.basicdata.model;
 
-import java.util.ArrayList;
+import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import com.tx.core.generator.annotation.Comment;
 import org.apache.commons.lang3.StringUtils;
 
-import com.tx.component.basicdata.annotation.BasicDataType;
-import com.tx.core.jdbc.sqlsource.annotation.QueryConditionEqual;
-import com.tx.core.jdbc.sqlsource.annotation.UpdateAble;
-import com.tx.core.support.entrysupport.model.EntityEntry;
-import com.tx.core.support.entrysupport.model.EntryAble;
 import com.tx.core.support.initable.model.ConfigInitAble;
+import com.tx.core.support.json.JSONAttributesSupport;
 
 /**
  * 基础数据字典<br/>
@@ -37,65 +30,47 @@ import com.tx.core.support.initable.model.ConfigInitAble;
  */
 @Entity
 @Table(name = "bd_data_dict")
-@BasicDataType(name = "数据字典", common = false, viewType = BasicDataViewTypeEnum.PAGEDLIST)
-@Comment("数据字典")
-public class DataDict implements EntryAble<EntityEntry>, ConfigInitAble,
-        BasicData {
+public class DataDict
+        implements ConfigInitAble, JSONAttributesSupport, Serializable {
     
     /** 注释内容 */
     private static final long serialVersionUID = 3972222691318635864L;
     
     /** 数据字典数据：唯一键 */
     @Id
-    @Comment("唯一ID")
     private String id;
     
+    /** 类型编码 */
+    private String basicDataType;
+    
     /** 父级对象id */
-    @UpdateAble
-    @QueryConditionEqual
     @Transient
     private DataDict parent;
     
-    /** 类型编码 */
-    @QueryConditionEqual
-    private String basicDataTypeCode;
-    
     /** 编码 */
-    @QueryConditionEqual
     private String code;
     
     /** 是否有效 */
-    @UpdateAble
-    @QueryConditionEqual
     private boolean valid = true;
     
     /** 是否可编辑 */
-    @UpdateAble
-    @QueryConditionEqual
-    private boolean modifyAble = true;
+    private boolean modifyAble = false;
     
     /** 名称 */
-    @UpdateAble
-    @QueryConditionEqual
     private String name;
     
     /** 备注 */
-    @UpdateAble
-    @QueryConditionEqual
     private String remark;
     
     /** 最后更新时间 */
-    @UpdateAble
     private Date lastUpdateDate;
     
     /** 创建时间 */
     private Date createDate;
     
-    /** 分项列表 */
-    @OneToMany
-    @Transient
-    private List<EntityEntry> entryList = new ArrayList<>();
-
+    /** 额外属性值 */
+    private String attributes;
+    
     /**
      * @return 返回 id
      */
@@ -145,17 +120,17 @@ public class DataDict implements EntryAble<EntityEntry>, ConfigInitAble,
     }
     
     /**
-     * @return 返回 basicDataTypeCode
+     * @return 返回 basicDataType
      */
-    public String getBasicDataTypeCode() {
-        return basicDataTypeCode;
+    public String getBasicDataType() {
+        return basicDataType;
     }
     
     /**
-     * @param 对basicDataTypeCode进行赋值
+     * @param 对basicDataType进行赋值
      */
-    public void setBasicDataTypeCode(String basicDataTypeCode) {
-        this.basicDataTypeCode = basicDataTypeCode;
+    public void setBasicDataType(String basicDataType) {
+        this.basicDataType = basicDataType;
     }
     
     /**
@@ -178,7 +153,7 @@ public class DataDict implements EntryAble<EntityEntry>, ConfigInitAble,
     public boolean isValid() {
         return valid;
     }
-
+    
     /**
      * @param 对valid进行赋值
      */
@@ -257,16 +232,16 @@ public class DataDict implements EntryAble<EntityEntry>, ConfigInitAble,
     }
     
     /**
-     * @return 返回 entryList
+     * @return 返回 attributes
      */
-    public List<EntityEntry> getEntryList() {
-        return entryList;
+    public String getAttributes() {
+        return attributes;
     }
     
     /**
-     * @param 对entryList进行赋值
+     * @param 对attributes进行赋值
      */
-    public void setEntryList(List<EntityEntry> entryList) {
-        this.entryList = entryList;
+    public void setAttributes(String attributes) {
+        this.attributes = attributes;
     }
 }

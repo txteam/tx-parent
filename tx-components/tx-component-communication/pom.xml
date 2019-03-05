@@ -3,16 +3,15 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<artifactId>tx-services</artifactId>
+		<artifactId>tx-components</artifactId>
 		<groupId>com.tx</groupId>
-		<version>5.0.x-SNAPSHOT</version>
+		<version>4.0.x-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>tx-service-communication</artifactId>
+	<artifactId>tx-component-communication</artifactId>
 	<name>communication</name>
 	<packaging>jar</packaging>
 	<url>http://maven.apache.org</url>
-
 
 	<dependencies>
 		<!-- swagger -->

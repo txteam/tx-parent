@@ -185,76 +185,76 @@ public class BasicDataContextTableInitializer extends AbstractTableInitializer
         ddlBuilder.newIndex(false, "idx_parentId", "parentId");
     }
     
-    /**
-     * 核心文件定义表<br/>
-     * <功能详细描述> [参数说明]
-     * 
-     * @return void [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-    */
-    private String table_bd_data_dict_entry(TableDDLExecutor tableDDLExecutor,
-            boolean tableAutoInitialize) {
-        String tableName = "bd_data_dict_entry";
-        
-        CreateTableDDLBuilder createDDLBuilder = null;
-        AlterTableDDLBuilder alterDDLBuilder = null;
-        DDLBuilder<?> ddlBuilder = null;
-        
-        if (tableDDLExecutor.exists(tableName)) {
-            alterDDLBuilder = tableDDLExecutor
-                    .generateAlterTableDDLBuilder(tableName);
-            ddlBuilder = alterDDLBuilder;
-        } else {
-            createDDLBuilder = tableDDLExecutor
-                    .generateCreateTableDDLBuilder(tableName);
-            ddlBuilder = createDDLBuilder;
-        }
-        
-        bd_data_dict_entry(ddlBuilder);//写入表结构
-        
-        if (alterDDLBuilder != null
-                && alterDDLBuilder.compare().isNeedAlter()) {
-            if (tableAutoInitialize) {
-                tableDDLExecutor.alter(alterDDLBuilder);
-            }
-            return alterDDLBuilder.alterSql();
-        } else if (createDDLBuilder != null) {
-            if (tableAutoInitialize) {
-                tableDDLExecutor.create(createDDLBuilder);
-            }
-            return createDDLBuilder.createSql();
-        }
-        return "";
-    }
-    
-    /**
-     * task_execute_log的构建器<br/>
-     * <功能详细描述>
-     * @param ddlBuilder [参数说明]
-     * 
-     * @return void [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-    */
-    public static void bd_data_dict_entry(DDLBuilder<?> ddlBuilder) {
-        /*
-        drop table if exists bd_data_dict_entry;
-        CREATE TABLE bd_data_dict_entry(
-            id varchar(64) not null,
-            entityId varchar(64) not null,
-            entryKey varchar(64) not null,
-            entryValue varchar(255),
-            primary key(id)
-        );
-        create unique index idx_bd_data_dict_entry_00 ON bd_data_dict_entry(entityId,entryKey);
-         */
-        ddlBuilder.newColumnOfVarchar(true, "id", 64, true, null)
-                .newColumnOfVarchar("entityId", 64, true, null)
-                .newColumnOfVarchar("entryKey", 64, true, null)
-                .newColumnOfVarchar("entryValue", 255, false, null);
-        ddlBuilder.newIndex(true, "idx_dict_entry_00", "entityId,entryKey");
-    }
+    //    /**
+    //     * 核心文件定义表<br/>
+    //     * <功能详细描述> [参数说明]
+    //     * 
+    //     * @return void [返回类型说明]
+    //     * @exception throws [异常类型] [异常说明]
+    //     * @see [类、类#方法、类#成员]
+    //    */
+    //    private String table_bd_data_dict_entry(TableDDLExecutor tableDDLExecutor,
+    //            boolean tableAutoInitialize) {
+    //        String tableName = "bd_data_dict_entry";
+    //        
+    //        CreateTableDDLBuilder createDDLBuilder = null;
+    //        AlterTableDDLBuilder alterDDLBuilder = null;
+    //        DDLBuilder<?> ddlBuilder = null;
+    //        
+    //        if (tableDDLExecutor.exists(tableName)) {
+    //            alterDDLBuilder = tableDDLExecutor
+    //                    .generateAlterTableDDLBuilder(tableName);
+    //            ddlBuilder = alterDDLBuilder;
+    //        } else {
+    //            createDDLBuilder = tableDDLExecutor
+    //                    .generateCreateTableDDLBuilder(tableName);
+    //            ddlBuilder = createDDLBuilder;
+    //        }
+    //        
+    //        bd_data_dict_entry(ddlBuilder);//写入表结构
+    //        
+    //        if (alterDDLBuilder != null
+    //                && alterDDLBuilder.compare().isNeedAlter()) {
+    //            if (tableAutoInitialize) {
+    //                tableDDLExecutor.alter(alterDDLBuilder);
+    //            }
+    //            return alterDDLBuilder.alterSql();
+    //        } else if (createDDLBuilder != null) {
+    //            if (tableAutoInitialize) {
+    //                tableDDLExecutor.create(createDDLBuilder);
+    //            }
+    //            return createDDLBuilder.createSql();
+    //        }
+    //        return "";
+    //    }
+    //    
+    //    /**
+    //     * task_execute_log的构建器<br/>
+    //     * <功能详细描述>
+    //     * @param ddlBuilder [参数说明]
+    //     * 
+    //     * @return void [返回类型说明]
+    //     * @exception throws [异常类型] [异常说明]
+    //     * @see [类、类#方法、类#成员]
+    //    */
+    //    public static void bd_data_dict_entry(DDLBuilder<?> ddlBuilder) {
+    //        /*
+    //        drop table if exists bd_data_dict_entry;
+    //        CREATE TABLE bd_data_dict_entry(
+    //            id varchar(64) not null,
+    //            entityId varchar(64) not null,
+    //            entryKey varchar(64) not null,
+    //            entryValue varchar(255),
+    //            primary key(id)
+    //        );
+    //        create unique index idx_bd_data_dict_entry_00 ON bd_data_dict_entry(entityId,entryKey);
+    //         */
+    //        ddlBuilder.newColumnOfVarchar(true, "id", 64, true, null)
+    //                .newColumnOfVarchar("entityId", 64, true, null)
+    //                .newColumnOfVarchar("entryKey", 64, true, null)
+    //                .newColumnOfVarchar("entryValue", 255, false, null);
+    //        ddlBuilder.newIndex(true, "idx_dict_entry_00", "entityId,entryKey");
+    //    }
     
     //  /**
     //     * 核心文件定义表<br/>

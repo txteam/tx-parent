@@ -1,5 +1,0 @@
-题设：
-条件：ABCD=ABC+CDC，ABCD互不相等，求ABCD各数 
-
-case
-	A*1000+b*100+ c* 10 + d = ddd

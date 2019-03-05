@@ -376,14 +376,14 @@ public class BasicDataServiceRegistry implements ApplicationContextAware,
             
             BasicDataService<? extends BasicData> serviceTemp = null;
             if (bdType.isAnnotationPresent(
-                    com.tx.component.basicdata.annotation.BasicDataType.class)
+                    com.tx.component.basicdata.annotation.BasicDataEntity.class)
                     && !StringUtils.isEmpty(bdType
                             .getAnnotation(
-                                    com.tx.component.basicdata.annotation.BasicDataType.class)
+                                    com.tx.component.basicdata.annotation.BasicDataEntity.class)
                             .module())
                     && !this.module.equals(bdType
                             .getAnnotation(
-                                    com.tx.component.basicdata.annotation.BasicDataType.class)
+                                    com.tx.component.basicdata.annotation.BasicDataEntity.class)
                             .module())) {
                 serviceTemp = buildDefaultRemoteBasicDataService(this.module,
                         bdType);
@@ -461,10 +461,10 @@ public class BasicDataServiceRegistry implements ApplicationContextAware,
             }
             
             if (type.isAnnotationPresent(
-                    com.tx.component.basicdata.annotation.BasicDataType.class)) {
-                com.tx.component.basicdata.annotation.BasicDataType anno = type
+                    com.tx.component.basicdata.annotation.BasicDataEntity.class)) {
+                com.tx.component.basicdata.annotation.BasicDataEntity anno = type
                         .getAnnotation(
-                                com.tx.component.basicdata.annotation.BasicDataType.class);
+                                com.tx.component.basicdata.annotation.BasicDataEntity.class);
                 //读取注解中值
                 bdType.setCommon(anno.common());
                 bdType.setViewType(anno.viewType());
