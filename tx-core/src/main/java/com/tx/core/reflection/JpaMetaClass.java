@@ -6,7 +6,14 @@
  */
 package com.tx.core.reflection;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.WeakHashMap;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -22,7 +29,6 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import com.tx.core.generator.annotation.Comment;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
@@ -297,11 +303,11 @@ public class JpaMetaClass<T> {
             processWhenColumnAnnotationExist(getterName, type, jpaColumnInfo);
         }
         
-        if (ReflectionUtils.isHasAnnotationForGetter(type,
-                getterName,
-                Comment.class)) {
-            processWhenCommentAnnotationExist(getterName, type, jpaColumnInfo);
-        }
+//        if (ReflectionUtils.isHasAnnotationForGetter(type,
+//                getterName,
+//                Comment.class)) {
+//            processWhenCommentAnnotationExist(getterName, type, jpaColumnInfo);
+//        }
         
         //是否存在Column注解
         if (ReflectionUtils.isHasAnnotationForGetter(type,
@@ -429,15 +435,15 @@ public class JpaMetaClass<T> {
         
     }
     
-    private void processWhenCommentAnnotationExist(String getterName,
-            Class<T> type, JpaColumnInfo jpaColumnInfo) {
-        Comment comment = ReflectionUtils.getGetterAnnotation(type,
-                getterName,
-                Comment.class);
-        if (comment != null && StringUtils.isNotEmpty(comment.value())) {
-            jpaColumnInfo.setColumnComment(comment.value());
-        }
-    }
+//    private void processWhenCommentAnnotationExist(String getterName,
+//            Class<T> type, JpaColumnInfo jpaColumnInfo) {
+//        Comment comment = ReflectionUtils.getGetterAnnotation(type,
+//                getterName,
+//                Comment.class);
+//        if (comment != null && StringUtils.isNotEmpty(comment.value())) {
+//            jpaColumnInfo.setColumnComment(comment.value());
+//        }
+//    }
     
     /**
      * 字段长度默认生成器<br/>
@@ -636,10 +642,10 @@ public class JpaMetaClass<T> {
         this.entitySimpleName = this.type.getSimpleName();
         this.tableName = this.entitySimpleName;
         
-        Comment tableC = this.type.getAnnotation(Comment.class);
-        if (tableC != null) {
-            this.tableComment = tableC.value();
-        }
+//        Comment tableC = this.type.getAnnotation(Comment.class);
+//        if (tableC != null) {
+//            this.tableComment = tableC.value();
+//        }
         //将类型截取掉
         this.modulePackageName = StringUtils
                 .substringBeforeLast(this.type.getName(), ".");

@@ -9,14 +9,14 @@ package com.tx.test.ddlutil.model;
 import com.tx.core.ddlutil.model.TableColumnDef;
 
 /**
-  * <功能简述>
-  * <功能详细描述>
-  * 
-  * @author  Administrator
-  * @version  [版本号, 2018年4月29日]
-  * @see  [相关类/方法]
-  * @since  [产品/模块版本]
-  */
+ * <功能简述>
+ * <功能详细描述>
+ * 
+ * @author  Administrator
+ * @version  [版本号, 2018年4月29日]
+ * @see  [相关类/方法]
+ * @since  [产品/模块版本]
+ */
 public class ColumnCompareInfo {
     
     private String columnName;
@@ -68,14 +68,14 @@ public class ColumnCompareInfo {
     public void setSourceColumn(TableColumnDef sourceColumn) {
         this.sourceColumn = sourceColumn;
     }
-
+    
     /**
      * @return 返回 targetColumn
      */
     public TableColumnDef getTargetColumn() {
         return targetColumn;
     }
-
+    
     /**
      * @param 对targetColumn进行赋值
      */
