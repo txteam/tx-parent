@@ -71,29 +71,14 @@ public class BasicDataContextAutoConfiguration
     /** 包名 */
     protected String basePackages = "com.tx";
     
-    /** mybatis配置文件 */
-    protected String mybatisConfigLocation = "classpath:context/mybatis-config.xml";
+    /** spring 容器句柄 */
+    private ApplicationContext applicationContext;
     
     /** 属性文件 */
     private BasicDataContextProperties properties;
     
-    /** spring 容器句柄 */
-    private ApplicationContext applicationContext;
-    
-    /** 数据源:dataSource */
-    protected DataSource dataSource;
-    
-    /** transactionManager */
-    protected PlatformTransactionManager transactionManager;
-    
     /** cacheManager */
     protected CacheManager cacheManager;
-    
-    /** transactionTemplate: 如果存在事务则在当前事务中执行 */
-    private MyBatisDaoSupport myBatisDaoSupport;
-    
-    /** transactionTemplate: 如果存在事务则在当前事务中执行 */
-    private TransactionTemplate transactionTemplate;
     
     /** 容器所属模块：当该值为空时，使用spring.application.name的内容 */
     private String module;

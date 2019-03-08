@@ -42,7 +42,7 @@ public interface ConfigPropertyItemDao {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public void update(Map<String, Object> rowMap);
+    public int update(Map<String, Object> rowMap);
     
     /**
      * 根据系统id查询配置属性项列表 

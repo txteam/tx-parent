@@ -6,7 +6,6 @@
  */
 package com.tx.component.configuration.starter;
 
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -14,8 +13,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
 import org.springframework.cache.CacheManager;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -37,43 +34,20 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @since  [产品/模块版本]
  */
 @Configuration
-public class ConfigContextConfiguration
-        implements ApplicationContextAware, InitializingBean {
-    
-    /** spring 容器句柄 */
-    protected ApplicationContext applicationContext;
-    
-    /** 容器所属模块：当该值为空时，使用spring.application.name的内容 */
-    private String module;
+public class ConfigContextPersisterConfiguration implements InitializingBean {
     
     /** cacheManager */
     private CacheManager cacheManager;
-    
-    /** 属性文件 */
-    private ConfigContextProperties properties;
     
     /** 持久层配置属性 */
     private BasicDataPersisterConfig persisterConfig;
     
     /** <默认构造函数> */
-    public ConfigContextConfiguration(String module,
-            ConfigContextProperties properties, CacheManager cacheManager,
+    public ConfigContextPersisterConfiguration(CacheManager cacheManager,
             BasicDataPersisterConfig persisterConfig) {
         super();
-        this.module = module;
-        this.properties = properties;
         this.cacheManager = cacheManager;
         this.persisterConfig = persisterConfig;
-    }
-    
-    /**
-     * @param applicationContext
-     * @throws BeansException
-     */
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext)
-            throws BeansException {
-        this.applicationContext = applicationContext;
     }
     
     /**
@@ -81,10 +55,13 @@ public class ConfigContextConfiguration
      */
     @Override
     public void afterPropertiesSet() throws Exception {
-        AssertUtils.notEmpty(this.module, "module is empty.");
         AssertUtils.notNull(this.cacheManager, "cacheManager is null.");
-        AssertUtils.notNull(this.properties, "properties is null.");
-        AssertUtils.notNull(this.persisterConfig, "persisterConfig is null.");
+        
+        AssertUtils.notNull(persisterConfig, "persisterConfig is null.");
+        AssertUtils.notNull(persisterConfig.getTransactionTemplate(),
+                "transactionTemplate is null.");
+        AssertUtils.notNull(persisterConfig.getMyBatisDaoSupport(),
+                "persisterConfig is null.");
     }
     
     /**
@@ -99,20 +76,7 @@ public class ConfigContextConfiguration
     @Configuration
     @ConditionalOnMissingBean(ConfigPropertyItemService.class)
     @AutoConfigureAfter(ConfigContextTableInitializerConfiguration.class)
-    public class ConfigContextPersisterConfiguration
-            implements InitializingBean {
-        
-        /**
-         * @throws Exception
-         */
-        @Override
-        public void afterPropertiesSet() throws Exception {
-            AssertUtils.notNull(persisterConfig, "persisterConfig is null.");
-            AssertUtils.notNull(persisterConfig.getTransactionTemplate(),
-                    "transactionTemplate is null.");
-            AssertUtils.notNull(persisterConfig.getMyBatisDaoSupport(),
-                    "persisterConfig is null.");
-        }
+    public class ConfigContextMybatisPersisterConfiguration {
         
         /**
          * 配置属性业务持久业务层<br/>

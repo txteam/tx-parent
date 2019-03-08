@@ -18,33 +18,16 @@ package com.tx.component.configuration.starter;
 //tx.basicdata.config
 public class ConfigContextProperties {
     
-    /** 表是否自动初始化 */
-    private boolean tableAutoInitialize = false;
-    
     /** 命令容器是否启动 */
     private boolean enable = true;
-
-    /**
-     * @return 返回 tableAutoInitialize
-     */
-    public boolean isTableAutoInitialize() {
-        return tableAutoInitialize;
-    }
-
-    /**
-     * @param 对tableAutoInitialize进行赋值
-     */
-    public void setTableAutoInitialize(boolean tableAutoInitialize) {
-        this.tableAutoInitialize = tableAutoInitialize;
-    }
-
+    
     /**
      * @return 返回 enable
      */
     public boolean isEnable() {
         return enable;
     }
-
+    
     /**
      * @param 对enable进行赋值
      */

@@ -75,18 +75,18 @@ public class ConfigContextTableInitializer extends AbstractTableInitializer
         StringBuilder sb = new StringBuilder(TxConstants.INITIAL_STR_LENGTH);
         
         sb.append(COMMENT_PREFIX)
-                .append("----------core_config_context----------")
+                .append("----------bd_config_context----------")
                 .append(COMMENT_SUFFIX)
                 .append(LINE_SEPARATOR);
-        sb.append(table_core_config_context(tableDDLExecutor,
-                tableAutoInitialize));
+        sb.append(
+                table_bd_config_context(tableDDLExecutor, tableAutoInitialize));
         sb.append(LINE_SEPARATOR);
         
         sb.append(COMMENT_PREFIX)
-                .append("----------core_config_context_his----------")
+                .append("----------bd_config_context_his----------")
                 .append(COMMENT_SUFFIX)
                 .append(LINE_SEPARATOR);
-        sb.append(table_core_config_context_his(tableDDLExecutor,
+        sb.append(table_bd_config_context_his(tableDDLExecutor,
                 tableAutoInitialize));
         sb.append(LINE_SEPARATOR);
         
@@ -101,9 +101,9 @@ public class ConfigContextTableInitializer extends AbstractTableInitializer
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public String table_core_config_context(TableDDLExecutor tableDDLExecutor,
+    public String table_bd_config_context(TableDDLExecutor tableDDLExecutor,
             boolean tableAutoInitialize) {
-        String tableName = "core_config_context";
+        String tableName = "bd_config_context";
         
         CreateTableDDLBuilder createDDLBuilder = null;
         AlterTableDDLBuilder alterDDLBuilder = null;
@@ -119,10 +119,8 @@ public class ConfigContextTableInitializer extends AbstractTableInitializer
             ddlBuilder = createDDLBuilder;
         }
         
-        core_config_context(ddlBuilder);//写入表结构
-        ddlBuilder.newIndex(true,
-                "idx_core_config_context_00",
-                "keyName,systemId");
+        bd_config_context(ddlBuilder);//写入表结构
+        ddlBuilder.newIndex(true, "idx_bd_config_context_00", "code,module");
         
         if (alterDDLBuilder != null
                 && alterDDLBuilder.compare().isNeedAlter()) {
@@ -147,9 +145,9 @@ public class ConfigContextTableInitializer extends AbstractTableInitializer
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public String table_core_config_context_his(
-            TableDDLExecutor tableDDLExecutor, boolean tableAutoInitialize) {
-        String tableName = "core_config_context_his";
+    public String table_bd_config_context_his(TableDDLExecutor tableDDLExecutor,
+            boolean tableAutoInitialize) {
+        String tableName = "bd_config_context_his";
         
         CreateTableDDLBuilder createDDLBuilder = null;
         AlterTableDDLBuilder alterDDLBuilder = null;
@@ -165,7 +163,7 @@ public class ConfigContextTableInitializer extends AbstractTableInitializer
             ddlBuilder = createDDLBuilder;
         }
         
-        core_config_context(ddlBuilder);//写入表结构
+        bd_config_context(ddlBuilder);//写入表结构
         
         if (alterDDLBuilder != null
                 && alterDDLBuilder.compare().isNeedAlter()) {
@@ -191,25 +189,7 @@ public class ConfigContextTableInitializer extends AbstractTableInitializer
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public static void core_config_context(DDLBuilder<?> ddlBuilder) {
-        /*
-        drop table if exists core_config_context;
-        create table core_config_context(
-            id varchar2(64) not null,
-            code varchar2(64) not null,
-            value varchar2(64) not null,
-            name varchar2(64) not null,
-            remark varchar2(512),
-            createdate timestamp,
-            lastupdatedate timestamp,
-            modifyAble bit default 1,
-            leaf bit default 0,
-            module varchar2(64),
-            validateexpression varchar2(128),
-            primary key(id)
-        );
-        create unique index idx_core_conf_cont_00 on core_config_context(keyName,systemId);
-        */
+    public static void bd_config_context(DDLBuilder<?> ddlBuilder) {
         ddlBuilder.newColumnOfVarchar(true, "id", 64, true, null)
                 .newColumnOfVarchar("parentId", 64, false, null)
                 .newColumnOfVarchar("code", 64, true, null)
@@ -218,7 +198,6 @@ public class ConfigContextTableInitializer extends AbstractTableInitializer
                 .newColumnOfVarchar("remark", 512, false, null)
                 .newColumnOfVarchar("validateExpression", 128, false, null)
                 .newColumnOfVarchar("module", 64, false, null)
-                .newColumnOfVarchar("version", 64, false, null)
                 .newColumnOfBoolean("modifyAble", true, true)
                 .newColumnOfBoolean("leaf", true, false)
                 .newColumnOfDate("lastUpdateDate", true, true)

@@ -34,7 +34,6 @@ public class ConfigPropertyParser {
     
     /** 关键字 */
     @XStreamAsAttribute
-    //@XStreamAlias("key")
     private String code;
     
     /** 配置资源名 */

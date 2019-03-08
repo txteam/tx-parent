@@ -48,10 +48,10 @@ public class ConfigPropertyItem implements ConfigProperty, Serializable {
     private String validateExpression;
     
     /** 是否可编辑 */
-    private boolean modifyAble;
+    private boolean modifyAble = true;
     
     /** 是否叶节点 */
-    private boolean leaf;
+    private boolean leaf = true;
     
     /** 创建时间 */
     private Date createDate;
@@ -61,9 +61,6 @@ public class ConfigPropertyItem implements ConfigProperty, Serializable {
     
     /** 所属模块 */
     private String module;
-    
-    /** 版本 */
-    private String version;
     
     /** 子配置项 */
     private List<ConfigProperty> childs;
@@ -248,19 +245,5 @@ public class ConfigPropertyItem implements ConfigProperty, Serializable {
      */
     public void setModule(String module) {
         this.module = module;
-    }
-
-    /**
-     * @return 返回 version
-     */
-    public String getVersion() {
-        return version;
-    }
-
-    /**
-     * @param 对version进行赋值
-     */
-    public void setVersion(String version) {
-        this.version = version;
     }
 }

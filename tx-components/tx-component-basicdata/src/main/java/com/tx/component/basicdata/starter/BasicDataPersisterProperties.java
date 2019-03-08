@@ -17,9 +17,6 @@ package com.tx.component.basicdata.starter;
  */
 public class BasicDataPersisterProperties {
     
-    /** persister type */
-    private String type = "mybatis";
-    
     /** mybatis配置文件:service需要该逻辑 */
     private String mybatisConfigLocation = "classpath:context/mybatis-config.xml";
     
@@ -28,20 +25,6 @@ public class BasicDataPersisterProperties {
     
     /** transactionManager */
     protected String transactionManagerRef;
-    
-    /**
-     * @return 返回 type
-     */
-    public String getType() {
-        return type;
-    }
-    
-    /**
-     * @param 对type进行赋值
-     */
-    public void setType(String type) {
-        this.type = type;
-    }
     
     /**
      * @return 返回 dataSourceRef

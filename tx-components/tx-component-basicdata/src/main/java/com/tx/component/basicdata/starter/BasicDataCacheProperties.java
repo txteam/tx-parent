@@ -6,7 +6,7 @@
  */
 package com.tx.component.basicdata.starter;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 
 /**
  * 基础数据容器默认配置<br/>
@@ -26,7 +26,7 @@ public class BasicDataCacheProperties {
     
     /** redis缓存属性 */
     //tx.basicdata.cache.redis
-    private BasicDataCacheRedisProperties redis;
+    private RedisProperties redis;
 
     /**
      * @return 返回 cacheManagerRef
@@ -40,5 +40,19 @@ public class BasicDataCacheProperties {
      */
     public void setCacheManagerRef(String cacheManagerRef) {
         this.cacheManagerRef = cacheManagerRef;
+    }
+
+    /**
+     * @return 返回 redis
+     */
+    public RedisProperties getRedis() {
+        return redis;
+    }
+
+    /**
+     * @param 对redis进行赋值
+     */
+    public void setRedis(RedisProperties redis) {
+        this.redis = redis;
     }
 }

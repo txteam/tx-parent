@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.tx.component.basicdata.model.DataDict;
-import com.tx.core.mybatis.model.Order;
 import com.tx.core.paged.model.PagedList;
 
 /**
@@ -107,22 +106,6 @@ public interface DataDictDao {
     public List<DataDict> queryList(Map<String, Object> params);
     
     /**
-     * 根据指定查询条件以及排序列查询DataDict列表
-     * auto generate
-     * <功能详细描述>
-     * @param params
-     * @param orderList
-     * @return [参数说明]
-     * 
-     * @return List<DataDict> [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    //auto generate
-    public List<DataDict> queryList(Map<String, Object> params,
-            List<Order> orderList);
-    
-    /**
      * 根据条件查询DataDict列表总数
      * auto generated
      * <功能详细描述>
@@ -151,24 +134,6 @@ public interface DataDictDao {
     //auto generate
     public PagedList<DataDict> queryPagedList(Map<String, Object> params,
             int pageIndex, int pageSize);
-    
-    /**
-     * 分页查询DataDict列表，传入排序字段
-     * auto generate
-     * <功能详细描述>
-     * @param params
-     * @param pageIndex
-     * @param pageSize
-     * @param orderList
-     * @return [参数说明]
-     * 
-     * @return PagedList<DataDict> [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    //auto generate
-    public PagedList<DataDict> queryPagedList(Map<String, Object> params,
-            int pageIndex, int pageSize, List<Order> orderList);
     
     /**
      * 更新DataDict实体，

@@ -2,41 +2,42 @@
 <!DOCTYPE mapper 
 	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="dataDict">
+<mapper namespace="configPropertyItem">
 
 	<!-- auto generate default resultMap -->
-	<resultMap id="dataDictMap" 
-		type="com.tx.component.datadict.model.DataDict">
+	<resultMap id="configPropertyItemMap" 
+		type="com.tx.component.configuration.model.ConfigPropertyItem">
 		<result column="parentId" property="parent.id"/>
 	</resultMap>
 	
 	<!-- auto generate default find -->
 	<select id="find" 
-		parameterType="com.tx.component.datadict.model.DataDict"
-		resultMap="dataDictMap">
+		parameterType="com.tx.component.configuration.model.ConfigPropertyItem"
+		resultMap="configPropertyItemMap">
 		SELECT 
 				TDD.id,
 				TDD.parentId,
-				TDD.basicDataType,
 				TDD.code,
 				TDD.name,
+				TDD.value,
 				TDD.remark,
-				TDD.valid,
+				TDD.validateExpression,
 				TDD.modifyAble,
-				TDD.attributes,
+				TDD.leaf,
+				TDD.module,
 				TDD.lastUpdateDate,
 				TDD.createDate
-		  FROM BD_DATA_DICT TDD
+		  FROM bd_config_context TDD
 		 WHERE
 		<trim prefixOverrides="AND | OR">
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
 	            <![CDATA[ AND TDD.id = #{id} ]]>
 	        </if>
-	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(basicDataType)">  
-	            <![CDATA[ AND TDD.basicDataType = #{basicDataType,jdbcType=VARCHAR} ]]>
-	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(code)">  
 	            <![CDATA[ AND TDD.code = #{code,jdbcType=VARCHAR} ]]>
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(module)">  
+	            <![CDATA[ AND TDD.module = #{module,jdbcType=VARCHAR} ]]>
 	        </if>
 		</trim>
 	</select>
@@ -44,25 +45,23 @@
 	<!-- auto generate default query -->
 	<select id="query" 
 		parameterType="java.util.Map"
-		resultMap="dataDictMap">
+		resultMap="configPropertyItemMap">
 		SELECT 
 				TDD.id,
 				TDD.parentId,
-				TDD.basicDataType,
 				TDD.code,
 				TDD.name,
+				TDD.value,
 				TDD.remark,
-				TDD.valid,
+				TDD.validateExpression,
 				TDD.modifyAble,
-				TDD.attributes,
+				TDD.leaf,
+				TDD.module,
 				TDD.lastUpdateDate,
 				TDD.createDate
-		  FROM BD_DATA_DICT TDD
+		  FROM bd_config_context TDD
 		<trim prefix="WHERE" prefixOverrides="AND | OR">
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(basicDataType)">  
-	            <![CDATA[ AND TDD.basicDataType = #{basicDataType,jdbcType=VARCHAR} ]]>
-	        </if>
-	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(parentId)">  
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(parentId)">  
 	            <![CDATA[ AND TDD.parentId = #{parentId,jdbcType=VARCHAR} ]]>
 	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(code)">  
@@ -71,20 +70,17 @@
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(modifyAble)">  
 	            <![CDATA[ AND TDD.modifyAble = #{modifyAble,jdbcType=BIT} ]]>
 	        </if>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(valid)">  
-	            <![CDATA[ AND TDD.valid = #{valid,jdbcType=BIT} ]]>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(leaf)">  
+	            <![CDATA[ AND TDD.leaf = #{leaf,jdbcType=BIT} ]]>
 	        </if>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(remark)">  
-	            <![CDATA[ AND TDD.remark = #{remark,jdbcType=VARCHAR} ]]>
-	        </if>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(name)">  
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(name)">  
 	            <![CDATA[ AND TDD.name = #{name,jdbcType=VARCHAR} ]]>
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(excludeId)">
 				<![CDATA[ AND TDD.id <> #{excludeId,javaType=java.lang.String} ]]>
 			</if>
 		</trim>
-		ORDER BY basicDataType,createDate
+		ORDER BY module,createDate
 	</select>
 	
 		<!-- auto generate default count -->
@@ -94,10 +90,7 @@
 		SELECT COUNT(1)
 		  FROM BD_DATA_DICT TDD
 		<trim prefix="WHERE" prefixOverrides="AND | OR">
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(basicDataType)">  
-	            <![CDATA[ AND TDD.basicDataType = #{basicDataType,jdbcType=VARCHAR} ]]>
-	        </if>
-	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(parentId)">  
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(parentId)">  
 	            <![CDATA[ AND TDD.parentId = #{parentId,jdbcType=VARCHAR} ]]>
 	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(code)">  
@@ -106,13 +99,10 @@
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(modifyAble)">  
 	            <![CDATA[ AND TDD.modifyAble = #{modifyAble,jdbcType=BIT} ]]>
 	        </if>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(valid)">  
-	            <![CDATA[ AND TDD.valid = #{valid,jdbcType=BIT} ]]>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(leaf)">  
+	            <![CDATA[ AND TDD.leaf = #{leaf,jdbcType=BIT} ]]>
 	        </if>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(remark)">  
-	            <![CDATA[ AND TDD.remark = #{remark,jdbcType=VARCHAR} ]]>
-	        </if>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(name)">  
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(name)">  
 	            <![CDATA[ AND TDD.name = #{name,jdbcType=VARCHAR} ]]>
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(excludeId)">
@@ -123,18 +113,19 @@
     
     <!-- auto generate default insert -->
     <insert id="insert" 
-		parameterType="com.tx.component.datadict.model.DataDict">
-		INSERT INTO BD_DATA_DICT
+		parameterType="com.tx.component.configuration.model.ConfigPropertyItem">
+		INSERT INTO bd_config_context
 		(
 			id,
 			parentId,
-			basicDataType,
 			code,
 			name,
+			value,
 			remark,
+			validateExpression,
 			modifyAble,
-			valid,
-			attributes,
+			leaf,
+			module,
 			lastUpdateDate,
 			createDate
 		)
@@ -142,13 +133,14 @@
 		(
 			#{id},
 			#{parentId},
-			#{basicDataType},
 			#{code},
 			#{name},
+			#{value},
 			#{remark},
+			#{validateExpression},
 			#{modifyAble},
-			#{valid},
-			#{attributes},
+			#{leaf},
+			#{module},
 			#{lastUpdateDate},
 			#{createDate}
 		)
@@ -156,20 +148,20 @@
 	
 	<!-- auto generate default delete -->
 	<delete id="delete" 
-		parameterType="com.tx.component.datadict.model.DataDict">
-		DELETE FROM BD_DATA_DICT WHERE
+		parameterType="com.tx.component.configuration.model.ConfigPropertyItem">
+		DELETE FROM bd_config_context WHERE
 		<trim prefixOverrides="AND | OR">
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
-	            AND id = #{id}
-	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(parentId)">  
 	            AND parentId = #{parentId}
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
+	            AND id = #{id}
 	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(code)">  
 	            AND code = #{code,jdbcType=VARCHAR}
 	        </if>
-	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(basicDataType)">  
-	            AND basicDataType = #{basicDataType,jdbcType=VARCHAR}
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(module)">  
+	            AND module = #{module,jdbcType=VARCHAR}
 	        </if>
 		</trim>
 	</delete>
@@ -177,7 +169,7 @@
 	<!-- auto generate default update -->
 	<update id="update"
 	    parameterType="java.util.Map">  
-	    UPDATE BD_DATA_DICT 
+	    UPDATE bd_config_context 
 	    <trim prefix="SET" suffixOverrides=",">
 			<if test="_parameter.containsKey('parentId')">
 	    		parentId = #{parentId,javaType=java.lang.String},
@@ -185,17 +177,23 @@
 	    	<if test="_parameter.containsKey('name')">
 	    		name = #{name,javaType=java.lang.String},
 	    	</if>
+	    	<if test="_parameter.containsKey('value')">
+	    		value = #{value,javaType=java.lang.String},
+	    	</if>
 	    	<if test="_parameter.containsKey('remark')">
 	    		remark = #{remark,javaType=java.lang.String},
 	    	</if>
-			<if test="_parameter.containsKey('valid')">
-	    		valid = #{valid,javaType=boolean},
+	    	<if test="_parameter.containsKey('validateExpression')">
+	    		validateExpression = #{validateExpression,javaType=java.lang.String},
+	    	</if>
+			<if test="_parameter.containsKey('leaf')">
+	    		leaf = #{leaf,javaType=boolean},
 	    	</if>
 			<if test="_parameter.containsKey('modifyAble')">
 	    		modifyAble = #{modifyAble,javaType=boolean},
 	    	</if>
-	    	<if test="_parameter.containsKey('attributes')">
-	    		attributes = #{attributes,javaType=java.lang.String},
+	    	<if test="_parameter.containsKey('module')">
+	    		module = #{module,javaType=java.lang.String},
 	    	</if>
 	    	<if test="_parameter.containsKey('lastUpdateDate')">
 	    		lastUpdateDate = #{lastUpdateDate,javaType=java.util.Date},
@@ -205,9 +203,6 @@
 	    <trim prefixOverrides="AND | OR">
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
 	            <![CDATA[ AND id = #{id} ]]>
-	        </if>
-	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(basicDataType)">  
-	            <![CDATA[ AND basicDataType = #{basicDataType,jdbcType=VARCHAR} ]]>
 	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(code)">  
 	            <![CDATA[ AND code = #{code,jdbcType=VARCHAR} ]]>

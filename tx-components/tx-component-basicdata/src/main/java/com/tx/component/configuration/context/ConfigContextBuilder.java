@@ -8,7 +8,10 @@
  */
 package com.tx.component.configuration.context;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +19,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 
 import com.tx.component.basicdata.context.BasicDataContext;
+import com.tx.component.configuration.model.ConfigProperty;
 
 /**
  * 配置容器基础配置吃撑类<br/>
@@ -26,25 +30,16 @@ import com.tx.component.basicdata.context.BasicDataContext;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public class ConfigContextBuilder implements InitializingBean {
+public class ConfigContextBuilder extends ConfigContextConfigurator {
     
     /** 日志记录器 */
     private static Logger logger = LoggerFactory.getLogger(ConfigContextBuilder.class);
     
-    /** spring容器句柄 */
-    protected static ApplicationContext applicationContext;
-    
-    /** beanName实例 */
-    protected static String beanName;
-    
-    /** 是否处于开发模式  开发模式中 getValue 将优先获取 developValue */
-    private boolean isDevelop = false;
-    
-    /** 配置是否可重复 */
-    private boolean repeatAble = false;
-    
     /** 配置属性持久器集合 */
     protected List<ConfigPropertyFinder> configPropertiesPersisterList;
+    
+    /** 配置属性映射 */
+    private Map<String, ConfigProperty> configPropertyMapping = new HashMap<String, ConfigProperty>();
     
     /**
      * @throws Exception

@@ -6,11 +6,17 @@
  */
 package com.tx.component.configuration.service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
 import com.tx.component.configuration.dao.ConfigPropertyItemDao;
 import com.tx.component.configuration.model.ConfigPropertyItem;
+import com.tx.core.exceptions.util.AssertUtils;
 
 /**
  * 配置属性项业务层<br/>
@@ -23,39 +29,60 @@ import com.tx.component.configuration.model.ConfigPropertyItem;
  */
 public class ConfigPropertyItemService {
     
+    /** 事务管理 */
+    private final TransactionTemplate transactionTemplate;
+    
     /** 配置属相项持久层实现 */
-    private ConfigPropertyItemDao configPropertyItemDao;
+    private final ConfigPropertyItemDao configPropertyItemDao;
     
     /** <默认构造函数> */
-    public ConfigPropertyItemService(
+    public ConfigPropertyItemService(TransactionTemplate transactionTemplate,
             ConfigPropertyItemDao configPropertyItemDao) {
         super();
+        this.transactionTemplate = transactionTemplate;
         this.configPropertyItemDao = configPropertyItemDao;
     }
-
+    
     /**
      * 插入配置属性项目<br/>
-     *<功能详细描述>
+     * <功能详细描述>
      * @param configPropertyItem [参数说明]
      * 
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public void insert(ConfigPropertyItem configPropertyItem){
+    public void insert(ConfigPropertyItem configPropertyItem) {
+        AssertUtils.notNull(configPropertyItem, "configPropertyItem is null.");
+        AssertUtils.notEmpty(configPropertyItem.getCode(),
+                "configPropertyItem.code is empty.");
+        AssertUtils.notEmpty(configPropertyItem.getValue(),
+                "configPropertyItem.value is empty.");
         
+        Date now = new Date();
+        configPropertyItem.setLastUpdateDate(now);
+        configPropertyItem.setCreateDate(now);
+        
+        this.transactionTemplate
+                .execute(new TransactionCallbackWithoutResult() {
+                    @Override
+                    protected void doInTransactionWithoutResult(
+                            TransactionStatus status) {
+                        configPropertyItemDao.insert(configPropertyItem);
+                    }
+                });
     }
     
     /**
      * 更新配置属性项<br/>
-     *<功能详细描述>
+     * <功能详细描述>
      * @param configPropertyItem [参数说明]
      * 
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public void update(ConfigPropertyItem configPropertyItem){
+    public void update(ConfigPropertyItem configPropertyItem) {
         
     }
     
@@ -69,7 +96,9 @@ public class ConfigPropertyItemService {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public List<ConfigPropertyItem> queryList(Map<String, Object> params){
-        return null;
+    public List<ConfigPropertyItem> queryList(Map<String, Object> params) {
+        List<ConfigPropertyItem> resList = this.configPropertyItemDao
+                .queryList(params);
+        return resList;
     }
 }

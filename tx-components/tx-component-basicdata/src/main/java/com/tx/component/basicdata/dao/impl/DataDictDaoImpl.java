@@ -11,7 +11,6 @@ import java.util.Map;
 
 import com.tx.component.basicdata.dao.DataDictDao;
 import com.tx.component.basicdata.model.DataDict;
-import com.tx.core.mybatis.model.Order;
 import com.tx.core.mybatis.support.MyBatisDaoSupport;
 import com.tx.core.paged.model.PagedList;
 
@@ -44,7 +43,7 @@ public class DataDictDaoImpl implements DataDictDao {
      */
     @Override
     public void batchInsert(List<DataDict> condition) {
-        this.myBatisDaoSupport.batchInsertUseUUID("dataDict.insertDataDict",
+        this.myBatisDaoSupport.batchInsertUseUUID("dataDict.insert",
                 condition,
                 "id",
                 true);
@@ -55,7 +54,7 @@ public class DataDictDaoImpl implements DataDictDao {
      */
     @Override
     public void batchUpdate(List<Map<String, Object>> updateRowMapList) {
-        this.myBatisDaoSupport.batchUpdate("dataDict.updateDataDict",
+        this.myBatisDaoSupport.batchUpdate("dataDict.update",
                 updateRowMapList,
                 true);
     }
@@ -65,7 +64,7 @@ public class DataDictDaoImpl implements DataDictDao {
      */
     @Override
     public void insert(DataDict condition) {
-        this.myBatisDaoSupport.insertUseUUID("dataDict.insertDataDict",
+        this.myBatisDaoSupport.insertUseUUID("dataDict.insert",
                 condition,
                 "id");
     }
@@ -76,7 +75,7 @@ public class DataDictDaoImpl implements DataDictDao {
      */
     @Override
     public int delete(DataDict condition) {
-        return this.myBatisDaoSupport.delete("dataDict.deleteDataDict",
+        return this.myBatisDaoSupport.delete("dataDict.delete",
                 condition);
     }
     
@@ -86,7 +85,7 @@ public class DataDictDaoImpl implements DataDictDao {
      */
     @Override
     public DataDict find(DataDict condition) {
-        return this.myBatisDaoSupport.<DataDict> find("dataDict.findDataDict",
+        return this.myBatisDaoSupport.<DataDict> find("dataDict.find",
                 condition);
     }
     
@@ -96,21 +95,8 @@ public class DataDictDaoImpl implements DataDictDao {
      */
     @Override
     public List<DataDict> queryList(Map<String, Object> params) {
-        return this.myBatisDaoSupport.<DataDict> queryList("dataDict.queryDataDict",
+        return this.myBatisDaoSupport.<DataDict> queryList("dataDict.query",
                 params);
-    }
-    
-    /**
-     * @param params
-     * @param orderList
-     * @return
-     */
-    @Override
-    public List<DataDict> queryList(Map<String, Object> params,
-            List<Order> orderList) {
-        return this.myBatisDaoSupport.<DataDict> queryList("dataDict.queryDataDict",
-                params,
-                orderList);
     }
     
     /**
@@ -119,7 +105,7 @@ public class DataDictDaoImpl implements DataDictDao {
      */
     @Override
     public int count(Map<String, Object> params) {
-        return this.myBatisDaoSupport.<Integer> find("dataDict.queryDataDictCount",
+        return this.myBatisDaoSupport.<Integer> find("dataDict.queryCount",
                 params);
     }
     
@@ -132,27 +118,10 @@ public class DataDictDaoImpl implements DataDictDao {
     @Override
     public PagedList<DataDict> queryPagedList(Map<String, Object> params,
             int pageIndex, int pageSize) {
-        return this.myBatisDaoSupport.<DataDict> queryPagedList("dataDict.queryDataDict",
+        return this.myBatisDaoSupport.<DataDict> queryPagedList("dataDict.query",
                 params,
                 pageIndex,
                 pageSize);
-    }
-    
-    /**
-     * @param params
-     * @param pageIndex
-     * @param pageSize
-     * @param orderList
-     * @return
-     */
-    @Override
-    public PagedList<DataDict> queryPagedList(Map<String, Object> params,
-            int pageIndex, int pageSize, List<Order> orderList) {
-        return this.myBatisDaoSupport.<DataDict> queryPagedList("dataDict.queryDataDict",
-                params,
-                pageIndex,
-                pageSize,
-                orderList);
     }
     
     /**
@@ -161,7 +130,7 @@ public class DataDictDaoImpl implements DataDictDao {
      */
     @Override
     public int update(Map<String, Object> updateRowMap) {
-        return this.myBatisDaoSupport.update("dataDict.updateDataDict",
+        return this.myBatisDaoSupport.update("dataDict.update",
                 updateRowMap);
     }
 }

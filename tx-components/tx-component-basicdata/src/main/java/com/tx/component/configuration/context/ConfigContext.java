@@ -30,17 +30,12 @@ import com.tx.core.util.MessageUtils;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public class ConfigContext extends ConfigContextConfigurator {
+public class ConfigContext extends ConfigContextBuilder {
     
     /** 配置容器的唯一实例 */
     protected static ConfigContext context;
     
-    /** 配置属性映射 */
-    private Map<String, ConfigProperty> configPropertyMapping = new HashMap<String, ConfigProperty>();
-    
-    /** 配置属性组列表 */
-    private List<ConfigPropertyGroup> configPropertyGroupList = new ArrayList<ConfigPropertyGroup>();
-    
+    /** 配置容器构造函数 */
     protected ConfigContext() {
         super();
     }
@@ -85,7 +80,7 @@ public class ConfigContext extends ConfigContextConfigurator {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public ConfigProperty get(String code) {
+    public ConfigProperty getByCode(String code) {
         AssertUtils.notEmpty(code, "code is empty.");
         
         return null;

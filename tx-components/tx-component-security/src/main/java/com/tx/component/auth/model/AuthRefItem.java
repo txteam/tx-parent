@@ -22,7 +22,7 @@ import javax.persistence.Table;
  * @since  [产品/模块版本]
  */
 @Entity
-@Table(name = "auth_authref")
+@Table(name = "sec_authref")
 public class AuthRefItem extends AbstractAuthRefItem {
     
     /** 注释内容 */

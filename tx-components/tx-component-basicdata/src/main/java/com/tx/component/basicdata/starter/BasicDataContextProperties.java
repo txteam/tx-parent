@@ -20,6 +20,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "tx.basicdata")
 public class BasicDataContextProperties {
     
+    /** 表是否自动初始化 */
+    private boolean tableAutoInitialize = false;
+    
     /** 命令容器是否启动 */
     private boolean enable;
     
@@ -29,20 +32,11 @@ public class BasicDataContextProperties {
     /** 基础包集合 */
     private String basePackages = "";
     
-    /** mybatis配置文件:service需要该逻辑 */
-    private String mybatisConfigLocation = "classpath:context/mybatis-config.xml";
-    
-    /** cacheManager */
-    private String cacheManagerRef;
-    
-    /** 数据源:dataSource */
-    private String dataSourceRef;
-    
-    /** transactionManager */
-    protected String transactionManagerRef;
-    
+    /** 持久层逻辑 */
     private BasicDataPersisterProperties persister;
     
+    /** 缓存 */
+    private BasicDataCacheProperties cache;
     
     /**
      * @return 返回 enable

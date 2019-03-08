@@ -15,8 +15,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 
-import com.tx.component.basicdata.context.BasicDataContext;
-
 /**
  * 配置容器基础配置吃撑类<br/>
  * 用以加载系统配置，支持动态加载系统中各配置<br/>
@@ -29,7 +27,8 @@ import com.tx.component.basicdata.context.BasicDataContext;
 public class ConfigContextConfigurator implements InitializingBean {
     
     /** 日志记录器 */
-    private static Logger logger = LoggerFactory.getLogger(ConfigContextConfigurator.class);
+    private static Logger logger = LoggerFactory
+            .getLogger(ConfigContextConfigurator.class);
     
     /** spring容器句柄 */
     protected static ApplicationContext applicationContext;
@@ -37,50 +36,13 @@ public class ConfigContextConfigurator implements InitializingBean {
     /** beanName实例 */
     protected static String beanName;
     
-    /** 是否处于开发模式  开发模式中 getValue 将优先获取 developValue */
-    private boolean isDevelop = false;
-    
-    /** 配置是否可重复 */
-    private boolean repeatAble = false;
-    
-    /** 配置属性持久器集合 */
-    protected List<ConfigPropertyFinder> configPropertiesPersisterList;
-    
     /**
      * @throws Exception
      */
     @Override
     public void afterPropertiesSet() throws Exception {
-        logger.info("configContext init.\n\t isDevelop:{} \n\t repeatAble:{}",
-                new Object[] { isDevelop, repeatAble });
-    }
-    
-    /**
-     * @return 返回 isDevelop
-     */
-    public boolean isDevelop() {
-        return isDevelop;
-    }
-    
-    /**
-     * @param 对isDevelop进行赋值
-     */
-    public void setDevelop(boolean isDevelop) {
-        this.isDevelop = isDevelop;
-    }
-    
-    /**
-     * @return 返回 repeatAble
-     */
-    public boolean isRepeatAble() {
-        return repeatAble;
-    }
-    
-    /**
-     * @param 对repeatAble进行赋值
-     */
-    public void setRepeatAble(boolean repeatAble) {
-        this.repeatAble = repeatAble;
+        logger.info("configContext init. \n\t repeatAble:{}",
+                new Object[] { repeatAble });
     }
     
     /**
