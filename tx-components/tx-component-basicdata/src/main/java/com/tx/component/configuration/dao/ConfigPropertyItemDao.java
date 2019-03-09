@@ -24,7 +24,7 @@ public interface ConfigPropertyItemDao {
     
     /**
      * 插入配置属性项目<br/>
-     *<功能详细描述>
+     * <功能详细描述>
      * @param configPropertyItem [参数说明]
      * 
      * @return void [返回类型说明]
@@ -35,7 +35,7 @@ public interface ConfigPropertyItemDao {
     
     /**
      * 更新配置属性项<br/>
-     *<功能详细描述>
+     * <功能详细描述>
      * @param configPropertyItem [参数说明]
      * 
      * @return void [返回类型说明]
@@ -46,7 +46,7 @@ public interface ConfigPropertyItemDao {
     
     /**
      * 根据系统id查询配置属性项列表 
-     *<功能详细描述>
+     * <功能详细描述>
      * @param systemId
      * @return [参数说明]
      * 

@@ -6,8 +6,6 @@
  */
 package com.tx.component.test.service;
 
-import org.springframework.transaction.annotation.Transactional;
-
 /**
   * <功能简述>
   * <功能详细描述>
@@ -29,7 +27,6 @@ public class TestBeanService {
         System.out.println("test service cons." + this.test);
     }
     
-    @Transactional
     public void insertTest() {
         
     }

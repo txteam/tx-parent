@@ -1,7 +1,6 @@
 package com.tx.component.command.context.support;
 
 import org.slf4j.helpers.MessageFormatter;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.tx.component.command.context.CommandReceiver;
 import com.tx.component.command.context.CommandRequest;
@@ -47,7 +46,6 @@ public abstract class AbstractRequestSupport<PR extends CommandRequest, RE exten
      * @param response
      */
     @Override
-    @Transactional
     public final void handle(PR request, CommandResponse response) {
         //判断入参的合法性
         AssertUtils.notNull(request, "request is null.");

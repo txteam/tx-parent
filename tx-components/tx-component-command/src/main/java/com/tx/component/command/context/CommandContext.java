@@ -2,7 +2,6 @@ package com.tx.component.command.context;
 
 import java.io.Serializable;
 
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronizationAdapter;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
@@ -31,7 +30,8 @@ public class CommandContext extends CommandContextBuilder {
             return context;
         }
         synchronized (CommandContext.class) {
-            CommandContext.context = (CommandContext) applicationContext.getBean(beanName);
+            CommandContext.context = (CommandContext) applicationContext
+                    .getBean(beanName);
         }
         AssertUtils.notNull(context, "context is null.maybe not inited.");
         return context;
@@ -45,7 +45,6 @@ public class CommandContext extends CommandContextBuilder {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @Transactional
     public CommandResponse post(CommandRequest request) {
         AssertUtils.notNull(request, "request is null.");
         CommandResponse response = new DefaultResponse();
@@ -62,8 +61,7 @@ public class CommandContext extends CommandContextBuilder {
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
-    @Transactional
+     */
     public void post(CommandRequest request, CommandResponse response) {
         AssertUtils.notNull(request, "request is null.");
         AssertUtils.notNull(response, "response is null.");
@@ -79,7 +77,6 @@ public class CommandContext extends CommandContextBuilder {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @Transactional
     public void notify(final CommandRequest request) {
         AssertUtils.notNull(request, "request is null.");
         AssertUtils.isTrue(request instanceof Serializable,
@@ -88,16 +85,17 @@ public class CommandContext extends CommandContextBuilder {
         //FIXME:插入数据
         
         //在事务执行成功提交以后，执行notify的实际逻辑
-        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
-            @Override
-            public void afterCommit() {
-                CommandResponse response = new DefaultResponse();
-                doPost(request, response);
-                
-                //FIXME: 如果执行成功，在此处执行更新为成功，并迁移至历史表的逻辑
-                
-                //FIXME: 否则，则记录为错误
-            }
-        });
+        TransactionSynchronizationManager.registerSynchronization(
+                new TransactionSynchronizationAdapter() {
+                    @Override
+                    public void afterCommit() {
+                        CommandResponse response = new DefaultResponse();
+                        doPost(request, response);
+                        
+                        //FIXME: 如果执行成功，在此处执行更新为成功，并迁移至历史表的逻辑
+                        
+                        //FIXME: 否则，则记录为错误
+                    }
+                });
     }
 }
