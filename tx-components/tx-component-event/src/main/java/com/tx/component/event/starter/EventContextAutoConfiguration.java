@@ -79,16 +79,20 @@ public class EventContextAutoConfiguration
      */
     @Override
     public void afterPropertiesSet() throws Exception {
-        if (StringUtils.isNotBlank(properties.getTransactionManager())
+        if (StringUtils.isNotBlank(properties.getTransactionManagerRef())
                 && this.applicationContext
-                        .containsBean(properties.getTransactionManager())) {
+                        .containsBean(properties.getTransactionManagerRef())
+                && this.applicationContext
+                        .getBeansOfType(PlatformTransactionManager.class)
+                        .size() == 1) {
             this.transactionManager = this.applicationContext.getBean(
-                    properties.getTransactionManager(),
+                    properties.getTransactionManagerRef(),
                     PlatformTransactionManager.class);
         } else {
             this.transactionManager = this.applicationContext
                     .getBean(PlatformTransactionManager.class);
         }
+        
         if (StringUtils.isNotBlank(properties.getEventListenerSupportFactory())
                 && this.applicationContext.containsBean(
                         properties.getEventListenerSupportFactory())) {
