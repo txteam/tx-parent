@@ -91,83 +91,15 @@ public class BasicDataCacheConfiguration
      */
     @Override
     public void afterPropertiesSet() throws Exception {
-        //设置dataSource
-    }
-    
-    /**
-     * 该类会优先加载:基础数据容器表初始化器<br/>
-     * <功能详细描述>
-     * 
-     * @author  Administrator
-     * @version  [版本号, 2018年5月5日]
-     * @see  [相关类/方法]
-     * @since  [产品/模块版本]
-     */
-    @Configuration
-    @ConditionalOnBean({ TableDDLExecutor.class })
-    @ConditionalOnSingleCandidate(TableDDLExecutor.class)
-    @ConditionalOnProperty(prefix = "tx.basicdata", value = "table-auto-initialize", havingValue = "true")
-    @ConditionalOnMissingBean(BasicDataContextTableInitializer.class)
-    public static class BasicDataContextTableInitializerConfiguration {
-        
-        /** 表ddl自动执行器 */
-        private TableDDLExecutor tableDDLExecutor;
-        
-        public BasicDataContextTableInitializerConfiguration(
-                TableDDLExecutor tableDDLExecutor) {
-            this.tableDDLExecutor = tableDDLExecutor;
+      //设置cacheManager
+        if (StringUtils.isNotBlank(this.properties.getCacheManagerRef())
+                && this.applicationContext
+                        .containsBean(this.properties.getCacheManagerRef())) {
+            this.cacheManager = this.cacheManager = this.applicationContext
+                    .getBean(CacheManager.class);
         }
         
-        /**
-         * 当命令容器不存在时<br/>
-         * <功能详细描述>
-         * @return [参数说明]
-         * 
-         * @return CommandContextFactory [返回类型说明]
-         * @exception throws [异常类型] [异常说明]
-         * @see [类、类#方法、类#成员]
-         */
-        @Bean("basicdata.tableInitializer")
-        public BasicDataContextTableInitializer tableInitializer() {
-            BasicDataContextTableInitializer initializer = new BasicDataContextTableInitializer(
-                    tableDDLExecutor, true);
-            
-            return initializer;
-        }
     }
-    
-    //    /**
-    //     * 基础数据类型持久层<br/>
-    //     * <功能详细描述>
-    //     * @return [参数说明]
-    //     * 
-    //     * @return BasicDataTypeDao [返回类型说明]
-    //     * @exception throws [异常类型] [异常说明]
-    //     * @see [类、类#方法、类#成员]
-    //     */
-    //    @Bean(name = "basicdata.basicDataTypeDao")
-    //    public BasicDataTypeDao basicDataTypeDao() {
-    //        BasicDataTypeDao basicDataTypeDao = new BasicDataTypeDaoImpl(
-    //                this.myBatisDaoSupport);
-    //        return basicDataTypeDao;
-    //    }
-    //
-    //    /**
-    //     * 基础数据类型业务层<br/>
-    //     * <功能详细描述>
-    //     * @return [参数说明]
-    //     * 
-    //     * @return BasicDataTypeService [返回类型说明]
-    //     * @exception throws [异常类型] [异常说明]
-    //     * @see [类、类#方法、类#成员]
-    //     */
-    //    @Bean(name = "basicdata.basicDataTypeService")
-    //    public BasicDataTypeService basicDataTypeService(
-    //            BasicDataTypeDao basicDataTypeDao) {
-    //        BasicDataTypeService basicDataTypeService = new BasicDataTypeService(
-    //                basicDataTypeDao);
-    //        return basicDataTypeService;
-    //    }
     
     /**
      * 基础数据类型业务层<br/>

@@ -44,7 +44,8 @@ import com.tx.core.starter.util.CoreUtilAutoConfiguration;
 @Configuration
 @EnableConfigurationProperties(value = CommandContextProperties.class)
 @ConditionalOnBean({ DataSource.class, PlatformTransactionManager.class })
-@AutoConfigureAfter({ CoreUtilAutoConfiguration.class,DataSourceAutoConfiguration.class,
+@AutoConfigureAfter({ CoreUtilAutoConfiguration.class,
+        DataSourceAutoConfiguration.class,
         DataSourceTransactionManagerAutoConfiguration.class })
 @ConditionalOnProperty(prefix = "tx.command", value = "enable", havingValue = "true")
 public class CommandContextAutoConfiguration
@@ -78,56 +79,20 @@ public class CommandContextAutoConfiguration
      */
     @Override
     public void afterPropertiesSet() throws Exception {
-        if (StringUtils.isNotBlank(properties.getTransactionManager())
+        if (StringUtils.isNotBlank(properties.getTransactionManagerRef())
                 && this.applicationContext
-                        .containsBean(properties.getTransactionManager())) {
+                        .containsBean(properties.getTransactionManagerRef())
+                && this.applicationContext
+                        .getBeansOfType(PlatformTransactionManager.class)
+                        .size() == 1) {
             this.transactionManager = this.applicationContext.getBean(
-                    properties.getTransactionManager(),
+                    properties.getTransactionManagerRef(),
                     PlatformTransactionManager.class);
         } else {
             this.transactionManager = this.applicationContext
                     .getBean(PlatformTransactionManager.class);
         }
     }
-    
-    //    /**
-    //     * 该类会优先加载<br/>
-    //     * <功能详细描述>
-    //     * 
-    //     * @author  Administrator
-    //     * @version  [版本号, 2018年5月5日]
-    //     * @see  [相关类/方法]
-    //     * @since  [产品/模块版本]
-    //     */
-    //    @Configuration
-    //    @ConditionalOnSingleCandidate(PlatformTransactionManager.class)
-    //    public static class CommandContextOnSingleConfiguration {
-    //        
-    //        private final PlatformTransactionManager txManager;
-    //        
-    //        public CommandContextOnSingleConfiguration(
-    //                PlatformTransactionManager transactionManager) {
-    //            this.txManager = transactionManager;
-    //        }
-    //        
-    //        /**
-    //         * 当命令容器不存在时<br/>
-    //         * <功能详细描述>
-    //         * @return [参数说明]
-    //         * 
-    //         * @return CommandContextFactory [返回类型说明]
-    //         * @exception throws [异常类型] [异常说明]
-    //         * @see [类、类#方法、类#成员]
-    //         */
-    //        @Bean("commandContext")
-    //        @ConditionalOnMissingBean(CommandContext.class)
-    //        public CommandContextFactory commandContext() {
-    //            CommandContextFactory factory = new CommandContextFactory();
-    //            factory.setTxManager(this.txManager);
-    //            
-    //            return factory;
-    //        }
-    //    }
     
     /**
      * 当命令容器不存在时<br/>
