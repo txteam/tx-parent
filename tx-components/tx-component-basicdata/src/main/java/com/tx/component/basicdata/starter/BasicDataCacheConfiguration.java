@@ -32,7 +32,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import com.tx.component.basicdata.context.BasicDataContextFactory;
-import com.tx.component.basicdata.context.BasicDataServiceRegistry;
 import com.tx.component.basicdata.context.BasicDataServiceSupportCacheProxyCreator;
 import com.tx.component.basicdata.controller.BasicDataRemoteController;
 import com.tx.component.basicdata.controller.BasicDataTypeController;

@@ -8,6 +8,8 @@ package com.tx.component.basicdata.starter;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import com.tx.component.configuration.starter.ConfigContextProperties;
+
 /**
  * 基础数据容器默认配置<br/>
  * <功能详细描述>
@@ -20,23 +22,26 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "tx.basicdata")
 public class BasicDataContextProperties {
     
-    /** 表是否自动初始化 */
-    private boolean tableAutoInitialize = false;
-    
     /** 命令容器是否启动 */
     private boolean enable;
+    
+    /** 表是否自动初始化 */
+    private boolean tableAutoInitialize = false;
     
     /** 容器所属模块：当该值为空时，使用spring.application.name的内容 */
     private String module;
     
     /** 基础包集合 */
-    private String basePackages = "";
+    private String basePackages = "com.tx.local";
     
     /** 持久层逻辑 */
     private BasicDataPersisterProperties persister;
     
     /** 缓存 */
     private BasicDataCacheProperties cache;
+    
+    /** 配置容器配置 */
+    private ConfigContextProperties config;
     
     /**
      * @return 返回 enable
@@ -67,62 +72,6 @@ public class BasicDataContextProperties {
     }
     
     /**
-     * @return 返回 cacheManagerRef
-     */
-    public String getCacheManagerRef() {
-        return cacheManagerRef;
-    }
-    
-    /**
-     * @param 对cacheManagerRef进行赋值
-     */
-    public void setCacheManagerRef(String cacheManagerRef) {
-        this.cacheManagerRef = cacheManagerRef;
-    }
-    
-    /**
-     * @return 返回 dataSourceRef
-     */
-    public String getDataSourceRef() {
-        return dataSourceRef;
-    }
-    
-    /**
-     * @param 对dataSourceRef进行赋值
-     */
-    public void setDataSourceRef(String dataSourceRef) {
-        this.dataSourceRef = dataSourceRef;
-    }
-    
-    /**
-     * @return 返回 transactionManagerRef
-     */
-    public String getTransactionManagerRef() {
-        return transactionManagerRef;
-    }
-    
-    /**
-     * @param 对transactionManagerRef进行赋值
-     */
-    public void setTransactionManagerRef(String transactionManagerRef) {
-        this.transactionManagerRef = transactionManagerRef;
-    }
-    
-    /**
-     * @return 返回 mybatisConfigLocation
-     */
-    public String getMybatisConfigLocation() {
-        return mybatisConfigLocation;
-    }
-    
-    /**
-     * @param 对mybatisConfigLocation进行赋值
-     */
-    public void setMybatisConfigLocation(String mybatisConfigLocation) {
-        this.mybatisConfigLocation = mybatisConfigLocation;
-    }
-    
-    /**
      * @return 返回 module
      */
     public String getModule() {
@@ -134,5 +83,61 @@ public class BasicDataContextProperties {
      */
     public void setModule(String module) {
         this.module = module;
+    }
+    
+    /**
+     * @return 返回 tableAutoInitialize
+     */
+    public boolean isTableAutoInitialize() {
+        return tableAutoInitialize;
+    }
+    
+    /**
+     * @param 对tableAutoInitialize进行赋值
+     */
+    public void setTableAutoInitialize(boolean tableAutoInitialize) {
+        this.tableAutoInitialize = tableAutoInitialize;
+    }
+    
+    /**
+     * @return 返回 persister
+     */
+    public BasicDataPersisterProperties getPersister() {
+        return persister;
+    }
+    
+    /**
+     * @param 对persister进行赋值
+     */
+    public void setPersister(BasicDataPersisterProperties persister) {
+        this.persister = persister;
+    }
+    
+    /**
+     * @return 返回 cache
+     */
+    public BasicDataCacheProperties getCache() {
+        return cache;
+    }
+    
+    /**
+     * @param 对cache进行赋值
+     */
+    public void setCache(BasicDataCacheProperties cache) {
+        this.cache = cache;
+    }
+    
+    /**
+     * @return 返回 config
+     */
+    public ConfigContextProperties getConfig() {
+        return config;
+    }
+    
+    /**
+     * @param 对config进行赋值
+     */
+    public void setConfig(ConfigContextProperties config) {
+        this.config = config;
     }
 }

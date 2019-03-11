@@ -4,7 +4,7 @@
  * 修改时间:  2016年10月6日
  * <修改描述:>
  */
-package com.tx.component.basicdata.context;
+package com.tx.component.basicdata.starter;
 
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -29,8 +29,13 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ResourceLoaderAware;
+import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.AliasRegistry;
+import org.springframework.core.io.ResourceLoader;
+import org.springframework.core.type.AnnotationMetadata;
 
+import com.tx.component.basicdata.context.BasicDataService;
 import com.tx.component.basicdata.model.BasicData;
 import com.tx.component.basicdata.model.BasicDataType;
 import com.tx.component.basicdata.model.DataDict;
@@ -54,8 +59,9 @@ import com.tx.core.util.ClassScanUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class BasicDataServiceRegistry implements ApplicationContextAware,
-        InitializingBean, BeanFactoryAware, BeanNameAware {
+public class BasicDataServiceRegistry
+        implements ApplicationContextAware, InitializingBean, BeanFactoryAware,
+        BeanNameAware, ImportBeanDefinitionRegistrar {
     
     private Logger logger = LoggerFactory
             .getLogger(BasicDataServiceRegistry.class);
@@ -71,10 +77,6 @@ public class BasicDataServiceRegistry implements ApplicationContextAware,
     private static Map<String, BasicDataService<?>> code2serviceMap = new HashMap<String, BasicDataService<?>>();
     
     private AliasRegistry aliasRegistry;
-    
-    private BeanDefinitionRegistry beanDefinitionRegistry;
-    
-    private SingletonBeanRegistry singletonBeanRegistry;
     
     /** 所属模块：如果对象已经存在，module不等于当前模块，则默认调用remoteBasicDataSer */
     private String module;
@@ -220,6 +222,18 @@ public class BasicDataServiceRegistry implements ApplicationContextAware,
     }
     
     /**
+     * @param importingClassMetadata
+     * @param registry
+     */
+    @Override
+    public void registerBeanDefinitions(
+            AnnotationMetadata importingClassMetadata,
+            BeanDefinitionRegistry registry) {
+        // TODO Auto-generated method stub
+        
+    }
+    
+    /**
      * 构建默认的基础数据业务类<br/>
      * <功能详细描述>
      * @param type [参数说明]
@@ -330,6 +344,7 @@ public class BasicDataServiceRegistry implements ApplicationContextAware,
         //查找spring容器中已经存在的业务层
         Map<String, BasicDataService> basicDataServiceMap = BasicDataServiceRegistry.applicationContext
                 .getBeansOfType(BasicDataService.class);
+        
         for (Entry<String, BasicDataService> entry : basicDataServiceMap
                 .entrySet()) {
             BasicDataService service = entry.getValue();

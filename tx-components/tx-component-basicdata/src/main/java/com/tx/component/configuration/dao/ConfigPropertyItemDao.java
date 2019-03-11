@@ -47,7 +47,7 @@ public interface ConfigPropertyItemDao {
     /**
      * 根据系统id查询配置属性项列表 
      * <功能详细描述>
-     * @param systemId
+     * @param params
      * @return [参数说明]
      * 
      * @return List<ConfigPropertyItem> [返回类型说明]

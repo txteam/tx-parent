@@ -81,10 +81,7 @@ public class CommandContextAutoConfiguration
     public void afterPropertiesSet() throws Exception {
         if (StringUtils.isNotBlank(properties.getTransactionManagerRef())
                 && this.applicationContext
-                        .containsBean(properties.getTransactionManagerRef())
-                && this.applicationContext
-                        .getBeansOfType(PlatformTransactionManager.class)
-                        .size() == 1) {
+                        .isSingleton(properties.getTransactionManagerRef())) {
             this.transactionManager = this.applicationContext.getBean(
                     properties.getTransactionManagerRef(),
                     PlatformTransactionManager.class);

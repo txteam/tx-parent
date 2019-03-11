@@ -32,7 +32,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import com.tx.component.basicdata.context.BasicDataContextFactory;
-import com.tx.component.basicdata.context.BasicDataServiceRegistry;
 import com.tx.component.basicdata.context.BasicDataServiceSupportCacheProxyCreator;
 import com.tx.component.basicdata.controller.BasicDataRemoteController;
 import com.tx.component.basicdata.controller.BasicDataTypeController;
@@ -109,10 +108,75 @@ public class BasicDataContextAutoConfiguration
      */
     @Override
     public void afterPropertiesSet() throws Exception {
+        //初始化包名
+        if (!StringUtils.isEmpty(this.properties.getBasePackages())) {
+            this.basePackages = this.properties.getBasePackages();
+        }
+        
+        if (!StringUtils.isBlank(this.properties.getModule())) {
+            this.module = this.properties.getModule();
+        }
+        if (!StringUtils.isBlank(this.applicationName)) {
+            this.module = this.applicationName;
+        }
+        
+        this.transactionTemplate = new TransactionTemplate(
+                this.transactionManager);
+        this.myBatisDaoSupport = MyBatisDaoSupportHelper.buildMyBatisDaoSupport(
+                this.mybatisConfigLocation,
+                this.mybatisMapperLocations,
+                DataSourceTypeEnum.MYSQL,
+                this.dataSource);
+    }
+    
+    /**
+     * 基础数据缓存业务层<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return CacheManager [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @Bean
+    public CacheManager basicDataCacheManager() {
+        //设置cacheManager
+        if (StringUtils.isNotBlank(this.properties.getCacheManagerRef())
+                && this.applicationContext
+                        .containsBean(this.properties.getCacheManagerRef())) {
+            this.cacheManager = new ConcurrentMapCacheManager();
+        } else if (this.applicationContext.getBeansOfType(CacheManager.class)
+                .size() == 1) {
+            this.cacheManager = this.applicationContext
+                    .getBean(CacheManager.class);
+        } else {
+            this.cacheManager = new ConcurrentMapCacheManager();
+        }
+        
+        return null;
+    }
+    
+    /**
+     * 基础数据持久化配置<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return BasicDataPersisterConfig [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @Bean
+    public BasicDataPersisterConfig basicDataPersisterConfig() {
+        BasicDataPersisterConfig config = new BasicDataPersisterConfig();
+        
+        
+        
+        String mybaticConfigLocation = this.properties.getPersister()
+                .getMybatisConfigLocation();
         //设置dataSource
         if (StringUtils.isNotBlank(this.properties.getDataSourceRef())
                 && this.applicationContext
-                        .containsBean(this.properties.getDataSourceRef())) {
+                        .isSingleton(this.properties.getDataSourceRef())) {
             this.dataSource = this.applicationContext.getBean(
                     this.properties.getDataSourceRef(), DataSource.class);
         } else if (this.applicationContext.getBeansOfType(DataSource.class)
@@ -140,42 +204,7 @@ public class BasicDataContextAutoConfiguration
         AssertUtils.notEmpty(this.transactionManager,
                 "transactionManager is null.存在多个事务管理器，需要通过basicdata.transactionManager指定使用的数据源,或为数据源设置为Primary.");
         
-        //设置cacheManager
-        if (StringUtils.isNotBlank(this.properties.getCacheManagerRef())
-                && this.applicationContext
-                        .containsBean(this.properties.getCacheManagerRef())) {
-            this.cacheManager = new ConcurrentMapCacheManager();
-        } else if (this.applicationContext.getBeansOfType(CacheManager.class)
-                .size() == 1) {
-            this.cacheManager = this.applicationContext
-                    .getBean(CacheManager.class);
-        } else {
-            this.cacheManager = new ConcurrentMapCacheManager();
-        }
-        
-        //初始化包名
-        if (!StringUtils.isEmpty(this.properties.getBasePackages())) {
-            this.basePackages = this.properties.getBasePackages();
-        }
-        if (!StringUtils.isEmpty(this.properties.getMybatisConfigLocation())) {
-            this.mybatisConfigLocation = this.properties
-                    .getMybatisConfigLocation();
-        }
-        
-        if (!StringUtils.isBlank(this.properties.getModule())) {
-            this.module = this.properties.getModule();
-        }
-        if (!StringUtils.isBlank(this.applicationName)) {
-            this.module = this.applicationName;
-        }
-        
-        this.transactionTemplate = new TransactionTemplate(
-                this.transactionManager);
-        this.myBatisDaoSupport = MyBatisDaoSupportHelper.buildMyBatisDaoSupport(
-                this.mybatisConfigLocation,
-                this.mybatisMapperLocations,
-                DataSourceTypeEnum.MYSQL,
-                this.dataSource);
+        return config;
     }
     
     /**
