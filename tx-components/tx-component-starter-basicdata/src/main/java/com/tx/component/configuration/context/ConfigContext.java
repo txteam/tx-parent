@@ -43,13 +43,6 @@ public class ConfigContext extends ConfigContextBuilder {
     @Override
     public void afterPropertiesSet() throws Exception {
         super.afterPropertiesSet();
-        
-        // 让配置属性持久器加载配置数据
-        if (this.configPropertiesPersisterList != null) {
-            for (ConfigPropertyFinder configPropertiesPersister : this.configPropertiesPersisterList) {
-                configPropertiesPersister.load(this);
-            }
-        }
     }
     
     /**
@@ -73,17 +66,42 @@ public class ConfigContext extends ConfigContextBuilder {
     
     /**
      * 根据key获取对应的配置属性实例
-     * 
-     * @param key
+     * <功能详细描述>
+     * @param module
+     * @param code
+     * @return [参数说明]
      * 
      * @return ConfigProperty [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public ConfigProperty getByCode(String code) {
+    public ConfigProperty get(String module, String code) {
         AssertUtils.notEmpty(code, "code is empty.");
         
-        return null;
+        List<ConfigProperty> pList = doQuery(module, code);
+        AssertUtils.isTrue(pList.size() <= 1,
+                "module:{} code:{} 对应的配置属性重复.",
+                module,
+                code);
+        ConfigProperty p = pList.get(0);
+        
+        return p;
+    }
+    
+    /**
+     * 根据key获取对应的配置属性实例
+     * 
+     * @param code
+     * 
+     * @return ConfigProperty [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public ConfigProperty get(String code) {
+        AssertUtils.notEmpty(code, "code is empty.");
+        
+        ConfigProperty p = doFind(code);
+        return p;
     }
     
     /**

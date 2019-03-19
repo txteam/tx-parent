@@ -8,8 +8,6 @@
  */
 package com.tx.component.configuration.context;
 
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -27,7 +25,7 @@ import org.springframework.context.ApplicationContext;
 public class ConfigContextConfigurator implements InitializingBean {
     
     /** 日志记录器 */
-    private static Logger logger = LoggerFactory
+    protected static Logger logger = LoggerFactory
             .getLogger(ConfigContextConfigurator.class);
     
     /** spring容器句柄 */
@@ -41,22 +39,6 @@ public class ConfigContextConfigurator implements InitializingBean {
      */
     @Override
     public void afterPropertiesSet() throws Exception {
-        logger.info("configContext init. \n\t repeatAble:{}",
-                new Object[] { repeatAble });
-    }
-    
-    /**
-     * @return 返回 configPropertiesPersisterList
-     */
-    public List<ConfigPropertyFinder> getConfigPropertiesPersisterList() {
-        return configPropertiesPersisterList;
-    }
-    
-    /**
-     * @param 对configPropertiesPersisterList进行赋值
-     */
-    public void setConfigPropertiesPersisterList(
-            List<ConfigPropertyFinder> configPropertiesPersisterList) {
-        this.configPropertiesPersisterList = configPropertiesPersisterList;
+        //logger.info("configContext init. \n\t repeatAble:{}",new Object[] { repeatAble });
     }
 }

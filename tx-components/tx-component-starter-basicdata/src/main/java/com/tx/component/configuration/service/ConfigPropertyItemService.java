@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.cache.CacheManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -35,12 +36,17 @@ public class ConfigPropertyItemService {
     /** 配置属相项持久层实现 */
     private final ConfigPropertyItemDao configPropertyItemDao;
     
+    /** 缓存Manager */
+    private final CacheManager cacheManager;
+    
     /** <默认构造函数> */
     public ConfigPropertyItemService(TransactionTemplate transactionTemplate,
-            ConfigPropertyItemDao configPropertyItemDao) {
+            ConfigPropertyItemDao configPropertyItemDao,
+            CacheManager cacheManager) {
         super();
         this.transactionTemplate = transactionTemplate;
         this.configPropertyItemDao = configPropertyItemDao;
+        this.cacheManager = cacheManager;
     }
     
     /**

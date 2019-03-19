@@ -231,6 +231,14 @@ public class TestContextAutoConfiguration
     }
     
 }
+//1、实现了ImportBeanDefinitionRegistrar的Configuration类优先被加载，其构造函数以及init一并被调用
+//2、当前Configuration类被加载，其构造函数以及init一并被调用
+//3、当前类中的内部类Configuration加载
+//4、当前勒种内部类Configuration中注册的bean加载
+//5、Import的类被加载
+//6、Import的Configuration中的bean加载
+//7、当前类中的bean加载
+
 //TestContextAutoInnerImportRegistrar constrution. called
 //TestContextAutoInnerImportRegistrar registerBeanDefinitions. called
 //TestContextAutoConfiguration constrution. called

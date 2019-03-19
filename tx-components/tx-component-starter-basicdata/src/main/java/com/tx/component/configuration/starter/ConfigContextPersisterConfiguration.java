@@ -91,7 +91,7 @@ public class ConfigContextPersisterConfiguration implements InitializingBean {
         public ConfigPropertyItemService configPropertyItemService() {
             ConfigPropertyItemService service = new ConfigPropertyItemService(
                     persisterConfig.getTransactionTemplate(),
-                    configPropertyItemDao());
+                    configPropertyItemDao(), cacheManager);
             return service;
         }
         
@@ -153,5 +153,4 @@ public class ConfigContextPersisterConfiguration implements InitializingBean {
             return initializer;
         }
     }
-    
 }

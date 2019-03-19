@@ -40,6 +40,7 @@ import com.tx.component.basicdata.dao.impl.DataDictDaoImpl;
 import com.tx.component.basicdata.script.BasicDataContextTableInitializer;
 import com.tx.component.basicdata.service.BasicDataTypeService;
 import com.tx.component.basicdata.service.DataDictService;
+import com.tx.component.configuration.starter.ConfigContextConfiguration;
 import com.tx.core.ddlutil.executor.TableDDLExecutor;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.mybatis.support.MyBatisDaoSupport;
@@ -397,5 +398,9 @@ public class BasicDataContextAutoConfiguration
             BasicDataTypeService basicDataTypeService) {
         BasicDataRemoteController controller = new BasicDataRemoteController();
         return controller;
+    }
+    
+    public ConfigContextConfiguration ConfigContextConfiguration(){
+        
     }
 }
