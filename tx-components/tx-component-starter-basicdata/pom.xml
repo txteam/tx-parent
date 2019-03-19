@@ -7,9 +7,9 @@
 		<version>4.0.x-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>tx-component-basicdata</artifactId>
+	<artifactId>tx-component-starter-basicdata</artifactId>
+	<name>tx-component-starter-basicdata</name>
 	<packaging>jar</packaging>
-	<name>tx-component-basicdata</name>
 	<url>http://maven.apache.org</url>
 
 	<dependencies>

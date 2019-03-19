@@ -16,11 +16,23 @@
 /tx-components/.project
 /tx-components/.factorypath
 
+/tx-components/tx-component-starter-command/target
+/tx-components/tx-component-starter-command/.settings
+/tx-components/tx-component-starter-command/.classpath
+/tx-components/tx-component-starter-command/.project
+/tx-components/tx-component-starter-command/.factorypath
+
 /tx-components/tx-component-command/target
 /tx-components/tx-component-command/.settings
 /tx-components/tx-component-command/.classpath
 /tx-components/tx-component-command/.project
 /tx-components/tx-component-command/.factorypath
+
+/tx-components/tx-component-starter-event/target
+/tx-components/tx-component-starter-event/.settings
+/tx-components/tx-component-starter-event/.classpath
+/tx-components/tx-component-starter-event/.project
+/tx-components/tx-component-starter-event/.factorypath
 
 /tx-components/tx-component-event/target
 /tx-components/tx-component-event/.settings
@@ -28,17 +40,35 @@
 /tx-components/tx-component-event/.project
 /tx-components/tx-component-event/.factorypath
 
+/tx-components/tx-component-starter-basicdata/target
+/tx-components/tx-component-starter-basicdata/.settings
+/tx-components/tx-component-starter-basicdata/.classpath
+/tx-components/tx-component-starter-basicdata/.project
+/tx-components/tx-component-starter-basicdata/.factorypath
+
 /tx-components/tx-component-basicdata/target
 /tx-components/tx-component-basicdata/.settings
 /tx-components/tx-component-basicdata/.classpath
 /tx-components/tx-component-basicdata/.project
 /tx-components/tx-component-basicdata/.factorypath
 
+/tx-components/tx-component-starter-task/target
+/tx-components/tx-component-starter-task/.settings
+/tx-components/tx-component-starter-task/.classpath
+/tx-components/tx-component-starter-task/.project
+/tx-components/tx-component-starter-task/.factorypath
+
 /tx-components/tx-component-task/target
 /tx-components/tx-component-task/.settings
 /tx-components/tx-component-task/.classpath
 /tx-components/tx-component-task/.project
 /tx-components/tx-component-task/.factorypath
+
+/tx-components/tx-component-starter-security/target
+/tx-components/tx-component-starter-security/.settings
+/tx-components/tx-component-starter-security/.classpath
+/tx-components/tx-component-starter-security/.project
+/tx-components/tx-component-starter-security/.factorypath
 
 /tx-components/tx-component-security/target
 /tx-components/tx-component-security/.settings

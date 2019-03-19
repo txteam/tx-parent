@@ -7,9 +7,9 @@
 		<version>4.0.x-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>tx-component-command</artifactId>
+	<artifactId>tx-component-starter-command</artifactId>
+	<name>tx-component-starter-command</name>
 	<packaging>jar</packaging>
-	<name>tx-component-command</name>
 	<url>http://maven.apache.org</url>
 
 	<dependencies>
