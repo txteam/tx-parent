@@ -7,9 +7,9 @@
 		<version>4.0.x-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>tx-component-security</artifactId>
+	<artifactId>tx-component-starter-security</artifactId>
+	<name>tx-component-starter-security</name>
 	<packaging>jar</packaging>
-	<name>tx-component-security</name>
 	<url>http://maven.apache.org</url>
 
 	<properties>

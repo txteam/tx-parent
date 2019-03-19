@@ -7,9 +7,9 @@
 		<version>4.0.x-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>tx-component-servicelogger</artifactId>
+	<artifactId>tx-component-starter-servicelogger</artifactId>
+	<name>tx-component-starter-servicelogger</name>
 	<packaging>jar</packaging>
-	<name>tx-component-servicelogger</name>
 	<url>http://maven.apache.org</url>
 
 	<properties>

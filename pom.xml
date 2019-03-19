@@ -210,32 +210,32 @@
 			<!-- tx-components -->
 			<dependency>
 				<groupId>com.tx</groupId>
-				<artifactId>tx-component-command</artifactId>
+				<artifactId>tx-component-starter-command</artifactId>
 				<version>${tx.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.tx</groupId>
-				<artifactId>tx-component-event</artifactId>
+				<artifactId>tx-component-starter-event</artifactId>
 				<version>${tx.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.tx</groupId>
-				<artifactId>tx-component-basicdata</artifactId>
+				<artifactId>tx-component-starter-basicdata</artifactId>
 				<version>${tx.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.tx</groupId>
-				<artifactId>tx-component-task</artifactId>
+				<artifactId>tx-component-starter-task</artifactId>
 				<version>${tx.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.tx</groupId>
-				<artifactId>tx-component-servicelogger</artifactId>
+				<artifactId>tx-component-starter-servicelogger</artifactId>
 				<version>${tx.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.tx</groupId>
-				<artifactId>tx-component-security</artifactId>
+				<artifactId>tx-component-starter-security</artifactId>
 				<version>${tx.version}</version>
 			</dependency>
 
