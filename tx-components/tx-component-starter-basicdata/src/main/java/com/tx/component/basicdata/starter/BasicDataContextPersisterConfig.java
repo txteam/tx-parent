@@ -20,7 +20,7 @@ import com.tx.core.mybatis.support.MyBatisDaoSupport;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class BasicDataContextConfig {
+public class BasicDataContextPersisterConfig {
     
     /** 所属模块 */
     private String module;

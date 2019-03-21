@@ -86,25 +86,21 @@
 	</developers>
 
 	<properties>
+		<!-- 参考spring-boot-dependencies中版本信息 -->
+		<java.version>1.8</java.version>
+		
+		<!-- 其他属性 -->
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding><!-- base info -->
+		<skipTests>true</skipTests><!-- projectInfo -->
+	
 		<!-- lib info -->
-		<tx.version>5.0.x-SNAPSHOT</tx.version>
+		<tx.version>4.0.x-SNAPSHOT</tx.version>
 
 		<!-- 无参考版本信息 -->
 		<activiti.version>5.22.0</activiti.version>
 		<drools.version>6.5.0.Final</drools.version>
 		<poi.version>3.17</poi.version>
 
-		<!-- 参考spring-boot-dependencies中版本信息 -->
-		<java.version>1.8</java.version>
-
-		<!-- <spring.version>5.0.5.RELEASE</spring.version> -->
-		<!-- <hibernate.version>5.2.16.Final</hibernate.version> -->
-		<!-- <hibernate-validator.version>6.0.9.Final</hibernate-validator.version> -->
-
-		<!-- 其他属性 -->
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding><!-- base info -->
-		<skipTests>true</skipTests><!-- projectInfo -->
-		
 		<!-- 覆盖默认父属性：改变版本 -->
 		<thymeleaf.version>3.0.9.RELEASE</thymeleaf.version>
  		<thymeleaf-layout-dialect.version>2.3.0</thymeleaf-layout-dialect.version>

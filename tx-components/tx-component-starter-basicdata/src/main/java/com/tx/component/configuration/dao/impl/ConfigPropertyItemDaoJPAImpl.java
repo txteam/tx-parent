@@ -9,12 +9,8 @@ package com.tx.component.configuration.dao.impl;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import com.tx.component.configuration.dao.ConfigPropertyItemDao;
 import com.tx.component.configuration.model.ConfigPropertyItem;
-import com.tx.core.mybatis.support.MyBatisDaoSupport;
 
 /**
  * DataDict持久层
@@ -27,47 +23,37 @@ import com.tx.core.mybatis.support.MyBatisDaoSupport;
  */
 public class ConfigPropertyItemDaoJPAImpl implements ConfigPropertyItemDao {
     
-    @PersistenceContext
-    private EntityManager entityManager;
-    
     /** <默认构造函数> */
     public ConfigPropertyItemDaoJPAImpl() {
         super();
     }
-    
-    /** <默认构造函数> */
-    public ConfigPropertyItemDaoJPAImpl(MyBatisDaoSupport myBatisDaoSupport) {
-        super();
-        this.myBatisDaoSupport = myBatisDaoSupport;
-    }
-    
+
     /**
-     * @param condition
+     * @param configPropertyItem
      */
     @Override
-    public void insert(ConfigPropertyItem condition) {
-        this.myBatisDaoSupport.insertUseUUID("configPropertyItem.insert",
-                condition,
-                "id");
+    public void insert(ConfigPropertyItem configPropertyItem) {
+        // TODO Auto-generated method stub
+        
     }
-    
+
+    /**
+     * @param rowMap
+     * @return
+     */
+    @Override
+    public int update(Map<String, Object> rowMap) {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
     /**
      * @param params
      * @return
      */
     @Override
     public List<ConfigPropertyItem> queryList(Map<String, Object> params) {
-        return this.myBatisDaoSupport.<ConfigPropertyItem> queryList(
-                "configPropertyItem.query", params);
-    }
-    
-    /**
-     * @param updateRowMap
-     * @return
-     */
-    @Override
-    public int update(Map<String, Object> updateRowMap) {
-        return this.myBatisDaoSupport.update("configPropertyItem.update",
-                updateRowMap);
+        // TODO Auto-generated method stub
+        return null;
     }
 }

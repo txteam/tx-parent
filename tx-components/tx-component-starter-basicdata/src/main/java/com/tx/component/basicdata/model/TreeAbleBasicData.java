@@ -6,10 +6,8 @@
  */
 package com.tx.component.basicdata.model;
 
-import java.io.Serializable;
 import java.util.List;
 
-import com.tx.core.support.initable.model.ConfigInitAble;
 import com.tx.core.tree.model.TreeAble;
 
 /**
@@ -21,8 +19,8 @@ import com.tx.core.tree.model.TreeAble;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public interface TreeAbleBasicData<T extends TreeAbleBasicData<T>> extends
-        BasicData, TreeAble<List<T>, T>, ConfigInitAble, Serializable {
+public interface TreeAbleBasicData<T extends TreeAbleBasicData<T>>
+        extends BasicData, TreeAble<List<T>, T> {
     
     /**
       * 获取父节点对象<br/>

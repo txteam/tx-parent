@@ -14,8 +14,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandi
 import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.support.TransactionTemplate;
 
-import com.tx.component.basicdata.starter.BasicDataContextConfig;
+import com.tx.component.basicdata.starter.BasicDataContextPersisterConfig;
 import com.tx.component.configuration.dao.ConfigPropertyItemDao;
 import com.tx.component.configuration.dao.impl.ConfigPropertyItemDaoImpl;
 import com.tx.component.configuration.script.ConfigContextTableInitializer;
@@ -33,35 +34,14 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @since  [产品/模块版本]
  */
 @Configuration
-public class ConfigContextPersisterConfiguration implements InitializingBean {
-    
-    /** cacheManager */
-    private CacheManager cacheManager;
-    
-    /** 持久层配置属性 */
-    private BasicDataContextConfig persisterConfig;
+public class ConfigContextPersisterConfiguration {
     
     /** <默认构造函数> */
-    public ConfigContextPersisterConfiguration(CacheManager cacheManager,
-            BasicDataContextConfig persisterConfig) {
+    public ConfigContextPersisterConfiguration() {
         super();
-        this.cacheManager = cacheManager;
-        this.persisterConfig = persisterConfig;
     }
     
-    /**
-     * @throws Exception
-     */
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        AssertUtils.notNull(this.cacheManager, "cacheManager is null.");
-        
-        AssertUtils.notNull(persisterConfig, "persisterConfig is null.");
-        AssertUtils.notNull(persisterConfig.getTransactionTemplate(),
-                "transactionTemplate is null.");
-        AssertUtils.notNull(persisterConfig.getMyBatisDaoSupport(),
-                "persisterConfig is null.");
-    }
+    
     
     /**
      * 该类会优先加载:基础数据容器表初始化器<br/>
@@ -105,7 +85,6 @@ public class ConfigContextPersisterConfiguration implements InitializingBean {
         }
     }
     
-    
     /**
      * 配置荣庆初始化配置<br/>
      * <功能详细描述>
@@ -116,8 +95,25 @@ public class ConfigContextPersisterConfiguration implements InitializingBean {
      * @since  [产品/模块版本]
      */
     @Configuration
-    @ConditionalOnMissingBean(ConfigPropertyItemService.class)
-    public class ConfigContextMybatisPersisterConfiguration {
+    public static class ConfigContextMybatisPersisterConfiguration implements InitializingBean {
+        
+        private BasicDataContextPersisterConfig persisterConfig;
+        
+        
+        
+        /**
+         * @throws Exception
+         */
+        @Override
+        public void afterPropertiesSet() throws Exception {
+            AssertUtils.notNull(this.cacheManager, "cacheManager is null.");
+            
+            AssertUtils.notNull(persisterConfig, "persisterConfig is null.");
+            AssertUtils.notNull(persisterConfig.getTransactionTemplate(),
+                    "transactionTemplate is null.");
+            AssertUtils.notNull(persisterConfig.getMyBatisDaoSupport(),
+                    "persisterConfig is null.");
+        }
         
         /**
          * 配置属性业务持久业务层<br/>
@@ -128,6 +124,7 @@ public class ConfigContextPersisterConfiguration implements InitializingBean {
          * @exception throws [异常类型] [异常说明]
          * @see [类、类#方法、类#成员]
          */
+        @ConditionalOnMissingBean(ConfigPropertyItemService.class)
         @Bean("basicdata.config.configPropertyItemService")
         public ConfigPropertyItemService configPropertyItemService() {
             ConfigPropertyItemService service = new ConfigPropertyItemService(

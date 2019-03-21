@@ -6,6 +6,9 @@
  */
 package com.tx.component.configuration.context;
 
+import java.util.List;
+import java.util.Map;
+
 import com.tx.component.configuration.model.ConfigProperty;
 
 /**
@@ -30,4 +33,18 @@ public interface ConfigPropertyFinder {
      * @see [类、类#方法、类#成员]
      */
     public ConfigProperty findByCode(String key);
+    
+    /**
+     * 查询配置属性<br/>
+     * <功能详细描述>
+     * @param parentId
+     * @param params
+     * @return [参数说明]
+     * 
+     * @return List<ConfigProperty> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public List<ConfigProperty> query(String parentId,
+            Map<String, Object> params);
 }

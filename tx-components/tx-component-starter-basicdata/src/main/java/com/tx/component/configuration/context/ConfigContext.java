@@ -27,11 +27,14 @@ public class ConfigContext extends ConfigContextBuilder {
         super();
     }
     
+    /**
+     * @throws Exception
+     */
     @Override
-    public void afterPropertiesSet() throws Exception {
-        super.afterPropertiesSet();
+    protected void doInitContext() throws Exception {
+        
     }
-    
+
     /**
      * 获取配置容器的唯一实例
      * 

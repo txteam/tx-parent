@@ -24,7 +24,7 @@ import com.tx.component.configuration.model.ConfigProperty;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public class ConfigContextBuilder extends ConfigContextConfigurator {
+public abstract class ConfigContextBuilder extends ConfigContextConfigurator {
     
     /** 日志记录器 */
     private static Logger logger = LoggerFactory
@@ -37,7 +37,8 @@ public class ConfigContextBuilder extends ConfigContextConfigurator {
      * @throws Exception
      */
     @Override
-    public void afterPropertiesSet() throws Exception {
+    protected void doBuild() throws Exception {
+        // TODO Auto-generated method stub
         
     }
     
@@ -59,7 +60,9 @@ public class ConfigContextBuilder extends ConfigContextConfigurator {
         return null;
     }
     
-    protected List<ConfigProperty> doQuery(String module, String code) {
+    protected List<ConfigProperty> doQuery(String module, String code,
+            String parentId) {
         return null;
     }
+    
 }
