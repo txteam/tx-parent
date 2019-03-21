@@ -9,6 +9,7 @@ package com.tx.core.util;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.HttpHeaders;
 
 /**
  * 请求处理工具<br/>
@@ -20,6 +21,46 @@ import org.apache.commons.lang3.StringUtils;
  * @since  [产品/模块版本]
  */
 public class WebRequestUtils {
+    
+    /**
+     * 是否是ajax请求<br/>
+     * <功能详细描述>
+     * @param request
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static boolean isAjaxRequest(HttpServletRequest request) {
+        //Header
+        String requestType = request.getHeader("X-Requested-With");
+        if (StringUtils.equalsIgnoreCase("XMLHttpRequest", requestType)) {
+            return true;
+        }
+        
+        //accept
+        String accept = request.getHeader(HttpHeaders.ACCEPT);
+        if (StringUtils.isEmpty(accept)) {
+            accept = request.getHeader("accept");
+        }
+        if (!StringUtils.isEmpty(accept) && StringUtils
+                .indexOfIgnoreCase(accept, "application/json") != -1) {
+            return true;
+        }
+        
+        //contentType
+        String contentType = request.getHeader(HttpHeaders.CONTENT_TYPE);
+        if (StringUtils.isEmpty(contentType)) {
+            contentType = request.getHeader("content-type");
+        }
+        if (!StringUtils.isEmpty(contentType) && StringUtils
+                .indexOfIgnoreCase(contentType, "application/json") != -1) {
+            return true;
+        }
+        
+        return false;
+    }
     
     /**
      * 根据request获取请求客户端ip地址<br/>

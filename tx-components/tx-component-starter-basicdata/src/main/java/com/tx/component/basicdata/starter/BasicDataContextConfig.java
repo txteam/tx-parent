@@ -6,10 +6,7 @@
  */
 package com.tx.component.basicdata.starter;
 
-import javax.sql.DataSource;
-
 import org.springframework.cache.CacheManager;
-import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import com.tx.core.mybatis.support.MyBatisDaoSupport;
@@ -23,75 +20,73 @@ import com.tx.core.mybatis.support.MyBatisDaoSupport;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class BasicDataPersisterConfig {
+public class BasicDataContextConfig {
     
-    /** 数据源:dataSource */
-    protected DataSource dataSource;
+    /** 所属模块 */
+    private String module;
     
-    /** transactionManager */
-    protected PlatformTransactionManager transactionManager;
+    /** 缓存管理器 */
+    private CacheManager cacheManager;
     
     /** transactionTemplate: 如果存在事务则在当前事务中执行 */
     private MyBatisDaoSupport myBatisDaoSupport;
     
     /** transactionTemplate: 如果存在事务则在当前事务中执行 */
     private TransactionTemplate transactionTemplate;
-    
+
     /**
-     * @return 返回 dataSource
+     * @return 返回 module
      */
-    public DataSource getDataSource() {
-        return dataSource;
+    public String getModule() {
+        return module;
     }
-    
+
     /**
-     * @param 对dataSource进行赋值
+     * @param 对module进行赋值
      */
-    public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
+    public void setModule(String module) {
+        this.module = module;
     }
-    
+
     /**
-     * @return 返回 transactionManager
+     * @return 返回 cacheManager
      */
-    public PlatformTransactionManager getTransactionManager() {
-        return transactionManager;
+    public CacheManager getCacheManager() {
+        return cacheManager;
     }
-    
+
     /**
-     * @param 对transactionManager进行赋值
+     * @param 对cacheManager进行赋值
      */
-    public void setTransactionManager(
-            PlatformTransactionManager transactionManager) {
-        this.transactionManager = transactionManager;
+    public void setCacheManager(CacheManager cacheManager) {
+        this.cacheManager = cacheManager;
     }
-    
+
     /**
      * @return 返回 myBatisDaoSupport
      */
     public MyBatisDaoSupport getMyBatisDaoSupport() {
         return myBatisDaoSupport;
     }
-    
+
     /**
      * @param 对myBatisDaoSupport进行赋值
      */
     public void setMyBatisDaoSupport(MyBatisDaoSupport myBatisDaoSupport) {
         this.myBatisDaoSupport = myBatisDaoSupport;
     }
-    
+
     /**
      * @return 返回 transactionTemplate
      */
     public TransactionTemplate getTransactionTemplate() {
         return transactionTemplate;
     }
-    
+
     /**
      * @param 对transactionTemplate进行赋值
      */
-    public void setTransactionTemplate(
-            TransactionTemplate transactionTemplate) {
+    public void setTransactionTemplate(TransactionTemplate transactionTemplate) {
         this.transactionTemplate = transactionTemplate;
     }
 }

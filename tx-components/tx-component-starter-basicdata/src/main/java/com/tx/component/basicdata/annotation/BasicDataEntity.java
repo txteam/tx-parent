@@ -29,7 +29,10 @@ import com.tx.component.basicdata.model.BasicDataViewTypeEnum;
 public @interface BasicDataEntity {
     
     /**
-     * 基础数据类型编码<br/>
+     * 基础数据归属模块<br/>
+     *    如果为空，则默认为当前项目的基础数据<br/>
+     *    如果在公共引用包中，应该指定其为哪一个模块<br/>
+     *    在远程调用时，将会识别该对象对应的模块，从而获取数据<br/>
      * <功能详细描述>
      * @return [参数说明]
      * 
@@ -37,7 +40,7 @@ public @interface BasicDataEntity {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    String module();
+    String module() default "";
     
     /**
      * 基础数据名称<br/>

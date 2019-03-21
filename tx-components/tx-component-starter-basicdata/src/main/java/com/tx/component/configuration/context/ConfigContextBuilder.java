@@ -41,6 +41,24 @@ public class ConfigContextBuilder extends ConfigContextConfigurator {
         
     }
     
+    /**
+     * 根据code获取配置属性<br/>
+     * <功能详细描述>
+     * @param code
+     * @return [参数说明]
+     * 
+     * @return ConfigProperty [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    protected ConfigProperty doFind(String code) {
+        return null;
+    }
+    
+    protected ConfigProperty doFind(String module, String code) {
+        return null;
+    }
+    
     protected List<ConfigProperty> doQuery(String module, String code) {
         return null;
     }

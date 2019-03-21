@@ -6,9 +6,6 @@
  */
 package com.tx.component.configuration.context;
 
-import java.util.List;
-import java.util.Map;
-
 import com.tx.component.configuration.model.ConfigProperty;
 
 /**
@@ -23,18 +20,6 @@ import com.tx.component.configuration.model.ConfigProperty;
 public interface ConfigPropertyFinder {
     
     /**
-     * 查询配置属性列表<br/>
-     * <功能详细描述>
-     * @param params
-     * @return [参数说明]
-     * 
-     * @return List<ConfigProperty> [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public List<ConfigProperty> queryList(Map<String, Object> params);
-    
-    /**
      * 根据关键字key获取配置属性实例<br/>
      * <功能详细描述>
      * @param key
@@ -45,16 +30,4 @@ public interface ConfigPropertyFinder {
      * @see [类、类#方法、类#成员]
      */
     public ConfigProperty findByCode(String key);
-    
-    /**
-     * 更新配置容器中配置属性值<br/> 
-     *<功能详细描述>
-     * @param key
-     * @param value [参数说明]
-     * 
-     * @return void [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public void update(ConfigProperty configProperty);
 }

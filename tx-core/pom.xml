@@ -69,6 +69,13 @@
 			<artifactId>mybatis-spring-boot-starter</artifactId>
 			<optional>true</optional>
 		</dependency>
+		
+		<!-- hibernate: data-jpa jpa -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+			<optional>true</optional>
+		</dependency>
 
 		<!-- srpingframework core -->
 		<!-- spring核心常用工具类包：依赖加载 -->
@@ -111,12 +118,6 @@
 		<dependency>
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
-		</dependency>
-
-		<!-- hibernate -->
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-core</artifactId>
 		</dependency>
 
 		<!-- commons -->

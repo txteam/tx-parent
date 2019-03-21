@@ -23,6 +23,9 @@ public class ConfigContextProperties {
     /** 命令容器是否启动 */
     private boolean enable = true;
     
+    /** 配置文件所在路径 */
+    private String configLocation = "classpath:config/local/*.xml";
+    
     /**
      * @return 返回 enable
      */
@@ -35,5 +38,19 @@ public class ConfigContextProperties {
      */
     public void setEnable(boolean enable) {
         this.enable = enable;
+    }
+    
+    /**
+     * @return 返回 configLocation
+     */
+    public String getConfigLocation() {
+        return configLocation;
+    }
+    
+    /**
+     * @param 对configLocation进行赋值
+     */
+    public void setConfigLocation(String configLocation) {
+        this.configLocation = configLocation;
     }
 }

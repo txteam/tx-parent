@@ -8,8 +8,8 @@
 		<version>4.0.x-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>tx-component-communication</artifactId>
-	<name>communication</name>
+	<artifactId>tx-component-starter-communication</artifactId>
+	<name>tx-component-starter-communication</name>
 	<packaging>jar</packaging>
 	<url>http://maven.apache.org</url>
 

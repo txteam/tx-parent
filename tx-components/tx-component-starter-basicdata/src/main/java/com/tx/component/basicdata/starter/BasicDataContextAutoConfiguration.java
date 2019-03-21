@@ -167,8 +167,8 @@ public class BasicDataContextAutoConfiguration
      * @see [类、类#方法、类#成员]
      */
     @Bean
-    public BasicDataPersisterConfig basicDataPersisterConfig() {
-        BasicDataPersisterConfig config = new BasicDataPersisterConfig();
+    public BasicDataContextConfig basicDataPersisterConfig() {
+        BasicDataContextConfig config = new BasicDataContextConfig();
         
         
         
