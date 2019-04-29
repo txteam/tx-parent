@@ -20,11 +20,11 @@
 				TDD.code,
 				TDD.name,
 				TDD.value,
+				TDD.module,
 				TDD.remark,
 				TDD.validateExpression,
 				TDD.modifyAble,
 				TDD.leaf,
-				TDD.module,
 				TDD.lastUpdateDate,
 				TDD.createDate
 		  FROM bd_config_context TDD
@@ -52,20 +52,26 @@
 				TDD.code,
 				TDD.name,
 				TDD.value,
+				TDD.module,
 				TDD.remark,
 				TDD.validateExpression,
 				TDD.modifyAble,
 				TDD.leaf,
-				TDD.module,
 				TDD.lastUpdateDate,
 				TDD.createDate
 		  FROM bd_config_context TDD
 		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(parentIds)">
+				AND TDD.parentId IN <foreach collection="parentIds" open="(" close=")" separator="," item="parentIdTemp">#{parentIdTemp,jdbcType=VARCHAR}</foreach>
+	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(parentId)">  
 	            <![CDATA[ AND TDD.parentId = #{parentId,jdbcType=VARCHAR} ]]>
 	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(code)">  
 	            <![CDATA[ AND TDD.code = #{code,jdbcType=VARCHAR} ]]>
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(module)">  
+	            <![CDATA[ AND TDD.module = #{module,jdbcType=VARCHAR} ]]>
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(modifyAble)">  
 	            <![CDATA[ AND TDD.modifyAble = #{modifyAble,jdbcType=BIT} ]]>
@@ -80,7 +86,7 @@
 				<![CDATA[ AND TDD.id <> #{excludeId,javaType=java.lang.String} ]]>
 			</if>
 		</trim>
-		ORDER BY module,createDate
+		ORDER BY createDate
 	</select>
 	
 		<!-- auto generate default count -->
@@ -90,11 +96,17 @@
 		SELECT COUNT(1)
 		  FROM BD_DATA_DICT TDD
 		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(parentIds)">
+				AND TDD.parentId IN <foreach collection="parentIds" open="(" close=")" separator="," item="parentIdTemp">#{parentIdTemp,jdbcType=VARCHAR}</foreach>
+	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(parentId)">  
 	            <![CDATA[ AND TDD.parentId = #{parentId,jdbcType=VARCHAR} ]]>
 	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(code)">  
 	            <![CDATA[ AND TDD.code = #{code,jdbcType=VARCHAR} ]]>
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(module)">  
+	            <![CDATA[ AND TDD.module = #{module,jdbcType=VARCHAR} ]]>
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(modifyAble)">  
 	            <![CDATA[ AND TDD.modifyAble = #{modifyAble,jdbcType=BIT} ]]>
@@ -121,11 +133,11 @@
 			code,
 			name,
 			value,
+			module,
 			remark,
 			validateExpression,
 			modifyAble,
 			leaf,
-			module,
 			lastUpdateDate,
 			createDate
 		)
@@ -136,11 +148,11 @@
 			#{code},
 			#{name},
 			#{value},
+			#{module},
 			#{remark},
 			#{validateExpression},
 			#{modifyAble},
 			#{leaf},
-			#{module},
 			#{lastUpdateDate},
 			#{createDate}
 		)
@@ -161,7 +173,7 @@
 	            AND code = #{code,jdbcType=VARCHAR}
 	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(module)">  
-	            AND module = #{module,jdbcType=VARCHAR}
+	            <![CDATA[ AND module = #{module,jdbcType=VARCHAR} ]]>
 	        </if>
 		</trim>
 	</delete>
@@ -192,9 +204,6 @@
 			<if test="_parameter.containsKey('modifyAble')">
 	    		modifyAble = #{modifyAble,javaType=boolean},
 	    	</if>
-	    	<if test="_parameter.containsKey('module')">
-	    		module = #{module,javaType=java.lang.String},
-	    	</if>
 	    	<if test="_parameter.containsKey('lastUpdateDate')">
 	    		lastUpdateDate = #{lastUpdateDate,javaType=java.util.Date},
 	    	</if>
@@ -206,6 +215,9 @@
 	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(code)">  
 	            <![CDATA[ AND code = #{code,jdbcType=VARCHAR} ]]>
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(module)">  
+	            <![CDATA[ AND module = #{module,jdbcType=VARCHAR} ]]>
 	        </if>
 		</trim>
 	</update>  

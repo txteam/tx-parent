@@ -84,8 +84,8 @@ public class BasicDataServiceRegistry
     /** 扫描包路径 */
     private String basePackages = "com.tx";
     
-    /** 基础数据类型 */
-    private BasicDataTypeService basicDataTypeService;
+//    /** 基础数据类型 */
+//    private BasicDataTypeService basicDataTypeService;
     
     /** 数据字典业务层 */
     private DataDictService dataDictService;

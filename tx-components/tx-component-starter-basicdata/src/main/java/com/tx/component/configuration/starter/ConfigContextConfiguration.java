@@ -16,6 +16,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -37,6 +38,7 @@ import com.tx.core.exceptions.util.AssertUtils;
 @ConditionalOnBean({ DataSource.class, PlatformTransactionManager.class})
 @AutoConfigureAfter({ BasicDataContextAutoConfiguration.class })
 @Import({ConfigContextPersisterConfiguration.class})
+@Configuration
 public class ConfigContextConfiguration
         implements ApplicationContextAware, InitializingBean {
     
@@ -73,5 +75,7 @@ public class ConfigContextConfiguration
         AssertUtils.notEmpty(this.module, "module is empty.");
         AssertUtils.notNull(this.properties, "properties is null.");
     }
+    
+    
     
 }

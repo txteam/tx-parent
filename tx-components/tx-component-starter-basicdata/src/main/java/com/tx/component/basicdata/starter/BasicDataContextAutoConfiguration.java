@@ -26,26 +26,13 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.support.TransactionTemplate;
 
-import com.tx.component.basicdata.context.BasicDataContextFactory;
-import com.tx.component.basicdata.context.BasicDataServiceSupportCacheProxyCreator;
-import com.tx.component.basicdata.controller.BasicDataRemoteController;
-import com.tx.component.basicdata.controller.BasicDataTypeController;
-import com.tx.component.basicdata.dao.DataDictDao;
-import com.tx.component.basicdata.dao.impl.DataDictDaoImpl;
 import com.tx.component.basicdata.script.BasicDataContextTableInitializer;
-import com.tx.component.basicdata.service.BasicDataTypeService;
-import com.tx.component.basicdata.service.DataDictService;
-import com.tx.component.configuration.starter.ConfigContextConfiguration;
+import com.tx.component.basicdata.starter.persister.BasicDataContextHibernateConfig;
 import com.tx.core.ddlutil.executor.TableDDLExecutor;
 import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.mybatis.support.MyBatisDaoSupport;
-import com.tx.core.mybatis.support.MyBatisDaoSupportHelper;
-import com.tx.core.util.dialect.DataSourceTypeEnum;
 
 /**
  * 基础数据容器自动配置<br/>
@@ -114,48 +101,48 @@ public class BasicDataContextAutoConfiguration
             this.basePackages = this.properties.getBasePackages();
         }
         
-        if (!StringUtils.isBlank(this.properties.getModule())) {
-            this.module = this.properties.getModule();
-        }
-        if (!StringUtils.isBlank(this.applicationName)) {
-            this.module = this.applicationName;
-        }
-        
-        this.transactionTemplate = new TransactionTemplate(
-                this.transactionManager);
-        this.myBatisDaoSupport = MyBatisDaoSupportHelper.buildMyBatisDaoSupport(
-                this.mybatisConfigLocation,
-                this.mybatisMapperLocations,
-                DataSourceTypeEnum.MYSQL,
-                this.dataSource);
+//        if (!StringUtils.isBlank(this.properties.getModule())) {
+//            this.module = this.properties.getModule();
+//        }
+//        if (!StringUtils.isBlank(this.applicationName)) {
+//            this.module = this.applicationName;
+//        }
+//        
+//        this.transactionTemplate = new TransactionTemplate(
+//                this.transactionManager);
+//        this.myBatisDaoSupport = MyBatisDaoSupportHelper.buildMyBatisDaoSupport(
+//                this.mybatisConfigLocation,
+//                this.mybatisMapperLocations,
+//                DataSourceTypeEnum.MYSQL,
+//                this.dataSource);
     }
     
-    /**
-     * 基础数据缓存业务层<br/>
-     * <功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return CacheManager [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    @Bean
-    public CacheManager basicDataCacheManager() {
-        //设置cacheManager
-        if (StringUtils.isNotBlank(this.properties.getCacheManagerRef())
-                && this.applicationContext
-                        .containsBean(this.properties.getCacheManagerRef())) {
-            this.cacheManager = new ConcurrentMapCacheManager();
-        } else if (this.applicationContext.getBeansOfType(CacheManager.class)
-                .size() == 1) {
-            this.cacheManager = this.applicationContext
-                    .getBean(CacheManager.class);
-        } else {
-            this.cacheManager = new ConcurrentMapCacheManager();
-        }
-        
-        return null;
-    }
+//    /**
+//     * 基础数据缓存业务层<br/>
+//     * <功能详细描述>
+//     * @return [参数说明]
+//     * 
+//     * @return CacheManager [返回类型说明]
+//     * @exception throws [异常类型] [异常说明]
+//     * @see [类、类#方法、类#成员]
+//     */
+//    @Bean
+//    public CacheManager basicDataCacheManager() {
+//        //设置cacheManager
+//        if (StringUtils.isNotBlank(this.properties.getCacheManagerRef())
+//                && this.applicationContext
+//                        .containsBean(this.properties.getCacheManagerRef())) {
+//            this.cacheManager = new ConcurrentMapCacheManager();
+//        } else if (this.applicationContext.getBeansOfType(CacheManager.class)
+//                .size() == 1) {
+//            this.cacheManager = this.applicationContext
+//                    .getBean(CacheManager.class);
+//        } else {
+//            this.cacheManager = new ConcurrentMapCacheManager();
+//        }
+//        
+//        return null;
+//    }
     
     /**
      * 基础数据持久化配置<br/>
@@ -167,10 +154,8 @@ public class BasicDataContextAutoConfiguration
      * @see [类、类#方法、类#成员]
      */
     @Bean
-    public BasicDataContextPersisterConfig basicDataPersisterConfig() {
-        BasicDataContextPersisterConfig config = new BasicDataContextPersisterConfig();
-        
-        
+    public BasicDataContextHibernateConfig basicDataPersisterConfig() {
+        BasicDataContextHibernateConfig config = new BasicDataContextHibernateConfig();
         
         String mybaticConfigLocation = this.properties.getPersister()
                 .getMybatisConfigLocation();
@@ -283,124 +268,106 @@ public class BasicDataContextAutoConfiguration
     //        return basicDataTypeService;
     //    }
     
-    /**
-     * 基础数据类型业务层<br/>
-     * <功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return BasicDataTypeService [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    @Bean(name = "basicdata.basicDataTypeService")
-    public BasicDataTypeService basicDataTypeService() {
-        BasicDataTypeService basicDataTypeService = new BasicDataTypeService();
-        return basicDataTypeService;
-    }
+    //    /**
+    //     * 基础数据类型业务层<br/>
+    //     * <功能详细描述>
+    //     * @return [参数说明]
+    //     * 
+    //     * @return BasicDataTypeService [返回类型说明]
+    //     * @exception throws [异常类型] [异常说明]
+    //     * @see [类、类#方法、类#成员]
+    //     */
+    //    @Bean(name = "basicdata.basicDataTypeService")
+    //    public BasicDataTypeService basicDataTypeService() {
+    //        BasicDataTypeService basicDataTypeService = new BasicDataTypeService();
+    //        return basicDataTypeService;
+    //    }
+    //    
+    //    /**
+    //     * 数据字典类持久层<br/>
+    //     * <功能详细描述>
+    //     * @return [参数说明]
+    //     * 
+    //     * @return DataDictDao [返回类型说明]
+    //     * @exception throws [异常类型] [异常说明]
+    //     * @see [类、类#方法、类#成员]
+    //     */
+    //    @Bean(name = "basicdata.dataDictDao")
+    //    public DataDictDao dataDictDao() {
+    //        DataDictDao dao = new DataDictDaoImpl(this.myBatisDaoSupport);
+    //        return dao;
+    //    }
+    //    
+    //    /**
+    //     * 数据字典业务层<br/>
+    //     * <功能详细描述>
+    //     * @return [参数说明]
+    //     * 
+    //     * @return DataDictService [返回类型说明]
+    //     * @exception throws [异常类型] [异常说明]
+    //     * @see [类、类#方法、类#成员]
+    //     */
+    //    @Bean(name = "basicdata.dataDictService")
+    //    public DataDictService dataDictService(DataDictDao dataDictDao) {
+    //        DataDictService service = new DataDictService(this.dataSource,
+    //                this.transactionTemplate, dataDictDao);
+    //        return service;
+    //    }
     
-    /**
-     * 数据字典类持久层<br/>
-     * <功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return DataDictDao [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    @Bean(name = "basicdata.dataDictDao")
-    public DataDictDao dataDictDao() {
-        DataDictDao dao = new DataDictDaoImpl(this.myBatisDaoSupport);
-        return dao;
-    }
+    //    /**
+    //     * 基础数据业务层代理创建器<br/>
+    //     * <功能详细描述>
+    //     * @return [参数说明]
+    //     * 
+    //     * @return BasicDataServiceProxyCreator [返回类型说明]
+    //     * @exception throws [异常类型] [异常说明]
+    //     * @see [类、类#方法、类#成员]
+    //    */
+    //    @Bean(name = "basicdata.basicDataServiceSupportCacheProxyCreator")
+    //    public BasicDataServiceSupportCacheProxyCreator basicDataServiceSupportCacheProxyCreator() {
+    //        BasicDataServiceSupportCacheProxyCreator creator = new BasicDataServiceSupportCacheProxyCreator(
+    //                this.cacheManager);
+    //        
+    //        return creator;
+    //    }
+    //    
+    //    /**
+    //     * 基础数据容器<br/>
+    //     * <功能详细描述>
+    //     * @return [参数说明]
+    //     * 
+    //     * @return BasicDataContextFactory [返回类型说明]
+    //     * @exception throws [异常类型] [异常说明]
+    //     * @see [类、类#方法、类#成员]
+    //     */
+    //    @Bean(name = "basicDataContext")
+    //    public BasicDataContextFactory BasicDataContextFactory() {
+    //        BasicDataContextFactory context = new BasicDataContextFactory();
+    //        
+    //        return context;
+    //    }
+    //    
+    //    /**
+    //     * 基础数据业务层注册机<br/>
+    //     * <功能详细描述>
+    //     * @param basicDataTypeService
+    //     * @param dataDictService
+    //     * @return [参数说明]
+    //     * 
+    //     * @return BasicDataServiceRegistry [返回类型说明]
+    //     * @exception throws [异常类型] [异常说明]
+    //     * @see [类、类#方法、类#成员]
+    //     */
+    //    @DependsOn(value = "basicDataContext")
+    //    @Bean(name = "basicdata.basicDataServiceRegistry")
+    //    public BasicDataServiceRegistry basicDataServiceRegistry(
+    //            BasicDataTypeService basicDataTypeService,
+    //            DataDictService dataDictService) {
+    //        BasicDataServiceRegistry serviceFactory = new BasicDataServiceRegistry(
+    //                module, basePackages, basicDataTypeService, dataDictService,
+    //                null);
+    //        
+    //        return serviceFactory;
+    //    }
     
-    /**
-     * 数据字典业务层<br/>
-     * <功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return DataDictService [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    @Bean(name = "basicdata.dataDictService")
-    public DataDictService dataDictService(DataDictDao dataDictDao) {
-        DataDictService service = new DataDictService(this.dataSource,
-                this.transactionTemplate, dataDictDao);
-        return service;
-    }
-    
-    /**
-     * 基础数据业务层代理创建器<br/>
-     * <功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return BasicDataServiceProxyCreator [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-    */
-    @Bean(name = "basicdata.basicDataServiceSupportCacheProxyCreator")
-    public BasicDataServiceSupportCacheProxyCreator basicDataServiceSupportCacheProxyCreator() {
-        BasicDataServiceSupportCacheProxyCreator creator = new BasicDataServiceSupportCacheProxyCreator(
-                this.cacheManager);
-        
-        return creator;
-    }
-    
-    /**
-     * 基础数据容器<br/>
-     * <功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return BasicDataContextFactory [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    @Bean(name = "basicDataContext")
-    public BasicDataContextFactory BasicDataContextFactory() {
-        BasicDataContextFactory context = new BasicDataContextFactory();
-        
-        return context;
-    }
-    
-    /**
-     * 基础数据业务层注册机<br/>
-     * <功能详细描述>
-     * @param basicDataTypeService
-     * @param dataDictService
-     * @return [参数说明]
-     * 
-     * @return BasicDataServiceRegistry [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    @DependsOn(value = "basicDataContext")
-    @Bean(name = "basicdata.basicDataServiceRegistry")
-    public BasicDataServiceRegistry basicDataServiceRegistry(
-            BasicDataTypeService basicDataTypeService,
-            DataDictService dataDictService) {
-        BasicDataServiceRegistry serviceFactory = new BasicDataServiceRegistry(
-                module, basePackages, basicDataTypeService, dataDictService,
-                null);
-        
-        return serviceFactory;
-    }
-    
-    @Bean(name = "basicDataTypeController")
-    public BasicDataTypeController basicDataTypeController(
-            BasicDataTypeService basicDataTypeService) {
-        BasicDataTypeController controller = new BasicDataTypeController(
-                basicDataTypeService);
-        return controller;
-    }
-    
-    @Bean(name = "basicDataRemoteController")
-    public BasicDataRemoteController basicDataRemoteController(
-            BasicDataTypeService basicDataTypeService) {
-        BasicDataRemoteController controller = new BasicDataRemoteController();
-        return controller;
-    }
-    
-    public ConfigContextConfiguration ConfigContextConfiguration(){
-        
-    }
 }

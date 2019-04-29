@@ -4,7 +4,7 @@
  * 修改时间:  2018年4月27日
  * <修改描述:>
  */
-package com.tx.component.basicdata.starter;
+package com.tx.component.basicdata.starter.persister;
 
 /**
  * 基础数据容器默认配置<br/>

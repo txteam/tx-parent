@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.tx.component.configuration.model.ConfigProperty;
+import com.tx.component.configuration.persister.ConfigPropertyPersister;
 
 /**
  * 配置容器基础配置吃撑类<br/>
@@ -31,7 +32,7 @@ public abstract class ConfigContextBuilder extends ConfigContextConfigurator {
             .getLogger(ConfigContextBuilder.class);
     
     /** 配置属性持久器集合 */
-    protected List<ConfigPropertyFinder> configPropertyFinderList;
+    protected List<ConfigPropertyPersister> configPropertyFinderList;
     
     /**
      * @throws Exception

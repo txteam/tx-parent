@@ -4,7 +4,7 @@
  * 修改时间:  2019年3月7日
  * <修改描述:>
  */
-package com.tx.component.basicdata.starter;
+package com.tx.component.basicdata.starter.persister;
 
 import org.springframework.cache.CacheManager;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -20,10 +20,7 @@ import com.tx.core.mybatis.support.MyBatisDaoSupport;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class BasicDataContextPersisterConfig {
-    
-    /** 所属模块 */
-    private String module;
+public class BasicDataContextMybatisConfig {
     
     /** 缓存管理器 */
     private CacheManager cacheManager;
@@ -31,22 +28,8 @@ public class BasicDataContextPersisterConfig {
     /** transactionTemplate: 如果存在事务则在当前事务中执行 */
     private MyBatisDaoSupport myBatisDaoSupport;
     
-    /** transactionTemplate: 如果存在事务则在当前事务中执行 */
+    /** 事务处理句柄 */
     private TransactionTemplate transactionTemplate;
-
-    /**
-     * @return 返回 module
-     */
-    public String getModule() {
-        return module;
-    }
-
-    /**
-     * @param 对module进行赋值
-     */
-    public void setModule(String module) {
-        this.module = module;
-    }
 
     /**
      * @return 返回 cacheManager

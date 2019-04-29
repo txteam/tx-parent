@@ -7,7 +7,6 @@
 	</configSuffixes>
 	<enableImports><![CDATA[false]]></enableImports>
 	<configs>
-		<config>java:com.tx.component.file.boot.FileComponentBootApplication</config>
 	</configs>
 	<autoconfigs>
 	</autoconfigs>

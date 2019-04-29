@@ -234,31 +234,17 @@
 				<artifactId>tx-component-starter-security</artifactId>
 				<version>${tx.version}</version>
 			</dependency>
-
-			<!-- 待改进模块 -->
 			<dependency>
 				<groupId>com.tx</groupId>
-				<artifactId>tx-component-rule</artifactId>
-				<version>${tx.version}</version>
-			</dependency>
-
-			<!-- 废弃模块 -->
-			<dependency>
-				<groupId>com.tx</groupId>
-				<artifactId>tx-component-configuration</artifactId>
+				<artifactId>tx-component-starter-communication</artifactId>
 				<version>${tx.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.tx</groupId>
-				<artifactId>tx-component-communication</artifactId>
+				<artifactId>tx-component-starter-file</artifactId>
 				<version>${tx.version}</version>
 			</dependency>
-			<dependency>
-				<groupId>com.tx</groupId>
-				<artifactId>tx-component-file</artifactId>
-				<version>${tx.version}</version>
-			</dependency>
-
+			
 			<!-- cglib dependency by mybatis -->
 			<dependency>
 				<groupId>cglib</groupId>

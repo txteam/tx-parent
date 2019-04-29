@@ -6,23 +6,20 @@
  */
 package com.tx.component.configuration.starter;
 
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
-import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.transaction.support.TransactionTemplate;
 
-import com.tx.component.basicdata.starter.BasicDataContextPersisterConfig;
+import com.tx.component.basicdata.starter.cache.BasicDataContextCacheConfig;
+import com.tx.component.basicdata.starter.persister.BasicDataContextMybatisConfig;
 import com.tx.component.configuration.dao.ConfigPropertyItemDao;
 import com.tx.component.configuration.dao.impl.ConfigPropertyItemDaoImpl;
 import com.tx.component.configuration.script.ConfigContextTableInitializer;
 import com.tx.component.configuration.service.ConfigPropertyItemService;
 import com.tx.core.ddlutil.executor.TableDDLExecutor;
-import com.tx.core.exceptions.util.AssertUtils;
 
 /**
  * 基础数据容器自动配置<br/>
@@ -40,8 +37,6 @@ public class ConfigContextPersisterConfiguration {
     public ConfigContextPersisterConfiguration() {
         super();
     }
-    
-    
     
     /**
      * 该类会优先加载:基础数据容器表初始化器<br/>
@@ -95,24 +90,24 @@ public class ConfigContextPersisterConfiguration {
      * @since  [产品/模块版本]
      */
     @Configuration
-    public static class ConfigContextMybatisPersisterConfiguration implements InitializingBean {
+    @ConditionalOnBean({ BasicDataContextMybatisConfig.class,
+            BasicDataContextCacheConfig.class })
+    @ConditionalOnMissingBean(ConfigPropertyItemService.class)
+    public static class ConfigContextMybatisPersisterConfiguration {
         
-        private BasicDataContextPersisterConfig persisterConfig;
+        /** mybatis配置 */
+        private BasicDataContextMybatisConfig mybatisConfig;
         
+        /** 基础数据容器缓存配置 */
+        private BasicDataContextCacheConfig cacheConfig;
         
-        
-        /**
-         * @throws Exception
-         */
-        @Override
-        public void afterPropertiesSet() throws Exception {
-            AssertUtils.notNull(this.cacheManager, "cacheManager is null.");
-            
-            AssertUtils.notNull(persisterConfig, "persisterConfig is null.");
-            AssertUtils.notNull(persisterConfig.getTransactionTemplate(),
-                    "transactionTemplate is null.");
-            AssertUtils.notNull(persisterConfig.getMyBatisDaoSupport(),
-                    "persisterConfig is null.");
+        /** <默认构造函数> */
+        public ConfigContextMybatisPersisterConfiguration(
+                BasicDataContextMybatisConfig mybatisConfig,
+                BasicDataContextCacheConfig cacheConfig) {
+            super();
+            this.mybatisConfig = mybatisConfig;
+            this.cacheConfig = cacheConfig;
         }
         
         /**
@@ -128,8 +123,8 @@ public class ConfigContextPersisterConfiguration {
         @Bean("basicdata.config.configPropertyItemService")
         public ConfigPropertyItemService configPropertyItemService() {
             ConfigPropertyItemService service = new ConfigPropertyItemService(
-                    persisterConfig.getTransactionTemplate(),
-                    configPropertyItemDao(), cacheManager);
+                    mybatisConfig.getTransactionTemplate(),
+                    configPropertyItemDao(), cacheConfig.getCacheManager());
             return service;
         }
         
@@ -145,7 +140,7 @@ public class ConfigContextPersisterConfiguration {
         @Bean("basicdata.config.configPropertyItemDao")
         public ConfigPropertyItemDao configPropertyItemDao() {
             ConfigPropertyItemDao dao = new ConfigPropertyItemDaoImpl(
-                    persisterConfig.getMyBatisDaoSupport());
+                    mybatisConfig.getMyBatisDaoSupport());
             return dao;
         }
     }

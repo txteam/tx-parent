@@ -14,7 +14,7 @@ import com.tx.component.configuration.context.ConfigContext;
 import com.tx.component.configuration.model.ConfigProperty;
 
 /**
- * <功能简述>
+ * 配置容器工具类<br/>
  * <功能详细描述>
  * 
  * @author  Administrator

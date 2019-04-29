@@ -6,7 +6,6 @@
  */
 package com.tx.component.configuration.model;
 
-
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -41,6 +40,9 @@ public class ConfigPropertyItem implements ConfigProperty, Serializable {
     /** 配置属性的值 */
     private String value;
     
+    /** 配置属性所属模块 */
+    private String module;
+    
     /** 配置属性描述 */
     private String remark;
     
@@ -59,8 +61,8 @@ public class ConfigPropertyItem implements ConfigProperty, Serializable {
     /** 最后更新时间 */
     private Date lastUpdateDate;
     
-    /** 所属模块 */
-    private String module;
+    /** 配置属性额外属性 */
+    private String attributes;
     
     /** 子配置项 */
     private List<ConfigProperty> childs;
@@ -85,26 +87,12 @@ public class ConfigPropertyItem implements ConfigProperty, Serializable {
     public String getParentId() {
         return parentId;
     }
-
+    
     /**
      * @param 对parentId进行赋值
      */
     public void setParentId(String parentId) {
         this.parentId = parentId;
-    }
-
-    /**
-     * @return 返回 name
-     */
-    public String getName() {
-        return name;
-    }
-    
-    /**
-     * @param 对name进行赋值
-     */
-    public void setName(String name) {
-        this.name = name;
     }
     
     /**
@@ -122,6 +110,20 @@ public class ConfigPropertyItem implements ConfigProperty, Serializable {
     }
     
     /**
+     * @return 返回 name
+     */
+    public String getName() {
+        return name;
+    }
+    
+    /**
+     * @param 对name进行赋值
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+    
+    /**
      * @return 返回 value
      */
     public String getValue() {
@@ -133,6 +135,20 @@ public class ConfigPropertyItem implements ConfigProperty, Serializable {
      */
     public void setValue(String value) {
         this.value = value;
+    }
+    
+    /**
+     * @return 返回 module
+     */
+    public String getModule() {
+        return module;
+    }
+    
+    /**
+     * @param 对module进行赋值
+     */
+    public void setModule(String module) {
+        this.module = module;
     }
     
     /**
@@ -164,6 +180,34 @@ public class ConfigPropertyItem implements ConfigProperty, Serializable {
     }
     
     /**
+     * @return 返回 modifyAble
+     */
+    public boolean isModifyAble() {
+        return modifyAble;
+    }
+    
+    /**
+     * @param 对modifyAble进行赋值
+     */
+    public void setModifyAble(boolean modifyAble) {
+        this.modifyAble = modifyAble;
+    }
+    
+    /**
+     * @return 返回 leaf
+     */
+    public boolean isLeaf() {
+        return leaf;
+    }
+    
+    /**
+     * @param 对leaf进行赋值
+     */
+    public void setLeaf(boolean leaf) {
+        this.leaf = leaf;
+    }
+    
+    /**
      * @return 返回 createDate
      */
     public Date getCreateDate() {
@@ -192,6 +236,20 @@ public class ConfigPropertyItem implements ConfigProperty, Serializable {
     }
     
     /**
+     * @return 返回 attributes
+     */
+    public String getAttributes() {
+        return attributes;
+    }
+    
+    /**
+     * @param 对attributes进行赋值
+     */
+    public void setAttributes(String attributes) {
+        this.attributes = attributes;
+    }
+    
+    /**
      * @return 返回 childs
      */
     public List<ConfigProperty> getChilds() {
@@ -203,47 +261,5 @@ public class ConfigPropertyItem implements ConfigProperty, Serializable {
      */
     public void setChilds(List<ConfigProperty> childs) {
         this.childs = childs;
-    }
-    
-    /**
-     * @return 返回 leaf
-     */
-    public boolean isLeaf() {
-        return leaf;
-    }
-    
-    /**
-     * @param 对leaf进行赋值
-     */
-    public void setLeaf(boolean leaf) {
-        this.leaf = leaf;
-    }
-    
-    /**
-     * @param 对modifyAble进行赋值
-     */
-    public void setModifyAble(boolean modifyAble) {
-        this.modifyAble = modifyAble;
-    }
-    
-    /**
-     * @return 返回 modifyAble
-     */
-    public boolean isModifyAble() {
-        return modifyAble;
-    }
-
-    /**
-     * @return 返回 module
-     */
-    public String getModule() {
-        return module;
-    }
-
-    /**
-     * @param 对module进行赋值
-     */
-    public void setModule(String module) {
-        this.module = module;
     }
 }

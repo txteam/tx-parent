@@ -39,9 +39,9 @@ import io.swagger.annotations.ApiOperation;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-@Api(value = "/basicDataRemote", tags = "基础数据远程调用API")
-@RestController(value = "/basicDataRemote")
-public class BasicDataRemoteController {
+@Api(value = "/basicdata", tags = "基础数据容器API")
+@RestController(value = "/basicdata")
+public class BasicDataAPIController {
     
     /**
      * 获取对应的表名<br/>

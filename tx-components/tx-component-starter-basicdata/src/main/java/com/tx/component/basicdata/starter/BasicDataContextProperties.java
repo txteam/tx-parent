@@ -8,6 +8,8 @@ package com.tx.component.basicdata.starter;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import com.tx.component.basicdata.starter.cache.BasicDataCacheProperties;
+import com.tx.component.basicdata.starter.persister.BasicDataPersisterProperties;
 import com.tx.component.configuration.starter.ConfigContextProperties;
 
 /**
@@ -27,9 +29,6 @@ public class BasicDataContextProperties {
     
     /** 表是否自动初始化 */
     private boolean tableAutoInitialize = false;
-    
-    /** 容器所属模块：当该值为空时，使用spring.application.name的内容 */
-    private String module;
     
     /** 基础包集合 */
     private String basePackages = "com.tx.local";
@@ -69,20 +68,6 @@ public class BasicDataContextProperties {
      */
     public void setBasePackages(String basePackages) {
         this.basePackages = basePackages;
-    }
-    
-    /**
-     * @return 返回 module
-     */
-    public String getModule() {
-        return module;
-    }
-    
-    /**
-     * @param 对module进行赋值
-     */
-    public void setModule(String module) {
-        this.module = module;
     }
     
     /**

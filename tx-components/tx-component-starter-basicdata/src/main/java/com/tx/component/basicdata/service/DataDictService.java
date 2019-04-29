@@ -330,8 +330,8 @@ public class DataDictService implements InitializingBean, ResourceLoaderAware {
         
         DataDict entity = findEntityByCode(basicDataType, code);
         
-        //加载Entity的分项列表
-        setupEntryList(entity);
+//        //加载Entity的分项列表
+//        setupEntryList(entity);
         
         return entity;
     }
@@ -350,7 +350,7 @@ public class DataDictService implements InitializingBean, ResourceLoaderAware {
         AssertUtils.notEmpty(code, "code is empty.");
         
         DataDict condition = new DataDict();
-        condition.setBasicDataTypeCode(basicDataTypeCode);
+//        condition.setBasicDataTypeCode(basicDataTypeCode);
         condition.setCode(code);
         
         DataDict res = this.dataDictDao.find(condition);

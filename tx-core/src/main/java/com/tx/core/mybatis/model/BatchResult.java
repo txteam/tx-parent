@@ -6,9 +6,7 @@
  */
 package com.tx.core.mybatis.model;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -21,19 +19,20 @@ import java.util.Map;
  */
 public class BatchResult {
     
+    /** 是否成功 */
     private boolean success = true;
     
+    /** 总数 */
     private int totalNum = 0;
     
+    /** 错误数目 */
     private int errorNum = 0;
     
-    private Map<Integer, Object> errorRownumParameterMapping = new HashMap<Integer, Object>();
+    private Map<Integer, Object> errorRownum2ObjectMap = new HashMap<Integer, Object>();
     
-    private List<Integer> errorRownumIndexList = new ArrayList<Integer>();
+    private Map<Integer, Exception> errorRownum2ExceptionMap = new HashMap<Integer, Exception>();
     
-    private Map<Integer, Exception> errorExceptionRownumIndexMapping = new HashMap<Integer, Exception>();
-    
-    private Map<Integer, String> errorMessageRownumIndexMapping = new HashMap<Integer, String>();
+    private Map<Integer, String> errorRownum2MessageMapping = new HashMap<Integer, String>();
     
     /**
      * @return 返回 success
@@ -41,119 +40,12 @@ public class BatchResult {
     public boolean isSuccess() {
         return success;
     }
-
+    
     /**
      * @param 对success进行赋值
      */
     public void setSuccess(boolean success) {
         this.success = success;
-    }
-
-    /**
-     * @return 返回 errorNum
-     */
-    public int getErrorNum() {
-        return errorNum;
-    }
-    
-    /**
-     * 当发生异常时设置 <功能详细描述> [参数说明]
-     * 
-     * @return void [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public void addErrorInfoWhenException(Object parameter, int rownumIndex,
-            Exception ex) {
-        success = false;
-        
-        this.errorRownumParameterMapping.put(rownumIndex, parameter);
-        this.errorRownumIndexList.add(rownumIndex);
-        errorExceptionRownumIndexMapping.put(rownumIndex, ex);
-        errorMessageRownumIndexMapping.put(rownumIndex, ex.toString());
-        this.errorNum++;
-    }
-    
-    /**
-     * 设置异常信息 1、因默认的错误信息填入的是exception.toString不便页面获取该对象进行显示
-     * 2、所以此处提供该方法，用于用户自定义错误信息的填入
-     * 
-     * @param rownum
-     * @param message
-     *            [参数说明]
-     * 
-     * @return void [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public void setErrorMessage(int rownumIndex, String message) {
-        errorMessageRownumIndexMapping.put(rownumIndex, message);
-    }
-    
-    /**
-     * @return 返回 errorRownumParameterMapping
-     */
-    public Map<Integer, Object> getErrorRownumParameterMapping() {
-        return errorRownumParameterMapping;
-    }
-
-    /**
-     * @param 对errorRownumParameterMapping进行赋值
-     */
-    public void setErrorRownumParameterMapping(
-            Map<Integer, Object> errorRownumParameterMapping) {
-        this.errorRownumParameterMapping = errorRownumParameterMapping;
-    }
-
-    /**
-     * @return 返回 errorRownumIndexList
-     */
-    public List<Integer> getErrorRownumIndexList() {
-        return errorRownumIndexList;
-    }
-    
-    /**
-     * @param 对errorRownumIndexList进行赋值
-     */
-    public void setErrorRownumIndexList(List<Integer> errorRownumIndexList) {
-        this.errorRownumIndexList = errorRownumIndexList;
-    }
-    
-    /**
-     * @return 返回 errorExceptionRownumIndexMapping
-     */
-    public Map<Integer, Exception> getErrorExceptionRownumIndexMapping() {
-        return errorExceptionRownumIndexMapping;
-    }
-    
-    /**
-     * @param 对errorExceptionRownumIndexMapping进行赋值
-     */
-    public void setErrorExceptionRownumIndexMapping(
-            Map<Integer, Exception> errorExceptionRownumIndexMapping) {
-        this.errorExceptionRownumIndexMapping = errorExceptionRownumIndexMapping;
-    }
-    
-    /**
-     * @return 返回 errorMessageRownumIndexMapping
-     */
-    public Map<Integer, String> getErrorMessageRownumIndexMapping() {
-        return errorMessageRownumIndexMapping;
-    }
-    
-    /**
-     * @param 对errorMessageRownumIndexMapping进行赋值
-     */
-    public void setErrorMessageRownumIndexMapping(
-            Map<Integer, String> errorMessageRownumIndexMapping) {
-        this.errorMessageRownumIndexMapping = errorMessageRownumIndexMapping;
-    }
-    
-    /**
-     * @param 对errorNum进行赋值
-     */
-    public void setErrorNum(int errorNum) {
-        this.errorNum = errorNum;
     }
     
     /**
@@ -171,9 +63,86 @@ public class BatchResult {
     }
     
     /**
+     * @return 返回 errorNum
+     */
+    public int getErrorNum() {
+        return errorNum;
+    }
+    
+    /**
+     * @param 对errorNum进行赋值
+     */
+    public void setErrorNum(int errorNum) {
+        this.errorNum = errorNum;
+    }
+    
+    /**
      * @return 返回 successNum
      */
     public int getSuccessNum() {
         return this.totalNum - this.errorNum;
+    }
+    
+    /**
+     * 当发生异常时设置 <功能详细描述> [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public void addErrorInfo(Object data, int rownum, Exception ex) {
+        success = false;
+        
+        if (!this.errorRownum2ObjectMap.containsKey(rownum)) {
+            this.errorNum++;
+        }
+        this.errorRownum2ObjectMap.put(rownum, data);
+        this.errorRownum2ExceptionMap.put(rownum, ex);
+        this.errorRownum2MessageMapping.put(rownum, ex.toString());
+    }
+
+    /**
+     * @return 返回 errorRownum2ObjectMap
+     */
+    public Map<Integer, Object> getErrorRownum2ObjectMap() {
+        return errorRownum2ObjectMap;
+    }
+
+    /**
+     * @param 对errorRownum2ObjectMap进行赋值
+     */
+    public void setErrorRownum2ObjectMap(
+            Map<Integer, Object> errorRownum2ObjectMap) {
+        this.errorRownum2ObjectMap = errorRownum2ObjectMap;
+    }
+
+    /**
+     * @return 返回 errorRownum2ExceptionMap
+     */
+    public Map<Integer, Exception> getErrorRownum2ExceptionMap() {
+        return errorRownum2ExceptionMap;
+    }
+
+    /**
+     * @param 对errorRownum2ExceptionMap进行赋值
+     */
+    public void setErrorRownum2ExceptionMap(
+            Map<Integer, Exception> errorRownum2ExceptionMap) {
+        this.errorRownum2ExceptionMap = errorRownum2ExceptionMap;
+    }
+
+    /**
+     * @return 返回 errorRownum2MessageMapping
+     */
+    public Map<Integer, String> getErrorRownum2MessageMapping() {
+        return errorRownum2MessageMapping;
+    }
+
+    /**
+     * @param 对errorRownum2MessageMapping进行赋值
+     */
+    public void setErrorRownum2MessageMapping(
+            Map<Integer, String> errorRownum2MessageMapping) {
+        this.errorRownum2MessageMapping = errorRownum2MessageMapping;
     }
 }

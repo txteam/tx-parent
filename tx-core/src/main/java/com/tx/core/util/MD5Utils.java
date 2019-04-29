@@ -10,6 +10,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.DigestUtils;
 
 import com.tx.core.exceptions.argument.ArgIllegalException;
 
@@ -59,5 +60,13 @@ public class MD5Utils {
             str[k++] = hexDigits[byte0 & 0xf];
         }
         return new String(str);
+    }
+    
+    public static void main(String[] args) {
+        String rawPassword = "123456";
+        
+        System.out.println(DigestUtils
+                        .md5DigestAsHex(rawPassword.toString().getBytes()));
+        System.out.println(encode(rawPassword));
     }
 }

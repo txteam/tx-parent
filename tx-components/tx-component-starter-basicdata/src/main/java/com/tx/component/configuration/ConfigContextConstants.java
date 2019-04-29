@@ -18,4 +18,5 @@ package com.tx.component.configuration;
   */
 public interface ConfigContextConstants {
 
+    String CACHE_NAME = "configPropertyItemCache";
 }

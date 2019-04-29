@@ -42,7 +42,7 @@ public interface ConfigPropertyItemDao {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public int update(Map<String, Object> rowMap);
+    public void update(Map<String, Object> rowMap);
     
     /**
      * 根据系统id查询配置属性项列表 
@@ -55,4 +55,16 @@ public interface ConfigPropertyItemDao {
      * @see [类、类#方法、类#成员]
      */
     public List<ConfigPropertyItem> queryList(Map<String, Object> params);
+    
+    /**
+     * 查询配置属性项<br/>
+     * <功能详细描述>
+     * @param condition
+     * @return [参数说明]
+     * 
+     * @return ConfigPropertyItem [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public ConfigPropertyItem find(ConfigPropertyItem condition);
 }

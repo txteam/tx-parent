@@ -48,6 +48,26 @@ public class ConfigPropertyItemDaoImpl implements ConfigPropertyItemDao {
     }
     
     /**
+     * @param updateRowMap
+     * @return
+     */
+    @Override
+    public void update(Map<String, Object> updateRowMap) {
+        this.myBatisDaoSupport.update("configPropertyItem.update",
+                updateRowMap);
+    }
+    
+    /**
+     * @param condition
+     * @return
+     */
+    @Override
+    public ConfigPropertyItem find(ConfigPropertyItem condition) {
+        return this.myBatisDaoSupport.<ConfigPropertyItem> find(
+                "configPropertyItem.find", condition);
+    }
+    
+    /**
      * @param params
      * @return
      */
@@ -57,13 +77,4 @@ public class ConfigPropertyItemDaoImpl implements ConfigPropertyItemDao {
                 "configPropertyItem.query", params);
     }
     
-    /**
-     * @param updateRowMap
-     * @return
-     */
-    @Override
-    public int update(Map<String, Object> updateRowMap) {
-        return this.myBatisDaoSupport.update("configPropertyItem.update",
-                updateRowMap);
-    }
 }

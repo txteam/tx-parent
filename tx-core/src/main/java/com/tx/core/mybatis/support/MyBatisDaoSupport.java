@@ -13,7 +13,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.executor.BatchExecutorException;
 import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -27,7 +26,6 @@ import org.springframework.beans.PropertyAccessorFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.dao.support.PersistenceExceptionTranslator;
 
-import com.tx.core.exceptions.argument.ArgNullException;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.mybatis.model.BatchResult;
 import com.tx.core.mybatis.model.Order;
@@ -48,23 +46,15 @@ public class MyBatisDaoSupport implements InitializingBean {
     /** 默认在batch功能执行过程中批量持久的条数 */
     private static final int defaultDoFlushSize = 100;
     
+    /** 默认的uuid生成方案 */
     private static final IdentifierGenerator generator = new UUIDHexGenerator();
     
+    /** sqlSessionTemplate */
     private SqlSessionTemplate sqlSessionTemplate;
-    
-    private SqlSessionFactory sqlSessionFactory = null;
-    
-    private PersistenceExceptionTranslator exceptionTranslator = null;
     
     /** <默认构造函数> */
     public MyBatisDaoSupport() {
         super();
-    }
-    
-    /** <默认构造函数> */
-    public MyBatisDaoSupport(SqlSessionFactory sqlSessionFactory) {
-        super();
-        this.sqlSessionFactory = sqlSessionFactory;
     }
     
     /** <默认构造函数> */
@@ -73,51 +63,23 @@ public class MyBatisDaoSupport implements InitializingBean {
         this.sqlSessionTemplate = sqlSessionTemplate;
     }
     
-    /** <默认构造函数> */
-    public MyBatisDaoSupport(SqlSessionFactory sqlSessionFactory,
-            PersistenceExceptionTranslator exceptionTranslator) {
-        super();
-        this.sqlSessionFactory = sqlSessionFactory;
-        this.exceptionTranslator = exceptionTranslator;
-    }
-    
     /**
      * @throws Exception
      */
     @Override
     public void afterPropertiesSet() {
-        if (sqlSessionTemplate == null && sqlSessionFactory == null) {
-            throw new ArgNullException(
-                    "sqlSessionTemplate and sqlSessionFactory is null");
-        }
-        AssertUtils.notNull(sqlSessionTemplate, "sqlSessionTemplate is null.");
-        
-        if (this.sqlSessionFactory == null) {
-            this.sqlSessionFactory = this.sqlSessionTemplate
-                    .getSqlSessionFactory();
-        }
-        if (this.sqlSessionTemplate == null) {
-            if (this.exceptionTranslator == null) {
-                this.sqlSessionTemplate = new SqlSessionTemplate(
-                        this.sqlSessionFactory, ExecutorType.SIMPLE);
-                this.exceptionTranslator = this.sqlSessionTemplate
-                        .getPersistenceExceptionTranslator();
-            } else {
-                this.sqlSessionTemplate = new SqlSessionTemplate(
-                        this.sqlSessionFactory, ExecutorType.SIMPLE,
-                        this.exceptionTranslator);
-            }
-        }
+        AssertUtils.notNull(this.sqlSessionTemplate,
+                "sqlSessionTemplate is null.");
     }
     
     /**
-      * 利用hibernaeUUID生成器，生成唯一键
-      * <功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return String [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 利用hibernaeUUID生成器，生成唯一键
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     public String generateUUID() {
         return generator.generate(null, null).toString();
@@ -505,37 +467,6 @@ public class MyBatisDaoSupport implements InitializingBean {
         }
     }
     
-    //    /**
-    //     * 提供给批量插入使用 需要使用用户自己控制异常处理， 以及flush的时候 需要自己调用
-    //     * 
-    //     * @param statement
-    //     * @param parameter
-    //     *            [参数说明]
-    //     * 
-    //     * @return void [返回类型说明]
-    //     * @exception throws [异常类型] [异常说明]
-    //     * @see [类、类#方法、类#成员]
-    //     */
-    //    @Deprecated
-    //    private void insertForBatch(SqlSession sqlSession, String statement,
-    //            Object parameter, String keyProperty) {
-    //        if (!StringUtils.isEmpty(keyProperty)) {
-    //            //如果指定了keyProperty
-    //            MetaObject metaObject = MetaObject.forObject(parameter);
-    //            if (metaObject.hasSetter(keyProperty)
-    //                    && String.class.equals(metaObject.getSetterType(keyProperty))
-    //                    && StringUtils.isEmpty((String) metaObject.getValue(keyProperty))) {
-    //                metaObject.setValue(keyProperty, generateUUID());
-    //            }
-    //        }
-    //        
-    //        if (parameter != null) {
-    //            sqlSession.insert(statement, parameter);
-    //        } else {
-    //            sqlSession.insert(statement);
-    //        }
-    //    }
-    
     /**
      * 提供给批量插入使用 需要使用用户自己控制异常处理， 以及flush的时候 需要自己调用
      * 
@@ -626,7 +557,7 @@ public class MyBatisDaoSupport implements InitializingBean {
                     || index == objectList.size() - 1) {
                 try {
                     @SuppressWarnings("unused")
-                    List<org.apache.ibatis.executor.BatchResult> test = flushBatchStatements();
+                    List<org.apache.ibatis.executor.BatchResult> test = flushStatements();
                     //System.out.println(test);
                     startFlushRowIndex = index + 1;
                 } catch (BatchExecutorException ex) {
@@ -647,7 +578,7 @@ public class MyBatisDaoSupport implements InitializingBean {
                     // 获取错误行数，由于错误行发生的地方
                     int errorRownumIndex = startFlushRowIndex
                             + e.getSuccessfulBatchResults().size();
-                    result.addErrorInfoWhenException(objectList.get(index),
+                    result.addErrorInfo(objectList.get(index),
                             errorRownumIndex,
                             ex);
                     
@@ -722,7 +653,7 @@ public class MyBatisDaoSupport implements InitializingBean {
                     || index == objectList.size() - 1) {
                 try {
                     @SuppressWarnings("unused")
-                    List<org.apache.ibatis.executor.BatchResult> test = flushBatchStatements();
+                    List<org.apache.ibatis.executor.BatchResult> test = flushStatements();
                     //System.out.println(test);
                     startFlushRowIndex = index + 1;
                 } catch (BatchExecutorException ex) {
@@ -743,7 +674,7 @@ public class MyBatisDaoSupport implements InitializingBean {
                     // 获取错误行数，由于错误行发生的地方
                     int errorRownumIndex = startFlushRowIndex
                             + e.getSuccessfulBatchResults().size();
-                    result.addErrorInfoWhenException(objectList.get(index),
+                    result.addErrorInfo(objectList.get(index),
                             errorRownumIndex,
                             ex);
                     
@@ -870,7 +801,7 @@ public class MyBatisDaoSupport implements InitializingBean {
                     || index == objectList.size() - 1) {
                 try {
                     @SuppressWarnings("unused")
-                    List<org.apache.ibatis.executor.BatchResult> test = flushBatchStatements();
+                    List<org.apache.ibatis.executor.BatchResult> test = flushStatements();
                     //System.out.println(test);
                     startFlushRowIndex = index + 1;
                 } catch (BatchExecutorException ex) {
@@ -891,7 +822,7 @@ public class MyBatisDaoSupport implements InitializingBean {
                     // 获取错误行数，由于错误行发生的地方
                     int errorRownumIndex = startFlushRowIndex
                             + e.getSuccessfulBatchResults().size();
-                    result.addErrorInfoWhenException(objectList.get(index),
+                    result.addErrorInfo(objectList.get(index),
                             errorRownumIndex,
                             ex);
                     
@@ -1035,7 +966,7 @@ public class MyBatisDaoSupport implements InitializingBean {
             if (index % doFlushSize == 0 || index == objectList.size()) {
                 try {
                     @SuppressWarnings("unused")
-                    List<org.apache.ibatis.executor.BatchResult> test = flushBatchStatements();
+                    List<org.apache.ibatis.executor.BatchResult> test = flushStatements();
                     startFlushRowIndex = index;
                 } catch (BatchExecutorException ex) {
                     if (isStopWhenFlushHappenedException) {
@@ -1053,7 +984,7 @@ public class MyBatisDaoSupport implements InitializingBean {
                     // 获取错误行数，由于错误行发生的地方
                     int errorRownumIndex = startFlushRowIndex
                             + ex.getSuccessfulBatchResults().size();
-                    result.addErrorInfoWhenException(objectList.get(index),
+                    result.addErrorInfo(objectList.get(index),
                             errorRownumIndex,
                             ex);
                     
@@ -1201,7 +1132,7 @@ public class MyBatisDaoSupport implements InitializingBean {
                     || index == objectList.size() - 1) {
                 try {
                     @SuppressWarnings("unused")
-                    List<org.apache.ibatis.executor.BatchResult> test = flushBatchStatements();
+                    List<org.apache.ibatis.executor.BatchResult> test = flushStatements();
                     //System.out.println(test);
                     startFlushRowIndex = index + 1;
                 } catch (BatchExecutorException ex) {
@@ -1222,7 +1153,7 @@ public class MyBatisDaoSupport implements InitializingBean {
                     // 获取错误行数，由于错误行发生的地方
                     int errorRownumIndex = startFlushRowIndex
                             + e.getSuccessfulBatchResults().size();
-                    result.addErrorInfoWhenException(objectList.get(index),
+                    result.addErrorInfo(objectList.get(index),
                             errorRownumIndex,
                             ex);
                     
@@ -1247,7 +1178,7 @@ public class MyBatisDaoSupport implements InitializingBean {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    private List<org.apache.ibatis.executor.BatchResult> flushBatchStatements() {
+    public List<org.apache.ibatis.executor.BatchResult> flushStatements() {
         return this.sqlSessionTemplate.flushStatements();
     }
     
@@ -1264,32 +1195,29 @@ public class MyBatisDaoSupport implements InitializingBean {
     }
     
     /**
-     * @param 对sqlSessionTemplate进行赋值
+     * sqlSessionTemplate
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return SqlSessionTemplate [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
-    public void setSqlSessionTemplate(SqlSessionTemplate sqlSessionTemplate) {
-        this.sqlSessionTemplate = sqlSessionTemplate;
+    public SqlSessionTemplate getSqlSessionTemplate() {
+        return sqlSessionTemplate;
     }
     
     /**
-     * @param 对exceptionTranslator进行赋值
-     */
-    public void setExceptionTranslator(
-            PersistenceExceptionTranslator exceptionTranslator) {
-        this.exceptionTranslator = exceptionTranslator;
-    }
-    
-    /**
-     * @param 对sqlSessionFactory进行赋值
-     */
-    public void setSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
-        this.sqlSessionFactory = sqlSessionFactory;
-    }
-    
-    /**
-     * @return 返回 exceptionTranslator
+     * ExceptionTranslator
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return PersistenceExceptionTranslator [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     public PersistenceExceptionTranslator getExceptionTranslator() {
-        return exceptionTranslator;
+        return this.sqlSessionTemplate.getPersistenceExceptionTranslator();
     }
     
     /**
@@ -1305,19 +1233,6 @@ public class MyBatisDaoSupport implements InitializingBean {
     }
     
     /**
-     * sqlSessionTemplate
-     * <功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return SqlSessionTemplate [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public SqlSessionTemplate getSqlSessionTemplate() {
-        return sqlSessionTemplate;
-    }
-    
-    /**
      * 获取Mybatis对应的sqlSessionFactory中的Configuration<br/>
      * <功能详细描述>
      * @return [参数说明]
@@ -1326,9 +1241,21 @@ public class MyBatisDaoSupport implements InitializingBean {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public Configuration getConfiguration(){
-        return this.sqlSessionFactory.getConfiguration();
+    public Configuration getConfiguration() {
+        return getSqlSessionFactory().getConfiguration();
     }
     
+    /**
+     * setSqlSessionTemplate 
+     * <功能详细描述>
+     * @param sqlSessionTemplate [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public void setSqlSessionTemplate(SqlSessionTemplate sqlSessionTemplate) {
+        this.sqlSessionTemplate = sqlSessionTemplate;
+    }
     
 }

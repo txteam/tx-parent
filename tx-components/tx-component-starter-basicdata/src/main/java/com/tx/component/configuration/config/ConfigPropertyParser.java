@@ -7,9 +7,11 @@
 package com.tx.component.configuration.config;
 
 import java.util.List;
+import java.util.Map;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import com.thoughtworks.xstream.annotations.XStreamConverter;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 /**
@@ -21,6 +23,7 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
+@XStreamConverter(value = ConfigPropertyParserConverter.class)
 @XStreamAlias("config")
 public class ConfigPropertyParser {
     
@@ -30,7 +33,7 @@ public class ConfigPropertyParser {
     
     /** 是否支持动态配置 */
     @XStreamAsAttribute
-    private boolean modifyAble = false;
+    private boolean modifyAble = true;
     
     /** 关键字 */
     @XStreamAsAttribute
@@ -45,6 +48,9 @@ public class ConfigPropertyParser {
     
     /** 实际值，如果在开发模式，则以该值为标准，在开发模式中，value值优先加载该值 */
     private String value;
+    
+    /** 菜单对应权限 */
+    private Map<String, String> attributes;
     
     /** 属性值表达式 */
     private String validateExpression = "";
@@ -131,6 +137,20 @@ public class ConfigPropertyParser {
      */
     public void setModifyAble(boolean modifyAble) {
         this.modifyAble = modifyAble;
+    }
+    
+    /**
+     * @return 返回 attributes
+     */
+    public Map<String, String> getAttributes() {
+        return attributes;
+    }
+    
+    /**
+     * @param 对attributes进行赋值
+     */
+    public void setAttributes(Map<String, String> attributes) {
+        this.attributes = attributes;
     }
     
     /**

@@ -8,8 +8,10 @@
  */
 package com.tx.component.configuration.model;
 
+import com.tx.core.support.json.JSONAttributesSupport;
+
 /**
- * 配置属性
+ * 配置属性<br/>
  * <功能详细描述>
  * 
  * @author  PengQingyang
@@ -17,7 +19,40 @@ package com.tx.component.configuration.model;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public interface ConfigProperty {
+public interface ConfigProperty extends JSONAttributesSupport {
+    
+    /**
+     * 获取配置属性的唯一键<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public String getId();
+    
+    /**
+     * 获取配置属性的父节点id<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public String getParentId();
+    
+    /**
+     * 获取配置属性所属模块<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public String getModule();
     
     /**
      * 获取配置的属性名
@@ -95,15 +130,4 @@ public interface ConfigProperty {
      * @see [类、类#方法、类#成员]
      */
     public boolean isLeaf();
-    
-    /**
-     * 所属模块<br/>
-     * <功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return String [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public String getModule();
 }
