@@ -24,7 +24,8 @@ public abstract class RequestSupport<PR extends CommandRequest, RECEIVER extends
         extends ParameterizedTypeReference<PR> {
     
     /** 日志记录器 */
-    protected static final Logger logger = LoggerFactory.getLogger(RequestSupport.class);
+    protected static final Logger logger = LoggerFactory
+            .getLogger(RequestSupport.class);
     
     /** 请求处理器 */
     protected final RECEIVER receiver;
@@ -51,7 +52,6 @@ public abstract class RequestSupport<PR extends CommandRequest, RECEIVER extends
       * @see [类、类#方法、类#成员]
      */
     public Class<? extends CommandRequest> getRequestType() {
-        @SuppressWarnings("unchecked")
         Class<? extends CommandRequest> rawType = (Class<? extends CommandRequest>) getRawType();
         return rawType;
     }

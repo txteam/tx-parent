@@ -11,9 +11,8 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 
 import org.apache.commons.collections4.CollectionUtils;
-
-import net.sf.cglib.proxy.MethodInterceptor;
-import net.sf.cglib.proxy.MethodProxy;
+import org.springframework.cglib.proxy.MethodInterceptor;
+import org.springframework.cglib.proxy.MethodProxy;
 
 import com.tx.core.exceptions.SILException;
 import com.tx.core.exceptions.util.AssertUtils;

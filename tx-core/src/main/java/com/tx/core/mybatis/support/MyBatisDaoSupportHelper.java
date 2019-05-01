@@ -55,13 +55,15 @@ public class MyBatisDaoSupportHelper {
      * @return MyBatisDaoSupport [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
+     */
     public static MyBatisDaoSupport buildMyBatisDaoSupport(
             String configLocation, DataSourceTypeEnum dataSourceType,
             DataSource dataSource) throws Exception {
-        PersistenceExceptionTranslator exceptionTranslator = buildDefaultExceptionTranslator(dataSource);
+        PersistenceExceptionTranslator exceptionTranslator = buildDefaultExceptionTranslator(
+                dataSource);
         
-        MyBatisDaoSupport myBatisDaoSupport = doBuildMyBatisDaoSupport(configLocation,
+        MyBatisDaoSupport myBatisDaoSupport = doBuildMyBatisDaoSupport(
+                configLocation,
                 null,
                 dataSourceType,
                 dataSource,
@@ -71,26 +73,28 @@ public class MyBatisDaoSupportHelper {
     }
     
     /**
-      * 构建MybatisDaoSupport
-      * <功能详细描述>
-      * @param configLocation
-      * @param mapperLocations
-      * @param dataSourceType
-      * @param dataSource
-      * @return
-      * @throws Exception [参数说明]
-      * 
-      * @return MyBatisDaoSupport [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 构建MybatisDaoSupport
+     * <功能详细描述>
+     * @param configLocation
+     * @param mapperLocations
+     * @param dataSourceType
+     * @param dataSource
+     * @return
+     * @throws Exception [参数说明]
+     * 
+     * @return MyBatisDaoSupport [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     public static MyBatisDaoSupport buildMyBatisDaoSupport(
             String configLocation, String[] mapperLocations,
             DataSourceTypeEnum dataSourceType, DataSource dataSource)
             throws Exception {
-        PersistenceExceptionTranslator exceptionTranslator = buildDefaultExceptionTranslator(dataSource);
+        PersistenceExceptionTranslator exceptionTranslator = buildDefaultExceptionTranslator(
+                dataSource);
         
-        MyBatisDaoSupport myBatisDaoSupport = doBuildMyBatisDaoSupport(configLocation,
+        MyBatisDaoSupport myBatisDaoSupport = doBuildMyBatisDaoSupport(
+                configLocation,
                 mapperLocations,
                 dataSourceType,
                 dataSource,
@@ -100,26 +104,24 @@ public class MyBatisDaoSupportHelper {
     }
     
     /**
-      * 构建MybatisDaoSupport实例<br/>
-      * <功能详细描述>
-      * @param isSingler
-      * @param dataSourceType
-      * @param dataSource
-      * @return [参数说明]
-      * 
-      * @return MyBatisDaoSupport [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 构建MybatisDaoSupport实例<br/>
+     * <功能详细描述>
+     * @param isSingler
+     * @param dataSourceType
+     * @param dataSource
+     * @return [参数说明]
+     * 
+     * @return MyBatisDaoSupport [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     private static MyBatisDaoSupport doBuildMyBatisDaoSupport(
             String configLocation, String[] mapperLocations,
             DataSourceTypeEnum dataSourceType, DataSource dataSource,
             PersistenceExceptionTranslator exceptionTranslator)
             throws Exception {
-        SqlSessionFactory sqlSessionFactory = buildSqlSessionFactory(configLocation,
-                mapperLocations,
-                dataSourceType,
-                dataSource);
+        SqlSessionFactory sqlSessionFactory = buildSqlSessionFactory(
+                configLocation, mapperLocations, dataSourceType, dataSource);
         
         SqlSessionTemplate sqlSessionTemplate = new SqlSessionTemplate(
                 sqlSessionFactory, ExecutorType.SIMPLE, exceptionTranslator);
@@ -149,40 +151,42 @@ public class MyBatisDaoSupportHelper {
             throws Exception {
         SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
         sqlSessionFactoryBean.setFailFast(true);
-        sqlSessionFactoryBean.setTypeHandlersPackage("com.tx.core.mybatis.handler");
-        sqlSessionFactoryBean.setPlugins(new Interceptor[] { buildPagedDialectStatementHandlerInterceptor(dataSourceType) });
+        sqlSessionFactoryBean
+                .setTypeHandlersPackage("com.tx.core.mybatis.handler");
+        sqlSessionFactoryBean.setPlugins(new Interceptor[] {
+                buildPagedDialectStatementHandlerInterceptor(dataSourceType) });
         
         sqlSessionFactoryBean.setDataSource(dataSource);
-        sqlSessionFactoryBean.setConfigLocation(defaultResourceLoader.getResource(configLocation));
+        sqlSessionFactoryBean.setConfigLocation(
+                defaultResourceLoader.getResource(configLocation));
         //if(applicationContext)
         Set<Resource> mapperLocationResourcesSet = new HashSet<>();
         if (mapperLocations != null) {
             for (String mapperLocationTemp : mapperLocations) {
-                Resource[] resourcesTemp = pathMatchingResourcePatternResolver.getResources(mapperLocationTemp);
-                mapperLocationResourcesSet.addAll(new HashSet<>(
-                        Arrays.asList(resourcesTemp)));
+                Resource[] resourcesTemp = pathMatchingResourcePatternResolver
+                        .getResources(mapperLocationTemp);
+                mapperLocationResourcesSet
+                        .addAll(new HashSet<>(Arrays.asList(resourcesTemp)));
             }
-            sqlSessionFactoryBean.setMapperLocations(mapperLocationResourcesSet.toArray(new Resource[] {}));
+            sqlSessionFactoryBean.setMapperLocations(
+                    mapperLocationResourcesSet.toArray(new Resource[] {}));
         }
-        //sqlSessionFactoryBean.setTypeHandlersPackage("com.tx.core.mybatis.handler");
-        //PagedDialectStatementHandlerInterceptor pagedInterceptor = new PagedDialectStatementHandlerInterceptor();
-        //pagedInterceptor.setDataSourceType(dataSourceType);
-        //sqlSessionFactoryBean.setPlugins(new Interceptor[] { pagedInterceptor });
         
         sqlSessionFactoryBean.afterPropertiesSet();
-        SqlSessionFactory sqlSessionFactory = (SqlSessionFactory) sqlSessionFactoryBean.getObject();
+        SqlSessionFactory sqlSessionFactory = (SqlSessionFactory) sqlSessionFactoryBean
+                .getObject();
         return sqlSessionFactory;
     }
     
     /**
-      * 构建分页容器支撑拦截器<br/>
-      * <功能详细描述>
-      * @param dataSourceType
-      * @return [参数说明]
-      * 
-      * @return Interceptor [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 构建分页容器支撑拦截器<br/>
+     * <功能详细描述>
+     * @param dataSourceType
+     * @return [参数说明]
+     * 
+     * @return Interceptor [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     private static Interceptor buildPagedDialectStatementHandlerInterceptor(
             DataSourceTypeEnum dataSourceType) {
@@ -200,7 +204,7 @@ public class MyBatisDaoSupportHelper {
      * @return PersistenceExceptionTranslator [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
+     */
     private static PersistenceExceptionTranslator buildDefaultExceptionTranslator(
             DataSource dataSource) {
         PersistenceExceptionTranslator defaultExceptionTranslator = new MyBatisExceptionTranslator(

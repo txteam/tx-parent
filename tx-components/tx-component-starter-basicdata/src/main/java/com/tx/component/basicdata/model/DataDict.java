@@ -16,6 +16,7 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tx.core.support.initable.model.ConfigInitAble;
 import com.tx.core.support.json.JSONAttributesSupport;
 
@@ -40,15 +41,19 @@ public class DataDict
     @Id
     private String id;
     
-    /** 类型编码 */
-    private String basicDataType;
-    
     /** 父级对象id */
+    @JsonIgnore
     @Transient
     private DataDict parent;
     
     /** 编码 */
     private String code;
+    
+    /** 编码 */
+    private String module;
+    
+    /** 类型编码 */
+    private String type;
     
     /** 是否有效 */
     private boolean valid = true;
@@ -59,6 +64,9 @@ public class DataDict
     /** 名称 */
     private String name;
     
+    /** 额外属性值 */
+    private String attributes;
+    
     /** 备注 */
     private String remark;
     
@@ -68,8 +76,20 @@ public class DataDict
     /** 创建时间 */
     private Date createDate;
     
-    /** 额外属性值 */
-    private String attributes;
+    /**
+     * @return 返回 parent
+     */
+    @JsonIgnore
+    public DataDict getParent() {
+        return parent;
+    }
+    
+    /**
+     * @param 对parent进行赋值
+     */
+    public void setParent(DataDict parent) {
+        this.parent = parent;
+    }
     
     /**
      * @return 返回 id
@@ -83,20 +103,6 @@ public class DataDict
      */
     public void setId(String id) {
         this.id = id;
-    }
-    
-    /**
-     * @return 返回 parent
-     */
-    public DataDict getParent() {
-        return parent;
-    }
-    
-    /**
-     * @param 对parent进行赋值
-     */
-    public void setParent(DataDict parent) {
-        this.parent = parent;
     }
     
     /**
@@ -120,19 +126,19 @@ public class DataDict
     }
     
     /**
-     * @return 返回 basicDataType
+     * @return 返回 type
      */
-    public String getBasicDataType() {
-        return basicDataType;
+    public String getType() {
+        return type;
     }
-    
+
     /**
-     * @param 对basicDataType进行赋值
+     * @param 对type进行赋值
      */
-    public void setBasicDataType(String basicDataType) {
-        this.basicDataType = basicDataType;
+    public void setType(String type) {
+        this.type = type;
     }
-    
+
     /**
      * @return 返回 code
      */
@@ -147,6 +153,20 @@ public class DataDict
         this.code = code;
     }
     
+    /**
+     * @return 返回 module
+     */
+    public String getModule() {
+        return module;
+    }
+
+    /**
+     * @param 对module进行赋值
+     */
+    public void setModule(String module) {
+        this.module = module;
+    }
+
     /**
      * @return 返回 valid
      */

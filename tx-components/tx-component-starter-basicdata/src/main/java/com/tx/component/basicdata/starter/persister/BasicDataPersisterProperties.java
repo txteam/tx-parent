@@ -6,6 +6,11 @@
  */
 package com.tx.component.basicdata.starter.persister;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
+import com.tx.core.starter.properties.PersisterJPAProperties;
+import com.tx.core.starter.properties.PersisterMybatisProperties;
+
 /**
  * 基础数据容器默认配置<br/>
  * <功能详细描述>
@@ -15,19 +20,17 @@ package com.tx.component.basicdata.starter.persister;
  * @see  [相关类/方法]0
  * @since  [产品/模块版本]
  */
+@ConfigurationProperties(prefix = "tx.basicdata.persist")
 public class BasicDataPersisterProperties {
     
     /** 持久化类型 */
     private String type = "mybatis";
     
     /** mybatis配置文件:service需要该逻辑 */
-    private String mybatisConfigLocation = "classpath:context/mybatis-config.xml";
+    private PersisterMybatisProperties mybatis;
     
-    /** 数据源:dataSource */
-    private String dataSourceRef;
-    
-    /** transactionManager */
-    protected String transactionManagerRef;
+    /** jpa必要的配置参数 */
+    private PersisterJPAProperties jpa;
     
     /**
      * @return 返回 type
@@ -44,44 +47,30 @@ public class BasicDataPersisterProperties {
     }
 
     /**
-     * @return 返回 dataSourceRef
+     * @return 返回 mybatis
      */
-    public String getDataSourceRef() {
-        return dataSourceRef;
+    public PersisterMybatisProperties getMybatis() {
+        return mybatis;
     }
-    
+
     /**
-     * @param 对dataSourceRef进行赋值
+     * @param 对mybatis进行赋值
      */
-    public void setDataSourceRef(String dataSourceRef) {
-        this.dataSourceRef = dataSourceRef;
+    public void setMybatis(PersisterMybatisProperties mybatis) {
+        this.mybatis = mybatis;
     }
-    
+
     /**
-     * @return 返回 transactionManagerRef
+     * @return 返回 jpa
      */
-    public String getTransactionManagerRef() {
-        return transactionManagerRef;
+    public PersisterJPAProperties getJpa() {
+        return jpa;
     }
-    
+
     /**
-     * @param 对transactionManagerRef进行赋值
+     * @param 对jpa进行赋值
      */
-    public void setTransactionManagerRef(String transactionManagerRef) {
-        this.transactionManagerRef = transactionManagerRef;
-    }
-    
-    /**
-     * @return 返回 mybatisConfigLocation
-     */
-    public String getMybatisConfigLocation() {
-        return mybatisConfigLocation;
-    }
-    
-    /**
-     * @param 对mybatisConfigLocation进行赋值
-     */
-    public void setMybatisConfigLocation(String mybatisConfigLocation) {
-        this.mybatisConfigLocation = mybatisConfigLocation;
+    public void setJpa(PersisterJPAProperties jpa) {
+        this.jpa = jpa;
     }
 }

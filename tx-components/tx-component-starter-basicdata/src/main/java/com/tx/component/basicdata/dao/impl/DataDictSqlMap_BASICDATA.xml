@@ -17,7 +17,7 @@
 		SELECT 
 				TDD.id,
 				TDD.parentId,
-				TDD.basicDataType,
+				TDD.type,
 				TDD.code,
 				TDD.name,
 				TDD.remark,
@@ -32,8 +32,8 @@
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
 	            <![CDATA[ AND TDD.id = #{id} ]]>
 	        </if>
-	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(basicDataType)">  
-	            <![CDATA[ AND TDD.basicDataType = #{basicDataType,jdbcType=VARCHAR} ]]>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(type)">  
+	            <![CDATA[ AND TDD.type = #{type,jdbcType=VARCHAR} ]]>
 	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(code)">  
 	            <![CDATA[ AND TDD.code = #{code,jdbcType=VARCHAR} ]]>
@@ -48,7 +48,7 @@
 		SELECT 
 				TDD.id,
 				TDD.parentId,
-				TDD.basicDataType,
+				TDD.type,
 				TDD.code,
 				TDD.name,
 				TDD.remark,
@@ -59,8 +59,8 @@
 				TDD.createDate
 		  FROM BD_DATA_DICT TDD
 		<trim prefix="WHERE" prefixOverrides="AND | OR">
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(basicDataType)">  
-	            <![CDATA[ AND TDD.basicDataType = #{basicDataType,jdbcType=VARCHAR} ]]>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(type)">  
+	            <![CDATA[ AND TDD.type = #{type,jdbcType=VARCHAR} ]]>
 	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(parentId)">  
 	            <![CDATA[ AND TDD.parentId = #{parentId,jdbcType=VARCHAR} ]]>
@@ -84,7 +84,7 @@
 				<![CDATA[ AND TDD.id <> #{excludeId,javaType=java.lang.String} ]]>
 			</if>
 		</trim>
-		ORDER BY basicDataType,createDate
+		ORDER BY type,createDate
 	</select>
 	
 		<!-- auto generate default count -->
@@ -94,8 +94,8 @@
 		SELECT COUNT(1)
 		  FROM BD_DATA_DICT TDD
 		<trim prefix="WHERE" prefixOverrides="AND | OR">
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(basicDataType)">  
-	            <![CDATA[ AND TDD.basicDataType = #{basicDataType,jdbcType=VARCHAR} ]]>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(type)">  
+	            <![CDATA[ AND TDD.type = #{type,jdbcType=VARCHAR} ]]>
 	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(parentId)">  
 	            <![CDATA[ AND TDD.parentId = #{parentId,jdbcType=VARCHAR} ]]>
@@ -128,7 +128,7 @@
 		(
 			id,
 			parentId,
-			basicDataType,
+			type,
 			code,
 			name,
 			remark,
@@ -142,7 +142,7 @@
 		(
 			#{id},
 			#{parentId},
-			#{basicDataType},
+			#{type},
 			#{code},
 			#{name},
 			#{remark},
@@ -168,8 +168,8 @@
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(code)">  
 	            AND code = #{code,jdbcType=VARCHAR}
 	        </if>
-	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(basicDataType)">  
-	            AND basicDataType = #{basicDataType,jdbcType=VARCHAR}
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(type)">  
+	            AND type = #{type,jdbcType=VARCHAR}
 	        </if>
 		</trim>
 	</delete>
@@ -206,8 +206,8 @@
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
 	            <![CDATA[ AND id = #{id} ]]>
 	        </if>
-	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(basicDataType)">  
-	            <![CDATA[ AND basicDataType = #{basicDataType,jdbcType=VARCHAR} ]]>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(type)">  
+	            <![CDATA[ AND type = #{type,jdbcType=VARCHAR} ]]>
 	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(code)">  
 	            <![CDATA[ AND code = #{code,jdbcType=VARCHAR} ]]>

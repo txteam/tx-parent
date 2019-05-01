@@ -9,6 +9,7 @@ package com.tx.core.support.poi.excel.cellreader;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 
 import com.tx.core.exceptions.resource.ResourceReadException;
 import com.tx.core.support.poi.excel.CellReader;
@@ -49,12 +50,12 @@ public class CellReader4StringValue implements CellReader<String> {
      * @see [类、类#方法、类#成员]
     */
     private void throwTypeUnmatchExceptionWhenNotIgnoreTypeUnmatch(
-            boolean ignoreTypeUnmatch, String cellType, int rowNum,
-            int cellNum, String key) {
+            boolean ignoreTypeUnmatch, String cellType, int rowNum, int cellNum,
+            String key) {
         if (!ignoreTypeUnmatch) {
-            throw new ResourceReadException(
-                    MessageUtils.format("cell rowNum:{} cellNum:{} key:{} type is:{} unable change to BigDecimal.",
-                            new Object[] { rowNum, cellNum, key }));
+            throw new ResourceReadException(MessageUtils.format(
+                    "cell rowNum:{} cellNum:{} key:{} type is:{} unable change to BigDecimal.",
+                    new Object[] { rowNum, cellNum, key }));
         }
     }
     
@@ -66,35 +67,38 @@ public class CellReader4StringValue implements CellReader<String> {
      */
     @Override
     public String read(Cell cell, int rowNum, int cellNum, String key,
-            boolean ignoreError, boolean ignoreBlank, boolean ignoreTypeUnmatch) {
+            boolean ignoreError, boolean ignoreBlank,
+            boolean ignoreTypeUnmatch) {
         String resString = null;
         if (null == cell) {
             return resString;
         }
         switch (cell.getCellType()) {
-            case Cell.CELL_TYPE_ERROR:
+            case ERROR:
                 if (!ignoreError) {
-                    throw new ResourceReadException(
-                            MessageUtils.format("cell rowNum:{} cellNum:{} key:{} cellType is error.",
-                                    new Object[] { rowNum, cellNum, key }));
+                    throw new ResourceReadException(MessageUtils.format(
+                            "cell rowNum:{} cellNum:{} key:{} cellType is error.",
+                            new Object[] { rowNum, cellNum, key }));
                 }
                 resString = null;
                 break;
-            case Cell.CELL_TYPE_BLANK:
+            case _NONE:
+            case BLANK:
                 if (!ignoreBlank) {
-                    throw new ResourceReadException(
-                            MessageUtils.format("cell rowNum:{} cellNum:{} key:{} cellType is blank.",
-                                    new Object[] { rowNum, cellNum, key }));
+                    throw new ResourceReadException(MessageUtils.format(
+                            "cell rowNum:{} cellNum:{} key:{} cellType is blank.",
+                            new Object[] { rowNum, cellNum, key }));
                 }
                 resString = "";
                 break;
-            case Cell.CELL_TYPE_FORMULA:
+            case FORMULA:
                 //如果为计算公式，将计算公司进行提取
                 resString = cell.getCellFormula();
                 break;
-            case Cell.CELL_TYPE_NUMERIC:
+            case NUMERIC:
                 //如果Cell类型一定要匹配
-                throwTypeUnmatchExceptionWhenNotIgnoreTypeUnmatch(ignoreTypeUnmatch,
+                throwTypeUnmatchExceptionWhenNotIgnoreTypeUnmatch(
+                        ignoreTypeUnmatch,
                         "CELL_TYPE_NUMERIC",
                         rowNum,
                         cellNum,
@@ -110,14 +114,14 @@ public class CellReader4StringValue implements CellReader<String> {
                     resString = String.valueOf(cell.getNumericCellValue());
                 }
                 break;
-            case Cell.CELL_TYPE_STRING:
-                resString = cell.getStringCellValue() != null ? cell.getStringCellValue()
-                        .trim()
-                        : "";
+            case STRING:
+                resString = cell.getStringCellValue() != null
+                        ? cell.getStringCellValue().trim() : "";
                 break;
-            case Cell.CELL_TYPE_BOOLEAN:
+            case BOOLEAN:
                 //如果Cell类型一定要匹配
-                throwTypeUnmatchExceptionWhenNotIgnoreTypeUnmatch(ignoreTypeUnmatch,
+                throwTypeUnmatchExceptionWhenNotIgnoreTypeUnmatch(
+                        ignoreTypeUnmatch,
                         "CELL_TYPE_BOOLEAN",
                         rowNum,
                         cellNum,
@@ -144,9 +148,9 @@ public class CellReader4StringValue implements CellReader<String> {
             String key, boolean ignoreError, boolean ignoreBlank,
             boolean ignoreTypeUnmatch) {
         String resString = null;
-        if (cellType == Cell.CELL_TYPE_STRING) {
+        if (cell.getCellType() == CellType.STRING) {
             resString = cell.getStringCellValue();
-        } else if (cellType == Cell.CELL_TYPE_NUMERIC) {
+        } else if (cell.getCellType() == CellType.NUMERIC) {
             resString = String.valueOf(cell.getNumericCellValue());
         } else {
             resString = read(cell,

@@ -109,7 +109,6 @@ public class BasicDataContextTableInitializer extends AbstractTableInitializer
         }
         
         bd_data_dict(ddlBuilder);//写入表结构
-        
         if (alterDDLBuilder != null
                 && alterDDLBuilder.compare().isNeedAlter()) {
             if (tableAutoInitialize) {
@@ -138,7 +137,7 @@ public class BasicDataContextTableInitializer extends AbstractTableInitializer
         ddlBuilder.newColumnOfVarchar(true, "id", 64, true, null)
                 .newColumnOfVarchar("parentId", 64, false, null)
                 .newColumnOfVarchar("code", 64, true, null)
-                .newColumnOfVarchar("basicDataType", 64, true, null)
+                .newColumnOfVarchar("type", 64, true, null)
                 .newColumnOfBoolean("modifyAble", true, true)
                 .newColumnOfBoolean("valid", true, true)
                 .newColumnOfVarchar("name", 64, true, null)
@@ -146,8 +145,8 @@ public class BasicDataContextTableInitializer extends AbstractTableInitializer
                 .newColumnOfVarchar("attributes", 512, false, null)
                 .newColumnOfDate("lastUpdateDate", true, true)
                 .newColumnOfDate("createDate", true, true);
-        ddlBuilder.newIndex(true, "idx_data_dict_00", "code,basicDataType");
-        ddlBuilder.newIndex(false, "idx_basicDataType", "basicDataType");
-        ddlBuilder.newIndex(false, "idx_parentId", "parentId");
+        ddlBuilder.newIndex(true, "idx_data_dict_00", "code,type");
+        ddlBuilder.newIndex(false, "idx_data_dict_01", "type");
+        ddlBuilder.newIndex(false, "idx_data_dict_02", "parentId");
     }
 }

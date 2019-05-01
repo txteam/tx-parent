@@ -8,7 +8,8 @@ package com.tx.test.proxy;
 
 import java.lang.reflect.Method;
 
-import net.sf.cglib.proxy.InvocationHandler;
+import org.springframework.cglib.proxy.InvocationHandler;
+import org.springframework.cglib.proxy.Proxy;
 
 
  /**
@@ -31,7 +32,7 @@ public class CountCglibProxy2 implements InvocationHandler{
     public Object bind(Object target) {  
         this.target = target;  
         //取得代理对象  
-        return net.sf.cglib.proxy.Proxy.newProxyInstance(target.getClass().getClassLoader(),  
+        return Proxy.newProxyInstance(target.getClass().getClassLoader(),  
                 target.getClass().getInterfaces(), this);   //要绑定接口(这是一个缺陷，cglib弥补了这一缺陷)  
     }  
   

@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 
 import com.tx.core.exceptions.resource.ResourceReadException;
 import com.tx.core.exceptions.util.AssertUtils;
@@ -73,7 +74,7 @@ public class CellReader4Enum<E extends Enum<E>> implements CellReader<E> {
             return null;
         }
         switch (cell.getCellType()) {
-            case Cell.CELL_TYPE_ERROR:
+            case ERROR:
                 if (!ignoreError) {
                     throw new ResourceReadException(
                             MessageUtils.format("cell rowNum:{} cellNum:{} key:{} cellType is error.",
@@ -81,7 +82,8 @@ public class CellReader4Enum<E extends Enum<E>> implements CellReader<E> {
                 }
                 resString = null;
                 break;
-            case Cell.CELL_TYPE_BLANK:
+            case _NONE:
+            case BLANK:
                 if (!ignoreBlank) {
                     throw new ResourceReadException(
                             MessageUtils.format("cell rowNum:{} cellNum:{} key:{} cellType is blank.",
@@ -89,20 +91,20 @@ public class CellReader4Enum<E extends Enum<E>> implements CellReader<E> {
                 }
                 resString = "";
                 break;
-            case Cell.CELL_TYPE_FORMULA:
+            case FORMULA:
                 //如果为计算公式，将计算公司进行提取
                 resString = cell.getCellFormula();
                 break;
-            case Cell.CELL_TYPE_NUMERIC:
+            case NUMERIC:
                 //如果Cell类型一定要匹配
                 resString = null;
                 break;
-            case Cell.CELL_TYPE_STRING:
+            case STRING:
                 resString = cell.getStringCellValue() != null ? cell.getStringCellValue()
                         .trim()
                         : "";
                 break;
-            case Cell.CELL_TYPE_BOOLEAN:
+            case BOOLEAN:
                 //如果Cell类型一定要匹配
                 throwTypeUnmatchExceptionWhenNotIgnoreTypeUnmatch(ignoreTypeUnmatch,
                         "CELL_TYPE_BOOLEAN",
@@ -131,11 +133,11 @@ public class CellReader4Enum<E extends Enum<E>> implements CellReader<E> {
             boolean ignoreError, boolean ignoreBlank, boolean ignoreTypeUnmatch) {
         E res = null;
         String resString = null;
-        if (cellType == Cell.CELL_TYPE_STRING) {
+        if (cell.getCellType() == CellType.STRING) {
             resString = cell.getStringCellValue();
             
             res = this.enumMap.get(resString);
-        } else if (cellType == Cell.CELL_TYPE_NUMERIC) {
+        } else if (cell.getCellType() == CellType.NUMERIC) {
             resString = String.valueOf(cell.getNumericCellValue());
             
             res = this.enumMap.get(resString);

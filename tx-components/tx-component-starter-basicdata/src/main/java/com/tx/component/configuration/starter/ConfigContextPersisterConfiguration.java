@@ -10,9 +10,11 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.tx.component.basicdata.starter.BasicDataContextProperties;
 import com.tx.component.basicdata.starter.cache.BasicDataContextCacheConfig;
 import com.tx.component.basicdata.starter.persister.BasicDataContextMybatisConfig;
 import com.tx.component.configuration.dao.ConfigPropertyItemDao;
@@ -81,7 +83,7 @@ public class ConfigContextPersisterConfiguration {
     }
     
     /**
-     * 配置荣庆初始化配置<br/>
+     * 配置容器持久化配置<br/>
      * <功能详细描述>
      * 
      * @author  Administrator
@@ -90,9 +92,7 @@ public class ConfigContextPersisterConfiguration {
      * @since  [产品/模块版本]
      */
     @Configuration
-    @ConditionalOnBean({ BasicDataContextMybatisConfig.class,
-            BasicDataContextCacheConfig.class })
-    @ConditionalOnMissingBean(ConfigPropertyItemService.class)
+    @EnableConfigurationProperties(BasicDataContextProperties.class)
     public static class ConfigContextMybatisPersisterConfiguration {
         
         /** mybatis配置 */

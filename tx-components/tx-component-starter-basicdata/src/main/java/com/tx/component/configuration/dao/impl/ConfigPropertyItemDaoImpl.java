@@ -52,8 +52,8 @@ public class ConfigPropertyItemDaoImpl implements ConfigPropertyItemDao {
      * @return
      */
     @Override
-    public void update(Map<String, Object> updateRowMap) {
-        this.myBatisDaoSupport.update("configPropertyItem.update",
+    public int update(Map<String, Object> updateRowMap) {
+        return this.myBatisDaoSupport.update("configPropertyItem.update",
                 updateRowMap);
     }
     

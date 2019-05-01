@@ -9,9 +9,7 @@ package com.tx.component.basicdata.model;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.Table;
 
 import com.tx.core.jdbc.sqlsource.annotation.QueryConditionEqual;
 import com.tx.core.jdbc.sqlsource.annotation.UpdateAble;
@@ -25,8 +23,6 @@ import com.tx.core.jdbc.sqlsource.annotation.UpdateAble;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-@Entity
-@Table(name = "bd_basic_data_type")
 public class BasicDataType implements Serializable {
     
     /** 注释内容 */
@@ -40,15 +36,15 @@ public class BasicDataType implements Serializable {
     @QueryConditionEqual
     private Class<? extends BasicData> type;
     
-    /** 基础数据所属模块 */
-    @UpdateAble
-    @QueryConditionEqual
-    private String module;
-    
     /** 基础数据类型编码 */
     @UpdateAble
     @QueryConditionEqual
     private String code;
+    
+    /** 基础数据所属模块 */
+    @UpdateAble
+    @QueryConditionEqual
+    private String module;
     
     /** 基础数据对应表名 */
     @UpdateAble

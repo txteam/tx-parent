@@ -34,5 +34,6 @@ public interface CellRowWriter<T> {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    void write(Sheet sheet,Row row, T obj, int rowNum, int rowHeight, CellStyle cellStyle);
+    void write(Sheet sheet, Row row, T obj, int rowNum, int rowHeight,
+            CellStyle cellStyle);
 }

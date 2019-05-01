@@ -9,9 +9,14 @@ package com.tx.component.basicdata.context;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.transaction.annotation.Transactional;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
+import org.apache.commons.lang3.StringUtils;
+
+import com.tx.component.basicdata.annotation.BasicDataEntity;
 import com.tx.component.basicdata.model.BasicData;
+import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.paged.model.PagedList;
 
 /**
@@ -34,7 +39,7 @@ public interface BasicDataService<T extends BasicData> {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public Class<T> type();
+    public Class<T> getType();
     
     /**
      * 对应基础数据编码<br/>
@@ -45,18 +50,17 @@ public interface BasicDataService<T extends BasicData> {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public String code();
-    
-    /**
-     * 基础数据所属模块,可以为空,如果为空,则默认为当前系统所属模块<br/>
-     * <功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return String [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public String module();
+    public default String type() {
+        Class<T> type = getType();
+        AssertUtils.notNull(type, "type is null.");
+        
+        String code = type.getName();
+        if (type.isAnnotationPresent(BasicDataEntity.class) && StringUtils
+                .isNotEmpty(type.getAnnotation(BasicDataEntity.class).type())) {
+            code = type.getAnnotation(BasicDataEntity.class).type();
+        }
+        return code;
+    }
     
     /**
      * 获取对应的表名<br/>
@@ -68,7 +72,22 @@ public interface BasicDataService<T extends BasicData> {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public String tableName();
+    public default String tableName() {
+        Class<T> type = getType();
+        AssertUtils.notNull(type, "type is null.");
+        
+        String tableName = type.getSimpleName();
+        if (type.isAnnotationPresent(Table.class)) {
+            tableName = type.getAnnotation(Table.class).name();
+        }
+        if (type.isAnnotationPresent(Entity.class)) {
+            tableName = type.getAnnotation(Entity.class).name();
+        }
+        if (StringUtils.isEmpty(tableName)) {
+            tableName = "bd_data_dict";
+        }
+        return tableName;
+    }
     
     /**
      * 插入基础数据对象
@@ -116,6 +135,53 @@ public interface BasicDataService<T extends BasicData> {
      * @see [类、类#方法、类#成员]
      */
     public boolean deleteByCode(String code);
+    
+    /**
+     * 根据id更新基础数据对象<br/>
+     * <功能详细描述>
+     * @param data
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public boolean updateById(T data);
+    
+    /**
+     * 批量更新基础数据<br/>
+     * <功能详细描述>
+     * @param dataList [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public void batchUpdate(List<T> dataList);
+    
+    /**
+     * 根据id禁用DataDict<br/>
+     * <功能详细描述>
+     * @param id
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public boolean disableById(String id);
+    
+    /**
+     * 根据id启用DataDict<br/>
+     * <功能详细描述>
+     * @param postId
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public boolean enableById(String id);
     
     /**
      * 判断基础数据是否存在<br/>
@@ -183,52 +249,4 @@ public interface BasicDataService<T extends BasicData> {
     public PagedList<T> queryPagedList(Boolean valid,
             Map<String, Object> params, int pageIndex, int pageSize);
     
-    /**
-     * 根据id更新基础数据对象<br/>
-     * <功能详细描述>
-     * @param data
-     * @return [参数说明]
-     * 
-     * @return boolean [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public boolean updateById(T data);
-    
-    /**
-     * 批量更新基础数据<br/>
-     * <功能详细描述>
-     * @param dataList [参数说明]
-     * 
-     * @return void [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public void batchUpdate(List<T> dataList);
-    
-    /**
-     * 根据id禁用DataDict<br/>
-     * <功能详细描述>
-     * @param id
-     * @return [参数说明]
-     * 
-     * @return boolean [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    @Transactional
-    public boolean disableById(String id);
-    
-    /**
-     * 根据id启用DataDict<br/>
-     * <功能详细描述>
-     * @param postId
-     * @return [参数说明]
-     * 
-     * @return boolean [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    @Transactional
-    public boolean enableById(String id);
 }

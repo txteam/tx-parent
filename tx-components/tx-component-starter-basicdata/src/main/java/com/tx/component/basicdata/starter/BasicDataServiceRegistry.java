@@ -35,13 +35,13 @@ import org.springframework.core.AliasRegistry;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.type.AnnotationMetadata;
 
+import com.tx.component.basicdata.api.BasicDataAPI;
 import com.tx.component.basicdata.context.BasicDataService;
 import com.tx.component.basicdata.model.BasicData;
 import com.tx.component.basicdata.model.BasicDataType;
 import com.tx.component.basicdata.model.DataDict;
 import com.tx.component.basicdata.model.TreeAbleBasicData;
-import com.tx.component.basicdata.service.BasicDataRemoteService;
-import com.tx.component.basicdata.service.BasicDataTypeService;
+import com.tx.component.basicdata.service.BasicDataTypeRegistry;
 import com.tx.component.basicdata.service.DataDictService;
 import com.tx.component.basicdata.service.DefaultDBBasicDataService;
 import com.tx.component.basicdata.service.DefaultDBTreeAbleBasicDataService;
@@ -91,7 +91,7 @@ public class BasicDataServiceRegistry
     private DataDictService dataDictService;
     
     /** 基础数据远程调用消费逻辑层 */
-    private BasicDataRemoteService basicDataRemoteService;
+    private BasicDataAPI basicDataRemoteService;
     
     /** <默认构造函数> */
     public BasicDataServiceRegistry() {
@@ -100,9 +100,9 @@ public class BasicDataServiceRegistry
     
     /** <默认构造函数> */
     public BasicDataServiceRegistry(String module, String basePackages,
-            BasicDataTypeService basicDataTypeService,
+            BasicDataTypeRegistry basicDataTypeService,
             DataDictService dataDictService,
-            BasicDataRemoteService basicDataRemoteService) {
+            BasicDataAPI basicDataRemoteService) {
         super();
         AssertUtils.notEmpty(module, "module is null.");
         
@@ -468,7 +468,7 @@ public class BasicDataServiceRegistry
             bdType.setType(type);
             bdType.setTableName(tableName);
             bdType.setName(name);
-            bdType.setModifyAble(false);
+            //bdType.setModifyAble(false);
             if (StringUtils.isEmpty(moduleTemp)) {
                 bdType.setModule(this.module);
             } else {
@@ -481,7 +481,7 @@ public class BasicDataServiceRegistry
                         .getAnnotation(
                                 com.tx.component.basicdata.annotation.BasicDataEntity.class);
                 //读取注解中值
-                bdType.setCommon(anno.common());
+                //bdType.setCommon(anno.common());
                 bdType.setViewType(anno.viewType());
                 bdType.setRemark(anno.remark());
                 
@@ -491,7 +491,7 @@ public class BasicDataServiceRegistry
             }
             
             //resListOfCfg.add(bdType);
-            this.basicDataTypeService.insert(bdType);
+            //this.basicDataTypeService.insert(bdType);
         }
     }
     

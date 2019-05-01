@@ -8,7 +8,6 @@ package com.tx.core.support.poi.excel.cellwriter;
 
 import java.math.BigDecimal;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 
@@ -35,10 +34,9 @@ public class CellWriterForBigDecimal extends CellWriter<BigDecimal> {
      * @param cellNum
      */
     @Override
-    public void write(Cell cell, Object value, int cellType, int width,
+    public void write(Cell cell, Object value, int width,
             CellStyle cellStyle, int rowNum, int cellNum) {
         if (value == null) {
-            cell.setCellType(HSSFCell.LAST_COLUMN_NUMBER);
             cell.setCellValue("");
             return;
         }
@@ -48,12 +46,6 @@ public class CellWriterForBigDecimal extends CellWriter<BigDecimal> {
                 "value is not BigDecimal");
         
         BigDecimal cellValue = (BigDecimal) value;
-        if (cellType < 0 || HSSFCell.CELL_TYPE_NUMERIC == cellType) {
-            cell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
-            cell.setCellValue(cellValue.toString());
-        } else {
-            cell.setCellType(cellType);
-            cell.setCellValue(cellValue.toString());
-        }
+        cell.setCellValue(cellValue.toString());
     }
 }

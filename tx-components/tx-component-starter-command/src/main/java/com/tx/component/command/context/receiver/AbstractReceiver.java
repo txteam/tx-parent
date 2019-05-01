@@ -25,8 +25,8 @@ import com.tx.core.util.typereference.ParameterizedTypeReference;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public abstract class AbstractReceiver<PR extends AbstractRequest> extends
-        ParameterizedTypeReference<PR> implements CommandReceiver<PR> {
+public abstract class AbstractReceiver<PR extends AbstractRequest>
+        extends ParameterizedTypeReference<PR> implements CommandReceiver<PR> {
     
     protected Logger logger = LoggerFactory.getLogger(CommandContext.class);
     
@@ -34,7 +34,6 @@ public abstract class AbstractReceiver<PR extends AbstractRequest> extends
      * 请求类型<br/>
      * @return
      */
-    @SuppressWarnings("unchecked")
     @Override
     public Class<? extends CommandRequest> getRequestType() {
         Class<? extends CommandRequest> requestType = (Class<? extends CommandRequest>) getRawType();

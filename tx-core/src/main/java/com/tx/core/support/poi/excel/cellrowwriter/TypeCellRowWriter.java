@@ -95,7 +95,6 @@ public class TypeCellRowWriter<T> implements CellRowWriter<T> {
             
             cellInfo.getCellWriter().write(cell,
                     value,
-                    cellInfo.getCellType(),
                     cellInfo.getWidth(),
                     cellStyle,
                     rowNum,

@@ -44,6 +44,7 @@ public @interface BasicDataEntity {
     
     /**
      * 基础数据名称<br/>
+     *    如果为空，默认使用类名（全名）
      * <功能详细描述>
      * @return [参数说明]
      * 
@@ -51,7 +52,7 @@ public @interface BasicDataEntity {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    String basicDataType() default "";
+    String type() default "";
     
     /**
      * 基础数据名称<br/>

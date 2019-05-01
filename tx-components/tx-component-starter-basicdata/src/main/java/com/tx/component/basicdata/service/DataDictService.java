@@ -13,8 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -26,24 +24,20 @@ import org.springframework.beans.PropertyAccessorFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 
 import com.tx.component.basicdata.dao.DataDictDao;
 import com.tx.component.basicdata.model.DataDict;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.paged.model.PagedList;
-import com.tx.core.support.entrysupport.model.EntityEntry;
-import com.tx.core.support.entrysupport.support.AbstractEntityEntryAbleService;
-import com.tx.core.support.entrysupport.support.EntityEntrySupport;
-import com.tx.core.support.entrysupport.support.EntityEntrySupportFactory;
 import com.tx.core.support.initable.helper.ConfigInitAbleHelper;
 import com.tx.core.support.poi.excel.ExcelReadUtils;
 
 /**
- * DataDict的业务层
+ * DataDict的业务层<br/>
  * <功能详细描述>
  * 
  * @author  
@@ -94,11 +88,6 @@ public class DataDictService implements InitializingBean, ResourceLoaderAware {
     */
     private List<DataDict> loadListFromExcelConfig() {
         List<DataDict> resList = new ArrayList<>();
-        if (!resourceLoader
-                .getResource("classpath*:init/basicdata/data_dict.xlsx")
-                .exists()) {
-            return resList;
-        }
         
         Workbook wb = ExcelReadUtils
                 .getWorkBook("classpath*:init/basicdata/data_dict.xlsx");
@@ -108,10 +97,10 @@ public class DataDictService implements InitializingBean, ResourceLoaderAware {
             if (sheet == null) {
                 continue;
             }
+            
             String sheetName = sheet.getSheetName();
             List<Map<String, String>> rowMapList = ExcelReadUtils
                     .readSheet(sheet);
-            
             for (Map<String, String> rowMap : rowMapList) {
                 DataDict ddTemp = new DataDict();
                 BeanWrapper ddBW = PropertyAccessorFactory
@@ -122,19 +111,22 @@ public class DataDictService implements InitializingBean, ResourceLoaderAware {
                     //如果code不存在，则跳过该非法行
                     continue;
                 }
-                String basicDataType = rowMap.get("basicDataType");
-                if (StringUtils.isEmpty(basicDataType)) {
-                    basicDataType = sheetName;
+                String type = sheetName;
+                if (!StringUtils.isEmpty(rowMap.get("basicDataType"))) {
+                    type = rowMap.get("basicDataType");
+                }
+                if (!StringUtils.isEmpty(rowMap.get("type"))) {
+                    type = rowMap.get("type");
                 }
                 
+                //写入值<br/>
                 ddTemp.setCode(code);
-                ddTemp.setBasicDataType(basicDataType);
+                ddTemp.setType(type);
                 //其他属性字段
                 for (Entry<String, String> entryTemp : rowMap.entrySet()) {
                     String entryKey = entryTemp.getKey();
                     String entryValue = entryTemp.getValue();
-                    if ("code".equals(entryKey)
-                            || "basicDataType".equals(entryKey)
+                    if ("code".equals(entryKey) || "type".equals(entryKey)
                             || "class".equals(entryKey)) {
                         continue;
                     }
@@ -147,7 +139,6 @@ public class DataDictService implements InitializingBean, ResourceLoaderAware {
                                 entryValue);
                     }
                 }
-                
                 resList.add(ddTemp);
             }
         }
@@ -180,17 +171,13 @@ public class DataDictService implements InitializingBean, ResourceLoaderAware {
         }
         
         ConfigInitAbleHelper<DataDict> helper = new ConfigInitAbleHelper<DataDict>() {
-            /**
-             * @param cia
-             * @return
-             */
             @Override
             protected String getSingleCode(DataDict cia) {
                 AssertUtils.notNull(cia, "cia is null.");
-                AssertUtils.notEmpty(cia.getBasicDataType(), "cia is null.");
+                AssertUtils.notEmpty(cia.getType(), "cia is null.");
                 AssertUtils.notEmpty(cia.getCode(), "cia is null.");
                 
-                String code = cia.getBasicDataType() + "_" + cia.getCode();
+                String code = cia.getType() + "_" + cia.getCode();
                 return code;
             }
             
@@ -210,7 +197,8 @@ public class DataDictService implements InitializingBean, ResourceLoaderAware {
             protected void doBeforeUpdate(DataDict ciaOfDB, DataDict ciaOfCfg) {
                 ciaOfDB.setName(ciaOfCfg.getName());
                 ciaOfDB.setRemark(ciaOfCfg.getRemark());
-                ciaOfDB.setBasicDataType(ciaOfCfg.getBasicDataType());
+                ciaOfDB.setType(ciaOfCfg.getType());
+                
                 //设置额外属性
                 ciaOfDB.setAttributes(ciaOfCfg.getAttributes());
             }
@@ -266,7 +254,6 @@ public class DataDictService implements InitializingBean, ResourceLoaderAware {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @Transactional
     public void insert(DataDict dataDict) {
         //验证参数是否合法
         AssertUtils.notNull(dataDict, "dataDict is null.");
@@ -276,23 +263,159 @@ public class DataDictService implements InitializingBean, ResourceLoaderAware {
         dataDict.setCreateDate(now);
         dataDict.setLastUpdateDate(now);
         
-        //调用数据持久层对实体进行持久化操作
-        this.dataDictDao.insert(dataDict);
+        this.transactionTemplate
+                .execute(new TransactionCallbackWithoutResult() {
+                    
+                    @Override
+                    protected void doInTransactionWithoutResult(
+                            TransactionStatus status) {
+                        //调用数据持久层对实体进行持久化操作
+                        dataDictDao.insert(dataDict);
+                    }
+                });
     }
     
     /**
      * @param entityId
      * @return
      */
-    @Transactional
-    protected boolean deleteById(String id) {
+    public boolean deleteById(String id) {
         AssertUtils.notEmpty(id, "id is empty.");
         
         DataDict condition = new DataDict();
         condition.setId(id);
-        int resInt = this.dataDictDao.delete(condition);
+        int resInt = this.transactionTemplate
+                .execute(new TransactionCallback<Integer>() {
+                    @Override
+                    public Integer doInTransaction(TransactionStatus status) {
+                        return dataDictDao.delete(condition);
+                    }
+                });
         
         boolean flag = resInt > 0;
+        return flag;
+    }
+    
+    /**
+     * @param entityId
+     * @return
+     */
+    public boolean deleteByCode(String code, String type) {
+        AssertUtils.notEmpty(code, "code is empty.");
+        AssertUtils.notEmpty(type, "type is empty.");
+        
+        DataDict condition = new DataDict();
+        condition.setCode(code);
+        condition.setType(type);
+        int resInt = this.transactionTemplate
+                .execute(new TransactionCallback<Integer>() {
+                    @Override
+                    public Integer doInTransaction(TransactionStatus status) {
+                        return dataDictDao.delete(condition);
+                    }
+                });
+        
+        boolean flag = resInt > 0;
+        return flag;
+    }
+    
+    /**
+     * @param entity
+     * @return
+     */
+    public boolean updateById(DataDict dataDict) {
+        //验证参数是否合法，必填字段是否填写，
+        AssertUtils.notNull(dataDict, "dataDict is null.");
+        AssertUtils.notEmpty(dataDict.getId(), "dataDict.id is empty.");
+        
+        //生成需要更新字段的hashMap
+        Map<String, Object> updateRowMap = new HashMap<String, Object>();
+        updateRowMap.put("id", dataDict.getId());
+        updateRowMap.put("code", dataDict.getCode());
+        updateRowMap.put("type", dataDict.getType());
+        
+        //需要更新的字段
+        updateRowMap.put("name", dataDict.getName());
+        updateRowMap.put("remark", dataDict.getRemark());
+        updateRowMap.put("modifyAble", dataDict.isModifyAble());
+        updateRowMap.put("valid", dataDict.isValid());
+        updateRowMap.put("attributes", dataDict.getAttributes());
+        updateRowMap.put("lastUpdateDate", new Date());
+        
+        int updateRowCount = this.transactionTemplate
+                .execute(new TransactionCallback<Integer>() {
+                    @Override
+                    public Integer doInTransaction(TransactionStatus status) {
+                        return dataDictDao.update(updateRowMap);
+                    }
+                });
+        
+        //如果需要大于1时，抛出异常并回滚，需要在这里修改
+        boolean flag = updateRowCount >= 1;
+        return flag;
+    }
+    
+    /**
+     * 根据id禁用DataDict<br/>
+     * <功能详细描述>
+     * @param id
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public boolean disableById(String id) {
+        AssertUtils.notEmpty(id, "id is empty.");
+        
+        //生成查询条件
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("id", id);
+        params.put("valid", false);
+        params.put("lastUpdateDate", new Date());
+        
+        int updateRowCount = this.transactionTemplate
+                .execute(new TransactionCallback<Integer>() {
+                    @Override
+                    public Integer doInTransaction(TransactionStatus status) {
+                        return dataDictDao.update(params);
+                    }
+                });
+        
+        //如果需要大于1时，抛出异常并回滚，需要在这里修改
+        boolean flag = updateRowCount >= 1;
+        return flag;
+    }
+    
+    /**
+     * 根据id启用DataDict<br/>
+     * <功能详细描述>
+     * @param postId
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public boolean enableById(String id) {
+        AssertUtils.notEmpty(id, "id is empty.");
+        
+        //生成查询条件
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("id", id);
+        params.put("valid", true);
+        params.put("lastUpdateDate", new Date());
+        
+        int updateRowCount = this.transactionTemplate
+                .execute(new TransactionCallback<Integer>() {
+                    @Override
+                    public Integer doInTransaction(TransactionStatus status) {
+                        return dataDictDao.update(params);
+                    }
+                });
+        
+        //如果需要大于1时，抛出异常并回滚，需要在这里修改
+        boolean flag = updateRowCount >= 1;
         return flag;
     }
     
@@ -305,7 +428,7 @@ public class DataDictService implements InitializingBean, ResourceLoaderAware {
      * @exception throws
      * @see [类、类#方法、类#成员]
      */
-    public DataDict findEntityById(String id) {
+    public DataDict findById(String id) {
         AssertUtils.notEmpty(id, "id is empty.");
         
         DataDict condition = new DataDict();
@@ -324,33 +447,12 @@ public class DataDictService implements InitializingBean, ResourceLoaderAware {
      * @exception throws
      * @see [类、类#方法、类#成员]
      */
-    public DataDict findByCode(String basicDataType, String code) {
-        AssertUtils.notEmpty(basicDataType, "basicDataType is empty.");
+    public DataDict findByCode(String code, String type) {
         AssertUtils.notEmpty(code, "code is empty.");
-        
-        DataDict entity = findEntityByCode(basicDataType, code);
-        
-//        //加载Entity的分项列表
-//        setupEntryList(entity);
-        
-        return entity;
-    }
-    
-    /**
-     * 根据Id查询DataDict实体
-     * 1、当id为empty时抛出异常
-     *
-     * @param id
-     * @return DataDict [返回类型说明]
-     * @exception throws
-     * @see [类、类#方法、类#成员]
-     */
-    public DataDict findEntityByCode(String basicDataTypeCode, String code) {
-        AssertUtils.notEmpty(basicDataTypeCode, "basicDataTypeCode is empty.");
-        AssertUtils.notEmpty(code, "code is empty.");
+        AssertUtils.notEmpty(type, "type is empty.");
         
         DataDict condition = new DataDict();
-//        condition.setBasicDataTypeCode(basicDataTypeCode);
+        condition.setType(type);
         condition.setCode(code);
         
         DataDict res = this.dataDictDao.find(condition);
@@ -368,11 +470,11 @@ public class DataDictService implements InitializingBean, ResourceLoaderAware {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public List<DataDict> queryList(String basicDataType, Boolean valid,
+    public List<DataDict> queryList(String type, Boolean valid,
             Map<String, Object> params) {
         //生成查询条件
         params = params == null ? new HashMap<String, Object>() : params;
-        params.put("basicDataType", basicDataType);
+        params.put("type", type);
         params.put("valid", valid);
         
         //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
@@ -392,11 +494,11 @@ public class DataDictService implements InitializingBean, ResourceLoaderAware {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public List<DataDict> queryList(String basicDataTypeCode, String parentId,
-            Boolean valid, Map<String, Object> params) {
+    public List<DataDict> queryList(String type, String parentId, Boolean valid,
+            Map<String, Object> params) {
         //生成查询条件
         params = params == null ? new HashMap<String, Object>() : params;
-        params.put("basicDataTypeCode", basicDataTypeCode);
+        params.put("type", type);
         params.put("parentId", parentId);
         params.put("valid", valid);
         
@@ -421,14 +523,11 @@ public class DataDictService implements InitializingBean, ResourceLoaderAware {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public PagedList<DataDict> queryPagedList(String basicDataTypeCode,
-            Boolean valid, Map<String, Object> params, int pageIndex,
-            int pageSize) {
-        //T判断条件合法性
-        
+    public PagedList<DataDict> queryPagedList(String type, Boolean valid,
+            Map<String, Object> params, int pageIndex, int pageSize) {
         //生成查询条件
         params = params == null ? new HashMap<String, Object>() : params;
-        params.put("basicDataTypeCode", basicDataTypeCode);
+        params.put("type", type);
         params.put("valid", valid);
         
         //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
@@ -453,14 +552,12 @@ public class DataDictService implements InitializingBean, ResourceLoaderAware {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public PagedList<DataDict> queryPagedList(String basicDataTypeCode,
-            String parentId, Boolean valid, Map<String, Object> params,
-            int pageIndex, int pageSize) {
-        //T判断条件合法性
-        
+    public PagedList<DataDict> queryPagedList(String type, String parentId,
+            Boolean valid, Map<String, Object> params, int pageIndex,
+            int pageSize) {
         //生成查询条件
         params = params == null ? new HashMap<String, Object>() : params;
-        params.put("basicDataTypeCode", basicDataTypeCode);
+        params.put("type", type);
         params.put("parentId", parentId);
         params.put("valid", valid);
         
@@ -480,98 +577,21 @@ public class DataDictService implements InitializingBean, ResourceLoaderAware {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    public boolean isExist(String basicDataTypeCode,
-            Map<String, String> key2valueMap, String excludeId) {
-        AssertUtils.notEmpty(basicDataTypeCode, "basicDataTypeCode is empty");
+    public boolean isExist(String type, Map<String, String> key2valueMap,
+            String excludeId) {
+        AssertUtils.notEmpty(type, "type is empty");
         AssertUtils.notEmpty(key2valueMap, "key2valueMap is empty");
         
         //生成查询条件
         Map<String, Object> params = new HashMap<String, Object>();
         params.putAll(key2valueMap);
-        params.put("basicDataTypeCode", basicDataTypeCode);
+        params.put("type", type);
         params.put("excludeId", excludeId);
         
         //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
         int res = this.dataDictDao.count(params);
         
         return res > 0;
-    }
-    
-    /**
-     * @param entity
-     * @return
-     */
-    @Transactional
-    public boolean updateById(DataDict dataDict) {
-        //验证参数是否合法，必填字段是否填写，
-        AssertUtils.notNull(dataDict, "dataDict is null.");
-        AssertUtils.notEmpty(dataDict.getId(), "dataDict.id is empty.");
-        
-        //生成需要更新字段的hashMap
-        Map<String, Object> updateRowMap = new HashMap<String, Object>();
-        updateRowMap.put("id", dataDict.getId());
-        
-        //需要更新的字段
-        updateRowMap.put("name", dataDict.getName());
-        updateRowMap.put("remark", dataDict.getRemark());
-        updateRowMap.put("modifyAble", dataDict.isModifyAble());
-        updateRowMap.put("valid", dataDict.isValid());
-        updateRowMap.put("lastUpdateDate", new Date());
-        
-        int updateRowCount = this.dataDictDao.update(updateRowMap);
-        
-        //如果需要大于1时，抛出异常并回滚，需要在这里修改
-        return updateRowCount >= 1;
-    }
-    
-    /**
-     * 根据id禁用DataDict<br/>
-     * <功能详细描述>
-     * @param id
-     * @return [参数说明]
-     * 
-     * @return boolean [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-    */
-    @Transactional
-    public boolean disableById(String id) {
-        AssertUtils.notEmpty(id, "id is empty.");
-        
-        //生成查询条件
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("id", id);
-        params.put("valid", false);
-        params.put("lastUpdateDate", new Date());
-        
-        this.dataDictDao.update(params);
-        
-        return true;
-    }
-    
-    /**
-      * 根据id启用DataDict<br/>
-      * <功能详细描述>
-      * @param postId
-      * @return [参数说明]
-      * 
-      * @return boolean [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    @Transactional
-    public boolean enableById(String id) {
-        AssertUtils.notEmpty(id, "id is empty.");
-        
-        //生成查询条件
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("id", id);
-        params.put("valid", true);
-        params.put("lastUpdateDate", new Date());
-        
-        this.dataDictDao.update(params);
-        
-        return true;
     }
     
     /**

@@ -27,8 +27,8 @@ import com.tx.core.support.poi.excel.cellwriter.CellWriterForString;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class StringMapCellRowWriter implements
-        CellRowWriter<Map<String, String>> {
+public class StringMapCellRowWriter
+        implements CellRowWriter<Map<String, String>> {
     
     //由于map实际上是无序的需要指定写入的key顺序
     private String[] keys;
@@ -39,12 +39,13 @@ public class StringMapCellRowWriter implements
     public StringMapCellRowWriter(String[] keys) {
         super();
         this.keys = keys;
-        this.cellWriter = (CellWriter<String>) CellWriterBuilder.build(CellWriterForString.class,
-                String.class);
+        this.cellWriter = (CellWriter<String>) CellWriterBuilder
+                .build(CellWriterForString.class, String.class);
     }
     
     /** <默认构造函数> */
-    public StringMapCellRowWriter(String[] keys, CellWriter<String> cellWriter) {
+    public StringMapCellRowWriter(String[] keys,
+            CellWriter<String> cellWriter) {
         super();
         this.keys = keys;
         this.cellWriter = cellWriter;
@@ -58,8 +59,8 @@ public class StringMapCellRowWriter implements
      * @param cellStyle
      */
     @Override
-    public void write(Sheet sheet, Row row, Map<String, String> obj,
-            int rowNum, int rowHeight, CellStyle cellStyle) {
+    public void write(Sheet sheet, Row row, Map<String, String> obj, int rowNum,
+            int rowHeight, CellStyle cellStyle) {
         //设置行高
         row.setHeightInPoints(rowHeight);
         
@@ -67,13 +68,7 @@ public class StringMapCellRowWriter implements
             Cell cell = row.createCell(i);
             String value = obj.get(keys[i]);
             
-            this.cellWriter.write(cell,
-                    value,
-                    Cell.CELL_TYPE_STRING,
-                    -1,
-                    cellStyle,
-                    rowNum,
-                    i);
+            this.cellWriter.write(cell, value, -1, cellStyle, rowNum, i);
         }
     }
 }

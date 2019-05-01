@@ -12,8 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -60,22 +59,17 @@ public class ExcelReadUtils {
         AssertUtils.notEmpty(filePath, "filePath is empty.");
         
         Resource fileResource = resourceLoader.getResource(filePath);
-        
         AssertUtils.isTrue(fileResource != null && fileResource.exists(),
                 "file is not exist.");
         
         Workbook book = null;
-        InputStream in = null;
-        try {
-            in = fileResource.getInputStream();
+        try (InputStream in = fileResource.getInputStream()) {
             book = WorkbookFactory.create(in);
         } catch (IOException e) {
             throw ExceptionWrapperUtils.wrapperIOException(e, "excel解析异常.", "");
-        } catch (InvalidFormatException e) {
-            throw ExceptionWrapperUtils.wrapperSILException(ResourceParseException.class,
-                    "资源解析异常");
-        } finally {
-            IOUtils.closeQuietly(in);
+        } catch (EncryptedDocumentException e) {
+            throw ExceptionWrapperUtils.wrapperSILException(
+                    ResourceParseException.class, "资源解析异常");
         }
         
         return book;
@@ -98,9 +92,11 @@ public class ExcelReadUtils {
         
         try {
             book = WorkbookFactory.create(inputStream);
-        } catch (InvalidFormatException e) {
-            throw ExceptionWrapperUtils.wrapperSILException(ResourceParseException.class,
-                    "资源解析异常");
+        } catch (IOException e) {
+            throw ExceptionWrapperUtils.wrapperIOException(e, "excel解析异常.", "");
+        } catch (EncryptedDocumentException e) {
+            throw ExceptionWrapperUtils.wrapperSILException(
+                    ResourceParseException.class, "资源解析异常");
         }
         return book;
     }
@@ -124,7 +120,8 @@ public class ExcelReadUtils {
             return new ArrayList<>();
         }
         String[] keys = new String[firstRow.getLastCellNum()];
-        for (int cellIndex = 0; cellIndex < firstRow.getLastCellNum(); cellIndex++) {
+        for (int cellIndex = 0; cellIndex < firstRow
+                .getLastCellNum(); cellIndex++) {
             Cell cell = firstRow.getCell(cellIndex);
             AssertUtils.notNull(cell,
                     "cell is null,sheet:{} cellIndex:{}",
@@ -135,8 +132,8 @@ public class ExcelReadUtils {
         }
         
         @SuppressWarnings("rawtypes")
-        CellRowReader cellRowReader = CellRowReaderBuilder.build(MapRowReader.class,
-                new Object[] { keys });
+        CellRowReader cellRowReader = CellRowReaderBuilder
+                .build(MapRowReader.class, new Object[] { keys });
         @SuppressWarnings("unchecked")
         List<Map<String, String>> resList = readSheet(sheet,
                 1,
@@ -182,8 +179,8 @@ public class ExcelReadUtils {
         AssertUtils.notEmpty(keys, "keys is null.");
         
         @SuppressWarnings("rawtypes")
-        CellRowReader cellRowReader = CellRowReaderBuilder.build(MapRowReader.class,
-                new Object[] { keys });
+        CellRowReader cellRowReader = CellRowReaderBuilder
+                .build(MapRowReader.class, new Object[] { keys });
         @SuppressWarnings("unchecked")
         List<Map<String, String>> resList = readSheet(sheet,
                 skips,
@@ -213,8 +210,8 @@ public class ExcelReadUtils {
         AssertUtils.notEmpty(sheet, "sheet is null.");
         
         @SuppressWarnings("rawtypes")
-        CellRowReader cellRowReader = CellRowReaderBuilder.build(TypeRowReader.class,
-                new Object[] { type });
+        CellRowReader cellRowReader = CellRowReaderBuilder
+                .build(TypeRowReader.class, new Object[] { type });
         @SuppressWarnings("unchecked")
         List<T> resList = readSheet(sheet,
                 skips,
@@ -252,6 +249,8 @@ public class ExcelReadUtils {
         //构造返回列表
         List<T> resList = new ArrayList<T>();
         //获取行中有多少列
+        //getPhysicalNumberOfRows()获取的是物理行数，也就是不包括那些空行（隔行）的情况。
+        //getLastRowNum()获取的是最后一行的编号（编号从0开始）。
         //int rows = sheet.getPhysicalNumberOfRows();
         int lastRowNum = sheet.getLastRowNum();
         //System.out.println(test);

@@ -4,7 +4,7 @@
 		<property name="content_name" value="tx-core" />
 		<property name="log_path" value="d:/logs/${content_name}" />
 
-		<property name="common_pattern" value="[%d{yyyy-MM-dd HH:mm:ss,SSS}] %-5level %class{36} %L %M -%msg%xEx%n" />
+		<property name="common_pattern" value="[%d{yyyy-MM-dd HH:mm:ss,SSS}] [%-5p] %l -%msg%xEx%n" />
 		<property name="max_log_file_size" value="20MB"></property>
 		<property name="max_log_file_num" value="10"></property>
 	</Properties>
@@ -20,29 +20,15 @@
 
 		<!-- 文件会打印出所有信息，这个log每次运行程序会自动清空，由append属性决定，这个也挺有用的，适合临时测试用 -->
 		<!-- append为TRUE表示消息增加到指定文件中，false表示消息覆盖指定的文件内容，默认值是true -->
-		<File name="mybatis_auto_sqlmap_file" fileName="${log_path}.auto.sqlmap.log" append="false">
+		<File name="sql_log_file" fileName="${log_path}.sql.log" append="false">
 			<PatternLayout pattern="%msg%xEx%n" />
 		</File>
 		<File name="cache_log_file" fileName="${log_path}.cache.log" append="false">
-			<PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss,SSS}] %-5level %msg%xEx%n" />
+			<PatternLayout pattern="%msg%xEx%n" />
 		</File>
-		<File name="sql_log_file" fileName="${log_path}.sql.log" append="false">
-			<PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss,SSS}] %-5level %msg%xEx%n" />
-		</File>
-		<!-- 打印报文日志:没有缓冲区 -->
-		<RollingFile name="message_log_file" append="true" fileName="${log_path}.message.log" filePattern="${log_path}/$${date:yyyy-MM-dd}/message.%d{yyyy--MM--dd}.%i.log.gz">
-			<PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss,SSS}] %-5level %msg%xEx%n" />
-			<Filters>
-				<ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY" />
-			</Filters>
-			<Policies>
-				<TimeBasedTriggeringPolicy interval="24" modulate="false" />
-				<SizeBasedTriggeringPolicy size="${max_log_file_size}" />
-			</Policies>
-		</RollingFile>
 
-		<!-- info,warning日志：有缓冲区 -->
-		<RollingRandomAccessFile name="info_log_file" immediateFlush="false" fileName="${log_path}.info.log" filePattern="${log_path}/$${date:yyyy-MM}/info.%d{yyyy--MM--dd}.%i.log.gz">
+		<!-- info,warning日志 -->
+		<RollingRandomAccessFile name="info_log_file" immediateFlush="true" fileName="${log_path}.info.log" filePattern="${log_path}/$${date:yyyy-MM}/info.%d{yyyy--MM--dd}.%i.log.gz">
 			<PatternLayout pattern="${common_pattern}" /><!-- 输出日志的格式 -->
 			<Policies>
 				<OnStartupTriggeringPolicy />
@@ -58,8 +44,8 @@
 			<DefaultRolloverStrategy max="${max_log_file_num}" />
 		</RollingRandomAccessFile>
 
-		<!-- 打印错误日志:没有缓冲区 -->
-		<RollingFile name="error_log_file" append="true" fileName="${log_path}.error.log" filePattern="${log_path}/$${date:yyyy-MM-dd}/error.%d{yyyy--MM--dd}.%i.log.gz">
+		<!-- 打印错误日志 -->
+		<RollingFile name="error_log_file" append="true" immediateFlush="true" fileName="${log_path}.error.log" filePattern="${log_path}/$${date:yyyy-MM-dd}/error.%d{yyyy--MM--dd}.%i.log.gz">
 			<PatternLayout pattern="${common_pattern}" />
 			<Filters>
 				<ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY" />
@@ -94,9 +80,9 @@
 			<AppenderRef ref="sql_log_file" />
 		</Logger>
 		<!-- mybatis.auto.sqlmap日志级别 p6spy -->
-		<Logger name="mybatis.auto.sqlmap" level="DEBUG">
-			<AppenderRef ref="mybatis_auto_sqlmap_file" />
-		</Logger>
+		<!-- <Logger name="mybatis.auto.sqlmap" level="DEBUG"> -->
+		<!-- <AppenderRef ref="mybatis_auto_sqlmap_file" /> -->
+		<!-- </Logger> -->
 		<!-- message -->
 		<Logger name="message" level="DEBUG">
 			<AppenderRef ref="message_log_file" />

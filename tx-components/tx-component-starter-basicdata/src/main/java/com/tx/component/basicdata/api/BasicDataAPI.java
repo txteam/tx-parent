@@ -4,7 +4,7 @@
  * 修改时间:  2016年10月3日
  * <修改描述:>
  */
-package com.tx.component.basicdata.service;
+package com.tx.component.basicdata.api;
 
 import java.util.List;
 import java.util.Map;
@@ -25,33 +25,20 @@ import com.tx.core.paged.model.PagedList;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-@RequestMapping(value = "/basicDataRemote")
-public interface BasicDataRemoteService {
+@RequestMapping(value = "/api/basicdata")
+public interface BasicDataAPI {
     
     /**
-     * 获取对应的表名<br/>
-     *     用户写入基础数据类型中
+     * 插入基础数据对象<br/>
      * <功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return String [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    @RequestMapping(value = "/tableName", method = RequestMethod.GET)
-    public <T extends BasicData> String tableName(Class<T> type);
-    
-    /**
-     * 插入基础数据对象
-     * <功能详细描述>
-     * @param data [参数说明]
+     * @param dataMap [参数说明]
      * 
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
     @RequestMapping(value = "/insert", method = RequestMethod.POST)
-    public <T extends BasicData> void insert(Class<T> type, T data);
+    public void insert(String type, Map<String, Object> dataMap);
     
     /**
      * 批量插入基础数据
@@ -63,7 +50,7 @@ public interface BasicDataRemoteService {
      * @see [类、类#方法、类#成员]
      */
     @RequestMapping(value = "/batchInsert", method = RequestMethod.POST)
-    public <T extends BasicData> void batchInsert(Class<T> type,
+    public <T extends BasicData> void batchInsert(String type,
             List<T> dataList);
     
     /**

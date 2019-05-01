@@ -2,13 +2,13 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<!-- 作为tx-parent 的微服务基础框架： 考虑到：项目进度，以及前期系统搭建的技术债务问题 多数据源，以及多数据源事务，跨库的公共能力协调 数据一致性问题，在该版本中不作太多的设计调整 考虑后台公库，待后期业务需要再进行系统框架演进即可 -->
-
 	<!-- relativePath元素中的地址–本地仓库–远程仓库 设定一个空值将始终从仓库中获取，不从本地路径获取 -->
 	<!-- 依赖于spring-boot-dependencies，如果升级改版本，需要根据官方依赖修改properties -->
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-dependencies</artifactId>
-		<version>1.5.14.RELEASE</version>
+		<version>2.0.5.RELEASE</version>
+		<!-- <version>1.5.14.RELEASE</version> -->
 		<relativePath />
 	</parent>
 
@@ -88,22 +88,23 @@
 	<properties>
 		<!-- 参考spring-boot-dependencies中版本信息 -->
 		<java.version>1.8</java.version>
-		
+
 		<!-- 其他属性 -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding><!-- base info -->
 		<skipTests>true</skipTests><!-- projectInfo -->
-	
+
 		<!-- lib info -->
 		<tx.version>4.0.x-SNAPSHOT</tx.version>
 
 		<!-- 无参考版本信息 -->
-		<activiti.version>5.22.0</activiti.version>
+		<!-- <activiti.version>5.22.0</activiti.version> -->
+		<activiti.version>7.0.0.SR1</activiti.version>
 		<drools.version>6.5.0.Final</drools.version>
-		<poi.version>3.17</poi.version>
+		<poi.version>4.1.0</poi.version>
 
 		<!-- 覆盖默认父属性：改变版本 -->
 		<thymeleaf.version>3.0.9.RELEASE</thymeleaf.version>
- 		<thymeleaf-layout-dialect.version>2.3.0</thymeleaf-layout-dialect.version>
+		<thymeleaf-layout-dialect.version>2.3.0</thymeleaf-layout-dialect.version>
 	</properties>
 
 	<dependencyManagement>
@@ -111,7 +112,8 @@
 			<dependency>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-starter</artifactId>
-				<version>1.5.14.RELEASE</version>
+				<version>2.0.5.RELEASE</version>
+				<!-- <version>1.5.14.RELEASE</version> -->
 				<exclusions>
 					<exclusion>
 						<groupId>org.springframework.boot</groupId>
@@ -138,51 +140,45 @@
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-dependencies</artifactId>
-				<version>Dalston.SR5</version>
+				<!-- <version>Dalston.SR5</version> -->
+				<version>Finchley.SR3</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
 
-			<!-- mybatis -->
-			<dependency>
-				<groupId>org.mybatis.spring.boot</groupId>
-				<artifactId>mybatis-spring-boot-starter</artifactId>
-				<version>1.3.2</version>
-			</dependency>
-
 			<!-- 2.0.1含有 1.5.12不含的jar包 -->
-			<dependency>
-				<groupId>org.apache.commons</groupId>
-				<artifactId>commons-lang3</artifactId>
-				<version>3.7</version>
-				<exclusions>
-					<exclusion>
-						<artifactId>commons-logging</artifactId>
-						<groupId>commons-logging</groupId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.commons</groupId>
-				<artifactId>commons-dbcp2</artifactId>
-				<version>2.1.1</version>
-				<exclusions>
-					<exclusion>
-						<artifactId>commons-logging</artifactId>
-						<groupId>commons-logging</groupId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-			<dependency>
-				<groupId>org.quartz-scheduler</groupId>
-				<artifactId>quartz</artifactId>
-				<version>2.3.0</version>
-			</dependency>
-			<dependency>
-				<groupId>org.quartz-scheduler</groupId>
-				<artifactId>quartz-jobs</artifactId>
-				<version>2.3.0</version>
-			</dependency>
+			<!-- <dependency> -->
+			<!-- <groupId>org.apache.commons</groupId> -->
+			<!-- <artifactId>commons-lang3</artifactId> -->
+			<!-- <version>3.7</version> -->
+			<!-- <exclusions> -->
+			<!-- <exclusion> -->
+			<!-- <artifactId>commons-logging</artifactId> -->
+			<!-- <groupId>commons-logging</groupId> -->
+			<!-- </exclusion> -->
+			<!-- </exclusions> -->
+			<!-- </dependency> -->
+			<!-- <dependency> -->
+			<!-- <groupId>org.apache.commons</groupId> -->
+			<!-- <artifactId>commons-dbcp2</artifactId> -->
+			<!-- <version>2.1.1</version> -->
+			<!-- <exclusions> -->
+			<!-- <exclusion> -->
+			<!-- <artifactId>commons-logging</artifactId> -->
+			<!-- <groupId>commons-logging</groupId> -->
+			<!-- </exclusion> -->
+			<!-- </exclusions> -->
+			<!-- </dependency> -->
+			<!-- <dependency> -->
+			<!-- <groupId>org.quartz-scheduler</groupId> -->
+			<!-- <artifactId>quartz</artifactId> -->
+			<!-- <version>2.3.0</version> -->
+			<!-- </dependency> -->
+			<!-- <dependency> -->
+			<!-- <groupId>org.quartz-scheduler</groupId> -->
+			<!-- <artifactId>quartz-jobs</artifactId> -->
+			<!-- <version>2.3.0</version> -->
+			<!-- </dependency> -->
 
 			<!-- json web token -->
 			<dependency>
@@ -194,13 +190,6 @@
 				<groupId>com.auth0</groupId>
 				<artifactId>java-jwt</artifactId>
 				<version>3.4.0</version>
-			</dependency>
-
-			<!-- tx-core -->
-			<dependency>
-				<groupId>com.tx</groupId>
-				<artifactId>tx-core</artifactId>
-				<version>${tx.version}</version>
 			</dependency>
 
 			<!-- tx-components -->
@@ -221,17 +210,17 @@
 			</dependency>
 			<dependency>
 				<groupId>com.tx</groupId>
-				<artifactId>tx-component-starter-task</artifactId>
-				<version>${tx.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.tx</groupId>
-				<artifactId>tx-component-starter-servicelogger</artifactId>
-				<version>${tx.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.tx</groupId>
 				<artifactId>tx-component-starter-security</artifactId>
+				<version>${tx.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.tx</groupId>
+				<artifactId>tx-component-starter-file</artifactId>
+				<version>${tx.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.tx</groupId>
+				<artifactId>tx-component-starter-task</artifactId>
 				<version>${tx.version}</version>
 			</dependency>
 			<dependency>
@@ -241,22 +230,30 @@
 			</dependency>
 			<dependency>
 				<groupId>com.tx</groupId>
-				<artifactId>tx-component-starter-file</artifactId>
+				<artifactId>tx-component-starter-servicelogger</artifactId>
 				<version>${tx.version}</version>
 			</dependency>
-			
-			<!-- cglib dependency by mybatis -->
+
+			<!-- tx-core -->
 			<dependency>
-				<groupId>cglib</groupId>
-				<artifactId>cglib-nodep</artifactId>
-				<version>3.2.5</version>
+				<groupId>com.tx</groupId>
+				<artifactId>tx-core</artifactId>
+				<version>${tx.version}</version>
 			</dependency>
+
+			<!-- cglib dependency by mybatis -->
+			<!-- Spring 3.2开始, 不需要定义CGLIB 依赖关系(现在升级到了CGLIB3.0)—— 它已经被重新打包(现在所有 net.sf.cglib 包变成了 org.springframework.cglib包)并直接集成在 spring-core 这个 JAR包中 -->
+			<!-- <dependency> -->
+			<!-- <groupId>cglib</groupId> -->
+			<!-- <artifactId>cglib-nodep</artifactId> -->
+			<!-- <version>3.2.5</version> -->
+			<!-- </dependency> -->
 
 			<!-- commons -->
 			<dependency>
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-vfs2</artifactId>
-				<version>2.2</version>
+				<version>2.3</version>
 				<exclusions>
 					<exclusion>
 						<artifactId>commons-logging</artifactId>
@@ -267,7 +264,7 @@
 			<dependency>
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-collections4</artifactId>
-				<version>4.1</version>
+				<version>4.3</version>
 				<exclusions>
 					<exclusion>
 						<artifactId>commons-logging</artifactId>
@@ -275,50 +272,58 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
-			<dependency>
-				<groupId>commons-io</groupId>
-				<artifactId>commons-io</artifactId>
-				<version>2.6</version>
-				<exclusions>
-					<exclusion>
-						<artifactId>commons-logging</artifactId>
-						<groupId>commons-logging</groupId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-			<dependency>
-				<groupId>commons-beanutils</groupId>
-				<artifactId>commons-beanutils</artifactId>
-				<version>1.9.3</version>
-				<exclusions>
-					<exclusion>
-						<artifactId>commons-logging</artifactId>
-						<groupId>commons-logging</groupId>
-					</exclusion>
-				</exclusions>
-			</dependency>
+			<!-- 长期未更新放弃依赖 -->
+			<!-- <dependency> -->
+			<!-- <groupId>commons-io</groupId> -->
+			<!-- <artifactId>commons-io</artifactId> -->
+			<!-- <version>2.6</version> -->
+			<!-- <exclusions> -->
+			<!-- <exclusion> -->
+			<!-- <artifactId>commons-logging</artifactId> -->
+			<!-- <groupId>commons-logging</groupId> -->
+			<!-- </exclusion> -->
+			<!-- </exclusions> -->
+			<!-- </dependency> -->
+			<!-- <dependency> -->
+			<!-- <groupId>commons-beanutils</groupId> -->
+			<!-- <artifactId>commons-beanutils</artifactId> -->
+			<!-- <version>1.9.3</version> -->
+			<!-- <exclusions> -->
+			<!-- <exclusion> -->
+			<!-- <artifactId>commons-logging</artifactId> -->
+			<!-- <groupId>commons-logging</groupId> -->
+			<!-- </exclusion> -->
+			<!-- </exclusions> -->
+			<!-- </dependency> -->
 
 			<!-- activiti -->
 			<dependency>
 				<groupId>org.activiti</groupId>
-				<artifactId>activiti-engine</artifactId>
-				<version>${activiti.version}</version>
+				<artifactId>activiti-spring-boot-starter</artifactId>
+				<version>7.0.0.SR1</version>
 			</dependency>
-			<dependency>
-				<groupId>org.activiti</groupId>
-				<artifactId>activiti-spring</artifactId>
-				<version>${activiti.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.activiti</groupId>
-				<artifactId>activiti-cxf</artifactId>
-				<version>${activiti.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.activiti</groupId>
-				<artifactId>activiti-cdi</artifactId>
-				<version>${activiti.version}</version>
-			</dependency>
+			<!-- <dependency> -->
+			<!-- <groupId>org.activiti</groupId> -->
+			<!-- <artifactId>activiti-engine</artifactId> -->
+			<!-- <version>${activiti.version}</version> -->
+			<!-- </dependency> -->
+			<!-- <dependency> -->
+			<!-- <groupId>org.activiti</groupId> -->
+			<!-- <artifactId>activiti-spring</artifactId> -->
+			<!-- <version>${activiti.version}</version> -->
+			<!-- </dependency> -->
+			<!-- <dependency> -->
+			<!-- <groupId>org.activiti</groupId> -->
+			<!-- <artifactId>activiti-cxf</artifactId> -->
+			<!-- <version>${activiti.version}</version> -->
+			<!-- </dependency> -->
+			<!-- <dependency> -->
+			<!-- <groupId>org.activiti</groupId> -->
+			<!-- <artifactId>activiti-cdi</artifactId> -->
+			<!-- <version>${activiti.version}</version> -->
+			<!-- </dependency> -->
+
+			<!-- Flowable -->
 
 			<!-- drools -->
 			<dependency>
@@ -330,6 +335,24 @@
 				<groupId>org.kie</groupId>
 				<artifactId>kie-spring</artifactId>
 				<version>${drools.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.springframework</groupId>
+						<artifactId>spring-tx</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.springframework</groupId>
+						<artifactId>spring-beans</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.springframework</groupId>
+						<artifactId>spring-core</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.springframework</groupId>
+						<artifactId>spring-context</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.drools</groupId>
@@ -368,15 +391,20 @@
 			<dependency>
 				<groupId>org.apache.cxf</groupId>
 				<artifactId>cxf-spring-boot-starter-jaxws</artifactId>
-				<version>3.2.4</version>
+				<version>3.3.1</version>
+				<!-- <type>bundle</type> -->
 			</dependency>
+			<!-- <dependency> -->
+			<!-- <groupId>org.apache.cxf</groupId> -->
+			<!-- <artifactId>cxf-spring-boot-starter-jaxws</artifactId> -->
+			<!-- <version>3.2.4</version> -->
+			<!-- </dependency> -->
 
 			<!-- swagger2 -->
 			<dependency>
 				<groupId>io.springfox</groupId>
 				<artifactId>springfox-swagger2</artifactId>
 				<version>2.9.2</version>
-				<!-- <version>2.9.2</version> -->
 				<exclusions>
 					<exclusion>
 						<groupId>org.springframework</groupId>
@@ -384,11 +412,19 @@
 					</exclusion>
 					<exclusion>
 						<groupId>org.springframework</groupId>
-						<artifactId>spring-beans</artifactId>
+						<artifactId>spring-web</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.springframework</groupId>
+						<artifactId>spring-webmvc</artifactId>
 					</exclusion>
 					<exclusion>
 						<groupId>org.springframework</groupId>
 						<artifactId>spring-context</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.springframework</groupId>
+						<artifactId>spring-beans</artifactId>
 					</exclusion>
 					<exclusion>
 						<groupId>org.springframework</groupId>
@@ -410,14 +446,7 @@
 						<groupId>org.springframework</groupId>
 						<artifactId>spring-jdbc</artifactId>
 					</exclusion>
-					<exclusion>
-						<groupId>org.springframework</groupId>
-						<artifactId>spring-web</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.springframework</groupId>
-						<artifactId>spring-webmvc</artifactId>
-					</exclusion>
+
 					<exclusion>
 						<groupId>org.springframework</groupId>
 						<artifactId>spring-oxm</artifactId>
@@ -463,20 +492,23 @@
 			<dependency>
 				<groupId>org.xhtmlrenderer</groupId>
 				<artifactId>flying-saucer-core</artifactId>
-				<version>9.1.5</version>
+				<version>9.1.18</version>
 			</dependency>
 			<dependency>
 				<groupId>org.xhtmlrenderer</groupId>
 				<artifactId>flying-saucer-pdf-itext5</artifactId>
-				<version>9.1.5</version>
+				<version>9.1.18</version>
 			</dependency>
 
 			<!-- barcode4j 条形码 2维码相关 -->
-			<dependency>
-				<groupId>net.sf.barcode4j</groupId>
-				<artifactId>barcode4j</artifactId>
-				<version>2.1</version>
-			</dependency>
+			<!-- 常年不更新：废弃 -->
+			<!-- <dependency> -->
+			<!-- <groupId>net.sf.barcode4j</groupId> -->
+			<!-- <artifactId>barcode4j</artifactId> -->
+			<!-- <version>2.1</version> -->
+			<!-- </dependency> -->
+			<!-- QRCode -->
+			<!-- zxing -->
 
 			<!-- pinyin -->
 			<dependency>
@@ -489,7 +521,7 @@
 			<dependency>
 				<groupId>org.jsoup</groupId>
 				<artifactId>jsoup</artifactId>
-				<version>1.7.3</version>
+				<version>1.11.3</version>
 			</dependency>
 
 			<!-- WebCollector Dependencies -->
@@ -505,26 +537,33 @@
 			<dependency>
 				<groupId>com.thoughtworks.xstream</groupId>
 				<artifactId>xstream</artifactId>
-				<version>1.4.10</version>
+				<version>1.4.11</version>
 			</dependency>
 
 			<!-- alibaba -->
 			<dependency>
 				<groupId>com.alibaba</groupId>
 				<artifactId>druid-spring-boot-starter</artifactId>
-				<version>1.1.10</version>
-			</dependency>
-			<dependency>
-				<groupId>com.alibaba</groupId>
-				<artifactId>druid</artifactId>
-				<version>1.1.10</version>
+				<version>1.1.16</version>
 			</dependency>
 			<dependency>
 				<groupId>com.alibaba</groupId>
 				<artifactId>fastjson</artifactId>
-				<version>1.2.47</version>
+				<version>1.2.57</version>
 			</dependency>
+			<!-- <dependency> -->
+			<!-- <groupId>com.alibaba</groupId> -->
+			<!-- <artifactId>druid</artifactId> -->
+			<!-- <version>1.1.10</version> -->
+			<!-- </dependency> -->
 
+
+			<!-- mybatis -->
+			<dependency>
+				<groupId>org.mybatis.spring.boot</groupId>
+				<artifactId>mybatis-spring-boot-starter</artifactId>
+				<version>2.0.1</version>
+			</dependency>
 			<!-- <dependency> -->
 			<!-- <groupId>org.mybatis</groupId> -->
 			<!-- <artifactId>mybatis</artifactId> -->
@@ -565,7 +604,7 @@
 			<dependency>
 				<groupId>ognl</groupId>
 				<artifactId>ognl</artifactId>
-				<version>3.1.16</version>
+				<version>3.1.23</version>
 			</dependency>
 
 			<!-- p6spy -->
@@ -808,36 +847,6 @@
 			<!-- <groupId>org.postgresql</groupId> -->
 			<!-- <artifactId>postgresql</artifactId> -->
 			<!-- </dependency> -->
-
-			<!-- log -->
-			<!-- <dependency> -->
-			<!-- <groupId>org.springframework</groupId> -->
-			<!-- <artifactId>spring-boot-starter-logging</artifactId> -->
-			<!-- </dependency> -->
-			<!-- <dependency> <groupId>ch.qos.logback</groupId> <artifactId>logback-classic</artifactId> <version>1.2.3</version> </dependency> <dependency> <groupId>ch.qos.logback</groupId> <artifactId>logback-core</artifactId> <version>1.2.3</version> </dependency> <dependency> <groupId>org.slf4j</groupId> <artifactId>slf4j-api</artifactId> <version>1.7.25</version> </dependency> <dependency> <groupId>org.slf4j</groupId> <artifactId>jul-to-slf4j</artifactId> <version>1.7.25</version> </dependency> <dependency> 
-				<groupId>org.apache.logging.log4j</groupId> <artifactId>log4j-api</artifactId> <version>2.10.0</version> </dependency> <dependency> <groupId>org.apache.logging.log4j</groupId> <artifactId>log4j-to-slf4j</artifactId> <version>2.10.0</version> </dependency> -->
-
-			<!-- Web Context Dependencies -->
-			<!-- JEE2 (J2EE 1.2) 12 Dec 1999 Servlet 2.2 JSP 1.1 -->
-			<!-- JEE3 (J2EE 1.3) 24 Sep 2001 Servlet 2.3 JSP 1.2 JSTL 1.0 -->
-			<!-- JEE4 (J2EE 1.4) 11 Nov 2003 Servlet 2.4 JSP 2.0 JSTL 1.1 JSF1.1 -->
-			<!-- JEE5 11 May 2006 Servlet 2.5 JSP 2.1 EL2.1 JSTL 1.2 JSF 1.2 -->
-			<!-- JEE6 10 Dec 2009 Servlet 3.0 JSP 2.2 EL 2.2 JSTL 1.2 JSF 2.0 -->
-			<!-- JEE7 12 Jun 2013 Servlet 3.1 JSP 2.3 EL 3.0 JSTL 1.2 JSF 2.2 -->
-			<!-- spring-boot-dependencies 中已包含 -->
-
-			<!-- Test Dependencies -->
-			<!-- spring-boot-dependencies 中已包含 -->
-			<!-- <dependency> -->
-			<!-- <groupId>org.springframework.boot</groupId> -->
-			<!-- <artifactId>spring-boot-starter-test</artifactId> -->
-			<!-- <scope>test</scope> -->
-			<!-- </dependency> -->
-			<!-- <dependency> -->
-			<!-- <groupId>junit</groupId> -->
-			<!-- <artifactId>junit</artifactId> -->
-			<!-- <scope>test</scope> -->
-			<!-- </dependency> -->
 		</dependencies>
 	</dependencyManagement>
 
@@ -908,6 +917,13 @@
 					<artifactId>sonar-maven3-plugin</artifactId>
 					<version>4.5.7</version>
 				</plugin>
+
+				<!-- maven中添加bundle类型的依赖包 -->
+				<!-- <plugin> -->
+				<!-- <groupId>org.apache.felix</groupId> -->
+				<!-- <artifactId>maven-bundle-plugin</artifactId> -->
+				<!-- <extensions>true</extensions> -->
+				<!-- </plugin> -->
 			</plugins>
 		</pluginManagement>
 

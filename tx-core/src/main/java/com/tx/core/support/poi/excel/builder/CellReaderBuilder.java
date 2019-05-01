@@ -40,8 +40,7 @@ public abstract class CellReaderBuilder {
     }
     
     /** cell的读取器 */
-    @SuppressWarnings({ "unchecked" })
-    private static Map<String, CellReader<?>> cellReaderCache = (Map<String, CellReader<?>>) new LRUMap(
+    private static Map<String, CellReader<?>> cellReaderCache = (Map<String, CellReader<?>>) new LRUMap<String, CellReader<?>>(
             255);
     
     /**

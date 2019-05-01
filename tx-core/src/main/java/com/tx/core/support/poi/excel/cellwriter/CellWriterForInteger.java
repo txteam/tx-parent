@@ -33,10 +33,9 @@ public class CellWriterForInteger extends CellWriter<Integer> {
      * @param cellNum
      */
     @Override
-    public void write(Cell cell, Object value, int cellType, int width,
+    public void write(Cell cell, Object value, int width,
             CellStyle cellStyle, int rowNum, int cellNum) {
         if (value == null) {
-            cell.setCellType(HSSFCell.LAST_COLUMN_NUMBER);
             cell.setCellValue("");
             return;
         }
@@ -46,12 +45,14 @@ public class CellWriterForInteger extends CellWriter<Integer> {
                 "value is not Integer");
         
         Integer integerValue = (Integer) value;
-        if (cellType < 0) {
-            cell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
-            cell.setCellValue(integerValue.toString());
-        } else {
-            cell.setCellType(cellType);
-            cell.setCellValue(integerValue.toString());
-        }
+        cell.setCellValue(integerValue.toString());
+        
+//        if (cellType < 0) {
+//            cell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
+//            cell.setCellValue(integerValue.toString());
+//        } else {
+//            cell.setCellType(cellType);
+//            cell.setCellValue(integerValue.toString());
+//        }
     }
 }

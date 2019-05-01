@@ -25,7 +25,7 @@ import com.tx.component.configuration.model.ConfigProperty;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-@RequestMapping(value = "/configuration")
+@RequestMapping(value = "/config")
 public interface ConfigurationRemote {
     
     /**

@@ -51,14 +51,25 @@ public class XlsExcelTest {
             }
             String val = "";
             switch (cell.getCellType()) {
-                case Cell.CELL_TYPE_NUMERIC:
+                case NUMERIC:
                     val = String.valueOf(cell.getNumericCellValue());
                     break;
-                case Cell.CELL_TYPE_STRING:
+                case STRING:
                     val = cell.getStringCellValue();
                     break;
-                case Cell.CELL_TYPE_FORMULA:
+                case FORMULA:
                     val = cell.getCellFormula();//String.valueOf(cell.getNumericCellValue());
+                    break;
+                case _NONE:
+                case BLANK:
+                    val = "";
+                    break;
+                case BOOLEAN:
+                    if(cell.getBooleanCellValue()){
+                        val = "true";
+                    }else{
+                        val = "false";
+                    }
                     break;
                 default:
                     break;

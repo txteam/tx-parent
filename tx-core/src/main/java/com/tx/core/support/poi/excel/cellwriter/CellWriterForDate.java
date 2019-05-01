@@ -8,24 +8,21 @@ package com.tx.core.support.poi.excel.cellwriter;
 
 import java.util.Date;
 
-import org.apache.commons.lang3.time.DateFormatUtils;
-import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.support.poi.excel.CellWriter;
 
-
- /**
-  * 写入Cell值
-  * 
-  * @author  Administrator
-  * @version  [版本号, 2014年5月14日]
-  * @see  [相关类/方法]
-  * @since  [产品/模块版本]
-  */
-public class CellWriterForDate extends CellWriter<Date>{
+/**
+ * 写入Cell值
+ * 
+ * @author  Administrator
+ * @version  [版本号, 2014年5月14日]
+ * @see  [相关类/方法]
+ * @since  [产品/模块版本]
+ */
+public class CellWriterForDate extends CellWriter<Date> {
     
     /**
      * @param cell
@@ -37,24 +34,20 @@ public class CellWriterForDate extends CellWriter<Date>{
      * @param cellNum
      */
     @Override
-    public void write(Cell cell, Object value, int cellType,
-            int width, CellStyle cellStyle, int rowNum, int cellNum) {
+    public void write(Cell cell, Object value, int width, CellStyle cellStyle,
+            int rowNum, int cellNum) {
         if (value == null) {
-            cell.setCellType(HSSFCell.LAST_COLUMN_NUMBER);
             cell.setCellValue("");
             return;
         }
         
-        AssertUtils.isInstanceOf(Date.class, value,"value is not Date");
+        AssertUtils.isInstanceOf(Date.class, value, "value is not Date");
         
-        Date dateValue = (Date)value;
-        
-        if(cellType < 0 || cellType == HSSFCell.CELL_TYPE_NUMERIC){
-            cell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);  
-            cell.setCellValue(dateValue);
-        }else{
-            cell.setCellType(cellType);  
-            cell.setCellValue(DateFormatUtils.format(dateValue, "yyyy-MM-dd"));
-        }
+        Date dateValue = (Date) value;
+        //if(cellType < 0 || cellType == HSSFCell.CELL_TYPE_NUMERIC){ 
+        //    cell.setCellValue(dateValue);
+        //}else{
+        //    cell.setCellValue(DateFormatUtils.format(dateValue, "yyyy-MM-dd"));
+        //}
     }
 }

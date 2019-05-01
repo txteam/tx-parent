@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.io.IOUtils;
@@ -67,8 +66,8 @@ public class ObjectUtils {
      * @version [版本号, 2015年11月25日]
      * @author rain
      */
-    public static void debugPrintPropertyValue(PrintStream out, String label, Object object, boolean deep,
-            boolean ignoreNull) {
+    public static void debugPrintPropertyValue(PrintStream out, String label,
+            Object object, boolean deep, boolean ignoreNull) {
         if (out == null) {
             out = System.out;
         }
@@ -81,7 +80,8 @@ public class ObjectUtils {
         Set<String> getterNames = jpaMetaClass.getGetterNames();
         for (String getterMethod : getterNames) {
             try {
-                Object invokeMethod = MethodUtils.invokeMethod(object, "get" + StringUtils.capitalize(getterMethod));
+                Object invokeMethod = MethodUtils.invokeMethod(object,
+                        "get" + StringUtils.capitalize(getterMethod));
                 if (ignoreNull && invokeMethod == null) {
                     continue;
                 }
@@ -112,7 +112,8 @@ public class ObjectUtils {
             baos = new ByteArrayOutputStream();
             oos = new ObjectOutputStream(baos);
             oos.writeObject(srcObj);
-            ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+            ByteArrayInputStream bais = new ByteArrayInputStream(
+                    baos.toByteArray());
             ois = new ObjectInputStream(bais);
             resObject = (T) ois.readObject();
         } catch (IOException | ClassNotFoundException e) {
@@ -137,7 +138,8 @@ public class ObjectUtils {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public static boolean equals(Object thisObj, Object otherObj, String... dependPropertyName) {
+    public static boolean equals(Object thisObj, Object otherObj,
+            String... dependPropertyName) {
         if (thisObj == otherObj) {
             //两者均为空，则相等
             return true;
@@ -151,11 +153,15 @@ public class ObjectUtils {
         if (!thisObj.getClass().isAssignableFrom(otherObj.getClass())) {
             return false;
         } else {
-            BeanWrapper thisMetaObject = PropertyAccessorFactory.forBeanPropertyAccess(thisObj);
-            BeanWrapper otherMetaObject = PropertyAccessorFactory.forBeanPropertyAccess(otherObj);
+            BeanWrapper thisMetaObject = PropertyAccessorFactory
+                    .forBeanPropertyAccess(thisObj);
+            BeanWrapper otherMetaObject = PropertyAccessorFactory
+                    .forBeanPropertyAccess(otherObj);
             for (String propertyNameTemp : dependPropertyName) {
-                Object thisPropertyValue = thisMetaObject.getPropertyValue(propertyNameTemp);
-                Object otherPropertyValue = otherMetaObject.getPropertyValue(propertyNameTemp);
+                Object thisPropertyValue = thisMetaObject
+                        .getPropertyValue(propertyNameTemp);
+                Object otherPropertyValue = otherMetaObject
+                        .getPropertyValue(propertyNameTemp);
                 if (thisPropertyValue == otherPropertyValue) {
                     continue;
                 }
@@ -181,14 +187,17 @@ public class ObjectUtils {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public static int generateHashCode(int superHashCode, Object thisObj, String... dependPropertyName) {
+    public static int generateHashCode(int superHashCode, Object thisObj,
+            String... dependPropertyName) {
         AssertUtils.notNull(thisObj, "thisObj is null.");
         
         int resHashCode = thisObj.getClass().hashCode();
-        BeanWrapper metaObject = PropertyAccessorFactory.forBeanPropertyAccess(thisObj);
+        BeanWrapper metaObject = PropertyAccessorFactory
+                .forBeanPropertyAccess(thisObj);
         for (String propertyNameTemp : dependPropertyName) {
             Object value = metaObject.getPropertyValue(propertyNameTemp);
-            resHashCode += (value == null ? propertyNameTemp.hashCode() : value.hashCode());
+            resHashCode += (value == null ? propertyNameTemp.hashCode()
+                    : value.hashCode());
         }
         return resHashCode;
     }
@@ -240,25 +249,29 @@ public class ObjectUtils {
             res = (T) ConstructorUtils.invokeConstructor(type, objects);
             return res;
         } catch (NoSuchMethodException e) {
-            throw new ReflectionException("invokeConstructor create newInstance error.", e);
+            throw new ReflectionException(
+                    "invokeConstructor create newInstance error.", e);
         } catch (IllegalAccessException e) {
-            throw new ReflectionException("invokeConstructor create newInstance error.", e);
+            throw new ReflectionException(
+                    "invokeConstructor create newInstance error.", e);
         } catch (InvocationTargetException e) {
-            throw new ReflectionException("invokeConstructor create newInstance error.", e);
+            throw new ReflectionException(
+                    "invokeConstructor create newInstance error.", e);
         } catch (InstantiationException e) {
-            throw new ReflectionException("invokeConstructor create newInstance error.", e);
+            throw new ReflectionException(
+                    "invokeConstructor create newInstance error.", e);
         }
     }
     
-    public static <T> void populate(T obj, Map<String, Object> properties) {
-        try {
-            BeanUtils.populate(obj, properties);
-        } catch (IllegalAccessException e) {
-            throw new ReflectionException("invoke populate error.", e);
-        } catch (InvocationTargetException e) {
-            throw new ReflectionException("invoke populate error.", e);
-        }
-    }
+    //    public static <T> void populate(T obj, Map<String, Object> properties) {
+    //        try {
+    //            BeanUtils.populate(obj, properties);
+    //        } catch (IllegalAccessException e) {
+    //            throw new ReflectionException("invoke populate error.", e);
+    //        } catch (InvocationTargetException e) {
+    //            throw new ReflectionException("invoke populate error.", e);
+    //        }
+    //    }
     
     /**
      * 
@@ -279,7 +292,8 @@ public class ObjectUtils {
         if (value instanceof Boolean) {
             return (Boolean) value;
         }
-        if ("true".equals(value) || "1".equals(value) || "yes".equals(value) || "on".equals(value)) {
+        if ("true".equals(value) || "1".equals(value) || "yes".equals(value)
+                || "on".equals(value)) {
             return Boolean.TRUE;
         }
         return BooleanUtils.toBooleanObject(String.valueOf(value));

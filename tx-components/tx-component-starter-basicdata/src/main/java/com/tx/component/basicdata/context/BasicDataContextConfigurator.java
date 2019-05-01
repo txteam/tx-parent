@@ -22,7 +22,7 @@ import org.springframework.context.ApplicationContextAware;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class BasicDataContextConfigurator
+public abstract class BasicDataContextConfigurator
         implements ApplicationContextAware, InitializingBean {
     
     /** 日志记录器 */
@@ -30,6 +30,9 @@ public class BasicDataContextConfigurator
     
     /** spring容器句柄 */
     protected static ApplicationContext applicationContext;
+    
+    /** 模块 */
+    protected String module;
     
     /**
      * @param applicationContext

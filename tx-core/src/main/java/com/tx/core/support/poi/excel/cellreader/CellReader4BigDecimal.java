@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 
 import com.tx.core.exceptions.resource.ResourceReadException;
 import com.tx.core.support.poi.excel.CellReader;
@@ -62,7 +63,7 @@ public class CellReader4BigDecimal implements CellReader<BigDecimal> {
         BigDecimal resBigDecimal = null;
         
         switch (cell.getCellType()) {
-            case Cell.CELL_TYPE_ERROR:
+            case ERROR:
                 if (!ignoreError) {
                     throw new ResourceReadException(
                             MessageUtils.format("cell rowNum:{} cellNum:{} key:{} cellType is error.",
@@ -70,7 +71,8 @@ public class CellReader4BigDecimal implements CellReader<BigDecimal> {
                 }
                 resBigDecimal = null;
                 break;
-            case Cell.CELL_TYPE_BLANK:
+            case _NONE:
+            case BLANK:
                 if (!ignoreBlank) {
                     throw new ResourceReadException(
                             MessageUtils.format("cell rowNum:{} cellNum:{} key:{} cellType is blank.",
@@ -78,7 +80,7 @@ public class CellReader4BigDecimal implements CellReader<BigDecimal> {
                 }
                 resBigDecimal = null;
                 break;
-            case Cell.CELL_TYPE_FORMULA:
+            case FORMULA:
                 //如果Cell类型一定要匹配
                 throwTypeUnmatchExceptionWhenNotIgnoreTypeUnmatch(ignoreTypeUnmatch,
                         "CELL_TYPE_FORMULA",
@@ -89,7 +91,7 @@ public class CellReader4BigDecimal implements CellReader<BigDecimal> {
                 //如果Cell类型不需要匹配
                 resBigDecimal = null;
                 break;
-            case Cell.CELL_TYPE_NUMERIC:
+            case NUMERIC:
                 if (HSSFDateUtil.isCellDateFormatted(cell)) {
                     //如果Cell类型一定要匹配
                     throwTypeUnmatchExceptionWhenNotIgnoreTypeUnmatch(ignoreTypeUnmatch,
@@ -104,7 +106,7 @@ public class CellReader4BigDecimal implements CellReader<BigDecimal> {
                     resBigDecimal = new BigDecimal(cell.getNumericCellValue());
                 }
                 break;
-            case Cell.CELL_TYPE_STRING:
+            case STRING:
                 //如果Cell类型一定要匹配
                 throwTypeUnmatchExceptionWhenNotIgnoreTypeUnmatch(ignoreTypeUnmatch,
                         "CELL_TYPE_STRING",
@@ -122,7 +124,7 @@ public class CellReader4BigDecimal implements CellReader<BigDecimal> {
                     resBigDecimal = null;
                 }
                 break;
-            case Cell.CELL_TYPE_BOOLEAN:
+            case BOOLEAN:
                 //如果Cell类型一定要匹配
                 throwTypeUnmatchExceptionWhenNotIgnoreTypeUnmatch(ignoreTypeUnmatch,
                         "CELL_TYPE_BOOLEAN",
@@ -154,9 +156,9 @@ public class CellReader4BigDecimal implements CellReader<BigDecimal> {
             String key, boolean ignoreError, boolean ignoreBlank,
             boolean ignoreTypeUnmatch) {
         BigDecimal resBigDecimal = null;
-        if (Cell.CELL_TYPE_FORMULA == cell.getCellType()) {
+        if (CellType.FORMULA == cell.getCellType()) {
             resBigDecimal = new BigDecimal(cell.getNumericCellValue());
-        } else if (Cell.CELL_TYPE_STRING == cell.getCellType()) {
+        } else if (CellType.STRING == cell.getCellType()) {
             String stringValue = cell.getStringCellValue();
             if (NumberUtils.isNumber(stringValue)) {
                 resBigDecimal = new BigDecimal(cell.getNumericCellValue());

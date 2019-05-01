@@ -13,16 +13,15 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.support.poi.excel.CellWriter;
 
-
- /**
-  * 写入Cell值
-  * 
-  * @author  Administrator
-  * @version  [版本号, 2014年5月14日]
-  * @see  [相关类/方法]
-  * @since  [产品/模块版本]
-  */
-public class CellWriterForString extends CellWriter<String>{
+/**
+ * 写入Cell值
+ * 
+ * @author  Administrator
+ * @version  [版本号, 2014年5月14日]
+ * @see  [相关类/方法]
+ * @since  [产品/模块版本]
+ */
+public class CellWriterForString extends CellWriter<String> {
     
     /**
      * @param cell
@@ -34,24 +33,22 @@ public class CellWriterForString extends CellWriter<String>{
      * @param cellNum
      */
     @Override
-    public void write(Cell cell, Object value, int cellType, int width,
-            CellStyle cellStyle, int rowNum, int cellNum) {
-        if(value == null){
-            cell.setCellType(HSSFCell.CELL_TYPE_STRING);  
+    public void write(Cell cell, Object value, int width, CellStyle cellStyle,
+            int rowNum, int cellNum) {
+        if (value == null) {
             cell.setCellValue("");
-            return ;
+            return;
         }
-        AssertUtils.isInstanceOf(String.class,
-                value,
-                "value is not String");
+        AssertUtils.isInstanceOf(String.class, value, "value is not String");
         
         String stringValue = (String) value;
-        if(cellType < 0){
-            cell.setCellType(HSSFCell.CELL_TYPE_STRING);  
-            cell.setCellValue(stringValue);
-        }else{
-            cell.setCellType(cellType);
-            cell.setCellValue(stringValue);
-        }
+        //        if(cellType < 0){
+        //            cell.setCellType(HSSFCell.CELL_TYPE_STRING);  
+        //            cell.setCellValue(stringValue);
+        //        }else{
+        //            cell.setCellType(cellType);
+        //            cell.setCellValue(stringValue);
+        //        }
+        cell.setCellValue(stringValue);
     }
 }

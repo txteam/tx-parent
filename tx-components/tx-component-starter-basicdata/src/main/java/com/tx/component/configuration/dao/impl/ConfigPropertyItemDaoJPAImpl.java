@@ -67,14 +67,14 @@ public class ConfigPropertyItemDaoJPAImpl implements ConfigPropertyItemDao {
      * @return
      */
     @Override
-    public void update(Map<String, Object> rowMap) {
+    public int update(Map<String, Object> rowMap) {
         AssertUtils.notNull(rowMap, "rowMap is null.");
         AssertUtils.notEmpty(rowMap.get("id"), "id is empty.");
         
         ConfigPropertyItem cpi = entityManager.find(ConfigPropertyItem.class,
                 rowMap.get("id"));
         if (cpi == null) {
-            return ;
+            return 0;
         }
         
         BeanWrapper bw = PropertyAccessorFactory.forBeanPropertyAccess(cpi);
@@ -86,6 +86,7 @@ public class ConfigPropertyItemDaoJPAImpl implements ConfigPropertyItemDao {
                 bw.setPropertyValue(entryTemp.getKey(), entryTemp.getValue());
             }
         }
+        return 1;
     }
     
     /**

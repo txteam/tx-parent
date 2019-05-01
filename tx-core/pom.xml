@@ -55,16 +55,21 @@
 			<artifactId>spring-boot-starter-jdbc</artifactId>
 			<optional>true</optional>
 		</dependency>
-		
+
 		<!-- eureka、feign -->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-eureka</artifactId>
+			<artifactId>spring-cloud-starter-netflix-zuul</artifactId>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-feign</artifactId>
+			<artifactId>spring-cloud-netflix-eureka-client</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-openfeign</artifactId>
 			<optional>true</optional>
 		</dependency>
 
@@ -81,19 +86,35 @@
 			<artifactId>mybatis-spring-boot-starter</artifactId>
 			<optional>true</optional>
 		</dependency>
-		
+
 		<!-- hibernate: data-jpa jpa -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 			<optional>true</optional>
 		</dependency>
-		
+
 		<!-- redis -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-redis</artifactId>
 			<optional>true</optional>
+			<!-- 1.5的版本默认采用的连接池技术是jedis 2.0以上版本默认连接池是lettuce, 在这里采用jedis，所以需要排除lettuce的jar -->
+			<exclusions>
+				<exclusion>
+					<groupId>redis.clients</groupId>
+					<artifactId>jedis</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>io.lettuce</groupId>
+					<artifactId>lettuce-core</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<!-- 添加jedis客户端 -->
+		<dependency>
+			<groupId>redis.clients</groupId>
+			<artifactId>jedis</artifactId>
 		</dependency>
 
 		<!-- srpingframework core -->
@@ -109,12 +130,6 @@
 			<optional>true</optional>
 		</dependency>
 
-		<!-- cglib -->
-		<dependency>
-			<groupId>cglib</groupId>
-			<artifactId>cglib-nodep</artifactId>
-		</dependency>
-
 		<!-- commons -->
 		<dependency>
 			<groupId>org.apache.commons</groupId>
@@ -123,14 +138,6 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-collections4</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>commons-beanutils</groupId>
-			<artifactId>commons-beanutils</artifactId>
 		</dependency>
 
 		<!-- joda-time -->
@@ -247,11 +254,11 @@
 		</dependency>
 
 		<!-- druid -->
-		<dependency>
-			<groupId>com.alibaba</groupId>
-			<artifactId>druid</artifactId>
-			<optional>true</optional>
-		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>com.alibaba</groupId> -->
+		<!-- <artifactId>druid</artifactId> -->
+		<!-- <optional>true</optional> -->
+		<!-- </dependency> -->
 
 		<!-- html解析 -->
 		<dependency>
@@ -316,6 +323,11 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<extensions>true</extensions>
 			</plugin>
 		</plugins>
 	</build>

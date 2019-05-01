@@ -32,6 +32,6 @@ public abstract class CellWriter<T> extends TypeReference<T> {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public abstract void write(Cell cell, Object value, int cellType,
-            int width, CellStyle cellStyle, int rowNum, int cellNum);
+    public abstract void write(Cell cell, Object value, int width,
+            CellStyle cellStyle, int rowNum, int cellNum);
 }

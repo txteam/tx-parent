@@ -24,15 +24,6 @@ import com.tx.component.configuration.starter.ConfigContextProperties;
 @ConfigurationProperties(prefix = "tx.basicdata")
 public class BasicDataContextProperties {
     
-    /** 命令容器是否启动 */
-    private boolean enable;
-    
-    /** 表是否自动初始化 */
-    private boolean tableAutoInitialize = false;
-    
-    /** 基础包集合 */
-    private String basePackages = "com.tx.local";
-    
     /** 持久层逻辑 */
     private BasicDataPersisterProperties persister;
     
@@ -41,6 +32,18 @@ public class BasicDataContextProperties {
     
     /** 配置容器配置 */
     private ConfigContextProperties config;
+    
+    /** 命令容器是否启动 */
+    private boolean enable;
+    
+    /** 所属模块 */
+    private String module;
+    
+    /** 表是否自动初始化 */
+    private boolean tableAutoInitialize = false;
+    
+    /** 基础包集合 */
+    private String basePackages = "com.tx.local";
     
     /**
      * @return 返回 enable
@@ -54,6 +57,20 @@ public class BasicDataContextProperties {
      */
     public void setEnable(boolean enable) {
         this.enable = enable;
+    }
+    
+    /**
+     * @return 返回 module
+     */
+    public String getModule() {
+        return module;
+    }
+    
+    /**
+     * @param 对module进行赋值
+     */
+    public void setModule(String module) {
+        this.module = module;
     }
     
     /**

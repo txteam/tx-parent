@@ -6,12 +6,18 @@
  */
 package com.tx.component.basicdata.starter;
 
+import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -21,11 +27,15 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.CacheManager;
-import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ResourceLoaderAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
+import org.springframework.core.io.ResourceLoader;
+import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -48,15 +58,9 @@ import com.tx.core.exceptions.util.AssertUtils;
 @ConditionalOnBean({ DataSource.class, PlatformTransactionManager.class })
 @AutoConfigureAfter({ DataSourceAutoConfiguration.class,
         DataSourceTransactionManagerAutoConfiguration.class })
+@Import(BasicDataPersisterConfiguration.class)
 public class BasicDataContextAutoConfiguration
         implements ApplicationContextAware, InitializingBean {
-    
-    /** mybatis配置文件 */
-    protected String[] mybatisMapperLocations = new String[] {
-            "classpath*:com/tx/component/basicdata/dao/impl/*SqlMap_BASICDATA.xml" };
-    
-    /** 包名 */
-    protected String basePackages = "com.tx";
     
     /** spring 容器句柄 */
     private ApplicationContext applicationContext;
@@ -64,8 +68,8 @@ public class BasicDataContextAutoConfiguration
     /** 属性文件 */
     private BasicDataContextProperties properties;
     
-    /** cacheManager */
-    protected CacheManager cacheManager;
+    /** 基础数据扫表包路径 */
+    private String basePackages;
     
     /** 容器所属模块：当该值为空时，使用spring.application.name的内容 */
     private String module;
@@ -97,141 +101,14 @@ public class BasicDataContextAutoConfiguration
     @Override
     public void afterPropertiesSet() throws Exception {
         //初始化包名
-        if (!StringUtils.isEmpty(this.properties.getBasePackages())) {
+        if (!StringUtils.isBlank(this.properties.getBasePackages())) {
             this.basePackages = this.properties.getBasePackages();
         }
-        
-//        if (!StringUtils.isBlank(this.properties.getModule())) {
-//            this.module = this.properties.getModule();
-//        }
-//        if (!StringUtils.isBlank(this.applicationName)) {
-//            this.module = this.applicationName;
-//        }
-//        
-//        this.transactionTemplate = new TransactionTemplate(
-//                this.transactionManager);
-//        this.myBatisDaoSupport = MyBatisDaoSupportHelper.buildMyBatisDaoSupport(
-//                this.mybatisConfigLocation,
-//                this.mybatisMapperLocations,
-//                DataSourceTypeEnum.MYSQL,
-//                this.dataSource);
-    }
-    
-//    /**
-//     * 基础数据缓存业务层<br/>
-//     * <功能详细描述>
-//     * @return [参数说明]
-//     * 
-//     * @return CacheManager [返回类型说明]
-//     * @exception throws [异常类型] [异常说明]
-//     * @see [类、类#方法、类#成员]
-//     */
-//    @Bean
-//    public CacheManager basicDataCacheManager() {
-//        //设置cacheManager
-//        if (StringUtils.isNotBlank(this.properties.getCacheManagerRef())
-//                && this.applicationContext
-//                        .containsBean(this.properties.getCacheManagerRef())) {
-//            this.cacheManager = new ConcurrentMapCacheManager();
-//        } else if (this.applicationContext.getBeansOfType(CacheManager.class)
-//                .size() == 1) {
-//            this.cacheManager = this.applicationContext
-//                    .getBean(CacheManager.class);
-//        } else {
-//            this.cacheManager = new ConcurrentMapCacheManager();
-//        }
-//        
-//        return null;
-//    }
-    
-    /**
-     * 基础数据持久化配置<br/>
-     * <功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return BasicDataPersisterConfig [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    @Bean
-    public BasicDataContextHibernateConfig basicDataPersisterConfig() {
-        BasicDataContextHibernateConfig config = new BasicDataContextHibernateConfig();
-        
-        String mybaticConfigLocation = this.properties.getPersister()
-                .getMybatisConfigLocation();
-        //设置dataSource
-        if (StringUtils.isNotBlank(this.properties.getDataSourceRef())
-                && this.applicationContext
-                        .isSingleton(this.properties.getDataSourceRef())) {
-            this.dataSource = this.applicationContext.getBean(
-                    this.properties.getDataSourceRef(), DataSource.class);
-        } else if (this.applicationContext.getBeansOfType(DataSource.class)
-                .size() == 1) {
-            this.dataSource = this.applicationContext.getBean(DataSource.class);
+        if (!StringUtils.isBlank(this.applicationName)) {
+            this.module = this.applicationName;
         }
-        AssertUtils.notEmpty(this.dataSource,
-                "dataSource is null.存在多个数据源，需要通过basicdata.dataSource指定使用的数据源,或为数据源设置为Primary.");
-        
-        //设置transactionManager
-        if (StringUtils.isNotBlank(this.properties.getTransactionManagerRef())
-                && this.applicationContext.containsBean(
-                        this.properties.getTransactionManagerRef())) {
-            this.transactionManager = this.applicationContext.getBean(
-                    this.properties.getTransactionManagerRef(),
-                    PlatformTransactionManager.class);
-        } else if (this.applicationContext
-                .getBeansOfType(PlatformTransactionManager.class).size() == 1) {
-            this.transactionManager = this.applicationContext
-                    .getBean(PlatformTransactionManager.class);
-        } else {
-            this.transactionManager = new DataSourceTransactionManager(
-                    this.dataSource);
-        }
-        AssertUtils.notEmpty(this.transactionManager,
-                "transactionManager is null.存在多个事务管理器，需要通过basicdata.transactionManager指定使用的数据源,或为数据源设置为Primary.");
-        
-        return config;
-    }
-    
-    /**
-     * 该类会优先加载:基础数据容器表初始化器<br/>
-     * <功能详细描述>
-     * 
-     * @author  Administrator
-     * @version  [版本号, 2018年5月5日]
-     * @see  [相关类/方法]
-     * @since  [产品/模块版本]
-     */
-    @Configuration
-    @ConditionalOnBean({ TableDDLExecutor.class })
-    @ConditionalOnSingleCandidate(TableDDLExecutor.class)
-    @ConditionalOnProperty(prefix = "tx.basicdata", value = "table-auto-initialize", havingValue = "true")
-    @ConditionalOnMissingBean(BasicDataContextTableInitializer.class)
-    public static class BasicDataContextTableInitializerConfiguration {
-        
-        /** 表ddl自动执行器 */
-        private TableDDLExecutor tableDDLExecutor;
-        
-        public BasicDataContextTableInitializerConfiguration(
-                TableDDLExecutor tableDDLExecutor) {
-            this.tableDDLExecutor = tableDDLExecutor;
-        }
-        
-        /**
-         * 当命令容器不存在时<br/>
-         * <功能详细描述>
-         * @return [参数说明]
-         * 
-         * @return CommandContextFactory [返回类型说明]
-         * @exception throws [异常类型] [异常说明]
-         * @see [类、类#方法、类#成员]
-         */
-        @Bean("basicdata.tableInitializer")
-        public BasicDataContextTableInitializer tableInitializer() {
-            BasicDataContextTableInitializer initializer = new BasicDataContextTableInitializer(
-                    tableDDLExecutor, true);
-            
-            return initializer;
+        if (!StringUtils.isEmpty(this.properties.getModule())) {
+            this.module = this.properties.getModule();
         }
     }
     
@@ -369,5 +246,69 @@ public class BasicDataContextAutoConfiguration
     //        
     //        return serviceFactory;
     //    }
+    
+    /**
+     * 基础数据业务层注册<br/>
+     * <功能详细描述>
+     * 
+     * @author  Administrator
+     * @version  [版本号, 2019年4月30日]
+     * @see  [相关类/方法]
+     * @since  [产品/模块版本]
+     */
+    @Import(BasicDataPersisterConfiguration.class)
+    public static class BasicDataServiceImportRegistrar
+            implements BeanFactoryAware, ImportBeanDefinitionRegistrar,
+            ResourceLoaderAware, InitializingBean {
+        
+        @SuppressWarnings("unused")
+        private BeanFactory beanFactory;
+        
+        @SuppressWarnings("unused")
+        private ResourceLoader resourceLoader;
+        
+        /** <默认构造函数> */
+        //第一个被调用
+        public BasicDataServiceImportRegistrar() {
+            super();
+        }
+        
+        @PostConstruct
+        public void afterPropertiesSet() {
+            System.out.println(
+                    "TestContextAutoInnerImportRegistrar afterPropertiesSet. called");
+        }
+        
+        @PostConstruct
+        public void postConstruct() {
+            System.out.println(
+                    "TestContextAutoInnerImportRegistrar postConstruct. called");
+        }
+        
+        //低而个被调用
+        @Override
+        public void registerBeanDefinitions(
+                AnnotationMetadata importingClassMetadata,
+                BeanDefinitionRegistry registry) {
+            BeanDefinition bd = BeanDefinitionBuilder
+                    .genericBeanDefinition(TestBeanRegiste.class)
+                    .getBeanDefinition();
+            
+            System.out.println(
+                    "TestContextAutoInnerImportRegistrar registerBeanDefinitions. called");
+            registry.registerBeanDefinition("testRegiste", bd);
+        }
+        
+        @Override
+        public void setBeanFactory(BeanFactory beanFactory)
+                throws BeansException {
+            this.beanFactory = beanFactory;
+        }
+        
+        @Override
+        public void setResourceLoader(ResourceLoader resourceLoader) {
+            this.resourceLoader = resourceLoader;
+        }
+    }
     
 }
