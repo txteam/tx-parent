@@ -9,8 +9,6 @@ package tools.generator;
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.commons.io.FileUtils;
-
 import com.tx.component.basicdata.model.DataDict;
 import com.tx.core.generator.table.TableCodeGenerator;
 import com.tx.core.util.MD5Utils;
@@ -29,7 +27,7 @@ public class WTPTableCodeGenerator {
     public static void main(String[] args) throws IOException {
         Class<?> type = DataDict.class;
         String folderPath = "d:/generator/tablecode";
-        FileUtils.forceMkdir(new File(folderPath));
+        (new File(folderPath)).mkdirs();
         
         TableCodeGenerator factory = new TableCodeGenerator();
         //factory.setLoadTemplateClass(WTPTableCodeGenerator.class);

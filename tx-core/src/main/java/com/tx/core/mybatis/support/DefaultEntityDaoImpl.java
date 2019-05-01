@@ -13,7 +13,6 @@ import java.util.Map;
 import org.apache.commons.collections4.CollectionUtils;
 
 import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.mybatis.model.Order;
 import com.tx.core.paged.model.PagedList;
 
 /**
@@ -136,17 +135,17 @@ public class DefaultEntityDaoImpl<T> implements EntityDao<T> {
                 .queryList(this.assistant.getQueryStatementName(), params);
     }
     
-    /**
-     * @param params
-     * @param orderList
-     * @return
-     */
-    @Override
-    public List<T> queryList(Map<String, Object> params,
-            List<Order> orderList) {
-        return this.myBatisDaoSupport.queryList(
-                this.assistant.getQueryStatementName(), params, orderList);
-    }
+//    /**
+//     * @param params
+//     * @param orderList
+//     * @return
+//     */
+//    @Override
+//    public List<T> queryList(Map<String, Object> params,
+//            List<Order> orderList) {
+//        return this.myBatisDaoSupport.queryList(
+//                this.assistant.getQueryStatementName(), params, orderList);
+//    }
     
     /**
      * @param params
@@ -174,23 +173,23 @@ public class DefaultEntityDaoImpl<T> implements EntityDao<T> {
                 pageSize);
     }
     
-    /**
-     * @param params
-     * @param pageIndex
-     * @param pageSize
-     * @param orderList
-     * @return
-     */
-    @Override
-    public PagedList<T> queryPagedList(Map<String, Object> params,
-            int pageIndex, int pageSize, List<Order> orderList) {
-        return this.myBatisDaoSupport.queryPagedList(
-                this.assistant.getQueryStatementName(),
-                params,
-                pageIndex,
-                pageSize,
-                orderList);
-    }
+//    /**
+//     * @param params
+//     * @param pageIndex
+//     * @param pageSize
+//     * @param orderList
+//     * @return
+//     */
+//    @Override
+//    public PagedList<T> queryPagedList(Map<String, Object> params,
+//            int pageIndex, int pageSize, List<Order> orderList) {
+//        return this.myBatisDaoSupport.queryPagedList(
+//                this.assistant.getQueryStatementName(),
+//                params,
+//                pageIndex,
+//                pageSize,
+//                orderList);
+//    }
     
     /**
      * @param updateRowMap

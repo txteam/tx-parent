@@ -14,7 +14,6 @@ import javax.persistence.FlushModeType;
 import javax.persistence.LockModeType;
 
 import com.tx.core.mybatis.model.BatchResult;
-import com.tx.core.mybatis.model.Order;
 import com.tx.core.paged.model.PagedList;
 
 /**
@@ -122,20 +121,6 @@ public interface JPABaseDao<T, ID extends Serializable> {
     public List<T> queryList(Map<String, Object> params);
     
     /**
-     * 根据指定查询条件以及排序列查询T列表
-     * auto generate
-     * <功能详细描述>
-     * @param params
-     * @param orderList
-     * @return [参数说明]
-     * 
-     * @return List<T> [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public List<T> queryList(Map<String, Object> params, List<Order> orderList);
-    
-    /**
      * 根据条件查询T列表总数
      * auto generated
      * <功能详细描述>
@@ -163,23 +148,6 @@ public interface JPABaseDao<T, ID extends Serializable> {
      */
     public PagedList<T> queryPagedList(Map<String, Object> params,
             int pageIndex, int pageSize);
-    
-    /**
-     * 分页查询T列表，传入排序字段
-     * auto generate
-     * <功能详细描述>
-     * @param params
-     * @param pageIndex
-     * @param pageSize
-     * @param orderList
-     * @return [参数说明]
-     * 
-     * @return PagedList<T> [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public PagedList<T> queryPagedList(Map<String, Object> params,
-            int pageIndex, int pageSize, List<Order> orderList);
     
     /**
      * 更新T实体，

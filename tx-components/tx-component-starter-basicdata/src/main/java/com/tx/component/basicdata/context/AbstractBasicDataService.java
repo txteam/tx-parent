@@ -8,7 +8,7 @@ package com.tx.component.basicdata.context;
 
 import java.util.List;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.tx.component.basicdata.model.BasicData;

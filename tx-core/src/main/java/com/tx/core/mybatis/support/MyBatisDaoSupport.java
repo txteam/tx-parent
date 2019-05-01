@@ -28,7 +28,6 @@ import org.springframework.dao.support.PersistenceExceptionTranslator;
 
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.mybatis.model.BatchResult;
-import com.tx.core.mybatis.model.Order;
 import com.tx.core.paged.model.PagedList;
 
 /**
@@ -145,101 +144,101 @@ public class MyBatisDaoSupport implements InitializingBean {
         }
     }
     
-    /**
-     * <查询列表对象> <功能详细描述>
-     * 
-     * @param statement
-     * @param parameter
-     * @return [参数说明]
-     * 
-     * @return List<?> [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public <T> List<T> queryList(String statement,
-            Map<String, Object> parameter, List<Order> orders) {
-        if (orders != null && orders.size() > 0) {
-            StringBuilder sb = new StringBuilder();
-            for (Order orderTemp : orders) {
-                sb.append(orderTemp.toSqlString()).append(",");
-            }
-            if (sb.length() > 0) {
-                String orderSql = sb.substring(0, sb.length() - 1);
-                
-                parameter.put("orderSql", orderSql);
-            }
-        }
-        return this.<T> queryList(statement, parameter);
-    }
+    //    /**
+    //     * <查询列表对象> <功能详细描述>
+    //     * 
+    //     * @param statement
+    //     * @param parameter
+    //     * @return [参数说明]
+    //     * 
+    //     * @return List<?> [返回类型说明]
+    //     * @exception throws [异常类型] [异常说明]
+    //     * @see [类、类#方法、类#成员]
+    //     */
+    //    public <T> List<T> queryList(String statement,
+    //            Map<String, Object> parameter, List<Order> orders) {
+    //        if (orders != null && orders.size() > 0) {
+    //            StringBuilder sb = new StringBuilder();
+    //            for (Order orderTemp : orders) {
+    //                sb.append(orderTemp.toSqlString()).append(",");
+    //            }
+    //            if (sb.length() > 0) {
+    //                String orderSql = sb.substring(0, sb.length() - 1);
+    //                
+    //                parameter.put("orderSql", orderSql);
+    //            }
+    //        }
+    //        return this.<T> queryList(statement, parameter);
+    //    }
+    //    
+    //    /**
+    //     * <查询分页对象> <功能详细描述>
+    //     * 
+    //     * @param statement
+    //     * @param parameter
+    //     * @param pageIndex
+    //     * @param pageSize
+    //     * @param orders
+    //     * @return [参数说明]
+    //     * 
+    //     * @return PagedList<?> [返回类型说明]
+    //     * @exception throws [异常类型] [异常说明]
+    //     * @see [类、类#方法、类#成员]
+    //     */
+    //    public <T> PagedList<T> queryPagedList(String statement,
+    //            Map<String, Object> parameter, int pageIndex, int pageSize,
+    //            List<Order> orders) {
+    //        if (orders != null && orders.size() > 0) {
+    //            StringBuilder sb = new StringBuilder();
+    //            for (Order orderTemp : orders) {
+    //                sb.append(orderTemp.toSqlString()).append(",");
+    //            }
+    //            if (sb.length() > 0) {
+    //                String orderSql = sb.substring(0, sb.length() - 1);
+    //                
+    //                parameter.put("orderSql", orderSql);
+    //            }
+    //        }
+    //        return this.<T> queryPagedList(statement,
+    //                parameter,
+    //                pageIndex,
+    //                pageSize);
+    //    }
     
-    /**
-     * <查询分页对象> <功能详细描述>
-     * 
-     * @param statement
-     * @param parameter
-     * @param pageIndex
-     * @param pageSize
-     * @param orders
-     * @return [参数说明]
-     * 
-     * @return PagedList<?> [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public <T> PagedList<T> queryPagedList(String statement,
-            Map<String, Object> parameter, int pageIndex, int pageSize,
-            List<Order> orders) {
-        if (orders != null && orders.size() > 0) {
-            StringBuilder sb = new StringBuilder();
-            for (Order orderTemp : orders) {
-                sb.append(orderTemp.toSqlString()).append(",");
-            }
-            if (sb.length() > 0) {
-                String orderSql = sb.substring(0, sb.length() - 1);
-                
-                parameter.put("orderSql", orderSql);
-            }
-        }
-        return this.<T> queryPagedList(statement,
-                parameter,
-                pageIndex,
-                pageSize);
-    }
-    
-    /**
-     * <查询分页对象> <功能详细描述>
-     * 
-     * @param statement
-     * @param parameter
-     * @param pageIndex
-     * @param pageSize
-     * @param orders
-     * @return [参数说明]
-     * 
-     * @return PagedList<?> [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public <T> PagedList<T> queryPagedList(String statement,
-            Map<String, Object> parameter, int pageIndex, int pageSize,
-            int count, List<Order> orders) {
-        if (orders != null && orders.size() > 0) {
-            StringBuilder sb = new StringBuilder();
-            for (Order orderTemp : orders) {
-                sb.append(orderTemp.toSqlString()).append(",");
-            }
-            if (sb.length() > 0) {
-                String orderSql = sb.substring(0, sb.length() - 1);
-                
-                parameter.put("orderSql", orderSql);
-            }
-        }
-        return this.<T> queryPagedList(statement,
-                parameter,
-                pageIndex,
-                pageSize,
-                count);
-    }
+    //    /**
+    //     * <查询分页对象> <功能详细描述>
+    //     * 
+    //     * @param statement
+    //     * @param parameter
+    //     * @param pageIndex
+    //     * @param pageSize
+    //     * @param orders
+    //     * @return [参数说明]
+    //     * 
+    //     * @return PagedList<?> [返回类型说明]
+    //     * @exception throws [异常类型] [异常说明]
+    //     * @see [类、类#方法、类#成员]
+    //     */
+    //    public <T> PagedList<T> queryPagedList(String statement,
+    //            Map<String, Object> parameter, int pageIndex, int pageSize,
+    //            int count, List<Order> orders) {
+    //        if (orders != null && orders.size() > 0) {
+    //            StringBuilder sb = new StringBuilder();
+    //            for (Order orderTemp : orders) {
+    //                sb.append(orderTemp.toSqlString()).append(",");
+    //            }
+    //            if (sb.length() > 0) {
+    //                String orderSql = sb.substring(0, sb.length() - 1);
+    //                
+    //                parameter.put("orderSql", orderSql);
+    //            }
+    //        }
+    //        return this.<T> queryPagedList(statement,
+    //                parameter,
+    //                pageIndex,
+    //                pageSize,
+    //                count);
+    //    }
     
     /**
      * <查询分页对象> <功能详细描述>

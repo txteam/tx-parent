@@ -6,8 +6,6 @@ package tools.generator;
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.commons.io.FileUtils;
-
 import com.tx.component.basicdata.model.DataDict;
 import com.tx.core.generator.basicedata.BasicDataCodeGenerator;
 import com.tx.core.util.dialect.DataSourceTypeEnum;
@@ -27,7 +25,8 @@ public class WTPBasicDataCodeGenerator {
         Class<?> basicDataType = DataDict.class;
         //基础数据逻辑代码生成存放目录com.tx.component.basicdata.generator.
         String codeBaseFolder = "d:/generator/basicdata";
-        FileUtils.forceMkdir(new File(codeBaseFolder));
+        (new File(codeBaseFolder)).mkdirs();
+        //FileUtils.forceMkdir(new File(codeBaseFolder));
         
         //基础数据生成逻辑代码对应的数据库类型(mysql与oracle)在sqlMap中组装like条件是不一致的
         DataSourceTypeEnum dataSourceType = DataSourceTypeEnum.MYSQL;

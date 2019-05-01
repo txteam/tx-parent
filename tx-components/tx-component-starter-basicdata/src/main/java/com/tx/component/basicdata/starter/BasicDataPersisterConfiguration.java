@@ -33,20 +33,24 @@ import com.tx.core.ddlutil.executor.TableDDLExecutor;
  * @since  [产品/模块版本]
  */
 @Configuration
-@EnableConfigurationProperties(BasicDataPersisterProperties.class)
 public class BasicDataPersisterConfiguration
         implements ApplicationContextAware, InitializingBean {
     
     /** spring 容器句柄 */
     private ApplicationContext applicationContext;
     
-    private BasicDataPersisterProperties properties;
+    /** 基础数据容器属性 */
+    private BasicDataContextProperties properties;
+    
+    /** 基础数据容器属性 */
+    private BasicDataPersisterProperties persister;
     
     /** <默认构造函数> */
     public BasicDataPersisterConfiguration(
-            BasicDataPersisterProperties properties) {
+            BasicDataContextProperties properties) {
         super();
         this.properties = properties;
+        this.persister = properties.getPersister();
     }
     
     /**

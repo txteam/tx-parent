@@ -8,7 +8,7 @@ package com.tx.component.basicdata.context;
 
 import java.util.Collection;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 
 import com.tx.component.basicdata.model.BasicData;
 import com.tx.component.basicdata.model.TreeAbleBasicData;

@@ -17,7 +17,6 @@ import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -111,7 +110,7 @@ public class MybatisSupportAutoConfiguration
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(name = "myBatisDaoSupport")
     @Bean("myBatisDaoSupport")
     public MyBatisDaoSupport myBatisDaoSupport(
             SqlSessionTemplate sqlSessionTemplate) {
