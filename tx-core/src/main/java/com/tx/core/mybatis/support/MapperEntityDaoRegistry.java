@@ -28,7 +28,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.AliasRegistry;
 
 import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.mybatis.annotation.AutoPersistEntitySupport;
+import com.tx.core.mybatis.annotation.MapperEntity;
 import com.tx.core.util.ClassScanUtils;
 
 /**
@@ -40,16 +40,16 @@ import com.tx.core.util.ClassScanUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class EntityDaoRegistry implements ApplicationContextAware,
+public class MapperEntityDaoRegistry implements ApplicationContextAware,
         InitializingBean, BeanFactoryAware, BeanNameAware {
     
-    private Logger logger = LoggerFactory.getLogger(EntityDaoRegistry.class);
+    private Logger logger = LoggerFactory.getLogger(MapperEntityDaoRegistry.class);
     
     private static String beanName;
     
     private static ApplicationContext applicationContext;
     
-    private static EntityDaoRegistry instance;
+    private static MapperEntityDaoRegistry instance;
     
     private AliasRegistry aliasRegistry;
     
@@ -61,7 +61,7 @@ public class EntityDaoRegistry implements ApplicationContextAware,
     private static Map<Class<?>, String> type2nameMap = new HashMap<Class<?>, String>();
     
     /** 实体持久层实现映射 */
-    private static Map<String, EntityDao<?>> name2daoMap = new HashMap<String, EntityDao<?>>();
+    private static Map<String, MapperEntityDao<?>> name2daoMap = new HashMap<String, MapperEntityDao<?>>();
     
     /** 扫描包范围 */
     private String basePackages;
@@ -70,12 +70,12 @@ public class EntityDaoRegistry implements ApplicationContextAware,
     private MyBatisDaoSupport myBatisDaoSupport;
     
     /** <默认构造函数> */
-    public EntityDaoRegistry() {
+    public MapperEntityDaoRegistry() {
         super();
     }
     
     /** <默认构造函数> */
-    public EntityDaoRegistry(String basePackages,
+    public MapperEntityDaoRegistry(String basePackages,
             MyBatisDaoSupport myBatisDaoSupport) {
         super();
         this.basePackages = basePackages;
@@ -91,15 +91,15 @@ public class EntityDaoRegistry implements ApplicationContextAware,
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    public static EntityDaoRegistry getInstance() {
-        AssertUtils.notEmpty(EntityDaoRegistry.beanName, "beanName is empty.");
+    public static MapperEntityDaoRegistry getInstance() {
+        AssertUtils.notEmpty(MapperEntityDaoRegistry.beanName, "beanName is empty.");
         
-        if (EntityDaoRegistry.instance == null) {
-            EntityDaoRegistry.instance = applicationContext.getBean(
-                    EntityDaoRegistry.beanName, EntityDaoRegistry.class);
+        if (MapperEntityDaoRegistry.instance == null) {
+            MapperEntityDaoRegistry.instance = applicationContext.getBean(
+                    MapperEntityDaoRegistry.beanName, MapperEntityDaoRegistry.class);
         }
         
-        AssertUtils.notNull(EntityDaoRegistry.instance, "factory not inited.");
+        AssertUtils.notNull(MapperEntityDaoRegistry.instance, "factory not inited.");
         
         return instance;
     }
@@ -113,23 +113,23 @@ public class EntityDaoRegistry implements ApplicationContextAware,
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    public static EntityDao<?> getEntityDao(Class<?> modelType) {
+    public static MapperEntityDao<?> getEntityDao(Class<?> modelType) {
         AssertUtils.notNull(modelType, "modelType is null.");
         AssertUtils.isTrue(type2nameMap.containsKey(modelType),
                 "type2nameMap is not contains:{}",
                 new Object[] { modelType });
         
-        AssertUtils.notNull(EntityDaoRegistry.applicationContext,
+        AssertUtils.notNull(MapperEntityDaoRegistry.applicationContext,
                 "applicationContext is null.");
         
         //实体持久层Bean名称
         String entityDaoName = type2nameMap.get(modelType);
-        EntityDao<?> entityDao = null;
+        MapperEntityDao<?> entityDao = null;
         if (name2daoMap.containsKey(entityDaoName)) {
             entityDao = name2daoMap.get(entityDaoName);
         } else {
             entityDao = applicationContext.getBean(entityDaoName,
-                    EntityDao.class);
+                    MapperEntityDao.class);
             name2daoMap.put(entityDaoName, entityDao);
         }
         
@@ -143,7 +143,7 @@ public class EntityDaoRegistry implements ApplicationContextAware,
     @Override
     public void setApplicationContext(ApplicationContext applicationContext)
             throws BeansException {
-        EntityDaoRegistry.applicationContext = applicationContext;
+        MapperEntityDaoRegistry.applicationContext = applicationContext;
     }
     
     /**
@@ -151,7 +151,7 @@ public class EntityDaoRegistry implements ApplicationContextAware,
      */
     @Override
     public void setBeanName(String beanName) {
-        EntityDaoRegistry.beanName = beanName;
+        MapperEntityDaoRegistry.beanName = beanName;
     }
     
     /**
@@ -225,10 +225,10 @@ public class EntityDaoRegistry implements ApplicationContextAware,
     @Override
     public void afterPropertiesSet() throws Exception {
         //查找spring容器中已经存在的业务层
-        Map<String, EntityDao> basicDataServiceMap = EntityDaoRegistry.applicationContext
-                .getBeansOfType(EntityDao.class);
-        for (Entry<String, EntityDao> entry : basicDataServiceMap.entrySet()) {
-            EntityDao<?> dao = entry.getValue();
+        Map<String, MapperEntityDao> basicDataServiceMap = MapperEntityDaoRegistry.applicationContext
+                .getBeansOfType(MapperEntityDao.class);
+        for (Entry<String, MapperEntityDao> entry : basicDataServiceMap.entrySet()) {
+            MapperEntityDao<?> dao = entry.getValue();
             String beanName = entry.getKey();
             if (dao.getEntityType() == null
                     || !Class.class.isInstance(dao.getEntityType())
@@ -236,7 +236,7 @@ public class EntityDaoRegistry implements ApplicationContextAware,
                 continue;
             }
             Class<?> beanType = (Class<?>) dao.getEntityType();
-            if (!beanType.isAnnotationPresent(AutoPersistEntitySupport.class)) {
+            if (!beanType.isAnnotationPresent(MapperEntity.class)) {
                 continue;
             }
             
@@ -248,14 +248,14 @@ public class EntityDaoRegistry implements ApplicationContextAware,
             }
             
             //注册处理的业务类型
-            EntityDaoRegistry.type2nameMap.put(beanType, generateDaoName);
+            MapperEntityDaoRegistry.type2nameMap.put(beanType, generateDaoName);
         }
         
         //扫描遍历，如果已经存在持久层的实体类，则不再添加
         String[] basePackageArray = StringUtils
                 .splitByWholeSeparator(basePackages, ",");
         Set<Class<?>> types = ClassScanUtils.scanByAnnotation(
-                AutoPersistEntitySupport.class, basePackageArray);
+                MapperEntity.class, basePackageArray);
         
         for (Class<?> beanType : types) {
             //注册实体持久层
@@ -265,7 +265,7 @@ public class EntityDaoRegistry implements ApplicationContextAware,
             
             registerBeanDefinition(entityDaoName, daoBeanDefinition);
             
-            EntityDaoRegistry.type2nameMap.put(beanType, entityDaoName);
+            MapperEntityDaoRegistry.type2nameMap.put(beanType, entityDaoName);
         }
     }
     
@@ -286,7 +286,7 @@ public class EntityDaoRegistry implements ApplicationContextAware,
         AssertUtils.notNull(myBatisDaoSupport, "myBatisDaoSupport is null.");
         
         BeanDefinitionBuilder builder = BeanDefinitionBuilder
-                .genericBeanDefinition(EntityDaoFactory.class);
+                .genericBeanDefinition(MapperEntityDaoFactory.class);
         builder.addConstructorArgValue(beanType);
         builder.addConstructorArgValue(myBatisDaoSupport);
         

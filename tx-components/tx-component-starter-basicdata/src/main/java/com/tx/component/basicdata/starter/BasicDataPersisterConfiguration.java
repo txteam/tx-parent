@@ -15,25 +15,16 @@ import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionTemplate;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.util.StringUtils;
 
 import com.tx.component.basicdata.dao.DataDictDao;
 import com.tx.component.basicdata.dao.impl.DataDictDaoImpl;
-import com.tx.component.basicdata.model.DataDict;
 import com.tx.component.basicdata.script.BasicDataContextTableInitializer;
 import com.tx.component.basicdata.service.DataDictService;
 import com.tx.component.configuration.script.ConfigContextTableInitializer;
@@ -42,6 +33,7 @@ import com.tx.core.mybatis.support.MyBatisDaoSupport;
 import com.tx.core.mybatis.support.MyBatisDaoSupportHelper;
 import com.tx.core.starter.mybatis.AbstractMybatisConfiguration;
 import com.tx.core.starter.mybatis.ConfigurationCustomizer;
+import com.tx.core.starter.mybatis.MybatisProperties;
 
 /**
  * 基础数据持久层配置逻辑<br/>
@@ -53,69 +45,11 @@ import com.tx.core.starter.mybatis.ConfigurationCustomizer;
  * @since  [产品/模块版本]
  */
 @Configuration
-public class BasicDataPersisterConfiguration
-        implements ApplicationContextAware, InitializingBean {
-    
-    /** spring 容器句柄 */
-    private static ApplicationContext applicationContext;
-    
-    /** 基础数据容器属性 */
-    private static BasicDataContextProperties properties;
-    
-    /** 数据源 */
-    private static DataSource dataSource;
-    
-    /** 事务管理器 */
-    private static PlatformTransactionManager transactionManager;
-    
-    /** 事务管理器 */
-    private static TransactionTemplate transactionTemplate;
+public class BasicDataPersisterConfiguration {
     
     /** <默认构造函数> */
-    public BasicDataPersisterConfiguration(
-            BasicDataContextProperties properties) {
+    public BasicDataPersisterConfiguration() {
         super();
-        BasicDataPersisterConfiguration.properties = properties;
-    }
-    
-    /**
-     * @param applicationContext
-     * @throws BeansException
-     */
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext)
-            throws BeansException {
-        BasicDataPersisterConfiguration.applicationContext = applicationContext;
-    }
-    
-    /**
-     * @throws Exception
-     */
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        if (!StringUtils.isEmpty(properties.getPersister().getDataSourceRef())
-                && applicationContext.containsBean(
-                        properties.getPersister().getDataSourceRef())) {
-            dataSource = applicationContext.getBean(
-                    properties.getPersister().getDataSourceRef(),
-                    DataSource.class);
-        } else {
-            //如果不是唯一的数据源则跑出异常
-            dataSource = applicationContext.getBean(DataSource.class);
-            //"dataSource is null.存在多个数据源，需要通过basicdata.dataSource指定使用的数据源,或为数据源设置为Primary."
-        }
-        
-        if (!StringUtils.isEmpty(properties.getPersister().getTransactionManagerRef())
-                && applicationContext.containsBean(
-                        properties.getPersister().getTransactionManagerRef())) {
-            transactionManager = applicationContext.getBean(
-                    properties.getPersister().getTransactionManagerRef(),
-                    PlatformTransactionManager.class);
-        } else {
-            //如果不是唯一的数据源则跑出异常
-            transactionManager = applicationContext.getBean(PlatformTransactionManager.class);
-            //"dataSource is null.存在多个数据源，需要通过basicdata.dataSource指定使用的数据源,或为数据源设置为Primary."
-        }
     }
     
     /**
@@ -169,17 +103,36 @@ public class BasicDataPersisterConfiguration
      * @since  [产品/模块版本]
      */
     @Configuration
-    @ConditionalOnExpression("'mybatis'.equals('${tx.basicdata.persist.type}')")
+    @ConditionalOnProperty(prefix = "tx.basicdata", value = "persister", havingValue = "mybatis")
     public static class MybatisBasicDataContextPersisterConfiguration
             extends AbstractMybatisConfiguration {
         
+        /** mybatis属性 */
+        private MybatisProperties properties;
+        
+        /** 数据源 */
+        private DataSource dataSource;
+        
+        /** 事务管理器 */
+        private TransactionTemplate transactionTemplate;
+        
         /** <默认构造函数> */
         public MybatisBasicDataContextPersisterConfiguration(
+                MybatisProperties properties,
                 ObjectProvider<DatabaseIdProvider> databaseIdProvider,
                 ObjectProvider<Interceptor[]> interceptorsProvider,
-                ObjectProvider<List<ConfigurationCustomizer>> configurationCustomizersProvider) {
+                ObjectProvider<List<ConfigurationCustomizer>> configurationCustomizersProvider,
+                DataSource dataSource,
+                TransactionTemplate transactionTemplate) {
             super(databaseIdProvider, interceptorsProvider,
                     configurationCustomizersProvider);
+            
+            this.properties = (MybatisProperties) properties.clone();
+            this.properties.setMapperLocations(new String[] {
+                    "classpath*:com/tx/component/basicdata/dao/impl/*SqlMap_BASICDATA.xml" });
+            
+            this.dataSource = dataSource;
+            this.transactionTemplate = transactionTemplate;
         }
         
         /**
@@ -196,12 +149,12 @@ public class BasicDataPersisterConfiguration
         @ConditionalOnMissingBean(name = "basicdata.sqlSessionFactory")
         public SqlSessionFactory sqlSessionFactory() throws Exception {
             SqlSessionFactory factory = MyBatisDaoSupportHelper
-                    .buildSqlSessionFactory(dataSource,
-                            properties.getPersister().getMybatis(),
-                            databaseIdProvider,
-                            interceptors,
-                            configurationCustomizers,
-                            resourceLoader);
+                    .buildSqlSessionFactory(this.dataSource,
+                            this.properties,
+                            this.databaseIdProvider,
+                            this.interceptors,
+                            this.configurationCustomizers,
+                            this.resourceLoader);
             return factory;
         }
         
@@ -218,9 +171,7 @@ public class BasicDataPersisterConfiguration
         @Bean(name = "basicdata.sqlSessionTemplate")
         @ConditionalOnMissingBean(name = "basicdata.sqlSessionTemplate")
         public SqlSessionTemplate sqlSessionTemplate() throws Exception {
-            ExecutorType executorType = properties.getPersister()
-                    .getMybatis()
-                    .getExecutorType();
+            ExecutorType executorType = this.properties.getExecutorType();
             if (executorType != null) {
                 return new SqlSessionTemplate(sqlSessionFactory(),
                         executorType);
@@ -257,7 +208,8 @@ public class BasicDataPersisterConfiguration
          * @exception throws [异常类型] [异常说明]
          * @see [类、类#方法、类#成员]
          */
-        @Bean("dataDictDao")
+        @Bean("basicdata.dataDictDao")
+        @ConditionalOnMissingBean(name = "basicdata.dataDictDao")
         public DataDictDao dataDictDao() throws Exception {
             DataDictDao dao = new DataDictDaoImpl(myBatisDaoSupport());
             return dao;
@@ -273,15 +225,17 @@ public class BasicDataPersisterConfiguration
          * @exception throws [异常类型] [异常说明]
          * @see [类、类#方法、类#成员]
          */
-        @Bean("dataDictService")
-        public DataDictService dataDictService() throws Exception{
-            DataDictService service = new DataDictService(dataDictDao(), transactionTemplate);
+        @Bean("basicdata.dataDictService")
+        @ConditionalOnMissingBean(name = "basicdata.dataDictService")
+        public DataDictService dataDictService() throws Exception {
+            DataDictService service = new DataDictService(dataDictDao(),
+                    this.transactionTemplate);
             return service;
         }
     }
     
     @Configuration
-    @ConditionalOnExpression("'jpa'.equals('${tx.basicdata.persist.type}')")
+    @ConditionalOnProperty(prefix = "tx.basicdata", value = "persister", havingValue = "jpa")
     public static class JPABasicDataContextPersisterConfiguration {
         
     }

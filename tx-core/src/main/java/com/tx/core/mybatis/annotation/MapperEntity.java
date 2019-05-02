@@ -26,7 +26,7 @@ import java.lang.annotation.Target;
 @Inherited
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface AutoPersistEntitySupport {
+public @interface MapperEntity {
     
     /**
      * 插入语句<br/>
@@ -90,16 +90,4 @@ public @interface AutoPersistEntitySupport {
      * @see [类、类#方法、类#成员]
      */
     String countSQL() default "";
-    
-    /**
-     * 额外的查询条件提供者<br/>
-     *    暂未对该能力提供支持，属于保留字段，用以对扩展查询条件提供入口，最终实现待有需要的情况再进行思考by:pqy,2018-6-13
-     * <功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return Class<? extends QueryConditionProvider> [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    Class<?>[] extraQueryConditionProviderClasses() default {};
 }

@@ -56,12 +56,14 @@
 			<optional>true</optional>
 		</dependency>
 
-		<!-- eureka、feign -->
+		<!-- zuul -->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-netflix-zuul</artifactId>
 			<optional>true</optional>
 		</dependency>
+		
+		<!-- eureka、feign -->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-netflix-eureka-client</artifactId>

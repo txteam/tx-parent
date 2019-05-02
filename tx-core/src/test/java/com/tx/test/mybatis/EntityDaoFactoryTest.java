@@ -24,8 +24,8 @@ import com.tx.core.ddlutil.executor.TableDDLExecutor;
 import com.tx.core.ddlutil.executor.impl.MysqlTableDDLExecutor;
 import com.tx.core.ddlutil.helper.JPAEntityDDLHelper;
 import com.tx.core.ddlutil.model.TableDef;
-import com.tx.core.mybatis.support.EntityDao;
-import com.tx.core.mybatis.support.EntityDaoFactory;
+import com.tx.core.mybatis.support.MapperEntityDao;
+import com.tx.core.mybatis.support.MapperEntityDaoFactory;
 import com.tx.core.mybatis.support.MyBatisDaoSupport;
 import com.tx.core.mybatis.support.MyBatisDaoSupportHelper;
 import com.tx.core.util.UUIDUtils;
@@ -75,10 +75,10 @@ public class EntityDaoFactoryTest {
             ddlExecutor.create(createBuilder);
         }
         
-        EntityDaoFactory<TestDemo> entityDaoFactory = new EntityDaoFactory<>(
+        MapperEntityDaoFactory<TestDemo> entityDaoFactory = new MapperEntityDaoFactory<>(
                 TestDemo.class, myBatisDaoSupport);
         entityDaoFactory.afterPropertiesSet();
-        EntityDao<TestDemo> dao = entityDaoFactory.getObject();
+        MapperEntityDao<TestDemo> dao = entityDaoFactory.getObject();
         
         String id1 = UUIDUtils.generateUUID();
         TestDemo td1 = new TestDemo();

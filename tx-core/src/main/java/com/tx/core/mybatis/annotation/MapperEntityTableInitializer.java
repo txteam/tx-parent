@@ -28,18 +28,18 @@ import com.tx.core.util.ClassScanUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class AutoPersistEntityTableInitializer
+public class MapperEntityTableInitializer
         extends AbstractTableInitializer {
     
     private String basePackages = "com.tx";
     
     /** <默认构造函数> */
-    public AutoPersistEntityTableInitializer() {
+    public MapperEntityTableInitializer() {
         super();
     }
     
     /** <默认构造函数> */
-    public AutoPersistEntityTableInitializer(String basePackages) {
+    public MapperEntityTableInitializer(String basePackages) {
         super();
         this.basePackages = basePackages;
     }
@@ -56,7 +56,7 @@ public class AutoPersistEntityTableInitializer
         String[] basePackageArray = StringUtils
                 .splitByWholeSeparator(basePackages.trim(), ",");
         Set<Class<?>> typeSet = ClassScanUtils.scanByAnnotation(
-                AutoPersistEntitySupport.class, basePackageArray);
+                MapperEntity.class, basePackageArray);
         
         StringBuilder sb = new StringBuilder();
         for (Class<?> type : typeSet) {

@@ -17,7 +17,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.core.annotation.AnnotationUtils;
 
 import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.mybatis.annotation.AutoPersistEntitySupport;
+import com.tx.core.mybatis.annotation.MapperEntity;
 import com.tx.core.mybatis.builder.AbstractEntityMapperBuilderAssistant;
 import com.tx.core.mybatis.sqlbuilder.SqlMapSQLBuilder;
 import com.tx.core.util.JPAParseUtils;
@@ -37,7 +37,7 @@ public class EntityMapperBuilderAssistant
         extends AbstractEntityMapperBuilderAssistant {
     
     /** 注解信息 */
-    protected AutoPersistEntitySupport annotation;
+    protected MapperEntity annotation;
     
     //表名
     protected String tableName;
@@ -67,13 +67,13 @@ public class EntityMapperBuilderAssistant
                 "type:{} is simpleValueType.",
                 new Object[] { beanType });
         AssertUtils.isTrue(
-                beanType.isAnnotationPresent(AutoPersistEntitySupport.class),
+                beanType.isAnnotationPresent(MapperEntity.class),
                 "type:{} annotation is not exist.",
                 new Object[] { beanType });
         
         //解析表名
         this.annotation = AnnotationUtils.findAnnotation(beanType,
-                AutoPersistEntitySupport.class);
+                MapperEntity.class);
         this.tableName = JPAParseUtils.parseTableName(this.beanType);
         this.tableColumns = JPAParseUtils.parseTableColumns(this.beanType);
         

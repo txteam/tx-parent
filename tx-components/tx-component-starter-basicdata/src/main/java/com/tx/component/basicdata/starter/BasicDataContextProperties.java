@@ -8,9 +8,7 @@ package com.tx.component.basicdata.starter;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-import com.tx.component.basicdata.starter.cache.BasicDataCacheProperties;
-import com.tx.component.basicdata.starter.persister.BasicDataPersisterProperties;
-import com.tx.component.configuration.starter.ConfigContextProperties;
+import com.tx.core.starter.persister.PersisterTypeEnum;
 
 /**
  * 基础数据容器默认配置<br/>
@@ -24,14 +22,11 @@ import com.tx.component.configuration.starter.ConfigContextProperties;
 @ConfigurationProperties(prefix = "tx.basicdata")
 public class BasicDataContextProperties {
     
-    /** 持久层逻辑 */
-    private BasicDataPersisterProperties persister;
+    /** 持久化类型 */
+    private PersisterTypeEnum type = PersisterTypeEnum.mybatis;
     
-    /** 缓存 */
-    private BasicDataCacheProperties cache;
-    
-    /** 配置容器配置 */
-    private ConfigContextProperties config;
+    /** 持久化类型 */
+    private PersisterTypeEnum persister;
     
     /** 命令容器是否启动 */
     private boolean enable;
@@ -44,6 +39,34 @@ public class BasicDataContextProperties {
     
     /** 基础包集合 */
     private String basePackages = "com.tx.local";
+    
+    /**
+     * @return 返回 type
+     */
+    public PersisterTypeEnum getType() {
+        return type;
+    }
+    
+    /**
+     * @param 对type进行赋值
+     */
+    public void setType(PersisterTypeEnum type) {
+        this.type = type;
+    }
+    
+    /**
+     * @return 返回 persister
+     */
+    public PersisterTypeEnum getPersister() {
+        return persister;
+    }
+    
+    /**
+     * @param 对persister进行赋值
+     */
+    public void setPersister(PersisterTypeEnum persister) {
+        this.persister = persister;
+    }
     
     /**
      * @return 返回 enable
@@ -74,20 +97,6 @@ public class BasicDataContextProperties {
     }
     
     /**
-     * @return 返回 basePackages
-     */
-    public String getBasePackages() {
-        return basePackages;
-    }
-    
-    /**
-     * @param 对basePackages进行赋值
-     */
-    public void setBasePackages(String basePackages) {
-        this.basePackages = basePackages;
-    }
-    
-    /**
      * @return 返回 tableAutoInitialize
      */
     public boolean isTableAutoInitialize() {
@@ -102,44 +111,17 @@ public class BasicDataContextProperties {
     }
     
     /**
-     * @return 返回 persister
+     * @return 返回 basePackages
      */
-    public BasicDataPersisterProperties getPersister() {
-        return persister;
+    public String getBasePackages() {
+        return basePackages;
     }
     
     /**
-     * @param 对persister进行赋值
+     * @param 对basePackages进行赋值
      */
-    public void setPersister(BasicDataPersisterProperties persister) {
-        this.persister = persister;
+    public void setBasePackages(String basePackages) {
+        this.basePackages = basePackages;
     }
     
-    /**
-     * @return 返回 cache
-     */
-    public BasicDataCacheProperties getCache() {
-        return cache;
-    }
-    
-    /**
-     * @param 对cache进行赋值
-     */
-    public void setCache(BasicDataCacheProperties cache) {
-        this.cache = cache;
-    }
-    
-    /**
-     * @return 返回 config
-     */
-    public ConfigContextProperties getConfig() {
-        return config;
-    }
-    
-    /**
-     * @param 对config进行赋值
-     */
-    public void setConfig(ConfigContextProperties config) {
-        this.config = config;
-    }
 }

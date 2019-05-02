@@ -12,7 +12,7 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import com.tx.core.mybatis.annotation.AutoPersistEntitySupport;
+import com.tx.core.mybatis.annotation.MapperEntity;
 
 /**
  * <功能简述>
@@ -23,7 +23,7 @@ import com.tx.core.mybatis.annotation.AutoPersistEntitySupport;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-@AutoPersistEntitySupport
+@MapperEntity
 @Table(name="test_demo")
 public class TestDemo extends TestDemoSuper{
    

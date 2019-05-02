@@ -36,6 +36,9 @@ import com.tx.core.support.json.JSONAttributesSupportUtils;
 public class DefaultDBBasicDataService<T extends BasicData>
         extends AbstractBasicDataService<T> {
     
+    /** 对应类型 */
+    private Class<T> type;
+    
     /** 数据字典业务层 */
     protected DataDictService dataDictService;
     
@@ -288,5 +291,21 @@ public class DefaultDBBasicDataService<T extends BasicData>
     public void setTransactionTemplate(
             TransactionTemplate transactionTemplate) {
         this.transactionTemplate = transactionTemplate;
+    }
+    
+    /**
+     * @param 对type进行赋值
+     */
+    public void setType(Class<T> type) {
+        this.type = type;
+    }
+    
+    /**
+     * 覆写该方法保证类型能够被获取到<br/>
+     * @return
+     */
+    @Override
+    public Class<T> getType() {
+        return this.type;
     }
 }

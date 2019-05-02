@@ -4,7 +4,7 @@
 // * 修改时间:  2016年10月6日
 // * <修改描述:>
 // */
-//package com.tx.component.basicdata.starter;
+//package com.tx.component.basicdata.context;
 //
 //import java.lang.reflect.Modifier;
 //import java.util.ArrayList;
@@ -35,10 +35,10 @@
 //import org.springframework.core.io.ResourceLoader;
 //import org.springframework.core.type.AnnotationMetadata;
 //
-//import com.tx.component.basicdata.api.BasicDataAPI;
+//import com.tx.component.basicdata.client.BasicDataAPIClient;
 //import com.tx.component.basicdata.context.BasicDataService;
 //import com.tx.component.basicdata.model.BasicData;
-//import com.tx.component.basicdata.model.BasicDataType;
+//import com.tx.component.basicdata.model.BasicDataEntityInfo;
 //import com.tx.component.basicdata.model.DataDict;
 //import com.tx.component.basicdata.model.TreeAbleBasicData;
 //import com.tx.component.basicdata.service.BasicDataTypeRegistry;
@@ -72,9 +72,10 @@
 //    
 //    private static BasicDataServiceRegistry instance;
 //    
-//    private static Map<Class<?>, BasicDataService<?>> type2serviceMap = new HashMap<Class<?>, BasicDataService<?>>();
+//    private static Map<String, Class<? extends BasicData>> classMap = new HashMap<String, Class<? extends BasicData>>();
 //    
-//    private static Map<String, BasicDataService<?>> code2serviceMap = new HashMap<String, BasicDataService<?>>();
+//    @SuppressWarnings("rawtypes")
+//    private static Map<String, BasicDataService> serviceMap = new HashMap<String, BasicDataService>();
 //    
 //    private AliasRegistry aliasRegistry;
 //    
@@ -91,7 +92,7 @@
 //    private DataDictService dataDictService;
 //    
 //    /** 基础数据远程调用消费逻辑层 */
-//    private BasicDataAPI basicDataRemoteService;
+//    private BasicDataAPIClient basicDataRemoteService;
 //    
 //    /** <默认构造函数> */
 //    public BasicDataServiceRegistry() {
@@ -102,7 +103,7 @@
 //    public BasicDataServiceRegistry(String module, String basePackages,
 //            BasicDataTypeRegistry basicDataTypeService,
 //            DataDictService dataDictService,
-//            BasicDataAPI basicDataRemoteService) {
+//            BasicDataAPIClient basicDataRemoteService) {
 //        super();
 //        AssertUtils.notEmpty(module, "module is null.");
 //        
@@ -233,45 +234,7 @@
 //        
 //    }
 //    
-//    /**
-//     * 构建默认的基础数据业务类<br/>
-//     * <功能详细描述>
-//     * @param type [参数说明]
-//     * 
-//     * @return void [返回类型说明]
-//     * @exception throws [异常类型] [异常说明]
-//     * @see [类、类#方法、类#成员]
-//     */
-//    @SuppressWarnings("rawtypes")
-//    public BasicDataService buildDefaultDBBasicDataService(String module,
-//            Class<? extends BasicData> type) {
-//        String beanName = generateServiceBeanName(type);
-//        
-//        if (type.isAssignableFrom(TreeAbleBasicData.class)) {
-//            Class<?> defaultServiceType = DefaultDBTreeAbleBasicDataService.class;
-//            
-//            BeanDefinitionBuilder builder = BeanDefinitionBuilder
-//                    .genericBeanDefinition(defaultServiceType);
-//            builder.addPropertyValue("module", module);
-//            builder.addPropertyValue("type", type);
-//            builder.addPropertyValue("dataDictService", this.dataDictService);
-//            registerBeanDefinition(beanName, builder.getBeanDefinition());
-//        } else {
-//            Class<?> defaultServiceType = DefaultDBBasicDataService.class;
-//            
-//            BeanDefinitionBuilder builder = BeanDefinitionBuilder
-//                    .genericBeanDefinition(defaultServiceType);
-//            builder.addPropertyValue("module", module);
-//            builder.addPropertyValue("type", type);
-//            builder.addPropertyValue("dataDictService", this.dataDictService);
-//            registerBeanDefinition(beanName, builder.getBeanDefinition());
-//        }
-//        
-//        //利用有参构造函数,(Object) type
-//        BasicDataService service = (BasicDataService) BasicDataServiceRegistry.applicationContext
-//                .getBean(beanName);
-//        return service;
-//    }
+//
 //    
 //    /**
 //     * 构建默认的基础数据业务类<br/>
@@ -463,7 +426,7 @@
 //                    "tableName is empty.BasicDataService:{}",
 //                    new Object[] { s });
 //            
-//            BasicDataType bdType = new BasicDataType();
+//            BasicDataEntityInfo bdType = new BasicDataEntityInfo();
 //            bdType.setCode(code);
 //            bdType.setType(type);
 //            bdType.setTableName(tableName);

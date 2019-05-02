@@ -14,7 +14,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.tx.core.mybatis.interceptor.PagedDialectStatementHandlerInterceptor;
-import com.tx.core.starter.persister.PersisterProperties;
 import com.tx.core.util.dialect.DialectUtils;
 
 /**
@@ -34,10 +33,10 @@ public class MybatisPluginConfiguration {
             .getLogger(MybatisPluginConfiguration.class);
     
     /** 持久层配置属性 */
-    private final PersisterProperties properties;
+    private final MybatisProperties properties;
     
     /** 持久层配置 */
-    public MybatisPluginConfiguration(PersisterProperties properties) {
+    public MybatisPluginConfiguration(MybatisProperties properties) {
         this.properties = properties;
     }
     

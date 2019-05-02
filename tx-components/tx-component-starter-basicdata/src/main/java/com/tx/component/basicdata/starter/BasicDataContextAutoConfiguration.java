@@ -6,48 +6,20 @@
  */
 package com.tx.component.basicdata.starter;
 
-import javax.annotation.PostConstruct;
-import javax.sql.DataSource;
-
 import org.apache.commons.lang3.StringUtils;
-import org.apache.ibatis.session.SqlSessionFactory;
-import org.mybatis.spring.SqlSessionFactoryBean;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
+import org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cache.CacheManager;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.ResourceLoaderAware;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
-import org.springframework.core.io.ResourceLoader;
-import org.springframework.core.type.AnnotationMetadata;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import com.tx.component.basicdata.script.BasicDataContextTableInitializer;
-import com.tx.component.basicdata.starter.persister.BasicDataContextHibernateConfig;
-import com.tx.core.ddlutil.executor.TableDDLExecutor;
-import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.starter.mybatis.MybatisPluginConfiguration;
-import com.tx.core.starter.persister.PersisterProperties;
+import com.tx.component.basicdata.context.BasicDataContextFactory;
 
 /**
  * 基础数据容器自动配置<br/>
@@ -60,16 +32,13 @@ import com.tx.core.starter.persister.PersisterProperties;
  */
 @Configuration
 @EnableConfigurationProperties(BasicDataContextProperties.class)
-@ConditionalOnSingleCandidate(DataSource.class)
-@ConditionalOnClass({ SqlSessionFactory.class, SqlSessionFactoryBean.class })
-@ConditionalOnBean({ DataSource.class, PlatformTransactionManager.class })
-@AutoConfigureAfter(DataSourceAutoConfiguration.class)
-@Import(BasicDataPersisterConfiguration.class)
-public class BasicDataContextAutoConfiguration
-        implements ApplicationContextAware, InitializingBean {
-    
-    /** spring 容器句柄 */
-    private ApplicationContext applicationContext;
+@ConditionalOnClass({ BasicDataContextFactory.class })
+@ConditionalOnSingleCandidate(PlatformTransactionManager.class)
+@AutoConfigureAfter(TransactionAutoConfiguration.class)
+@ConditionalOnProperty(prefix = "tx.basicdata", value = "enable", havingValue = "true")
+@Import({ BasicDataPersisterConfiguration.class,
+        BasicDataAPIClientConfiguration.class })
+public class BasicDataContextAutoConfiguration implements InitializingBean {
     
     /** 属性文件 */
     private BasicDataContextProperties properties;
@@ -89,16 +58,6 @@ public class BasicDataContextAutoConfiguration
             BasicDataContextProperties properties) {
         super();
         this.properties = properties;
-    }
-    
-    /**
-     * @param applicationContext
-     * @throws BeansException
-     */
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext)
-            throws BeansException {
-        this.applicationContext = applicationContext;
     }
     
     /**
@@ -253,68 +212,68 @@ public class BasicDataContextAutoConfiguration
     //        return serviceFactory;
     //    }
     
-//    /**
-//     * 基础数据业务层注册<br/>
-//     * <功能详细描述>
-//     * 
-//     * @author  Administrator
-//     * @version  [版本号, 2019年4月30日]
-//     * @see  [相关类/方法]
-//     * @since  [产品/模块版本]
-//     */
-//    @Import(BasicDataPersisterConfiguration.class)
-//    public static class BasicDataServiceImportRegistrar
-//            implements BeanFactoryAware, ImportBeanDefinitionRegistrar,
-//            ResourceLoaderAware, InitializingBean {
-//        
-//        @SuppressWarnings("unused")
-//        private BeanFactory beanFactory;
-//        
-//        @SuppressWarnings("unused")
-//        private ResourceLoader resourceLoader;
-//        
-//        /** <默认构造函数> */
-//        //第一个被调用
-//        public BasicDataServiceImportRegistrar() {
-//            super();
-//        }
-//        
-//        @PostConstruct
-//        public void afterPropertiesSet() {
-//            System.out.println(
-//                    "TestContextAutoInnerImportRegistrar afterPropertiesSet. called");
-//        }
-//        
-//        @PostConstruct
-//        public void postConstruct() {
-//            System.out.println(
-//                    "TestContextAutoInnerImportRegistrar postConstruct. called");
-//        }
-//        
-//        //低而个被调用
-//        @Override
-//        public void registerBeanDefinitions(
-//                AnnotationMetadata importingClassMetadata,
-//                BeanDefinitionRegistry registry) {
-//            BeanDefinition bd = BeanDefinitionBuilder
-//                    .genericBeanDefinition(TestBeanRegiste.class)
-//                    .getBeanDefinition();
-//            
-//            System.out.println(
-//                    "TestContextAutoInnerImportRegistrar registerBeanDefinitions. called");
-//            registry.registerBeanDefinition("testRegiste", bd);
-//        }
-//        
-//        @Override
-//        public void setBeanFactory(BeanFactory beanFactory)
-//                throws BeansException {
-//            this.beanFactory = beanFactory;
-//        }
-//        
-//        @Override
-//        public void setResourceLoader(ResourceLoader resourceLoader) {
-//            this.resourceLoader = resourceLoader;
-//        }
-//    }
+    //    /**
+    //     * 基础数据业务层注册<br/>
+    //     * <功能详细描述>
+    //     * 
+    //     * @author  Administrator
+    //     * @version  [版本号, 2019年4月30日]
+    //     * @see  [相关类/方法]
+    //     * @since  [产品/模块版本]
+    //     */
+    //    @Import(BasicDataPersisterConfiguration.class)
+    //    public static class BasicDataServiceImportRegistrar
+    //            implements BeanFactoryAware, ImportBeanDefinitionRegistrar,
+    //            ResourceLoaderAware, InitializingBean {
+    //        
+    //        @SuppressWarnings("unused")
+    //        private BeanFactory beanFactory;
+    //        
+    //        @SuppressWarnings("unused")
+    //        private ResourceLoader resourceLoader;
+    //        
+    //        /** <默认构造函数> */
+    //        //第一个被调用
+    //        public BasicDataServiceImportRegistrar() {
+    //            super();
+    //        }
+    //        
+    //        @PostConstruct
+    //        public void afterPropertiesSet() {
+    //            System.out.println(
+    //                    "TestContextAutoInnerImportRegistrar afterPropertiesSet. called");
+    //        }
+    //        
+    //        @PostConstruct
+    //        public void postConstruct() {
+    //            System.out.println(
+    //                    "TestContextAutoInnerImportRegistrar postConstruct. called");
+    //        }
+    //        
+    //        //低而个被调用
+    //        @Override
+    //        public void registerBeanDefinitions(
+    //                AnnotationMetadata importingClassMetadata,
+    //                BeanDefinitionRegistry registry) {
+    //            BeanDefinition bd = BeanDefinitionBuilder
+    //                    .genericBeanDefinition(TestBeanRegiste.class)
+    //                    .getBeanDefinition();
+    //            
+    //            System.out.println(
+    //                    "TestContextAutoInnerImportRegistrar registerBeanDefinitions. called");
+    //            registry.registerBeanDefinition("testRegiste", bd);
+    //        }
+    //        
+    //        @Override
+    //        public void setBeanFactory(BeanFactory beanFactory)
+    //                throws BeansException {
+    //            this.beanFactory = beanFactory;
+    //        }
+    //        
+    //        @Override
+    //        public void setResourceLoader(ResourceLoader resourceLoader) {
+    //            this.resourceLoader = resourceLoader;
+    //        }
+    //    }
     
 }

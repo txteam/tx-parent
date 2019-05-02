@@ -23,9 +23,6 @@ public class CommandContextProperties {
     /** 命令容器是否启动 */
     private boolean enable;
     
-    /** 事务管理器bean名称 */
-    private String transactionManagerRef;
-    
     /**
      * @return 返回 enable
      */
@@ -38,19 +35,5 @@ public class CommandContextProperties {
      */
     public void setEnable(boolean enable) {
         this.enable = enable;
-    }
-    
-    /**
-     * @return 返回 transactionManagerRef
-     */
-    public String getTransactionManagerRef() {
-        return transactionManagerRef;
-    }
-    
-    /**
-     * @param 对transactionManagerRef进行赋值
-     */
-    public void setTransactionManagerRef(String transactionManagerRef) {
-        this.transactionManagerRef = transactionManagerRef;
     }
 }

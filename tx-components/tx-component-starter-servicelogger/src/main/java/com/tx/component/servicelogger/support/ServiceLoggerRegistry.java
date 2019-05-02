@@ -30,7 +30,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import com.tx.component.servicelogger.annotation.ServiceLog;
 import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.mybatis.annotation.AutoPersistEntitySupport;
+import com.tx.core.mybatis.annotation.MapperEntity;
 import com.tx.core.mybatis.support.MyBatisDaoSupport;
 import com.tx.core.util.ClassScanUtils;
 
@@ -270,7 +270,7 @@ public class ServiceLoggerRegistry implements ApplicationContextAware,
         String[] basePackageArray = StringUtils
                 .splitByWholeSeparator(basePackages, ",");
         Set<Class<?>> types = ClassScanUtils.scanByAnnotation(
-                AutoPersistEntitySupport.class, basePackageArray);
+                MapperEntity.class, basePackageArray);
         
         for (Class<?> beanType : types) {
             //注册实体持久层

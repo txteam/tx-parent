@@ -21,7 +21,7 @@ import com.tx.core.paged.model.PagedList;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public interface EntityDao<T> {
+public interface MapperEntityDao<T> {
     
     /**
      * 获取泛型类型<br/>
@@ -97,20 +97,6 @@ public interface EntityDao<T> {
      */
     public List<T> queryList(Map<String, Object> params);
     
-    //    /**
-    //     * 根据指定查询条件以及排序列查询T列表
-    //     * auto generate
-    //     * <功能详细描述>
-    //     * @param params
-    //     * @param orderList
-    //     * @return [参数说明]
-    //     * 
-    //     * @return List<T> [返回类型说明]
-    //     * @exception throws [异常类型] [异常说明]
-    //     * @see [类、类#方法、类#成员]
-    //     */
-    //    public List<T> queryList(Map<String, Object> params, List<Order> orderList);
-    
     /**
      * 根据条件查询T列表总数
      * auto generated
@@ -139,7 +125,20 @@ public interface EntityDao<T> {
      */
     public PagedList<T> queryPagedList(Map<String, Object> params,
             int pageIndex, int pageSize);
-    
+    //  /**
+    //     * 根据指定查询条件以及排序列查询T列表
+    //     * auto generate
+    //     * <功能详细描述>
+    //     * @param params
+    //     * @param orderList
+    //     * @return [参数说明]
+    //     * 
+    //     * @return List<T> [返回类型说明]
+    //     * @exception throws [异常类型] [异常说明]
+    //     * @see [类、类#方法、类#成员]
+    //     */
+    //    public List<T> queryList(Map<String, Object> params, List<Order> orderList);
+    //
     //    /**
     //     * 分页查询T列表，传入排序字段
     //     * auto generate

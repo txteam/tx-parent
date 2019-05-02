@@ -6,17 +6,14 @@
  */
 package com.tx.component.command.starter;
 
-import javax.sql.DataSource;
-
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
+import org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -30,7 +27,6 @@ import com.tx.component.command.context.HelperFactory;
 import com.tx.component.strategy.context.StrategyContext;
 import com.tx.component.strategy.context.StrategyContextFactory;
 import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.starter.util.CoreAutoConfiguration;
 
 /**
  * 命令容器配置器<br/>
@@ -43,25 +39,25 @@ import com.tx.core.starter.util.CoreAutoConfiguration;
  */
 @Configuration
 @EnableConfigurationProperties(value = CommandContextProperties.class)
-@ConditionalOnBean({ DataSource.class, PlatformTransactionManager.class })
-@AutoConfigureAfter({ CoreAutoConfiguration.class,
-        DataSourceAutoConfiguration.class,
-        DataSourceTransactionManagerAutoConfiguration.class })
+@ConditionalOnClass({ CommandContext.class })
+@ConditionalOnSingleCandidate(PlatformTransactionManager.class)
+@AutoConfigureAfter(TransactionAutoConfiguration.class)
 @ConditionalOnProperty(prefix = "tx.command", value = "enable", havingValue = "true")
 public class CommandContextAutoConfiguration
         implements ApplicationContextAware, InitializingBean {
     
-    private ApplicationContext applicationContext;
+    protected ApplicationContext applicationContext;
     
-    private CommandContextProperties properties;
+    protected final CommandContextProperties properties;
     
-    private PlatformTransactionManager transactionManager;
+    private final PlatformTransactionManager transactionManager;
     
     /** <默认构造函数> */
-    public CommandContextAutoConfiguration(
-            CommandContextProperties properties) {
+    public CommandContextAutoConfiguration(CommandContextProperties properties,
+            PlatformTransactionManager transactionManager) {
         super();
         this.properties = properties;
+        this.transactionManager = transactionManager;
     }
     
     /**
@@ -79,16 +75,6 @@ public class CommandContextAutoConfiguration
      */
     @Override
     public void afterPropertiesSet() throws Exception {
-        if (StringUtils.isNotBlank(properties.getTransactionManagerRef())
-                && this.applicationContext
-                        .isSingleton(properties.getTransactionManagerRef())) {
-            this.transactionManager = this.applicationContext.getBean(
-                    properties.getTransactionManagerRef(),
-                    PlatformTransactionManager.class);
-        } else {
-            this.transactionManager = this.applicationContext
-                    .getBean(PlatformTransactionManager.class);
-        }
     }
     
     /**

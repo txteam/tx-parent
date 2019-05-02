@@ -11,7 +11,6 @@ import java.util.Map;
 
 import com.tx.component.task.dao.TaskExecuteLogDao;
 import com.tx.component.task.model.TaskExecuteLog;
-import com.tx.core.mybatis.model.Order;
 import com.tx.core.mybatis.support.MyBatisDaoSupport;
 import com.tx.core.paged.model.PagedList;
 
@@ -98,18 +97,6 @@ public class TaskExecuteLogDaoImpl implements TaskExecuteLogDao {
     
     /**
      * @param params
-     * @param orderList
-     * @return
-     */
-    @Override
-    public List<TaskExecuteLog> queryList(Map<String, Object> params,
-            List<Order> orderList) {
-        return this.myBatisDaoSupport.<TaskExecuteLog> queryList(
-                "taskExecuteLog.queryTaskExecuteLog", params, orderList);
-    }
-    
-    /**
-     * @param params
      * @return
      */
     @Override
@@ -132,24 +119,6 @@ public class TaskExecuteLogDaoImpl implements TaskExecuteLogDao {
                 params,
                 pageIndex,
                 pageSize);
-    }
-    
-    /**
-     * @param params
-     * @param pageIndex
-     * @param pageSize
-     * @param orderList
-     * @return
-     */
-    @Override
-    public PagedList<TaskExecuteLog> queryPagedList(Map<String, Object> params,
-            int pageIndex, int pageSize, List<Order> orderList) {
-        return this.myBatisDaoSupport.<TaskExecuteLog> queryPagedList(
-                "taskExecuteLog.queryTaskExecuteLog",
-                params,
-                pageIndex,
-                pageSize,
-                orderList);
     }
     
     /**

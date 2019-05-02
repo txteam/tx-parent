@@ -24,7 +24,7 @@ import com.tx.core.paged.model.PagedList;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class DefaultEntityDaoImpl<T> implements EntityDao<T> {
+public class DefaultMapperEntityDaoImpl<T> implements MapperEntityDao<T> {
     
     /** bean类型 */
     private Class<T> beanType;
@@ -36,7 +36,7 @@ public class DefaultEntityDaoImpl<T> implements EntityDao<T> {
     private EntityMapperBuilderAssistant assistant;
     
     /** <默认构造函数> */
-    public DefaultEntityDaoImpl(Class<T> beanType,
+    public DefaultMapperEntityDaoImpl(Class<T> beanType,
             MyBatisDaoSupport myBatisDaoSupport,
             EntityMapperBuilderAssistant assistant) {
         super();

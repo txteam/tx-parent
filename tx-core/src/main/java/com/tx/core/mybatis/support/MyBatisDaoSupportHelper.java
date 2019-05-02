@@ -6,10 +6,13 @@
  */
 package com.tx.core.mybatis.support;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import javax.sql.DataSource;
 
@@ -25,6 +28,7 @@ import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.dao.support.PersistenceExceptionTranslator;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
@@ -47,9 +51,11 @@ import com.tx.core.util.dialect.DataSourceTypeEnum;
  */
 public class MyBatisDaoSupportHelper {
     
+    /** resourceLoader */
     private static ResourceLoader defaultResourceLoader = new DefaultResourceLoader();
     
-    private static PathMatchingResourcePatternResolver pathMatchingResourcePatternResolver = new PathMatchingResourcePatternResolver();
+    /** resourceResolver */
+    private static final ResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
     
     /**
      * 构建MybatisDaoSupport
@@ -65,6 +71,7 @@ public class MyBatisDaoSupportHelper {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
+    @Deprecated
     public static MyBatisDaoSupport buildMyBatisDaoSupport(
             String configLocation, DataSourceTypeEnum dataSourceType,
             DataSource dataSource) throws Exception {
@@ -95,6 +102,7 @@ public class MyBatisDaoSupportHelper {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
+    @Deprecated
     public static MyBatisDaoSupport buildMyBatisDaoSupport(
             String configLocation, String[] mapperLocations,
             DataSourceTypeEnum dataSourceType, DataSource dataSource)
@@ -124,6 +132,7 @@ public class MyBatisDaoSupportHelper {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
+    @Deprecated
     private static MyBatisDaoSupport doBuildMyBatisDaoSupport(
             String configLocation, String[] mapperLocations,
             DataSourceTypeEnum dataSourceType, DataSource dataSource,
@@ -172,7 +181,7 @@ public class MyBatisDaoSupportHelper {
         Set<Resource> mapperLocationResourcesSet = new HashSet<>();
         if (mapperLocations != null) {
             for (String mapperLocationTemp : mapperLocations) {
-                Resource[] resourcesTemp = pathMatchingResourcePatternResolver
+                Resource[] resourcesTemp = resourceResolver
                         .getResources(mapperLocationTemp);
                 mapperLocationResourcesSet
                         .addAll(new HashSet<>(Arrays.asList(resourcesTemp)));
@@ -273,8 +282,9 @@ public class MyBatisDaoSupportHelper {
         if (databaseIdProvider != null) {
             factory.setDatabaseIdProvider(databaseIdProvider);
         }
-        if (!ObjectUtils.isEmpty(properties.resolveMapperLocations())) {
-            factory.setMapperLocations(properties.resolveMapperLocations());
+        if (!ObjectUtils.isEmpty(properties.getMapperLocations())) {
+            factory.setMapperLocations(
+                    resolveMapperLocations(properties.getMapperLocations()));
         }
         
         SqlSessionFactory sqlSessionFactory = factory.getObject();
@@ -295,17 +305,57 @@ public class MyBatisDaoSupportHelper {
     private static void applyConfiguration(SqlSessionFactoryBean factory,
             MybatisProperties properties,
             List<ConfigurationCustomizer> customizers) {
-        Configuration configuration = properties.getConfiguration();
-        if (configuration == null
-                && !StringUtils.hasText(properties.getConfigLocation())) {
+        //        Configuration configuration = properties.getConfiguration();
+        //        if (configuration == null
+        //                && !StringUtils.hasText(properties.getConfigLocation())) {
+        //            configuration = new Configuration();
+        //        }
+        
+        Configuration configuration = null;
+        if (!StringUtils.hasText(properties.getConfigLocation())) {
             configuration = new Configuration();
         }
-        
         if (configuration != null && !CollectionUtils.isEmpty(customizers)) {
             for (ConfigurationCustomizer customizer : customizers) {
                 customizer.customize(configuration);
             }
         }
         factory.setConfiguration(configuration);
+    }
+    
+    /**
+     * 解析MapperLocations<br/>
+     * <功能详细描述>
+     * @param mapperLocations
+     * @return [参数说明]
+     * 
+     * @return Resource[] [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    private static Resource[] resolveMapperLocations(String[] mapperLocations) {
+        Resource[] resources = Stream
+                .of(Optional.ofNullable(mapperLocations).orElse(new String[0]))
+                .flatMap(location -> Stream.of(getResources(location)))
+                .toArray(Resource[]::new);
+        return resources;
+    }
+    
+    /**
+     * 解析location<br/>
+     * <功能详细描述>
+     * @param location
+     * @return [参数说明]
+     * 
+     * @return Resource[] [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    private static Resource[] getResources(String location) {
+        try {
+            return resourceResolver.getResources(location);
+        } catch (IOException e) {
+            return new Resource[0];
+        }
     }
 }

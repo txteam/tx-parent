@@ -13,7 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.tx.component.basicdata.model.BasicData;
-import com.tx.component.basicdata.model.BasicDataType;
+import com.tx.component.basicdata.model.BasicDataEntityInfo;
 
 /**
  * BasicDataType的业务层
@@ -31,7 +31,7 @@ public final class BasicDataTypeRegistry {
             .getLogger(BasicDataTypeRegistry.class);
     
     /** 类型到类型的映射 */
-    private Map<String, BasicDataType> map = new HashMap<>();
+    private Map<String, BasicDataEntityInfo> map = new HashMap<>();
     
     /** 编码到类型的映射 */
     private Map<String, Class<?>> code2typeMap = new HashMap<>();

@@ -11,7 +11,6 @@ import java.util.Map;
 
 import com.tx.component.task.dao.TaskDetailDao;
 import com.tx.component.task.model.TaskDetail;
-import com.tx.core.mybatis.model.Order;
 import com.tx.core.mybatis.support.MyBatisDaoSupport;
 import com.tx.core.paged.model.PagedList;
 
@@ -61,18 +60,6 @@ public class TaskDetailDaoImpl implements TaskDetailDao {
     
     /**
      * @param params
-     * @param orderList
-     * @return
-     */
-    @Override
-    public List<TaskDetail> queryList(Map<String, Object> params,
-            List<Order> orderList) {
-        return this.myBatisDaoSupport.<TaskDetail> queryList(
-                "taskDetail.queryTaskDetail", params, orderList);
-    }
-    
-    /**
-     * @param params
      * @return
      */
     @Override
@@ -92,24 +79,6 @@ public class TaskDetailDaoImpl implements TaskDetailDao {
             int pageIndex, int pageSize) {
         return this.myBatisDaoSupport.<TaskDetail> queryPagedList(
                 "taskDetail.queryTaskDetail", params, pageIndex, pageSize);
-    }
-    
-    /**
-     * @param params
-     * @param pageIndex
-     * @param pageSize
-     * @param orderList
-     * @return
-     */
-    @Override
-    public PagedList<TaskDetail> queryPagedList(Map<String, Object> params,
-            int pageIndex, int pageSize, List<Order> orderList) {
-        return this.myBatisDaoSupport.<TaskDetail> queryPagedList(
-                "taskDetail.queryTaskDetail",
-                params,
-                pageIndex,
-                pageSize,
-                orderList);
     }
     
 }

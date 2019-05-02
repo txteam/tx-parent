@@ -63,7 +63,7 @@ public @interface BasicDataEntity {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    String name() default "";
+    String name();
     
     /**
      * 基础数据类型备注<br/>

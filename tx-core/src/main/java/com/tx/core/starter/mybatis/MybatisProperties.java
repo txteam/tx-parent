@@ -6,20 +6,16 @@
  */
 package com.tx.core.starter.mybatis;
 
-import java.io.IOException;
-import java.util.Optional;
 import java.util.Properties;
-import java.util.stream.Stream;
 
-import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ExecutorType;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.core.io.support.ResourcePatternResolver;
+import org.hibernate.dialect.MySQL5Dialect;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
+import com.tx.core.exceptions.SILException;
 
 /**
- * <功能简述>
+ * Mybatis配置属性<br/>
  * <功能详细描述>
  * 
  * @author  Administrator
@@ -27,18 +23,17 @@ import org.springframework.core.io.support.ResourcePatternResolver;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class MybatisProperties {
+@ConfigurationProperties(prefix = MybatisProperties.MYBATIS_PREFIX)
+public class MybatisProperties implements Cloneable {
     
-    private static final ResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
+    /** 常量 */
+    public static final String MYBATIS_PREFIX = "tx.core.mybatis";
+    
+    /** 数据源方言对应的字符串 */
+    private String databasePlatform = MySQL5Dialect.class.getName();
     
     /** Indicates whether perform presence check of the MyBatis xml config file. */
     private boolean checkConfigLocation = false;
-    
-    /** mybatis配置文件 */
-    private String configLocation;
-    
-    /** mybatis的SqlMap文件配置 */
-    private String[] mapperLocations;
     
     /** Packages to search for type handlers. (Package delimiters are ",; \t\n") */
     private String typeHandlersPackage;
@@ -52,12 +47,32 @@ public class MybatisProperties {
     /** The super class for filtering type alias. If this not specifies, the MyBatis deal as type alias all classes that searched from typeAliasesPackage.*/
     private Class<?> typeAliasesSuperType;
     
+    /** mybatis的SqlMap文件配置 */
+    private String[] mapperLocations;
+    
+    /** mybatis配置文件 */
+    private String configLocation;
+    
     /** Externalized properties for MyBatis configuration. */
     private Properties configurationProperties;
     
-    /** A Configuration object for customize default settings. If {@link #configLocation}is specified, this property is not used. */
-    @NestedConfigurationProperty
-    private Configuration configuration;
+    //    /** A Configuration object for customize default settings. If {@link #configLocation}is specified, this property is not used. */
+    //    @NestedConfigurationProperty
+    //    private Configuration configuration;
+    
+    /**
+     * @return 返回 databasePlatform
+     */
+    public String getDatabasePlatform() {
+        return databasePlatform;
+    }
+    
+    /**
+     * @param 对databasePlatform进行赋值
+     */
+    public void setDatabasePlatform(String databasePlatform) {
+        this.databasePlatform = databasePlatform;
+    }
     
     /**
      * @return 返回 checkConfigLocation
@@ -171,33 +186,66 @@ public class MybatisProperties {
         this.configurationProperties = configurationProperties;
     }
     
-    /**
-     * @return 返回 configuration
-     */
-    public Configuration getConfiguration() {
-        return configuration;
-    }
+    //    /**
+    //     * @return 返回 configuration
+    //     */
+    //    public Configuration getConfiguration() {
+    //        return configuration;
+    //    }
+    //    
+    //    /**
+    //     * @param 对configuration进行赋值
+    //     */
+    //    public void setConfiguration(Configuration configuration) {
+    //        this.configuration = configuration;
+    //    }
     
     /**
-     * @param 对configuration进行赋值
+     * @return
+     * @throws CloneNotSupportedException
      */
-    public void setConfiguration(Configuration configuration) {
-        this.configuration = configuration;
-    }
-    
-    public Resource[] resolveMapperLocations() {
-        return Stream
-                .of(Optional.ofNullable(this.mapperLocations)
-                        .orElse(new String[0]))
-                .flatMap(location -> Stream.of(getResources(location)))
-                .toArray(Resource[]::new);
-    }
-    
-    private Resource[] getResources(String location) {
+    @Override
+    public Object clone() {
+        MybatisProperties properties = null;
         try {
-            return resourceResolver.getResources(location);
-        } catch (IOException e) {
-            return new Resource[0];
+            properties = (MybatisProperties) super.clone();
+            properties.setConfigurationProperties(
+                    this.configurationProperties == null ? null
+                            : (Properties) this.configurationProperties
+                                    .clone());
+        } catch (Exception e) {
+            throw new SILException("CloneNotSupportedException", e);
         }
+        //        MybatisProperties properties = new MybatisProperties();
+        //        properties.setCheckConfigLocation(this.checkConfigLocation);
+        //        properties.setConfigLocation(this.configLocation);
+        //        properties.setDatabasePlatform(this.databasePlatform);
+        //        
+        //        properties.setExecutorType(this.executorType);
+        //        properties.setMapperLocations(this.mapperLocations == null ? null : this.mapperLocations.clone());
+        //        properties.setTypeAliasesPackage(typeAliasesPackage);
+        //        properties.setTypeAliasesSuperType(typeAliasesSuperType);
+        //        properties.setTypeHandlersPackage(typeHandlersPackage);
+        //        properties.setConfigurationProperties(configurationProperties);
+        return properties;
+    }
+    
+    public static void main(String[] args) {
+        MybatisProperties pro = new MybatisProperties();
+        pro.setCheckConfigLocation(true);
+        pro.setConfigLocation("test");
+        pro.setConfigurationProperties(new Properties());
+        pro.getConfigurationProperties().put("key1", "value1");
+        
+        MybatisProperties pro2 = (MybatisProperties) pro.clone();
+        System.out.println(pro2.getConfigLocation());
+        System.out.println(pro2.getConfigurationProperties().get("key1"));
+        
+        System.out.println(pro == pro2);
+        System.out.println(pro.getConfigurationProperties().get("key1") == pro2
+                .getConfigurationProperties().get("key1"));
+        System.out.println(pro.getConfigurationProperties() == pro2
+                .getConfigurationProperties());
+        
     }
 }

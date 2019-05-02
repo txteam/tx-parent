@@ -6,16 +6,14 @@
  */
 package com.tx.component.event.starter;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
+import org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -29,7 +27,6 @@ import com.tx.component.event.context.loader.AnnotationEventListenerLoader;
 import com.tx.component.event.listener.resolver.impl.EventListenerMethodEventArgumentResolver;
 import com.tx.component.event.listener.resolver.impl.EventListenerParamMapMethodArgumentResolver;
 import com.tx.component.event.listener.resolver.impl.EventListenerParamMethodArgumentResolver;
-import com.tx.core.starter.util.CoreAutoConfiguration;
 
 /**
  * 命令容器配置器<br/>
@@ -42,26 +39,27 @@ import com.tx.core.starter.util.CoreAutoConfiguration;
  */
 @Configuration
 @EnableConfigurationProperties(value = EventContextProperties.class)
-@ConditionalOnBean({ DataSource.class, PlatformTransactionManager.class })
-@AutoConfigureAfter({ CoreAutoConfiguration.class,
-        DataSourceAutoConfiguration.class,
-        DataSourceTransactionManagerAutoConfiguration.class })
+@ConditionalOnClass({ EventContextFactory.class })
+@ConditionalOnSingleCandidate(PlatformTransactionManager.class)
+@AutoConfigureAfter(TransactionAutoConfiguration.class)
 @ConditionalOnProperty(prefix = "tx.event", value = "enable", havingValue = "true")
 public class EventContextAutoConfiguration
         implements ApplicationContextAware, InitializingBean {
     
-    private EventContextProperties properties;
-    
     private ApplicationContext applicationContext;
     
-    private PlatformTransactionManager transactionManager;
+    private final EventContextProperties properties;
+    
+    private final PlatformTransactionManager transactionManager;
     
     private EventListenerSupportFactory eventListenerSupportFactory;
     
     /** <默认构造函数> */
-    public EventContextAutoConfiguration(EventContextProperties properties) {
+    public EventContextAutoConfiguration(EventContextProperties properties,
+            PlatformTransactionManager transactionManager) {
         super();
         this.properties = properties;
+        this.transactionManager = transactionManager;
     }
     
     /**
@@ -79,17 +77,6 @@ public class EventContextAutoConfiguration
      */
     @Override
     public void afterPropertiesSet() throws Exception {
-        if (StringUtils.isNotBlank(properties.getTransactionManagerRef())
-                && this.applicationContext
-                        .isSingleton(properties.getTransactionManagerRef())) {
-            this.transactionManager = this.applicationContext.getBean(
-                    properties.getTransactionManagerRef(),
-                    PlatformTransactionManager.class);
-        } else {
-            this.transactionManager = this.applicationContext
-                    .getBean(PlatformTransactionManager.class);
-        }
-        
         if (StringUtils.isNotBlank(properties.getEventListenerSupportFactory())
                 && this.applicationContext.containsBean(
                         properties.getEventListenerSupportFactory())) {

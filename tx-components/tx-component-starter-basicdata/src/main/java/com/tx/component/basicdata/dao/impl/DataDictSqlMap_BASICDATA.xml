@@ -6,13 +6,13 @@
 
 	<!-- auto generate default resultMap -->
 	<resultMap id="dataDictMap" 
-		type="com.tx.component.datadict.model.DataDict">
+		type="com.tx.component.basicdata.model.DataDict">
 		<result column="parentId" property="parent.id"/>
 	</resultMap>
 	
 	<!-- auto generate default find -->
 	<select id="find" 
-		parameterType="com.tx.component.datadict.model.DataDict"
+		parameterType="com.tx.component.basicdata.model.DataDict"
 		resultMap="dataDictMap">
 		SELECT 
 				TDD.id,
@@ -123,7 +123,7 @@
     
     <!-- auto generate default insert -->
     <insert id="insert" 
-		parameterType="com.tx.component.datadict.model.DataDict">
+		parameterType="com.tx.component.basicdata.model.DataDict">
 		INSERT INTO BD_DATA_DICT
 		(
 			id,
@@ -156,7 +156,7 @@
 	
 	<!-- auto generate default delete -->
 	<delete id="delete" 
-		parameterType="com.tx.component.datadict.model.DataDict">
+		parameterType="com.tx.component.basicdata.model.DataDict">
 		DELETE FROM BD_DATA_DICT WHERE
 		<trim prefixOverrides="AND | OR">
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  

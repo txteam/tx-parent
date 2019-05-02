@@ -11,6 +11,7 @@
 //
 //import org.apache.commons.collections4.CollectionUtils;
 //
+//import com.tx.component.basicdata.client.BasicDataAPIClient;
 //import com.tx.component.basicdata.context.AbstractBasicDataService;
 //import com.tx.component.basicdata.model.BasicData;
 //import com.tx.core.exceptions.util.AssertUtils;
@@ -28,8 +29,10 @@
 //public class DefaultRemoteBasicDataService<T extends BasicData>
 //        extends AbstractBasicDataService<T> {
 //    
+//    private Class<T> type;
+//    
 //    /** 基础数据远程调用客户端 */
-//    private BasicDataRemoteService client;
+//    private BasicDataAPIClient client;
 //    
 //    /** <默认构造函数> */
 //    public DefaultRemoteBasicDataService() {
@@ -40,28 +43,8 @@
 //     * @return
 //     */
 //    @Override
-//    public Class<T> type() {
+//    public Class<T> getType() {
 //        return this.type;
-//    }
-//    
-//    /**
-//     * @return
-//     */
-//    @Override
-//    public String module() {
-//        return this.module;
-//    }
-//    
-//    /**
-//     * @return
-//     */
-//    @Override
-//    public String tableName() {
-//        Class<T> type = type();
-//        AssertUtils.notNull(type, "type is null.");
-//        
-//        String tableName = this.client.tableName(type());
-//        return tableName;
 //    }
 //    
 //    /**
@@ -71,8 +54,8 @@
 //    public void insert(T object) {
 //        AssertUtils.notNull(object, "object is null.");
 //        
-//        Class<T> type = type();
-//        AssertUtils.notNull(type, "type is null.");
+//        String type = type();
+//        AssertUtils.notEmpty(type, "type is empty.");
 //        
 //        //构建字典对象
 //        this.client.insert(type, object);
@@ -86,8 +69,8 @@
 //    public boolean deleteById(String id) {
 //        AssertUtils.notEmpty(id, "id is null.");
 //        
-//        Class<T> type = type();
-//        AssertUtils.notNull(type, "type is null.");
+//        String type = type();
+//        AssertUtils.notEmpty(type, "type is empty.");
 //        
 //        boolean flag = this.client.deleteById(type, id);
 //        return flag;
@@ -102,8 +85,8 @@
 //    public boolean deleteByCode(String code) {
 //        AssertUtils.notEmpty(code, "code is null.");
 //        
-//        Class<T> type = type();
-//        AssertUtils.notNull(type, "type is null.");
+//        String type = type();
+//        AssertUtils.notEmpty(type, "type is empty.");
 //        
 //        boolean flag = this.client.deleteByCode(type, code);
 //        return flag;
@@ -117,8 +100,8 @@
 //    public T findById(String id) {
 //        AssertUtils.notEmpty(id, "id is null.");
 //        
-//        Class<T> type = type();
-//        AssertUtils.notNull(type, "type is null.");
+//        String type = type();
+//        AssertUtils.notEmpty(type, "type is empty.");
 //        
 //        T res = this.client.findById(type, id);
 //        return res;
@@ -132,8 +115,8 @@
 //    public T findByCode(String code) {
 //        AssertUtils.notEmpty(code, "code is null.");
 //        
-//        Class<T> type = type();
-//        AssertUtils.notNull(type, "type is null.");
+//        String type = type();
+//        AssertUtils.notEmpty(type, "type is empty.");
 //        
 //        //查询基础数据详情实例
 //        T res = this.client.findByCode(type, code);
@@ -147,12 +130,10 @@
 //     */
 //    @Override
 //    public List<T> queryList(Boolean valid, Map<String, Object> params) {
-//        Class<T> type = type();
-//        AssertUtils.notNull(type, "type is null.");
+//        String type = type();
+//        AssertUtils.notEmpty(type, "type is empty.");
 //        
-//        List<T> resList = this.client.queryList(type,
-//                valid,
-//                params);
+//        List<T> resList = this.client.queryList(type, valid, params);
 //        return resList;
 //    }
 //    
@@ -166,11 +147,14 @@
 //    @Override
 //    public PagedList<T> queryPagedList(Boolean valid,
 //            Map<String, Object> params, int pageIndex, int pageSize) {
-//        Class<T> type = type();
-//        AssertUtils.notNull(type, "type is null.");
+//        String type = type();
+//        AssertUtils.notEmpty(type, "type is empty.");
 //        
-//        PagedList<T> resPageList = this.client
-//                .queryPagedList(type, valid, params, pageIndex, pageSize);
+//        PagedList<T> resPageList = this.client.queryPagedList(type,
+//                valid,
+//                params,
+//                pageIndex,
+//                pageSize);
 //        return resPageList;
 //    }
 //    
@@ -184,12 +168,10 @@
 //    public boolean isExist(Map<String, String> key2valueMap, String excludeId) {
 //        AssertUtils.notEmpty(key2valueMap, "key2valueMap is null.");
 //        
-//        Class<T> type = type();
-//        AssertUtils.notNull(type, "type is null.");
+//        String type = type();
+//        AssertUtils.notEmpty(type, "type is empty.");
 //        
-//        boolean flag = this.client.isExist(type,
-//                key2valueMap,
-//                excludeId);
+//        boolean flag = this.client.isExist(type, key2valueMap, excludeId);
 //        return flag;
 //        
 //    }
@@ -202,8 +184,8 @@
 //    public boolean updateById(T data) {
 //        AssertUtils.notNull(data, "data is null.");
 //        
-//        Class<T> type = type();
-//        AssertUtils.notNull(type, "type is null.");
+//        String type = type();
+//        AssertUtils.notEmpty(type, "type is empty.");
 //        
 //        boolean flag = this.client.updateById(type, data);
 //        return flag;
@@ -218,8 +200,8 @@
 //            return;
 //        }
 //        
-//        Class<T> type = type();
-//        AssertUtils.notNull(type, "type is null.");
+//        String type = type();
+//        AssertUtils.notEmpty(type, "type is empty.");
 //        
 //        this.client.batchInsert(type, dataList);
 //    }
@@ -233,8 +215,8 @@
 //            return;
 //        }
 //        
-//        Class<T> type = type();
-//        AssertUtils.notNull(type, "type is null.");
+//        String type = type();
+//        AssertUtils.notEmpty(type, "type is empty.");
 //        
 //        this.client.batchUpdate(type, dataList);
 //    }
@@ -247,8 +229,8 @@
 //    public boolean disableById(String id) {
 //        AssertUtils.notEmpty(id, "id is empty.");
 //        
-//        Class<T> type = type();
-//        AssertUtils.notNull(type, "type is null.");
+//        String type = type();
+//        AssertUtils.notEmpty(type, "type is empty.");
 //        
 //        boolean flag = this.client.disableById(type(), id);
 //        return flag;
@@ -262,8 +244,8 @@
 //    public boolean enableById(String id) {
 //        AssertUtils.notEmpty(id, "id is empty.");
 //        
-//        Class<T> type = type();
-//        AssertUtils.notNull(type, "type is null.");
+//        String type = type();
+//        AssertUtils.notEmpty(type, "type is empty.");
 //        
 //        boolean flag = this.client.enableById(type(), id);
 //        return flag;
@@ -275,18 +257,11 @@
 //    public void setType(Class<T> type) {
 //        this.type = type;
 //    }
-//
-//    /**
-//     * @param 对module进行赋值
-//     */
-//    public void setModule(String module) {
-//        this.module = module;
-//    }
-//
+//    
 //    /**
 //     * @param 对client进行赋值
 //     */
-//    public void setClient(BasicDataRemoteService client) {
+//    public void setClient(BasicDataAPIClient client) {
 //        this.client = client;
 //    }
 //}

@@ -11,7 +11,6 @@ import java.util.Map;
 
 import com.tx.component.task.dao.TaskStatusDao;
 import com.tx.component.task.model.TaskStatus;
-import com.tx.core.mybatis.model.Order;
 import com.tx.core.mybatis.support.MyBatisDaoSupport;
 import com.tx.core.paged.model.PagedList;
 
@@ -112,18 +111,6 @@ public class TaskStatusDaoImpl implements TaskStatusDao {
     
     /**
      * @param params
-     * @param orderList
-     * @return
-     */
-    @Override
-    public List<TaskStatus> queryList(Map<String, Object> params,
-            List<Order> orderList) {
-        return this.myBatisDaoSupport.<TaskStatus> queryList(
-                "taskStatus.queryTaskStatus", params, orderList);
-    }
-    
-    /**
-     * @param params
      * @return
      */
     @Override
@@ -143,24 +130,6 @@ public class TaskStatusDaoImpl implements TaskStatusDao {
             int pageIndex, int pageSize) {
         return this.myBatisDaoSupport.<TaskStatus> queryPagedList(
                 "taskStatus.queryTaskStatus", params, pageIndex, pageSize);
-    }
-    
-    /**
-     * @param params
-     * @param pageIndex
-     * @param pageSize
-     * @param orderList
-     * @return
-     */
-    @Override
-    public PagedList<TaskStatus> queryPagedList(Map<String, Object> params,
-            int pageIndex, int pageSize, List<Order> orderList) {
-        return this.myBatisDaoSupport.<TaskStatus> queryPagedList(
-                "taskStatus.queryTaskStatus",
-                params,
-                pageIndex,
-                pageSize,
-                orderList);
     }
     
     /**

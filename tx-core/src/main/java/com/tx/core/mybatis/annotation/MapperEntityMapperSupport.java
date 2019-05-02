@@ -28,7 +28,7 @@ import org.springframework.beans.factory.support.BeanNameGenerator;
 @Inherited
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface EnableEntityAutoPersistSupport {
+public @interface MapperEntityMapperSupport {
     
     /**
      * Base packages to scan for MyBatis interfaces. Note that only interfaces

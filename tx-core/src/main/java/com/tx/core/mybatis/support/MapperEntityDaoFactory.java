@@ -22,10 +22,10 @@ import org.springframework.beans.factory.InitializingBean;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class EntityDaoFactory<T>
-        implements FactoryBean<EntityDao<T>>, InitializingBean {
+public class MapperEntityDaoFactory<T>
+        implements FactoryBean<MapperEntityDao<T>>, InitializingBean {
     
-    private Logger logger = LoggerFactory.getLogger(EntityDaoFactory.class);
+    private Logger logger = LoggerFactory.getLogger(MapperEntityDaoFactory.class);
     
     private Class<T> beanType;
     
@@ -37,10 +37,10 @@ public class EntityDaoFactory<T>
     
     private EntityMapperBuilderAssistant assistant;
     
-    private EntityDao<T> entityDao;
+    private MapperEntityDao<T> entityDao;
     
     /** <默认构造函数> */
-    public EntityDaoFactory(Class<T> beanType,
+    public MapperEntityDaoFactory(Class<T> beanType,
             MyBatisDaoSupport myBatisDaoSupport) {
         super();
         this.beanType = beanType;
@@ -66,7 +66,7 @@ public class EntityDaoFactory<T>
                 this.assistant.getCurrentNamespace());
         
         //构建Dao
-        this.entityDao = new DefaultEntityDaoImpl<>(this.beanType,
+        this.entityDao = new DefaultMapperEntityDaoImpl<>(this.beanType,
                 this.myBatisDaoSupport, this.assistant);
         
         logger.info("构建实体自动持久层：完成.beanType:{}", this.beanType.getName());
@@ -77,7 +77,7 @@ public class EntityDaoFactory<T>
      */
     @Override
     public Class<?> getObjectType() {
-        return EntityDao.class;
+        return MapperEntityDao.class;
     }
     
     /**
@@ -93,7 +93,7 @@ public class EntityDaoFactory<T>
      * @throws Exception
      */
     @Override
-    public EntityDao<T> getObject() throws Exception {
+    public MapperEntityDao<T> getObject() throws Exception {
         return this.entityDao;
     }
 }

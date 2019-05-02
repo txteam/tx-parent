@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.tx.component.task.model.TaskDetail;
-import com.tx.core.mybatis.model.Order;
 import com.tx.core.paged.model.PagedList;
 
 /**
@@ -53,21 +52,6 @@ public interface TaskDetailDao {
     public List<TaskDetail> queryList(Map<String, Object> params);
     
     /**
-     * 根据指定查询条件以及排序列查询TaskDetail列表
-     * auto generate
-     * <功能详细描述>
-     * @param params
-     * @param orderList
-     * @return [参数说明]
-     * 
-     * @return List<TaskDetail> [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    //auto generate
-    public List<TaskDetail> queryList(Map<String, Object> params, List<Order> orderList);
-    
-    /**
      * 根据条件查询TaskDetail列表总数
      * auto generated
      * <功能详细描述>
@@ -94,23 +78,6 @@ public interface TaskDetailDao {
      * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public PagedList<TaskDetail> queryPagedList(Map<String, Object> params, int pageIndex, int pageSize);
-    
-    /**
-     * 分页查询TaskDetail列表，传入排序字段
-     * auto generate
-     * <功能详细描述>
-     * @param params
-     * @param pageIndex
-     * @param pageSize
-     * @param orderList
-     * @return [参数说明]
-     * 
-     * @return PagedList<TaskDetail> [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    //auto generate
-    public PagedList<TaskDetail> queryPagedList(Map<String, Object> params, int pageIndex, int pageSize,
-            List<Order> orderList);
+    public PagedList<TaskDetail> queryPagedList(Map<String, Object> params,
+            int pageIndex, int pageSize);
 }
