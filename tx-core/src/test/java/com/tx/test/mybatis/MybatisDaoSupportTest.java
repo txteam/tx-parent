@@ -49,7 +49,7 @@ public class MybatisDaoSupportTest {
         MyBatisDaoSupport myBatisDaoSupport = MyBatisDaoSupportHelper
                 .buildMyBatisDaoSupport("classpath:context/mybatis-config.xml",
                         null,
-                        DataSourceTypeEnum.MySQL5InnoDBDialect,
+                        DataSourceTypeEnum.MYSQL,
                         ds);
         
         String tableName = "test_001";

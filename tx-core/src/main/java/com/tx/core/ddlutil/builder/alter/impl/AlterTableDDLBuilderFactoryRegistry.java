@@ -33,7 +33,7 @@ public class AlterTableDDLBuilderFactoryRegistry {
         DDLDialect mysqlDialect = MysqlDDLDialect.INSTANCE;
         AlterTableDDLBuilderFactoryRegistry.registeFactory(DataSourceTypeEnum.MYSQL,
                 new MysqlAlterTableDDLBuilder(mysqlDialect));
-        AlterTableDDLBuilderFactoryRegistry.registeFactory(DataSourceTypeEnum.MySQL5InnoDBDialect,
+        AlterTableDDLBuilderFactoryRegistry.registeFactory(DataSourceTypeEnum.MYSQL,
                 new MysqlAlterTableDDLBuilder(mysqlDialect));
     }
     

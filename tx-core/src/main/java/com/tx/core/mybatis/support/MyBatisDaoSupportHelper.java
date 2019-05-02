@@ -8,11 +8,14 @@ package com.tx.core.mybatis.support;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.sql.DataSource;
 
+import org.apache.ibatis.mapping.DatabaseIdProvider;
 import org.apache.ibatis.plugin.Interceptor;
+import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.MyBatisExceptionTranslator;
@@ -23,8 +26,14 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.dao.support.PersistenceExceptionTranslator;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 import com.tx.core.mybatis.interceptor.PagedDialectStatementHandlerInterceptor;
+import com.tx.core.starter.mybatis.ConfigurationCustomizer;
+import com.tx.core.starter.mybatis.MybatisProperties;
+import com.tx.core.starter.mybatis.SpringBootVFS;
 import com.tx.core.util.dialect.DataSourceTypeEnum;
 
 /**
@@ -210,5 +219,93 @@ public class MyBatisDaoSupportHelper {
         PersistenceExceptionTranslator defaultExceptionTranslator = new MyBatisExceptionTranslator(
                 dataSource, false);
         return defaultExceptionTranslator;
+    }
+    
+    /**
+     * 构建SqlSessionFactory<br/>
+     * <功能详细描述>
+     * @param dataSource
+     * @param properties
+     * @param databaseIdProvider
+     * @param interceptors
+     * @param customizers
+     * @param resourceLoader
+     * @return
+     * @throws Exception [参数说明]
+     * 
+     * @return SqlSessionFactory [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static SqlSessionFactory buildSqlSessionFactory(
+            DataSource dataSource, MybatisProperties properties,
+            DatabaseIdProvider databaseIdProvider, Interceptor[] interceptors,
+            List<ConfigurationCustomizer> customizers,
+            ResourceLoader resourceLoader) throws Exception {
+        SqlSessionFactoryBean factory = new SqlSessionFactoryBean();
+        factory.setDataSource(dataSource);
+        factory.setVfs(SpringBootVFS.class);
+        factory.setFailFast(true);
+        
+        if (StringUtils.hasText(properties.getConfigLocation())) {
+            factory.setConfigLocation(
+                    resourceLoader.getResource(properties.getConfigLocation()));
+        }
+        applyConfiguration(factory, properties, customizers);
+        
+        if (StringUtils.hasLength(properties.getTypeAliasesPackage())) {
+            factory.setTypeAliasesPackage(properties.getTypeAliasesPackage());
+        }
+        if (properties.getTypeAliasesSuperType() != null) {
+            factory.setTypeAliasesSuperType(
+                    properties.getTypeAliasesSuperType());
+        }
+        if (StringUtils.hasLength(properties.getTypeHandlersPackage())) {
+            factory.setTypeHandlersPackage(properties.getTypeHandlersPackage());
+        }
+        if (properties.getConfigurationProperties() != null) {
+            factory.setConfigurationProperties(
+                    properties.getConfigurationProperties());
+        }
+        if (!ObjectUtils.isEmpty(interceptors)) {
+            factory.setPlugins(interceptors);
+        }
+        if (databaseIdProvider != null) {
+            factory.setDatabaseIdProvider(databaseIdProvider);
+        }
+        if (!ObjectUtils.isEmpty(properties.resolveMapperLocations())) {
+            factory.setMapperLocations(properties.resolveMapperLocations());
+        }
+        
+        SqlSessionFactory sqlSessionFactory = factory.getObject();
+        return sqlSessionFactory;
+    }
+    
+    /**
+     * 根据配置写入SqlSessionFactoryBean中<br/>
+     * <功能详细描述>
+     * @param factory
+     * @param properties
+     * @param customizers [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    private static void applyConfiguration(SqlSessionFactoryBean factory,
+            MybatisProperties properties,
+            List<ConfigurationCustomizer> customizers) {
+        Configuration configuration = properties.getConfiguration();
+        if (configuration == null
+                && !StringUtils.hasText(properties.getConfigLocation())) {
+            configuration = new Configuration();
+        }
+        
+        if (configuration != null && !CollectionUtils.isEmpty(customizers)) {
+            for (ConfigurationCustomizer customizer : customizers) {
+                customizer.customize(configuration);
+            }
+        }
+        factory.setConfiguration(configuration);
     }
 }

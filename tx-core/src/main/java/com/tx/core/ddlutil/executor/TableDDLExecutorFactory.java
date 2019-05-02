@@ -154,7 +154,7 @@ public class TableDDLExecutorFactory implements FactoryBean<TableDDLExecutor>,
         TableDDLExecutor ddlExecutor = null;
         switch (this.dataSourceType) {
             case MYSQL:
-            case MySQL5InnoDBDialect:
+            //case MySQL5InnoDBDialect:
                 ddlExecutor = new MysqlTableDDLExecutor(this.dataSource,
                         this.jdbcTemplate);
                 break;

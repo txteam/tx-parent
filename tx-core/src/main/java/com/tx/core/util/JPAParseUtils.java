@@ -27,7 +27,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
-import org.springframework.context.annotation.Primary;
 import org.springframework.util.ReflectionUtils;
 
 import com.tx.core.exceptions.util.AssertUtils;
@@ -334,8 +333,7 @@ public class JPAParseUtils {
         Method readMethod = propertyDescriptor.getReadMethod();
         if (readMethod.isAnnotationPresent(Id.class)
                 || readMethod.isAnnotationPresent(
-                        org.springframework.data.annotation.Id.class)
-                || readMethod.isAnnotationPresent(Primary.class)) {
+                        org.springframework.data.annotation.Id.class)) {
             return true;
         }
         
@@ -345,8 +343,7 @@ public class JPAParseUtils {
         if (field != null) {
             if (field.isAnnotationPresent(Id.class)
                     || field.isAnnotationPresent(
-                            org.springframework.data.annotation.Id.class)
-                    || field.isAnnotationPresent(Primary.class)) {
+                            org.springframework.data.annotation.Id.class)) {
                 return true;
             }
         }

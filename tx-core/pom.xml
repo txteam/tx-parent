@@ -100,22 +100,22 @@
 			<artifactId>spring-boot-starter-data-redis</artifactId>
 			<optional>true</optional>
 			<!-- 1.5的版本默认采用的连接池技术是jedis 2.0以上版本默认连接池是lettuce, 在这里采用jedis，所以需要排除lettuce的jar -->
-			<exclusions>
-				<exclusion>
-					<groupId>redis.clients</groupId>
-					<artifactId>jedis</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>io.lettuce</groupId>
-					<artifactId>lettuce-core</artifactId>
-				</exclusion>
-			</exclusions>
+			<!-- <exclusions> -->
+			<!-- <exclusion> -->
+			<!-- <groupId>redis.clients</groupId> -->
+			<!-- <artifactId>jedis</artifactId> -->
+			<!-- </exclusion> -->
+			<!-- <exclusion> -->
+			<!-- <groupId>io.lettuce</groupId> -->
+			<!-- <artifactId>lettuce-core</artifactId> -->
+			<!-- </exclusion> -->
+			<!-- </exclusions> -->
 		</dependency>
 		<!-- 添加jedis客户端 -->
-		<dependency>
-			<groupId>redis.clients</groupId>
-			<artifactId>jedis</artifactId>
-		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>redis.clients</groupId> -->
+		<!-- <artifactId>jedis</artifactId> -->
+		<!-- </dependency> -->
 
 		<!-- srpingframework core -->
 		<!-- spring核心常用工具类包：依赖加载 -->

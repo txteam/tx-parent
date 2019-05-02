@@ -62,8 +62,8 @@ public class DataDictService implements InitializingBean, ResourceLoaderAware {
     }
     
     /** <默认构造函数> */
-    public DataDictService(TransactionTemplate transactionTemplate,
-            DataDictDao dataDictDao) {
+    public DataDictService(DataDictDao dataDictDao,
+            TransactionTemplate transactionTemplate) {
         super();
         this.dataDictDao = dataDictDao;
         this.transactionTemplate = transactionTemplate;

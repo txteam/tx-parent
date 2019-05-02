@@ -13,7 +13,6 @@ import org.springframework.beans.factory.BeanNameAware;
 
 import com.tx.component.basicdata.model.BasicData;
 import com.tx.component.basicdata.model.TreeAbleBasicData;
-import com.tx.component.basicdata.starter.BasicDataServiceRegistry;
 import com.tx.core.exceptions.util.AssertUtils;
 
 /**
@@ -64,8 +63,7 @@ public class BasicDataContextBuilder extends BasicDataContextConfigurator
             Class<BDTYPE> type) {
         AssertUtils.notNull(type, "type is null.");
         
-        BasicDataService<BDTYPE> service = BasicDataServiceRegistry.getInstance()
-                .getBasicDataService(type);
+        BasicDataService<BDTYPE> service = null;
         return service;
     }
     
@@ -83,8 +81,7 @@ public class BasicDataContextBuilder extends BasicDataContextConfigurator
             Class<BDTYPE> type) {
         AssertUtils.notNull(type, "type is null.");
         
-        TreeAbleBasicDataService<BDTYPE> service = (TreeAbleBasicDataService<BDTYPE>) BasicDataServiceRegistry.getInstance()
-                .getBasicDataService(type);
+        TreeAbleBasicDataService<BDTYPE> service = null;
         return service;
     }
 }

@@ -31,10 +31,11 @@ public class CreateTableDDLBuilderFactoryRegistry {
     
     static {
         DDLDialect mysqlDialect = MysqlDDLDialect.INSTANCE;
-        CreateTableDDLBuilderFactoryRegistry.registeFactory(DataSourceTypeEnum.MYSQL,
+        CreateTableDDLBuilderFactoryRegistry.registeFactory(
+                DataSourceTypeEnum.MYSQL,
                 new MysqlCreateTableDDLBuilder(mysqlDialect));
-        CreateTableDDLBuilderFactoryRegistry.registeFactory(DataSourceTypeEnum.MySQL5InnoDBDialect,
-                new MysqlCreateTableDDLBuilder(mysqlDialect));
+        //        CreateTableDDLBuilderFactoryRegistry.registeFactory(DataSourceTypeEnum.MySQL5InnoDBDialect,
+        //                new MysqlCreateTableDDLBuilder(mysqlDialect));
     }
     
     /**
@@ -73,7 +74,8 @@ public class CreateTableDDLBuilderFactoryRegistry {
             DataSourceTypeEnum dataSourceType) {
         AssertUtils.notNull(dataSourceType, "dataSourceType is null.");
         
-        CreateTableDDLBuilderFactory builder = type2factoryMap.get(dataSourceType);
+        CreateTableDDLBuilderFactory builder = type2factoryMap
+                .get(dataSourceType);
         AssertUtils.notNull(builder,
                 "builder is not exist.dataSourceType:{}",
                 new Object[] { dataSourceType });

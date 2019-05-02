@@ -520,7 +520,7 @@ public class BasicDataCodeGenerator {
         Map<String, Object> data = new HashMap<String, Object>();
         
         DBScriptMapper dbScriptMapper = new DBScriptMapper(jpaMetaClass,
-                DataSourceTypeEnum.MySQL5InnoDBDialect.getDialect(), false);
+                DataSourceTypeEnum.MYSQL.getDialect(), false);
         data.put("dbScriptMapper", dbScriptMapper);
         
         String[] arrs = jpaMetaClass.getEntityTypeName().split("\\.");
@@ -535,7 +535,7 @@ public class BasicDataCodeGenerator {
                 + packageName + "/" + sqlSource.getTableName().toLowerCase()
                 + ".sql");
         dbScriptMapper = new DBScriptMapper(jpaMetaClass,
-                DataSourceTypeEnum.ORACLE10G.getDialect(), false);
+                DataSourceTypeEnum.ORACLE.getDialect(), false);
         data.put("dbScriptMapper", dbScriptMapper);
         FreeMarkerUtils.fprint(loadTemplateClass,
                 dbScriptTemplateFilePath,

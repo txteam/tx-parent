@@ -30,7 +30,7 @@ import com.tx.component.command.context.HelperFactory;
 import com.tx.component.strategy.context.StrategyContext;
 import com.tx.component.strategy.context.StrategyContextFactory;
 import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.starter.util.CoreUtilAutoConfiguration;
+import com.tx.core.starter.util.CoreAutoConfiguration;
 
 /**
  * 命令容器配置器<br/>
@@ -44,7 +44,7 @@ import com.tx.core.starter.util.CoreUtilAutoConfiguration;
 @Configuration
 @EnableConfigurationProperties(value = CommandContextProperties.class)
 @ConditionalOnBean({ DataSource.class, PlatformTransactionManager.class })
-@AutoConfigureAfter({ CoreUtilAutoConfiguration.class,
+@AutoConfigureAfter({ CoreAutoConfiguration.class,
         DataSourceAutoConfiguration.class,
         DataSourceTransactionManagerAutoConfiguration.class })
 @ConditionalOnProperty(prefix = "tx.command", value = "enable", havingValue = "true")

@@ -91,9 +91,7 @@ public class CommandContext extends CommandContextBuilder {
                     public void afterCommit() {
                         CommandResponse response = new DefaultResponse();
                         doPost(request, response);
-                        
                         //FIXME: 如果执行成功，在此处执行更新为成功，并迁移至历史表的逻辑
-                        
                         //FIXME: 否则，则记录为错误
                     }
                 });

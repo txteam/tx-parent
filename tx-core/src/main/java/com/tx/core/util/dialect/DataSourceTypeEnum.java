@@ -18,22 +18,26 @@ import org.hibernate.dialect.Dialect;
  * @since  [产品/模块版本]
  */
 public enum DataSourceTypeEnum {
-    /**
-     * sqlServer
-     */
-    SQLSERVER2008("sqlserver2008", DialectUtils.sqlServer2008Dialect),
+    //    /**
+    //     * sqlServer
+    //     */
+    //    SQLSERVER2008("sqlserver2008", DialectUtils.sqlServer2008Dialect),
+    //    /**
+    //     * MYSQL
+    //     */
+    //    MySQL5InnoDBDialect("MYSQL5INNODB", DialectUtils.mySQL5InnoDBDialect),
+    //    /**
+    //     * oracle
+    //     */
+    //    ORACLE9I("ORACLE9I", DialectUtils.oracle9iDialect),
+    //    /**
+    //     * oracle
+    //     */
+    //    ORACLE10G("ORACLE10G", DialectUtils.oracle10gDialect),
     /**
      * oracle
      */
     ORACLE("ORACLE", DialectUtils.oracle10gDialect),
-    /**
-     * oracle
-     */
-    ORACLE9I("ORACLE9I", DialectUtils.oracle9iDialect),
-    /**
-     * oracle
-     */
-    ORACLE10G("ORACLE10G", DialectUtils.oracle10gDialect),
     /**
      * H2
      */
@@ -41,11 +45,7 @@ public enum DataSourceTypeEnum {
     /**
      * MYSQL
      */
-    MYSQL("MYSQL", DialectUtils.mySQL5InnoDBDialect),
-    /**
-     * MYSQL
-     */
-    MySQL5InnoDBDialect("MYSQL5INNODB", DialectUtils.mySQL5InnoDBDialect);
+    MYSQL("MYSQL", DialectUtils.mySQL5Dialect);
     
     /**
      * 数据源类型名

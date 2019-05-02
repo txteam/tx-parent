@@ -54,7 +54,7 @@ public class EntityDaoFactoryTest {
         MyBatisDaoSupport myBatisDaoSupport = MyBatisDaoSupportHelper
                 .buildMyBatisDaoSupport("classpath:context/mybatis-config.xml",
                         null,
-                        DataSourceTypeEnum.MySQL5InnoDBDialect,
+                        DataSourceTypeEnum.MYSQL,
                         ds);
         
         TableDDLExecutor ddlExecutor = new MysqlTableDDLExecutor(jt);

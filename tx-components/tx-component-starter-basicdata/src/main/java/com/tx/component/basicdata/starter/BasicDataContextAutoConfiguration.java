@@ -10,6 +10,8 @@ import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.mybatis.spring.SqlSessionFactoryBean;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -20,6 +22,7 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
@@ -43,6 +46,8 @@ import com.tx.component.basicdata.script.BasicDataContextTableInitializer;
 import com.tx.component.basicdata.starter.persister.BasicDataContextHibernateConfig;
 import com.tx.core.ddlutil.executor.TableDDLExecutor;
 import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.starter.mybatis.MybatisPluginConfiguration;
+import com.tx.core.starter.persister.PersisterProperties;
 
 /**
  * 基础数据容器自动配置<br/>
@@ -55,9 +60,10 @@ import com.tx.core.exceptions.util.AssertUtils;
  */
 @Configuration
 @EnableConfigurationProperties(BasicDataContextProperties.class)
+@ConditionalOnSingleCandidate(DataSource.class)
+@ConditionalOnClass({ SqlSessionFactory.class, SqlSessionFactoryBean.class })
 @ConditionalOnBean({ DataSource.class, PlatformTransactionManager.class })
-@AutoConfigureAfter({ DataSourceAutoConfiguration.class,
-        DataSourceTransactionManagerAutoConfiguration.class })
+@AutoConfigureAfter(DataSourceAutoConfiguration.class)
 @Import(BasicDataPersisterConfiguration.class)
 public class BasicDataContextAutoConfiguration
         implements ApplicationContextAware, InitializingBean {
@@ -247,68 +253,68 @@ public class BasicDataContextAutoConfiguration
     //        return serviceFactory;
     //    }
     
-    /**
-     * 基础数据业务层注册<br/>
-     * <功能详细描述>
-     * 
-     * @author  Administrator
-     * @version  [版本号, 2019年4月30日]
-     * @see  [相关类/方法]
-     * @since  [产品/模块版本]
-     */
-    @Import(BasicDataPersisterConfiguration.class)
-    public static class BasicDataServiceImportRegistrar
-            implements BeanFactoryAware, ImportBeanDefinitionRegistrar,
-            ResourceLoaderAware, InitializingBean {
-        
-        @SuppressWarnings("unused")
-        private BeanFactory beanFactory;
-        
-        @SuppressWarnings("unused")
-        private ResourceLoader resourceLoader;
-        
-        /** <默认构造函数> */
-        //第一个被调用
-        public BasicDataServiceImportRegistrar() {
-            super();
-        }
-        
-        @PostConstruct
-        public void afterPropertiesSet() {
-            System.out.println(
-                    "TestContextAutoInnerImportRegistrar afterPropertiesSet. called");
-        }
-        
-        @PostConstruct
-        public void postConstruct() {
-            System.out.println(
-                    "TestContextAutoInnerImportRegistrar postConstruct. called");
-        }
-        
-        //低而个被调用
-        @Override
-        public void registerBeanDefinitions(
-                AnnotationMetadata importingClassMetadata,
-                BeanDefinitionRegistry registry) {
-            BeanDefinition bd = BeanDefinitionBuilder
-                    .genericBeanDefinition(TestBeanRegiste.class)
-                    .getBeanDefinition();
-            
-            System.out.println(
-                    "TestContextAutoInnerImportRegistrar registerBeanDefinitions. called");
-            registry.registerBeanDefinition("testRegiste", bd);
-        }
-        
-        @Override
-        public void setBeanFactory(BeanFactory beanFactory)
-                throws BeansException {
-            this.beanFactory = beanFactory;
-        }
-        
-        @Override
-        public void setResourceLoader(ResourceLoader resourceLoader) {
-            this.resourceLoader = resourceLoader;
-        }
-    }
+//    /**
+//     * 基础数据业务层注册<br/>
+//     * <功能详细描述>
+//     * 
+//     * @author  Administrator
+//     * @version  [版本号, 2019年4月30日]
+//     * @see  [相关类/方法]
+//     * @since  [产品/模块版本]
+//     */
+//    @Import(BasicDataPersisterConfiguration.class)
+//    public static class BasicDataServiceImportRegistrar
+//            implements BeanFactoryAware, ImportBeanDefinitionRegistrar,
+//            ResourceLoaderAware, InitializingBean {
+//        
+//        @SuppressWarnings("unused")
+//        private BeanFactory beanFactory;
+//        
+//        @SuppressWarnings("unused")
+//        private ResourceLoader resourceLoader;
+//        
+//        /** <默认构造函数> */
+//        //第一个被调用
+//        public BasicDataServiceImportRegistrar() {
+//            super();
+//        }
+//        
+//        @PostConstruct
+//        public void afterPropertiesSet() {
+//            System.out.println(
+//                    "TestContextAutoInnerImportRegistrar afterPropertiesSet. called");
+//        }
+//        
+//        @PostConstruct
+//        public void postConstruct() {
+//            System.out.println(
+//                    "TestContextAutoInnerImportRegistrar postConstruct. called");
+//        }
+//        
+//        //低而个被调用
+//        @Override
+//        public void registerBeanDefinitions(
+//                AnnotationMetadata importingClassMetadata,
+//                BeanDefinitionRegistry registry) {
+//            BeanDefinition bd = BeanDefinitionBuilder
+//                    .genericBeanDefinition(TestBeanRegiste.class)
+//                    .getBeanDefinition();
+//            
+//            System.out.println(
+//                    "TestContextAutoInnerImportRegistrar registerBeanDefinitions. called");
+//            registry.registerBeanDefinition("testRegiste", bd);
+//        }
+//        
+//        @Override
+//        public void setBeanFactory(BeanFactory beanFactory)
+//                throws BeansException {
+//            this.beanFactory = beanFactory;
+//        }
+//        
+//        @Override
+//        public void setResourceLoader(ResourceLoader resourceLoader) {
+//            this.resourceLoader = resourceLoader;
+//        }
+//    }
     
 }

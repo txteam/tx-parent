@@ -1,5 +1,4 @@
 # Auto Configure
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.tx.core.starter.util.CoreUtilAutoConfiguration,\
-com.tx.core.starter.mybatis.BeforeMybatisAutoConfiguration,\
-com.tx.core.starter.mybatis.MybatisSupportAutoConfiguration
+com.tx.core.starter.util.CoreAutoConfiguration,\
+com.tx.core.starter.mybatis.MybatisAutoConfiguration
