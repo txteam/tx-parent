@@ -4,7 +4,7 @@
  * 修改时间:  2016年11月17日
  * <修改描述:>
  */
-package com.tx.component.servicelogger.support;
+package com.tx.component.servicelogger.support.mybatis;
 
 import java.util.ArrayList;
 import java.util.HashMap;

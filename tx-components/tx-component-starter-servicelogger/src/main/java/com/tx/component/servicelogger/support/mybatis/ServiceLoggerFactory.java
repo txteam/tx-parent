@@ -4,7 +4,7 @@
  * 修改时间:  2018年6月3日
  * <修改描述:>
  */
-package com.tx.component.servicelogger.support;
+package com.tx.component.servicelogger.support.mybatis;
 
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -13,6 +13,7 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import com.tx.component.servicelogger.support.ServiceLogger;
 import com.tx.core.mybatis.support.MyBatisDaoSupport;
 
 /**

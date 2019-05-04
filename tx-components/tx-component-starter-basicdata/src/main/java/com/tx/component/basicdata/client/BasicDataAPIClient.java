@@ -10,11 +10,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.tx.component.basicdata.model.BasicData;
 import com.tx.core.paged.model.PagedList;
 
 /**
@@ -43,6 +43,20 @@ public interface BasicDataAPIClient {
             @RequestParam Map<String, Object> dataMap);
     
     /**
+     * 批量插入基础数据对象<br/>
+     * <功能详细描述>
+     * @param type
+     * @param mapList [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @RequestMapping(value = "/{type}/batch", method = RequestMethod.POST)
+    public void batchInsert(@PathVariable String type,
+            @RequestBody List<Map<String, Object>> dataMapList);
+    
+    /**
      * 根据id进行删除
      * <功能详细描述>
      * @param id
@@ -53,7 +67,7 @@ public interface BasicDataAPIClient {
      * @see [类、类#方法、类#成员]
      */
     @RequestMapping(value = "/{type}/{id}", method = RequestMethod.DELETE)
-    public <T extends BasicData> boolean deleteById(@PathVariable String type,
+    public boolean deleteById(@PathVariable String type,
             @PathVariable String id);
     
     /**
@@ -68,22 +82,8 @@ public interface BasicDataAPIClient {
      * @see [类、类#方法、类#成员]
      */
     @RequestMapping(value = "/{type}/code/{code}", method = RequestMethod.DELETE)
-    public <T extends BasicData> boolean deleteByCode(@PathVariable String type,
+    public boolean deleteByCode(@PathVariable String type,
             @PathVariable String code);
-    
-    /**
-     * 根据id更新基础数据对象<br/>
-     * <功能详细描述>
-     * @param data
-     * @return [参数说明]
-     * 
-     * @return boolean [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    @RequestMapping(value = "/{type}/", method = RequestMethod.PUT)
-    public boolean updateById(@PathVariable String type,
-            @RequestParam Map<String, Object> dataMap);
     
     /**
      * 根据id禁用DataDict<br/>
@@ -114,6 +114,34 @@ public interface BasicDataAPIClient {
             @PathVariable String id);
     
     /**
+     * 根据id更新基础数据对象<br/>
+     * <功能详细描述>
+     * @param data
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @RequestMapping(value = "/{type}/", method = RequestMethod.PUT)
+    public boolean update(@PathVariable String type,
+            @RequestParam Map<String, Object> dataMap);
+    
+    /**
+     * 根据id更新基础数据对象<br/>
+     * <功能详细描述>
+     * @param data
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @RequestMapping(value = "/{type}/batch", method = RequestMethod.PUT)
+    public void batchUpdate(@PathVariable String type,
+            @RequestBody List<Map<String, Object>> dataMapList);
+    
+    /**
      * 判断基础数据是否存在<br/>
      * <功能详细描述>
      * @param key2valueMap
@@ -125,7 +153,7 @@ public interface BasicDataAPIClient {
      * @see [类、类#方法、类#成员]
      */
     @RequestMapping(value = "/{type}/exist/{excludeId}", method = RequestMethod.GET)
-    public boolean isExist(@PathVariable String type,
+    public boolean exist(@PathVariable String type,
             @RequestParam Map<String, String> key2valueMap,
             @PathVariable(required = false) String excludeId);
     
@@ -186,7 +214,7 @@ public interface BasicDataAPIClient {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @RequestMapping(value = "/{type}/pagedlist/{pageSize}/{pageIndex}/{valid}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{type}/pagedlist/{valid}", method = RequestMethod.GET)
     public PagedList<Map<String, Object>> queryPagedList(
             @PathVariable String type,
             @PathVariable(required = false) Boolean valid,

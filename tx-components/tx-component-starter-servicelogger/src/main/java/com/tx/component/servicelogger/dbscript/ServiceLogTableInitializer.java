@@ -32,7 +32,7 @@ import com.tx.core.util.ClassScanUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class ServiceLoggerTableInitializer extends AbstractTableInitializer implements InitializingBean{
+public class ServiceLogTableInitializer extends AbstractTableInitializer implements InitializingBean{
     
     private String basePackages = "com.tx";
     
@@ -43,18 +43,18 @@ public class ServiceLoggerTableInitializer extends AbstractTableInitializer impl
     private boolean tableAutoInitialize = false;
     
     /** <默认构造函数> */
-    public ServiceLoggerTableInitializer() {
+    public ServiceLogTableInitializer() {
         super();
     }
     
     /** <默认构造函数> */
-    public ServiceLoggerTableInitializer(TableDDLExecutor tableDDLExecutor) {
+    public ServiceLogTableInitializer(TableDDLExecutor tableDDLExecutor) {
         super();
         this.tableDDLExecutor = tableDDLExecutor;
     }
     
     /** <默认构造函数> */
-    public ServiceLoggerTableInitializer(TableDDLExecutor tableDDLExecutor,
+    public ServiceLogTableInitializer(TableDDLExecutor tableDDLExecutor,
             boolean tableAutoInitialize) {
         super();
         this.tableDDLExecutor = tableDDLExecutor;

@@ -29,18 +29,39 @@ import com.tx.core.exceptions.util.AssertUtils;
 public class CommandSessionContext {
     
     /** 日志记录句柄 */
-    private static Logger logger = LoggerFactory.getLogger(CommandSessionContext.class);
+    private static Logger logger = LoggerFactory
+            .getLogger(CommandSessionContext.class);
     
     /** 当前线程中的操作容器实例 */
     private static ThreadLocal<Stack<CommandSessionContext>> context = new ThreadLocal<Stack<CommandSessionContext>>() {
-        /**
-         * @return
-         */
         @Override
         protected Stack<CommandSessionContext> initialValue() {
-            logger.info("ProcessSessionContext: current thread: {} processSessionContext init.");
+            logger.info(
+                    "CommandSessionContext: current thread: {}. CommandSessionContext session init.",
+                    String.valueOf(Thread.currentThread().getId()));
             
+            //该会话必须在事务中进行执行,存在此逻辑，可写入会话执行完毕后强制清理线程变量
+            AssertUtils.isTrue(
+                    TransactionSynchronizationManager.isSynchronizationActive(),
+                    "必须在事务中进行执行");
+            
+            //new 堆栈
             Stack<CommandSessionContext> stack = new Stack<CommandSessionContext>();
+            
+            //注册自动会话结束期间强制回收
+            TransactionSynchronizationManager.registerSynchronization(
+                    new TransactionSynchronizationAdapter() {
+                        /**
+                         * @param status
+                         */
+                        @Override
+                        public void afterCompletion(int status) {
+                            //清空堆栈
+                            stack.clear();
+                            //移除线程变量
+                            remove();
+                        }
+                    });
             return stack;
         }
         
@@ -49,7 +70,8 @@ public class CommandSessionContext {
          */
         @Override
         public void remove() {
-            logger.info("ProcessSessionContext: current thread: {} processSessionContext remove.");
+            logger.info(
+                    "ProcessSessionContext: current thread: {} processSessionContext remove.");
             
             super.remove();
         }
@@ -66,33 +88,20 @@ public class CommandSessionContext {
      * @see [类、类#方法、类#成员]
     */
     public static void open(CommandRequest request, CommandResponse response) {
-        //该会话必须在事务中进行执行
-        AssertUtils.isTrue(TransactionSynchronizationManager.isSynchronizationActive(), "必须在事务中进行执行");
-        
         //获取堆栈
-        Stack<CommandSessionContext> stack = CommandSessionContext.context.get();
+        Stack<CommandSessionContext> stack = CommandSessionContext.context
+                .get();
         //如果堆栈中存在原来交易，将堆栈中交易，进行持久后，再将新值进行插入
         if (!stack.isEmpty()) {
             CommandSessionContext peek = stack.peek();
             //如果栈顶存在,判断堆栈顶的session是否为可挂起的
             AssertUtils.isTrue(!peek.isLockSuspend(), "当前会话不能进行挂起，或已经被挂起。");
             peek.setLockSuspend(true);
-        } else {
-            //如果为空，注册事务关闭时，一并清空命令会话容器
-            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
-                /**
-                 * @param status
-                 */
-                @Override
-                public void afterCompletion(int status) {
-                    //在事务结束期间保证业务逻辑依然被调用一次
-                    CommandSessionContext.context.remove();
-                }
-            });
         }
         
         //构建新的堆栈
-        CommandSessionContext newSessionContext = new CommandSessionContext(request, response);
+        CommandSessionContext newSessionContext = new CommandSessionContext(
+                request, response);
         stack.push(newSessionContext);
     }
     
@@ -105,11 +114,13 @@ public class CommandSessionContext {
       * @see [类、类#方法、类#成员]
      */
     public static void close() {
-        Stack<CommandSessionContext> stack = CommandSessionContext.context.get();
+        Stack<CommandSessionContext> stack = CommandSessionContext.context
+                .get();
         
         //将出栈的会话进行清理
         CommandSessionContext closeProcessSessionContext = stack.pop();
         closeProcessSessionContext.clear();
+        
         //如果堆栈顶部仍然存在交易，则对该交易重新进行持久
         if (stack.isEmpty()) {
             CommandSessionContext.context.remove();
@@ -131,9 +142,12 @@ public class CommandSessionContext {
     */
     public static void lockSuspend() {
         //该会话必须在事务中进行执行
-        AssertUtils.isTrue(TransactionSynchronizationManager.isSynchronizationActive(), "必须在事务中进行执行");
+        AssertUtils.isTrue(
+                TransactionSynchronizationManager.isSynchronizationActive(),
+                "必须在事务中进行执行");
         //获取堆栈
-        Stack<CommandSessionContext> stack = CommandSessionContext.context.get();
+        Stack<CommandSessionContext> stack = CommandSessionContext.context
+                .get();
         AssertUtils.notNull(stack, "stack is null");
         AssertUtils.notEmpty(stack, "stack is empty");
         
@@ -152,9 +166,12 @@ public class CommandSessionContext {
      */
     public static void unLockSuspend() {
         //该会话必须在事务中进行执行
-        AssertUtils.isTrue(TransactionSynchronizationManager.isSynchronizationActive(), "必须在事务中进行执行");
+        AssertUtils.isTrue(
+                TransactionSynchronizationManager.isSynchronizationActive(),
+                "必须在事务中进行执行");
         //获取堆栈
-        Stack<CommandSessionContext> stack = CommandSessionContext.context.get();
+        Stack<CommandSessionContext> stack = CommandSessionContext.context
+                .get();
         AssertUtils.notNull(stack, "stack is null");
         AssertUtils.notEmpty(stack, "stack is empty");
         
@@ -173,7 +190,8 @@ public class CommandSessionContext {
       * @see [类、类#方法、类#成员]
      */
     public static CommandSessionContext getSession() {
-        Stack<CommandSessionContext> stack = CommandSessionContext.context.get();
+        Stack<CommandSessionContext> stack = CommandSessionContext.context
+                .get();
         if (stack.isEmpty()) {
             return null;
         }
@@ -200,7 +218,8 @@ public class CommandSessionContext {
     private Map<String, Object> attributes = new HashMap<>();
     
     /** <默认构造函数> */
-    private CommandSessionContext(CommandRequest request, CommandResponse response) {
+    private CommandSessionContext(CommandRequest request,
+            CommandResponse response) {
         super();
         //AssertUtils.notNull(response, "response is null.");
         AssertUtils.notNull(request, "request is null.");
@@ -370,7 +389,8 @@ public class CommandSessionContext {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public <T> T getValueByHandler(String key, Class<T> type, ValueHandler<T> valueHandler) {
+    public <T> T getValueByHandler(String key, Class<T> type,
+            ValueHandler<T> valueHandler) {
         AssertUtils.notEmpty(key, "key is empty.");
         AssertUtils.notNull(type, "type is null.");
         AssertUtils.notNull(valueHandler, "attributeHandle is null.");
@@ -411,7 +431,8 @@ public class CommandSessionContext {
         }
         
         @SuppressWarnings("unchecked")
-        Map<String, T> mapAttribute = (Map<String, T>) this.attributes.get(mapKey);
+        Map<String, T> mapAttribute = (Map<String, T>) this.attributes
+                .get(mapKey);
         if (mapAttribute == null) {
             mapAttribute = new HashMap<>();
             this.attributes.put(mapKey, mapAttribute);
@@ -431,7 +452,8 @@ public class CommandSessionContext {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public <T> T getValueFromMapAttribute(String mapKey, String key, Class<T> type) {
+    public <T> T getValueFromMapAttribute(String mapKey, String key,
+            Class<T> type) {
         AssertUtils.notEmpty(mapKey, "mapKey is empty.");
         AssertUtils.notEmpty(key, "key is empty.");
         AssertUtils.notNull(type, "type is null.");
@@ -440,7 +462,8 @@ public class CommandSessionContext {
             return null;
         }
         @SuppressWarnings("unchecked")
-        Map<String, T> mapAttribute = (Map<String, T>) this.attributes.get(mapKey);
+        Map<String, T> mapAttribute = (Map<String, T>) this.attributes
+                .get(mapKey);
         if (mapAttribute == null) {
             return null;
         }
@@ -466,8 +489,8 @@ public class CommandSessionContext {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public <T> T getValueFromMapAttributeByHandler(String mapKey, String key, Class<T> type,
-            ValueHandler<T> valueHandler) {
+    public <T> T getValueFromMapAttributeByHandler(String mapKey, String key,
+            Class<T> type, ValueHandler<T> valueHandler) {
         AssertUtils.notEmpty(mapKey, "mapKey is empty.");
         AssertUtils.notEmpty(key, "key is empty.");
         AssertUtils.notNull(type, "type is null.");

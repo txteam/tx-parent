@@ -7,10 +7,14 @@
 package com.tx.component.basicdata.starter;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cloud.openfeign.FeignClientsConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.format.support.FormattingConversionService;
+
+import com.tx.component.basicdata.registry.BasicDataAPIClientRegistry;
+import com.tx.component.basicdata.registry.impl.BasicDataAPIClientRegistryImpl;
 
 import feign.Client;
 import feign.Contract;
@@ -59,36 +63,23 @@ public class BasicDataAPIClientConfiguration {
         
         private Contract feignContract;
         
-        private FormattingConversionService feignConversionService;
-        
         /** <默认构造函数> */
         public feignAPIClientConfiguration(Decoder decoder, Encoder encoder,
-                Client client, Contract feignContract,
-                FormattingConversionService feignConversionService) {
+                Client client, Contract feignContract) {
             super();
             this.decoder = decoder;
             this.encoder = encoder;
             this.client = client;
             this.feignContract = feignContract;
-            this.feignConversionService = feignConversionService;
         }
         
-        //public BasicDataAPIClientFactoryBean
-        //        public FooController(
-        //                Decoder decoder, Encoder encoder, Client client) {
-        //            this.fooClient = Feign.builder().client(client)
-        //                    .encoder(encoder)
-        //                    .decoder(decoder)
-        //                    .contract(new SpringMvcContract())
-        //                    .requestInterceptor(new BasicAuthRequestInterceptor("user", "user"))
-        //                    .target(FooClient.class, "http://PROD-SVC");
-        //            this.adminClient = Feign.builder().client(client)
-        //                    .encoder(encoder)
-        //                    .decoder(decoder)
-        //                    .contract(new SpringMvcContract())
-        //                    .requestInterceptor(new BasicAuthRequestInterceptor("admin", "admin"))
-        //                    .target(FooClient.class, "http://PROD-SVC");
-        //        }
+        @Bean
+        @ConditionalOnMissingBean
+        public BasicDataAPIClientRegistry basicDataAPIClientRegistry() {
+            BasicDataAPIClientRegistry registry = new BasicDataAPIClientRegistryImpl(
+                    decoder, encoder, client, feignContract);
+            return registry;
+        }
     }
     
 }

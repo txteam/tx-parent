@@ -13,10 +13,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.PropertyAccessorFactory;
+import org.springframework.core.convert.TypeDescriptor;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.tx.component.basicdata.annotation.BasicDataEntity;
 import com.tx.component.basicdata.model.BasicData;
+import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.paged.model.PagedList;
 import com.tx.core.util.ObjectUtils;
 
@@ -30,6 +38,53 @@ import com.tx.core.util.ObjectUtils;
  * @since  [产品/模块版本]
  */
 public class BasicDataUtils {
+    
+    /**
+     * 对应基础数据编码<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static String getType(Class<? extends BasicData> entityClass) {
+        AssertUtils.notNull(entityClass, "entityClass is null.");
+        
+        String code = entityClass.getName();
+        if (entityClass.isAnnotationPresent(BasicDataEntity.class)
+                && StringUtils.isNotEmpty(entityClass
+                        .getAnnotation(BasicDataEntity.class).type())) {
+            code = entityClass.getAnnotation(BasicDataEntity.class).type();
+        }
+        return code;
+    }
+    
+    /**
+     * 获取对应的表名<br/>
+     *     用户写入基础数据类型中
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static String getTableName(Class<? extends BasicData> entityClass) {
+        AssertUtils.notNull(entityClass, "entityClass is null.");
+        
+        String tableName = entityClass.getSimpleName();
+        if (entityClass.isAnnotationPresent(Table.class)) {
+            tableName = entityClass.getAnnotation(Table.class).name();
+        }
+        if (entityClass.isAnnotationPresent(Entity.class)) {
+            tableName = entityClass.getAnnotation(Entity.class).name();
+        }
+        if (StringUtils.isEmpty(tableName)) {
+            tableName = "bd_data_dict";
+        }
+        return tableName;
+    }
     
     /**
      * 将对象转换为Map<br/>
@@ -104,8 +159,12 @@ public class BasicDataUtils {
                     || pdTemp.getWriteMethod() == null) {
                 continue;
             }
-            
             String property = pdTemp.getName();
+            TypeDescriptor tdTemp = objBW.getPropertyTypeDescriptor(property);
+            if (tdTemp.hasAnnotation(JsonIgnore.class)) {
+                continue;
+            }
+            
             Object value = pdTemp.getValue(property);
             if (value == null) {
                 continue;
@@ -113,6 +172,66 @@ public class BasicDataUtils {
             resMap.put(property, value);
         }
         return resMap;
+    }
+    
+    /**
+     * 将对象转换为Map<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return Map<String,Object> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static <BD extends BasicData> PagedList<BD> fromMapPagedList(
+            PagedList<Map<String, Object>> mapPagedList, Class<BD> type) {
+        AssertUtils.notNull(type, "type is null.");
+        AssertUtils.isTrue(BasicData.class.isAssignableFrom(type),
+                "type:{} is not assignableFrom BasicData.",
+                new Object[] { type });
+        if (mapPagedList == null) {
+            return null;
+        }
+        
+        PagedList<BD> pagedList = new PagedList<>();
+        pagedList.setCount(mapPagedList.getCount());
+        pagedList.setPageIndex(mapPagedList.getPageIndex());
+        pagedList.setPageSize(mapPagedList.getPageSize());
+        pagedList.setQueryPageSize(mapPagedList.getQueryPageSize());
+        List<BD> objList = new ArrayList<>();
+        pagedList.setList(objList);
+        for (Map<String, Object> mapTemp : mapPagedList.getList()) {
+            objList.add(fromMap(mapTemp, type));
+        }
+        return pagedList;
+    }
+    
+    /**
+     * 从MapList转换为实例List
+     * <功能详细描述>
+     * @param mapList
+     * @param type
+     * @return [参数说明]
+     * 
+     * @return List<BD> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static <BD extends BasicData> List<BD> fromMapList(
+            List<Map<String, Object>> mapList, Class<BD> type) {
+        AssertUtils.notNull(type, "type is null.");
+        AssertUtils.isTrue(BasicData.class.isAssignableFrom(type),
+                "type:{} is not assignableFrom BasicData.",
+                new Object[] { type });
+        if (mapList == null) {
+            return null;
+        }
+        
+        List<BD> objList = new ArrayList<>();
+        for (Map<String, Object> mapTemp : mapList) {
+            objList.add(fromMap(mapTemp, type));
+        }
+        return objList;
     }
     
     /**
@@ -128,6 +247,10 @@ public class BasicDataUtils {
      */
     public static <BD extends BasicData> BD fromMap(Map<String, Object> map,
             Class<BD> type) {
+        AssertUtils.notNull(type, "type is null.");
+        AssertUtils.isTrue(BasicData.class.isAssignableFrom(type),
+                "type:{} is not assignableFrom BasicData.",
+                new Object[] { type });
         if (map == null) {
             return null;
         }
@@ -138,14 +261,25 @@ public class BasicDataUtils {
         for (Entry<String, Object> entryTemp : map.entrySet()) {
             String key = entryTemp.getKey();
             PropertyDescriptor pdTemp = objBW.getPropertyDescriptor(key);
+            //            TypeDescriptor tdTemp = objBW.getPropertyTypeDescriptor(key);
             if (pdTemp == null || pdTemp.getReadMethod() == null
                     || pdTemp.getWriteMethod() == null) {
                 continue;
             }
+            //            if (tdTemp.hasAnnotation(JsonIgnore.class)) {
+            //                continue;
+            //            }
             
             Object value = entryTemp.getValue();
             objBW.setPropertyValue(key, value);
         }
         return bd;
     }
+    
+    //    public static void main(String[] args) {
+    //        DataDict dd = new DataDict();
+    //        BeanWrapper objBW = PropertyAccessorFactory.forBeanPropertyAccess(dd);
+    //        
+    //        System.out.println(objBW.getPropertyTypeDescriptor("parent").hasAnnotation(JsonIgnore.class));
+    //    }
 }

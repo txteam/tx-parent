@@ -30,7 +30,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import com.tx.component.servicelogger.context.ServiceLoggerContextFactory;
-import com.tx.component.servicelogger.dbscript.ServiceLoggerTableInitializer;
+import com.tx.component.servicelogger.dbscript.ServiceLogTableInitializer;
 import com.tx.component.servicelogger.support.ServiceLoggerRegistry;
 import com.tx.core.ddlutil.executor.TableDDLExecutor;
 import com.tx.core.exceptions.util.AssertUtils;
@@ -183,7 +183,7 @@ public class ServiceLoggerContextAutoConfiguration
     @ConditionalOnBean({ TableDDLExecutor.class })
     @ConditionalOnSingleCandidate(TableDDLExecutor.class)
     @ConditionalOnProperty(prefix = "tx.servicelogger", value = "table-auto-initialize", havingValue = "true")
-    @ConditionalOnMissingBean(ServiceLoggerTableInitializer.class)
+    @ConditionalOnMissingBean(ServiceLogTableInitializer.class)
     public static class BasicDataContextTableInitializerConfiguration {
         
         /** 表ddl自动执行器 */
@@ -204,8 +204,8 @@ public class ServiceLoggerContextAutoConfiguration
          * @see [类、类#方法、类#成员]
          */
         @Bean("servicelogger.tableInitializer")
-        public ServiceLoggerTableInitializer tableInitializer() {
-            ServiceLoggerTableInitializer initializer = new ServiceLoggerTableInitializer(
+        public ServiceLogTableInitializer tableInitializer() {
+            ServiceLogTableInitializer initializer = new ServiceLogTableInitializer(
                     tableDDLExecutor);
             
             return initializer;

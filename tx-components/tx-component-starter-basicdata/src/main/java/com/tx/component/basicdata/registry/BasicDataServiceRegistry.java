@@ -1,3 +1,4 @@
+package com.tx.component.basicdata.registry;
 ///*
 // * 描          述:  <描述>
 // * 修  改   人:  Administrator

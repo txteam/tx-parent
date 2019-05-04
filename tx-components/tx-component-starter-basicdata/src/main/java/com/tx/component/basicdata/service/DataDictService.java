@@ -227,7 +227,7 @@ public class DataDictService implements InitializingBean, ResourceLoaderAware {
                     return;
                 }
                 for (DataDict erTemp : needUpdateList) {
-                    updateById(erTemp);
+                    update(erTemp);
                 }
             }
             
@@ -323,7 +323,7 @@ public class DataDictService implements InitializingBean, ResourceLoaderAware {
      * @param entity
      * @return
      */
-    public boolean updateById(DataDict dataDict) {
+    public boolean update(DataDict dataDict) {
         //验证参数是否合法，必填字段是否填写，
         AssertUtils.notNull(dataDict, "dataDict is null.");
         AssertUtils.notEmpty(dataDict.getId(), "dataDict.id is empty.");
@@ -577,7 +577,7 @@ public class DataDictService implements InitializingBean, ResourceLoaderAware {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    public boolean isExist(String type, Map<String, String> key2valueMap,
+    public boolean exist(String type, Map<String, String> key2valueMap,
             String excludeId) {
         AssertUtils.notEmpty(type, "type is empty");
         AssertUtils.notEmpty(key2valueMap, "key2valueMap is empty");

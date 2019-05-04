@@ -46,7 +46,7 @@ public abstract class AbstractInjectHandler<PR extends Object> extends
       * @see [类、类#方法、类#成员]
      */
     protected boolean matches(Class<?> requestType) {
-        if (getType().isAssignableFrom(requestType)) {
+        if (getRawType().isAssignableFrom(requestType)) {
             return true;
         }
         return false;
@@ -58,10 +58,10 @@ public abstract class AbstractInjectHandler<PR extends Object> extends
     @SuppressWarnings("unchecked")
     @Override
     public void inject(CommandRequest request) {
-        AssertUtils.isAssignable(getType(),
+        AssertUtils.isAssignable(getRawType(),
                 request.getClass(),
                 "request.type:{} should be subtype of:{}",
-                new Object[] { request.getClass(), getType() });
+                new Object[] { request.getClass(), getRawType() });
         
         //注入对象
         doInject((PR) request);

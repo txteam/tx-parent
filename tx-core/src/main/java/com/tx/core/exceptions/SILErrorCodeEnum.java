@@ -15,34 +15,35 @@ package com.tx.core.exceptions;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
+//参考 org.springframework.http.HttpStatus
 public enum SILErrorCodeEnum implements ErrorCode {
     
     /* -------　参数异常 start ------- */
-    ARG_ILLEGAL_ERROR(101000, "参数非法"),
+    ARG_ILLEGAL_ERROR(500100, "参数非法"),
     
-    ARG_EMPTY_ERROR(101011, "参数为空"),
+    ARG_EMPTY_ERROR(500101, "参数为空"),
     
-    ARG_NOT_EMPTY_ERROR(101012, "参数非空"),
+    ARG_NOT_EMPTY_ERROR(500102, "参数非空"),
     
-    ARG_NULL_ERROR(101002, "参数为空"),
+    ARG_NULL_ERROR(500103, "参数为空"),
     
-    ARG_NOT_NULL_ERROR(101002, "参数非空"),
+    ARG_NOT_NULL_ERROR(500104, "参数非空"),
     
-    ARG_TYPE_ILLEGAL_ERROR(102000, "参数类型非法"),
+    ARG_TYPE_ILLEGAL_ERROR(500105, "参数类型非法"),
     
-    ARG_TYPE_NOT_MATCHED_ERROR(102001, "参数类型不匹配"),
+    ARG_TYPE_NOT_MATCHED_ERROR(500106, "参数类型不匹配"),
     
-    ARG_TYPE_IS_INTERFACE_ERROR(102101, "参数为接口"),
+    ARG_TYPE_IS_INTERFACE_ERROR(500107, "参数为接口"),
     
-    ARG_TYPE_NOT_INTERFACE_ERROR(102201, "参数不为接口"),
+    ARG_TYPE_NOT_INTERFACE_ERROR(500108, "参数不为接口"),
     
-    ARG_TYPE_IS_ABSTRACT_CLASS_ERROR(102102, "参数为抽象类"),
+    ARG_TYPE_IS_ABSTRACT_CLASS_ERROR(500109, "参数为抽象类"),
     
-    ARG_TYPE_NOT_ABSTRACT_CLASS_ERROR(102202, "参数不为抽象类"),
+    ARG_TYPE_NOT_ABSTRACT_CLASS_ERROR(500110, "参数不为抽象类"),
     
-    ARG_TYPE_IS_ENUM_ERROR(102302, "参数为枚举"),
+    ARG_TYPE_IS_ENUM_ERROR(500111, "参数为枚举"),
     
-    ARG_TYPE_NOT_ENUM_ERROR(102302, "参数不为枚举"),
+    ARG_TYPE_NOT_ENUM_ERROR(500112, "参数不为枚举"),
     /* -------　参数异常 end   ------- */
     
     /* -------　反射异常 start ------- */
@@ -84,17 +85,17 @@ public enum SILErrorCodeEnum implements ErrorCode {
     /* -------　method invoke异常 end   ------- */
     
     /* -------　Remote异常 start ------- */
-    REMOTE_ACCESS_ERROR(130000, "资源访问异常"),
+    REMOTE_ACCESS_ERROR(500200, "资源访问异常"),
     
-    HTTP_EXECUTE_ERROR(131000, "发送HTTP请求异常"),
+    HTTP_EXECUTE_ERROR(500201, "发送HTTP请求异常"),
     
-    HTTP_BEFORE_EXECUTE_ERROR(131001, "发送HTTP请求异常"),
+    HTTP_BEFORE_EXECUTE_ERROR(500202, "发送HTTP请求异常"),
     
-    HTTP_EXECUTEING_ERROR(131002, "发送HTTP请求异常"),
+    HTTP_EXECUTEING_ERROR(500203, "发送HTTP请求异常"),
     
-    HTTP_AFTER_EXECUTE_ERROR(131003, "发送HTTP请求异常"),
+    HTTP_AFTER_EXECUTE_ERROR(500204, "发送HTTP请求异常"),
     
-    HTTP_SOCKET_ERROR(131004, "发送HTTP请求异常")
+    HTTP_SOCKET_ERROR(500205, "发送HTTP请求异常")
     /* -------　Remote异常 end   ------- */
     
     

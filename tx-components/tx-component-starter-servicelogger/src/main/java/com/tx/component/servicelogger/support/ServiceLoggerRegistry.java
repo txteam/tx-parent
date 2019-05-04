@@ -29,6 +29,7 @@ import org.springframework.core.AliasRegistry;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import com.tx.component.servicelogger.annotation.ServiceLog;
+import com.tx.component.servicelogger.support.mybatis.ServiceLoggerFactory;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.mybatis.annotation.MapperEntity;
 import com.tx.core.mybatis.support.MyBatisDaoSupport;

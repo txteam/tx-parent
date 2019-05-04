@@ -15,11 +15,13 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
 import org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import com.tx.component.basicdata.context.BasicDataContextFactory;
+import com.tx.component.basicdata.registry.BasicDataEntityRegistry;
 
 /**
  * 基础数据容器自动配置<br/>
@@ -77,84 +79,24 @@ public class BasicDataContextAutoConfiguration implements InitializingBean {
         }
     }
     
-    //    /**
-    //     * 基础数据类型持久层<br/>
-    //     * <功能详细描述>
-    //     * @return [参数说明]
-    //     * 
-    //     * @return BasicDataTypeDao [返回类型说明]
-    //     * @exception throws [异常类型] [异常说明]
-    //     * @see [类、类#方法、类#成员]
-    //     */
-    //    @Bean(name = "basicdata.basicDataTypeDao")
-    //    public BasicDataTypeDao basicDataTypeDao() {
-    //        BasicDataTypeDao basicDataTypeDao = new BasicDataTypeDaoImpl(
-    //                this.myBatisDaoSupport);
-    //        return basicDataTypeDao;
-    //    }
-    //
-    //    /**
-    //     * 基础数据类型业务层<br/>
-    //     * <功能详细描述>
-    //     * @return [参数说明]
-    //     * 
-    //     * @return BasicDataTypeService [返回类型说明]
-    //     * @exception throws [异常类型] [异常说明]
-    //     * @see [类、类#方法、类#成员]
-    //     */
-    //    @Bean(name = "basicdata.basicDataTypeService")
-    //    public BasicDataTypeService basicDataTypeService(
-    //            BasicDataTypeDao basicDataTypeDao) {
-    //        BasicDataTypeService basicDataTypeService = new BasicDataTypeService(
-    //                basicDataTypeDao);
-    //        return basicDataTypeService;
-    //    }
-    
-    //    /**
-    //     * 基础数据类型业务层<br/>
-    //     * <功能详细描述>
-    //     * @return [参数说明]
-    //     * 
-    //     * @return BasicDataTypeService [返回类型说明]
-    //     * @exception throws [异常类型] [异常说明]
-    //     * @see [类、类#方法、类#成员]
-    //     */
-    //    @Bean(name = "basicdata.basicDataTypeService")
-    //    public BasicDataTypeService basicDataTypeService() {
-    //        BasicDataTypeService basicDataTypeService = new BasicDataTypeService();
-    //        return basicDataTypeService;
-    //    }
-    //    
-    //    /**
-    //     * 数据字典类持久层<br/>
-    //     * <功能详细描述>
-    //     * @return [参数说明]
-    //     * 
-    //     * @return DataDictDao [返回类型说明]
-    //     * @exception throws [异常类型] [异常说明]
-    //     * @see [类、类#方法、类#成员]
-    //     */
-    //    @Bean(name = "basicdata.dataDictDao")
-    //    public DataDictDao dataDictDao() {
-    //        DataDictDao dao = new DataDictDaoImpl(this.myBatisDaoSupport);
-    //        return dao;
-    //    }
-    //    
-    //    /**
-    //     * 数据字典业务层<br/>
-    //     * <功能详细描述>
-    //     * @return [参数说明]
-    //     * 
-    //     * @return DataDictService [返回类型说明]
-    //     * @exception throws [异常类型] [异常说明]
-    //     * @see [类、类#方法、类#成员]
-    //     */
-    //    @Bean(name = "basicdata.dataDictService")
-    //    public DataDictService dataDictService(DataDictDao dataDictDao) {
-    //        DataDictService service = new DataDictService(this.dataSource,
-    //                this.transactionTemplate, dataDictDao);
-    //        return service;
-    //    }
+    /**
+     * 基础数据业务层注册机<br/>
+     * <功能详细描述>
+     * @param basicDataTypeService
+     * @param dataDictService
+     * @return [参数说明]
+     * 
+     * @return BasicDataServiceRegistry [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @Bean(name = "basicdata.basicDataEntityRegistry")
+    public BasicDataEntityRegistry basicDataServiceRegistry() {
+        BasicDataEntityRegistry registry = new BasicDataEntityRegistry(
+                this.module);
+        
+        return registry;
+    }
     
     //    /**
     //     * 基础数据业务层代理创建器<br/>
@@ -189,91 +131,7 @@ public class BasicDataContextAutoConfiguration implements InitializingBean {
     //        return context;
     //    }
     //    
-    //    /**
-    //     * 基础数据业务层注册机<br/>
-    //     * <功能详细描述>
-    //     * @param basicDataTypeService
-    //     * @param dataDictService
-    //     * @return [参数说明]
-    //     * 
-    //     * @return BasicDataServiceRegistry [返回类型说明]
-    //     * @exception throws [异常类型] [异常说明]
-    //     * @see [类、类#方法、类#成员]
-    //     */
-    //    @DependsOn(value = "basicDataContext")
-    //    @Bean(name = "basicdata.basicDataServiceRegistry")
-    //    public BasicDataServiceRegistry basicDataServiceRegistry(
-    //            BasicDataTypeService basicDataTypeService,
-    //            DataDictService dataDictService) {
-    //        BasicDataServiceRegistry serviceFactory = new BasicDataServiceRegistry(
-    //                module, basePackages, basicDataTypeService, dataDictService,
-    //                null);
-    //        
-    //        return serviceFactory;
-    //    }
     
-    //    /**
-    //     * 基础数据业务层注册<br/>
-    //     * <功能详细描述>
-    //     * 
-    //     * @author  Administrator
-    //     * @version  [版本号, 2019年4月30日]
-    //     * @see  [相关类/方法]
-    //     * @since  [产品/模块版本]
-    //     */
-    //    @Import(BasicDataPersisterConfiguration.class)
-    //    public static class BasicDataServiceImportRegistrar
-    //            implements BeanFactoryAware, ImportBeanDefinitionRegistrar,
-    //            ResourceLoaderAware, InitializingBean {
-    //        
-    //        @SuppressWarnings("unused")
-    //        private BeanFactory beanFactory;
-    //        
-    //        @SuppressWarnings("unused")
-    //        private ResourceLoader resourceLoader;
-    //        
-    //        /** <默认构造函数> */
-    //        //第一个被调用
-    //        public BasicDataServiceImportRegistrar() {
-    //            super();
-    //        }
-    //        
-    //        @PostConstruct
-    //        public void afterPropertiesSet() {
-    //            System.out.println(
-    //                    "TestContextAutoInnerImportRegistrar afterPropertiesSet. called");
-    //        }
-    //        
-    //        @PostConstruct
-    //        public void postConstruct() {
-    //            System.out.println(
-    //                    "TestContextAutoInnerImportRegistrar postConstruct. called");
-    //        }
-    //        
-    //        //低而个被调用
-    //        @Override
-    //        public void registerBeanDefinitions(
-    //                AnnotationMetadata importingClassMetadata,
-    //                BeanDefinitionRegistry registry) {
-    //            BeanDefinition bd = BeanDefinitionBuilder
-    //                    .genericBeanDefinition(TestBeanRegiste.class)
-    //                    .getBeanDefinition();
-    //            
-    //            System.out.println(
-    //                    "TestContextAutoInnerImportRegistrar registerBeanDefinitions. called");
-    //            registry.registerBeanDefinition("testRegiste", bd);
-    //        }
-    //        
-    //        @Override
-    //        public void setBeanFactory(BeanFactory beanFactory)
-    //                throws BeansException {
-    //            this.beanFactory = beanFactory;
-    //        }
-    //        
-    //        @Override
-    //        public void setResourceLoader(ResourceLoader resourceLoader) {
-    //            this.resourceLoader = resourceLoader;
-    //        }
-    //    }
+    
     
 }

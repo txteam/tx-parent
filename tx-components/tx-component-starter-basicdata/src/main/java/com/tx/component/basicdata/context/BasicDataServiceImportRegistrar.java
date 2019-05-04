@@ -6,6 +6,8 @@
  */
 package com.tx.component.basicdata.context;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -28,9 +30,11 @@ import com.tx.component.basicdata.client.BasicDataAPIClient;
 import com.tx.component.basicdata.model.BasicData;
 import com.tx.component.basicdata.model.DataDict;
 import com.tx.component.basicdata.model.TreeAbleBasicData;
+import com.tx.component.basicdata.registry.BasicDataAPIClientRegistry;
 import com.tx.component.basicdata.service.DataDictService;
 import com.tx.component.basicdata.service.DefaultDBBasicDataService;
 import com.tx.component.basicdata.service.DefaultDBTreeAbleBasicDataService;
+import com.tx.component.basicdata.service.DefaultRemoteBasicDataService;
 import com.tx.component.basicdata.starter.BasicDataPersisterConfiguration;
 import com.tx.core.exceptions.util.AssertUtils;
 
@@ -44,7 +48,6 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @since  [产品/模块版本]
  */
 @Configuration
-@Import(BasicDataPersisterConfiguration.class)
 public class BasicDataServiceImportRegistrar
         implements ImportBeanDefinitionRegistrar, InitializingBean,
         BeanFactoryAware, ApplicationContextAware {
@@ -57,6 +60,8 @@ public class BasicDataServiceImportRegistrar
     
     /** 基础数据：数据字典业务层 */
     private DataDictService dataDictService;
+    
+    private BasicDataAPIClientRegistry BasicDataAPIClientRegistry;
     
     /** <默认构造函数> */
     public BasicDataServiceImportRegistrar(DataDictService dataDictService) {
@@ -105,7 +110,8 @@ public class BasicDataServiceImportRegistrar
                 continue;
             }
             
-            String alias = generateServiceBeanName(service.getType());
+            //生成业务层BeanName
+            String alias = generateServiceBeanName(service.getRawType());
             //注册单例Bean进入Spring容器
             if (!beanName.equals(alias)) {
                 registerAlise(beanName, alias);
@@ -127,48 +133,48 @@ public class BasicDataServiceImportRegistrar
         
     }
     
-//    /**
-//     * 构建默认的基础数据业务类<br/>
-//     * <功能详细描述>
-//     * @param type [参数说明]
-//     * 
-//     * @return void [返回类型说明]
-//     * @exception throws [异常类型] [异常说明]
-//     * @see [类、类#方法、类#成员]
-//     */
-//    @SuppressWarnings("rawtypes")
-//    public BasicDataService buildDefaultDBBasicDataService(String module,
-//            Class<? extends BasicData> type) {
-//        String beanName = generateServiceBeanName(type);
-//        
-//        if (type.isAssignableFrom(TreeAbleBasicData.class)) {
-//            Class<?> defaultServiceType = DefaultDBTreeAbleBasicDataService.class;
-//            
-//            BeanDefinitionBuilder builder = BeanDefinitionBuilder
-//                    .genericBeanDefinition(defaultServiceType);
-//            builder.addPropertyValue("module", module);
-//            builder.addPropertyValue("type", type);
-//            builder.addPropertyValue("dataDictService", this.dataDictService);
-//            
-//            registerBeanDefinition(beanName, builder.getBeanDefinition());
-//        } else {
-//            Class<?> defaultServiceType = DefaultDBBasicDataService.class;
-//            
-//            BeanDefinitionBuilder builder = BeanDefinitionBuilder
-//                    .genericBeanDefinition(defaultServiceType);
-//            builder.addPropertyValue("module", module);
-//            builder.addPropertyValue("type", type);
-//            builder.addPropertyValue("dataDictService", this.dataDictService);
-//            
-//            registerBeanDefinition(beanName, builder.getBeanDefinition());
-//        }
-//        
-//        //利用有参构造函数
-//        BasicDataService service = (BasicDataService) BasicDataServiceRegistry.applicationContext
-//                .getBean(beanName);
-//        
-//        return service;
-//    }
+    //    /**
+    //     * 构建默认的基础数据业务类<br/>
+    //     * <功能详细描述>
+    //     * @param type [参数说明]
+    //     * 
+    //     * @return void [返回类型说明]
+    //     * @exception throws [异常类型] [异常说明]
+    //     * @see [类、类#方法、类#成员]
+    //     */
+    //    @SuppressWarnings("rawtypes")
+    //    public BasicDataService buildDefaultDBBasicDataService(String module,
+    //            Class<? extends BasicData> type) {
+    //        String beanName = generateServiceBeanName(type);
+    //        
+    //        if (type.isAssignableFrom(TreeAbleBasicData.class)) {
+    //            Class<?> defaultServiceType = DefaultDBTreeAbleBasicDataService.class;
+    //            
+    //            BeanDefinitionBuilder builder = BeanDefinitionBuilder
+    //                    .genericBeanDefinition(defaultServiceType);
+    //            builder.addPropertyValue("module", module);
+    //            builder.addPropertyValue("type", type);
+    //            builder.addPropertyValue("dataDictService", this.dataDictService);
+    //            
+    //            registerBeanDefinition(beanName, builder.getBeanDefinition());
+    //        } else {
+    //            Class<?> defaultServiceType = DefaultDBBasicDataService.class;
+    //            
+    //            BeanDefinitionBuilder builder = BeanDefinitionBuilder
+    //                    .genericBeanDefinition(defaultServiceType);
+    //            builder.addPropertyValue("module", module);
+    //            builder.addPropertyValue("type", type);
+    //            builder.addPropertyValue("dataDictService", this.dataDictService);
+    //            
+    //            registerBeanDefinition(beanName, builder.getBeanDefinition());
+    //        }
+    //        
+    //        //利用有参构造函数
+    //        BasicDataService service = (BasicDataService) BasicDataServiceRegistry.applicationContext
+    //                .getBean(beanName);
+    //        
+    //        return service;
+    //    }
     
     /**
      * @desc 向spring容器注册bean

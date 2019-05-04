@@ -79,7 +79,6 @@ public class DataDict
     /**
      * @return 返回 parent
      */
-    @JsonIgnore
     public DataDict getParent() {
         return parent;
     }

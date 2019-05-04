@@ -9,13 +9,8 @@ package com.tx.component.basicdata.context;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-
-import org.apache.commons.lang3.StringUtils;
-
-import com.tx.component.basicdata.annotation.BasicDataEntity;
 import com.tx.component.basicdata.model.BasicData;
+import com.tx.component.basicdata.util.BasicDataUtils;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.paged.model.PagedList;
 
@@ -39,7 +34,7 @@ public interface BasicDataService<T extends BasicData> {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public Class<T> getType();
+    public Class<T> getRawType();
     
     /**
      * 对应基础数据编码<br/>
@@ -51,14 +46,10 @@ public interface BasicDataService<T extends BasicData> {
      * @see [类、类#方法、类#成员]
      */
     public default String type() {
-        Class<T> type = getType();
-        AssertUtils.notNull(type, "type is null.");
+        Class<T> rawType = getRawType();
+        AssertUtils.notNull(rawType, "rawType is null.");
         
-        String code = type.getName();
-        if (type.isAnnotationPresent(BasicDataEntity.class) && StringUtils
-                .isNotEmpty(type.getAnnotation(BasicDataEntity.class).type())) {
-            code = type.getAnnotation(BasicDataEntity.class).type();
-        }
+        String code = BasicDataUtils.getType(rawType);
         return code;
     }
     
@@ -73,19 +64,10 @@ public interface BasicDataService<T extends BasicData> {
      * @see [类、类#方法、类#成员]
      */
     public default String tableName() {
-        Class<T> type = getType();
-        AssertUtils.notNull(type, "type is null.");
+        Class<T> rawType = getRawType();
+        AssertUtils.notNull(rawType, "rawType is null.");
         
-        String tableName = type.getSimpleName();
-        if (type.isAnnotationPresent(Table.class)) {
-            tableName = type.getAnnotation(Table.class).name();
-        }
-        if (type.isAnnotationPresent(Entity.class)) {
-            tableName = type.getAnnotation(Entity.class).name();
-        }
-        if (StringUtils.isEmpty(tableName)) {
-            tableName = "bd_data_dict";
-        }
+        String tableName = BasicDataUtils.getTableName(rawType);
         return tableName;
     }
     
@@ -146,7 +128,7 @@ public interface BasicDataService<T extends BasicData> {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public boolean updateById(T data);
+    public boolean update(T data);
     
     /**
      * 批量更新基础数据<br/>
@@ -194,7 +176,7 @@ public interface BasicDataService<T extends BasicData> {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public boolean isExist(Map<String, String> key2valueMap, String excludeId);
+    public boolean exist(Map<String, String> key2valueMap, String excludeId);
     
     /**
      * 根据id查询基础数据实例<br/>

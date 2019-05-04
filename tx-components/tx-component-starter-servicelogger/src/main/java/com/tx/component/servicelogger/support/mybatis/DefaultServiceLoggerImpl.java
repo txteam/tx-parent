@@ -4,7 +4,7 @@
  * 修改时间:  2018年6月9日
  * <修改描述:>
  */
-package com.tx.component.servicelogger.support;
+package com.tx.component.servicelogger.support.mybatis;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -15,8 +15,8 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import com.tx.component.servicelogger.support.ServiceLogger;
 import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.mybatis.model.Order;
 import com.tx.core.mybatis.support.MyBatisDaoSupport;
 import com.tx.core.paged.model.PagedList;
 
@@ -172,18 +172,6 @@ public class DefaultServiceLoggerImpl<T> implements ServiceLogger<T> {
     
     /**
      * @param params
-     * @param orderList
-     * @return
-     */
-    @Override
-    public List<T> queryList(Map<String, Object> params,
-            List<Order> orderList) {
-        return this.myBatisDaoSupport.queryList(
-                this.assistant.getQueryStatementName(), params, orderList);
-    }
-    
-    /**
-     * @param params
      * @return
      */
     @Override
@@ -206,24 +194,6 @@ public class DefaultServiceLoggerImpl<T> implements ServiceLogger<T> {
                 params,
                 pageIndex,
                 pageSize);
-    }
-    
-    /**
-     * @param params
-     * @param pageIndex
-     * @param pageSize
-     * @param orderList
-     * @return
-     */
-    @Override
-    public PagedList<T> queryPagedList(Map<String, Object> params,
-            int pageIndex, int pageSize, List<Order> orderList) {
-        return this.myBatisDaoSupport.queryPagedList(
-                this.assistant.getQueryStatementName(),
-                params,
-                pageIndex,
-                pageSize,
-                orderList);
     }
     
     /**

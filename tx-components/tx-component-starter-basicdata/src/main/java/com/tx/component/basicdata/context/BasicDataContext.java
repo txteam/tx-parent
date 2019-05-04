@@ -104,6 +104,10 @@ public class BasicDataContext extends BasicDataContextBuilder {
         setup(objectPagedList.getList());
     }
     
+    public Class<? extends BasicData> getEntityClass(String type) {
+        return null;
+    }
+    
     /**
       * 获取基础数据业务层<br/>
       * <功能详细描述>
@@ -121,6 +125,22 @@ public class BasicDataContext extends BasicDataContextBuilder {
     }
     
     /**
+     * 获取基础数据业务层<br/>
+     * <功能详细描述>
+     * @param type
+     * @return [参数说明]
+     * 
+     * @return BasicDataService<BDTYPE> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    public <BDTYPE extends BasicData> BasicDataService<BDTYPE> getBasicDataService(
+            String type) {
+        BasicDataService<BDTYPE> service = doGetBasicDataService(type);
+        return service;
+    }
+    
+    /**
      * 根据类型获取对应的基础数据业务层<br/>
      * <功能详细描述>
      * @param type
@@ -132,7 +152,25 @@ public class BasicDataContext extends BasicDataContextBuilder {
     */
     public <BDTYPE extends TreeAbleBasicData<BDTYPE>> TreeAbleBasicDataService<BDTYPE> getTreeAbleBasicDataService(
             Class<BDTYPE> type) {
-        TreeAbleBasicDataService<BDTYPE> service = doGetTreeAbleBasicDataService(type);
+        TreeAbleBasicDataService<BDTYPE> service = doGetTreeAbleBasicDataService(
+                type);
+        return service;
+    }
+    
+    /**
+    * 根据类型获取对应的基础数据业务层<br/>
+    * <功能详细描述>
+    * @param type
+    * @return [参数说明]
+    * 
+    * @return BasicDataService<BDTYPE> [返回类型说明]
+    * @exception throws [异常类型] [异常说明]
+    * @see [类、类#方法、类#成员]
+    */
+    public <BDTYPE extends TreeAbleBasicData<BDTYPE>> TreeAbleBasicDataService<BDTYPE> getTreeAbleBasicDataService(
+            String type) {
+        TreeAbleBasicDataService<BDTYPE> service = doGetTreeAbleBasicDataService(
+                type);
         return service;
     }
     

@@ -20,40 +20,14 @@ import org.springframework.core.ResolvableType;
 public abstract class ParameterizedTypeReference<T> {
     
     /** 实体类类型 */
-    private final Class<T> entityClass;
+    private final Class<T> rawType;
     
     /** 构造方法 */
     @SuppressWarnings("unchecked")
     public ParameterizedTypeReference() {
         ResolvableType resolvableType = ResolvableType.forClass(getClass());
-        entityClass = (Class<T>) resolvableType
+        rawType = (Class<T>) resolvableType
                 .as(ParameterizedTypeReference.class).getGeneric().resolve();
-    }
-    
-    /**
-     * 获取参数类型<br/>
-     * <功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return Class<T> [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public Class<T> getType() {
-        return entityClass;
-    }
-    
-    /**
-     * 获取泛型参数类型<br/>
-     * <功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return Class<T> [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public Class<T> getEntityClass() {
-        return entityClass;
     }
     
     /**
@@ -66,7 +40,7 @@ public abstract class ParameterizedTypeReference<T> {
      * @see [类、类#方法、类#成员]
      */
     public Class<T> getRawType(){
-        return entityClass;
+        return this.rawType;
     }
     
     //

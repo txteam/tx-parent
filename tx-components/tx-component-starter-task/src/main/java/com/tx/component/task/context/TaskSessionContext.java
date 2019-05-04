@@ -69,7 +69,6 @@ public class TaskSessionContext {
                             remove();
                         }
                     });
-                    
             return stack;
         }
         
