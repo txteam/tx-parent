@@ -73,8 +73,17 @@ public class BasicDataAPIClientConfiguration {
             this.feignContract = feignContract;
         }
         
-        @Bean
+        /**
+         * 基础数据APIClient的注册表：basicDataAPIClientRegistry<br/>
+         * <功能详细描述>
+         * @return [参数说明]
+         * 
+         * @return BasicDataAPIClientRegistry [返回类型说明]
+         * @exception throws [异常类型] [异常说明]
+         * @see [类、类#方法、类#成员]
+         */
         @ConditionalOnMissingBean
+        @Bean("basicDataAPIClientRegistry")
         public BasicDataAPIClientRegistry basicDataAPIClientRegistry() {
             BasicDataAPIClientRegistry registry = new BasicDataAPIClientRegistryImpl(
                     decoder, encoder, client, feignContract);

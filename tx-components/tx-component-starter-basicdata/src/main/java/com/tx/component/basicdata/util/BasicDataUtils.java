@@ -51,7 +51,7 @@ public class BasicDataUtils {
     public static String getType(Class<? extends BasicData> entityClass) {
         AssertUtils.notNull(entityClass, "entityClass is null.");
         
-        String code = entityClass.getName();
+        String code = entityClass.getSimpleName();
         if (entityClass.isAnnotationPresent(BasicDataEntity.class)
                 && StringUtils.isNotEmpty(entityClass
                         .getAnnotation(BasicDataEntity.class).type())) {

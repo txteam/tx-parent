@@ -31,8 +31,19 @@ public abstract class BasicDataContextConfigurator
     /** spring容器句柄 */
     protected static ApplicationContext applicationContext;
     
-    /** 模块 */
-    protected String module;
+    /** 注册表 */
+    protected BasicDataEntityRegistry registry;
+    
+    /** <默认构造函数> */
+    public BasicDataContextConfigurator() {
+        super();
+    }
+    
+    /** <默认构造函数> */
+    public BasicDataContextConfigurator(BasicDataEntityRegistry registry) {
+        super();
+        this.registry = registry;
+    }
     
     /**
      * @param applicationContext
@@ -72,6 +83,20 @@ public abstract class BasicDataContextConfigurator
      */
     protected void doInitContext() throws Exception {
         
+    }
+    
+    /**
+     * @return 返回 registry
+     */
+    public BasicDataEntityRegistry getRegistry() {
+        return registry;
+    }
+    
+    /**
+     * @param 对registry进行赋值
+     */
+    public void setRegistry(BasicDataEntityRegistry registry) {
+        this.registry = registry;
     }
     
 }

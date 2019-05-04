@@ -29,8 +29,8 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.collections.map.HashedMap;
+import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.collections4.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 
 import com.tx.core.exceptions.reflection.JPAParseException;

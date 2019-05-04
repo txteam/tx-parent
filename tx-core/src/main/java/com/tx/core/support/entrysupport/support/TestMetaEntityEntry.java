@@ -13,7 +13,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections4.MapUtils;
 
 import com.tx.core.support.entrysupport.model.AbstractEntryAble;
 import com.tx.core.support.entrysupport.model.EntityEntry;

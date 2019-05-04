@@ -1,4 +1,4 @@
-package com.tx.component.basicdata.registry;
+package com.tx.component.basicdata.context;
 ///*
 // * 描          述:  <描述>
 // * 修  改   人:  Administrator

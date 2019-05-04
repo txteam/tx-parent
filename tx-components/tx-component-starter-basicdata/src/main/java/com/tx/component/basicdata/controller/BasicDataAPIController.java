@@ -38,7 +38,8 @@ import io.swagger.annotations.ApiOperation;
  * @since  [产品/模块版本]
  */
 @Api(value = "/basicdata", tags = "基础数据容器API")
-@RestController(value = "/basicdata")
+@RestController
+@RequestMapping("/basicdata")
 public class BasicDataAPIController {
     
     /**

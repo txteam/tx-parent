@@ -22,37 +22,20 @@ import com.tx.core.starter.persister.PersisterTypeEnum;
 @ConfigurationProperties(prefix = "tx.basicdata")
 public class BasicDataContextProperties {
     
-    /** 持久化类型 */
-    private PersisterTypeEnum type = PersisterTypeEnum.mybatis;
-    
-    /** 持久化类型 */
-    private PersisterTypeEnum persister;
-    
-    /** 命令容器是否启动 */
-    private boolean enable;
-    
-    /** 所属模块 */
-    private String module;
-    
     /** 表是否自动初始化 */
     private boolean tableAutoInitialize = false;
     
     /** 基础包集合 */
     private String basePackages = "com.tx.local";
     
-    /**
-     * @return 返回 type
-     */
-    public PersisterTypeEnum getType() {
-        return type;
-    }
+    /** 持久化类型 */
+    private PersisterTypeEnum persister = PersisterTypeEnum.mybatis;
     
-    /**
-     * @param 对type进行赋值
-     */
-    public void setType(PersisterTypeEnum type) {
-        this.type = type;
-    }
+    /** 命令容器是否启动 */
+    private boolean enable;
+    
+    /** 所属模块 */
+    private String module;
     
     /**
      * @return 返回 persister

@@ -59,11 +59,16 @@ public class BasicDataContextBuilder extends BasicDataContextConfigurator
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
+    @SuppressWarnings("unchecked")
     protected <BDTYPE extends BasicData> BasicDataService<BDTYPE> doGetBasicDataService(
             Class<BDTYPE> type) {
         AssertUtils.notNull(type, "type is null.");
+        AssertUtils.isTrue(BasicData.class.isAssignableFrom(type),
+                "type:{} is not assign from BasicData.",
+                new Object[] { type });
         
-        BasicDataService<BDTYPE> service = null;
+        BasicDataService<BDTYPE> service = (BasicDataService<BDTYPE>) this.registry
+                .getService(type);
         return service;
     }
     
@@ -77,47 +82,52 @@ public class BasicDataContextBuilder extends BasicDataContextConfigurator
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    protected <BDTYPE extends BasicData> BasicDataService<BDTYPE> doGetBasicDataService(
-            String type) {
-        AssertUtils.notNull(type, "type is null.");
-        
-        BasicDataService<BDTYPE> service = null;
-        return service;
-    }
-    
-    /**
-     * 根据类型获取对应的基础数据业务层<br/>
-     * <功能详细描述>
-     * @param type
-     * @return [参数说明]
-     * 
-     * @return BasicDataService<BDTYPE> [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
+    @SuppressWarnings("unchecked")
     protected <BDTYPE extends TreeAbleBasicData<BDTYPE>> TreeAbleBasicDataService<BDTYPE> doGetTreeAbleBasicDataService(
             Class<BDTYPE> type) {
         AssertUtils.notNull(type, "type is null.");
+        AssertUtils.isTrue(TreeAbleBasicData.class.isAssignableFrom(type),
+                "type:{} is not assign from BasicData.",
+                new Object[] { type });
         
-        TreeAbleBasicDataService<BDTYPE> service = null;
+        TreeAbleBasicDataService<BDTYPE> service = (TreeAbleBasicDataService<BDTYPE>) this.registry
+                .getService(type);
         return service;
     }
     
-    /**
-     * 根据类型获取对应的基础数据业务层<br/>
-     * <功能详细描述>
-     * @param type
-     * @return [参数说明]
-     * 
-     * @return BasicDataService<BDTYPE> [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    protected <BDTYPE extends TreeAbleBasicData<BDTYPE>> TreeAbleBasicDataService<BDTYPE> doGetTreeAbleBasicDataService(
-            String type) {
-        AssertUtils.notNull(type, "type is null.");
-        
-        TreeAbleBasicDataService<BDTYPE> service = null;
-        return service;
-    }
+    //    /**
+    //     * 根据类型获取对应的基础数据业务层<br/>
+    //     * <功能详细描述>
+    //     * @param type
+    //     * @return [参数说明]
+    //     * 
+    //     * @return BasicDataService<BDTYPE> [返回类型说明]
+    //     * @exception throws [异常类型] [异常说明]
+    //     * @see [类、类#方法、类#成员]
+    //     */
+    //    protected <BDTYPE extends TreeAbleBasicData<BDTYPE>> TreeAbleBasicDataService<BDTYPE> doGetTreeAbleBasicDataService(
+    //            String type) {
+    //        AssertUtils.notNull(type, "type is null.");
+    //        
+    //        TreeAbleBasicDataService<BDTYPE> service = null;
+    //        return service;
+    //    }
+    //    
+    //    /**
+    //     * 根据类型获取对应的基础数据业务层<br/>
+    //     * <功能详细描述>
+    //     * @param type
+    //     * @return [参数说明]
+    //     * 
+    //     * @return BasicDataService<BDTYPE> [返回类型说明]
+    //     * @exception throws [异常类型] [异常说明]
+    //     * @see [类、类#方法、类#成员]
+    //     */
+    //    protected <BDTYPE extends BasicData> BasicDataService<BDTYPE> doGetBasicDataService(
+    //            String type) {
+    //        AssertUtils.notNull(type, "type is null.");
+    //        
+    //        BasicDataService<BDTYPE> service = null;
+    //        return service;
+    //    }
 }
