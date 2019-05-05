@@ -51,7 +51,7 @@ public abstract class AbstractBasicDataService<T extends BasicData>
             return;
         }
         for (T dataTemp : dataList) {
-            update(dataTemp);
+            updateById(dataTemp);
         }
     }
 }

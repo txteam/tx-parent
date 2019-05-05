@@ -123,7 +123,7 @@ public class DefaultDBBasicDataService<T extends BasicData>
      * @return
      */
     @Override
-    public boolean update(T data) {
+    public boolean updateById(T data) {
         AssertUtils.notNull(data, "data is null.");
         
         DataDict obj = JSONAttributesSupportUtils

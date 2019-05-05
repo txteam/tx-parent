@@ -33,18 +33,15 @@ public abstract class BasicDataContextConfigurator
     /** spring容器句柄 */
     protected static ApplicationContext applicationContext;
     
-    /** 注册表 */
-    protected BasicDataEntityRegistry registry;
+    /** 基础数据实体注册表 */
+    protected BasicDataEntityRegistry basicDataEntityRegistry;
+    
+    /** 基础数据业务层注册表 */
+    //protected BasicDataServiceRegistry basicDataServiceRegistry;
     
     /** <默认构造函数> */
     public BasicDataContextConfigurator() {
         super();
-    }
-    
-    /** <默认构造函数> */
-    public BasicDataContextConfigurator(BasicDataEntityRegistry registry) {
-        super();
-        this.registry = registry;
     }
     
     /**
@@ -76,29 +73,39 @@ public abstract class BasicDataContextConfigurator
     /**
      * 基础数据容器构建<br/>
      */
-    protected void doBuild() throws Exception {
-        
-    }
+    protected abstract void doBuild() throws Exception;
     
     /**
      * 容器初始化<br/>
      */
-    protected void doInitContext() throws Exception {
-        
+    protected abstract void doInitContext() throws Exception;
+    
+    /**
+     * @return 返回 logger
+     */
+    public Logger getLogger() {
+        return logger;
     }
     
     /**
-     * @return 返回 registry
+     * @param 对logger进行赋值
      */
-    public BasicDataEntityRegistry getRegistry() {
-        return registry;
+    public void setLogger(Logger logger) {
+        this.logger = logger;
     }
     
     /**
-     * @param 对registry进行赋值
+     * @return 返回 basicDataEntityRegistry
      */
-    public void setRegistry(BasicDataEntityRegistry registry) {
-        this.registry = registry;
+    public BasicDataEntityRegistry getBasicDataEntityRegistry() {
+        return basicDataEntityRegistry;
     }
     
+    /**
+     * @param 对basicDataEntityRegistry进行赋值
+     */
+    public void setBasicDataEntityRegistry(
+            BasicDataEntityRegistry basicDataEntityRegistry) {
+        this.basicDataEntityRegistry = basicDataEntityRegistry;
+    }
 }

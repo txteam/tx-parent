@@ -31,13 +31,15 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class ConfigPropertyItemServiceImpl implements ConfigPropertyItemService {
+public class ConfigPropertyItemServiceImpl
+        implements ConfigPropertyItemService {
     
     /** 配置属相项持久层实现 */
     private final ConfigPropertyItemDao configPropertyItemDao;
     
     /** <默认构造函数> */
-    public ConfigPropertyItemServiceImpl(ConfigPropertyItemDao configPropertyItemDao) {
+    public ConfigPropertyItemServiceImpl(
+            ConfigPropertyItemDao configPropertyItemDao) {
         super();
         this.configPropertyItemDao = configPropertyItemDao;
     }
@@ -55,6 +57,7 @@ public class ConfigPropertyItemServiceImpl implements ConfigPropertyItemService 
                 "configPropertyItem.module is empty.");
         AssertUtils.notEmpty(configPropertyItem.getName(),
                 "configPropertyItem.name is empty.");
+        
         AssertUtils.notEmpty(configPropertyItem.getValue(),
                 "configPropertyItem.value is empty.");
         
@@ -66,13 +69,40 @@ public class ConfigPropertyItemServiceImpl implements ConfigPropertyItemService 
     }
     
     /**
-     * @param configPropertyItem
+     * @param id
      * @return
      */
     @Override
-    public boolean delete(ConfigPropertyItem configPropertyItem) {
-        // TODO Auto-generated method stub
-        return false;
+    @Transactional
+    public boolean deleteById(String id) {
+        AssertUtils.notEmpty(id, "id is empty.");
+        
+        ConfigPropertyItem item = new ConfigPropertyItem();
+        item.setId(id);
+        
+        int count = this.configPropertyItemDao.delete(item);
+        boolean flag = count > 0;
+        return flag;
+    }
+    
+    /**
+     * @param module
+     * @param code
+     * @return
+     */
+    @Override
+    @Transactional
+    public boolean deleteByCode(String module, String code) {
+        AssertUtils.notEmpty(module, "module is empty.");
+        AssertUtils.notEmpty(code, "code is empty.");
+        
+        ConfigPropertyItem item = new ConfigPropertyItem();
+        item.setModule(module);
+        item.setCode(code);
+        
+        int count = this.configPropertyItemDao.delete(item);
+        boolean flag = count > 0;
+        return flag;
     }
     
     /**
@@ -106,7 +136,7 @@ public class ConfigPropertyItemServiceImpl implements ConfigPropertyItemService 
      */
     @Override
     @Transactional
-    public boolean update(ConfigPropertyItem configPropertyItem) {
+    public boolean updateById(ConfigPropertyItem configPropertyItem) {
         AssertUtils.notNull(configPropertyItem, "configPropertyItem is null.");
         AssertUtils.notEmpty(configPropertyItem.getId(),
                 "configPropertyItem.id is empty.");
@@ -122,13 +152,16 @@ public class ConfigPropertyItemServiceImpl implements ConfigPropertyItemService 
         
         final Map<String, Object> rowMap = new HashMap<>();
         rowMap.put("id", configPropertyItem.getId());
+        //rowMap.put("code", configPropertyItem.getCode());
+        //rowMap.put("module", configPropertyItem.getModule());
+        
         rowMap.put("parentId", configPropertyItem.getParentId());
-        rowMap.put("code", configPropertyItem.getCode());
         rowMap.put("name", configPropertyItem.getName());
+        rowMap.put("value", configPropertyItem.getValue());
         rowMap.put("remark", configPropertyItem.getRemark());
+        rowMap.put("attributes", configPropertyItem.getAttributes());
         rowMap.put("validateExpression",
                 configPropertyItem.getValidateExpression());
-        rowMap.put("value", configPropertyItem.getValue());
         rowMap.put("modifyAble", configPropertyItem.isModifyAble());
         rowMap.put("leaf", configPropertyItem.isLeaf());
         rowMap.put("lastUpdateDate", configPropertyItem.getLastUpdateDate());
@@ -137,6 +170,21 @@ public class ConfigPropertyItemServiceImpl implements ConfigPropertyItemService 
         boolean res = rownum > 0;
         
         return res;
+    }
+    
+    /**
+     * @param id
+     * @return
+     */
+    @Override
+    public ConfigPropertyItem findById(String id) {
+        AssertUtils.notEmpty(id, "id is empty.");
+        
+        ConfigPropertyItem condition = new ConfigPropertyItem();
+        condition.setId(id);
+        ConfigPropertyItem item = configPropertyItemDao.find(condition);
+        
+        return item;
     }
     
     /**
@@ -151,8 +199,8 @@ public class ConfigPropertyItemServiceImpl implements ConfigPropertyItemService 
         
         ConfigPropertyItem condition = new ConfigPropertyItem();
         condition.setCode(code);
-        ConfigPropertyItem item = configPropertyItemDao
-                .find(condition);
+        condition.setModule(module);
+        ConfigPropertyItem item = configPropertyItemDao.find(condition);
         
         return item;
     }
@@ -183,22 +231,42 @@ public class ConfigPropertyItemServiceImpl implements ConfigPropertyItemService 
      * @return
      */
     @Override
-    public List<ConfigPropertyItem> queryNestedListByParentId(String module,
+    public List<ConfigPropertyItem> queryChildsByParentId(String module,
             String parentId, Map<String, Object> params) {
         AssertUtils.notEmpty(module, "module is empty.");
         AssertUtils.notEmpty(parentId, "parentId is empty.");
         
-        List<ConfigPropertyItem> resList = null;
-        final Map<String, Object> queryParams = params == null ? new HashMap<>()
-                : params;
-        queryParams.put("module", module);
+        params = params == null ? new HashMap<>() : params;
+        params.put("module", module);
+        params.put("parentId", parentId);
+        List<ConfigPropertyItem> resList = configPropertyItemDao
+                .queryList(params);
+        
+        return resList;
+    }
+    
+    /**
+     * @param module
+     * @param parentId
+     * @param params
+     * @return
+     */
+    @Override
+    public List<ConfigPropertyItem> queryNestedChildsByParentId(String module,
+            String parentId, Map<String, Object> params) {
+        AssertUtils.notEmpty(module, "module is empty.");
+        AssertUtils.notEmpty(parentId, "parentId is empty.");
+        
+        params = params == null ? new HashMap<>() : params;
+        params.put("module", module);
         
         Set<String> ids = new HashSet<>();
         Set<String> parentIds = new HashSet<>();
         parentIds.add(parentId);
         
-        List<ConfigPropertyItem> resListTemp = doQueryNestedList(
-                ids, parentIds, queryParams);
+        List<ConfigPropertyItem> resListTemp = doQueryNestedList(ids,
+                parentIds,
+                params);
         
         return resListTemp;
     }
@@ -222,28 +290,23 @@ public class ConfigPropertyItemServiceImpl implements ConfigPropertyItemService 
         }
         
         //ids避免数据出错时导致无限循环
-        final Map<String, Object> queryParams = params == null ? new HashMap<>()
-                : params;
+        Map<String, Object> queryParams = new HashMap<>();
+        queryParams.putAll(params);
         queryParams.put("parentIds", parentIds);
-        
-        Set<String> newParentIds = new HashSet<>();
         List<ConfigPropertyItem> resList = configPropertyItemDao
                 .queryList(queryParams);
         
+        Set<String> newParentIds = new HashSet<>();
         for (ConfigPropertyItem cpTemp : resList) {
             if (!ids.contains(cpTemp.getId())) {
                 newParentIds.add(cpTemp.getId());
             }
             ids.add(cpTemp.getId());
         }
-        
         //嵌套查询下一层级
-        resList.addAll(doQueryNestedList(ids, newParentIds, queryParams));
+        resList.addAll(doQueryNestedList(ids, newParentIds, params));
+        
         return resList;
     }
-
-    
-    
-    
     
 }

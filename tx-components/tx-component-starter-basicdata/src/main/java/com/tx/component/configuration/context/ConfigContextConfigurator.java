@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 
+import com.tx.component.configuration.persister.ConfigPropertyPersisterComposite;
+
 /**
  * 配置容器基础配置吃撑类<br/>
  * 用以加载系统配置，支持动态加载系统中各配置<br/>
@@ -33,6 +35,12 @@ public abstract class ConfigContextConfigurator implements InitializingBean {
     
     /** beanName实例 */
     protected static String beanName;
+    
+    /** 配置容器所属模块 */
+    protected String module;
+    
+    /** 配置属性持久器集合 */
+    protected ConfigPropertyPersisterComposite composite;
     
     /**
      * @throws Exception
@@ -71,4 +79,32 @@ public abstract class ConfigContextConfigurator implements InitializingBean {
      * @see [类、类#方法、类#成员]
      */
     protected abstract void doInitContext() throws Exception;
+
+    /**
+     * @return 返回 module
+     */
+    public String getModule() {
+        return module;
+    }
+
+    /**
+     * @param 对module进行赋值
+     */
+    public void setModule(String module) {
+        this.module = module;
+    }
+
+    /**
+     * @return 返回 composite
+     */
+    public ConfigPropertyPersisterComposite getComposite() {
+        return composite;
+    }
+
+    /**
+     * @param 对composite进行赋值
+     */
+    public void setComposite(ConfigPropertyPersisterComposite composite) {
+        this.composite = composite;
+    }
 }

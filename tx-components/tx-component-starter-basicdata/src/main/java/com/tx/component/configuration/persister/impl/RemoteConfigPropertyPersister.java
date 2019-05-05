@@ -1,109 +1,132 @@
-///*
-// * 描          述:  <描述>
-// * 修  改   人:  Administrator
-// * 修改时间:  2019年3月5日
-// * <修改描述:>
-// */
-//package com.tx.component.configuration.persister.impl;
-//
-//import java.util.List;
-//import java.util.Map;
-//
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
-//import org.springframework.beans.BeansException;
-//import org.springframework.cloud.netflix.feign.FeignContext;
-//import org.springframework.context.ApplicationContext;
-//import org.springframework.context.ApplicationContextAware;
-//import org.springframework.web.client.RestTemplate;
-//
-//import com.tx.component.configuration.model.ConfigProperty;
-//import com.tx.component.configuration.persister.ConfigPropertyPersister;
-//import com.tx.component.configuration.remote.ConfigurationRemote;
-//
-///**
-// * 本地配置属性查询器<br/>
-// * <功能详细描述>
-// * 
-// * @author  Administrator
-// * @version  [版本号, 2019年3月5日]
-// * @see  [相关类/方法]
-// * @since  [产品/模块版本]
-// */
-//public class RemoteConfigPropertyPersister
-//        implements ConfigPropertyPersister, ApplicationContextAware {
-//    
-//    //日志记录句柄
-//    private Logger logger = LoggerFactory
-//            .getLogger(RemoteConfigPropertyPersister.class);
-//    
-//    protected <T> T get(FeignContext context, Class<T> type) {
-//        T instance = context.getInstance(this.name, type);
-//        if (instance == null) {
-//            throw new IllegalStateException("No bean found of type " + type + " for "
-//                    + this.name);
-//        }
-//        return instance;
-//    }
-//    
-//    /**
-//     * @param module
-//     * @return
-//     */
-//    @Override
-//    public boolean supportsModule(String module) {
-//        
-//        // TODO Auto-generated method stub
-//        return false;
-//    }
-//    
-//    /**
-//     * @param module
-//     * @param code
-//     * @return
-//     */
-//    @Override
-//    public ConfigProperty findByCode(String module, String code) {
-//        //restTemplate.getForObject(url, responseType)
-//        // TODO Auto-generated method stub
-//        return null;
-//    }
-//    
-//    /**
-//     * @param module
-//     * @param params
-//     * @return
-//     */
-//    @Override
-//    public List<ConfigProperty> queryList(String module,
-//            Map<String, Object> params) {
-//        // TODO Auto-generated method stub
-//        return null;
-//    }
-//    
-//    /**
-//     * @param module
-//     * @param parentId
-//     * @param params
-//     * @return
-//     */
-//    @Override
-//    public List<ConfigProperty> queryNestedListByParentId(String module,
-//            String parentId, Map<String, Object> params) {
-//        // TODO Auto-generated method stub
-//        return null;
-//    }
-//    
-//    /**
-//     * @param module
-//     * @param code
-//     * @param value
-//     * @return
-//     */
-//    @Override
-//    public boolean update(String module, String code, String value) {
-//        // TODO Auto-generated method stub
-//        return false;
-//    }
-//    
-//}
+/*
+ * 描          述:  <描述>
+ * 修  改   人:  Administrator
+ * 修改时间:  2019年3月5日
+ * <修改描述:>
+ */
+package com.tx.component.configuration.persister.impl;
+
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
+
+import com.tx.component.configuration.client.ConfigAPIClient;
+import com.tx.component.configuration.model.ConfigProperty;
+import com.tx.component.configuration.persister.ConfigPropertyPersister;
+import com.tx.component.configuration.registry.ConfigAPIClientRegistry;
+import com.tx.core.exceptions.util.AssertUtils;
+
+/**
+ * 本地配置属性查询器<br/>
+ * <功能详细描述>
+ * 
+ * @author  Administrator
+ * @version  [版本号, 2019年3月5日]
+ * @see  [相关类/方法]
+ * @since  [产品/模块版本]
+ */
+public class RemoteConfigPropertyPersister implements ConfigPropertyPersister {
+    
+    /** 所属模块 */
+    private String module;
+    
+    /** 配置客户端注册表 */
+    private ConfigAPIClientRegistry configAPIClientRegistry;
+    
+    /** <默认构造函数> */
+    public RemoteConfigPropertyPersister(String module,
+            ConfigAPIClientRegistry configAPIClientRegistry) {
+        super();
+        this.module = module;
+        this.configAPIClientRegistry = configAPIClientRegistry;
+    }
+    
+    /**
+     * @param module
+     * @return
+     */
+    @Override
+    public boolean supportsModule(String module) {
+        if (StringUtils.isEmpty(module)
+                || StringUtils.equalsAnyIgnoreCase(this.module, module)) {
+            return false;
+        }
+        return true;
+    }
+    
+    /**
+     * @param module
+     * @param code
+     * @return
+     */
+    @Override
+    public ConfigProperty findByCode(String module, String code) {
+        AssertUtils.notEmpty(module, "module is empty.");
+        AssertUtils.notEmpty(code, "code is empty.");
+        
+        ConfigAPIClient client = configAPIClientRegistry
+                .getConfigAPIClient(module);
+        
+        ConfigProperty res = client.findByCode(code);
+        return res;
+    }
+    
+    /**
+     * @param module
+     * @param params
+     * @return
+     */
+    @Override
+    public List<ConfigProperty> queryList(String module,
+            Map<String, Object> params) {
+        AssertUtils.notEmpty(module, "module is empty.");
+        
+        ConfigAPIClient client = configAPIClientRegistry
+                .getConfigAPIClient(module);
+        
+        List<ConfigProperty> resList = client.queryList(params);
+        return resList;
+    }
+    
+    /**
+     * @param module
+     * @param parentId
+     * @param params
+     * @return
+     */
+    @Override
+    public List<ConfigProperty> queryChildsByParentId(String module,
+            String parentId, Map<String, Object> params) {
+        AssertUtils.notEmpty(module, "module is empty.");
+        AssertUtils.notEmpty(parentId, "parentId is empty.");
+        
+        ConfigAPIClient client = configAPIClientRegistry
+                .getConfigAPIClient(module);
+        
+        List<ConfigProperty> resList = client.queryChildsByParentId(parentId,
+                params);
+        return resList;
+    }
+    
+    /**
+     * @param module
+     * @param parentId
+     * @param params
+     * @return
+     */
+    @Override
+    public List<ConfigProperty> queryNestedChildsByParentId(String module,
+            String parentId, Map<String, Object> params) {
+        AssertUtils.notEmpty(module, "module is empty.");
+        AssertUtils.notEmpty(parentId, "parentId is empty.");
+        
+        ConfigAPIClient client = configAPIClientRegistry
+                .getConfigAPIClient(module);
+        
+        List<ConfigProperty> resList = client
+                .queryNestedChildsByParentId(parentId, params);
+        return resList;
+    }
+    
+}

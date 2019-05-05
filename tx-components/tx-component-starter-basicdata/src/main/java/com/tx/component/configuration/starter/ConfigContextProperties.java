@@ -21,7 +21,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class ConfigContextProperties {
     
     /** 配置文件所在路径 */
-    private String configLocation = "classpath:config/local/*.xml";
+    private String configLocation = "classpath:config/*.xml";
     
     /**
      * @return 返回 configLocation

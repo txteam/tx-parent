@@ -14,8 +14,8 @@ import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 
 import com.tx.component.basicdata.service.BasicDataService;
+import com.tx.component.configuration.context.ConfigCacheInterceptor;
 import com.tx.component.configuration.service.ConfigPropertyItemService;
-import com.tx.core.spring.interceptor.ServiceSupportCacheInterceptor;
 
 /**
  * 基础数据业务层环绕<br/>
@@ -59,55 +59,31 @@ public class BasicDataServiceSupportCacheProxyCreator
     protected Object[] getAdvicesAndAdvisorsForBean(Class<?> beanClass,
             String beanName, TargetSource customTargetSource)
             throws BeansException {
-        if (!BasicDataService.class.isAssignableFrom(beanClass)
-                && !ConfigPropertyItemService.class
-                        .isAssignableFrom(beanClass)) {
-            return DO_NOT_PROXY;
-        }
-        
         if (BasicDataService.class.isAssignableFrom(beanClass)) {
             String cacheName = beanName;
-            
             if (!beanName.startsWith("basicdata.")) {
-                cacheName = (new StringBuilder("basicdata.")).append(beanName)
-                        .append("Cache")
+                cacheName = (new StringBuilder(beanName)).append(".cache")
                         .toString();
             } else {
-                cacheName = (new StringBuilder("basicdata.")).append(
-                        StringUtils.substringAfter(beanName, "basicdata."))
-                        .append("Cache")
-                        .toString();
+                cacheName = (new StringBuilder(
+                        StringUtils.substringAfter(beanName, "basicdata.")))
+                                .append(".cache").toString();
             }
             
             Cache cache = this.cacheManager.getCache(cacheName);
-            if (BasicDataService.class.isAssignableFrom(beanClass)) {
-                Object[] interceptors = new Object[] {
-                        new BasicDataCacheInterceptor(cache) };
-                return interceptors;
-            }
+            Object[] interceptors = new Object[] {
+                    new BasicDataCacheInterceptor(cache) };
+            return interceptors;
         } else if (ConfigPropertyItemService.class
                 .isAssignableFrom(beanClass)) {
-            String cacheName = beanName;
-            
-            if (!beanName.startsWith("config.")) {
-                cacheName = (new StringBuilder("config.")).append(beanName)
-                        .append("Cache")
-                        .toString();
-            } else {
-                cacheName = (new StringBuilder("config."))
-                        .append(StringUtils.substringAfter(beanName, "config."))
-                        .append("Cache")
-                        .toString();
-            }
+            String cacheName = "configPropertyItemService.cache";
             
             Cache cache = this.cacheManager.getCache(cacheName);
-            if (ConfigPropertyItemService.class.isAssignableFrom(beanClass)) {
-                Object[] interceptors = new Object[] {
-                        new BasicDataCacheInterceptor(cache) };
-                return interceptors;
-            }
+            Object[] interceptors = new Object[] {
+                    new ConfigCacheInterceptor(cache) };
+            return interceptors;
+        } else {
+            return DO_NOT_PROXY;
         }
-        
-        return DO_NOT_PROXY;
     }
 }

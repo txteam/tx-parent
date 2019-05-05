@@ -38,6 +38,20 @@ public interface ConfigAPIClient {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public ConfigProperty findById(
+            @PathVariable(required = true, name = "id") String id);
+    
+    /**
+     * 根据配置项编码获取配置属性实例<br/>
+     * <功能详细描述>
+     * @param code
+     * @return [参数说明]
+     * 
+     * @return ConfigProperty [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
     @RequestMapping(value = "/code/{code}", method = RequestMethod.GET)
     public ConfigProperty findByCode(
             @PathVariable(required = true, name = "code") String code);
@@ -67,8 +81,24 @@ public interface ConfigAPIClient {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @RequestMapping(value = "/nestedlist/{parentId}", method = RequestMethod.GET)
-    public List<ConfigProperty> queryNestedListByParentId(
+    @RequestMapping(value = "/childs/{parentId}", method = RequestMethod.GET)
+    public List<ConfigProperty> queryChildsByParentId(
+            @PathVariable(required = true, name = "parentId") String parentId,
+            @RequestParam Map<String, Object> params);
+    
+    /**
+     * 查询配置属性<br/>
+     * <功能详细描述>
+     * @param module
+     * @param params
+     * @return [参数说明]
+     * 
+     * @return List<ConfigProperty> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @RequestMapping(value = "/nestedchilds/{parentId}", method = RequestMethod.GET)
+    public List<ConfigProperty> queryNestedChildsByParentId(
             @PathVariable(required = true, name = "parentId") String parentId,
             @RequestParam Map<String, Object> params);
 }

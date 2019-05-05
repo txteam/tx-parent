@@ -285,7 +285,7 @@ public class BasicDataAPIController {
                 new Object[] { type, entityClass });
         
         T object = BasicDataUtils.fromMap(dataMap, entityClass);
-        boolean flag = service.update(object);
+        boolean flag = service.updateById(object);
         return flag;
     }
     

@@ -34,7 +34,7 @@ public class ConfigContext extends ConfigContextBuilder {
     protected void doInitContext() throws Exception {
         
     }
-
+    
     /**
      * 获取配置容器的唯一实例
      * 
@@ -66,7 +66,7 @@ public class ConfigContext extends ConfigContextBuilder {
     public ConfigProperty find(String code) {
         AssertUtils.notEmpty(code, "code is empty.");
         
-        ConfigProperty p = doFind(code);
+        ConfigProperty p = doFind(this.module, code);
         return p;
     }
     

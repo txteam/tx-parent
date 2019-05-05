@@ -202,13 +202,13 @@
 	    	<if test="_parameter.containsKey('validateExpression')">
 	    		validateExpression = #{validateExpression,javaType=java.lang.String},
 	    	</if>
-			<if test="_parameter.containsKey('leaf')">
-	    		leaf = #{leaf,javaType=boolean},
-	    	</if>
 	    	<if test="_parameter.containsKey('attributes')">
 	    		attributes = #{attributes,javaType=java.lang.String},
 	    	</if>
-			<if test="_parameter.containsKey('modifyAble')">
+			<if test="_parameter.containsKey('leaf')">
+	    		leaf = #{leaf,javaType=boolean},
+	    	</if>
+	    	<if test="_parameter.containsKey('modifyAble')">
 	    		modifyAble = #{modifyAble,javaType=boolean},
 	    	</if>
 	    	<if test="_parameter.containsKey('lastUpdateDate')">

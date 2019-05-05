@@ -10,7 +10,6 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
-import com.tx.component.configuration.context.ConfigContext;
 import com.tx.component.configuration.model.ConfigProperty;
 
 /**
@@ -34,9 +33,7 @@ public class ConfigContextUtils {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public static String getValue(String code) {
-        ConfigProperty configProperty = ConfigContext.getContext().find(code);
-        
+    public static String getValue(ConfigProperty configProperty) {
         String value = configProperty == null ? null
                 : configProperty.getValue();
         return value;
@@ -64,8 +61,8 @@ public class ConfigContextUtils {
      * @exception [异常类型] [异常说明]
      * @see org.apache.commons.lang3.BooleanUtils#toBooleanObject(String)
      */
-    public static Boolean getBooleanValue(String code) {
-        String value = getValue(code);
+    public static Boolean getBooleanValue(ConfigProperty configProperty) {
+        String value = getValue(configProperty);
         if (value == null) {
             return null;
         }
@@ -111,31 +108,14 @@ public class ConfigContextUtils {
      * @exception [异常类型] [异常说明]
      * @see org.apache.commons.lang3.BooleanUtils#toBooleanObject(String)
      */
-    public static boolean getBooleanValue(String key, boolean defaultBoolean) {
+    public static Boolean getBooleanValue(ConfigProperty configProperty,
+            boolean defaultBoolean) {
         try {
-            return getBooleanValue(key).booleanValue();
+            Boolean b = getBooleanValue(configProperty);
+            return b == null ? defaultBoolean : b;
         } catch (Exception e) {
             return defaultBoolean;
         }
-    }
-    
-    /**
-     * 获取配置属性的实际值<br/>
-     * <功能详细描述>
-     * @param module
-     * @param code
-     * @return [参数说明]
-     * 
-     * @return String [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public static String getValue(String module, String code) {
-        ConfigProperty configProperty = ConfigContext.getContext().find(code);
-        
-        String value = configProperty == null ? null
-                : configProperty.getValue();
-        return value;
     }
     
     /**
@@ -147,16 +127,12 @@ public class ConfigContextUtils {
      * @exception [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public static Integer getValueInteger(String key) {
-        String value = getValue(key);
+    public static Integer getIntegerValue(ConfigProperty configProperty) {
+        String value = getValue(configProperty);
         if (StringUtils.isBlank(value)) {
             return null;
         }
-        try {
-            return Integer.valueOf(value);
-        } catch (NumberFormatException e) {
-            return null;
-        }
+        return Integer.valueOf(value);
     }
     
     /**
@@ -169,9 +145,11 @@ public class ConfigContextUtils {
      * @exception [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public static int getValueInteger(String key, int defaultInt) {
+    public static Integer getIntegerValue(ConfigProperty configProperty,
+            int defaultInt) {
         try {
-            return getValueInteger(key).intValue();
+            Integer i = getIntegerValue(configProperty);
+            return i == null ? defaultInt : i;
         } catch (Exception e) {
             return defaultInt;
         }
@@ -186,16 +164,12 @@ public class ConfigContextUtils {
      * @exception [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public static Long getLongValue(String key) {
-        String value = getValue(key);
+    public static Long getLongValue(ConfigProperty configProperty) {
+        String value = getValue(configProperty);
         if (StringUtils.isBlank(value)) {
             return null;
         }
-        try {
-            return Long.valueOf(value);
-        } catch (NumberFormatException e) {
-            return null;
-        }
+        return Long.valueOf(value);
     }
     
     /**
@@ -208,9 +182,11 @@ public class ConfigContextUtils {
      * @exception [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public static long getLongValue(String key, long defaultLong) {
+    public static Long getLongValue(ConfigProperty configProperty,
+            long defaultLong) {
         try {
-            return getLongValue(key).longValue();
+            Long l = getLongValue(configProperty);
+            return l == null ? defaultLong : l;
         } catch (Exception e) {
             return defaultLong;
         }

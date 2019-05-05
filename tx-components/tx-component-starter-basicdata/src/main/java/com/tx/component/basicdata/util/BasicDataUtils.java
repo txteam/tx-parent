@@ -12,10 +12,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.PropertyAccessorFactory;
@@ -24,6 +27,7 @@ import org.springframework.core.convert.TypeDescriptor;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tx.component.basicdata.annotation.BasicDataEntity;
 import com.tx.component.basicdata.model.BasicData;
+import com.tx.component.basicdata.model.DataDict;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.paged.model.PagedList;
 import com.tx.core.util.ObjectUtils;
@@ -40,50 +44,141 @@ import com.tx.core.util.ObjectUtils;
 public class BasicDataUtils {
     
     /**
-     * 对应基础数据编码<br/>
+     * 生成基础数据对象<br/>
      * <功能详细描述>
+     * @param map
+     * @param type
      * @return [参数说明]
      * 
-     * @return String [返回类型说明]
+     * @return BD [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public static String getType(Class<? extends BasicData> entityClass) {
-        AssertUtils.notNull(entityClass, "entityClass is null.");
-        
-        String code = entityClass.getSimpleName();
-        if (entityClass.isAnnotationPresent(BasicDataEntity.class)
-                && StringUtils.isNotEmpty(entityClass
-                        .getAnnotation(BasicDataEntity.class).type())) {
-            code = entityClass.getAnnotation(BasicDataEntity.class).type();
+    public static <BD extends BasicData> BD fromDataDict(DataDict dd,
+            Class<BD> type) {
+        AssertUtils.notNull(type, "type is null.");
+        AssertUtils.isTrue(BasicData.class.isAssignableFrom(type),
+                "type:{} is not assignableFrom BasicData.",
+                new Object[] { type });
+        if (dd == null) {
+            return null;
         }
-        return code;
+        
+        BD bd = ObjectUtils.newInstance(type);
+        BeanWrapper bdBW = PropertyAccessorFactory.forBeanPropertyAccess(bd);
+        
+        BeanWrapper ddBW = PropertyAccessorFactory.forBeanPropertyAccess(dd);
+        for (PropertyDescriptor pd : ddBW.getPropertyDescriptors()) {
+            String property = pd.getName();
+            if (pd.getReadMethod() == null || pd.getWriteMethod() == null
+                    || "attributes".equals(property)
+                    || "attributeJSONObject".equals(property)) {
+                continue;
+            }
+            Object value = ddBW.getPropertyValue(property);
+            
+            PropertyDescriptor bdBWPDTemp = bdBW.getPropertyDescriptor(property);
+            if (bdBWPDTemp == null || bdBWPDTemp.getWriteMethod() == null) {
+                continue;
+            }
+            bdBW.setPropertyValue(property, value);
+        }
+        if (!MapUtils.isEmpty(dd.getAttributeJSONObject())) {
+            for (Entry<String, Object> entryTemp : dd.getAttributeJSONObject()
+                    .entrySet()) {
+                String key = entryTemp.getKey();
+                Object value = entryTemp.getValue();
+                
+                PropertyDescriptor bdBWPDTemp = bdBW.getPropertyDescriptor(key);
+                if (bdBWPDTemp == null || bdBWPDTemp.getWriteMethod() == null) {
+                    continue;
+                }
+                bdBW.setPropertyValue(key, value);
+            }
+        }
+        return bd;
     }
     
     /**
-     * 获取对应的表名<br/>
-     *     用户写入基础数据类型中
+     * 将对象转换为Map<br/>
      * <功能详细描述>
      * @return [参数说明]
      * 
-     * @return String [返回类型说明]
+     * @return Map<String,Object> [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public static String getTableName(Class<? extends BasicData> entityClass) {
-        AssertUtils.notNull(entityClass, "entityClass is null.");
+    public static <BD extends BasicData> DataDict toDataDict(BD object) {
+        if (object == null) {
+            return null;
+        }
         
-        String tableName = entityClass.getSimpleName();
-        if (entityClass.isAnnotationPresent(Table.class)) {
-            tableName = entityClass.getAnnotation(Table.class).name();
+        Map<String, Object> resMap = toMap(object);
+        
+        DataDict dd = new DataDict();
+        BeanWrapper ddBW = PropertyAccessorFactory.forBeanPropertyAccess(dd);
+        for (Entry<String, Object> entryTemp : resMap.entrySet()) {
+            String key = entryTemp.getKey();
+            if (ddBW.isWritableProperty(key)) {
+                ddBW.setPropertyValue(key, entryTemp.getValue());
+            } else {
+                dd.getAttributeJSONObject().put(key,
+                        Objects.toString(entryTemp.getValue()));
+            }
         }
-        if (entityClass.isAnnotationPresent(Entity.class)) {
-            tableName = entityClass.getAnnotation(Entity.class).name();
+        
+        return dd;
+    }
+    
+    /**
+     * 将对象转换为Map<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return Map<String,Object> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static <BD extends BasicData> List<DataDict> toDataDictList(
+            List<BD> objectList) {
+        if (objectList == null) {
+            return null;
         }
-        if (StringUtils.isEmpty(tableName)) {
-            tableName = "bd_data_dict";
+        
+        List<DataDict> ddList = new ArrayList<>();
+        for (BD object : objectList) {
+            ddList.add(toDataDict(object));
         }
-        return tableName;
+        return ddList;
+    }
+    
+    /**
+     * 将对象转换为Map<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return Map<String,Object> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static <BD extends BasicData> PagedList<List<DataDict>> toDataDictPagedList(
+            PagedList<BD> objectPagedList) {
+        if (objectPagedList == null) {
+            return null;
+        }
+        
+        PagedList<List<DataDict>> pagedList = new PagedList<>();
+        pagedList.setCount(objectPagedList.getCount());
+        pagedList.setPageIndex(objectPagedList.getPageIndex());
+        pagedList.setPageSize(objectPagedList.getPageSize());
+        pagedList.setQueryPageSize(objectPagedList.getQueryPageSize());
+        List<DataDict> ddList = new ArrayList<>();
+        pagedList.setList(ddList);
+        
+        for (BD object : objectPagedList.getList()) {
+            ddList.add(toDataDict(object));
+        }
+        return pagedList;
     }
     
     /**
@@ -162,6 +257,9 @@ public class BasicDataUtils {
             String property = pdTemp.getName();
             TypeDescriptor tdTemp = objBW.getPropertyTypeDescriptor(property);
             if (tdTemp.hasAnnotation(JsonIgnore.class)) {
+                continue;
+            }
+            if (tdTemp.hasAnnotation(Transient.class)) {
                 continue;
             }
             
@@ -274,6 +372,53 @@ public class BasicDataUtils {
             objBW.setPropertyValue(key, value);
         }
         return bd;
+    }
+    
+    /**
+     * 对应基础数据编码<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static String getType(Class<? extends BasicData> entityClass) {
+        AssertUtils.notNull(entityClass, "entityClass is null.");
+        
+        String code = entityClass.getSimpleName();
+        if (entityClass.isAnnotationPresent(BasicDataEntity.class)
+                && StringUtils.isNotEmpty(entityClass
+                        .getAnnotation(BasicDataEntity.class).type())) {
+            code = entityClass.getAnnotation(BasicDataEntity.class).type();
+        }
+        return code;
+    }
+    
+    /**
+     * 获取对应的表名<br/>
+     *     用户写入基础数据类型中
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static String getTableName(Class<? extends BasicData> entityClass) {
+        AssertUtils.notNull(entityClass, "entityClass is null.");
+        
+        String tableName = entityClass.getSimpleName();
+        if (entityClass.isAnnotationPresent(Table.class)) {
+            tableName = entityClass.getAnnotation(Table.class).name();
+        }
+        if (entityClass.isAnnotationPresent(Entity.class)) {
+            tableName = entityClass.getAnnotation(Entity.class).name();
+        }
+        if (StringUtils.isEmpty(tableName)) {
+            tableName = "bd_data_dict";
+        }
+        return tableName;
     }
     
     //    public static void main(String[] args) {

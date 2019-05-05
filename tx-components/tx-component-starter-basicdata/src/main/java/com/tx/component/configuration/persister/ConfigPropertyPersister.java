@@ -62,30 +62,32 @@ public interface ConfigPropertyPersister {
             Map<String, Object> params);
     
     /**
-     * 查询配置属性<br/>
+     * 根父节点查询子节点<br/>
      * <功能详细描述>
      * @param module
+     * @param parentId
      * @param params
      * @return [参数说明]
      * 
-     * @return List<ConfigProperty> [返回类型说明]
+     * @return List<ConfigPropertyItem> [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public List<ConfigProperty> queryNestedListByParentId(String module,
+    List<ConfigProperty> queryChildsByParentId(String module,
             String parentId, Map<String, Object> params);
     
     /**
-     * 更新配置属性参数值<br/>
+     * 嵌套查询子级配置项<br/>
      * <功能详细描述>
      * @param module
-     * @param code
-     * @param value
+     * @param parentId
+     * @param params
      * @return [参数说明]
      * 
-     * @return boolean [返回类型说明]
+     * @return List<ConfigPropertyItem> [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public boolean update(String module, String code, String value);
+    List<ConfigProperty> queryNestedChildsByParentId(String module,
+            String parentId, Map<String, Object> params);
 }

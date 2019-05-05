@@ -6,13 +6,11 @@
  */
 package com.tx.component.configuration.persister.impl;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -55,11 +53,11 @@ public class LocalConfigPropertyPersister implements ConfigPropertyPersister,
     /** 所属模块 */
     private String module;
     
-    /** 配置文件所在路径 */
-    private String configLocation;
-    
     /** 资源加载器 */
     private ResourceLoader resourceLoader;
+    
+    /** 配置文件所在路径 */
+    private String configLocation;
     
     /** 配置项业务层 */
     private ConfigPropertyItemService configPropertyItemService;
@@ -135,39 +133,36 @@ public class LocalConfigPropertyPersister implements ConfigPropertyPersister,
             if (configPropertyItem == null) {
                 configPropertyItem = addConfigPropertyByParser(parent,
                         configParserTemp);
-                
-                logger.info(
+                logger.debug(
                         "...新增配置项: code:{} | name:{} | value:{} | remark:{} | parentId:{} | validateExpression:{}",
                         new Object[] { configPropertyItem.getCode(),
-                                configPropertyItem.getCode(),
+                                configPropertyItem.getName(),
                                 configPropertyItem.getValue(),
                                 configPropertyItem.getRemark(),
                                 configPropertyItem.getParentId(),
                                 configPropertyItem.getValidateExpression() });
-                
             } else if (!matches(parent, configParserTemp, configPropertyItem)) {
                 updateConfigPropertyByParser(configPropertyItem,
                         parent,
                         configParserTemp);
-                logger.info(
+                logger.debug(
                         "...更新配置项: code:{} | name:{} | value:{} | remark:{} | parentId:{} | validateExpression:{}",
                         new Object[] { configPropertyItem.getCode(),
-                                configPropertyItem.getCode(),
+                                configPropertyItem.getName(),
                                 configPropertyItem.getValue(),
                                 configPropertyItem.getRemark(),
                                 configPropertyItem.getParentId(),
                                 configPropertyItem.getValidateExpression() });
             } else {
-                logger.info(
+                logger.debug(
                         "...加载配置项: code:{} | name:{} | value:{} | remark:{} | parentId:{} | validateExpression:{}",
                         new Object[] { configPropertyItem.getCode(),
-                                configPropertyItem.getCode(),
+                                configPropertyItem.getName(),
                                 configPropertyItem.getValue(),
                                 configPropertyItem.getRemark(),
                                 configPropertyItem.getParentId(),
                                 configPropertyItem.getValidateExpression() });
             }
-            
             //嵌套初始化配置属性
             initConfigProperties(configPropertyItem,
                     configParserTemp.getConfigs());
@@ -197,7 +192,7 @@ public class LocalConfigPropertyPersister implements ConfigPropertyPersister,
         configPropertyItem.setValidateExpression(
                 configParserTemp.getValidateExpression());
         
-        configPropertyItem.setModifyAble(true);
+        configPropertyItem.setModifyAble(configParserTemp.isModifyAble());
         configPropertyItem.setParentId(parent == null ? null : parent.getId());
         configPropertyItem
                 .setLeaf(CollectionUtils.isEmpty(configParserTemp.getConfigs())
@@ -223,12 +218,12 @@ public class LocalConfigPropertyPersister implements ConfigPropertyPersister,
             ConfigPropertyParser configParserTemp) {
         //configPropertyItem.setCode(configParserTemp.getCode());
         //configPropertyItem.setModule(this.module);
+        
         configPropertyItem.setName(configParserTemp.getName());
         configPropertyItem.setValue(configParserTemp.getValue());
         configPropertyItem.setRemark(configParserTemp.getRemark());
         configPropertyItem.setValidateExpression(
                 configParserTemp.getValidateExpression());
-        
         configPropertyItem.setModifyAble(configParserTemp.isModifyAble());
         configPropertyItem.setParentId(parent == null ? null : parent.getId());
         configPropertyItem
@@ -238,7 +233,7 @@ public class LocalConfigPropertyPersister implements ConfigPropertyPersister,
             configPropertyItem.setValue(configParserTemp.getValue());
         }
         
-        this.configPropertyItemService.update(configPropertyItem);
+        this.configPropertyItemService.updateById(configPropertyItem);
     }
     
     /**
@@ -271,6 +266,10 @@ public class LocalConfigPropertyPersister implements ConfigPropertyPersister,
         if (!StringUtils.equalsAnyIgnoreCase(
                 configParser.getValidateExpression(),
                 configPropertyItem.getValidateExpression())) {
+            return false;
+        }
+        if (Objects.hashCode(configParser.getAttributes()) == Objects
+                .hashCode(configPropertyItem.getAttributes())) {
             return false;
         }
         if (!StringUtils.equalsAnyIgnoreCase(
@@ -315,8 +314,7 @@ public class LocalConfigPropertyPersister implements ConfigPropertyPersister,
         
         ConfigProperty res = this.configPropertyItemService
                 .findByCode(this.module, code);
-        
-        return LocalConfigPropertyInvocationHandler.proxy(module, res);
+        return res;
     }
     
     /**
@@ -326,18 +324,16 @@ public class LocalConfigPropertyPersister implements ConfigPropertyPersister,
     @Override
     public List<ConfigProperty> queryList(String module,
             Map<String, Object> params) {
-        List<ConfigProperty> resList = new ArrayList<ConfigProperty>();
-        
         List<ConfigPropertyItem> cpiList = this.configPropertyItemService
                 .queryList(this.module, params);
+        List<ConfigProperty> resList = new ArrayList<ConfigProperty>();
         for (ConfigPropertyItem itemTemp : cpiList) {
             if (!codes.contains(itemTemp.getCode())) {
                 continue;
             }
-            
             resList.add(itemTemp);
         }
-        return LocalConfigPropertyInvocationHandler.proxy(module, resList);
+        return resList;
     }
     
     /**
@@ -347,114 +343,38 @@ public class LocalConfigPropertyPersister implements ConfigPropertyPersister,
      * @return
      */
     @Override
-    public List<ConfigProperty> queryNestedListByParentId(String module,
+    public List<ConfigProperty> queryChildsByParentId(String module,
             String parentId, Map<String, Object> params) {
-        AssertUtils.notEmpty(parentId, "parentId is empty.");
-        
-        List<ConfigProperty> resList = new ArrayList<ConfigProperty>();
         List<ConfigPropertyItem> cpiList = this.configPropertyItemService
-                .queryNestedListByParentId(this.module, parentId, params);
+                .queryChildsByParentId(this.module, parentId, params);
+        List<ConfigProperty> resList = new ArrayList<ConfigProperty>();
         for (ConfigPropertyItem itemTemp : cpiList) {
             if (!codes.contains(itemTemp.getCode())) {
                 continue;
             }
-            
             resList.add(itemTemp);
         }
-        return LocalConfigPropertyInvocationHandler.proxy(module, resList);
+        return resList;
     }
     
     /**
      * @param module
-     * @param code
-     * @param value
+     * @param parentId
+     * @param params
      * @return
      */
     @Override
-    public boolean update(String module, String code, String value) {
-        AssertUtils.notEmpty(module, "module is empty.");
-        AssertUtils.notEmpty(code, "code is empty.");
-        AssertUtils.notEmpty(value, "value is empty.");
-        
-        this.configPropertyItemService.update(module, code, value);
-        return false;
-    }
-    
-    /**
-     * 配置属性代理<br/>
-     * <功能详细描述>
-     * 
-     * @author  Administrator
-     * @version  [版本号, 2019年3月26日]
-     * @see  [相关类/方法]
-     * @since  [产品/模块版本]
-     */
-    private static class LocalConfigPropertyInvocationHandler
-            implements InvocationHandler {
-        
-        /** 所属模块 */
-        private String module;
-        
-        /** 被代理的配置属性 */
-        private ConfigProperty target;
-        
-        /** <默认构造函数> */
-        public LocalConfigPropertyInvocationHandler(String module,
-                ConfigProperty target) {
-            super();
-            this.module = module;
-            this.target = target;
-        }
-        
-        /** 
-         * 调用方法 
-         */
-        @Override
-        public Object invoke(Object proxy, Method method, Object[] args)
-                throws Throwable {
-            if ("getModule".equals(method)) {
-                return module;
+    public List<ConfigProperty> queryNestedChildsByParentId(String module,
+            String parentId, Map<String, Object> params) {
+        List<ConfigPropertyItem> cpiList = this.configPropertyItemService
+                .queryNestedChildsByParentId(this.module, parentId, params);
+        List<ConfigProperty> resList = new ArrayList<ConfigProperty>();
+        for (ConfigPropertyItem itemTemp : cpiList) {
+            if (!codes.contains(itemTemp.getCode())) {
+                continue;
             }
-            Object result = method.invoke(target, args);
-            return result;
+            resList.add(itemTemp);
         }
-        
-        /** 
-         * 绑定委托对象并返回一个代理类 
-         * @param target 
-         * @return 
-         */
-        public static ConfigProperty proxy(String module,
-                ConfigProperty target) {
-            if (target == null) {
-                return null;
-            }
-            LocalConfigPropertyInvocationHandler proxy = new LocalConfigPropertyInvocationHandler(
-                    module, target);
-            
-            ConfigProperty cp = (ConfigProperty) Proxy.newProxyInstance(
-                    target.getClass().getClassLoader(),
-                    new Class<?>[] { ConfigProperty.class },
-                    proxy);
-            return cp;
-        }
-        
-        /** 
-         * 绑定委托对象并返回一个代理类 
-         * @param target 
-         * @return 
-         */
-        public static List<ConfigProperty> proxy(String module,
-                List<ConfigProperty> targetList) {
-            if (CollectionUtils.isEmpty(targetList)) {
-                return targetList;
-            }
-            
-            List<ConfigProperty> resList = new ArrayList<>();
-            for (ConfigProperty cpTemp : targetList) {
-                resList.add(proxy(module, cpTemp));
-            }
-            return resList;
-        }
+        return resList;
     }
 }

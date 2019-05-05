@@ -10,6 +10,7 @@ import java.time.Duration;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import com.tx.component.configuration.starter.ConfigContextProperties;
 import com.tx.core.starter.persister.PersisterTypeEnum;
 
 /**
@@ -45,74 +46,77 @@ public class BasicDataContextProperties {
     /** 缓存的有效期:默认缓存一天 */
     private Duration duration = Duration.ofDays(1);
     
-    /**
-     * @return 返回 persister
-     */
-    public PersisterTypeEnum getPersister() {
-        return persister;
-    }
-    
-    /**
-     * @param 对persister进行赋值
-     */
-    public void setPersister(PersisterTypeEnum persister) {
-        this.persister = persister;
-    }
-    
+    /** 配置属性 */
+    private ConfigContextProperties config;
+
     /**
      * @return 返回 enable
      */
     public boolean isEnable() {
         return enable;
     }
-    
+
     /**
      * @param 对enable进行赋值
      */
     public void setEnable(boolean enable) {
         this.enable = enable;
     }
-    
-    /**
-     * @return 返回 module
-     */
-    public String getModule() {
-        return module;
-    }
-    
-    /**
-     * @param 对module进行赋值
-     */
-    public void setModule(String module) {
-        this.module = module;
-    }
-    
+
     /**
      * @return 返回 tableAutoInitialize
      */
     public boolean isTableAutoInitialize() {
         return tableAutoInitialize;
     }
-    
+
     /**
      * @param 对tableAutoInitialize进行赋值
      */
     public void setTableAutoInitialize(boolean tableAutoInitialize) {
         this.tableAutoInitialize = tableAutoInitialize;
     }
-    
+
     /**
      * @return 返回 basePackages
      */
     public String getBasePackages() {
         return basePackages;
     }
-    
+
     /**
      * @param 对basePackages进行赋值
      */
     public void setBasePackages(String basePackages) {
         this.basePackages = basePackages;
+    }
+
+    /**
+     * @return 返回 persister
+     */
+    public PersisterTypeEnum getPersister() {
+        return persister;
+    }
+
+    /**
+     * @param 对persister进行赋值
+     */
+    public void setPersister(PersisterTypeEnum persister) {
+        this.persister = persister;
+    }
+
+    /**
+     * @return 返回 module
+     */
+    public String getModule() {
+        return module;
+    }
+
+    /**
+     * @param 对module进行赋值
+     */
+    public void setModule(String module) {
+        this.module = module;
     }
 
     /**
@@ -141,5 +145,19 @@ public class BasicDataContextProperties {
      */
     public void setDuration(Duration duration) {
         this.duration = duration;
+    }
+
+    /**
+     * @return 返回 config
+     */
+    public ConfigContextProperties getConfig() {
+        return config;
+    }
+
+    /**
+     * @param 对config进行赋值
+     */
+    public void setConfig(ConfigContextProperties config) {
+        this.config = config;
     }
 }

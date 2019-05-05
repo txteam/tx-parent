@@ -6,12 +6,15 @@
  */
 package com.tx.component.basicdata.starter;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
 import org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration;
@@ -32,6 +35,8 @@ import com.tx.component.basicdata.registry.BasicDataEntityRegistry;
 import com.tx.component.basicdata.registry.BasicDataServiceRegistry;
 import com.tx.component.basicdata.service.DataDictService;
 import com.tx.component.basicdata.starter.BasicDataCacheConfiguration.BasicDataCacheCustomizer;
+import com.tx.component.configuration.context.ConfigContext;
+import com.tx.component.configuration.starter.ConfigContextConfiguration;
 import com.tx.core.exceptions.util.AssertUtils;
 
 /**
@@ -104,6 +109,7 @@ public class BasicDataContextAutoConfiguration
         if (!StringUtils.isEmpty(this.properties.getModule())) {
             this.module = this.properties.getModule();
         }
+        AssertUtils.notEmpty(this.module, "module is empty.");
     }
     
     /**
@@ -122,23 +128,6 @@ public class BasicDataContextAutoConfiguration
         BasicDataEntityRegistry registry = new BasicDataEntityRegistry();
         
         return registry;
-    }
-    
-    /**
-     * 基础数据容器<br/>
-     * <功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return BasicDataContextFactory [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    @Bean(name = "basicDataContext")
-    public BasicDataContextFactory BasicDataContextFactory() {
-        BasicDataContextFactory context = new BasicDataContextFactory();
-        context.setRegistry(basicDataEntityRegistry());
-        
-        return context;
     }
     
     /**
@@ -166,6 +155,23 @@ public class BasicDataContextAutoConfiguration
                 this.basePackages, this.module, dataDictService,
                 basicDataAPIClientRegistry, basicDataEntityRegistry());
         return registrar;
+    }
+    
+    /**
+     * 基础数据容器<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return BasicDataContextFactory [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @Bean(name = "basicDataContext")
+    public BasicDataContextFactory BasicDataContextFactory() {
+        BasicDataContextFactory context = new BasicDataContextFactory();
+        context.setBasicDataEntityRegistry(basicDataEntityRegistry());
+        
+        return context;
     }
     
     /**
@@ -202,5 +208,24 @@ public class BasicDataContextAutoConfiguration
     public BasicDataAPIController basicDataAPIController() {
         BasicDataAPIController controller = new BasicDataAPIController();
         return controller;
+    }
+    
+    /**
+     * 加载配置容器<br/>
+     * <功能详细描述>
+     * 
+     * @author  Administrator
+     * @version  [版本号, 2019年5月5日]
+     * @see  [相关类/方法]
+     * @since  [产品/模块版本]
+     */
+    @Configuration
+    @Import({ ConfigContextConfiguration.class })
+    @ConditionalOnMissingBean(ConfigContext.class)
+    public static class ConfigContextNotFoundConfiguration {
+        
+        @PostConstruct
+        public void afterPropertiesSet() {
+        }
     }
 }

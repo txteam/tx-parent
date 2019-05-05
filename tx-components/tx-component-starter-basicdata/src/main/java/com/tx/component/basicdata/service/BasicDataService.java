@@ -128,7 +128,7 @@ public interface BasicDataService<T extends BasicData> {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public boolean update(T data);
+    public boolean updateById(T data);
     
     /**
      * 批量更新基础数据<br/>

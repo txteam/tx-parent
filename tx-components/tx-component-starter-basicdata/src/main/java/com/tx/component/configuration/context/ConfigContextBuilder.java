@@ -9,12 +9,10 @@
 package com.tx.component.configuration.context;
 
 import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.Map;
 
 import com.tx.component.configuration.model.ConfigProperty;
-import com.tx.component.configuration.persister.ConfigPropertyPersister;
+import com.tx.core.exceptions.util.AssertUtils;
 
 /**
  * 配置容器基础配置吃撑类<br/>
@@ -27,25 +25,19 @@ import com.tx.component.configuration.persister.ConfigPropertyPersister;
  */
 public abstract class ConfigContextBuilder extends ConfigContextConfigurator {
     
-    /** 日志记录器 */
-    private static Logger logger = LoggerFactory
-            .getLogger(ConfigContextBuilder.class);
-    
-    /** 配置属性持久器集合 */
-    protected List<ConfigPropertyPersister> configPropertyFinderList;
-    
     /**
      * @throws Exception
      */
     @Override
     protected void doBuild() throws Exception {
-        // TODO Auto-generated method stub
-        
+        AssertUtils.notNull(composite, "composite is null.");
+        AssertUtils.notEmpty(this.module, "module is empty.");
     }
     
     /**
      * 根据code获取配置属性<br/>
      * <功能详细描述>
+     * @param module
      * @param code
      * @return [参数说明]
      * 
@@ -53,17 +45,64 @@ public abstract class ConfigContextBuilder extends ConfigContextConfigurator {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    protected ConfigProperty doFind(String code) {
-        return null;
-    }
-    
     protected ConfigProperty doFind(String module, String code) {
-        return null;
+        ConfigProperty cp = this.composite.findByCode(module, code);
+        return cp;
     }
     
-    protected List<ConfigProperty> doQuery(String module, String code,
-            String parentId) {
-        return null;
+    /**
+     * 查询配置项目列表<br/>
+     * <功能详细描述>
+     * @param module
+     * @param params
+     * @return [参数说明]
+     * 
+     * @return List<ConfigProperty> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    protected List<ConfigProperty> doQueryList(String module,
+            Map<String, Object> params) {
+        List<ConfigProperty> cpList = this.composite.queryList(module, params);
+        return cpList;
+    }
+    
+    /**
+     * 查询配置项目列表<br/>
+     * <功能详细描述>
+     * @param module
+     * @param parentId
+     * @param params
+     * @return [参数说明]
+     * 
+     * @return List<ConfigProperty> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    protected List<ConfigProperty> doQueryChildsByParentId(String module,
+            String parentId, Map<String, Object> params) {
+        List<ConfigProperty> cpList = this.composite
+                .queryChildsByParentId(module, parentId, params);
+        return cpList;
+    }
+    
+    /**
+     * 查询配置项目列表<br/>
+     * <功能详细描述>
+     * @param module
+     * @param parentId
+     * @param params
+     * @return [参数说明]
+     * 
+     * @return List<ConfigProperty> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    protected List<ConfigProperty> doQueryNestedChildsByParentId(String module,
+            String parentId, Map<String, Object> params) {
+        List<ConfigProperty> cpList = this.composite
+                .queryNestedChildsByParentId(module, parentId, params);
+        return cpList;
     }
     
 }

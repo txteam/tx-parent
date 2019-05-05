@@ -53,6 +53,14 @@ public class BasicDataContext extends BasicDataContextBuilder {
     }
     
     /**
+     * @throws Exception
+     */
+    @Override
+    protected void doInitContext() throws Exception {
+        
+    }
+    
+    /**
       * 装载对象属性<br/>
       *    尽量不要在基础数据业务层中调用，如果造成嵌套循环，则会加载太多对象<br/>
       * <功能详细描述>
@@ -121,7 +129,7 @@ public class BasicDataContext extends BasicDataContextBuilder {
     public Class<? extends BasicData> getEntityClass(String type) {
         AssertUtils.notEmpty(type, "type is empty.");
         
-        Class<? extends BasicData> entityClass = this.registry
+        Class<? extends BasicData> entityClass = this.basicDataEntityRegistry
                 .getEntityClass(type);
         
         return entityClass;

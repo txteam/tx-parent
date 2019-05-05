@@ -211,7 +211,7 @@ public class DefaultRemoteBasicDataService<T extends BasicData>
      * @return
      */
     @Override
-    public boolean update(T data) {
+    public boolean updateById(T data) {
         AssertUtils.notNull(data, "data is null.");
         
         String type = type();
