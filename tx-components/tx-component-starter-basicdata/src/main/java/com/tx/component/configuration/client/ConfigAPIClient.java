@@ -4,7 +4,7 @@
  * 修改时间:  2019年3月21日
  * <修改描述:>
  */
-package com.tx.component.configuration.remote;
+package com.tx.component.configuration.client;
 
 import java.util.List;
 import java.util.Map;
@@ -25,8 +25,8 @@ import com.tx.component.configuration.model.ConfigProperty;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-@RequestMapping(value = "/config")
-public interface ConfigurationRemote {
+@RequestMapping(value = "/api/config")
+public interface ConfigAPIClient {
     
     /**
      * 根据配置项编码获取配置属性实例<br/>
@@ -38,7 +38,7 @@ public interface ConfigurationRemote {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @RequestMapping(value = "code/{code}", method = RequestMethod.GET)
+    @RequestMapping(value = "/code/{code}", method = RequestMethod.GET)
     public ConfigProperty findByCode(
             @PathVariable(required = true, name = "code") String code);
     
@@ -52,7 +52,7 @@ public interface ConfigurationRemote {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @RequestMapping(value = "list", method = RequestMethod.GET)
+    @RequestMapping(value = "/list", method = RequestMethod.GET)
     public List<ConfigProperty> queryList(
             @RequestParam Map<String, Object> params);
     
@@ -67,25 +67,8 @@ public interface ConfigurationRemote {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @RequestMapping(value = "nestedList/{parentId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/nestedlist/{parentId}", method = RequestMethod.GET)
     public List<ConfigProperty> queryNestedListByParentId(
             @PathVariable(required = true, name = "parentId") String parentId,
             @RequestParam Map<String, Object> params);
-    
-    /**
-     * 更新配置属性参数值<br/>
-     * <功能详细描述>
-     * @param module
-     * @param code
-     * @param value
-     * @return [参数说明]
-     * 
-     * @return boolean [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    @RequestMapping(value = "{code}", method = RequestMethod.PATCH)
-    public boolean update(
-            @PathVariable(required = true, name = "parentId") String code,
-            @RequestParam(value = "value", required = true) String value);
 }

@@ -15,6 +15,8 @@ import org.springframework.context.annotation.Import;
 
 import com.tx.component.basicdata.registry.BasicDataAPIClientRegistry;
 import com.tx.component.basicdata.registry.impl.BasicDataAPIClientRegistryImpl;
+import com.tx.component.configuration.registry.ConfigAPIClientRegistry;
+import com.tx.component.configuration.registry.impl.ConfigAPIClientRegistryImpl;
 
 import feign.Client;
 import feign.Contract;
@@ -86,6 +88,23 @@ public class BasicDataAPIClientConfiguration {
         @Bean("basicDataAPIClientRegistry")
         public BasicDataAPIClientRegistry basicDataAPIClientRegistry() {
             BasicDataAPIClientRegistry registry = new BasicDataAPIClientRegistryImpl(
+                    decoder, encoder, client, feignContract);
+            return registry;
+        }
+        
+        /**
+         * 基础数据APIClient的注册表：basicDataAPIClientRegistry<br/>
+         * <功能详细描述>
+         * @return [参数说明]
+         * 
+         * @return BasicDataAPIClientRegistry [返回类型说明]
+         * @exception throws [异常类型] [异常说明]
+         * @see [类、类#方法、类#成员]
+         */
+        @ConditionalOnMissingBean
+        @Bean("configAPIClientRegistry")
+        public ConfigAPIClientRegistry configAPIClientRegistry() {
+            ConfigAPIClientRegistry registry = new ConfigAPIClientRegistryImpl(
                     decoder, encoder, client, feignContract);
             return registry;
         }

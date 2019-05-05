@@ -4,13 +4,13 @@
  * 修改时间:  
  * <修改描述:>
  */
-package com.tx.component.basicdata.registry.impl;
+package com.tx.component.configuration.registry.impl;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import com.tx.component.basicdata.client.BasicDataAPIClient;
-import com.tx.component.basicdata.registry.BasicDataAPIClientRegistry;
+import com.tx.component.configuration.client.ConfigAPIClient;
+import com.tx.component.configuration.registry.ConfigAPIClientRegistry;
 
 import feign.Client;
 import feign.Contract;
@@ -27,8 +27,7 @@ import feign.codec.Encoder;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class BasicDataAPIClientRegistryImpl
-        implements BasicDataAPIClientRegistry {
+public class ConfigAPIClientRegistryImpl implements ConfigAPIClientRegistry {
     
     private Decoder decoder;
     
@@ -38,10 +37,10 @@ public class BasicDataAPIClientRegistryImpl
     
     private Contract feignContract;
     
-    private final Map<String, BasicDataAPIClient> basicDataAPIClientMap = new HashMap<>();
+    private final Map<String, ConfigAPIClient> configAPIClientMap = new HashMap<>();
     
     /** <默认构造函数> */
-    public BasicDataAPIClientRegistryImpl(Decoder decoder, Encoder encoder,
+    public ConfigAPIClientRegistryImpl(Decoder decoder, Encoder encoder,
             Client client, Contract feignContract) {
         super();
         this.decoder = decoder;
@@ -55,19 +54,19 @@ public class BasicDataAPIClientRegistryImpl
      * @return
      */
     @Override
-    public BasicDataAPIClient getBasicDataAPIClient(String module) {
-        if (this.basicDataAPIClientMap.containsKey(module)) {
-            return this.basicDataAPIClientMap.get(module);
+    public ConfigAPIClient getConfigAPIClient(String module) {
+        if (this.configAPIClientMap.containsKey(module)) {
+            return this.configAPIClientMap.get(module);
         }
-        BasicDataAPIClient newClient = Feign.builder()
+        ConfigAPIClient newClient = Feign.builder()
                 .client(client)
                 .encoder(encoder)
                 .decoder(decoder)
                 .contract(this.feignContract)
                 //.requestInterceptor(new BasicAuthRequestInterceptor("user", "user"))
-                .target(BasicDataAPIClient.class,
-                        "http://" + module + "/api/basicdata");
-        this.basicDataAPIClientMap.put(module, newClient);
+                .target(ConfigAPIClient.class,
+                        "http://" + module + "/api/config");
+        this.configAPIClientMap.put(module, newClient);
         return newClient;
     }
 }

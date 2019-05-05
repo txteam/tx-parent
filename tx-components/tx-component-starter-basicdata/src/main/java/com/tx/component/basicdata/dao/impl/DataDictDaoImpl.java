@@ -37,27 +37,6 @@ public class DataDictDaoImpl implements DataDictDao {
         super();
         this.myBatisDaoSupport = myBatisDaoSupport;
     }
-
-    /**
-     * @param condition
-     */
-    @Override
-    public void batchInsert(List<DataDict> condition) {
-        this.myBatisDaoSupport.batchInsertUseUUID("dataDict.insert",
-                condition,
-                "id",
-                true);
-    }
-    
-    /**
-     * @param condition
-     */
-    @Override
-    public void batchUpdate(List<Map<String, Object>> updateRowMapList) {
-        this.myBatisDaoSupport.batchUpdate("dataDict.update",
-                updateRowMapList,
-                true);
-    }
     
     /**
      * @param condition
@@ -71,12 +50,41 @@ public class DataDictDaoImpl implements DataDictDao {
     
     /**
      * @param condition
+     */
+    @Override
+    public void batchInsert(List<DataDict> condition) {
+        this.myBatisDaoSupport.batchInsertUseUUID("dataDict.insert",
+                condition,
+                "id",
+                true);
+    }
+    
+    /**
+     * @param condition
      * @return
      */
     @Override
     public int delete(DataDict condition) {
-        return this.myBatisDaoSupport.delete("dataDict.delete",
-                condition);
+        return this.myBatisDaoSupport.delete("dataDict.delete", condition);
+    }
+    
+    /**
+     * @param updateRowMap
+     * @return
+     */
+    @Override
+    public int update(Map<String, Object> updateRowMap) {
+        return this.myBatisDaoSupport.update("dataDict.update", updateRowMap);
+    }
+    
+    /**
+     * @param condition
+     */
+    @Override
+    public void batchUpdate(List<Map<String, Object>> updateRowMapList) {
+        this.myBatisDaoSupport.batchUpdate("dataDict.update",
+                updateRowMapList,
+                true);
     }
     
     /**
@@ -118,19 +126,8 @@ public class DataDictDaoImpl implements DataDictDao {
     @Override
     public PagedList<DataDict> queryPagedList(Map<String, Object> params,
             int pageIndex, int pageSize) {
-        return this.myBatisDaoSupport.<DataDict> queryPagedList("dataDict.query",
-                params,
-                pageIndex,
-                pageSize);
+        return this.myBatisDaoSupport.<DataDict> queryPagedList(
+                "dataDict.query", params, pageIndex, pageSize);
     }
     
-    /**
-     * @param updateRowMap
-     * @return
-     */
-    @Override
-    public int update(Map<String, Object> updateRowMap) {
-        return this.myBatisDaoSupport.update("dataDict.update",
-                updateRowMap);
-    }
 }

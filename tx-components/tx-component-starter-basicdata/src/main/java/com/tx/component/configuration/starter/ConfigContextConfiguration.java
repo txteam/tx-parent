@@ -6,22 +6,14 @@
  */
 package com.tx.component.configuration.starter;
 
-import javax.sql.DataSource;
-
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-import org.springframework.transaction.PlatformTransactionManager;
 
 import com.tx.component.basicdata.context.BasicDataContextConfigurator;
-import com.tx.component.basicdata.starter.BasicDataContextAutoConfiguration;
 import com.tx.core.exceptions.util.AssertUtils;
 
 /**
@@ -34,10 +26,6 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @since  [产品/模块版本]
  */
 @EnableConfigurationProperties(ConfigContextProperties.class)
-@ConditionalOnProperty(prefix = "tx.basicdata.config", value = "enable", havingValue = "true")
-@ConditionalOnBean({ DataSource.class, PlatformTransactionManager.class})
-@AutoConfigureAfter({ BasicDataContextAutoConfiguration.class })
-@Import({ConfigContextPersisterConfiguration.class})
 @Configuration
 public class ConfigContextConfiguration
         implements ApplicationContextAware, InitializingBean {
@@ -52,7 +40,8 @@ public class ConfigContextConfiguration
     private ConfigContextProperties properties;
     
     /** <默认构造函数> */
-    public ConfigContextConfiguration(ConfigContextProperties properties,BasicDataContextConfigurator tt) {
+    public ConfigContextConfiguration(ConfigContextProperties properties,
+            BasicDataContextConfigurator tt) {
         super();
         this.properties = properties;
     }
@@ -75,7 +64,5 @@ public class ConfigContextConfiguration
         AssertUtils.notEmpty(this.module, "module is empty.");
         AssertUtils.notNull(this.properties, "properties is null.");
     }
-    
-    
     
 }

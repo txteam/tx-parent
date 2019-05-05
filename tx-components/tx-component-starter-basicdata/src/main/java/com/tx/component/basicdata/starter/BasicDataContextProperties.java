@@ -6,6 +6,8 @@
  */
 package com.tx.component.basicdata.starter;
 
+import java.time.Duration;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import com.tx.core.starter.persister.PersisterTypeEnum;
@@ -22,6 +24,9 @@ import com.tx.core.starter.persister.PersisterTypeEnum;
 @ConfigurationProperties(prefix = "tx.basicdata")
 public class BasicDataContextProperties {
     
+    /** 命令容器是否启动 */
+    private boolean enable;
+    
     /** 表是否自动初始化 */
     private boolean tableAutoInitialize = false;
     
@@ -31,11 +36,14 @@ public class BasicDataContextProperties {
     /** 持久化类型 */
     private PersisterTypeEnum persister = PersisterTypeEnum.mybatis;
     
-    /** 命令容器是否启动 */
-    private boolean enable;
-    
     /** 所属模块 */
     private String module;
+    
+    /** 缓存manager的引用 */
+    private String cacheManagerRef;
+    
+    /** 缓存的有效期:默认缓存一天 */
+    private Duration duration = Duration.ofDays(1);
     
     /**
      * @return 返回 persister
@@ -106,5 +114,32 @@ public class BasicDataContextProperties {
     public void setBasePackages(String basePackages) {
         this.basePackages = basePackages;
     }
-    
+
+    /**
+     * @return 返回 cacheManagerRef
+     */
+    public String getCacheManagerRef() {
+        return cacheManagerRef;
+    }
+
+    /**
+     * @param 对cacheManagerRef进行赋值
+     */
+    public void setCacheManagerRef(String cacheManagerRef) {
+        this.cacheManagerRef = cacheManagerRef;
+    }
+
+    /**
+     * @return 返回 duration
+     */
+    public Duration getDuration() {
+        return duration;
+    }
+
+    /**
+     * @param 对duration进行赋值
+     */
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
 }

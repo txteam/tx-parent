@@ -48,6 +48,16 @@ public class ConfigPropertyItemDaoImpl implements ConfigPropertyItemDao {
     }
     
     /**
+     * @param configPropertyItem
+     * @return
+     */
+    @Override
+    public int delete(ConfigPropertyItem configPropertyItem) {
+        return this.myBatisDaoSupport.delete("configPropertyItem.delete",
+                configPropertyItem);
+    }
+    
+    /**
      * @param updateRowMap
      * @return
      */
@@ -75,6 +85,16 @@ public class ConfigPropertyItemDaoImpl implements ConfigPropertyItemDao {
     public List<ConfigPropertyItem> queryList(Map<String, Object> params) {
         return this.myBatisDaoSupport.<ConfigPropertyItem> queryList(
                 "configPropertyItem.query", params);
+    }
+    
+    /**
+     * @param params
+     * @return
+     */
+    @Override
+    public int count(Map<String, Object> params) {
+        return this.myBatisDaoSupport
+                .<Integer> find("configPropertyItem.queryCount", params);
     }
     
 }

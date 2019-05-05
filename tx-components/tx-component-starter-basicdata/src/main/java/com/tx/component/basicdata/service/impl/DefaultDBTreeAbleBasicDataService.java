@@ -4,14 +4,14 @@
  * 修改时间:  2016年10月7日
  * <修改描述:>
  */
-package com.tx.component.basicdata.service;
+package com.tx.component.basicdata.service.impl;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.tx.component.basicdata.context.TreeAbleBasicDataService;
 import com.tx.component.basicdata.model.TreeAbleBasicData;
+import com.tx.component.basicdata.service.TreeAbleBasicDataService;
 import com.tx.core.paged.model.PagedList;
 
 /**

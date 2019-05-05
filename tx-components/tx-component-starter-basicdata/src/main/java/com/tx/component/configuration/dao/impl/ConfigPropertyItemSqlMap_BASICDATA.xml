@@ -25,6 +25,7 @@
 				TDD.validateExpression,
 				TDD.modifyAble,
 				TDD.leaf,
+				TDD.attributes,
 				TDD.lastUpdateDate,
 				TDD.createDate
 		  FROM bd_config_context TDD
@@ -57,6 +58,7 @@
 				TDD.validateExpression,
 				TDD.modifyAble,
 				TDD.leaf,
+				TDD.attributes,
 				TDD.lastUpdateDate,
 				TDD.createDate
 		  FROM bd_config_context TDD
@@ -138,6 +140,7 @@
 			validateExpression,
 			modifyAble,
 			leaf,
+			attributes,
 			lastUpdateDate,
 			createDate
 		)
@@ -153,6 +156,7 @@
 			#{validateExpression},
 			#{modifyAble},
 			#{leaf},
+			#{attributes},
 			#{lastUpdateDate},
 			#{createDate}
 		)
@@ -200,6 +204,9 @@
 	    	</if>
 			<if test="_parameter.containsKey('leaf')">
 	    		leaf = #{leaf,javaType=boolean},
+	    	</if>
+	    	<if test="_parameter.containsKey('attributes')">
+	    		attributes = #{attributes,javaType=java.lang.String},
 	    	</if>
 			<if test="_parameter.containsKey('modifyAble')">
 	    		modifyAble = #{modifyAble,javaType=boolean},

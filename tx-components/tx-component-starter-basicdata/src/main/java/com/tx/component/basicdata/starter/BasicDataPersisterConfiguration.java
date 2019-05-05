@@ -16,18 +16,24 @@ import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import com.tx.component.basicdata.dao.DataDictDao;
 import com.tx.component.basicdata.dao.impl.DataDictDaoImpl;
 import com.tx.component.basicdata.script.BasicDataContextTableInitializer;
 import com.tx.component.basicdata.service.DataDictService;
+import com.tx.component.configuration.dao.ConfigPropertyItemDao;
+import com.tx.component.configuration.dao.impl.ConfigPropertyItemDaoImpl;
 import com.tx.component.configuration.script.ConfigContextTableInitializer;
+import com.tx.component.configuration.service.ConfigPropertyItemService;
+import com.tx.component.configuration.service.impl.ConfigPropertyItemServiceImpl;
 import com.tx.core.ddlutil.executor.TableDDLExecutor;
 import com.tx.core.mybatis.support.MyBatisDaoSupport;
 import com.tx.core.mybatis.support.MyBatisDaoSupportHelper;
@@ -85,9 +91,51 @@ public class BasicDataPersisterConfiguration {
          * @exception throws [异常类型] [异常说明]
          * @see [类、类#方法、类#成员]
          */
-        @Bean("basicdata.config.tableInitializer")
+        @Bean("basicdata.tableInitializer")
         public BasicDataContextTableInitializer tableInitializer() {
             BasicDataContextTableInitializer initializer = new BasicDataContextTableInitializer(
+                    tableDDLExecutor, true);
+            return initializer;
+        }
+    }
+    
+    /**
+     * 该类会优先加载:基础数据容器表初始化器<br/>
+     * <功能详细描述>
+     * 
+     * @author  Administrator
+     * @version  [版本号, 2018年5月5日]
+     * @see  [相关类/方法]
+     * @since  [产品/模块版本]
+     */
+    @Configuration
+    @ConditionalOnBean({ TableDDLExecutor.class })
+    @ConditionalOnSingleCandidate(TableDDLExecutor.class)
+    @ConditionalOnProperty(prefix = "tx.basicdata", value = "table-auto-initialize", havingValue = "true")
+    @ConditionalOnMissingBean(ConfigContextTableInitializer.class)
+    public static class ConfigContextTableInitializerConfiguration {
+        
+        /** 表ddl自动执行器 */
+        private TableDDLExecutor tableDDLExecutor;
+        
+        /** 基础数据容器初始化构造函数 */
+        public ConfigContextTableInitializerConfiguration(
+                TableDDLExecutor tableDDLExecutor) {
+            this.tableDDLExecutor = tableDDLExecutor;
+        }
+        
+        /**
+         * 当命令容器不存在时<br/>
+         * <功能详细描述>
+         * @return [参数说明]
+         * 
+         * @return CommandContextFactory [返回类型说明]
+         * @exception throws [异常类型] [异常说明]
+         * @see [类、类#方法、类#成员]
+         */
+        @Bean("config.tableInitializer")
+        public ConfigContextTableInitializer tableInitializer() {
+            ConfigContextTableInitializer initializer = new ConfigContextTableInitializer(
                     tableDDLExecutor, true);
             return initializer;
         }
@@ -123,16 +171,18 @@ public class BasicDataPersisterConfiguration {
                 ObjectProvider<Interceptor[]> interceptorsProvider,
                 ObjectProvider<List<ConfigurationCustomizer>> configurationCustomizersProvider,
                 DataSource dataSource,
-                TransactionTemplate transactionTemplate) {
+                PlatformTransactionManager transactionManager) {
             super(databaseIdProvider, interceptorsProvider,
                     configurationCustomizersProvider);
             
             this.properties = (MybatisProperties) properties.clone();
             this.properties.setMapperLocations(new String[] {
-                    "classpath*:com/tx/component/basicdata/dao/impl/*SqlMap_BASICDATA.xml" });
+                    "classpath*:com/tx/component/basicdata/dao/impl/*SqlMap_BASICDATA.xml",
+                    "classpath*:com/tx/component/configuration/dao/impl/*SqlMap_BASICDATA.xml" });
             
             this.dataSource = dataSource;
-            this.transactionTemplate = transactionTemplate;
+            this.transactionTemplate = new TransactionTemplate(
+                    transactionManager);
         }
         
         /**
@@ -230,6 +280,43 @@ public class BasicDataPersisterConfiguration {
         public DataDictService dataDictService() throws Exception {
             DataDictService service = new DataDictService(dataDictDao(),
                     this.transactionTemplate);
+            return service;
+        }
+        
+        /**
+         * 数据字典实例<br/>
+         * <功能详细描述>
+         * @return
+         * @throws Exception [参数说明]
+         * 
+         * @return DataDictDao [返回类型说明]
+         * @exception throws [异常类型] [异常说明]
+         * @see [类、类#方法、类#成员]
+         */
+        @Bean("basicdata.configPropertyItemDao")
+        @ConditionalOnMissingBean(name = "basicdata.configPropertyItemDao")
+        public ConfigPropertyItemDao configPropertyItemDao() throws Exception {
+            ConfigPropertyItemDao dao = new ConfigPropertyItemDaoImpl(
+                    myBatisDaoSupport());
+            return dao;
+        }
+        
+        /**
+         * 数据字典实例<br/>
+         * <功能详细描述>
+         * @return
+         * @throws Exception [参数说明]
+         * 
+         * @return DataDictDao [返回类型说明]
+         * @exception throws [异常类型] [异常说明]
+         * @see [类、类#方法、类#成员]
+         */
+        @Bean("basicdata.configPropertyItemService")
+        @ConditionalOnMissingBean(name = "basicdata.configPropertyItemService")
+        public ConfigPropertyItemService configPropertyItemService()
+                throws Exception {
+            ConfigPropertyItemService service = new ConfigPropertyItemServiceImpl(
+                    configPropertyItemDao());
             return service;
         }
     }

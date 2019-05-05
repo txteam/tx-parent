@@ -13,6 +13,8 @@ import org.springframework.beans.factory.BeanNameAware;
 
 import com.tx.component.basicdata.model.BasicData;
 import com.tx.component.basicdata.model.TreeAbleBasicData;
+import com.tx.component.basicdata.service.BasicDataService;
+import com.tx.component.basicdata.service.TreeAbleBasicDataService;
 import com.tx.core.exceptions.util.AssertUtils;
 
 /**

@@ -4,7 +4,7 @@
  * 修改时间:  2019年4月30日
  * <修改描述:>
  */
-package com.tx.component.basicdata.context;
+package com.tx.component.basicdata.registry;
 
 import java.lang.reflect.Modifier;
 import java.util.HashSet;
@@ -29,12 +29,12 @@ import com.tx.component.basicdata.annotation.BasicDataEntity;
 import com.tx.component.basicdata.model.BasicData;
 import com.tx.component.basicdata.model.DataDict;
 import com.tx.component.basicdata.model.TreeAbleBasicData;
-import com.tx.component.basicdata.registry.BasicDataAPIClientRegistry;
+import com.tx.component.basicdata.service.BasicDataService;
 import com.tx.component.basicdata.service.DataDictService;
-import com.tx.component.basicdata.service.DefaultDBBasicDataService;
-import com.tx.component.basicdata.service.DefaultDBTreeAbleBasicDataService;
-import com.tx.component.basicdata.service.DefaultRemoteBasicDataService;
-import com.tx.component.basicdata.service.DefaultRemoteTreeAbleBasicDataService;
+import com.tx.component.basicdata.service.impl.DefaultDBBasicDataService;
+import com.tx.component.basicdata.service.impl.DefaultDBTreeAbleBasicDataService;
+import com.tx.component.basicdata.service.impl.DefaultRemoteBasicDataService;
+import com.tx.component.basicdata.service.impl.DefaultRemoteTreeAbleBasicDataService;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.util.ClassScanUtils;
 
@@ -47,12 +47,12 @@ import com.tx.core.util.ClassScanUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class BasicDataServiceImportRegistrar
+public class BasicDataServiceRegistry
         implements InitializingBean, BeanFactoryAware, ApplicationContextAware {
     
     //日志记录句柄
     private Logger logger = LoggerFactory
-            .getLogger(BasicDataServiceImportRegistrar.class);
+            .getLogger(BasicDataServiceRegistry.class);
     
     /** spring容器 */
     private ApplicationContext applicationContext;
@@ -82,7 +82,7 @@ public class BasicDataServiceImportRegistrar
     private final Set<Class<?>> loadedClassSet = new HashSet<>();
     
     /** <默认构造函数> */
-    public BasicDataServiceImportRegistrar(String basePackages, String module,
+    public BasicDataServiceRegistry(String basePackages, String module,
             DataDictService dataDictService,
             BasicDataAPIClientRegistry basicDataAPIClientRegistry,
             BasicDataEntityRegistry registry) {
@@ -234,6 +234,8 @@ public class BasicDataServiceImportRegistrar
                     .genericBeanDefinition(defaultServiceType);
             builder.addPropertyValue("rawType", rawType);
             builder.addPropertyValue("dataDictService", this.dataDictService);
+            builder.addPropertyValue("transactionTemplate",
+                    this.dataDictService.getTransactionTemplate());
         } else {
             Class<?> defaultServiceType = DefaultDBBasicDataService.class;
             

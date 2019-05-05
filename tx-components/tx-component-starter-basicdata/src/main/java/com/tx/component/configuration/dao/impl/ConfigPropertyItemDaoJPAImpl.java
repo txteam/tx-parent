@@ -103,4 +103,26 @@ public class ConfigPropertyItemDaoJPAImpl implements ConfigPropertyItemDao {
         
         return null;
     }
+
+    /**
+     * @param configPropertyItem
+     * @return
+     */
+    @Override
+    public int delete(ConfigPropertyItem configPropertyItem) {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    /**
+     * @param params
+     * @return
+     */
+    @Override
+    public int count(Map<String, Object> params) {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+    
+    
 }

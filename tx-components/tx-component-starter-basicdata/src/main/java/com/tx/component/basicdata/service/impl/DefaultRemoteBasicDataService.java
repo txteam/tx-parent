@@ -4,7 +4,7 @@
  * 修改时间:  2016年10月7日
  * <修改描述:>
  */
-package com.tx.component.basicdata.service;
+package com.tx.component.basicdata.service.impl;
 
 import java.util.List;
 import java.util.Map;
@@ -12,8 +12,8 @@ import java.util.Map;
 import org.apache.commons.collections4.CollectionUtils;
 
 import com.tx.component.basicdata.client.BasicDataAPIClient;
-import com.tx.component.basicdata.context.BasicDataService;
 import com.tx.component.basicdata.model.BasicData;
+import com.tx.component.basicdata.service.BasicDataService;
 import com.tx.component.basicdata.util.BasicDataUtils;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.paged.model.PagedList;

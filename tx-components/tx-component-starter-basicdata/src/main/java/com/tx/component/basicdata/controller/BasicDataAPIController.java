@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tx.component.basicdata.context.BasicDataContext;
-import com.tx.component.basicdata.context.BasicDataService;
 import com.tx.component.basicdata.model.BasicData;
+import com.tx.component.basicdata.service.BasicDataService;
 import com.tx.component.basicdata.util.BasicDataUtils;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.paged.model.PagedList;
@@ -37,9 +37,9 @@ import io.swagger.annotations.ApiOperation;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-@Api(value = "/basicdata", tags = "基础数据容器API")
 @RestController
-@RequestMapping("/basicdata")
+@Api(value = "/api/basicdata", tags = "基础数据容器API")
+@RequestMapping("/api/basicdata")
 public class BasicDataAPIController {
     
     /**
@@ -55,7 +55,7 @@ public class BasicDataAPIController {
     @ApiOperation(value = "增加基础数据实例", notes = "")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "type", value = "基础数据类型", required = true, dataType = "string", paramType = "path"),
-            @ApiImplicitParam(name = "dataMap", value = "数据实例对应的map", required = true, dataType = "Map", example = "{code:'...',name='...'}") })
+            @ApiImplicitParam(name = "dataMap", value = "数据实例对应的map", required = true, dataTypeClass = Map.class, paramType = "form", example = "{code:'...',name='...'}") })
     @RequestMapping(value = "/{type}/", method = RequestMethod.POST)
     public <T extends BasicData> void insert(@PathVariable String type,
             @RequestParam Map<String, Object> dataMap) {
@@ -90,7 +90,7 @@ public class BasicDataAPIController {
     @ApiOperation(value = "批量增加基础数据实例", notes = "")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "type", value = "基础数据类型", required = true, dataType = "string", paramType = "path"),
-            @ApiImplicitParam(name = "dataMapList", value = "基础数据类型", required = true, dataType = "List", example = "[{code:'...',name='...'}]") })
+            @ApiImplicitParam(name = "dataMapList", value = "基础数据类型", required = true, dataTypeClass = List.class, paramType = "body", example = "[{code:'...',name='...'}]") })
     @RequestMapping(value = "/{type}/batch", method = RequestMethod.POST)
     public <T extends BasicData> void batchInsert(@PathVariable String type,
             @RequestBody List<Map<String, Object>> dataMapList) {
@@ -126,7 +126,7 @@ public class BasicDataAPIController {
     @ApiOperation(value = "根据ID删除实例", notes = "")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "type", value = "基础数据类型", required = true, dataType = "string", paramType = "path"),
-            @ApiImplicitParam(name = "id", value = "基础数据ID", required = true, dataType = "string") })
+            @ApiImplicitParam(name = "id", value = "基础数据ID", required = true, dataType = "string", paramType = "path") })
     @RequestMapping(value = "/{type}/{id}", method = RequestMethod.DELETE)
     public <T extends BasicData> boolean deleteById(@PathVariable String type,
             @PathVariable String id) {
@@ -162,7 +162,7 @@ public class BasicDataAPIController {
     @ApiOperation(value = "根据code删除实例", notes = "")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "type", value = "基础数据类型", required = true, dataType = "string", paramType = "path"),
-            @ApiImplicitParam(name = "code", value = "基础数据code", required = true, dataType = "string") })
+            @ApiImplicitParam(name = "code", value = "基础数据code", required = true, dataType = "string", paramType = "path") })
     @RequestMapping(value = "/{type}/code/{code}", method = RequestMethod.DELETE)
     public <T extends BasicData> boolean deleteByCode(@PathVariable String type,
             @PathVariable String code) {
@@ -194,6 +194,9 @@ public class BasicDataAPIController {
      * @see [类、类#方法、类#成员]
      */
     @ApiOperation(value = "禁用基础数据实例", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "type", value = "基础数据类型", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "id", value = "基础数据id", required = true, dataType = "string", paramType = "path") })
     @SuppressWarnings("unchecked")
     @RequestMapping(value = "/{type}/disable/{id}", method = RequestMethod.PATCH)
     public <T extends BasicData> boolean disableById(@PathVariable String type,
@@ -226,6 +229,9 @@ public class BasicDataAPIController {
      * @see [类、类#方法、类#成员]
      */
     @ApiOperation(value = "启用基础数据实例", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "type", value = "基础数据类型", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "id", value = "基础数据id", required = true, dataType = "string", paramType = "path") })
     @SuppressWarnings("unchecked")
     @RequestMapping(value = "/{type}/enable/{id}", method = RequestMethod.PATCH)
     public <T extends BasicData> boolean enableById(@PathVariable String type,
@@ -261,7 +267,7 @@ public class BasicDataAPIController {
     @ApiOperation(value = "更新基础数据实例", notes = "")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "type", value = "基础数据类型", required = true, dataType = "string", paramType = "path"),
-            @ApiImplicitParam(name = "data", value = "基础数据类型", required = true, dataType = "Map", example = "{code:'...',name='...'}") })
+            @ApiImplicitParam(name = "data", value = "基础数据类型", required = true, dataTypeClass = Map.class, example = "{code:'...',name='...'}") })
     @RequestMapping(value = "/{type}/", method = RequestMethod.PUT)
     public <T extends BasicData> boolean update(@PathVariable String type,
             @RequestParam Map<String, Object> dataMap) {
@@ -296,7 +302,7 @@ public class BasicDataAPIController {
     @ApiOperation(value = "批量更新基础数据实例", notes = "")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "type", value = "基础数据类型", required = true, dataType = "string", paramType = "path"),
-            @ApiImplicitParam(name = "dataMapList", value = "基础数据类型", required = true, dataType = "List", example = "[{code:'...',name='...'}]") })
+            @ApiImplicitParam(name = "dataMapList", value = "基础数据类型", required = true, dataTypeClass = List.class, paramType = "body", example = "[{code:'...',name='...'}]") })
     @RequestMapping(value = "/{type}/batch", method = RequestMethod.PUT)
     public <T extends BasicData> void batchUpdate(@PathVariable String type,
             @RequestBody List<Map<String, Object>> dataMapList) {
@@ -365,6 +371,10 @@ public class BasicDataAPIController {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
+    @ApiOperation(value = "根据id查询基础数据实例", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "type", value = "基础数据类型", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "id", value = "唯一键", required = true, dataType = "string", paramType = "path") })
     @SuppressWarnings("unchecked")
     @RequestMapping(value = "/{type}/{id}", method = RequestMethod.GET)
     public <T extends BasicData> T findById(@PathVariable String type,
@@ -396,6 +406,10 @@ public class BasicDataAPIController {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
+    @ApiOperation(value = "根据code查询基础数据实例", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "type", value = "基础数据类型", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "code", value = "编码", required = true, dataType = "string", paramType = "path") })
     @SuppressWarnings("unchecked")
     @RequestMapping(value = "/{type}/code/{code}", method = RequestMethod.GET)
     public <T extends BasicData> T findByCode(@PathVariable String type,
@@ -428,6 +442,11 @@ public class BasicDataAPIController {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
+    @ApiOperation(value = "查询基础数据实例列表", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "type", value = "基础数据类型", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "valid", value = "是否有效", required = true, dataTypeClass = Boolean.class, paramType = "path"),
+            @ApiImplicitParam(name = "params", value = "查询条件", required = false, dataTypeClass = Map.class) })
     @SuppressWarnings("unchecked")
     @RequestMapping(value = "/{type}/list/{valid}", method = RequestMethod.GET)
     public <T extends BasicData> List<T> queryList(@PathVariable String type,
@@ -463,6 +482,13 @@ public class BasicDataAPIController {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
+    @ApiOperation(value = "查询基础数据实例分页列表", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "type", value = "基础数据类型", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "valid", value = "是否有效", required = true, dataTypeClass = Boolean.class, paramType = "path"),
+            @ApiImplicitParam(name = "params", value = "查询条件", required = false, dataTypeClass = Map.class),
+            @ApiImplicitParam(name = "pageIndex", value = "第几页", required = true, dataTypeClass = Integer.class),
+            @ApiImplicitParam(name = "pageSize", value = "每页显示条数", required = true, dataTypeClass = Integer.class) })
     @SuppressWarnings("unchecked")
     @RequestMapping(value = "/{type}/pagedlist/{valid}", method = RequestMethod.GET)
     public <T extends BasicData> PagedList<T> queryPagedList(

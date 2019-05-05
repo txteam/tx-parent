@@ -4,7 +4,7 @@
  * 修改时间:  2016年10月7日
  * <修改描述:>
  */
-package com.tx.component.basicdata.service;
+package com.tx.component.basicdata.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,12 +12,15 @@ import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import com.tx.component.basicdata.context.AbstractBasicDataService;
 import com.tx.component.basicdata.context.BasicDataContext;
 import com.tx.component.basicdata.model.BasicData;
 import com.tx.component.basicdata.model.DataDict;
+import com.tx.component.basicdata.service.AbstractBasicDataService;
+import com.tx.component.basicdata.service.DataDictService;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.paged.model.PagedList;
 import com.tx.core.support.json.JSONAttributesSupportUtils;
@@ -40,18 +43,21 @@ public class DefaultDBBasicDataService<T extends BasicData>
     /** 数据字典业务层 */
     protected DataDictService dataDictService;
     
+    /** 事务处理业务逻辑 */
+    protected TransactionTemplate transactionTemplate;
+    
     /** <默认构造函数> */
     public DefaultDBBasicDataService() {
         super();
     }
     
-    /** <默认构造函数> */
-    public DefaultDBBasicDataService(Class<T> rawType,
-            DataDictService dataDictService,
-            TransactionTemplate transactionTemplate) {
-        super();
-        this.rawType = rawType;
-        this.dataDictService = dataDictService;
+    /**
+     * 覆写该方法保证类型能够被获取到<br/>
+     * @return
+     */
+    @Override
+    public Class<T> getRawType() {
+        return this.rawType;
     }
     
     /**
@@ -81,7 +87,13 @@ public class DefaultDBBasicDataService<T extends BasicData>
     public boolean deleteById(String id) {
         AssertUtils.notEmpty(id, "id is null.");
         
-        boolean flag = dataDictService.deleteById(id);
+        boolean flag = this.transactionTemplate
+                .execute(new TransactionCallback<Boolean>() {
+                    @Override
+                    public Boolean doInTransaction(TransactionStatus status) {
+                        return dataDictService.deleteById(id);
+                    }
+                });
         return flag;
     }
     
@@ -96,7 +108,13 @@ public class DefaultDBBasicDataService<T extends BasicData>
         String type = type();
         AssertUtils.notEmpty(type, "type is null.");
         
-        boolean flag = dataDictService.deleteByCode(code, type);
+        boolean flag = this.transactionTemplate
+                .execute(new TransactionCallback<Boolean>() {
+                    @Override
+                    public Boolean doInTransaction(TransactionStatus status) {
+                        return dataDictService.deleteByCode(code, type);
+                    }
+                });
         return flag;
     }
     
@@ -112,7 +130,13 @@ public class DefaultDBBasicDataService<T extends BasicData>
                 .toJSONAttributesSupport(DataDict.class, data);
         AssertUtils.notEmpty(obj.getId(), "data.id is empty.");
         
-        boolean flag = dataDictService.update(obj);
+        boolean flag = this.transactionTemplate
+                .execute(new TransactionCallback<Boolean>() {
+                    @Override
+                    public Boolean doInTransaction(TransactionStatus status) {
+                        return dataDictService.update(obj);
+                    }
+                });
         return flag;
     }
     
@@ -122,7 +146,13 @@ public class DefaultDBBasicDataService<T extends BasicData>
      */
     @Override
     public boolean disableById(String id) {
-        boolean flag = dataDictService.disableById(id);
+        boolean flag = this.transactionTemplate
+                .execute(new TransactionCallback<Boolean>() {
+                    @Override
+                    public Boolean doInTransaction(TransactionStatus status) {
+                        return dataDictService.disableById(id);
+                    }
+                });
         return flag;
     }
     
@@ -132,7 +162,13 @@ public class DefaultDBBasicDataService<T extends BasicData>
      */
     @Override
     public boolean enableById(String id) {
-        boolean flag = dataDictService.enableById(id);
+        boolean flag = this.transactionTemplate
+                .execute(new TransactionCallback<Boolean>() {
+                    @Override
+                    public Boolean doInTransaction(TransactionStatus status) {
+                        return dataDictService.enableById(id);
+                    }
+                });
         return flag;
     }
     
@@ -266,11 +302,10 @@ public class DefaultDBBasicDataService<T extends BasicData>
     }
     
     /**
-     * 覆写该方法保证类型能够被获取到<br/>
-     * @return
+     * @param 对transactionTemplate进行赋值
      */
-    @Override
-    public Class<T> getRawType() {
-        return this.rawType;
+    public void setTransactionTemplate(
+            TransactionTemplate transactionTemplate) {
+        this.transactionTemplate = transactionTemplate;
     }
 }

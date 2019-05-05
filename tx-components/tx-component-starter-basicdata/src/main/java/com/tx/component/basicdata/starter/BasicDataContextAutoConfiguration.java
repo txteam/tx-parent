@@ -12,25 +12,27 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
 import org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cache.CacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import com.tx.component.basicdata.context.BasicDataContextFactory;
-import com.tx.component.basicdata.context.BasicDataEntityRegistry;
-import com.tx.component.basicdata.context.BasicDataServiceImportRegistrar;
+import com.tx.component.basicdata.context.BasicDataServiceSupportCacheProxyCreator;
 import com.tx.component.basicdata.controller.BasicDataAPIController;
 import com.tx.component.basicdata.registry.BasicDataAPIClientRegistry;
+import com.tx.component.basicdata.registry.BasicDataEntityRegistry;
+import com.tx.component.basicdata.registry.BasicDataServiceRegistry;
 import com.tx.component.basicdata.service.DataDictService;
+import com.tx.component.basicdata.starter.BasicDataCacheConfiguration.BasicDataCacheCustomizer;
+import com.tx.core.exceptions.util.AssertUtils;
 
 /**
  * 基础数据容器自动配置<br/>
@@ -48,7 +50,8 @@ import com.tx.component.basicdata.service.DataDictService;
 @AutoConfigureAfter(TransactionAutoConfiguration.class)
 @ConditionalOnProperty(prefix = "tx.basicdata", value = "enable", havingValue = "true")
 @Import({ BasicDataPersisterConfiguration.class,
-        BasicDataAPIClientConfiguration.class })
+        BasicDataAPIClientConfiguration.class,
+        BasicDataCacheConfiguration.class })
 public class BasicDataContextAutoConfiguration
         implements InitializingBean, ApplicationContextAware {
     
@@ -70,7 +73,8 @@ public class BasicDataContextAutoConfiguration
     
     /** <默认构造函数> */
     public BasicDataContextAutoConfiguration(
-            BasicDataContextProperties properties) {
+            BasicDataContextProperties properties,
+            PlatformTransactionManager transactionManager) {
         super();
         this.properties = properties;
     }
@@ -114,7 +118,7 @@ public class BasicDataContextAutoConfiguration
      * @see [类、类#方法、类#成员]
      */
     @Bean(name = "basicdata.basicDataEntityRegistry")
-    public BasicDataEntityRegistry basicDataServiceRegistry() {
+    public BasicDataEntityRegistry basicDataEntityRegistry() {
         BasicDataEntityRegistry registry = new BasicDataEntityRegistry();
         
         return registry;
@@ -132,7 +136,7 @@ public class BasicDataContextAutoConfiguration
     @Bean(name = "basicDataContext")
     public BasicDataContextFactory BasicDataContextFactory() {
         BasicDataContextFactory context = new BasicDataContextFactory();
-        context.setRegistry(basicDataServiceRegistry());
+        context.setRegistry(basicDataEntityRegistry());
         
         return context;
     }
@@ -148,8 +152,8 @@ public class BasicDataContextAutoConfiguration
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @Bean(name = "basicDataServiceImportRegistrar")
-    public BasicDataServiceImportRegistrar basicDataServiceImportRegistrar(
+    @Bean(name = "basicDataServiceRegistry")
+    public BasicDataServiceRegistry basicDataServiceRegistry(
             DataDictService dataDictService) {
         BasicDataAPIClientRegistry basicDataAPIClientRegistry = null;
         if (this.applicationContext
@@ -158,10 +162,31 @@ public class BasicDataContextAutoConfiguration
                     "basicDataAPIClientRegistry",
                     BasicDataAPIClientRegistry.class);
         }
-        BasicDataServiceImportRegistrar registrar = new BasicDataServiceImportRegistrar(
+        BasicDataServiceRegistry registrar = new BasicDataServiceRegistry(
                 this.basePackages, this.module, dataDictService,
-                basicDataAPIClientRegistry, basicDataServiceRegistry());
+                basicDataAPIClientRegistry, basicDataEntityRegistry());
         return registrar;
+    }
+    
+    /**
+     * 基础数据业务层缓存代理<br/>
+     * <功能详细描述>
+     * @param customizer
+     * @return [参数说明]
+     * 
+     * @return BasicDataServiceSupportCacheProxyCreator [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @Bean(name = "basicDataServiceSupportCacheProxyCreator")
+    public BasicDataServiceSupportCacheProxyCreator basicDataServiceSupportCacheProxyCreator(
+            BasicDataCacheCustomizer customizer) {
+        CacheManager cacheManager = customizer.getCacheManager();
+        AssertUtils.notNull(cacheManager, "cacheManager is null.");
+        
+        BasicDataServiceSupportCacheProxyCreator creator = new BasicDataServiceSupportCacheProxyCreator(
+                cacheManager);
+        return creator;
     }
     
     /**
@@ -177,26 +202,5 @@ public class BasicDataContextAutoConfiguration
     public BasicDataAPIController basicDataAPIController() {
         BasicDataAPIController controller = new BasicDataAPIController();
         return controller;
-    }
-    
-    /**
-     * 加载controller<br/>
-     * <功能详细描述>
-     * 
-     * @author  Administrator
-     * @version  [版本号, 2019年5月4日]
-     * @see  [相关类/方法]
-     * @since  [产品/模块版本]
-     */
-    @Configuration
-    @ComponentScan(basePackages = "com.tx.component.basicdata.controller")
-    public static class ControllerLoader {
-        
-        @Bean
-        @ConditionalOnMissingBean
-        public ControllerLoader controllerLoader() {
-            ControllerLoader loader = new ControllerLoader();
-            return loader;
-        }
     }
 }

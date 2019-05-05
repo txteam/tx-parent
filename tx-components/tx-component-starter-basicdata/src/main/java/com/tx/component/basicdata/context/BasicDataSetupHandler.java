@@ -14,6 +14,7 @@ import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.PropertyAccessorFactory;
 
 import com.tx.component.basicdata.model.BasicData;
+import com.tx.component.basicdata.service.BasicDataService;
 import com.tx.core.exceptions.util.AssertUtils;
 
 /**

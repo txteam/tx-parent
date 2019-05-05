@@ -34,15 +34,29 @@ public interface ConfigPropertyItemDao {
     public void insert(ConfigPropertyItem configPropertyItem);
     
     /**
-     * 更新配置属性项<br/>
+     * 删除DataDict对象
+     * 1、auto generate
+     * 2、根据入参条件进行删除
      * <功能详细描述>
-     * @param configPropertyItem [参数说明]
+     * @param condition [参数说明]
      * 
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public int update(Map<String, Object> rowMap);
+    public int delete(ConfigPropertyItem configPropertyItem);
+    
+    /**
+     * 查询配置属性项<br/>
+     * <功能详细描述>
+     * @param condition
+     * @return [参数说明]
+     * 
+     * @return ConfigPropertyItem [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public ConfigPropertyItem find(ConfigPropertyItem condition);
     
     /**
      * 根据系统id查询配置属性项列表 
@@ -57,14 +71,26 @@ public interface ConfigPropertyItemDao {
     public List<ConfigPropertyItem> queryList(Map<String, Object> params);
     
     /**
-     * 查询配置属性项<br/>
+     * 根据条件查询DataDict列表总数
+     * auto generated
      * <功能详细描述>
-     * @param condition
+     * @param params
      * @return [参数说明]
      * 
-     * @return ConfigPropertyItem [返回类型说明]
+     * @return int [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public ConfigPropertyItem find(ConfigPropertyItem condition);
+    public int count(Map<String, Object> params);
+    
+    /**
+     * 更新配置属性项<br/>
+     * <功能详细描述>
+     * @param configPropertyItem [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public int update(Map<String, Object> rowMap);
 }

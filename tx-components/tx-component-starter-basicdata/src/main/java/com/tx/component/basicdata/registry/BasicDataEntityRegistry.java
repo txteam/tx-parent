@@ -4,7 +4,7 @@
  * 修改时间:  
  * <修改描述:>
  */
-package com.tx.component.basicdata.context;
+package com.tx.component.basicdata.registry;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,6 +20,7 @@ import com.tx.component.basicdata.annotation.BasicDataEntity;
 import com.tx.component.basicdata.model.BasicData;
 import com.tx.component.basicdata.model.BasicDataEntityInfo;
 import com.tx.component.basicdata.model.BasicDataViewTypeEnum;
+import com.tx.component.basicdata.service.BasicDataService;
 import com.tx.core.exceptions.util.AssertUtils;
 
 /**
@@ -123,6 +124,24 @@ public class BasicDataEntityRegistry {
         this.class2moduleMap.put(rawType, info.getModule());
         this.class2entityInfoMap.put(rawType, info);
         this.class2serviceMap.put(rawType, service);
+    }
+    
+    /**
+     * 获取实例信息列表<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return List<BasicDataEntityInfo> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public List<BasicDataEntityInfo> getEntityInfoList() {
+        List<BasicDataEntityInfo> infoList = new ArrayList<>();
+        
+        for (BasicDataEntityInfo info : this.entityInfoMap.values()) {
+            infoList.add(info);
+        }
+        return infoList;
     }
     
     /**

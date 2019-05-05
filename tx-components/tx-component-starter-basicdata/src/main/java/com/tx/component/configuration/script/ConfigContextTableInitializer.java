@@ -200,6 +200,7 @@ public class ConfigContextTableInitializer extends AbstractTableInitializer
                 .newColumnOfVarchar("validateExpression", 128, false, null)
                 .newColumnOfBoolean("modifyAble", true, true)
                 .newColumnOfBoolean("leaf", true, false)
+                .newColumnOfVarchar("attributes", 512, false, null)
                 .newColumnOfDate("lastUpdateDate", true, true)
                 .newColumnOfDate("createDate", true, true);
     }

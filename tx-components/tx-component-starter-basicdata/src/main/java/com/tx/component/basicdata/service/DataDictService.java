@@ -601,4 +601,11 @@ public class DataDictService implements InitializingBean, ResourceLoaderAware {
             TransactionTemplate transactionTemplate) {
         this.transactionTemplate = transactionTemplate;
     }
+
+    /**
+     * @return 返回 transactionTemplate
+     */
+    public TransactionTemplate getTransactionTemplate() {
+        return transactionTemplate;
+    }
 }

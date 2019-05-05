@@ -20,25 +20,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "tx.basicdata.config")
 public class ConfigContextProperties {
     
-    /** 命令容器是否启动 */
-    private boolean enable = true;
-    
     /** 配置文件所在路径 */
     private String configLocation = "classpath:config/local/*.xml";
-    
-    /**
-     * @return 返回 enable
-     */
-    public boolean isEnable() {
-        return enable;
-    }
-    
-    /**
-     * @param 对enable进行赋值
-     */
-    public void setEnable(boolean enable) {
-        this.enable = enable;
-    }
     
     /**
      * @return 返回 configLocation

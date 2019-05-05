@@ -13,6 +13,8 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+import com.tx.component.basicdata.registry.BasicDataEntityRegistry;
+
 /**
  * 基础数据容器配置器<br/>
  * <功能详细描述>

@@ -12,6 +12,8 @@ import org.apache.commons.collections4.CollectionUtils;
 
 import com.tx.component.basicdata.model.BasicData;
 import com.tx.component.basicdata.model.TreeAbleBasicData;
+import com.tx.component.basicdata.service.BasicDataService;
+import com.tx.component.basicdata.service.TreeAbleBasicDataService;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.paged.model.PagedList;
 
@@ -52,6 +54,7 @@ public class BasicDataContext extends BasicDataContextBuilder {
     
     /**
       * 装载对象属性<br/>
+      *    尽量不要在基础数据业务层中调用，如果造成嵌套循环，则会加载太多对象<br/>
       * <功能详细描述>
       * @param obj [参数说明]
       * 
@@ -72,6 +75,7 @@ public class BasicDataContext extends BasicDataContextBuilder {
     
     /**
       * 装载基础数据<br/>
+      *     尽量不要在基础数据业务层中调用，如果造成嵌套循环，则会加载太多对象<br/>
       * <功能详细描述>
       * @param objectList [参数说明]
       * 

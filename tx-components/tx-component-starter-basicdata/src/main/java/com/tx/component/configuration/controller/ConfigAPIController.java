@@ -33,13 +33,10 @@ import io.swagger.annotations.ApiOperation;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-@Api(value = "/config", tags = "配置容器API")
-@RestController(value = "/config")
+@RestController
+@Api(value = "/api/config", tags = "配置容器API")
+@RequestMapping(value = "/api/config")
 public class ConfigAPIController {
-    
-    /** 配置容器实例 */
-    @Resource(name = "configContext")
-    private ConfigContext configContext;
     
     /** 配置属性项业务层 */
     @Resource
@@ -60,7 +57,7 @@ public class ConfigAPIController {
     @RequestMapping(value = "code/{code}", method = RequestMethod.GET)
     public ConfigProperty findByCode(
             @PathVariable(required = true, name = "code") String code) {
-        ConfigProperty configProperty = configContext.find(code);
+        ConfigProperty configProperty = this.configPropertyItemService.findByCode(module, code);
         return configProperty;
     }
     
@@ -79,23 +76,6 @@ public class ConfigAPIController {
     @RequestMapping(value = "/queryList", method = RequestMethod.GET)
     public List<ConfigProperty> queryList(Map<String, Object> params) {
         return null;
-    }
-    
-    /**
-     * 更新配置属性值<br/>
-     * <功能详细描述>
-     * @param key
-     * @param value
-     * @return [参数说明]
-     * 
-     * @return boolean [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    @RequestMapping("/update")
-    public boolean update(String code, String value) {
-        
-        return true;
     }
     
 }

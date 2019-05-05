@@ -78,6 +78,20 @@ public interface DataDictDao {
     public int delete(DataDict condition);
     
     /**
+     * 更新DataDict实体，
+     * auto generate
+     * 1、传入DataDict中主键不能为空
+     * <功能详细描述>
+     * @param updateDataDictRowMap
+     * @return [参数说明]
+     * 
+     * @return int [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public int update(Map<String, Object> updateRowMap);
+    
+    /**
      * 查询DataDict实体
      * auto generate
      * <功能详细描述>
@@ -135,17 +149,4 @@ public interface DataDictDao {
     public PagedList<DataDict> queryPagedList(Map<String, Object> params,
             int pageIndex, int pageSize);
     
-    /**
-     * 更新DataDict实体，
-     * auto generate
-     * 1、传入DataDict中主键不能为空
-     * <功能详细描述>
-     * @param updateDataDictRowMap
-     * @return [参数说明]
-     * 
-     * @return int [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public int update(Map<String, Object> updateRowMap);
 }
