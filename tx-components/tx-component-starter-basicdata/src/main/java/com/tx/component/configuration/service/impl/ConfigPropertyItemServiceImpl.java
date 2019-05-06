@@ -231,7 +231,7 @@ public class ConfigPropertyItemServiceImpl
      * @return
      */
     @Override
-    public List<ConfigPropertyItem> queryChildsByParentId(String module,
+    public List<ConfigPropertyItem> queryChildrenByParentId(String module,
             String parentId, Map<String, Object> params) {
         AssertUtils.notEmpty(module, "module is empty.");
         AssertUtils.notEmpty(parentId, "parentId is empty.");
@@ -252,7 +252,7 @@ public class ConfigPropertyItemServiceImpl
      * @return
      */
     @Override
-    public List<ConfigPropertyItem> queryNestedChildsByParentId(String module,
+    public List<ConfigPropertyItem> queryDescendantsByParentId(String module,
             String parentId, Map<String, Object> params) {
         AssertUtils.notEmpty(module, "module is empty.");
         AssertUtils.notEmpty(parentId, "parentId is empty.");

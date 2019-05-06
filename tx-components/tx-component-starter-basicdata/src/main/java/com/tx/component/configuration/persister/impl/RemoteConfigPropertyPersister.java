@@ -58,6 +58,25 @@ public class RemoteConfigPropertyPersister implements ConfigPropertyPersister {
     /**
      * @param module
      * @param code
+     * @param value
+     * @return
+     */
+    @Override
+    public boolean patch(String module, String code, String value) {
+        AssertUtils.notEmpty(module, "module is empty.");
+        AssertUtils.notEmpty(code, "code is empty.");
+        
+        ConfigAPIClient client = configAPIClientRegistry
+                .getConfigAPIClient(module);
+        value = value == null ? "" : value;
+        
+        boolean res = client.patch(code, value);
+        return res;
+    }
+    
+    /**
+     * @param module
+     * @param code
      * @return
      */
     @Override

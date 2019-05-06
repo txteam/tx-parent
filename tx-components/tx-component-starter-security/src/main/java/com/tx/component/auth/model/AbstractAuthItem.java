@@ -333,7 +333,7 @@ public abstract class AbstractAuthItem implements Auth {
      * @return
      */
     @Override
-    public List<Auth> getChilds() {
+    public List<Auth> getChildren() {
         return childs;
     }
     
@@ -341,7 +341,7 @@ public abstract class AbstractAuthItem implements Auth {
      * @param childs
      */
     @Override
-    public void setChilds(List<Auth> childs) {
+    public void setChildren(List<Auth> childs) {
         this.childs = childs;
     }
     

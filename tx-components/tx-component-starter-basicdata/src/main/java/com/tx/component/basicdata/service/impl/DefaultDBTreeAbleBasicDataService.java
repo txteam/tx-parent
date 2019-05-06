@@ -38,7 +38,7 @@ public class DefaultDBTreeAbleBasicDataService<T extends TreeAbleBasicData<T>>
      * @return
      */
     @Override
-    public List<T> queryListByParentId(String parentId, Boolean valid,
+    public List<T> queryChildrenByParentId(String parentId, Boolean valid,
             Map<String, Object> params) {
         params = params == null ? new HashMap<String, Object>() : params;
         params.put("parentId", parentId);
@@ -56,7 +56,7 @@ public class DefaultDBTreeAbleBasicDataService<T extends TreeAbleBasicData<T>>
      * @return
      */
     @Override
-    public PagedList<T> queryPagedListByParentId(String parentId, Boolean valid,
+    public PagedList<T> queryDescendantsByParentId(String parentId, Boolean valid,
             Map<String, Object> params, int pageIndex, int pageSize) {
         params = params == null ? new HashMap<String, Object>() : params;
         params.put("parentId", parentId);

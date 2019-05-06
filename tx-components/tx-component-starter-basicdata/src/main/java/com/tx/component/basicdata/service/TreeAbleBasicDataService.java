@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.tx.component.basicdata.model.TreeAbleBasicData;
-import com.tx.core.paged.model.PagedList;
 
 /**
  * 基础数据业务层<br/>
@@ -36,7 +35,7 @@ public interface TreeAbleBasicDataService<T extends TreeAbleBasicData<T>>
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    public List<T> queryListByParentId(String parentId, Boolean valid,
+    public List<T> queryChildrenByParentId(String parentId, Boolean valid,
             Map<String, Object> params);
     
     /**
@@ -45,15 +44,12 @@ public interface TreeAbleBasicDataService<T extends TreeAbleBasicData<T>>
      * @param parentId
      * @param valid
      * @param params
-     * @param pageIndex
-     * @param pageSize
      * @return [参数说明]
      * 
      * @return PagedList<T> [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    public PagedList<T> queryPagedListByParentId(String parentId,
-            Boolean valid, Map<String, Object> params, int pageIndex,
-            int pageSize);
+    public List<T> queryDescendantsByParentId(String parentId, Boolean valid,
+            Map<String, Object> params);
 }

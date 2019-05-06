@@ -65,7 +65,7 @@ public class ConfigPropertyItem implements ConfigProperty, Serializable {
     private String attributes;
     
     /** 子配置项 */
-    private List<ConfigProperty> childs;
+    private List<ConfigProperty> children;
     
     /**
      * @return 返回 id
@@ -248,18 +248,18 @@ public class ConfigPropertyItem implements ConfigProperty, Serializable {
     public void setAttributes(String attributes) {
         this.attributes = attributes;
     }
-    
+
     /**
-     * @return 返回 childs
+     * @return 返回 children
      */
-    public List<ConfigProperty> getChilds() {
-        return childs;
+    public List<ConfigProperty> getChildren() {
+        return children;
     }
-    
+
     /**
-     * @param 对childs进行赋值
+     * @param 对children进行赋值
      */
-    public void setChilds(List<ConfigProperty> childs) {
-        this.childs = childs;
+    public void setChildren(List<ConfigProperty> children) {
+        this.children = children;
     }
 }

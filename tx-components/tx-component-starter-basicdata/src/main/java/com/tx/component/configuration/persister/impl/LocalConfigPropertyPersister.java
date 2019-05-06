@@ -346,7 +346,7 @@ public class LocalConfigPropertyPersister implements ConfigPropertyPersister,
     public List<ConfigProperty> queryChildsByParentId(String module,
             String parentId, Map<String, Object> params) {
         List<ConfigPropertyItem> cpiList = this.configPropertyItemService
-                .queryChildsByParentId(this.module, parentId, params);
+                .queryChildrenByParentId(this.module, parentId, params);
         List<ConfigProperty> resList = new ArrayList<ConfigProperty>();
         for (ConfigPropertyItem itemTemp : cpiList) {
             if (!codes.contains(itemTemp.getCode())) {
@@ -367,7 +367,7 @@ public class LocalConfigPropertyPersister implements ConfigPropertyPersister,
     public List<ConfigProperty> queryNestedChildsByParentId(String module,
             String parentId, Map<String, Object> params) {
         List<ConfigPropertyItem> cpiList = this.configPropertyItemService
-                .queryNestedChildsByParentId(this.module, parentId, params);
+                .queryDescendantsByParentId(this.module, parentId, params);
         List<ConfigProperty> resList = new ArrayList<ConfigProperty>();
         for (ConfigPropertyItem itemTemp : cpiList) {
             if (!codes.contains(itemTemp.getCode())) {
@@ -377,4 +377,23 @@ public class LocalConfigPropertyPersister implements ConfigPropertyPersister,
         }
         return resList;
     }
+    
+    /**
+     * @param module
+     * @param code
+     * @param value
+     * @return
+     */
+    @Override
+    public boolean patch(String module, String code, String value) {
+        AssertUtils.notEmpty(module, "module is empty.");
+        AssertUtils.notEmpty(code, "code is empty.");
+        value = value == null ? "" : value;
+        
+        boolean res = this.configPropertyItemService.patch(this.module,
+                code,
+                value);
+        return res;
+    }
+    
 }

@@ -65,7 +65,7 @@ public abstract class AbstractTreeAbleDataDict<T extends TreeAbleBasicData<T>>
      * @return
      */
     @Override
-    public List<T> getChilds() {
+    public List<T> getChildren() {
         return this.childs;
     }
     
@@ -73,7 +73,7 @@ public abstract class AbstractTreeAbleDataDict<T extends TreeAbleBasicData<T>>
      * @param childs
      */
     @Override
-    public void setChilds(List<T> childs) {
+    public void setChildren(List<T> childs) {
         this.childs = childs;
     }
 }

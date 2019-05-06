@@ -307,7 +307,7 @@ public class TreeUtils {
         for (T parentTreeAbleNodeTemp : parentNodeCollection) {
             String parentTreeNodeId = parentTreeAbleNodeTemp.getId();
             if (parentIdIndexMap.containsKey(parentTreeNodeId)) {
-                parentTreeAbleNodeTemp.setChilds(parentIdIndexMap.get(parentTreeNodeId));
+                parentTreeAbleNodeTemp.setChildren(parentIdIndexMap.get(parentTreeNodeId));
                 allNextChildCollection.addAll(parentIdIndexMap.get(parentTreeNodeId));
             }
         }

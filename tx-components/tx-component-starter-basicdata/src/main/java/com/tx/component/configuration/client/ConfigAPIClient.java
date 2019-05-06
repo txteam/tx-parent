@@ -29,18 +29,20 @@ import com.tx.component.configuration.model.ConfigProperty;
 public interface ConfigAPIClient {
     
     /**
-     * 根据配置项编码获取配置属性实例<br/>
+     * 修改配置项值<br/>
      * <功能详细描述>
      * @param code
+     * @param value
      * @return [参数说明]
      * 
-     * @return ConfigProperty [返回类型说明]
+     * @return boolean [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ConfigProperty findById(
-            @PathVariable(required = true, name = "id") String id);
+    @RequestMapping(value = "/{code}/{value}", method = RequestMethod.PATCH)
+    public boolean patch(
+            @PathVariable(required = true, name = "code") String code,
+            @PathVariable(required = false, name = "value") String value);
     
     /**
      * 根据配置项编码获取配置属性实例<br/>

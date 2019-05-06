@@ -11,14 +11,15 @@ import java.util.List;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class ListTreeAbleProxy<T> implements ListTreeAble<ListTreeAbleProxy<T>> {
+public class ListTreeAbleProxy<T>
+        implements ListTreeAble<ListTreeAbleProxy<T>> {
     private T object;
     
     private String id;
     
     private String parentId;
     
-    private List<ListTreeAbleProxy<T>> childs;
+    private List<ListTreeAbleProxy<T>> children;
     
     public ListTreeAbleProxy(TreeAbleAdapter<T> adapter, T object) {
         this.id = adapter.getId(object);
@@ -71,14 +72,14 @@ public class ListTreeAbleProxy<T> implements ListTreeAble<ListTreeAbleProxy<T>> 
     /**
      * @return 返回 childs
      */
-    public List<ListTreeAbleProxy<T>> getChilds() {
-        return childs;
+    public List<ListTreeAbleProxy<T>> getChildren() {
+        return children;
     }
     
     /**
      * @param 对childs进行赋值
      */
-    public void setChilds(List<ListTreeAbleProxy<T>> childs) {
-        this.childs = childs;
+    public void setChildren(List<ListTreeAbleProxy<T>> childs) {
+        this.children = childs;
     }
 }

@@ -6,14 +6,11 @@
  */
 package com.tx.component.configuration.controller;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,6 +24,7 @@ import com.tx.core.exceptions.util.AssertUtils;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
 /**
@@ -69,24 +67,29 @@ public class ConfigAPIController implements InitializingBean {
     }
     
     /**
-     * 根据唯一键获取配置项实例<br/>
+     * 修改配置属性值<br/>
      * <功能详细描述>
-     * @param id
+     * @param code
+     * @param value
      * @return [参数说明]
      * 
-     * @return ConfigPropertyItem [返回类型说明]
+     * @return boolean [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @ApiOperation(value = "根据配置项id获取配置属性实例", notes = "")
-    @ApiImplicitParam(name = "id", value = "唯一键", required = true, dataType = "string", paramType = "path")
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ConfigPropertyItem findById(
-            @PathVariable(required = true, name = "id") String id) {
-        ConfigPropertyItem configProperty = this.configPropertyItemService
-                .findById(id);
+    @ApiOperation(value = "修改配置属性值", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "code", value = "code", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "value", value = "value", required = true, dataType = "string", paramType = "path") })
+    @RequestMapping(value = "/{code}/{value}", method = RequestMethod.PATCH)
+    public boolean patch(
+            @PathVariable(required = true, name = "code") String code,
+            @PathVariable(required = false, name = "value") String value) {
+        boolean res = this.configPropertyItemService.patch(this.module,
+                code,
+                value);
         
-        return configProperty;
+        return res;
     }
     
     /**
@@ -124,15 +127,51 @@ public class ConfigAPIController implements InitializingBean {
     @ApiImplicitParam(name = "params", value = "参数", required = true, dataType = "string", paramType = "path")
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public List<ConfigPropertyItem> queryList(
-            @RequestParam Map<String, String> params) {
-        Map<String, Object> queryParams = new HashMap<>();
-        if (MapUtils.isEmpty(params)) {
-            for (Entry<String, String> entryTemp : params.entrySet()) {
-                queryParams.put(entryTemp.getKey(), entryTemp.getValue());
-            }
-        }
+            @RequestParam Map<String, Object> params) {
         List<ConfigPropertyItem> cpiList = this.configPropertyItemService
-                .queryList(module, queryParams);
+                .queryList(module, params);
+        return cpiList;
+    }
+    
+    /**
+     * 查询配置属性<br/>
+     * <功能详细描述>
+     * @param module
+     * @param params
+     * @return [参数说明]
+     * 
+     * @return List<ConfigProperty> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @ApiOperation(value = "查询子集配置项清单", notes = "")
+    @RequestMapping(value = "/children/{parentId}", method = RequestMethod.GET)
+    public List<ConfigPropertyItem> queryChildrenByParentId(
+            @PathVariable(required = true, name = "parentId") String parentId,
+            @RequestParam Map<String, Object> params) {
+        List<ConfigPropertyItem> cpiList = this.configPropertyItemService
+                .queryChildrenByParentId(this.module, parentId, params);
+        return cpiList;
+    }
+    
+    /**
+     * 查询配置属性<br/>
+     * <功能详细描述>
+     * @param module
+     * @param params
+     * @return [参数说明]
+     * 
+     * @return List<ConfigProperty> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @ApiOperation(value = "查询所有孙子节点配置项清单", notes = "")
+    @RequestMapping(value = "/descendants/{parentId}", method = RequestMethod.GET)
+    public List<ConfigPropertyItem> queryDescendantsByParentId(
+            @PathVariable(required = true, name = "parentId") String parentId,
+            @RequestParam Map<String, Object> params) {
+        List<ConfigPropertyItem> cpiList = this.configPropertyItemService
+                .queryDescendantsByParentId(this.module, parentId, params);
         return cpiList;
     }
     

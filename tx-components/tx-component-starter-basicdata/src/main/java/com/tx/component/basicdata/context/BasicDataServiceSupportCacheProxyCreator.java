@@ -6,6 +6,8 @@
  */
 package com.tx.component.basicdata.context;
 
+import java.lang.reflect.Method;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.aop.TargetSource;
 import org.springframework.aop.framework.autoproxy.AbstractAutoProxyCreator;
@@ -14,8 +16,9 @@ import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 
 import com.tx.component.basicdata.service.BasicDataService;
-import com.tx.component.configuration.context.ConfigCacheInterceptor;
+import com.tx.component.configuration.persister.ConfigPropertyPersister;
 import com.tx.component.configuration.service.ConfigPropertyItemService;
+import com.tx.core.spring.interceptor.ServiceSupportCacheInterceptor;
 
 /**
  * 基础数据业务层环绕<br/>
@@ -72,15 +75,39 @@ public class BasicDataServiceSupportCacheProxyCreator
             
             Cache cache = this.cacheManager.getCache(cacheName);
             Object[] interceptors = new Object[] {
-                    new BasicDataCacheInterceptor(cache) };
+                    //基础数据仅在find时使用缓存
+                    new ServiceSupportCacheInterceptor(cache) {
+                        @Override
+                        protected boolean isUseCache(Method method,
+                                Object[] args) {
+                            String methodName = method.getName();
+                            boolean isQueryMethod = methodName
+                                    .startsWith("find");
+                            return isQueryMethod;
+                        }
+                    } };
             return interceptors;
-        } else if (ConfigPropertyItemService.class
-                .isAssignableFrom(beanClass)) {
-            String cacheName = "configPropertyItemService.cache";
+        } else if (ConfigPropertyPersister.class.isAssignableFrom(beanClass)) {
+            String cacheName = "configcontext.cache";
             
             Cache cache = this.cacheManager.getCache(cacheName);
             Object[] interceptors = new Object[] {
-                    new ConfigCacheInterceptor(cache) };
+                    new ServiceSupportCacheInterceptor(cache) };
+            return interceptors;
+        } else if (ConfigPropertyItemService.class
+                .isAssignableFrom(beanClass)) {
+            String cacheName = "configcontext.cache";
+            
+            Cache cache = this.cacheManager.getCache(cacheName);
+            Object[] interceptors = new Object[] {
+                    new ServiceSupportCacheInterceptor(cache) {
+                        //itemservice只负责清空缓存，查询期间不使用缓存
+                        @Override
+                        protected boolean isUseCache(Method method,
+                                Object[] args) {
+                            return false;
+                        }
+                    } };
             return interceptors;
         } else {
             return DO_NOT_PROXY;

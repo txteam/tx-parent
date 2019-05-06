@@ -19,8 +19,8 @@ public interface SetTreeAble<T> extends TreeAble<Set<T>, T> {
     public String getParentId();
     
     /** 获取子节点列表 */
-    public Set<T> getChilds();
+    public Set<T> getChildren();
     
     /** 设置子节点列表 */
-    public void setChilds(Set<T> childs);
+    public void setChildren(Set<T> childs);
 }

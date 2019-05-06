@@ -18,7 +18,7 @@ public class SetTreeAbleProxy<T> implements SetTreeAble<SetTreeAbleProxy<T>> {
     
     private String parentId;
     
-    private Set<SetTreeAbleProxy<T>> childs;
+    private Set<SetTreeAbleProxy<T>> children;
     
     public SetTreeAbleProxy(TreeAbleAdapter<T> adapter, T object) {
         this.id = adapter.getId(object);
@@ -71,14 +71,14 @@ public class SetTreeAbleProxy<T> implements SetTreeAble<SetTreeAbleProxy<T>> {
     /**
      * @return 返回 childs
      */
-    public Set<SetTreeAbleProxy<T>> getChilds() {
-        return childs;
+    public Set<SetTreeAbleProxy<T>> getChildren() {
+        return children;
     }
     
     /**
      * @param 对childs进行赋值
      */
-    public void setChilds(Set<SetTreeAbleProxy<T>> childs) {
-        this.childs = childs;
+    public void setChildren(Set<SetTreeAbleProxy<T>> childs) {
+        this.children = childs;
     }
 }

@@ -132,4 +132,18 @@ public class ConfigPropertyPersisterComposite
         return cpList;
     }
     
+    /**
+     * @param module
+     * @param code
+     * @param value
+     * @return
+     */
+    @Override
+    public boolean patch(String module, String code, String value) {
+        ConfigPropertyPersister persister = getConfigPropertyPersister(module);
+        
+        boolean flag = persister.patch(module, code, value);
+        return flag;
+    }
+    
 }

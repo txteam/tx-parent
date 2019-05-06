@@ -20,8 +20,8 @@ public interface TreeAble<C extends Collection<T>, T> {
     public String getParentId();
     
     /** 获取子节点列表 */
-    public C getChilds();
+    public C getChildren();
     
     /** 设置子节点列表 */
-    public void setChilds(C childs);
+    public void setChildren(C childs);
 }

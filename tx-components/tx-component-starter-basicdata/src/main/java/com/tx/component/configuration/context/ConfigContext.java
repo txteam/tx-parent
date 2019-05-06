@@ -6,6 +6,9 @@
  */
 package com.tx.component.configuration.context;
 
+import java.util.List;
+import java.util.Map;
+
 import com.tx.component.configuration.model.ConfigProperty;
 import com.tx.core.exceptions.util.AssertUtils;
 
@@ -85,5 +88,126 @@ public class ConfigContext extends ConfigContextBuilder {
         
         ConfigProperty p = doFind(module, code);
         return p;
+    }
+    
+    /**
+     * 查询配置属性<br/>
+     * <功能详细描述>
+     * @param params
+     * @return [参数说明]
+     * 
+     * @return List<ConfigProperty> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public List<ConfigProperty> queryList(Map<String, Object> params) {
+        List<ConfigProperty> resList = doQueryList(this.module, params);
+        return resList;
+    }
+    
+    /**
+     * 根父节点查询子节点<br/>
+     * <功能详细描述>
+     * @param parentId
+     * @param params
+     * @return [参数说明]
+     * 
+     * @return List<ConfigPropertyItem> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public List<ConfigProperty> queryChildsByParentId(String parentId,
+            Map<String, Object> params) {
+        AssertUtils.notEmpty(parentId, "parentId is empty.");
+        
+        List<ConfigProperty> resList = doQueryChildsByParentId(this.module,
+                parentId,
+                params);
+        return resList;
+    }
+    
+    /**
+     * 嵌套查询子级配置项<br/>
+     * <功能详细描述>
+     * @param parentId
+     * @param params
+     * @return [参数说明]
+     * 
+     * @return List<ConfigPropertyItem> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public List<ConfigProperty> queryNestedChildsByParentId(String parentId,
+            Map<String, Object> params) {
+        AssertUtils.notEmpty(parentId, "parentId is empty.");
+        
+        List<ConfigProperty> resList = doQueryNestedChildsByParentId(
+                this.module, parentId, params);
+        return resList;
+    }
+    
+    /**
+     * 查询配置属性<br/>
+     * <功能详细描述>
+     * @param module
+     * @param params
+     * @return [参数说明]
+     * 
+     * @return List<ConfigProperty> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public List<ConfigProperty> queryList(String module,
+            Map<String, Object> params) {
+        AssertUtils.notEmpty(module, "module is empty.");
+        
+        List<ConfigProperty> resList = doQueryList(module, params);
+        return resList;
+    }
+    
+    /**
+     * 根父节点查询子节点<br/>
+     * <功能详细描述>
+     * @param module
+     * @param parentId
+     * @param params
+     * @return [参数说明]
+     * 
+     * @return List<ConfigPropertyItem> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public List<ConfigProperty> queryChildsByParentId(String module,
+            String parentId, Map<String, Object> params) {
+        AssertUtils.notEmpty(module, "module is empty.");
+        AssertUtils.notEmpty(parentId, "parentId is empty.");
+        
+        List<ConfigProperty> resList = doQueryChildsByParentId(module,
+                parentId,
+                params);
+        return resList;
+    }
+    
+    /**
+     * 嵌套查询子级配置项<br/>
+     * <功能详细描述>
+     * @param module
+     * @param parentId
+     * @param params
+     * @return [参数说明]
+     * 
+     * @return List<ConfigPropertyItem> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public List<ConfigProperty> queryNestedChildsByParentId(String module,
+            String parentId, Map<String, Object> params) {
+        AssertUtils.notEmpty(module, "module is empty.");
+        AssertUtils.notEmpty(parentId, "parentId is empty.");
+        
+        List<ConfigProperty> resList = doQueryNestedChildsByParentId(module,
+                parentId,
+                params);
+        return resList;
     }
 }

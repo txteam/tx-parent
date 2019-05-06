@@ -193,7 +193,7 @@ public class AuthItemWraper<T> implements Auth {
     /**
      * @return 返回 childs
      */
-    public List<Auth> getChilds() {
+    public List<Auth> getChildren() {
         return childs;
     }
     

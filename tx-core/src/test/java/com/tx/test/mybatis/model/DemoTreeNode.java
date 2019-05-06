@@ -45,14 +45,14 @@ public class DemoTreeNode extends Demo implements TreeAble<List<Demo>,Demo>{
     /**
      * @return 返回 childs
      */
-    public List<Demo> getChilds() {
+    public List<Demo> getChildren() {
         return childs;
     }
 
     /**
      * @param 对childs进行赋值
      */
-    public void setChilds(List<Demo> childs) {
+    public void setChildren(List<Demo> childs) {
         this.childs = childs;
     }
 

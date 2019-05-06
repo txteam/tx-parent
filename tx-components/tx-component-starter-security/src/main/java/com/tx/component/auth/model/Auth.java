@@ -144,5 +144,5 @@ public interface Auth extends JSONAttributesSupport, TreeAble<List<Auth>, Auth>,
      * 
      * @return String [返回类型说明]
      */
-    List<Auth> getChilds();
+    List<Auth> getChildren();
 }

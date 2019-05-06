@@ -73,8 +73,8 @@ public interface ConfigPropertyPersister {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    List<ConfigProperty> queryChildsByParentId(String module,
-            String parentId, Map<String, Object> params);
+    List<ConfigProperty> queryChildsByParentId(String module, String parentId,
+            Map<String, Object> params);
     
     /**
      * 嵌套查询子级配置项<br/>
@@ -90,4 +90,18 @@ public interface ConfigPropertyPersister {
      */
     List<ConfigProperty> queryNestedChildsByParentId(String module,
             String parentId, Map<String, Object> params);
+    
+    /**
+     * 更新配置项<br/>
+     * <功能详细描述>
+     * @param module
+     * @param code
+     * @param value
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public boolean patch(String module, String code, String value);
 }

@@ -125,7 +125,7 @@ public interface ConfigPropertyItemService {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    List<ConfigPropertyItem> queryChildsByParentId(String module,
+    List<ConfigPropertyItem> queryChildrenByParentId(String module,
             String parentId, Map<String, Object> params);
     
     /**
@@ -140,7 +140,7 @@ public interface ConfigPropertyItemService {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    List<ConfigPropertyItem> queryNestedChildsByParentId(String module,
+    List<ConfigPropertyItem> queryDescendantsByParentId(String module,
             String parentId, Map<String, Object> params);
     
 }

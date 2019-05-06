@@ -20,7 +20,7 @@ public class TreeAbleProxy<T>
     
     private String parentId;
     
-    private List<TreeAbleProxy<T>> childs;
+    private List<TreeAbleProxy<T>> children;
     
     public TreeAbleProxy(TreeAbleAdapter<T> adapter, T object) {
         this.id = adapter.getId(object);
@@ -73,14 +73,14 @@ public class TreeAbleProxy<T>
     /**
      * @return 返回 childs
      */
-    public List<TreeAbleProxy<T>> getChilds() {
-        return childs;
+    public List<TreeAbleProxy<T>> getChildren() {
+        return children;
     }
 
     /**
      * @param 对childs进行赋值
      */
-    public void setChilds(List<TreeAbleProxy<T>> childs) {
-        this.childs = childs;
+    public void setChildren(List<TreeAbleProxy<T>> children) {
+        this.children = children;
     }
 }

@@ -19,8 +19,8 @@ public interface ListTreeAble<T> extends TreeAble<List<T>, T> {
     public String getParentId();
     
     /** 获取子节点列表 */
-    public List<T> getChilds();
+    public List<T> getChildren();
     
     /** 设置子节点列表 */
-    public void setChilds(List<T> childs);
+    public void setChildren(List<T> childs);
 }
