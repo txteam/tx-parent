@@ -35,7 +35,6 @@ public class ConfigContext extends ConfigContextBuilder {
      */
     @Override
     protected void doInitContext() throws Exception {
-        
     }
     
     /**
@@ -56,6 +55,38 @@ public class ConfigContext extends ConfigContextBuilder {
         AssertUtils.notNull(ConfigContext.context, "context is null.");
         
         return ConfigContext.context;
+    }
+    
+    /**
+     * 根据code获取对应的配置属性实例
+     * @param code
+     * 
+     * @return ConfigProperty [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public boolean patch(String code, String value) {
+        AssertUtils.notEmpty(code, "code is empty.");
+        value = value == null ? "" : value;
+        
+        boolean flag = this.composite.patch(this.module, code, value);
+        return flag;
+    }
+    
+    /**
+     * 根据code获取对应的配置属性实例
+     * @param code
+     * 
+     * @return ConfigProperty [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public boolean patch(String module, String code, String value) {
+        AssertUtils.notEmpty(module, "module is empty.");
+        AssertUtils.notEmpty(code, "code is empty.");
+        
+        boolean flag = this.composite.patch(module, code, value);
+        return flag;
     }
     
     /**

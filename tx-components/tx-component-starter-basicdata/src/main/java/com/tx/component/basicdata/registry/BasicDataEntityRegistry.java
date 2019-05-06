@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -153,17 +154,22 @@ public class BasicDataEntityRegistry {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public List<BasicDataEntityInfo> getEntityInfoList(String module) {
-        List<BasicDataEntityInfo> infoList = new ArrayList<>();
+    public List<BasicDataEntityInfo> getEntityInfoList(String module,
+            List<BasicDataViewTypeEnum> viewTypes) {
+        List<BasicDataEntityInfo> infoList = new ArrayList<>(
+                this.entityInfoMap.values());
         
-        for (BasicDataEntityInfo info : this.entityInfoMap.values()) {
-            if (!StringUtils.isEmpty(module) && StringUtils
-                    .equalsAnyIgnoreCase(module, info.getModule())) {
-                infoList.add(info);
-            } else {
-                infoList.add(info);
-            }
+        if (!StringUtils.isEmpty(module)) {
+            CollectionUtils.filter(infoList,
+                    (BasicDataEntityInfo object) -> !module
+                            .equals(object.getModule()));
         }
+        if (!CollectionUtils.isEmpty(viewTypes)) {
+            CollectionUtils.filter(infoList,
+                    (BasicDataEntityInfo object) -> !viewTypes
+                            .contains(object.getViewType()));
+        }
+        
         return infoList;
     }
     
