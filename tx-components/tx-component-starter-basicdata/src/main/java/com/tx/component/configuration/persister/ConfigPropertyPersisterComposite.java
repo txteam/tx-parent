@@ -106,11 +106,11 @@ public class ConfigPropertyPersisterComposite
      * @return
      */
     @Override
-    public List<ConfigProperty> queryChildsByParentId(String module,
+    public List<ConfigProperty> queryChildrenByParentId(String module,
             String parentId, Map<String, Object> params) {
         ConfigPropertyPersister persister = getConfigPropertyPersister(module);
         
-        List<ConfigProperty> cpList = persister.queryChildsByParentId(module,
+        List<ConfigProperty> cpList = persister.queryChildrenByParentId(module,
                 parentId,
                 params);
         return cpList;
@@ -123,12 +123,12 @@ public class ConfigPropertyPersisterComposite
      * @return
      */
     @Override
-    public List<ConfigProperty> queryNestedChildsByParentId(String module,
+    public List<ConfigProperty> queryDescendantsByParentId(String module,
             String parentId, Map<String, Object> params) {
         ConfigPropertyPersister persister = getConfigPropertyPersister(module);
         
         List<ConfigProperty> cpList = persister
-                .queryNestedChildsByParentId(module, parentId, params);
+                .queryDescendantsByParentId(module, parentId, params);
         return cpList;
     }
     

@@ -115,7 +115,7 @@ public class RemoteConfigPropertyPersister implements ConfigPropertyPersister {
      * @return
      */
     @Override
-    public List<ConfigProperty> queryChildsByParentId(String module,
+    public List<ConfigProperty> queryChildrenByParentId(String module,
             String parentId, Map<String, Object> params) {
         AssertUtils.notEmpty(module, "module is empty.");
         AssertUtils.notEmpty(parentId, "parentId is empty.");
@@ -123,7 +123,7 @@ public class RemoteConfigPropertyPersister implements ConfigPropertyPersister {
         ConfigAPIClient client = configAPIClientRegistry
                 .getConfigAPIClient(module);
         
-        List<ConfigProperty> resList = client.queryChildsByParentId(parentId,
+        List<ConfigProperty> resList = client.queryChildrenByParentId(parentId,
                 params);
         return resList;
     }
@@ -135,7 +135,7 @@ public class RemoteConfigPropertyPersister implements ConfigPropertyPersister {
      * @return
      */
     @Override
-    public List<ConfigProperty> queryNestedChildsByParentId(String module,
+    public List<ConfigProperty> queryDescendantsByParentId(String module,
             String parentId, Map<String, Object> params) {
         AssertUtils.notEmpty(module, "module is empty.");
         AssertUtils.notEmpty(parentId, "parentId is empty.");
@@ -144,7 +144,7 @@ public class RemoteConfigPropertyPersister implements ConfigPropertyPersister {
                 .getConfigAPIClient(module);
         
         List<ConfigProperty> resList = client
-                .queryNestedChildsByParentId(parentId, params);
+                .queryDescendantsByParentId(parentId, params);
         return resList;
     }
     

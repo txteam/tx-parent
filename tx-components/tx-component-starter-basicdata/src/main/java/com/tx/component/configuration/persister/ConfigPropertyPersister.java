@@ -73,7 +73,7 @@ public interface ConfigPropertyPersister {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    List<ConfigProperty> queryChildsByParentId(String module, String parentId,
+    List<ConfigProperty> queryChildrenByParentId(String module, String parentId,
             Map<String, Object> params);
     
     /**
@@ -88,7 +88,7 @@ public interface ConfigPropertyPersister {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    List<ConfigProperty> queryNestedChildsByParentId(String module,
+    List<ConfigProperty> queryDescendantsByParentId(String module,
             String parentId, Map<String, Object> params);
     
     /**

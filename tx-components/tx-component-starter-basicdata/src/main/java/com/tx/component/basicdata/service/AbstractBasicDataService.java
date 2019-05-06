@@ -9,9 +9,11 @@ package com.tx.component.basicdata.service;
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.tx.component.basicdata.model.BasicData;
+import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.util.typereference.ParameterizedTypeReference;
 
 /**
@@ -24,8 +26,7 @@ import com.tx.core.util.typereference.ParameterizedTypeReference;
  * @since  [产品/模块版本]
  */
 public abstract class AbstractBasicDataService<T extends BasicData>
-        extends ParameterizedTypeReference<T>
-        implements BasicDataService<T> {
+        extends ParameterizedTypeReference<T> implements BasicDataService<T> {
     
     /**
      * @param dataList
@@ -53,5 +54,26 @@ public abstract class AbstractBasicDataService<T extends BasicData>
         for (T dataTemp : dataList) {
             updateById(dataTemp);
         }
+    }
+    
+    /**
+     * @param data
+     * @return
+     */
+    @Override
+    @Transactional
+    public boolean updateByCode(T data) {
+        if (!StringUtils.isEmpty(data.getId())) {
+            updateById(data);
+        }
+        AssertUtils.notEmpty(data.getCode(), "code is empty.");
+        T dbData = findByCode(data.getCode());
+        if (dbData == null) {
+            return false;
+        }
+        
+        data.setId(dbData.getId());
+        boolean flag = updateById(data);
+        return flag;
     }
 }

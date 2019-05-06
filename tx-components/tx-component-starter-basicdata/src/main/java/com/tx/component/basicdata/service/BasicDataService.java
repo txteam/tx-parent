@@ -131,6 +131,18 @@ public interface BasicDataService<T extends BasicData> {
     public boolean updateById(T data);
     
     /**
+     * 根据id更新基础数据对象<br/>
+     * <功能详细描述>
+     * @param data
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public boolean updateByCode(T data);
+    
+    /**
      * 批量更新基础数据<br/>
      * <功能详细描述>
      * @param dataList [参数说明]

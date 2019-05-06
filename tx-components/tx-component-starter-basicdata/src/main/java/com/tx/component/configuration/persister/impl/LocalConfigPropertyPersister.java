@@ -343,7 +343,7 @@ public class LocalConfigPropertyPersister implements ConfigPropertyPersister,
      * @return
      */
     @Override
-    public List<ConfigProperty> queryChildsByParentId(String module,
+    public List<ConfigProperty> queryChildrenByParentId(String module,
             String parentId, Map<String, Object> params) {
         List<ConfigPropertyItem> cpiList = this.configPropertyItemService
                 .queryChildrenByParentId(this.module, parentId, params);
@@ -364,7 +364,7 @@ public class LocalConfigPropertyPersister implements ConfigPropertyPersister,
      * @return
      */
     @Override
-    public List<ConfigProperty> queryNestedChildsByParentId(String module,
+    public List<ConfigProperty> queryDescendantsByParentId(String module,
             String parentId, Map<String, Object> params) {
         List<ConfigPropertyItem> cpiList = this.configPropertyItemService
                 .queryDescendantsByParentId(this.module, parentId, params);

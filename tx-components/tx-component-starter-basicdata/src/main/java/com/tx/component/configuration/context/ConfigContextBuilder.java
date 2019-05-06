@@ -79,10 +79,10 @@ public abstract class ConfigContextBuilder extends ConfigContextConfigurator {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    protected List<ConfigProperty> doQueryChildsByParentId(String module,
+    protected List<ConfigProperty> doQueryChildrenByParentId(String module,
             String parentId, Map<String, Object> params) {
         List<ConfigProperty> cpList = this.composite
-                .queryChildsByParentId(module, parentId, params);
+                .queryChildrenByParentId(module, parentId, params);
         return cpList;
     }
     
@@ -98,10 +98,10 @@ public abstract class ConfigContextBuilder extends ConfigContextConfigurator {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    protected List<ConfigProperty> doQueryNestedChildsByParentId(String module,
+    protected List<ConfigProperty> doQueryDescendantsByParentId(String module,
             String parentId, Map<String, Object> params) {
         List<ConfigProperty> cpList = this.composite
-                .queryNestedChildsByParentId(module, parentId, params);
+                .queryDescendantsByParentId(module, parentId, params);
         return cpList;
     }
     

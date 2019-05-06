@@ -6,14 +6,15 @@
  */
 package com.tx.component.basicdata.service.impl;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.tx.component.basicdata.client.BasicDataAPIClient;
+import com.tx.component.basicdata.model.DataDict;
 import com.tx.component.basicdata.model.TreeAbleBasicData;
 import com.tx.component.basicdata.service.TreeAbleBasicDataService;
-import com.tx.core.paged.model.PagedList;
+import com.tx.component.basicdata.util.BasicDataUtils;
+import com.tx.core.exceptions.util.AssertUtils;
 
 /**
  * 默认的基础数据业务层实现<br/>
@@ -40,6 +41,19 @@ public class DefaultRemoteTreeAbleBasicDataService<T extends TreeAbleBasicData<T
     }
     
     /**
+     * @throws Exception
+     */
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        super.afterPropertiesSet();
+        
+        AssertUtils.isTrue(
+                TreeAbleBasicData.class.isAssignableFrom(this.rawType),
+                "rawType:{} is not assign from TreeAbleBasicData.class.",
+                new Object[] { this.rawType });
+    }
+    
+    /**
      * @param parentId
      * @param valid
      * @param params
@@ -48,11 +62,18 @@ public class DefaultRemoteTreeAbleBasicDataService<T extends TreeAbleBasicData<T
     @Override
     public List<T> queryChildrenByParentId(String parentId, Boolean valid,
             Map<String, Object> params) {
-        params = params == null ? new HashMap<String, Object>() : params;
-        params.put("parentId", parentId);
+        AssertUtils.notEmpty(parentId, "parentId is null.");
         
-        List<T> resList = queryList(valid, params);
-        return resList;
+        String type = type();
+        AssertUtils.notEmpty(type, "type is empty.");
+        
+        List<DataDict> dataList = this.client.queryChildrenByParentId(type,
+                parentId,
+                valid,
+                params);
+        List<T> objectList = BasicDataUtils.fromDataDictList(dataList,
+                getRawType());
+        return objectList;
     }
     
     /**
@@ -64,15 +85,19 @@ public class DefaultRemoteTreeAbleBasicDataService<T extends TreeAbleBasicData<T
      * @return
      */
     @Override
-    public PagedList<T> queryDescendantsByParentId(String parentId, Boolean valid,
-            Map<String, Object> params, int pageIndex, int pageSize) {
-        params = params == null ? new HashMap<String, Object>() : params;
-        params.put("parentId", parentId);
+    public List<T> queryDescendantsByParentId(String parentId, Boolean valid,
+            Map<String, Object> params) {
+        AssertUtils.notEmpty(parentId, "parentId is null.");
         
-        PagedList<T> resPagedList = queryPagedList(valid,
-                params,
-                pageIndex,
-                pageSize);
-        return resPagedList;
+        String type = type();
+        AssertUtils.notEmpty(type, "type is empty.");
+        
+        List<DataDict> dataList = this.client.queryDescendantsByParentId(type,
+                parentId,
+                valid,
+                params);
+        List<T> objectList = BasicDataUtils.fromDataDictList(dataList,
+                getRawType());
+        return objectList;
     }
 }

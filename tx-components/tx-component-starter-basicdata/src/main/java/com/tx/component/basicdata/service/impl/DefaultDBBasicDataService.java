@@ -123,8 +123,34 @@ public class DefaultDBBasicDataService<T extends BasicData>
      * @return
      */
     @Override
+    public boolean updateByCode(T data) {
+        AssertUtils.notNull(data, "data is null.");
+        String type = type();
+        AssertUtils.notEmpty(type, "type is null.");
+        
+        DataDict obj = JSONAttributesSupportUtils
+                .toJSONAttributesSupport(DataDict.class, data);
+        AssertUtils.notEmpty(obj.getCode(), "data.code is empty.");
+        obj.setType(type);
+        
+        boolean flag = this.transactionTemplate
+                .execute(new TransactionCallback<Boolean>() {
+                    @Override
+                    public Boolean doInTransaction(TransactionStatus status) {
+                        return dataDictService.update(obj);
+                    }
+                });
+        return flag;
+    }
+    
+    /**
+     * @param data
+     * @return
+     */
+    @Override
     public boolean updateById(T data) {
         AssertUtils.notNull(data, "data is null.");
+        AssertUtils.notEmpty(data.getId(), "data.id is empty.");
         
         DataDict obj = JSONAttributesSupportUtils
                 .toJSONAttributesSupport(DataDict.class, data);
@@ -162,6 +188,8 @@ public class DefaultDBBasicDataService<T extends BasicData>
      */
     @Override
     public boolean enableById(String id) {
+        AssertUtils.notEmpty(id, "id is null.");
+        
         boolean flag = this.transactionTemplate
                 .execute(new TransactionCallback<Boolean>() {
                     @Override

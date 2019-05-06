@@ -106,47 +106,6 @@ public class ConfigContext extends ConfigContextBuilder {
     }
     
     /**
-     * 根父节点查询子节点<br/>
-     * <功能详细描述>
-     * @param parentId
-     * @param params
-     * @return [参数说明]
-     * 
-     * @return List<ConfigPropertyItem> [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public List<ConfigProperty> queryChildsByParentId(String parentId,
-            Map<String, Object> params) {
-        AssertUtils.notEmpty(parentId, "parentId is empty.");
-        
-        List<ConfigProperty> resList = doQueryChildsByParentId(this.module,
-                parentId,
-                params);
-        return resList;
-    }
-    
-    /**
-     * 嵌套查询子级配置项<br/>
-     * <功能详细描述>
-     * @param parentId
-     * @param params
-     * @return [参数说明]
-     * 
-     * @return List<ConfigPropertyItem> [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public List<ConfigProperty> queryNestedChildsByParentId(String parentId,
-            Map<String, Object> params) {
-        AssertUtils.notEmpty(parentId, "parentId is empty.");
-        
-        List<ConfigProperty> resList = doQueryNestedChildsByParentId(
-                this.module, parentId, params);
-        return resList;
-    }
-    
-    /**
      * 查询配置属性<br/>
      * <功能详细描述>
      * @param module
@@ -168,6 +127,27 @@ public class ConfigContext extends ConfigContextBuilder {
     /**
      * 根父节点查询子节点<br/>
      * <功能详细描述>
+     * @param parentId
+     * @param params
+     * @return [参数说明]
+     * 
+     * @return List<ConfigPropertyItem> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public List<ConfigProperty> queryChildrenByParentId(String parentId,
+            Map<String, Object> params) {
+        AssertUtils.notEmpty(parentId, "parentId is empty.");
+        
+        List<ConfigProperty> resList = doQueryChildrenByParentId(this.module,
+                parentId,
+                params);
+        return resList;
+    }
+    
+    /**
+     * 根父节点查询子节点<br/>
+     * <功能详细描述>
      * @param module
      * @param parentId
      * @param params
@@ -177,12 +157,33 @@ public class ConfigContext extends ConfigContextBuilder {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public List<ConfigProperty> queryChildsByParentId(String module,
+    public List<ConfigProperty> queryChildrenByParentId(String module,
             String parentId, Map<String, Object> params) {
         AssertUtils.notEmpty(module, "module is empty.");
         AssertUtils.notEmpty(parentId, "parentId is empty.");
         
-        List<ConfigProperty> resList = doQueryChildsByParentId(module,
+        List<ConfigProperty> resList = doQueryChildrenByParentId(module,
+                parentId,
+                params);
+        return resList;
+    }
+    
+    /**
+     * 嵌套查询子级配置项<br/>
+     * <功能详细描述>
+     * @param parentId
+     * @param params
+     * @return [参数说明]
+     * 
+     * @return List<ConfigPropertyItem> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public List<ConfigProperty> queryDescendantsByParentId(String parentId,
+            Map<String, Object> params) {
+        AssertUtils.notEmpty(parentId, "parentId is empty.");
+        
+        List<ConfigProperty> resList = doQueryDescendantsByParentId(this.module,
                 parentId,
                 params);
         return resList;
@@ -200,12 +201,12 @@ public class ConfigContext extends ConfigContextBuilder {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public List<ConfigProperty> queryNestedChildsByParentId(String module,
+    public List<ConfigProperty> queryDescendantsByParentId(String module,
             String parentId, Map<String, Object> params) {
         AssertUtils.notEmpty(module, "module is empty.");
         AssertUtils.notEmpty(parentId, "parentId is empty.");
         
-        List<ConfigProperty> resList = doQueryNestedChildsByParentId(module,
+        List<ConfigProperty> resList = doQueryDescendantsByParentId(module,
                 parentId,
                 params);
         return resList;

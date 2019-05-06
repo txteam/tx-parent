@@ -10,9 +10,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.beans.factory.InitializingBean;
 
 import com.tx.component.basicdata.client.BasicDataAPIClient;
 import com.tx.component.basicdata.model.BasicData;
+import com.tx.component.basicdata.model.DataDict;
 import com.tx.component.basicdata.service.BasicDataService;
 import com.tx.component.basicdata.util.BasicDataUtils;
 import com.tx.core.exceptions.util.AssertUtils;
@@ -28,12 +30,12 @@ import com.tx.core.paged.model.PagedList;
  * @since  [产品/模块版本]
  */
 public class DefaultRemoteBasicDataService<T extends BasicData>
-        implements BasicDataService<T> {
+        implements BasicDataService<T>, InitializingBean {
     
-    private Class<T> rawType;
+    protected Class<T> rawType;
     
     /** 基础数据远程调用客户端 */
-    private BasicDataAPIClient client;
+    protected BasicDataAPIClient client;
     
     /** <默认构造函数> */
     public DefaultRemoteBasicDataService() {
@@ -46,6 +48,19 @@ public class DefaultRemoteBasicDataService<T extends BasicData>
         super();
         this.rawType = rawType;
         this.client = client;
+    }
+    
+    /**
+     * @throws Exception
+     */
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        AssertUtils.notNull(this.rawType, "rawType is null.");
+        AssertUtils.notNull(this.client, "client is null.");
+        
+        AssertUtils.isTrue(BasicData.class.isAssignableFrom(this.rawType),
+                "rawType:{} is not assign from BasicData.class.",
+                new Object[] { this.rawType });
     }
     
     /**
@@ -67,24 +82,24 @@ public class DefaultRemoteBasicDataService<T extends BasicData>
         AssertUtils.notEmpty(type, "type is empty.");
         
         //构建字典对象
-        Map<String, Object> map = BasicDataUtils.toMap(object);
-        this.client.insert(type, map);
+        DataDict data = BasicDataUtils.toDataDict(object);
+        this.client.insert(type, data);
     }
     
     /**
      * @param dataList
      */
     @Override
-    public void batchInsert(List<T> dataList) {
-        if (CollectionUtils.isEmpty(dataList)) {
+    public void batchInsert(List<T> objectList) {
+        if (CollectionUtils.isEmpty(objectList)) {
             return;
         }
         
         String type = type();
         AssertUtils.notEmpty(type, "type is empty.");
         
-        List<Map<String, Object>> mapList = BasicDataUtils.toMapList(dataList);
-        this.client.batchInsert(type, mapList);
+        List<DataDict> dataList = BasicDataUtils.toDataDictList(objectList);
+        this.client.batchInsert(type, dataList);
     }
     
     /**
@@ -129,8 +144,8 @@ public class DefaultRemoteBasicDataService<T extends BasicData>
         String type = type();
         AssertUtils.notEmpty(type, "type is empty.");
         
-        Map<String, Object> resMap = this.client.findById(type, id);
-        T res = BasicDataUtils.fromMap(resMap, getRawType());
+        DataDict data = this.client.findById(type, id);
+        T res = BasicDataUtils.fromDataDict(data, getRawType());
         return res;
     }
     
@@ -146,8 +161,8 @@ public class DefaultRemoteBasicDataService<T extends BasicData>
         AssertUtils.notEmpty(type, "type is empty.");
         
         //查询基础数据详情实例
-        Map<String, Object> resMap = this.client.findByCode(type, code);
-        T res = BasicDataUtils.fromMap(resMap, getRawType());
+        DataDict data = this.client.findByCode(type, code);
+        T res = BasicDataUtils.fromDataDict(data, getRawType());
         return res;
     }
     
@@ -161,10 +176,9 @@ public class DefaultRemoteBasicDataService<T extends BasicData>
         String type = type();
         AssertUtils.notEmpty(type, "type is empty.");
         
-        List<Map<String, Object>> mapList = this.client.queryList(type,
-                valid,
-                params);
-        List<T> resList = BasicDataUtils.fromMapList(mapList, getRawType());
+        List<DataDict> dataList = this.client.queryList(type, valid, params);
+        List<T> resList = BasicDataUtils.fromDataDictList(dataList,
+                getRawType());
         return resList;
     }
     
@@ -181,10 +195,13 @@ public class DefaultRemoteBasicDataService<T extends BasicData>
         String type = type();
         AssertUtils.notEmpty(type, "type is empty.");
         
-        PagedList<Map<String, Object>> mapPagedList = this.client
-                .queryPagedList(type, valid, params, pageIndex, pageSize);
+        PagedList<DataDict> dataPagedList = this.client.queryPagedList(type,
+                valid,
+                params,
+                pageIndex,
+                pageSize);
         PagedList<T> resPagedList = BasicDataUtils
-                .fromMapPagedList(mapPagedList, getRawType());
+                .fromDataDictPagedList(dataPagedList, getRawType());
         return resPagedList;
     }
     
@@ -211,14 +228,32 @@ public class DefaultRemoteBasicDataService<T extends BasicData>
      * @return
      */
     @Override
-    public boolean updateById(T data) {
-        AssertUtils.notNull(data, "data is null.");
+    public boolean updateById(T object) {
+        AssertUtils.notNull(object, "data is null.");
+        AssertUtils.notEmpty(object.getId(), "data.id is empty.");
         
         String type = type();
         AssertUtils.notEmpty(type, "type is empty.");
         
-        Map<String, Object> map = BasicDataUtils.toMap(data);
-        boolean flag = this.client.update(type, map);
+        DataDict data = BasicDataUtils.toDataDict(object);
+        boolean flag = this.client.updateById(type, object.getId(), data);
+        return flag;
+    }
+    
+    /**
+     * @param data
+     * @return
+     */
+    @Override
+    public boolean updateByCode(T object) {
+        AssertUtils.notNull(object, "data is null.");
+        AssertUtils.notEmpty(object.getCode(), "data.code is empty.");
+        
+        String type = type();
+        AssertUtils.notEmpty(type, "type is empty.");
+        
+        DataDict data = BasicDataUtils.toDataDict(object);
+        boolean flag = this.client.updateByCode(type, object.getCode(), data);
         return flag;
     }
     
@@ -226,16 +261,16 @@ public class DefaultRemoteBasicDataService<T extends BasicData>
      * @param dataList
      */
     @Override
-    public void batchUpdate(List<T> dataList) {
-        if (CollectionUtils.isEmpty(dataList)) {
+    public void batchUpdate(List<T> objectList) {
+        if (CollectionUtils.isEmpty(objectList)) {
             return;
         }
         
         String type = type();
         AssertUtils.notEmpty(type, "type is empty.");
         
-        List<Map<String, Object>> mapList = BasicDataUtils.toMapList(dataList);
-        this.client.batchUpdate(type, mapList);
+        List<DataDict> dataList = BasicDataUtils.toDataDictList(objectList);
+        this.client.batchUpdate(type, dataList);
     }
     
     /**

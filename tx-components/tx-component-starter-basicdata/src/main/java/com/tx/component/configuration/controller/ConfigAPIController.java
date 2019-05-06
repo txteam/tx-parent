@@ -129,7 +129,7 @@ public class ConfigAPIController implements InitializingBean {
     public List<ConfigPropertyItem> queryList(
             @RequestParam Map<String, Object> params) {
         List<ConfigPropertyItem> cpiList = this.configPropertyItemService
-                .queryList(module, params);
+                .queryList(this.module, params);
         return cpiList;
     }
     

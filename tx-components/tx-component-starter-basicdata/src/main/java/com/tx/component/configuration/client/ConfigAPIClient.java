@@ -83,8 +83,8 @@ public interface ConfigAPIClient {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @RequestMapping(value = "/childs/{parentId}", method = RequestMethod.GET)
-    public List<ConfigProperty> queryChildsByParentId(
+    @RequestMapping(value = "/children/{parentId}", method = RequestMethod.GET)
+    public List<ConfigProperty> queryChildrenByParentId(
             @PathVariable(required = true, name = "parentId") String parentId,
             @RequestParam Map<String, Object> params);
     
@@ -99,8 +99,8 @@ public interface ConfigAPIClient {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @RequestMapping(value = "/nestedchilds/{parentId}", method = RequestMethod.GET)
-    public List<ConfigProperty> queryNestedChildsByParentId(
+    @RequestMapping(value = "/descendants/{parentId}", method = RequestMethod.GET)
+    public List<ConfigProperty> queryDescendantsByParentId(
             @PathVariable(required = true, name = "parentId") String parentId,
             @RequestParam Map<String, Object> params);
 }

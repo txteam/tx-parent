@@ -18,7 +18,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tx.component.basicdata.context.BasicDataContext;
 import com.tx.component.basicdata.model.BasicData;
+import com.tx.component.basicdata.model.DataDict;
+import com.tx.component.basicdata.model.TreeAbleBasicData;
 import com.tx.component.basicdata.service.BasicDataService;
+import com.tx.component.basicdata.service.TreeAbleBasicDataService;
 import com.tx.component.basicdata.util.BasicDataUtils;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.paged.model.PagedList;
@@ -55,10 +58,10 @@ public class BasicDataAPIController {
     @ApiOperation(value = "增加基础数据实例", notes = "")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "type", value = "基础数据类型", required = true, dataType = "string", paramType = "path"),
-            @ApiImplicitParam(name = "dataMap", value = "数据实例对应的map", required = true, dataTypeClass = Map.class, paramType = "form", example = "{code:'...',name='...'}") })
+            @ApiImplicitParam(name = "data", value = "数据字典实例", required = true, dataTypeClass = DataDict.class, paramType = "form", example = "{code:'...',name='...'}") })
     @RequestMapping(value = "/{type}/", method = RequestMethod.POST)
     public <T extends BasicData> void insert(@PathVariable String type,
-            @RequestParam Map<String, Object> dataMap) {
+            @RequestParam DataDict data) {
         //获取对应的实体类型
         AssertUtils.notEmpty(type, "type is empty.");
         Class<T> entityClass = (Class<T>) BasicDataContext.getContext()
@@ -73,7 +76,7 @@ public class BasicDataAPIController {
                 new Object[] { type, entityClass });
         
         //转换为对应的实例
-        T object = BasicDataUtils.fromMap(dataMap, entityClass);
+        T object = BasicDataUtils.fromDataDict(data, entityClass);
         service.insert(object);
     }
     
@@ -93,7 +96,7 @@ public class BasicDataAPIController {
             @ApiImplicitParam(name = "dataMapList", value = "基础数据类型", required = true, dataTypeClass = List.class, paramType = "body", example = "[{code:'...',name='...'}]") })
     @RequestMapping(value = "/{type}/batch", method = RequestMethod.POST)
     public <T extends BasicData> void batchInsert(@PathVariable String type,
-            @RequestBody List<Map<String, Object>> dataMapList) {
+            @RequestBody List<DataDict> dataList) {
         //获取对应的实体类型
         AssertUtils.notEmpty(type, "type is empty.");
         Class<T> entityClass = (Class<T>) BasicDataContext.getContext()
@@ -107,7 +110,7 @@ public class BasicDataAPIController {
                 "service is not exist.type:{} entityClass:{}",
                 new Object[] { type, entityClass });
         
-        List<T> objectList = BasicDataUtils.fromMapList(dataMapList,
+        List<T> objectList = BasicDataUtils.fromDataDictList(dataList,
                 entityClass);
         service.batchInsert(objectList);
     }
@@ -264,13 +267,14 @@ public class BasicDataAPIController {
      * @see [类、类#方法、类#成员]
      */
     @SuppressWarnings("unchecked")
-    @ApiOperation(value = "更新基础数据实例", notes = "")
+    @ApiOperation(value = "根据id更新基础数据实例", notes = "")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "type", value = "基础数据类型", required = true, dataType = "string", paramType = "path"),
-            @ApiImplicitParam(name = "data", value = "基础数据类型", required = true, dataTypeClass = Map.class, example = "{code:'...',name='...'}") })
-    @RequestMapping(value = "/{type}/", method = RequestMethod.PUT)
-    public <T extends BasicData> boolean update(@PathVariable String type,
-            @RequestParam Map<String, Object> dataMap) {
+            @ApiImplicitParam(name = "id", value = "唯一键", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "data", value = "数据字典实例", required = true, dataTypeClass = DataDict.class, example = "{code:'...',name='...'}") })
+    @RequestMapping(value = "/{type}/{id}", method = RequestMethod.PUT)
+    public <T extends BasicData> boolean updateById(@PathVariable String type,
+            @PathVariable String id, @RequestParam DataDict data) {
         //获取对应的实体类型
         AssertUtils.notEmpty(type, "type is empty.");
         Class<T> entityClass = (Class<T>) BasicDataContext.getContext()
@@ -284,7 +288,48 @@ public class BasicDataAPIController {
                 "service is not exist.type:{} entityClass:{}",
                 new Object[] { type, entityClass });
         
-        T object = BasicDataUtils.fromMap(dataMap, entityClass);
+        data.setId(id);
+        T object = BasicDataUtils.fromDataDict(data, entityClass);
+        boolean flag = service.updateById(object);
+        return flag;
+    }
+    
+    /**
+     * 根据编码更新基础数据实例<br/>
+     * <功能详细描述>
+     * @param type
+     * @param code
+     * @param data
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @SuppressWarnings("unchecked")
+    @ApiOperation(value = "根据编码更新基础数据实例", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "type", value = "基础数据类型", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "code", value = "编码", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "data", value = "数据字典实例", required = true, dataTypeClass = DataDict.class, example = "{code:'...',name='...'}") })
+    @RequestMapping(value = "/{type}/code/{code}", method = RequestMethod.PUT)
+    public <T extends BasicData> boolean updateByCode(@PathVariable String type,
+            @PathVariable String code, @RequestParam DataDict data) {
+        //获取对应的实体类型
+        AssertUtils.notEmpty(type, "type is empty.");
+        Class<T> entityClass = (Class<T>) BasicDataContext.getContext()
+                .getEntityClass(type);
+        AssertUtils.notNull(entityClass, "entityClass is null.type:{}", type);
+        
+        //获取对应的业务层
+        BasicDataService<T> service = BasicDataContext.getContext()
+                .getBasicDataService(entityClass);
+        AssertUtils.notNull(service,
+                "service is not exist.type:{} entityClass:{}",
+                new Object[] { type, entityClass });
+        
+        data.setCode(code);
+        T object = BasicDataUtils.fromDataDict(data, entityClass);
         boolean flag = service.updateById(object);
         return flag;
     }
@@ -302,10 +347,10 @@ public class BasicDataAPIController {
     @ApiOperation(value = "批量更新基础数据实例", notes = "")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "type", value = "基础数据类型", required = true, dataType = "string", paramType = "path"),
-            @ApiImplicitParam(name = "dataMapList", value = "基础数据类型", required = true, dataTypeClass = List.class, paramType = "body", example = "[{code:'...',name='...'}]") })
+            @ApiImplicitParam(name = "dataList", value = "数据字典实例集合", required = true, dataTypeClass = List.class, paramType = "body", example = "[{code:'...',name='...'}]") })
     @RequestMapping(value = "/{type}/batch", method = RequestMethod.PUT)
     public <T extends BasicData> void batchUpdate(@PathVariable String type,
-            @RequestBody List<Map<String, Object>> dataMapList) {
+            @RequestBody List<DataDict> dataList) {
         //获取对应的实体类型
         AssertUtils.notEmpty(type, "type is empty.");
         Class<T> entityClass = (Class<T>) BasicDataContext.getContext()
@@ -319,7 +364,7 @@ public class BasicDataAPIController {
                 "service is not exist.type:{} entityClass:{}",
                 new Object[] { type, entityClass });
         
-        List<T> objectList = BasicDataUtils.fromMapList(dataMapList,
+        List<T> objectList = BasicDataUtils.fromDataDictList(dataList,
                 entityClass);
         service.batchUpdate(objectList);
     }
@@ -377,7 +422,7 @@ public class BasicDataAPIController {
             @ApiImplicitParam(name = "id", value = "唯一键", required = true, dataType = "string", paramType = "path") })
     @SuppressWarnings("unchecked")
     @RequestMapping(value = "/{type}/{id}", method = RequestMethod.GET)
-    public <T extends BasicData> T findById(@PathVariable String type,
+    public <T extends BasicData> DataDict findById(@PathVariable String type,
             @PathVariable String id) {
         //获取对应的实体类型
         AssertUtils.notEmpty(type, "type is empty.");
@@ -392,8 +437,9 @@ public class BasicDataAPIController {
                 "service is not exist.type:{} entityClass:{}",
                 new Object[] { type, entityClass });
         
-        T res = service.findById(id);
-        return res;
+        T object = service.findById(id);
+        DataDict data = BasicDataUtils.toDataDict(object);
+        return data;
     }
     
     /**
@@ -412,7 +458,7 @@ public class BasicDataAPIController {
             @ApiImplicitParam(name = "code", value = "编码", required = true, dataType = "string", paramType = "path") })
     @SuppressWarnings("unchecked")
     @RequestMapping(value = "/{type}/code/{code}", method = RequestMethod.GET)
-    public <T extends BasicData> T findByCode(@PathVariable String type,
+    public <T extends BasicData> DataDict findByCode(@PathVariable String type,
             @PathVariable String code) {
         //获取对应的实体类型
         AssertUtils.notEmpty(type, "type is empty.");
@@ -427,8 +473,9 @@ public class BasicDataAPIController {
                 "service is not exist.type:{} entityClass:{}",
                 new Object[] { type, entityClass });
         
-        T res = service.findByCode(code);
-        return res;
+        T object = service.findByCode(code);
+        DataDict data = BasicDataUtils.toDataDict(object);
+        return data;
     }
     
     /**
@@ -449,7 +496,8 @@ public class BasicDataAPIController {
             @ApiImplicitParam(name = "params", value = "查询条件", required = false, dataTypeClass = Map.class) })
     @SuppressWarnings("unchecked")
     @RequestMapping(value = "/{type}/list/{valid}", method = RequestMethod.GET)
-    public <T extends BasicData> List<T> queryList(@PathVariable String type,
+    public <T extends BasicData> List<DataDict> queryList(
+            @PathVariable String type,
             @PathVariable(required = false) Boolean valid,
             @RequestParam Map<String, Object> params) {
         //获取对应的实体类型
@@ -465,8 +513,9 @@ public class BasicDataAPIController {
                 "service is not exist.type:{} entityClass:{}",
                 new Object[] { type, entityClass });
         
-        List<T> resList = service.queryList(valid, params);
-        return resList;
+        List<T> objectList = service.queryList(valid, params);
+        List<DataDict> dataList = BasicDataUtils.toDataDictList(objectList);
+        return dataList;
     }
     
     /**
@@ -491,7 +540,7 @@ public class BasicDataAPIController {
             @ApiImplicitParam(name = "pageSize", value = "每页显示条数", required = true, dataTypeClass = Integer.class) })
     @SuppressWarnings("unchecked")
     @RequestMapping(value = "/{type}/pagedlist/{valid}", method = RequestMethod.GET)
-    public <T extends BasicData> PagedList<T> queryPagedList(
+    public <T extends BasicData> PagedList<DataDict> queryPagedList(
             @PathVariable String type,
             @PathVariable(required = false) Boolean valid,
             @RequestParam Map<String, Object> params,
@@ -510,10 +559,88 @@ public class BasicDataAPIController {
                 "service is not exist.type:{} entityClass:{}",
                 new Object[] { type, entityClass });
         
-        PagedList<T> resPagedList = service.queryPagedList(valid,
+        PagedList<T> objectPagedList = service.queryPagedList(valid,
                 params,
                 pageIndex,
                 pageSize);
-        return resPagedList;
+        PagedList<DataDict> dataPagedList = BasicDataUtils
+                .toDataDictPagedList(objectPagedList);
+        return dataPagedList;
+    }
+    
+    /**
+     * 根据条件查询基础数据列表<br/>
+     * <功能详细描述>
+     * @param valid
+     * @param params
+     * @return [参数说明]
+     * 
+     * @return List<T> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @RequestMapping(value = "/{type}/children/{valid}", method = RequestMethod.GET)
+    public <T extends TreeAbleBasicData> List<DataDict> queryChildrenByParentId(
+            @PathVariable String type,
+            @PathVariable(required = true) String parentId,
+            @PathVariable(required = false) Boolean valid,
+            @RequestParam Map<String, Object> params) {
+        //获取对应的实体类型
+        AssertUtils.notEmpty(type, "type is empty.");
+        Class<T> entityClass = (Class<T>) BasicDataContext.getContext()
+                .getEntityClass(type);
+        AssertUtils.notNull(entityClass, "entityClass is null.type:{}", type);
+        
+        //获取对应的业务层
+        TreeAbleBasicDataService service = BasicDataContext.getContext()
+                .getTreeAbleBasicDataService(entityClass);
+        AssertUtils.notNull(service,
+                "service is not exist.type:{} entityClass:{}",
+                new Object[] { type, entityClass });
+        
+        List<T> objectList = service.queryChildrenByParentId(parentId,
+                valid,
+                params);
+        List<DataDict> dataList = BasicDataUtils.toDataDictList(objectList);
+        return dataList;
+    }
+    
+    /**
+     * 根据条件查询基础数据列表<br/>
+     * <功能详细描述>
+     * @param valid
+     * @param params
+     * @return [参数说明]
+     * 
+     * @return List<T> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @SuppressWarnings("unchecked")
+    @RequestMapping(value = "/{type}/descendants/{valid}", method = RequestMethod.GET)
+    public <T extends TreeAbleBasicData<T>> List<DataDict> queryDescendantsByParentId(
+            @PathVariable String type,
+            @PathVariable(required = true) String parentId,
+            @PathVariable(required = false) Boolean valid,
+            @RequestParam Map<String, Object> params) {
+        //获取对应的实体类型
+        AssertUtils.notEmpty(type, "type is empty.");
+        Class<T> entityClass = (Class<T>) BasicDataContext.getContext()
+                .getEntityClass(type);
+        AssertUtils.notNull(entityClass, "entityClass is null.type:{}", type);
+        
+        //获取对应的业务层
+        TreeAbleBasicDataService<T> service = BasicDataContext.getContext()
+                .getTreeAbleBasicDataService(entityClass);
+        AssertUtils.notNull(service,
+                "service is not exist.type:{} entityClass:{}",
+                new Object[] { type, entityClass });
+        
+        List<T> objectList = service.queryDescendantsByParentId(parentId,
+                valid,
+                params);
+        List<DataDict> dataList = BasicDataUtils.toDataDictList(objectList);
+        return dataList;
     }
 }

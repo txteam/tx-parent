@@ -12,7 +12,6 @@ import java.util.Map;
 
 import com.tx.component.basicdata.model.TreeAbleBasicData;
 import com.tx.component.basicdata.service.TreeAbleBasicDataService;
-import com.tx.core.paged.model.PagedList;
 
 /**
  * 默认的基础数据业务层实现<br/>
@@ -24,7 +23,8 @@ import com.tx.core.paged.model.PagedList;
  * @since  [产品/模块版本]
  */
 public class DefaultDBTreeAbleBasicDataService<T extends TreeAbleBasicData<T>>
-        extends DefaultDBBasicDataService<T> implements TreeAbleBasicDataService<T>{
+        extends DefaultDBBasicDataService<T>
+        implements TreeAbleBasicDataService<T> {
     
     /** <默认构造函数> */
     public DefaultDBTreeAbleBasicDataService() {
@@ -43,7 +43,7 @@ public class DefaultDBTreeAbleBasicDataService<T extends TreeAbleBasicData<T>>
         params = params == null ? new HashMap<String, Object>() : params;
         params.put("parentId", parentId);
         
-        List<T> resList = queryList(valid, params);
+        List<T> resList = queryChildrenByParentId(parentId, valid, params);
         return resList;
     }
     
@@ -56,15 +56,12 @@ public class DefaultDBTreeAbleBasicDataService<T extends TreeAbleBasicData<T>>
      * @return
      */
     @Override
-    public PagedList<T> queryDescendantsByParentId(String parentId, Boolean valid,
-            Map<String, Object> params, int pageIndex, int pageSize) {
+    public List<T> queryDescendantsByParentId(String parentId, Boolean valid,
+            Map<String, Object> params) {
         params = params == null ? new HashMap<String, Object>() : params;
         params.put("parentId", parentId);
         
-        PagedList<T> resPagedList = queryPagedList(valid,
-                params,
-                pageIndex,
-                pageSize);
-        return resPagedList;
+        List<T> resList = queryDescendantsByParentId(parentId, valid, params);
+        return resList;
     }
 }

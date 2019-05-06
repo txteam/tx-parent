@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.tx.component.basicdata.model.DataDict;
 import com.tx.core.paged.model.PagedList;
 
 /**
@@ -39,8 +40,7 @@ public interface BasicDataAPIClient {
      * @see [类、类#方法、类#成员]
      */
     @RequestMapping(value = "/{type}/", method = RequestMethod.POST)
-    public void insert(@PathVariable String type,
-            @RequestParam Map<String, Object> dataMap);
+    public void insert(@PathVariable String type, @RequestParam DataDict data);
     
     /**
      * 批量插入基础数据对象<br/>
@@ -54,7 +54,7 @@ public interface BasicDataAPIClient {
      */
     @RequestMapping(value = "/{type}/batch", method = RequestMethod.POST)
     public void batchInsert(@PathVariable String type,
-            @RequestBody List<Map<String, Object>> dataMapList);
+            @RequestBody List<DataDict> dataList);
     
     /**
      * 根据id进行删除
@@ -123,9 +123,23 @@ public interface BasicDataAPIClient {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @RequestMapping(value = "/{type}/", method = RequestMethod.PUT)
-    public boolean update(@PathVariable String type,
-            @RequestParam Map<String, Object> dataMap);
+    @RequestMapping(value = "/{type}/{id}", method = RequestMethod.PUT)
+    public boolean updateById(@PathVariable String type,
+            @PathVariable String id, @RequestParam DataDict data);
+    
+    /**
+     * 根据id更新基础数据对象<br/>
+     * <功能详细描述>
+     * @param data
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @RequestMapping(value = "/{type}/code/{code}", method = RequestMethod.PUT)
+    public boolean updateByCode(@PathVariable String type,
+            @PathVariable String code, @RequestParam DataDict data);
     
     /**
      * 根据id更新基础数据对象<br/>
@@ -139,7 +153,7 @@ public interface BasicDataAPIClient {
      */
     @RequestMapping(value = "/{type}/batch", method = RequestMethod.PUT)
     public void batchUpdate(@PathVariable String type,
-            @RequestBody List<Map<String, Object>> dataMapList);
+            @RequestBody List<DataDict> dataMapList);
     
     /**
      * 判断基础数据是否存在<br/>
@@ -168,7 +182,7 @@ public interface BasicDataAPIClient {
      * @see [类、类#方法、类#成员]
      */
     @RequestMapping(value = "/{type}/{id}", method = RequestMethod.GET)
-    public Map<String, Object> findById(@PathVariable String type,
+    public DataDict findById(@PathVariable String type,
             @PathVariable String id);
     
     /**
@@ -182,7 +196,7 @@ public interface BasicDataAPIClient {
      * @see [类、类#方法、类#成员]
      */
     @RequestMapping(value = "/{type}/code/{code}", method = RequestMethod.GET)
-    public Map<String, Object> findByCode(@PathVariable String type,
+    public DataDict findByCode(@PathVariable String type,
             @PathVariable String code);
     
     /**
@@ -197,7 +211,7 @@ public interface BasicDataAPIClient {
      * @see [类、类#方法、类#成员]
      */
     @RequestMapping(value = "/{type}/list/{valid}", method = RequestMethod.GET)
-    public List<Map<String, Object>> queryList(@PathVariable String type,
+    public List<DataDict> queryList(@PathVariable String type,
             @PathVariable(required = false) Boolean valid,
             @RequestParam Map<String, Object> params);
     
@@ -215,10 +229,43 @@ public interface BasicDataAPIClient {
      * @see [类、类#方法、类#成员]
      */
     @RequestMapping(value = "/{type}/pagedlist/{valid}", method = RequestMethod.GET)
-    public PagedList<Map<String, Object>> queryPagedList(
-            @PathVariable String type,
+    public PagedList<DataDict> queryPagedList(@PathVariable String type,
             @PathVariable(required = false) Boolean valid,
             @RequestParam Map<String, Object> params,
             @RequestParam(value = "pageIndex", required = false, defaultValue = "1") int pageIndex,
             @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize);
+    
+    /**
+     * 根据条件查询基础数据列表<br/>
+     * <功能详细描述>
+     * @param valid
+     * @param params
+     * @return [参数说明]
+     * 
+     * @return List<T> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @RequestMapping(value = "/{type}/children/{parentId}/{valid}", method = RequestMethod.GET)
+    public List<DataDict> queryChildrenByParentId(@PathVariable String type,
+            @PathVariable(required = true) String parentId,
+            @PathVariable(required = false) Boolean valid,
+            @RequestParam Map<String, Object> params);
+    
+    /**
+     * 根据条件查询基础数据列表<br/>
+     * <功能详细描述>
+     * @param valid
+     * @param params
+     * @return [参数说明]
+     * 
+     * @return List<T> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @RequestMapping(value = "/{type}/descendants/{parentId}/{valid}", method = RequestMethod.GET)
+    public List<DataDict> queryDescendantsByParentId(@PathVariable String type,
+            @PathVariable(required = true) String parentId,
+            @PathVariable(required = false) Boolean valid,
+            @RequestParam Map<String, Object> params);
 }
