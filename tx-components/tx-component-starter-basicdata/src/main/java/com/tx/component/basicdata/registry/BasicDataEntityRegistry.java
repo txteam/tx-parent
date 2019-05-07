@@ -163,12 +163,12 @@ public class BasicDataEntityRegistry {
         
         if (!StringUtils.isEmpty(module)) {
             CollectionUtils.filter(infoList,
-                    (BasicDataEntityInfo object) -> !module
+                    (BasicDataEntityInfo object) -> module
                             .equals(object.getModule()));
         }
         if (!CollectionUtils.isEmpty(viewTypes)) {
             CollectionUtils.filter(infoList,
-                    (BasicDataEntityInfo object) -> !viewTypes
+                    (BasicDataEntityInfo object) -> viewTypes
                             .contains(object.getViewType()));
         }
         

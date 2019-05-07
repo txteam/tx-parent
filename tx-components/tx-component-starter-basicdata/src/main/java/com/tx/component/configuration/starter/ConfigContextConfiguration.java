@@ -21,6 +21,7 @@ import org.springframework.util.StringUtils;
 
 import com.tx.component.basicdata.starter.BasicDataContextProperties;
 import com.tx.component.configuration.context.ConfigContextFactory;
+import com.tx.component.configuration.controller.ConfigAPIController;
 import com.tx.component.configuration.persister.ConfigPropertyPersister;
 import com.tx.component.configuration.persister.ConfigPropertyPersisterComposite;
 import com.tx.component.configuration.persister.impl.LocalConfigPropertyPersister;
@@ -167,5 +168,23 @@ public class ConfigContextConfiguration
         factory.setModule(module);
         
         return factory;
+    }
+    
+    /**
+     * 配置容器apicontroller实现
+     * <功能详细描述>
+     * @param configPropertyItemService
+     * @return [参数说明]
+     * 
+     * @return ConfigAPIController [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @Bean
+    public ConfigAPIController configAPIController(
+            ConfigPropertyItemService configPropertyItemService) {
+        ConfigAPIController controller = new ConfigAPIController(module,
+                configPropertyItemService);
+        return controller;
     }
 }
