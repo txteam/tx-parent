@@ -6,8 +6,8 @@
  */
 package com.tx.component.auth.context.adminchecker.impl;
 
-import com.tx.component.auth.AuthConstants;
 import com.tx.component.auth.context.adminchecker.AdminChecker;
+import com.tx.component.security.auth.AuthConstants;
 
 /**
  * 默认的超级管理员检查器

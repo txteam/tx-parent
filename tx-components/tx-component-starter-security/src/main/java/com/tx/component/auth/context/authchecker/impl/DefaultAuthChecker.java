@@ -8,8 +8,8 @@ package com.tx.component.auth.context.authchecker.impl;
 
 import java.util.List;
 
-import com.tx.component.auth.AuthConstants;
 import com.tx.component.auth.model.AuthRef;
+import com.tx.component.security.auth.AuthConstants;
 
 /**
  * 默认的权限检测器<br/>

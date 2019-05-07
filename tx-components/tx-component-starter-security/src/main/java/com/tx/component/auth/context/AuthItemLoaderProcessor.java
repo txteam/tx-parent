@@ -11,8 +11,8 @@ import java.util.Set;
 
 import org.springframework.core.Ordered;
 
-import com.tx.component.auth.exception.AuthContextInitException;
 import com.tx.component.auth.model.Auth;
+import com.tx.component.security.auth.exception.AuthContextInitException;
 
 /**
  * 权限生成生命周期中的处理器接口逻辑定义<br/>

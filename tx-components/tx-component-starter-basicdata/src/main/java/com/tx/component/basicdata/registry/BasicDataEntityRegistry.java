@@ -106,10 +106,12 @@ public class BasicDataEntityRegistry {
             info.setRemark(anno.remark());
             info.setViewType(anno.viewType() == null
                     ? BasicDataViewTypeEnum.COMMON_PAGEDLIST : anno.viewType());
+            info.setCatalog(anno.catalog());
         } else {
             info.setName(rawType.getSimpleName());
             info.setRemark("");
             info.setViewType(BasicDataViewTypeEnum.COMMON_PAGEDLIST);
+            info.setCatalog("");
         }
         
         AssertUtils.isTrue(!entityClassMap.containsKey(rawType),

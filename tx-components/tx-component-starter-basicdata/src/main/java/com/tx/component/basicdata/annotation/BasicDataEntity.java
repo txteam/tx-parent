@@ -55,6 +55,17 @@ public @interface BasicDataEntity {
     String type() default "";
     
     /**
+     * 基础数据所在目录<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    String catalog() default "";
+    
+    /**
      * 基础数据名称<br/>
      * <功能详细描述>
      * @return [参数说明]

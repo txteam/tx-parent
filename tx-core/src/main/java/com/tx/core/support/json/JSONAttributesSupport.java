@@ -7,7 +7,6 @@
 package com.tx.core.support.json;
 
 import com.alibaba.fastjson.JSONObject;
-import com.tx.core.exceptions.util.AssertUtils;
 
 /**
  * 支持json_attributes的接口实现<br/>
@@ -58,41 +57,5 @@ public interface JSONAttributesSupport {
         JSONObject json = JSONObjectChangeListener.newProxy(listener);
         
         return json;
-    }
-    
-    /**
-     * 属性变更监听<br/>
-     * <功能详细描述>
-     * 
-     * @author  Administrator
-     * @version  [版本号, 2018年6月17日]
-     * @see  [相关类/方法]
-     * @since  [产品/模块版本]
-     */
-    static class AttributesAbleJSONObjectChangeListener
-            extends JSONObjectChangeListener {
-        
-        /** 菜单对象 */
-        private JSONAttributesSupport object;
-        
-        /** <默认构造函数> */
-        public AttributesAbleJSONObjectChangeListener(JSONAttributesSupport object) {
-            AssertUtils.notNull(object, "object is null.");
-            
-            this.jsonObject = JSONObject.parseObject(object.getAttributes());
-            if (this.jsonObject == null) {
-                this.jsonObject = new JSONObject();
-                object.setAttributes(this.jsonObject.toJSONString());
-            }
-            this.object = object;
-        }
-        
-        /**
-         * JSONObject值变化时的回调方法<brf/>
-         */
-        @Override
-        public void callbackOnChange() {
-            object.setAttributes(this.jsonObject.toJSONString());
-        }
     }
 }

@@ -7,8 +7,8 @@
 		<version>4.0.x-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>tx-component-starter-security</artifactId>
-	<name>tx-component-starter-security</name>
+	<artifactId>tx-component-starter-basicdata</artifactId>
+	<name>tx-component-starter-basicdata</name>
 	<packaging>jar</packaging>
 	<url>http://maven.apache.org</url>
 
@@ -23,28 +23,13 @@
 			<artifactId>tx-core</artifactId>
 		</dependency>
 
-		<!-- json xml -->
+		<!-- swagger2 -->
 		<dependency>
-			<groupId>com.thoughtworks.xstream</groupId>
-			<artifactId>xstream</artifactId>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger2</artifactId>
 		</dependency>
 
-		<!-- jwt、security、zuul -->
-		<!-- <dependency> -->
-		<!-- <groupId>com.auth0</groupId> -->
-		<!-- <artifactId>java-jwt</artifactId> -->
-		<!-- <version>3.4.0</version> -->
-		<!-- </dependency> -->
-		<dependency>
-			<groupId>io.jsonwebtoken</groupId>
-			<artifactId>jjwt</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-security</artifactId>
-		</dependency>
-
-		<!-- spring-boot -->
+		<!-- spring boot -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
@@ -57,29 +42,54 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-jdbc</artifactId>
 		</dependency>
+
+		<!-- cache -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-cache</artifactId>
+		</dependency>
+
+		<!-- redis -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-redis</artifactId>
+		</dependency>
+
+		<!-- mybatis -->
 		<dependency>
 			<groupId>org.mybatis.spring.boot</groupId>
 			<artifactId>mybatis-spring-boot-starter</artifactId>
 		</dependency>
-		
-		<!-- feign -->
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-feign</artifactId>
-			<optional>true</optional>
-		</dependency>
 
-		<!-- Redis -->
+		<!-- hibernate: data-jpa jpa -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-redis</artifactId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+
+		<!-- 根据xml加载初始化数据 -->
+		<dependency>
+			<groupId>com.thoughtworks.xstream</groupId>
+			<artifactId>xstream</artifactId>
+		</dependency>
+
+		<!-- security -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+
+		<!-- configurationProperties -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-configuration-processor</artifactId>
 			<optional>true</optional>
 		</dependency>
 
-		<!-- spring-session -->
+		<!-- generator -->
 		<dependency>
-			<groupId>org.springframework.session</groupId>
-			<artifactId>spring-session-data-redis</artifactId>
+			<groupId>org.freemarker</groupId>
+			<artifactId>freemarker</artifactId>
 			<optional>true</optional>
 		</dependency>
 
@@ -90,17 +100,15 @@
 			<optional>true</optional>
 		</dependency>
 
-		<!-- zuul依赖 -->
+		<!-- eureka、feign -->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-zuul</artifactId>
+			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
 			<optional>true</optional>
 		</dependency>
-
-		<!-- freemarker -->
 		<dependency>
-			<groupId>org.freemarker</groupId>
-			<artifactId>freemarker</artifactId>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-openfeign</artifactId>
 			<optional>true</optional>
 		</dependency>
 

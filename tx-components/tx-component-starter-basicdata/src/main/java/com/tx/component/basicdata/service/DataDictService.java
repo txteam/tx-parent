@@ -90,7 +90,7 @@ public class DataDictService implements InitializingBean, ResourceLoaderAware {
         List<DataDict> resList = new ArrayList<>();
         
         Workbook wb = ExcelReadUtils
-                .getWorkBook("classpath*:init/basicdata/data_dict.xlsx");
+                .getWorkBook("classpath:init/basicdata/data_dict.xlsx");
         int numberOfSheets = wb.getNumberOfSheets();
         for (int sheetIndex = 0; sheetIndex < numberOfSheets; sheetIndex++) {
             Sheet sheet = wb.getSheetAt(sheetIndex);
@@ -165,7 +165,7 @@ public class DataDictService implements InitializingBean, ResourceLoaderAware {
     @Override
     public void afterPropertiesSet() throws Exception {
         if (!resourceLoader
-                .getResource("classpath*:init/basicdata/data_dict.xlsx")
+                .getResource("classpath:init/basicdata/data_dict.xlsx")
                 .exists()) {
             return;
         }

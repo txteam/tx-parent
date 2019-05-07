@@ -154,22 +154,6 @@ public class AuthItemWraper<T> implements Auth {
      * @return
      */
     @Override
-    public int getVersion() {
-        return this.version;
-    }
-    
-    /**
-     * @param version
-     */
-    @Override
-    public void setVersion(int version) {
-        this.version = version;
-    }
-    
-    /**
-     * @return
-     */
-    @Override
     public boolean isModifyAble() {
         return false;
     }

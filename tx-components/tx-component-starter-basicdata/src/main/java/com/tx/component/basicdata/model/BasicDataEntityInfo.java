@@ -31,6 +31,9 @@ public class BasicDataEntityInfo implements Serializable {
     /** 基础数据所属模块 */
     private String module;
     
+    /** 基础数据目录 */
+    private String catalog;
+    
     /** 基础数据对应表名 */
     private String tableName;
     
@@ -42,98 +45,112 @@ public class BasicDataEntityInfo implements Serializable {
     
     /** 是否分页显示 */
     private BasicDataViewTypeEnum viewType = BasicDataViewTypeEnum.COMMON_LIST;
-
+    
     /**
      * @return 返回 type
      */
     public String getType() {
         return type;
     }
-
+    
     /**
      * @param 对type进行赋值
      */
     public void setType(String type) {
         this.type = type;
     }
-
+    
     /**
      * @return 返回 entityClass
      */
     public Class<? extends BasicData> getEntityClass() {
         return entityClass;
     }
-
+    
     /**
      * @param 对entityClass进行赋值
      */
     public void setEntityClass(Class<? extends BasicData> entityClass) {
         this.entityClass = entityClass;
     }
-
+    
     /**
      * @return 返回 module
      */
     public String getModule() {
         return module;
     }
-
+    
     /**
      * @param 对module进行赋值
      */
     public void setModule(String module) {
         this.module = module;
     }
-
+    
     /**
      * @return 返回 tableName
      */
     public String getTableName() {
         return tableName;
     }
-
+    
     /**
      * @param 对tableName进行赋值
      */
     public void setTableName(String tableName) {
         this.tableName = tableName;
     }
-
+    
     /**
      * @return 返回 name
      */
     public String getName() {
         return name;
     }
-
+    
     /**
      * @param 对name进行赋值
      */
     public void setName(String name) {
         this.name = name;
     }
-
+    
+    /**
+     * @return 返回 catalog
+     */
+    public String getCatalog() {
+        return catalog;
+    }
+    
+    /**
+     * @param 对catalog进行赋值
+     */
+    public void setCatalog(String catalog) {
+        this.catalog = catalog;
+    }
+    
     /**
      * @return 返回 remark
      */
     public String getRemark() {
         return remark;
     }
-
+    
     /**
      * @param 对remark进行赋值
      */
     public void setRemark(String remark) {
         this.remark = remark;
     }
-
+    
     /**
      * @return 返回 viewType
      */
     public BasicDataViewTypeEnum getViewType() {
         return viewType;
     }
-
+    
     /**
      * @param 对viewType进行赋值
      */

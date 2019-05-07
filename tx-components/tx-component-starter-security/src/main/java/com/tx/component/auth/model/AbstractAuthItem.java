@@ -209,14 +209,6 @@ public abstract class AbstractAuthItem implements Auth {
     }
     
     /**
-     * @return 返回 version
-     */
-    @Override
-    public int getVersion() {
-        return version;
-    }
-    
-    /**
      * @return 返回 module
      */
     @Override

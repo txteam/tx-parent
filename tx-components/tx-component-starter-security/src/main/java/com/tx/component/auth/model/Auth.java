@@ -37,14 +37,6 @@ public interface Auth extends JSONAttributesSupport, TreeAble<List<Auth>, Auth>,
     String getParentId();
     
     /**
-     * 获取权限类型<br/>
-     * <功能详细描述>
-     * 
-     * @return [参数说明]
-     */
-    String getAuthType();
-    
-    /**
      * 获取权限项模块<br/>
      * <功能详细描述>
      * 
@@ -61,42 +53,12 @@ public interface Auth extends JSONAttributesSupport, TreeAble<List<Auth>, Auth>,
     void setModule(String module);
     
     /**
-     * 获取权限版本<br/>
-     * <功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return int [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    int getVersion();
-    
-    /**
-     * 设置权限版本<br/>
-     * <功能详细描述>
-     * @param version [参数说明]
-     * 
-     * @return void [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    void setVersion(int version);
-    
-    /**
-     * 获取权限关联项id<br/>
-     * <功能详细描述>
-     * 
-     * @return String [返回类型说明]
-     */
-    String getRefId();
-    
-    /**
-     * 权限项目引用类型  <br/>
+     * 获取权限类型<br/>
      * <功能详细描述>
      * 
      * @return [参数说明]
      */
-    String getRefType();
+    String getAuthType();
     
     /**
      * 权限名<br/>
@@ -137,6 +99,22 @@ public interface Auth extends JSONAttributesSupport, TreeAble<List<Auth>, Auth>,
      * @return boolean 
      */
     boolean isConfigAble();
+    
+    /**
+     * 权限项目引用类型  <br/>
+     * <功能详细描述>
+     * 
+     * @return [参数说明]
+     */
+    String getRefType();
+    
+    /**
+     * 获取权限关联项id<br/>
+     * <功能详细描述>
+     * 
+     * @return String [返回类型说明]
+     */
+    String getRefId();
     
     /**
      * 获取子权限<br/>
