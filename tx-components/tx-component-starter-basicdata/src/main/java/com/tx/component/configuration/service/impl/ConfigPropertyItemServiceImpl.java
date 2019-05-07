@@ -53,14 +53,14 @@ public class ConfigPropertyItemServiceImpl
         AssertUtils.notNull(configPropertyItem, "configPropertyItem is null.");
         AssertUtils.notEmpty(configPropertyItem.getCode(),
                 "configPropertyItem.code is empty.");
-        AssertUtils.notEmpty(configPropertyItem.getModule(),
-                "configPropertyItem.module is empty.");
         AssertUtils.notEmpty(configPropertyItem.getName(),
                 "configPropertyItem.name is empty.");
+        AssertUtils.notEmpty(configPropertyItem.getModule(),
+                "configPropertyItem.module is empty.");
         
-        AssertUtils.notEmpty(configPropertyItem.getValue(),
-                "configPropertyItem.value is empty.");
-        
+        if (configPropertyItem.getValue() == null) {
+            configPropertyItem.setValue("");
+        }
         Date now = new Date();
         configPropertyItem.setLastUpdateDate(now);
         configPropertyItem.setCreateDate(now);
@@ -140,12 +140,11 @@ public class ConfigPropertyItemServiceImpl
         AssertUtils.notNull(configPropertyItem, "configPropertyItem is null.");
         AssertUtils.notEmpty(configPropertyItem.getId(),
                 "configPropertyItem.id is empty.");
-        AssertUtils.notEmpty(configPropertyItem.getCode(),
-                "configPropertyItem.code is empty.");
         AssertUtils.notEmpty(configPropertyItem.getName(),
                 "configPropertyItem.name is empty.");
-        AssertUtils.notEmpty(configPropertyItem.getValue(),
-                "configPropertyItem.value is empty.");
+        if (configPropertyItem.getValue() == null) {
+            configPropertyItem.setValue("");
+        }
         
         Date now = new Date();
         configPropertyItem.setLastUpdateDate(now);
@@ -264,7 +263,7 @@ public class ConfigPropertyItemServiceImpl
         Set<String> parentIds = new HashSet<>();
         parentIds.add(parentId);
         
-        List<ConfigPropertyItem> resListTemp = doQueryNestedList(ids,
+        List<ConfigPropertyItem> resListTemp = doNestedQueryList(ids,
                 parentIds,
                 params);
         
@@ -283,7 +282,7 @@ public class ConfigPropertyItemServiceImpl
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    private List<ConfigPropertyItem> doQueryNestedList(Set<String> ids,
+    private List<ConfigPropertyItem> doNestedQueryList(Set<String> ids,
             Set<String> parentIds, Map<String, Object> params) {
         if (CollectionUtils.isEmpty(parentIds)) {
             return new ArrayList<ConfigPropertyItem>();
@@ -304,7 +303,7 @@ public class ConfigPropertyItemServiceImpl
             ids.add(cpTemp.getId());
         }
         //嵌套查询下一层级
-        resList.addAll(doQueryNestedList(ids, newParentIds, params));
+        resList.addAll(doNestedQueryList(ids, newParentIds, params));
         
         return resList;
     }

@@ -194,7 +194,7 @@ public class ConfigContextTableInitializer extends AbstractTableInitializer
                 .newColumnOfVarchar("parentId", 64, false, null)
                 .newColumnOfVarchar("code", 64, true, null)
                 .newColumnOfVarchar("name", 64, true, null)
-                .newColumnOfVarchar("value", 64, true, null)
+                .newColumnOfVarchar("value", 256, true, null)
                 .newColumnOfVarchar("module", 64, true, null)
                 .newColumnOfVarchar("remark", 512, false, null)
                 .newColumnOfVarchar("validateExpression", 128, false, null)

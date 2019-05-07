@@ -7,7 +7,6 @@
 	<!-- auto generate default resultMap -->
 	<resultMap id="configPropertyItemMap" 
 		type="com.tx.component.configuration.model.ConfigPropertyItem">
-		<result column="parentId" property="parent.id"/>
 	</resultMap>
 	
 	<!-- auto generate default find -->

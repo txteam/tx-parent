@@ -14,12 +14,13 @@ import java.util.Objects;
 import java.util.Set;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.context.ResourceLoaderAware;
-import org.springframework.core.io.ResourceLoader;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.core.io.support.ResourcePatternResolver;
 
 import com.thoughtworks.xstream.XStream;
 import com.tx.component.configuration.config.ConfigPropertyParser;
@@ -28,6 +29,7 @@ import com.tx.component.configuration.model.ConfigPropertyItem;
 import com.tx.component.configuration.persister.ConfigPropertyPersister;
 import com.tx.component.configuration.service.ConfigPropertyItemService;
 import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.util.PinyinUtils;
 import com.tx.core.util.XstreamUtils;
 
 /**
@@ -39,8 +41,11 @@ import com.tx.core.util.XstreamUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class LocalConfigPropertyPersister implements ConfigPropertyPersister,
-        InitializingBean, ResourceLoaderAware {
+public class LocalConfigPropertyPersister
+        implements ConfigPropertyPersister, InitializingBean {
+    
+    /** resourceResolver */
+    private static final ResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
     
     //日志记录句柄
     private Logger logger = LoggerFactory
@@ -52,9 +57,6 @@ public class LocalConfigPropertyPersister implements ConfigPropertyPersister,
     
     /** 所属模块 */
     private String module;
-    
-    /** 资源加载器 */
-    private ResourceLoader resourceLoader;
     
     /** 配置文件所在路径 */
     private String configLocation;
@@ -71,14 +73,8 @@ public class LocalConfigPropertyPersister implements ConfigPropertyPersister,
         super();
         this.module = module;
         this.configLocation = configLocation;
-    }
-    
-    /**
-     * @param resourceLoader
-     */
-    @Override
-    public void setResourceLoader(ResourceLoader resourceLoader) {
-        this.resourceLoader = resourceLoader;
+        
+        this.configPropertyItemService = configPropertyItemService;
     }
     
     /**
@@ -92,21 +88,27 @@ public class LocalConfigPropertyPersister implements ConfigPropertyPersister,
                     "configLocation is empty or configPropertyItemService is null.");
             return;
         }
-        
         AssertUtils.notEmpty(this.module, "module is empty.");
         
-        org.springframework.core.io.Resource configResource = this.resourceLoader
-                .getResource(this.configLocation);
-        if (!configResource.exists()) {
-            logger.info("configLocation resource is not exist.");
+        org.springframework.core.io.Resource[] configResources = resourceResolver
+                .getResources(configLocation);
+        
+        if (ArrayUtils.isEmpty(configResources)) {
             return;
         }
         
-        //解析配置文件
-        ConfigPropertyParser parser = (ConfigPropertyParser) configXstream
-                .fromXML(configResource.getInputStream());
-        //初始化配置属性
-        initConfigProperties(null, parser.getConfigs());
+        for (org.springframework.core.io.Resource configResource : configResources) {
+            if (!configResource.exists()) {
+                logger.info("configLocation resource is not exist.");
+                continue;
+            }
+            
+            //解析配置文件
+            ConfigPropertyParser parser = (ConfigPropertyParser) configXstream
+                    .fromXML(configResource.getInputStream());
+            //初始化配置属性
+            initConfigProperties(null, parser.getConfigs());
+        }
     }
     
     /**
@@ -124,12 +126,12 @@ public class LocalConfigPropertyPersister implements ConfigPropertyPersister,
             return;
         }
         for (ConfigPropertyParser configParserTemp : parserList) {
+            preprocessing(parent, configParserTemp);
             String codeTemp = configParserTemp.getCode();
             
             codes.add(codeTemp);
             ConfigPropertyItem configPropertyItem = this.configPropertyItemService
                     .findByCode(this.module, codeTemp);
-            
             if (configPropertyItem == null) {
                 configPropertyItem = addConfigPropertyByParser(parent,
                         configParserTemp);
@@ -169,6 +171,40 @@ public class LocalConfigPropertyPersister implements ConfigPropertyPersister,
         }
     }
     
+    /**
+     * 配置值需要进行预处理<br/>
+     * <功能详细描述>
+     * @param configParserTemp [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    private void preprocessing(ConfigPropertyItem parent,
+            ConfigPropertyParser configParserTemp) {
+        //配置项中name,code不能均为空
+        AssertUtils.notTrue(
+                StringUtils.isEmpty(configParserTemp.getCode())
+                        && StringUtils.isEmpty(configParserTemp.getName()),
+                "配置项中:code,name均为空.");
+        if (StringUtils.isEmpty(configParserTemp.getCode())) {
+            //当code为空时需要根据name生成对应的code
+            String name = configParserTemp.getName();
+            String newcode = (new StringBuilder(PinyinUtils.parseToPY(name)))
+                    .append("_").append(Math.abs(name.hashCode())).toString();
+            if (newcode.length() > 32) {
+                newcode = newcode.substring(0, 32);
+            }
+            configParserTemp.setCode(newcode);
+        }
+        if (StringUtils.isEmpty(configParserTemp.getName())) {
+            configParserTemp.setName(configParserTemp.getCode());
+        }
+        if (configParserTemp.getValue() == null) {
+            configParserTemp.setValue("");
+        }
+    }
+    
     /** 
      * 根据配置 新增配置属性<br/>
      * <功能详细描述>
@@ -191,8 +227,8 @@ public class LocalConfigPropertyPersister implements ConfigPropertyPersister,
         configPropertyItem.setRemark(configParserTemp.getRemark());
         configPropertyItem.setValidateExpression(
                 configParserTemp.getValidateExpression());
-        
         configPropertyItem.setModifyAble(configParserTemp.isModifyAble());
+        
         configPropertyItem.setParentId(parent == null ? null : parent.getId());
         configPropertyItem
                 .setLeaf(CollectionUtils.isEmpty(configParserTemp.getConfigs())

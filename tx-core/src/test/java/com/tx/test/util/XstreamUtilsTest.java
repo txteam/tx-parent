@@ -27,6 +27,7 @@ public class XstreamUtilsTest extends TestCase {
             + "<testEl1>el1</testEl1>"
             + "<test_Rename_El2>el2</test_Rename_El2>"
             + "<itemName>listItem1</itemName>"
+            + "<reasdfasd>listItem1</reasdfasd>"
             + "<itemName>listItem2</itemName>" + "<overEl2>listItem2</overEl2>"
             + "<overEl1>listItem2</overEl1>" + "</TestBeanRoot>";
     

@@ -35,13 +35,11 @@ public class ConfigPropertyParser {
     @XStreamAsAttribute
     private boolean modifyAble = true;
     
-    /** 关键字 */
-    @XStreamAsAttribute
-    private String code;
-    
     /** 配置资源名 */
-    @XStreamAsAttribute
     private String name;
+    
+    /** 关键字 */
+    private String code;
     
     /** 配置资源描述信息 */
     private String remark;

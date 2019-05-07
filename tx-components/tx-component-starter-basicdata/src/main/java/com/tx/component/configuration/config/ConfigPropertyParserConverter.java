@@ -13,6 +13,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.PropertyAccessorFactory;
@@ -24,6 +26,7 @@ import com.thoughtworks.xstream.converters.reflection.ReflectionProvider;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import com.thoughtworks.xstream.mapper.Mapper;
+import com.thoughtworks.xstream.mapper.MapperWrapper;
 
 /**
  * 让菜单项目支持data放入任意值的设定<br/>
@@ -53,7 +56,24 @@ public class ConfigPropertyParserConverter extends AbstractReflectionConverter {
     /** <默认构造函数> */
     public ConfigPropertyParserConverter(Mapper mapper,
             ReflectionProvider reflectionProvider) {
-        super(mapper, reflectionProvider);
+        super(new MapperWrapper(mapper) {
+            @SuppressWarnings("rawtypes")
+            @Override
+            public boolean shouldSerializeMember(Class definedIn,
+                    String fieldName) {
+                if (!super.shouldSerializeMember(definedIn, fieldName)) {
+                    return false;
+                } else {
+                    if (FieldUtils.getDeclaredField(definedIn,
+                            fieldName,
+                            true) == null) {
+                        return false;
+                    } else {
+                        return true;
+                    }
+                }
+            }
+        }, reflectionProvider);
     }
     
     /**
@@ -80,10 +100,14 @@ public class ConfigPropertyParserConverter extends AbstractReflectionConverter {
             return;
         }
         
+        //调用超类写入
+        super.marshal(source, writer, context);
+        
         //如果不为空
         BeanWrapper bw = PropertyAccessorFactory.forBeanPropertyAccess(source);
         Map<String, String> attributesMap = (Map<String, String>) bw
-                .getPropertyDescriptor("attributes");
+                .getPropertyValue("attributes");
+        
         //遍历数据，写入动态参数
         if (MapUtils.isEmpty(attributesMap)) {
             return;
@@ -96,9 +120,6 @@ public class ConfigPropertyParserConverter extends AbstractReflectionConverter {
             }
             writer.addAttribute(entryTemp.getKey(), entryTemp.getValue());
         }
-        
-        //调用超类写入
-        super.marshal(source, writer, context);
     }
     
     /**
@@ -113,18 +134,26 @@ public class ConfigPropertyParserConverter extends AbstractReflectionConverter {
                 reader, context);
         
         Map<String, String> attributesMap = new HashMap<String, String>();
+        
         @SuppressWarnings("unchecked")
         Iterator<String> attNameIterator = reader.getAttributeNames();
         while (attNameIterator.hasNext()) {
             String attNameTemp = attNameIterator.next();
             String value = reader.getAttribute(attNameTemp);
+            if ("name".equals(attNameTemp) && !StringUtils.isEmpty(value)) {
+                //name出现在属性时也会被解析为属性
+                catalog.setName(value);
+            }
+            if ("code".equals(attNameTemp) && !StringUtils.isEmpty(value)) {
+                //name出现在属性时也会被解析为属性
+                catalog.setCode(value);
+            }
             if (TYPE_PD_MAP.containsKey(attNameTemp)) {
                 continue;
             }
             attributesMap.put(attNameTemp, value);
         }
         catalog.setAttributes(attributesMap);
-        
         return catalog;
     }
     
