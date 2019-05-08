@@ -9,7 +9,7 @@ package com.tx.component.security.auth.dao;
 import java.util.List;
 import java.util.Map;
 
-import com.tx.component.auth.model.AuthRefItem;
+import com.tx.component.security.auth.model.AuthRefItem;
 
 /**
  * AuthItemRefImpl持久层
