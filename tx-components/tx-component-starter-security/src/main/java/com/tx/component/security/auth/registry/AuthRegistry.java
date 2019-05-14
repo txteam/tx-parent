@@ -6,6 +6,7 @@
  */
 package com.tx.component.security.auth.registry;
 
+import com.tx.component.security.auth.model.Auth;
 
 /**
  * 权限注册表<br/>
@@ -18,4 +19,15 @@ package com.tx.component.security.auth.registry;
  */
 public class AuthRegistry {
     
+    public static final AuthRegistry instance = new AuthRegistry();
+    
+    public static AuthRegistry getInstance(){
+        return null;
+    }
+    
+    
+    /** 根据权限ID获取对应的权限项 */
+    public static Auth getAuth(String authId) {
+        return null;
+    }
 }

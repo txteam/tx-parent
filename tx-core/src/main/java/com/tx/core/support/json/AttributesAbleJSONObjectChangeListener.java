@@ -43,4 +43,15 @@ class AttributesAbleJSONObjectChangeListener extends JSONObjectChangeListener {
     public void callbackOnChange() {
         object.setAttributes(this.jsonObject.toJSONString());
     }
+    
+    //    public static void main(String[] args) {
+    //        JSONObject jsonObject = JSONObject.parseObject(null);
+    //        if (jsonObject == null) {
+    //            jsonObject = new JSONObject();
+    //            System.out.println(jsonObject.toJSONString());
+    //        }
+    //        jsonObject = JSONObject.parseObject(jsonObject.toJSONString());
+    //        System.out.println(jsonObject == null);
+    //        //this.object = object;
+    //    }
 }

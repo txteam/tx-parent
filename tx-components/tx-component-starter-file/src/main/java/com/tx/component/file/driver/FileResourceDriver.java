@@ -19,7 +19,7 @@ import com.tx.component.file.resource.FileResource;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public interface FileDefinitionResourceDriver extends InitializingBean {
+public interface FileResourceDriver extends InitializingBean {
     
     /**
      * 获取资源对象<br/>

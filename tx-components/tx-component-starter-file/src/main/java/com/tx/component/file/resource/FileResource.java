@@ -23,6 +23,17 @@ import java.io.InputStream;
 public interface FileResource {
     
     /**
+     * 判断文件定义是否存在<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    boolean exists();
+    
+    /**
      * 访问资源的ViewUrl:可能为相对路径|获绝对路径|或http访问的路径<br/>
      * <功能详细描述>
      * @return [参数说明]
@@ -34,35 +45,24 @@ public interface FileResource {
     public String getViewUrl();
     
     /**
-      * 获取文件名<br/>
-      * <功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return String [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 获取文件名<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     String getFilename();
     
     /**
-     * 判断文件定义是否存在<br/>
+     * 存储输入流,如果资源已经存在，则覆盖已存在的资源<br/>
      * <功能详细描述>
-     * @return [参数说明]
+     * @param inputStream [参数说明]
      * 
-     * @return boolean [返回类型说明]
+     * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
-    boolean exists();
-    
-    /**
-      * 存储输入流,如果资源已经存在，则覆盖已存在的资源<br/>
-      * <功能详细描述>
-      * @param inputStream [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
      */
     void save(InputStream inputStream);
     
@@ -74,28 +74,28 @@ public interface FileResource {
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
+     */
     public void add(InputStream inputStream);
     
     /**
-      * 删除文件<br/>
-      * <功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return boolean [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 删除文件<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     public void delete();
     
     /**
-      * 获取输入流<br/>
-      * <功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return InputStream [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 获取输入流<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return InputStream [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     public InputStream getInputStream() throws IOException;
 }

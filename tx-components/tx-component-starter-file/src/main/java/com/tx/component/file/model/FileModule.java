@@ -6,7 +6,7 @@
  */
 package com.tx.component.file.model;
 
-import com.tx.component.file.driver.FileDefinitionResourceDriver;
+import com.tx.component.file.driver.FileResourceDriver;
 
 /**
  * 文件模块配置<br/>
@@ -26,7 +26,7 @@ public class FileModule {
     private ReadWritePermissionEnum permission;
     
     /** 文件定义资源驱动 */
-    private FileDefinitionResourceDriver driver;
+    private FileResourceDriver driver;
     
     /** <默认构造函数> */
     public FileModule() {
@@ -35,7 +35,7 @@ public class FileModule {
     
     /** <默认构造函数> */
     public FileModule(String module, ReadWritePermissionEnum permission,
-            FileDefinitionResourceDriver driver) {
+            FileResourceDriver driver) {
         super();
         this.module = module;
         this.permission = permission;
@@ -59,14 +59,14 @@ public class FileModule {
     /**
      * @return 返回 driver
      */
-    public FileDefinitionResourceDriver getDriver() {
+    public FileResourceDriver getDriver() {
         return driver;
     }
     
     /**
      * @param 对driver进行赋值
      */
-    public void setDriver(FileDefinitionResourceDriver driver) {
+    public void setDriver(FileResourceDriver driver) {
         this.driver = driver;
     }
     

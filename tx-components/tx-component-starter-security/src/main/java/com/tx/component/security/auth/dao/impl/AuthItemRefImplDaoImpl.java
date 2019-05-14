@@ -1,11 +1,10 @@
-package com.tx.component.security.auth.dao.impl;
 ///*
 // * 描          述:  <描述>
 // * 修  改   人:  
 // * 修改时间:  
 // * <修改描述:>
 // */
-//package com.tx.component.auth.dao.impl;
+//package com.tx.component.security.auth.dao.impl;
 //
 //import java.sql.PreparedStatement;
 //import java.sql.ResultSet;

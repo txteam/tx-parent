@@ -13,7 +13,7 @@ import org.apache.commons.io.FileUtils;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.util.StringUtils;
 
-import com.tx.component.file.driver.FileDefinitionResourceDriver;
+import com.tx.component.file.driver.FileResourceDriver;
 import com.tx.component.file.model.FileDefinition;
 import com.tx.component.file.resource.FileResource;
 import com.tx.component.file.resource.impl.SystemFileResource;
@@ -30,7 +30,7 @@ import com.tx.core.exceptions.util.ExceptionWrapperUtils;
  * @since [产品/模块版本]
  */
 public class SystemFileDefinitionResourceDriver implements
-        FileDefinitionResourceDriver {
+        FileResourceDriver {
     
     /** 访问域名 */
     private String accessDomain = "";
@@ -141,22 +141,4 @@ public class SystemFileDefinitionResourceDriver implements
     public void setAccessDomain(String accessDomain) {
         this.accessDomain = accessDomain;
     }
-    
-    //public static void main(String[] args) {
-    //    String path = "d:/test\\test1/test2/test3//";
-    //    path = StringUtils.cleanPath(path);
-    //    while (path.endsWith("/")) {
-    //        path = path.substring(0, path.length() - 1);
-    //    }
-    //    System.out.println(path);
-    //    File file = new File(path);
-    //    if (!file.exists() && !file.isDirectory()) {
-    //        try {
-    //            FileUtils.forceMkdir(new File(path));
-    //        } catch (IOException e) {
-    //            throw ExceptionWrapperUtils.wrapperIOException(e,
-    //                    e.getMessage());
-    //        }
-    //    }
-    //}
 }

@@ -53,7 +53,6 @@ public interface JSONAttributesSupport {
     public default JSONObject getAttributeJSONObject() {
         AttributesAbleJSONObjectChangeListener listener = new AttributesAbleJSONObjectChangeListener(
                 this);
-        
         JSONObject json = JSONObjectChangeListener.newProxy(listener);
         
         return json;

@@ -25,11 +25,11 @@ public class SecurityContextProperties {
     /** 命令容器是否启动 */
     private boolean enable;
     
-    /** 所属模块 */
-    private String module;
-    
     /** 表是否自动初始化 */
     private boolean tableAutoInitialize = false;
+    
+    /** 所属模块 */
+    private String module;
     
     /** 持久化类型 */
     private PersisterTypeEnum persister = PersisterTypeEnum.mybatis;
@@ -46,6 +46,48 @@ public class SecurityContextProperties {
      */
     public void setEnable(boolean enable) {
         this.enable = enable;
+    }
+    
+    /**
+     * @return 返回 tableAutoInitialize
+     */
+    public boolean isTableAutoInitialize() {
+        return tableAutoInitialize;
+    }
+    
+    /**
+     * @param 对tableAutoInitialize进行赋值
+     */
+    public void setTableAutoInitialize(boolean tableAutoInitialize) {
+        this.tableAutoInitialize = tableAutoInitialize;
+    }
+    
+    /**
+     * @return 返回 module
+     */
+    public String getModule() {
+        return module;
+    }
+    
+    /**
+     * @param 对module进行赋值
+     */
+    public void setModule(String module) {
+        this.module = module;
+    }
+    
+    /**
+     * @return 返回 persister
+     */
+    public PersisterTypeEnum getPersister() {
+        return persister;
+    }
+    
+    /**
+     * @param 对persister进行赋值
+     */
+    public void setPersister(PersisterTypeEnum persister) {
+        this.persister = persister;
     }
     
 }

@@ -29,7 +29,7 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class FileDefinitionResourceDriverRegistry {
+public class FileResourceDriverRegistry {
     
     /** 驱动正则表达式 */
     private static Pattern driverPattern = Pattern.compile("(.+?)\\:\\{(.+?)\\}");
@@ -44,7 +44,7 @@ public class FileDefinitionResourceDriverRegistry {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public static FileDefinitionResourceDriver parseDriver(String driver) {
+    public static FileResourceDriver parseDriver(String driver) {
         AssertUtils.notEmpty(driver, "driver is empty.");
         
         Matcher matcher = driverPattern.matcher(driver);
@@ -53,7 +53,7 @@ public class FileDefinitionResourceDriverRegistry {
         String jsonString = "{" + matcher.group(2) + "}";
         JSONObject jsonObject = JSON.parseObject(jsonString);
         
-        FileDefinitionResourceDriver resourceDriver = null;
+        FileResourceDriver resourceDriver = null;
         switch (driverName) {
             case "SYSTEMFILE":
                 resourceDriver = new SystemFileDefinitionResourceDriver();

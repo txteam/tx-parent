@@ -25,8 +25,8 @@ import org.springframework.util.StringUtils;
 import com.thoughtworks.xstream.XStream;
 import com.tx.component.file.config.FileContextConfig;
 import com.tx.component.file.config.FileModuleCfg;
-import com.tx.component.file.driver.FileDefinitionResourceDriver;
-import com.tx.component.file.driver.FileDefinitionResourceDriverRegistry;
+import com.tx.component.file.driver.FileResourceDriver;
+import com.tx.component.file.driver.FileResourceDriverRegistry;
 import com.tx.component.file.driver.impl.SystemFileDefinitionResourceDriver;
 import com.tx.component.file.model.FileDefinition;
 import com.tx.component.file.model.FileModule;
@@ -219,7 +219,7 @@ public class FileContextBuilder extends FileContextConfigurator implements
                 continue;
             }
             FileModule fm = new FileModule();
-            fm.setDriver(FileDefinitionResourceDriverRegistry.parseDriver(fmcfg.getDriver()));
+            fm.setDriver(FileResourceDriverRegistry.parseDriver(fmcfg.getDriver()));
             fm.setModule(fmcfg.getModule());
             fm.setPermission(fmcfg.getPermission());
             moduleMap.put(fmcfg.getModule(), fm);
@@ -284,7 +284,7 @@ public class FileContextBuilder extends FileContextConfigurator implements
 
         String module = fileDefinition.getModule();
         FileModule fm = getFileModule(module);
-        FileDefinitionResourceDriver driver = fm.getDriver();
+        FileResourceDriver driver = fm.getDriver();
         FileResource resource = driver.getResource(fileDefinition);
 
         return resource;
@@ -399,7 +399,7 @@ public class FileContextBuilder extends FileContextConfigurator implements
 
         String module = fileDefinition.getModule();
         FileModule fm = getFileModule(module);
-        FileDefinitionResourceDriver driver = fm.getDriver();
+        FileResourceDriver driver = fm.getDriver();
         FileResource resource = driver.getResource(fileDefinition);
 
         resource.delete();
@@ -430,7 +430,7 @@ public class FileContextBuilder extends FileContextConfigurator implements
             getFileDefinitionPersistService().evict(fileDefinition.getId());
 
             FileModule fm = getFileModule(module);
-            FileDefinitionResourceDriver driver = fm.getDriver();
+            FileResourceDriver driver = fm.getDriver();
             FileResource resource = driver.getResource(fileDefinition);
             resource.save(input);
 
@@ -441,7 +441,7 @@ public class FileContextBuilder extends FileContextConfigurator implements
         } else {
             fileDefinition = buildFileDefinition(module, relativePath);
             FileModule fm = getFileModule(module);
-            FileDefinitionResourceDriver driver = fm.getDriver();
+            FileResourceDriver driver = fm.getDriver();
             FileResource resource = driver.getResource(fileDefinition);
             resource.save(input);
 
@@ -476,7 +476,7 @@ public class FileContextBuilder extends FileContextConfigurator implements
                 relativePath);
 
         FileModule fm = getFileModule(module);
-        FileDefinitionResourceDriver driver = fm.getDriver();
+        FileResourceDriver driver = fm.getDriver();
         FileResource resource = driver.getResource(fileDefinition);
         resource.add(input);
 

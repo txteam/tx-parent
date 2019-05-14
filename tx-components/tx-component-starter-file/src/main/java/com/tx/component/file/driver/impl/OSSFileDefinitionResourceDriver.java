@@ -14,7 +14,7 @@ import com.aliyun.oss.common.comm.Protocol;
 import com.aliyun.oss.model.BucketInfo;
 import com.aliyun.oss.model.CannedAccessControlList;
 import com.aliyun.oss.model.CreateBucketRequest;
-import com.tx.component.file.driver.FileDefinitionResourceDriver;
+import com.tx.component.file.driver.FileResourceDriver;
 import com.tx.component.file.model.FileDefinition;
 import com.tx.component.file.resource.FileResource;
 import com.tx.component.file.resource.impl.OSSFileResource;
@@ -31,7 +31,7 @@ import com.tx.core.util.ObjectUtils;
  * @since [产品/模块版本]
  */
 public class OSSFileDefinitionResourceDriver implements
-        FileDefinitionResourceDriver {
+        FileResourceDriver {
     
     /** 访问域名 */
     private String accessDomain = "http://oss-cn-shenzhen.aliyuncs.com";

@@ -23,6 +23,18 @@ import com.tx.component.security.auth.model.AuthRefItem;
 public interface AuthItemRefDao {
     
     /**
+     * 插入AuthItemRefImpl对象实体
+     * 1、auto generate
+     * <功能详细描述>
+     * @param condition [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public void insertToHis(AuthRefItem authRefItem);
+    
+    /**
      * 批量插入权限项引用
      * <功能详细描述>
      * @param condition [参数说明]
@@ -30,90 +42,83 @@ public interface AuthItemRefDao {
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
-    public void batchInsertAuthItemRefImplToHis(
-            List<AuthRefItem> condition, String tableSuffix);
+     */
+    public void batchInsertToHis(List<AuthRefItem> authRefItems);
     
     /**
-      * 插入AuthItemRefImpl对象实体
-      * 1、auto generate
-      * <功能详细描述>
-      * @param condition [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 插入AuthItemRefImpl对象实体
+     * 1、auto generate
+     * <功能详细描述>
+     * @param condition [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public void insertAuthItemRefImpl(AuthRefItem condition,
-            String tableSuffix);
+    public void insert(AuthRefItem authRefItem);
     
     /**
-      * 批量插入权限项引用
-      * <功能详细描述>
-      * @param condition [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 批量插入权限项引用
+     * <功能详细描述>
+     * @param condition [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
-    public void batchInsertAuthItemRefImpl(List<AuthRefItem> condition,
-            String tableSuffix);
+    public void batchInsert(List<AuthRefItem> authRefItems);
     
     /**
-      * 删除AuthItemRefImpl对象
-      * 1、auto generate
-      * 2、根据入参条件进行删除
-      * <功能详细描述>
-      * @param condition [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 删除AuthItemRefImpl对象
+     * 1、auto generate
+     * 2、根据入参条件进行删除
+     * <功能详细描述>
+     * @param condition [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public int deleteAuthItemRefImpl(AuthRefItem condition,
-            String tableSuffix);
+    public int delete(AuthRefItem authRefItem);
     
     /**
-      * 批量删除权限项目引用
-      * <功能详细描述>
-      * @param authItemRefImplList [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 批量删除权限项目引用
+     * <功能详细描述>
+     * @param authItemRefImplList [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
-    public void batchDeleteAuthItemRefImpl(
-            List<AuthRefItem> authItemRefImplList, String tableSuffix);
+    public void batchDelete(List<AuthRefItem> authRefItems);
     
     /**
-      * 根据条件查询AuthItemRefImpl列表
-      * auto generate
-      * <功能详细描述>
-      * @param params
-      * @return [参数说明]
-      * 
-      * @return List<AuthItemRefImpl> [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 根据条件查询AuthItemRefImpl列表
+     * auto generate
+     * <功能详细描述>
+     * @param params
+     * @return [参数说明]
+     * 
+     * @return List<AuthItemRefImpl> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public List<AuthRefItem> queryAuthItemRefImplList(
-            Map<String, Object> params, String tableSuffix);
+    public List<AuthRefItem> queryList(Map<String, Object> params);
     
     /**
-      * 更新AuthItemRefImpl实体，
-      * auto generate
-      * 1、传入AuthItemRefImpl中主键不能为空
-      * <功能详细描述>
-      * @param updateAuthItemRefImplRowMap
-      * @return [参数说明]
-      * 
-      * @return int [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 更新AuthItemRefImpl实体，
+     * auto generate
+     * 1、传入AuthItemRefImpl中主键不能为空
+     * <功能详细描述>
+     * @param updateAuthItemRefImplRowMap
+     * @return [参数说明]
+     * 
+     * @return int [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
-    public int updateAuthItemRefImpl(Map<String, Object> updateRowMap,
-            String tableSuffix);
+    public int update(Map<String, Object> updateRowMap);
 }

@@ -1,6 +1,10 @@
 package com.tx.component.security.auth.model;
 
 import java.io.Serializable;
+import java.util.List;
+
+import com.tx.core.support.json.JSONAttributesSupport;
+import com.tx.core.tree.model.TreeAble;
 
 /**
   * 权限项接口<br/>
@@ -11,7 +15,8 @@ import java.io.Serializable;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
  */
-public interface Auth extends Serializable {
+public interface Auth extends Serializable, JSONAttributesSupport,
+        TreeAble<List<Auth>, Auth> {
     
     /**
      * 权限项唯一键key 
@@ -30,14 +35,6 @@ public interface Auth extends Serializable {
      * @return [参数说明]
      */
     String getParentId();
-    
-    /**
-     * 获取权限项模块<br/>
-     * <功能详细描述>
-     * 
-     * @return [参数说明]
-     */
-    String getModule();
     
     /**
      * 获取权限类型<br/>
@@ -64,14 +61,6 @@ public interface Auth extends Serializable {
     String getRemark();
     
     /**
-     * 社区权限所属系统<br/>
-     * <功能详细描述> [参数说明]
-     * 
-     * @return void [返回类型说明]
-     */
-    void setModule(String module);
-    
-    /**
      * 是否能进行配置<br/>
      * <功能详细描述>
      * 
@@ -94,4 +83,12 @@ public interface Auth extends Serializable {
      * @return String [返回类型说明]
      */
     String getRefId();
+    
+    /**
+     * 获取权限项模块<br/>
+     * <功能详细描述>
+     * 
+     * @return [参数说明]
+     */
+    String getModule();
 }

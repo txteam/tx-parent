@@ -12,6 +12,10 @@ import java.util.List;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.PropertyAccessorFactory;
+
+import com.tx.core.exceptions.context.UnsupportedOperationException;
 import com.tx.core.exceptions.util.AssertUtils;
 
 /**
@@ -29,34 +33,33 @@ public class AuthItemWraper<T> implements Auth {
     private static final long serialVersionUID = 2463898805204658642L;
     
     /** 被代理的对象本身 */
-    private T object;
+    private T target;
     
-    /** 上级权限 */
-    private Auth parentAuth;
+    /** target的BeanWrapper对象 */
+    private BeanWrapper targetBeanWrapper;
     
     /** 被代理对象到权限的适配器 */
     private AuthItemAdapter<T> adapter;
     
-    /** 所属模块 */
-    private String module;
-    
-    /** 额外的属性值 */
-    private String attributes;
+    /** 上级权限 */
+    private Auth parent;
     
     /** 子权限列表 */
     @OneToMany(fetch = FetchType.LAZY)
     private List<Auth> children = new ArrayList<Auth>();
     
     /** <默认构造函数> */
-    public AuthItemWraper(AuthItemAdapter<T> adapter, T object,
-            Auth parentAuth) {
+    public AuthItemWraper(AuthItemAdapter<T> adapter, T target, Auth parent) {
         super();
         AssertUtils.notNull(adapter, "adapter is null.");
         AssertUtils.notNull(adapter, "object is null.");
         
         this.adapter = adapter;
-        this.object = object;
-        this.parentAuth = parentAuth;
+        this.target = target;
+        this.targetBeanWrapper = PropertyAccessorFactory
+                .forBeanPropertyAccess(this.target);
+        
+        this.parent = parent;
     }
     
     /**
@@ -64,7 +67,7 @@ public class AuthItemWraper<T> implements Auth {
      */
     @Override
     public String getId() {
-        return this.adapter.getId(this.object, this.parentAuth);
+        return this.adapter.getId(this.targetBeanWrapper, this.parent);
     }
     
     /**
@@ -72,7 +75,7 @@ public class AuthItemWraper<T> implements Auth {
      */
     @Override
     public String getRefId() {
-        return this.adapter.getRefId(this.object, this.parentAuth);
+        return this.adapter.getRefId(this.targetBeanWrapper, this.parent);
     }
     
     /**
@@ -80,7 +83,7 @@ public class AuthItemWraper<T> implements Auth {
      */
     @Override
     public String getRefType() {
-        return this.adapter.getRefType(this.object, this.parentAuth);
+        return this.adapter.getRefType(this.targetBeanWrapper, this.parent);
     }
     
     /**
@@ -88,7 +91,7 @@ public class AuthItemWraper<T> implements Auth {
      */
     @Override
     public String getParentId() {
-        return this.adapter.getParentId(this.object, this.parentAuth);
+        return this.adapter.getParentId(this.targetBeanWrapper, this.parent);
     }
     
     /**
@@ -96,7 +99,7 @@ public class AuthItemWraper<T> implements Auth {
      */
     @Override
     public String getName() {
-        return this.adapter.getName(this.object, this.parentAuth);
+        return this.adapter.getName(this.targetBeanWrapper, this.parent);
     }
     
     /**
@@ -104,7 +107,7 @@ public class AuthItemWraper<T> implements Auth {
      */
     @Override
     public String getRemark() {
-        return this.adapter.getRemark(this.object, this.parentAuth);
+        return this.adapter.getRemark(this.targetBeanWrapper, this.parent);
     }
     
     /**
@@ -112,23 +115,7 @@ public class AuthItemWraper<T> implements Auth {
      */
     @Override
     public String getAuthType() {
-        return this.adapter.getAuthType(this.object, this.parentAuth);
-    }
-    
-    /**
-     * @return
-     */
-    @Override
-    public String getAttributes() {
-        return this.attributes;
-    }
-    
-    /**
-     * @param attributes
-     */
-    @Override
-    public void setAttributes(String attributes) {
-        this.attributes = attributes;
+        return this.adapter.getAuthType(this.targetBeanWrapper, this.parent);
     }
     
     /**
@@ -136,23 +123,7 @@ public class AuthItemWraper<T> implements Auth {
      */
     @Override
     public String getModule() {
-        return this.module;
-    }
-    
-    /**
-     * @param module
-     */
-    @Override
-    public void setModule(String module) {
-        this.module = module;
-    }
-    
-    /**
-     * @return
-     */
-    @Override
-    public boolean isModifyAble() {
-        return false;
+        return this.adapter.getModule(this.targetBeanWrapper, this.parent);
     }
     
     /**
@@ -160,15 +131,16 @@ public class AuthItemWraper<T> implements Auth {
      */
     @Override
     public boolean isConfigAble() {
-        return true;
+        return this.adapter.isConfigAble(this.targetBeanWrapper, this.parent);
     }
     
     /**
      * @return
      */
     @Override
-    public boolean isValid() {
-        return true;
+    public String getAttributes() {
+        // TODO Auto-generated method stub
+        return null;
     }
     
     /**
@@ -183,5 +155,14 @@ public class AuthItemWraper<T> implements Auth {
      */
     public void setChildren(List<Auth> children) {
         this.children = children;
+    }
+    
+    /**
+     * @param attributes
+     */
+    @Override
+    public void setAttributes(String attributes) {
+        throw new UnsupportedOperationException(
+                "属性attributes(AuthItemWraper)不能被修改.");
     }
 }
