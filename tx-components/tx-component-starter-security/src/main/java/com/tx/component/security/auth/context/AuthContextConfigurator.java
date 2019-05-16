@@ -32,37 +32,15 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @since  [产品/模块版本]
  */
 @Configuration
-public class AuthContextConfigurator implements InitializingBean,
-        ApplicationContextAware {
+public abstract class AuthContextConfigurator
+        implements InitializingBean, ApplicationContextAware {
     
     /** 日志记录器 */
-    protected static final Logger logger = LoggerFactory.getLogger(AuthContextConfigurator.class);
-    
-    /** 默认的权限检查器 */
-    protected AuthChecker defaultAuthChecker;
-    
-    /** 系统id 64，用以与其他系统区分 */
-    protected String systemId;
-    
-    /** 表后缀名 */
-    protected String tableSuffix;
+    protected static final Logger logger = LoggerFactory
+            .getLogger(AuthContextConfigurator.class);
     
     /** 当前spring容器 */
     protected ApplicationContext applicationContext;
-    
-    /** 事务处理器:如果dataSource为空则该值不能为空 */
-    protected PlatformTransactionManager platformTransactionManager;
-    
-    /** 数据源 */
-    protected DataSource dataSource;
-    
-    /** jdbc句柄:如果dataSource为空则该值不能为空 */
-    protected JdbcTemplate jdbcTemplate;
-    
-    /** 权限配置地址 */
-    protected String[] authConfigLocaions;
-    
-    private String scanControllerAuthBasePackages = "com.tx";
     
     /**
      * @param arg0
@@ -79,70 +57,7 @@ public class AuthContextConfigurator implements InitializingBean,
      */
     @Override
     public void afterPropertiesSet() throws Exception {
-        if (this.dataSource == null) {
-            AssertUtils.notNull(this.jdbcTemplate,
-                    "dataSource or jdbcTemplate is null");
-            AssertUtils.notNull(this.platformTransactionManager,
-                    "platformTransactionManager or jdbcTemplate is null");
-        } else {
-            if (this.jdbcTemplate == null) {
-                this.jdbcTemplate = new JdbcTemplate(this.dataSource);
-            }
-            if (this.platformTransactionManager == null) {
-                this.platformTransactionManager = new DataSourceTransactionManager(
-                        this.dataSource);
-            }
-        }
+        
     }
     
-    /**
-     * @param 对defaultAuthChecker进行赋值
-     */
-    public void setDefaultAuthChecker(AuthChecker defaultAuthChecker) {
-        this.defaultAuthChecker = defaultAuthChecker;
-    }
-    
-    /**
-     * @param 对systemId进行赋值
-     */
-    public void setSystemId(String systemId) {
-        this.systemId = systemId;
-    }
-    
-    /**
-     * @param 对tableSuffix进行赋值
-     */
-    public void setTableSuffix(String tableSuffix) {
-        this.tableSuffix = tableSuffix;
-    }
-    
-    /**
-     * @param 对platformTransactionManager进行赋值
-     */
-    public void setPlatformTransactionManager(
-            PlatformTransactionManager platformTransactionManager) {
-        this.platformTransactionManager = platformTransactionManager;
-    }
-    
-    /**
-     * @param 对dataSource进行赋值
-     */
-    public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
-    
-    /**
-     * @param 对jdbcTemplate进行赋值
-     */
-    public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
-
-    /**
-     * @param 对scanControllerAuthBasePackages进行赋值
-     */
-    public void setScanControllerAuthBasePackages(
-            String scanControllerAuthBasePackages) {
-        this.scanControllerAuthBasePackages = scanControllerAuthBasePackages;
-    }
 }

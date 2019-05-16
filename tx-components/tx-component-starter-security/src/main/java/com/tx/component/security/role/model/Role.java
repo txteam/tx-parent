@@ -6,8 +6,13 @@
  */
 package com.tx.component.security.role.model;
 
+import org.apache.commons.lang3.StringUtils;
+
+import com.tx.component.security.role.context.RoleTypeRegistry;
+
 /**
- * 角色<br/>
+ * 角色接口实现<br/>
+ *    系统中无论客户角色，还是操作员角色都可定义为该角色接口定义的实现<br/>
  * <功能详细描述>
  * 
  * @author  Administrator
@@ -29,7 +34,7 @@ public interface Role {
     String getId();
     
     /**
-     * 获取角色类型<br/>
+     * 获取角色名称<br/>
      * <功能详细描述>
      * @return [参数说明]
      * 
@@ -37,7 +42,7 @@ public interface Role {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    String getRoleType();
+    String getName();
     
     /**
      * 获取角色备注<br/>
@@ -50,5 +55,34 @@ public interface Role {
      */
     default String getRemark() {
         return "";
+    }
+    
+    /**
+     * 获取角色类型id<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    String getRoleTypeId();
+    
+    /**
+     * 获取角色类型<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return RoleType [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    default RoleType getRoleType() {
+        String roleTypeId = getRoleTypeId();
+        if (StringUtils.isEmpty(roleTypeId)) {
+            return null;
+        }
+        RoleType roleType = RoleTypeRegistry.getInstance().findById(roleTypeId);
+        return roleType;
     }
 }

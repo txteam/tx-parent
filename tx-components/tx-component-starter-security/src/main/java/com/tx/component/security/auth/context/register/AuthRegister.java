@@ -20,24 +20,24 @@ import com.tx.component.security.auth.model.Auth;
 public interface AuthRegister {
     
     /**
-      * 权限注册器对应权限类型<br/>
-      * <功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return String [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 权限注册器对应权限类型<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     public String authType();
     
     /**
-      * 注册权限<br/>
-      * <功能详细描述>
-      * @param authItem [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 注册权限<br/>
+     * <功能详细描述>
+     * @param authItem [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     public Auth registeAuth(Auth authItem);
 }
