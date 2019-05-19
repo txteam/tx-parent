@@ -11,14 +11,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
@@ -27,7 +25,6 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.reflect.ConstructorUtils;
-import org.apache.commons.lang3.reflect.MethodUtils;
 import org.apache.commons.lang3.reflect.TypeUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.PropertyAccessorFactory;
@@ -35,7 +32,6 @@ import org.springframework.beans.PropertyAccessorFactory;
 import com.tx.core.exceptions.reflection.ReflectionException;
 import com.tx.core.exceptions.resource.ResourceAccessException;
 import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.reflection.JpaMetaClass;
 
 /**
  * 对象工具类<br />
@@ -50,46 +46,177 @@ import com.tx.core.reflection.JpaMetaClass;
 public class ObjectUtils {
     
     /**
+     * 将对象toString<br/>
+     * <功能详细描述>
+     * @param obj
+     * @return [参数说明]
      * 
-     * 打印调试信息<br />
-     * 打印出一个 bean 中的 get 方法返回值
-     *
-     * @param out 输出流,如果为 null, 则自动设置成System.out
-     * @param label 标签
-     * @param object bean
-     * @param deep 深度遍历(暂未实现)
-     * @param ignoreNull 是否忽略返回的 null 的项
-     *            
-     * @return void [返回类型说明]
+     * @return String [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-     * @version [版本号, 2015年11月25日]
-     * @author rain
      */
-    public static void debugPrintPropertyValue(PrintStream out, String label,
-            Object object, boolean deep, boolean ignoreNull) {
-        if (out == null) {
-            out = System.out;
+    public static String toString(Object obj) {
+        if (obj == null) {
+            return "null";
         }
-        if (object == null) {
-            out.println(label + " : null");
+        final Class<?> clazz = obj.getClass();
+        if (!clazz.isArray()) {
+            return obj.toString();
         }
-        out.println();
-        out.println(label + " : " + object.getClass().getName());
-        JpaMetaClass<?> jpaMetaClass = JpaMetaClass.forClass(object.getClass());
-        Set<String> getterNames = jpaMetaClass.getGetterNames();
-        for (String getterMethod : getterNames) {
-            try {
-                Object invokeMethod = MethodUtils.invokeMethod(object,
-                        "get" + StringUtils.capitalize(getterMethod));
-                if (ignoreNull && invokeMethod == null) {
-                    continue;
-                }
-                out.println(getterMethod + " : " + invokeMethod);
-            } catch (Exception e) {
-            }
+        final Class<?> componentType = obj.getClass().getComponentType();
+        if (long.class.equals(componentType)) {
+            return Arrays.toString((long[]) obj);
+        } else if (int.class.equals(componentType)) {
+            return Arrays.toString((int[]) obj);
+        } else if (short.class.equals(componentType)) {
+            return Arrays.toString((short[]) obj);
+        } else if (char.class.equals(componentType)) {
+            return Arrays.toString((char[]) obj);
+        } else if (byte.class.equals(componentType)) {
+            return Arrays.toString((byte[]) obj);
+        } else if (boolean.class.equals(componentType)) {
+            return Arrays.toString((boolean[]) obj);
+        } else if (float.class.equals(componentType)) {
+            return Arrays.toString((float[]) obj);
+        } else if (double.class.equals(componentType)) {
+            return Arrays.toString((double[]) obj);
+        } else {
+            return Arrays.toString((Object[]) obj);
         }
     }
+    
+    /**
+     * 获取指定对象的hashCode值<br/>
+     * <功能详细描述>
+     * @param obj
+     * @return [参数说明]
+     * 
+     * @return int [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static int hashCode(Object obj) {
+        if (obj == null) {
+            // for consistency with Arrays#hashCode() and Objects#hashCode()
+            return 0;
+        }
+        final Class<?> clazz = obj.getClass();
+        if (!clazz.isArray()) {
+            return Objects.hashCode(obj);
+        }
+        final Class<?> componentType = clazz.getComponentType();
+        if (long.class.equals(componentType)) {
+            return Arrays.hashCode((long[]) obj);
+        } else if (int.class.equals(componentType)) {
+            return Arrays.hashCode((int[]) obj);
+        } else if (short.class.equals(componentType)) {
+            return Arrays.hashCode((short[]) obj);
+        } else if (char.class.equals(componentType)) {
+            return Arrays.hashCode((char[]) obj);
+        } else if (byte.class.equals(componentType)) {
+            return Arrays.hashCode((byte[]) obj);
+        } else if (boolean.class.equals(componentType)) {
+            return Arrays.hashCode((boolean[]) obj);
+        } else if (float.class.equals(componentType)) {
+            return Arrays.hashCode((float[]) obj);
+        } else if (double.class.equals(componentType)) {
+            return Arrays.hashCode((double[]) obj);
+        } else {
+            return Arrays.hashCode((Object[]) obj);
+        }
+    }
+    
+    /**
+     * Compares two objects. Returns <code>true</code> if
+     * <ul>
+     * <li>{@code thisObj} and {@code thatObj} are both <code>null</code></li>
+     * <li>{@code thisObj} and {@code thatObj} are instances of the same type and
+     * {@link Object#equals(Object)} returns <code>true</code></li>
+     * <li>{@code thisObj} and {@code thatObj} are arrays with the same component type and
+     * equals() method of {@link Arrays} returns <code>true</code> (not deepEquals())</li>
+     * </ul>
+     *
+     * @param thisObj
+     *          The left hand object to compare. May be an array or <code>null</code>
+     * @param thatObj
+     *          The right hand object to compare. May be an array or <code>null</code>
+     * @return <code>true</code> if two objects are equal; <code>false</code> otherwise.
+     */
+    public static boolean equals(Object thisObj, Object thatObj) {
+        if (thisObj == null) {
+            return thatObj == null;
+        } else if (thatObj == null) {
+            return false;
+        }
+        final Class<?> clazz = thisObj.getClass();
+        if (!clazz.equals(thatObj.getClass())) {
+            return false;
+        }
+        if (!clazz.isArray()) {
+            return thisObj.equals(thatObj);
+        }
+        final Class<?> componentType = clazz.getComponentType();
+        if (long.class.equals(componentType)) {
+            return Arrays.equals((long[]) thisObj, (long[]) thatObj);
+        } else if (int.class.equals(componentType)) {
+            return Arrays.equals((int[]) thisObj, (int[]) thatObj);
+        } else if (short.class.equals(componentType)) {
+            return Arrays.equals((short[]) thisObj, (short[]) thatObj);
+        } else if (char.class.equals(componentType)) {
+            return Arrays.equals((char[]) thisObj, (char[]) thatObj);
+        } else if (byte.class.equals(componentType)) {
+            return Arrays.equals((byte[]) thisObj, (byte[]) thatObj);
+        } else if (boolean.class.equals(componentType)) {
+            return Arrays.equals((boolean[]) thisObj, (boolean[]) thatObj);
+        } else if (float.class.equals(componentType)) {
+            return Arrays.equals((float[]) thisObj, (float[]) thatObj);
+        } else if (double.class.equals(componentType)) {
+            return Arrays.equals((double[]) thisObj, (double[]) thatObj);
+        } else {
+            return Arrays.equals((Object[]) thisObj, (Object[]) thatObj);
+        }
+    }
+    
+    //    /**
+    //     * 打印调试信息<br />
+    //     * 打印出一个 bean 中的 get 方法返回值
+    //     *
+    //     * @param out 输出流,如果为 null, 则自动设置成System.out
+    //     * @param label 标签
+    //     * @param object bean
+    //     * @param deep 深度遍历(暂未实现)
+    //     * @param ignoreNull 是否忽略返回的 null 的项
+    //     *            
+    //     * @return void [返回类型说明]
+    //     * @exception throws [异常类型] [异常说明]
+    //     * @see [类、类#方法、类#成员]
+    //     * @version [版本号, 2015年11月25日]
+    //     * @author rain
+    //     */
+    //    public static void debugPrintPropertyValue(PrintStream out, String label,
+    //            Object object, boolean deep, boolean ignoreNull) {
+    //        if (out == null) {
+    //            out = System.out;
+    //        }
+    //        if (object == null) {
+    //            out.println(label + " : null");
+    //        }
+    //        out.println();
+    //        out.println(label + " : " + object.getClass().getName());
+    //        JpaMetaClass<?> jpaMetaClass = JpaMetaClass.forClass(object.getClass());
+    //        Set<String> getterNames = jpaMetaClass.getGetterNames();
+    //        for (String getterMethod : getterNames) {
+    //            try {
+    //                Object invokeMethod = MethodUtils.invokeMethod(object,
+    //                        "get" + StringUtils.capitalize(getterMethod));
+    //                if (ignoreNull && invokeMethod == null) {
+    //                    continue;
+    //                }
+    //                out.println(getterMethod + " : " + invokeMethod);
+    //            } catch (Exception e) {
+    //            }
+    //        }
+    //    }
     
     /**
      * 对一个Serializable的对象进行深度Clone 基于序列化与反序列化实现， 该方法通用性强，但性能反而不如clone或BeanUtils的应用<br/>
@@ -196,6 +323,7 @@ public class ObjectUtils {
                 .forBeanPropertyAccess(thisObj);
         for (String propertyNameTemp : dependPropertyName) {
             Object value = metaObject.getPropertyValue(propertyNameTemp);
+            
             resHashCode += (value == null ? propertyNameTemp.hashCode()
                     : value.hashCode());
         }

@@ -26,17 +26,14 @@ public interface AuthConstants {
     /** 操作员权限引用项：操作员权限引用 */
     public static final String AUTHREFTYPE_OPERATOR = "AUTHREFTYPE_OPERATOR";
     
-    /** 操作员权限引用项：操作员临时权限引用 */
-    public static final String AUTHREFTYPE_OPERATOR_TEMPORARY = "AUTHREFTYPE_OPERATOR_TEMPORARY";
-    
     /** 操作员权限引用项：角色权限引用 */
-    public static final String AUTHREFTYPE_ROLE = "AUTHREFTYPE_ROLE";
+    public static final String AUTHREFTYPE_OPERATOR_ROLE = "AUTHREFTYPE_OPERATOR_ROLE";
     
     /** 操作员权限引用项：职位权限引用 */
-    public static final String AUTHREFTYPE_POST = "AUTHREFTYPE_POST";
+    public static final String AUTHREFTYPE_OPERATOR_POST = "AUTHREFTYPE_OPERATOR_POST";
     
     /** 操作员权限引用项：组织权限引用 */
-    public static final String AUTHREFTYPE_ORGANIZATION = "AUTHREFTYPE_ORGANIZATION";
+    public static final String AUTHREFTYPE_OPERATOR_ORGANIZATION = "AUTHREFTYPE_OPERATOR_ORGANIZATION";
     //end-----------------------权限引用类型----------------------
     
     //start-----------------------权限类型----------------------
