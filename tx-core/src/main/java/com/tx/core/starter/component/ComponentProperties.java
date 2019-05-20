@@ -25,9 +25,6 @@ public class ComponentProperties {
     
     /** 持久化类型 */
     private ComponentPersisterProperties persister;
-    
-    /** 缓存配置 */
-    private ComponentCacheProperties cache;
 
     /**
      * @return 返回 module
@@ -55,19 +52,5 @@ public class ComponentProperties {
      */
     public void setPersister(ComponentPersisterProperties persister) {
         this.persister = persister;
-    }
-
-    /**
-     * @return 返回 cache
-     */
-    public ComponentCacheProperties getCache() {
-        return cache;
-    }
-
-    /**
-     * @param 对cache进行赋值
-     */
-    public void setCache(ComponentCacheProperties cache) {
-        this.cache = cache;
     }
 }

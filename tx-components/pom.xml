@@ -42,7 +42,7 @@
 		<module>tx-component-starter-event</module>
 		<module>tx-component-starter-basicdata</module>
 
-		<module>tx-component-starter-security</module>
+		<!-- <module>tx-component-starter-security</module> -->
 
 		<!-- <module>tx-component-starter-task</module> -->
 		<!-- <module>tx-component-starter-file</module> -->
