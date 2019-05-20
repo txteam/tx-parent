@@ -6,7 +6,7 @@
  */
 package com.tx.component.event.starter;
 
-import javax.activation.DataSource;
+import javax.sql.DataSource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeansException;

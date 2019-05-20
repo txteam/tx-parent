@@ -6,7 +6,8 @@
  */
 package com.tx.component.command.starter;
 
-import javax.activation.DataSource;
+
+import javax.sql.DataSource;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;

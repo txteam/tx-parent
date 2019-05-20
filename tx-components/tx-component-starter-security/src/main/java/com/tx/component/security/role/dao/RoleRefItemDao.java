@@ -9,11 +9,10 @@ package com.tx.component.security.role.dao;
 import java.util.List;
 import java.util.Map;
 
-import com.tx.component.security.auth.model.AuthRefItem;
 import com.tx.component.security.role.model.RoleRefItem;
 
 /**
- * AuthItemRefImpl持久层
+ * RoleRefItem持久层
  * <功能详细描述>
  * 
  * @author  
@@ -24,7 +23,7 @@ import com.tx.component.security.role.model.RoleRefItem;
 public interface RoleRefItemDao {
     
     /**
-     * 插入AuthItemRefImpl对象实体
+     * 插入RoleRefItem对象实体
      * 1、auto generate
      * <功能详细描述>
      * @param condition [参数说明]
@@ -107,7 +106,7 @@ public interface RoleRefItemDao {
      * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public List<AuthRefItem> queryList(Map<String, Object> params);
+    public List<RoleRefItem> queryList(Map<String, Object> params);
     
     /**
      * 更新AuthItemRefImpl实体，

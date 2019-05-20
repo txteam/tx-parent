@@ -6,8 +6,8 @@
  */
 package com.tx.component.basicdata.starter;
 
-import javax.activation.DataSource;
 import javax.annotation.PostConstruct;
+import javax.sql.DataSource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeansException;
