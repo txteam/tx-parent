@@ -6,6 +6,8 @@
  */
 package com.tx.component.security.role.model;
 
+import java.io.Serializable;
+
 import org.apache.commons.lang3.StringUtils;
 
 import com.tx.component.security.role.context.RoleTypeRegistry;
@@ -20,7 +22,7 @@ import com.tx.component.security.role.context.RoleTypeRegistry;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public interface Role {
+public interface Role extends Serializable {
     
     /**
      * 获取角色唯一键<br/>

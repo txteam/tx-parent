@@ -39,17 +39,17 @@ import com.tx.core.util.MessageUtils;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public class AuthContext extends AuthContextBuilder {
+public class SecurityContextImpl extends AuthContextBuilder {
     /* 不需要进行注入部分属性 */
     
     /** 单子模式权限容器唯一实例 */
-    private static AuthContext authContext;
+    private static SecurityContextImpl authContext;
     
     /**
      * <默认构造函数>
      * 构造函数级别为子类可见<br/>
      */
-    protected AuthContext() {
+    protected SecurityContextImpl() {
     }
     
     /**
@@ -61,8 +61,8 @@ public class AuthContext extends AuthContextBuilder {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public static AuthContext getContext() {
-        AssertUtils.notNull(AuthContext.authContext,
+    public static SecurityContextImpl getContext() {
+        AssertUtils.notNull(SecurityContextImpl.authContext,
                 "context is null.please call it after init.");
         return authContext;
     }

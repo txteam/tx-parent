@@ -6,6 +6,8 @@
  */
 package com.tx.component.security.role.model;
 
+import java.io.Serializable;
+
 /**
  * 角色类型接口<br/>
  * <功能详细描述>
@@ -15,7 +17,7 @@ package com.tx.component.security.role.model;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public interface RoleType {
+public interface RoleType extends Serializable {
     
     /**
      * 获取角色类型唯一键<br/>

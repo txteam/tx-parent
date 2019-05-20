@@ -81,11 +81,11 @@ public class RoleTypeRegistry
     /** CacheManager */
     private CacheManager cacheManager;
     
-    /** 角色类型管理器集 */
-    private List<RoleTypeManager> roleTypeManagers;
-    
     /** 缓存实例 */
     private Cache cache;
+    
+    /** 角色类型管理器集 */
+    private List<RoleTypeManager> roleTypeManagers;
     
     /** 角色类型 */
     private RoleTypeManagerComposite composite;
@@ -99,7 +99,8 @@ public class RoleTypeRegistry
         AssertUtils.notEmpty(roleTypeManagers, "roleTypeManagers is empty.");
         
         this.cache = this.cacheManager.getCache("roleTypeCache");
-        this.composite = new RoleTypeManagerComposite(roleTypeManagers);
+        this.composite = new RoleTypeManagerComposite(roleTypeManagers,
+                this.cache);
     }
     
     /**

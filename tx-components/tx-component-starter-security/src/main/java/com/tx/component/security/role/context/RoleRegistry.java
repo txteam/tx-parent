@@ -99,7 +99,20 @@ public class RoleRegistry
         AssertUtils.notEmpty(roleManagers, "roleManagers is empty.");
         
         this.cache = this.cacheManager.getCache("roleTypeCache");
-        this.composite = new RoleManagerComposite(roleManagers);
+        this.composite = new RoleManagerComposite(roleManagers,this.cache);
+    }
+    
+    /**
+     * 获取缓存<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return Cache [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public Cache getCache() {
+        return this.cache;
     }
     
     public Role findById(String id) {
@@ -107,10 +120,6 @@ public class RoleRegistry
     }
     
     public List<Role> queryList(Map<String, Object> params) {
-        return null;
-    }
-    
-    public Map<String, Role> queryMap(Map<String, Object> params) {
         return null;
     }
 }

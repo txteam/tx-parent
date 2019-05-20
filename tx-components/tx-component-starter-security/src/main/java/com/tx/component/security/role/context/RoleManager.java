@@ -9,6 +9,8 @@ package com.tx.component.security.role.context;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.cache.Cache;
+
 import com.tx.component.security.role.model.Role;
 
 /**
@@ -45,4 +47,20 @@ public interface RoleManager {
      * @see [类、类#方法、类#成员]
      */
     public List<Role> queryList(Map<String, Object> params);
+    
+    /**
+     * 刷新缓存<br/>
+     * <功能详细描述>
+     * @param ms [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    default void flushRoleTypeCache() {
+        Cache cache = RoleRegistry.getInstance().getCache();
+        if (cache != null) {
+            cache.clear();
+        }
+    }
 }

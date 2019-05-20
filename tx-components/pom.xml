@@ -41,12 +41,14 @@
 		<module>tx-component-starter-command</module>
 		<module>tx-component-starter-event</module>
 		<module>tx-component-starter-basicdata</module>
-		<module>tx-component-starter-task</module>
+
 		<module>tx-component-starter-security</module>
-		<module>tx-component-starter-file</module>
-		<module>tx-component-starter-servicelogger</module>
-		<module>tx-component-starter-communication</module>
-		
+
+		<!-- <module>tx-component-starter-task</module> -->
+		<!-- <module>tx-component-starter-file</module> -->
+		<!-- <module>tx-component-starter-servicelogger</module> -->
+		<!-- <module>tx-component-starter-communication</module> -->
+
 		<!-- 待完善的模块 -->
 		<!-- <module>tx-component-sequence</module> -->
 	</modules>

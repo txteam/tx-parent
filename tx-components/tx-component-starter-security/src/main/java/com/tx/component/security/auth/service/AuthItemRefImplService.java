@@ -89,7 +89,7 @@ public class AuthItemRefImplService {
         AssertUtils.notEmpty(systemId, "systemId is empty");
         
         AuthRefItem condition = new AuthRefItem();
-        Auth authItemTemp = AuthContext.getContext()
+        Auth authItemTemp = SecurityContextImpl.getContext()
                 .getAuthItemFromContextById(authItemId);
         condition.setAuthItem(authItemTemp);
         condition.setTemp(null);

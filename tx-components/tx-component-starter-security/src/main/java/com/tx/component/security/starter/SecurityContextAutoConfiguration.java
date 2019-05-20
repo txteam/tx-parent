@@ -182,8 +182,8 @@ public class AuthContextAutoConfiguration
     }
     
     @Bean(name = "authContext")
-    public AuthContextFactory authContext() {
-        AuthContextFactory authContextFactory = new AuthContextFactory();
+    public SecurityContextFactory authContext() {
+        SecurityContextFactory authContextFactory = new SecurityContextFactory();
         authContextFactory.setDataSource(dataSource);
         authContextFactory.setDefaultAuthChecker(defaultAuthChecker);
         authContextFactory.setJdbcTemplate(jdbcTemplate);
@@ -194,8 +194,8 @@ public class AuthContextAutoConfiguration
     }
     
     @Bean(name = "authItemRefImplDao")
-    public AuthItemRefDao authItemRefImplDao() {
-        AuthItemRefDao authItemRefImplDao = new AuthItemRefImplDaoImpl(
+    public RoleRefItemDao authItemRefImplDao() {
+        RoleRefItemDao authItemRefImplDao = new AuthItemRefImplDaoImpl(
                 this.jdbcTemplate, this.dataSource);
         return authItemRefImplDao;
     }

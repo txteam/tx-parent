@@ -6,6 +6,7 @@
  */
 package com.tx.component.basicdata.starter;
 
+import javax.activation.DataSource;
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.lang3.StringUtils;
@@ -13,6 +14,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -51,7 +53,8 @@ import com.tx.core.exceptions.util.AssertUtils;
 @Configuration
 @EnableConfigurationProperties(BasicDataContextProperties.class)
 @ConditionalOnClass({ BasicDataContextFactory.class })
-@ConditionalOnSingleCandidate(PlatformTransactionManager.class)
+@ConditionalOnSingleCandidate(DataSource.class)
+@ConditionalOnBean(PlatformTransactionManager.class)
 @AutoConfigureAfter(TransactionAutoConfiguration.class)
 @ConditionalOnProperty(prefix = "tx.basicdata", value = "enable", havingValue = "true")
 @Import({ BasicDataPersisterConfiguration.class,

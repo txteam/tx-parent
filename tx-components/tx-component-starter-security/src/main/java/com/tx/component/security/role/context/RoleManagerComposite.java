@@ -6,8 +6,12 @@
  */
 package com.tx.component.security.role.context;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.cache.Cache;
 
 import com.tx.component.security.role.model.Role;
 import com.tx.core.exceptions.util.AssertUtils;
@@ -21,12 +25,13 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class RoleManagerComposite{
+public class RoleManagerComposite {
     
+    /** 角色管理器实现 */
     private List<RoleManager> roleManagers;
     
     /** <默认构造函数> */
-    public RoleManagerComposite(List<RoleManager> roleManagers) {
+    public RoleManagerComposite(List<RoleManager> roleManagers,Cache cache) {
         super();
         this.roleManagers = roleManagers;
     }
@@ -53,8 +58,13 @@ public class RoleManagerComposite{
      * @return
      */
     public List<Role> queryList(Map<String, Object> params) {
-        // TODO Auto-generated method stub
-        return null;
+        List<Role> resList = new ArrayList<>();
+        for (RoleManager rm : roleManagers) {
+            List<Role> tempList = rm.queryList(params);
+            if (!CollectionUtils.isEmpty(tempList)) {
+                resList.addAll(tempList);
+            }
+        }
+        return resList;
     }
-    
 }

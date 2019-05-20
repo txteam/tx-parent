@@ -9,6 +9,8 @@ package com.tx.component.security.role.context;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.cache.Cache;
+
 import com.tx.component.security.role.model.RoleType;
 import com.tx.core.exceptions.util.AssertUtils;
 
@@ -21,12 +23,13 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class RoleTypeManagerComposite implements RoleTypeManager {
+public class RoleTypeManagerComposite{
     
     private List<RoleTypeManager> roleTypeManagers;
     
     /** <默认构造函数> */
-    public RoleTypeManagerComposite(List<RoleTypeManager> roleTypeManagers) {
+    public RoleTypeManagerComposite(List<RoleTypeManager> roleTypeManagers,
+            Cache roleTypeCache) {
         super();
         this.roleTypeManagers = roleTypeManagers;
     }
@@ -35,7 +38,6 @@ public class RoleTypeManagerComposite implements RoleTypeManager {
      * @param roleTypeId
      * @return
      */
-    @Override
     public RoleType findById(String roleTypeId) {
         AssertUtils.notEmpty(roleTypeId, "roleTypeId is empty.");
         return null;
@@ -45,9 +47,7 @@ public class RoleTypeManagerComposite implements RoleTypeManager {
      * @param params
      * @return
      */
-    @Override
     public List<RoleType> queryList(Map<String, Object> params) {
-        // TODO Auto-generated method stub
         return null;
     }
     

@@ -6,6 +6,10 @@
  */
 package com.tx.component.security.context;
 
+import com.tx.component.security.auth.service.AuthRefService;
+import com.tx.component.security.role.context.RoleRegistry;
+import com.tx.component.security.role.context.RoleTypeRegistry;
+import com.tx.component.security.role.service.RoleRefService;
 
 /**
  * 权控容器<br/>
@@ -18,4 +22,11 @@ package com.tx.component.security.context;
  */
 public interface SecurityContext {
     
+    public RoleRefService getRoleRefService();
+    
+    public AuthRefService getAuthRefService();
+    
+    public RoleTypeRegistry getRoleTypeRegistry();
+    
+    public RoleRegistry getRoleRegistry();
 }

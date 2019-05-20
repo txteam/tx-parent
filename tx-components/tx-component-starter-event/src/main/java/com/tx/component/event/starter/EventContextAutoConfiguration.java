@@ -6,10 +6,13 @@
  */
 package com.tx.component.event.starter;
 
+import javax.activation.DataSource;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
@@ -40,7 +43,8 @@ import com.tx.component.event.listener.resolver.impl.EventListenerParamMethodArg
 @Configuration
 @EnableConfigurationProperties(value = EventContextProperties.class)
 @ConditionalOnClass({ EventContextFactory.class })
-@ConditionalOnSingleCandidate(PlatformTransactionManager.class)
+@ConditionalOnSingleCandidate(DataSource.class)
+@ConditionalOnBean(PlatformTransactionManager.class)
 @AutoConfigureAfter(TransactionAutoConfiguration.class)
 @ConditionalOnProperty(prefix = "tx.event", value = "enable", havingValue = "true")
 public class EventContextAutoConfiguration

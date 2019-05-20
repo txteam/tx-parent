@@ -18,16 +18,16 @@ import org.springframework.beans.factory.FactoryBean;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
   */
-public class AuthContextFactory extends AuthContext
-    implements FactoryBean<AuthContext>{
+public class SecurityContextFactory extends SecurityContextImpl
+    implements FactoryBean<SecurityContextImpl>{
     
     /**
      * @return
      * @throws Exception
      */
     @Override
-    public AuthContext getObject() throws Exception {
-        return AuthContext.getContext();
+    public SecurityContextImpl getObject() throws Exception {
+        return SecurityContextImpl.getContext();
     }
 
     /**
@@ -35,7 +35,7 @@ public class AuthContextFactory extends AuthContext
      */
     @Override
     public Class<?> getObjectType() {
-        return AuthContext.class;
+        return SecurityContextImpl.class;
     }
 
     /**
