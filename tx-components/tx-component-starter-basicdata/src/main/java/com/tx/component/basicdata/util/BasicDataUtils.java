@@ -21,6 +21,7 @@ import javax.persistence.Transient;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.PropertyAccessorFactory;
 import org.springframework.core.convert.TypeDescriptor;
 
@@ -510,6 +511,11 @@ public class BasicDataUtils {
     //        DataDict dd = new DataDict();
     //        BeanWrapper objBW = PropertyAccessorFactory.forBeanPropertyAccess(dd);
     //        
-    //        System.out.println(objBW.getPropertyTypeDescriptor("parent").hasAnnotation(JsonIgnore.class));
+    //        System.out.println(objBW.getPropertyTypeDescriptor("parent")
+    //                .hasAnnotation(JsonIgnore.class));
+    //        
+    //        BeanWrapper testBW = new BeanWrapperImpl(DataDict.class);
+    //        System.out.println(testBW.getPropertyTypeDescriptor("parent")
+    //                .hasAnnotation(JsonIgnore.class));
     //    }
 }

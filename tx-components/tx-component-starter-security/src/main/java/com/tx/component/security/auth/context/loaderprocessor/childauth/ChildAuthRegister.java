@@ -8,7 +8,7 @@ package com.tx.component.security.auth.context.loaderprocessor.childauth;
 
 import java.util.Set;
 
-import com.tx.component.security.auth.model.Auth;
+import com.tx.component.auth.model.Auth;
 
 /**
  * 子数据权限注册器<br/>

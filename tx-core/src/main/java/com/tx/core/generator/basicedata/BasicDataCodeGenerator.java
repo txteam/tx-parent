@@ -33,10 +33,10 @@ import com.tx.core.generator.model.SqlMapMapper;
 import com.tx.core.generator.model.UpdateMapper;
 import com.tx.core.generator.model.ViewerGeneratorModel;
 import com.tx.core.generator.util.GeneratorUtils;
+import com.tx.core.generator.util.JpaMetaClass;
+import com.tx.core.generator.util.SqlSource;
+import com.tx.core.generator.util.SqlSourceBuilder;
 import com.tx.core.jdbc.model.QueryConditionTypeEnum;
-import com.tx.core.jdbc.sqlsource.SqlSource;
-import com.tx.core.jdbc.sqlsource.SqlSourceBuilder;
-import com.tx.core.reflection.JpaMetaClass;
 import com.tx.core.util.FreeMarkerUtils;
 import com.tx.core.util.dialect.DataSourceTypeEnum;
 
@@ -49,6 +49,7 @@ import com.tx.core.util.dialect.DataSourceTypeEnum;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
+@Deprecated
 public class BasicDataCodeGenerator {
     
     /** 日志记录器 */

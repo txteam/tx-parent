@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.helpers.MessageFormatter;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
@@ -29,7 +28,8 @@ import org.springframework.jdbc.core.RowMapper;
 import com.tx.core.TxConstants;
 import com.tx.core.exceptions.SILException;
 import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.reflection.JpaMetaClass;
+import com.tx.core.util.JPAParseUtils;
+import com.tx.core.util.JPAParseUtils.JPAColumnInfo;
 
 /**
  * 实体分项反射类描述<br/>
@@ -122,9 +122,6 @@ public class MetaEntityEntry {
     
     /** RowMapper */
     private final RowMapper<?> rowMap;
-    
-    /** jpaMetaClass */
-    private final JpaMetaClass<?> jpaMetaClass;
     
     /** 表名 */
     private final String tableName;
@@ -224,14 +221,9 @@ public class MetaEntityEntry {
     private MetaEntityEntry(Class<?> type, String tableName) {
         super();
         this.type = type;
-        this.jpaMetaClass = JpaMetaClass.forClass(type);
         this.rowMap = new BeanPropertyRowMapper<>(type);
         
-        if (StringUtils.isEmpty(tableName)) {
-            this.tableName = this.jpaMetaClass.getTableName();
-        } else {
-            this.tableName = tableName;
-        }
+        this.tableName = JPAParseUtils.parseTableName(type);
         try {
             this.beanInfo = Introspector.getBeanInfo(type);
             this.propertyDescriptors = beanInfo.getPropertyDescriptors();
@@ -240,12 +232,12 @@ public class MetaEntityEntry {
         }
         this.hisTableName = this.tableName + hisTableNameSuffix;
         this.otherFieldName = new ArrayList<>();
-        Set<String> getterNames = this.jpaMetaClass.getGetterNames();
-        for (String getterNameTemp : getterNames) {
-            if (entityEntryCommonFieldNames.contains(getterNameTemp.toUpperCase())) {
+        for (JPAColumnInfo jpaColumnInfo : JPAParseUtils.parseTableColumns(type)) {
+            String propertyNameTemp = jpaColumnInfo.getPropertyName();
+            if (entityEntryCommonFieldNames.contains(propertyNameTemp.toUpperCase())) {
                 continue;
             }
-            this.otherFieldName.add(getterNameTemp);
+            this.otherFieldName.add(propertyNameTemp);
         }
         
         StringBuilder fieldsSB = new StringBuilder(
@@ -320,13 +312,6 @@ public class MetaEntityEntry {
      */
     public Class<?> getType() {
         return type;
-    }
-    
-    /**
-     * @return 返回 jpaMetaClass
-     */
-    public JpaMetaClass<?> getJpaMetaClass() {
-        return jpaMetaClass;
     }
     
     /**

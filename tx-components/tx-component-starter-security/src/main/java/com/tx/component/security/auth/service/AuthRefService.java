@@ -19,7 +19,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MultiValueMap;
 
-import com.tx.component.security.auth.model.AuthRef;
+import com.tx.component.auth.model.AuthRef;
 import com.tx.core.exceptions.util.AssertUtils;
 
 /**

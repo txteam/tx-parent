@@ -86,15 +86,15 @@ public class ${service.entitySimpleName}Service {
     }
     
     /**
-     * 根据${service.upCaseIdPropertyName}查询${service.entitySimpleName}实体
-     * 1、当${service.idPropertyName}为empty时抛出异常
-     * <功能详细描述>
-     * @param ${service.idPropertyName}
-     * @return [参数说明]
-     * 
-     * @return ${service.entitySimpleName} [返回类型说明]
-     * @exception throws 可能存在数据库访问异常DataAccessException
-     * @see [类、类#方法、类#成员]
+      * 根据${service.upCaseIdPropertyName}查询${service.entitySimpleName}实体
+      * 1、当${service.idPropertyName}为empty时抛出异常
+      * <功能详细描述>
+      * @param ${service.idPropertyName}
+      * @return [参数说明]
+      * 
+      * @return ${service.entitySimpleName} [返回类型说明]
+      * @exception throws 可能存在数据库访问异常DataAccessException
+      * @see [类、类#方法、类#成员]
      */
     public ${service.entitySimpleName} findBy${service.upCaseIdPropertyName}(String ${service.idPropertyName}) {
         AssertUtils.notEmpty(${service.idPropertyName}, "${service.idPropertyName} is empty.");
@@ -107,13 +107,13 @@ public class ${service.entitySimpleName}Service {
     }
     
     /**
-     * 根据${service.entitySimpleName}实体列表
-     * <功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return List<${service.entitySimpleName}> [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
+      * 根据${service.entitySimpleName}实体列表
+      * <功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return List<${service.entitySimpleName}> [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
      */
     public List<${service.entitySimpleName}> queryList(Map<String,Object> params) {
         params = params == null ? new HashMap<String, Object>() : params;
@@ -132,7 +132,7 @@ public class ${service.entitySimpleName}Service {
      * @return List<${service.entitySimpleName}> [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-     */
+    */
     public PagedList<${service.entitySimpleName}> queryPagedList(Map<String,Object> params,int pageIndex,
             int pageSize) {
         params = params == null ? new HashMap<String, Object>() : params;
@@ -144,13 +144,13 @@ public class ${service.entitySimpleName}Service {
     }
     
     /**
-     * 查询${service.lowerCaseEntitySimpleName}列表总条数
-     * <功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return int [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
+      * 查询${service.lowerCaseEntitySimpleName}列表总条数
+      * <功能详细描述>
+      * @return [参数说明]
+      * 
+      * @return int [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
      */
     public int count(Map<String,Object> params){
         params = params == null ? new HashMap<String, Object>() : params;
@@ -162,14 +162,14 @@ public class ${service.entitySimpleName}Service {
     }
     
     /**
-     * 根据${service.idPropertyName}更新对象
-     * <功能详细描述>
-     * @param ${service.lowerCaseEntitySimpleName}
-     * @return [参数说明]
-     * 
-     * @return boolean [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
+      * 根据${service.idPropertyName}更新对象
+      * <功能详细描述>
+      * @param ${service.lowerCaseEntitySimpleName}
+      * @return [参数说明]
+      * 
+      * @return boolean [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
      */
     @Transactional
     public boolean updateBy${service.upCaseIdPropertyName}(${service.entitySimpleName} ${service.lowerCaseEntitySimpleName}) {

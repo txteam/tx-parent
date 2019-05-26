@@ -10,9 +10,6 @@ import java.io.Serializable;
 
 import javax.persistence.Id;
 
-import com.tx.core.jdbc.sqlsource.annotation.QueryConditionEqual;
-import com.tx.core.jdbc.sqlsource.annotation.UpdateAble;
-
 /**
  * 实体属性分项<br/>
  *     该对象设计为：为基础数据类：即不会经常变动的实体
@@ -38,15 +35,12 @@ public class EntityEntry implements Serializable {
     private String id;
     
     /** 实体id */
-    @QueryConditionEqual
     private String entityId;
     
     /** 分项key值 */
-    @QueryConditionEqual
     private String entryKey;
     
     /** 分项value值 */
-    @UpdateAble
     private String entryValue;
     
     /** <默认构造函数> */

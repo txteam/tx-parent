@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper 
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="roleRefItem">
+
+	<!-- auto generate default resultMap -->
+	<resultMap id="roleRefItemMap" 
+		type="com.tx.component.security.role.model.RoleRefItem">
+	</resultMap>
+	
+	<!-- auto generate default find -->
+	<select id="findRoleRefItem" 
+		parameterType="com.tx.component.security.role.model.RoleRefItem"
+		resultMap="roleRefItemMap">
+		SELECT 
+				TRRI.id,
+				TRRI.refType,
+				TRRI.refId,
+				TRRI.roleId,
+				TRRI.effectiveDate,
+				TRRI.expiryDate,
+				TRRI.createOperatorId,
+				TRRI.createDate
+		  FROM sec_roleref TRRI
+		 WHERE
+		<trim prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
+	            AND TRRI.ID = #{id}
+	        </if>
+		</trim>
+	</select>
+	
+	<!-- auto generate default query -->
+	<select id="queryRoleRefItem" 
+		parameterType="java.util.Map"
+		resultMap="roleRefItemMap">
+		SELECT 
+				TRRI.id,
+				TRRI.refType,
+				TRRI.refId,
+				TRRI.roleId,
+				TRRI.effectiveDate,
+				TRRI.expiryDate,
+				TRRI.createOperatorId,
+				TRRI.createDate
+		  FROM sec_roleref TRRI
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
+	            AND TRRI.id = #{id,javaType=java.lang.String}
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(refType)">  
+	            AND TRRI.refType = #{refType,javaType=java.lang.String}
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(refId)">  
+	            AND TRRI.refId = #{refId,javaType=java.lang.String}
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(roleId)">  
+	            AND TRRI.roleId = #{roleId,javaType=java.lang.String}
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(effectiveDate)">  
+	            AND TRRI.effectiveDate = #{effectiveDate,javaType=java.util.Date}
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(expiryDate)">  
+	            AND TRRI.expiryDate = #{expiryDate,javaType=java.util.Date}
+	        </if>
+			<if test="role != null">
+				<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(role.id)">  
+		            AND TRRI.role = #{role.id,javaType=java.lang.String}
+		        </if>
+	        </if>
+		</trim>
+		<choose>  
+	        <when test="@com.tx.core.util.OgnlUtils@isNotEmpty(orderSql)">  
+	            ORDER BY ${orderSql}
+	        </when>
+	        <otherwise>  
+	            ORDER BY ID
+	        </otherwise>  
+	    </choose>
+	</select>
+	
+		<!-- auto generate default count -->
+	<select id="queryRoleRefItemCount" 
+		parameterType="java.util.Map"
+		resultType="java.lang.Integer">
+		SELECT COUNT(1)
+		  FROM RoleRefItem TRRI
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
+	            AND TRRI.id = #{id,javaType=java.lang.String}
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(refType)">  
+	            AND TRRI.refType = #{refType,javaType=java.lang.String}
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(refId)">  
+	            AND TRRI.refId = #{refId,javaType=java.lang.String}
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(roleId)">  
+	            AND TRRI.roleId = #{roleId,javaType=java.lang.String}
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(effectiveDate)">  
+	            AND TRRI.effectiveDate = #{effectiveDate,javaType=java.util.Date}
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(expiryDate)">  
+	            AND TRRI.expiryDate = #{expiryDate,javaType=java.util.Date}
+	        </if>
+			<if test="role != null">
+				<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(role.id)">  
+		            AND TRRI.role = #{role.id,javaType=java.lang.String}
+		        </if>
+	        </if>
+		</trim>
+	</select>
+    
+    <!-- auto generate default insert -->
+    <insert id="insertRoleRefItemToHis" 
+		parameterType="com.tx.component.security.role.model.RoleRefItem">
+		INSERT INTO sec_roleref
+		(
+			id,
+			refType,
+			refId,
+			roleId,
+			effectiveDate,
+			expiryDate,
+			createOperatorId,
+			createDate
+		)
+		VALUES
+		(
+			#{id},
+			#{refType},
+			#{refId},
+			#{roleId},
+			#{effectiveDate},
+			#{expiryDate},
+			#{createOperatorId},
+			#{createDate}
+		)
+	</insert>
+    
+    <insert id="insertRoleRefItem" 
+		parameterType="com.tx.component.security.role.model.RoleRefItem">
+		INSERT INTO sec_roleref
+		(
+			id,
+			refType,
+			refId,
+			roleId,
+			effectiveDate,
+			expiryDate,
+			createOperatorId,
+			createDate
+		)
+		VALUES
+		(
+			#{id},
+			#{refType},
+			#{refId},
+			#{roleId},
+			#{effectiveDate},
+			#{expiryDate},
+			#{createOperatorId},
+			#{createDate}
+		)
+	</insert>
+	
+	<!-- auto generate default delete -->
+	<delete id="deleteRoleRefItem" 
+		parameterType="com.tx.component.security.role.model.RoleRefItem">
+		DELETE FROM sec_roleref  WHERE
+		<trim prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
+	            AND ID = #{id}
+	        </if>
+		</trim>
+	</delete>
+
+	<!-- auto generate default update -->
+	<update id="updateRoleRefItem"
+	    parameterType="java.util.Map">  
+	    UPDATE sec_roleref
+	    <trim prefix="SET" suffixOverrides=",">
+			<if test="_parameter.containsKey('refType')">
+	    		refType = #{refType,javaType=java.lang.String},
+	    	</if>	
+			<if test="_parameter.containsKey('refId')">
+	    		refId = #{refId,javaType=java.lang.String},
+	    	</if>	
+			<if test="_parameter.containsKey('roleId')">
+	    		roleId = #{roleId,javaType=java.lang.String},
+	    	</if>	
+			<if test="_parameter.containsKey('effectiveDate')">
+	    		effectiveDate = #{effectiveDate,javaType=java.util.Date},
+	    	</if>	
+			<if test="_parameter.containsKey('expiryDate')">
+	    		expiryDate = #{expiryDate,javaType=java.util.Date},
+	    	</if>
+	    </trim>
+	    WHERE ID = #{id} 
+	</update>  
+
+</mapper>
+<!--
+sqlMap生成描述:
+
+-->

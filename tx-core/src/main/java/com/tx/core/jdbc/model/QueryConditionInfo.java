@@ -17,6 +17,7 @@ import org.apache.ibatis.type.JdbcType;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
+@Deprecated
 public class QueryConditionInfo {
     
     /** 查询条件类型 */

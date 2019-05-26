@@ -11,7 +11,7 @@ import java.util.Set;
 
 import org.springframework.core.Ordered;
 
-import com.tx.component.security.auth.model.Auth;
+import com.tx.component.auth.model.Auth;
 
 /**
  * 权限加载器<br/>

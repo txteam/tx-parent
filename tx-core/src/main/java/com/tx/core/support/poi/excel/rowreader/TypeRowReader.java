@@ -6,18 +6,19 @@
  */
 package com.tx.core.support.poi.excel.rowreader;
 
+import java.beans.PropertyDescriptor;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
-import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
+import org.springframework.core.convert.TypeDescriptor;
 
 import com.tx.core.exceptions.resource.ResourceReadException;
 import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.reflection.ReflectionUtils;
 import com.tx.core.support.poi.excel.CellRowReader;
 import com.tx.core.support.poi.excel.annotation.ExcelCell;
 import com.tx.core.support.poi.excel.annotation.ExcelCellInfo;
@@ -46,16 +47,22 @@ public class TypeRowReader<T> implements CellRowReader<T> {
         AssertUtils.notNull(type, "type is empty.");
         this.type = type;
         
-        List<String> getterList = ReflectionUtils.getGetterNamesByAnnotationType(type,
-                ExcelCell.class);
-        for (String fieldName : getterList) {
-            ExcelCell excelCellAnno = ReflectionUtils.getGetterAnnotation(type,
-                    fieldName,
-                    ExcelCell.class);
-            Class<?> fieldType = BeanUtils.getPropertyDescriptor(type,
-                    fieldName).getPropertyType();
+        
+        BeanWrapper bw = new BeanWrapperImpl(type);
+        for (PropertyDescriptor pdTemp : bw.getPropertyDescriptors()) {
+            if(pdTemp.getReadMethod() == null || pdTemp.getWriteMethod() == null){
+                continue;
+            }
+            String propertyName = pdTemp.getName();
+            TypeDescriptor td = bw.getPropertyTypeDescriptor(propertyName);
+            if(!td.hasAnnotation(ExcelCell.class)){
+                continue;
+            }
             
-            ExcelCellInfo<?> excelCellInfo = new ExcelCellInfo<>(fieldName,
+            ExcelCell excelCellAnno = td.getAnnotation(ExcelCell.class);
+            Class<?> fieldType = td.getType();
+            
+            ExcelCellInfo<?> excelCellInfo = new ExcelCellInfo<>(propertyName,
                     fieldType, excelCellAnno);
             
             if (key2excelCellInfoMapping.containsKey(excelCellAnno.index())) {

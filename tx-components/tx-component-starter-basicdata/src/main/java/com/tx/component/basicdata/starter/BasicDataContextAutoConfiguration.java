@@ -19,7 +19,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
-import org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.ApplicationContext;
@@ -40,6 +39,7 @@ import com.tx.component.basicdata.starter.BasicDataCacheConfiguration.BasicDataC
 import com.tx.component.configuration.context.ConfigContext;
 import com.tx.component.configuration.starter.ConfigContextConfiguration;
 import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.starter.component.ComponentSupportAutoConfiguration;
 
 /**
  * 基础数据容器自动配置<br/>
@@ -51,12 +51,12 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @since  [产品/模块版本]
  */
 @Configuration
+@AutoConfigureAfter({ComponentSupportAutoConfiguration.class})
 @EnableConfigurationProperties(BasicDataContextProperties.class)
 @ConditionalOnClass({ BasicDataContextFactory.class })
 @ConditionalOnSingleCandidate(DataSource.class)
 @ConditionalOnBean(PlatformTransactionManager.class)
-@AutoConfigureAfter(TransactionAutoConfiguration.class)
-@ConditionalOnProperty(prefix = "tx.basicdata", value = "enable", havingValue = "true")
+@ConditionalOnProperty(prefix = "tx.component.basicdata", value = "enable", havingValue = "true")
 @Import({ BasicDataPersisterConfiguration.class,
         BasicDataAPIClientConfiguration.class,
         BasicDataCacheConfiguration.class })

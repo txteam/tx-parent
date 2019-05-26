@@ -16,6 +16,7 @@ package com.tx.core.jdbc.model;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
   */
+@Deprecated
 public enum QueryConditionTypeEnum {
     EQUAL,
     GREATER,

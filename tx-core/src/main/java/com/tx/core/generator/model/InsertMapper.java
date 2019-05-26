@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.tx.core.generator.util.GeneratorUtils;
-import com.tx.core.reflection.JpaMetaClass;
+import com.tx.core.generator.util.JpaMetaClass;
 
 /**
  * 插入的映射器描述
@@ -21,6 +21,7 @@ import com.tx.core.reflection.JpaMetaClass;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
+@Deprecated
 public class InsertMapper {
     
     private String id;

@@ -8,6 +8,8 @@
  */
 package com.tx.component.configuration.model;
 
+import java.util.Date;
+
 import com.tx.core.support.json.JSONAttributesSupport;
 
 /**
@@ -130,4 +132,16 @@ public interface ConfigProperty extends JSONAttributesSupport {
      * @see [类、类#方法、类#成员]
      */
     public boolean isLeaf();
+    
+    /**
+     * 获取配置项的最后更新时间<br/>
+     *    可以用于使用场景中判断配置值是否发生了变化
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return Date [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public Date getLastUpdateDate();
 }

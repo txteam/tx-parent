@@ -7,13 +7,13 @@
 package com.tx.core.util;
 
 import java.beans.PropertyDescriptor;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -27,6 +27,9 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
+import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.util.ReflectionUtils;
 
 import com.tx.core.exceptions.util.AssertUtils;
@@ -73,6 +76,72 @@ public class JPAParseUtils {
             }
         }
         return tableName;
+    }
+    
+    /**
+     * 解析表字段<br/>
+     * <功能详细描述>
+     * @param beanType
+     * @param jpaPropertySimpleTypeFilter
+     * @return [参数说明]
+     * 
+     * @return List<JPAProperty> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static List<JPAColumnInfo> parseTableColumns(Class<?> beanType) {
+        AssertUtils.notNull(beanType, "beanType is null.");
+        
+        //解析jpa属性
+        List<JPAColumnInfo> columns = new ArrayList<>();
+        
+        //objBW.getPropertyTypeDescriptor("parent").hasAnnotation(JsonIgnore.class)
+        BeanWrapper bw = new BeanWrapperImpl(beanType);
+        boolean hasPrimaryKey = false;//是否存在主键
+        for (PropertyDescriptor pd : BeanUtils
+                .getPropertyDescriptors(beanType)) {
+            String propertyName = pd.getName();
+            TypeDescriptor td = bw.getPropertyTypeDescriptor(propertyName);
+            if (JPAParseUtils.isIgnoreProperty(pd, td)) {
+                continue;
+            }
+            
+            JPAColumnInfo jpaColumnInfo = new JPAColumnInfo(pd, td);
+            
+            boolean primaryKey = JPAParseUtils.isPrimaryKey(pd, td);//判断是否为主键
+            if (primaryKey) {
+                hasPrimaryKey = true;
+            }
+            jpaColumnInfo.setPrimaryKey(primaryKey);
+            
+            columns.add(jpaColumnInfo);
+        }
+        
+        if (!hasPrimaryKey) {
+            //如果没有主键：判断是否有id,code这样的字段
+            //如果有id
+            for (JPAColumnInfo col : columns) {
+                if (StringUtils.equalsIgnoreCase("id",
+                        col.getPropertyDescriptor().getName())) {
+                    col.setPrimaryKey(true);
+                    hasPrimaryKey = true;
+                    break;
+                }
+            }
+        }
+        if (!hasPrimaryKey) {
+            //如果没有主键：判断是否有id,code这样的字段
+            //如果有code
+            for (JPAColumnInfo col : columns) {
+                if (StringUtils.equalsIgnoreCase("code",
+                        col.getPropertyDescriptor().getName())) {
+                    col.setPrimaryKey(true);
+                    hasPrimaryKey = true;
+                    break;
+                }
+            }
+        }
+        return columns;
     }
     
     /**
@@ -183,79 +252,6 @@ public class JPAParseUtils {
     }
     
     /**
-     * 解析表字段<br/>
-     * <功能详细描述>
-     * @param beanType
-     * @param jpaPropertySimpleTypeFilter
-     * @return [参数说明]
-     * 
-     * @return List<JPAProperty> [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public static List<JPAColumnInfo> parseTableColumns(Class<?> beanType) {
-        AssertUtils.notNull(beanType, "beanType is null.");
-        
-        //解析jpa属性
-        List<JPAColumnInfo> columns = new ArrayList<>();
-        
-        boolean hasPrimaryKey = false;//是否存在主键
-        for (PropertyDescriptor pd : BeanUtils
-                .getPropertyDescriptors(beanType)) {
-            if (JPAParseUtils.isIgnoreProperty(beanType, pd)) {
-                continue;
-            }
-            
-            Column columnAnnotation = JPAParseUtils
-                    .parseColumnAnnotation(beanType, pd);
-            JPAColumnInfo jpaColumnInfo = new JPAColumnInfo(pd,
-                    columnAnnotation);
-            
-            PropertyDescriptor nestedPd = null;
-            if (!BeanUtils.isSimpleValueType(pd.getPropertyType())) {
-                nestedPd = JPAParseUtils
-                        .parseCustomizeTypeNestedPropertyDescriptorByColumnName(
-                                beanType, pd, jpaColumnInfo.getColumnName());
-                jpaColumnInfo.setNestedPropertyDescriptor(nestedPd);
-            }
-            
-            boolean primaryKey = JPAParseUtils.isPrimaryKey(beanType, pd);//判断是否为主键
-            if (primaryKey) {
-                hasPrimaryKey = true;
-            }
-            jpaColumnInfo.setPrimaryKey(primaryKey);
-            
-            columns.add(jpaColumnInfo);
-        }
-        
-        if (!hasPrimaryKey) {
-            //如果没有主键：判断是否有id,code这样的字段
-            //如果有id
-            for (JPAColumnInfo col : columns) {
-                if (StringUtils.equalsIgnoreCase("id",
-                        col.getPropertyDescriptor().getName())) {
-                    col.setPrimaryKey(true);
-                    hasPrimaryKey = true;
-                    break;
-                }
-            }
-        }
-        if (!hasPrimaryKey) {
-            //如果没有主键：判断是否有id,code这样的字段
-            //如果有code
-            for (JPAColumnInfo col : columns) {
-                if (StringUtils.equalsIgnoreCase("code",
-                        col.getPropertyDescriptor().getName())) {
-                    col.setPrimaryKey(true);
-                    hasPrimaryKey = true;
-                    break;
-                }
-            }
-        }
-        return columns;
-    }
-    
-    /**
      * 是否忽略属性<br/>
      * <功能详细描述>
      * @param propertyDescriptor
@@ -265,49 +261,33 @@ public class JPAParseUtils {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public static boolean isIgnoreProperty(Class<?> beanType,
-            PropertyDescriptor propertyDescriptor) {
-        AssertUtils.notNull(beanType, "beanType is null.");
-        AssertUtils.notNull(propertyDescriptor, "propertyDescriptor is null.");
+    public static boolean isIgnoreProperty(PropertyDescriptor pd,
+            TypeDescriptor td) {
+        AssertUtils.notNull(pd, "pd is null.");
+        AssertUtils.notNull(td, "td is null.");
         
         //如果属性没有同时具备Read,Write方法时则跳过该属性
-        if (propertyDescriptor.getReadMethod() == null
-                || propertyDescriptor.getWriteMethod() == null) {
+        if (pd.getReadMethod() == null || pd.getWriteMethod() == null) {
             return true;
         }
         
         //collection,map，array,interface,annotation,abstract
-        //|| Modifier.isAbstract(propertyType.getModifiers())  boolean等值，=true了，先修改以後再進行處理
-        Class<?> propertyType = propertyDescriptor.getPropertyType();
-        if (Collection.class.isAssignableFrom(propertyType)
-                || Map.class.isAssignableFrom(propertyType)
-                || Set.class.isAssignableFrom(propertyType)
-                || propertyType.isArray() || propertyType.isInterface()
-                || propertyType.isAnnotation()) {
+        //|| Modifier.isAbstract(propertyType.getModifiers())  boolean等值，=true了，先修改以後再進行處理        
+        Class<?> propertyType = pd.getPropertyType();
+        if (td.isCollection() || td.isMap() || td.isArray()
+                || propertyType.isInterface() || propertyType.isAnnotation()) {
             return true;
         }
         
-        //如果readMethod上有忽略字段的注解，则跳过该字段
-        Method readMethod = propertyDescriptor.getReadMethod();
-        if (readMethod.isAnnotationPresent(Transient.class)
-                || readMethod.isAnnotationPresent(java.beans.Transient.class)
-                || readMethod.isAnnotationPresent(
-                        org.springframework.data.annotation.Transient.class)
-                || readMethod.isAnnotationPresent(OneToMany.class)) {
+        if (td.hasAnnotation(Transient.class)) {
             return true;
-        }
-        
-        //如果存在字段，则字段上有注解需要跳过时，则跳过该字段
-        Field field = ReflectionUtils.findField(beanType,
-                propertyDescriptor.getName());
-        if (field != null) {
-            if (field.isAnnotationPresent(Transient.class)
-                    || field.isAnnotationPresent(java.beans.Transient.class)
-                    || field.isAnnotationPresent(
-                            org.springframework.data.annotation.Transient.class)
-                    || field.isAnnotationPresent(OneToMany.class)) {
-                return true;
-            }
+        } else if (td.hasAnnotation(java.beans.Transient.class)) {
+            return true;
+        } else if (td.hasAnnotation(
+                org.springframework.data.annotation.Transient.class)) {
+            return true;
+        } else if (td.hasAnnotation(OneToMany.class)) {
+            return true;
         }
         
         return false;
@@ -324,28 +304,16 @@ public class JPAParseUtils {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public static boolean isPrimaryKey(Class<?> beanType,
-            PropertyDescriptor propertyDescriptor) {
-        AssertUtils.notNull(beanType, "beanType is null.");
-        AssertUtils.notNull(propertyDescriptor, "propertyDescriptor is null.");
+    private static boolean isPrimaryKey(PropertyDescriptor pd,
+            TypeDescriptor td) {
+        AssertUtils.notNull(pd, "pd is null.");
+        AssertUtils.notNull(td, "td is null.");
         
-        //如果readMethod上有忽略字段的注解，则跳过该字段
-        Method readMethod = propertyDescriptor.getReadMethod();
-        if (readMethod.isAnnotationPresent(Id.class)
-                || readMethod.isAnnotationPresent(
-                        org.springframework.data.annotation.Id.class)) {
+        if (td.hasAnnotation(Id.class)) {
             return true;
-        }
-        
-        //如果存在字段，则字段上有注解需要跳过时，则跳过该字段
-        Field field = ReflectionUtils.findField(beanType,
-                propertyDescriptor.getName());
-        if (field != null) {
-            if (field.isAnnotationPresent(Id.class)
-                    || field.isAnnotationPresent(
-                            org.springframework.data.annotation.Id.class)) {
-                return true;
-            }
+        } else if (td
+                .hasAnnotation(org.springframework.data.annotation.Id.class)) {
+            return true;
         }
         
         return false;
@@ -362,26 +330,14 @@ public class JPAParseUtils {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    private static Column parseColumnAnnotation(Class<?> beanType,
-            PropertyDescriptor propertyDescriptor) {
-        AssertUtils.notNull(beanType, "beanType is null.");
-        AssertUtils.notNull(propertyDescriptor, "propertyDescriptor is null.");
-        
-        Column columnAnnotation = null;
-        //如果readMethod上有忽略字段的注解，则跳过该字段
-        Method readMethod = propertyDescriptor.getReadMethod();
-        if (readMethod.isAnnotationPresent(Column.class)) {
-            columnAnnotation = readMethod.getAnnotation(Column.class);
+    @SuppressWarnings("unused")
+    private static <T extends Annotation> T parseColumnAnnotation(
+            TypeDescriptor td, Class<T> annotation) {
+        AssertUtils.notNull(td, "td is null.");
+        if (!td.hasAnnotation(annotation)) {
+            return null;
         }
-        
-        //如果存在字段，则字段上有注解需要跳过时，则跳过该字段
-        Field field = ReflectionUtils.findField(beanType,
-                propertyDescriptor.getName());
-        if (field != null && field.isAnnotationPresent(Column.class)) {
-            columnAnnotation = field.getAnnotation(Column.class);
-        }
-        
-        return columnAnnotation;
+        return td.getAnnotation(annotation);
     }
     
     /**
@@ -462,87 +418,6 @@ public class JPAParseUtils {
     }
     
     /**
-     * 根据字段名解析对象<br/>
-     * <功能详细描述>
-     * @param beanType
-     * @param propertyDescriptor
-     * @param columnName
-     * @return [参数说明]
-     * 
-     * @return String [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public static PropertyDescriptor parseCustomizeTypeNestedPropertyDescriptorByColumnName(
-            Class<?> beanType, PropertyDescriptor propertyDescriptor,
-            String columnName) {
-        AssertUtils.notNull(beanType, "beanType is null.");
-        AssertUtils.notNull(propertyDescriptor, "propertyDescriptor is null.");
-        AssertUtils.notEmpty(columnName, "columnName is empty.");
-        
-        Class<?> propertyType = propertyDescriptor.getPropertyType();
-        String propertyName = propertyDescriptor.getName();
-        
-        //类型不应该为简单类型
-        AssertUtils.isTrue(!BeanUtils.isSimpleValueType(propertyType),
-                "propertyType:{} is not simpleValueType.",
-                new Object[] { propertyDescriptor.getPropertyType() });
-        //类型不应该为集合，Map,数组
-        AssertUtils.isTrue(
-                !propertyType.isArray() && !propertyType.isInterface()
-                        && !Collection.class.isAssignableFrom(propertyType)
-                        && !Map.class.isAssignableFrom(propertyType),
-                "propertyType:{} is Array or Interface or Abstract or Collection or Map.",
-                new Object[] { propertyDescriptor.getPropertyType() });
-        
-        String nestedPropertyName = null;
-        if (columnName.length() > propertyName.length()
-                && columnName.indexOf("_") < 0 //字段中如果含有"_"则优先根据拆分办法进行取值
-                && StringUtils.startsWithIgnoreCase(columnName, propertyName)) {
-            //如果属性名是字段名的一部分采用该截取的方式获取字段名
-            nestedPropertyName = StringUtils.substring(columnName,
-                    propertyName.length());
-        } else if (!StringUtils.equalsIgnoreCase(columnName, propertyName)) {
-            //取字段名数组中最后一个字符串
-            String columnNameArraySource = columnName;
-            columnNameArraySource = columnNameArraySource.replaceAll("[A-Z]",
-                    ",$0");
-            columnNameArraySource = columnNameArraySource.replaceAll("_", ",");
-            String[] columnNames = StringUtils
-                    .splitByWholeSeparator(columnNameArraySource, ",");
-            
-            AssertUtils.isTrue(columnNames.length > 1,
-                    "columnNames:{} length should > 1.",
-                    new Object[] { columnNames });
-            nestedPropertyName = columnNames[columnNames.length - 1];
-        } else {
-            return null;
-        }
-        
-        //嵌套的属性名不能为空
-        if (StringUtils.isEmpty(nestedPropertyName)) {
-            return null;
-        }
-        
-        //嵌套属性名首写字母小写化
-        nestedPropertyName = StringUtils.uncapitalize(nestedPropertyName);
-        PropertyDescriptor nestedPropertyDescriptor = BeanUtils
-                .getPropertyDescriptor(propertyType, nestedPropertyName);
-        if (nestedPropertyDescriptor == null) {
-            for (PropertyDescriptor pdTemp : BeanUtils
-                    .getPropertyDescriptors(propertyType)) {
-                if (StringUtils.equalsIgnoreCase(pdTemp.getName(),
-                        nestedPropertyName)) {
-                    nestedPropertyDescriptor = pdTemp;
-                    break;
-                }
-            }
-        }
-        
-        return nestedPropertyDescriptor;
-    }
-    
-    /**
      * JPA字段信息<br/>
      * <功能详细描述>
      * 
@@ -554,33 +429,34 @@ public class JPAParseUtils {
     public static class JPAColumnInfo {
         
         /** 属性描述 */
-        private PropertyDescriptor propertyDescriptor;
+        private final PropertyDescriptor propertyDescriptor;
+        
+        /** 属性类型描述字段 */
+        private final TypeDescriptor typeDescriptor;
+        
+        /** 字段注解 */
+        private final Column columnAnnotation;
         
         /** 嵌套属性描述，如果不存在嵌套属性，则该值为空 */
         private PropertyDescriptor nestedPropertyDescriptor;
         
-        /** 字段注解 */
-        private Column columnAnnotation;
-        
-        /** 是否是主键 */
+        /** 是否是主键: 不根据属性判断，如果不存在@Id注解时，系统将考虑采用id,或是code字段当做唯一键字段 */
         private boolean primaryKey = false;
         
         /** <默认构造函数> */
         public JPAColumnInfo(PropertyDescriptor propertyDescriptor,
-                Column columnAnnotation) {
+                TypeDescriptor typeDescriptor) {
             super();
             this.propertyDescriptor = propertyDescriptor;
-            this.columnAnnotation = columnAnnotation;
-        }
-        
-        /** <默认构造函数> */
-        public JPAColumnInfo(PropertyDescriptor propertyDescriptor,
-                PropertyDescriptor nestedPropertyDescriptor,
-                Column columnAnnotation) {
-            super();
-            this.propertyDescriptor = propertyDescriptor;
-            this.nestedPropertyDescriptor = nestedPropertyDescriptor;
-            this.columnAnnotation = columnAnnotation;
+            this.typeDescriptor = typeDescriptor;
+            this.columnAnnotation = typeDescriptor.getAnnotation(Column.class);
+            
+            if (!BeanUtils
+                    .isSimpleValueType(propertyDescriptor.getPropertyType())) {
+                //如果属性不为simpleType则使用JPA解析二级属性
+                this.nestedPropertyDescriptor = parseCustomizeTypeNestedPropertyDescriptorByColumnName(
+                        propertyDescriptor, getColumnName());
+            }
         }
         
         /**
@@ -591,36 +467,17 @@ public class JPAParseUtils {
         }
         
         /**
-         * @param 对propertyDescriptor进行赋值
+         * @return 返回 typeDescriptor
          */
-        public void setPropertyDescriptor(
-                PropertyDescriptor propertyDescriptor) {
-            this.propertyDescriptor = propertyDescriptor;
+        public TypeDescriptor getTypeDescriptor() {
+            return typeDescriptor;
         }
         
         /**
-         * @return 返回 nestedPropertyDescriptor
+         * @return 返回 columnAnnotation
          */
-        public PropertyDescriptor getNestedPropertyDescriptor() {
-            return nestedPropertyDescriptor;
-        }
-        
-        /**
-         * @param 对nestedPropertyDescriptor进行赋值
-         */
-        public void setNestedPropertyDescriptor(
-                PropertyDescriptor nestedPropertyDescriptor) {
-            this.nestedPropertyDescriptor = nestedPropertyDescriptor;
-        }
-        
-        /**
-         * @return 返回 columnName
-         */
-        public String getColumnName() {
-            return (columnAnnotation == null
-                    || StringUtils.isBlank(columnAnnotation.name()))
-                            ? this.propertyDescriptor.getName()
-                            : columnAnnotation.name();
+        public Column getColumnAnnotation() {
+            return columnAnnotation;
         }
         
         /**
@@ -638,33 +495,20 @@ public class JPAParseUtils {
         }
         
         /**
-         * @return 返回 length
+         * @return 返回 nestedPropertyDescriptor
          */
-        public int getLength() {
-            return (columnAnnotation == null) ? 255 : columnAnnotation.length();
+        public PropertyDescriptor getNestedPropertyDescriptor() {
+            return nestedPropertyDescriptor;
         }
         
         /**
-         * @return 返回 precision
+         * @return 返回 columnName
          */
-        public int getPrecision() {
-            return (columnAnnotation == null) ? 0
-                    : columnAnnotation.precision();
-        }
-        
-        /**
-         * @return 返回 scale
-         */
-        public int getScale() {
-            return (columnAnnotation == null) ? 0 : columnAnnotation.scale();
-        }
-        
-        /**
-         * @return 返回 unique
-         */
-        public boolean isUnique() {
-            return (columnAnnotation == null) ? false
-                    : columnAnnotation.unique();
+        public String getColumnName() {
+            return (columnAnnotation == null
+                    || StringUtils.isBlank(columnAnnotation.name()))
+                            ? this.propertyDescriptor.getName()
+                            : columnAnnotation.name();
         }
         
         /**
@@ -681,6 +525,41 @@ public class JPAParseUtils {
         }
         
         /**
+         * @return 返回 length
+         */
+        public int getLength() {
+            return (columnAnnotation == null) ? 255 : columnAnnotation.length();
+        }
+        
+        /**
+         * @return 返回 precision
+         */
+        public int getPrecision() {
+            return (columnAnnotation == null)
+                    ? (Number.class.isAssignableFrom(getNestedPropertyType())
+                            ? 32 : 64)
+                    : columnAnnotation.precision();
+        }
+        
+        /**
+         * @return 返回 scale
+         */
+        public int getScale() {
+            return (columnAnnotation == null)
+                    ? (Number.class.isAssignableFrom(getNestedPropertyType())
+                            ? 2 : 0)
+                    : columnAnnotation.scale();
+        }
+        
+        /**
+         * @return 返回 unique
+         */
+        public boolean isUnique() {
+            return (columnAnnotation == null) ? false
+                    : columnAnnotation.unique();
+        }
+        
+        /**
          * @return 返回 insertable
          */
         public boolean isInsertable() {
@@ -694,20 +573,6 @@ public class JPAParseUtils {
         public boolean isUpdatable() {
             return (columnAnnotation == null) ? true
                     : columnAnnotation.updatable();
-        }
-        
-        /**
-         * @return 返回 columnAnnotation
-         */
-        public Column getColumnAnnotation() {
-            return columnAnnotation;
-        }
-        
-        /**
-         * @param 对columnAnnotation进行赋值
-         */
-        public void setColumnAnnotation(Column columnAnnotation) {
-            this.columnAnnotation = columnAnnotation;
         }
         
         /**
@@ -783,5 +648,228 @@ public class JPAParseUtils {
                 return nestedPropertyDescriptor.getPropertyType();
             }
         }
+        
+        /**
+         * 根据字段名解析对象<br/>
+         * <功能详细描述>
+         * @param beanType
+         * @param propertyDescriptor
+         * @param columnName
+         * @return [参数说明]
+         * 
+         * @return String [返回类型说明]
+         * @exception throws [异常类型] [异常说明]
+         * @see [类、类#方法、类#成员]
+         */
+        private static PropertyDescriptor parseCustomizeTypeNestedPropertyDescriptorByColumnName(
+                PropertyDescriptor propertyDescriptor, String columnName) {
+            AssertUtils.notNull(propertyDescriptor,
+                    "propertyDescriptor is null.");
+            AssertUtils.notEmpty(columnName, "columnName is empty.");
+            
+            Class<?> propertyType = propertyDescriptor.getPropertyType();
+            String propertyName = propertyDescriptor.getName();
+            
+            //类型不应该为简单类型
+            AssertUtils.isTrue(!BeanUtils.isSimpleValueType(propertyType),
+                    "propertyType:{} is not simpleValueType.",
+                    new Object[] { propertyDescriptor.getPropertyType() });
+            //类型不应该为集合，Map,数组
+            //&& !propertyType.isInterface()
+            // or Interface
+            AssertUtils.isTrue(
+                    !propertyType.isArray()
+                            && !Collection.class.isAssignableFrom(propertyType)
+                            && !Map.class.isAssignableFrom(propertyType),
+                    "propertyType:{} is Array or Abstract or Collection or Map.",
+                    new Object[] { propertyDescriptor.getPropertyType() });
+            
+            String nestedPropertyName = null;
+            if (columnName.length() > propertyName.length()
+                    && columnName.indexOf("_") < 0 //字段中如果含有"_"则优先根据拆分办法进行取值
+                    && StringUtils.startsWithIgnoreCase(columnName,
+                            propertyName)) {
+                //如果属性名是字段名的一部分采用该截取的方式获取字段名
+                nestedPropertyName = StringUtils.substring(columnName,
+                        propertyName.length());
+            } else if (!StringUtils.equalsIgnoreCase(columnName,
+                    propertyName)) {
+                //取字段名数组中最后一个字符串
+                String columnNameArraySource = columnName;
+                columnNameArraySource = columnNameArraySource
+                        .replaceAll("[A-Z]", ",$0");
+                columnNameArraySource = columnNameArraySource.replaceAll("_",
+                        ",");
+                String[] columnNames = StringUtils
+                        .splitByWholeSeparator(columnNameArraySource, ",");
+                
+                AssertUtils.isTrue(columnNames.length > 1,
+                        "columnNames:{} length should > 1.",
+                        new Object[] { columnNames });
+                nestedPropertyName = columnNames[columnNames.length - 1];
+            } else {
+                return null;
+            }
+            
+            //嵌套的属性名不能为空
+            AssertUtils.notEmpty(nestedPropertyName,
+                    "parse nestedPropertyName error.nestedPropertyName is empty.");
+            
+            //嵌套属性名首写字母小写化
+            nestedPropertyName = StringUtils.uncapitalize(nestedPropertyName);
+            PropertyDescriptor nestedPropertyDescriptor = BeanUtils
+                    .getPropertyDescriptor(propertyType, nestedPropertyName);
+            
+            if (nestedPropertyDescriptor == null) {
+                for (PropertyDescriptor pdTemp : BeanUtils
+                        .getPropertyDescriptors(propertyType)) {
+                    if (StringUtils.equalsIgnoreCase(pdTemp.getName(),
+                            nestedPropertyName)) {
+                        nestedPropertyDescriptor = pdTemp;
+                        break;
+                    }
+                }
+            }
+            AssertUtils.notNull(nestedPropertyDescriptor,
+                    "nestedPropertyDescriptor is null.nestedPropertyName:{} ",
+                    nestedPropertyName);
+            
+            return nestedPropertyDescriptor;
+        }
     }
+    
+    //    /**
+    //     * 是否忽略属性<br/>
+    //     * <功能详细描述>
+    //     * @param propertyDescriptor
+    //     * @return [参数说明]
+    //     * 
+    //     * @return boolean [返回类型说明]
+    //     * @exception throws [异常类型] [异常说明]
+    //     * @see [类、类#方法、类#成员]
+    //     */
+    //    @SuppressWarnings("unused")
+    //    @Deprecated
+    //    private static boolean isIgnoreProperty(Class<?> beanType,
+    //            PropertyDescriptor propertyDescriptor) {
+    //        AssertUtils.notNull(beanType, "beanType is null.");
+    //        AssertUtils.notNull(propertyDescriptor, "propertyDescriptor is null.");
+    //        
+    //        //如果属性没有同时具备Read,Write方法时则跳过该属性
+    //        if (propertyDescriptor.getReadMethod() == null
+    //                || propertyDescriptor.getWriteMethod() == null) {
+    //            return true;
+    //        }
+    //        
+    //        //collection,map，array,interface,annotation,abstract
+    //        //|| Modifier.isAbstract(propertyType.getModifiers())  boolean等值，=true了，先修改以後再進行處理
+    //        Class<?> propertyType = propertyDescriptor.getPropertyType();
+    //        if (Collection.class.isAssignableFrom(propertyType)
+    //                || Map.class.isAssignableFrom(propertyType)
+    //                || Set.class.isAssignableFrom(propertyType)
+    //                || propertyType.isArray() || propertyType.isInterface()
+    //                || propertyType.isAnnotation()) {
+    //            return true;
+    //        }
+    //        
+    //        //如果readMethod上有忽略字段的注解，则跳过该字段
+    //        Method readMethod = propertyDescriptor.getReadMethod();
+    //        if (readMethod.isAnnotationPresent(Transient.class)
+    //                || readMethod.isAnnotationPresent(java.beans.Transient.class)
+    //                || readMethod.isAnnotationPresent(
+    //                        org.springframework.data.annotation.Transient.class)
+    //                || readMethod.isAnnotationPresent(OneToMany.class)) {
+    //            return true;
+    //        }
+    //        
+    //        //如果存在字段，则字段上有注解需要跳过时，则跳过该字段
+    //        Field field = ReflectionUtils.findField(beanType,
+    //                propertyDescriptor.getName());
+    //        if (field != null) {
+    //            if (field.isAnnotationPresent(Transient.class)
+    //                    || field.isAnnotationPresent(java.beans.Transient.class)
+    //                    || field.isAnnotationPresent(
+    //                            org.springframework.data.annotation.Transient.class)
+    //                    || field.isAnnotationPresent(OneToMany.class)) {
+    //                return true;
+    //            }
+    //        }
+    //        
+    //        return false;
+    //    }
+    //    
+    //    /**
+    //     * 获取字段名<br/>
+    //     * <功能详细描述>
+    //     * @param beanType
+    //     * @param propertyDescriptor
+    //     * @return [参数说明]
+    //     * 
+    //     * @return String [返回类型说明]
+    //     * @exception throws [异常类型] [异常说明]
+    //     * @see [类、类#方法、类#成员]
+    //     */
+    //    @SuppressWarnings("unused")
+    //    @Deprecated
+    //    private static Column parseColumnAnnotation(Class<?> beanType,
+    //            PropertyDescriptor propertyDescriptor) {
+    //        AssertUtils.notNull(beanType, "beanType is null.");
+    //        AssertUtils.notNull(propertyDescriptor, "propertyDescriptor is null.");
+    //        
+    //        Column columnAnnotation = null;
+    //        //如果readMethod上有忽略字段的注解，则跳过该字段
+    //        Method readMethod = propertyDescriptor.getReadMethod();
+    //        if (readMethod.isAnnotationPresent(Column.class)) {
+    //            columnAnnotation = readMethod.getAnnotation(Column.class);
+    //        }
+    //        
+    //        //如果存在字段，则字段上有注解需要跳过时，则跳过该字段
+    //        Field field = ReflectionUtils.findField(beanType,
+    //                propertyDescriptor.getName());
+    //        if (field != null && field.isAnnotationPresent(Column.class)) {
+    //            columnAnnotation = field.getAnnotation(Column.class);
+    //        }
+    //        
+    //        return columnAnnotation;
+    //    }
+    //    
+    //    /**
+    //     * 判断是否主键<br/>
+    //     * <功能详细描述>
+    //     * @param beanType
+    //     * @param propertyDescriptor
+    //     * @return [参数说明]
+    //     * 
+    //     * @return boolean [返回类型说明]
+    //     * @exception throws [异常类型] [异常说明]
+    //     * @see [类、类#方法、类#成员]
+    //     */
+    //    @SuppressWarnings("unused")
+    //    @Deprecated
+    //    private static boolean isPrimaryKey(Class<?> beanType,
+    //            PropertyDescriptor propertyDescriptor) {
+    //        AssertUtils.notNull(beanType, "beanType is null.");
+    //        AssertUtils.notNull(propertyDescriptor, "propertyDescriptor is null.");
+    //        
+    //        //如果readMethod上有忽略字段的注解，则跳过该字段
+    //        Method readMethod = propertyDescriptor.getReadMethod();
+    //        if (readMethod.isAnnotationPresent(Id.class)
+    //                || readMethod.isAnnotationPresent(
+    //                        org.springframework.data.annotation.Id.class)) {
+    //            return true;
+    //        }
+    //        
+    //        //如果存在字段，则字段上有注解需要跳过时，则跳过该字段
+    //        Field field = ReflectionUtils.findField(beanType,
+    //                propertyDescriptor.getName());
+    //        if (field != null) {
+    //            if (field.isAnnotationPresent(Id.class)
+    //                    || field.isAnnotationPresent(
+    //                            org.springframework.data.annotation.Id.class)) {
+    //                return true;
+    //            }
+    //        }
+    //        
+    //        return false;
+    //    }
 }

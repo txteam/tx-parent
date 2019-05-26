@@ -11,7 +11,7 @@ import java.util.Map;
 
 import org.hibernate.dialect.Dialect;
 import org.hibernate.dialect.H2Dialect;
-import org.hibernate.dialect.MySQL5Dialect;
+import org.hibernate.dialect.MySQL57Dialect;
 import org.hibernate.dialect.Oracle10gDialect;
 import org.hibernate.dialect.Oracle9iDialect;
 import org.hibernate.dialect.SQLServer2008Dialect;
@@ -44,7 +44,7 @@ public abstract class DialectUtils {
     
     public static final H2Dialect h2Dialect = new H2Dialect();
     
-    public static final MySQL5Dialect mySQL5Dialect = new MySQL5Dialect();
+    public static final MySQL57Dialect mySQL57Dialect = new MySQL57Dialect();
     
     /**
      * 获取方言实例<br/>

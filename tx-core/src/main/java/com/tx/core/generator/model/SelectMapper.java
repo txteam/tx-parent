@@ -14,8 +14,8 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 
 import com.tx.core.generator.util.GeneratorUtils;
-import com.tx.core.jdbc.sqlsource.SqlSource;
-import com.tx.core.reflection.JpaMetaClass;
+import com.tx.core.generator.util.JpaMetaClass;
+import com.tx.core.generator.util.SqlSource;
 
 /**
  * select相关语句生成器<br/>
@@ -26,6 +26,7 @@ import com.tx.core.reflection.JpaMetaClass;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
+@Deprecated
 public class SelectMapper {
     
     private String resultMapId;

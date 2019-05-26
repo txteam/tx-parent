@@ -9,7 +9,7 @@ package com.tx.component.security.auth.service.impl;
 import java.util.Map;
 import java.util.Set;
 
-import com.tx.component.security.auth.model.Auth;
+import com.tx.component.auth.model.Auth;
 import com.tx.component.security.auth.service.AuthManager;
 
 /**

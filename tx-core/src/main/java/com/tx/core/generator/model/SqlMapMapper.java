@@ -6,7 +6,7 @@
  */
 package com.tx.core.generator.model;
 
-import com.tx.core.reflection.JpaMetaClass;
+import com.tx.core.generator.util.JpaMetaClass;
 
 /**
  * 对应sqlMap顶层相关配置
@@ -17,6 +17,7 @@ import com.tx.core.reflection.JpaMetaClass;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
+@Deprecated
 public class SqlMapMapper {
     
     /** 命名空间 */

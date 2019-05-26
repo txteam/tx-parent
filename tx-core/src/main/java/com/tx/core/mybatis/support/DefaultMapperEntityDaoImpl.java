@@ -135,18 +135,6 @@ public class DefaultMapperEntityDaoImpl<T> implements MapperEntityDao<T> {
                 .queryList(this.assistant.getQueryStatementName(), params);
     }
     
-//    /**
-//     * @param params
-//     * @param orderList
-//     * @return
-//     */
-//    @Override
-//    public List<T> queryList(Map<String, Object> params,
-//            List<Order> orderList) {
-//        return this.myBatisDaoSupport.queryList(
-//                this.assistant.getQueryStatementName(), params, orderList);
-//    }
-    
     /**
      * @param params
      * @return
@@ -172,24 +160,6 @@ public class DefaultMapperEntityDaoImpl<T> implements MapperEntityDao<T> {
                 pageIndex,
                 pageSize);
     }
-    
-//    /**
-//     * @param params
-//     * @param pageIndex
-//     * @param pageSize
-//     * @param orderList
-//     * @return
-//     */
-//    @Override
-//    public PagedList<T> queryPagedList(Map<String, Object> params,
-//            int pageIndex, int pageSize, List<Order> orderList) {
-//        return this.myBatisDaoSupport.queryPagedList(
-//                this.assistant.getQueryStatementName(),
-//                params,
-//                pageIndex,
-//                pageSize,
-//                orderList);
-//    }
     
     /**
      * @param updateRowMap

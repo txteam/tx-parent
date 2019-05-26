@@ -11,8 +11,7 @@ import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
 
-import com.tx.component.security.auth.model.AuthItem;
-import com.tx.component.security.jwt.model.JwtSigningKey;
+import com.tx.component.role.model.RoleRefItem;
 import com.tx.core.generator.table.TableCodeGenerator;
 import com.tx.core.util.MD5Utils;
 
@@ -28,7 +27,7 @@ import com.tx.core.util.MD5Utils;
 public class WTPTableCodeGenerator {
     
     public static void main(String[] args) throws IOException {
-        Class<?> type = JwtSigningKey.class;
+        Class<?> type = RoleRefItem.class;
         String folderPath = "d:/generator/table";
         FileUtils.forceMkdir(new File(folderPath));
         

@@ -30,7 +30,7 @@ import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -46,6 +46,7 @@ import org.springframework.util.StringUtils;
 
 import com.tx.core.mybatis.support.MyBatisDaoSupport;
 import com.tx.core.mybatis.support.MyBatisDaoSupportHelper;
+import com.tx.core.starter.util.CoreAutoConfiguration;
 
 /**
  * mybatisSupport自动配置类<br/>
@@ -60,7 +61,8 @@ import com.tx.core.mybatis.support.MyBatisDaoSupportHelper;
 @ConditionalOnClass({ SqlSessionFactory.class, SqlSessionFactoryBean.class })
 @ConditionalOnSingleCandidate(DataSource.class)
 @EnableConfigurationProperties(MybatisProperties.class)
-@AutoConfigureAfter(DataSourceAutoConfiguration.class)
+@AutoConfigureAfter({ CoreAutoConfiguration.class,
+        TransactionAutoConfiguration.class })
 @Import({ MybatisPluginConfiguration.class })
 public class MybatisAutoConfiguration extends AbstractMybatisConfiguration
         implements InitializingBean, ApplicationContextAware {
@@ -75,7 +77,8 @@ public class MybatisAutoConfiguration extends AbstractMybatisConfiguration
     public MybatisAutoConfiguration(MybatisProperties properties,
             ObjectProvider<DatabaseIdProvider> databaseIdProvider,
             ObjectProvider<Interceptor[]> interceptorsProvider,
-            ObjectProvider<List<ConfigurationCustomizer>> configurationCustomizersProvider,DataSource dataSource) {
+            ObjectProvider<List<ConfigurationCustomizer>> configurationCustomizersProvider,
+            DataSource dataSource) {
         super(databaseIdProvider, interceptorsProvider,
                 configurationCustomizersProvider);
         
@@ -110,8 +113,8 @@ public class MybatisAutoConfiguration extends AbstractMybatisConfiguration
      * @see [类、类#方法、类#成员]
      */
     private void checkConfigFileExists() {
-        if (this.properties.isCheckConfigLocation() && StringUtils
-                .hasText(this.properties.getConfigLocation())) {
+        if (this.properties.isCheckConfigLocation()
+                && StringUtils.hasText(this.properties.getConfigLocation())) {
             Resource resource = this.resourceLoader
                     .getResource(this.properties.getConfigLocation());
             Assert.state(resource.exists(),

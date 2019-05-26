@@ -17,7 +17,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
-import org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -31,6 +30,7 @@ import com.tx.component.command.context.HelperFactory;
 import com.tx.component.strategy.context.StrategyContext;
 import com.tx.component.strategy.context.StrategyContextFactory;
 import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.starter.component.ComponentSupportAutoConfiguration;
 
 /**
  * 命令容器配置器<br/>
@@ -46,8 +46,8 @@ import com.tx.core.exceptions.util.AssertUtils;
 @ConditionalOnClass({ CommandContext.class })
 @ConditionalOnSingleCandidate(DataSource.class)
 @ConditionalOnBean(PlatformTransactionManager.class)
-@AutoConfigureAfter(TransactionAutoConfiguration.class)
-@ConditionalOnProperty(prefix = "tx.command", value = "enable", havingValue = "true")
+@AutoConfigureAfter({ComponentSupportAutoConfiguration.class})
+@ConditionalOnProperty(prefix = "tx.component.command", value = "enable", havingValue = "true")
 public class CommandContextAutoConfiguration
         implements ApplicationContextAware, InitializingBean {
     

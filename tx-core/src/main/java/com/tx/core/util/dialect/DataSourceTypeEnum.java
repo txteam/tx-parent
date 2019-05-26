@@ -45,7 +45,7 @@ public enum DataSourceTypeEnum {
     /**
      * MYSQL
      */
-    MYSQL("MYSQL", DialectUtils.mySQL5Dialect);
+    MYSQL("MYSQL", DialectUtils.mySQL57Dialect);
     
     /**
      * 数据源类型名

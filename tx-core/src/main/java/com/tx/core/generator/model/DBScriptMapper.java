@@ -16,8 +16,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.dialect.MySQL5InnoDBDialect;
 
-import com.tx.core.reflection.JpaColumnInfo;
-import com.tx.core.reflection.JpaMetaClass;
+import com.tx.core.generator.util.JpaColumnInfo;
+import com.tx.core.generator.util.JpaMetaClass;
 import com.tx.core.util.JdbcUtils;
 
 /**
@@ -29,6 +29,7 @@ import com.tx.core.util.JdbcUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
+@Deprecated
 public class DBScriptMapper {
     
     private boolean nameToUpperCase = false;

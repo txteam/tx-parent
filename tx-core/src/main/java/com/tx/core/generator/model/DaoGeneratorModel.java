@@ -9,7 +9,7 @@ package com.tx.core.generator.model;
 import org.hibernate.dialect.Dialect;
 import org.springframework.util.ClassUtils;
 
-import com.tx.core.reflection.JpaMetaClass;
+import com.tx.core.generator.util.JpaMetaClass;
 
 /**
  * 持久层代码生成模型<br/>
@@ -21,6 +21,7 @@ import com.tx.core.reflection.JpaMetaClass;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
+@Deprecated
 public class DaoGeneratorModel {
     
     private String basePackage;

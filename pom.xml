@@ -273,17 +273,17 @@
 				</exclusions>
 			</dependency>
 			<!-- 长期未更新放弃依赖 -->
-			<!-- <dependency> -->
-			<!-- <groupId>commons-io</groupId> -->
-			<!-- <artifactId>commons-io</artifactId> -->
-			<!-- <version>2.6</version> -->
-			<!-- <exclusions> -->
-			<!-- <exclusion> -->
-			<!-- <artifactId>commons-logging</artifactId> -->
-			<!-- <groupId>commons-logging</groupId> -->
-			<!-- </exclusion> -->
-			<!-- </exclusions> -->
-			<!-- </dependency> -->
+			<dependency>
+				<groupId>commons-io</groupId>
+				<artifactId>commons-io</artifactId>
+				<version>2.6</version>
+				<exclusions>
+					<exclusion>
+						<artifactId>commons-logging</artifactId>
+						<groupId>commons-logging</groupId>
+					</exclusion>
+				</exclusions>
+			</dependency>
 			<!-- <dependency> -->
 			<!-- <groupId>commons-beanutils</groupId> -->
 			<!-- <artifactId>commons-beanutils</artifactId> -->

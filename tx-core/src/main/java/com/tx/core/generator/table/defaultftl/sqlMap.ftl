@@ -65,7 +65,7 @@
 		</trim>
 		<choose>  
 	        <when test="@com.tx.core.util.OgnlUtils@isNotEmpty(orderSql)">  
-	            ORDER BY ${r"${"}orderSql${r"}"}
+	            ORDER BY ${r"#{"}orderSql${r"}"}
 	        </when>
 	        <otherwise>  
 	            ORDER BY ${select.idColumnName}

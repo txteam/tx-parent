@@ -18,10 +18,6 @@ import com.tx.core.TxConstants;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.generator.model.FieldView;
 import com.tx.core.generator.model.SqlMapColumn;
-import com.tx.core.jdbc.sqlsource.SqlSource;
-import com.tx.core.reflection.JpaColumnInfo;
-import com.tx.core.reflection.JpaMetaClass;
-import com.tx.core.reflection.ReflectionUtils;
 
 /**
  * <功能简述>
@@ -36,7 +32,7 @@ public class GeneratorUtils {
 
     /**
      * 生成页面显示行信息
-     * <功能详细描述>
+     *<功能详细描述>
      * @param jpaMetaClass
      * @param sqlSource
      * @param uniqueGetterNamesArray

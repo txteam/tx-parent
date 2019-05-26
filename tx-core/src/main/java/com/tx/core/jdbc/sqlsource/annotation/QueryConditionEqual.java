@@ -14,7 +14,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-
 /**
  * 查询条件注解<br/>
  *     key对应到对象中的getterName,如果不指定将使用所在字段的getterName
@@ -27,8 +26,9 @@ import java.lang.annotation.Target;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
+@Deprecated
 @Retention(RetentionPolicy.RUNTIME)
-@Target({METHOD, FIELD})
+@Target({ METHOD, FIELD })
 @Inherited
 public @interface QueryConditionEqual {
     

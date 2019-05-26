@@ -18,8 +18,8 @@ import org.hibernate.dialect.Dialect;
 import org.springframework.util.ClassUtils;
 
 import com.tx.core.generator.util.GeneratorUtils;
-import com.tx.core.jdbc.sqlsource.SqlSource;
-import com.tx.core.reflection.JpaMetaClass;
+import com.tx.core.generator.util.JpaMetaClass;
+import com.tx.core.generator.util.SqlSource;
 
 /**
  * <功能简述>
@@ -30,6 +30,7 @@ import com.tx.core.reflection.JpaMetaClass;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
+@Deprecated
 public class ServiceGeneratorModel {
     
     private String basePackage;

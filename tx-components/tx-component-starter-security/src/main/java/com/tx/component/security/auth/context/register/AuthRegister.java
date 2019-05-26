@@ -6,7 +6,7 @@
  */
 package com.tx.component.security.auth.context.register;
 
-import com.tx.component.security.auth.model.Auth;
+import com.tx.component.auth.model.Auth;
 
 /**
  * 权限注册器<br/>

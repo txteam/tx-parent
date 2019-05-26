@@ -16,7 +16,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
-import org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -30,6 +29,7 @@ import com.tx.component.event.context.loader.AnnotationEventListenerLoader;
 import com.tx.component.event.listener.resolver.impl.EventListenerMethodEventArgumentResolver;
 import com.tx.component.event.listener.resolver.impl.EventListenerParamMapMethodArgumentResolver;
 import com.tx.component.event.listener.resolver.impl.EventListenerParamMethodArgumentResolver;
+import com.tx.core.starter.component.ComponentSupportAutoConfiguration;
 
 /**
  * 命令容器配置器<br/>
@@ -45,8 +45,8 @@ import com.tx.component.event.listener.resolver.impl.EventListenerParamMethodArg
 @ConditionalOnClass({ EventContextFactory.class })
 @ConditionalOnSingleCandidate(DataSource.class)
 @ConditionalOnBean(PlatformTransactionManager.class)
-@AutoConfigureAfter(TransactionAutoConfiguration.class)
-@ConditionalOnProperty(prefix = "tx.event", value = "enable", havingValue = "true")
+@AutoConfigureAfter({ComponentSupportAutoConfiguration.class})
+@ConditionalOnProperty(prefix = "tx.component.event", value = "enable", havingValue = "true")
 public class EventContextAutoConfiguration
         implements ApplicationContextAware, InitializingBean {
     

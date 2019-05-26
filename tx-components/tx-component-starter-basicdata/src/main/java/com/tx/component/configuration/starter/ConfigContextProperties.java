@@ -17,7 +17,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @see  [相关类/方法]0
  * @since  [产品/模块版本]
  */
-@ConfigurationProperties(prefix = "tx.basicdata.config")
+@ConfigurationProperties(prefix = "tx.component.config")
 public class ConfigContextProperties {
     
     /** 配置文件所在路径 */

@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
-import org.hibernate.dialect.MySQL5InnoDBDialect;
+import org.hibernate.dialect.MySQL57Dialect;
 
 import com.tx.core.ddlutil.model.JdbcTypeEnum;
 import com.tx.core.exceptions.util.AssertUtils;
@@ -36,7 +36,7 @@ public class MysqlDDLDialect extends DDLDialect {
     /** <默认构造函数> */
     MysqlDDLDialect() {
         super();
-        setDialect(new MySQL5InnoDBDialect());
+        setDialect(new MySQL57Dialect());
     }
     
     /** class类型对jdbctype的映射 */

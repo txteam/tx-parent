@@ -16,9 +16,9 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.util.MultiValueMap;
 
+import com.tx.component.auth.model.Auth;
+import com.tx.component.auth.model.AuthRefItem;
 import com.tx.component.security.auth.dao.AuthItemRefDao;
-import com.tx.component.security.auth.model.Auth;
-import com.tx.component.security.auth.model.AuthRefItem;
 import com.tx.core.exceptions.util.AssertUtils;
 
 /**
