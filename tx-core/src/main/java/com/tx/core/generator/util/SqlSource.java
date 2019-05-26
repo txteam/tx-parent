@@ -44,6 +44,7 @@ import com.tx.core.util.ObjectUtils;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
+@Deprecated
 public class SqlSource<T> implements Serializable, Cloneable {
     
     /** 注释内容 */

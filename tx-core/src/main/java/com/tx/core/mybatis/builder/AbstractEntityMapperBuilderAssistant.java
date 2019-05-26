@@ -726,7 +726,7 @@ public abstract class AbstractEntityMapperBuilderAssistant
         
         KeyGenerator keyGenerator = configuration.isUseGeneratedKeys()
                 ? new Jdbc3KeyGenerator() : new NoKeyGenerator();
-        LanguageDriver lang = getLanguageDriver(null);
+        LanguageDriver lang = configuration.getLanguageDriver(null);
         
         SqlSource sqlSource = lang.createSqlSource(configuration,
                 sql,
@@ -795,7 +795,7 @@ public abstract class AbstractEntityMapperBuilderAssistant
         String parameterMap = null;
         
         KeyGenerator keyGenerator = new NoKeyGenerator();
-        LanguageDriver lang = getLanguageDriver(null);
+        LanguageDriver lang = configuration.getLanguageDriver(null);
         
         SqlSource sqlSource = lang.createSqlSource(configuration,
                 sql,
@@ -863,7 +863,7 @@ public abstract class AbstractEntityMapperBuilderAssistant
         String parameterMap = null;
         
         KeyGenerator keyGenerator = new NoKeyGenerator();
-        LanguageDriver lang = getLanguageDriver(null);
+        LanguageDriver lang = configuration.getLanguageDriver(null);
         
         SqlSource sqlSource = lang.createSqlSource(configuration,
                 sql,
@@ -932,7 +932,7 @@ public abstract class AbstractEntityMapperBuilderAssistant
         String parameterMap = null;
         
         KeyGenerator keyGenerator = new NoKeyGenerator();
-        LanguageDriver lang = getLanguageDriver(null);
+        LanguageDriver lang = configuration.getLanguageDriver(null);
         
         SqlSource sqlSource = lang.createSqlSource(configuration,
                 sql,
@@ -1001,7 +1001,7 @@ public abstract class AbstractEntityMapperBuilderAssistant
         String parameterMap = null;
         
         KeyGenerator keyGenerator = new NoKeyGenerator();
-        LanguageDriver lang = getLanguageDriver(null);
+        LanguageDriver lang = configuration.getLanguageDriver(null);
         
         SqlSource sqlSource = lang.createSqlSource(configuration,
                 sql,
@@ -1070,7 +1070,7 @@ public abstract class AbstractEntityMapperBuilderAssistant
         String parameterMap = null;
         
         KeyGenerator keyGenerator = new NoKeyGenerator();
-        LanguageDriver lang = getLanguageDriver(null);
+        LanguageDriver lang = configuration.getLanguageDriver(null);
         
         SqlSource sqlSource = lang.createSqlSource(configuration,
                 sql,
@@ -1143,7 +1143,7 @@ public abstract class AbstractEntityMapperBuilderAssistant
         KeyGenerator keyGenerator = (configuration.isUseGeneratedKeys()
                 && SqlCommandType.INSERT.equals(sqlCommandType))
                         ? new Jdbc3KeyGenerator() : new NoKeyGenerator();
-        LanguageDriver lang = getLanguageDriver(null);
+        LanguageDriver lang = configuration.getLanguageDriver(null);
         
         SqlSource sqlSource = lang.createSqlSource(configuration,
                 sql,
@@ -1221,7 +1221,7 @@ public abstract class AbstractEntityMapperBuilderAssistant
         KeyGenerator keyGenerator = (configuration.isUseGeneratedKeys()
                 && SqlCommandType.INSERT.equals(sqlCommandType))
                         ? new Jdbc3KeyGenerator() : new NoKeyGenerator();
-        LanguageDriver lang = getLanguageDriver(null);
+        LanguageDriver lang = configuration.getLanguageDriver(null);
         
         SqlSource sqlSource = lang.createSqlSource(configuration,
                 sql,
@@ -1298,7 +1298,7 @@ public abstract class AbstractEntityMapperBuilderAssistant
         KeyGenerator keyGenerator = (configuration.isUseGeneratedKeys()
                 && SqlCommandType.INSERT.equals(sqlCommandType))
                         ? new Jdbc3KeyGenerator() : new NoKeyGenerator();
-        LanguageDriver lang = getLanguageDriver(null);
+        LanguageDriver lang = configuration.getLanguageDriver(null);
         
         SqlSource sqlSource = lang.createSqlSource(configuration,
                 sql,

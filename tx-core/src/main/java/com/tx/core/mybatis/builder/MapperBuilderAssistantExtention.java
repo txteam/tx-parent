@@ -52,12 +52,10 @@ public class MapperBuilderAssistantExtention extends MapperBuilderAssistant {
             String resource) {
         super(configuration, resource);
         try {
-            this.mappedStatements = (Map<String, MappedStatement>) FieldUtils.readDeclaredField(configuration,
-                    "mappedStatements",
-                    true);
-            this.resultMaps = (Map<String, ResultMap>) FieldUtils.readDeclaredField(configuration,
-                    "resultMaps",
-                    true);
+            this.mappedStatements = (Map<String, MappedStatement>) FieldUtils
+                    .readDeclaredField(configuration, "mappedStatements", true);
+            this.resultMaps = (Map<String, ResultMap>) FieldUtils
+                    .readDeclaredField(configuration, "resultMaps", true);
         } catch (IllegalAccessException e) {
             throw new SILException("IllegalAccessException.e", e);
         }
@@ -103,9 +101,10 @@ public class MapperBuilderAssistantExtention extends MapperBuilderAssistant {
         
         String parameterMap = null;
         
-        KeyGenerator keyGenerator = (configuration.isUseGeneratedKeys() && SqlCommandType.INSERT.equals(sqlCommandType)) ? new Jdbc3KeyGenerator()
-                : new NoKeyGenerator();
-        LanguageDriver lang = getLanguageDriver(null);
+        KeyGenerator keyGenerator = (configuration.isUseGeneratedKeys()
+                && SqlCommandType.INSERT.equals(sqlCommandType))
+                        ? new Jdbc3KeyGenerator() : new NoKeyGenerator();
+        LanguageDriver lang = configuration.getLanguageDriver(null);
         
         SqlSource sqlSource = lang.createSqlSource(configuration,
                 sql,
@@ -180,9 +179,10 @@ public class MapperBuilderAssistantExtention extends MapperBuilderAssistant {
         
         String parameterMap = null;
         
-        KeyGenerator keyGenerator = (configuration.isUseGeneratedKeys() && SqlCommandType.INSERT.equals(sqlCommandType)) ? new Jdbc3KeyGenerator()
-                : new NoKeyGenerator();
-        LanguageDriver lang = getLanguageDriver(null);
+        KeyGenerator keyGenerator = (configuration.isUseGeneratedKeys()
+                && SqlCommandType.INSERT.equals(sqlCommandType))
+                        ? new Jdbc3KeyGenerator() : new NoKeyGenerator();
+        LanguageDriver lang = configuration.getLanguageDriver(null);
         
         SqlSource sqlSource = lang.createSqlSource(configuration,
                 sql,
@@ -259,9 +259,10 @@ public class MapperBuilderAssistantExtention extends MapperBuilderAssistant {
         
         String parameterMap = null;
         
-        KeyGenerator keyGenerator = (configuration.isUseGeneratedKeys() && SqlCommandType.INSERT.equals(sqlCommandType)) ? new Jdbc3KeyGenerator()
-                : new NoKeyGenerator();
-        LanguageDriver lang = getLanguageDriver(null);
+        KeyGenerator keyGenerator = (configuration.isUseGeneratedKeys()
+                && SqlCommandType.INSERT.equals(sqlCommandType))
+                        ? new Jdbc3KeyGenerator() : new NoKeyGenerator();
+        LanguageDriver lang = configuration.getLanguageDriver(null);
         
         SqlSource sqlSource = lang.createSqlSource(configuration,
                 sql,
@@ -348,7 +349,8 @@ public class MapperBuilderAssistantExtention extends MapperBuilderAssistant {
       * @see [类、类#方法、类#成员]
      */
     public ResultMapping buildResultMapping(Class<?> resultType,
-            String property, Class<?> javaType, String column, JdbcType jdbcType) {
+            String property, Class<?> javaType, String column,
+            JdbcType jdbcType) {
         String nestedSelect = null;//是否存在nestedSelect
         String nestedResultMap = null;//
         String notNullColumn = null;

@@ -115,6 +115,8 @@ public interface RoleRefService {
     
     /**
      * 为指定角色新增关联引用： 应用于针对某角色赋予多个[人员]的场景<br/>
+     *    在引用唯一键方面系统不依赖于数据库唯一键去限定，由代码进行控制，允许多个临时权限存在.
+     *    add方法一般服务于新增临时权限场景
      * <功能详细描述>
      * @param roleId
      * @param refType

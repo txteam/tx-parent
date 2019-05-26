@@ -8,9 +8,11 @@ package com.tx.component.role.service.impl;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +24,6 @@ import com.tx.component.role.model.RoleRef;
 import com.tx.component.role.model.RoleRefItem;
 import com.tx.component.role.service.RoleRefService;
 import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.util.WebContextUtils;
 
 /**
  * 角色引用业务层实现类<br>
@@ -45,8 +46,10 @@ public class RoleRefServiceImpl implements RoleRefService {
      */
     @Override
     public List<RoleRef> queryList(Boolean valid, Map<String, Object> params) {
-        //List<RoleRefItem> roleRefList = roleRefItemDao.queryList(params);
-        return null;
+        List<RoleRef> roleRefList = roleRefItemDao.queryList(params)
+                .stream()
+                .collect(Collectors.toList());
+        return roleRefList;
     }
     
     /**

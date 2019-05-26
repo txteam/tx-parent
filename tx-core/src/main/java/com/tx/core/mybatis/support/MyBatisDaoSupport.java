@@ -6,6 +6,7 @@
  */
 package com.tx.core.mybatis.support;
 
+import java.beans.PropertyDescriptor;
 import java.util.List;
 import java.util.Map;
 
@@ -432,18 +433,26 @@ public class MyBatisDaoSupport implements InitializingBean {
       * @see [类、类#方法、类#成员]
      */
     public void insertUseUUID(String statement, Object parameter,
-            String keyPropertyName) {
-        if (!StringUtils.isEmpty(keyPropertyName)) {
-            //如果指定了keyProperty
-            BeanWrapper bw = PropertyAccessorFactory
-                    .forBeanPropertyAccess(parameter);
-            if (bw.isWritableProperty(keyPropertyName)
-                    && String.class.equals(bw.getPropertyType(keyPropertyName))
-                    && StringUtils.isEmpty(
-                            (String) bw.getPropertyValue(keyPropertyName))) {
-                bw.setPropertyValue(keyPropertyName, generateUUID());
-            }
+            String primaryKeyPropertyName) {
+        AssertUtils.notEmpty(primaryKeyPropertyName,
+                "primaryKeyPropertyName is empty.");
+        AssertUtils.notNull(parameter, "parameter is null.");
+        
+        //如果指定了keyProperty
+        BeanWrapper bw = PropertyAccessorFactory
+                .forBeanPropertyAccess(parameter);
+        PropertyDescriptor primaryKeyPD = bw
+                .getPropertyDescriptor(primaryKeyPropertyName);
+        AssertUtils.notNull(primaryKeyPD,
+                "bean:{} not contains property:{}.",
+                new Object[] { parameter.getClass(), primaryKeyPropertyName });
+        if (primaryKeyPD.getWriteMethod() != null
+                && String.class.equals(primaryKeyPD.getPropertyType())
+                && StringUtils.isEmpty(
+                        (String) bw.getPropertyValue(primaryKeyPropertyName))) {
+            bw.setPropertyValue(primaryKeyPropertyName, generateUUID());
         }
+        
         insert(statement, parameter);
     }
     
@@ -478,24 +487,28 @@ public class MyBatisDaoSupport implements InitializingBean {
      * @see [类、类#方法、类#成员]
      */
     private void insertForBatch(String statement, Object parameter,
-            String keyProperty) {
-        if (!StringUtils.isEmpty(keyProperty)) {
-            //如果指定了keyProperty
-            BeanWrapper bw = PropertyAccessorFactory
-                    .forBeanPropertyAccess(parameter);
-            if (bw.isWritableProperty(keyProperty)
-                    && String.class.equals(bw.getPropertyType(keyProperty))
-                    && StringUtils.isEmpty(
-                            (String) bw.getPropertyValue(keyProperty))) {
-                bw.setPropertyValue(keyProperty, generateUUID());
-            }
+            String primaryKeyPropertyName) {
+        AssertUtils.notEmpty(primaryKeyPropertyName,
+                "primaryKeyPropertyName is empty.");
+        AssertUtils.notNull(parameter, "parameter is null.");
+        
+        //如果指定了keyProperty
+        BeanWrapper bw = PropertyAccessorFactory
+                .forBeanPropertyAccess(parameter);
+        PropertyDescriptor primaryKeyPD = bw
+                .getPropertyDescriptor(primaryKeyPropertyName);
+        AssertUtils.notNull(primaryKeyPD,
+                "bean:{} not contains property:{}.",
+                new Object[] { parameter.getClass(), primaryKeyPropertyName });
+        
+        if (primaryKeyPD.getWriteMethod() != null
+                && String.class.equals(primaryKeyPD.getPropertyType())
+                && StringUtils.isEmpty(
+                        (String) bw.getPropertyValue(primaryKeyPropertyName))) {
+            bw.setPropertyValue(primaryKeyPropertyName, generateUUID());
         }
         
-        if (parameter != null) {
-            this.sqlSessionTemplate.insert(statement, parameter);
-        } else {
-            this.sqlSessionTemplate.insert(statement);
-        }
+        this.sqlSessionTemplate.insert(statement, parameter);
     }
     
     /**
@@ -1091,6 +1104,24 @@ public class MyBatisDaoSupport implements InitializingBean {
      */
     public BatchResult batchDelete(String statement, List<?> objectList,
             boolean isStopWhenFlushHappenedException) {
+//        BatchResult result = new BatchResult();
+//        if(CollectionUtils.isEmpty(objectList)){
+//            return result;
+//        }
+//        SqlSession sqlSession = getSqlSessionFactory().openSession(ExecutorType.BATCH);
+//        for(Object parameter : objectList){
+//            sqlSession.delete(statement, parameter);
+//        }
+//        sqlSession.close();
+//        
+//        long begin=System.currentTimeMillis();
+//        for(int i=0;i<10000;i++){
+//            mapper.insert(new User(null,"赵敏"+i,i,"镇雄"+i,false));
+//        }
+//        long end=System.currentTimeMillis();
+//        System.out.println(end-begin);
+//        sqlSession.close();
+        
         return batchDelete(statement,
                 objectList,
                 defaultDoFlushSize,

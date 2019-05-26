@@ -28,6 +28,7 @@ import com.tx.core.generator.model.SqlMapColumn;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
+@Deprecated
 public class GeneratorUtils {
 
     /**
@@ -235,6 +236,7 @@ public class GeneratorUtils {
     }
 
     /** 默认的字段比较器，用以排序 */
+    @SuppressWarnings("unused")
     private static final Comparator<SqlMapColumn> columnComparator = new Comparator<SqlMapColumn>() {
         /**
          * @param o1

@@ -208,8 +208,7 @@ public class JpaMetaClass<T> {
         }
         getterNames = newFieldName;
         
-        Set<String> fieldNameSet = classReflector.getFieldNames();
-        //TODO classRefector.getFiledMapping 顺序可以考虑
+        //Set<String> fieldNameSet = classReflector.getFieldNames();
         for (String getterNameTemp : newFieldName) {
             if (!getterNames.contains(getterNameTemp)) {
                 continue;
@@ -698,7 +697,7 @@ public class JpaMetaClass<T> {
         }
     }
     
-    public static Map<String, String> map = new HashedMap();
+    public static Map<String, String> map = new HashedMap<>();
     
     private String getBaseColumnName2Comment(String columnName) {
         if (map.isEmpty()) {
@@ -824,7 +823,6 @@ public class JpaMetaClass<T> {
     /**
      * @return 返回 getter2columnInfoMapping
      */
-    @SuppressWarnings("unchecked")
     public Map<String, JpaColumnInfo> getGetter2columnInfoMapping() {
         return MapUtils.unmodifiableMap(getter2columnInfoMapping);
     }
@@ -832,7 +830,6 @@ public class JpaMetaClass<T> {
     /**
      * @return 返回 column2getterMapping
      */
-    @SuppressWarnings("unchecked")
     public Map<String, String> getColumn2getterMapping() {
         return MapUtils.unmodifiableMap(column2realGetterMapping);
     }
@@ -851,6 +848,7 @@ public class JpaMetaClass<T> {
         return modulePackageSimpleName;
     }
     
+    @SuppressWarnings("unused")
     private static Comparator<String> nameComparator = new Comparator<String>() {
         @Override
         public int compare(String o1, String o2) {
