@@ -1,3 +1,4 @@
 # Auto Configure
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.tx.component.basicdata.starter.BasicDataContextAutoConfiguration
+com.tx.component.basicdata.starter.BasicDataContextAutoConfiguration,\
+com.tx.component.configuration.starter.ConfigContextAutoConfiguration

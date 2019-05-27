@@ -11,9 +11,6 @@ import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
-import com.tx.core.jdbc.sqlsource.annotation.QueryConditionEqual;
-import com.tx.core.jdbc.sqlsource.annotation.UpdateAble;
-
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiModelProperty.AccessMode;
 
@@ -38,41 +35,30 @@ public abstract class AbstractDataDict implements BasicData {
     private String id;
     
     /** 类型编码 */
-    @QueryConditionEqual
     @ApiModelProperty(value = "类型", required = true)
     private String type;
     
     /** 编码 */
-    @QueryConditionEqual
     @ApiModelProperty(value = "编码", required = true)
     private String code;
     
     /** 是否有效 */
-    @UpdateAble
-    @QueryConditionEqual
     @ApiModelProperty(value = "是否有效")
     private boolean valid = true;
     
     /** 是否可编辑 */
-    @UpdateAble
-    @QueryConditionEqual
     @ApiModelProperty(value = "是否可编辑")
     private boolean modifyAble = true;
     
     /** 名称 */
-    @UpdateAble
-    @QueryConditionEqual
     @ApiModelProperty(value = "名称", required = true)
     private String name;
     
     /** 备注 */
-    @UpdateAble
-    @QueryConditionEqual
     @ApiModelProperty(value = "备注")
     private String remark;
     
     /** 最后更新时间 */
-    @UpdateAble
     @ApiModelProperty(value = "最后更新时间", accessMode = AccessMode.READ_ONLY)
     private Date lastUpdateDate;
     

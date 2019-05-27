@@ -4,7 +4,7 @@
  * 修改时间:  2013-8-2
  * <修改描述:>
  */
-package com.tx.component.configuration.persister;
+package com.tx.component.configuration.service;
 
 import java.util.List;
 import java.util.Map;
@@ -20,7 +20,7 @@ import com.tx.component.configuration.model.ConfigProperty;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public interface ConfigPropertyPersister {
+public interface ConfigPropertyManager {
     
     /**
      * 根据数据所属模块判断从何获取数据,自动匹配<br/>

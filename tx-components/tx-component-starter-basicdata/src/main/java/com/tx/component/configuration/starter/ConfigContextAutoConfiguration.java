@@ -8,27 +8,40 @@ package com.tx.component.configuration.starter;
 
 import java.util.List;
 
+import javax.sql.DataSource;
+
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cache.CacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.util.StringUtils;
 
-import com.tx.component.basicdata.starter.BasicDataContextProperties;
+import com.tx.component.basicdata.context.BasicDataContextFactory;
+import com.tx.component.configuration.ConfigContextConstants;
 import com.tx.component.configuration.context.ConfigContextFactory;
+import com.tx.component.configuration.context.ConfigPropertyServiceSupportCacheProxyCreator;
 import com.tx.component.configuration.controller.ConfigAPIController;
-import com.tx.component.configuration.persister.ConfigPropertyPersister;
-import com.tx.component.configuration.persister.ConfigPropertyPersisterComposite;
-import com.tx.component.configuration.persister.impl.LocalConfigPropertyPersister;
-import com.tx.component.configuration.persister.impl.RemoteConfigPropertyPersister;
 import com.tx.component.configuration.registry.ConfigAPIClientRegistry;
 import com.tx.component.configuration.service.ConfigPropertyItemService;
+import com.tx.component.configuration.service.ConfigPropertyManager;
+import com.tx.component.configuration.service.ConfigPropertyManagerComposite;
+import com.tx.component.configuration.service.impl.LocalConfigPropertyManager;
+import com.tx.component.configuration.service.impl.RemoteConfigPropertyManager;
+import com.tx.component.configuration.starter.ConfigCacheConfiguration.ConfigCacheCustomizer;
 import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.starter.component.ComponentSupportAutoConfiguration;
 
 /**
  * 基础数据容器自动配置<br/>
@@ -41,7 +54,14 @@ import com.tx.core.exceptions.util.AssertUtils;
  */
 @EnableConfigurationProperties(ConfigContextProperties.class)
 @Configuration
-public class ConfigContextConfiguration
+@AutoConfigureAfter({ ComponentSupportAutoConfiguration.class })
+@ConditionalOnClass({ BasicDataContextFactory.class })
+@ConditionalOnSingleCandidate(DataSource.class)
+@ConditionalOnBean(PlatformTransactionManager.class)
+@ConditionalOnProperty(prefix = ConfigContextConstants.PROPERTIES_PREFIX, value = "enable", havingValue = "true")
+@Import({ ConfigPersisterConfiguration.class,
+        ConfigAPIClientConfiguration.class, ConfigCacheConfiguration.class })
+public class ConfigContextAutoConfiguration
         implements ApplicationContextAware, InitializingBean {
     
     /** spring 容器句柄 */
@@ -61,13 +81,10 @@ public class ConfigContextConfiguration
     private String configLocation = "classpath:config/*.xml";
     
     /** <默认构造函数> */
-    public ConfigContextConfiguration(
-            BasicDataContextProperties basicDataContextProperties,
-            ConfigContextProperties properties) {
+    public ConfigContextAutoConfiguration(ConfigContextProperties properties) {
         super();
         
         this.properties = properties;
-        this.module = basicDataContextProperties.getModule();
     }
     
     /**
@@ -91,10 +108,34 @@ public class ConfigContextConfiguration
         }
         
         //初始化包名
-        if (StringUtils.isEmpty(this.module)) {
+        if (!StringUtils.isEmpty(this.applicationName)) {
             this.module = this.applicationName;
         }
+        if (!StringUtils.isEmpty(this.properties.getModule())) {
+            this.module = this.properties.getModule();
+        }
         AssertUtils.notEmpty(this.module, "module is empty.");
+    }
+    
+    /**
+     * 基础数据业务层缓存代理<br/>
+     * <功能详细描述>
+     * @param customizer
+     * @return [参数说明]
+     * 
+     * @return BasicDataServiceSupportCacheProxyCreator [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @Bean(name = "configPropertyServiceSupportCacheProxyCreator")
+    public ConfigPropertyServiceSupportCacheProxyCreator configPropertyServiceSupportCacheProxyCreator(
+            ConfigCacheCustomizer customizer) {
+        CacheManager cacheManager = customizer.getCacheManager();
+        AssertUtils.notNull(cacheManager, "cacheManager is null.");
+        
+        ConfigPropertyServiceSupportCacheProxyCreator creator = new ConfigPropertyServiceSupportCacheProxyCreator(
+                cacheManager);
+        return creator;
     }
     
     /**
@@ -107,11 +148,11 @@ public class ConfigContextConfiguration
      * @see [类、类#方法、类#成员]
      */
     @Bean
-    public LocalConfigPropertyPersister localConfigPropertyPersister(
+    public LocalConfigPropertyManager localConfigPropertyManager(
             ConfigPropertyItemService configPropertyItemService) {
-        LocalConfigPropertyPersister persister = new LocalConfigPropertyPersister(
+        LocalConfigPropertyManager manager = new LocalConfigPropertyManager(
                 module, configLocation, configPropertyItemService);
-        return persister;
+        return manager;
     }
     
     /**
@@ -125,11 +166,11 @@ public class ConfigContextConfiguration
      */
     @Bean
     @ConditionalOnBean(ConfigAPIClientRegistry.class)
-    public RemoteConfigPropertyPersister remoteConfigPropertyPersister(
+    public RemoteConfigPropertyManager remoteConfigPropertyManager(
             ConfigAPIClientRegistry configAPIClientRegistry) {
-        RemoteConfigPropertyPersister persister = new RemoteConfigPropertyPersister(
+        RemoteConfigPropertyManager manager = new RemoteConfigPropertyManager(
                 module, configAPIClientRegistry);
-        return persister;
+        return manager;
     }
     
     /**
@@ -143,9 +184,9 @@ public class ConfigContextConfiguration
      * @see [类、类#方法、类#成员]
      */
     @Bean
-    public ConfigPropertyPersisterComposite configPropertyPersisterComposite(
-            List<ConfigPropertyPersister> persisters) {
-        ConfigPropertyPersisterComposite composite = new ConfigPropertyPersisterComposite(
+    public ConfigPropertyManagerComposite configPropertyManagerComposite(
+            List<ConfigPropertyManager> persisters) {
+        ConfigPropertyManagerComposite composite = new ConfigPropertyManagerComposite(
                 persisters);
         return composite;
     }
@@ -162,7 +203,7 @@ public class ConfigContextConfiguration
      */
     @Bean
     public ConfigContextFactory configContext(
-            ConfigPropertyPersisterComposite composite) {
+            ConfigPropertyManagerComposite composite) {
         ConfigContextFactory factory = new ConfigContextFactory();
         factory.setComposite(composite);
         factory.setModule(module);

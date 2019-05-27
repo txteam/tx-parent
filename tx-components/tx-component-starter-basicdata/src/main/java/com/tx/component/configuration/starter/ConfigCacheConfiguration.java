@@ -4,10 +4,11 @@
  * 修改时间:  2019年4月30日
  * <修改描述:>
  */
-package com.tx.component.basicdata.starter;
+package com.tx.component.configuration.starter;
 
 import java.time.Duration;
 
+import org.springframework.beans.BeansException;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -15,6 +16,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandi
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.cache.transaction.TransactionAwareCacheManagerProxy;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
@@ -29,7 +32,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tx.component.basicdata.BasicDataContextConstants;
+import com.tx.component.configuration.ConfigContextConstants;
 import com.tx.core.exceptions.util.AssertUtils;
 
 /**
@@ -42,23 +45,62 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @since  [产品/模块版本]
  */
 @Configuration
-public class BasicDataCacheConfiguration {
+public class ConfigCacheConfiguration implements ApplicationContextAware {
+    
+    /** spring容器句柄 */
+    private ApplicationContext applicationContext;
     
     /** 基础数据容器属性 */
-    private BasicDataContextProperties properties;
+    private ConfigContextProperties properties;
     
     /** 缓存的有效期 */
     private static Duration duration;
     
     /** <默认构造函数> */
-    public BasicDataCacheConfiguration(BasicDataContextProperties properties) {
+    public ConfigCacheConfiguration(ConfigContextProperties properties) {
         super();
         this.properties = properties;
         
         if (this.properties.getDuration() == null
                 || this.properties.getDuration().toMillis() <= 0) {
-            BasicDataCacheConfiguration.duration = Duration.ofDays(1);
+            ConfigCacheConfiguration.duration = Duration.ofDays(1);
         }
+    }
+    
+    /**
+     * @param applicationContext
+     * @throws BeansException
+     */
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext)
+            throws BeansException {
+        this.applicationContext = applicationContext;
+    }
+    
+    /**
+     * 基础数据缓存定义<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return BasicDataCacheCustomizer [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @ConditionalOnMissingBean(ConfigCacheCustomizer.class)
+    @ConditionalOnProperty(prefix = ConfigContextConstants.PROPERTIES_PREFIX, value = "cacheManagerRef", matchIfMissing = false)
+    @Bean
+    public ConfigCacheCustomizer configCacheCustomizer() {
+        CacheManager cacheManager = null;
+        if (this.applicationContext
+                .containsBean(this.properties.getCacheManagerRef())) {
+            cacheManager = this.applicationContext.getBean(
+                    this.properties.getCacheManagerRef(), CacheManager.class);
+        }
+        
+        AssertUtils.notNull(cacheManager, "cacheManager is null.");
+        ConfigCacheCustomizer customizer = new ConfigCacheCustomizer();
+        customizer.setCacheManager(cacheManager);
+        return customizer;
     }
     
     /**
@@ -73,7 +115,7 @@ public class BasicDataCacheConfiguration {
     @Configuration
     @ConditionalOnClass(RedisOperations.class)
     @ConditionalOnSingleCandidate(RedisConnectionFactory.class)
-    @ConditionalOnMissingBean(BasicDataCacheCustomizer.class)
+    @ConditionalOnMissingBean(ConfigCacheCustomizer.class)
     public static class BasicDataRedisCacheConfiguration {
         
         /** redis链接工厂 */
@@ -87,11 +129,11 @@ public class BasicDataCacheConfiguration {
         }
         
         @Bean
-        public BasicDataCacheCustomizer basicDataCacheCustomizer() {
-            CacheManager cacheManager = basicDataCacheManager();
+        public ConfigCacheCustomizer configCacheCustomizer() {
+            CacheManager cacheManager = configCacheManager();
             
             AssertUtils.notNull(cacheManager, "cacheManager is null.");
-            BasicDataCacheCustomizer customizer = new BasicDataCacheCustomizer();
+            ConfigCacheCustomizer customizer = new ConfigCacheCustomizer();
             customizer.setCacheManager(cacheManager);
             return customizer;
         }
@@ -106,8 +148,8 @@ public class BasicDataCacheConfiguration {
          * @see [类、类#方法、类#成员]
          */
         @SuppressWarnings({ "unchecked", "rawtypes" })
-        @Bean("basicdata.cacheManager")
-        public CacheManager basicDataCacheManager() {
+        @Bean("config.cacheManager")
+        public CacheManager configCacheManager() {
             RedisSerializer<String> redisSerializer = new StringRedisSerializer();
             Jackson2JsonRedisSerializer<?> jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer(
                     Object.class);
@@ -123,7 +165,7 @@ public class BasicDataCacheConfiguration {
             RedisCacheConfiguration config = RedisCacheConfiguration
                     .defaultCacheConfig()
                     //prefix?
-                    .entryTtl(BasicDataCacheConfiguration.duration)
+                    .entryTtl(ConfigCacheConfiguration.duration)
                     .serializeKeysWith(
                             RedisSerializationContext.SerializationPair
                                     .fromSerializer(redisSerializer))
@@ -149,7 +191,7 @@ public class BasicDataCacheConfiguration {
      * @since  [产品/模块版本]
      */
     @Configuration
-    @ConditionalOnMissingBean(BasicDataCacheCustomizer.class)
+    @ConditionalOnMissingBean(ConfigCacheCustomizer.class)
     public static class BasicDataLocalCacheConfiguration {
         
         /**
@@ -162,15 +204,15 @@ public class BasicDataCacheConfiguration {
          * @see [类、类#方法、类#成员]
          */
         @ConditionalOnMissingBean(RedisConnectionFactory.class)
-        @ConditionalOnProperty(prefix = BasicDataContextConstants.PROPERTIES_PREFIX, value = "cacheManagerRef", matchIfMissing = true)
+        @ConditionalOnProperty(prefix = ConfigContextConstants.PROPERTIES_PREFIX, value = "cacheManagerRef", matchIfMissing = true)
         @Bean
-        public BasicDataCacheCustomizer basicDataCacheCustomizer() {
+        public ConfigCacheCustomizer configCacheCustomizer() {
             CacheManager local = new ConcurrentMapCacheManager();
             CacheManager cacheManager = new TransactionAwareCacheManagerProxy(
                     local);
             
             AssertUtils.notNull(cacheManager, "cacheManager is null.");
-            BasicDataCacheCustomizer customizer = new BasicDataCacheCustomizer();
+            ConfigCacheCustomizer customizer = new ConfigCacheCustomizer();
             customizer.setCacheManager(cacheManager);
             return customizer;
         }
@@ -185,7 +227,7 @@ public class BasicDataCacheConfiguration {
      * @see  [相关类/方法]
      * @since  [产品/模块版本]
      */
-    public static class BasicDataCacheCustomizer {
+    public static class ConfigCacheCustomizer {
         
         /** 缓存manager */
         private CacheManager cacheManager;

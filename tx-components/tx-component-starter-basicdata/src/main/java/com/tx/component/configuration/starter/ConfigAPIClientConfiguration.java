@@ -4,7 +4,7 @@
  * 修改时间:  2019年4月30日
  * <修改描述:>
  */
-package com.tx.component.basicdata.starter;
+package com.tx.component.configuration.starter;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -13,8 +13,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
-import com.tx.component.basicdata.registry.BasicDataAPIClientRegistry;
-import com.tx.component.basicdata.registry.impl.BasicDataAPIClientRegistryImpl;
+import com.tx.component.configuration.registry.ConfigAPIClientRegistry;
+import com.tx.component.configuration.registry.impl.ConfigAPIClientRegistryImpl;
 
 import feign.Client;
 import feign.Contract;
@@ -32,10 +32,10 @@ import feign.codec.Encoder;
  * @since  [产品/模块版本]
  */
 @Configuration
-public class BasicDataAPIClientConfiguration {
+public class ConfigAPIClientConfiguration {
     
     /** <默认构造函数> */
-    public BasicDataAPIClientConfiguration() {
+    public ConfigAPIClientConfiguration() {
         super();
     }
     
@@ -83,9 +83,9 @@ public class BasicDataAPIClientConfiguration {
          * @see [类、类#方法、类#成员]
          */
         @ConditionalOnMissingBean
-        @Bean("basicDataAPIClientRegistry")
-        public BasicDataAPIClientRegistry basicDataAPIClientRegistry() {
-            BasicDataAPIClientRegistry registry = new BasicDataAPIClientRegistryImpl(
+        @Bean("configAPIClientRegistry")
+        public ConfigAPIClientRegistry configAPIClientRegistry() {
+            ConfigAPIClientRegistry registry = new ConfigAPIClientRegistryImpl(
                     decoder, encoder, client, feignContract);
             return registry;
         }

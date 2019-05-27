@@ -10,6 +10,7 @@ import java.time.Duration;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import com.tx.component.basicdata.BasicDataContextConstants;
 import com.tx.component.configuration.starter.ConfigContextProperties;
 
 /**
@@ -21,7 +22,7 @@ import com.tx.component.configuration.starter.ConfigContextProperties;
  * @see  [相关类/方法]0
  * @since  [产品/模块版本]
  */
-@ConfigurationProperties(prefix = "tx.component.basicdata")
+@ConfigurationProperties(prefix = BasicDataContextConstants.PROPERTIES_PREFIX)
 public class BasicDataContextProperties {
     
     /** 命令容器是否启动 */
@@ -33,14 +34,8 @@ public class BasicDataContextProperties {
     /** 基础包集合 */
     private String basePackages = "com.tx.local";
     
-    /** 持久化类型 */
-    //private PersisterTypeEnum persister = PersisterTypeEnum.mybatis;
-    
     /** 所属模块 */
     private String module;
-    
-    /** 缓存manager的引用 */
-    private String cacheManagerRef;
     
     /** 缓存的有效期:默认缓存一天 */
     private Duration duration = Duration.ofDays(1);
@@ -90,20 +85,6 @@ public class BasicDataContextProperties {
         this.basePackages = basePackages;
     }
     
-    //    /**
-    //     * @return 返回 persister
-    //     */
-    //    public PersisterTypeEnum getPersister() {
-    //        return persister;
-    //    }
-    //
-    //    /**
-    //     * @param 对persister进行赋值
-    //     */
-    //    public void setPersister(PersisterTypeEnum persister) {
-    //        this.persister = persister;
-    //    }
-    
     /**
      * @return 返回 module
      */
@@ -116,20 +97,6 @@ public class BasicDataContextProperties {
      */
     public void setModule(String module) {
         this.module = module;
-    }
-    
-    /**
-     * @return 返回 cacheManagerRef
-     */
-    public String getCacheManagerRef() {
-        return cacheManagerRef;
-    }
-    
-    /**
-     * @param 对cacheManagerRef进行赋值
-     */
-    public void setCacheManagerRef(String cacheManagerRef) {
-        this.cacheManagerRef = cacheManagerRef;
     }
     
     /**

@@ -4,18 +4,19 @@
  * 修改时间:  2016年10月10日
  * <修改描述:>
  */
-package com.tx.component.basicdata.context;
+package com.tx.component.configuration.context;
 
 import java.lang.reflect.Method;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.aop.TargetSource;
 import org.springframework.aop.framework.autoproxy.AbstractAutoProxyCreator;
 import org.springframework.beans.BeansException;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 
-import com.tx.component.basicdata.service.BasicDataService;
+import com.tx.component.configuration.ConfigContextConstants;
+import com.tx.component.configuration.service.ConfigPropertyItemService;
+import com.tx.component.configuration.service.ConfigPropertyManager;
 import com.tx.core.spring.interceptor.ServiceSupportCacheInterceptor;
 
 /**
@@ -27,7 +28,7 @@ import com.tx.core.spring.interceptor.ServiceSupportCacheInterceptor;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class BasicDataServiceSupportCacheProxyCreator
+public class ConfigPropertyServiceSupportCacheProxyCreator
         extends AbstractAutoProxyCreator {
     
     /** 注释内容 */
@@ -37,13 +38,13 @@ public class BasicDataServiceSupportCacheProxyCreator
     private CacheManager cacheManager;
     
     /** <默认构造函数> */
-    public BasicDataServiceSupportCacheProxyCreator() {
+    public ConfigPropertyServiceSupportCacheProxyCreator() {
         super();
         setProxyTargetClass(true);
     }
     
     /** <默认构造函数> */
-    public BasicDataServiceSupportCacheProxyCreator(CacheManager cacheManager) {
+    public ConfigPropertyServiceSupportCacheProxyCreator(CacheManager cacheManager) {
         super();
         this.cacheManager = cacheManager;
         setProxyTargetClass(true);
@@ -60,30 +61,28 @@ public class BasicDataServiceSupportCacheProxyCreator
     protected Object[] getAdvicesAndAdvisorsForBean(Class<?> beanClass,
             String beanName, TargetSource customTargetSource)
             throws BeansException {
-        if (BasicDataService.class.isAssignableFrom(beanClass)) {
-            String cacheName = beanName;
-            if (!beanName.startsWith("basicdata.")) {
-                cacheName = (new StringBuilder(beanName)).append(".cache")
-                        .toString();
-            } else {
-                cacheName = (new StringBuilder(
-                        StringUtils.substringAfter(beanName, "basicdata.")))
-                                .append(".cache").toString();
-            }
+        if (ConfigPropertyManager.class.isAssignableFrom(beanClass)) {
+            String cacheName = ConfigContextConstants.CACHE_NAME;
             
             Cache cache = this.cacheManager.getCache(cacheName);
             Object[] interceptors = new Object[] {
-                    //基础数据仅在find时使用缓存
+                    new ServiceSupportCacheInterceptor(cache) };
+            
+            return interceptors;
+        } else if (ConfigPropertyItemService.class
+                .isAssignableFrom(beanClass)) {
+            String cacheName = ConfigContextConstants.CACHE_NAME;
+            
+            Cache cache = this.cacheManager.getCache(cacheName);
+            Object[] interceptors = new Object[] {
                     new ServiceSupportCacheInterceptor(cache) {
+                        //itemservice只负责清空缓存，查询期间不使用缓存
                         @Override
                         protected boolean isUseCache(Method method,
                                 Object[] args) {
-                            String methodName = method.getName();
-                            boolean isQueryMethod = methodName
-                                    .startsWith("find");
-                            return isQueryMethod;
+                            return false;
                         }
-                    } };
+                    }};
             return interceptors;
         } else {
             return DO_NOT_PROXY;

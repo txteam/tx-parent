@@ -28,6 +28,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import com.tx.component.basicdata.BasicDataContextConstants;
 import com.tx.component.basicdata.context.BasicDataContextFactory;
 import com.tx.component.basicdata.context.BasicDataServiceSupportCacheProxyCreator;
 import com.tx.component.basicdata.controller.BasicDataAPIController;
@@ -37,7 +38,7 @@ import com.tx.component.basicdata.registry.BasicDataServiceRegistry;
 import com.tx.component.basicdata.service.DataDictService;
 import com.tx.component.basicdata.starter.BasicDataCacheConfiguration.BasicDataCacheCustomizer;
 import com.tx.component.configuration.context.ConfigContext;
-import com.tx.component.configuration.starter.ConfigContextConfiguration;
+import com.tx.component.configuration.starter.ConfigContextAutoConfiguration;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.starter.component.ComponentSupportAutoConfiguration;
 
@@ -51,12 +52,12 @@ import com.tx.core.starter.component.ComponentSupportAutoConfiguration;
  * @since  [产品/模块版本]
  */
 @Configuration
-@AutoConfigureAfter({ComponentSupportAutoConfiguration.class})
+@AutoConfigureAfter({ ComponentSupportAutoConfiguration.class })
 @EnableConfigurationProperties(BasicDataContextProperties.class)
 @ConditionalOnClass({ BasicDataContextFactory.class })
 @ConditionalOnSingleCandidate(DataSource.class)
 @ConditionalOnBean(PlatformTransactionManager.class)
-@ConditionalOnProperty(prefix = "tx.component.basicdata", value = "enable", havingValue = "true")
+@ConditionalOnProperty(prefix = BasicDataContextConstants.PROPERTIES_PREFIX, value = "enable", havingValue = "true")
 @Import({ BasicDataPersisterConfiguration.class,
         BasicDataAPIClientConfiguration.class,
         BasicDataCacheConfiguration.class })
@@ -223,7 +224,7 @@ public class BasicDataContextAutoConfiguration
      * @since  [产品/模块版本]
      */
     @Configuration
-    @Import({ ConfigContextConfiguration.class })
+    @Import({ ConfigContextAutoConfiguration.class })
     @ConditionalOnMissingBean(ConfigContext.class)
     public static class ConfigContextNotFoundConfiguration {
         

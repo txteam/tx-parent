@@ -18,4 +18,5 @@ package com.tx.component.basicdata;
  */
 public interface BasicDataContextConstants {
     
+    String PROPERTIES_PREFIX = "tx.component.basicdata";
 }

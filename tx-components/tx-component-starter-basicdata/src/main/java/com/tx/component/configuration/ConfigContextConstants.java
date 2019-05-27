@@ -17,6 +17,8 @@ package com.tx.component.configuration;
   * @since  [产品/模块版本]
   */
 public interface ConfigContextConstants {
+    
+    String PROPERTIES_PREFIX = "tx.component.config";
 
-    String CACHE_NAME = "configPropertyItemCache";
+    String CACHE_NAME = "configcontext.cache";
 }

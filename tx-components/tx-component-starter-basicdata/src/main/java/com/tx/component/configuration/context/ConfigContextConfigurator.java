@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 
-import com.tx.component.configuration.persister.ConfigPropertyPersisterComposite;
+import com.tx.component.configuration.service.ConfigPropertyManagerComposite;
 
 /**
  * 配置容器基础配置吃撑类<br/>
@@ -40,7 +40,7 @@ public abstract class ConfigContextConfigurator implements InitializingBean {
     protected String module;
     
     /** 配置属性持久器集合 */
-    protected ConfigPropertyPersisterComposite composite;
+    protected ConfigPropertyManagerComposite composite;
     
     /**
      * @throws Exception
@@ -97,14 +97,14 @@ public abstract class ConfigContextConfigurator implements InitializingBean {
     /**
      * @return 返回 composite
      */
-    public ConfigPropertyPersisterComposite getComposite() {
+    public ConfigPropertyManagerComposite getComposite() {
         return composite;
     }
 
     /**
      * @param 对composite进行赋值
      */
-    public void setComposite(ConfigPropertyPersisterComposite composite) {
+    public void setComposite(ConfigPropertyManagerComposite composite) {
         this.composite = composite;
     }
 }

@@ -4,7 +4,7 @@
  * 修改时间:  2019年3月5日
  * <修改描述:>
  */
-package com.tx.component.configuration.persister.impl;
+package com.tx.component.configuration.service.impl;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -26,8 +26,8 @@ import com.thoughtworks.xstream.XStream;
 import com.tx.component.configuration.config.ConfigPropertyParser;
 import com.tx.component.configuration.model.ConfigProperty;
 import com.tx.component.configuration.model.ConfigPropertyItem;
-import com.tx.component.configuration.persister.ConfigPropertyPersister;
 import com.tx.component.configuration.service.ConfigPropertyItemService;
+import com.tx.component.configuration.service.ConfigPropertyManager;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.util.PinyinUtils;
 import com.tx.core.util.XstreamUtils;
@@ -41,15 +41,15 @@ import com.tx.core.util.XstreamUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class LocalConfigPropertyPersister
-        implements ConfigPropertyPersister, InitializingBean {
+public class LocalConfigPropertyManager
+        implements ConfigPropertyManager, InitializingBean {
     
     /** resourceResolver */
     private static final ResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
     
     //日志记录句柄
     private Logger logger = LoggerFactory
-            .getLogger(LocalConfigPropertyPersister.class);
+            .getLogger(LocalConfigPropertyManager.class);
     
     //配置解析句柄
     private XStream configXstream = XstreamUtils
@@ -68,7 +68,7 @@ public class LocalConfigPropertyPersister
     private Set<String> codes = new HashSet<>();
     
     /** <默认构造函数> */
-    public LocalConfigPropertyPersister(String module, String configLocation,
+    public LocalConfigPropertyManager(String module, String configLocation,
             ConfigPropertyItemService configPropertyItemService) {
         super();
         this.module = module;

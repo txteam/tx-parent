@@ -4,7 +4,7 @@
  * 修改时间:  2019年3月5日
  * <修改描述:>
  */
-package com.tx.component.configuration.persister.impl;
+package com.tx.component.configuration.service.impl;
 
 import java.util.List;
 import java.util.Map;
@@ -13,8 +13,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.tx.component.configuration.client.ConfigAPIClient;
 import com.tx.component.configuration.model.ConfigProperty;
-import com.tx.component.configuration.persister.ConfigPropertyPersister;
 import com.tx.component.configuration.registry.ConfigAPIClientRegistry;
+import com.tx.component.configuration.service.ConfigPropertyManager;
 import com.tx.core.exceptions.util.AssertUtils;
 
 /**
@@ -26,7 +26,7 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class RemoteConfigPropertyPersister implements ConfigPropertyPersister {
+public class RemoteConfigPropertyManager implements ConfigPropertyManager {
     
     /** 所属模块 */
     private String module;
@@ -35,7 +35,7 @@ public class RemoteConfigPropertyPersister implements ConfigPropertyPersister {
     private ConfigAPIClientRegistry configAPIClientRegistry;
     
     /** <默认构造函数> */
-    public RemoteConfigPropertyPersister(String module,
+    public RemoteConfigPropertyManager(String module,
             ConfigAPIClientRegistry configAPIClientRegistry) {
         super();
         this.module = module;

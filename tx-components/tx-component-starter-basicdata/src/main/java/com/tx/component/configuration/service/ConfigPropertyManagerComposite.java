@@ -4,7 +4,7 @@
  * 修改时间:  2019年5月5日
  * <修改描述:>
  */
-package com.tx.component.configuration.persister;
+package com.tx.component.configuration.service;
 
 import java.util.List;
 import java.util.Map;
@@ -23,15 +23,14 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class ConfigPropertyPersisterComposite
-        implements ConfigPropertyPersister, InitializingBean {
+public class ConfigPropertyManagerComposite implements InitializingBean {
     
     /** 配置属性持久器 */
-    private List<ConfigPropertyPersister> persisters;
+    private List<ConfigPropertyManager> persisters;
     
     /** <默认构造函数> */
-    public ConfigPropertyPersisterComposite(
-            List<ConfigPropertyPersister> persisters) {
+    public ConfigPropertyManagerComposite(
+            List<ConfigPropertyManager> persisters) {
         super();
         this.persisters = persisters;
     }
@@ -54,8 +53,8 @@ public class ConfigPropertyPersisterComposite
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    private ConfigPropertyPersister getConfigPropertyPersister(String module) {
-        for (ConfigPropertyPersister persister : persisters) {
+    private ConfigPropertyManager getConfigPropertyPersister(String module) {
+        for (ConfigPropertyManager persister : persisters) {
             if (persister.supportsModule(module)) {
                 return persister;
             }
@@ -67,7 +66,6 @@ public class ConfigPropertyPersisterComposite
      * @param module
      * @return
      */
-    @Override
     public boolean supportsModule(String module) {
         return getConfigPropertyPersister(module) != null;
     }
@@ -77,9 +75,8 @@ public class ConfigPropertyPersisterComposite
      * @param code
      * @return
      */
-    @Override
     public ConfigProperty findByCode(String module, String code) {
-        ConfigPropertyPersister persister = getConfigPropertyPersister(module);
+        ConfigPropertyManager persister = getConfigPropertyPersister(module);
         
         ConfigProperty cp = persister.findByCode(module, code);
         return cp;
@@ -90,10 +87,9 @@ public class ConfigPropertyPersisterComposite
      * @param params
      * @return
      */
-    @Override
     public List<ConfigProperty> queryList(String module,
             Map<String, Object> params) {
-        ConfigPropertyPersister persister = getConfigPropertyPersister(module);
+        ConfigPropertyManager persister = getConfigPropertyPersister(module);
         
         List<ConfigProperty> cpList = persister.queryList(module, params);
         return cpList;
@@ -105,10 +101,9 @@ public class ConfigPropertyPersisterComposite
      * @param params
      * @return
      */
-    @Override
     public List<ConfigProperty> queryChildrenByParentId(String module,
             String parentId, Map<String, Object> params) {
-        ConfigPropertyPersister persister = getConfigPropertyPersister(module);
+        ConfigPropertyManager persister = getConfigPropertyPersister(module);
         
         List<ConfigProperty> cpList = persister.queryChildrenByParentId(module,
                 parentId,
@@ -122,10 +117,9 @@ public class ConfigPropertyPersisterComposite
      * @param params
      * @return
      */
-    @Override
     public List<ConfigProperty> queryDescendantsByParentId(String module,
             String parentId, Map<String, Object> params) {
-        ConfigPropertyPersister persister = getConfigPropertyPersister(module);
+        ConfigPropertyManager persister = getConfigPropertyPersister(module);
         
         List<ConfigProperty> cpList = persister
                 .queryDescendantsByParentId(module, parentId, params);
@@ -138,9 +132,8 @@ public class ConfigPropertyPersisterComposite
      * @param value
      * @return
      */
-    @Override
     public boolean patch(String module, String code, String value) {
-        ConfigPropertyPersister persister = getConfigPropertyPersister(module);
+        ConfigPropertyManager persister = getConfigPropertyPersister(module);
         
         boolean flag = persister.patch(module, code, value);
         return flag;
