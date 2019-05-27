@@ -14,6 +14,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -25,6 +26,7 @@ import com.tx.component.basicdata.service.DataDictService;
 import com.tx.core.ddlutil.executor.TableDDLExecutor;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.mybatis.support.MyBatisDaoSupport;
+import com.tx.core.starter.component.ComponentConstants;
 
 /**
  * 基础数据持久层配置逻辑<br/>
@@ -93,8 +95,9 @@ public class BasicDataPersisterConfiguration {
      * @see  [相关类/方法]
      * @since  [产品/模块版本]
      */
+    @DependsOn("basicdata.tableInitializer")
     @Configuration
-    @ConditionalOnProperty(prefix = "tx.component.persister", value = "type", havingValue = "mybatis")
+    @ConditionalOnProperty(prefix = ComponentConstants.PERSISTER_PROPERTIES_PREFIX, value = "type", havingValue = "mybatis")
     public static class MybatisBasicDataContextPersisterConfiguration
             implements InitializingBean {
         

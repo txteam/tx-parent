@@ -247,7 +247,7 @@ public abstract class AbstractDDLBuilder<B extends DDLBuilder<B>>
         JdbcTypeEnum jdbcType = JdbcTypeEnum.DATETIME;
         DBColumnDef tableColumn = new DBColumnDef(false, columnName,
                 this.tableName, jdbcType, 0, 0, required,
-                isDefaultNow ? "now()" : null);
+                isDefaultNow ? "now(6)" : null);
         
         addAndValidateNewColumn(tableColumn);
         

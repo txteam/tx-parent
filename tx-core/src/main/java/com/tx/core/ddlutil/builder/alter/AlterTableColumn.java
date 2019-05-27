@@ -304,7 +304,8 @@ public class AlterTableColumn {
             return;
         }
         
-        if (!StringUtils.equalsIgnoreCase(this.sourceColumn.getDefaultValue(),
+        if (!isMatchOfDefaultValue(this.targetColumn.getJdbcType(),
+                this.sourceColumn.getDefaultValue(),
                 this.targetColumn.getDefaultValue())) {
             this.strictMatch = false;
             this.needAlter = true;
@@ -470,7 +471,6 @@ public class AlterTableColumn {
                         new Object[] { jdbcType });
                 return false;
         }
-        
     }
     
     private static boolean isMatchOfScale(JdbcTypeEnum jdbcType,
@@ -514,6 +514,54 @@ public class AlterTableColumn {
                         "未知的jdbcType:{}",
                         new Object[] { jdbcType });
                 return false;
+        }
+    }
+    
+    private static boolean isMatchOfDefaultValue(JdbcTypeEnum jdbcType,
+            String sourceDefaultValue, String targetDefaultValue) {
+        AssertUtils.notNull(jdbcType, "jdbcType is null.");
+        
+        switch (jdbcType) {
+            case DATE:
+            case DATETIME:
+            case TIMESTAMP:
+            case TIME:
+                if (StringUtils.isEmpty(sourceDefaultValue)
+                        && StringUtils.isEmpty(targetDefaultValue)) {
+                    return true;
+                } else if (!StringUtils.isEmpty(sourceDefaultValue)
+                        && !StringUtils.isEmpty(targetDefaultValue)) {
+                    return true;
+                } else {
+                    return false;
+                }
+                //无需检测长度的类型
+            case BIT:
+            case TINYINT:
+            case SMALLINT:
+            case INT:
+            case INTEGER:
+            case BIGINT:
+            case CHAR:
+            case VARCHAR:
+            case NCHAR:
+            case NVARCHAR:
+            case TEXT:
+            case LONGTEXT:
+            case LONGVARCHAR:
+            case TINYTEXT:
+            case FLOAT:
+            case DOUBLE:
+            case REAL:
+            case NUMERIC:
+            case DECIMAL:
+            default:
+                if (StringUtils.equals(sourceDefaultValue,
+                        targetDefaultValue)) {
+                    return true;
+                } else {
+                    return false;
+                }
         }
     }
 }
