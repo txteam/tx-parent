@@ -131,7 +131,7 @@ public class EntityMapperBuilderAssistant
     public List<String> getPrimaryProperyNameList() {
         List<String> resList = new ArrayList<>();
         for (JPAColumnInfo column : this.primaryKeyColumns) {
-            resList.add(column.getNestedPropertyName());
+            resList.add(column.getColumnPropertyName());
         }
         return resList;
     }
@@ -153,8 +153,8 @@ public class EntityMapperBuilderAssistant
                 continue;
             }
             String columnName = column.getColumnName();
-            String propertyName = column.getNestedPropertyName();
-            sql.VALUES(columnName, formatProperty(propertyName));
+            String columnPropertyName = column.getColumnPropertyName();
+            sql.VALUES(columnName, formatProperty(columnPropertyName));
         }
         
         String insertSQL = sql.toString();
@@ -175,11 +175,11 @@ public class EntityMapperBuilderAssistant
         
         for (JPAColumnInfo column : this.primaryKeyColumns) {
             String columnName = column.getColumnName();
-            String propertyName = column.getNestedPropertyName();
+            String columnPropertyName = column.getColumnPropertyName();
             
             String whereItem = formatWhereAndItem(columnName,
                     " = ",
-                    propertyName);
+                    columnPropertyName);
             sql.WHERE(whereItem);
         }
         
@@ -204,19 +204,19 @@ public class EntityMapperBuilderAssistant
             }
             String columnName = column.getColumnName();
             String propertyName = column.getPropertyName();
-            String nestedPropertyName = column.getNestedPropertyName();
-            Class<?> javaType = column.getNestedPropertyType();
+            String columnPropertyName = column.getColumnPropertyName();
+            Class<?> columnPropertyType = column.getColumnPropertyType();
             
             String setItem = formatSetItem(columnName,
                     propertyName,
-                    nestedPropertyName,
-                    javaType);
+                    columnPropertyName,
+                    columnPropertyType);
             sql.SET(setItem);
             
         }
         for (JPAColumnInfo column : this.primaryKeyColumns) {
             String columnName = column.getColumnName();
-            String propertyName = column.getNestedPropertyName();
+            String propertyName = column.getColumnPropertyName();
             
             String whereItem = formatWhereAndItem(columnName,
                     " = ",
@@ -236,11 +236,11 @@ public class EntityMapperBuilderAssistant
         Map<String, String> column2propertyMap = new HashMap<>();
         for (JPAColumnInfo column : this.tableColumns) {
             String columnName = column.getColumnName();
-            String propertyName = column.getNestedPropertyName();
+            String columnPropertyName = column.getColumnPropertyName();
             
             //如果字段名和属性名不匹配时才回缴入customizeColumn2PropertyMap
-            if (!StringUtils.equalsIgnoreCase(columnName, propertyName)) {
-                column2propertyMap.put(columnName, propertyName);
+            if (!StringUtils.equalsIgnoreCase(columnName, columnPropertyName)) {
+                column2propertyMap.put(columnName, columnPropertyName);
             }
         }
         
@@ -265,11 +265,11 @@ public class EntityMapperBuilderAssistant
         sql.FROM(this.tableName);
         for (JPAColumnInfo column : this.primaryKeyColumns) {
             String columnName = column.getColumnName();
-            String propertyName = column.getNestedPropertyName();
+            String columnPropertyName = column.getColumnPropertyName();
             
             String whereItem = formatWhereAndItem(columnName,
                     " = ",
-                    propertyName);
+                    columnPropertyName);
             sql.WHERE(whereItem);
         }
         
@@ -334,13 +334,13 @@ public class EntityMapperBuilderAssistant
         for (JPAColumnInfo column : this.tableColumns) {
             String columnName = column.getColumnName();
             String propertyName = column.getPropertyName();
-            String nestedPropertyName = column.getNestedPropertyName();
+            String columnPropertyName = column.getColumnPropertyName();
             
             if (column.hasNestedProperty()) {
                 String whereItem = formatNestedWhereAndItem(columnName,
                         " = ",
                         propertyName,
-                        nestedPropertyName);
+                        columnPropertyName);
                 sql.WHERE(whereItem);
             } else {
                 String whereItem = formatWhereAndItem(columnName,

@@ -1,6 +1,6 @@
 package com.tx.core.ddlutil.model;
 
-import com.tx.core.ddlutil.dialect.DDLDialect;
+import com.tx.core.ddlutil.dialect.Dialect4DDL;
 import com.tx.core.util.order.OrderedSupport;
 
 /**
@@ -57,6 +57,28 @@ public interface TableColumnDef extends OrderedSupport {
      * @see [类、类#方法、类#成员]
      */
     public abstract int getSize();
+    
+    //  /**
+    //  * 长度<br/>
+    //  * <功能详细描述>
+    //  * @return [参数说明]
+    //  * 
+    //  * @return int [返回类型说明]
+    //  * @exception throws [异常类型] [异常说明]
+    //  * @see [类、类#方法、类#成员]
+    //  */
+    // public abstract int getLength();
+    // 
+    // /**
+    //  * 精度<br/>
+    //  * <功能详细描述>
+    //  * @return [参数说明]
+    //  * 
+    //  * @return int [返回类型说明]
+    //  * @exception throws [异常类型] [异常说明]
+    //  * @see [类、类#方法、类#成员]
+    //  */
+    // public abstract int getPrecision();
     
     /**
      * 获取字段精度<br/>
@@ -133,5 +155,5 @@ public interface TableColumnDef extends OrderedSupport {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public abstract String getColumnType(DDLDialect ddlDialect);
+    public abstract String getColumnType(Dialect4DDL ddlDialect);
 }

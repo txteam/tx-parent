@@ -53,7 +53,8 @@ import com.tx.core.util.dialect.DataSourceTypeEnum;
 public class BasicDataCodeGenerator {
     
     /** 日志记录器 */
-    private static Logger logger = LoggerFactory.getLogger(BasicDataCodeGenerator.class);
+    private static Logger logger = LoggerFactory
+            .getLogger(BasicDataCodeGenerator.class);
     
     private static SqlSourceBuilder sqlSourceBuilder = new SqlSourceBuilder();
     
@@ -72,9 +73,9 @@ public class BasicDataCodeGenerator {
     private static String controllerTemplateFilePath = "com/tx/core/generator/basicedata/defaultftl/basicdata_controller.ftl";
     
     private static String queryListTemplateFilePath = "com/tx/core/generator/basicedata/defaultftl/basicdata_queryList.jsp.ftl";
-
+    
     private static String detailTemplateFilePath = "com/tx/core/generator/basicedata/defaultftl/basicdata_detail.jsp.ftl";
-
+    
     private static String addTemplateFilePath = "com/tx/core/generator/basicedata/defaultftl/basicdata_add.jsp.ftl";
     
     private static String updateTemplateFilePath = "com/tx/core/generator/basicedata/defaultftl/basicdata_update.jsp.ftl";
@@ -195,9 +196,10 @@ public class BasicDataCodeGenerator {
             e.printStackTrace();
         }
         
-        AssertUtils.notTrue(Modifier.isInterface(basicDataType.getClass()
-                .getModifiers())
-                || Modifier.isAbstract(basicDataType.getClass().getModifiers()),
+        AssertUtils.notTrue(
+                Modifier.isInterface(basicDataType.getClass().getModifiers())
+                        || Modifier.isAbstract(
+                                basicDataType.getClass().getModifiers()),
                 "指定的基础数据类型不能为接口或抽象类。class:{}",
                 new Object[] { basicDataType.getClass() });
         logger.info("校验:指定类费接口，非抽象类：---------------------通过");
@@ -207,7 +209,8 @@ public class BasicDataCodeGenerator {
         //校验类型是否合法
         //校验对应的类不是接口或抽象类
         //校验对象是否存在可更新字段
-        AssertUtils.notTrue(CollectionUtils.isEmpty(sqlSource.getUpdateAblePropertyNames()),
+        AssertUtils.notTrue(
+                CollectionUtils.isEmpty(sqlSource.getUpdateAblePropertyNames()),
                 "指定的基础数据类型不含有可更新的字段。class:{}",
                 new Object[] { basicDataType.getClass() });
         logger.info("校验:指定类存在可更新字段：-----------------------通过");
@@ -233,19 +236,26 @@ public class BasicDataCodeGenerator {
             //校验设定的validPropertyName如果不为空时，对象中对应属性应存在equals查询条件，
             //并且对应字段应当能够被更新,并且对应属性为boolean其他类型标识暂不支持
             //校验validPropertyName为可更新字段
-            AssertUtils.isTrue(jpaMetaClass.getGetterNames()
-                    .contains(validPropertyName)
-                    && (boolean.class.equals(jpaMetaClass.getGetterType(validPropertyName)) || Boolean.class.equals(jpaMetaClass.getGetterType(validPropertyName)))
-                    && sqlSource.getQueryConditionKey2ConditionInfoMapping()
-                            .containsKey(validPropertyName)
-                    && QueryConditionTypeEnum.EQUAL.equals(sqlSource.getQueryConditionKey2ConditionInfoMapping()
-                            .get(validPropertyName)
-                            .getQueryConditionType())
-                    && sqlSource.getUpdateAblePropertyNames()
-                            .contains(validPropertyName),
+            AssertUtils.isTrue(
+                    jpaMetaClass.getGetterNames().contains(validPropertyName)
+                            && (boolean.class.equals(jpaMetaClass
+                                    .getGetterType(validPropertyName))
+                                    || Boolean.class.equals(jpaMetaClass
+                                            .getGetterType(validPropertyName)))
+                            && sqlSource
+                                    .getQueryConditionKey2ConditionInfoMapping()
+                                    .containsKey(validPropertyName)
+                            && QueryConditionTypeEnum.EQUAL.equals(sqlSource
+                                    .getQueryConditionKey2ConditionInfoMapping()
+                                    .get(validPropertyName)
+                                    .getQueryConditionType())
+                            && sqlSource.getUpdateAblePropertyNames()
+                                    .contains(validPropertyName),
                     "指定对象:{}中,字段：\"{}\"，应当存在，且类型为（boolean/Boolean）的，并且存在对应key的equal查询条件，并且能够被更新.请为对应字段配置@QueryConditionEqual,@UpdateAble",
-                    new Object[] { basicDataType.getClass(), validPropertyName });
-            logger.info("校验:指定类属性{}为是否有效标志,校验改属性是否配置为可更新：--------------------通过");
+                    new Object[] { basicDataType.getClass(),
+                            validPropertyName });
+            logger.info(
+                    "校验:指定类属性{}为是否有效标志,校验改属性是否配置为可更新：--------------------通过");
         }
         
         //生成脚本
@@ -256,9 +266,11 @@ public class BasicDataCodeGenerator {
                 dbEncode);
         generateDBScript(jpaMetaClass, sqlSource, codeBaseFolder, dbEncode);
         logger.info("打印脚本:");
-        System.out.println("/*------------------------------------------------------*/");
+        System.out.println(
+                "/*------------------------------------------------------*/");
         System.out.println(scriptContext);
-        System.out.println("/*------------------------------------------------------*/");
+        System.out.println(
+                "/*------------------------------------------------------*/");
         //生成sqlMap
         logger.info("开始生成SqlMap:");
         generateSqlMap(jpaMetaClass, sqlSource, dataSourceType, codeBaseFolder);
@@ -284,7 +296,8 @@ public class BasicDataCodeGenerator {
         
         String[] entityTypeNameArray = jpaMetaClass.getEntityTypeName()
                 .split("\\.");
-        String packageName = entityTypeNameArray[entityTypeNameArray.length - 3];
+        String packageName = entityTypeNameArray[entityTypeNameArray.length
+                - 3];
         logger.info("代码生成完毕，请按以下步骤进行操作：");
         logger.info("   \t 1、打开文件夹：{}", codeBaseFolder);
         logger.info("   \t 2、拷贝main文件夹，粘贴于src目录下。");
@@ -293,18 +306,25 @@ public class BasicDataCodeGenerator {
         logger.info("   \t 5、打开生成的Controller文件，处理其中存在//TODO:的逻辑");
         logger.info("   \t 6、修改生成的数据库脚本，并运行。");
         logger.info("   \t 7、根据提示信息：添加对应菜单项。");
-        logger.info("   \t\n<menu id=\"{}_manage_menu\" text=\"{}管理\" \n"
-                + "\tauthKey=\"{}_manage_menuauth\" \n"
-                + "\thref=\"/{}/toQuery{}.action\" \n"
-                + "\ttarget=\"mainTabs\"></menu> \n",
+        logger.info(
+                "   \t\n<menu id=\"{}_manage_menu\" text=\"{}管理\" \n"
+                        + "\tauthKey=\"{}_manage_menuauth\" \n"
+                        + "\thref=\"/{}/toQuery{}.action\" \n"
+                        + "\ttarget=\"mainTabs\"></menu> \n",
                 new Object[] {
-                        StringUtils.uncapitalize(jpaMetaClass.getEntitySimpleName()),
-                        StringUtils.uncapitalize(jpaMetaClass.getEntitySimpleName()),
+                        StringUtils.uncapitalize(
+                                jpaMetaClass.getEntitySimpleName()),
+                        StringUtils.uncapitalize(
+                                jpaMetaClass.getEntitySimpleName()),
                         StringUtils.uncapitalize(packageName),
-                        StringUtils.uncapitalize(jpaMetaClass.getEntitySimpleName()),
-                        queryPageIsPagedList ? StringUtils.capitalize(jpaMetaClass.getEntitySimpleName())
-                                + "PagedList"
-                                : StringUtils.capitalize(jpaMetaClass.getEntitySimpleName())
+                        StringUtils.uncapitalize(
+                                jpaMetaClass.getEntitySimpleName()),
+                        queryPageIsPagedList
+                                ? StringUtils.capitalize(
+                                        jpaMetaClass.getEntitySimpleName())
+                                        + "PagedList"
+                                : StringUtils.capitalize(
+                                        jpaMetaClass.getEntitySimpleName())
                                         + "List" });
         logger.info("   \t 8、启动项目验证是否启动正确。");
         logger.info("   \t 9、点击对应菜单项目，进入查询页面。打开对应查询页面修改其中存在//TODO:的逻辑，并查看效果");
@@ -331,10 +351,12 @@ public class BasicDataCodeGenerator {
         Map<String, Object> data = new HashMap<String, Object>();
         String[] entityTypeNameArray = jpaMetaClass.getEntityTypeName()
                 .split("\\.");
-        String packageName = entityTypeNameArray[entityTypeNameArray.length - 3];
-        Map<String, FieldView> fieldViewMapping = GeneratorUtils.generateFieldViewMapping(jpaMetaClass,
-                sqlSource,
-                uniqueGetterNamesArray);
+        String packageName = entityTypeNameArray[entityTypeNameArray.length
+                - 3];
+        Map<String, FieldView> fieldViewMapping = GeneratorUtils
+                .generateFieldViewMapping(jpaMetaClass,
+                        sqlSource,
+                        uniqueGetterNamesArray);
         
         data.put("view", viewModel);
         data.put("validPropertyName", validPropertyName);
@@ -343,8 +365,8 @@ public class BasicDataCodeGenerator {
         data.put("fieldViewMapping", fieldViewMapping);
         data.put("isPagedList", queryPageIsPagedList);
         
-        String basePath = ClassUtils.convertClassNameToResourcePath(jpaMetaClass.getEntityTypeName())
-                + "/../..";
+        String basePath = ClassUtils.convertClassNameToResourcePath(
+                jpaMetaClass.getEntityTypeName()) + "/../..";
         basePath = org.springframework.util.StringUtils.cleanPath(basePath);
         FreeMarkerUtils.fprint(loadTemplateClass,
                 controllerTemplateFilePath,
@@ -373,13 +395,14 @@ public class BasicDataCodeGenerator {
                 data,
                 codeBaseFolder + "/main/webapp/WEB-INF/view/" + packageName
                         + "/add" + jpaMetaClass.getEntitySimpleName() + ".jsp");
-
+        
         FreeMarkerUtils.fprint(loadTemplateClass,
                 detailTemplateFilePath,
                 data,
                 codeBaseFolder + "/main/webapp/WEB-INF/view/" + packageName
-                        + "/detail" + jpaMetaClass.getEntitySimpleName() + ".jsp");
-
+                        + "/detail" + jpaMetaClass.getEntitySimpleName()
+                        + ".jsp");
+        
         FreeMarkerUtils.fprint(loadTemplateClass,
                 updateTemplateFilePath,
                 data,
@@ -409,17 +432,17 @@ public class BasicDataCodeGenerator {
         data.put("service", serviceModel);
         data.put("validPropertyName", validPropertyName);
         
-        String basePath = ClassUtils.convertClassNameToResourcePath(jpaMetaClass.getEntityTypeName())
-                + "/../..";
+        String basePath = ClassUtils.convertClassNameToResourcePath(
+                jpaMetaClass.getEntityTypeName()) + "/../..";
         basePath = org.springframework.util.StringUtils.cleanPath(basePath);
         FreeMarkerUtils.fprint(loadTemplateClass,
                 serviceTemplateFilePath,
                 data,
                 codeBaseFolder + "/main/java/" + basePath + "/service/"
                         + jpaMetaClass.getEntitySimpleName() + "Service.java");
-        logger.info("service存放路径:{}", codeBaseFolder + "/main/java/" + basePath
-                + "/service/" + jpaMetaClass.getEntitySimpleName()
-                + "service.java");
+        logger.info("service存放路径:{}",
+                codeBaseFolder + "/main/java/" + basePath + "/service/"
+                        + jpaMetaClass.getEntitySimpleName() + "service.java");
     }
     
     /**
@@ -441,8 +464,8 @@ public class BasicDataCodeGenerator {
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("dao", daoModel);
         
-        String daoPath = ClassUtils.convertClassNameToResourcePath(jpaMetaClass.getEntityTypeName())
-                + "/../../dao";
+        String daoPath = ClassUtils.convertClassNameToResourcePath(
+                jpaMetaClass.getEntityTypeName()) + "/../../dao";
         daoPath = org.springframework.util.StringUtils.cleanPath(daoPath);
         FreeMarkerUtils.fprint(loadTemplateClass,
                 daoTemplateFilePath,
@@ -455,11 +478,12 @@ public class BasicDataCodeGenerator {
                 codeBaseFolder + "/main/java/" + daoPath + "/impl/"
                         + jpaMetaClass.getEntitySimpleName() + "DaoImpl.java");
         
-        logger.info("dao存放路径:{}", codeBaseFolder + "/main/java/" + daoPath
-                + "/" + jpaMetaClass.getEntitySimpleName() + "Dao.java");
-        logger.info("daoImpl存放路径:{}", codeBaseFolder + "/main/java/" + daoPath
-                + "/impl/" + jpaMetaClass.getEntitySimpleName()
-                + "DaoImpl.java");
+        logger.info("dao存放路径:{}",
+                codeBaseFolder + "/main/java/" + daoPath + "/"
+                        + jpaMetaClass.getEntitySimpleName() + "Dao.java");
+        logger.info("daoImpl存放路径:{}",
+                codeBaseFolder + "/main/java/" + daoPath + "/impl/"
+                        + jpaMetaClass.getEntitySimpleName() + "DaoImpl.java");
     }
     
     /**
@@ -490,8 +514,8 @@ public class BasicDataCodeGenerator {
         data.put("update", update);
         
         //org.springframework.util.StringUtils
-        String sqlMapPath = ClassUtils.convertClassNameToResourcePath(jpaMetaClass.getEntityTypeName())
-                + "/../../dao/impl";
+        String sqlMapPath = ClassUtils.convertClassNameToResourcePath(
+                jpaMetaClass.getEntityTypeName()) + "/../../dao/impl";
         sqlMapPath = org.springframework.util.StringUtils.cleanPath(sqlMapPath);
         
         FreeMarkerUtils.fprint(loadTemplateClass,
@@ -499,22 +523,22 @@ public class BasicDataCodeGenerator {
                 data,
                 codeBaseFolder + "/main/java/" + sqlMapPath + "/"
                         + jpaMetaClass.getEntitySimpleName() + "SqlMap.xml");
-        logger.info("sqlMap存放路径:{}", codeBaseFolder + "/main/java/"
-                + sqlMapPath + "/" + jpaMetaClass.getEntitySimpleName()
-                + "SqlMap.xml");
+        logger.info("sqlMap存放路径:{}",
+                codeBaseFolder + "/main/java/" + sqlMapPath + "/"
+                        + jpaMetaClass.getEntitySimpleName() + "SqlMap.xml");
     }
     
     /**
-      *<功能简述>
-      *<功能详细描述>
-      * @param dataSourceType
-      * @param jpaMetaClass
-      * @param encode
-      * @return [参数说明]
-      * 
-      * @return String [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     *<功能简述>
+     *<功能详细描述>
+     * @param dataSourceType
+     * @param jpaMetaClass
+     * @param encode
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     private static <T> void generateDBScript(JpaMetaClass<T> jpaMetaClass,
             SqlSource<T> sqlSource, String codeBaseFolder, String encode) {
@@ -532,9 +556,9 @@ public class BasicDataCodeGenerator {
                 data,
                 codeBaseFolder + "/mysql/01basisScript/" + packageName + "/"
                         + sqlSource.getTableName().toLowerCase() + ".sql");
-        logger.info("mysql脚本存放路径:{}", codeBaseFolder + "/mysql/01basisScript/"
-                + packageName + "/" + sqlSource.getTableName().toLowerCase()
-                + ".sql");
+        logger.info("mysql脚本存放路径:{}",
+                codeBaseFolder + "/mysql/01basisScript/" + packageName + "/"
+                        + sqlSource.getTableName().toLowerCase() + ".sql");
         dbScriptMapper = new DBScriptMapper(jpaMetaClass,
                 DataSourceTypeEnum.ORACLE.getDialect(), false);
         data.put("dbScriptMapper", dbScriptMapper);
@@ -543,9 +567,9 @@ public class BasicDataCodeGenerator {
                 data,
                 codeBaseFolder + "/oracle/01basisScript/" + packageName + "/"
                         + sqlSource.getTableName().toLowerCase() + ".sql");
-        logger.info("oracle脚本存放路径:{}", codeBaseFolder
-                + "/oracle/01basisScript/" + packageName + "/"
-                + sqlSource.getTableName().toLowerCase() + ".sql");
+        logger.info("oracle脚本存放路径:{}",
+                codeBaseFolder + "/oracle/01basisScript/" + packageName + "/"
+                        + sqlSource.getTableName().toLowerCase() + ".sql");
     }
     
     /**
@@ -603,7 +627,8 @@ public class BasicDataCodeGenerator {
     /**
      * @param 对sqlMapTemplateFilePath进行赋值
      */
-    public static void setSqlMapTemplateFilePath(String sqlMapTemplateFilePath) {
+    public static void setSqlMapTemplateFilePath(
+            String sqlMapTemplateFilePath) {
         BasicDataCodeGenerator.sqlMapTemplateFilePath = sqlMapTemplateFilePath;
     }
     
@@ -617,14 +642,16 @@ public class BasicDataCodeGenerator {
     /**
      * @param 对daoImplTemplateFilePath进行赋值
      */
-    public static void setDaoImplTemplateFilePath(String daoImplTemplateFilePath) {
+    public static void setDaoImplTemplateFilePath(
+            String daoImplTemplateFilePath) {
         BasicDataCodeGenerator.daoImplTemplateFilePath = daoImplTemplateFilePath;
     }
     
     /**
      * @param 对serviceTemplateFilePath进行赋值
      */
-    public static void setServiceTemplateFilePath(String serviceTemplateFilePath) {
+    public static void setServiceTemplateFilePath(
+            String serviceTemplateFilePath) {
         BasicDataCodeGenerator.serviceTemplateFilePath = serviceTemplateFilePath;
     }
     
@@ -654,7 +681,8 @@ public class BasicDataCodeGenerator {
     /**
      * @param 对updateTemplateFilePath进行赋值
      */
-    public static void setUpdateTemplateFilePath(String updateTemplateFilePath) {
+    public static void setUpdateTemplateFilePath(
+            String updateTemplateFilePath) {
         BasicDataCodeGenerator.updateTemplateFilePath = updateTemplateFilePath;
     }
 }

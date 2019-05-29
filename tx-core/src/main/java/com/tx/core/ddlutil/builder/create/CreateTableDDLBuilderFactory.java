@@ -1,6 +1,6 @@
 package com.tx.core.ddlutil.builder.create;
 
-import com.tx.core.ddlutil.dialect.DDLDialect;
+import com.tx.core.ddlutil.dialect.Dialect4DDL;
 import com.tx.core.ddlutil.model.TableDef;
 
 /**
@@ -23,7 +23,7 @@ public interface CreateTableDDLBuilderFactory {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public DDLDialect getDefaultDDLDialect();
+    public Dialect4DDL getDefaultDDLDialect();
     
     /**
      * 创建建设表构建器实例<br/>
@@ -57,7 +57,7 @@ public interface CreateTableDDLBuilderFactory {
      * @see [类、类#方法、类#成员]
     */
     public abstract CreateTableDDLBuilder newInstance(String tableName,
-            DDLDialect ddlDialect);
+            Dialect4DDL ddlDialect);
     
     /**
      * 创建建设表构建器实例<br/>
@@ -69,5 +69,5 @@ public interface CreateTableDDLBuilderFactory {
      * @see [类、类#方法、类#成员]
     */
     public abstract CreateTableDDLBuilder newInstance(TableDef tableDef,
-            DDLDialect ddlDialect);
+            Dialect4DDL ddlDialect);
 }

@@ -13,7 +13,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.tx.core.ddlutil.dialect.DDLDialect;
+import com.tx.core.ddlutil.dialect.Dialect4DDL;
 import com.tx.core.ddlutil.model.JPAEntityColumnDef;
 import com.tx.core.ddlutil.model.JPAEntityTableDef;
 import com.tx.core.ddlutil.model.JdbcTypeEnum;
@@ -51,7 +51,7 @@ public abstract class JPAEntityDDLHelper {
      * @see [类、类#方法、类#成员]
      */
     public static TableDef analyzeToTableDefDetail(Class<?> type,
-            DDLDialect ddlDialect) {
+            Dialect4DDL ddlDialect) {
         AssertUtils.notNull(type, "type is null.");
         AssertUtils.notNull(ddlDialect, "ddlDialect is null.");
         
@@ -76,7 +76,7 @@ public abstract class JPAEntityDDLHelper {
       * @see [类、类#方法、类#成员]
      */
     private static JPAEntityTableDef doAnalyzeToTableDefDetail(Class<?> type,
-            DDLDialect ddlDialect) {
+            Dialect4DDL ddlDialect) {
         JPAEntityTableDef tableDef = doAnalyzeTableDef(type);//解析表定义
         
         List<JPAEntityColumnDef> columnDefs = doAnalyzeCoumnDefs(
@@ -128,7 +128,7 @@ public abstract class JPAEntityDDLHelper {
      * @see [类、类#方法、类#成员]
      */
     private static List<JPAEntityColumnDef> doAnalyzeCoumnDefs(String tableName,
-            Class<?> type, DDLDialect ddlDialect) {
+            Class<?> type, Dialect4DDL ddlDialect) {
         List<JPAEntityColumnDef> colDefList = new ArrayList<>();
         for (JPAColumnInfo column : JPAParseUtils.parseTableColumns(type)) {
             JPAEntityColumnDef colDef = doAnalyzeCoumnDef(tableName,
@@ -152,34 +152,33 @@ public abstract class JPAEntityDDLHelper {
       * @see [类、类#方法、类#成员]
      */
     private static JPAEntityColumnDef doAnalyzeCoumnDef(String tableName,
-            Class<?> type, JPAColumnInfo column, DDLDialect ddlDialect) {
+            Class<?> type, JPAColumnInfo column, Dialect4DDL ddlDialect) {
         JPAEntityColumnDef colDef = null;
         
         String columnComment = "";
-        String propertyName = column.getNestedPropertyName();
-        Class<?> javaType = column.getNestedPropertyType();
+        String columnPropertyName = column.getColumnPropertyName();
+        Class<?> columnPropertyType = column.getColumnPropertyType();
         String columnName = column.getColumnName();
         boolean required = !column.isNullable();
         boolean primaryKey = column.isPrimaryKey();
-        JdbcTypeEnum jdbcType = ddlDialect.getJdbcType(javaType);//获取对应的jdbcType
+        JdbcTypeEnum jdbcType = ddlDialect.getJdbcType(columnPropertyType);//获取对应的jdbcType
         
         int size = 255;
         int scale = 0;
-        
         //根据类型取默认值
         {
-            int defaultSizeByType = ddlDialect.getDefaultLengthByType(javaType);
-            int defaultScaleByType = ddlDialect.getDefaultScaleByType(javaType);
+            int defaultSizeByType = ddlDialect.getDefaultLengthByType(columnPropertyType);
+            int defaultScaleByType = ddlDialect.getDefaultScaleByType(columnPropertyType);
             size = defaultSizeByType >= 0 ? defaultSizeByType : size;
             scale = defaultScaleByType >= 0 ? defaultScaleByType : scale;
         }
         
         //根据名称取值+
         {
-            int defaultSizeByName = ddlDialect.getDefaultLengthByName(javaType,
-                    propertyName);
-            int defaultScaleByName = ddlDialect.getDefaultScaleByName(javaType,
-                    propertyName);
+            int defaultSizeByName = ddlDialect.getDefaultLengthByName(columnPropertyType,
+                    columnPropertyName);
+            int defaultScaleByName = ddlDialect.getDefaultScaleByName(columnPropertyType,
+                    columnPropertyName);
             size = defaultSizeByName >= 0 ? defaultSizeByName : size;
             scale = defaultScaleByName >= 0 ? defaultScaleByName : scale;
         }
@@ -192,7 +191,7 @@ public abstract class JPAEntityDDLHelper {
             scale = column.getScale() > 0 ? column.getScale() : size;
         }
         
-        colDef = new JPAEntityColumnDef(columnName, javaType, jdbcType, size,
+        colDef = new JPAEntityColumnDef(columnName, columnPropertyType, jdbcType, size,
                 scale, required, primaryKey);
         colDef.setComment(columnComment);
         

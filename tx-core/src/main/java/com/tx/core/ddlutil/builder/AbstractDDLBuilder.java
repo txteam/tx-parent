@@ -14,7 +14,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.tx.core.ddlutil.dialect.DDLDialect;
+import com.tx.core.ddlutil.dialect.Dialect4DDL;
 import com.tx.core.ddlutil.model.DBColumnDef;
 import com.tx.core.ddlutil.model.DBIndexDef;
 import com.tx.core.ddlutil.model.JdbcTypeEnum;
@@ -43,7 +43,7 @@ public abstract class AbstractDDLBuilder<B extends DDLBuilder<B>>
     protected String tableName;
     
     /** ddl方言类 */
-    protected final DDLDialect ddlDialect;
+    protected final Dialect4DDL ddlDialect;
     
     /** 字段集合 */
     protected final List<TableColumnDef> columns = new LinkedList<>();
@@ -55,7 +55,7 @@ public abstract class AbstractDDLBuilder<B extends DDLBuilder<B>>
     protected StringWriter writer;
     
     /** <默认构造函数> */
-    protected AbstractDDLBuilder(DDLDialect ddlDialect) {
+    protected AbstractDDLBuilder(Dialect4DDL ddlDialect) {
         super();
         this.ddlDialect = ddlDialect;
         
@@ -63,14 +63,14 @@ public abstract class AbstractDDLBuilder<B extends DDLBuilder<B>>
     }
     
     /** <默认构造函数> */
-    protected AbstractDDLBuilder(String tableName, DDLDialect ddlDialect) {
+    protected AbstractDDLBuilder(String tableName, Dialect4DDL ddlDialect) {
         this(ddlDialect);
         
         this.tableName = tableName;
     }
     
     /** <默认构造函数> */
-    protected AbstractDDLBuilder(TableDef table, DDLDialect ddlDialect) {
+    protected AbstractDDLBuilder(TableDef table, Dialect4DDL ddlDialect) {
         this(ddlDialect);
         
         AssertUtils.notNull(table, "table is null.");
@@ -478,7 +478,7 @@ public abstract class AbstractDDLBuilder<B extends DDLBuilder<B>>
     /**
      * @return 返回 ddlDialect
      */
-    protected final DDLDialect getDDLDialect() {
+    protected final Dialect4DDL getDDLDialect() {
         return ddlDialect;
     }
     

@@ -29,9 +29,9 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class MysqlDDLDialect extends DDLDialect {
+public class MysqlDDLDialect extends Dialect4DDL {
     
-    public static final DDLDialect INSTANCE = new MysqlDDLDialect();
+    public static final Dialect4DDL INSTANCE = new MysqlDDLDialect();
     
     /** <默认构造函数> */
     MysqlDDLDialect() {

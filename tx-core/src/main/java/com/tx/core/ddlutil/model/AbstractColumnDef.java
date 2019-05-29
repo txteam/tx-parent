@@ -6,7 +6,7 @@
  */
 package com.tx.core.ddlutil.model;
 
-import com.tx.core.ddlutil.dialect.DDLDialect;
+import com.tx.core.ddlutil.dialect.Dialect4DDL;
 
 /**
   * 抽象字段定义<br/>
@@ -170,7 +170,7 @@ public abstract class AbstractColumnDef implements TableColumnDef {
      * @return
      */
     @Override
-    public String getColumnType(DDLDialect ddlDialect) {
+    public String getColumnType(Dialect4DDL ddlDialect) {
         String columnType = ddlDialect.getDialect()
                 .getTypeName(jdbcType.getSqlType(), size, size, scale);
         return columnType;

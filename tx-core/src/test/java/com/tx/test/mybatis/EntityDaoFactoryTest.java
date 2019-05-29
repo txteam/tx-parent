@@ -18,7 +18,7 @@ import com.tx.core.datasource.DataSourceFinder;
 import com.tx.core.datasource.finder.SimpleDataSourceFinder;
 import com.tx.core.ddlutil.builder.alter.AlterTableDDLBuilder;
 import com.tx.core.ddlutil.builder.create.CreateTableDDLBuilder;
-import com.tx.core.ddlutil.dialect.DDLDialect;
+import com.tx.core.ddlutil.dialect.Dialect4DDL;
 import com.tx.core.ddlutil.dialect.MysqlDDLDialect;
 import com.tx.core.ddlutil.executor.TableDDLExecutor;
 import com.tx.core.ddlutil.executor.impl.MysqlTableDDLExecutor;
@@ -59,7 +59,7 @@ public class EntityDaoFactoryTest {
         
         TableDDLExecutor ddlExecutor = new MysqlTableDDLExecutor(jt);
         
-        DDLDialect ddlDialect = MysqlDDLDialect.INSTANCE;
+        Dialect4DDL ddlDialect = MysqlDDLDialect.INSTANCE;
         TableDef testDemoTableDef = JPAEntityDDLHelper
                 .analyzeToTableDefDetail(TestDemo.class, ddlDialect);
         String tableName = testDemoTableDef.getTableName();

@@ -8,6 +8,9 @@ package com.tx.core.util.dialect;
 
 import org.hibernate.dialect.Dialect;
 
+import com.tx.core.ddlutil.dialect.Dialect4DDL;
+import com.tx.core.ddlutil.dialect.MysqlDDLDialect;
+
 /**
  * 数据库类型<br/>
  * <功能详细描述>
@@ -18,22 +21,6 @@ import org.hibernate.dialect.Dialect;
  * @since  [产品/模块版本]
  */
 public enum DataSourceTypeEnum {
-    //    /**
-    //     * sqlServer
-    //     */
-    //    SQLSERVER2008("sqlserver2008", DialectUtils.sqlServer2008Dialect),
-    //    /**
-    //     * MYSQL
-    //     */
-    //    MySQL5InnoDBDialect("MYSQL5INNODB", DialectUtils.mySQL5InnoDBDialect),
-    //    /**
-    //     * oracle
-    //     */
-    //    ORACLE9I("ORACLE9I", DialectUtils.oracle9iDialect),
-    //    /**
-    //     * oracle
-    //     */
-    //    ORACLE10G("ORACLE10G", DialectUtils.oracle10gDialect),
     /**
      * oracle
      */
@@ -45,17 +32,20 @@ public enum DataSourceTypeEnum {
     /**
      * MYSQL
      */
-    MYSQL("MYSQL", DialectUtils.mySQL57Dialect);
+    MYSQL("MYSQL", DialectUtils.mySQL57Dialect, MysqlDDLDialect.INSTANCE);
     
     /**
      * 数据源类型名
      */
-    private String name;
+    private final String name;
     
     /**
      * 对应oracle方言
      */
-    private Dialect dialect;
+    private final Dialect dialect;
+    
+    /** ddl生成方言 */
+    private final Dialect4DDL dialect4DDL;
     
     /**
      * <默认构造函数>
@@ -63,6 +53,17 @@ public enum DataSourceTypeEnum {
     private DataSourceTypeEnum(String name, Dialect dialect) {
         this.name = name;
         this.dialect = dialect;
+        this.dialect4DDL = null;
+    }
+    
+    /**
+     * <默认构造函数>
+     */
+    private DataSourceTypeEnum(String name, Dialect dialect,
+            Dialect4DDL dialect4DDL) {
+        this.name = name;
+        this.dialect = dialect;
+        this.dialect4DDL = dialect4DDL;
     }
     
     /**
@@ -73,23 +74,16 @@ public enum DataSourceTypeEnum {
     }
     
     /**
-     * @param 对name进行赋值
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-    
-    /**
      * @return 返回 dialect
      */
     public Dialect getDialect() {
         return dialect;
     }
-    
+
     /**
-     * @param 对dialect进行赋值
+     * @return 返回 dialect4DDL
      */
-    public void setDialect(Dialect dialect) {
-        this.dialect = dialect;
+    public Dialect4DDL getDialect4DDL() {
+        return dialect4DDL;
     }
 }

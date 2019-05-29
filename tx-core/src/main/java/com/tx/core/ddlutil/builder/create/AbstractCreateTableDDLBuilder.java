@@ -15,7 +15,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import com.tx.core.ddlutil.builder.AbstractDDLBuilder;
-import com.tx.core.ddlutil.dialect.DDLDialect;
+import com.tx.core.ddlutil.dialect.Dialect4DDL;
 import com.tx.core.ddlutil.helper.TableDefHelper;
 import com.tx.core.ddlutil.model.TableColumnDef;
 import com.tx.core.ddlutil.model.TableDef;
@@ -38,19 +38,19 @@ public abstract class AbstractCreateTableDDLBuilder
         implements CreateTableDDLBuilder, CreateTableDDLBuilderFactory {
     
     /** <默认构造函数> */
-    public AbstractCreateTableDDLBuilder(DDLDialect ddlDialect) {
+    public AbstractCreateTableDDLBuilder(Dialect4DDL ddlDialect) {
         super(ddlDialect);
     }
     
     /** <默认构造函数> */
     public AbstractCreateTableDDLBuilder(String tableName,
-            DDLDialect ddlDialect) {
+            Dialect4DDL ddlDialect) {
         super(tableName, ddlDialect);
     }
     
     /** <默认构造函数> */
     public AbstractCreateTableDDLBuilder(TableDef table,
-            DDLDialect ddlDialect) {
+            Dialect4DDL ddlDialect) {
         super(table, ddlDialect);
     }
     
@@ -58,7 +58,7 @@ public abstract class AbstractCreateTableDDLBuilder
      * @return
      */
     @Override
-    public DDLDialect getDefaultDDLDialect() {
+    public Dialect4DDL getDefaultDDLDialect() {
         return getDDLDialect();
     }
     

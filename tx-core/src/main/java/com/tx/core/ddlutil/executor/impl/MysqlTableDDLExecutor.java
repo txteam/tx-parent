@@ -31,7 +31,7 @@ import com.tx.core.ddlutil.builder.alter.AlterTableDDLBuilder;
 import com.tx.core.ddlutil.builder.alter.impl.AlterTableDDLBuilderFactoryRegistry;
 import com.tx.core.ddlutil.builder.create.CreateTableDDLBuilder;
 import com.tx.core.ddlutil.builder.create.impl.CreateTableDDLBuilderFactoryRegistry;
-import com.tx.core.ddlutil.dialect.DDLDialect;
+import com.tx.core.ddlutil.dialect.Dialect4DDL;
 import com.tx.core.ddlutil.dialect.MysqlDDLDialect;
 import com.tx.core.ddlutil.executor.TableDDLExecutor;
 import com.tx.core.ddlutil.model.DBColumnDef;
@@ -693,7 +693,7 @@ public class MysqlTableDDLExecutor
      * @return
      */
     @Override
-    public DDLDialect getDDLDialect() {
+    public Dialect4DDL getDDLDialect() {
         return MysqlDDLDialect.INSTANCE;
     }
     

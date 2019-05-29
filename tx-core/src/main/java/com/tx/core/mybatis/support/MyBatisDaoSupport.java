@@ -1145,6 +1145,21 @@ public class MyBatisDaoSupport implements InitializingBean {
     // 批量插入
     public BatchResult batchDelete(String statement, List<?> objectList,
             int doFlushSize, boolean isStopWhenFlushHappenedException) {
+        //        BatchResult result = new BatchResult();
+        //        if(CollectionUtils.isEmpty(objectList)){
+        //            return result;
+        //        }
+        //        
+        //        //打开sqlSession
+        //        SqlSessionFactory sqlSessionFactory = getSqlSessionFactory();
+        //        SqlSession sqlSession = getSqlSession(
+        //                sqlSessionFactory,
+        //                ExecutorType.BATCH,
+        //                getExceptionTranslator());
+        //        for(Object parameter : objectList){
+        //            sqlSession.delete(statement, parameter);
+        //        }
+        //        sqlSession.close();
         BatchResult result = new BatchResult();
         if (CollectionUtils.isEmpty(objectList)) {
             return result;

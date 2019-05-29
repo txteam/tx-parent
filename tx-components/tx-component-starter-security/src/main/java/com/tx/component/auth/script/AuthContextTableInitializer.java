@@ -4,7 +4,7 @@
  * 修改时间:  2018年5月9日
  * <修改描述:>
  */
-package com.tx.component.security.auth.script;
+package com.tx.component.auth.script;
 
 import org.springframework.beans.factory.InitializingBean;
 

@@ -8,7 +8,7 @@ package com.tx.core.ddlutil.builder.create.impl;
 
 import com.tx.core.ddlutil.builder.create.AbstractCreateTableDDLBuilder;
 import com.tx.core.ddlutil.builder.create.CreateTableDDLBuilder;
-import com.tx.core.ddlutil.dialect.DDLDialect;
+import com.tx.core.ddlutil.dialect.Dialect4DDL;
 import com.tx.core.ddlutil.model.TableDef;
 import com.tx.core.exceptions.util.AssertUtils;
 
@@ -24,17 +24,17 @@ import com.tx.core.exceptions.util.AssertUtils;
 public class MysqlCreateTableDDLBuilder extends AbstractCreateTableDDLBuilder {
     
     /** <默认构造函数> */
-    MysqlCreateTableDDLBuilder(DDLDialect ddlDialect) {
+    MysqlCreateTableDDLBuilder(Dialect4DDL ddlDialect) {
         super(ddlDialect);
     }
     
     /** <默认构造函数> */
-    private MysqlCreateTableDDLBuilder(String tableName, DDLDialect ddlDialect) {
+    private MysqlCreateTableDDLBuilder(String tableName, Dialect4DDL ddlDialect) {
         super(tableName, ddlDialect);
     }
     
     /** <默认构造函数> */
-    public MysqlCreateTableDDLBuilder(TableDef table, DDLDialect ddlDialect) {
+    public MysqlCreateTableDDLBuilder(TableDef table, Dialect4DDL ddlDialect) {
         super(table, ddlDialect);
     }
     
@@ -45,7 +45,7 @@ public class MysqlCreateTableDDLBuilder extends AbstractCreateTableDDLBuilder {
      */
     @Override
     public CreateTableDDLBuilder newInstance(String tableName,
-            DDLDialect ddlDialect) {
+            Dialect4DDL ddlDialect) {
         AssertUtils.notEmpty(tableName, "tableName is empty.");
         AssertUtils.notNull(ddlDialect, "ddlDialect is null.");
         
@@ -61,7 +61,7 @@ public class MysqlCreateTableDDLBuilder extends AbstractCreateTableDDLBuilder {
      */
     @Override
     public CreateTableDDLBuilder newInstance(TableDef tableDef,
-            DDLDialect ddlDialect) {
+            Dialect4DDL ddlDialect) {
         AssertUtils.notNull(tableDef, "tableDef is empty.");
         AssertUtils.notNull(ddlDialect, "ddlDialect is null.");
         

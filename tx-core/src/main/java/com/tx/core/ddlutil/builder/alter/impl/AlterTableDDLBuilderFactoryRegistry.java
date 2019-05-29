@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.tx.core.ddlutil.builder.alter.AlterTableDDLBuilderFactory;
-import com.tx.core.ddlutil.dialect.DDLDialect;
+import com.tx.core.ddlutil.dialect.Dialect4DDL;
 import com.tx.core.ddlutil.dialect.MysqlDDLDialect;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.util.dialect.DataSourceTypeEnum;
@@ -30,7 +30,7 @@ public class AlterTableDDLBuilderFactoryRegistry {
     protected static Map<DataSourceTypeEnum, AlterTableDDLBuilderFactory> type2factoryMap = new HashMap<>();
     
     static {
-        DDLDialect mysqlDialect = MysqlDDLDialect.INSTANCE;
+        Dialect4DDL mysqlDialect = MysqlDDLDialect.INSTANCE;
         AlterTableDDLBuilderFactoryRegistry.registeFactory(DataSourceTypeEnum.MYSQL,
                 new MysqlAlterTableDDLBuilder(mysqlDialect));
     }

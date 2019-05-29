@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import com.tx.core.ddlutil.builder.alter.AlterTableDDLBuilder;
 import com.tx.core.ddlutil.builder.create.CreateTableDDLBuilder;
-import com.tx.core.ddlutil.dialect.DDLDialect;
+import com.tx.core.ddlutil.dialect.Dialect4DDL;
 import com.tx.core.ddlutil.model.DBColumnDef;
 import com.tx.core.ddlutil.model.DBIndexDef;
 import com.tx.core.ddlutil.model.DBTableDef;
@@ -248,5 +248,5 @@ public interface TableDDLExecutor {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public DDLDialect getDDLDialect();
+    public Dialect4DDL getDDLDialect();
 }

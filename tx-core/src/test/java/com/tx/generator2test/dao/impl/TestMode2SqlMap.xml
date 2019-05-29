@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper 
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="testMode2">
+
+	<!-- auto generate default resultMap -->
+	<resultMap id="testMode2Map" 
+		type="com.tx.generator2test.model.TestMode2">
+		<result column="nested1Id" property="nested1.id"/>
+		<result column="nested2Code" property="nested2.code"/>
+	</resultMap>
+	
+	<!-- auto generate default find -->
+	<select id="find" 
+		parameterType="com.tx.generator2test.model.TestMode2"
+		resultMap="testMode2Map">
+		SELECT 
+				TM.code,
+				TM.lastUpdateDate,
+				TM.lastUpdateOperatorId,
+				TM.name,
+				TM.testInt,
+				TM.testLong,
+				TM.type,
+				TM.createDate,
+				TM.createOperatorId,
+				TM.remark,
+				TM.nested1Id,
+				TM.nested2Code,
+				TM.attributes,
+				TM.description
+		  FROM TEST_TESTMODE2 TM
+		 WHERE
+		<trim prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(code)">  
+	            AND TM.code = #{code}
+	        </if>
+		</trim>
+	</select>
+	
+	<!-- auto generate default query -->
+	<select id="query" 
+		parameterType="java.util.Map"
+		resultMap="testMode2Map">
+		SELECT 
+				TM.code,
+				TM.lastUpdateDate,
+				TM.lastUpdateOperatorId,
+				TM.name,
+				TM.testInt,
+				TM.testLong,
+				TM.type,
+				TM.createDate,
+				TM.createOperatorId,
+				TM.remark,
+				TM.nested1Id,
+				TM.nested2Code,
+				TM.attributes,
+				TM.description
+		  FROM TEST_TESTMODE2 TM
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(code)">  
+	            <![CDATA[ AND TM.code = #{code} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(lastUpdateDate)">  
+	            <![CDATA[ AND TM.lastUpdateDate = #{lastUpdateDate} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(lastUpdateOperatorId)">  
+	            <![CDATA[ AND TM.lastUpdateOperatorId = #{lastUpdateOperatorId} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(name)">  
+	            <![CDATA[ AND TM.name = #{name} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(testInt)">  
+	            <![CDATA[ AND TM.testInt = #{testInt} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(testLong)">  
+	            <![CDATA[ AND TM.testLong = #{testLong} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(type)">  
+	            <![CDATA[ AND TM.type = #{type} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(createDate)">  
+	            <![CDATA[ AND TM.createDate = #{createDate} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(createOperatorId)">  
+	            <![CDATA[ AND TM.createOperatorId = #{createOperatorId} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(remark)">  
+	            <![CDATA[ AND TM.remark = #{remark} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(nested1)">  
+	            <![CDATA[ AND TM.nested1Id = #{nested1.id} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(nested2)">  
+	            <![CDATA[ AND TM.nested2Code = #{nested2.code} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(attributes)">  
+	            <![CDATA[ AND TM.attributes = #{attributes} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(description)">  
+	            <![CDATA[ AND TM.description = #{description} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(excludeCode)">
+				<![CDATA[ AND TM.code <> #{excludeCode} ]]>
+			</if>
+		</trim>
+		ORDER BY code
+	</select>
+
+	<!-- auto generate default count -->
+	<select id="queryCount" 
+		parameterType="java.util.Map"
+		resultType="java.lang.Integer">
+		SELECT COUNT(1)
+		  FROM TEST_TESTMODE2 TM
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(code)">  
+	            <![CDATA[ AND TM.code = #{code} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(lastUpdateDate)">  
+	            <![CDATA[ AND TM.lastUpdateDate = #{lastUpdateDate} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(lastUpdateOperatorId)">  
+	            <![CDATA[ AND TM.lastUpdateOperatorId = #{lastUpdateOperatorId} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(name)">  
+	            <![CDATA[ AND TM.name = #{name} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(testInt)">  
+	            <![CDATA[ AND TM.testInt = #{testInt} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(testLong)">  
+	            <![CDATA[ AND TM.testLong = #{testLong} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(type)">  
+	            <![CDATA[ AND TM.type = #{type} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(createDate)">  
+	            <![CDATA[ AND TM.createDate = #{createDate} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(createOperatorId)">  
+	            <![CDATA[ AND TM.createOperatorId = #{createOperatorId} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(remark)">  
+	            <![CDATA[ AND TM.remark = #{remark} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(nested1)">  
+	            <![CDATA[ AND TM.nested1Id = #{nested1.id} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(nested2)">  
+	            <![CDATA[ AND TM.nested2Code = #{nested2.code} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(attributes)">  
+	            <![CDATA[ AND TM.attributes = #{attributes} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(description)">  
+	            <![CDATA[ AND TM.description = #{description} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(excludeCode)">
+				<![CDATA[ AND TM.code <> #{excludeCode} ]]>
+			</if>
+		</trim>
+	</select>
+	
+	<!-- auto generate default insert -->
+    <insert id="insert" 
+		parameterType="com.tx.generator2test.model.TestMode2">
+		INSERT INTO TEST_TESTMODE2
+		(
+			code,
+			lastUpdateDate,
+			lastUpdateOperatorId,
+			name,
+			testInt,
+			testLong,
+			type,
+			createDate,
+			createOperatorId,
+			remark,
+			nested1Id,
+			nested2Code,
+			attributes,
+			description
+		)
+		VALUES
+		(
+			#{code},
+			#{lastUpdateDate},
+			#{lastUpdateOperatorId},
+			#{name},
+			#{testInt},
+			#{testLong},
+			#{type},
+			#{createDate},
+			#{createOperatorId},
+			#{remark},
+			#{nested1.id},
+			#{nested2.code},
+			#{attributes},
+			#{description}
+		)
+	</insert>
+	
+	<!-- auto generate default delete -->
+	<delete id="delete" 
+		parameterType="com.tx.generator2test.model.TestMode2">
+		DELETE FROM TEST_TESTMODE2  WHERE
+		<trim prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(code)">  
+	            AND code = #{code}
+	        </if>
+		</trim>
+	</delete>
+	
+	<!-- auto generate default update -->
+	<update id="update"
+	    parameterType="java.util.Map">  
+	    UPDATE TEST_TESTMODE2
+	    <trim prefix="SET" suffixOverrides=",">
+			<if test="_parameter.containsKey('lastUpdateDate')">
+	    		lastUpdateDate = #{lastUpdateDate,javaType=java.util.Date},
+	    	</if>
+			<if test="_parameter.containsKey('lastUpdateOperatorId')">
+	    		lastUpdateOperatorId = #{lastUpdateOperatorId,javaType=java.lang.String},
+	    	</if>
+			<if test="_parameter.containsKey('name')">
+	    		name = #{name,javaType=java.lang.String},
+	    	</if>
+			<if test="_parameter.containsKey('testInt')">
+	    		testInt = #{testInt,javaType=int},
+	    	</if>
+			<if test="_parameter.containsKey('testLong')">
+	    		testLong = #{testLong,javaType=java.lang.Long},
+	    	</if>
+			<if test="_parameter.containsKey('type')">
+	    		type = #{type,javaType=com.tx.generator2test.model.TestTypeEnum},
+	    	</if>
+			<if test="_parameter.containsKey('createDate')">
+	    		createDate = #{createDate,javaType=java.util.Date},
+	    	</if>
+			<if test="_parameter.containsKey('createOperatorId')">
+	    		createOperatorId = #{createOperatorId,javaType=java.lang.String},
+	    	</if>
+			<if test="_parameter.containsKey('remark')">
+	    		remark = #{remark,javaType=java.lang.String},
+	    	</if>
+			<if test="_parameter.containsKey('nested1')">
+	    		nested1Id = #{nested1.id,javaType=java.lang.String},
+	    	</if>
+			<if test="_parameter.containsKey('nested2')">
+	    		nested2Code = #{nested2.code,javaType=java.lang.String},
+	    	</if>
+			<if test="_parameter.containsKey('attributes')">
+	    		attributes = #{attributes,javaType=java.lang.String},
+	    	</if>
+			<if test="_parameter.containsKey('description')">
+	    		description = #{description,javaType=java.lang.String},
+	    	</if>
+	    </trim>
+	    WHERE
+		<trim prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(code)">  
+	            AND code = #{code}
+	        </if>
+		</trim>
+	</update> 
+
+</mapper>

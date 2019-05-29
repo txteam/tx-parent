@@ -6,7 +6,7 @@
  */
 package com.tx.core.ddlutil.builder.alter;
 
-import com.tx.core.ddlutil.dialect.DDLDialect;
+import com.tx.core.ddlutil.dialect.Dialect4DDL;
 import com.tx.core.ddlutil.model.TableDef;
 
 /**
@@ -29,7 +29,7 @@ public interface AlterTableDDLBuilderFactory {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    DDLDialect getDefaultDDLDialect();
+    Dialect4DDL getDefaultDDLDialect();
     
     /**
      * 创建建设表构建器实例<br/>
@@ -52,7 +52,7 @@ public interface AlterTableDDLBuilderFactory {
      * @see [类、类#方法、类#成员]
     */
     public abstract AlterTableDDLBuilder newInstance(TableDef sourceTableDef,
-            DDLDialect ddlDialect);
+            Dialect4DDL ddlDialect);
     
     /**
      * 创建建设表构建器实例<br/>
@@ -76,5 +76,5 @@ public interface AlterTableDDLBuilderFactory {
      * @see [类、类#方法、类#成员]
     */
     public abstract AlterTableDDLBuilder newInstance(TableDef newTableDef,
-            TableDef sourceTableDef, DDLDialect ddlDialect);
+            TableDef sourceTableDef, Dialect4DDL ddlDialect);
 }

@@ -19,12 +19,12 @@ import com.tx.core.ddlutil.model.JdbcTypeEnum;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public abstract class DDLDialect {
+public abstract class Dialect4DDL {
     
     private Dialect dialect;
     
     /** <默认构造函数> */
-    public DDLDialect() {
+    public Dialect4DDL() {
         super();
     }
     

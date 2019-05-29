@@ -15,7 +15,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.tx.core.ddlutil.builder.AbstractDDLBuilder;
-import com.tx.core.ddlutil.dialect.DDLDialect;
+import com.tx.core.ddlutil.dialect.Dialect4DDL;
 import com.tx.core.ddlutil.model.TableColumnDef;
 import com.tx.core.ddlutil.model.TableDef;
 import com.tx.core.exceptions.SILException;
@@ -39,7 +39,7 @@ public abstract class AbstractAlterTableDDLBuilder
     private final TableDef sourceTable;
     
     /** <默认构造函数> */
-    public AbstractAlterTableDDLBuilder(DDLDialect ddlDialect) {
+    public AbstractAlterTableDDLBuilder(Dialect4DDL ddlDialect) {
         super(ddlDialect);
         
         this.sourceTable = null;
@@ -47,7 +47,7 @@ public abstract class AbstractAlterTableDDLBuilder
     
     /** <默认构造函数> */
     public AbstractAlterTableDDLBuilder(TableDef sourceTable,
-            DDLDialect ddlDialect) {
+            Dialect4DDL ddlDialect) {
         super(sourceTable.getTableName(), ddlDialect);
         
         AssertUtils.notNull(sourceTable, "sourceTable is null.");
@@ -61,7 +61,7 @@ public abstract class AbstractAlterTableDDLBuilder
     
     /** <默认构造函数> */
     public AbstractAlterTableDDLBuilder(TableDef newTable, TableDef sourceTable,
-            DDLDialect ddlDialect) {
+            Dialect4DDL ddlDialect) {
         super(newTable, ddlDialect);
         
         AssertUtils.notNull(newTable, "newTable is null.");
@@ -84,7 +84,7 @@ public abstract class AbstractAlterTableDDLBuilder
      * @return
      */
     @Override
-    public DDLDialect getDefaultDDLDialect() {
+    public Dialect4DDL getDefaultDDLDialect() {
         return getDDLDialect();
     }
     

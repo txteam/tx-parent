@@ -8,7 +8,7 @@ package com.tx.core.ddlutil.builder.alter.impl;
 
 import com.tx.core.ddlutil.builder.alter.AbstractAlterTableDDLBuilder;
 import com.tx.core.ddlutil.builder.alter.AlterTableDDLBuilder;
-import com.tx.core.ddlutil.dialect.DDLDialect;
+import com.tx.core.ddlutil.dialect.Dialect4DDL;
 import com.tx.core.ddlutil.model.TableDef;
 import com.tx.core.exceptions.util.AssertUtils;
 
@@ -24,18 +24,18 @@ import com.tx.core.exceptions.util.AssertUtils;
 public class MysqlAlterTableDDLBuilder extends AbstractAlterTableDDLBuilder {
     
     /** <默认构造函数> */
-    MysqlAlterTableDDLBuilder(DDLDialect ddlDialect) {
+    MysqlAlterTableDDLBuilder(Dialect4DDL ddlDialect) {
         super(ddlDialect);
     }
     
     /** <默认构造函数> */
-    public MysqlAlterTableDDLBuilder(TableDef sourceTable, DDLDialect ddlDialect) {
+    public MysqlAlterTableDDLBuilder(TableDef sourceTable, Dialect4DDL ddlDialect) {
         super(sourceTable, ddlDialect);
     }
     
     /** <默认构造函数> */
     public MysqlAlterTableDDLBuilder(TableDef newTable, TableDef sourceTable,
-            DDLDialect ddlDialect) {
+            Dialect4DDL ddlDialect) {
         super(newTable, sourceTable, ddlDialect);
     }
     
@@ -46,7 +46,7 @@ public class MysqlAlterTableDDLBuilder extends AbstractAlterTableDDLBuilder {
      */
     @Override
     public AlterTableDDLBuilder newInstance(TableDef sourceTable,
-            DDLDialect ddlDialect) {
+            Dialect4DDL ddlDialect) {
         AssertUtils.notNull(ddlDialect, "ddlDialect is null.");
         AssertUtils.notNull(sourceTable, "sourceTable is null.");
         AssertUtils.notEmpty(sourceTable.getTableName(),
@@ -67,7 +67,7 @@ public class MysqlAlterTableDDLBuilder extends AbstractAlterTableDDLBuilder {
      */
     @Override
     public AlterTableDDLBuilder newInstance(TableDef newTable,
-            TableDef sourceTable, DDLDialect ddlDialect) {
+            TableDef sourceTable, Dialect4DDL ddlDialect) {
         AssertUtils.notNull(ddlDialect, "ddlDialect is null.");
         AssertUtils.notNull(newTable, "newTable is null.");
         AssertUtils.notEmpty(newTable.getTableName(),
