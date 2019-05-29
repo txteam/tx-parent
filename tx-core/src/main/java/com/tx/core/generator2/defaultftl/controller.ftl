@@ -23,14 +23,19 @@ import ${controller.basePackage}.model.${controller.entityTypeSimpleName};
 import ${controller.basePackage}.service.${controller.entityTypeSimpleName}Service;
 import com.tx.core.paged.model.PagedList;
 
+<#list controller.propertyList as property>
+    <#if property.propertyType.isEnum() >
+import ${property.propertyType.getName()};
+    </#if>
+</#list>
+
 /**
- * ${controller.entityTypeSimpleName}显示层逻辑<br/>
- * <功能详细描述>
+ * ${controller.entityComment}[${controller.entityTypeSimpleName}]Controller层<br/>
  * 
- * @author  PengQingyang
- * @version  [版本号, 2013-8-27]
- * @see  [相关类/方法]
- * @since  [产品/模块版本]
+ * @author []
+ * @version [版本号]
+ * @see [相关类/方法]
+ * @since [产品/模块版本]
  */
 @Controller
 @RequestMapping("/${controller.entityTypeSimpleName?uncap_first}")
@@ -39,8 +44,9 @@ public class ${controller.entityTypeSimpleName}Controller {
     @Resource(name = "${controller.entityTypeSimpleName?uncap_first}Service")
     private ${controller.entityTypeSimpleName}Service ${controller.entityTypeSimpleName?uncap_first}Service;
     
+<#if !(viewType??) || viewType == "LIST">
     /**
-     * 跳转到查询${controller.entityTypeSimpleName}列表页面<br/>
+     * 跳转到查询${controller.entityComment}[${controller.entityTypeSimpleName}]列表页面<br/>
      * <功能详细描述>
      * @return [参数说明]
      * 
@@ -48,78 +54,81 @@ public class ${controller.entityTypeSimpleName}Controller {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @RequestMapping("/toQuery${controller.entityTypeSimpleName}List")
-    public String toQuery${controller.entityTypeSimpleName}List(ModelMap response) {
-        <#list fieldViewMapping?values as fieldView>
-            <#if fieldcontroller.javaType.enum >
-        response.put("${fieldcontroller.fieldName}List", ${fieldcontroller.javaType.simpleName}.values());
-            </#if>
-        </#list>
+    @RequestMapping("/toQueryList")
+    public String toQueryList(ModelMap response) {
+<#list controller.propertyList as property>
+    <#if property.propertyType.isEnum() >
+		response.put("${property.propertyName}s", ${property.propertyType.getSimpleName()}.values());
+    </#if>
+</#list>
 
         return "/${packageName}/query${controller.entityTypeSimpleName}List";
     }
+</#if>
     
-     /**
-      * 跳转到查询${controller.entityTypeSimpleName}分页列表页面<br/>
-      *<功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return String [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    @RequestMapping("/toQuery${controller.entityTypeSimpleName}PagedList")
-    public String toQuery${controller.entityTypeSimpleName}PagedList(ModelMap response) {
-        <#list fieldViewMapping?values as fieldView>
-            <#if fieldcontroller.javaType.enum >
-        response.put("${fieldcontroller.fieldName}List", ${fieldcontroller.javaType.simpleName}.values());
-            </#if>
-        </#list>
-
-        return "/${packageName}/query${controller.entityTypeSimpleName}PagedList";
-    }
-    
+<#if (viewType??) && viewType == "PAGEDLIST">
     /**
-      * 跳转到添加${controller.entityTypeSimpleName}页面<br/>
-      *<功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return String [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
-     */
-    @RequestMapping("/toAdd${controller.entityTypeSimpleName}")
-    public String toAdd${controller.entityTypeSimpleName}(ModelMap response) {
-        response.put("${controller.entityTypeSimpleName?uncap_first}", new ${controller.entityTypeSimpleName}());
-
-        <#list fieldViewMapping?values as fieldView>
-        <#if fieldcontroller.javaType.enum >
-        response.put("${fieldcontroller.fieldName}List", ${fieldcontroller.javaType.simpleName}.values());
-        </#if>
-        </#list>
-
-        return "/${packageName}/add${controller.entityTypeSimpleName}";
-    }
-    
-    /**
-     * 跳转到编辑${controller.entityTypeSimpleName}页面
+     * 跳转到查询${controller.entityComment}[${controller.entityTypeSimpleName}]分页列表页面<br/>
      *<功能详细描述>
      * @return [参数说明]
      * 
      * @return String [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
-    @RequestMapping("/toUpdate${controller.entityTypeSimpleName}")
-    public String toUpdate${controller.entityTypeSimpleName}(
-    		@RequestParam("${controller.entityTypeSimpleName?uncap_first}${controller.pkColumn.propertyName?cap_first}") String ${controller.entityTypeSimpleName?uncap_first}${controller.pkColumn.propertyName?cap_first},
-            ModelMap response) {
-        ${controller.entityTypeSimpleName} res${controller.entityTypeSimpleName} = this.${controller.entityTypeSimpleName?uncap_first}Service.findBy${controller.pkColumn.propertyName?cap_first}(${controller.entityTypeSimpleName?uncap_first}${controller.pkColumn.propertyName?cap_first}); 
-        response.put("${controller.entityTypeSimpleName?uncap_first}", res${controller.entityTypeSimpleName});
+     */
+    @RequestMapping("/toQueryPagedList")
+    public String toQueryPagedList(ModelMap response) {
+<#list controller.propertyList as property>
+    <#if property.propertyType.isEnum() >
+		response.put("${property.propertyName}s", ${property.propertyType.getSimpleName()}.values());
+    </#if>
+</#list>
 
-<#list fieldViewMapping?values as fieldView>
-    <#if fieldcontroller.javaType.enum >
-        response.put("${fieldcontroller.fieldName}List", ${fieldcontroller.javaType.simpleName}.values());
+        return "/${packageName}/query${controller.entityTypeSimpleName}PagedList";
+    }
+</#if>
+    
+    /**
+     * 跳转到新增${controller.entityComment}[${controller.entityTypeSimpleName}]页面<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @RequestMapping("/toAdd")
+    public String toAdd(ModelMap response) {
+    	response.put("${controller.entityTypeSimpleName?uncap_first}", new ${controller.entityTypeSimpleName}());
+    	
+<#list controller.propertyList as property>
+    <#if property.propertyType.isEnum() >
+		response.put("${property.propertyName}s", ${property.propertyType.getSimpleName()}.values());
+    </#if>
+</#list>
+
+        return "/${packageName}/add${controller.entityTypeSimpleName}";
+    }
+    
+    /**
+     * 跳转到编辑${controller.entityComment}[${controller.entityTypeSimpleName}]页面
+     *<功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @RequestMapping("/toUpdate")
+    public String toUpdate(
+    		@RequestParam("${controller.entityTypeSimpleName?uncap_first}${controller.pkProperty.propertyName?cap_first}") String ${controller.entityTypeSimpleName?uncap_first}${controller.pkProperty.propertyName?cap_first},
+            ModelMap response) {
+        ${controller.entityTypeSimpleName} ${controller.entityTypeSimpleName?uncap_first} = this.${controller.entityTypeSimpleName?uncap_first}Service.findBy${controller.pkProperty.propertyName?cap_first}(${controller.entityTypeSimpleName?uncap_first}${controller.pkProperty.propertyName?cap_first}); 
+        response.put("${controller.entityTypeSimpleName?uncap_first}", ${controller.entityTypeSimpleName?uncap_first});
+
+<#list controller.propertyList as property>
+    <#if property.propertyType.isEnum() >
+		response.put("${property.propertyName}s", ${property.propertyType.getSimpleName()}.values());
     </#if>
 </#list>
         
@@ -127,32 +136,160 @@ public class ${controller.entityTypeSimpleName}Controller {
     }
 
     /**
-    * 跳转到编辑${controller.entityTypeSimpleName}页面
-    *<功能详细描述>
-    * @return [参数说明]
-    *
-    * @return String [返回类型说明]
-    * @exception throws [异常类型] [异常说明]
-    * @see [类、类#方法、类#成员]
+     * 查询${controller.entityTypeSimpleName}列表<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return List<${controller.entityTypeSimpleName}> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
     */
-    @RequestMapping("/toView${controller.entityTypeSimpleName}")
-    public String toViewById${controller.entityTypeSimpleName}(
-    @RequestParam("${controller.entityTypeSimpleName?uncap_first}${controller.pkColumn.propertyName?cap_first}") String ${controller.entityTypeSimpleName?uncap_first}${controller.pkColumn.propertyName?cap_first},
-    ModelMap response) {
-${controller.entityTypeSimpleName} res${controller.entityTypeSimpleName} = this.${controller.entityTypeSimpleName?uncap_first}Service.findBy${controller.pkColumn.propertyName?cap_first}(${controller.entityTypeSimpleName?uncap_first}${controller.pkColumn.propertyName?cap_first});
-    response.put("${controller.entityTypeSimpleName?uncap_first}", res${controller.entityTypeSimpleName});
-
-    return "/${packageName}/detail${controller.entityTypeSimpleName}";
+    @ResponseBody
+    @RequestMapping("/queryList")
+    public List<${controller.entityTypeSimpleName}> queryList(
+<#if controller.validProperty??>
+			@RequestParam(value="${controller.validProperty.propertyName}",required=false) Boolean ${controller.validProperty.propertyName},
+</#if>
+    		@RequestParam MultiValueMap<String, String> request
+    	) {
+        Map<String,Object> params = new HashMap<>();
+        //params.put("",request.getFirst(""));
+    	
+        List<${controller.entityTypeSimpleName}> resList = this.${controller.entityTypeSimpleName?uncap_first}Service.queryList(
+<#if controller.validProperty??>
+			${controller.validProperty.propertyName},
+</#if>
+			params         
+        );
+  
+        return resList;
     }
+    
+    /**
+     * 查询${controller.entityTypeSimpleName}分页列表<br/>
+     *<功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return List<${controller.entityTypeSimpleName}> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+    */
+    @ResponseBody
+    @RequestMapping("/queryPagedList")
+    public PagedList<${controller.entityTypeSimpleName}> queryPagedList(
+<#if controller.validProperty??>
+			@RequestParam(value="${controller.validProperty.propertyName}",required=false) Boolean ${controller.validProperty.propertyName},
+</#if>
+			@RequestParam(value = "pageNumber", required = false, defaultValue = "1") int pageIndex,
+            @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
+            @RequestParam MultiValueMap<String, String> request
+    	) {
+		Map<String,Object> params = new HashMap<>();
+		//params.put("",request.getFirst(""));
 
-<#if !ObjectUtils.isEmpty(uniqueGetterNamesArray)>
-	<#list uniqueGetterNamesArray as uniqueGetterNames>
+        PagedList<${controller.entityTypeSimpleName}> resPagedList = this.${controller.entityTypeSimpleName?uncap_first}Service.queryPagedList(
+<#if controller.validProperty??>
+			${controller.validProperty.propertyName},
+</#if>
+			params,
+			pageIndex,
+			pageSize
+        );
+        return resPagedList;
+    }
+    
+    /**
+     * 新增${controller.entityTypeSimpleName}
+     * <功能详细描述>
+     * @param organization [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @ResponseBody
+    @RequestMapping("/add")
+    public boolean add(${controller.entityTypeSimpleName} ${controller.entityTypeSimpleName?uncap_first}) {
+        this.${controller.entityTypeSimpleName?uncap_first}Service.insert(${controller.entityTypeSimpleName?uncap_first});
+        return true;
+    }
+    
+    /**
+     * 更新${controller.entityTypeSimpleName}<br/>
+     * <功能详细描述>
+     * @param ${controller.entityTypeSimpleName?uncap_first}
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @ResponseBody
+    @RequestMapping("/update")
+    public boolean update(${controller.entityTypeSimpleName} ${controller.entityTypeSimpleName?uncap_first}) {
+        boolean flag = this.${controller.entityTypeSimpleName?uncap_first}Service.updateBy${controller.pkProperty.propertyName?cap_first}(${controller.entityTypeSimpleName?uncap_first});
+        return flag;
+    }
+    
+    /**
+     * 删除${controller.entityTypeSimpleName}<br/> 
+     * <功能详细描述>
+     * @param ${controller.entityTypeSimpleName?uncap_first}${controller.pkProperty.propertyName?cap_first}
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @ResponseBody
+    @RequestMapping("/deleteBy${controller.pkProperty.propertyName?cap_first}")
+    public boolean deleteBy${controller.pkProperty.propertyName?cap_first}(@RequestParam(value = "${controller.entityTypeSimpleName?uncap_first}${controller.pkProperty.propertyName?cap_first}") String ${controller.entityTypeSimpleName?uncap_first}${controller.pkProperty.propertyName?cap_first}) {
+        boolean flag = this.${controller.entityTypeSimpleName?uncap_first}Service.deleteBy${controller.pkProperty.propertyName?cap_first}(${controller.entityTypeSimpleName?uncap_first}${controller.pkProperty.propertyName?cap_first});
+        return flag;
+    }
+    
+<#if controller.validProperty??>
+    /**
+     * 禁用${controller.entityTypeSimpleName}
+     * @param ${controller.entityTypeSimpleName?uncap_first}${controller.pkProperty.propertyName?cap_first}
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @ResponseBody
+    @RequestMapping("/disableBy${controller.pkProperty.propertyName?cap_first}")
+    public boolean disableBy${controller.pkProperty.propertyName?cap_first}(@RequestParam(value = "${controller.entityTypeSimpleName?uncap_first}${controller.pkProperty.propertyName?cap_first}") String ${controller.entityTypeSimpleName?uncap_first}${controller.pkProperty.propertyName?cap_first}) {
+        boolean flag = this.${controller.entityTypeSimpleName?uncap_first}Service.disableBy${controller.pkProperty.propertyName?cap_first}(${controller.entityTypeSimpleName?uncap_first}${controller.pkProperty.propertyName?cap_first});
+        return flag;
+    }
+    
+    /**
+     * 启用${controller.entityTypeSimpleName}<br/>
+     * <功能详细描述>
+     * @param ${controller.entityTypeSimpleName?uncap_first}${controller.pkProperty.propertyName?cap_first}
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @ResponseBody
+    @RequestMapping("/enableBy${controller.pkProperty.propertyName?cap_first}")
+    public boolean enableBy${controller.pkProperty.propertyName?cap_first}(@RequestParam(value = "${controller.entityTypeSimpleName?uncap_first}${controller.pkProperty.propertyName?cap_first}") String ${controller.entityTypeSimpleName?uncap_first}${controller.pkProperty.propertyName?cap_first}) {
+        boolean flag = this.${controller.entityTypeSimpleName?uncap_first}Service.enableBy${controller.pkProperty.propertyName?cap_first}(${controller.entityTypeSimpleName?uncap_first}${controller.pkProperty.propertyName?cap_first});
+        return flag;
+    }
+</#if>
+
+<#if !ObjectUtils.isEmpty(uniquePropertyNamesArray)>
+	<#list uniquePropertyNamesArray as uniquePropertyNames>
     /**
      * 判断${controller.entityTypeSimpleName}:
       	<#list uniqueGetterNames as uniqueGetterName>
      *  ${uniqueGetterName}
      	</#list>
-     *
      * 是否已经被使用
 		<#list uniqueGetterNames as uniqueGetterName>
 	 * @param uniqueGetterName
@@ -192,192 +329,5 @@ ${controller.entityTypeSimpleName} res${controller.entityTypeSimpleName} = this.
     }
     
 	</#list>
-</#if>
-    /**
-     * 查询${controller.entityTypeSimpleName}列表<br/>
-     *<功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return List<${controller.entityTypeSimpleName}> [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-    */
-    @ResponseBody
-    @RequestMapping("/queryList")
-    public List<${controller.entityTypeSimpleName}> queryList(
-<#if StringUtils.isNotEmpty(validPropertyName)>
-			@RequestParam(value="${validPropertyName}",required=false) Boolean ${validPropertyName},
-</#if>
-<#list controller.queryConditionName2TypeNameMapping?keys as key>
-	<#if validPropertyName != key>
-		<#if controller.queryConditionName2TypeNameMapping[key] != 'String'>
-			<#if controller.queryConditionName2TypeNameMapping[key] == 'boolean'>
-			@RequestParam(value="${key}",required=false) Boolean ${key},
-			<#else>
-			@RequestParam(value="${key}",required=false) ${controller.queryConditionName2TypeNameMapping[key]} ${key},
-			</#if>
-		</#if>
-	</#if>
-</#list> 
-    		@RequestParam MultiValueMap<String, String> request
-    	) {
-        Map<String,Object> params = new HashMap<>();
-
-<#list controller.queryConditionName2TypeNameMapping?keys as key>
-	<#if validPropertyName != key>
-		<#if controller.queryConditionName2TypeNameMapping[key] != 'String'>
-		params.put("${key}",${key});
-		<#else>
-		params.put("${key}",request.getFirst("${key}"));
-		</#if>
-	</#if>
-</#list> 
-    	
-        List<${controller.entityTypeSimpleName}> resList = this.${controller.entityTypeSimpleName?uncap_first}Service.queryList(
-<#if StringUtils.isNotEmpty(validPropertyName)>
-			${validPropertyName},
-</#if>
-			params         
-        );
-  
-        return resList;
-    }
-    
-    /**
-     * 查询${controller.entityTypeSimpleName}分页列表<br/>
-     *<功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return List<${controller.entityTypeSimpleName}> [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-    */
-    @ResponseBody
-    @RequestMapping("/queryPagedList")
-    public PagedList<${controller.entityTypeSimpleName}> queryPagedList(
-<#if StringUtils.isNotEmpty(validPropertyName)>
-			@RequestParam(value="${validPropertyName}",required=false) Boolean ${validPropertyName},
-</#if>
-<#list controller.queryConditionName2TypeNameMapping?keys as key>
-	<#if validPropertyName != key>
-		<#if controller.queryConditionName2TypeNameMapping[key] != 'String'>
-			<#if controller.queryConditionName2TypeNameMapping[key] == 'boolean'>
-			@RequestParam(value="${key}",required=false) Boolean ${key},
-			<#else>
-			@RequestParam(value="${key}",required=false) ${controller.queryConditionName2TypeNameMapping[key]} ${key},
-			</#if>
-		</#if>
-	</#if>
-</#list>
-			@RequestParam(value = "pageNumber", required = false, defaultValue = "1") int pageIndex,
-            @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
-            @RequestParam MultiValueMap<String, String> request
-    	) {
-		Map<String,Object> params = new HashMap<>();
-
-<#list controller.queryConditionName2TypeNameMapping?keys as key>
-	<#if validPropertyName != key>
-		<#if controller.queryConditionName2TypeNameMapping[key] != 'String'>
-		params.put("${key}",${key});
-		<#else>
-		params.put("${key}",request.getFirst("${key}"));
-		</#if>
-	</#if>
-</#list> 
-
-        PagedList<${controller.entityTypeSimpleName}> resPagedList = this.${controller.entityTypeSimpleName?uncap_first}Service.queryPagedList(
-<#if StringUtils.isNotEmpty(validPropertyName)>
-			${validPropertyName},
-</#if>
-			params,
-			pageIndex,
-			pageSize
-        );
-        return resPagedList;
-    }
-    
-    /**
-     * 新增${controller.entityTypeSimpleName}
-     * <功能详细描述>
-     * @param organization [参数说明]
-     * 
-     * @return void [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    @ResponseBody
-    @RequestMapping("/add")
-    public boolean add(${controller.entityTypeSimpleName} ${controller.entityTypeSimpleName?uncap_first}) {
-        this.${controller.entityTypeSimpleName?uncap_first}Service.insert(${controller.entityTypeSimpleName?uncap_first});
-        return true;
-    }
-    
-    /**
-     * 更新${controller.entityTypeSimpleName}<br/>
-     * <功能详细描述>
-     * @param ${controller.entityTypeSimpleName?uncap_first}
-     * @return [参数说明]
-     * 
-     * @return boolean [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    @ResponseBody
-    @RequestMapping("/update")
-    public boolean update(${controller.entityTypeSimpleName} ${controller.entityTypeSimpleName?uncap_first}) {
-        boolean flag = this.${controller.entityTypeSimpleName?uncap_first}Service.updateBy${controller.pkColumn.propertyName?cap_first}(${controller.entityTypeSimpleName?uncap_first});
-        return flag;
-    }
-    
-    /**
-     * 删除${controller.entityTypeSimpleName}<br/> 
-     * <功能详细描述>
-     * @param ${controller.entityTypeSimpleName?uncap_first}${controller.pkColumn.propertyName?cap_first}
-     * @return [参数说明]
-     * 
-     * @return boolean [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    @ResponseBody
-    @RequestMapping("/deleteBy${controller.pkColumn.propertyName?cap_first}")
-    public boolean deleteBy${controller.pkColumn.propertyName?cap_first}(@RequestParam(value = "${controller.entityTypeSimpleName?uncap_first}${controller.pkColumn.propertyName?cap_first}") String ${controller.entityTypeSimpleName?uncap_first}${controller.pkColumn.propertyName?cap_first}) {
-        boolean flag = this.${controller.entityTypeSimpleName?uncap_first}Service.deleteBy${controller.pkColumn.propertyName?cap_first}(${controller.entityTypeSimpleName?uncap_first}${controller.pkColumn.propertyName?cap_first});
-        return flag;
-    }
-    
-<#if controller.validColumn??>
-    /**
-     * 禁用${controller.entityTypeSimpleName}
-     * @param ${controller.entityTypeSimpleName?uncap_first}${controller.pkColumn.propertyName?cap_first}
-     * @return [参数说明]
-     * 
-     * @return boolean [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    @ResponseBody
-    @RequestMapping("/disableBy${controller.pkColumn.propertyName?cap_first}")
-    public boolean disableBy${controller.pkColumn.propertyName?cap_first}(@RequestParam(value = "${controller.entityTypeSimpleName?uncap_first}${controller.pkColumn.propertyName?cap_first}") String ${controller.entityTypeSimpleName?uncap_first}${controller.pkColumn.propertyName?cap_first}) {
-        boolean flag = this.${controller.entityTypeSimpleName?uncap_first}Service.disableBy${controller.pkColumn.propertyName?cap_first}(${controller.entityTypeSimpleName?uncap_first}${controller.pkColumn.propertyName?cap_first});
-        return flag;
-    }
-    
-    /**
-     * 启用${controller.entityTypeSimpleName}<br/>
-     * <功能详细描述>
-     * @param ${controller.entityTypeSimpleName?uncap_first}${controller.pkColumn.propertyName?cap_first}
-     * @return [参数说明]
-     * 
-     * @return boolean [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    @ResponseBody
-    @RequestMapping("/enableBy${controller.pkColumn.propertyName?cap_first}")
-    public boolean enableBy${controller.pkColumn.propertyName?cap_first}(@RequestParam(value = "${controller.entityTypeSimpleName?uncap_first}${controller.pkColumn.propertyName?cap_first}") String ${controller.entityTypeSimpleName?uncap_first}${controller.pkColumn.propertyName?cap_first}) {
-        boolean flag = this.${controller.entityTypeSimpleName?uncap_first}Service.enableBy${controller.pkColumn.propertyName?cap_first}(${controller.entityTypeSimpleName?uncap_first}${controller.pkColumn.propertyName?cap_first});
-        return flag;
-    }
 </#if>
 }

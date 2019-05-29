@@ -326,12 +326,6 @@
 			<if test="_parameter.containsKey('valid')">
 	    		valid = #{valid,javaType=boolean},
 	    	</if>
-			<if test="_parameter.containsKey('createDate')">
-	    		createDate = #{createDate,javaType=java.util.Date},
-	    	</if>
-			<if test="_parameter.containsKey('createOperatorId')">
-	    		createOperatorId = #{createOperatorId,javaType=java.lang.String},
-	    	</if>
 			<if test="_parameter.containsKey('expiryDate')">
 	    		expiryDate = #{expiryDate,javaType=java.util.Date},
 	    	</if>

@@ -28,6 +28,7 @@ public class CodeGeneratorTest {
         CodeGenerator.generateSqlMap(entityType);
         CodeGenerator.generateDao(entityType);
         CodeGenerator.generateService(entityType);
+        CodeGenerator.generateController(entityType);
         
         entityType = TestMode2.class;
         
@@ -36,5 +37,6 @@ public class CodeGeneratorTest {
         CodeGenerator.generateDao(entityType);
         CodeGenerator.generateDao(entityType);
         CodeGenerator.generateService(entityType);
+        CodeGenerator.generateController(entityType);
     }
 }

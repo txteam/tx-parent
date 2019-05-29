@@ -13,8 +13,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.ClassUtils;
 
 import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.util.JPAParseUtils;
-import com.tx.core.util.JPAParseUtils.JPAColumnInfo;
+import com.tx.core.generator2.util.GeneratorUtils;
+import com.tx.core.generator2.util.GeneratorUtils.EntityProperty;
+
+import springfox.documentation.annotations.ApiIgnore;
 
 /**
  * <功能简述>
@@ -33,6 +35,9 @@ public class ControllerGeneratorModel {
     /** 实体类型 */
     private final Class<?> entityType;
     
+    /** 实体注释 */
+    private final String entityComment;
+    
     /** 实体类型name */
     private final String entityTypeName;
     
@@ -40,19 +45,22 @@ public class ControllerGeneratorModel {
     private final String entityTypeSimpleName;
     
     /** jpa字段列表 */
-    private final List<JPAColumnInfo> columnList;
+    private final List<EntityProperty> propertyList;
     
     /** jpa字段列表 */
-    private final List<JPAColumnInfo> pkColumnList;
+    private final List<EntityProperty> pkPropertyList;
+    
+    /** jpa字段列表 */
+    private final List<EntityProperty> viewablePropertyList;
     
     /** 主键字段列表 */
-    private final JPAColumnInfo pkColumn;
+    private final EntityProperty pkProperty;
     
     /** 是否有编码属性 */
-    private JPAColumnInfo codeColumn;
+    private EntityProperty codeProperty;
     
     /** 是否有是否有效的属性 */
-    private JPAColumnInfo validColumn;
+    private EntityProperty validProperty;
     
     /** <默认构造函数> */
     public ControllerGeneratorModel(Class<?> entityType) {
@@ -65,65 +73,45 @@ public class ControllerGeneratorModel {
         this.entityType = entityType;
         this.entityTypeName = entityType.getName();
         this.entityTypeSimpleName = entityType.getSimpleName();
+        this.entityComment = GeneratorUtils.parseEntityComment(entityType);
         
-        this.columnList = JPAParseUtils.parseTableColumns(entityType);
-        this.pkColumnList = this.columnList.stream().filter(column -> {
+        this.propertyList = GeneratorUtils.parseEntityPropertyList(entityType);
+        this.pkPropertyList = this.propertyList.stream().filter(column -> {
             return column.isPrimaryKey();
         }).collect(Collectors.toList());
+        this.pkProperty = this.pkPropertyList.get(0);
+        AssertUtils.isTrue(this.pkProperty != null, "没有找到主键字段");
+        AssertUtils.isTrue(String.class.isAssignableFrom(
+                this.pkProperty.getPropertyType()), "主键字段应为String");
         
-        this.pkColumn = this.pkColumnList.get(0);
-        AssertUtils.isTrue(this.pkColumn != null, "没有找到主键字段");
-        AssertUtils.isTrue(
-                String.class.isAssignableFrom(this.pkColumn.getPropertyType()),
-                "主键字段应为String");
+        this.viewablePropertyList = this.propertyList.stream()
+                .filter(column -> {
+                    if (column.getTypeDescriptor()
+                            .hasAnnotation(ApiIgnore.class)) {
+                        return false;
+                    }
+                    return true;
+                })
+                .collect(Collectors.toList());
         
-        this.columnList.stream().forEach(column -> {
-            if (StringUtils.equals("code", column.getPropertyName())
-                    && !column.isPrimaryKey()) {
+        this.propertyList.stream().forEach(property -> {
+            if (StringUtils.equals("code", property.getPropertyName())
+                    && !property.isPrimaryKey()) {
                 //如果主键就是code，则无需标定hasCodeProperty
-                this.codeColumn = column;
-                AssertUtils.isTrue(
-                        String.class.isAssignableFrom(column.getPropertyType())
-                                || boolean.class
-                                        .equals(column.getPropertyType()),
+                this.codeProperty = property;
+                AssertUtils.isTrue(String.class
+                        .isAssignableFrom(property.getPropertyType())
+                        || boolean.class.equals(property.getPropertyType()),
                         "code type should is String.");
-            } else if (StringUtils.equals("valid", column.getPropertyName())) {
-                this.validColumn = column;
-                AssertUtils.isTrue(
-                        Boolean.class.isAssignableFrom(column.getPropertyType())
-                                || boolean.class
-                                        .equals(column.getPropertyType()),
+            } else if (StringUtils.equals("valid",
+                    property.getPropertyName())) {
+                this.validProperty = property;
+                AssertUtils.isTrue(Boolean.class
+                        .isAssignableFrom(property.getPropertyType())
+                        || boolean.class.equals(property.getPropertyType()),
                         "valid type should is boolean or Boolean.");
             }
         });
-    }
-    
-    /**
-     * @return 返回 codeColumn
-     */
-    public JPAColumnInfo getCodeColumn() {
-        return codeColumn;
-    }
-    
-    /**
-     * @param 对codeColumn进行赋值
-     */
-    public void setCodeColumn(JPAColumnInfo codeColumn) {
-        this.codeColumn = codeColumn;
-    }
-    
-    /**
-     * @return 返回 validColumn
-     */
-    public JPAColumnInfo getValidColumn() {
-        return validColumn;
-    }
-    
-    /**
-     * @param 对validColumn进行赋值
-     */
-    public void setValidColumn(JPAColumnInfo validColumn) {
-        this.validColumn = validColumn;
     }
     
     /**
@@ -155,23 +143,65 @@ public class ControllerGeneratorModel {
     }
     
     /**
-     * @return 返回 columnList
+     * @return 返回 codeProperty
      */
-    public List<JPAColumnInfo> getColumnList() {
-        return columnList;
+    public EntityProperty getCodeProperty() {
+        return codeProperty;
     }
     
     /**
-     * @return 返回 pkColumnList
+     * @param 对codeProperty进行赋值
      */
-    public List<JPAColumnInfo> getPkColumnList() {
-        return pkColumnList;
+    public void setCodeProperty(EntityProperty codeProperty) {
+        this.codeProperty = codeProperty;
     }
     
     /**
-     * @return 返回 pkColumn
+     * @return 返回 validProperty
      */
-    public JPAColumnInfo getPkColumn() {
-        return pkColumn;
+    public EntityProperty getValidProperty() {
+        return validProperty;
+    }
+    
+    /**
+     * @param 对validProperty进行赋值
+     */
+    public void setValidProperty(EntityProperty validProperty) {
+        this.validProperty = validProperty;
+    }
+    
+    /**
+     * @return 返回 entityComment
+     */
+    public String getEntityComment() {
+        return entityComment;
+    }
+    
+    /**
+     * @return 返回 propertyList
+     */
+    public List<EntityProperty> getPropertyList() {
+        return propertyList;
+    }
+    
+    /**
+     * @return 返回 pkPropertyList
+     */
+    public List<EntityProperty> getPkPropertyList() {
+        return pkPropertyList;
+    }
+    
+    /**
+     * @return 返回 pkProperty
+     */
+    public EntityProperty getPkProperty() {
+        return pkProperty;
+    }
+    
+    /**
+     * @return 返回 viewablePropertyList
+     */
+    public List<EntityProperty> getViewablePropertyList() {
+        return viewablePropertyList;
     }
 }

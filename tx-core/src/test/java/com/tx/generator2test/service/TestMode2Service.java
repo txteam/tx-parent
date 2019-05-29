@@ -55,10 +55,10 @@ public class TestMode2Service {
     public void insert(TestMode2 testMode2) {
         //验证参数是否合法
         AssertUtils.notNull(testMode2, "testMode2 is null.");
-        
+           
         //FIXME:为添加的数据需要填入默认值的字段填入默认值
-        testMode2.setLastUpdateDate(new Date());
-        testMode2.setCreateDate(new Date());
+		testMode2.setLastUpdateDate(new Date());
+		testMode2.setCreateDate(new Date());
         
         //调用数据持久层对实体进行持久化操作
         this.testMode2Dao.insert(testMode2);
@@ -105,6 +105,7 @@ public class TestMode2Service {
         return res;
     }
     
+    
     /**
      * 查询TestMode2实体列表
      * <功能详细描述>
@@ -115,19 +116,21 @@ public class TestMode2Service {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public List<TestMode2> queryList(Map<String, Object> params) {
+    public List<TestMode2> queryList(
+		Map<String,Object> params   
+    	) {
         //判断条件合法性
         
         //生成查询条件
         params = params == null ? new HashMap<String, Object>() : params;
-        
+
         //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
         List<TestMode2> resList = this.testMode2Dao.queryList(params);
         
         return resList;
     }
     
-    /**
+	/**
      * 分页查询TestMode2实体列表
      * <功能详细描述>
      * @param params    
@@ -141,16 +144,17 @@ public class TestMode2Service {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public PagedList<TestMode2> queryPagedList(Map<String, Object> params,
-            int pageIndex, int pageSize) {
+    public PagedList<TestMode2> queryPagedList(
+		Map<String,Object> params,
+    	int pageIndex,
+        int pageSize) {
         //T判断条件合法性
         
         //生成查询条件
         params = params == null ? new HashMap<String, Object>() : params;
-        
+ 
         //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
-        PagedList<TestMode2> resPagedList = this.testMode2Dao
-                .queryPagedList(params, pageIndex, pageSize);
+        PagedList<TestMode2> resPagedList = this.testMode2Dao.queryPagedList(params, pageIndex, pageSize);
         
         return resPagedList;
     }
@@ -164,8 +168,7 @@ public class TestMode2Service {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public boolean exists(Map<String, String> key2valueMap,
-            String excludeCode) {
+    public boolean exists(Map<String,String> key2valueMap, String excludeCode) {
         AssertUtils.notEmpty(key2valueMap, "key2valueMap is empty");
         
         //生成查询条件
@@ -194,27 +197,26 @@ public class TestMode2Service {
         //验证参数是否合法，必填字段是否填写
         AssertUtils.notNull(testMode2, "testMode2 is null.");
         AssertUtils.notEmpty(testMode2.getCode(), "testMode2.code is empty.");
-        
+
         //生成需要更新字段的hashMap
         Map<String, Object> updateRowMap = new HashMap<String, Object>();
         updateRowMap.put("code", testMode2.getCode());
         
         //FIXME:需要更新的字段
-        updateRowMap.put("lastUpdateOperatorId",
-                testMode2.getLastUpdateOperatorId());
-        updateRowMap.put("name", testMode2.getName());
-        updateRowMap.put("testInt", testMode2.getTestInt());
-        updateRowMap.put("testLong", testMode2.getTestLong());
-        updateRowMap.put("type", testMode2.getType());
-        updateRowMap.put("createOperatorId", testMode2.getCreateOperatorId());
-        updateRowMap.put("remark", testMode2.getRemark());
-        updateRowMap.put("nested1", testMode2.getNested1());
-        updateRowMap.put("nested2", testMode2.getNested2());
-        updateRowMap.put("attributes", testMode2.getAttributes());
-        updateRowMap.put("description", testMode2.getDescription());
-        updateRowMap.put("lastUpdateDate", new Date());
-        
-        int updateRowCount = this.testMode2Dao.update(updateRowMap);
+		updateRowMap.put("lastUpdateOperatorId", testMode2.getLastUpdateOperatorId());
+		updateRowMap.put("name", testMode2.getName());
+		updateRowMap.put("testInt", testMode2.getTestInt());
+		updateRowMap.put("testLong", testMode2.getTestLong());
+		updateRowMap.put("type", testMode2.getType());
+		updateRowMap.put("createOperatorId", testMode2.getCreateOperatorId());
+		updateRowMap.put("remark", testMode2.getRemark());
+		updateRowMap.put("nested1", testMode2.getNested1());
+		updateRowMap.put("nested2", testMode2.getNested2());
+		updateRowMap.put("attributes", testMode2.getAttributes());
+		updateRowMap.put("description", testMode2.getDescription());
+		updateRowMap.put("lastUpdateDate", new Date());
+
+        int updateRowCount = this.testMode2Dao.update(updateRowMap); 
         //如果需要大于1时，抛出异常并回滚，需要在这里修改
         return updateRowCount >= 1;
     }

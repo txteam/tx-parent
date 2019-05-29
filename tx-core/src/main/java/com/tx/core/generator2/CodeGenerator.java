@@ -9,10 +9,12 @@ package com.tx.core.generator2;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.ClassUtils;
 
+import com.tx.core.generator2.model.ControllerGeneratorModel;
 import com.tx.core.generator2.model.DBScriptGeneratorModel;
 import com.tx.core.generator2.model.DaoGeneratorModel;
 import com.tx.core.generator2.model.ServiceGeneratorModel;
@@ -57,6 +59,8 @@ public class CodeGenerator {
     
     private static String serviceTemplateFilePath = "com/tx/core/generator2/defaultftl/service.ftl";
     
+    private static String controllerTemplateFilePath = "com/tx/core/generator2/defaultftl/controller.ftl";
+    
     /**
      * 生成持久层逻辑
      * <功能详细描述>
@@ -66,25 +70,58 @@ public class CodeGenerator {
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
+     */
+    public static <T> void generateController(Class<?> entityType) {
+        ControllerGeneratorModel controllerModel = new ControllerGeneratorModel(
+                entityType);
+        
+        Map<String, Object> data = new HashMap<String, Object>();
+        data.put("controller", controllerModel);
+        data.put("packageName", getPackageName(entityType));
+        
+        String controllerPath = ClassUtils.convertClassNameToResourcePath(
+                entityType.getName()) + "/../../controller";
+        controllerPath = org.springframework.util.StringUtils
+                .cleanPath(controllerPath);
+        String controllerFilePath = BASE_CODE_FOLDER + "/main/java/" + controllerPath
+                + "/" + entityType.getSimpleName() + "Controller.java";
+        
+        FreeMarkerUtils.fprint(LOAD_TEMPLATE_CLASS,
+                controllerTemplateFilePath,
+                data,
+                controllerFilePath);
+        logger.info("controller存放路径:{}", controllerFilePath);
+    }
+    
+    /**
+     * 生成持久层逻辑
+     * <功能详细描述>
+     * @param jpaMetaClass
+     * @param resultFolderPath [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
     public static <T> void generateService(Class<?> entityType) {
-        ServiceGeneratorModel serviceModel = new ServiceGeneratorModel(entityType);
+        ServiceGeneratorModel serviceModel = new ServiceGeneratorModel(
+                entityType);
         
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("service", serviceModel);
         
         String servicePath = ClassUtils.convertClassNameToResourcePath(
                 entityType.getName()) + "/../../service";
-        servicePath = org.springframework.util.StringUtils.cleanPath(servicePath);
-        String serviceFilePath = BASE_CODE_FOLDER + "/main/java/" + servicePath + "/"
-                + entityType.getSimpleName() + "Service.java";
-        
+        servicePath = org.springframework.util.StringUtils
+                .cleanPath(servicePath);
+        String serviceFilePath = BASE_CODE_FOLDER + "/main/java/" + servicePath
+                + "/" + entityType.getSimpleName() + "Service.java";
         
         FreeMarkerUtils.fprint(LOAD_TEMPLATE_CLASS,
                 serviceTemplateFilePath,
                 data,
                 serviceFilePath);
-        logger.info("service存放路径:{}",serviceFilePath);
+        logger.info("service存放路径:{}", serviceFilePath);
     }
     
     /**
@@ -103,13 +140,14 @@ public class CodeGenerator {
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("dao", daoModel);
         
-        String daoPath = ClassUtils.convertClassNameToResourcePath(entityType.getName()) + "/../../dao";
+        String daoPath = ClassUtils.convertClassNameToResourcePath(
+                entityType.getName()) + "/../../dao";
         daoPath = org.springframework.util.StringUtils.cleanPath(daoPath);
         
         String daoFilePath = BASE_CODE_FOLDER + "/main/java/" + daoPath + "/"
                 + entityType.getSimpleName() + "Dao.java";
-        String daoImplFilePath = BASE_CODE_FOLDER + "/main/java/" + daoPath + "/impl/"
-                + entityType.getSimpleName() + "DaoImpl.java";
+        String daoImplFilePath = BASE_CODE_FOLDER + "/main/java/" + daoPath
+                + "/impl/" + entityType.getSimpleName() + "DaoImpl.java";
         
         FreeMarkerUtils.fprint(LOAD_TEMPLATE_CLASS,
                 daoTemplateFilePath,
@@ -120,8 +158,8 @@ public class CodeGenerator {
                 data,
                 daoImplFilePath);
         
-        logger.info("dao存放路径:{}",daoFilePath);
-        logger.info("daoImpl存放路径:{}",daoImplFilePath);
+        logger.info("dao存放路径:{}", daoFilePath);
+        logger.info("daoImpl存放路径:{}", daoImplFilePath);
     }
     
     /**
@@ -140,17 +178,18 @@ public class CodeGenerator {
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("sqlmap", sqlmap);
         
-        String sqlmapPath = ClassUtils.convertClassNameToResourcePath(entityType.getName()) + "/../../dao/impl";
+        String sqlmapPath = ClassUtils.convertClassNameToResourcePath(
+                entityType.getName()) + "/../../dao/impl";
         sqlmapPath = org.springframework.util.StringUtils.cleanPath(sqlmapPath);
         
-        String sqlmapFilePath = BASE_CODE_FOLDER + "/main/java/" + sqlmapPath + "/"
-                + entityType.getSimpleName() + "SqlMap.xml";
+        String sqlmapFilePath = BASE_CODE_FOLDER + "/main/java/" + sqlmapPath
+                + "/" + entityType.getSimpleName() + "SqlMap.xml";
         
         FreeMarkerUtils.fprint(LOAD_TEMPLATE_CLASS,
                 sqlMapTemplateFilePath,
                 data,
                 sqlmapFilePath);
-        logger.info("sqlmap存放路径:{}",sqlmapPath);
+        logger.info("sqlmap存放路径:{}", sqlmapPath);
     }
     
     /**
@@ -183,5 +222,25 @@ public class CodeGenerator {
                 data,
                 dbScriptPath);
         logger.info("mysql脚本存放路径:{}", dbScriptPath);
+    }
+    
+    /**
+     * 获取包名<br/>
+     * <功能详细描述>
+     * @param entityType
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    private static String getPackageName(Class<?> entityType) {
+        String servicePath = ClassUtils.convertClassNameToResourcePath(
+                entityType.getName()) + "/../../";
+        servicePath = org.springframework.util.StringUtils
+                .cleanPath(servicePath);
+        String[] servicePaths = StringUtils.split(servicePath, "/");
+        String packageName = servicePaths[servicePaths.length - 1];
+        return packageName;
     }
 }

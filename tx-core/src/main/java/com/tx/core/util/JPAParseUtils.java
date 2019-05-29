@@ -398,19 +398,19 @@ public class JPAParseUtils {
     public static class JPAColumnInfo {
         
         /** 属性描述 */
-        private final PropertyDescriptor propertyDescriptor;
+        protected final PropertyDescriptor propertyDescriptor;
         
         /** 属性类型描述字段 */
-        private final TypeDescriptor typeDescriptor;
-        
-        /** 嵌套属性描述，如果不存在嵌套属性，则该值为空 */
-        private PropertyDescriptor nestedPropertyDescriptor;
+        protected final TypeDescriptor typeDescriptor;
         
         /** 字段注解 */
-        private final Column columnAnnotation;
+        protected final Column columnAnnotation;
+        
+        /** 嵌套属性描述，如果不存在嵌套属性，则该值为空 */
+        protected PropertyDescriptor nestedPropertyDescriptor;
         
         /** 是否是主键: 不根据属性判断，如果不存在@Id注解时，系统将考虑采用id,或是code字段当做唯一键字段 */
-        private boolean primaryKey = false;
+        protected boolean primaryKey = false;
         
         /** <默认构造函数> */
         public JPAColumnInfo(PropertyDescriptor propertyDescriptor,

@@ -55,13 +55,13 @@ public class TestModeService {
     public void insert(TestMode testMode) {
         //验证参数是否合法
         AssertUtils.notNull(testMode, "testMode is null.");
-        AssertUtils.notEmpty(testMode.getCode(), "testMode.code is empty.");
-        AssertUtils.notEmpty(testMode.getName(), "testMode.name is empty.");
-        
+		AssertUtils.notEmpty(testMode.getCode(), "testMode.code is empty.");
+		AssertUtils.notEmpty(testMode.getName(), "testMode.name is empty.");
+           
         //FIXME:为添加的数据需要填入默认值的字段填入默认值
-        testMode.setLastUpdateDate(new Date());
-        testMode.setValid(true);
-        testMode.setCreateDate(new Date());
+		testMode.setLastUpdateDate(new Date());
+		testMode.setValid(true);
+		testMode.setCreateDate(new Date());
         
         //调用数据持久层对实体进行持久化操作
         this.testModeDao.insert(testMode);
@@ -138,20 +138,23 @@ public class TestModeService {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public List<TestMode> queryList(Boolean valid, Map<String, Object> params) {
+    public List<TestMode> queryList(
+		Boolean valid,
+		Map<String,Object> params   
+    	) {
         //判断条件合法性
         
         //生成查询条件
         params = params == null ? new HashMap<String, Object>() : params;
-        params.put("valid", valid);
-        
+		params.put("valid",valid);
+
         //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
         List<TestMode> resList = this.testModeDao.queryList(params);
         
         return resList;
     }
     
-    /**
+	/**
      * 分页查询TestMode实体列表
      * <功能详细描述>
      * @param valid
@@ -166,17 +169,19 @@ public class TestModeService {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public PagedList<TestMode> queryPagedList(Boolean valid,
-            Map<String, Object> params, int pageIndex, int pageSize) {
+    public PagedList<TestMode> queryPagedList(
+		Boolean valid,
+		Map<String,Object> params,
+    	int pageIndex,
+        int pageSize) {
         //T判断条件合法性
         
         //生成查询条件
         params = params == null ? new HashMap<String, Object>() : params;
-        params.put("valid", valid);
-        
+		params.put("valid",valid);
+ 
         //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
-        PagedList<TestMode> resPagedList = this.testModeDao
-                .queryPagedList(params, pageIndex, pageSize);
+        PagedList<TestMode> resPagedList = this.testModeDao.queryPagedList(params, pageIndex, pageSize);
         
         return resPagedList;
     }
@@ -190,7 +195,7 @@ public class TestModeService {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public boolean exists(Map<String, String> key2valueMap, String excludeId) {
+    public boolean exists(Map<String,String> key2valueMap, String excludeId) {
         AssertUtils.notEmpty(key2valueMap, "key2valueMap is empty");
         
         //生成查询条件
@@ -219,49 +224,46 @@ public class TestModeService {
         //验证参数是否合法，必填字段是否填写
         AssertUtils.notNull(testMode, "testMode is null.");
         AssertUtils.notEmpty(testMode.getId(), "testMode.id is empty.");
-        AssertUtils.notEmpty(testMode.getName(), "testMode.name is empty.");
-        
+		AssertUtils.notEmpty(testMode.getName(), "testMode.name is empty.");
+
         //生成需要更新字段的hashMap
         Map<String, Object> updateRowMap = new HashMap<String, Object>();
         updateRowMap.put("id", testMode.getId());
         
         //FIXME:需要更新的字段
-        updateRowMap.put("lastUpdateOperatorId",
-                testMode.getLastUpdateOperatorId());
-        updateRowMap.put("name", testMode.getName());
-        updateRowMap.put("testInt", testMode.getTestInt());
-        updateRowMap.put("testLong", testMode.getTestLong());
-        updateRowMap.put("testBigDecimal", testMode.getTestBigDecimal());
-        updateRowMap.put("type", testMode.getType());
-        updateRowMap.put("valid", testMode.isValid());
-        updateRowMap.put("createOperatorId", testMode.getCreateOperatorId());
-        updateRowMap.put("expiryDate", testMode.getExpiryDate());
-        updateRowMap.put("modifyAble", testMode.isModifyAble());
-        updateRowMap.put("parentId", testMode.getParentId());
-        updateRowMap.put("remark", testMode.getRemark());
-        updateRowMap.put("nested1", testMode.getNested1());
-        updateRowMap.put("nested2", testMode.getNested2());
-        updateRowMap.put("success", testMode.getSuccess());
-        updateRowMap.put("effictiveDate", testMode.getEffictiveDate());
-        updateRowMap.put("attributes", testMode.getAttributes());
-        updateRowMap.put("description", testMode.getDescription());
-        updateRowMap.put("lastUpdateDate", new Date());
-        
-        int updateRowCount = this.testModeDao.update(updateRowMap);
+		updateRowMap.put("lastUpdateOperatorId", testMode.getLastUpdateOperatorId());
+		updateRowMap.put("name", testMode.getName());
+		updateRowMap.put("testInt", testMode.getTestInt());
+		updateRowMap.put("testLong", testMode.getTestLong());
+		updateRowMap.put("testBigDecimal", testMode.getTestBigDecimal());
+		updateRowMap.put("type", testMode.getType());
+		updateRowMap.put("valid", testMode.isValid());
+		updateRowMap.put("expiryDate", testMode.getExpiryDate());
+		updateRowMap.put("modifyAble", testMode.isModifyAble());
+		updateRowMap.put("parentId", testMode.getParentId());
+		updateRowMap.put("remark", testMode.getRemark());
+		updateRowMap.put("nested1", testMode.getNested1());
+		updateRowMap.put("nested2", testMode.getNested2());
+		updateRowMap.put("success", testMode.getSuccess());
+		updateRowMap.put("effictiveDate", testMode.getEffictiveDate());
+		updateRowMap.put("attributes", testMode.getAttributes());
+		updateRowMap.put("description", testMode.getDescription());
+		updateRowMap.put("lastUpdateDate", new Date());
+
+        int updateRowCount = this.testModeDao.update(updateRowMap); 
         //如果需要大于1时，抛出异常并回滚，需要在这里修改
         return updateRowCount >= 1;
     }
-    
-    /**
-     * 根据id禁用TestMode<br/>
-     * <功能详细描述>
-     * @param id
-     * @return [参数说明]
-     * 
-     * @return boolean [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-    */
+     /**
+      * 根据id禁用TestMode<br/>
+      * <功能详细描述>
+      * @param id
+      * @return [参数说明]
+      * 
+      * @return boolean [返回类型说明]
+      * @exception throws [异常类型] [异常说明]
+      * @see [类、类#方法、类#成员]
+     */
     @Transactional
     public boolean disableById(String id) {
         AssertUtils.notEmpty(id, "id is empty.");

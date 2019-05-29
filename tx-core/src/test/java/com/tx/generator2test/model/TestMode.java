@@ -19,8 +19,11 @@ import javax.persistence.Transient;
 
 import com.tx.core.tree.model.TreeAble;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 /**
- * <功能简述>
+ * 测试对象
  * <功能详细描述>
  * 
  * @author  Administrator
@@ -30,6 +33,7 @@ import com.tx.core.tree.model.TreeAble;
  */
 @Entity
 @Table(name = "test_testmode")
+@ApiModel("测试对象")
 public class TestMode implements TreeAble<List<TestMode>, TestMode> {
     
     @Id
@@ -57,9 +61,10 @@ public class TestMode implements TreeAble<List<TestMode>, TestMode> {
     
     private String attributes;
     
-    @Column(nullable = false)
+    @Column(nullable = false, updatable = false)
     private Date createDate;
     
+    @Column(updatable = false)
     private String createOperatorId;
     
     @Column(nullable = false)
@@ -72,16 +77,20 @@ public class TestMode implements TreeAble<List<TestMode>, TestMode> {
     
     private boolean modifyAble;
     
+    @ApiModelProperty("是否成功")
     private Boolean success;
     
     private Date effictiveDate;
     
     private Date expiryDate;
     
+    @ApiModelProperty("测试int值")
     private int testInt;
     
+    @ApiModelProperty("测试Long值")
     private Long testLong;
     
+    @ApiModelProperty("测试BigDecimal值")
     private BigDecimal testBigDecimal;
     
     @Transient
@@ -355,70 +364,70 @@ public class TestMode implements TreeAble<List<TestMode>, TestMode> {
     public void setParentId(String parentId) {
         this.parentId = parentId;
     }
-
+    
     /**
      * @return 返回 valid
      */
     public boolean isValid() {
         return valid;
     }
-
+    
     /**
      * @param 对valid进行赋值
      */
     public void setValid(boolean valid) {
         this.valid = valid;
     }
-
+    
     /**
      * @return 返回 modifyAble
      */
     public boolean isModifyAble() {
         return modifyAble;
     }
-
+    
     /**
      * @param 对modifyAble进行赋值
      */
     public void setModifyAble(boolean modifyAble) {
         this.modifyAble = modifyAble;
     }
-
+    
     /**
      * @return 返回 success
      */
     public Boolean getSuccess() {
         return success;
     }
-
+    
     /**
      * @param 对success进行赋值
      */
     public void setSuccess(Boolean success) {
         this.success = success;
     }
-
+    
     /**
      * @return 返回 effictiveDate
      */
     public Date getEffictiveDate() {
         return effictiveDate;
     }
-
+    
     /**
      * @param 对effictiveDate进行赋值
      */
     public void setEffictiveDate(Date effictiveDate) {
         this.effictiveDate = effictiveDate;
     }
-
+    
     /**
      * @return 返回 expiryDate
      */
     public Date getExpiryDate() {
         return expiryDate;
     }
-
+    
     /**
      * @param 对expiryDate进行赋值
      */
