@@ -15,6 +15,7 @@ import javax.annotation.Resource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -26,7 +27,7 @@ import com.tx.core.paged.model.PagedList;
 import com.tx.generator2test.model.TestTypeEnum;
 
 /**
- * 测试对象[TestMode]Controller层<br/>
+ * 测试对象控制层<br/>
  * 
  * @author []
  * @version [版本号]
@@ -37,11 +38,12 @@ import com.tx.generator2test.model.TestTypeEnum;
 @RequestMapping("/testMode")
 public class TestModeController {
     
+    //测试对象业务层
     @Resource(name = "testModeService")
     private TestModeService testModeService;
     
     /**
-     * 跳转到查询测试对象列表页面[TestMode]<br/>
+     * 跳转到查询测试对象列表页面<br/>
      * <功能详细描述>
      * @return [参数说明]
      * 
@@ -57,7 +59,7 @@ public class TestModeController {
     }
     
     /**
-     * 跳转到新增测试对象[TestMode]页面<br/>
+     * 跳转到新增测试对象页面<br/>
      * <功能详细描述>
      * @return [参数说明]
      * 
@@ -75,8 +77,8 @@ public class TestModeController {
     }
     
     /**
-     * 跳转到编辑测试对象[TestMode]页面
-     *<功能详细描述>
+     * 跳转到编辑测试对象页面
+     * <功能详细描述>
      * @return [参数说明]
      * 
      * @return String [返回类型说明]
@@ -95,14 +97,14 @@ public class TestModeController {
     }
     
     /**
-     * 查询TestMode列表<br/>
+     * 查询测试对象实例列表<br/>
      * <功能详细描述>
      * @return [参数说明]
      * 
      * @return List<TestMode> [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
+     */
     @ResponseBody
     @RequestMapping("/queryList")
     public List<TestMode> queryList(
@@ -117,14 +119,14 @@ public class TestModeController {
     }
     
     /**
-     * 查询TestMode分页列表<br/>
-     *<功能详细描述>
+     * 查询测试对象实例分页列表<br/>
+     * <功能详细描述>
      * @return [参数说明]
      * 
      * @return List<TestMode> [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
+     */
     @ResponseBody
     @RequestMapping("/queryPagedList")
     public PagedList<TestMode> queryPagedList(
@@ -141,9 +143,9 @@ public class TestModeController {
     }
     
     /**
-     * 新增TestMode
+     * 新增测试对象实例
      * <功能详细描述>
-     * @param organization [参数说明]
+     * @param testMode [参数说明]
      * 
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
@@ -157,7 +159,7 @@ public class TestModeController {
     }
     
     /**
-     * 更新TestMode<br/>
+     * 更新测试对象实例<br/>
      * <功能详细描述>
      * @param testMode
      * @return [参数说明]
@@ -174,7 +176,7 @@ public class TestModeController {
     }
     
     /**
-     * 删除TestMode<br/> 
+     * 删除测试对象实例<br/> 
      * <功能详细描述>
      * @param testModeId
      * @return [参数说明]
@@ -192,7 +194,7 @@ public class TestModeController {
     }
     
     /**
-     * 禁用TestMode
+     * 禁用测试对象实例
      * @param testModeId
      * @return [参数说明]
      * 
@@ -209,7 +211,7 @@ public class TestModeController {
     }
     
     /**
-     * 启用TestMode<br/>
+     * 启用测试对象实例<br/>
      * <功能详细描述>
      * @param testModeId
      * @return [参数说明]
@@ -224,5 +226,31 @@ public class TestModeController {
             @RequestParam(value = "testModeId") String testModeId) {
         boolean flag = this.testModeService.enableById(testModeId);
         return flag;
+    }
+    
+    /**
+     * 校验参数对应实例是否重复
+     * @param excludeId
+     * @param params
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @ResponseBody
+    @RequestMapping("/check/{excludeId}")
+    public Map<String, String> check(
+            @PathVariable(value = "excludeId", required = false) String excludeId,
+            @RequestParam Map<String, String> params) {
+        boolean flag = this.testModeService.exists(params, excludeId);
+        
+        Map<String, String> resMap = new HashMap<String, String>();
+        if (!flag) {
+            resMap.put("ok", "");
+        } else {
+            resMap.put("error", "重复值");
+        }
+        return resMap;
     }
 }

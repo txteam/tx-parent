@@ -41,7 +41,7 @@ import io.swagger.annotations.ApiOperation;
  * @since  [产品/模块版本]
  */
 @RestController
-@Api(value = "/api/basicdata", tags = "基础数据容器API")
+@Api(tags = "基础数据容器API")
 @RequestMapping("/api/basicdata")
 public class BasicDataAPIController {
     
@@ -61,7 +61,7 @@ public class BasicDataAPIController {
             @ApiImplicitParam(name = "data", value = "数据字典实例", required = true, dataTypeClass = DataDict.class, paramType = "form", example = "{code:'...',name='...'}") })
     @RequestMapping(value = "/{type}/", method = RequestMethod.POST)
     public <T extends BasicData> void insert(@PathVariable String type,
-            @RequestParam DataDict data) {
+            @RequestBody DataDict data) {
         //获取对应的实体类型
         AssertUtils.notEmpty(type, "type is empty.");
         Class<T> entityClass = (Class<T>) BasicDataContext.getContext()
@@ -274,7 +274,7 @@ public class BasicDataAPIController {
             @ApiImplicitParam(name = "data", value = "数据字典实例", required = true, dataTypeClass = DataDict.class, example = "{code:'...',name='...'}") })
     @RequestMapping(value = "/{type}/{id}", method = RequestMethod.PUT)
     public <T extends BasicData> boolean updateById(@PathVariable String type,
-            @PathVariable String id, @RequestParam DataDict data) {
+            @PathVariable String id, @RequestBody DataDict data) {
         //获取对应的实体类型
         AssertUtils.notEmpty(type, "type is empty.");
         Class<T> entityClass = (Class<T>) BasicDataContext.getContext()
@@ -314,7 +314,7 @@ public class BasicDataAPIController {
             @ApiImplicitParam(name = "data", value = "数据字典实例", required = true, dataTypeClass = DataDict.class, example = "{code:'...',name='...'}") })
     @RequestMapping(value = "/{type}/code/{code}", method = RequestMethod.PUT)
     public <T extends BasicData> boolean updateByCode(@PathVariable String type,
-            @PathVariable String code, @RequestParam DataDict data) {
+            @PathVariable String code, @RequestBody DataDict data) {
         //获取对应的实体类型
         AssertUtils.notEmpty(type, "type is empty.");
         Class<T> entityClass = (Class<T>) BasicDataContext.getContext()

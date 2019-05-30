@@ -15,6 +15,7 @@ import javax.annotation.Resource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -30,7 +31,7 @@ import ${property.propertyType.getName()};
 </#list>
 
 /**
- * ${controller.entityComment}[${controller.entityTypeSimpleName}]Controller层<br/>
+ * ${controller.entityComment}控制层<br/>
  * 
  * @author []
  * @version [版本号]
@@ -41,12 +42,13 @@ import ${property.propertyType.getName()};
 @RequestMapping("/${controller.entityTypeSimpleName?uncap_first}")
 public class ${controller.entityTypeSimpleName}Controller {
     
+    //${controller.entityComment}业务层
     @Resource(name = "${controller.entityTypeSimpleName?uncap_first}Service")
     private ${controller.entityTypeSimpleName}Service ${controller.entityTypeSimpleName?uncap_first}Service;
     
 <#if !(viewType??) || viewType == "LIST">
     /**
-     * 跳转到查询${controller.entityComment}[${controller.entityTypeSimpleName}]列表页面<br/>
+     * 跳转到查询${controller.entityComment}列表页面<br/>
      * <功能详细描述>
      * @return [参数说明]
      * 
@@ -68,8 +70,8 @@ public class ${controller.entityTypeSimpleName}Controller {
     
 <#if (viewType??) && viewType == "PAGEDLIST">
     /**
-     * 跳转到查询${controller.entityComment}[${controller.entityTypeSimpleName}]分页列表页面<br/>
-     *<功能详细描述>
+     * 跳转到查询${controller.entityComment}分页列表页面<br/>
+     * <功能详细描述>
      * @return [参数说明]
      * 
      * @return String [返回类型说明]
@@ -89,7 +91,7 @@ public class ${controller.entityTypeSimpleName}Controller {
 </#if>
     
     /**
-     * 跳转到新增${controller.entityComment}[${controller.entityTypeSimpleName}]页面<br/>
+     * 跳转到新增${controller.entityComment}页面<br/>
      * <功能详细描述>
      * @return [参数说明]
      * 
@@ -111,8 +113,8 @@ public class ${controller.entityTypeSimpleName}Controller {
     }
     
     /**
-     * 跳转到编辑${controller.entityComment}[${controller.entityTypeSimpleName}]页面
-     *<功能详细描述>
+     * 跳转到编辑${controller.entityComment}页面
+     * <功能详细描述>
      * @return [参数说明]
      * 
      * @return String [返回类型说明]
@@ -136,14 +138,14 @@ public class ${controller.entityTypeSimpleName}Controller {
     }
 
     /**
-     * 查询${controller.entityTypeSimpleName}列表<br/>
+     * 查询${controller.entityComment}实例列表<br/>
      * <功能详细描述>
      * @return [参数说明]
      * 
      * @return List<${controller.entityTypeSimpleName}> [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
+     */
     @ResponseBody
     @RequestMapping("/queryList")
     public List<${controller.entityTypeSimpleName}> queryList(
@@ -166,14 +168,14 @@ public class ${controller.entityTypeSimpleName}Controller {
     }
     
     /**
-     * 查询${controller.entityTypeSimpleName}分页列表<br/>
-     *<功能详细描述>
+     * 查询${controller.entityComment}实例分页列表<br/>
+     * <功能详细描述>
      * @return [参数说明]
      * 
      * @return List<${controller.entityTypeSimpleName}> [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
+     */
     @ResponseBody
     @RequestMapping("/queryPagedList")
     public PagedList<${controller.entityTypeSimpleName}> queryPagedList(
@@ -199,9 +201,9 @@ public class ${controller.entityTypeSimpleName}Controller {
     }
     
     /**
-     * 新增${controller.entityTypeSimpleName}
+     * 新增${controller.entityComment}实例
      * <功能详细描述>
-     * @param organization [参数说明]
+     * @param ${controller.entityTypeSimpleName?uncap_first} [参数说明]
      * 
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
@@ -215,7 +217,7 @@ public class ${controller.entityTypeSimpleName}Controller {
     }
     
     /**
-     * 更新${controller.entityTypeSimpleName}<br/>
+     * 更新${controller.entityComment}实例<br/>
      * <功能详细描述>
      * @param ${controller.entityTypeSimpleName?uncap_first}
      * @return [参数说明]
@@ -232,7 +234,7 @@ public class ${controller.entityTypeSimpleName}Controller {
     }
     
     /**
-     * 删除${controller.entityTypeSimpleName}<br/> 
+     * 删除${controller.entityComment}实例<br/> 
      * <功能详细描述>
      * @param ${controller.entityTypeSimpleName?uncap_first}${controller.pkProperty.propertyName?cap_first}
      * @return [参数说明]
@@ -250,7 +252,7 @@ public class ${controller.entityTypeSimpleName}Controller {
     
 <#if controller.validProperty??>
     /**
-     * 禁用${controller.entityTypeSimpleName}
+     * 禁用${controller.entityComment}实例
      * @param ${controller.entityTypeSimpleName?uncap_first}${controller.pkProperty.propertyName?cap_first}
      * @return [参数说明]
      * 
@@ -266,7 +268,7 @@ public class ${controller.entityTypeSimpleName}Controller {
     }
     
     /**
-     * 启用${controller.entityTypeSimpleName}<br/>
+     * 启用${controller.entityComment}实例<br/>
      * <功能详细描述>
      * @param ${controller.entityTypeSimpleName?uncap_first}${controller.pkProperty.propertyName?cap_first}
      * @return [参数说明]
@@ -283,18 +285,10 @@ public class ${controller.entityTypeSimpleName}Controller {
     }
 </#if>
 
-<#if !ObjectUtils.isEmpty(uniquePropertyNamesArray)>
-	<#list uniquePropertyNamesArray as uniquePropertyNames>
-    /**
-     * 判断${controller.entityTypeSimpleName}:
-      	<#list uniqueGetterNames as uniqueGetterName>
-     *  ${uniqueGetterName}
-     	</#list>
-     * 是否已经被使用
-		<#list uniqueGetterNames as uniqueGetterName>
-	 * @param uniqueGetterName
-		</#list>
-     * @param exclude${controller.entityTypeSimpleName}${controller.pkColumn.propertyName?cap_first}
+	/**
+     * 校验参数对应实例是否重复
+	 * @param exclude${controller.pkProperty.propertyName?cap_first}
+     * @param params
      * @return [参数说明]
      * 
      * @return boolean [返回类型说明]
@@ -302,32 +296,18 @@ public class ${controller.entityTypeSimpleName}Controller {
      * @see [类、类#方法、类#成员]
      */
     @ResponseBody
-    @RequestMapping("/validate<#list uniqueGetterNames as uniqueGetterName>${uniqueGetterName?cap_first}<#if uniqueGetterName_has_next>And</#if></#list>IsExist")
-    public Map<String, String> validate<#list uniqueGetterNames as uniqueGetterName>${uniqueGetterName?cap_first}<#if uniqueGetterName_has_next>And</#if></#list>IsExist(
-		<#list uniqueGetterNames as uniqueGetterName>
-            @RequestParam("${uniqueGetterName}") String ${uniqueGetterName},
-		</#list>
-            @RequestParam(value = "${controller.idPropertyName}", required = false) String exclude${controller.entityTypeSimpleName}${controller.pkColumn.propertyName?cap_first},
-            @RequestParam MultiValueMap<String, String> request) {
-        
-        Map<String, String> key2valueMap = new HashMap<String, String>();
-		<#list uniqueGetterNames as uniqueGetterName>
-        key2valueMap.put("${uniqueGetterName}", ${uniqueGetterName});
-		</#list>
-        
-        boolean flag = this.${controller.entityTypeSimpleName?uncap_first}Service.isExist(key2valueMap, exclude${controller.entityTypeSimpleName}${controller.pkColumn.propertyName?cap_first});
+    @RequestMapping("/check/{exclude${controller.pkProperty.propertyName?cap_first}}")
+    public Map<String, String> check(
+            @PathVariable(value = "exclude${controller.pkProperty.propertyName?cap_first}", required = false) String exclude${controller.pkProperty.propertyName?cap_first},
+            @RequestParam Map<String, String> params) {
+        boolean flag = this.${controller.entityTypeSimpleName?uncap_first}Service.exists(params, exclude${controller.pkProperty.propertyName?cap_first});
         
         Map<String, String> resMap = new HashMap<String, String>();
         if (!flag) {
-        	//FIXME:修改验证重复成功提示信息
-            resMap.put("ok", "可用的${controller.entityTypeSimpleName?uncap_first} <#list uniqueGetterNames as uniqueGetterName>${uniqueGetterName}<#if uniqueGetterName_has_next>,</#if></#list>");
+            resMap.put("ok", "");
         } else {
-        	//FIXME:修改验证重复失败提示信息
-            resMap.put("error", "已经存在的${controller.entityTypeSimpleName?uncap_first} <#list uniqueGetterNames as uniqueGetterName>${uniqueGetterName}<#if uniqueGetterName_has_next>,</#if></#list>");
+            resMap.put("error", "重复值");
         }
         return resMap;
     }
-    
-	</#list>
-</#if>
 }

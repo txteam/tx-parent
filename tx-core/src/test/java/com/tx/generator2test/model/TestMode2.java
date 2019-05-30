@@ -13,6 +13,8 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import io.swagger.annotations.ApiModel;
+
 /**
  * <功能简述>
  * <功能详细描述>
@@ -24,6 +26,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "test_testmode2")
+@ApiModel("测试对象2")
 public class TestMode2 {
     
     @Id

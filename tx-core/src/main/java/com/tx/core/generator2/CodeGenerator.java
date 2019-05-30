@@ -61,8 +61,10 @@ public class CodeGenerator {
     
     private static String controllerTemplateFilePath = "com/tx/core/generator2/defaultftl/controller.ftl";
     
+    private static String apicontrollerTemplateFilePath = "com/tx/core/generator2/defaultftl/apicontroller.ftl";
+    
     /**
-     * 生成持久层逻辑
+     * 生成控制层逻辑
      * <功能详细描述>
      * @param jpaMetaClass
      * @param resultFolderPath [参数说明]
@@ -83,18 +85,26 @@ public class CodeGenerator {
                 entityType.getName()) + "/../../controller";
         controllerPath = org.springframework.util.StringUtils
                 .cleanPath(controllerPath);
-        String controllerFilePath = BASE_CODE_FOLDER + "/main/java/" + controllerPath
-                + "/" + entityType.getSimpleName() + "Controller.java";
         
+        String controllerFilePath = BASE_CODE_FOLDER + "/src/main/java/" + controllerPath
+                + "/" + entityType.getSimpleName() + "Controller.java";
         FreeMarkerUtils.fprint(LOAD_TEMPLATE_CLASS,
                 controllerTemplateFilePath,
                 data,
                 controllerFilePath);
         logger.info("controller存放路径:{}", controllerFilePath);
+        
+        String apicontrollerFilePath = BASE_CODE_FOLDER + "/src/main/java/" + controllerPath
+                + "/" + entityType.getSimpleName() + "APIController.java";
+        FreeMarkerUtils.fprint(LOAD_TEMPLATE_CLASS,
+                apicontrollerTemplateFilePath,
+                data,
+                apicontrollerFilePath);
+        logger.info("controller存放路径:{}", apicontrollerFilePath);
     }
     
     /**
-     * 生成持久层逻辑
+     * 生成业务层逻辑
      * <功能详细描述>
      * @param jpaMetaClass
      * @param resultFolderPath [参数说明]
@@ -114,7 +124,7 @@ public class CodeGenerator {
                 entityType.getName()) + "/../../service";
         servicePath = org.springframework.util.StringUtils
                 .cleanPath(servicePath);
-        String serviceFilePath = BASE_CODE_FOLDER + "/main/java/" + servicePath
+        String serviceFilePath = BASE_CODE_FOLDER + "/src/main/java/" + servicePath
                 + "/" + entityType.getSimpleName() + "Service.java";
         
         FreeMarkerUtils.fprint(LOAD_TEMPLATE_CLASS,
@@ -144,9 +154,9 @@ public class CodeGenerator {
                 entityType.getName()) + "/../../dao";
         daoPath = org.springframework.util.StringUtils.cleanPath(daoPath);
         
-        String daoFilePath = BASE_CODE_FOLDER + "/main/java/" + daoPath + "/"
+        String daoFilePath = BASE_CODE_FOLDER + "/src/main/java/" + daoPath + "/"
                 + entityType.getSimpleName() + "Dao.java";
-        String daoImplFilePath = BASE_CODE_FOLDER + "/main/java/" + daoPath
+        String daoImplFilePath = BASE_CODE_FOLDER + "/src/main/java/" + daoPath
                 + "/impl/" + entityType.getSimpleName() + "DaoImpl.java";
         
         FreeMarkerUtils.fprint(LOAD_TEMPLATE_CLASS,
@@ -163,7 +173,7 @@ public class CodeGenerator {
     }
     
     /**
-     * 生成持久层逻辑
+     * 生成SqlMap
      * <功能详细描述>
      * @param jpaMetaClass
      * @param resultFolderPath [参数说明]
@@ -182,7 +192,7 @@ public class CodeGenerator {
                 entityType.getName()) + "/../../dao/impl";
         sqlmapPath = org.springframework.util.StringUtils.cleanPath(sqlmapPath);
         
-        String sqlmapFilePath = BASE_CODE_FOLDER + "/main/java/" + sqlmapPath
+        String sqlmapFilePath = BASE_CODE_FOLDER + "/src/main/java/" + sqlmapPath
                 + "/" + entityType.getSimpleName() + "SqlMap.xml";
         
         FreeMarkerUtils.fprint(LOAD_TEMPLATE_CLASS,
@@ -212,9 +222,9 @@ public class CodeGenerator {
         //代码生成路径生成
         String[] arrs = entityType.getName().split("\\.");
         String packageName = arrs[arrs.length - 3];
-        String dbScriptPath = BASE_CODE_FOLDER + "/"
+        String dbScriptPath = BASE_CODE_FOLDER + "/dbscript/"
                 + DATASOURCE_TYPE.toString().toLowerCase() + "/01basisScript/"
-                + packageName + "/" + dbScript.getTableName().toLowerCase()
+                + packageName + "/tables/" + dbScript.getTableName().toLowerCase()
                 + ".sql";
         
         FreeMarkerUtils.fprint(LOAD_TEMPLATE_CLASS,

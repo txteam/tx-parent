@@ -6,7 +6,9 @@
  */
 package com.tx.core.generator2.model;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -94,7 +96,9 @@ public class ControllerGeneratorModel {
                 })
                 .collect(Collectors.toList());
         
+        Set<String> propertyNameSet = new HashSet<>();
         this.propertyList.stream().forEach(property -> {
+            propertyNameSet.add(property.getPropertyName());
             if (StringUtils.equals("code", property.getPropertyName())
                     && !property.isPrimaryKey()) {
                 //如果主键就是code，则无需标定hasCodeProperty
@@ -112,6 +116,32 @@ public class ControllerGeneratorModel {
                         "valid type should is boolean or Boolean.");
             }
         });
+        
+        //        this.uniquePropertiesList = new ArrayList<List<EntityProperty>>();
+        //        if (ArrayUtils.isEmpty(uniquePropertyNamesArray)) {
+        //            return;
+        //        }
+        //        for (String[] uniquePropertyNames : uniquePropertyNamesArray) {
+        //            if (ArrayUtils.isEmpty(uniquePropertyNames)) {
+        //                continue;
+        //            }
+        //            Set<String> validPropertyNameSet = new HashSet<>();
+        //            for (String propertyName : uniquePropertyNames) {
+        //                if (!propertyNameSet.contains(propertyName)) {
+        //                    continue;
+        //                }
+        //                validPropertyNameSet.add(propertyName);
+        //            }
+        //            if (CollectionUtils.isEmpty(validPropertyNameSet)) {
+        //                continue;
+        //            }
+        //            //添加唯一键属性清单列表
+        //            this.uniquePropertiesList
+        //                    .add(this.propertyList.stream().filter(property -> {
+        //                        return validPropertyNameSet
+        //                                .contains(property.getPropertyName());
+        //                    }).collect(Collectors.toList()));
+        //        }
     }
     
     /**

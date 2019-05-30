@@ -40,7 +40,7 @@ public interface BasicDataAPIClient {
      * @see [类、类#方法、类#成员]
      */
     @RequestMapping(value = "/{type}/", method = RequestMethod.POST)
-    public void insert(@PathVariable String type, @RequestParam DataDict data);
+    public void insert(@PathVariable String type, @RequestBody DataDict data);
     
     /**
      * 批量插入基础数据对象<br/>
@@ -125,7 +125,7 @@ public interface BasicDataAPIClient {
      */
     @RequestMapping(value = "/{type}/{id}", method = RequestMethod.PUT)
     public boolean updateById(@PathVariable String type,
-            @PathVariable String id, @RequestParam DataDict data);
+            @PathVariable String id, @RequestBody DataDict data);
     
     /**
      * 根据id更新基础数据对象<br/>
@@ -139,7 +139,7 @@ public interface BasicDataAPIClient {
      */
     @RequestMapping(value = "/{type}/code/{code}", method = RequestMethod.PUT)
     public boolean updateByCode(@PathVariable String type,
-            @PathVariable String code, @RequestParam DataDict data);
+            @PathVariable String code, @RequestBody DataDict data);
     
     /**
      * 根据id更新基础数据对象<br/>

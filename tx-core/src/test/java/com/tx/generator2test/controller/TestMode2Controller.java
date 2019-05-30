@@ -15,6 +15,7 @@ import javax.annotation.Resource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -26,7 +27,7 @@ import com.tx.core.paged.model.PagedList;
 import com.tx.generator2test.model.TestTypeEnum;
 
 /**
- * TestMode2[TestMode2]Controller层<br/>
+ * 测试对象2控制层<br/>
  * 
  * @author []
  * @version [版本号]
@@ -37,11 +38,12 @@ import com.tx.generator2test.model.TestTypeEnum;
 @RequestMapping("/testMode2")
 public class TestMode2Controller {
     
+    //测试对象2业务层
     @Resource(name = "testMode2Service")
     private TestMode2Service testMode2Service;
     
     /**
-     * 跳转到查询TestMode2[TestMode2]列表页面<br/>
+     * 跳转到查询测试对象2列表页面<br/>
      * <功能详细描述>
      * @return [参数说明]
      * 
@@ -51,14 +53,13 @@ public class TestMode2Controller {
      */
     @RequestMapping("/toQueryList")
     public String toQueryList(ModelMap response) {
-		response.put("types", TestTypeEnum.values());
-
+        response.put("types", TestTypeEnum.values());
+        
         return "/generator2test/queryTestMode2List";
     }
     
-    
     /**
-     * 跳转到新增TestMode2[TestMode2]页面<br/>
+     * 跳转到新增测试对象2页面<br/>
      * <功能详细描述>
      * @return [参数说明]
      * 
@@ -68,16 +69,16 @@ public class TestMode2Controller {
      */
     @RequestMapping("/toAdd")
     public String toAdd(ModelMap response) {
-    	response.put("testMode2", new TestMode2());
-    	
-		response.put("types", TestTypeEnum.values());
-
+        response.put("testMode2", new TestMode2());
+        
+        response.put("types", TestTypeEnum.values());
+        
         return "/generator2test/addTestMode2";
     }
     
     /**
-     * 跳转到编辑TestMode2[TestMode2]页面
-     *<功能详细描述>
+     * 跳转到编辑测试对象2页面
+     * <功能详细描述>
      * @return [参数说明]
      * 
      * @return String [返回类型说明]
@@ -85,72 +86,64 @@ public class TestMode2Controller {
      * @see [类、类#方法、类#成员]
      */
     @RequestMapping("/toUpdate")
-    public String toUpdate(
-    		@RequestParam("testMode2Code") String testMode2Code,
+    public String toUpdate(@RequestParam("testMode2Code") String testMode2Code,
             ModelMap response) {
-        TestMode2 testMode2 = this.testMode2Service.findByCode(testMode2Code); 
+        TestMode2 testMode2 = this.testMode2Service.findByCode(testMode2Code);
         response.put("testMode2", testMode2);
-
-		response.put("types", TestTypeEnum.values());
+        
+        response.put("types", TestTypeEnum.values());
         
         return "/generator2test/updateTestMode2";
     }
-
+    
     /**
-     * 查询TestMode2列表<br/>
+     * 查询测试对象2实例列表<br/>
      * <功能详细描述>
      * @return [参数说明]
      * 
      * @return List<TestMode2> [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
+     */
     @ResponseBody
     @RequestMapping("/queryList")
     public List<TestMode2> queryList(
-    		@RequestParam MultiValueMap<String, String> request
-    	) {
-        Map<String,Object> params = new HashMap<>();
+            @RequestParam MultiValueMap<String, String> request) {
+        Map<String, Object> params = new HashMap<>();
         //params.put("",request.getFirst(""));
-    	
-        List<TestMode2> resList = this.testMode2Service.queryList(
-			params         
-        );
-  
+        
+        List<TestMode2> resList = this.testMode2Service.queryList(params);
+        
         return resList;
     }
     
     /**
-     * 查询TestMode2分页列表<br/>
-     *<功能详细描述>
+     * 查询测试对象2实例分页列表<br/>
+     * <功能详细描述>
      * @return [参数说明]
      * 
      * @return List<TestMode2> [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
+     */
     @ResponseBody
     @RequestMapping("/queryPagedList")
     public PagedList<TestMode2> queryPagedList(
-			@RequestParam(value = "pageNumber", required = false, defaultValue = "1") int pageIndex,
+            @RequestParam(value = "pageNumber", required = false, defaultValue = "1") int pageIndex,
             @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
-            @RequestParam MultiValueMap<String, String> request
-    	) {
-		Map<String,Object> params = new HashMap<>();
-		//params.put("",request.getFirst(""));
-
-        PagedList<TestMode2> resPagedList = this.testMode2Service.queryPagedList(
-			params,
-			pageIndex,
-			pageSize
-        );
+            @RequestParam MultiValueMap<String, String> request) {
+        Map<String, Object> params = new HashMap<>();
+        //params.put("",request.getFirst(""));
+        
+        PagedList<TestMode2> resPagedList = this.testMode2Service
+                .queryPagedList(params, pageIndex, pageSize);
         return resPagedList;
     }
     
     /**
-     * 新增TestMode2
+     * 新增测试对象2实例
      * <功能详细描述>
-     * @param organization [参数说明]
+     * @param testMode2 [参数说明]
      * 
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
@@ -164,7 +157,7 @@ public class TestMode2Controller {
     }
     
     /**
-     * 更新TestMode2<br/>
+     * 更新测试对象2实例<br/>
      * <功能详细描述>
      * @param testMode2
      * @return [参数说明]
@@ -181,7 +174,7 @@ public class TestMode2Controller {
     }
     
     /**
-     * 删除TestMode2<br/> 
+     * 删除测试对象2实例<br/> 
      * <功能详细描述>
      * @param testMode2Code
      * @return [参数说明]
@@ -192,9 +185,35 @@ public class TestMode2Controller {
      */
     @ResponseBody
     @RequestMapping("/deleteByCode")
-    public boolean deleteByCode(@RequestParam(value = "testMode2Code") String testMode2Code) {
+    public boolean deleteByCode(
+            @RequestParam(value = "testMode2Code") String testMode2Code) {
         boolean flag = this.testMode2Service.deleteByCode(testMode2Code);
         return flag;
     }
     
+    /**
+     * 校验参数对应实例是否重复
+     * @param excludeCode
+     * @param params
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @ResponseBody
+    @RequestMapping("/check/{excludeCode}")
+    public Map<String, String> check(
+            @PathVariable(value = "excludeCode", required = false) String excludeCode,
+            @RequestParam Map<String, String> params) {
+        boolean flag = this.testMode2Service.exists(params, excludeCode);
+        
+        Map<String, String> resMap = new HashMap<String, String>();
+        if (!flag) {
+            resMap.put("ok", "");
+        } else {
+            resMap.put("error", "重复值");
+        }
+        return resMap;
+    }
 }
