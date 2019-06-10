@@ -10,6 +10,9 @@
 <#list sqlmap.columnList as column>
 	<#if !column.isSimpleValueType()>
 		<result column="${column.columnName}" property="${column.columnPropertyName}"/>
+	<#elseif column.columnName != column.columnPropertyName>
+		<result column="${column.columnName}" property="${column.columnPropertyName}"/>
+	<#else>
 	</#if>
 </#list>
 	</resultMap>
@@ -25,11 +28,11 @@
 		  FROM ${sqlmap.tableName} ${sqlmap.simpleTableName}
 		 WHERE
 		<trim prefixOverrides="AND | OR">
-<#list sqlmap.pkColumnList as column>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(${column.propertyName})">  
-	            AND ${sqlmap.simpleTableName}.${column.columnName} = ${r"#{"}${column.columnPropertyName}${r"}"}
+<#if sqlmap.pkColumn??>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(${sqlmap.pkColumn.propertyName})">  
+	            AND ${sqlmap.simpleTableName}.${sqlmap.pkColumn.columnName} = ${r"#{"}${sqlmap.pkColumn.columnPropertyName}${r"}"}
 	        </if>
-</#list>
+</#if>
 <#if sqlmap.codeColumn??>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(${sqlmap.codeColumn.propertyName})">  
 	            AND ${sqlmap.simpleTableName}.${sqlmap.codeColumn.columnName} = ${r"#{"}${sqlmap.codeColumn.columnPropertyName}${r"}"}
@@ -48,18 +51,58 @@
 </#list>
 		  FROM ${sqlmap.tableName} ${sqlmap.simpleTableName}
 		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(conditions)">
+			<foreach collection="conditions" item="conditionTemp">
+			<choose>  
+		        <when test="conditionTemp.withoutValue">
+		        	${r"AND ${conditionTemp.column} ${conditionTemp.operator}"}
+		        </when>
+		        <when test="conditionTemp.foreach">  
+		            ${r"AND ${conditionTemp.column} ${conditionTemp.operator}"} <foreach collection="conditionTemp.value" item="valueTemp" open="(" close=")" separator=",">${r"#{valueTemp}"}</foreach>
+		        </when>
+		        <otherwise>  
+		            ${r"AND ${conditionTemp.column} ${conditionTemp.operator}"} ${r"#{conditionTemp.value}"}
+		        </otherwise>
+			</choose>
+			</foreach>
+	        </if>
 <#list sqlmap.columnList as column>
+	<#if column.propertyName == "createDate">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(minCreateDate)">  
+	            ${r"<![CDATA[ "}AND ${sqlmap.simpleTableName}.${column.columnName} >= ${r"#{"}minCreateDate${r"} ]]>"}
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(maxCreateDate)">  
+	            ${r"<![CDATA[ "}AND ${sqlmap.simpleTableName}.${column.columnName} < ${r"#{"}maxCreateDate${r"} ]]>"}
+	        </if>
+	<#elseif column.propertyType.getName() == "java.util.Date" || column.propertyType.getName() == "java.sql.Date">
+	<#elseif column.propertyType.getName() == "float" || column.propertyType.getName() == "java.lang.Float">
+	<#elseif column.propertyType.getName() == "double" || column.propertyType.getName() == "java.lang.Double">
+	<#elseif !column.isSimpleValueType()>
+			<if test="${column.propertyName} != null">
+				<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(${column.columnPropertyName})">  
+		            ${r"<![CDATA[ "}AND ${sqlmap.simpleTableName}.${column.columnName} = ${r"#{"}${column.columnPropertyName}${r"} ]]>"}
+		        </if>
+	        </if>			
+	<#else>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(${column.propertyName})">  
 	            ${r"<![CDATA[ "}AND ${sqlmap.simpleTableName}.${column.columnName} = ${r"#{"}${column.columnPropertyName}${r"} ]]>"}
-	        </if>
+	        </if>			
+	</#if>	
 </#list>
-<#list sqlmap.pkColumnList as column>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(exclude${column.propertyName?cap_first})">
-				${r"<![CDATA[ "}AND ${sqlmap.simpleTableName}.${column.columnName} ${r"<>"} ${r"#{exclude"}${column.propertyName?cap_first}${r"} ]]>"}
+<#if sqlmap.pkColumn??>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(exclude${sqlmap.pkColumn.propertyName?cap_first})">
+				${r"<![CDATA[ "}AND ${sqlmap.simpleTableName}.${sqlmap.pkColumn.columnName} ${r"<>"} ${r"#{exclude"}${sqlmap.pkColumn.propertyName?cap_first}${r"} ]]>"}
 			</if>
-</#list>
+</#if>
 		</trim>
-		ORDER BY <#list sqlmap.pkColumnList as column>${column.columnName}<#if column_has_next>,</#if></#list>
+		<choose>  
+	        <when test="@com.tx.core.util.OgnlUtils@isNotEmpty(orders)">  
+	            ORDER BY <foreach collection="orders" item="orderTemp" separator=",">${r"${orderTemp.column} ${orderTemp.direction}"}</foreach>
+	        </when>
+	        <otherwise>  
+	            ORDER BY ${sqlmap.defaultOrderBy}
+	        </otherwise>  
+	    </choose>
 	</select>
 
 	<!-- auto generate default count -->
@@ -69,16 +112,49 @@
 		SELECT COUNT(1)
 		  FROM ${sqlmap.tableName} ${sqlmap.simpleTableName}
 		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(conditions)">
+			<foreach collection="conditions" item="conditionTemp">
+			<choose>  
+		        <when test="conditionTemp.withoutValue">
+		        	${r"AND ${conditionTemp.column} ${conditionTemp.operator}"}
+		        </when>
+		        <when test="conditionTemp.foreach">  
+		            ${r"AND ${conditionTemp.column} ${conditionTemp.operator}"} <foreach collection="conditionTemp.value" item="valueTemp" open="(" close=")" separator=",">${r"#{valueTemp}"}</foreach>
+		        </when>
+		        <otherwise>  
+		            ${r"AND ${conditionTemp.column} ${conditionTemp.operator}"} ${r"#{conditionTemp.value}"}
+		        </otherwise>
+			</choose>
+			</foreach>
+	        </if>
 <#list sqlmap.columnList as column>
+	<#if column.propertyName == "createDate">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(minCreateDate)">  
+	            ${r"<![CDATA[ "}AND ${sqlmap.simpleTableName}.${column.columnName} >= ${r"#{"}minCreateDate${r"} ]]>"}
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(maxCreateDate)">  
+	            ${r"<![CDATA[ "}AND ${sqlmap.simpleTableName}.${column.columnName} < ${r"#{"}maxCreateDate${r"} ]]>"}
+	        </if>
+	<#elseif column.propertyType.getName() == "java.util.Date" || column.propertyType.getName() == "java.sql.Date">
+	<#elseif column.propertyType.getName() == "float" || column.propertyType.getName() == "java.lang.Float">
+	<#elseif column.propertyType.getName() == "double" || column.propertyType.getName() == "java.lang.Double">
+	<#elseif !column.isSimpleValueType()>
+			<if test="${column.propertyName} != null">
+				<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(${column.columnPropertyName})">  
+		            ${r"<![CDATA[ "}AND ${sqlmap.simpleTableName}.${column.columnName} = ${r"#{"}${column.columnPropertyName}${r"} ]]>"}
+		        </if>
+	        </if>			
+	<#else>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(${column.propertyName})">  
 	            ${r"<![CDATA[ "}AND ${sqlmap.simpleTableName}.${column.columnName} = ${r"#{"}${column.columnPropertyName}${r"} ]]>"}
-	        </if>
+	        </if>			
+	</#if>	
 </#list>
-<#list sqlmap.pkColumnList as column>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(exclude${column.propertyName?cap_first})">
-				${r"<![CDATA[ "}AND ${sqlmap.simpleTableName}.${column.columnName} ${r"<>"} ${r"#{exclude"}${column.propertyName?cap_first}${r"} ]]>"}
+<#if sqlmap.pkColumn??>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(exclude${sqlmap.pkColumn.propertyName?cap_first})">
+				${r"<![CDATA[ "}AND ${sqlmap.simpleTableName}.${sqlmap.pkColumn.columnName} ${r"<>"} ${r"#{exclude"}${sqlmap.pkColumn.propertyName?cap_first}${r"} ]]>"}
 			</if>
-</#list>
+</#if>
 		</trim>
 	</select>
 	
@@ -108,11 +184,16 @@
 		parameterType="${sqlmap.entityTypeName}">
 		DELETE FROM ${sqlmap.tableName}  WHERE
 		<trim prefixOverrides="AND | OR">
-<#list sqlmap.pkColumnList as column>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(${column.propertyName})">  
-	            AND ${column.columnName} = ${r"#{"}${column.columnPropertyName}${r"}"}
+<#if sqlmap.pkColumn??>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(${sqlmap.pkColumn.propertyName})">  
+	            AND ${sqlmap.pkColumn.columnName} = ${r"#{"}${sqlmap.pkColumn.columnPropertyName}${r"}"}
 	        </if>
-</#list>
+</#if>
+<#if sqlmap.codeColumn??>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(${sqlmap.codeColumn.propertyName})">  
+	            AND ${sqlmap.codeColumn.columnName} = ${r"#{"}${sqlmap.codeColumn.columnPropertyName}${r"}"}
+	        </if>
+</#if>
 		</trim>
 	</delete>
 	
@@ -122,7 +203,7 @@
 	    UPDATE ${sqlmap.tableName}
 	    <trim prefix="SET" suffixOverrides=",">
 <#list sqlmap.columnList as column>
-	<#if (!column.isPrimaryKey() && column.isUpdatable())>
+	<#if (!column.isPrimaryKey() && column.isUpdatable() && column.propertyName != "createDate" && column.propertyName != "createOperatorId" && column.propertyName != "code")>
 			<if test="_parameter.containsKey('${column.propertyName}')">
 	    		${column.columnName} = ${r"#{"}${column.columnPropertyName},javaType=${column.columnPropertyType.getName()}${r"}"},
 	    	</if>
@@ -131,11 +212,16 @@
 	    </trim>
 	    WHERE
 		<trim prefixOverrides="AND | OR">
-<#list sqlmap.pkColumnList as column>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(${column.propertyName})">  
-	            AND ${column.columnName} = ${r"#{"}${column.columnPropertyName}${r"}"}
+<#if sqlmap.pkColumn??>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(${sqlmap.pkColumn.propertyName})">  
+	            AND ${sqlmap.pkColumn.columnName} = ${r"#{"}${sqlmap.pkColumn.columnPropertyName}${r"}"}
 	        </if>
-</#list>
+</#if>
+<#if sqlmap.codeColumn??>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(${sqlmap.codeColumn.propertyName})">  
+	            AND ${sqlmap.codeColumn.columnName} = ${r"#{"}${sqlmap.codeColumn.columnPropertyName}${r"}"}
+	        </if>
+</#if>
 		</trim>
 	</update> 
 

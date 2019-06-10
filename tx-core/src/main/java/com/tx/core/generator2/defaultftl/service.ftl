@@ -275,6 +275,7 @@ public class ${service.entityTypeSimpleName}Service {
         //如果需要大于1时，抛出异常并回滚，需要在这里修改
         return updateRowCount >= 1;
     }
+
 <#if service.validColumn??>
      /**
       * 根据${service.pkColumn.propertyName}禁用${service.entityTypeSimpleName}<br/>

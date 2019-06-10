@@ -4,7 +4,7 @@
  * 修改时间:  2018年6月9日
  * <修改描述:>
  */
-package com.tx.core.mybatis.support;
+package com.tx.core.mybatis.mapper;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,6 +29,7 @@ import org.springframework.core.AliasRegistry;
 
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.mybatis.annotation.MapperEntity;
+import com.tx.core.mybatis.support.MyBatisDaoSupport;
 import com.tx.core.util.ClassScanUtils;
 
 /**

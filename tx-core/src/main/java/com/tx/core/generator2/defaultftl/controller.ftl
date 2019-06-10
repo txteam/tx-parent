@@ -123,9 +123,9 @@ public class ${controller.entityTypeSimpleName}Controller {
      */
     @RequestMapping("/toUpdate")
     public String toUpdate(
-    		@RequestParam("${controller.entityTypeSimpleName?uncap_first}${controller.pkProperty.propertyName?cap_first}") String ${controller.entityTypeSimpleName?uncap_first}${controller.pkProperty.propertyName?cap_first},
+    		@RequestParam("${controller.pkProperty.propertyName}") String ${controller.pkProperty.propertyName},
             ModelMap response) {
-        ${controller.entityTypeSimpleName} ${controller.entityTypeSimpleName?uncap_first} = this.${controller.entityTypeSimpleName?uncap_first}Service.findBy${controller.pkProperty.propertyName?cap_first}(${controller.entityTypeSimpleName?uncap_first}${controller.pkProperty.propertyName?cap_first}); 
+        ${controller.entityTypeSimpleName} ${controller.entityTypeSimpleName?uncap_first} = this.${controller.entityTypeSimpleName?uncap_first}Service.findBy${controller.pkProperty.propertyName?cap_first}(${controller.pkProperty.propertyName}); 
         response.put("${controller.entityTypeSimpleName?uncap_first}", ${controller.entityTypeSimpleName?uncap_first});
 
 <#list controller.propertyList as property>
@@ -234,9 +234,45 @@ public class ${controller.entityTypeSimpleName}Controller {
     }
     
     /**
+     * 根据主键查询${controller.entityComment}实例<br/> 
+     * <功能详细描述>
+     * @param ${controller.pkProperty.propertyName}
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @ResponseBody
+    @RequestMapping("/findBy${controller.pkProperty.propertyName?cap_first}")
+    public ${controller.entityTypeSimpleName} findBy${controller.pkProperty.propertyName?cap_first}(@RequestParam(value = "${controller.pkProperty.propertyName}") String ${controller.pkProperty.propertyName}) {
+        ${controller.entityTypeSimpleName} ${controller.entityTypeSimpleName?uncap_first} = this.${controller.entityTypeSimpleName?uncap_first}Service.findBy${controller.pkProperty.propertyName?cap_first}(${controller.pkProperty.propertyName});
+        return ${controller.entityTypeSimpleName?uncap_first};
+    }
+
+<#if controller.codeProperty??>
+	/**
+     * 根据编码查询${controller.entityComment}实例<br/> 
+     * <功能详细描述>
+     * @param ${controller.codeProperty.propertyName}
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @ResponseBody
+    @RequestMapping("/findBy${controller.codeProperty.propertyName?cap_first}")
+    public ${controller.entityTypeSimpleName} findBy${controller.codeProperty.propertyName?cap_first}(@RequestParam(value = "${controller.codeProperty.propertyName}") String ${controller.codeProperty.propertyName}) {
+        ${controller.entityTypeSimpleName} ${controller.entityTypeSimpleName?uncap_first} = this.${controller.entityTypeSimpleName?uncap_first}Service.findBy${controller.codeProperty.propertyName?cap_first}(${controller.codeProperty.propertyName});
+        return ${controller.entityTypeSimpleName?uncap_first};
+    }
+    
+</#if>
+    /**
      * 删除${controller.entityComment}实例<br/> 
      * <功能详细描述>
-     * @param ${controller.entityTypeSimpleName?uncap_first}${controller.pkProperty.propertyName?cap_first}
+     * @param ${controller.pkProperty.propertyName}
      * @return [参数说明]
      * 
      * @return boolean [返回类型说明]
@@ -245,15 +281,15 @@ public class ${controller.entityTypeSimpleName}Controller {
      */
     @ResponseBody
     @RequestMapping("/deleteBy${controller.pkProperty.propertyName?cap_first}")
-    public boolean deleteBy${controller.pkProperty.propertyName?cap_first}(@RequestParam(value = "${controller.entityTypeSimpleName?uncap_first}${controller.pkProperty.propertyName?cap_first}") String ${controller.entityTypeSimpleName?uncap_first}${controller.pkProperty.propertyName?cap_first}) {
-        boolean flag = this.${controller.entityTypeSimpleName?uncap_first}Service.deleteBy${controller.pkProperty.propertyName?cap_first}(${controller.entityTypeSimpleName?uncap_first}${controller.pkProperty.propertyName?cap_first});
+    public boolean deleteBy${controller.pkProperty.propertyName?cap_first}(@RequestParam(value = "${controller.pkProperty.propertyName}") String ${controller.pkProperty.propertyName}) {
+        boolean flag = this.${controller.entityTypeSimpleName?uncap_first}Service.deleteBy${controller.pkProperty.propertyName?cap_first}(${controller.pkProperty.propertyName});
         return flag;
     }
     
 <#if controller.validProperty??>
     /**
      * 禁用${controller.entityComment}实例
-     * @param ${controller.entityTypeSimpleName?uncap_first}${controller.pkProperty.propertyName?cap_first}
+     * @param ${controller.pkProperty.propertyName}
      * @return [参数说明]
      * 
      * @return boolean [返回类型说明]
@@ -262,15 +298,15 @@ public class ${controller.entityTypeSimpleName}Controller {
      */
     @ResponseBody
     @RequestMapping("/disableBy${controller.pkProperty.propertyName?cap_first}")
-    public boolean disableBy${controller.pkProperty.propertyName?cap_first}(@RequestParam(value = "${controller.entityTypeSimpleName?uncap_first}${controller.pkProperty.propertyName?cap_first}") String ${controller.entityTypeSimpleName?uncap_first}${controller.pkProperty.propertyName?cap_first}) {
-        boolean flag = this.${controller.entityTypeSimpleName?uncap_first}Service.disableBy${controller.pkProperty.propertyName?cap_first}(${controller.entityTypeSimpleName?uncap_first}${controller.pkProperty.propertyName?cap_first});
+    public boolean disableBy${controller.pkProperty.propertyName?cap_first}(@RequestParam(value = "${controller.pkProperty.propertyName}") String ${controller.pkProperty.propertyName}) {
+        boolean flag = this.${controller.entityTypeSimpleName?uncap_first}Service.disableBy${controller.pkProperty.propertyName?cap_first}(${controller.pkProperty.propertyName});
         return flag;
     }
     
     /**
      * 启用${controller.entityComment}实例<br/>
      * <功能详细描述>
-     * @param ${controller.entityTypeSimpleName?uncap_first}${controller.pkProperty.propertyName?cap_first}
+     * @param ${controller.pkProperty.propertyName}
      * @return [参数说明]
      * 
      * @return boolean [返回类型说明]
@@ -279,8 +315,8 @@ public class ${controller.entityTypeSimpleName}Controller {
      */
     @ResponseBody
     @RequestMapping("/enableBy${controller.pkProperty.propertyName?cap_first}")
-    public boolean enableBy${controller.pkProperty.propertyName?cap_first}(@RequestParam(value = "${controller.entityTypeSimpleName?uncap_first}${controller.pkProperty.propertyName?cap_first}") String ${controller.entityTypeSimpleName?uncap_first}${controller.pkProperty.propertyName?cap_first}) {
-        boolean flag = this.${controller.entityTypeSimpleName?uncap_first}Service.enableBy${controller.pkProperty.propertyName?cap_first}(${controller.entityTypeSimpleName?uncap_first}${controller.pkProperty.propertyName?cap_first});
+    public boolean enableBy${controller.pkProperty.propertyName?cap_first}(@RequestParam(value = "${controller.pkProperty.propertyName}") String ${controller.pkProperty.propertyName}) {
+        boolean flag = this.${controller.entityTypeSimpleName?uncap_first}Service.enableBy${controller.pkProperty.propertyName?cap_first}(${controller.pkProperty.propertyName});
         return flag;
     }
 </#if>

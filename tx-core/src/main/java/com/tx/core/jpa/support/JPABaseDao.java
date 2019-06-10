@@ -52,15 +52,13 @@ public interface JPABaseDao<T, ID extends Serializable> {
      * <功能详细描述>
      * @param objectList
      * @param doFlushSize
-     * @param isStopWhenException
      * @return [参数说明]
      * 
      * @return BatchResult [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public BatchResult batchInsert(List<T> entityList, int doFlushSize,
-            boolean isStopWhenException);
+    public BatchResult batchInsert(List<T> entityList, int doFlushSize);
     
     /**
      * 删除对象实体<br/>
@@ -87,15 +85,13 @@ public interface JPABaseDao<T, ID extends Serializable> {
      * <功能详细描述>
      * @param objectList
      * @param doFlushSize
-     * @param isStopWhenException
      * @return [参数说明]
      * 
      * @return BatchResult [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public BatchResult batchDelete(List<T> objectList, int doFlushSize,
-            boolean isStopWhenException);
+    public BatchResult batchDelete(List<T> objectList, int doFlushSize);
     
     /**
      * 查询对象实体<br/>
@@ -130,7 +126,7 @@ public interface JPABaseDao<T, ID extends Serializable> {
      * @return int [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
+     */
     public int count(Map<String, Object> params);
     
     /**

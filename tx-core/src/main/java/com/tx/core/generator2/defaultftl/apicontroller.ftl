@@ -37,7 +37,7 @@ import io.swagger.annotations.ApiOperation;
  */
 @RestController
 @Api(tags = "${controller.entityComment}API")
-@RequestMapping("/api/${controller.entityTypeSimpleName}")
+@RequestMapping("/api/${controller.entityTypeSimpleName}?uncap_first")
 public class ${controller.entityTypeSimpleName}APIController {
     
     //${controller.entityComment}业务层

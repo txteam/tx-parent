@@ -50,9 +50,6 @@ public class ControllerGeneratorModel {
     private final List<EntityProperty> propertyList;
     
     /** jpa字段列表 */
-    private final List<EntityProperty> pkPropertyList;
-    
-    /** jpa字段列表 */
     private final List<EntityProperty> viewablePropertyList;
     
     /** 主键字段列表 */
@@ -78,10 +75,9 @@ public class ControllerGeneratorModel {
         this.entityComment = GeneratorUtils.parseEntityComment(entityType);
         
         this.propertyList = GeneratorUtils.parseEntityPropertyList(entityType);
-        this.pkPropertyList = this.propertyList.stream().filter(column -> {
+        this.pkProperty = this.propertyList.stream().filter(column -> {
             return column.isPrimaryKey();
-        }).collect(Collectors.toList());
-        this.pkProperty = this.pkPropertyList.get(0);
+        }).collect(Collectors.toList()).get(0);
         AssertUtils.isTrue(this.pkProperty != null, "没有找到主键字段");
         AssertUtils.isTrue(String.class.isAssignableFrom(
                 this.pkProperty.getPropertyType()), "主键字段应为String");
@@ -212,13 +208,6 @@ public class ControllerGeneratorModel {
      */
     public List<EntityProperty> getPropertyList() {
         return propertyList;
-    }
-    
-    /**
-     * @return 返回 pkPropertyList
-     */
-    public List<EntityProperty> getPkPropertyList() {
-        return pkPropertyList;
     }
     
     /**

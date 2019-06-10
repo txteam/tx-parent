@@ -53,10 +53,11 @@ public class TestModeController {
      */
     @RequestMapping("/toQueryList")
     public String toQueryList(ModelMap response) {
-        response.put("types", TestTypeEnum.values());
-        
+		response.put("types", TestTypeEnum.values());
+
         return "/generator2test/queryTestModeList";
     }
+    
     
     /**
      * 跳转到新增测试对象页面<br/>
@@ -69,10 +70,10 @@ public class TestModeController {
      */
     @RequestMapping("/toAdd")
     public String toAdd(ModelMap response) {
-        response.put("testMode", new TestMode());
-        
-        response.put("types", TestTypeEnum.values());
-        
+    	response.put("testMode", new TestMode());
+    	
+		response.put("types", TestTypeEnum.values());
+
         return "/generator2test/addTestMode";
     }
     
@@ -86,16 +87,17 @@ public class TestModeController {
      * @see [类、类#方法、类#成员]
      */
     @RequestMapping("/toUpdate")
-    public String toUpdate(@RequestParam("testModeId") String testModeId,
+    public String toUpdate(
+    		@RequestParam("id") String id,
             ModelMap response) {
-        TestMode testMode = this.testModeService.findById(testModeId);
+        TestMode testMode = this.testModeService.findById(id); 
         response.put("testMode", testMode);
-        
-        response.put("types", TestTypeEnum.values());
+
+		response.put("types", TestTypeEnum.values());
         
         return "/generator2test/updateTestMode";
     }
-    
+
     /**
      * 查询测试对象实例列表<br/>
      * <功能详细描述>
@@ -108,13 +110,17 @@ public class TestModeController {
     @ResponseBody
     @RequestMapping("/queryList")
     public List<TestMode> queryList(
-            @RequestParam(value = "valid", required = false) Boolean valid,
-            @RequestParam MultiValueMap<String, String> request) {
-        Map<String, Object> params = new HashMap<>();
+			@RequestParam(value="valid",required=false) Boolean valid,
+    		@RequestParam MultiValueMap<String, String> request
+    	) {
+        Map<String,Object> params = new HashMap<>();
         //params.put("",request.getFirst(""));
-        
-        List<TestMode> resList = this.testModeService.queryList(valid, params);
-        
+    	
+        List<TestMode> resList = this.testModeService.queryList(
+			valid,
+			params         
+        );
+  
         return resList;
     }
     
@@ -130,15 +136,20 @@ public class TestModeController {
     @ResponseBody
     @RequestMapping("/queryPagedList")
     public PagedList<TestMode> queryPagedList(
-            @RequestParam(value = "valid", required = false) Boolean valid,
-            @RequestParam(value = "pageNumber", required = false, defaultValue = "1") int pageIndex,
+			@RequestParam(value="valid",required=false) Boolean valid,
+			@RequestParam(value = "pageNumber", required = false, defaultValue = "1") int pageIndex,
             @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
-            @RequestParam MultiValueMap<String, String> request) {
-        Map<String, Object> params = new HashMap<>();
-        //params.put("",request.getFirst(""));
-        
-        PagedList<TestMode> resPagedList = this.testModeService
-                .queryPagedList(valid, params, pageIndex, pageSize);
+            @RequestParam MultiValueMap<String, String> request
+    	) {
+		Map<String,Object> params = new HashMap<>();
+		//params.put("",request.getFirst(""));
+
+        PagedList<TestMode> resPagedList = this.testModeService.queryPagedList(
+			valid,
+			params,
+			pageIndex,
+			pageSize
+        );
         return resPagedList;
     }
     
@@ -176,9 +187,43 @@ public class TestModeController {
     }
     
     /**
+     * 根据主键查询测试对象实例<br/> 
+     * <功能详细描述>
+     * @param id
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @ResponseBody
+    @RequestMapping("/findById")
+    public TestMode findById(@RequestParam(value = "id") String id) {
+        TestMode testMode = this.testModeService.findById(id);
+        return testMode;
+    }
+
+	/**
+     * 根据编码查询测试对象实例<br/> 
+     * <功能详细描述>
+     * @param code
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @ResponseBody
+    @RequestMapping("/findByCode")
+    public TestMode findByCode(@RequestParam(value = "code") String code) {
+        TestMode testMode = this.testModeService.findByCode(code);
+        return testMode;
+    }
+    
+    /**
      * 删除测试对象实例<br/> 
      * <功能详细描述>
-     * @param testModeId
+     * @param id
      * @return [参数说明]
      * 
      * @return boolean [返回类型说明]
@@ -187,15 +232,14 @@ public class TestModeController {
      */
     @ResponseBody
     @RequestMapping("/deleteById")
-    public boolean deleteById(
-            @RequestParam(value = "testModeId") String testModeId) {
-        boolean flag = this.testModeService.deleteById(testModeId);
+    public boolean deleteById(@RequestParam(value = "id") String id) {
+        boolean flag = this.testModeService.deleteById(id);
         return flag;
     }
     
     /**
      * 禁用测试对象实例
-     * @param testModeId
+     * @param id
      * @return [参数说明]
      * 
      * @return boolean [返回类型说明]
@@ -204,16 +248,15 @@ public class TestModeController {
      */
     @ResponseBody
     @RequestMapping("/disableById")
-    public boolean disableById(
-            @RequestParam(value = "testModeId") String testModeId) {
-        boolean flag = this.testModeService.disableById(testModeId);
+    public boolean disableById(@RequestParam(value = "id") String id) {
+        boolean flag = this.testModeService.disableById(id);
         return flag;
     }
     
     /**
      * 启用测试对象实例<br/>
      * <功能详细描述>
-     * @param testModeId
+     * @param id
      * @return [参数说明]
      * 
      * @return boolean [返回类型说明]
@@ -222,15 +265,14 @@ public class TestModeController {
      */
     @ResponseBody
     @RequestMapping("/enableById")
-    public boolean enableById(
-            @RequestParam(value = "testModeId") String testModeId) {
-        boolean flag = this.testModeService.enableById(testModeId);
+    public boolean enableById(@RequestParam(value = "id") String id) {
+        boolean flag = this.testModeService.enableById(id);
         return flag;
     }
-    
-    /**
+
+	/**
      * 校验参数对应实例是否重复
-     * @param excludeId
+	 * @param excludeId
      * @param params
      * @return [参数说明]
      * 

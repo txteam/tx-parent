@@ -4,7 +4,7 @@
  * 修改时间:  2018年6月3日
  * <修改描述:>
  */
-package com.tx.core.mybatis.support;
+package com.tx.core.mybatis.mapper;
 
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -12,6 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
+
+import com.tx.core.mybatis.support.MyBatisDaoSupport;
 
 /**
  * 实体持久层注册器<br/>

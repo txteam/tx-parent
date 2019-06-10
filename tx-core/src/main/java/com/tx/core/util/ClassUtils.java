@@ -76,6 +76,7 @@ public class ClassUtils {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
+    @Deprecated
     public static boolean isCommonSimpleClass(String className) {
         boolean flag = commonSimpleClassNameSet.contains(className);
         return flag;

@@ -42,9 +42,6 @@ public class ServiceGeneratorModel {
     /** jpa字段列表 */
     private final List<JPAColumnInfo> columnList;
     
-    /** jpa字段列表 */
-    private final List<JPAColumnInfo> pkColumnList;
-    
     /** 主键字段列表 */
     private final JPAColumnInfo pkColumn;
     
@@ -67,15 +64,10 @@ public class ServiceGeneratorModel {
         this.entityTypeSimpleName = entityType.getSimpleName();
         
         this.columnList = JPAParseUtils.parseTableColumns(entityType);
-        this.pkColumnList = this.columnList.stream().filter(column -> {
+        this.pkColumn = this.columnList.stream().filter(column -> {
             return column.isPrimaryKey();
-        }).collect(Collectors.toList());
-        
-        this.pkColumn = this.pkColumnList.get(0);
+        }).collect(Collectors.toList()).get(0);
         AssertUtils.isTrue(this.pkColumn != null, "没有找到主键字段");
-        AssertUtils.isTrue(
-                String.class.isAssignableFrom(this.pkColumn.getPropertyType()),
-                "主键字段应为String");
         
         this.columnList.stream().forEach(column -> {
             if (StringUtils.equals("code", column.getPropertyName())
@@ -141,19 +133,12 @@ public class ServiceGeneratorModel {
     }
     
     /**
-     * @return 返回 pkColumnList
-     */
-    public List<JPAColumnInfo> getPkColumnList() {
-        return pkColumnList;
-    }
-
-    /**
      * @return 返回 codeColumn
      */
     public JPAColumnInfo getCodeColumn() {
         return codeColumn;
     }
-
+    
     /**
      * @return 返回 validColumn
      */

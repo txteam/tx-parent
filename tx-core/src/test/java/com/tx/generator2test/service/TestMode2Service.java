@@ -220,4 +220,5 @@ public class TestMode2Service {
         //如果需要大于1时，抛出异常并回滚，需要在这里修改
         return updateRowCount >= 1;
     }
+
 }

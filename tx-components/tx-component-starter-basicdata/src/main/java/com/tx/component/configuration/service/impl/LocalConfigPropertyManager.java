@@ -304,7 +304,7 @@ public class LocalConfigPropertyManager
                 configPropertyItem.getValidateExpression())) {
             return false;
         }
-        if (Objects.hashCode(configParser.getAttributes()) == Objects
+        if (Objects.hashCode(configParser.getAttributes()) != Objects
                 .hashCode(configPropertyItem.getAttributes())) {
             return false;
         }

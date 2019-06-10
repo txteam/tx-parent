@@ -37,7 +37,7 @@ import io.swagger.annotations.ApiOperation;
  */
 @RestController
 @Api(tags = "测试对象API")
-@RequestMapping("/api/testMode")
+@RequestMapping("/api/TestMode?uncap_first")
 public class TestModeAPIController {
     
     //测试对象业务层
@@ -71,9 +71,9 @@ public class TestModeAPIController {
      * @see [类、类#方法、类#成员]
      */
     @ApiOperation(value = "删除测试对象")
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE) 
     public boolean deleteById(
-            @PathVariable(value = "id", required = true) String id) {
+    	@PathVariable(value = "id",required=true) String id) {
         boolean flag = this.testModeService.deleteById(id);
         return flag;
     }
@@ -104,10 +104,10 @@ public class TestModeAPIController {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @ApiOperation(value = "禁用测试对象")
+	@ApiOperation(value = "禁用测试对象")
     @RequestMapping(value = "/disable/{id}", method = RequestMethod.PATCH)
     public boolean disableById(
-            @PathVariable(value = "id", required = true) String id) {
+    		@PathVariable(value = "id", required = true) String id) {
         boolean flag = this.testModeService.disableById(id);
         return flag;
     }
@@ -125,11 +125,11 @@ public class TestModeAPIController {
     @ApiOperation(value = "启用测试对象")
     @RequestMapping(value = "/enable/{id}", method = RequestMethod.PATCH)
     public boolean enableById(
-            @PathVariable(value = "id", required = true) String id) {
+    		@PathVariable(value = "id", required = true) String id) {
         boolean flag = this.testModeService.enableById(id);
         return flag;
     }
-    
+
     /**
      * 根据主键查询测试对象<br/>
      * <功能详细描述>
@@ -165,8 +165,8 @@ public class TestModeAPIController {
         
         return res;
     }
-    
-    /**
+
+	/**
      * 查询测试对象实例列表<br/>
      * <功能详细描述>
      * @return [参数说明]
@@ -178,13 +178,17 @@ public class TestModeAPIController {
     @ApiOperation(value = "查询测试对象列表")
     @RequestMapping(value = "/list/{valid}", method = RequestMethod.GET)
     public List<TestMode> queryList(
-            @PathVariable(value = "valid", required = false) Boolean valid,
-            @RequestParam MultiValueMap<String, String> request) {
-        Map<String, Object> params = new HashMap<>();
+			@PathVariable(value = "valid", required = false) Boolean valid,
+    		@RequestParam MultiValueMap<String, String> request
+    	) {
+        Map<String,Object> params = new HashMap<>();
         //params.put("",request.getFirst(""));
-        
-        List<TestMode> resList = this.testModeService.queryList(valid, params);
-        
+    	
+        List<TestMode> resList = this.testModeService.queryList(
+			valid,
+			params         
+        );
+  
         return resList;
     }
     
@@ -200,21 +204,26 @@ public class TestModeAPIController {
     @ApiOperation(value = "查询测试对象分页列表")
     @RequestMapping(value = "/pagedlist/{pageSize}/{pageNumber}/{valid}", method = RequestMethod.GET)
     public PagedList<TestMode> queryPagedList(
-            @PathVariable(value = "valid", required = false) Boolean valid,
-            @PathVariable(value = "pageNumber", required = true) int pageIndex,
+			@PathVariable(value = "valid", required = false) Boolean valid,
+			@PathVariable(value = "pageNumber", required = true) int pageIndex,
             @PathVariable(value = "pageSize", required = true) int pageSize,
-            @RequestParam MultiValueMap<String, String> request) {
-        Map<String, Object> params = new HashMap<>();
-        //params.put("",request.getFirst(""));
-        
-        PagedList<TestMode> resPagedList = this.testModeService
-                .queryPagedList(valid, params, pageIndex, pageSize);
+            @RequestParam MultiValueMap<String, String> request
+    	) {
+		Map<String,Object> params = new HashMap<>();
+		//params.put("",request.getFirst(""));
+
+        PagedList<TestMode> resPagedList = this.testModeService.queryPagedList(
+			valid,
+			params,
+			pageIndex,
+			pageSize
+        );
         return resPagedList;
     }
-    
-    /**
+
+	/**
      * 查询测试对象是否存在<br/>
-     * @param excludeId
+	 * @param excludeId
      * @param params
      * @return [参数说明]
      * 

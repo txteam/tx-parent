@@ -19,11 +19,23 @@ package com.tx.core.paged;
 public interface PagedConstant {
     
     /** 默认每页显示条数 */
-    int DEFAULT_PAGE_SIZE = 10;
+    int DEFAULT_PAGE_SIZE = 20;
     
     /** 默认页索引 */
     int DEFAULT_PAGE_INDEX = 0;
     
     /** 默认每次查询页条数  */
     int DEFAULT_QUERY_PAGE_SIZE = 1;
+    
+    /** 默认页码 */
+    int DEFAULT_PAGE_NUMBER = 1;
+
+    /** 默认每页记录数 */
+    //int DEFAULT_PAGE_SIZE = 20;
+
+    /** 最大每页记录数 */
+    int MAX_PAGE_SIZE = 1000;
+    
+    /** 默认是否忽略大小写 */
+    boolean DEFAULT_IGNORE_CASE = true;
 }

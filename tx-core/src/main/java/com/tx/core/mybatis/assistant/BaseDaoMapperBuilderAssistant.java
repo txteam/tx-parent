@@ -4,9 +4,10 @@
  * 修改时间:  2016年11月17日
  * <修改描述:>
  */
-package com.tx.core.mybatis.support;
+package com.tx.core.mybatis.assistant;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +19,6 @@ import org.springframework.core.annotation.AnnotationUtils;
 
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.mybatis.annotation.MapperEntity;
-import com.tx.core.mybatis.builder.AbstractEntityMapperBuilderAssistant;
 import com.tx.core.mybatis.sqlbuilder.SqlMapSQLBuilder;
 import com.tx.core.util.JPAParseUtils;
 import com.tx.core.util.JPAParseUtils.JPAColumnInfo;
@@ -33,11 +33,8 @@ import com.tx.core.util.JPAParseUtils.JPAColumnInfo;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class EntityMapperBuilderAssistant
-        extends AbstractEntityMapperBuilderAssistant {
-    
-    /** 注解信息 */
-    protected MapperEntity annotation;
+public class BaseDaoMapperBuilderAssistant
+        extends AbstractBaseDaoMapperBuilderAssistant {
     
     //表名
     protected String tableName;
@@ -45,46 +42,44 @@ public class EntityMapperBuilderAssistant
     //表字段
     protected List<JPAColumnInfo> tableColumns;
     
-    //排序字段
-    protected List<String> orderBys;
+    //MapperEntity的注解
+    private MapperEntity annotation;
     
-    //queryOrderBy
-    protected String queryOrderBy;
+    /** 主键字段列表 */
+    private final JPAColumnInfo pkColumn;
     
-    //主键字段
-    protected List<JPAColumnInfo> primaryKeyColumns;
+    /** 是否有编码属性 */
+    private JPAColumnInfo createDateColumn;
     
-    //非主键字段
-    protected List<JPAColumnInfo> notPrimaryKeyColumns;
+    /** 是否有编码属性 */
+    private JPAColumnInfo codeColumn;
+    
+    /** 是否有是否有效的属性 */
+    private JPAColumnInfo validColumn;
+    
+    /** 排序字段 */
+    private String defaultOrderBy;
     
     /** <默认构造函数> */
-    public EntityMapperBuilderAssistant(Configuration configuration,
-            Class<?> beanType) {
-        super(configuration, beanType);
+    public BaseDaoMapperBuilderAssistant(Configuration configuration,
+            Class<?> entityType) {
+        super(configuration, entityType);
         
         //被解析生成的类型应该不是一个simpleValueType
-        AssertUtils.isTrue(!BeanUtils.isSimpleValueType(beanType),
+        AssertUtils.isTrue(!BeanUtils.isSimpleValueType(entityType),
                 "type:{} is simpleValueType.",
-                new Object[] { beanType });
-        AssertUtils.isTrue(
-                beanType.isAnnotationPresent(MapperEntity.class),
-                "type:{} annotation is not exist.",
-                new Object[] { beanType });
-        
+                new Object[] { entityType });
         //解析表名
-        this.annotation = AnnotationUtils.findAnnotation(beanType,
+        this.annotation = AnnotationUtils.findAnnotation(entityType,
                 MapperEntity.class);
-        this.tableName = JPAParseUtils.parseTableName(this.beanType);
-        this.tableColumns = JPAParseUtils.parseTableColumns(this.beanType);
+        this.tableName = JPAParseUtils.parseTableName(entityType);
+        this.tableColumns = JPAParseUtils.parseTableColumns(entityType);
         
         //主键字段以及非主键字段集合记录
-        this.primaryKeyColumns = new ArrayList<>();
-        this.notPrimaryKeyColumns = new ArrayList<>();
+        List<JPAColumnInfo> pkColumns = new ArrayList<>();
         for (JPAColumnInfo column : this.tableColumns) {
             if (column.isPrimaryKey()) {
-                this.primaryKeyColumns.add(column);
-            } else {
-                this.notPrimaryKeyColumns.add(column);
+                pkColumns.add(column);
             }
             
             //判断是否具备typeHandler,也不存在嵌套属性描述时需要抛出异常
@@ -92,48 +87,50 @@ public class EntityMapperBuilderAssistant
                 //如果不具备typeHandler，那么nestedPropertyDescriptor就不该为空
                 AssertUtils.isTrue(column.getNestedPropertyDescriptor() != null,
                         "对应属性不存在类型处理器，且解析嵌套属性失败.beanType:{} property:{}",
-                        new Object[] { this.beanType,
+                        new Object[] { entityType,
                                 column.getPropertyDescriptor().getName() });
             }
-            
             if (column.isPrimaryKey()) {
                 //虽然可以支持，但是变化情况太复杂，而且暂时想不到哪里有常用的应用场景，所以暂时如果出现这种情况就抛出异常
                 AssertUtils.isTrue(!column.hasNestedProperty(),
                         "主键不支持具有嵌套属性的情况.");
             }
+            if ("createDate".equals(column.getPropertyName())) {
+                this.createDateColumn = column;
+                AssertUtils.isTrue(
+                        Date.class.isAssignableFrom(column.getPropertyType()),
+                        "createDateColumn.propertyType:{} is not assign from Date.class.",
+                        new Object[] { column.getPropertyType() });
+            } else if ("code".equals(column.getPropertyName())) {
+                this.codeColumn = column;
+                AssertUtils.isTrue(
+                        String.class.isAssignableFrom(column.getPropertyType()),
+                        "createDateColumn.propertyType:{} is not assign from Date.class.",
+                        new Object[] { column.getPropertyType() });
+            } else if ("valid".equals(column.getPropertyName())) {
+                this.validColumn = column;
+                AssertUtils.isTrue(
+                        Boolean.class.equals(column.getPropertyType())
+                                || boolean.class
+                                        .equals(column.getPropertyType()),
+                        "createDateColumn.propertyType:{} is not assign from boolean.class or Boolean.class.",
+                        new Object[] { column.getPropertyType() });
+            }
         }
         
         //必须存在主键字段
-        AssertUtils.notEmpty(this.primaryKeyColumns,
+        AssertUtils.notEmpty(pkColumns,
                 "实体无法判断主键字段，不支持自动生成SqlMap.type:{}",
-                new Object[] { this.beanType });
+                new Object[] { entityType });
+        this.pkColumn = pkColumns.get(0);
         
         //解析排序字段
-        this.orderBys = JPAParseUtils.parseOrderBys(beanType,
+        this.defaultOrderBy = JPAParseUtils.parseOrderBy(entityType,
                 this.tableColumns,
                 "createDate",
-                "id");
-        this.queryOrderBy = JPAParseUtils.parseOrderBy(beanType,
-                this.tableColumns,
-                "createDate",
-                "id");
-    }
-    
-    /**
-     * 获取主键属性名列表<br/>
-     * <功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return List<String> [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public List<String> getPrimaryProperyNameList() {
-        List<String> resList = new ArrayList<>();
-        for (JPAColumnInfo column : this.primaryKeyColumns) {
-            resList.add(column.getColumnPropertyName());
-        }
-        return resList;
+                "id",
+                "code",
+                "name");
     }
     
     /**
@@ -141,7 +138,8 @@ public class EntityMapperBuilderAssistant
      */
     @Override
     protected String getInsertSQL() {
-        if (StringUtils.isNotBlank(annotation.insertSQL())) {
+        if (annotation != null
+                && StringUtils.isNotBlank(annotation.insertSQL())) {
             return annotation.insertSQL();
         }
         
@@ -166,21 +164,19 @@ public class EntityMapperBuilderAssistant
      */
     @Override
     protected String getDeleteSQL() {
-        if (StringUtils.isNotBlank(annotation.deleteSQL())) {
-            return annotation.insertSQL();
+        if (annotation != null
+                && StringUtils.isNotBlank(annotation.deleteSQL())) {
+            return annotation.deleteSQL();
         }
         
         SqlMapSQLBuilder sql = new SqlMapSQLBuilder();
         sql.DELETE_FROM(this.tableName);
         
-        for (JPAColumnInfo column : this.primaryKeyColumns) {
-            String columnName = column.getColumnName();
-            String columnPropertyName = column.getColumnPropertyName();
-            
-            String whereItem = formatWhereAndItem(columnName,
-                    " = ",
-                    columnPropertyName);
-            sql.WHERE(whereItem);
+        String whereItem = formatAndEqual(this.pkColumn);
+        sql.WHERE(whereItem);
+        if (this.codeColumn != null) {
+            String whereItemTemp = formatAndEqual(this.codeColumn);
+            sql.WHERE(whereItemTemp);
         }
         
         String deleteSQL = sql.toString();
@@ -192,14 +188,20 @@ public class EntityMapperBuilderAssistant
      */
     @Override
     protected String getUpdateSQL() {
-        if (StringUtils.isNotBlank(annotation.updateSQL())) {
+        if (annotation != null
+                && StringUtils.isNotBlank(annotation.updateSQL())) {
             return annotation.updateSQL();
         }
         
         SqlMapSQLBuilder sql = new SqlMapSQLBuilder();
         sql.UPDATE(this.tableName);
-        for (JPAColumnInfo column : this.notPrimaryKeyColumns) {
-            if (!column.isUpdatable()) {
+        for (JPAColumnInfo column : this.tableColumns) {
+            if (!column.isUpdatable() && !column.isPrimaryKey()
+                    && !StringUtils.equals("code", column.getPropertyName())
+                    && !StringUtils.equals("createDate",
+                            column.getPropertyName())
+                    && !StringUtils.equals("createOperatorId",
+                            column.getPropertyName())) {
                 continue;
             }
             String columnName = column.getColumnName();
@@ -214,14 +216,12 @@ public class EntityMapperBuilderAssistant
             sql.SET(setItem);
             
         }
-        for (JPAColumnInfo column : this.primaryKeyColumns) {
-            String columnName = column.getColumnName();
-            String propertyName = column.getColumnPropertyName();
-            
-            String whereItem = formatWhereAndItem(columnName,
-                    " = ",
-                    propertyName);
-            sql.WHERE(whereItem);
+        
+        String whereItem = formatAndEqual(this.pkColumn);
+        sql.WHERE(whereItem);
+        if (this.codeColumn != null) {
+            String whereItemTemp = formatAndEqual(this.codeColumn);
+            sql.WHERE(whereItemTemp);
         }
         
         String updateSQL = sql.toString();
@@ -232,14 +232,14 @@ public class EntityMapperBuilderAssistant
      * @return
      */
     @Override
-    protected Map<String, String> getCustomizeColumn2PropertyMap() {
+    protected Map<String, String> getColumn2PropertyMap() {
         Map<String, String> column2propertyMap = new HashMap<>();
         for (JPAColumnInfo column : this.tableColumns) {
             String columnName = column.getColumnName();
             String columnPropertyName = column.getColumnPropertyName();
-            
             //如果字段名和属性名不匹配时才回缴入customizeColumn2PropertyMap
-            if (!StringUtils.equalsIgnoreCase(columnName, columnPropertyName)) {
+            if (!StringUtils.equalsIgnoreCase(columnName, columnPropertyName)
+                    || !hasTypeHandler(column.getPropertyDescriptor())) {
                 column2propertyMap.put(columnName, columnPropertyName);
             }
         }
@@ -252,7 +252,8 @@ public class EntityMapperBuilderAssistant
      */
     @Override
     protected String getFindSQL() {
-        if (StringUtils.isNotBlank(annotation.findSQL())) {
+        if (annotation != null
+                && StringUtils.isNotBlank(annotation.findSQL())) {
             return annotation.findSQL();
         }
         
@@ -263,14 +264,12 @@ public class EntityMapperBuilderAssistant
             sql.FIND(columnName);
         }
         sql.FROM(this.tableName);
-        for (JPAColumnInfo column : this.primaryKeyColumns) {
-            String columnName = column.getColumnName();
-            String columnPropertyName = column.getColumnPropertyName();
-            
-            String whereItem = formatWhereAndItem(columnName,
-                    " = ",
-                    columnPropertyName);
-            sql.WHERE(whereItem);
+        
+        String whereItem = formatAndEqual(this.pkColumn);
+        sql.WHERE(whereItem);
+        if (this.codeColumn != null) {
+            String whereItemTemp = formatAndEqual(this.codeColumn);
+            sql.WHERE(whereItemTemp);
         }
         
         String findSQL = sql.toString();
@@ -282,7 +281,8 @@ public class EntityMapperBuilderAssistant
      */
     @Override
     protected String getQuerySQL() {
-        if (StringUtils.isNotBlank(annotation.querySQL())) {
+        if (annotation != null
+                && StringUtils.isNotBlank(annotation.querySQL())) {
             return annotation.querySQL();
         }
         
@@ -294,9 +294,10 @@ public class EntityMapperBuilderAssistant
         }
         sql.FROM(this.tableName);
         
+        sql.WHERE(FORMATTER_OF_QUERIER);//查询的其他条件
         buildQueryCondition(sql);//构建查询条件
         
-        sql.ORDER_BY(this.queryOrderBy);
+        sql.ORDER_BY(defaultOrderBy);
         
         String querySQL = sql.toString();
         return querySQL;
@@ -307,7 +308,8 @@ public class EntityMapperBuilderAssistant
      */
     @Override
     protected String getCountSQL() {
-        if (StringUtils.isNotBlank(annotation.countSQL())) {
+        if (annotation != null
+                && StringUtils.isNotBlank(annotation.countSQL())) {
             return annotation.countSQL();
         }
         
@@ -332,36 +334,61 @@ public class EntityMapperBuilderAssistant
      */
     protected void buildQueryCondition(SqlMapSQLBuilder sql) {
         for (JPAColumnInfo column : this.tableColumns) {
-            String columnName = column.getColumnName();
-            String propertyName = column.getPropertyName();
-            String columnPropertyName = column.getColumnPropertyName();
-            
-            if (column.hasNestedProperty()) {
-                String whereItem = formatNestedWhereAndItem(columnName,
-                        " = ",
-                        propertyName,
-                        columnPropertyName);
-                sql.WHERE(whereItem);
-            } else {
-                String whereItem = formatWhereAndItem(columnName,
-                        " = ",
-                        propertyName);
-                sql.WHERE(whereItem);
+            if (Date.class.isAssignableFrom(column.getPropertyType())
+                    || java.sql.Date.class
+                            .isAssignableFrom(column.getPropertyType())) {
+                continue;
+            }
+            if (float.class.isAssignableFrom(column.getPropertyType())
+                    || Float.class.isAssignableFrom(column.getPropertyType())) {
+                continue;
+            }
+            if (double.class.isAssignableFrom(column.getPropertyType())
+                    || Double.class
+                            .isAssignableFrom(column.getPropertyType())) {
+                continue;
             }
             
-            //这里以后可以做成子类可扩展的
-            if ("createDate".equals(propertyName)) {
-                String minWhereItem = formatWhereAndItem(columnName,
-                        " >= ",
-                        "minCreateDate");
-                sql.WHERE(minWhereItem);
-                
-                String maxWhereItem = formatWhereAndItem(columnName,
-                        " < ",
-                        "maxCreateDate");
-                sql.WHERE(maxWhereItem);
-            }
+            String whereItem = formatAnd(column, " = ");
+            sql.WHERE(whereItem);
+        }
+        if (createDateColumn != null) {
+            String whereItem1 = formatAnd(this.createDateColumn.getColumnName(),
+                    ">=",
+                    "minCreateDate");
+            sql.WHERE(whereItem1);
+            String whereItem2 = formatAnd(this.createDateColumn.getColumnName(),
+                    "<",
+                    "maxCreateDate");
+            sql.WHERE(whereItem2);
+        }
+        if (pkColumn != null) {
+            String whereItem1 = formatAnd(this.pkColumn.getColumnName(),
+                    "<>",
+                    "exclude" + StringUtils
+                            .capitalize(this.pkColumn.getPropertyName()));
+            sql.WHERE(whereItem1);
         }
     }
     
+    /**
+     * @return 返回 pkColumn
+     */
+    public JPAColumnInfo getPkColumn() {
+        return pkColumn;
+    }
+    
+    /**
+     * @return 返回 codeColumn
+     */
+    public JPAColumnInfo getCodeColumn() {
+        return codeColumn;
+    }
+    
+    /**
+     * @return 返回 validColumn
+     */
+    public JPAColumnInfo getValidColumn() {
+        return validColumn;
+    }
 }

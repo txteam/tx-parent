@@ -37,7 +37,7 @@ import io.swagger.annotations.ApiOperation;
  */
 @RestController
 @Api(tags = "测试对象2API")
-@RequestMapping("/api/testMode2")
+@RequestMapping("/api/TestMode2?uncap_first")
 public class TestMode2APIController {
     
     //测试对象2业务层
@@ -71,8 +71,9 @@ public class TestMode2APIController {
      * @see [类、类#方法、类#成员]
      */
     @ApiOperation(value = "删除测试对象2")
-    @RequestMapping(value = "/{code}", method = RequestMethod.DELETE)
-    public boolean deleteByCode(@PathVariable(value = "code") String code) {
+    @RequestMapping(value = "/{code}", method = RequestMethod.DELETE) 
+    public boolean deleteByCode(
+    	@PathVariable(value = "code",required=true) String code) {
         boolean flag = this.testMode2Service.deleteByCode(code);
         return flag;
     }
@@ -94,6 +95,7 @@ public class TestMode2APIController {
         return flag;
     }
     
+
     /**
      * 根据主键查询测试对象2<br/>
      * <功能详细描述>
@@ -112,7 +114,8 @@ public class TestMode2APIController {
         return res;
     }
     
-    /**
+
+	/**
      * 查询测试对象2实例列表<br/>
      * <功能详细描述>
      * @return [参数说明]
@@ -124,12 +127,15 @@ public class TestMode2APIController {
     @ApiOperation(value = "查询测试对象2列表")
     @RequestMapping(value = "/list/{valid}", method = RequestMethod.GET)
     public List<TestMode2> queryList(
-            @RequestParam MultiValueMap<String, String> request) {
-        Map<String, Object> params = new HashMap<>();
+    		@RequestParam MultiValueMap<String, String> request
+    	) {
+        Map<String,Object> params = new HashMap<>();
         //params.put("",request.getFirst(""));
-        
-        List<TestMode2> resList = this.testMode2Service.queryList(params);
-        
+    	
+        List<TestMode2> resList = this.testMode2Service.queryList(
+			params         
+        );
+  
         return resList;
     }
     
@@ -145,20 +151,24 @@ public class TestMode2APIController {
     @ApiOperation(value = "查询测试对象2分页列表")
     @RequestMapping(value = "/pagedlist/{pageSize}/{pageNumber}/{valid}", method = RequestMethod.GET)
     public PagedList<TestMode2> queryPagedList(
-            @PathVariable(value = "pageNumber", required = true) int pageIndex,
+			@PathVariable(value = "pageNumber", required = true) int pageIndex,
             @PathVariable(value = "pageSize", required = true) int pageSize,
-            @RequestParam MultiValueMap<String, String> request) {
-        Map<String, Object> params = new HashMap<>();
-        //params.put("",request.getFirst(""));
-        
-        PagedList<TestMode2> resPagedList = this.testMode2Service
-                .queryPagedList(params, pageIndex, pageSize);
+            @RequestParam MultiValueMap<String, String> request
+    	) {
+		Map<String,Object> params = new HashMap<>();
+		//params.put("",request.getFirst(""));
+
+        PagedList<TestMode2> resPagedList = this.testMode2Service.queryPagedList(
+			params,
+			pageIndex,
+			pageSize
+        );
         return resPagedList;
     }
-    
-    /**
+
+	/**
      * 查询测试对象2是否存在<br/>
-     * @param excludeCode
+	 * @param excludeCode
      * @param params
      * @return [参数说明]
      * 

@@ -4,7 +4,7 @@
  * 修改时间:  2018年6月9日
  * <修改描述:>
  */
-package com.tx.core.mybatis.support;
+package com.tx.core.mybatis.mapper;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -13,6 +13,7 @@ import java.util.Map;
 import org.apache.commons.collections4.CollectionUtils;
 
 import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.mybatis.support.MyBatisDaoSupport;
 import com.tx.core.paged.model.PagedList;
 
 /**
@@ -67,13 +68,12 @@ public class DefaultMapperEntityDaoImpl<T> implements MapperEntityDao<T> {
         if (CollectionUtils.isEmpty(primaryPropertyList)
                 || primaryPropertyList.size() > 1) {
             this.myBatisDaoSupport.batchInsert(
-                    this.assistant.getInsertStatementName(), objectList, true);
+                    this.assistant.getInsertStatementName(), objectList);
         } else {
             this.myBatisDaoSupport.batchInsertUseUUID(
                     this.assistant.getInsertStatementName(),
                     objectList,
-                    primaryPropertyList.get(0),
-                    true);
+                    primaryPropertyList.get(0));
         }
     }
     
@@ -112,7 +112,7 @@ public class DefaultMapperEntityDaoImpl<T> implements MapperEntityDao<T> {
     @Override
     public void batchDelete(List<T> condition) {
         this.myBatisDaoSupport.batchDelete(
-                this.assistant.getDeleteStatementName(), condition, true);
+                this.assistant.getDeleteStatementName(), condition);
     }
     
     /**
@@ -177,8 +177,6 @@ public class DefaultMapperEntityDaoImpl<T> implements MapperEntityDao<T> {
     @Override
     public void batchUpdate(List<Map<String, Object>> updateRowMapList) {
         this.myBatisDaoSupport.batchUpdate(
-                this.assistant.getUpdateStatementName(),
-                updateRowMapList,
-                true);
+                this.assistant.getUpdateStatementName(), updateRowMapList);
     }
 }

@@ -6,6 +6,7 @@
  */
 package com.tx.core.generator2.model;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -45,10 +46,19 @@ public class SqlMapGeneratorModel {
     private final List<JPAColumnInfo> columnList;
     
     /** 主键字段列表 */
-    private final List<JPAColumnInfo> pkColumnList;
+    private final JPAColumnInfo pkColumn;
+    
+    /** 是否有编码属性 */
+    private JPAColumnInfo createDateColumn;
     
     /** 是否有编码属性 */
     private JPAColumnInfo codeColumn;
+    
+    /** 是否有是否有效的属性 */
+    private JPAColumnInfo validColumn;
+    
+    /** 排序字段 */
+    private String defaultOrderBy;
     
     /** <默认构造函数> */
     public SqlMapGeneratorModel(Class<?> entityType) {
@@ -62,9 +72,10 @@ public class SqlMapGeneratorModel {
                 entityType.getSimpleName());
         
         this.columnList = JPAParseUtils.parseTableColumns(entityType);
-        this.pkColumnList = this.columnList.stream().filter(column -> {
+        this.pkColumn = this.columnList.stream().filter(column -> {
             return column.isPrimaryKey();
-        }).collect(Collectors.toList());
+        }).collect(Collectors.toList()).get(0);
+        AssertUtils.isTrue(this.pkColumn != null, "没有找到主键字段");
         
         this.columnList.stream().forEach(column -> {
             if (StringUtils.equals("code", column.getPropertyName())
@@ -77,8 +88,30 @@ public class SqlMapGeneratorModel {
                                 || boolean.class.equals(
                                         this.codeColumn.getPropertyType()),
                         "code type should is String.");
+            } else if (StringUtils.equals("valid", column.getPropertyName())) {
+                this.validColumn = column;
+                AssertUtils.isTrue(
+                        Boolean.class.isAssignableFrom(column.getPropertyType())
+                                || boolean.class
+                                        .equals(column.getPropertyType()),
+                        "valid type should is boolean or Boolean.");
+            } else if (StringUtils.equals("createDate",
+                    column.getPropertyName())) {
+                this.createDateColumn = column;
+                AssertUtils.isTrue(
+                        Date.class.isAssignableFrom(column.getPropertyType())
+                                || boolean.class
+                                        .equals(column.getPropertyType()),
+                        "createDate type should is Date.");
             }
         });
+        
+        this.defaultOrderBy = JPAParseUtils.parseOrderBy(entityType,
+                this.columnList,
+                "createDate",
+                "id",
+                "code",
+                "name");
     }
     
     /**
@@ -124,19 +157,40 @@ public class SqlMapGeneratorModel {
     }
     
     /**
-     * @return 返回 pkColumnList
-     */
-    public List<JPAColumnInfo> getPkColumnList() {
-        return pkColumnList;
-    }
-    
-    /**
      * @return 返回 codeColumn
      */
     public JPAColumnInfo getCodeColumn() {
         return codeColumn;
     }
     
+    /**
+     * @return 返回 validColumn
+     */
+    public JPAColumnInfo getValidColumn() {
+        return validColumn;
+    }
+    
+    /**
+     * @return 返回 pkColumn
+     */
+    public JPAColumnInfo getPkColumn() {
+        return pkColumn;
+    }
+    
+    /**
+     * @return 返回 createDateColumn
+     */
+    public JPAColumnInfo getCreateDateColumn() {
+        return createDateColumn;
+    }
+    
+    /**
+     * @return 返回 defaultOrderBy
+     */
+    public String getDefaultOrderBy() {
+        return defaultOrderBy;
+    }
+
     /**
      * 生成表名缩写<br/>
      * <功能详细描述>

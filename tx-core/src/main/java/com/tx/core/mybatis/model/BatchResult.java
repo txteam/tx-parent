@@ -17,6 +17,7 @@ import java.util.Map;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
+@Deprecated
 public class BatchResult {
     
     /** 是否成功 */
@@ -30,7 +31,7 @@ public class BatchResult {
     
     private Map<Integer, Object> errorRownum2ObjectMap = new HashMap<Integer, Object>();
     
-    private Map<Integer, Exception> errorRownum2ExceptionMap = new HashMap<Integer, Exception>();
+    private Map<Integer, Throwable> errorRownum2ExceptionMap = new HashMap<Integer, Throwable>();
     
     private Map<Integer, String> errorRownum2MessageMapping = new HashMap<Integer, String>();
     
@@ -90,7 +91,7 @@ public class BatchResult {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public void addErrorInfo(Object data, int rownum, Exception ex) {
+    public void addErrorInfo(Object data, int rownum, Throwable ex) {
         success = false;
         
         if (!this.errorRownum2ObjectMap.containsKey(rownum)) {
@@ -100,14 +101,14 @@ public class BatchResult {
         this.errorRownum2ExceptionMap.put(rownum, ex);
         this.errorRownum2MessageMapping.put(rownum, ex.toString());
     }
-
+    
     /**
      * @return 返回 errorRownum2ObjectMap
      */
     public Map<Integer, Object> getErrorRownum2ObjectMap() {
         return errorRownum2ObjectMap;
     }
-
+    
     /**
      * @param 对errorRownum2ObjectMap进行赋值
      */
@@ -115,29 +116,29 @@ public class BatchResult {
             Map<Integer, Object> errorRownum2ObjectMap) {
         this.errorRownum2ObjectMap = errorRownum2ObjectMap;
     }
-
+    
     /**
      * @return 返回 errorRownum2ExceptionMap
      */
-    public Map<Integer, Exception> getErrorRownum2ExceptionMap() {
+    public Map<Integer, Throwable> getErrorRownum2ExceptionMap() {
         return errorRownum2ExceptionMap;
     }
-
+    
     /**
      * @param 对errorRownum2ExceptionMap进行赋值
      */
     public void setErrorRownum2ExceptionMap(
-            Map<Integer, Exception> errorRownum2ExceptionMap) {
+            Map<Integer, Throwable> errorRownum2ExceptionMap) {
         this.errorRownum2ExceptionMap = errorRownum2ExceptionMap;
     }
-
+    
     /**
      * @return 返回 errorRownum2MessageMapping
      */
     public Map<Integer, String> getErrorRownum2MessageMapping() {
         return errorRownum2MessageMapping;
     }
-
+    
     /**
      * @param 对errorRownum2MessageMapping进行赋值
      */

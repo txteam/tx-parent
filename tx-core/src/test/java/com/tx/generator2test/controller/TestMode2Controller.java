@@ -53,10 +53,11 @@ public class TestMode2Controller {
      */
     @RequestMapping("/toQueryList")
     public String toQueryList(ModelMap response) {
-        response.put("types", TestTypeEnum.values());
-        
+		response.put("types", TestTypeEnum.values());
+
         return "/generator2test/queryTestMode2List";
     }
+    
     
     /**
      * 跳转到新增测试对象2页面<br/>
@@ -69,10 +70,10 @@ public class TestMode2Controller {
      */
     @RequestMapping("/toAdd")
     public String toAdd(ModelMap response) {
-        response.put("testMode2", new TestMode2());
-        
-        response.put("types", TestTypeEnum.values());
-        
+    	response.put("testMode2", new TestMode2());
+    	
+		response.put("types", TestTypeEnum.values());
+
         return "/generator2test/addTestMode2";
     }
     
@@ -86,16 +87,17 @@ public class TestMode2Controller {
      * @see [类、类#方法、类#成员]
      */
     @RequestMapping("/toUpdate")
-    public String toUpdate(@RequestParam("testMode2Code") String testMode2Code,
+    public String toUpdate(
+    		@RequestParam("code") String code,
             ModelMap response) {
-        TestMode2 testMode2 = this.testMode2Service.findByCode(testMode2Code);
+        TestMode2 testMode2 = this.testMode2Service.findByCode(code); 
         response.put("testMode2", testMode2);
-        
-        response.put("types", TestTypeEnum.values());
+
+		response.put("types", TestTypeEnum.values());
         
         return "/generator2test/updateTestMode2";
     }
-    
+
     /**
      * 查询测试对象2实例列表<br/>
      * <功能详细描述>
@@ -108,12 +110,15 @@ public class TestMode2Controller {
     @ResponseBody
     @RequestMapping("/queryList")
     public List<TestMode2> queryList(
-            @RequestParam MultiValueMap<String, String> request) {
-        Map<String, Object> params = new HashMap<>();
+    		@RequestParam MultiValueMap<String, String> request
+    	) {
+        Map<String,Object> params = new HashMap<>();
         //params.put("",request.getFirst(""));
-        
-        List<TestMode2> resList = this.testMode2Service.queryList(params);
-        
+    	
+        List<TestMode2> resList = this.testMode2Service.queryList(
+			params         
+        );
+  
         return resList;
     }
     
@@ -129,14 +134,18 @@ public class TestMode2Controller {
     @ResponseBody
     @RequestMapping("/queryPagedList")
     public PagedList<TestMode2> queryPagedList(
-            @RequestParam(value = "pageNumber", required = false, defaultValue = "1") int pageIndex,
+			@RequestParam(value = "pageNumber", required = false, defaultValue = "1") int pageIndex,
             @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
-            @RequestParam MultiValueMap<String, String> request) {
-        Map<String, Object> params = new HashMap<>();
-        //params.put("",request.getFirst(""));
-        
-        PagedList<TestMode2> resPagedList = this.testMode2Service
-                .queryPagedList(params, pageIndex, pageSize);
+            @RequestParam MultiValueMap<String, String> request
+    	) {
+		Map<String,Object> params = new HashMap<>();
+		//params.put("",request.getFirst(""));
+
+        PagedList<TestMode2> resPagedList = this.testMode2Service.queryPagedList(
+			params,
+			pageIndex,
+			pageSize
+        );
         return resPagedList;
     }
     
@@ -174,9 +183,26 @@ public class TestMode2Controller {
     }
     
     /**
+     * 根据主键查询测试对象2实例<br/> 
+     * <功能详细描述>
+     * @param code
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @ResponseBody
+    @RequestMapping("/findByCode")
+    public TestMode2 findByCode(@RequestParam(value = "code") String code) {
+        TestMode2 testMode2 = this.testMode2Service.findByCode(code);
+        return testMode2;
+    }
+
+    /**
      * 删除测试对象2实例<br/> 
      * <功能详细描述>
-     * @param testMode2Code
+     * @param code
      * @return [参数说明]
      * 
      * @return boolean [返回类型说明]
@@ -185,15 +211,15 @@ public class TestMode2Controller {
      */
     @ResponseBody
     @RequestMapping("/deleteByCode")
-    public boolean deleteByCode(
-            @RequestParam(value = "testMode2Code") String testMode2Code) {
-        boolean flag = this.testMode2Service.deleteByCode(testMode2Code);
+    public boolean deleteByCode(@RequestParam(value = "code") String code) {
+        boolean flag = this.testMode2Service.deleteByCode(code);
         return flag;
     }
     
-    /**
+
+	/**
      * 校验参数对应实例是否重复
-     * @param excludeCode
+	 * @param excludeCode
      * @param params
      * @return [参数说明]
      * 

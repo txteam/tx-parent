@@ -4,7 +4,7 @@
  * 修改时间:  2018年6月3日
  * <修改描述:>
  */
-package com.tx.core.mybatis.support;
+package com.tx.core.mybatis.mapper;
 
 import java.lang.reflect.Type;
 import java.util.List;

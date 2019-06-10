@@ -158,7 +158,7 @@ public class JPAParseUtils {
      */
     public static List<String> parseOrderBys(Class<?> beanType,
             List<JPAColumnInfo> columnInfos,
-            String... defaultOrderByColumnNames) {
+            String... defaultOrderByProperties) {
         AssertUtils.notNull(beanType, "beanType is null.");
         AssertUtils.notEmpty(columnInfos, "columnInfos is null.");
         
@@ -173,17 +173,17 @@ public class JPAParseUtils {
         }
         
         //如果有默认的排序字段
-        if (!ArrayUtils.isEmpty(defaultOrderByColumnNames)) {
-            for (String name : defaultOrderByColumnNames) {
+        if (!ArrayUtils.isEmpty(defaultOrderByProperties)) {
+            for (String name : defaultOrderByProperties) {
                 if (StringUtils.isEmpty(name)) {
                     continue;
                 }
                 for (JPAColumnInfo columnTemp : columnInfos) {
                     if (!StringUtils.equalsIgnoreCase(name,
-                            columnTemp.getPropertyDescriptor().getName())) {
+                            columnTemp.getPropertyName())) {
                         continue;
                     }
-                    orderBys.add(columnTemp.getColumnName() + " ASC");
+                    orderBys.add(columnTemp.getColumnName() + " DESC");
                 }
             }
         }
@@ -194,7 +194,7 @@ public class JPAParseUtils {
                 if (!columnTemp.isPrimaryKey()) {
                     continue;
                 }
-                orderBys.add(columnTemp.getColumnName() + " ASC");
+                orderBys.add(columnTemp.getColumnName() + " DESC");
             }
         }
         return orderBys;
@@ -213,7 +213,7 @@ public class JPAParseUtils {
      */
     public static String parseOrderBy(Class<?> beanType,
             List<JPAColumnInfo> columnInfos,
-            String... defaultOrderByColumnNames) {
+            String... defaultOrderByPropertys) {
         AssertUtils.notNull(beanType, "beanType is null.");
         AssertUtils.notEmpty(columnInfos, "columnInfos is null.");
         
@@ -226,17 +226,17 @@ public class JPAParseUtils {
         }
         
         //如果有默认的排序字段
-        if (!ArrayUtils.isEmpty(defaultOrderByColumnNames)) {
-            for (String name : defaultOrderByColumnNames) {
+        if (!ArrayUtils.isEmpty(defaultOrderByPropertys)) {
+            for (String name : defaultOrderByPropertys) {
                 if (StringUtils.isEmpty(name)) {
                     continue;
                 }
                 for (JPAColumnInfo columnTemp : columnInfos) {
-                    if (!StringUtils.equalsIgnoreCase(name,
-                            columnTemp.getPropertyDescriptor().getName())) {
+                    if (!StringUtils.equals(name,
+                            columnTemp.getPropertyName())) {
                         continue;
                     }
-                    return columnTemp.getColumnName() + " ASC";
+                    return columnTemp.getColumnName() + " DESC";
                 }
             }
         }
@@ -246,7 +246,7 @@ public class JPAParseUtils {
             if (!columnTemp.isPrimaryKey()) {
                 continue;
             }
-            return columnTemp.getColumnName() + " ASC";
+            return columnTemp.getColumnName() + " DESC";
         }
         
         return null;
@@ -366,7 +366,7 @@ public class JPAParseUtils {
         if (td.hasAnnotation(OrderBy.class)) {
             OrderBy orderByAnnotation = td.getAnnotation(OrderBy.class);
             if (StringUtils.isEmpty(orderByAnnotation.value())) {
-                orderBy = columnInfo.getColumnName() + " ASC";
+                orderBy = columnInfo.getColumnName() + " DESC";
             } else {
                 orderBy = orderByAnnotation.value();
             }
@@ -376,7 +376,7 @@ public class JPAParseUtils {
             org.hibernate.annotations.OrderBy orderByAnnotation = td
                     .getAnnotation(org.hibernate.annotations.OrderBy.class);
             if (StringUtils.isEmpty(orderByAnnotation.clause())) {
-                orderBy = columnInfo.getColumnName() + " ASC";
+                orderBy = columnInfo.getColumnName() + " DESC";
             } else {
                 orderBy = orderByAnnotation.clause();
             }

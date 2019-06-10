@@ -168,12 +168,6 @@ public class SqlMapSQLStatement extends SQLStatement {
         }
         sqlClause(builder, "FROM", tables, "", "", ", ");
         joins(builder);
-        //        sqlClause(builder,
-        //                "",
-        //                where,
-        //                "(<trim prefix=\"WHERE\" prefixOverrides=\"AND | OR\">",
-        //                "</trim>)",
-        //                " ");
         sqlClause(builder,
                 "",
                 where,
@@ -185,7 +179,7 @@ public class SqlMapSQLStatement extends SQLStatement {
         sqlClause(builder,
                 "",
                 orderBy,
-                "<choose><when test=\"@com.tx.core.util.OgnlUtils@isNotEmpty(orderSql)\">ORDER BY ${orderSql}</when><otherwise>ORDER BY ",
+                "<choose><when test=\"@com.tx.core.util.OgnlUtils@isNotEmpty(orders)\">ORDER BY <foreach collection=\"orders\" item=\"orderTemp\" separator=\",\">${orderTemp.column} ${orderTemp.direction}</foreach></when><otherwise>ORDER BY ",
                 "</otherwise></choose>",
                 ", ");
         return builder.toString();

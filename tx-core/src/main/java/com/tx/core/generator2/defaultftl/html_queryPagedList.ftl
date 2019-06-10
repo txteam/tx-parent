@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="utf-8"/>
 <title>查询${view.entityComment}列表[query${view.entityTypeSimpleName}List]</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
@@ -33,6 +32,7 @@
 <!-- customize -->
 <script type="text/javascript" charset="utf-8" src="../../webjars/js/commons.js" th:src="@{/webjars/js/commons.js}"></script>
 <script type="text/javascript" charset="utf-8" src="../../webjars/js/components.js" th:src="@{/webjars/js/components.js}"></script>
+
 <script type="text/javascript" th:inline="javascript">
 /*<![CDATA[*/
 var _contextPath = ${r"/*[[@{/}]]*/''"};
@@ -40,20 +40,19 @@ var _contextPath = ${r"/*[[@{/}]]*/''"};
 </script>
 </block>
 
-<script type="text/javascript" th:inline="javascript">
-/*<![CDATA[*/
+<script type="text/javascript" >
 //权限判定
-$.canAdd = true;
-$.canUpdate = true;
-$.canDelete = true;
+$.canAdd = false;
+$.canUpdate = false;
+$.canDelete = false;
 <#if validProperty??>
-$.canDisable = true;
-$.canEnable = true;
+$.canDisable = false;
+$.canEnable = false;
 </#if>
 
 var grid = null;
-var idFieldName = '${view.pkProperty.propertyName}';
-var nameFieldName = '${view.nameProperty.propertyName}'; 
+var idFieldName = '${view.pkProperty.name}';
+var nameFieldName = '${view.pkProperty.name}'; 
 var entityName = '${view.entityComment}';
 
 $(document).ready(function(){
@@ -66,7 +65,7 @@ $(document).ready(function(){
 </#if>
 
 	grid = $('#grid').datagrid({
-		url : _contextPath + '${view.entityTypeSimpleName?uncap_first}/queryList',
+		url : _contextPath + '${sqlmap.entityTypeSimpleName?uncap_first}/queryList',
 		fit : true,
 <#if (fieldViewMapping?size gt 15) >
 	    fitColumns : false,
@@ -80,8 +79,22 @@ $(document).ready(function(){
 		nowrap : true,
 		striped : true,
 		singleSelect : true,
+<#if isPagedList>
+		pagination : true,
+		pageSize : 15,
+		pageList : [ 15, 20, 30, 40, 50 ],
+		loadFilter: function(data){
+			var res = {total:0,rows:[]};
+			if(!$.ObjectUtils.isEmpty(data)
+					&& !$.ObjectUtils.isEmpty(data.list)){
+				res['total'] = data.count;
+				res['rows'] = data.list;
+			}
+			return res;
+		}, 
+</#if>
 		frozenColumns: [[ {
-			field : 'row.${view.pkProperty.propertyName}',
+			field : 'row.${view.idPropertyName}',
 			title : 'pk',
 			width : 150,
 			hidden : true
@@ -220,7 +233,7 @@ function addFun() {
 	DialogUtils.openModalDialog(
 		"add${view.entitySimpleName}",
 		"新增" + entityName,
-		$.formatString(_contextPath + "${view.entityTypeSimpleName?uncap_first}/toAdd"),
+		$.formatString("${r"${contextPath}"}/${view.lowerCaseEntitySimpleName}/toAdd${view.entitySimpleName}.action"),
 		500,${(fieldViewMapping?size*28+40)?string("#")},function(){
 			queryFun();
 	});
@@ -246,11 +259,37 @@ function editFun(id,name) {
 	DialogUtils.openModalDialog(
 		"update${view.entitySimpleName}",
 		"编辑" + entityName + ":" + name,
-		$.formatString(_contextPath + "${view.entityTypeSimpleName?uncap_first}/toUpdate?id={0}",id),
+		$.formatString("${r"${contextPath}"}/${view.lowerCaseEntitySimpleName}/toUpdate${view.entitySimpleName}.action?${view.lowerCaseEntitySimpleName}Id={0}",id),
             500,${(fieldViewMapping?size*28+40)?string("#")},function(){
 			//queryFun();
 	});
 	return false;
+}
+
+/**
+ * 详情
+ */
+function viewFun(id,name) {
+    if (id == undefined) {
+        var rows = grid.datagrid('getSelections');
+        id = rows[0][idFieldName];
+        name = rows[0][nameFieldName];
+    }
+    if($.ObjectUtils.isEmpty(id)){
+        DialogUtils.alert("没有选中的" + entityName);
+        return ;
+    }
+    DialogUtils.progress({
+        text : '加载中，请等待....'
+    });
+	DialogUtils.openModalDialog(
+		"view${view.entitySimpleName}",
+		"" + entityName + "详情:" + name,
+		$.formatString("${r"${contextPath}"}/${view.lowerCaseEntitySimpleName}/toView${view.entitySimpleName}.action?${view.lowerCaseEntitySimpleName}Id={0}",id),
+            900,${(fieldViewMapping?size/2*28+50)?string("#")},function(){
+			//queryFun();
+		});
+    return false;
 }
 /*
  * 删除
@@ -275,8 +314,8 @@ function deleteFun(id,name) {
 	    		});
 	    		//如果确认删除指定的${view.entityComment}
 	    		$.post(
-			    		'${r"${contextPath}"}/${view.entityTypeSimpleName?uncap_first}/deleteBy${view.upCaseIdPropertyName}.action',
-			    		{${view.entityTypeSimpleName?uncap_first}Id:id},
+			    		'${r"${contextPath}"}/${view.lowerCaseEntitySimpleName}/deleteBy${view.upCaseIdPropertyName}.action',
+			    		{${view.lowerCaseEntitySimpleName}Id:id},
 			    		function(data){
 			    			DialogUtils.progress('close');
 			    			if(data){
@@ -291,7 +330,7 @@ function deleteFun(id,name) {
     });
     return false;
 }
-<#if validProperty??>
+<#if !StringUtils.isEmpty(validPropertyName)>
 /*
  * 禁用
  */
@@ -316,8 +355,8 @@ function disableFun(id,name){
     		});
     		//如果确认禁用指定${view.entityComment}
     		$.post(
-		    		'${r"${contextPath}"}/${view.entityTypeSimpleName?uncap_first}/disableBy${view.upCaseIdPropertyName}.action',
-		    		{${view.entityTypeSimpleName?uncap_first}Id:id},
+		    		'${r"${contextPath}"}/${view.lowerCaseEntitySimpleName}/disableBy${view.upCaseIdPropertyName}.action',
+		    		{${view.lowerCaseEntitySimpleName}Id:id},
 		    		function(data){
 			    			DialogUtils.progress('close');
 			    			if(data){
@@ -356,8 +395,8 @@ function enableFun(id,name){
     		});
     		//如果确认启用指定${view.entityComment}
     		$.post(
-		    		'${r"${contextPath}"}/${view.entityTypeSimpleName?uncap_first}/enableBy${view.upCaseIdPropertyName}.action',
-		    		{${view.entityTypeSimpleName?uncap_first}Id:id},
+		    		'${r"${contextPath}"}/${view.lowerCaseEntitySimpleName}/enableBy${view.upCaseIdPropertyName}.action',
+		    		{${view.lowerCaseEntitySimpleName}Id:id},
 		    		function(data){
 			    			DialogUtils.progress('close');
 			    			if(data){
@@ -424,11 +463,20 @@ function enableFun(id,name){
     </div> 
     
 	<div id="toolbar" style="display: none;">		
-		<a onclick="addFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'pencil_add'">新增</a>
-		<a id="editALink" onclick="editFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'pencil'">编辑</a>
-		<a id="viewALink" onclick="viewFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'pencil_go'">详情</a>
-		<a id="deleteALink" onclick="deleteFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'pencil_delete'">删除</a>
-<#if validProperty??>
+		<c:if test='${r"${authContext.hasAuth("}"add_${view.lowerCaseEntitySimpleName}") }'>
+			<a onclick="addFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'pencil_add'">新增</a>
+		</c:if>
+		<c:if test='${r"${authContext.hasAuth("}"update_${view.lowerCaseEntitySimpleName}") }'>
+			<a id="editALink" onclick="editFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'pencil'">编辑</a>
+		</c:if>
+		<c:if test='${r"${authContext.hasAuth("}"view_${view.lowerCaseEntitySimpleName}") }'>
+			<a id="viewALink" onclick="viewFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'pencil_go'">详情</a>
+		</c:if>
+
+		<c:if test='${r"${authContext.hasAuth("}"delete_${view.lowerCaseEntitySimpleName}") }'>
+			<a id="deleteALink" onclick="deleteFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'pencil_delete'">删除</a>
+		</c:if>
+<#if !StringUtils.isEmpty(validPropertyName)>
 		<a id="enableALink" onclick="enableFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'control_play_blue'">启用</a>
 		<a id="disableALink" onclick="disableFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'control_stop_blue'">禁用</a>
 </#if>
