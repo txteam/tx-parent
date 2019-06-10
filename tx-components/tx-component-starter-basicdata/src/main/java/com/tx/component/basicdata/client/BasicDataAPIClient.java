@@ -214,7 +214,7 @@ public interface BasicDataAPIClient {
     @RequestMapping(value = "/{type}/list/{valid}", method = RequestMethod.GET)
     public List<DataDict> queryList(@PathVariable String type,
             @PathVariable(required = false) Boolean valid,
-            @RequestBody Querier querier);
+            @RequestParam Map<String, Object> params);
     
     /**
      * 根据条件查询基础数据分页列表<br/>
@@ -232,7 +232,7 @@ public interface BasicDataAPIClient {
     @RequestMapping(value = "/{type}/pagedlist/{valid}", method = RequestMethod.GET)
     public PagedList<DataDict> queryPagedList(@PathVariable String type,
             @PathVariable(required = false) Boolean valid,
-            @RequestBody Querier querier,
+            @RequestParam Map<String, Object> params,
             @RequestParam(value = "pageIndex", required = false, defaultValue = "1") int pageIndex,
             @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize);
     
@@ -251,7 +251,7 @@ public interface BasicDataAPIClient {
     public List<DataDict> queryChildrenByParentId(@PathVariable String type,
             @PathVariable(required = true) String parentId,
             @PathVariable(required = false) Boolean valid,
-            @RequestBody Querier querier);
+            @RequestParam Map<String, Object> params);
     
     /**
      * 根据条件查询基础数据列表<br/>
@@ -268,5 +268,75 @@ public interface BasicDataAPIClient {
     public List<DataDict> queryDescendantsByParentId(@PathVariable String type,
             @PathVariable(required = true) String parentId,
             @PathVariable(required = false) Boolean valid,
-            @RequestBody Querier querier);
+            @RequestParam Map<String, Object> params);
+    
+//    /**
+//     * 根据条件查询基础数据列表<br/>
+//     * <功能详细描述>
+//     * @param valid
+//     * @param params
+//     * @return [参数说明]
+//     * 
+//     * @return List<T> [返回类型说明]
+//     * @exception throws [异常类型] [异常说明]
+//     * @see [类、类#方法、类#成员]
+//     */
+//    @RequestMapping(value = "/{type}/list/{valid}", method = RequestMethod.GET)
+//    public List<DataDict> queryList(@PathVariable String type,
+//            @PathVariable(required = false) Boolean valid,
+//            @RequestBody Querier querier);
+//    
+//    /**
+//     * 根据条件查询基础数据分页列表<br/>
+//     * <功能详细描述>
+//     * @param valid
+//     * @param params
+//     * @param pageIndex
+//     * @param pageSize
+//     * @return [参数说明]
+//     * 
+//     * @return PagedList<T> [返回类型说明]
+//     * @exception throws [异常类型] [异常说明]
+//     * @see [类、类#方法、类#成员]
+//     */
+//    @RequestMapping(value = "/{type}/pagedlist/{valid}", method = RequestMethod.GET)
+//    public PagedList<DataDict> queryPagedList(@PathVariable String type,
+//            @PathVariable(required = false) Boolean valid,
+//            @RequestBody Querier querier,
+//            @RequestParam(value = "pageIndex", required = false, defaultValue = "1") int pageIndex,
+//            @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize);
+//    
+//    /**
+//     * 根据条件查询基础数据列表<br/>
+//     * <功能详细描述>
+//     * @param valid
+//     * @param params
+//     * @return [参数说明]
+//     * 
+//     * @return List<T> [返回类型说明]
+//     * @exception throws [异常类型] [异常说明]
+//     * @see [类、类#方法、类#成员]
+//     */
+//    @RequestMapping(value = "/{type}/children/{parentId}/{valid}", method = RequestMethod.GET)
+//    public List<DataDict> queryChildrenByParentId(@PathVariable String type,
+//            @PathVariable(required = true) String parentId,
+//            @PathVariable(required = false) Boolean valid,
+//            @RequestBody Querier querier);
+//    
+//    /**
+//     * 根据条件查询基础数据列表<br/>
+//     * <功能详细描述>
+//     * @param valid
+//     * @param params
+//     * @return [参数说明]
+//     * 
+//     * @return List<T> [返回类型说明]
+//     * @exception throws [异常类型] [异常说明]
+//     * @see [类、类#方法、类#成员]
+//     */
+//    @RequestMapping(value = "/{type}/descendants/{parentId}/{valid}", method = RequestMethod.GET)
+//    public List<DataDict> queryDescendantsByParentId(@PathVariable String type,
+//            @PathVariable(required = true) String parentId,
+//            @PathVariable(required = false) Boolean valid,
+//            @RequestBody Querier querier);
 }

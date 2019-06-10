@@ -23,7 +23,6 @@
 				DD.valid,
 				DD.createDate,
 				DD.modifyAble,
-				DD.module,
 				DD.parentId,
 				DD.remark,
 				DD.attributes
@@ -55,7 +54,6 @@
 				DD.valid,
 				DD.createDate,
 				DD.modifyAble,
-				DD.module,
 				DD.parentId,
 				DD.remark,
 				DD.attributes
