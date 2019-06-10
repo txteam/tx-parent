@@ -66,6 +66,11 @@
 			</choose>
 			</foreach>
 	        </if>
+<#if sqlmap.parentIdColumn??>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(${sqlmap.parentIdColumn.propertyName}s)">  
+	            AND ${sqlmap.simpleTableName}.${sqlmap.parentIdColumn.columnName} IN <foreach collection="${sqlmap.parentIdColumn.propertyName}s" open="(" close=")" separator="," item="parentIdTemp">${r"#{parentIdTemp}"}</foreach>
+	        </if>
+</#if>
 <#list sqlmap.columnList as column>
 	<#if column.propertyName == "createDate">
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(minCreateDate)">  
@@ -127,6 +132,11 @@
 			</choose>
 			</foreach>
 	        </if>
+<#if sqlmap.parentIdColumn??>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(${sqlmap.parentIdColumn.propertyName}s)">  
+	            AND ${sqlmap.simpleTableName}.${sqlmap.parentIdColumn.columnName} IN <foreach collection="${sqlmap.parentIdColumn.propertyName}s" open="(" close=")" separator="," item="parentIdTemp">${r"#{parentIdTemp}"}</foreach>
+	        </if>
+</#if>
 <#list sqlmap.columnList as column>
 	<#if column.propertyName == "createDate">
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(minCreateDate)">  

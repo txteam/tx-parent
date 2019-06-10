@@ -6,6 +6,7 @@
  */
 package com.tx.core.querier.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,7 +26,10 @@ import com.tx.core.querier.QuerierConstants;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class Querier {
+public class Querier implements Serializable, Cloneable {
+    
+    /** 注释内容 */
+    private static final long serialVersionUID = 7977479044915973631L;
     
     /** 搜索属性 */
     private String searchProperty;
@@ -137,6 +141,9 @@ public class Querier {
      * @return 返回 filters
      */
     public List<Filter> getFilters() {
+        if (this.filters == null) {
+            this.filters = new ArrayList<>();
+        }
         return filters;
     }
     
@@ -152,6 +159,9 @@ public class Querier {
      * @return 排序
      */
     public List<Order> getOrders() {
+        if (this.orders == null) {
+            this.orders = new ArrayList<>();
+        }
         return orders;
     }
     
@@ -167,6 +177,9 @@ public class Querier {
      * @return 返回 params
      */
     public Map<String, Object> getParams() {
+        if (this.params == null) {
+            this.params = new HashMap<>();
+        }
         return params;
     }
     
@@ -195,4 +208,54 @@ public class Querier {
     public int hashCode() {
         return HashCodeBuilder.reflectionHashCode(this);
     }
+    
+    /**
+     * @return
+     */
+    @Override
+    public Object clone() {
+        Querier querier = new Querier();
+        querier.setOrderProperty(orderProperty);
+        querier.setOrderDirection(orderDirection);
+        querier.setSearchProperty(searchProperty);
+        querier.setSearchOperator(searchOperator);
+        querier.setSearchValue(searchValue);
+        
+        querier.setFilters(new ArrayList<>(getFilters()));
+        querier.setOrders(new ArrayList<>(getOrders()));
+        querier.setParams(new HashMap<>(getParams()));
+        return querier;
+    }
+    
+    //    public static void main(String[] args) {
+    //        Querier t1 = QuerierBuilder.newInstance()
+    //                .searchProperty("parentId", "testParentId")
+    //                .orderProperty("createDate")
+    //                .addOrder("name")
+    //                .addOrder("lastUpdateDate", OrderDirectionEnum.DESC)
+    //                .addOrder("createDate", OrderDirectionEnum.ASC)
+    //                .addFilter(Filter.like("name", "namelike%"))
+    //                .addFilter(Filter.isNotNull("code"))
+    //                .querier();
+    //        
+    //        Querier t2 = QuerierBuilder.newInstance()
+    //                .searchProperty("parentId", "testParentId")
+    //                .orderProperty("createDate")
+    //                .addOrder("name")
+    //                .addOrder("lastUpdateDate", OrderDirectionEnum.DESC)
+    //                .addOrder("createDate", OrderDirectionEnum.ASC)
+    //                .addFilter(Filter.like("name", "namelike%"))
+    //                .addFilter(Filter.isNotNull("code"))
+    //                .querier();
+    //        
+    //        System.out.println(t1.hashCode());
+    //        System.out.println(t2.hashCode());
+    //        System.out.println(t1.equals(t2));
+    //        
+    //        Querier t3 = (Querier)t1.clone();
+    //        Querier t4 = (Querier)t2.clone();
+    //        System.out.println(t3.hashCode());
+    //        System.out.println(t4.hashCode());
+    //        System.out.println(t3.equals(t4));
+    //    }
 }

@@ -94,6 +94,9 @@
 			</choose>
 			</foreach>
 	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(parentIds)">  
+	            AND TM.parentId IN <foreach collection="parentIds" open="(" close=")" separator="," item="parentIdTemp">#{parentIdTemp}</foreach>
+	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
 	            <![CDATA[ AND TM.id = #{id} ]]>
 	        </if>			
@@ -194,6 +197,9 @@
 			</choose>
 			</foreach>
 	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(parentIds)">  
+	            AND TM.parentId IN <foreach collection="parentIds" open="(" close=")" separator="," item="parentIdTemp">#{parentIdTemp}</foreach>
+	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
 	            <![CDATA[ AND TM.id = #{id} ]]>
 	        </if>			
@@ -240,12 +246,12 @@
 	            <![CDATA[ AND TM.remark = #{remark} ]]>
 	        </if>			
 			<if test="nested1 != null">
-				<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(nested1)">  
+				<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(nested1.id)">  
 		            <![CDATA[ AND TM.nested1Id = #{nested1.id} ]]>
 		        </if>
 	        </if>			
 			<if test="nested2 != null">
-				<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(nested2)">  
+				<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(nested2.code)">  
 		            <![CDATA[ AND TM.nested2Code = #{nested2.code} ]]>
 		        </if>
 	        </if>			

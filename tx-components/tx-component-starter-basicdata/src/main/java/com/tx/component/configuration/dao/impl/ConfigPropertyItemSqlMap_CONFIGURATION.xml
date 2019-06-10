@@ -14,30 +14,30 @@
 		parameterType="com.tx.component.configuration.model.ConfigPropertyItem"
 		resultMap="configPropertyItemMap">
 		SELECT 
-				TDD.id,
-				TDD.parentId,
-				TDD.code,
-				TDD.name,
-				TDD.value,
-				TDD.module,
-				TDD.remark,
-				TDD.validateExpression,
-				TDD.modifyAble,
-				TDD.leaf,
-				TDD.attributes,
-				TDD.lastUpdateDate,
-				TDD.createDate
-		  FROM bd_config_context TDD
+				CPI.id,
+				CPI.code,
+				CPI.lastUpdateDate,
+				CPI.leaf,
+				CPI.name,
+				CPI.value,
+				CPI.createDate,
+				CPI.modifyAble,
+				CPI.module,
+				CPI.parentId,
+				CPI.remark,
+				CPI.validateExpression,
+				CPI.attributes
+		  FROM BD_CONFIG_CONTEXT CPI
 		 WHERE
 		<trim prefixOverrides="AND | OR">
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
-	            <![CDATA[ AND TDD.id = #{id} ]]>
+	            <![CDATA[ AND CPI.id = #{id} ]]>
 	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(code)">  
-	            <![CDATA[ AND TDD.code = #{code,jdbcType=VARCHAR} ]]>
+	            <![CDATA[ AND CPI.code = #{code} ]]>
 	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(module)">  
-	            <![CDATA[ AND TDD.module = #{module,jdbcType=VARCHAR} ]]>
+	            <![CDATA[ AND CPI.module = #{module} ]]>
 	        </if>
 		</trim>
 	</select>
@@ -47,47 +47,69 @@
 		parameterType="java.util.Map"
 		resultMap="configPropertyItemMap">
 		SELECT 
-				TDD.id,
-				TDD.parentId,
-				TDD.code,
-				TDD.name,
-				TDD.value,
-				TDD.module,
-				TDD.remark,
-				TDD.validateExpression,
-				TDD.modifyAble,
-				TDD.leaf,
-				TDD.attributes,
-				TDD.lastUpdateDate,
-				TDD.createDate
-		  FROM bd_config_context TDD
+				CPI.id,
+				CPI.code,
+				CPI.lastUpdateDate,
+				CPI.leaf,
+				CPI.name,
+				CPI.value,
+				CPI.createDate,
+				CPI.modifyAble,
+				CPI.module,
+				CPI.parentId,
+				CPI.remark,
+				CPI.validateExpression,
+				CPI.attributes
+		  FROM BD_CONFIG_CONTEXT CPI
 		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(conditions)">
+			<foreach collection="conditions" item="conditionTemp">
+			<choose>  
+		        <when test="conditionTemp.withoutValue">
+		        	AND ${conditionTemp.column} ${conditionTemp.operator}
+		        </when>
+		        <when test="conditionTemp.foreach">  
+		            AND ${conditionTemp.column} ${conditionTemp.operator} <foreach collection="conditionTemp.value" item="valueTemp" open="(" close=")" separator=",">#{valueTemp}</foreach>
+		        </when>
+		        <otherwise>  
+		            AND ${conditionTemp.column} ${conditionTemp.operator} #{conditionTemp.value}
+		        </otherwise>
+			</choose>
+			</foreach>
+	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(parentIds)">
-				AND TDD.parentId IN <foreach collection="parentIds" open="(" close=")" separator="," item="parentIdTemp">#{parentIdTemp,jdbcType=VARCHAR}</foreach>
+				AND CPI.parentId IN <foreach collection="parentIds" open="(" close=")" separator="," item="parentIdTemp">#{parentIdTemp,jdbcType=VARCHAR}</foreach>
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(parentId)">  
-	            <![CDATA[ AND TDD.parentId = #{parentId,jdbcType=VARCHAR} ]]>
+	            <![CDATA[ AND CPI.parentId = #{parentId,jdbcType=VARCHAR} ]]>
 	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(code)">  
-	            <![CDATA[ AND TDD.code = #{code,jdbcType=VARCHAR} ]]>
+	            <![CDATA[ AND CPI.code = #{code,jdbcType=VARCHAR} ]]>
 	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(module)">  
-	            <![CDATA[ AND TDD.module = #{module,jdbcType=VARCHAR} ]]>
+	            <![CDATA[ AND CPI.module = #{module,jdbcType=VARCHAR} ]]>
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(modifyAble)">  
-	            <![CDATA[ AND TDD.modifyAble = #{modifyAble,jdbcType=BIT} ]]>
+	            <![CDATA[ AND CPI.modifyAble = #{modifyAble,jdbcType=BIT} ]]>
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(leaf)">  
-	            <![CDATA[ AND TDD.leaf = #{leaf,jdbcType=BIT} ]]>
+	            <![CDATA[ AND CPI.leaf = #{leaf,jdbcType=BIT} ]]>
 	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(name)">  
-	            <![CDATA[ AND TDD.name = #{name,jdbcType=VARCHAR} ]]>
+	            <![CDATA[ AND CPI.name = #{name,jdbcType=VARCHAR} ]]>
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(excludeId)">
-				<![CDATA[ AND TDD.id <> #{excludeId,javaType=java.lang.String} ]]>
+				<![CDATA[ AND CPI.id <> #{excludeId,javaType=java.lang.String} ]]>
 			</if>
 		</trim>
-		ORDER BY createDate
+		<choose>  
+	        <when test="@com.tx.core.util.OgnlUtils@isNotEmpty(orders)">  
+	            ORDER BY <foreach collection="orders" item="orderTemp" separator=",">${orderTemp.column} ${orderTemp.direction}</foreach>
+	        </when>
+	        <otherwise>  
+	            ORDER BY createDate DESC
+	        </otherwise>  
+	    </choose>
 	</select>
 	
 		<!-- auto generate default count -->
@@ -95,31 +117,46 @@
 		parameterType="java.util.Map"
 		resultType="java.lang.Integer">
 		SELECT COUNT(1)
-		  FROM BD_DATA_DICT TDD
+		  FROM BD_CONFIG_CONTEXT CPI
 		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(conditions)">
+			<foreach collection="conditions" item="conditionTemp">
+			<choose>  
+		        <when test="conditionTemp.withoutValue">
+		        	AND ${conditionTemp.column} ${conditionTemp.operator}
+		        </when>
+		        <when test="conditionTemp.foreach">  
+		            AND ${conditionTemp.column} ${conditionTemp.operator} <foreach collection="conditionTemp.value" item="valueTemp" open="(" close=")" separator=",">#{valueTemp}</foreach>
+		        </when>
+		        <otherwise>  
+		            AND ${conditionTemp.column} ${conditionTemp.operator} #{conditionTemp.value}
+		        </otherwise>
+			</choose>
+			</foreach>
+	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(parentIds)">
-				AND TDD.parentId IN <foreach collection="parentIds" open="(" close=")" separator="," item="parentIdTemp">#{parentIdTemp,jdbcType=VARCHAR}</foreach>
+				AND CPI.parentId IN <foreach collection="parentIds" open="(" close=")" separator="," item="parentIdTemp">#{parentIdTemp,jdbcType=VARCHAR}</foreach>
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(parentId)">  
-	            <![CDATA[ AND TDD.parentId = #{parentId,jdbcType=VARCHAR} ]]>
+	            <![CDATA[ AND CPI.parentId = #{parentId,jdbcType=VARCHAR} ]]>
 	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(code)">  
-	            <![CDATA[ AND TDD.code = #{code,jdbcType=VARCHAR} ]]>
+	            <![CDATA[ AND CPI.code = #{code,jdbcType=VARCHAR} ]]>
 	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(module)">  
-	            <![CDATA[ AND TDD.module = #{module,jdbcType=VARCHAR} ]]>
+	            <![CDATA[ AND CPI.module = #{module,jdbcType=VARCHAR} ]]>
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(modifyAble)">  
-	            <![CDATA[ AND TDD.modifyAble = #{modifyAble,jdbcType=BIT} ]]>
+	            <![CDATA[ AND CPI.modifyAble = #{modifyAble,jdbcType=BIT} ]]>
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(leaf)">  
-	            <![CDATA[ AND TDD.leaf = #{leaf,jdbcType=BIT} ]]>
+	            <![CDATA[ AND CPI.leaf = #{leaf,jdbcType=BIT} ]]>
 	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(name)">  
-	            <![CDATA[ AND TDD.name = #{name,jdbcType=VARCHAR} ]]>
+	            <![CDATA[ AND CPI.name = #{name,jdbcType=VARCHAR} ]]>
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(excludeId)">
-				<![CDATA[ AND TDD.id <> #{excludeId,javaType=java.lang.String} ]]>
+				<![CDATA[ AND CPI.id <> #{excludeId,javaType=java.lang.String} ]]>
 			</if>
 		</trim>
 	</select>
@@ -127,7 +164,7 @@
     <!-- auto generate default insert -->
     <insert id="insert" 
 		parameterType="com.tx.component.configuration.model.ConfigPropertyItem">
-		INSERT INTO bd_config_context
+		INSERT INTO BD_CONFIG_CONTEXT
 		(
 			id,
 			parentId,
@@ -164,7 +201,7 @@
 	<!-- auto generate default delete -->
 	<delete id="delete" 
 		parameterType="com.tx.component.configuration.model.ConfigPropertyItem">
-		DELETE FROM bd_config_context WHERE
+		DELETE FROM BD_CONFIG_CONTEXT WHERE
 		<trim prefixOverrides="AND | OR">
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(parentId)">  
 	            AND parentId = #{parentId}
@@ -173,10 +210,10 @@
 	            AND id = #{id}
 	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(code)">  
-	            AND code = #{code,jdbcType=VARCHAR}
+	            AND code = #{code}
 	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(module)">  
-	            <![CDATA[ AND module = #{module,jdbcType=VARCHAR} ]]>
+	            AND module = #{module}
 	        </if>
 		</trim>
 	</delete>
@@ -184,7 +221,7 @@
 	<!-- auto generate default update -->
 	<update id="update"
 	    parameterType="java.util.Map">  
-	    UPDATE bd_config_context 
+	    UPDATE BD_CONFIG_CONTEXT 
 	    <trim prefix="SET" suffixOverrides=",">
 			<if test="_parameter.containsKey('parentId')">
 	    		parentId = #{parentId,javaType=java.lang.String},
@@ -220,10 +257,10 @@
 	            <![CDATA[ AND id = #{id} ]]>
 	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(code)">  
-	            <![CDATA[ AND code = #{code,jdbcType=VARCHAR} ]]>
+	            <![CDATA[ AND code = #{code} ]]>
 	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(module)">  
-	            <![CDATA[ AND module = #{module,jdbcType=VARCHAR} ]]>
+	            <![CDATA[ AND module = #{module} ]]>
 	        </if>
 		</trim>
 	</update>  

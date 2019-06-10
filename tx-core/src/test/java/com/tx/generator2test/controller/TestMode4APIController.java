@@ -17,14 +17,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tx.core.paged.model.PagedList;
 import com.tx.core.querier.model.Querier;
-import com.tx.generator2test.model.TestMode2;
-import com.tx.generator2test.service.TestMode2Service;
+import com.tx.generator2test.model.TestMode4;
+import com.tx.generator2test.service.TestMode4Service;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
 /**
- * 测试对象2API控制层<br/>
+ * 测试对象API控制层<br/>
  * 
  * @author []
  * @version [版本号]
@@ -32,103 +32,120 @@ import io.swagger.annotations.ApiOperation;
  * @since [产品/模块版本]
  */
 @RestController
-@Api(tags = "测试对象2API")
-@RequestMapping("/api/testMode2")
-public class TestMode2APIController {
+@Api(tags = "测试对象API")
+@RequestMapping("/api/testMode4")
+public class TestMode4APIController {
     
-    //测试对象2业务层
-    @Resource(name = "testMode2Service")
-    private TestMode2Service testMode2Service;
+    //测试对象业务层
+    @Resource(name = "testMode4Service")
+    private TestMode4Service testMode4Service;
     
     /**
-     * 新增测试对象2<br/>
+     * 新增测试对象<br/>
      * <功能详细描述>
-     * @param testMode2 [参数说明]
+     * @param testMode4 [参数说明]
      * 
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @ApiOperation(value = "新增测试对象2")
+    @ApiOperation(value = "新增测试对象")
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public boolean insert(@RequestBody TestMode2 testMode2) {
-        this.testMode2Service.insert(testMode2);
+    public boolean insert(@RequestBody TestMode4 testMode4) {
+        this.testMode4Service.insert(testMode4);
         return true;
     }
     
     /**
-     * 删除测试对象2<br/> 
+     * 删除测试对象<br/> 
      * <功能详细描述>
-     * @param code
+     * @param id
      * @return [参数说明]
      * 
      * @return boolean [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @ApiOperation(value = "删除测试对象2")
-    @RequestMapping(value = "/{code}", method = RequestMethod.DELETE) 
-    public boolean deleteByCode(
-    		@PathVariable(value = "code",required=true) String code) {
-        boolean flag = this.testMode2Service.deleteByCode(code);
+    @ApiOperation(value = "删除测试对象")
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE) 
+    public boolean deleteById(
+    		@PathVariable(value = "id",required=true) Long id) {
+        boolean flag = this.testMode4Service.deleteById(id);
         return flag;
     }
     
     /**
-     * 更新测试对象2<br/>
+     * 更新测试对象<br/>
      * <功能详细描述>
-     * @param testMode2
+     * @param testMode4
      * @return [参数说明]
      * 
      * @return boolean [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @ApiOperation(value = "修改测试对象2")
-    @RequestMapping(value = "/{code}", method = RequestMethod.PUT)
-    public boolean updateByCode(@PathVariable(value = "code",required=true) String code,
-    		@RequestBody TestMode2 testMode2) {
-        boolean flag = this.testMode2Service.updateByCode(code,testMode2);
+    @ApiOperation(value = "修改测试对象")
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    public boolean updateById(@PathVariable(value = "id",required=true) Long id,
+    		@RequestBody TestMode4 testMode4) {
+        boolean flag = this.testMode4Service.updateById(id,testMode4);
         return flag;
     }
     
 
     /**
-     * 根据主键查询测试对象2<br/>
+     * 根据主键查询测试对象<br/>
      * <功能详细描述>
      * @return [参数说明]
      * 
-     * @return TestMode2 [返回类型说明]
+     * @return TestMode4 [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @ApiOperation(value = "根据主键查询测试对象2")
-    @RequestMapping(value = "/{code}", method = RequestMethod.GET)
-    public TestMode2 findByCode(
-            @PathVariable(value = "code", required = true) String code) {
-        TestMode2 res = this.testMode2Service.findByCode(code);
+    @ApiOperation(value = "根据主键查询测试对象")
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public TestMode4 findById(
+            @PathVariable(value = "id", required = true) Long id) {
+        TestMode4 res = this.testMode4Service.findById(id);
         
         return res;
     }
     
+    /**
+     * 根据编码查询测试对象<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return TestMode4 [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @ApiOperation(value = "根据编码查询测试对象")
+    @RequestMapping(value = "/code/{code}", method = RequestMethod.GET)
+    public TestMode4 findByCode(
+            @PathVariable(value = "code", required = true) String code) {
+        TestMode4 res = this.testMode4Service.findByCode(code);
+        
+        return res;
+    }
 
     /**
-     * 查询测试对象2实例列表<br/>
+     * 查询测试对象实例列表<br/>
      * <功能详细描述>
      * @param valid
      * @param querier
      * @return [参数说明]
      * 
-     * @return List<TestMode2> [返回类型说明]
+     * @return List<TestMode4> [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @ApiOperation(value = "查询测试对象2列表")
+    @ApiOperation(value = "查询测试对象列表")
     @RequestMapping(value = "/list", method = RequestMethod.GET)
-    public List<TestMode2> queryList(
+    public List<TestMode4> queryList(
     		@RequestBody Querier querier
     	) {
-        List<TestMode2> resList = this.testMode2Service.queryList(
+        List<TestMode4> resList = this.testMode4Service.queryList(
 			querier         
         );
   
@@ -136,7 +153,7 @@ public class TestMode2APIController {
     }
     
     /**
-     * 查询测试对象2分页列表<br/>
+     * 查询测试对象分页列表<br/>
      * <功能详细描述>
      * @param valid
      * @param pageIndex
@@ -144,18 +161,18 @@ public class TestMode2APIController {
      * @param querier
      * @return [参数说明]
      * 
-     * @return PagedList<TestMode2> [返回类型说明]
+     * @return PagedList<TestMode4> [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @ApiOperation(value = "查询测试对象2分页列表")
+    @ApiOperation(value = "查询测试对象分页列表")
     @RequestMapping(value = "/pagedlist/{pageSize}/{pageNumber}", method = RequestMethod.GET)
-    public PagedList<TestMode2> queryPagedList(
+    public PagedList<TestMode4> queryPagedList(
 			@PathVariable(value = "pageNumber", required = true) int pageIndex,
             @PathVariable(value = "pageSize", required = true) int pageSize,
             @RequestBody Querier querier
     	) {
-        PagedList<TestMode2> resPagedList = this.testMode2Service.queryPagedList(
+        PagedList<TestMode4> resPagedList = this.testMode4Service.queryPagedList(
 			querier,
 			pageIndex,
 			pageSize
@@ -164,7 +181,7 @@ public class TestMode2APIController {
     }
     
 	/**
-     * 查询测试对象2数量<br/>
+     * 查询测试对象数量<br/>
      * <功能详细描述>
      * @param valid
      * @param querier
@@ -174,19 +191,19 @@ public class TestMode2APIController {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @ApiOperation(value = "查询测试对象2数量")
+    @ApiOperation(value = "查询测试对象数量")
     @RequestMapping(value = "/count", method = RequestMethod.GET)
     public int count(
             @RequestBody Querier querier) {
-        int count = this.testMode2Service.count(
+        int count = this.testMode4Service.count(
         	querier);
         
         return count;
     }
 
 	/**
-     * 查询测试对象2是否存在<br/>
-	 * @param excludeCode
+     * 查询测试对象是否存在<br/>
+	 * @param excludeId
      * @param querier
      * @return [参数说明]
      * 
@@ -194,12 +211,12 @@ public class TestMode2APIController {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @ApiOperation(value = "查询测试对象2是否存在")
-    @RequestMapping(value = "/exists/{excludeCode}", method = RequestMethod.GET)
+    @ApiOperation(value = "查询测试对象是否存在")
+    @RequestMapping(value = "/exists/{excludeId}", method = RequestMethod.GET)
     public boolean exists(
-            @PathVariable(value = "excludeCode", required = false) String excludeCode,
+            @PathVariable(value = "excludeId", required = false) Long excludeId,
             @RequestBody Querier querier) {
-        boolean flag = this.testMode2Service.exists(querier, excludeCode);
+        boolean flag = this.testMode4Service.exists(querier, excludeId);
         
         return flag;
     }

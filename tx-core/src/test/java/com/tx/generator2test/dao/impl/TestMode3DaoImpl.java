@@ -12,11 +12,11 @@ import org.springframework.stereotype.Component;
 
 import com.tx.core.mybatis.dao.impl.MybatisBaseDaoImpl;
 import com.tx.core.mybatis.support.MyBatisDaoSupport;
-import com.tx.generator2test.dao.TestMode2Dao;
-import com.tx.generator2test.model.TestMode2;
+import com.tx.generator2test.dao.TestMode3Dao;
+import com.tx.generator2test.model.TestMode3;
 
 /**
- * TestMode2持久层
+ * TestMode3持久层
  * <功能详细描述>
  * 
  * @author  
@@ -24,10 +24,10 @@ import com.tx.generator2test.model.TestMode2;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-@Component("testMode2Dao")
-public class TestMode2DaoImpl 
-		extends MybatisBaseDaoImpl<TestMode2, String>
-		implements TestMode2Dao {
+@Component("testMode3Dao")
+public class TestMode3DaoImpl 
+		extends MybatisBaseDaoImpl<TestMode3, Long>
+		implements TestMode3Dao {
     
     @Resource(name = "myBatisDaoSupport")
     private MyBatisDaoSupport myBatisDaoSupport;

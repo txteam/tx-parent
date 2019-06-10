@@ -4,7 +4,7 @@
  * 修改时间:  2019年6月8日
  * <修改描述:>
  */
-package com.tx.core.mybatis.dao;
+package com.tx.core.mybatis.dao.impl;
 
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
@@ -12,8 +12,6 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.annotation.Resource;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -24,6 +22,7 @@ import org.springframework.beans.factory.InitializingBean;
 
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.mybatis.assistant.BaseDaoMapperBuilderAssistant;
+import com.tx.core.mybatis.dao.MybatisBaseDao;
 import com.tx.core.mybatis.support.MyBatisDaoSupport;
 import com.tx.core.paged.model.PagedList;
 import com.tx.core.querier.model.Querier;
@@ -38,7 +37,7 @@ import com.tx.core.querier.model.QuerierBuilder;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public abstract class AbstractMybatisBaseDao<T, ID extends Serializable>
+public abstract class MybatisBaseDaoImpl<T, ID extends Serializable>
         implements MybatisBaseDao<T, ID>, InitializingBean {
     
     /** 实体类型 */
@@ -47,16 +46,12 @@ public abstract class AbstractMybatisBaseDao<T, ID extends Serializable>
     /** 主键属性类型 */
     protected final Class<ID> pkPropertyType;
     
-    /** mybatis句柄 */
-    @Resource(name = "myBatisDaoSupport")
-    protected MyBatisDaoSupport myBatisDaoSupport;
-    
     /** mapper助手 */
     protected BaseDaoMapperBuilderAssistant assistant;
     
     /** <默认构造函数> */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public AbstractMybatisBaseDao() {
+    public MybatisBaseDaoImpl() {
         super();
         Class<?> clazz = getClass();
         Type type = clazz.getGenericSuperclass();//getGenericSuperclass()获得带有泛型的父类  
@@ -75,12 +70,12 @@ public abstract class AbstractMybatisBaseDao<T, ID extends Serializable>
     
     @Override
     public void afterPropertiesSet() throws Exception {
-        AssertUtils.notNull(this.myBatisDaoSupport,
+        AssertUtils.notNull(getMyBatisDaoSupport(),
                 "myBatisDaoSupport is null.");
         AssertUtils.notNull(this.entityType, "entityType is null.");
         AssertUtils.notNull(this.pkPropertyType, "pkPropertyType is null.");
         this.assistant = new BaseDaoMapperBuilderAssistant(
-                this.myBatisDaoSupport.getConfiguration(), this.entityType);
+                getMyBatisDaoSupport().getConfiguration(), this.entityType);
         
         AssertUtils.isTrue(
                 this.pkPropertyType.isAssignableFrom(
@@ -126,12 +121,12 @@ public abstract class AbstractMybatisBaseDao<T, ID extends Serializable>
         AssertUtils.notNull(entity, "entity is null.");
         
         if (String.class.isAssignableFrom(getPKPropertyType())) {
-            this.myBatisDaoSupport.insertUseUUID(
+            getMyBatisDaoSupport().insertUseUUID(
                     this.assistant.getInsertStatementName(),
                     entity,
                     this.assistant.getPkColumn().getPropertyName());
         } else {
-            this.myBatisDaoSupport
+            getMyBatisDaoSupport()
                     .insert(this.assistant.getInsertStatementName(), entity);
         }
     }
@@ -145,12 +140,12 @@ public abstract class AbstractMybatisBaseDao<T, ID extends Serializable>
             return;
         }
         if (String.class.isAssignableFrom(getPKPropertyType())) {
-            this.myBatisDaoSupport.batchInsertUseUUID(
+            getMyBatisDaoSupport().batchInsertUseUUID(
                     this.assistant.getInsertStatementName(),
                     entityList,
                     this.assistant.getPkColumn().getPropertyName());
         } else {
-            this.myBatisDaoSupport.batchInsert(
+            getMyBatisDaoSupport().batchInsert(
                     this.assistant.getInsertStatementName(), entityList);
         }
     }
@@ -169,8 +164,14 @@ public abstract class AbstractMybatisBaseDao<T, ID extends Serializable>
         entityBW.setPropertyValue(
                 this.assistant.getPkColumn().getPropertyName(), pk);
         
-        boolean flag = delete(entity) > 0;
-        return flag;
+        int count = delete(entity);
+        if (count < 1) {
+            return false;
+        }
+        AssertUtils.isTrue(count == 1,
+                "update count should == 1.but actual is :{}",
+                new Object[] { count });
+        return true;
     }
     
     /**
@@ -181,7 +182,7 @@ public abstract class AbstractMybatisBaseDao<T, ID extends Serializable>
     public int delete(T entity) {
         AssertUtils.notNull(entity, "entity is null.");
         
-        int res = this.myBatisDaoSupport
+        int res = getMyBatisDaoSupport()
                 .delete(this.assistant.getDeleteStatementName(), entity);
         return res;
     }
@@ -195,7 +196,7 @@ public abstract class AbstractMybatisBaseDao<T, ID extends Serializable>
             return;
         }
         
-        this.myBatisDaoSupport.batchDelete(
+        getMyBatisDaoSupport().batchDelete(
                 this.assistant.getDeleteStatementName(), entityList);
     }
     
@@ -210,8 +211,16 @@ public abstract class AbstractMybatisBaseDao<T, ID extends Serializable>
         AssertUtils.notEmpty(updateEntityMap, "updateEntityMap is empty.");
         
         updateEntityMap.put(this.assistant.getPkColumn().getPropertyName(), pk);
-        boolean flag = update(updateEntityMap) > 0;
-        return flag;
+        int count = update(updateEntityMap);
+        
+        if (count < 1) {
+            return false;
+        }
+        AssertUtils.isTrue(count == 1,
+                "update count should == 1.but actual is :{}",
+                new Object[] { count });
+        return true;
+        
     }
     
     /**
@@ -222,7 +231,7 @@ public abstract class AbstractMybatisBaseDao<T, ID extends Serializable>
     public int update(Map<String, Object> updateEntityMap) {
         AssertUtils.notEmpty(updateEntityMap, "updateEntityMap is empty.");
         
-        int count = this.myBatisDaoSupport.update(
+        int count = getMyBatisDaoSupport().update(
                 this.assistant.getUpdateStatementName(), updateEntityMap);
         return count;
     }
@@ -236,7 +245,7 @@ public abstract class AbstractMybatisBaseDao<T, ID extends Serializable>
             return;
         }
         
-        this.myBatisDaoSupport.batchUpdate(
+        getMyBatisDaoSupport().batchUpdate(
                 this.assistant.getUpdateStatementName(), updateEntityMapList);
     }
     
@@ -266,7 +275,7 @@ public abstract class AbstractMybatisBaseDao<T, ID extends Serializable>
     public T find(T entity) {
         AssertUtils.notNull(entity, "entity is null.");
         
-        T res = this.myBatisDaoSupport
+        T res = getMyBatisDaoSupport()
                 .find(this.assistant.getFindStatementName(), entity);
         return res;
     }
@@ -277,7 +286,7 @@ public abstract class AbstractMybatisBaseDao<T, ID extends Serializable>
      */
     @Override
     public List<T> queryList(Map<String, Object> params) {
-        List<T> resList = this.myBatisDaoSupport
+        List<T> resList = getMyBatisDaoSupport()
                 .queryList(this.assistant.getQueryStatementName(), params);
         return resList;
     }
@@ -288,7 +297,7 @@ public abstract class AbstractMybatisBaseDao<T, ID extends Serializable>
      */
     @Override
     public List<T> queryList(Querier querier) {
-        List<T> resList = this.myBatisDaoSupport.queryList(
+        List<T> resList = getMyBatisDaoSupport().queryList(
                 this.assistant.getQueryStatementName(),
                 this.entityType,
                 querier);
@@ -304,7 +313,7 @@ public abstract class AbstractMybatisBaseDao<T, ID extends Serializable>
     @Override
     public PagedList<T> queryPagedList(Map<String, Object> params,
             int pageIndex, int pageSize) {
-        PagedList<T> resPagedList = this.myBatisDaoSupport.queryPagedList(
+        PagedList<T> resPagedList = getMyBatisDaoSupport().queryPagedList(
                 this.assistant.getQueryStatementName(),
                 params,
                 pageIndex,
@@ -321,7 +330,7 @@ public abstract class AbstractMybatisBaseDao<T, ID extends Serializable>
     @Override
     public PagedList<T> queryPagedList(Querier querier, int pageIndex,
             int pageSize) {
-        PagedList<T> resPagedList = this.myBatisDaoSupport.queryPagedList(
+        PagedList<T> resPagedList = getMyBatisDaoSupport().queryPagedList(
                 this.assistant.getQueryStatementName(),
                 this.entityType,
                 querier,
@@ -340,7 +349,7 @@ public abstract class AbstractMybatisBaseDao<T, ID extends Serializable>
     @Override
     public PagedList<T> queryPagedList(Map<String, Object> params,
             int pageIndex, int pageSize, int count) {
-        PagedList<T> resPagedList = this.myBatisDaoSupport.queryPagedList(
+        PagedList<T> resPagedList = getMyBatisDaoSupport().queryPagedList(
                 this.assistant.getQueryStatementName(),
                 params,
                 pageIndex,
@@ -359,7 +368,7 @@ public abstract class AbstractMybatisBaseDao<T, ID extends Serializable>
     @Override
     public PagedList<T> queryPagedList(Querier querier, int pageIndex,
             int pageSize, int count) {
-        PagedList<T> resPagedList = this.myBatisDaoSupport.queryPagedList(
+        PagedList<T> resPagedList = getMyBatisDaoSupport().queryPagedList(
                 this.assistant.getQueryStatementName(),
                 this.entityType,
                 querier,
@@ -375,7 +384,7 @@ public abstract class AbstractMybatisBaseDao<T, ID extends Serializable>
      */
     @Override
     public int count(Map<String, Object> params) {
-        int count = this.myBatisDaoSupport
+        int count = getMyBatisDaoSupport()
                 .count(this.assistant.getCountStatmentName(), params);
         return count;
     }
@@ -386,7 +395,7 @@ public abstract class AbstractMybatisBaseDao<T, ID extends Serializable>
      */
     @Override
     public int count(Querier querier) {
-        int count = this.myBatisDaoSupport.count(
+        int count = getMyBatisDaoSupport().count(
                 this.assistant.getCountStatmentName(),
                 this.entityType,
                 querier);
@@ -407,7 +416,7 @@ public abstract class AbstractMybatisBaseDao<T, ID extends Serializable>
                         this.assistant.getPkColumn().getPropertyName()),
                 exclude);
         
-        int count = this.myBatisDaoSupport
+        int count = getMyBatisDaoSupport()
                 .count(this.assistant.getCountStatmentName(), params);
         return count;
     }
@@ -430,7 +439,7 @@ public abstract class AbstractMybatisBaseDao<T, ID extends Serializable>
                         this.assistant.getPkColumn().getPropertyName()),
                         exclude);
         
-        int count = this.myBatisDaoSupport.count(
+        int count = getMyBatisDaoSupport().count(
                 this.assistant.getCountStatmentName(),
                 this.entityType,
                 querier);
@@ -440,14 +449,5 @@ public abstract class AbstractMybatisBaseDao<T, ID extends Serializable>
     /**
      * @return 返回 myBatisDaoSupport
      */
-    public MyBatisDaoSupport getMyBatisDaoSupport() {
-        return myBatisDaoSupport;
-    }
-    
-    /**
-     * @param 对myBatisDaoSupport进行赋值
-     */
-    public void setMyBatisDaoSupport(MyBatisDaoSupport myBatisDaoSupport) {
-        this.myBatisDaoSupport = myBatisDaoSupport;
-    }
+    public abstract MyBatisDaoSupport getMyBatisDaoSupport();
 }

@@ -22,15 +22,17 @@ import com.tx.generator2test.dao.TestMode2Dao;
 import com.tx.generator2test.model.TestMode2;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.paged.model.PagedList;
+import com.tx.core.querier.model.Querier;
+import com.tx.core.querier.model.QuerierBuilder;
 
 /**
- * TestMode2的业务层
+ * 测试对象2的业务层[TestMode2Service]
  * <功能详细描述>
  * 
  * @author  
- * @version  [版本号, ]
- * @see  [相关类/方法]
- * @since  [产品/模块版本]
+ * @version [版本号]
+ * @see [相关类/方法]
+ * @since [产品/模块版本]
  */
 @Component("testMode2Service")
 public class TestMode2Service {
@@ -42,6 +44,7 @@ public class TestMode2Service {
     private TestMode2Dao testMode2Dao;
     
     /**
+     * 新增测试对象2实例<br/>
      * 将testMode2插入数据库中保存
      * 1、如果testMode2 为空时抛出参数为空异常
      * 2、如果testMode2 中部分必要参数为非法值时抛出参数不合法异常
@@ -60,12 +63,12 @@ public class TestMode2Service {
 		testMode2.setLastUpdateDate(new Date());
 		testMode2.setCreateDate(new Date());
         
-        //调用数据持久层对实体进行持久化操作
+        //调用数据持久层对实例进行持久化操作
         this.testMode2Dao.insert(testMode2);
     }
     
     /**
-     * 根据code删除TestMode2实例
+     * 根据code删除测试对象2实例
      * 1、如果入参数为空，则抛出异常
      * 2、执行删除后，将返回数据库中被影响的条数 > 0，则返回true
      *
@@ -87,7 +90,7 @@ public class TestMode2Service {
     }
     
     /**
-     * 根据code查询TestMode2实体
+     * 根据code查询测试对象2实例
      * 1、当code为empty时抛出异常
      *
      * @param code
@@ -107,7 +110,7 @@ public class TestMode2Service {
     
     
     /**
-     * 查询TestMode2实体列表
+     * 查询测试对象2实例列表
      * <功能详细描述>
      * @param params      
      * @return [参数说明]
@@ -130,8 +133,33 @@ public class TestMode2Service {
         return resList;
     }
     
-	/**
-     * 分页查询TestMode2实体列表
+    /**
+     * 查询测试对象2实例列表
+     * <功能详细描述>
+     * @param querier      
+     * @return [参数说明]
+     * 
+     * @return List<TestMode2> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public List<TestMode2> queryList(
+		Querier querier   
+    	) {
+        //判断条件合法性
+        
+        //生成查询条件
+        querier = querier == null ? QuerierBuilder.newInstance().querier()
+                : querier;
+
+        //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
+        List<TestMode2> resList = this.testMode2Dao.queryList(querier);
+        
+        return resList;
+    }
+    
+    /**
+     * 分页查询测试对象2实例列表
      * <功能详细描述>
      * @param params    
      * @param pageIndex 当前页index从1开始计算
@@ -159,10 +187,91 @@ public class TestMode2Service {
         return resPagedList;
     }
     
-    /**
-     * 判断是否已经存在<br/>
+	/**
+     * 分页查询测试对象2实例列表
+     * <功能详细描述>
+     * @param querier    
+     * @param pageIndex 当前页index从1开始计算
+     * @param pageSize 每页显示行数
+     * 
      * <功能详细描述>
      * @return [参数说明]
+     * 
+     * @return List<TestMode2> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public PagedList<TestMode2> queryPagedList(
+		Querier querier,
+    	int pageIndex,
+        int pageSize) {
+        //T判断条件合法性
+        
+        //生成查询条件
+        querier = querier == null ? QuerierBuilder.newInstance().querier()
+                : querier;
+ 
+        //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
+        PagedList<TestMode2> resPagedList = this.testMode2Dao.queryPagedList(querier, pageIndex, pageSize);
+        
+        return resPagedList;
+    }
+    
+    /**
+     * 查询测试对象2实例数量<br/>
+     * <功能详细描述>
+     * @param params      
+     * @return [参数说明]
+     * 
+     * @return List<TestMode2> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public int count(
+		Map<String,Object> params   
+    	) {
+        //判断条件合法性
+        
+        //生成查询条件
+        params = params == null ? new HashMap<String, Object>() : params;
+
+        //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
+        int res = this.testMode2Dao.count(params);
+        
+        return res;
+    }
+    
+    /**
+     * 查询测试对象2实例数量<br/>
+     * <功能详细描述>
+     * @param querier      
+     * @return [参数说明]
+     * 
+     * @return List<TestMode2> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public int count(
+		Querier querier   
+    	) {
+        //判断条件合法性
+        
+        //生成查询条件
+        querier = querier == null ? QuerierBuilder.newInstance().querier()
+                : querier;
+
+        //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
+        int res = this.testMode2Dao.count(querier);
+        
+        return res;
+    }
+    
+    /**
+     * 判断测试对象2实例是否已经存在<br/>
+     * <功能详细描述>
+     * @param key2valueMap
+     * @param excludeCode
+     * @return
      * 
      * @return int [返回类型说明]
      * @exception throws [异常类型] [异常说明]
@@ -183,7 +292,27 @@ public class TestMode2Service {
     }
     
     /**
-     * 根据code更新对象
+     * 判断测试对象2实例是否已经存在<br/>
+     * <功能详细描述>
+     * @param key2valueMap
+     * @param excludeCode
+     * @return
+     * 
+     * @return int [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public boolean exists(Querier querier, String excludeCode) {
+        AssertUtils.notNull(querier, "querier is null.");
+        
+        //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
+        int res = this.testMode2Dao.count(querier,excludeCode);
+        
+        return res > 0;
+    }
+    
+    /**
+     * 根据code更新测试对象2实例<br/>
      * <功能详细描述>
      * @param testMode2
      * @return [参数说明]
@@ -193,15 +322,13 @@ public class TestMode2Service {
      * @see [类、类#方法、类#成员]
      */
     @Transactional
-    public boolean updateByCode(TestMode2 testMode2) {
+    public boolean updateByCode(String code,TestMode2 testMode2) {
         //验证参数是否合法，必填字段是否填写
         AssertUtils.notNull(testMode2, "testMode2 is null.");
-        AssertUtils.notEmpty(testMode2.getCode(), "testMode2.code is empty.");
+        AssertUtils.notEmpty(code, "code is empty.");
 
         //生成需要更新字段的hashMap
         Map<String, Object> updateRowMap = new HashMap<String, Object>();
-        updateRowMap.put("code", testMode2.getCode());
-        
         //FIXME:需要更新的字段
 		updateRowMap.put("lastUpdateOperatorId", testMode2.getLastUpdateOperatorId());
 		updateRowMap.put("name", testMode2.getName());
@@ -216,9 +343,29 @@ public class TestMode2Service {
 		updateRowMap.put("description", testMode2.getDescription());
 		updateRowMap.put("lastUpdateDate", new Date());
 
-        int updateRowCount = this.testMode2Dao.update(updateRowMap); 
+        boolean flag = this.testMode2Dao.update(code,updateRowMap); 
         //如果需要大于1时，抛出异常并回滚，需要在这里修改
-        return updateRowCount >= 1;
+        return flag;
     }
+    
+    /**
+     * 根据code更新测试对象2实例<br/>
+     * <功能详细描述>
+     * @param testMode2
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @Transactional
+    public boolean updateByCode(TestMode2 testMode2) {
+        //验证参数是否合法，必填字段是否填写
+        AssertUtils.notNull(testMode2, "testMode2 is null.");
+        AssertUtils.notEmpty(testMode2.getCode(), "testMode2.code is empty.");
 
+        boolean flag = updateByCode(testMode2.getCode(),testMode2); 
+        //如果需要大于1时，抛出异常并回滚，需要在这里修改
+        return flag;
+    }
 }

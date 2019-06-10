@@ -17,6 +17,7 @@ import org.springframework.util.ClassUtils;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.generator2.util.GeneratorUtils;
 import com.tx.core.generator2.util.GeneratorUtils.EntityProperty;
+import com.tx.core.util.JPAParseUtils.JPAColumnInfo;
 
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -61,6 +62,9 @@ public class ControllerGeneratorModel {
     /** 是否有是否有效的属性 */
     private EntityProperty validProperty;
     
+    /** 父节点id对应的属性 */
+    private JPAColumnInfo parentIdProperty;
+    
     /** <默认构造函数> */
     public ControllerGeneratorModel(Class<?> entityType) {
         super();
@@ -79,8 +83,6 @@ public class ControllerGeneratorModel {
             return column.isPrimaryKey();
         }).collect(Collectors.toList()).get(0);
         AssertUtils.isTrue(this.pkProperty != null, "没有找到主键字段");
-        AssertUtils.isTrue(String.class.isAssignableFrom(
-                this.pkProperty.getPropertyType()), "主键字段应为String");
         
         this.viewablePropertyList = this.propertyList.stream()
                 .filter(column -> {
@@ -100,8 +102,7 @@ public class ControllerGeneratorModel {
                 //如果主键就是code，则无需标定hasCodeProperty
                 this.codeProperty = property;
                 AssertUtils.isTrue(String.class
-                        .isAssignableFrom(property.getPropertyType())
-                        || boolean.class.equals(property.getPropertyType()),
+                        .isAssignableFrom(property.getPropertyType()),
                         "code type should is String.");
             } else if (StringUtils.equals("valid",
                     property.getPropertyName())) {
@@ -110,117 +111,87 @@ public class ControllerGeneratorModel {
                         .isAssignableFrom(property.getPropertyType())
                         || boolean.class.equals(property.getPropertyType()),
                         "valid type should is boolean or Boolean.");
+            }else if (StringUtils.equals("parentId",
+                    property.getPropertyName())) {
+                this.parentIdProperty = property;
             }
         });
-        
-        //        this.uniquePropertiesList = new ArrayList<List<EntityProperty>>();
-        //        if (ArrayUtils.isEmpty(uniquePropertyNamesArray)) {
-        //            return;
-        //        }
-        //        for (String[] uniquePropertyNames : uniquePropertyNamesArray) {
-        //            if (ArrayUtils.isEmpty(uniquePropertyNames)) {
-        //                continue;
-        //            }
-        //            Set<String> validPropertyNameSet = new HashSet<>();
-        //            for (String propertyName : uniquePropertyNames) {
-        //                if (!propertyNameSet.contains(propertyName)) {
-        //                    continue;
-        //                }
-        //                validPropertyNameSet.add(propertyName);
-        //            }
-        //            if (CollectionUtils.isEmpty(validPropertyNameSet)) {
-        //                continue;
-        //            }
-        //            //添加唯一键属性清单列表
-        //            this.uniquePropertiesList
-        //                    .add(this.propertyList.stream().filter(property -> {
-        //                        return validPropertyNameSet
-        //                                .contains(property.getPropertyName());
-        //                    }).collect(Collectors.toList()));
-        //        }
     }
-    
+
     /**
      * @return 返回 basePackage
      */
     public String getBasePackage() {
         return basePackage;
     }
-    
+
     /**
      * @return 返回 entityType
      */
     public Class<?> getEntityType() {
         return entityType;
     }
-    
-    /**
-     * @return 返回 entityTypeName
-     */
-    public String getEntityTypeName() {
-        return entityTypeName;
-    }
-    
-    /**
-     * @return 返回 entityTypeSimpleName
-     */
-    public String getEntityTypeSimpleName() {
-        return entityTypeSimpleName;
-    }
-    
-    /**
-     * @return 返回 codeProperty
-     */
-    public EntityProperty getCodeProperty() {
-        return codeProperty;
-    }
-    
-    /**
-     * @param 对codeProperty进行赋值
-     */
-    public void setCodeProperty(EntityProperty codeProperty) {
-        this.codeProperty = codeProperty;
-    }
-    
-    /**
-     * @return 返回 validProperty
-     */
-    public EntityProperty getValidProperty() {
-        return validProperty;
-    }
-    
-    /**
-     * @param 对validProperty进行赋值
-     */
-    public void setValidProperty(EntityProperty validProperty) {
-        this.validProperty = validProperty;
-    }
-    
+
     /**
      * @return 返回 entityComment
      */
     public String getEntityComment() {
         return entityComment;
     }
-    
+
+    /**
+     * @return 返回 entityTypeName
+     */
+    public String getEntityTypeName() {
+        return entityTypeName;
+    }
+
+    /**
+     * @return 返回 entityTypeSimpleName
+     */
+    public String getEntityTypeSimpleName() {
+        return entityTypeSimpleName;
+    }
+
     /**
      * @return 返回 propertyList
      */
     public List<EntityProperty> getPropertyList() {
         return propertyList;
     }
-    
+
+    /**
+     * @return 返回 viewablePropertyList
+     */
+    public List<EntityProperty> getViewablePropertyList() {
+        return viewablePropertyList;
+    }
+
     /**
      * @return 返回 pkProperty
      */
     public EntityProperty getPkProperty() {
         return pkProperty;
     }
-    
+
     /**
-     * @return 返回 viewablePropertyList
+     * @return 返回 codeProperty
      */
-    public List<EntityProperty> getViewablePropertyList() {
-        return viewablePropertyList;
+    public EntityProperty getCodeProperty() {
+        return codeProperty;
+    }
+
+    /**
+     * @return 返回 validProperty
+     */
+    public EntityProperty getValidProperty() {
+        return validProperty;
+    }
+
+    /**
+     * @return 返回 parentIdProperty
+     */
+    public JPAColumnInfo getParentIdProperty() {
+        return parentIdProperty;
     }
 }

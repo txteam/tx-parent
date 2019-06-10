@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tx.core.paged.model.PagedList;
 import com.tx.core.querier.model.Querier;
-import com.tx.generator2test.model.TestMode;
-import com.tx.generator2test.service.TestModeService;
+import com.tx.generator2test.model.TestMode3;
+import com.tx.generator2test.service.TestMode3Service;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -33,17 +33,17 @@ import io.swagger.annotations.ApiOperation;
  */
 @RestController
 @Api(tags = "测试对象API")
-@RequestMapping("/api/testMode")
-public class TestModeAPIController {
+@RequestMapping("/api/testMode3")
+public class TestMode3APIController {
     
     //测试对象业务层
-    @Resource(name = "testModeService")
-    private TestModeService testModeService;
+    @Resource(name = "testMode3Service")
+    private TestMode3Service testMode3Service;
     
     /**
      * 新增测试对象<br/>
      * <功能详细描述>
-     * @param testMode [参数说明]
+     * @param testMode3 [参数说明]
      * 
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
@@ -51,8 +51,8 @@ public class TestModeAPIController {
      */
     @ApiOperation(value = "新增测试对象")
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public boolean insert(@RequestBody TestMode testMode) {
-        this.testModeService.insert(testMode);
+    public boolean insert(@RequestBody TestMode3 testMode3) {
+        this.testMode3Service.insert(testMode3);
         return true;
     }
     
@@ -69,15 +69,15 @@ public class TestModeAPIController {
     @ApiOperation(value = "删除测试对象")
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE) 
     public boolean deleteById(
-    		@PathVariable(value = "id",required=true) String id) {
-        boolean flag = this.testModeService.deleteById(id);
+    		@PathVariable(value = "id",required=true) Long id) {
+        boolean flag = this.testMode3Service.deleteById(id);
         return flag;
     }
     
     /**
      * 更新测试对象<br/>
      * <功能详细描述>
-     * @param testMode
+     * @param testMode3
      * @return [参数说明]
      * 
      * @return boolean [返回类型说明]
@@ -86,9 +86,9 @@ public class TestModeAPIController {
      */
     @ApiOperation(value = "修改测试对象")
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    public boolean updateById(@PathVariable(value = "id",required=true) String id,
-    		@RequestBody TestMode testMode) {
-        boolean flag = this.testModeService.updateById(id,testMode);
+    public boolean updateById(@PathVariable(value = "id",required=true) Long id,
+    		@RequestBody TestMode3 testMode3) {
+        boolean flag = this.testMode3Service.updateById(id,testMode3);
         return flag;
     }
     
@@ -104,8 +104,8 @@ public class TestModeAPIController {
 	@ApiOperation(value = "禁用测试对象")
     @RequestMapping(value = "/disable/{id}", method = RequestMethod.PATCH)
     public boolean disableById(
-    		@PathVariable(value = "id", required = true) String id) {
-        boolean flag = this.testModeService.disableById(id);
+    		@PathVariable(value = "id", required = true) Long id) {
+        boolean flag = this.testMode3Service.disableById(id);
         return flag;
     }
     
@@ -122,8 +122,8 @@ public class TestModeAPIController {
     @ApiOperation(value = "启用测试对象")
     @RequestMapping(value = "/enable/{id}", method = RequestMethod.PATCH)
     public boolean enableById(
-    		@PathVariable(value = "id", required = true) String id) {
-        boolean flag = this.testModeService.enableById(id);
+    		@PathVariable(value = "id", required = true) Long id) {
+        boolean flag = this.testMode3Service.enableById(id);
         return flag;
     }
 
@@ -132,15 +132,15 @@ public class TestModeAPIController {
      * <功能详细描述>
      * @return [参数说明]
      * 
-     * @return TestMode [返回类型说明]
+     * @return TestMode3 [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
     @ApiOperation(value = "根据主键查询测试对象")
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public TestMode findById(
-            @PathVariable(value = "id", required = true) String id) {
-        TestMode res = this.testModeService.findById(id);
+    public TestMode3 findById(
+            @PathVariable(value = "id", required = true) Long id) {
+        TestMode3 res = this.testMode3Service.findById(id);
         
         return res;
     }
@@ -150,15 +150,15 @@ public class TestModeAPIController {
      * <功能详细描述>
      * @return [参数说明]
      * 
-     * @return TestMode [返回类型说明]
+     * @return TestMode3 [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
     @ApiOperation(value = "根据编码查询测试对象")
     @RequestMapping(value = "/code/{code}", method = RequestMethod.GET)
-    public TestMode findByCode(
+    public TestMode3 findByCode(
             @PathVariable(value = "code", required = true) String code) {
-        TestMode res = this.testModeService.findByCode(code);
+        TestMode3 res = this.testMode3Service.findByCode(code);
         
         return res;
     }
@@ -170,17 +170,17 @@ public class TestModeAPIController {
      * @param querier
      * @return [参数说明]
      * 
-     * @return List<TestMode> [返回类型说明]
+     * @return List<TestMode3> [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
     @ApiOperation(value = "查询测试对象列表")
     @RequestMapping(value = "/list/{valid}", method = RequestMethod.GET)
-    public List<TestMode> queryList(
+    public List<TestMode3> queryList(
 			@PathVariable(value = "valid", required = false) Boolean valid,
     		@RequestBody Querier querier
     	) {
-        List<TestMode> resList = this.testModeService.queryList(
+        List<TestMode3> resList = this.testMode3Service.queryList(
 			valid,
 			querier         
         );
@@ -197,19 +197,19 @@ public class TestModeAPIController {
      * @param querier
      * @return [参数说明]
      * 
-     * @return PagedList<TestMode> [返回类型说明]
+     * @return PagedList<TestMode3> [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
     @ApiOperation(value = "查询测试对象分页列表")
     @RequestMapping(value = "/pagedlist/{pageSize}/{pageNumber}/{valid}", method = RequestMethod.GET)
-    public PagedList<TestMode> queryPagedList(
+    public PagedList<TestMode3> queryPagedList(
 			@PathVariable(value = "valid", required = false) Boolean valid,
 			@PathVariable(value = "pageNumber", required = true) int pageIndex,
             @PathVariable(value = "pageSize", required = true) int pageSize,
             @RequestBody Querier querier
     	) {
-        PagedList<TestMode> resPagedList = this.testModeService.queryPagedList(
+        PagedList<TestMode3> resPagedList = this.testMode3Service.queryPagedList(
 			valid,
 			querier,
 			pageIndex,
@@ -234,7 +234,7 @@ public class TestModeAPIController {
     public int count(
 			@PathVariable(value = "valid", required = false) Boolean valid,
             @RequestBody Querier querier) {
-        int count = this.testModeService.count(
+        int count = this.testMode3Service.count(
 			valid,
         	querier);
         
@@ -254,9 +254,9 @@ public class TestModeAPIController {
     @ApiOperation(value = "查询测试对象是否存在")
     @RequestMapping(value = "/exists/{excludeId}", method = RequestMethod.GET)
     public boolean exists(
-            @PathVariable(value = "excludeId", required = false) String excludeId,
+            @PathVariable(value = "excludeId", required = false) Long excludeId,
             @RequestBody Querier querier) {
-        boolean flag = this.testModeService.exists(querier, excludeId);
+        boolean flag = this.testMode3Service.exists(querier, excludeId);
         
         return flag;
     }

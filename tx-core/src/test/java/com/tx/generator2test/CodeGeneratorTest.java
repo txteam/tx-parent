@@ -9,6 +9,8 @@ package com.tx.generator2test;
 import com.tx.core.generator2.CodeGenerator;
 import com.tx.generator2test.model.TestMode;
 import com.tx.generator2test.model.TestMode2;
+import com.tx.generator2test.model.TestMode3;
+import com.tx.generator2test.model.TestMode4;
 
 /**
  * 编码生成测试
@@ -31,6 +33,24 @@ public class CodeGeneratorTest {
         CodeGenerator.generateController(entityType);
         
         entityType = TestMode2.class;
+        
+        CodeGenerator.generateDBScript(entityType);
+        CodeGenerator.generateSqlMap(entityType);
+        CodeGenerator.generateDao(entityType);
+        CodeGenerator.generateDao(entityType);
+        CodeGenerator.generateService(entityType);
+        CodeGenerator.generateController(entityType);
+        
+        entityType = TestMode3.class;
+        
+        CodeGenerator.generateDBScript(entityType);
+        CodeGenerator.generateSqlMap(entityType);
+        CodeGenerator.generateDao(entityType);
+        CodeGenerator.generateDao(entityType);
+        CodeGenerator.generateService(entityType);
+        CodeGenerator.generateController(entityType);
+        
+        entityType = TestMode4.class;
         
         CodeGenerator.generateDBScript(entityType);
         CodeGenerator.generateSqlMap(entityType);

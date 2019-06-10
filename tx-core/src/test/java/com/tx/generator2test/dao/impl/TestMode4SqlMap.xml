@@ -2,37 +2,47 @@
 <!DOCTYPE mapper 
 	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="testMode2">
+<mapper namespace="testMode4">
 
 	<!-- auto generate default resultMap -->
-	<resultMap id="testMode2Map" 
-		type="com.tx.generator2test.model.TestMode2">
+	<resultMap id="testMode4Map" 
+		type="com.tx.generator2test.model.TestMode4">
 		<result column="nested1Id" property="nested1.id"/>
 		<result column="nested2Code" property="nested2.code"/>
 	</resultMap>
 	
 	<!-- auto generate default find -->
 	<select id="find" 
-		parameterType="com.tx.generator2test.model.TestMode2"
-		resultMap="testMode2Map">
+		parameterType="com.tx.generator2test.model.TestMode4"
+		resultMap="testMode4Map">
 		SELECT 
+				TM.id,
 				TM.code,
 				TM.lastUpdateDate,
 				TM.lastUpdateOperatorId,
 				TM.name,
 				TM.testInt,
 				TM.testLong,
+				TM.testBigDecimal,
 				TM.type,
 				TM.createDate,
 				TM.createOperatorId,
+				TM.expiryDate,
+				TM.modifyAble,
+				TM.parentId,
 				TM.remark,
 				TM.nested1Id,
 				TM.nested2Code,
+				TM.success,
+				TM.effictiveDate,
 				TM.attributes,
 				TM.description
-		  FROM TEST_TESTMODE2 TM
+		  FROM TEST_TESTMODE3 TM
 		 WHERE
 		<trim prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
+	            AND TM.id = #{id}
+	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(code)">  
 	            AND TM.code = #{code}
 	        </if>
@@ -42,23 +52,30 @@
 	<!-- auto generate default query -->
 	<select id="query" 
 		parameterType="java.util.Map"
-		resultMap="testMode2Map">
+		resultMap="testMode4Map">
 		SELECT 
+				TM.id,
 				TM.code,
 				TM.lastUpdateDate,
 				TM.lastUpdateOperatorId,
 				TM.name,
 				TM.testInt,
 				TM.testLong,
+				TM.testBigDecimal,
 				TM.type,
 				TM.createDate,
 				TM.createOperatorId,
+				TM.expiryDate,
+				TM.modifyAble,
+				TM.parentId,
 				TM.remark,
 				TM.nested1Id,
 				TM.nested2Code,
+				TM.success,
+				TM.effictiveDate,
 				TM.attributes,
 				TM.description
-		  FROM TEST_TESTMODE2 TM
+		  FROM TEST_TESTMODE3 TM
 		<trim prefix="WHERE" prefixOverrides="AND | OR">
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(conditions)">
 			<foreach collection="conditions" item="conditionTemp">
@@ -75,6 +92,12 @@
 			</choose>
 			</foreach>
 	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(parentIds)">  
+	            AND TM.parentId IN <foreach collection="parentIds" open="(" close=")" separator="," item="parentIdTemp">#{parentIdTemp}</foreach>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
+	            <![CDATA[ AND TM.id = #{id} ]]>
+	        </if>			
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(code)">  
 	            <![CDATA[ AND TM.code = #{code} ]]>
 	        </if>			
@@ -90,6 +113,9 @@
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(testLong)">  
 	            <![CDATA[ AND TM.testLong = #{testLong} ]]>
 	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(testBigDecimal)">  
+	            <![CDATA[ AND TM.testBigDecimal = #{testBigDecimal} ]]>
+	        </if>			
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(type)">  
 	            <![CDATA[ AND TM.type = #{type} ]]>
 	        </if>			
@@ -101,6 +127,12 @@
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(createOperatorId)">  
 	            <![CDATA[ AND TM.createOperatorId = #{createOperatorId} ]]>
+	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(modifyAble)">  
+	            <![CDATA[ AND TM.modifyAble = #{modifyAble} ]]>
+	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(parentId)">  
+	            <![CDATA[ AND TM.parentId = #{parentId} ]]>
 	        </if>			
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(remark)">  
 	            <![CDATA[ AND TM.remark = #{remark} ]]>
@@ -115,14 +147,17 @@
 		            <![CDATA[ AND TM.nested2Code = #{nested2.code} ]]>
 		        </if>
 	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(success)">  
+	            <![CDATA[ AND TM.success = #{success} ]]>
+	        </if>			
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(attributes)">  
 	            <![CDATA[ AND TM.attributes = #{attributes} ]]>
 	        </if>			
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(description)">  
 	            <![CDATA[ AND TM.description = #{description} ]]>
 	        </if>			
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(excludeCode)">
-				<![CDATA[ AND TM.code <> #{excludeCode} ]]>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(excludeId)">
+				<![CDATA[ AND TM.id <> #{excludeId} ]]>
 			</if>
 		</trim>
 		<choose>  
@@ -140,7 +175,7 @@
 		parameterType="java.util.Map"
 		resultType="java.lang.Integer">
 		SELECT COUNT(1)
-		  FROM TEST_TESTMODE2 TM
+		  FROM TEST_TESTMODE3 TM
 		<trim prefix="WHERE" prefixOverrides="AND | OR">
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(conditions)">
 			<foreach collection="conditions" item="conditionTemp">
@@ -157,6 +192,12 @@
 			</choose>
 			</foreach>
 	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(parentIds)">  
+	            AND TM.parentId IN <foreach collection="parentIds" open="(" close=")" separator="," item="parentIdTemp">#{parentIdTemp}</foreach>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
+	            <![CDATA[ AND TM.id = #{id} ]]>
+	        </if>			
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(code)">  
 	            <![CDATA[ AND TM.code = #{code} ]]>
 	        </if>			
@@ -172,6 +213,9 @@
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(testLong)">  
 	            <![CDATA[ AND TM.testLong = #{testLong} ]]>
 	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(testBigDecimal)">  
+	            <![CDATA[ AND TM.testBigDecimal = #{testBigDecimal} ]]>
+	        </if>			
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(type)">  
 	            <![CDATA[ AND TM.type = #{type} ]]>
 	        </if>			
@@ -183,6 +227,12 @@
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(createOperatorId)">  
 	            <![CDATA[ AND TM.createOperatorId = #{createOperatorId} ]]>
+	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(modifyAble)">  
+	            <![CDATA[ AND TM.modifyAble = #{modifyAble} ]]>
+	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(parentId)">  
+	            <![CDATA[ AND TM.parentId = #{parentId} ]]>
 	        </if>			
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(remark)">  
 	            <![CDATA[ AND TM.remark = #{remark} ]]>
@@ -197,52 +247,69 @@
 		            <![CDATA[ AND TM.nested2Code = #{nested2.code} ]]>
 		        </if>
 	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(success)">  
+	            <![CDATA[ AND TM.success = #{success} ]]>
+	        </if>			
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(attributes)">  
 	            <![CDATA[ AND TM.attributes = #{attributes} ]]>
 	        </if>			
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(description)">  
 	            <![CDATA[ AND TM.description = #{description} ]]>
 	        </if>			
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(excludeCode)">
-				<![CDATA[ AND TM.code <> #{excludeCode} ]]>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(excludeId)">
+				<![CDATA[ AND TM.id <> #{excludeId} ]]>
 			</if>
 		</trim>
 	</select>
 	
 	<!-- auto generate default insert -->
     <insert id="insert" 
-		parameterType="com.tx.generator2test.model.TestMode2">
-		INSERT INTO TEST_TESTMODE2
+		parameterType="com.tx.generator2test.model.TestMode4">
+		INSERT INTO TEST_TESTMODE3
 		(
+			id,
 			code,
 			lastUpdateDate,
 			lastUpdateOperatorId,
 			name,
 			testInt,
 			testLong,
+			testBigDecimal,
 			type,
 			createDate,
 			createOperatorId,
+			expiryDate,
+			modifyAble,
+			parentId,
 			remark,
 			nested1Id,
 			nested2Code,
+			success,
+			effictiveDate,
 			attributes,
 			description
 		)
 		VALUES
 		(
+			#{id},
 			#{code},
 			#{lastUpdateDate},
 			#{lastUpdateOperatorId},
 			#{name},
 			#{testInt},
 			#{testLong},
+			#{testBigDecimal},
 			#{type},
 			#{createDate},
 			#{createOperatorId},
+			#{expiryDate},
+			#{modifyAble},
+			#{parentId},
 			#{remark},
 			#{nested1.id},
 			#{nested2.code},
+			#{success},
+			#{effictiveDate},
 			#{attributes},
 			#{description}
 		)
@@ -250,9 +317,12 @@
 	
 	<!-- auto generate default delete -->
 	<delete id="delete" 
-		parameterType="com.tx.generator2test.model.TestMode2">
-		DELETE FROM TEST_TESTMODE2  WHERE
+		parameterType="com.tx.generator2test.model.TestMode4">
+		DELETE FROM TEST_TESTMODE3  WHERE
 		<trim prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
+	            AND id = #{id}
+	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(code)">  
 	            AND code = #{code}
 	        </if>
@@ -262,7 +332,7 @@
 	<!-- auto generate default update -->
 	<update id="update"
 	    parameterType="java.util.Map">  
-	    UPDATE TEST_TESTMODE2
+	    UPDATE TEST_TESTMODE3
 	    <trim prefix="SET" suffixOverrides=",">
 			<if test="_parameter.containsKey('lastUpdateDate')">
 	    		lastUpdateDate = #{lastUpdateDate,javaType=java.util.Date},
@@ -279,8 +349,20 @@
 			<if test="_parameter.containsKey('testLong')">
 	    		testLong = #{testLong,javaType=java.lang.Long},
 	    	</if>
+			<if test="_parameter.containsKey('testBigDecimal')">
+	    		testBigDecimal = #{testBigDecimal,javaType=java.math.BigDecimal},
+	    	</if>
 			<if test="_parameter.containsKey('type')">
 	    		type = #{type,javaType=com.tx.generator2test.model.TestTypeEnum},
+	    	</if>
+			<if test="_parameter.containsKey('expiryDate')">
+	    		expiryDate = #{expiryDate,javaType=java.util.Date},
+	    	</if>
+			<if test="_parameter.containsKey('modifyAble')">
+	    		modifyAble = #{modifyAble,javaType=boolean},
+	    	</if>
+			<if test="_parameter.containsKey('parentId')">
+	    		parentId = #{parentId,javaType=java.lang.Long},
 	    	</if>
 			<if test="_parameter.containsKey('remark')">
 	    		remark = #{remark,javaType=java.lang.String},
@@ -291,6 +373,12 @@
 			<if test="_parameter.containsKey('nested2')">
 	    		nested2Code = #{nested2.code,javaType=java.lang.String},
 	    	</if>
+			<if test="_parameter.containsKey('success')">
+	    		success = #{success,javaType=java.lang.Boolean},
+	    	</if>
+			<if test="_parameter.containsKey('effictiveDate')">
+	    		effictiveDate = #{effictiveDate,javaType=java.util.Date},
+	    	</if>
 			<if test="_parameter.containsKey('attributes')">
 	    		attributes = #{attributes,javaType=java.lang.String},
 	    	</if>
@@ -300,6 +388,9 @@
 	    </trim>
 	    WHERE
 		<trim prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
+	            AND id = #{id}
+	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(code)">  
 	            AND code = #{code}
 	        </if>

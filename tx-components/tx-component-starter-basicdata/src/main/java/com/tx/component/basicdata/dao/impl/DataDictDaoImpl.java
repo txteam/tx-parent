@@ -6,13 +6,10 @@
  */
 package com.tx.component.basicdata.dao.impl;
 
-import java.util.List;
-import java.util.Map;
-
 import com.tx.component.basicdata.dao.DataDictDao;
 import com.tx.component.basicdata.model.DataDict;
+import com.tx.core.mybatis.dao.impl.MybatisBaseDaoImpl;
 import com.tx.core.mybatis.support.MyBatisDaoSupport;
-import com.tx.core.paged.model.PagedList;
 
 /**
  * DataDict持久层
@@ -23,7 +20,8 @@ import com.tx.core.paged.model.PagedList;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class DataDictDaoImpl implements DataDictDao {
+public class DataDictDaoImpl extends MybatisBaseDaoImpl<DataDict, String>
+        implements DataDictDao {
     
     private MyBatisDaoSupport myBatisDaoSupport;
     
@@ -37,97 +35,18 @@ public class DataDictDaoImpl implements DataDictDao {
         super();
         this.myBatisDaoSupport = myBatisDaoSupport;
     }
-    
+
     /**
-     * @param condition
+     * @return 返回 myBatisDaoSupport
      */
-    @Override
-    public void insert(DataDict condition) {
-        this.myBatisDaoSupport.insertUseUUID("dataDict.insert",
-                condition,
-                "id");
+    public MyBatisDaoSupport getMyBatisDaoSupport() {
+        return myBatisDaoSupport;
     }
-    
+
     /**
-     * @param condition
+     * @param 对myBatisDaoSupport进行赋值
      */
-    @Override
-    public void batchInsert(List<DataDict> condition) {
-        this.myBatisDaoSupport.batchInsertUseUUID("dataDict.insert",
-                condition,
-                "id",
-                true);
+    public void setMyBatisDaoSupport(MyBatisDaoSupport myBatisDaoSupport) {
+        this.myBatisDaoSupport = myBatisDaoSupport;
     }
-    
-    /**
-     * @param condition
-     * @return
-     */
-    @Override
-    public int delete(DataDict condition) {
-        return this.myBatisDaoSupport.delete("dataDict.delete", condition);
-    }
-    
-    /**
-     * @param updateRowMap
-     * @return
-     */
-    @Override
-    public int update(Map<String, Object> updateRowMap) {
-        return this.myBatisDaoSupport.update("dataDict.update", updateRowMap);
-    }
-    
-    /**
-     * @param condition
-     */
-    @Override
-    public void batchUpdate(List<Map<String, Object>> updateRowMapList) {
-        this.myBatisDaoSupport.batchUpdate("dataDict.update",
-                updateRowMapList,
-                true);
-    }
-    
-    /**
-     * @param condition
-     * @return
-     */
-    @Override
-    public DataDict find(DataDict condition) {
-        return this.myBatisDaoSupport.<DataDict> find("dataDict.find",
-                condition);
-    }
-    
-    /**
-     * @param params
-     * @return
-     */
-    @Override
-    public List<DataDict> queryList(Map<String, Object> params) {
-        return this.myBatisDaoSupport.<DataDict> queryList("dataDict.query",
-                params);
-    }
-    
-    /**
-     * @param params
-     * @return
-     */
-    @Override
-    public int count(Map<String, Object> params) {
-        return this.myBatisDaoSupport.<Integer> find("dataDict.queryCount",
-                params);
-    }
-    
-    /**
-     * @param params
-     * @param pageIndex
-     * @param pageSize
-     * @return
-     */
-    @Override
-    public PagedList<DataDict> queryPagedList(Map<String, Object> params,
-            int pageIndex, int pageSize) {
-        return this.myBatisDaoSupport.<DataDict> queryPagedList(
-                "dataDict.query", params, pageIndex, pageSize);
-    }
-    
 }

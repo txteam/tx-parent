@@ -10,6 +10,10 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
 /**
  * 配置属性项<br/>
  * 对应配置数据数据库统表存储的其中一项<br/>
@@ -20,12 +24,15 @@ import java.util.List;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
+@Entity
+@Table(name = "bd_config_context")
 public class ConfigPropertyItem implements ConfigProperty, Serializable {
     
     /** 注释内容 */
     private static final long serialVersionUID = 887600460642190895L;
     
     /** 数据库存储唯一键 */
+    @Id
     private String id;
     
     /** 数据库存储唯一键 */

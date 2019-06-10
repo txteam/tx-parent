@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.tx.component.basicdata.model.DataDict;
 import com.tx.core.paged.model.PagedList;
+import com.tx.core.querier.model.Querier;
 
 /**
  * 基础数据业务层<br/>
@@ -39,7 +40,7 @@ public interface BasicDataAPIClient {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @RequestMapping(value = "/{type}/", method = RequestMethod.POST)
+    @RequestMapping(value = "/{type}", method = RequestMethod.POST)
     public void insert(@PathVariable String type, @RequestBody DataDict data);
     
     /**
@@ -213,7 +214,7 @@ public interface BasicDataAPIClient {
     @RequestMapping(value = "/{type}/list/{valid}", method = RequestMethod.GET)
     public List<DataDict> queryList(@PathVariable String type,
             @PathVariable(required = false) Boolean valid,
-            @RequestParam Map<String, Object> params);
+            @RequestBody Querier querier);
     
     /**
      * 根据条件查询基础数据分页列表<br/>
@@ -231,7 +232,7 @@ public interface BasicDataAPIClient {
     @RequestMapping(value = "/{type}/pagedlist/{valid}", method = RequestMethod.GET)
     public PagedList<DataDict> queryPagedList(@PathVariable String type,
             @PathVariable(required = false) Boolean valid,
-            @RequestParam Map<String, Object> params,
+            @RequestBody Querier querier,
             @RequestParam(value = "pageIndex", required = false, defaultValue = "1") int pageIndex,
             @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize);
     
@@ -250,7 +251,7 @@ public interface BasicDataAPIClient {
     public List<DataDict> queryChildrenByParentId(@PathVariable String type,
             @PathVariable(required = true) String parentId,
             @PathVariable(required = false) Boolean valid,
-            @RequestParam Map<String, Object> params);
+            @RequestBody Querier querier);
     
     /**
      * 根据条件查询基础数据列表<br/>
@@ -267,5 +268,5 @@ public interface BasicDataAPIClient {
     public List<DataDict> queryDescendantsByParentId(@PathVariable String type,
             @PathVariable(required = true) String parentId,
             @PathVariable(required = false) Boolean valid,
-            @RequestParam Map<String, Object> params);
+            @RequestBody Querier querier);
 }

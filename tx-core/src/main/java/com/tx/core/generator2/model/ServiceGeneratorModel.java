@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.ClassUtils;
 
 import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.generator2.util.GeneratorUtils;
 import com.tx.core.util.JPAParseUtils;
 import com.tx.core.util.JPAParseUtils.JPAColumnInfo;
 
@@ -33,6 +34,9 @@ public class ServiceGeneratorModel {
     /** 实体类型 */
     private final Class<?> entityType;
     
+    /** 实体注释 */
+    private final String entityComment;
+    
     /** 实体类型name */
     private final String entityTypeName;
     
@@ -51,6 +55,9 @@ public class ServiceGeneratorModel {
     /** 是否有是否有效的属性 */
     private JPAColumnInfo validColumn;
     
+    /** 父节点id对应的属性 */
+    private JPAColumnInfo parentIdColumn;
+    
     /** <默认构造函数> */
     public ServiceGeneratorModel(Class<?> entityType) {
         super();
@@ -60,6 +67,7 @@ public class ServiceGeneratorModel {
         this.basePackage = ClassUtils.convertResourcePathToClassName(basePath);
         
         this.entityType = entityType;
+        this.entityComment = GeneratorUtils.parseEntityComment(entityType);
         this.entityTypeName = entityType.getName();
         this.entityTypeSimpleName = entityType.getSimpleName();
         
@@ -75,9 +83,7 @@ public class ServiceGeneratorModel {
                 //如果主键就是code，则无需标定hasCodeProperty
                 this.codeColumn = column;
                 AssertUtils.isTrue(
-                        String.class.isAssignableFrom(column.getPropertyType())
-                                || boolean.class
-                                        .equals(column.getPropertyType()),
+                        String.class.isAssignableFrom(column.getPropertyType()),
                         "code type should is String.");
             } else if (StringUtils.equals("valid", column.getPropertyName())) {
                 this.validColumn = column;
@@ -86,6 +92,15 @@ public class ServiceGeneratorModel {
                                 || boolean.class
                                         .equals(column.getPropertyType()),
                         "valid type should is boolean or Boolean.");
+            } else if (StringUtils.equals("parentId",
+                    column.getPropertyName())) {
+                this.parentIdColumn = column;
+                AssertUtils.isTrue(
+                        this.pkColumn.getPropertyType()
+                                .equals(column.getPropertyType()),
+                        "parentId type:{} should equals pk type:{}.",
+                        new Object[] { column.getPropertyType(),
+                                this.pkColumn.getPropertyType() });
             }
         });
     }
@@ -144,5 +159,19 @@ public class ServiceGeneratorModel {
      */
     public JPAColumnInfo getValidColumn() {
         return validColumn;
+    }
+    
+    /**
+     * @return 返回 entityComment
+     */
+    public String getEntityComment() {
+        return entityComment;
+    }
+    
+    /**
+     * @return 返回 parentIdColumn
+     */
+    public JPAColumnInfo getParentIdColumn() {
+        return parentIdColumn;
     }
 }

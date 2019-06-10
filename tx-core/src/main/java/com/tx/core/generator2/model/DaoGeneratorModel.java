@@ -6,7 +6,14 @@
  */
 package com.tx.core.generator2.model;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.util.ClassUtils;
+
+import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.util.JPAParseUtils;
+import com.tx.core.util.JPAParseUtils.JPAColumnInfo;
 
 /**
  * 持久层代码生成模型<br/>
@@ -32,6 +39,12 @@ public class DaoGeneratorModel {
     /** 实体类型simpleName */
     private final String entityTypeSimpleName;
     
+    /** jpa字段列表 */
+    private final List<JPAColumnInfo> columnList;
+    
+    /** 主键字段列表 */
+    private final JPAColumnInfo pkColumn;
+    
     /** <默认构造函数> */
     public DaoGeneratorModel(Class<?> entityType) {
         super();
@@ -44,6 +57,12 @@ public class DaoGeneratorModel {
         
         this.entityTypeName = entityType.getName();
         this.entityTypeSimpleName = entityType.getSimpleName();
+        
+        this.columnList = JPAParseUtils.parseTableColumns(entityType);
+        this.pkColumn = this.columnList.stream().filter(column -> {
+            return column.isPrimaryKey();
+        }).collect(Collectors.toList()).get(0);
+        AssertUtils.isTrue(this.pkColumn != null, "没有找到主键字段");
     }
     
     /**
@@ -73,4 +92,20 @@ public class DaoGeneratorModel {
     public String getEntityTypeSimpleName() {
         return entityTypeSimpleName;
     }
+
+    /**
+     * @return 返回 columnList
+     */
+    public List<JPAColumnInfo> getColumnList() {
+        return columnList;
+    }
+
+    /**
+     * @return 返回 pkColumn
+     */
+    public JPAColumnInfo getPkColumn() {
+        return pkColumn;
+    }
+    
+    
 }

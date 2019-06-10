@@ -6,21 +6,17 @@
  */
 package ${controller.basePackage}.controller;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 import javax.annotation.Resource;
 
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tx.core.paged.model.PagedList;
+import com.tx.core.querier.model.Querier;
 import ${controller.basePackage}.model.${controller.entityTypeSimpleName};
 import ${controller.basePackage}.service.${controller.entityTypeSimpleName}Service;
 
@@ -37,7 +33,7 @@ import io.swagger.annotations.ApiOperation;
  */
 @RestController
 @Api(tags = "${controller.entityComment}API")
-@RequestMapping("/api/${controller.entityTypeSimpleName}?uncap_first")
+@RequestMapping("/api/${controller.entityTypeSimpleName?uncap_first}")
 public class ${controller.entityTypeSimpleName}APIController {
     
     //${controller.entityComment}业务层
@@ -54,7 +50,7 @@ public class ${controller.entityTypeSimpleName}APIController {
      * @see [类、类#方法、类#成员]
      */
     @ApiOperation(value = "新增${controller.entityComment}")
-    @RequestMapping(value = "/", method = RequestMethod.POST)
+    @RequestMapping(value = "", method = RequestMethod.POST)
     public boolean insert(@RequestBody ${controller.entityTypeSimpleName} ${controller.entityTypeSimpleName?uncap_first}) {
         this.${controller.entityTypeSimpleName?uncap_first}Service.insert(${controller.entityTypeSimpleName?uncap_first});
         return true;
@@ -73,7 +69,7 @@ public class ${controller.entityTypeSimpleName}APIController {
     @ApiOperation(value = "删除${controller.entityComment}")
     @RequestMapping(value = "/{${controller.pkProperty.propertyName}}", method = RequestMethod.DELETE) 
     public boolean deleteBy${controller.pkProperty.propertyName?cap_first}(
-    	@PathVariable(value = "${controller.pkProperty.propertyName}",required=true) String ${controller.pkProperty.propertyName}) {
+    		@PathVariable(value = "${controller.pkProperty.propertyName}",required=true) ${controller.pkProperty.propertyType.getSimpleName()} ${controller.pkProperty.propertyName}) {
         boolean flag = this.${controller.entityTypeSimpleName?uncap_first}Service.deleteBy${controller.pkProperty.propertyName?cap_first}(${controller.pkProperty.propertyName});
         return flag;
     }
@@ -89,9 +85,10 @@ public class ${controller.entityTypeSimpleName}APIController {
      * @see [类、类#方法、类#成员]
      */
     @ApiOperation(value = "修改${controller.entityComment}")
-    @RequestMapping(value = "/", method = RequestMethod.PUT)
-    public boolean update(@RequestBody ${controller.entityTypeSimpleName} ${controller.entityTypeSimpleName?uncap_first}) {
-        boolean flag = this.${controller.entityTypeSimpleName?uncap_first}Service.updateBy${controller.pkProperty.propertyName?cap_first}(${controller.entityTypeSimpleName?uncap_first});
+    @RequestMapping(value = "/{${controller.pkProperty.propertyName}}", method = RequestMethod.PUT)
+    public boolean updateBy${controller.pkProperty.propertyName?cap_first}(@PathVariable(value = "${controller.pkProperty.propertyName}",required=true) ${controller.pkProperty.propertyType.getSimpleName()} ${controller.pkProperty.propertyName},
+    		@RequestBody ${controller.entityTypeSimpleName} ${controller.entityTypeSimpleName?uncap_first}) {
+        boolean flag = this.${controller.entityTypeSimpleName?uncap_first}Service.updateBy${controller.pkProperty.propertyName?cap_first}(${controller.pkProperty.propertyName},${controller.entityTypeSimpleName?uncap_first});
         return flag;
     }
     
@@ -108,7 +105,7 @@ public class ${controller.entityTypeSimpleName}APIController {
 	@ApiOperation(value = "禁用${controller.entityComment}")
     @RequestMapping(value = "/disable/{${controller.pkProperty.propertyName}}", method = RequestMethod.PATCH)
     public boolean disableBy${controller.pkProperty.propertyName?cap_first}(
-    		@PathVariable(value = "${controller.pkProperty.propertyName}", required = true) String ${controller.pkProperty.propertyName}) {
+    		@PathVariable(value = "${controller.pkProperty.propertyName}", required = true) ${controller.pkProperty.propertyType.getSimpleName()} ${controller.pkProperty.propertyName}) {
         boolean flag = this.${controller.entityTypeSimpleName?uncap_first}Service.disableBy${controller.pkProperty.propertyName?cap_first}(${controller.pkProperty.propertyName});
         return flag;
     }
@@ -126,7 +123,7 @@ public class ${controller.entityTypeSimpleName}APIController {
     @ApiOperation(value = "启用${controller.entityComment}")
     @RequestMapping(value = "/enable/{${controller.pkProperty.propertyName}}", method = RequestMethod.PATCH)
     public boolean enableBy${controller.pkProperty.propertyName?cap_first}(
-    		@PathVariable(value = "${controller.pkProperty.propertyName}", required = true) String ${controller.pkProperty.propertyName}) {
+    		@PathVariable(value = "${controller.pkProperty.propertyName}", required = true) ${controller.pkProperty.propertyType.getSimpleName()} ${controller.pkProperty.propertyName}) {
         boolean flag = this.${controller.entityTypeSimpleName?uncap_first}Service.enableBy${controller.pkProperty.propertyName?cap_first}(${controller.pkProperty.propertyName});
         return flag;
     }
@@ -143,8 +140,8 @@ public class ${controller.entityTypeSimpleName}APIController {
      */
     @ApiOperation(value = "根据主键查询${controller.entityComment}")
     @RequestMapping(value = "/{${controller.pkProperty.propertyName}}", method = RequestMethod.GET)
-    public ${controller.entityTypeSimpleName} findById(
-            @PathVariable(value = "${controller.pkProperty.propertyName}", required = true) String ${controller.pkProperty.propertyName}) {
+    public ${controller.entityTypeSimpleName} findBy${controller.pkProperty.propertyName?cap_first}(
+            @PathVariable(value = "${controller.pkProperty.propertyName}", required = true) ${controller.pkProperty.propertyType.getSimpleName()} ${controller.pkProperty.propertyName}) {
         ${controller.entityTypeSimpleName} res = this.${controller.entityTypeSimpleName?uncap_first}Service.findBy${controller.pkProperty.propertyName?cap_first}(${controller.pkProperty.propertyName});
         
         return res;
@@ -162,17 +159,19 @@ public class ${controller.entityTypeSimpleName}APIController {
      */
     @ApiOperation(value = "根据编码查询${controller.entityComment}")
     @RequestMapping(value = "/code/{code}", method = RequestMethod.GET)
-    public ${controller.entityTypeSimpleName} findByCode(
-            @PathVariable(value = "code", required = true) String code) {
-        ${controller.entityTypeSimpleName} res = this.${controller.entityTypeSimpleName?uncap_first}Service.findByCode(code);
+    public ${controller.entityTypeSimpleName} findBy${controller.codeProperty.propertyName?cap_first}(
+            @PathVariable(value = "code", required = true) ${controller.codeProperty.propertyType.getSimpleName()} ${controller.codeProperty.propertyName}) {
+        ${controller.entityTypeSimpleName} res = this.${controller.entityTypeSimpleName?uncap_first}Service.findBy${controller.codeProperty.propertyName?cap_first}(${controller.codeProperty.propertyName});
         
         return res;
     }
 </#if>
 
-	/**
+    /**
      * 查询${controller.entityComment}实例列表<br/>
      * <功能详细描述>
+     * @param valid
+     * @param querier
      * @return [参数说明]
      * 
      * @return List<${controller.entityTypeSimpleName}> [返回类型说明]
@@ -180,21 +179,18 @@ public class ${controller.entityTypeSimpleName}APIController {
      * @see [类、类#方法、类#成员]
      */
     @ApiOperation(value = "查询${controller.entityComment}列表")
-    @RequestMapping(value = "/list/{valid}", method = RequestMethod.GET)
+    @RequestMapping(value = "/list<#if controller.validProperty??>/{valid}</#if>", method = RequestMethod.GET)
     public List<${controller.entityTypeSimpleName}> queryList(
 <#if controller.validProperty??>
 			@PathVariable(value = "${controller.validProperty.propertyName}", required = false) Boolean ${controller.validProperty.propertyName},
 </#if>
-    		@RequestParam MultiValueMap<String, String> request
+    		@RequestBody Querier querier
     	) {
-        Map<String,Object> params = new HashMap<>();
-        //params.put("",request.getFirst(""));
-    	
         List<${controller.entityTypeSimpleName}> resList = this.${controller.entityTypeSimpleName?uncap_first}Service.queryList(
 <#if controller.validProperty??>
 			${controller.validProperty.propertyName},
 </#if>
-			params         
+			querier         
         );
   
         return resList;
@@ -203,40 +199,68 @@ public class ${controller.entityTypeSimpleName}APIController {
     /**
      * 查询${controller.entityComment}分页列表<br/>
      * <功能详细描述>
+     * @param valid
+     * @param pageIndex
+     * @param pageSize
+     * @param querier
      * @return [参数说明]
      * 
-     * @return List<${controller.entityTypeSimpleName}> [返回类型说明]
+     * @return PagedList<${controller.entityTypeSimpleName}> [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
     @ApiOperation(value = "查询${controller.entityComment}分页列表")
-    @RequestMapping(value = "/pagedlist/{pageSize}/{pageNumber}/{valid}", method = RequestMethod.GET)
+    @RequestMapping(value = "/pagedlist/{pageSize}/{pageNumber}<#if controller.validProperty??>/{valid}</#if>", method = RequestMethod.GET)
     public PagedList<${controller.entityTypeSimpleName}> queryPagedList(
 <#if controller.validProperty??>
 			@PathVariable(value = "${controller.validProperty.propertyName}", required = false) Boolean ${controller.validProperty.propertyName},
 </#if>
 			@PathVariable(value = "pageNumber", required = true) int pageIndex,
             @PathVariable(value = "pageSize", required = true) int pageSize,
-            @RequestParam MultiValueMap<String, String> request
+            @RequestBody Querier querier
     	) {
-		Map<String,Object> params = new HashMap<>();
-		//params.put("",request.getFirst(""));
-
         PagedList<${controller.entityTypeSimpleName}> resPagedList = this.${controller.entityTypeSimpleName?uncap_first}Service.queryPagedList(
 <#if controller.validProperty??>
 			${controller.validProperty.propertyName},
 </#if>
-			params,
+			querier,
 			pageIndex,
 			pageSize
         );
         return resPagedList;
     }
+    
+	/**
+     * 查询${controller.entityComment}数量<br/>
+     * <功能详细描述>
+     * @param valid
+     * @param querier
+     * @return [参数说明]
+     * 
+     * @return int [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @ApiOperation(value = "查询${controller.entityComment}数量")
+    @RequestMapping(value = "/count<#if controller.validProperty??>/{valid}</#if>", method = RequestMethod.GET)
+    public int count(
+<#if controller.validProperty??>
+			@PathVariable(value = "${controller.validProperty.propertyName}", required = false) Boolean ${controller.validProperty.propertyName},
+</#if>
+            @RequestBody Querier querier) {
+        int count = this.${controller.entityTypeSimpleName?uncap_first}Service.count(
+<#if controller.validProperty??>
+			${controller.validProperty.propertyName},
+</#if>
+        	querier);
+        
+        return count;
+    }
 
 	/**
      * 查询${controller.entityComment}是否存在<br/>
 	 * @param exclude${controller.pkProperty.propertyName?cap_first}
-     * @param params
+     * @param querier
      * @return [参数说明]
      * 
      * @return boolean [返回类型说明]
@@ -246,10 +270,12 @@ public class ${controller.entityTypeSimpleName}APIController {
     @ApiOperation(value = "查询${controller.entityComment}是否存在")
     @RequestMapping(value = "/exists/{exclude${controller.pkProperty.propertyName?cap_first}}", method = RequestMethod.GET)
     public boolean exists(
-            @PathVariable(value = "exclude${controller.pkProperty.propertyName?cap_first}", required = false) String exclude${controller.pkProperty.propertyName?cap_first},
-            @RequestParam Map<String, String> params) {
-        boolean flag = this.${controller.entityTypeSimpleName?uncap_first}Service.exists(params, exclude${controller.pkProperty.propertyName?cap_first});
+            @PathVariable(value = "exclude${controller.pkProperty.propertyName?cap_first}", required = false) ${controller.pkProperty.propertyType.getSimpleName()} exclude${controller.pkProperty.propertyName?cap_first},
+            @RequestBody Querier querier) {
+        boolean flag = this.${controller.entityTypeSimpleName?uncap_first}Service.exists(querier, exclude${controller.pkProperty.propertyName?cap_first});
         
         return flag;
     }
+    
+
 }

@@ -155,7 +155,8 @@ public class DataDictService implements InitializingBean, ResourceLoaderAware {
      * @see [类、类#方法、类#成员]
      */
     private List<DataDict> loadListFromDB() {
-        List<DataDict> ddList = this.dataDictDao.queryList(null);
+        List<DataDict> ddList = this.dataDictDao
+                .queryList((Map<String, Object>) null);
         return ddList;
     }
     
@@ -601,7 +602,7 @@ public class DataDictService implements InitializingBean, ResourceLoaderAware {
             TransactionTemplate transactionTemplate) {
         this.transactionTemplate = transactionTemplate;
     }
-
+    
     /**
      * @return 返回 transactionTemplate
      */

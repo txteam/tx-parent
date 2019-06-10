@@ -57,6 +57,9 @@ public class SqlMapGeneratorModel {
     /** 是否有是否有效的属性 */
     private JPAColumnInfo validColumn;
     
+    /** 父节点id对应的属性 */
+    private JPAColumnInfo parentIdColumn;
+    
     /** 排序字段 */
     private String defaultOrderBy;
     
@@ -84,9 +87,7 @@ public class SqlMapGeneratorModel {
                 this.codeColumn = column;
                 AssertUtils.isTrue(
                         String.class.isAssignableFrom(
-                                this.codeColumn.getPropertyType())
-                                || boolean.class.equals(
-                                        this.codeColumn.getPropertyType()),
+                                this.codeColumn.getPropertyType()),
                         "code type should is String.");
             } else if (StringUtils.equals("valid", column.getPropertyName())) {
                 this.validColumn = column;
@@ -103,6 +104,15 @@ public class SqlMapGeneratorModel {
                                 || boolean.class
                                         .equals(column.getPropertyType()),
                         "createDate type should is Date.");
+            } else if (StringUtils.equals("parentId",
+                    column.getPropertyName())) {
+                this.parentIdColumn = column;
+                AssertUtils.isTrue(
+                        this.pkColumn.getPropertyType()
+                                .equals(column.getPropertyType()),
+                        "parentId type:{} should equals pk type:{}.",
+                        new Object[] { column.getPropertyType(),
+                                this.pkColumn.getPropertyType() });
             }
         });
         
@@ -189,6 +199,13 @@ public class SqlMapGeneratorModel {
      */
     public String getDefaultOrderBy() {
         return defaultOrderBy;
+    }
+    
+    /**
+     * @return 返回 parentIdColumn
+     */
+    public JPAColumnInfo getParentIdColumn() {
+        return parentIdColumn;
     }
 
     /**

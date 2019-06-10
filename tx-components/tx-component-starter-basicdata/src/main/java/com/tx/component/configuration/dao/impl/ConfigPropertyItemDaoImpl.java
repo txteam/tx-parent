@@ -6,11 +6,9 @@
  */
 package com.tx.component.configuration.dao.impl;
 
-import java.util.List;
-import java.util.Map;
-
 import com.tx.component.configuration.dao.ConfigPropertyItemDao;
 import com.tx.component.configuration.model.ConfigPropertyItem;
+import com.tx.core.mybatis.dao.impl.MybatisBaseDaoImpl;
 import com.tx.core.mybatis.support.MyBatisDaoSupport;
 
 /**
@@ -22,7 +20,9 @@ import com.tx.core.mybatis.support.MyBatisDaoSupport;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class ConfigPropertyItemDaoImpl implements ConfigPropertyItemDao {
+public class ConfigPropertyItemDaoImpl
+        extends MybatisBaseDaoImpl<ConfigPropertyItem, String>
+        implements ConfigPropertyItemDao {
     
     private MyBatisDaoSupport myBatisDaoSupport;
     
@@ -38,63 +38,16 @@ public class ConfigPropertyItemDaoImpl implements ConfigPropertyItemDao {
     }
     
     /**
-     * @param condition
+     * @return 返回 myBatisDaoSupport
      */
-    @Override
-    public void insert(ConfigPropertyItem condition) {
-        this.myBatisDaoSupport.insertUseUUID("configPropertyItem.insert",
-                condition,
-                "id");
+    public MyBatisDaoSupport getMyBatisDaoSupport() {
+        return myBatisDaoSupport;
     }
     
     /**
-     * @param configPropertyItem
-     * @return
+     * @param 对myBatisDaoSupport进行赋值
      */
-    @Override
-    public int delete(ConfigPropertyItem configPropertyItem) {
-        return this.myBatisDaoSupport.delete("configPropertyItem.delete",
-                configPropertyItem);
+    public void setMyBatisDaoSupport(MyBatisDaoSupport myBatisDaoSupport) {
+        this.myBatisDaoSupport = myBatisDaoSupport;
     }
-    
-    /**
-     * @param updateRowMap
-     * @return
-     */
-    @Override
-    public int update(Map<String, Object> updateRowMap) {
-        return this.myBatisDaoSupport.update("configPropertyItem.update",
-                updateRowMap);
-    }
-    
-    /**
-     * @param condition
-     * @return
-     */
-    @Override
-    public ConfigPropertyItem find(ConfigPropertyItem condition) {
-        return this.myBatisDaoSupport.<ConfigPropertyItem> find(
-                "configPropertyItem.find", condition);
-    }
-    
-    /**
-     * @param params
-     * @return
-     */
-    @Override
-    public List<ConfigPropertyItem> queryList(Map<String, Object> params) {
-        return this.myBatisDaoSupport.<ConfigPropertyItem> queryList(
-                "configPropertyItem.query", params);
-    }
-    
-    /**
-     * @param params
-     * @return
-     */
-    @Override
-    public int count(Map<String, Object> params) {
-        return this.myBatisDaoSupport
-                .<Integer> find("configPropertyItem.queryCount", params);
-    }
-    
 }

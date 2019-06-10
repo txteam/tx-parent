@@ -15,28 +15,29 @@
 		parameterType="com.tx.component.basicdata.model.DataDict"
 		resultMap="dataDictMap">
 		SELECT 
-				TDD.id,
-				TDD.parentId,
-				TDD.type,
-				TDD.code,
-				TDD.name,
-				TDD.remark,
-				TDD.valid,
-				TDD.modifyAble,
-				TDD.attributes,
-				TDD.lastUpdateDate,
-				TDD.createDate
-		  FROM BD_DATA_DICT TDD
+				DD.id,
+				DD.code,
+				DD.lastUpdateDate,
+				DD.name,
+				DD.type,
+				DD.valid,
+				DD.createDate,
+				DD.modifyAble,
+				DD.module,
+				DD.parentId,
+				DD.remark,
+				DD.attributes
+		  FROM BD_DATA_DICT DD
 		 WHERE
 		<trim prefixOverrides="AND | OR">
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
-	            <![CDATA[ AND TDD.id = #{id} ]]>
+	            <![CDATA[ AND DD.id = #{id} ]]>
 	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(type)">  
-	            <![CDATA[ AND TDD.type = #{type,jdbcType=VARCHAR} ]]>
+	            <![CDATA[ AND DD.type = #{type} ]]>
 	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(code)">  
-	            <![CDATA[ AND TDD.code = #{code,jdbcType=VARCHAR} ]]>
+	            <![CDATA[ AND DD.code = #{code} ]]>
 	        </if>
 		</trim>
 	</select>
@@ -46,48 +47,71 @@
 		parameterType="java.util.Map"
 		resultMap="dataDictMap">
 		SELECT 
-				TDD.id,
-				TDD.parentId,
-				TDD.type,
-				TDD.code,
-				TDD.name,
-				TDD.remark,
-				TDD.valid,
-				TDD.modifyAble,
-				TDD.attributes,
-				TDD.lastUpdateDate,
-				TDD.createDate
-		  FROM BD_DATA_DICT TDD
+				DD.id,
+				DD.code,
+				DD.lastUpdateDate,
+				DD.name,
+				DD.type,
+				DD.valid,
+				DD.createDate,
+				DD.modifyAble,
+				DD.module,
+				DD.parentId,
+				DD.remark,
+				DD.attributes
+		  FROM BD_DATA_DICT DD
 		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(conditions)">
+			<foreach collection="conditions" item="conditionTemp">
+			<choose>  
+		        <when test="conditionTemp.withoutValue">
+		        	AND ${conditionTemp.column} ${conditionTemp.operator}
+		        </when>
+		        <when test="conditionTemp.foreach">  
+		            AND ${conditionTemp.column} ${conditionTemp.operator} <foreach collection="conditionTemp.value" item="valueTemp" open="(" close=")" separator=",">#{valueTemp}</foreach>
+		        </when>
+		        <otherwise>  
+		            AND ${conditionTemp.column} ${conditionTemp.operator} #{conditionTemp.value}
+		        </otherwise>
+			</choose>
+			</foreach>
+	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(parentIds)">
-				AND TDD.parentId IN <foreach collection="parentIds" open="(" close=")" separator="," item="parentIdTemp">#{parentIdTemp,jdbcType=VARCHAR}</foreach>
+				AND DD.parentId IN <foreach collection="parentIds" open="(" close=")" separator="," item="parentIdTemp">#{parentIdTemp}</foreach>
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(type)">  
-	            <![CDATA[ AND TDD.type = #{type,jdbcType=VARCHAR} ]]>
+	            <![CDATA[ AND DD.type = #{type} ]]>
 	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(parentId)">  
-	            <![CDATA[ AND TDD.parentId = #{parentId,jdbcType=VARCHAR} ]]>
+	            <![CDATA[ AND DD.parentId = #{parentId} ]]>
 	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(code)">  
-	            <![CDATA[ AND TDD.code = #{code,jdbcType=VARCHAR} ]]>
+	            <![CDATA[ AND DD.code = #{code} ]]>
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(modifyAble)">  
-	            <![CDATA[ AND TDD.modifyAble = #{modifyAble,jdbcType=BIT} ]]>
+	            <![CDATA[ AND DD.modifyAble = #{modifyAble} ]]>
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(valid)">  
-	            <![CDATA[ AND TDD.valid = #{valid,jdbcType=BIT} ]]>
+	            <![CDATA[ AND DD.valid = #{valid} ]]>
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(remark)">  
-	            <![CDATA[ AND TDD.remark = #{remark,jdbcType=VARCHAR} ]]>
+	            <![CDATA[ AND DD.remark = #{remark} ]]>
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(name)">  
-	            <![CDATA[ AND TDD.name = #{name,jdbcType=VARCHAR} ]]>
+	            <![CDATA[ AND DD.name = #{name} ]]>
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(excludeId)">
-				<![CDATA[ AND TDD.id <> #{excludeId,javaType=java.lang.String} ]]>
+				<![CDATA[ AND DD.id <> #{excludeId} ]]>
 			</if>
 		</trim>
-		ORDER BY type,createDate
+		<choose>  
+	        <when test="@com.tx.core.util.OgnlUtils@isNotEmpty(orders)">  
+	            ORDER BY <foreach collection="orders" item="orderTemp" separator=",">${orderTemp.column} ${orderTemp.direction}</foreach>
+	        </when>
+	        <otherwise>  
+	            ORDER BY type,createDate DESC
+	        </otherwise>  
+	    </choose>
 	</select>
 	
 		<!-- auto generate default count -->
@@ -95,34 +119,49 @@
 		parameterType="java.util.Map"
 		resultType="java.lang.Integer">
 		SELECT COUNT(1)
-		  FROM BD_DATA_DICT TDD
+		  FROM BD_DATA_DICT DD
 		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(conditions)">
+			<foreach collection="conditions" item="conditionTemp">
+			<choose>  
+		        <when test="conditionTemp.withoutValue">
+		        	AND ${conditionTemp.column} ${conditionTemp.operator}
+		        </when>
+		        <when test="conditionTemp.foreach">  
+		            AND ${conditionTemp.column} ${conditionTemp.operator} <foreach collection="conditionTemp.value" item="valueTemp" open="(" close=")" separator=",">#{valueTemp}</foreach>
+		        </when>
+		        <otherwise>  
+		            AND ${conditionTemp.column} ${conditionTemp.operator} #{conditionTemp.value}
+		        </otherwise>
+			</choose>
+			</foreach>
+	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(parentIds)">
-				AND TDD.parentId IN <foreach collection="parentIds" open="(" close=")" separator="," item="parentIdTemp">#{parentIdTemp,jdbcType=VARCHAR}</foreach>
+				AND DD.parentId IN <foreach collection="parentIds" open="(" close=")" separator="," item="parentIdTemp">#{parentIdTemp}</foreach>
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(type)">  
-	            <![CDATA[ AND TDD.type = #{type,jdbcType=VARCHAR} ]]>
+	            <![CDATA[ AND DD.type = #{type} ]]>
 	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(parentId)">  
-	            <![CDATA[ AND TDD.parentId = #{parentId,jdbcType=VARCHAR} ]]>
+	            <![CDATA[ AND DD.parentId = #{parentId} ]]>
 	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(code)">  
-	            <![CDATA[ AND TDD.code = #{code,jdbcType=VARCHAR} ]]>
+	            <![CDATA[ AND DD.code = #{code} ]]>
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(modifyAble)">  
-	            <![CDATA[ AND TDD.modifyAble = #{modifyAble,jdbcType=BIT} ]]>
+	            <![CDATA[ AND DD.modifyAble = #{modifyAble} ]]>
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(valid)">  
-	            <![CDATA[ AND TDD.valid = #{valid,jdbcType=BIT} ]]>
+	            <![CDATA[ AND DD.valid = #{valid} ]]>
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(remark)">  
-	            <![CDATA[ AND TDD.remark = #{remark,jdbcType=VARCHAR} ]]>
+	            <![CDATA[ AND DD.remark = #{remark} ]]>
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(name)">  
-	            <![CDATA[ AND TDD.name = #{name,jdbcType=VARCHAR} ]]>
+	            <![CDATA[ AND DD.name = #{name} ]]>
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(excludeId)">
-				<![CDATA[ AND TDD.id <> #{excludeId,javaType=java.lang.String} ]]>
+				<![CDATA[ AND DD.id <> #{excludeId} ]]>
 			</if>
 		</trim>
 	</select>

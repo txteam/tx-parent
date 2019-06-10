@@ -123,7 +123,7 @@ public class ${controller.entityTypeSimpleName}Controller {
      */
     @RequestMapping("/toUpdate")
     public String toUpdate(
-    		@RequestParam("${controller.pkProperty.propertyName}") String ${controller.pkProperty.propertyName},
+    		@RequestParam("${controller.pkProperty.propertyName}") ${controller.pkProperty.propertyType.getSimpleName()} ${controller.pkProperty.propertyName},
             ModelMap response) {
         ${controller.entityTypeSimpleName} ${controller.entityTypeSimpleName?uncap_first} = this.${controller.entityTypeSimpleName?uncap_first}Service.findBy${controller.pkProperty.propertyName?cap_first}(${controller.pkProperty.propertyName}); 
         response.put("${controller.entityTypeSimpleName?uncap_first}", ${controller.entityTypeSimpleName?uncap_first});
@@ -245,7 +245,7 @@ public class ${controller.entityTypeSimpleName}Controller {
      */
     @ResponseBody
     @RequestMapping("/findBy${controller.pkProperty.propertyName?cap_first}")
-    public ${controller.entityTypeSimpleName} findBy${controller.pkProperty.propertyName?cap_first}(@RequestParam(value = "${controller.pkProperty.propertyName}") String ${controller.pkProperty.propertyName}) {
+    public ${controller.entityTypeSimpleName} findBy${controller.pkProperty.propertyName?cap_first}(@RequestParam(value = "${controller.pkProperty.propertyName}") ${controller.pkProperty.propertyType.getSimpleName()} ${controller.pkProperty.propertyName}) {
         ${controller.entityTypeSimpleName} ${controller.entityTypeSimpleName?uncap_first} = this.${controller.entityTypeSimpleName?uncap_first}Service.findBy${controller.pkProperty.propertyName?cap_first}(${controller.pkProperty.propertyName});
         return ${controller.entityTypeSimpleName?uncap_first};
     }
@@ -263,7 +263,7 @@ public class ${controller.entityTypeSimpleName}Controller {
      */
     @ResponseBody
     @RequestMapping("/findBy${controller.codeProperty.propertyName?cap_first}")
-    public ${controller.entityTypeSimpleName} findBy${controller.codeProperty.propertyName?cap_first}(@RequestParam(value = "${controller.codeProperty.propertyName}") String ${controller.codeProperty.propertyName}) {
+    public ${controller.entityTypeSimpleName} findBy${controller.codeProperty.propertyName?cap_first}(@RequestParam(value = "${controller.codeProperty.propertyName}") ${controller.codeProperty.propertyType.getSimpleName()} ${controller.codeProperty.propertyName}) {
         ${controller.entityTypeSimpleName} ${controller.entityTypeSimpleName?uncap_first} = this.${controller.entityTypeSimpleName?uncap_first}Service.findBy${controller.codeProperty.propertyName?cap_first}(${controller.codeProperty.propertyName});
         return ${controller.entityTypeSimpleName?uncap_first};
     }
@@ -281,7 +281,7 @@ public class ${controller.entityTypeSimpleName}Controller {
      */
     @ResponseBody
     @RequestMapping("/deleteBy${controller.pkProperty.propertyName?cap_first}")
-    public boolean deleteBy${controller.pkProperty.propertyName?cap_first}(@RequestParam(value = "${controller.pkProperty.propertyName}") String ${controller.pkProperty.propertyName}) {
+    public boolean deleteBy${controller.pkProperty.propertyName?cap_first}(@RequestParam(value = "${controller.pkProperty.propertyName}") ${controller.pkProperty.propertyType.getSimpleName()} ${controller.pkProperty.propertyName}) {
         boolean flag = this.${controller.entityTypeSimpleName?uncap_first}Service.deleteBy${controller.pkProperty.propertyName?cap_first}(${controller.pkProperty.propertyName});
         return flag;
     }
@@ -298,7 +298,7 @@ public class ${controller.entityTypeSimpleName}Controller {
      */
     @ResponseBody
     @RequestMapping("/disableBy${controller.pkProperty.propertyName?cap_first}")
-    public boolean disableBy${controller.pkProperty.propertyName?cap_first}(@RequestParam(value = "${controller.pkProperty.propertyName}") String ${controller.pkProperty.propertyName}) {
+    public boolean disableBy${controller.pkProperty.propertyName?cap_first}(@RequestParam(value = "${controller.pkProperty.propertyName}") ${controller.pkProperty.propertyType.getSimpleName()} ${controller.pkProperty.propertyName}) {
         boolean flag = this.${controller.entityTypeSimpleName?uncap_first}Service.disableBy${controller.pkProperty.propertyName?cap_first}(${controller.pkProperty.propertyName});
         return flag;
     }
@@ -315,7 +315,7 @@ public class ${controller.entityTypeSimpleName}Controller {
      */
     @ResponseBody
     @RequestMapping("/enableBy${controller.pkProperty.propertyName?cap_first}")
-    public boolean enableBy${controller.pkProperty.propertyName?cap_first}(@RequestParam(value = "${controller.pkProperty.propertyName}") String ${controller.pkProperty.propertyName}) {
+    public boolean enableBy${controller.pkProperty.propertyName?cap_first}(@RequestParam(value = "${controller.pkProperty.propertyName}") ${controller.pkProperty.propertyType.getSimpleName()} ${controller.pkProperty.propertyName}) {
         boolean flag = this.${controller.entityTypeSimpleName?uncap_first}Service.enableBy${controller.pkProperty.propertyName?cap_first}(${controller.pkProperty.propertyName});
         return flag;
     }
@@ -334,7 +334,7 @@ public class ${controller.entityTypeSimpleName}Controller {
     @ResponseBody
     @RequestMapping("/check/{exclude${controller.pkProperty.propertyName?cap_first}}")
     public Map<String, String> check(
-            @PathVariable(value = "exclude${controller.pkProperty.propertyName?cap_first}", required = false) String exclude${controller.pkProperty.propertyName?cap_first},
+            @PathVariable(value = "exclude${controller.pkProperty.propertyName?cap_first}", required = false) ${controller.pkProperty.propertyType.getSimpleName()} exclude${controller.pkProperty.propertyName?cap_first},
             @RequestParam Map<String, String> params) {
         boolean flag = this.${controller.entityTypeSimpleName?uncap_first}Service.exists(params, exclude${controller.pkProperty.propertyName?cap_first});
         

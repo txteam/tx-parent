@@ -7,10 +7,10 @@
 package com.tx.generator2test.dao;
 
 import com.tx.core.mybatis.dao.MybatisBaseDao;
-import com.tx.generator2test.model.TestMode;
+import com.tx.generator2test.model.TestMode4;
 
 /**
- * TestMode持久层
+ * TestMode4持久层
  * <功能详细描述>
  * 
  * @author  
@@ -18,5 +18,5 @@ import com.tx.generator2test.model.TestMode;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public interface TestModeDao extends MybatisBaseDao<TestMode, String>{
+public interface TestMode4Dao extends MybatisBaseDao<TestMode4, Long>{
 }
