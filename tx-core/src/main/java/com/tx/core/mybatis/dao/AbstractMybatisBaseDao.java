@@ -47,9 +47,11 @@ public abstract class AbstractMybatisBaseDao<T, ID extends Serializable>
     /** 主键属性类型 */
     protected final Class<ID> pkPropertyType;
     
+    /** mybatis句柄 */
     @Resource(name = "myBatisDaoSupport")
     protected MyBatisDaoSupport myBatisDaoSupport;
     
+    /** mapper助手 */
     protected BaseDaoMapperBuilderAssistant assistant;
     
     /** <默认构造函数> */

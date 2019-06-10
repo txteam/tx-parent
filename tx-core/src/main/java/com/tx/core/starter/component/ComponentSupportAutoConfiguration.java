@@ -89,7 +89,7 @@ public class ComponentSupportAutoConfiguration
         this.properties = (MybatisProperties) properties.clone();
         this.properties.setMapperLocations(new String[] {
                 "classpath*:com/tx/component/basicdata/dao/impl/*SqlMap_BASICDATA.xml",
-                "classpath*:com/tx/component/configuration/dao/impl/*SqlMap_BASICDATA.xml" });
+                "classpath*:com/tx/component/configuration/dao/impl/*SqlMap_CONFIGURATION.xml" });
         
         this.dataSource = dataSource;
     }

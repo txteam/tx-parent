@@ -103,7 +103,8 @@ public abstract class AbstractBaseDaoMapperBuilderAssistant
         this.entityType = entityType;
         
         //设置namespace
-        this.currentNamespace = entityType.getName();
+        this.currentNamespace = StringUtils
+                .uncapitalize(entityType.getSimpleName());
         setCurrentNamespace(this.currentNamespace);
     }
     
@@ -187,9 +188,10 @@ public abstract class AbstractBaseDaoMapperBuilderAssistant
         AssertUtils.notEmpty(columnPropertyName,
                 "columnPropertyName is empty.");
         
-        String sql = MessageFormatter.arrayFormat(FORMATTER_OF_WHERE_ITEM_SIMPLE_TYPE,
-                new Object[] { columnPropertyName, "AND", columnName, condition,
-                        columnPropertyName })
+        String sql = MessageFormatter
+                .arrayFormat(FORMATTER_OF_WHERE_ITEM_SIMPLE_TYPE,
+                        new Object[] { columnPropertyName, "AND", columnName,
+                                condition, columnPropertyName })
                 .getMessage();
         return sql;
     }
@@ -517,7 +519,7 @@ public abstract class AbstractBaseDaoMapperBuilderAssistant
      * @see [类、类#方法、类#成员]
      */
     public String getCountStatmentName() {
-        return this.currentNamespace + "." + getQueryStatementName() + "Count";
+        return getQueryStatementName() + "Count";
     }
     
     /**
