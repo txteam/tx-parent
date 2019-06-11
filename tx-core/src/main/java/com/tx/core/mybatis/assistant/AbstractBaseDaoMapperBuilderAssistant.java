@@ -60,7 +60,7 @@ public abstract class AbstractBaseDaoMapperBuilderAssistant
     /** <if test=\"@com.tx.core.util.OgnlUtils@isNotEmpty({})\"><![CDATA[ AND {} {} #{{}} ]]></if>*/
     protected static final String FORMATTER_OF_WHERE_ITEM_SIMPLE_TYPE = "<if test=\"@com.tx.core.util.OgnlUtils@isNotEmpty({})\"><![CDATA[ {} {} {} #{{}} ]]></if>";
     
-    /** <if test=\"@com.tx.core.util.OgnlUtils@isNotEmpty({})\"><![CDATA[ AND {} {} #{{}} ]]></if>*/
+    //for querier
     protected static final String FORMATTER_OF_QUERIER = "<if test=\"@com.tx.core.util.OgnlUtils@isNotEmpty(conditions)\">"
             + "<foreach collection=\"conditions\" item=\"conditionTemp\">"
             + "<choose>" + "<when test=\"conditionTemp.withoutValue\">"
@@ -70,6 +70,9 @@ public abstract class AbstractBaseDaoMapperBuilderAssistant
             + "</when>" + "<otherwise>"
             + " AND ${conditionTemp.column} ${conditionTemp.operator} #{conditionTemp.value}"
             + "</otherwise>" + "</choose>" + "</foreach>" + "</if>";
+    
+    //for querier
+    protected static final String FORMATTER_OF_PARENTID = "<if test=\"@com.tx.core.util.OgnlUtils@isNotEmpty(parentIds)\">AND parentId IN <foreach collection=\"parentIds\" open=\"(\" close=\")\" separator=\",\" item=\"parentIdTemp\">#{parentIdTemp}</foreach></if>";
     
     /** <if test=\"_parameter.containsKey('{}')\"> {} = #{{},jdbcType={}}, </if> */
     protected static final String FORMATTER_OF_SET_ITEM = "<if test=\"_parameter.containsKey('{}')\"> {} = #{{},javaType={}}, </if>";

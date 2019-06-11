@@ -631,7 +631,7 @@ public class ${service.entityTypeSimpleName}Service {
         Set<${service.parentIdColumn.propertyType.getSimpleName()}> parentIds = new HashSet<>();
         parentIds.add(${service.parentIdColumn.propertyName});
         
-        List<${service.entityTypeSimpleName}> resList = doNestedQueryList(<#if service.validColumn??>valid, </#if>ids, parentIds, params);
+        List<${service.entityTypeSimpleName}> resList = doNestedQueryChildren(<#if service.validColumn??>valid, </#if>ids, parentIds, params);
         return resList;
     }
     
@@ -647,7 +647,7 @@ public class ${service.entityTypeSimpleName}Service {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    private List<${service.entityTypeSimpleName}> doNestedQueryList(
+    private List<${service.entityTypeSimpleName}> doNestedQueryChildren(
 	<#if service.validColumn??>
 			Boolean ${service.validColumn.propertyName},
 	</#if>
@@ -670,7 +670,7 @@ public class ${service.entityTypeSimpleName}Service {
             ids.add(bdTemp.getId());
         }
         //嵌套查询下一层级
-        resList.addAll(doNestedQueryList(<#if service.validColumn??>valid,</#if> ${service.pkColumn.propertyName}s, newParentIds, params));
+        resList.addAll(doNestedQueryChildren(<#if service.validColumn??>valid,</#if> ${service.pkColumn.propertyName}s, newParentIds, params));
         return resList;
     }
     
@@ -701,12 +701,12 @@ public class ${service.entityTypeSimpleName}Service {
         Set<${service.parentIdColumn.propertyType.getSimpleName()}> parentIds = new HashSet<>();
         parentIds.add(${service.parentIdColumn.propertyName});
         
-        List<${service.entityTypeSimpleName}> resList = doNestedQueryList(<#if service.validColumn??>valid, </#if>ids, parentIds, querier);
+        List<${service.entityTypeSimpleName}> resList = doNestedQueryChildren(<#if service.validColumn??>valid, </#if>ids, parentIds, querier);
         return resList;
     }
     
     /**
-     * 查询嵌套列表<br/>
+     * 嵌套查询列表<br/>
      * <功能详细描述>
      * @param ids
      * @param parentIds
@@ -717,11 +717,13 @@ public class ${service.entityTypeSimpleName}Service {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    private List<${service.entityTypeSimpleName}> doNestedQueryList(
+    private List<${service.entityTypeSimpleName}> doNestedQueryChildren(
 	<#if service.validColumn??>
 			Boolean ${service.validColumn.propertyName},
 	</#if>
-    		Set<${service.pkColumn.propertyType.getSimpleName()}> ${service.pkColumn.propertyName}s,Set<${service.parentIdColumn.propertyType.getSimpleName()}> parentIds,Querier querier) {
+    		Set<${service.pkColumn.propertyType.getSimpleName()}> ${service.pkColumn.propertyName}s,
+    		Set<${service.parentIdColumn.propertyType.getSimpleName()}> parentIds,
+    		Querier querier) {
         if (CollectionUtils.isEmpty(parentIds)) {
             return new ArrayList<${service.entityTypeSimpleName}>();
         }
@@ -739,7 +741,7 @@ public class ${service.entityTypeSimpleName}Service {
             ids.add(bdTemp.getId());
         }
         //嵌套查询下一层级
-        resList.addAll(doNestedQueryList(<#if service.validColumn??>valid,</#if> ${service.pkColumn.propertyName}s, newParentIds, querier));
+        resList.addAll(doNestedQueryChildren(<#if service.validColumn??>valid,</#if> ${service.pkColumn.propertyName}s, newParentIds, querier));
         return resList;
     }
 </#if>

@@ -559,7 +559,7 @@ public class TestMode3Service {
         Set<Long> parentIds = new HashSet<>();
         parentIds.add(parentId);
         
-        List<TestMode3> resList = doNestedQueryList(valid, ids, parentIds, params);
+        List<TestMode3> resList = doNestedQueryChildren(valid, ids, parentIds, params);
         return resList;
     }
     
@@ -575,7 +575,7 @@ public class TestMode3Service {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    private List<TestMode3> doNestedQueryList(
+    private List<TestMode3> doNestedQueryChildren(
 			Boolean valid,
     		Set<Long> ids,Set<Long> parentIds,Map<String, Object> params) {
         if (CollectionUtils.isEmpty(parentIds)) {
@@ -596,7 +596,7 @@ public class TestMode3Service {
             ids.add(bdTemp.getId());
         }
         //嵌套查询下一层级
-        resList.addAll(doNestedQueryList(valid, ids, newParentIds, params));
+        resList.addAll(doNestedQueryChildren(valid, ids, newParentIds, params));
         return resList;
     }
     
@@ -625,12 +625,12 @@ public class TestMode3Service {
         Set<Long> parentIds = new HashSet<>();
         parentIds.add(parentId);
         
-        List<TestMode3> resList = doNestedQueryList(valid, ids, parentIds, querier);
+        List<TestMode3> resList = doNestedQueryChildren(valid, ids, parentIds, querier);
         return resList;
     }
     
     /**
-     * 查询嵌套列表<br/>
+     * 嵌套查询列表<br/>
      * <功能详细描述>
      * @param ids
      * @param parentIds
@@ -641,9 +641,11 @@ public class TestMode3Service {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    private List<TestMode3> doNestedQueryList(
+    private List<TestMode3> doNestedQueryChildren(
 			Boolean valid,
-    		Set<Long> ids,Set<Long> parentIds,Querier querier) {
+    		Set<Long> ids,
+    		Set<Long> parentIds,
+    		Querier querier) {
         if (CollectionUtils.isEmpty(parentIds)) {
             return new ArrayList<TestMode3>();
         }
@@ -661,7 +663,7 @@ public class TestMode3Service {
             ids.add(bdTemp.getId());
         }
         //嵌套查询下一层级
-        resList.addAll(doNestedQueryList(valid, ids, newParentIds, querier));
+        resList.addAll(doNestedQueryChildren(valid, ids, newParentIds, querier));
         return resList;
     }
 }

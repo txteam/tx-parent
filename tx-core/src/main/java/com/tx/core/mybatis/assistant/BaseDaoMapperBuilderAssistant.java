@@ -6,11 +6,11 @@
  */
 package com.tx.core.mybatis.assistant;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.Configuration;
@@ -57,6 +57,9 @@ public class BaseDaoMapperBuilderAssistant
     /** 是否有是否有效的属性 */
     private JPAColumnInfo validColumn;
     
+    /** 是否有是否有效的属性 */
+    private JPAColumnInfo parentIdColumn;
+    
     /** 排序字段 */
     private String defaultOrderBy;
     
@@ -76,12 +79,18 @@ public class BaseDaoMapperBuilderAssistant
         this.tableColumns = JPAParseUtils.parseTableColumns(entityType);
         
         //主键字段以及非主键字段集合记录
-        List<JPAColumnInfo> pkColumns = new ArrayList<>();
+        List<JPAColumnInfo> pkColumns = this.tableColumns.stream()
+                .filter(column -> {
+                    return column.isPrimaryKey();
+                })
+                .collect(Collectors.toList());
+        //必须存在主键字段
+        AssertUtils.notEmpty(pkColumns,
+                "实体无法判断主键字段，不支持自动生成SqlMap.type:{}",
+                new Object[] { entityType });
+        this.pkColumn = pkColumns.get(0);
+        
         for (JPAColumnInfo column : this.tableColumns) {
-            if (column.isPrimaryKey()) {
-                pkColumns.add(column);
-            }
-            
             //判断是否具备typeHandler,也不存在嵌套属性描述时需要抛出异常
             if (!hasTypeHandler(column.getPropertyDescriptor())) {
                 //如果不具备typeHandler，那么nestedPropertyDescriptor就不该为空
@@ -115,14 +124,16 @@ public class BaseDaoMapperBuilderAssistant
                                         .equals(column.getPropertyType()),
                         "createDateColumn.propertyType:{} is not assign from boolean.class or Boolean.class.",
                         new Object[] { column.getPropertyType() });
+            } else if ("parentId".equals(column.getPropertyName())) {
+                this.parentIdColumn = column;
+                AssertUtils.isTrue(
+                        this.pkColumn.getPropertyType()
+                                .equals(column.getPropertyType()),
+                        "pkColumn.propertyType:{} should equals parentIdColumn.propertyType:{}",
+                        new Object[] { this.pkColumn.getPropertyType(),
+                                column.getPropertyType() });
             }
         }
-        
-        //必须存在主键字段
-        AssertUtils.notEmpty(pkColumns,
-                "实体无法判断主键字段，不支持自动生成SqlMap.type:{}",
-                new Object[] { entityType });
-        this.pkColumn = pkColumns.get(0);
         
         //解析排序字段
         this.defaultOrderBy = JPAParseUtils.parseOrderBy(entityType,
@@ -295,6 +306,9 @@ public class BaseDaoMapperBuilderAssistant
         sql.FROM(this.tableName);
         
         sql.WHERE(FORMATTER_OF_QUERIER);//查询的其他条件
+        if(this.parentIdColumn != null){
+            sql.WHERE(FORMATTER_OF_PARENTID);
+        }
         buildQueryCondition(sql);//构建查询条件
         
         sql.ORDER_BY(defaultOrderBy);
@@ -390,5 +404,47 @@ public class BaseDaoMapperBuilderAssistant
      */
     public JPAColumnInfo getValidColumn() {
         return validColumn;
+    }
+
+    /**
+     * @return 返回 tableName
+     */
+    public String getTableName() {
+        return tableName;
+    }
+
+    /**
+     * @return 返回 tableColumns
+     */
+    public List<JPAColumnInfo> getTableColumns() {
+        return tableColumns;
+    }
+
+    /**
+     * @return 返回 annotation
+     */
+    public MapperEntity getAnnotation() {
+        return annotation;
+    }
+
+    /**
+     * @return 返回 createDateColumn
+     */
+    public JPAColumnInfo getCreateDateColumn() {
+        return createDateColumn;
+    }
+
+    /**
+     * @return 返回 parentIdColumn
+     */
+    public JPAColumnInfo getParentIdColumn() {
+        return parentIdColumn;
+    }
+
+    /**
+     * @return 返回 defaultOrderBy
+     */
+    public String getDefaultOrderBy() {
+        return defaultOrderBy;
     }
 }

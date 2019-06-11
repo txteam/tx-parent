@@ -63,13 +63,13 @@ public class TestModeService {
     public void insert(TestMode testMode) {
         //验证参数是否合法
         AssertUtils.notNull(testMode, "testMode is null.");
-		AssertUtils.notEmpty(testMode.getCode(), "testMode.code is empty.");
-		AssertUtils.notEmpty(testMode.getName(), "testMode.name is empty.");
-           
+        AssertUtils.notEmpty(testMode.getCode(), "testMode.code is empty.");
+        AssertUtils.notEmpty(testMode.getName(), "testMode.name is empty.");
+        
         //FIXME:为添加的数据需要填入默认值的字段填入默认值
-		testMode.setLastUpdateDate(new Date());
-		testMode.setValid(true);
-		testMode.setCreateDate(new Date());
+        testMode.setLastUpdateDate(new Date());
+        testMode.setValid(true);
+        testMode.setCreateDate(new Date());
         
         //调用数据持久层对实例进行持久化操作
         this.testModeDao.insert(testMode);
@@ -146,16 +146,13 @@ public class TestModeService {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public List<TestMode> queryList(
-		Boolean valid,
-		Map<String,Object> params   
-    	) {
+    public List<TestMode> queryList(Boolean valid, Map<String, Object> params) {
         //判断条件合法性
         
         //生成查询条件
         params = params == null ? new HashMap<String, Object>() : params;
-		params.put("valid",valid);
-
+        params.put("valid", valid);
+        
         //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
         List<TestMode> resList = this.testModeDao.queryList(params);
         
@@ -173,19 +170,16 @@ public class TestModeService {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public List<TestMode> queryList(
-		Boolean valid,
-		Querier querier   
-    	) {
+    public List<TestMode> queryList(Boolean valid, Querier querier) {
         //判断条件合法性
         
         //生成查询条件
         querier = querier == null ? QuerierBuilder.newInstance().querier()
                 : querier;
-		if (valid != null) {
+        if (valid != null) {
             querier.getFilters().add(Filter.eq("valid", valid));
         }
-
+        
         //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
         List<TestMode> resList = this.testModeDao.queryList(querier);
         
@@ -207,24 +201,22 @@ public class TestModeService {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public PagedList<TestMode> queryPagedList(
-		Boolean valid,
-		Map<String,Object> params,
-    	int pageIndex,
-        int pageSize) {
+    public PagedList<TestMode> queryPagedList(Boolean valid,
+            Map<String, Object> params, int pageIndex, int pageSize) {
         //T判断条件合法性
         
         //生成查询条件
         params = params == null ? new HashMap<String, Object>() : params;
-		params.put("valid",valid);
- 
+        params.put("valid", valid);
+        
         //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
-        PagedList<TestMode> resPagedList = this.testModeDao.queryPagedList(params, pageIndex, pageSize);
+        PagedList<TestMode> resPagedList = this.testModeDao
+                .queryPagedList(params, pageIndex, pageSize);
         
         return resPagedList;
     }
     
-	/**
+    /**
      * 分页查询测试对象实例列表
      * <功能详细描述>
      * @param valid
@@ -239,22 +231,20 @@ public class TestModeService {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public PagedList<TestMode> queryPagedList(
-		Boolean valid,
-		Querier querier,
-    	int pageIndex,
-        int pageSize) {
+    public PagedList<TestMode> queryPagedList(Boolean valid, Querier querier,
+            int pageIndex, int pageSize) {
         //T判断条件合法性
         
         //生成查询条件
         querier = querier == null ? QuerierBuilder.newInstance().querier()
                 : querier;
-		if (valid != null) {
+        if (valid != null) {
             querier.getFilters().add(Filter.eq("valid", valid));
         }
- 
+        
         //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
-        PagedList<TestMode> resPagedList = this.testModeDao.queryPagedList(querier, pageIndex, pageSize);
+        PagedList<TestMode> resPagedList = this.testModeDao
+                .queryPagedList(querier, pageIndex, pageSize);
         
         return resPagedList;
     }
@@ -270,16 +260,13 @@ public class TestModeService {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public int count(
-		Boolean valid,
-		Map<String,Object> params   
-    	) {
+    public int count(Boolean valid, Map<String, Object> params) {
         //判断条件合法性
         
         //生成查询条件
         params = params == null ? new HashMap<String, Object>() : params;
-		params.put("valid",valid);
-
+        params.put("valid", valid);
+        
         //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
         int res = this.testModeDao.count(params);
         
@@ -297,19 +284,16 @@ public class TestModeService {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public int count(
-		Boolean valid,
-		Querier querier   
-    	) {
+    public int count(Boolean valid, Querier querier) {
         //判断条件合法性
         
         //生成查询条件
         querier = querier == null ? QuerierBuilder.newInstance().querier()
                 : querier;
-		if (valid != null) {
+        if (valid != null) {
             querier.getFilters().add(Filter.eq("valid", valid));
         }
-
+        
         //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
         int res = this.testModeDao.count(querier);
         
@@ -327,7 +311,7 @@ public class TestModeService {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public boolean exists(Map<String,String> key2valueMap, String excludeId) {
+    public boolean exists(Map<String, String> key2valueMap, String excludeId) {
         AssertUtils.notEmpty(key2valueMap, "key2valueMap is empty");
         
         //生成查询条件
@@ -356,7 +340,7 @@ public class TestModeService {
         AssertUtils.notNull(querier, "querier is null.");
         
         //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
-        int res = this.testModeDao.count(querier,excludeId);
+        int res = this.testModeDao.count(querier, excludeId);
         
         return res > 0;
     }
@@ -372,35 +356,36 @@ public class TestModeService {
      * @see [类、类#方法、类#成员]
      */
     @Transactional
-    public boolean updateById(String id,TestMode testMode) {
+    public boolean updateById(String id, TestMode testMode) {
         //验证参数是否合法，必填字段是否填写
         AssertUtils.notNull(testMode, "testMode is null.");
         AssertUtils.notEmpty(id, "id is empty.");
-		AssertUtils.notEmpty(testMode.getName(), "testMode.name is empty.");
-
+        AssertUtils.notEmpty(testMode.getName(), "testMode.name is empty.");
+        
         //生成需要更新字段的hashMap
         Map<String, Object> updateRowMap = new HashMap<String, Object>();
         //FIXME:需要更新的字段
-		updateRowMap.put("lastUpdateOperatorId", testMode.getLastUpdateOperatorId());
-		updateRowMap.put("name", testMode.getName());
-		updateRowMap.put("testInt", testMode.getTestInt());
-		updateRowMap.put("testLong", testMode.getTestLong());
-		updateRowMap.put("testBigDecimal", testMode.getTestBigDecimal());
-		updateRowMap.put("type", testMode.getType());
-		updateRowMap.put("valid", testMode.isValid());
-		updateRowMap.put("expiryDate", testMode.getExpiryDate());
-		updateRowMap.put("modifyAble", testMode.isModifyAble());
-		updateRowMap.put("parentId", testMode.getParentId());
-		updateRowMap.put("remark", testMode.getRemark());
-		updateRowMap.put("nested1", testMode.getNested1());
-		updateRowMap.put("nested2", testMode.getNested2());
-		updateRowMap.put("success", testMode.getSuccess());
-		updateRowMap.put("effictiveDate", testMode.getEffictiveDate());
-		updateRowMap.put("attributes", testMode.getAttributes());
-		updateRowMap.put("description", testMode.getDescription());
-		updateRowMap.put("lastUpdateDate", new Date());
-
-        boolean flag = this.testModeDao.update(id,updateRowMap); 
+        updateRowMap.put("lastUpdateOperatorId",
+                testMode.getLastUpdateOperatorId());
+        updateRowMap.put("name", testMode.getName());
+        updateRowMap.put("testInt", testMode.getTestInt());
+        updateRowMap.put("testLong", testMode.getTestLong());
+        updateRowMap.put("testBigDecimal", testMode.getTestBigDecimal());
+        updateRowMap.put("type", testMode.getType());
+        updateRowMap.put("valid", testMode.isValid());
+        updateRowMap.put("expiryDate", testMode.getExpiryDate());
+        updateRowMap.put("modifyAble", testMode.isModifyAble());
+        updateRowMap.put("parentId", testMode.getParentId());
+        updateRowMap.put("remark", testMode.getRemark());
+        updateRowMap.put("nested1", testMode.getNested1());
+        updateRowMap.put("nested2", testMode.getNested2());
+        updateRowMap.put("success", testMode.getSuccess());
+        updateRowMap.put("effictiveDate", testMode.getEffictiveDate());
+        updateRowMap.put("attributes", testMode.getAttributes());
+        updateRowMap.put("description", testMode.getDescription());
+        updateRowMap.put("lastUpdateDate", new Date());
+        
+        boolean flag = this.testModeDao.update(id, updateRowMap);
         //如果需要大于1时，抛出异常并回滚，需要在这里修改
         return flag;
     }
@@ -420,13 +405,13 @@ public class TestModeService {
         //验证参数是否合法，必填字段是否填写
         AssertUtils.notNull(testMode, "testMode is null.");
         AssertUtils.notEmpty(testMode.getId(), "testMode.id is empty.");
-		AssertUtils.notEmpty(testMode.getName(), "testMode.name is empty.");
-
-        boolean flag = updateById(testMode.getId(),testMode); 
+        AssertUtils.notEmpty(testMode.getName(), "testMode.name is empty.");
+        
+        boolean flag = updateById(testMode.getId(), testMode);
         //如果需要大于1时，抛出异常并回滚，需要在这里修改
         return flag;
     }
-
+    
     /**
      * 根据id禁用测试对象<br/>
      * <功能详细描述>
@@ -474,7 +459,7 @@ public class TestModeService {
         
         return flag;
     }
-
+    
     /**
      * 根据parentId查询测试对象子级实例列表<br/>
      * <功能详细描述>
@@ -488,16 +473,15 @@ public class TestModeService {
      * @see [类、类#方法、类#成员]
      */
     public List<TestMode> queryChildrenByParentId(String parentId,
-			Boolean valid,
-			Map<String,Object> params) {
+            Boolean valid, Map<String, Object> params) {
         //判断条件合法性
-        AssertUtils.notEmpty(parentId,"parentId is empty.");
+        AssertUtils.notEmpty(parentId, "parentId is empty.");
         
         //生成查询条件
         params = params == null ? new HashMap<String, Object>() : params;
         params.put("parentId", parentId);
-		params.put("valid",valid);
-
+        params.put("valid", valid);
+        
         //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
         List<TestMode> resList = this.testModeDao.queryList(params);
         
@@ -517,19 +501,18 @@ public class TestModeService {
      * @see [类、类#方法、类#成员]
      */
     public List<TestMode> queryChildrenByParentId(String parentId,
-			Boolean valid,
-			Querier querier) {
+            Boolean valid, Querier querier) {
         //判断条件合法性
-        AssertUtils.notEmpty(parentId,"parentId is empty.");
+        AssertUtils.notEmpty(parentId, "parentId is empty.");
         
         //生成查询条件
         querier = querier == null ? QuerierBuilder.newInstance().querier()
                 : querier;
-		if (valid != null) {
+        if (valid != null) {
             querier.getFilters().add(Filter.eq("valid", valid));
         }
-		querier.getFilters().add(Filter.eq("parentId", parentId));
-
+        querier.getFilters().add(Filter.eq("parentId", parentId));
+        
         //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
         List<TestMode> resList = this.testModeDao.queryList(querier);
         
@@ -549,17 +532,19 @@ public class TestModeService {
      * @see [类、类#方法、类#成员]
      */
     public List<TestMode> queryDescendantsByParentId(String parentId,
-			Boolean valid,
-            Map<String, Object> params) {
+            Boolean valid, Map<String, Object> params) {
         //判断条件合法性
-        AssertUtils.notEmpty(parentId,"parentId is empty.");
+        AssertUtils.notEmpty(parentId, "parentId is empty.");
         
         //生成查询条件
         Set<String> ids = new HashSet<>();
         Set<String> parentIds = new HashSet<>();
         parentIds.add(parentId);
         
-        List<TestMode> resList = doNestedQueryList(valid, ids, parentIds, params);
+        List<TestMode> resList = doNestedQueryChildren(valid,
+                ids,
+                parentIds,
+                params);
         return resList;
     }
     
@@ -575,9 +560,8 @@ public class TestModeService {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    private List<TestMode> doNestedQueryList(
-			Boolean valid,
-    		Set<String> ids,Set<String> parentIds,Map<String, Object> params) {
+    private List<TestMode> doNestedQueryChildren(Boolean valid, Set<String> ids,
+            Set<String> parentIds, Map<String, Object> params) {
         if (CollectionUtils.isEmpty(parentIds)) {
             return new ArrayList<TestMode>();
         }
@@ -596,7 +580,7 @@ public class TestModeService {
             ids.add(bdTemp.getId());
         }
         //嵌套查询下一层级
-        resList.addAll(doNestedQueryList(valid, ids, newParentIds, params));
+        resList.addAll(doNestedQueryChildren(valid, ids, newParentIds, params));
         return resList;
     }
     
@@ -613,10 +597,9 @@ public class TestModeService {
      * @see [类、类#方法、类#成员]
      */
     public List<TestMode> queryDescendantsByParentId(String parentId,
-			Boolean valid,
-            Querier querier) {
+            Boolean valid, Querier querier) {
         //判断条件合法性
-        AssertUtils.notEmpty(parentId,"parentId is empty.");
+        AssertUtils.notEmpty(parentId, "parentId is empty.");
         
         //生成查询条件
         querier = querier == null ? QuerierBuilder.newInstance().querier()
@@ -625,12 +608,15 @@ public class TestModeService {
         Set<String> parentIds = new HashSet<>();
         parentIds.add(parentId);
         
-        List<TestMode> resList = doNestedQueryList(valid, ids, parentIds, querier);
+        List<TestMode> resList = doNestedQueryChildren(valid,
+                ids,
+                parentIds,
+                querier);
         return resList;
     }
     
     /**
-     * 查询嵌套列表<br/>
+     * 嵌套查询列表<br/>
      * <功能详细描述>
      * @param ids
      * @param parentIds
@@ -641,15 +627,14 @@ public class TestModeService {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    private List<TestMode> doNestedQueryList(
-			Boolean valid,
-    		Set<String> ids,Set<String> parentIds,Querier querier) {
+    private List<TestMode> doNestedQueryChildren(Boolean valid, Set<String> ids,
+            Set<String> parentIds, Querier querier) {
         if (CollectionUtils.isEmpty(parentIds)) {
             return new ArrayList<TestMode>();
         }
         
         //ids避免数据出错时导致无限循环
-        Querier querierClone = (Querier)querier.clone();
+        Querier querierClone = (Querier) querier.clone();
         querierClone.getFilters().add(Filter.in("parentId", parentIds));
         List<TestMode> resList = queryList(valid, querierClone);
         
@@ -661,7 +646,8 @@ public class TestModeService {
             ids.add(bdTemp.getId());
         }
         //嵌套查询下一层级
-        resList.addAll(doNestedQueryList(valid, ids, newParentIds, querier));
+        resList.addAll(
+                doNestedQueryChildren(valid, ids, newParentIds, querier));
         return resList;
     }
 }
