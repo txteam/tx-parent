@@ -6,6 +6,7 @@
  */
 package com.tx.component.basicdata.starter;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cloud.openfeign.FeignClientsConfiguration;
@@ -52,7 +53,9 @@ public class BasicDataAPIClientConfiguration {
      */
     @Configuration
     @ConditionalOnClass({ Feign.class, FeignClientsConfiguration.class })
+    @ConditionalOnBean({Client.class})
     @Import(FeignClientsConfiguration.class)
+    @SuppressWarnings("unused")
     public static class feignAPIClientConfiguration {
         
         private Decoder decoder;
@@ -85,8 +88,9 @@ public class BasicDataAPIClientConfiguration {
         @ConditionalOnMissingBean
         @Bean("basicDataAPIClientRegistry")
         public BasicDataAPIClientRegistry basicDataAPIClientRegistry() {
-            BasicDataAPIClientRegistry registry = new BasicDataAPIClientRegistryImpl(
-                    decoder, encoder, client, feignContract);
+            //            BasicDataAPIClientRegistry registry = new BasicDataAPIClientRegistryImpl(
+            //                    decoder, encoder, client, feignContract);
+            BasicDataAPIClientRegistry registry = new BasicDataAPIClientRegistryImpl();
             return registry;
         }
     }

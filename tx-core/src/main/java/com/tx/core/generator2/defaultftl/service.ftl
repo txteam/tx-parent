@@ -117,6 +117,29 @@ public class ${service.entityTypeSimpleName}Service {
         boolean flag = resInt > 0;
         return flag;
     }
+<#if service.codeColumn??>
+
+    /**
+     * 根据${service.codeColumn.propertyName}删除${service.entityComment}实例
+     * 1、当${service.codeColumn.propertyName}为empty时抛出异常
+     * 2、执行删除后，将返回数据库中被影响的条数 > 0，则返回true
+     *
+     * @param ${service.codeColumn.propertyName}
+     * @return ${service.entityTypeSimpleName} [返回类型说明]
+     * @exception throws
+     * @see [类、类#方法、类#成员]
+     */
+    public boolean deleteBy${service.codeColumn.propertyName?cap_first}(${service.codeColumn.propertyType.getSimpleName()} ${service.codeColumn.propertyName}) {
+        AssertUtils.notEmpty(${service.codeColumn.propertyName}, "${service.codeColumn.propertyName} is empty.");
+        
+        ${service.entityTypeSimpleName} condition = new ${service.entityTypeSimpleName}();
+        condition.set${service.codeColumn.propertyName?cap_first}(${service.codeColumn.propertyName});
+        
+        int resInt = this.${service.entityTypeSimpleName?uncap_first}Dao.delete(condition);
+        boolean flag = resInt > 0;
+        return flag;
+    }
+</#if>
     
     /**
      * 根据${service.pkColumn.propertyName}查询${service.entityComment}实例
@@ -136,8 +159,8 @@ public class ${service.entityTypeSimpleName}Service {
         ${service.entityTypeSimpleName} res = this.${service.entityTypeSimpleName?uncap_first}Dao.find(condition);
         return res;
     }
-    
 <#if service.codeColumn??>
+
     /**
      * 根据${service.codeColumn.propertyName}查询${service.entityComment}实例
      * 1、当${service.codeColumn.propertyName}为empty时抛出异常
@@ -475,11 +498,6 @@ public class ${service.entityTypeSimpleName}Service {
         //验证参数是否合法，必填字段是否填写
         AssertUtils.notNull(${service.entityTypeSimpleName?uncap_first}, "${service.entityTypeSimpleName?uncap_first} is null.");
         AssertUtils.notEmpty(${service.entityTypeSimpleName?uncap_first}.${service.pkColumn.getPropertyDescriptor().getReadMethod().getName()}(), "${service.entityTypeSimpleName?uncap_first}.${service.pkColumn.propertyName} is empty.");
-<#list service.columnList as column>
-	<#if !column.isNullable() && !column.isPrimaryKey() && column.isUpdatable() && "valid" != column.propertyName && "createDate" != column.propertyName && "lastUpdateDate" != column.propertyName>
-		AssertUtils.notEmpty(${service.entityTypeSimpleName?uncap_first}.${column.getPropertyDescriptor().getReadMethod().getName()}(), "${service.entityTypeSimpleName?uncap_first}.${column.propertyName} is empty.");
-	</#if>
-</#list>
 
         boolean flag = updateBy${service.pkColumn.propertyName?cap_first}(${service.entityTypeSimpleName?uncap_first}.${service.pkColumn.getPropertyDescriptor().getReadMethod().getName()}(),${service.entityTypeSimpleName?uncap_first}); 
         //如果需要大于1时，抛出异常并回滚，需要在这里修改

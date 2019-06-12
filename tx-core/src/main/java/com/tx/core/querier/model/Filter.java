@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2017 cqtianxin.com. All rights reserved.
+z * Copyright 2005-2017 cqtianxin.com. All rights reserved.
  * Support: http://www.cqtianxin.com
  * License: http://www.cqtianxin.com/license
  */

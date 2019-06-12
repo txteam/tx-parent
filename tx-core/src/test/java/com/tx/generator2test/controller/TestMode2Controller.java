@@ -15,7 +15,6 @@ import javax.annotation.Resource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -228,9 +227,9 @@ public class TestMode2Controller {
      * @see [类、类#方法、类#成员]
      */
     @ResponseBody
-    @RequestMapping("/check/{excludeCode}")
+    @RequestMapping("/validate")
     public Map<String, String> check(
-            @PathVariable(value = "excludeCode", required = false) String excludeCode,
+            @RequestParam(value = "excludeCode", required = false) String excludeCode,
             @RequestParam Map<String, String> params) {
         boolean flag = this.testMode2Service.exists(params, excludeCode);
         

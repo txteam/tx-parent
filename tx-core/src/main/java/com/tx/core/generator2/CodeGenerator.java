@@ -63,6 +63,8 @@ public class CodeGenerator {
     
     private static String apicontrollerTemplateFilePath = "com/tx/core/generator2/defaultftl/apicontroller.ftl";
     
+    private static String facadeTemplateFilePath = "com/tx/core/generator2/defaultftl/facade.ftl";
+    
     /**
      * 生成控制层逻辑
      * <功能详细描述>
@@ -81,26 +83,34 @@ public class CodeGenerator {
         data.put("controller", controllerModel);
         data.put("packageName", getPackageName(entityType));
         
-        String controllerPath = ClassUtils.convertClassNameToResourcePath(
-                entityType.getName()) + "/../../controller";
-        controllerPath = org.springframework.util.StringUtils
-                .cleanPath(controllerPath);
+        String basePath = ClassUtils.convertClassNameToResourcePath(
+                entityType.getName()) + "/../..";
+        basePath = org.springframework.util.StringUtils
+                .cleanPath(basePath);
         
-        String controllerFilePath = BASE_CODE_FOLDER + "/src/main/java/" + controllerPath
-                + "/" + entityType.getSimpleName() + "Controller.java";
+        String controllerFilePath = BASE_CODE_FOLDER + "/src/main/java/" + basePath
+                + "/controller/" + entityType.getSimpleName() + "Controller.java";
         FreeMarkerUtils.fprint(LOAD_TEMPLATE_CLASS,
                 controllerTemplateFilePath,
                 data,
                 controllerFilePath);
         logger.info("controller存放路径:{}", controllerFilePath);
         
-        String apicontrollerFilePath = BASE_CODE_FOLDER + "/src/main/java/" + controllerPath
-                + "/" + entityType.getSimpleName() + "APIController.java";
+        String apicontrollerFilePath = BASE_CODE_FOLDER + "/src/main/java/" + basePath
+                + "/controller/" + entityType.getSimpleName() + "APIController.java";
         FreeMarkerUtils.fprint(LOAD_TEMPLATE_CLASS,
                 apicontrollerTemplateFilePath,
                 data,
                 apicontrollerFilePath);
-        logger.info("controller存放路径:{}", apicontrollerFilePath);
+        logger.info("apicontroller存放路径:{}", apicontrollerFilePath);
+        
+        String facadeFilePath = BASE_CODE_FOLDER + "/src/main/java/" + basePath
+                + "/facade/" + entityType.getSimpleName() + "Facade.java";
+        FreeMarkerUtils.fprint(LOAD_TEMPLATE_CLASS,
+                facadeTemplateFilePath,
+                data,
+                facadeFilePath);
+        logger.info("facade存放路径:{}", facadeFilePath);
     }
     
     /**

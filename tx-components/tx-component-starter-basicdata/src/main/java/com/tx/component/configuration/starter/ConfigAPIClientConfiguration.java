@@ -6,6 +6,7 @@
  */
 package com.tx.component.configuration.starter;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cloud.openfeign.FeignClientsConfiguration;
@@ -52,6 +53,7 @@ public class ConfigAPIClientConfiguration {
      */
     @Configuration
     @ConditionalOnClass({ Feign.class, FeignClientsConfiguration.class })
+    @ConditionalOnBean({Client.class})
     @Import(FeignClientsConfiguration.class)
     public static class feignAPIClientConfiguration {
         

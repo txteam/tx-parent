@@ -428,7 +428,6 @@ public abstract class MybatisBaseDaoImpl<T, ID extends Serializable>
      */
     @Override
     public int count(Querier querier, ID exclude) {
-        AssertUtils.notNull(exclude, "exclude is null.");
         querier = querier == null ? QuerierBuilder.newInstance().querier()
                 : querier;
         if (querier.getParams() == null) {

@@ -318,10 +318,7 @@ public abstract class AbstractBaseDaoMapperBuilderAssistant
     public void registe() {
         String namespace = this.getCurrentNamespace();
         
-        logger.info("");
-        logger.info(
-                "<!-- --------------- 自动注册SqlMap:'{}' START --------------- -->",
-                namespace);
+        logger.info("<!-- --------------- 检测是否需要自动注入SqlMap:[{}] START --------------- -->",namespace);
         
         //添加resultMap
         Map<String, String> customizeColumn2PropertyMap = getColumn2PropertyMap();
@@ -346,7 +343,7 @@ public abstract class AbstractBaseDaoMapperBuilderAssistant
             
             if (!this.configuration.hasStatement(getInsertStatementName(),
                     false)) {
-                logger.info("<!-- ---insertSQL:--- -->");
+                logger.info("<!-- --- 自动注入: insertSQL:--- -->");
                 logger.info(insertSQL);
                 addInsertMappedStatement(getInsertStatementName(),
                         insertSQL,
@@ -360,7 +357,7 @@ public abstract class AbstractBaseDaoMapperBuilderAssistant
             
             if (!this.configuration.hasStatement(getDeleteStatementName(),
                     false)) {
-                logger.info("<!-- ---deleteSQL:--- -->");
+                logger.info("<!-- --- 自动注入: deleteSQL:--- -->");
                 logger.info(deleteSQL);
                 addDeleteMappedStatement(getDeleteStatementName(),
                         deleteSQL,
@@ -374,7 +371,7 @@ public abstract class AbstractBaseDaoMapperBuilderAssistant
             
             if (!this.configuration.hasStatement(getUpdateStatementName(),
                     false)) {
-                logger.info("<!-- ---updateSQL:--- -->");
+                logger.info("<!-- --- 自动注入: updateSQL:--- -->");
                 logger.info(updateSQL);
                 addUpdateMappedStatement(getUpdateStatementName(),
                         updateSQL,
@@ -388,7 +385,7 @@ public abstract class AbstractBaseDaoMapperBuilderAssistant
             
             if (!this.configuration.hasStatement(getFindStatementName(),
                     false)) {
-                logger.info("<!-- ---findSQL:--- -->");
+                logger.info("<!-- --- 自动注入: findSQL:--- -->");
                 logger.info(findSQL);
                 addFindMappedStatement(getFindStatementName(),
                         findSQL,
@@ -403,7 +400,7 @@ public abstract class AbstractBaseDaoMapperBuilderAssistant
             
             if (!this.configuration.hasStatement(getQueryStatementName(),
                     false)) {
-                logger.info("<!-- ---querySQL:--- -->");
+                logger.info("<!-- --- 自动注入: querySQL:--- -->");
                 logger.info(querySQL);
                 addFindMappedStatement(getQueryStatementName(),
                         querySQL,
@@ -418,7 +415,7 @@ public abstract class AbstractBaseDaoMapperBuilderAssistant
             
             if (!this.configuration.hasStatement(getCountStatmentName(),
                     false)) {
-                logger.info("<!-- ---queryCountSQL:--- -->");
+                logger.info("<!-- --- 自动注入: queryCountSQL:--- -->");
                 logger.info(countSQL);
                 addCountMappedStatement(getCountStatmentName(),
                         countSQL,
@@ -428,9 +425,8 @@ public abstract class AbstractBaseDaoMapperBuilderAssistant
         }
         
         logger.info(
-                "<!-- --------------- 自动注册SqlMap:'{}'   END --------------- -->",
+                "<!-- --------------- 检测是否需要自动注入SqlMap:[{}]  END  --------------- -->",
                 namespace);
-        logger.info("");
     }
     
     /**

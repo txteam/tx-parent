@@ -108,7 +108,6 @@ public class TestMode2Service {
         return res;
     }
     
-    
     /**
      * 查询测试对象2实例列表
      * <功能详细描述>

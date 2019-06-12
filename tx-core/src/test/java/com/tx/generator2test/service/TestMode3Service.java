@@ -96,6 +96,27 @@ public class TestMode3Service {
         boolean flag = resInt > 0;
         return flag;
     }
+
+    /**
+     * 根据code删除测试对象实例
+     * 1、当code为empty时抛出异常
+     * 2、执行删除后，将返回数据库中被影响的条数 > 0，则返回true
+     *
+     * @param code
+     * @return TestMode3 [返回类型说明]
+     * @exception throws
+     * @see [类、类#方法、类#成员]
+     */
+    public boolean deleteByCode(String code) {
+        AssertUtils.notEmpty(code, "code is empty.");
+        
+        TestMode3 condition = new TestMode3();
+        condition.setCode(code);
+        
+        int resInt = this.testMode3Dao.delete(condition);
+        boolean flag = resInt > 0;
+        return flag;
+    }
     
     /**
      * 根据id查询测试对象实例
@@ -115,7 +136,7 @@ public class TestMode3Service {
         TestMode3 res = this.testMode3Dao.find(condition);
         return res;
     }
-    
+
     /**
      * 根据code查询测试对象实例
      * 1、当code为empty时抛出异常
@@ -420,7 +441,6 @@ public class TestMode3Service {
         //验证参数是否合法，必填字段是否填写
         AssertUtils.notNull(testMode3, "testMode3 is null.");
         AssertUtils.notEmpty(testMode3.getId(), "testMode3.id is empty.");
-		AssertUtils.notEmpty(testMode3.getName(), "testMode3.name is empty.");
 
         boolean flag = updateById(testMode3.getId(),testMode3); 
         //如果需要大于1时，抛出异常并回滚，需要在这里修改
