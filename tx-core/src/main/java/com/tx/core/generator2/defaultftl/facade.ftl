@@ -70,7 +70,7 @@ public interface ${controller.entityTypeSimpleName}Facade {
      * @see [类、类#方法、类#成员]
      */
     @ApiOperation(value = "根据${controller.codeProperty.propertyComment}删除${controller.entityComment}")
-    @RequestMapping(value = "/{${controller.codeProperty.propertyName}}", method = RequestMethod.DELETE) 
+    @RequestMapping(value = "/code/{${controller.codeProperty.propertyName}}", method = RequestMethod.DELETE) 
     public boolean deleteBy${controller.codeProperty.propertyName?cap_first}(
     		@PathVariable(value = "${controller.codeProperty.propertyName}",required=true) ${controller.codeProperty.propertyType.getSimpleName()} ${controller.codeProperty.propertyName});
 </#if>
