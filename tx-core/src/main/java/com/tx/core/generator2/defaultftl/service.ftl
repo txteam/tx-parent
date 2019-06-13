@@ -645,6 +645,7 @@ public class ${service.entityTypeSimpleName}Service {
         AssertUtils.notEmpty(${service.parentIdColumn.propertyName},"${service.parentIdColumn.propertyName} is empty.");
         
         //生成查询条件
+        params = params == null ? new HashMap<String, Object>() : params;
         Set<${service.pkColumn.propertyType.getSimpleName()}> ids = new HashSet<>();
         Set<${service.parentIdColumn.propertyType.getSimpleName()}> parentIds = new HashSet<>();
         parentIds.add(${service.parentIdColumn.propertyName});
@@ -678,7 +679,7 @@ public class ${service.entityTypeSimpleName}Service {
         Map<String, Object> queryParams = new HashMap<>();
         queryParams.putAll(params);
         queryParams.put("parentIds", parentIds);
-        List<${service.entityTypeSimpleName}> resList = queryList(<#if service.validColumn??>valid,</#if> params);
+        List<${service.entityTypeSimpleName}> resList = queryList(<#if service.validColumn??>valid,</#if> queryParams);
         
         Set<${service.pkColumn.propertyType.getSimpleName()}> newParentIds = new HashSet<>();
         for (${service.entityTypeSimpleName} bdTemp : resList) {
