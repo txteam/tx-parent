@@ -6,6 +6,8 @@
  */
 package com.tx.generator2test;
 
+import java.io.IOException;
+
 import com.tx.core.generator2.CodeGenerator;
 import com.tx.generator2test.model.TestMode;
 import com.tx.generator2test.model.TestMode2;
@@ -23,7 +25,10 @@ import com.tx.generator2test.model.TestMode4;
  */
 public class CodeGeneratorTest {
     
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
+    	
+    	CodeGenerator.clearGeneratorPath();
+    	
         Class<?> entityType = TestMode.class;
         
         CodeGenerator.generateDBScript(entityType);
