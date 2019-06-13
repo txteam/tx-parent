@@ -63,7 +63,7 @@ public class ControllerGeneratorModel {
     private EntityProperty validProperty;
     
     /** 父节点id对应的属性 */
-    private JPAColumnInfo parentIdProperty;
+    private EntityProperty parentIdProperty;
     
     /** <默认构造函数> */
     public ControllerGeneratorModel(Class<?> entityType) {
@@ -114,6 +114,12 @@ public class ControllerGeneratorModel {
             }else if (StringUtils.equals("parentId",
                     property.getPropertyName())) {
                 this.parentIdProperty = property;
+                AssertUtils.isTrue(
+                        this.pkProperty.getPropertyType()
+                                .equals(property.getPropertyType()),
+                        "parentId type:{} should equals pk type:{}.",
+                        new Object[] { property.getPropertyType(),
+                                this.pkProperty.getPropertyType() });
             }
         });
     }
@@ -191,7 +197,7 @@ public class ControllerGeneratorModel {
     /**
      * @return 返回 parentIdProperty
      */
-    public JPAColumnInfo getParentIdProperty() {
+    public EntityProperty getParentIdProperty() {
         return parentIdProperty;
     }
 }

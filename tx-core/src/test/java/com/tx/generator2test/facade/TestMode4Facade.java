@@ -4,42 +4,31 @@
  * 修改时间:
  * <修改描述:>
  */
-package com.tx.generator2test.controller;
+package com.tx.generator2test.facade;
 
 import java.util.List;
-
-import javax.annotation.Resource;
 
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
 import com.tx.core.paged.model.PagedList;
 import com.tx.core.querier.model.Querier;
-import com.tx.generator2test.facade.TestMode4Facade;
 import com.tx.generator2test.model.TestMode4;
-import com.tx.generator2test.service.TestMode4Service;
 
-import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 /**
- * 测试对象API控制层[TestMode4APIController]<br/>
+ * 测试对象接口门面层[TestMode4Facade]<br/>
  * 
  * @author []
  * @version [版本号]
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-@RestController
-@Api(tags = "测试对象API")
-@RequestMapping("/api/testMode4")
-public class TestMode4APIController implements TestMode4Facade {
-    
-    //测试对象业务层
-    @Resource(name = "testMode4Service")
-    private TestMode4Service testMode4Service;
+public interface TestMode4Facade {
     
     /**
      * 新增测试对象<br/>
@@ -50,11 +39,9 @@ public class TestMode4APIController implements TestMode4Facade {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @Override
-    public TestMode4 insert(@RequestBody TestMode4 testMode4) {
-        this.testMode4Service.insert(testMode4);
-        return testMode4;
-    }
+    @ApiOperation(value = "新增测试对象")
+    @RequestMapping(value = "", method = RequestMethod.POST)
+    public TestMode4 insert(@RequestBody TestMode4 testMode4);
     
     /**
      * 根据id删除测试对象<br/> 
@@ -66,12 +53,10 @@ public class TestMode4APIController implements TestMode4Facade {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @Override
+    @ApiOperation(value = "根据主键删除测试对象")
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE) 
     public boolean deleteById(
-    		@PathVariable(value = "id",required=true) Long id) {
-        boolean flag = this.testMode4Service.deleteById(id);
-        return flag;
-    }
+    		@PathVariable(value = "id",required=true) Long id);
 	
 	/**
      * 根据code删除测试对象<br/> 
@@ -83,13 +68,11 @@ public class TestMode4APIController implements TestMode4Facade {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @Override
+    @ApiOperation(value = "根据编码删除测试对象")
+    @RequestMapping(value = "/{code}", method = RequestMethod.DELETE) 
     public boolean deleteByCode(
-    		@PathVariable(value = "code",required=true) String code){
-        boolean flag = this.testMode4Service.deleteByCode(code);
-        return flag;    
-    }
-    
+    		@PathVariable(value = "code",required=true) String code);
+
     /**
      * 更新测试对象<br/>
      * <功能详细描述>
@@ -100,13 +83,10 @@ public class TestMode4APIController implements TestMode4Facade {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @Override
+    @ApiOperation(value = "修改测试对象")
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     public boolean updateById(@PathVariable(value = "id",required=true) Long id,
-    		@RequestBody TestMode4 testMode4) {
-        boolean flag = this.testMode4Service.updateById(id,testMode4);
-        return flag;
-    }
-    
+    		@RequestBody TestMode4 testMode4);
 
     /**
      * 根据主键查询测试对象<br/>
@@ -117,14 +97,11 @@ public class TestMode4APIController implements TestMode4Facade {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @Override
+    @ApiOperation(value = "根据主键查询测试对象")
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public TestMode4 findById(
-            @PathVariable(value = "id", required = true) Long id) {
-        TestMode4 res = this.testMode4Service.findById(id);
-        
-        return res;
-    }
-
+            @PathVariable(value = "id", required = true) Long id);
+    
     /**
      * 根据编码查询测试对象<br/>
      * <功能详细描述>
@@ -134,13 +111,10 @@ public class TestMode4APIController implements TestMode4Facade {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @Override
+    @ApiOperation(value = "根据编码查询测试对象")
+    @RequestMapping(value = "/code/{code}", method = RequestMethod.GET)
     public TestMode4 findByCode(
-            @PathVariable(value = "code", required = true) String code) {
-        TestMode4 res = this.testMode4Service.findByCode(code);
-        
-        return res;
-    }
+            @PathVariable(value = "code", required = true) String code);
 
     /**
      * 查询测试对象实例列表<br/>
@@ -152,16 +126,11 @@ public class TestMode4APIController implements TestMode4Facade {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @Override
+    @ApiOperation(value = "查询测试对象列表")
+    @RequestMapping(value = "/list", method = RequestMethod.GET)
     public List<TestMode4> queryList(
     		@RequestBody Querier querier
-    	) {
-        List<TestMode4> resList = this.testMode4Service.queryList(
-			querier         
-        );
-  
-        return resList;
-    }
+    	);
     
     /**
      * 查询测试对象分页列表<br/>
@@ -175,19 +144,13 @@ public class TestMode4APIController implements TestMode4Facade {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @Override
+    @ApiOperation(value = "查询测试对象分页列表")
+    @RequestMapping(value = "/pagedlist/{pageSize}/{pageNumber}", method = RequestMethod.GET)
     public PagedList<TestMode4> queryPagedList(
 			@RequestBody Querier querier,
 			@PathVariable(value = "pageNumber", required = true) int pageIndex,
             @PathVariable(value = "pageSize", required = true) int pageSize
-    	) {
-        PagedList<TestMode4> resPagedList = this.testMode4Service.queryPagedList(
-			querier,
-			pageIndex,
-			pageSize
-        );
-        return resPagedList;
-    }
+    	);
     
 	/**
      * 查询测试对象数量<br/>
@@ -199,14 +162,10 @@ public class TestMode4APIController implements TestMode4Facade {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @Override
+    @ApiOperation(value = "查询测试对象数量")
+    @RequestMapping(value = "/count", method = RequestMethod.GET)
     public int count(
-            @RequestBody Querier querier) {
-        int count = this.testMode4Service.count(
-        	querier);
-        
-        return count;
-    }
+            @RequestBody Querier querier);
 
 	/**
      * 查询测试对象是否存在<br/>
@@ -218,16 +177,15 @@ public class TestMode4APIController implements TestMode4Facade {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @Override
-    public boolean exists(@RequestBody Querier querier,
-            @RequestParam(value = "excludeId", required = false) Long excludeId) {
-        boolean flag = this.testMode4Service.exists(querier, excludeId);
-        
-        return flag;
-    }
+    @ApiOperation(value = "查询测试对象是否存在")
+    @RequestMapping(value = "/exists", method = RequestMethod.GET)
+    public boolean exists(
+    		@RequestBody Querier querier,
+            @RequestParam(value = "excludeId", required = false) Long excludeId
+            );
 
 	/**
-     * 根据条件查询基础数据分页列表<br/>
+     * 根据条件查询查询测试对象子代列表<br/>
      * <功能详细描述>
      * @param parentId
      * @param querier
@@ -237,18 +195,13 @@ public class TestMode4APIController implements TestMode4Facade {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @Override
+    @ApiOperation(value = "根据条件查询查询测试对象子代列表")
+    @RequestMapping(value = "/children/{parentId}", method = RequestMethod.GET)
     public List<TestMode4> queryChildrenByParentId(@PathVariable(value = "parentId", required = true) Long parentId,
-            Querier querier){
-        List<TestMode4> resList = this.testMode4Service.queryChildrenByParentId(parentId,
-			querier         
-        );
-  
-        return resList;
-    }
+            @RequestBody Querier querier);
 
 	/**
-     * 根据条件查询基础数据分页列表<br/>
+     * 根据条件查询查询测试对象后代列表<br/>
      * <功能详细描述>
      * @param parentId
      * @param querier
@@ -258,13 +211,8 @@ public class TestMode4APIController implements TestMode4Facade {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @Override
+    @ApiOperation(value = "根据条件查询查询测试对象后代列表")
+    @RequestMapping(value = "/descendants/{parentId}", method = RequestMethod.GET)
     public List<TestMode4> queryDescendantsByParentId(@PathVariable(value = "parentId", required = true) Long parentId,
-            Querier querier){
-        List<TestMode4> resList = this.testMode4Service.queryDescendantsByParentId(parentId,
-			querier         
-        );
-  
-        return resList;
-    }
+            @RequestBody Querier querier);
 }
