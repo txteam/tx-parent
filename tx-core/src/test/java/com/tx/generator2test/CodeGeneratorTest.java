@@ -6,7 +6,10 @@
  */
 package com.tx.generator2test;
 
+import java.io.File;
 import java.io.IOException;
+
+import org.apache.commons.io.FileUtils;
 
 import com.tx.core.generator2.CodeGenerator;
 import com.tx.generator2test.model.TestMode;
@@ -26,9 +29,10 @@ import com.tx.generator2test.model.TestMode4;
 public class CodeGeneratorTest {
     
     public static void main(String[] args) throws IOException {
-    	
-    	CodeGenerator.clearGeneratorPath();
-    	
+        
+        //CodeGenerator.clearGeneratorPath();
+        clearGeneratorPath(CodeGenerator.BASE_CODE_FOLDER);
+        
         Class<?> entityType = TestMode.class;
         
         CodeGenerator.generateDBScript(entityType);
@@ -63,5 +67,23 @@ public class CodeGeneratorTest {
         CodeGenerator.generateDao(entityType);
         CodeGenerator.generateService(entityType);
         CodeGenerator.generateController(entityType);
+    }
+    
+    /**
+     * 清空已存在生成代码目录
+     * <功能详细描述>
+     * 
+     * @return void [返回类型说明]
+     * @throws IOException 
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void clearGeneratorPath(String BASE_CODE_FOLDER)
+            throws IOException {
+        File dest = FileUtils.getFile(BASE_CODE_FOLDER);
+        if (!dest.exists()) {
+            dest.mkdirs();
+        }
+        FileUtils.cleanDirectory(dest);
     }
 }

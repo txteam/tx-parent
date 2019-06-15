@@ -6,12 +6,9 @@
  */
 package com.tx.core.generator2;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,19 +85,20 @@ public class CodeGenerator {
         
         String basePath = ClassUtils.convertClassNameToResourcePath(
                 entityType.getName()) + "/../..";
-        basePath = org.springframework.util.StringUtils
-                .cleanPath(basePath);
+        basePath = org.springframework.util.StringUtils.cleanPath(basePath);
         
-        String controllerFilePath = BASE_CODE_FOLDER + "/src/main/java/" + basePath
-                + "/controller/" + entityType.getSimpleName() + "Controller.java";
+        String controllerFilePath = BASE_CODE_FOLDER + "/src/main/java/"
+                + basePath + "/controller/" + entityType.getSimpleName()
+                + "Controller.java";
         FreeMarkerUtils.fprint(LOAD_TEMPLATE_CLASS,
                 controllerTemplateFilePath,
                 data,
                 controllerFilePath);
         logger.info("controller存放路径:{}", controllerFilePath);
         
-        String apicontrollerFilePath = BASE_CODE_FOLDER + "/src/main/java/" + basePath
-                + "/controller/" + entityType.getSimpleName() + "APIController.java";
+        String apicontrollerFilePath = BASE_CODE_FOLDER + "/src/main/java/"
+                + basePath + "/controller/" + entityType.getSimpleName()
+                + "APIController.java";
         FreeMarkerUtils.fprint(LOAD_TEMPLATE_CLASS,
                 apicontrollerTemplateFilePath,
                 data,
@@ -137,8 +135,9 @@ public class CodeGenerator {
                 entityType.getName()) + "/../../service";
         servicePath = org.springframework.util.StringUtils
                 .cleanPath(servicePath);
-        String serviceFilePath = BASE_CODE_FOLDER + "/src/main/java/" + servicePath
-                + "/" + entityType.getSimpleName() + "Service.java";
+        String serviceFilePath = BASE_CODE_FOLDER + "/src/main/java/"
+                + servicePath + "/" + entityType.getSimpleName()
+                + "Service.java";
         
         FreeMarkerUtils.fprint(LOAD_TEMPLATE_CLASS,
                 serviceTemplateFilePath,
@@ -167,8 +166,8 @@ public class CodeGenerator {
                 entityType.getName()) + "/../../dao";
         daoPath = org.springframework.util.StringUtils.cleanPath(daoPath);
         
-        String daoFilePath = BASE_CODE_FOLDER + "/src/main/java/" + daoPath + "/"
-                + entityType.getSimpleName() + "Dao.java";
+        String daoFilePath = BASE_CODE_FOLDER + "/src/main/java/" + daoPath
+                + "/" + entityType.getSimpleName() + "Dao.java";
         String daoImplFilePath = BASE_CODE_FOLDER + "/src/main/java/" + daoPath
                 + "/impl/" + entityType.getSimpleName() + "DaoImpl.java";
         
@@ -205,8 +204,8 @@ public class CodeGenerator {
                 entityType.getName()) + "/../../dao/impl";
         sqlmapPath = org.springframework.util.StringUtils.cleanPath(sqlmapPath);
         
-        String sqlmapFilePath = BASE_CODE_FOLDER + "/src/main/java/" + sqlmapPath
-                + "/" + entityType.getSimpleName() + "SqlMap.xml";
+        String sqlmapFilePath = BASE_CODE_FOLDER + "/src/main/java/"
+                + sqlmapPath + "/" + entityType.getSimpleName() + "SqlMap.xml";
         
         FreeMarkerUtils.fprint(LOAD_TEMPLATE_CLASS,
                 sqlMapTemplateFilePath,
@@ -237,8 +236,8 @@ public class CodeGenerator {
         String packageName = arrs[arrs.length - 3];
         String dbScriptPath = BASE_CODE_FOLDER + "/dbscript/"
                 + DATASOURCE_TYPE.toString().toLowerCase() + "/01basisScript/"
-                + packageName + "/tables/" + dbScript.getTableName().toLowerCase()
-                + ".sql";
+                + packageName + "/tables/"
+                + dbScript.getTableName().toLowerCase() + ".sql";
         
         FreeMarkerUtils.fprint(LOAD_TEMPLATE_CLASS,
                 dbScriptTemplateFilePath,
@@ -267,28 +266,28 @@ public class CodeGenerator {
         return packageName;
     }
     
-    /**
-     * 清空已存在生成代码目录
-     * <功能详细描述>
-     * 
-     * @return void [返回类型说明]
-     * @throws IOException 
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public static void clearGeneratorPath() throws IOException {
-        
-    	try {
-    		File dest = FileUtils.getFile(BASE_CODE_FOLDER);
-    		if(!dest.exists()) {
-    			dest.mkdirs();
-    		}
-			FileUtils.cleanDirectory(dest);
-		} catch (IOException e) {
-			logger.error("清空代码生成目录失败，请检查目录是否被占用", e);
-			throw e;
-		}
-    	
-        logger.info("已清空代码生成目录：" + BASE_CODE_FOLDER);
-    }
+    //    /**
+    //     * 清空已存在生成代码目录
+    //     * <功能详细描述>
+    //     * 
+    //     * @return void [返回类型说明]
+    //     * @throws IOException 
+    //     * @exception throws [异常类型] [异常说明]
+    //     * @see [类、类#方法、类#成员]
+    //     */
+    //    public static void clearGeneratorPath() throws IOException {
+    //        
+    //    	try {
+    //    		File dest = FileUtils.getFile(BASE_CODE_FOLDER);
+    //    		if(!dest.exists()) {
+    //    			dest.mkdirs();
+    //    		}
+    //			FileUtils.cleanDirectory(dest);
+    //		} catch (IOException e) {
+    //			logger.error("清空代码生成目录失败，请检查目录是否被占用", e);
+    //			throw e;
+    //		}
+    //    	
+    //        logger.info("已清空代码生成目录：" + BASE_CODE_FOLDER);
+    //    }
 }
