@@ -7,12 +7,12 @@
 package com.tx.component.basicdata.service;
 
 import java.util.List;
-import java.util.Map;
 
 import com.tx.component.basicdata.model.BasicData;
 import com.tx.component.basicdata.util.BasicDataUtils;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.paged.model.PagedList;
+import com.tx.core.querier.model.Querier;
 
 /**
  * 基础数据业务层<br/>
@@ -180,7 +180,7 @@ public interface BasicDataService<T extends BasicData> {
     /**
      * 判断基础数据是否存在<br/>
      * <功能详细描述>
-     * @param key2valueMap
+     * @param querier
      * @param excludeId
      * @return [参数说明]
      * 
@@ -188,7 +188,7 @@ public interface BasicDataService<T extends BasicData> {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public boolean exist(Map<String, String> key2valueMap, String excludeId);
+    public boolean exists(Querier querier, String excludeId);
     
     /**
      * 根据id查询基础数据实例<br/>
@@ -218,20 +218,20 @@ public interface BasicDataService<T extends BasicData> {
      * 根据条件查询基础数据列表<br/>
      * <功能详细描述>
      * @param valid
-     * @param params
+     * @param querier
      * @return [参数说明]
      * 
      * @return List<T> [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public List<T> queryList(Boolean valid, Map<String, Object> params);
+    public List<T> queryList(Boolean valid, Querier querier);
     
     /**
      * 根据条件查询基础数据分页列表<br/>
      * <功能详细描述>
      * @param valid
-     * @param params
+     * @param querier
      * @param pageIndex
      * @param pageSize
      * @return [参数说明]
@@ -240,7 +240,7 @@ public interface BasicDataService<T extends BasicData> {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public PagedList<T> queryPagedList(Boolean valid,
-            Map<String, Object> params, int pageIndex, int pageSize);
+    public PagedList<T> queryPagedList(Boolean valid, Querier querier,
+            int pageIndex, int pageSize);
     
 }

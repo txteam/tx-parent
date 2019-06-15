@@ -67,52 +67,12 @@ public class BasicDataAPIClientRegistryImpl implements
         if (this.basicDataAPIClientMap.containsKey(module)) {
             return this.basicDataAPIClientMap.get(module);
         }
-        Builder<BasicDataAPIClient> builder = this.feignClientBuilder
-                .forType(BasicDataAPIClient.class, "basicDataAPIClient");
+        Builder<BasicDataAPIClient> builder = this.feignClientBuilder.forType(
+                BasicDataAPIClient.class, module + "/basicdataAPIClient");
         BasicDataAPIClient newClient = (BasicDataAPIClient) builder
-                .url("http://" + module + "/api/basicdata").build();
+                .path("/api/basicdataAPIClient").build();
         
         this.basicDataAPIClientMap.put(module, newClient);
         return newClient;
     }
-    
-    //    private Decoder decoder;
-    //    
-    //    private Encoder encoder;
-    //    
-    //    private Client client;
-    //    
-    //    private Contract feignContract;
-    //
-    //    
-    //    /** <默认构造函数> */
-    //    public BasicDataAPIClientRegistryImpl(Decoder decoder, Encoder encoder,
-    //            Client client, Contract feignContract) {
-    //        super();
-    //        this.decoder = decoder;
-    //        this.encoder = encoder;
-    //        this.client = client;
-    //        this.feignContract = feignContract;
-    //    }
-    //    
-    //    /**
-    //     * @param module
-    //     * @return
-    //     */
-    //    @Override
-    //    public BasicDataAPIClient getBasicDataAPIClient(String module) {
-    //        if (this.basicDataAPIClientMap.containsKey(module)) {
-    //            return this.basicDataAPIClientMap.get(module);
-    //        }
-    //        BasicDataAPIClient newClient = Feign.builder()
-    //                .client(client)
-    //                .encoder(encoder)
-    //                .decoder(decoder)
-    //                .contract(this.feignContract)
-    //                //.requestInterceptor(new BasicAuthRequestInterceptor("user", "user"))
-    //                .target(BasicDataAPIClient.class,
-    //                        "http://" + module + "/api/basicdata");
-    //        this.basicDataAPIClientMap.put(module, newClient);
-    //        return newClient;
-    //    }
 }

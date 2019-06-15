@@ -16,6 +16,9 @@ import org.slf4j.helpers.MessageFormatter;
 
 import com.tx.core.util.ObjectUtils;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * 权限引用项
  *     可以是： 角色权限
@@ -30,6 +33,7 @@ import com.tx.core.util.ObjectUtils;
  */
 @Entity
 @Table(name = "sec_authref")
+@ApiModel("权限引用")
 public class AuthRefItem implements AuthRef {
     
     /** 注释内容 */
@@ -40,24 +44,31 @@ public class AuthRefItem implements AuthRef {
     private String id;
     
     /** 权限引用类型 */
+    @ApiModelProperty("引用类型")
     private String refType;
     
     /** 权限引用唯一键 */
+    @ApiModelProperty("引用ID")
     private String refId;
     
     /** 权限引用对应的权限id */
+    @ApiModelProperty("权限项ID")
     private String authId;
     
     /** 生效时间 */
+    @ApiModelProperty("生效时间")
     private Date effectiveDate;
     
     /** 系统自动判定的无效时间:系统在查询具体是否存在引用过程中将根据该时间动态计算 */
+    @ApiModelProperty("到期时间")
     private Date expiryDate;
     
     /** 权限授予人*/
+    @ApiModelProperty("创建人")
     private String createOperatorId;
     
     /** 权限引用项的创建(授予)时间 */
+    @ApiModelProperty("创建时间")
     private Date createDate;
     
     /** <默认构造函数> */

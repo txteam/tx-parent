@@ -18,10 +18,7 @@ import com.tx.component.basicdata.registry.BasicDataAPIClientRegistry;
 import com.tx.component.basicdata.registry.impl.BasicDataAPIClientRegistryImpl;
 
 import feign.Client;
-import feign.Contract;
 import feign.Feign;
-import feign.codec.Decoder;
-import feign.codec.Encoder;
 
 /**
  * 基础数据持久层配置逻辑<br/>
@@ -55,25 +52,11 @@ public class BasicDataAPIClientConfiguration {
     @ConditionalOnClass({ Feign.class, FeignClientsConfiguration.class })
     @ConditionalOnBean({Client.class})
     @Import(FeignClientsConfiguration.class)
-    @SuppressWarnings("unused")
     public static class feignAPIClientConfiguration {
         
-        private Decoder decoder;
-        
-        private Encoder encoder;
-        
-        private Client client;
-        
-        private Contract feignContract;
-        
         /** <默认构造函数> */
-        public feignAPIClientConfiguration(Decoder decoder, Encoder encoder,
-                Client client, Contract feignContract) {
+        public feignAPIClientConfiguration() {
             super();
-            this.decoder = decoder;
-            this.encoder = encoder;
-            this.client = client;
-            this.feignContract = feignContract;
         }
         
         /**
@@ -88,8 +71,6 @@ public class BasicDataAPIClientConfiguration {
         @ConditionalOnMissingBean
         @Bean("basicDataAPIClientRegistry")
         public BasicDataAPIClientRegistry basicDataAPIClientRegistry() {
-            //            BasicDataAPIClientRegistry registry = new BasicDataAPIClientRegistryImpl(
-            //                    decoder, encoder, client, feignContract);
             BasicDataAPIClientRegistry registry = new BasicDataAPIClientRegistryImpl();
             return registry;
         }

@@ -7,16 +7,16 @@
 package com.tx.component.basicdata.service.impl;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.collections4.CollectionUtils;
 
+import com.tx.component.basicdata.model.DataDict;
 import com.tx.component.basicdata.model.TreeAbleBasicData;
 import com.tx.component.basicdata.service.TreeAbleBasicDataService;
+import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.querier.model.Querier;
+import com.tx.core.support.json.JSONAttributesSupportUtils;
 
 /**
  * 默认的基础数据业务层实现<br/>
@@ -38,72 +38,61 @@ public class DefaultDBTreeAbleBasicDataService<T extends TreeAbleBasicData<T>>
     
     /**
      * @param parentId
-     * @param valid
-     * @param params
+     * @param querier
+     * @param querier
      * @return
      */
     @Override
     public List<T> queryChildrenByParentId(String parentId, Boolean valid,
-            Map<String, Object> params) {
-        params = params == null ? new HashMap<String, Object>() : params;
-        params.put("parentId", parentId);
+            Querier querier) {
+        AssertUtils.notEmpty(parentId, "parentId is empty.");
+        String type = type();
+        AssertUtils.notEmpty(type, "type is null.");
         
-        List<T> resList = queryList(valid, params);
+        List<DataDict> dataDictList = this.dataDictService
+                .queryChildrenByParentId(type, parentId, valid, querier);
+        List<T> resList = new ArrayList<>();
+        if (CollectionUtils.isEmpty(dataDictList)) {
+            return resList;
+        }
+        
+        //如果不为空，则开始加载分项属性
+        for (DataDict dd : dataDictList) {
+            T obj = JSONAttributesSupportUtils
+                    .fromJSONAttributesSupport(getRawType(), dd);
+            resList.add(obj);
+        }
         return resList;
     }
     
     /**
      * @param parentId
      * @param valid
-     * @param params
+     * @param querier
      * @param pageIndex
      * @param pageSize
      * @return
      */
     @Override
     public List<T> queryDescendantsByParentId(String parentId, Boolean valid,
-            Map<String, Object> params) {
-        Set<String> ids = new HashSet<>();
-        Set<String> parentIds = new HashSet<>();
-        parentIds.add(parentId);
+            Querier querier) {
+        AssertUtils.notEmpty(parentId, "parentId is empty.");
+        String type = type();
+        AssertUtils.notEmpty(type, "type is null.");
         
-        List<T> resList = doNestedQueryList(valid, ids, parentIds, params);
-        return resList;
-    }
-    
-    /**
-     * 查询嵌套列表<br/>
-     * <功能详细描述>
-     * @param ids
-     * @param parentIds
-     * @param params
-     * @return [参数说明]
-     * 
-     * @return List<ConfigPropertyItem> [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    private List<T> doNestedQueryList(Boolean valid, Set<String> ids,
-            Set<String> parentIds, Map<String, Object> params) {
-        if (CollectionUtils.isEmpty(parentIds)) {
-            return new ArrayList<T>();
+        List<DataDict> dataDictList = this.dataDictService
+                .queryDescendantsByParentId(type, parentId, valid, querier);
+        List<T> resList = new ArrayList<>();
+        if (CollectionUtils.isEmpty(dataDictList)) {
+            return resList;
         }
         
-        //ids避免数据出错时导致无限循环
-        Map<String, Object> queryParams = new HashMap<>();
-        queryParams.putAll(params);
-        queryParams.put("parentIds", parentIds);
-        List<T> resList = queryList(valid, params);
-        
-        Set<String> newParentIds = new HashSet<>();
-        for (T bdTemp : resList) {
-            if (!ids.contains(bdTemp.getId())) {
-                newParentIds.add(bdTemp.getId());
-            }
-            ids.add(bdTemp.getId());
+        //如果不为空，则开始加载分项属性
+        for (DataDict dd : dataDictList) {
+            T obj = JSONAttributesSupportUtils
+                    .fromJSONAttributesSupport(getRawType(), dd);
+            resList.add(obj);
         }
-        //嵌套查询下一层级
-        resList.addAll(doNestedQueryList(valid, ids, newParentIds, params));
         return resList;
     }
 }

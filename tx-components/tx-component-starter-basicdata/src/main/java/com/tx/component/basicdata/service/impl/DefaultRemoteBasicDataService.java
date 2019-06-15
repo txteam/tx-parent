@@ -7,7 +7,6 @@
 package com.tx.component.basicdata.service.impl;
 
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.InitializingBean;
@@ -19,6 +18,7 @@ import com.tx.component.basicdata.service.BasicDataService;
 import com.tx.component.basicdata.util.BasicDataUtils;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.paged.model.PagedList;
+import com.tx.core.querier.model.Querier;
 
 /**
  * 默认的基础数据业务层实现<br/>
@@ -168,15 +168,15 @@ public class DefaultRemoteBasicDataService<T extends BasicData>
     
     /**
      * @param valid
-     * @param params
+     * @param querier
      * @return
      */
     @Override
-    public List<T> queryList(Boolean valid, Map<String, Object> params) {
+    public List<T> queryList(Boolean valid, Querier querier) {
         String type = type();
         AssertUtils.notEmpty(type, "type is empty.");
         
-        List<DataDict> dataList = this.client.queryList(type, valid, params);
+        List<DataDict> dataList = this.client.queryList(type, valid, querier);
         List<T> resList = BasicDataUtils.fromDataDictList(dataList,
                 getRawType());
         return resList;
@@ -184,20 +184,20 @@ public class DefaultRemoteBasicDataService<T extends BasicData>
     
     /**
      * @param valid
-     * @param params
+     * @param querier
      * @param pageIndex
      * @param pageSize
      * @return
      */
     @Override
     public PagedList<T> queryPagedList(Boolean valid,
-            Map<String, Object> params, int pageIndex, int pageSize) {
+            Querier querier, int pageIndex, int pageSize) {
         String type = type();
         AssertUtils.notEmpty(type, "type is empty.");
         
         PagedList<DataDict> dataPagedList = this.client.queryPagedList(type,
                 valid,
-                params,
+                querier,
                 pageIndex,
                 pageSize);
         PagedList<T> resPagedList = BasicDataUtils
@@ -207,18 +207,18 @@ public class DefaultRemoteBasicDataService<T extends BasicData>
     
     /**
      * 判断数据是否存在<br/>
-     * @param key2valueMap
+     * @param querier
      * @param excludeId
      * @return
      */
     @Override
-    public boolean exist(Map<String, String> key2valueMap, String excludeId) {
-        AssertUtils.notEmpty(key2valueMap, "key2valueMap is null.");
+    public boolean exists(Querier querier, String excludeId) {
+        AssertUtils.notNull(querier, "querier is null.");
         
         String type = type();
         AssertUtils.notEmpty(type, "type is empty.");
         
-        boolean flag = this.client.exist(type, key2valueMap, excludeId);
+        boolean flag = this.client.exists(type, querier, excludeId);
         return flag;
         
     }

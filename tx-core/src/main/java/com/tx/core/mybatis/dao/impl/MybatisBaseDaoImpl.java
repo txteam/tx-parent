@@ -380,30 +380,6 @@ public abstract class MybatisBaseDaoImpl<T, ID extends Serializable>
     
     /**
      * @param params
-     * @return
-     */
-    @Override
-    public int count(Map<String, Object> params) {
-        int count = getMyBatisDaoSupport()
-                .count(this.assistant.getCountStatmentName(), params);
-        return count;
-    }
-    
-    /**
-     * @param querier
-     * @return
-     */
-    @Override
-    public int count(Querier querier) {
-        int count = getMyBatisDaoSupport().count(
-                this.assistant.getCountStatmentName(),
-                this.entityType,
-                querier);
-        return count;
-    }
-    
-    /**
-     * @param params
      * @param exclude
      * @return
      */

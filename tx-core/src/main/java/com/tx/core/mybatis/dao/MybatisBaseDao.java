@@ -231,30 +231,6 @@ public interface MybatisBaseDao<T, ID extends Serializable> {
      * 根据条件查询对象实例数量<br/>
      * <功能详细描述>
      * @param params
-     * @return [参数说明]
-     * 
-     * @return int [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public int count(Map<String, Object> params);
-    
-    /**
-     * 根据条件查询对象实例数量<br/>
-     * <功能详细描述>
-     * @param querier
-     * @return [参数说明]
-     * 
-     * @return int [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public int count(Querier querier);
-    
-    /**
-     * 根据条件查询对象实例数量<br/>
-     * <功能详细描述>
-     * @param params
      * @param exclude
      * @return [参数说明]
      * 
@@ -277,6 +253,36 @@ public interface MybatisBaseDao<T, ID extends Serializable> {
     public int count(Querier querier, ID exclude);
     
     /**
+     * 根据条件查询对象实例数量<br/>
+     * <功能详细描述>
+     * @param params
+     * @return [参数说明]
+     * 
+     * @return int [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public default int count(Map<String, Object> params) {
+        int res = count(params, null);
+        return res;
+    }
+    
+    /**
+     * 根据条件查询对象实例数量<br/>
+     * <功能详细描述>
+     * @param querier
+     * @return [参数说明]
+     * 
+     * @return int [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public default int count(Querier querier) {
+        int res = count(querier, null);
+        return res;
+    }
+    
+    /**
      * 判断指定条件的对象实例是否存在<br/>
      * <功能详细描述>
      * @param params
@@ -287,7 +293,7 @@ public interface MybatisBaseDao<T, ID extends Serializable> {
      * @see [类、类#方法、类#成员]
      */
     public default boolean exists(Map<String, Object> params) {
-        int count = count(params);
+        int count = count(params, null);
         boolean flag = count > 0;
         return flag;
     }
@@ -303,7 +309,39 @@ public interface MybatisBaseDao<T, ID extends Serializable> {
      * @see [类、类#方法、类#成员]
      */
     public default boolean exists(Querier querier) {
-        int count = count(querier);
+        int count = count(querier, null);
+        boolean flag = count > 0;
+        return flag;
+    }
+    
+    /**
+     * 判断指定条件的对象实例是否存在<br/>
+     * <功能详细描述>
+     * @param params
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public default boolean exists(Map<String, Object> params, ID exclude) {
+        int count = count(params, exclude);
+        boolean flag = count > 0;
+        return flag;
+    }
+    
+    /**
+     * 判断指定条件的对象实例是否存在<br/>
+     * <功能详细描述>
+     * @param querier
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public default boolean exists(Querier querier, ID exclude) {
+        int count = count(querier, exclude);
         boolean flag = count > 0;
         return flag;
     }

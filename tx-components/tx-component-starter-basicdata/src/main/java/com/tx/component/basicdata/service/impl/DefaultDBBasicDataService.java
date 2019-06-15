@@ -8,7 +8,6 @@ package com.tx.component.basicdata.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -23,6 +22,7 @@ import com.tx.component.basicdata.service.AbstractBasicDataService;
 import com.tx.component.basicdata.service.DataDictService;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.paged.model.PagedList;
+import com.tx.core.querier.model.Querier;
 import com.tx.core.support.json.JSONAttributesSupportUtils;
 
 /**
@@ -241,17 +241,17 @@ public class DefaultDBBasicDataService<T extends BasicData>
     
     /**
      * @param valid
-     * @param params
+     * @param querier
      * @return
      */
     @Override
-    public List<T> queryList(Boolean valid, Map<String, Object> params) {
+    public List<T> queryList(Boolean valid, Querier querier) {
         String type = type();
         AssertUtils.notEmpty(type, "type is null.");
         
         List<DataDict> dataDictList = this.dataDictService.queryList(type,
                 valid,
-                params);
+                querier);
         List<T> resList = new ArrayList<>();
         if (CollectionUtils.isEmpty(dataDictList)) {
             return resList;
@@ -268,19 +268,19 @@ public class DefaultDBBasicDataService<T extends BasicData>
     
     /**
      * @param valid
-     * @param params
+     * @param querier
      * @param pageIndex
      * @param pageSize
      * @return
      */
     @Override
-    public PagedList<T> queryPagedList(Boolean valid,
-            Map<String, Object> params, int pageIndex, int pageSize) {
+    public PagedList<T> queryPagedList(Boolean valid, Querier querier,
+            int pageIndex, int pageSize) {
         String type = type();
         AssertUtils.notEmpty(type, "type is null.");
         
         PagedList<DataDict> dataDictPageList = this.dataDictService
-                .queryPagedList(type, valid, params, pageIndex, pageSize);
+                .queryPagedList(type, valid, querier, pageIndex, pageSize);
         
         PagedList<T> resPagedList = new PagedList<>();
         resPagedList.setCount(dataDictPageList.getCount());
@@ -307,12 +307,12 @@ public class DefaultDBBasicDataService<T extends BasicData>
      * @return
      */
     @Override
-    public boolean exist(Map<String, String> key2valueMap, String excludeId) {
-        AssertUtils.notEmpty(key2valueMap, "key2valueMap is null.");
+    public boolean exists(Querier querier, String excludeId) {
+        AssertUtils.notNull(querier, "querier is null.");
         
         String type = type();
         AssertUtils.notEmpty(type, "type is null.");
-        return this.dataDictService.exist(type, key2valueMap, excludeId);
+        return this.dataDictService.exists(type, querier, excludeId);
     }
     
     /**

@@ -7,9 +7,9 @@
 package com.tx.component.basicdata.service;
 
 import java.util.List;
-import java.util.Map;
 
 import com.tx.component.basicdata.model.TreeAbleBasicData;
+import com.tx.core.querier.model.Querier;
 
 /**
  * 基础数据业务层<br/>
@@ -28,7 +28,7 @@ public interface TreeAbleBasicDataService<T extends TreeAbleBasicData<T>>
      * <功能详细描述>
      * @param parentId
      * @param valid
-     * @param params
+     * @param querier
      * @return [参数说明]
      * 
      * @return List<T> [返回类型说明]
@@ -36,20 +36,20 @@ public interface TreeAbleBasicDataService<T extends TreeAbleBasicData<T>>
      * @see [类、类#方法、类#成员]
      */
     public List<T> queryChildrenByParentId(String parentId, Boolean valid,
-            Map<String, Object> params);
+            Querier querier);
     
     /**
      * 根据条件查询基础数据分页列表<br/>
      * <功能详细描述>
      * @param parentId
      * @param valid
-     * @param params
+     * @param querier
      * @return [参数说明]
      * 
      * @return PagedList<T> [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
+     */
     public List<T> queryDescendantsByParentId(String parentId, Boolean valid,
-            Map<String, Object> params);
+            Querier querier);
 }

@@ -3,6 +3,11 @@ package com.tx.component.auth.model;
 import java.io.Serializable;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
+import com.tx.component.role.context.RoleTypeRegistry;
+import com.tx.component.role.model.RoleType;
+import com.tx.component.security.auth.context.register.AuthRegister;
 import com.tx.core.support.json.JSONAttributesSupport;
 import com.tx.core.tree.model.TreeAble;
 

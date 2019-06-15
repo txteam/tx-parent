@@ -9,9 +9,11 @@ package com.tx.component.basicdata.service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -33,6 +35,8 @@ import com.tx.component.basicdata.dao.DataDictDao;
 import com.tx.component.basicdata.model.DataDict;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.paged.model.PagedList;
+import com.tx.core.querier.model.Filter;
+import com.tx.core.querier.model.Querier;
 import com.tx.core.support.initable.helper.ConfigInitAbleHelper;
 import com.tx.core.support.poi.excel.ExcelReadUtils;
 
@@ -324,6 +328,35 @@ public class DataDictService implements InitializingBean, ResourceLoaderAware {
      * @param entity
      * @return
      */
+    public boolean updateById(String id, DataDict dataDict) {
+        //验证参数是否合法，必填字段是否填写
+        AssertUtils.notEmpty(id, "id is empty.");
+        AssertUtils.notNull(dataDict, "dataDict is null.");
+        
+        //生成需要更新字段的hashMap
+        Map<String, Object> updateRowMap = new HashMap<String, Object>();
+        //需要更新的字段
+        updateRowMap.put("name", dataDict.getName());
+        updateRowMap.put("remark", dataDict.getRemark());
+        updateRowMap.put("modifyAble", dataDict.isModifyAble());
+        updateRowMap.put("valid", dataDict.isValid());
+        updateRowMap.put("attributes", dataDict.getAttributes());
+        updateRowMap.put("lastUpdateDate", new Date());
+        
+        boolean flag = this.transactionTemplate
+                .execute(new TransactionCallback<Boolean>() {
+                    @Override
+                    public Boolean doInTransaction(TransactionStatus status) {
+                        return dataDictDao.update(id, updateRowMap);
+                    }
+                });
+        return flag;
+    }
+    
+    /**
+     * @param entity
+     * @return
+     */
     public boolean update(DataDict dataDict) {
         //验证参数是否合法，必填字段是否填写，
         AssertUtils.notNull(dataDict, "dataDict is null.");
@@ -473,6 +506,8 @@ public class DataDictService implements InitializingBean, ResourceLoaderAware {
      */
     public List<DataDict> queryList(String type, Boolean valid,
             Map<String, Object> params) {
+        AssertUtils.notEmpty("type", "type is empty.");
+        
         //生成查询条件
         params = params == null ? new HashMap<String, Object>() : params;
         params.put("type", type);
@@ -488,23 +523,24 @@ public class DataDictService implements InitializingBean, ResourceLoaderAware {
      * 查询DataDict实体列表
      * <功能详细描述>
      * @param valid
-     * @param params      
+     * @param querier      
      * @return [参数说明]
      * 
      * @return List<DataDict> [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public List<DataDict> queryList(String type, String parentId, Boolean valid,
-            Map<String, Object> params) {
+    public List<DataDict> queryList(String type, Boolean valid,
+            Querier querier) {
+        AssertUtils.notEmpty("type", "type is empty.");
+        
         //生成查询条件
-        params = params == null ? new HashMap<String, Object>() : params;
-        params.put("type", type);
-        params.put("parentId", parentId);
-        params.put("valid", valid);
+        querier = querier == null ? new Querier() : querier;
+        querier.getFilters().add(Filter.eq("type", type));
+        querier.getParams().put("valid", valid);
         
         //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
-        List<DataDict> resList = this.dataDictDao.queryList(params);
+        List<DataDict> resList = this.dataDictDao.queryList(querier);
         
         return resList;
     }
@@ -513,7 +549,7 @@ public class DataDictService implements InitializingBean, ResourceLoaderAware {
      * 分页查询DataDict实体列表
      * <功能详细描述>
      * @param valid
-      * @param params    
+     * @param params    
      * @param pageIndex 当前页index从1开始计算
      * @param pageSize 每页显示行数
      * 
@@ -526,6 +562,8 @@ public class DataDictService implements InitializingBean, ResourceLoaderAware {
      */
     public PagedList<DataDict> queryPagedList(String type, Boolean valid,
             Map<String, Object> params, int pageIndex, int pageSize) {
+        AssertUtils.notEmpty("type", "type is empty.");
+        
         //生成查询条件
         params = params == null ? new HashMap<String, Object>() : params;
         params.put("type", type);
@@ -542,7 +580,7 @@ public class DataDictService implements InitializingBean, ResourceLoaderAware {
      * 分页查询DataDict实体列表
      * <功能详细描述>
      * @param valid
-      * @param params    
+     * @param params    
      * @param pageIndex 当前页index从1开始计算
      * @param pageSize 每页显示行数
      * 
@@ -553,18 +591,18 @@ public class DataDictService implements InitializingBean, ResourceLoaderAware {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public PagedList<DataDict> queryPagedList(String type, String parentId,
-            Boolean valid, Map<String, Object> params, int pageIndex,
-            int pageSize) {
+    public PagedList<DataDict> queryPagedList(String type, Boolean valid,
+            Querier querier, int pageIndex, int pageSize) {
+        AssertUtils.notEmpty("type", "type is empty.");
+        
         //生成查询条件
-        params = params == null ? new HashMap<String, Object>() : params;
-        params.put("type", type);
-        params.put("parentId", parentId);
-        params.put("valid", valid);
+        querier = querier == null ? new Querier() : querier;
+        querier.getFilters().add(Filter.eq("type", type));
+        querier.getParams().put("valid", valid);
         
         //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
         PagedList<DataDict> resPagedList = this.dataDictDao
-                .queryPagedList(params, pageIndex, pageSize);
+                .queryPagedList(querier, pageIndex, pageSize);
         
         return resPagedList;
     }
@@ -572,13 +610,16 @@ public class DataDictService implements InitializingBean, ResourceLoaderAware {
     /**
      * 判断是否已经存在<br/>
      * <功能详细描述>
+     * @param type
+     * @param key2valueMap
+     * @param excludeId
      * @return [参数说明]
      * 
-     * @return int [返回类型说明]
+     * @return boolean [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
-    public boolean exist(String type, Map<String, String> key2valueMap,
+     */
+    public boolean exists(String type, Map<String, String> key2valueMap,
             String excludeId) {
         AssertUtils.notEmpty(type, "type is empty");
         AssertUtils.notEmpty(key2valueMap, "key2valueMap is empty");
@@ -593,6 +634,221 @@ public class DataDictService implements InitializingBean, ResourceLoaderAware {
         int res = this.dataDictDao.count(params);
         
         return res > 0;
+    }
+    
+    /**
+     * 判断是否可查询<br/>
+     * <功能详细描述>
+     * @param type
+     * @param querier
+     * @param excludeId
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public boolean exists(String type, Querier querier, String excludeId) {
+        AssertUtils.notEmpty(type, "type is empty");
+        AssertUtils.notNull(querier, "querier is empty");
+        
+        //生成查询条件`
+        querier.getFilters().add(Filter.eq("type", type));
+        querier.getParams().put("excludeId", excludeId);//可以为空，则用params进行写入
+        
+        //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
+        int res = this.dataDictDao.count(querier);
+        
+        return res > 0;
+    }
+    
+    /**
+     * 查询DataDict实体列表
+     * <功能详细描述>
+     * @param valid
+     * @param params      
+     * @return [参数说明]
+     * 
+     * @return List<DataDict> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public List<DataDict> queryChildrenByParentId(String type, String parentId,
+            Boolean valid, Map<String, Object> params) {
+        AssertUtils.notEmpty("type", "type is empty.");
+        AssertUtils.notEmpty("parentId", "parentId is empty.");
+        
+        //生成查询条件
+        params = params == null ? new HashMap<String, Object>() : params;
+        params.put("type", type);
+        params.put("parentId", parentId);
+        params.put("valid", valid);
+        
+        //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
+        List<DataDict> resList = this.dataDictDao.queryList(params);
+        
+        return resList;
+    }
+    
+    /**
+     * 查询DataDict实体列表
+     * <功能详细描述>
+     * @param valid
+     * @param querier      
+     * @return [参数说明]
+     * 
+     * @return List<DataDict> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public List<DataDict> queryChildrenByParentId(String type, String parentId,
+            Boolean valid, Querier querier) {
+        AssertUtils.notEmpty("type", "type is empty.");
+        AssertUtils.notEmpty("parentId", "parentId is empty.");
+        
+        //生成查询条件
+        querier = querier == null ? new Querier() : querier;
+        querier.getFilters().add(Filter.eq("type", type));
+        querier.getFilters().add(Filter.eq("parentId", parentId));
+        querier.getParams().put("valid", valid);
+        
+        //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
+        List<DataDict> resList = this.dataDictDao.queryList(querier);
+        
+        return resList;
+    }
+    
+    /**
+     * 查询子代数据字典业务层<br/>
+     * <功能详细描述>
+     * @param type
+     * @param parentId
+     * @param params
+     * @return [参数说明]
+     * 
+     * @return List<DataDict> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public List<DataDict> queryDescendantsByParentId(String type,
+            String parentId, Boolean valid, Map<String, Object> params) {
+        AssertUtils.notEmpty("type", "type is empty.");
+        AssertUtils.notEmpty("parentId", "parentId is empty.");
+        
+        params = params == null ? new HashMap<>() : params;
+        params.put("type", type);
+        params.put("valid", valid);
+        
+        Set<String> ids = new HashSet<>();
+        Set<String> parentIds = new HashSet<>();
+        parentIds.add(parentId);
+        
+        List<DataDict> resListTemp = doNestedQueryList(ids, parentIds, params);
+        
+        return resListTemp;
+    }
+    
+    /**
+     * 查询嵌套列表<br/>
+     * <功能详细描述>
+     * @param ids
+     * @param parentIds
+     * @param params
+     * @return [参数说明]
+     * 
+     * @return List<ConfigPropertyItem> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    private List<DataDict> doNestedQueryList(Set<String> ids,
+            Set<String> parentIds, Map<String, Object> params) {
+        if (CollectionUtils.isEmpty(parentIds)) {
+            return new ArrayList<DataDict>();
+        }
+        
+        //ids避免数据出错时导致无限循环
+        Map<String, Object> queryParams = new HashMap<>();
+        queryParams.putAll(params);
+        queryParams.put("parentIds", parentIds);
+        List<DataDict> resList = dataDictDao.queryList(queryParams);
+        
+        Set<String> newParentIds = new HashSet<>();
+        for (DataDict cpTemp : resList) {
+            if (!ids.contains(cpTemp.getId())) {
+                newParentIds.add(cpTemp.getId());
+            }
+            ids.add(cpTemp.getId());
+        }
+        //嵌套查询下一层级
+        resList.addAll(doNestedQueryList(ids, newParentIds, params));
+        
+        return resList;
+    }
+    
+    /**
+     * 查询后代数据字典业务层<br/>
+     * <功能详细描述>
+     * @param type
+     * @param parentId
+     * @param params
+     * @return [参数说明]
+     * 
+     * @return List<DataDict> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public List<DataDict> queryDescendantsByParentId(String type,
+            String parentId, Boolean valid, Querier querier) {
+        AssertUtils.notEmpty("type", "type is empty.");
+        AssertUtils.notEmpty("parentId", "parentId is empty.");
+        
+        querier = querier == null ? new Querier() : querier;
+        querier.getFilters().add(Filter.eq("type", type));
+        querier.getParams().put("valid", valid);
+        
+        Set<String> ids = new HashSet<>();
+        Set<String> parentIds = new HashSet<>();
+        parentIds.add(parentId);
+        
+        List<DataDict> resListTemp = doNestedQueryList(ids, parentIds, querier);
+        
+        return resListTemp;
+    }
+    
+    /**
+     * 查询嵌套列表<br/>
+     * <功能详细描述>
+     * @param ids
+     * @param parentIds
+     * @param params
+     * @return [参数说明]
+     * 
+     * @return List<ConfigPropertyItem> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    private List<DataDict> doNestedQueryList(Set<String> ids,
+            Set<String> parentIds, Querier querier) {
+        if (CollectionUtils.isEmpty(parentIds)) {
+            return new ArrayList<DataDict>();
+        }
+        
+        //ids避免数据出错时导致无限循环
+        Querier newQuerier = (Querier) querier.clone();
+        newQuerier.getParams().put("parentIds", parentIds);
+        List<DataDict> resList = dataDictDao.queryList(newQuerier);
+        
+        Set<String> newParentIds = new HashSet<>();
+        for (DataDict cpTemp : resList) {
+            if (!ids.contains(cpTemp.getId())) {
+                newParentIds.add(cpTemp.getId());
+            }
+            ids.add(cpTemp.getId());
+        }
+        //嵌套查询下一层级
+        resList.addAll(doNestedQueryList(ids, newParentIds, querier));
+        
+        return resList;
     }
     
     /**

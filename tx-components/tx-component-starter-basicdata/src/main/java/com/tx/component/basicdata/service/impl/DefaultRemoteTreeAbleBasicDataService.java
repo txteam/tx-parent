@@ -7,7 +7,6 @@
 package com.tx.component.basicdata.service.impl;
 
 import java.util.List;
-import java.util.Map;
 
 import com.tx.component.basicdata.client.BasicDataAPIClient;
 import com.tx.component.basicdata.model.DataDict;
@@ -15,6 +14,7 @@ import com.tx.component.basicdata.model.TreeAbleBasicData;
 import com.tx.component.basicdata.service.TreeAbleBasicDataService;
 import com.tx.component.basicdata.util.BasicDataUtils;
 import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.querier.model.Querier;
 
 /**
  * 默认的基础数据业务层实现<br/>
@@ -56,12 +56,12 @@ public class DefaultRemoteTreeAbleBasicDataService<T extends TreeAbleBasicData<T
     /**
      * @param parentId
      * @param valid
-     * @param params
+     * @param querier
      * @return
      */
     @Override
     public List<T> queryChildrenByParentId(String parentId, Boolean valid,
-            Map<String, Object> params) {
+            Querier querier) {
         AssertUtils.notEmpty(parentId, "parentId is null.");
         
         String type = type();
@@ -70,7 +70,7 @@ public class DefaultRemoteTreeAbleBasicDataService<T extends TreeAbleBasicData<T
         List<DataDict> dataList = this.client.queryChildrenByParentId(type,
                 parentId,
                 valid,
-                params);
+                querier);
         List<T> objectList = BasicDataUtils.fromDataDictList(dataList,
                 getRawType());
         return objectList;
@@ -79,14 +79,14 @@ public class DefaultRemoteTreeAbleBasicDataService<T extends TreeAbleBasicData<T
     /**
      * @param parentId
      * @param valid
-     * @param params
+     * @param querier
      * @param pageIndex
      * @param pageSize
      * @return
      */
     @Override
     public List<T> queryDescendantsByParentId(String parentId, Boolean valid,
-            Map<String, Object> params) {
+            Querier querier) {
         AssertUtils.notEmpty(parentId, "parentId is null.");
         
         String type = type();
@@ -95,7 +95,7 @@ public class DefaultRemoteTreeAbleBasicDataService<T extends TreeAbleBasicData<T
         List<DataDict> dataList = this.client.queryDescendantsByParentId(type,
                 parentId,
                 valid,
-                params);
+                querier);
         List<T> objectList = BasicDataUtils.fromDataDictList(dataList,
                 getRawType());
         return objectList;

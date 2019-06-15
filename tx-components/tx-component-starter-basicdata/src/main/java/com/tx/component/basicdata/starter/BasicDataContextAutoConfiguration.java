@@ -209,6 +209,7 @@ public class BasicDataContextAutoConfiguration
      * @see [类、类#方法、类#成员]
      */
     @Bean(name = "basicDataAPIController")
+    @SuppressWarnings("rawtypes")
     public BasicDataAPIController basicDataAPIController() {
         BasicDataAPIController controller = new BasicDataAPIController();
         return controller;
