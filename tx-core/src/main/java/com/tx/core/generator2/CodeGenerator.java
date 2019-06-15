@@ -6,9 +6,12 @@
  */
 package com.tx.core.generator2;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -262,5 +265,30 @@ public class CodeGenerator {
         String[] servicePaths = StringUtils.split(servicePath, "/");
         String packageName = servicePaths[servicePaths.length - 1];
         return packageName;
+    }
+    
+    /**
+     * 清空已存在生成代码目录
+     * <功能详细描述>
+     * 
+     * @return void [返回类型说明]
+     * @throws IOException 
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void clearGeneratorPath() throws IOException {
+        
+    	try {
+    		File dest = FileUtils.getFile(BASE_CODE_FOLDER);
+    		if(!dest.exists()) {
+    			dest.mkdirs();
+    		}
+			FileUtils.cleanDirectory(dest);
+		} catch (IOException e) {
+			logger.error("清空代码生成目录失败，请检查目录是否被占用", e);
+			throw e;
+		}
+    	
+        logger.info("已清空代码生成目录：" + BASE_CODE_FOLDER);
     }
 }

@@ -29,7 +29,7 @@ import io.swagger.annotations.ApiModelProperty;
  * @since  [产品/模块版本]
  */
 @Entity
-@Table(name = "test_testmode3")
+@Table(name = "test_testmode4")
 @ApiModel("测试对象")
 public class TestMode4 {
     
