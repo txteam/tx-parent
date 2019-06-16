@@ -7,12 +7,12 @@
 package com.tx.component.configuration.service;
 
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.InitializingBean;
 
 import com.tx.component.configuration.model.ConfigProperty;
 import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.querier.model.Querier;
 
 /**
  * <功能简述>
@@ -84,45 +84,44 @@ public class ConfigPropertyManagerComposite implements InitializingBean {
     
     /**
      * @param module
-     * @param params
+     * @param querier
      * @return
      */
-    public List<ConfigProperty> queryList(String module,
-            Map<String, Object> params) {
+    public List<ConfigProperty> queryList(String module, Querier querier) {
         ConfigPropertyManager persister = getConfigPropertyPersister(module);
         
-        List<ConfigProperty> cpList = persister.queryList(module, params);
+        List<ConfigProperty> cpList = persister.queryList(module, querier);
         return cpList;
     }
     
     /**
      * @param module
      * @param parentId
-     * @param params
+     * @param querier
      * @return
      */
     public List<ConfigProperty> queryChildrenByParentId(String module,
-            String parentId, Map<String, Object> params) {
+            String parentId, Querier querier) {
         ConfigPropertyManager persister = getConfigPropertyPersister(module);
         
         List<ConfigProperty> cpList = persister.queryChildrenByParentId(module,
                 parentId,
-                params);
+                querier);
         return cpList;
     }
     
     /**
      * @param module
      * @param parentId
-     * @param params
+     * @param querier
      * @return
      */
     public List<ConfigProperty> queryDescendantsByParentId(String module,
-            String parentId, Map<String, Object> params) {
+            String parentId, Querier querier) {
         ConfigPropertyManager persister = getConfigPropertyPersister(module);
         
         List<ConfigProperty> cpList = persister
-                .queryDescendantsByParentId(module, parentId, params);
+                .queryDescendantsByParentId(module, parentId, querier);
         return cpList;
     }
     

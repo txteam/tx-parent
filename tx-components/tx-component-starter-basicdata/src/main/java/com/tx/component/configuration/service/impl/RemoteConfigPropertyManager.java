@@ -7,15 +7,15 @@
 package com.tx.component.configuration.service.impl;
 
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.tx.component.configuration.client.ConfigAPIClient;
+import com.tx.component.configuration.client.ConfigContextAPIClient;
 import com.tx.component.configuration.model.ConfigProperty;
 import com.tx.component.configuration.registry.ConfigAPIClientRegistry;
 import com.tx.component.configuration.service.ConfigPropertyManager;
 import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.querier.model.Querier;
 
 /**
  * 本地配置属性查询器<br/>
@@ -66,7 +66,7 @@ public class RemoteConfigPropertyManager implements ConfigPropertyManager {
         AssertUtils.notEmpty(module, "module is empty.");
         AssertUtils.notEmpty(code, "code is empty.");
         
-        ConfigAPIClient client = configAPIClientRegistry
+        ConfigContextAPIClient client = configAPIClientRegistry
                 .getConfigAPIClient(module);
         value = value == null ? "" : value;
         
@@ -84,7 +84,7 @@ public class RemoteConfigPropertyManager implements ConfigPropertyManager {
         AssertUtils.notEmpty(module, "module is empty.");
         AssertUtils.notEmpty(code, "code is empty.");
         
-        ConfigAPIClient client = configAPIClientRegistry
+        ConfigContextAPIClient client = configAPIClientRegistry
                 .getConfigAPIClient(module);
         
         ConfigProperty res = client.findByCode(code);
@@ -93,58 +93,57 @@ public class RemoteConfigPropertyManager implements ConfigPropertyManager {
     
     /**
      * @param module
-     * @param params
+     * @param querier
      * @return
      */
     @Override
-    public List<ConfigProperty> queryList(String module,
-            Map<String, Object> params) {
+    public List<ConfigProperty> queryList(String module, Querier querier) {
         AssertUtils.notEmpty(module, "module is empty.");
         
-        ConfigAPIClient client = configAPIClientRegistry
+        ConfigContextAPIClient client = configAPIClientRegistry
                 .getConfigAPIClient(module);
         
-        List<ConfigProperty> resList = client.queryList(params);
+        List<ConfigProperty> resList = client.queryList(querier);
         return resList;
     }
     
     /**
      * @param module
      * @param parentId
-     * @param params
+     * @param querier
      * @return
      */
     @Override
     public List<ConfigProperty> queryChildrenByParentId(String module,
-            String parentId, Map<String, Object> params) {
+            String parentId, Querier querier) {
         AssertUtils.notEmpty(module, "module is empty.");
         AssertUtils.notEmpty(parentId, "parentId is empty.");
         
-        ConfigAPIClient client = configAPIClientRegistry
+        ConfigContextAPIClient client = configAPIClientRegistry
                 .getConfigAPIClient(module);
         
         List<ConfigProperty> resList = client.queryChildrenByParentId(parentId,
-                params);
+                querier);
         return resList;
     }
     
     /**
      * @param module
      * @param parentId
-     * @param params
+     * @param querier
      * @return
      */
     @Override
     public List<ConfigProperty> queryDescendantsByParentId(String module,
-            String parentId, Map<String, Object> params) {
+            String parentId, Querier querier) {
         AssertUtils.notEmpty(module, "module is empty.");
         AssertUtils.notEmpty(parentId, "parentId is empty.");
         
-        ConfigAPIClient client = configAPIClientRegistry
+        ConfigContextAPIClient client = configAPIClientRegistry
                 .getConfigAPIClient(module);
         
         List<ConfigProperty> resList = client
-                .queryDescendantsByParentId(parentId, params);
+                .queryDescendantsByParentId(parentId, querier);
         return resList;
     }
     

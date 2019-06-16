@@ -7,10 +7,10 @@
 package com.tx.component.configuration.context;
 
 import java.util.List;
-import java.util.Map;
 
 import com.tx.component.configuration.model.ConfigProperty;
 import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.querier.model.Querier;
 
 /**
  * 配置容器<br/>
@@ -124,15 +124,15 @@ public class ConfigContext extends ConfigContextBuilder {
     /**
      * 查询配置属性<br/>
      * <功能详细描述>
-     * @param params
+     * @param querier
      * @return [参数说明]
      * 
      * @return List<ConfigProperty> [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public List<ConfigProperty> queryList(Map<String, Object> params) {
-        List<ConfigProperty> resList = doQueryList(this.module, params);
+    public List<ConfigProperty> queryList(Querier querier) {
+        List<ConfigProperty> resList = doQueryList(this.module, querier);
         return resList;
     }
     
@@ -140,18 +140,17 @@ public class ConfigContext extends ConfigContextBuilder {
      * 查询配置属性<br/>
      * <功能详细描述>
      * @param module
-     * @param params
+     * @param querier
      * @return [参数说明]
      * 
      * @return List<ConfigProperty> [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public List<ConfigProperty> queryList(String module,
-            Map<String, Object> params) {
+    public List<ConfigProperty> queryList(String module, Querier querier) {
         AssertUtils.notEmpty(module, "module is empty.");
         
-        List<ConfigProperty> resList = doQueryList(module, params);
+        List<ConfigProperty> resList = doQueryList(module, querier);
         return resList;
     }
     
@@ -159,7 +158,7 @@ public class ConfigContext extends ConfigContextBuilder {
      * 根父节点查询子节点<br/>
      * <功能详细描述>
      * @param parentId
-     * @param params
+     * @param querier
      * @return [参数说明]
      * 
      * @return List<ConfigPropertyItem> [返回类型说明]
@@ -167,12 +166,12 @@ public class ConfigContext extends ConfigContextBuilder {
      * @see [类、类#方法、类#成员]
      */
     public List<ConfigProperty> queryChildrenByParentId(String parentId,
-            Map<String, Object> params) {
+            Querier querier) {
         AssertUtils.notEmpty(parentId, "parentId is empty.");
         
         List<ConfigProperty> resList = doQueryChildrenByParentId(this.module,
                 parentId,
-                params);
+                querier);
         return resList;
     }
     
@@ -181,7 +180,7 @@ public class ConfigContext extends ConfigContextBuilder {
      * <功能详细描述>
      * @param module
      * @param parentId
-     * @param params
+     * @param querier
      * @return [参数说明]
      * 
      * @return List<ConfigPropertyItem> [返回类型说明]
@@ -189,13 +188,13 @@ public class ConfigContext extends ConfigContextBuilder {
      * @see [类、类#方法、类#成员]
      */
     public List<ConfigProperty> queryChildrenByParentId(String module,
-            String parentId, Map<String, Object> params) {
+            String parentId, Querier querier) {
         AssertUtils.notEmpty(module, "module is empty.");
         AssertUtils.notEmpty(parentId, "parentId is empty.");
         
         List<ConfigProperty> resList = doQueryChildrenByParentId(module,
                 parentId,
-                params);
+                querier);
         return resList;
     }
     
@@ -203,7 +202,7 @@ public class ConfigContext extends ConfigContextBuilder {
      * 嵌套查询子级配置项<br/>
      * <功能详细描述>
      * @param parentId
-     * @param params
+     * @param querier
      * @return [参数说明]
      * 
      * @return List<ConfigPropertyItem> [返回类型说明]
@@ -211,12 +210,12 @@ public class ConfigContext extends ConfigContextBuilder {
      * @see [类、类#方法、类#成员]
      */
     public List<ConfigProperty> queryDescendantsByParentId(String parentId,
-            Map<String, Object> params) {
+            Querier querier) {
         AssertUtils.notEmpty(parentId, "parentId is empty.");
         
         List<ConfigProperty> resList = doQueryDescendantsByParentId(this.module,
                 parentId,
-                params);
+                querier);
         return resList;
     }
     
@@ -225,7 +224,7 @@ public class ConfigContext extends ConfigContextBuilder {
      * <功能详细描述>
      * @param module
      * @param parentId
-     * @param params
+     * @param querier
      * @return [参数说明]
      * 
      * @return List<ConfigPropertyItem> [返回类型说明]
@@ -233,13 +232,13 @@ public class ConfigContext extends ConfigContextBuilder {
      * @see [类、类#方法、类#成员]
      */
     public List<ConfigProperty> queryDescendantsByParentId(String module,
-            String parentId, Map<String, Object> params) {
+            String parentId, Querier querier) {
         AssertUtils.notEmpty(module, "module is empty.");
         AssertUtils.notEmpty(parentId, "parentId is empty.");
         
         List<ConfigProperty> resList = doQueryDescendantsByParentId(module,
                 parentId,
-                params);
+                querier);
         return resList;
     }
 }

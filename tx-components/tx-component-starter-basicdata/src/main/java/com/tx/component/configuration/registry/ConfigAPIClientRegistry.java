@@ -1,6 +1,6 @@
 package com.tx.component.configuration.registry;
 
-import com.tx.component.configuration.client.ConfigAPIClient;
+import com.tx.component.configuration.client.ConfigContextAPIClient;
 
 /**
  * 基础数据APIClient注册表<br/>
@@ -23,6 +23,6 @@ public interface ConfigAPIClientRegistry {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    ConfigAPIClient getConfigAPIClient(String module);
+    ConfigContextAPIClient getConfigAPIClient(String module);
     
 }

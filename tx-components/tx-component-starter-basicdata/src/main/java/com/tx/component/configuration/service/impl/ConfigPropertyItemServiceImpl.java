@@ -21,6 +21,8 @@ import com.tx.component.configuration.dao.ConfigPropertyItemDao;
 import com.tx.component.configuration.model.ConfigPropertyItem;
 import com.tx.component.configuration.service.ConfigPropertyItemService;
 import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.querier.model.Filter;
+import com.tx.core.querier.model.Querier;
 
 /**
  * 配置属性项业务层<br/>
@@ -206,10 +208,110 @@ public class ConfigPropertyItemServiceImpl
     
     /**
      * @param module
-     * @param params
+     * @param querier
      * @return
      */
     @Override
+    public List<ConfigPropertyItem> queryList(String module, Querier querier) {
+        AssertUtils.notEmpty(module, "module is empty.");
+        
+        List<ConfigPropertyItem> resList = null;
+        querier = querier == null ? new Querier() : querier;
+        querier.getFilters().add(Filter.eq("module", module));
+        
+        resList = configPropertyItemDao.queryList(querier);
+        return resList;
+    }
+    
+    /**
+     * @param module
+     * @param parentId
+     * @param querier
+     * @return
+     */
+    @Override
+    public List<ConfigPropertyItem> queryChildrenByParentId(String module,
+            String parentId, Querier querier) {
+        AssertUtils.notEmpty(module, "module is empty.");
+        AssertUtils.notEmpty(parentId, "parentId is empty.");
+        
+        List<ConfigPropertyItem> resList = null;
+        querier = querier == null ? new Querier() : querier;
+        querier.getFilters().add(Filter.eq("module", module));
+        querier.getFilters().add(Filter.eq("parentId", parentId));
+        
+        resList = configPropertyItemDao.queryList(querier);
+        return resList;
+    }
+    
+    /**
+     * @param module
+     * @param parentId
+     * @param querier
+     * @return
+     */
+    @Override
+    public List<ConfigPropertyItem> queryDescendantsByParentId(String module,
+            String parentId, Querier querier) {
+        AssertUtils.notEmpty(module, "module is empty.");
+        AssertUtils.notEmpty(parentId, "parentId is empty.");
+        
+        querier = querier == null ? new Querier() : querier;
+        querier.getFilters().add(Filter.eq("module", module));
+        
+        Set<String> ids = new HashSet<>();
+        Set<String> parentIds = new HashSet<>();
+        parentIds.add(parentId);
+        
+        List<ConfigPropertyItem> resListTemp = doNestedQueryList(ids,
+                parentIds,
+                querier);
+        
+        return resListTemp;
+    }
+    
+    /**
+     * 查询嵌套列表<br/>
+     * <功能详细描述>
+     * @param ids
+     * @param parentIds
+     * @param querier
+     * @return [参数说明]
+     * 
+     * @return List<ConfigPropertyItem> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    private List<ConfigPropertyItem> doNestedQueryList(Set<String> ids,
+            Set<String> parentIds, Querier querier) {
+        if (CollectionUtils.isEmpty(parentIds)) {
+            return new ArrayList<ConfigPropertyItem>();
+        }
+        
+        //ids避免数据出错时导致无限循环
+        Querier newQuerier = (Querier) querier.clone();
+        newQuerier.getParams().put("parentIds", parentIds);
+        List<ConfigPropertyItem> resList = configPropertyItemDao
+                .queryList(newQuerier);
+        
+        Set<String> newParentIds = new HashSet<>();
+        for (ConfigPropertyItem cpTemp : resList) {
+            if (!ids.contains(cpTemp.getId())) {
+                newParentIds.add(cpTemp.getId());
+            }
+            ids.add(cpTemp.getId());
+        }
+        //嵌套查询下一层级
+        resList.addAll(doNestedQueryList(ids, newParentIds, querier));
+        
+        return resList;
+    }
+    
+    /**
+     * @param module
+     * @param params
+     * @return
+     */
     public List<ConfigPropertyItem> queryList(String module,
             Map<String, Object> params) {
         AssertUtils.notEmpty(module, "module is empty.");
@@ -229,7 +331,6 @@ public class ConfigPropertyItemServiceImpl
      * @param params
      * @return
      */
-    @Override
     public List<ConfigPropertyItem> queryChildrenByParentId(String module,
             String parentId, Map<String, Object> params) {
         AssertUtils.notEmpty(module, "module is empty.");
@@ -250,7 +351,6 @@ public class ConfigPropertyItemServiceImpl
      * @param params
      * @return
      */
-    @Override
     public List<ConfigPropertyItem> queryDescendantsByParentId(String module,
             String parentId, Map<String, Object> params) {
         AssertUtils.notEmpty(module, "module is empty.");

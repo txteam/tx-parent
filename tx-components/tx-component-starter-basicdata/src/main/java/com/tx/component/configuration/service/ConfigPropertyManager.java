@@ -7,9 +7,9 @@
 package com.tx.component.configuration.service;
 
 import java.util.List;
-import java.util.Map;
 
 import com.tx.component.configuration.model.ConfigProperty;
+import com.tx.core.querier.model.Querier;
 
 /**
  * 配置属性持久接口<br/>
@@ -51,22 +51,21 @@ public interface ConfigPropertyManager {
      * 查询配置属性<br/>
      * <功能详细描述>
      * @param module
-     * @param params
+     * @param querier
      * @return [参数说明]
      * 
      * @return List<ConfigProperty> [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public List<ConfigProperty> queryList(String module,
-            Map<String, Object> params);
+    public List<ConfigProperty> queryList(String module, Querier querier);
     
     /**
      * 根父节点查询子节点<br/>
      * <功能详细描述>
      * @param module
      * @param parentId
-     * @param params
+     * @param querier
      * @return [参数说明]
      * 
      * @return List<ConfigPropertyItem> [返回类型说明]
@@ -74,14 +73,14 @@ public interface ConfigPropertyManager {
      * @see [类、类#方法、类#成员]
      */
     List<ConfigProperty> queryChildrenByParentId(String module, String parentId,
-            Map<String, Object> params);
+            Querier querier);
     
     /**
      * 嵌套查询子级配置项<br/>
      * <功能详细描述>
      * @param module
      * @param parentId
-     * @param params
+     * @param querier
      * @return [参数说明]
      * 
      * @return List<ConfigPropertyItem> [返回类型说明]
@@ -89,7 +88,7 @@ public interface ConfigPropertyManager {
      * @see [类、类#方法、类#成员]
      */
     List<ConfigProperty> queryDescendantsByParentId(String module,
-            String parentId, Map<String, Object> params);
+            String parentId, Querier querier);
     
     /**
      * 更新配置项<br/>

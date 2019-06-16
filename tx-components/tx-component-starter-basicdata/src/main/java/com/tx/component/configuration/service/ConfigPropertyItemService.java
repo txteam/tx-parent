@@ -1,9 +1,9 @@
 package com.tx.component.configuration.service;
 
 import java.util.List;
-import java.util.Map;
 
 import com.tx.component.configuration.model.ConfigPropertyItem;
+import com.tx.core.querier.model.Querier;
 
 /**
  * 配置项业务层<br/>
@@ -110,8 +110,7 @@ public interface ConfigPropertyItemService {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    List<ConfigPropertyItem> queryList(String module,
-            Map<String, Object> params);
+    List<ConfigPropertyItem> queryList(String module, Querier querier);
     
     /**
      * 根父节点查询子节点<br/>
@@ -126,7 +125,7 @@ public interface ConfigPropertyItemService {
      * @see [类、类#方法、类#成员]
      */
     List<ConfigPropertyItem> queryChildrenByParentId(String module,
-            String parentId, Map<String, Object> params);
+            String parentId, Querier querier);
     
     /**
      * 嵌套查询子级配置项<br/>
@@ -141,6 +140,6 @@ public interface ConfigPropertyItemService {
      * @see [类、类#方法、类#成员]
      */
     List<ConfigPropertyItem> queryDescendantsByParentId(String module,
-            String parentId, Map<String, Object> params);
+            String parentId, Querier querier);
     
 }

@@ -19,5 +19,4 @@ import com.tx.component.basicdata.facade.BasicDataFacade;
  */
 public interface BasicDataAPIClient extends BasicDataFacade{
     
-    
 }

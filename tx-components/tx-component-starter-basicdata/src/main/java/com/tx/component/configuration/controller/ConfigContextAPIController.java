@@ -7,25 +7,24 @@
 package com.tx.component.configuration.controller;
 
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tx.component.configuration.facade.ConfigContextFacade;
+import com.tx.component.configuration.model.ConfigProperty;
 import com.tx.component.configuration.model.ConfigPropertyItem;
 import com.tx.component.configuration.service.ConfigPropertyItemService;
 import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.querier.model.Querier;
 
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
 
 /**
  * 配置属性控制器 <br/>
@@ -37,9 +36,10 @@ import io.swagger.annotations.ApiOperation;
  * @since  [产品/模块版本]
  */
 @RestController
-@Api(value = "/api/config", tags = "配置容器API")
+@Api(tags = "配置容器API")
 @RequestMapping(value = "/api/config")
-public class ConfigAPIController implements InitializingBean {
+public class ConfigContextAPIController
+        implements ConfigContextFacade, InitializingBean {
     
     /** 当前项目所属模块 */
     private String module;
@@ -49,7 +49,7 @@ public class ConfigAPIController implements InitializingBean {
     private ConfigPropertyItemService configPropertyItemService;
     
     /** <默认构造函数> */
-    public ConfigAPIController(String module,
+    public ConfigContextAPIController(String module,
             ConfigPropertyItemService configPropertyItemService) {
         super();
         this.module = module;
@@ -77,18 +77,13 @@ public class ConfigAPIController implements InitializingBean {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @ApiOperation(value = "修改配置属性值", notes = "")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "code", value = "code", required = true, dataType = "string", paramType = "path"),
-            @ApiImplicitParam(name = "value", value = "value", required = true, dataType = "string", paramType = "path") })
-    @RequestMapping(value = "/{code}/{value}", method = RequestMethod.PATCH)
+    @Override
     public boolean patch(
             @PathVariable(required = true, name = "code") String code,
             @PathVariable(required = false, name = "value") String value) {
         boolean res = this.configPropertyItemService.patch(this.module,
                 code,
                 value);
-        
         return res;
     }
     
@@ -102,14 +97,11 @@ public class ConfigAPIController implements InitializingBean {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @ApiOperation(value = "根据配置项编码获取配置属性实例", notes = "")
-    @ApiImplicitParam(name = "code", value = "编码", required = true, dataType = "string", paramType = "path")
-    @RequestMapping(value = "/code/{code}", method = RequestMethod.GET)
-    public ConfigPropertyItem findByCode(
+    @Override
+    public ConfigProperty findByCode(
             @PathVariable(required = true, name = "code") String code) {
         ConfigPropertyItem configProperty = this.configPropertyItemService
                 .findByCode(this.module, code);
-        
         return configProperty;
     }
     
@@ -123,13 +115,12 @@ public class ConfigAPIController implements InitializingBean {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @ApiOperation(value = "查询配置项清单", notes = "")
-    @ApiImplicitParam(name = "params", value = "参数", required = true, dataType = "string", paramType = "path")
-    @RequestMapping(value = "/list", method = RequestMethod.GET)
-    public List<ConfigPropertyItem> queryList(
-            @RequestParam Map<String, Object> params) {
-        List<ConfigPropertyItem> cpiList = this.configPropertyItemService
-                .queryList(this.module, params);
+    @Override
+    public List<ConfigProperty> queryList(@RequestBody Querier querier) {
+        List<ConfigProperty> cpiList = this.configPropertyItemService
+                .queryList(this.module, querier)
+                .stream()
+                .collect(Collectors.toList());
         return cpiList;
     }
     
@@ -144,13 +135,14 @@ public class ConfigAPIController implements InitializingBean {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @ApiOperation(value = "查询子集配置项清单", notes = "")
-    @RequestMapping(value = "/children/{parentId}", method = RequestMethod.GET)
-    public List<ConfigPropertyItem> queryChildrenByParentId(
+    @Override
+    public List<ConfigProperty> queryChildrenByParentId(
             @PathVariable(required = true, name = "parentId") String parentId,
-            @RequestParam Map<String, Object> params) {
-        List<ConfigPropertyItem> cpiList = this.configPropertyItemService
-                .queryChildrenByParentId(this.module, parentId, params);
+            @RequestBody Querier querier) {
+        List<ConfigProperty> cpiList = this.configPropertyItemService
+                .queryChildrenByParentId(this.module, parentId, querier)
+                .stream()
+                .collect(Collectors.toList());
         return cpiList;
     }
     
@@ -165,13 +157,14 @@ public class ConfigAPIController implements InitializingBean {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @ApiOperation(value = "查询所有孙子节点配置项清单", notes = "")
-    @RequestMapping(value = "/descendants/{parentId}", method = RequestMethod.GET)
-    public List<ConfigPropertyItem> queryDescendantsByParentId(
+    @Override
+    public List<ConfigProperty> queryDescendantsByParentId(
             @PathVariable(required = true, name = "parentId") String parentId,
-            @RequestParam Map<String, Object> params) {
-        List<ConfigPropertyItem> cpiList = this.configPropertyItemService
-                .queryDescendantsByParentId(this.module, parentId, params);
+            @RequestBody Querier querier) {
+        List<ConfigProperty> cpiList = this.configPropertyItemService
+                .queryDescendantsByParentId(this.module, parentId, querier)
+                .stream()
+                .collect(Collectors.toList());
         return cpiList;
     }
     

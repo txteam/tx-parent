@@ -9,10 +9,10 @@
 package com.tx.component.configuration.context;
 
 import java.util.List;
-import java.util.Map;
 
 import com.tx.component.configuration.model.ConfigProperty;
 import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.querier.model.Querier;
 
 /**
  * 配置容器基础配置吃撑类<br/>
@@ -54,16 +54,15 @@ public abstract class ConfigContextBuilder extends ConfigContextConfigurator {
      * 查询配置项目列表<br/>
      * <功能详细描述>
      * @param module
-     * @param params
+     * @param querier
      * @return [参数说明]
      * 
      * @return List<ConfigProperty> [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    protected List<ConfigProperty> doQueryList(String module,
-            Map<String, Object> params) {
-        List<ConfigProperty> cpList = this.composite.queryList(module, params);
+    protected List<ConfigProperty> doQueryList(String module, Querier querier) {
+        List<ConfigProperty> cpList = this.composite.queryList(module, querier);
         return cpList;
     }
     
@@ -72,7 +71,7 @@ public abstract class ConfigContextBuilder extends ConfigContextConfigurator {
      * <功能详细描述>
      * @param module
      * @param parentId
-     * @param params
+     * @param querier
      * @return [参数说明]
      * 
      * @return List<ConfigProperty> [返回类型说明]
@@ -80,9 +79,9 @@ public abstract class ConfigContextBuilder extends ConfigContextConfigurator {
      * @see [类、类#方法、类#成员]
      */
     protected List<ConfigProperty> doQueryChildrenByParentId(String module,
-            String parentId, Map<String, Object> params) {
+            String parentId, Querier querier) {
         List<ConfigProperty> cpList = this.composite
-                .queryChildrenByParentId(module, parentId, params);
+                .queryChildrenByParentId(module, parentId, querier);
         return cpList;
     }
     
@@ -91,7 +90,7 @@ public abstract class ConfigContextBuilder extends ConfigContextConfigurator {
      * <功能详细描述>
      * @param module
      * @param parentId
-     * @param params
+     * @param querier
      * @return [参数说明]
      * 
      * @return List<ConfigProperty> [返回类型说明]
@@ -99,9 +98,9 @@ public abstract class ConfigContextBuilder extends ConfigContextConfigurator {
      * @see [类、类#方法、类#成员]
      */
     protected List<ConfigProperty> doQueryDescendantsByParentId(String module,
-            String parentId, Map<String, Object> params) {
+            String parentId, Querier querier) {
         List<ConfigProperty> cpList = this.composite
-                .queryDescendantsByParentId(module, parentId, params);
+                .queryDescendantsByParentId(module, parentId, querier);
         return cpList;
     }
     

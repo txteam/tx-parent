@@ -5,7 +5,6 @@ package tools.generator;
 
 import java.io.IOException;
 
-import com.tx.component.basicdata.model.DataDict;
 import com.tx.component.configuration.model.ConfigPropertyItem;
 import com.tx.core.generator2.CodeGenerator;
 
@@ -20,8 +19,13 @@ import com.tx.core.generator2.CodeGenerator;
 public class BasicDataCodeGenerator {
     
     public static void main(String[] args) throws IOException {
-        //Class<?> entityType = DataDict.class;
         Class<?> entityType = ConfigPropertyItem.class;
+        
+        //基础数据逻辑代码生成存放目录
+        String project_path = org.springframework.util.StringUtils
+                .cleanPath(entityType.getResource("/").getPath() + "../..");
+        String codeBaseFolder = project_path;
+        CodeGenerator.BASE_CODE_FOLDER = codeBaseFolder;
         
         CodeGenerator.generateDBScript(entityType);
         CodeGenerator.generateSqlMap(entityType);

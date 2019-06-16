@@ -9,7 +9,6 @@ package com.tx.component.configuration.service.impl;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -29,6 +28,7 @@ import com.tx.component.configuration.model.ConfigPropertyItem;
 import com.tx.component.configuration.service.ConfigPropertyItemService;
 import com.tx.component.configuration.service.ConfigPropertyManager;
 import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.querier.model.Querier;
 import com.tx.core.util.PinyinUtils;
 import com.tx.core.util.XstreamUtils;
 
@@ -354,14 +354,13 @@ public class LocalConfigPropertyManager
     }
     
     /**
-     * @param params
+     * @param querier
      * @return
      */
     @Override
-    public List<ConfigProperty> queryList(String module,
-            Map<String, Object> params) {
+    public List<ConfigProperty> queryList(String module, Querier querier) {
         List<ConfigPropertyItem> cpiList = this.configPropertyItemService
-                .queryList(this.module, params);
+                .queryList(this.module, querier);
         List<ConfigProperty> resList = new ArrayList<ConfigProperty>();
         for (ConfigPropertyItem itemTemp : cpiList) {
             if (!codes.contains(itemTemp.getCode())) {
@@ -375,14 +374,14 @@ public class LocalConfigPropertyManager
     /**
      * @param module
      * @param parentId
-     * @param params
+     * @param querier
      * @return
      */
     @Override
     public List<ConfigProperty> queryChildrenByParentId(String module,
-            String parentId, Map<String, Object> params) {
+            String parentId, Querier querier) {
         List<ConfigPropertyItem> cpiList = this.configPropertyItemService
-                .queryChildrenByParentId(this.module, parentId, params);
+                .queryChildrenByParentId(this.module, parentId, querier);
         List<ConfigProperty> resList = new ArrayList<ConfigProperty>();
         for (ConfigPropertyItem itemTemp : cpiList) {
             if (!codes.contains(itemTemp.getCode())) {
@@ -396,14 +395,14 @@ public class LocalConfigPropertyManager
     /**
      * @param module
      * @param parentId
-     * @param params
+     * @param querier
      * @return
      */
     @Override
     public List<ConfigProperty> queryDescendantsByParentId(String module,
-            String parentId, Map<String, Object> params) {
+            String parentId, Querier querier) {
         List<ConfigPropertyItem> cpiList = this.configPropertyItemService
-                .queryDescendantsByParentId(this.module, parentId, params);
+                .queryDescendantsByParentId(this.module, parentId, querier);
         List<ConfigProperty> resList = new ArrayList<ConfigProperty>();
         for (ConfigPropertyItem itemTemp : cpiList) {
             if (!codes.contains(itemTemp.getCode())) {

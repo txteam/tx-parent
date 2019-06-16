@@ -9,7 +9,7 @@ package com.tx.component.configuration.registry.impl;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.tx.component.configuration.client.ConfigAPIClient;
+import com.tx.component.configuration.client.ConfigContextAPIClient;
 import com.tx.component.configuration.registry.ConfigAPIClientRegistry;
 
 import feign.Client;
@@ -37,7 +37,7 @@ public class ConfigAPIClientRegistryImpl implements ConfigAPIClientRegistry {
     
     private Contract feignContract;
     
-    private final Map<String, ConfigAPIClient> configAPIClientMap = new HashMap<>();
+    private final Map<String, ConfigContextAPIClient> configAPIClientMap = new HashMap<>();
     
     /** <默认构造函数> */
     public ConfigAPIClientRegistryImpl(Decoder decoder, Encoder encoder,
@@ -54,17 +54,17 @@ public class ConfigAPIClientRegistryImpl implements ConfigAPIClientRegistry {
      * @return
      */
     @Override
-    public ConfigAPIClient getConfigAPIClient(String module) {
+    public ConfigContextAPIClient getConfigAPIClient(String module) {
         if (this.configAPIClientMap.containsKey(module)) {
             return this.configAPIClientMap.get(module);
         }
-        ConfigAPIClient newClient = Feign.builder()
+        ConfigContextAPIClient newClient = Feign.builder()
                 .client(client)
                 .encoder(encoder)
                 .decoder(decoder)
                 .contract(this.feignContract)
                 //.requestInterceptor(new BasicAuthRequestInterceptor("user", "user"))
-                .target(ConfigAPIClient.class,
+                .target(ConfigContextAPIClient.class,
                         "http://" + module + "/api/config");
         this.configAPIClientMap.put(module, newClient);
         return newClient;

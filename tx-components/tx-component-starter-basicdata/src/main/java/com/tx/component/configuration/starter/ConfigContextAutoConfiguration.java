@@ -32,7 +32,7 @@ import com.tx.component.basicdata.context.BasicDataContextFactory;
 import com.tx.component.configuration.ConfigContextConstants;
 import com.tx.component.configuration.context.ConfigContextFactory;
 import com.tx.component.configuration.context.ConfigPropertyServiceSupportCacheProxyCreator;
-import com.tx.component.configuration.controller.ConfigAPIController;
+import com.tx.component.configuration.controller.ConfigContextAPIController;
 import com.tx.component.configuration.registry.ConfigAPIClientRegistry;
 import com.tx.component.configuration.service.ConfigPropertyItemService;
 import com.tx.component.configuration.service.ConfigPropertyManager;
@@ -222,9 +222,9 @@ public class ConfigContextAutoConfiguration
      * @see [类、类#方法、类#成员]
      */
     @Bean
-    public ConfigAPIController configAPIController(
+    public ConfigContextAPIController configAPIController(
             ConfigPropertyItemService configPropertyItemService) {
-        ConfigAPIController controller = new ConfigAPIController(module,
+        ConfigContextAPIController controller = new ConfigContextAPIController(module,
                 configPropertyItemService);
         return controller;
     }
