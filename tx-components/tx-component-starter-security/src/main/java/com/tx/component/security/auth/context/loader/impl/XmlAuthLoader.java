@@ -164,7 +164,7 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
                     this.authConfigLocaions,
                     e.toString());
             logger.error("加载权限配置失败", e);
-            throw new AuthContextInitException("权限配置加载异常.", e);
+            throw new SecurityContextInitException("权限配置加载异常.", e);
         }
         
         // 初始化局部权限映射以及，根权限树
@@ -202,7 +202,7 @@ public class XmlAuthLoader implements AuthLoader, ApplicationContextAware {
                 loadAuthItemConfigFromAuthTypeElement(authItemMap,
                         authTypeElList);
             } catch (Exception e) {
-                throw new AuthContextInitException("权限配置加载异常.", e);
+                throw new SecurityContextInitException("权限配置加载异常.", e);
             } finally {
                 IOUtils.closeQuietly(io);
             }

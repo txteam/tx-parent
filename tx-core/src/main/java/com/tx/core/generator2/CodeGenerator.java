@@ -19,6 +19,7 @@ import com.tx.core.generator2.model.DBScriptGeneratorModel;
 import com.tx.core.generator2.model.DaoGeneratorModel;
 import com.tx.core.generator2.model.ServiceGeneratorModel;
 import com.tx.core.generator2.model.SqlMapGeneratorModel;
+import com.tx.core.generator2.model.ViewTypeEnum;
 import com.tx.core.util.FreeMarkerUtils;
 import com.tx.core.util.dialect.DataSourceTypeEnum;
 
@@ -66,6 +67,19 @@ public class CodeGenerator {
     private static String facadeTemplateFilePath = "com/tx/core/generator2/defaultftl/facade.ftl";
     
     /**
+     * 生成控制层逻辑<br/>
+     * <功能详细描述>
+     * @param entityType [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static <T> void generateController(Class<?> entityType) {
+        generateController(entityType, ViewTypeEnum.LIST);
+    }
+    
+    /**
      * 生成控制层逻辑
      * <功能详细描述>
      * @param jpaMetaClass
@@ -75,9 +89,10 @@ public class CodeGenerator {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public static <T> void generateController(Class<?> entityType) {
+    public static <T> void generateController(Class<?> entityType,
+            ViewTypeEnum viewType) {
         ControllerGeneratorModel controllerModel = new ControllerGeneratorModel(
-                entityType);
+                entityType, viewType);
         
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("controller", controllerModel);
@@ -265,29 +280,4 @@ public class CodeGenerator {
         String packageName = servicePaths[servicePaths.length - 1];
         return packageName;
     }
-    
-    //    /**
-    //     * 清空已存在生成代码目录
-    //     * <功能详细描述>
-    //     * 
-    //     * @return void [返回类型说明]
-    //     * @throws IOException 
-    //     * @exception throws [异常类型] [异常说明]
-    //     * @see [类、类#方法、类#成员]
-    //     */
-    //    public static void clearGeneratorPath() throws IOException {
-    //        
-    //    	try {
-    //    		File dest = FileUtils.getFile(BASE_CODE_FOLDER);
-    //    		if(!dest.exists()) {
-    //    			dest.mkdirs();
-    //    		}
-    //			FileUtils.cleanDirectory(dest);
-    //		} catch (IOException e) {
-    //			logger.error("清空代码生成目录失败，请检查目录是否被占用", e);
-    //			throw e;
-    //		}
-    //    	
-    //        logger.info("已清空代码生成目录：" + BASE_CODE_FOLDER);
-    //    }
 }

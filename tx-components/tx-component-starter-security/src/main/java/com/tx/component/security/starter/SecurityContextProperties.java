@@ -6,8 +6,11 @@
  */
 package com.tx.component.security.starter;
 
+import java.time.Duration;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import com.tx.component.security.SecurityConstants;
 import com.tx.core.starter.persister.PersisterTypeEnum;
 
 /**
@@ -19,7 +22,7 @@ import com.tx.core.starter.persister.PersisterTypeEnum;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-@ConfigurationProperties(prefix = "tx.security")
+@ConfigurationProperties(prefix = SecurityConstants.PROPERTIES_PREFIX)
 public class SecurityContextProperties {
     
     /** 命令容器是否启动 */
@@ -33,6 +36,9 @@ public class SecurityContextProperties {
     
     /** 持久化类型 */
     private PersisterTypeEnum persister = PersisterTypeEnum.mybatis;
+    
+    /** 缓存的有效期:默认缓存一天 */
+    private Duration duration = Duration.ofDays(1);
     
     /**
      * @return 返回 enable

@@ -10,113 +10,161 @@
 	</resultMap>
 	
 	<!-- auto generate default find -->
-	<select id="findRoleRefItem" 
+	<select id="find" 
 		parameterType="com.tx.component.security.role.model.RoleRefItem"
 		resultMap="roleRefItemMap">
 		SELECT 
-				TRRI.id,
-				TRRI.refType,
-				TRRI.refId,
-				TRRI.roleId,
-				TRRI.effectiveDate,
-				TRRI.expiryDate,
-				TRRI.createOperatorId,
-				TRRI.createDate
-		  FROM sec_roleref TRRI
+				RRI.id,
+				RRI.refType,
+				RRI.refId,
+				RRI.roleId,
+				RRI.effectiveDate,
+				RRI.expiryDate,
+				RRI.createOperatorId,
+				RRI.createDate
+		  FROM sec_roleref RRI
 		 WHERE
 		<trim prefixOverrides="AND | OR">
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
-	            AND TRRI.ID = #{id}
+	            AND RRI.ID = #{id}
 	        </if>
 		</trim>
 	</select>
 	
 	<!-- auto generate default query -->
-	<select id="queryRoleRefItem" 
+	<select id="query" 
 		parameterType="java.util.Map"
 		resultMap="roleRefItemMap">
 		SELECT 
-				TRRI.id,
-				TRRI.refType,
-				TRRI.refId,
-				TRRI.roleId,
-				TRRI.effectiveDate,
-				TRRI.expiryDate,
-				TRRI.createOperatorId,
-				TRRI.createDate
-		  FROM sec_roleref TRRI
+				RRI.id,
+				RRI.refType,
+				RRI.refId,
+				RRI.roleId,
+				RRI.effectiveDate,
+				RRI.expiryDate,
+				RRI.createOperatorId,
+				RRI.createDate
+		  FROM sec_roleref RRI
 		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(conditions)">
+			<foreach collection="conditions" item="conditionTemp">
+			<choose>  
+		        <when test="conditionTemp.withoutValue">
+		        	AND ${conditionTemp.column} ${conditionTemp.operator}
+		        </when>
+		        <when test="conditionTemp.foreach">  
+		            AND ${conditionTemp.column} ${conditionTemp.operator} <foreach collection="conditionTemp.value" item="valueTemp" open="(" close=")" separator=",">#{valueTemp}</foreach>
+		        </when>
+		        <otherwise>  
+		            AND ${conditionTemp.column} ${conditionTemp.operator} #{conditionTemp.value}
+		        </otherwise>
+			</choose>
+			</foreach>
+	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
-	            AND TRRI.id = #{id,javaType=java.lang.String}
+	            AND RRI.id = #{id,javaType=java.lang.String}
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(refType)">  
-	            AND TRRI.refType = #{refType,javaType=java.lang.String}
+	            AND RRI.refType = #{refType,javaType=java.lang.String}
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(refId)">  
-	            AND TRRI.refId = #{refId,javaType=java.lang.String}
+	            AND RRI.refId = #{refId,javaType=java.lang.String}
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(roleId)">  
-	            AND TRRI.roleId = #{roleId,javaType=java.lang.String}
+	            AND RRI.roleId = #{roleId,javaType=java.lang.String}
 	        </if>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(effectiveDate)">  
-	            AND TRRI.effectiveDate = #{effectiveDate,javaType=java.util.Date}
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(effective)">  
+	        	<choose>  
+			        <when test="@com.tx.core.util.OgnlUtils@isTrue(effective)">  
+			            <![CDATA[ AND ((RRI.expiryDate IS NULL OR RRI.expiryDate <= now(6)) AND (RRI.effectiveDate IS NULL OR RRI.effective >= now(6))) ]]>
+			        </when>
+			        <otherwise>  
+			            <![CDATA[ AND ((RRI.expiryDate IS NOT NULL AND RRI.expiryDate > now(6)) AND (RRI.effectiveDate IS NOT NULL OR RRI.effective < now(6))) ]]>
+			        </otherwise>  
+			    </choose>
 	        </if>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(expiryDate)">  
-	            AND TRRI.expiryDate = #{expiryDate,javaType=java.util.Date}
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(expried)">
+	        	<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(expried)">  
+		            AND ((RRI.expiryDate IS NOT NULL AND RRI.expiryDate > now(6))
+		        </if>
 	        </if>
 			<if test="role != null">
 				<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(role.id)">  
-		            AND TRRI.role = #{role.id,javaType=java.lang.String}
+		            AND RRI.role = #{role.id,javaType=java.lang.String}
 		        </if>
 	        </if>
 		</trim>
 		<choose>  
-	        <when test="@com.tx.core.util.OgnlUtils@isNotEmpty(orderSql)">  
-	            ORDER BY ${orderSql}
+	        <when test="@com.tx.core.util.OgnlUtils@isNotEmpty(orders)">  
+	            ORDER BY <foreach collection="orders" item="orderTemp" separator=",">${orderTemp.column} ${orderTemp.direction}</foreach>
 	        </when>
 	        <otherwise>  
-	            ORDER BY ID
+	            ORDER BY createDate DESC
 	        </otherwise>  
 	    </choose>
 	</select>
 	
 		<!-- auto generate default count -->
-	<select id="queryRoleRefItemCount" 
+	<select id="queryCount" 
 		parameterType="java.util.Map"
 		resultType="java.lang.Integer">
 		SELECT COUNT(1)
 		  FROM RoleRefItem TRRI
 		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(conditions)">
+			<foreach collection="conditions" item="conditionTemp">
+			<choose>  
+		        <when test="conditionTemp.withoutValue">
+		        	AND ${conditionTemp.column} ${conditionTemp.operator}
+		        </when>
+		        <when test="conditionTemp.foreach">  
+		            AND ${conditionTemp.column} ${conditionTemp.operator} <foreach collection="conditionTemp.value" item="valueTemp" open="(" close=")" separator=",">#{valueTemp}</foreach>
+		        </when>
+		        <otherwise>  
+		            AND ${conditionTemp.column} ${conditionTemp.operator} #{conditionTemp.value}
+		        </otherwise>
+			</choose>
+			</foreach>
+	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
-	            AND TRRI.id = #{id,javaType=java.lang.String}
+	            AND RRI.id = #{id,javaType=java.lang.String}
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(refType)">  
-	            AND TRRI.refType = #{refType,javaType=java.lang.String}
+	            AND RRI.refType = #{refType,javaType=java.lang.String}
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(refId)">  
-	            AND TRRI.refId = #{refId,javaType=java.lang.String}
+	            AND RRI.refId = #{refId,javaType=java.lang.String}
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(roleId)">  
-	            AND TRRI.roleId = #{roleId,javaType=java.lang.String}
+	            AND RRI.roleId = #{roleId,javaType=java.lang.String}
 	        </if>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(effectiveDate)">  
-	            AND TRRI.effectiveDate = #{effectiveDate,javaType=java.util.Date}
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(effective)">  
+	        	<choose>  
+			        <when test="@com.tx.core.util.OgnlUtils@isTrue(effective)">  
+			            <![CDATA[ AND ((RRI.expiryDate IS NULL OR RRI.expiryDate <= now(6)) AND (RRI.effectiveDate IS NULL OR RRI.effective >= now(6))) ]]>
+			        </when>
+			        <otherwise>  
+			            <![CDATA[ AND ((RRI.expiryDate IS NOT NULL AND RRI.expiryDate > now(6)) AND (RRI.effectiveDate IS NOT NULL OR RRI.effective < now(6))) ]]>
+			        </otherwise>  
+			    </choose>
 	        </if>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(expiryDate)">  
-	            AND TRRI.expiryDate = #{expiryDate,javaType=java.util.Date}
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(expried)">
+	        	<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(expried)">  
+		            AND ((RRI.expiryDate IS NOT NULL AND RRI.expiryDate > now(6))
+		        </if>
 	        </if>
 			<if test="role != null">
 				<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(role.id)">  
-		            AND TRRI.role = #{role.id,javaType=java.lang.String}
+		            AND RRI.role = #{role.id,javaType=java.lang.String}
 		        </if>
 	        </if>
 		</trim>
 	</select>
     
     <!-- auto generate default insert -->
-    <insert id="insertRoleRefItemToHis" 
+    <insert id="insertToHis" 
 		parameterType="com.tx.component.security.role.model.RoleRefItem">
-		INSERT INTO sec_roleref
+		INSERT INTO sec_roleref_his
 		(
 			id,
 			refType,
@@ -140,7 +188,7 @@
 		)
 	</insert>
     
-    <insert id="insertRoleRefItem" 
+    <insert id="insert" 
 		parameterType="com.tx.component.security.role.model.RoleRefItem">
 		INSERT INTO sec_roleref
 		(
@@ -167,7 +215,7 @@
 	</insert>
 	
 	<!-- auto generate default delete -->
-	<delete id="deleteRoleRefItem" 
+	<delete id="delete" 
 		parameterType="com.tx.component.security.role.model.RoleRefItem">
 		DELETE FROM sec_roleref  WHERE
 		<trim prefixOverrides="AND | OR">
@@ -178,7 +226,7 @@
 	</delete>
 
 	<!-- auto generate default update -->
-	<update id="updateRoleRefItem"
+	<update id="update"
 	    parameterType="java.util.Map">  
 	    UPDATE sec_roleref
 	    <trim prefix="SET" suffixOverrides=",">
@@ -204,5 +252,4 @@
 </mapper>
 <!--
 sqlMap生成描述:
-
 -->

@@ -7,7 +7,6 @@
 package com.tx.component.role.context;
 
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanNameAware;
@@ -19,6 +18,7 @@ import org.springframework.context.ApplicationContextAware;
 
 import com.tx.component.role.model.RoleType;
 import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.querier.model.Querier;
 
 /**
  * 角色注册表<br/>
@@ -136,15 +136,15 @@ public class RoleTypeRegistry
     /**
      * 根据条件查询角色类型列表<br/>
      * <功能详细描述>
-     * @param params
+     * @param querier
      * @return [参数说明]
      * 
      * @return List<RoleType> [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public List<RoleType> queryList(Map<String, Object> params) {
-        List<RoleType> resList = this.composite.queryList(params);
+    public List<RoleType> queryList(Querier querier) {
+        List<RoleType> resList = this.composite.queryList(querier);
         return resList;
     }
 }

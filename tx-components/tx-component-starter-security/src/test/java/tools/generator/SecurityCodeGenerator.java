@@ -6,6 +6,7 @@ package tools.generator;
 import java.io.IOException;
 
 import com.tx.component.auth.model.AuthRefItem;
+import com.tx.component.role.model.RoleRefItem;
 import com.tx.core.generator2.CodeGenerator;
 
 /**
@@ -16,10 +17,10 @@ import com.tx.core.generator2.CodeGenerator;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public class Generator {
+public class SecurityCodeGenerator {
 
     public static void main(String[] args) throws IOException {
-        Class<?> entityType = AuthRefItem.class;
+        Class<?> entityType = RoleRefItem.class;
 
         //基础数据逻辑代码生成存放目录com.tx.component.basicdata.generator.
         String project_path = org.springframework.util.StringUtils

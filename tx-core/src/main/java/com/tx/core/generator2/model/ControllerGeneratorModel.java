@@ -17,12 +17,11 @@ import org.springframework.util.ClassUtils;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.generator2.util.GeneratorUtils;
 import com.tx.core.generator2.util.GeneratorUtils.EntityProperty;
-import com.tx.core.util.JPAParseUtils.JPAColumnInfo;
 
 import springfox.documentation.annotations.ApiIgnore;
 
 /**
- * <功能简述>
+ * 控制层生成模型<br/>
  * <功能详细描述>
  * 
  * @author  brady
@@ -31,6 +30,9 @@ import springfox.documentation.annotations.ApiIgnore;
  * @since  [产品/模块版本]
  */
 public class ControllerGeneratorModel {
+    
+    /** 视图类型 */
+    private final ViewTypeEnum viewType;
     
     /** 所在包名 */
     private final String basePackage;
@@ -67,11 +69,19 @@ public class ControllerGeneratorModel {
     
     /** <默认构造函数> */
     public ControllerGeneratorModel(Class<?> entityType) {
+        this(entityType, ViewTypeEnum.LIST);
+    }
+    
+    /** <默认构造函数> */
+    public ControllerGeneratorModel(Class<?> entityType,
+            ViewTypeEnum viewType) {
         super();
         String basePath = ClassUtils.convertClassNameToResourcePath(
                 entityType.getName()) + "/../..";
         basePath = org.springframework.util.StringUtils.cleanPath(basePath);
         this.basePackage = ClassUtils.convertResourcePathToClassName(basePath);
+        
+        this.viewType = viewType == null ? ViewTypeEnum.LIST : viewType;
         
         this.entityType = entityType;
         this.entityTypeName = entityType.getName();
@@ -101,8 +111,9 @@ public class ControllerGeneratorModel {
                     && !property.isPrimaryKey()) {
                 //如果主键就是code，则无需标定hasCodeProperty
                 this.codeProperty = property;
-                AssertUtils.isTrue(String.class
-                        .isAssignableFrom(property.getPropertyType()),
+                AssertUtils.isTrue(
+                        String.class
+                                .isAssignableFrom(property.getPropertyType()),
                         "code type should is String.");
             } else if (StringUtils.equals("valid",
                     property.getPropertyName())) {
@@ -111,7 +122,7 @@ public class ControllerGeneratorModel {
                         .isAssignableFrom(property.getPropertyType())
                         || boolean.class.equals(property.getPropertyType()),
                         "valid type should is boolean or Boolean.");
-            }else if (StringUtils.equals("parentId",
+            } else if (StringUtils.equals("parentId",
                     property.getPropertyName())) {
                 this.parentIdProperty = property;
                 AssertUtils.isTrue(
@@ -123,81 +134,88 @@ public class ControllerGeneratorModel {
             }
         });
     }
-
+    
     /**
      * @return 返回 basePackage
      */
     public String getBasePackage() {
         return basePackage;
     }
-
+    
     /**
      * @return 返回 entityType
      */
     public Class<?> getEntityType() {
         return entityType;
     }
-
+    
     /**
      * @return 返回 entityComment
      */
     public String getEntityComment() {
         return entityComment;
     }
-
+    
     /**
      * @return 返回 entityTypeName
      */
     public String getEntityTypeName() {
         return entityTypeName;
     }
-
+    
     /**
      * @return 返回 entityTypeSimpleName
      */
     public String getEntityTypeSimpleName() {
         return entityTypeSimpleName;
     }
-
+    
     /**
      * @return 返回 propertyList
      */
     public List<EntityProperty> getPropertyList() {
         return propertyList;
     }
-
+    
     /**
      * @return 返回 viewablePropertyList
      */
     public List<EntityProperty> getViewablePropertyList() {
         return viewablePropertyList;
     }
-
+    
     /**
      * @return 返回 pkProperty
      */
     public EntityProperty getPkProperty() {
         return pkProperty;
     }
-
+    
     /**
      * @return 返回 codeProperty
      */
     public EntityProperty getCodeProperty() {
         return codeProperty;
     }
-
+    
     /**
      * @return 返回 validProperty
      */
     public EntityProperty getValidProperty() {
         return validProperty;
     }
-
+    
     /**
      * @return 返回 parentIdProperty
      */
     public EntityProperty getParentIdProperty() {
         return parentIdProperty;
+    }
+
+    /**
+     * @return 返回 viewType
+     */
+    public ViewTypeEnum getViewType() {
+        return viewType;
     }
 }

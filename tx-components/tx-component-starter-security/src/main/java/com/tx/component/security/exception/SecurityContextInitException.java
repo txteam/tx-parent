@@ -17,7 +17,7 @@ import com.tx.core.exceptions.ErrorCode;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class AuthContextInitException extends AuthContextException {
+public class SecurityContextInitException extends SecurityContextException {
     
     /** 注释内容 */
     private static final long serialVersionUID = 7273081031541085969L;
@@ -27,21 +27,21 @@ public class AuthContextInitException extends AuthContextException {
      */
     @Override
     protected ErrorCode error() {
-        return AuthContextErrorCodeEnum.AUTH_CONTEXT_INIT_ERROR;
+        return SecurityContextErrorCodeEnum.AUTH_CONTEXT_INIT_ERROR;
     }
     
     /** <默认构造函数> */
-    public AuthContextInitException() {
+    public SecurityContextInitException() {
         super();
     }
     
     /** <默认构造函数> */
-    public AuthContextInitException(String message, Throwable cause) {
+    public SecurityContextInitException(String message, Throwable cause) {
         super(message, cause);
     }
     
     /** <默认构造函数> */
-    public AuthContextInitException(String message) {
+    public SecurityContextInitException(String message) {
         super(message);
     }
     

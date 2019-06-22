@@ -7,12 +7,10 @@
 package com.tx.component.role.dao.impl;
 
 import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
 
 import com.tx.component.role.dao.RoleRefItemDao;
 import com.tx.component.role.model.RoleRefItem;
+import com.tx.core.mybatis.dao.impl.MybatisBaseDaoImpl;
 import com.tx.core.mybatis.support.MyBatisDaoSupport;
 
 /**
@@ -24,10 +22,21 @@ import com.tx.core.mybatis.support.MyBatisDaoSupport;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class RoleRefItemDaoMybatisImpl implements RoleRefItemDao {
+public class RoleRefItemDaoMybatisImpl extends
+        MybatisBaseDaoImpl<RoleRefItem, String> implements RoleRefItemDao {
     
-    @Resource(name = "myBatisDaoSupport")
     private MyBatisDaoSupport myBatisDaoSupport;
+    
+    /** <默认构造函数> */
+    public RoleRefItemDaoMybatisImpl() {
+        super();
+    }
+    
+    /** <默认构造函数> */
+    public RoleRefItemDaoMybatisImpl(MyBatisDaoSupport myBatisDaoSupport) {
+        super();
+        this.myBatisDaoSupport = myBatisDaoSupport;
+    }
     
     /**
      * @param roleRef
@@ -42,67 +51,20 @@ public class RoleRefItemDaoMybatisImpl implements RoleRefItemDao {
      */
     @Override
     public void batchInsertToHis(List<RoleRefItem> roleRefs) {
-        this.myBatisDaoSupport.batchInsert("roleRefItem.insertToHis",
-                roleRefs,
-                true);
+        this.myBatisDaoSupport.batchInsert("roleRefItem.insertToHis", roleRefs);
     }
     
     /**
-     * @param condition
+     * @return 返回 myBatisDaoSupport
      */
-    @Override
-    public void batchInsert(List<RoleRefItem> condition) {
-        this.myBatisDaoSupport.batchInsertUseUUID(
-                "roleRefItem.insertRoleRefItem", condition, "id", true);
+    public MyBatisDaoSupport getMyBatisDaoSupport() {
+        return myBatisDaoSupport;
     }
     
     /**
-     * @param condition
+     * @param 对myBatisDaoSupport进行赋值
      */
-    @Override
-    public void insert(RoleRefItem condition) {
-        this.myBatisDaoSupport.insertUseUUID("roleRefItem.insertRoleRefItem",
-                condition,
-                "id");
-    }
-    
-    /**
-     * @param condition
-     * @return
-     */
-    @Override
-    public int delete(RoleRefItem condition) {
-        return this.myBatisDaoSupport.delete("roleRefItem.deleteRoleRefItem",
-                condition);
-    }
-    
-    /**
-     * @param roleRefs
-     */
-    @Override
-    public void batchDelete(List<RoleRefItem> roleRefs) {
-        this.myBatisDaoSupport.batchDelete("roleRefItem.deleteRoleRefItem",
-                roleRefs,
-                true);
-    }
-    
-    /**
-     * @param params
-     * @return
-     */
-    @Override
-    public List<RoleRefItem> queryList(Map<String, Object> params) {
-        return this.myBatisDaoSupport.<RoleRefItem> queryList(
-                "roleRefItem.queryRoleRefItem", params);
-    }
-    
-    /**
-     * @param updateRowMap
-     * @return
-     */
-    @Override
-    public int update(Map<String, Object> updateRowMap) {
-        return this.myBatisDaoSupport.update("roleRefItem.updateRoleRefItem",
-                updateRowMap);
+    public void setMyBatisDaoSupport(MyBatisDaoSupport myBatisDaoSupport) {
+        this.myBatisDaoSupport = myBatisDaoSupport;
     }
 }

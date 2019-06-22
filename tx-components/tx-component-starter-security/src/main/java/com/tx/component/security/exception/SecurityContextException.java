@@ -18,7 +18,7 @@ import com.tx.core.exceptions.SILException;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public abstract class AuthContextException extends SILException {
+public abstract class SecurityContextException extends SILException {
     
     /** 注释内容 */
     private static final long serialVersionUID = 7273081031541085969L;
@@ -28,7 +28,7 @@ public abstract class AuthContextException extends SILException {
      */
     @Override
     protected ErrorCode error() {
-        return AuthContextErrorCodeEnum.AUTH_CONTEXT_ERROR;
+        return SecurityContextErrorCodeEnum.AUTH_CONTEXT_ERROR;
     }
     
     /**
@@ -48,17 +48,17 @@ public abstract class AuthContextException extends SILException {
     }
     
     /** <默认构造函数> */
-    public AuthContextException() {
+    public SecurityContextException() {
         super();
     }
     
     /** <默认构造函数> */
-    public AuthContextException(String message, Throwable cause) {
+    public SecurityContextException(String message, Throwable cause) {
         super(message, cause);
     }
     
     /** <默认构造函数> */
-    public AuthContextException(String message) {
+    public SecurityContextException(String message) {
         super(message);
     }
     

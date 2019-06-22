@@ -27,7 +27,6 @@ import com.tx.component.configuration.service.impl.ConfigPropertyItemServiceImpl
 import com.tx.core.ddlutil.executor.TableDDLExecutor;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.mybatis.support.MyBatisDaoSupport;
-import com.tx.core.starter.component.ComponentConstants;
 
 /**
  * 基础数据持久层配置逻辑<br/>
@@ -97,7 +96,8 @@ public class ConfigPersisterConfiguration {
      * @since  [产品/模块版本]
      */
     @Configuration
-    @ConditionalOnProperty(prefix = ComponentConstants.PERSISTER_PROPERTIES_PREFIX, value = "type", havingValue = "mybatis")
+    //jpa的实现尚未提供，此处实现暂时注释掉
+    //@ConditionalOnProperty(prefix = ComponentConstants.PERSISTER_PROPERTIES_PREFIX, value = "type", havingValue = "mybatis")
     @DependsOn("config.tableInitializer")
     public static class MybatisConfigContextPersisterConfiguration
             implements InitializingBean {

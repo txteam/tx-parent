@@ -26,7 +26,7 @@ import com.tx.core.querier.model.Querier;
 import com.tx.core.querier.model.QuerierBuilder;
 
 /**
- * AuthRefItem的业务层[AuthRefItemService]
+ * 权限引用的业务层[AuthRefItemService]
  * <功能详细描述>
  * 
  * @author  
@@ -44,7 +44,7 @@ public class AuthRefItemService {
     private AuthRefItemDao authRefItemDao;
     
     /**
-     * 新增AuthRefItem实例<br/>
+     * 新增权限引用实例<br/>
      * 将authRefItem插入数据库中保存
      * 1、如果authRefItem 为空时抛出参数为空异常
      * 2、如果authRefItem 中部分必要参数为非法值时抛出参数不合法异常
@@ -58,16 +58,22 @@ public class AuthRefItemService {
     public void insert(AuthRefItem authRefItem) {
         //验证参数是否合法
         AssertUtils.notNull(authRefItem, "authRefItem is null.");
-           
-        //FIXME:为添加的数据需要填入默认值的字段填入默认值
-		authRefItem.setCreateDate(new Date());
+        AssertUtils.notEmpty(authRefItem.getAuthId(),
+                "authRefItem.authId is empty.");
+        AssertUtils.notEmpty(authRefItem.getRefType(),
+                "authRefItem.refType is empty.");
+        AssertUtils.notEmpty(authRefItem.getRefId(),
+                "authRefItem.refId is empty.");
+        
+        //为添加的数据需要填入默认值的字段填入默认值
+        authRefItem.setCreateDate(new Date());
         
         //调用数据持久层对实例进行持久化操作
         this.authRefItemDao.insert(authRefItem);
     }
     
     /**
-     * 根据id删除AuthRefItem实例
+     * 根据id删除权限引用实例
      * 1、如果入参数为空，则抛出异常
      * 2、执行删除后，将返回数据库中被影响的条数 > 0，则返回true
      *
@@ -89,7 +95,7 @@ public class AuthRefItemService {
     }
     
     /**
-     * 根据id查询AuthRefItem实例
+     * 根据id查询权限引用实例
      * 1、当id为empty时抛出异常
      *
      * @param id
@@ -108,7 +114,7 @@ public class AuthRefItemService {
     }
     
     /**
-     * 查询AuthRefItem实例列表
+     * 查询权限引用实例列表
      * <功能详细描述>
      * @param params      
      * @return [参数说明]
@@ -117,14 +123,10 @@ public class AuthRefItemService {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public List<AuthRefItem> queryList(
-		Map<String,Object> params   
-    	) {
-        //判断条件合法性
-        
+    public List<AuthRefItem> queryList(Map<String, Object> params) {
         //生成查询条件
         params = params == null ? new HashMap<String, Object>() : params;
-
+        
         //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
         List<AuthRefItem> resList = this.authRefItemDao.queryList(params);
         
@@ -132,7 +134,7 @@ public class AuthRefItemService {
     }
     
     /**
-     * 查询AuthRefItem实例列表
+     * 查询权限引用实例列表
      * <功能详细描述>
      * @param querier      
      * @return [参数说明]
@@ -141,15 +143,11 @@ public class AuthRefItemService {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public List<AuthRefItem> queryList(
-		Querier querier   
-    	) {
-        //判断条件合法性
-        
+    public List<AuthRefItem> queryList(Querier querier) {
         //生成查询条件
         querier = querier == null ? QuerierBuilder.newInstance().querier()
                 : querier;
-
+        
         //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
         List<AuthRefItem> resList = this.authRefItemDao.queryList(querier);
         
@@ -157,7 +155,7 @@ public class AuthRefItemService {
     }
     
     /**
-     * 分页查询AuthRefItem实例列表
+     * 分页查询权限引用实例列表
      * <功能详细描述>
      * @param params    
      * @param pageIndex 当前页index从1开始计算
@@ -170,23 +168,20 @@ public class AuthRefItemService {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public PagedList<AuthRefItem> queryPagedList(
-		Map<String,Object> params,
-    	int pageIndex,
-        int pageSize) {
-        //T判断条件合法性
-        
+    public PagedList<AuthRefItem> queryPagedList(Map<String, Object> params,
+            int pageIndex, int pageSize) {
         //生成查询条件
         params = params == null ? new HashMap<String, Object>() : params;
- 
+        
         //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
-        PagedList<AuthRefItem> resPagedList = this.authRefItemDao.queryPagedList(params, pageIndex, pageSize);
+        PagedList<AuthRefItem> resPagedList = this.authRefItemDao
+                .queryPagedList(params, pageIndex, pageSize);
         
         return resPagedList;
     }
     
-	/**
-     * 分页查询AuthRefItem实例列表
+    /**
+     * 分页查询权限引用实例列表
      * <功能详细描述>
      * @param querier    
      * @param pageIndex 当前页index从1开始计算
@@ -199,24 +194,23 @@ public class AuthRefItemService {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public PagedList<AuthRefItem> queryPagedList(
-		Querier querier,
-    	int pageIndex,
-        int pageSize) {
+    public PagedList<AuthRefItem> queryPagedList(Querier querier, int pageIndex,
+            int pageSize) {
         //T判断条件合法性
         
         //生成查询条件
         querier = querier == null ? QuerierBuilder.newInstance().querier()
                 : querier;
- 
+        
         //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
-        PagedList<AuthRefItem> resPagedList = this.authRefItemDao.queryPagedList(querier, pageIndex, pageSize);
+        PagedList<AuthRefItem> resPagedList = this.authRefItemDao
+                .queryPagedList(querier, pageIndex, pageSize);
         
         return resPagedList;
     }
     
     /**
-     * 查询AuthRefItem实例数量<br/>
+     * 查询权限引用实例数量<br/>
      * <功能详细描述>
      * @param params      
      * @return [参数说明]
@@ -225,14 +219,12 @@ public class AuthRefItemService {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public int count(
-		Map<String,Object> params   
-    	) {
+    public int count(Map<String, Object> params) {
         //判断条件合法性
         
         //生成查询条件
         params = params == null ? new HashMap<String, Object>() : params;
-
+        
         //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
         int res = this.authRefItemDao.count(params);
         
@@ -240,7 +232,7 @@ public class AuthRefItemService {
     }
     
     /**
-     * 查询AuthRefItem实例数量<br/>
+     * 查询权限引用实例数量<br/>
      * <功能详细描述>
      * @param querier      
      * @return [参数说明]
@@ -249,15 +241,13 @@ public class AuthRefItemService {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public int count(
-		Querier querier   
-    	) {
+    public int count(Querier querier) {
         //判断条件合法性
         
         //生成查询条件
         querier = querier == null ? QuerierBuilder.newInstance().querier()
                 : querier;
-
+        
         //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
         int res = this.authRefItemDao.count(querier);
         
@@ -265,7 +255,7 @@ public class AuthRefItemService {
     }
     
     /**
-     * 判断AuthRefItem实例是否已经存在<br/>
+     * 判断权限引用实例是否已经存在<br/>
      * <功能详细描述>
      * @param key2valueMap
      * @param excludeId
@@ -275,7 +265,7 @@ public class AuthRefItemService {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public boolean exists(Map<String,String> key2valueMap, String excludeId) {
+    public boolean exists(Map<String, String> key2valueMap, String excludeId) {
         AssertUtils.notEmpty(key2valueMap, "key2valueMap is empty");
         
         //生成查询条件
@@ -290,7 +280,7 @@ public class AuthRefItemService {
     }
     
     /**
-     * 判断AuthRefItem实例是否已经存在<br/>
+     * 判断权限引用实例是否已经存在<br/>
      * <功能详细描述>
      * @param key2valueMap
      * @param excludeId
@@ -304,13 +294,13 @@ public class AuthRefItemService {
         AssertUtils.notNull(querier, "querier is null.");
         
         //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
-        int res = this.authRefItemDao.count(querier,excludeId);
+        int res = this.authRefItemDao.count(querier, excludeId);
         
         return res > 0;
     }
     
     /**
-     * 根据id更新AuthRefItem实例<br/>
+     * 根据id更新权限引用实例<br/>
      * <功能详细描述>
      * @param authRefItem
      * @return [参数说明]
@@ -320,28 +310,27 @@ public class AuthRefItemService {
      * @see [类、类#方法、类#成员]
      */
     @Transactional
-    public boolean updateById(String id,AuthRefItem authRefItem) {
+    public boolean updateById(String id, AuthRefItem authRefItem) {
         //验证参数是否合法，必填字段是否填写
         AssertUtils.notNull(authRefItem, "authRefItem is null.");
         AssertUtils.notEmpty(id, "id is empty.");
-
+        
         //生成需要更新字段的hashMap
         Map<String, Object> updateRowMap = new HashMap<String, Object>();
         //FIXME:需要更新的字段
-		updateRowMap.put("refId", authRefItem.getRefId());
-		updateRowMap.put("refType", authRefItem.getRefType());
-		updateRowMap.put("authId", authRefItem.getAuthId());
-		updateRowMap.put("createOperatorId", authRefItem.getCreateOperatorId());
-		updateRowMap.put("expiryDate", authRefItem.getExpiryDate());
-		updateRowMap.put("effectiveDate", authRefItem.getEffectiveDate());
-
-        boolean flag = this.authRefItemDao.update(id,updateRowMap); 
+        updateRowMap.put("refId", authRefItem.getRefId());
+        updateRowMap.put("refType", authRefItem.getRefType());
+        updateRowMap.put("authId", authRefItem.getAuthId());
+        updateRowMap.put("expiryDate", authRefItem.getExpiryDate());
+        updateRowMap.put("effectiveDate", authRefItem.getEffectiveDate());
+        
+        boolean flag = this.authRefItemDao.update(id, updateRowMap);
         //如果需要大于1时，抛出异常并回滚，需要在这里修改
         return flag;
     }
     
     /**
-     * 根据id更新AuthRefItem实例<br/>
+     * 根据id更新权限引用实例<br/>
      * <功能详细描述>
      * @param authRefItem
      * @return [参数说明]
@@ -355,8 +344,8 @@ public class AuthRefItemService {
         //验证参数是否合法，必填字段是否填写
         AssertUtils.notNull(authRefItem, "authRefItem is null.");
         AssertUtils.notEmpty(authRefItem.getId(), "authRefItem.id is empty.");
-
-        boolean flag = updateById(authRefItem.getId(),authRefItem); 
+        
+        boolean flag = updateById(authRefItem.getId(), authRefItem);
         //如果需要大于1时，抛出异常并回滚，需要在这里修改
         return flag;
     }

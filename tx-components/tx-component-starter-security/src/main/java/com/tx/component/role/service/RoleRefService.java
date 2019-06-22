@@ -21,6 +21,7 @@ import org.springframework.util.MultiValueMap;
 
 import com.tx.component.role.model.RoleRef;
 import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.querier.model.Querier;
 
 /**
  * 角色引用业务层<br/>
@@ -32,6 +33,18 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @since  [产品/模块版本]
  */
 public interface RoleRefService {
+    
+    /**
+     * 查询角色关联集合<br/>
+     * <功能详细描述>
+     * @param querier
+     * @return [参数说明]
+     * 
+     * @return List<RoleRef> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public List<RoleRef> queryList(Boolean valid, Querier querier);
     
     /**
      * 查询角色关联集合<br/>

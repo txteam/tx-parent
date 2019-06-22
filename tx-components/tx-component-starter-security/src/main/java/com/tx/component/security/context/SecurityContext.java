@@ -22,11 +22,55 @@ import com.tx.component.security.auth.service.AuthRefService;
  */
 public interface SecurityContext {
     
+    /**
+     * 获取角色引用业务层<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return RoleRefService [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
     public RoleRefService getRoleRefService();
     
+    /**
+     * 获取权限引用业务层<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return AuthRefService [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
     public AuthRefService getAuthRefService();
     
+    /**
+     * 获取角色类型注册中心实例<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return RoleTypeRegistry [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
     public RoleTypeRegistry getRoleTypeRegistry();
     
+    /**
+     * 获取角色注册中心<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return RoleRegistry [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
     public RoleRegistry getRoleRegistry();
+    
+    public boolean hasAuth();
+    
+    public boolean hasRole();
+    
+    public boolean hasAuthority();
+    
+    public boolean access();
 }

@@ -7,9 +7,9 @@
 package com.tx.component.role.dao;
 
 import java.util.List;
-import java.util.Map;
 
 import com.tx.component.role.model.RoleRefItem;
+import com.tx.core.mybatis.dao.MybatisBaseDao;
 
 /**
  * RoleRefItem持久层
@@ -20,7 +20,7 @@ import com.tx.component.role.model.RoleRefItem;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public interface RoleRefItemDao {
+public interface RoleRefItemDao extends MybatisBaseDao<RoleRefItem, String> {
     
     /**
      * 插入RoleRefItem对象实体
@@ -44,81 +44,4 @@ public interface RoleRefItemDao {
      * @see [类、类#方法、类#成员]
      */
     public void batchInsertToHis(List<RoleRefItem> roleRefs);
-    
-    /**
-     * 插入RoleRefItem对象实体
-     * 1、auto generate
-     * <功能详细描述>
-     * @param condition [参数说明]
-     * 
-     * @return void [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    //auto generate
-    public void insert(RoleRefItem roleRef);
-    
-    /**
-     * 批量插入权限项引用
-     * <功能详细描述>
-     * @param condition [参数说明]
-     * 
-     * @return void [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public void batchInsert(List<RoleRefItem> roleRefs);
-    
-    /**
-     * 删除RoleRefItem对象
-     * 1、auto generate
-     * 2、根据入参条件进行删除
-     * <功能详细描述>
-     * @param condition [参数说明]
-     * 
-     * @return void [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    //auto generate
-    public int delete(RoleRefItem roleRef);
-    
-    /**
-     * 批量删除权限项目引用
-     * <功能详细描述>
-     * @param RoleRefItemList [参数说明]
-     * 
-     * @return void [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public void batchDelete(List<RoleRefItem> roleRefs);
-    
-    /**
-     * 根据条件查询RoleRefItem列表
-     * auto generate
-     * <功能详细描述>
-     * @param params
-     * @return [参数说明]
-     * 
-     * @return List<RoleRefItem> [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    //auto generate
-    public List<RoleRefItem> queryList(Map<String, Object> params);
-    
-    /**
-     * 更新RoleRefItem实体，
-     * auto generate
-     * 1、传入RoleRefItem中主键不能为空
-     * <功能详细描述>
-     * @param updateRowMap
-     * @return [参数说明]
-     * 
-     * @return int [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public int update(Map<String, Object> updateRowMap);
 }

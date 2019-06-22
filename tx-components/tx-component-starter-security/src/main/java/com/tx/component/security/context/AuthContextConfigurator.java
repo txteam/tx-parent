@@ -6,8 +6,6 @@
  */
 package com.tx.component.security.context;
 
-import javax.sql.DataSource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -15,12 +13,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.transaction.PlatformTransactionManager;
-
-import com.tx.component.security.auth.context.authchecker.AuthChecker;
-import com.tx.core.exceptions.util.AssertUtils;
 
 /**
  * 权限容器配置器<br/>
@@ -39,8 +31,8 @@ public abstract class AuthContextConfigurator
     protected static final Logger logger = LoggerFactory
             .getLogger(AuthContextConfigurator.class);
     
-    /** 当前spring容器 */
-    protected ApplicationContext applicationContext;
+    /** spring容器句柄 */
+    protected static ApplicationContext applicationContext;
     
     /**
      * @param arg0
@@ -49,7 +41,7 @@ public abstract class AuthContextConfigurator
     @Override
     public void setApplicationContext(ApplicationContext applicationContext)
             throws BeansException {
-        this.applicationContext = applicationContext;
+        AuthContextConfigurator.applicationContext = applicationContext;
     }
     
     /**

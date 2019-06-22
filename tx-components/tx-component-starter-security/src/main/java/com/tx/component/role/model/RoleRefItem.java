@@ -12,6 +12,8 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import io.swagger.annotations.ApiModel;
+
 /**
  * 角色引用项<br/>
  * <功能详细描述>
@@ -23,6 +25,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "sec_roleref")
+@ApiModel("角色引用")
 public class RoleRefItem implements RoleRef {
     
     /** 注释内容 */
@@ -42,6 +45,8 @@ public class RoleRefItem implements RoleRef {
     private String roleId;
     
     /** 生效时间 */
+    //effective是有效的，起作用的意思，用于事物或人，一般是呈现出正确的结果或是解决了问题。
+    //efficient是有效率的，高效能的；既可指人也可指事物，强调不浪费时间、金钱、能源等的。
     private Date effectiveDate;
     
     /** 系统自动判定的无效时间:系统在查询具体是否存在引用过程中将根据该时间动态计算 */

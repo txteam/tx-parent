@@ -9,13 +9,17 @@ package com.tx.component.auth.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 import org.apache.commons.lang3.StringUtils;
 
 import com.tx.core.util.ObjectUtils;
+
+import io.swagger.annotations.ApiModel;
 
 /**
  * 权限项
@@ -27,6 +31,9 @@ import com.tx.core.util.ObjectUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
+@Entity
+@Table(name = "sec_authref")
+@ApiModel("权限项")
 public class AuthItem implements Auth {
     
     /** 注释内容 */

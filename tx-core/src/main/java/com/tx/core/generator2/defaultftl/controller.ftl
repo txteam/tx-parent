@@ -57,16 +57,15 @@ public class ${controller.entityTypeSimpleName}Controller {
      */
     @RequestMapping("/toQueryList")
     public String toQueryList(ModelMap response) {
-<#list controller.propertyList as property>
-    <#if property.propertyType.isEnum() >
+	<#list controller.propertyList as property>
+    	<#if property.propertyType.isEnum() >
 		response.put("${property.propertyName}s", ${property.propertyType.getSimpleName()}.values());
-    </#if>
-</#list>
+    	</#if>
+	</#list>
 
         return "/${packageName}/query${controller.entityTypeSimpleName}List";
     }
 </#if>
-    
 <#if (viewType??) && viewType == "PAGEDLIST">
     /**
      * 跳转到查询${controller.entityComment}分页列表页面<br/>
@@ -79,13 +78,34 @@ public class ${controller.entityTypeSimpleName}Controller {
      */
     @RequestMapping("/toQueryPagedList")
     public String toQueryPagedList(ModelMap response) {
-<#list controller.propertyList as property>
-    <#if property.propertyType.isEnum() >
+	<#list controller.propertyList as property>
+    	<#if property.propertyType.isEnum() >
 		response.put("${property.propertyName}s", ${property.propertyType.getSimpleName()}.values());
-    </#if>
-</#list>
+    	</#if>
+	</#list>
 
         return "/${packageName}/query${controller.entityTypeSimpleName}PagedList";
+    }
+</#if>
+<#if !(viewType??) || viewType == "TREELIST">
+    /**
+     * 跳转到查询${controller.entityComment}列表页面<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @RequestMapping("/toQueryTreeList")
+    public String toQueryTreeList(ModelMap response) {
+	<#list controller.propertyList as property>
+    	<#if property.propertyType.isEnum() >
+		response.put("${property.propertyName}s", ${property.propertyType.getSimpleName()}.values());
+    	</#if>
+	</#list>
+
+        return "/${packageName}/query${controller.entityTypeSimpleName}TreeList";
     }
 </#if>
     

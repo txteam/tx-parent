@@ -17,7 +17,7 @@ import com.tx.core.exceptions.ErrorCode;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public enum AuthContextErrorCodeEnum implements ErrorCode {
+public enum SecurityContextErrorCodeEnum implements ErrorCode {
     
     /* -------　权限容器异常 start ------- */
     AUTH_CONTEXT_ERROR(220000, "权限容器异常"),
@@ -35,7 +35,7 @@ public enum AuthContextErrorCodeEnum implements ErrorCode {
     private final String message;
     
     /** <默认构造函数> */
-    private AuthContextErrorCodeEnum(int code, String message) {
+    private SecurityContextErrorCodeEnum(int code, String message) {
         this.code = code;
         this.message = message;
     }

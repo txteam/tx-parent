@@ -5,9 +5,8 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.tx.component.role.context.RoleTypeRegistry;
-import com.tx.component.role.model.RoleType;
-import com.tx.component.security.auth.context.register.AuthRegister;
+import com.tx.component.auth.context.AuthRegistry;
+import com.tx.component.auth.context.AuthTypeRegistry;
 import com.tx.core.support.json.JSONAttributesSupport;
 import com.tx.core.tree.model.TreeAble;
 
@@ -47,7 +46,7 @@ public interface Auth extends Serializable, JSONAttributesSupport,
      * 
      * @return [参数说明]
      */
-    String getAuthType();
+    String getAuthTypeId();
     
     /**
      * 权限名<br/>
@@ -79,7 +78,9 @@ public interface Auth extends Serializable, JSONAttributesSupport,
      * 
      * @return [参数说明]
      */
-    String getRefType();
+    default String getRefType() {
+        return "";
+    }
     
     /**
      * 获取权限关联项id<br/>
@@ -87,7 +88,9 @@ public interface Auth extends Serializable, JSONAttributesSupport,
      * 
      * @return String [返回类型说明]
      */
-    String getRefId();
+    default String getRefId() {
+        return "";
+    }
     
     /**
      * 获取权限项模块<br/>
@@ -95,5 +98,44 @@ public interface Auth extends Serializable, JSONAttributesSupport,
      * 
      * @return [参数说明]
      */
-    String getModule();
+    default String getModule() {
+        return "";
+    }
+    
+    /**
+     * 获取父类角色类型<br/>
+     * 角色的parent主要应用于角色继承的业务逻辑中<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return RoleType [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    default Auth getParent() {
+        String parentId = getParentId();
+        if (StringUtils.isEmpty(parentId)) {
+            return null;
+        }
+        Auth parent = AuthRegistry.getInstance().findById(parentId);
+        return parent;
+    }
+    
+    /**
+     * 获取角色类型<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return RoleType [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    default AuthType getAuthType() {
+        String authTypeId = getAuthTypeId();
+        if (StringUtils.isEmpty(authTypeId)) {
+            return null;
+        }
+        AuthType authType = AuthTypeRegistry.getInstance().findById(authTypeId);
+        return authType;
+    }
 }

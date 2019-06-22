@@ -25,6 +25,7 @@ import com.tx.component.auth.model.Auth;
 import com.tx.component.auth.model.AuthItem;
 import com.tx.component.auth.model.AuthRef;
 import com.tx.component.auth.model.AuthRefItem;
+import com.tx.component.basicdata.context.BasicDataContext;
 import com.tx.core.TxConstants;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.util.MessageUtils;
@@ -39,11 +40,11 @@ import com.tx.core.util.MessageUtils;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public class SecurityContextImpl extends AuthContextBuilder {
+public class SecurityContextImpl extends AuthContextBuilder implements SecurityContext{
     /* 不需要进行注入部分属性 */
     
     /** 单子模式权限容器唯一实例 */
-    private static SecurityContextImpl authContext;
+    protected static SecurityContext context;
     
     /**
      * <默认构造函数>
@@ -61,10 +62,16 @@ public class SecurityContextImpl extends AuthContextBuilder {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    public static SecurityContextImpl getContext() {
-        AssertUtils.notNull(SecurityContextImpl.authContext,
-                "context is null.please call it after init.");
-        return authContext;
+    public static SecurityContext getContext() {
+        if (SecurityContextImpl.context != null) {
+            return SecurityContextImpl.context;
+        }
+        synchronized (SecurityContextImpl.class) {
+            SecurityContextImpl.context = applicationContext.getBean(beanName,
+                    SecurityContextImpl.class);
+        }
+        AssertUtils.notNull(SecurityContextImpl.context, "context is null.");
+        return SecurityContextImpl.context;
     }
     
     /**
@@ -286,7 +293,7 @@ public class SecurityContextImpl extends AuthContextBuilder {
         //检查对应权限的权限类型是否正确
         Auth authItem = authItemMapping.get(authKey);
         if (authItem == null) {
-            throw new AuthContextInitException(
+            throw new SecurityContextInitException(
                     MessageUtils.format("The authKey:{} AuthItem is not exists.",
                             new Object[] { authKey }));
         }

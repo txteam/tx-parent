@@ -10,6 +10,8 @@ import java.time.Duration;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import com.tx.component.configuration.ConfigContextConstants;
+
 /**
  * 基础数据容器默认配置<br/>
  * <功能详细描述>
@@ -19,7 +21,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @see  [相关类/方法]0
  * @since  [产品/模块版本]
  */
-@ConfigurationProperties(prefix = "tx.component.config")
+@ConfigurationProperties(prefix = ConfigContextConstants.PROPERTIES_PREFIX)
 public class ConfigContextProperties {
     
     /** 命令容器是否启动 */

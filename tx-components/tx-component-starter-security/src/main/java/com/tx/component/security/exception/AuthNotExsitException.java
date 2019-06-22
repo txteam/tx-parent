@@ -19,7 +19,7 @@ import com.tx.core.exceptions.ErrorCode;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class AuthNotExsitException extends AuthContextException {
+public class AuthNotExsitException extends SecurityContextException {
     
     /** 注释内容 */
     private static final long serialVersionUID = -2814953773924819958L;
@@ -32,7 +32,7 @@ public class AuthNotExsitException extends AuthContextException {
      */
     @Override
     protected ErrorCode error() {
-        return AuthContextErrorCodeEnum.AUTH_ITEM_NOT_EXIST_ERROR;
+        return SecurityContextErrorCodeEnum.AUTH_ITEM_NOT_EXIST_ERROR;
     }
     
     /** <默认构造函数> */

@@ -6,6 +6,8 @@
  */
 package com.tx.component.auth.dao.impl;
 
+import org.springframework.stereotype.Component;
+
 import com.tx.component.auth.dao.AuthRefItemDao;
 import com.tx.component.auth.model.AuthRefItem;
 import com.tx.core.mybatis.dao.impl.MybatisBaseDaoImpl;
@@ -20,6 +22,7 @@ import com.tx.core.mybatis.support.MyBatisDaoSupport;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
+@Component("authRefItemDao")
 public class AuthRefItemDaoImpl extends MybatisBaseDaoImpl<AuthRefItem, String>
         implements AuthRefItemDao {
     

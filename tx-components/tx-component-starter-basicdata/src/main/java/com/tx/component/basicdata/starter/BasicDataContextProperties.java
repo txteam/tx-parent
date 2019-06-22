@@ -11,7 +11,6 @@ import java.time.Duration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import com.tx.component.basicdata.BasicDataContextConstants;
-import com.tx.component.configuration.starter.ConfigContextProperties;
 
 /**
  * 基础数据容器默认配置<br/>
@@ -39,9 +38,6 @@ public class BasicDataContextProperties {
     
     /** 缓存的有效期:默认缓存一天 */
     private Duration duration = Duration.ofDays(1);
-    
-    /** 配置属性 */
-    private ConfigContextProperties config;
     
     /**
      * @return 返回 enable
@@ -111,19 +107,5 @@ public class BasicDataContextProperties {
      */
     public void setDuration(Duration duration) {
         this.duration = duration;
-    }
-    
-    /**
-     * @return 返回 config
-     */
-    public ConfigContextProperties getConfig() {
-        return config;
-    }
-    
-    /**
-     * @param 对config进行赋值
-     */
-    public void setConfig(ConfigContextProperties config) {
-        this.config = config;
     }
 }

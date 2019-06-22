@@ -47,11 +47,14 @@ import com.tx.core.exceptions.util.AssertUtils;
  */
 public class AuthContextBuilder extends AuthContextConfigurator {
     
-    /** 权限加载器 */
-    private List<AuthLoader> authLoaderList;
+    /** beanName实例 */
+    protected static String beanName;
     
-    /** 权限加载器处理器列表 */
-    private List<AuthItemLoaderProcessor> authLoaderProcessorList;
+//    /** 权限加载器 */
+//    private List<AuthLoader> authLoaderList;
+//    
+//    /** 权限加载器处理器列表 */
+//    private List<AuthItemLoaderProcessor> authLoaderProcessorList;
     
 //    /**
 //     * 系统的权限项集合<br/>

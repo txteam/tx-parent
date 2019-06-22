@@ -12,7 +12,7 @@ import java.util.Set;
 import org.springframework.core.Ordered;
 
 import com.tx.component.auth.model.Auth;
-import com.tx.component.security.exception.AuthContextInitException;
+import com.tx.component.security.exception.SecurityContextInitException;
 
 /**
  * 权限生成生命周期中的处理器接口逻辑定义<br/>
@@ -32,7 +32,7 @@ public interface AuthItemLoaderProcessor extends Ordered {
       * @param beforeLoadAuthItemMapping
       * @param authItemSet
       * @return
-      * @throws AuthContextInitException [参数说明]
+      * @throws SecurityContextInitException [参数说明]
       * 
       * @return Set<AuthItem> [返回类型说明]
       * @exception throws [异常类型] [异常说明]
@@ -40,6 +40,6 @@ public interface AuthItemLoaderProcessor extends Ordered {
      */
     public Set<Auth> postProcessAfterLoad(
             Map<String, Auth> beforeLoadAuthItemMapping,
-            Set<Auth> authItemSet) throws AuthContextInitException;
+            Set<Auth> authItemSet) throws SecurityContextInitException;
     
 }

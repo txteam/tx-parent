@@ -21,7 +21,7 @@ import com.tx.component.auth.model.AuthRefItem;
 import io.swagger.annotations.ApiOperation;
 
 /**
- * AuthRefItem接口门面层[AuthRefItemFacade]<br/>
+ * 权限引用接口门面层[AuthRefItemFacade]<br/>
  * 
  * @author []
  * @version [版本号]
@@ -31,7 +31,7 @@ import io.swagger.annotations.ApiOperation;
 public interface AuthRefItemFacade {
     
     /**
-     * 新增AuthRefItem<br/>
+     * 新增权限引用<br/>
      * <功能详细描述>
      * @param authRefItem [参数说明]
      * 
@@ -39,12 +39,12 @@ public interface AuthRefItemFacade {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @ApiOperation(value = "新增AuthRefItem")
+    @ApiOperation(value = "新增权限引用")
     @RequestMapping(value = "", method = RequestMethod.POST)
     public AuthRefItem insert(@RequestBody AuthRefItem authRefItem);
     
     /**
-     * 根据id删除AuthRefItem<br/> 
+     * 根据id删除权限引用<br/> 
      * <功能详细描述>
      * @param id
      * @return [参数说明]
@@ -53,13 +53,13 @@ public interface AuthRefItemFacade {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @ApiOperation(value = "根据主键删除AuthRefItem")
+    @ApiOperation(value = "根据主键删除权限引用")
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public boolean deleteById(
             @PathVariable(value = "id", required = true) String id);
     
     /**
-     * 更新AuthRefItem<br/>
+     * 更新权限引用<br/>
      * <功能详细描述>
      * @param authRefItem
      * @return [参数说明]
@@ -68,14 +68,14 @@ public interface AuthRefItemFacade {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @ApiOperation(value = "修改AuthRefItem")
+    @ApiOperation(value = "修改权限引用")
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     public boolean updateById(
             @PathVariable(value = "id", required = true) String id,
             @RequestBody AuthRefItem authRefItem);
     
     /**
-     * 根据主键查询AuthRefItem<br/>
+     * 根据主键查询权限引用<br/>
      * <功能详细描述>
      * @return [参数说明]
      * 
@@ -83,13 +83,13 @@ public interface AuthRefItemFacade {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @ApiOperation(value = "根据主键查询AuthRefItem")
+    @ApiOperation(value = "根据主键查询权限引用")
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public AuthRefItem findById(
             @PathVariable(value = "id", required = true) String id);
     
     /**
-     * 查询AuthRefItem实例列表<br/>
+     * 查询权限引用实例列表<br/>
      * <功能详细描述>
      * @param querier
      * @return [参数说明]
@@ -98,12 +98,12 @@ public interface AuthRefItemFacade {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @ApiOperation(value = "查询AuthRefItem列表")
+    @ApiOperation(value = "查询权限引用列表")
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public List<AuthRefItem> queryList(@RequestBody Querier querier);
     
     /**
-     * 查询AuthRefItem分页列表<br/>
+     * 查询权限引用分页列表<br/>
      * <功能详细描述>
      * @param pageIndex
      * @param pageSize
@@ -114,14 +114,14 @@ public interface AuthRefItemFacade {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @ApiOperation(value = "查询AuthRefItem分页列表")
+    @ApiOperation(value = "查询权限引用分页列表")
     @RequestMapping(value = "/pagedlist/{pageSize}/{pageNumber}", method = RequestMethod.GET)
     public PagedList<AuthRefItem> queryPagedList(@RequestBody Querier querier,
             @PathVariable(value = "pageNumber", required = true) int pageIndex,
             @PathVariable(value = "pageSize", required = true) int pageSize);
     
     /**
-     * 查询AuthRefItem数量<br/>
+     * 查询权限引用数量<br/>
      * <功能详细描述>
      * @param querier
      * @return [参数说明]
@@ -130,12 +130,12 @@ public interface AuthRefItemFacade {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @ApiOperation(value = "查询AuthRefItem数量")
+    @ApiOperation(value = "查询权限引用数量")
     @RequestMapping(value = "/count", method = RequestMethod.GET)
     public int count(@RequestBody Querier querier);
     
     /**
-     * 查询AuthRefItem是否存在<br/>
+     * 查询权限引用是否存在<br/>
      * @param excludeId
      * @param querier
      * @return [参数说明]
@@ -144,7 +144,7 @@ public interface AuthRefItemFacade {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @ApiOperation(value = "查询AuthRefItem是否存在")
+    @ApiOperation(value = "查询权限引用是否存在")
     @RequestMapping(value = "/exists", method = RequestMethod.GET)
     public boolean exists(@RequestBody Querier querier,
             @RequestParam(value = "excludeId", required = false) String excludeId);

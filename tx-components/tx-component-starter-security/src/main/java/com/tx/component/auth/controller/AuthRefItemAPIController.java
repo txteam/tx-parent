@@ -25,7 +25,7 @@ import com.tx.component.auth.service.AuthRefItemService;
 import io.swagger.annotations.Api;
 
 /**
- * AuthRefItemAPI控制层[AuthRefItemAPIController]<br/>
+ * 权限引用API控制层[AuthRefItemAPIController]<br/>
  * 
  * @author []
  * @version [版本号]
@@ -33,16 +33,16 @@ import io.swagger.annotations.Api;
  * @since [产品/模块版本]
  */
 @RestController
-@Api(tags = "AuthRefItemAPI")
+@Api(tags = "权限引用API")
 @RequestMapping("/api/authRefItem")
 public class AuthRefItemAPIController implements AuthRefItemFacade {
     
-    //AuthRefItem业务层
+    //权限引用业务层
     @Resource(name = "authRefItemService")
     private AuthRefItemService authRefItemService;
     
     /**
-     * 新增AuthRefItem<br/>
+     * 新增权限引用<br/>
      * <功能详细描述>
      * @param authRefItem [参数说明]
      * 
@@ -57,7 +57,7 @@ public class AuthRefItemAPIController implements AuthRefItemFacade {
     }
     
     /**
-     * 根据id删除AuthRefItem<br/> 
+     * 根据id删除权限引用<br/> 
      * <功能详细描述>
      * @param id
      * @return [参数说明]
@@ -74,7 +74,7 @@ public class AuthRefItemAPIController implements AuthRefItemFacade {
     }
     
     /**
-     * 更新AuthRefItem<br/>
+     * 更新权限引用<br/>
      * <功能详细描述>
      * @param authRefItem
      * @return [参数说明]
@@ -92,7 +92,7 @@ public class AuthRefItemAPIController implements AuthRefItemFacade {
     
 
     /**
-     * 根据主键查询AuthRefItem<br/>
+     * 根据主键查询权限引用<br/>
      * <功能详细描述>
      * @return [参数说明]
      * 
@@ -109,7 +109,7 @@ public class AuthRefItemAPIController implements AuthRefItemFacade {
     }
 
     /**
-     * 查询AuthRefItem实例列表<br/>
+     * 查询权限引用实例列表<br/>
      * <功能详细描述>
      * @param querier
      * @return [参数说明]
@@ -130,7 +130,7 @@ public class AuthRefItemAPIController implements AuthRefItemFacade {
     }
     
     /**
-     * 查询AuthRefItem分页列表<br/>
+     * 查询权限引用分页列表<br/>
      * <功能详细描述>
      * @param pageIndex
      * @param pageSize
@@ -156,7 +156,7 @@ public class AuthRefItemAPIController implements AuthRefItemFacade {
     }
     
 	/**
-     * 查询AuthRefItem数量<br/>
+     * 查询权限引用数量<br/>
      * <功能详细描述>
      * @param querier
      * @return [参数说明]
@@ -175,7 +175,7 @@ public class AuthRefItemAPIController implements AuthRefItemFacade {
     }
 
 	/**
-     * 查询AuthRefItem是否存在<br/>
+     * 查询权限引用是否存在<br/>
 	 * @param excludeId
      * @param querier
      * @return [参数说明]

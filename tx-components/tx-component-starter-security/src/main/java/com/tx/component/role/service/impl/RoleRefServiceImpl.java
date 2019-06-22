@@ -8,8 +8,8 @@ package com.tx.component.role.service.impl;
 
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -24,6 +24,7 @@ import com.tx.component.role.model.RoleRef;
 import com.tx.component.role.model.RoleRefItem;
 import com.tx.component.role.service.RoleRefService;
 import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.querier.model.Querier;
 
 /**
  * 角色引用业务层实现类<br>
@@ -41,11 +42,30 @@ public class RoleRefServiceImpl implements RoleRefService {
     
     /**
      * @param valid
+     * @param querier
+     * @return
+     */
+    @Override
+    public List<RoleRef> queryList(Boolean valid, Querier querier) {
+        querier = querier == null ? new Querier() : querier;
+        querier.getParams().put("valid", valid);
+        
+        List<RoleRef> roleRefList = roleRefItemDao.queryList(querier)
+                .stream()
+                .collect(Collectors.toList());
+        return roleRefList;
+    }
+    
+    /**
+     * @param valid
      * @param params
      * @return
      */
     @Override
     public List<RoleRef> queryList(Boolean valid, Map<String, Object> params) {
+        params = params == null ? new HashMap<String, Object>() : params;
+        params.put("valid", valid);
+        
         List<RoleRef> roleRefList = roleRefItemDao.queryList(params)
                 .stream()
                 .collect(Collectors.toList());
@@ -73,7 +93,8 @@ public class RoleRefServiceImpl implements RoleRefService {
         }
         Date expiryDate = null;
         if (duration != null) {
-            
+            expiryDate = com.tx.core.util.DateUtils.add(effectiveDate,
+                    duration);
         }
         
         Date now = new Date();
@@ -101,15 +122,46 @@ public class RoleRefServiceImpl implements RoleRefService {
      * @param roleId
      * @param refType
      * @param refIds
-     * @param effictiveDate
+     * @param effectiveDate
      * @param duration
      */
     @Override
     @Transactional
     public void batchInsertForRefIds(String roleId, String refType,
-            List<String> refIds, Date effictiveDate, Duration duration) {
-        // TODO Auto-generated method stub
+            List<String> refIds, Date effectiveDate, Duration duration) {
+        if (CollectionUtils.isEmpty(refIds)) {
+            return;
+        }
+        AssertUtils.notEmpty(roleId, "roleId is empty.");
+        AssertUtils.notEmpty(refType, "refType is empty.");
+        if (effectiveDate == null) {
+            effectiveDate = new Date();
+        }
+        Date expiryDate = null;
+        if (duration != null) {
+            expiryDate = com.tx.core.util.DateUtils.add(effectiveDate,
+                    duration);
+        }
         
+        Date now = new Date();
+        String createOperatorId = null;
+        List<RoleRefItem> roleRefList = new ArrayList<>();
+        RoleRegistry roleRegistry = RoleRegistry.getInstance();
+        for (String refIdTemp : refIds) {
+            Role role = roleRegistry.findById(roleId);
+            if (role == null) {
+                continue;
+            }
+            RoleRefItem roleRef = new RoleRefItem();
+            roleRef.setCreateDate(now);
+            roleRef.setCreateOperatorId(createOperatorId);
+            roleRef.setEffectiveDate(effectiveDate);
+            roleRef.setExpiryDate(expiryDate);
+            roleRef.setRefId(refIdTemp);
+            roleRef.setRefType(refType);
+            roleRef.setRoleId(roleId);
+        }
+        this.roleRefItemDao.batchInsert(roleRefList);
     }
     
     /**

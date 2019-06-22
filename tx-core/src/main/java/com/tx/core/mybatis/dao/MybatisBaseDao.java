@@ -244,6 +244,7 @@ public interface MybatisBaseDao<T, ID extends Serializable> {
      * 根据条件查询对象实例数量<br/>
      * <功能详细描述>
      * @param querier
+     * @param exclude
      * @return [参数说明]
      * 
      * @return int [返回类型说明]

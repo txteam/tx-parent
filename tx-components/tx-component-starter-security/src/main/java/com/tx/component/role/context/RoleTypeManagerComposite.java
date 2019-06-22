@@ -6,13 +6,15 @@
  */
 package com.tx.component.role.context;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.cache.Cache;
 
 import com.tx.component.role.model.RoleType;
 import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.querier.model.Querier;
 
 /**
  * 角色类型业务层<br/>
@@ -23,15 +25,27 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class RoleTypeManagerComposite{
+public class RoleTypeManagerComposite {
     
-    private List<RoleTypeManager> roleTypeManagers;
+    private List<RoleTypeManager> delegates;
     
     /** <默认构造函数> */
     public RoleTypeManagerComposite(List<RoleTypeManager> roleTypeManagers,
-            Cache roleTypeCache) {
+            Cache cache) {
         super();
-        this.roleTypeManagers = roleTypeManagers;
+        this.delegates = new ArrayList<>();
+        AssertUtils.notNull(cache, "cache is null.");
+        
+        if (CollectionUtils.isEmpty(roleTypeManagers)) {
+            roleTypeManagers.stream().forEach(rmTemp -> {
+                if (rmTemp instanceof CachingRoleTypeManager) {
+                    this.delegates.add((CachingRoleTypeManager) rmTemp);
+                } else {
+                    this.delegates
+                            .add(new CachingRoleTypeManager(rmTemp, cache));
+                }
+            });
+        }
     }
     
     /**
@@ -40,15 +54,30 @@ public class RoleTypeManagerComposite{
      */
     public RoleType findById(String roleTypeId) {
         AssertUtils.notEmpty(roleTypeId, "roleTypeId is empty.");
-        return null;
+        
+        RoleType roleTypeTemp = null;
+        for (RoleTypeManager rm : delegates) {
+            roleTypeTemp = rm.findRoleTypeById(roleTypeId);
+            if (roleTypeTemp != null) {
+                return roleTypeTemp;
+            }
+        }
+        return roleTypeTemp;
     }
     
     /**
      * @param params
      * @return
      */
-    public List<RoleType> queryList(Map<String, Object> params) {
-        return null;
+    public List<RoleType> queryList(Querier querier) {
+        List<RoleType> resList = new ArrayList<>();
+        for (RoleTypeManager rm : delegates) {
+            List<RoleType> tempList = rm.queryRoleTypeList(querier);
+            if (!CollectionUtils.isEmpty(tempList)) {
+                resList.addAll(tempList);
+            }
+        }
+        return resList;
     }
     
 }

@@ -17,6 +17,8 @@ package com.tx.component.security;
  */
 public interface SecurityConstants {
     
+    String PROPERTIES_PREFIX = "tx.component.security";
+    
     /** jwt头部签名code */
     String JWT_HEADER_SIGNING_KEY_CODE = "skcode";
     

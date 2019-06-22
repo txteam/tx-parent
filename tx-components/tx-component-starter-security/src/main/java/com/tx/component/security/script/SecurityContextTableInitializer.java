@@ -1,10 +1,10 @@
 /*
  * 描          述:  <描述>
  * 修  改   人:  Administrator
- * 修改时间:  2018年5月9日
+ * 修改时间:  2019年6月22日
  * <修改描述:>
  */
-package com.tx.component.auth.script;
+package com.tx.component.security.script;
 
 import org.springframework.beans.factory.InitializingBean;
 
@@ -16,15 +16,15 @@ import com.tx.core.ddlutil.builder.create.CreateTableDDLBuilder;
 import com.tx.core.ddlutil.executor.TableDDLExecutor;
 
 /**
- * 权限容器表初始<br/>
+ * <功能简述>
  * <功能详细描述>
  * 
  * @author  Administrator
- * @version  [版本号, 2018年5月9日]
+ * @version  [版本号, 2019年6月22日]
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class AuthContextTableInitializer extends AbstractTableInitializer
+public class SecurityContextTableInitializer extends AbstractTableInitializer
         implements InitializingBean {
     
     /** 表DDL执行器 */
@@ -34,18 +34,18 @@ public class AuthContextTableInitializer extends AbstractTableInitializer
     private boolean tableAutoInitialize = false;
     
     /** <默认构造函数> */
-    public AuthContextTableInitializer() {
+    public SecurityContextTableInitializer() {
         super();
     }
     
     /** <默认构造函数> */
-    public AuthContextTableInitializer(TableDDLExecutor tableDDLExecutor) {
+    public SecurityContextTableInitializer(TableDDLExecutor tableDDLExecutor) {
         super();
         this.tableDDLExecutor = tableDDLExecutor;
     }
     
     /** <默认构造函数> */
-    public AuthContextTableInitializer(TableDDLExecutor tableDDLExecutor,
+    public SecurityContextTableInitializer(TableDDLExecutor tableDDLExecutor,
             boolean tableAutoInitialize) {
         super();
         this.tableDDLExecutor = tableDDLExecutor;
@@ -269,7 +269,6 @@ public class AuthContextTableInitializer extends AbstractTableInitializer
                 .newColumnOfVarchar("refType", 64, true, null)
                 .newColumnOfVarchar("refId", 64, true, null)
                 .newColumnOfVarchar("authId", 128, true, null)
-        
                 
                 .newColumnOfVarchar("authType", 64, true, null)
                 .newColumnOfVarchar("parentId", 64, false, null)

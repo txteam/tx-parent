@@ -8,13 +8,13 @@ package com.tx.component.role.context;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.cache.Cache;
 
 import com.tx.component.role.model.Role;
 import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.querier.model.Querier;
 
 /**
  * 角色类型业务层<br/>
@@ -28,15 +28,23 @@ import com.tx.core.exceptions.util.AssertUtils;
 public class RoleManagerComposite {
     
     /** 角色管理器实现 */
-    private List<RoleManager> roleManagers;
+    private List<CachingRoleManager> delegates;
     
     /** <默认构造函数> */
     public RoleManagerComposite(List<RoleManager> roleManagers, Cache cache) {
         super();
-        this.roleManagers = roleManagers;
-        
-        AssertUtils.notEmpty(this.roleManagers, "roleManagers is empty.");
+        this.delegates = new ArrayList<>();
         AssertUtils.notNull(cache, "cache is null.");
+        
+        if (CollectionUtils.isEmpty(roleManagers)) {
+            roleManagers.stream().forEach(rmTemp -> {
+                if (rmTemp instanceof CachingRoleManager) {
+                    this.delegates.add((CachingRoleManager) rmTemp);
+                } else {
+                    this.delegates.add(new CachingRoleManager(rmTemp, cache));
+                }
+            });
+        }
     }
     
     /**
@@ -47,8 +55,8 @@ public class RoleManagerComposite {
         AssertUtils.notEmpty(roleId, "roleId is empty.");
         
         Role roleTemp = null;
-        for (RoleManager rm : roleManagers) {
-            roleTemp = rm.findById(roleId);
+        for (RoleManager rm : delegates) {
+            roleTemp = rm.findRoleById(roleId);
             if (roleTemp != null) {
                 return roleTemp;
             }
@@ -60,14 +68,49 @@ public class RoleManagerComposite {
      * @param params
      * @return
      */
-    public List<Role> queryList(Map<String, Object> params) {
+    public List<Role> queryList(Querier querier) {
         List<Role> resList = new ArrayList<>();
-        for (RoleManager rm : roleManagers) {
-            List<Role> tempList = rm.queryList(params);
+        for (RoleManager rm : delegates) {
+            List<Role> tempList = rm.queryRoleList(querier);
             if (!CollectionUtils.isEmpty(tempList)) {
                 resList.addAll(tempList);
             }
         }
         return resList;
     }
+    
+    /**
+     * @param params
+     * @return
+     */
+    public List<Role> queryChildrenByParentId(String parentId,
+            Querier querier) {
+        List<Role> resList = new ArrayList<>();
+        for (RoleManager rm : delegates) {
+            List<Role> tempList = rm.queryChildrenRoleByParentId(parentId,
+                    querier);
+            if (!CollectionUtils.isEmpty(tempList)) {
+                resList.addAll(tempList);
+            }
+        }
+        return resList;
+    }
+    
+    /**
+     * @param params
+     * @return
+     */
+    public List<Role> queryDescendantsByParentId(String parentId,
+            Querier querier) {
+        List<Role> resList = new ArrayList<>();
+        for (RoleManager rm : delegates) {
+            List<Role> tempList = rm.queryDescendantsRoleByParentId(parentId,
+                    querier);
+            if (!CollectionUtils.isEmpty(tempList)) {
+                resList.addAll(tempList);
+            }
+        }
+        return resList;
+    }
+    
 }
