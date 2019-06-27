@@ -13,7 +13,7 @@
 	<url>http://maven.apache.org</url>
 
 	<dependencies>
-		<!-- tx-* -->
+		<!-- tx-core -->
 		<dependency>
 			<groupId>com.tx</groupId>
 			<artifactId>tx-core</artifactId>

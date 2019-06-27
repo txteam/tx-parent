@@ -44,7 +44,7 @@ public interface RoleRefService {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public List<RoleRef> queryList(Boolean valid, Querier querier);
+    public List<RoleRef> queryList(Boolean effective, Querier querier);
     
     /**
      * 查询角色关联集合<br/>
@@ -56,7 +56,7 @@ public interface RoleRefService {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public List<RoleRef> queryList(Boolean valid, Map<String, Object> params);
+    public List<RoleRef> queryList(Boolean effective, Map<String, Object> params);
     
     /**
      * 根据关联类型映射查询角色关联<br/>
@@ -68,7 +68,7 @@ public interface RoleRefService {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    default List<RoleRef> queryListByRefMap(
+    default List<RoleRef> queryListByRefMap(Boolean effective,
             MultiValueMap<String, String> refMap) {
         AssertUtils.notEmpty(refMap, "refMap is empty.");
         
@@ -90,7 +90,7 @@ public interface RoleRefService {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    default List<RoleRef> queryListByRef(Boolean valid, String refType,
+    default List<RoleRef> queryListByRef(Boolean effective, String refType,
             String refId, Map<String, Object> params) {
         AssertUtils.notEmpty(refType, "refType is empty.");
         AssertUtils.notEmpty(refId, "refId is empty.");
@@ -99,7 +99,7 @@ public interface RoleRefService {
         params.put("refType", refType);
         params.put("refId", refId);
         
-        List<RoleRef> resList = queryList(valid, params);
+        List<RoleRef> resList = queryList(effective, params);
         return resList;
     }
     
@@ -114,7 +114,7 @@ public interface RoleRefService {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    default List<RoleRef> queryListByRoleId(Boolean valid, String roleId,
+    default List<RoleRef> queryListByRoleId(Boolean effective, String roleId,
             String refType, Map<String, Object> params) {
         AssertUtils.notEmpty(roleId, "roleId is empty.");
         
@@ -122,7 +122,7 @@ public interface RoleRefService {
         params.put("roleId", roleId);
         params.put("refType", refType);
         
-        List<RoleRef> resList = queryList(valid, params);
+        List<RoleRef> resList = queryList(effective, params);
         return resList;
     }
     

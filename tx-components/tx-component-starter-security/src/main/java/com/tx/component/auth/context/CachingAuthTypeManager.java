@@ -6,20 +6,16 @@
  */
 package com.tx.component.auth.context;
 
-import java.util.List;
-
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.cache.Cache;
 import org.springframework.cache.Cache.ValueWrapper;
 import org.springframework.util.ClassUtils;
 
 import com.tx.component.auth.model.AuthType;
 import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.querier.model.Querier;
 import com.tx.core.util.CacheUtils;
 
 /**
- * 角色类型业务层<br/>
+ * 权限类型业务层<br/>
  * <功能详细描述>
  * 
  * @author  Administrator
@@ -32,15 +28,12 @@ class CachingAuthTypeManager implements AuthTypeManager {
     private static final Class<?>[] FINDBYID_PARAMETER_TYPES = new Class<?>[] {
             String.class };
     
-    private static final Class<?>[] QUERYLIST_PARAMETER_TYPES = new Class<?>[] {
-            Querier.class };
-    
     private final Class<?> beanClass;
     
-    /** 角色类型Manager的实际实现类 */
+    /** 权限类型Manager的实际实现类 */
     private AuthTypeManager delegate;
     
-    /** 角色类型缓存 */
+    /** 权限类型缓存 */
     private Cache authTypeCache;
     
     /** 构造函数 */
@@ -57,50 +50,26 @@ class CachingAuthTypeManager implements AuthTypeManager {
     }
     
     /**
-     * @param roleTypeId
+     * @param authTypeId
      * @return
      */
-    public AuthType findAuthTypeById(String roleTypeId) {
+    public AuthType findAuthTypeById(String authTypeId) {
         String cacheKey = CacheUtils.generateStringCacheKey(this.beanClass,
-                "findById",
+                "findAuthTypeById",
                 FINDBYID_PARAMETER_TYPES,
-                new Object[] { roleTypeId });
+                new Object[] { authTypeId });
         
         ValueWrapper vw = this.authTypeCache.get(cacheKey);
         if (vw != null && vw.get() != null
                 && AuthType.class.isInstance(vw.get())) {
-            AuthType roleType = (AuthType) vw.get();
-            return roleType;
+            AuthType authType = (AuthType) vw.get();
+            return authType;
         }
         
-        AuthType roleType = this.delegate.findAuthTypeById(roleTypeId);
-        if (roleType != null) {
-            this.authTypeCache.put(cacheKey, roleType);
+        AuthType authType = this.delegate.findAuthTypeById(authTypeId);
+        if (authType != null) {
+            this.authTypeCache.put(cacheKey, authType);
         }
-        return roleType;
-    }
-    
-    /**
-     * @param params
-     * @return
-     */
-    @SuppressWarnings("unchecked")
-    public List<AuthType> queryAuthTypeList(Querier querier) {
-        String cacheKey = CacheUtils.generateStringCacheKey(this.beanClass,
-                "queryList",
-                QUERYLIST_PARAMETER_TYPES,
-                new Object[] { querier });
-        
-        ValueWrapper vw = this.authTypeCache.get(cacheKey);
-        if (vw != null && vw.get() != null && List.class.isInstance(vw.get())) {
-            List<AuthType> resList = (List<AuthType>) vw.get();
-            return resList;
-        }
-        
-        List<AuthType> resList = this.delegate.queryAuthTypeList(querier);
-        if (!CollectionUtils.isEmpty(resList)) {
-            this.authTypeCache.put(cacheKey, resList);
-        }
-        return resList;
+        return authType;
     }
 }

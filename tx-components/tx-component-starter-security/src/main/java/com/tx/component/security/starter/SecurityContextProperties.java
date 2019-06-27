@@ -10,7 +10,7 @@ import java.time.Duration;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-import com.tx.component.security.SecurityConstants;
+import com.tx.component.security.SecurityContextConstants;
 import com.tx.core.starter.persister.PersisterTypeEnum;
 
 /**
@@ -22,7 +22,7 @@ import com.tx.core.starter.persister.PersisterTypeEnum;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-@ConfigurationProperties(prefix = SecurityConstants.PROPERTIES_PREFIX)
+@ConfigurationProperties(prefix = SecurityContextConstants.PROPERTIES_PREFIX)
 public class SecurityContextProperties {
     
     /** 命令容器是否启动 */

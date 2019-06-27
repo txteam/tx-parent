@@ -14,7 +14,6 @@ import org.springframework.cache.Cache;
 
 import com.tx.component.auth.model.Auth;
 import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.querier.model.Querier;
 
 /**
  * 权限业务层<br/>
@@ -65,13 +64,13 @@ public class AuthManagerComposite {
     }
     
     /**
-     * @param params
+     * @param authTypeId
      * @return
      */
-    public List<Auth> queryList(Querier querier) {
+    public List<Auth> queryList(String authTypeId) {
         List<Auth> resList = new ArrayList<>();
         for (AuthManager rm : delegates) {
-            List<Auth> tempList = rm.queryAuthList(querier);
+            List<Auth> tempList = rm.queryAuthList(authTypeId);
             if (!CollectionUtils.isEmpty(tempList)) {
                 resList.addAll(tempList);
             }
@@ -80,15 +79,15 @@ public class AuthManagerComposite {
     }
     
     /**
-     * @param params
+     * @param authTypeId
      * @return
      */
     public List<Auth> queryChildrenByParentId(String parentId,
-            Querier querier) {
+            String authTypeId) {
         List<Auth> resList = new ArrayList<>();
         for (AuthManager rm : delegates) {
             List<Auth> tempList = rm.queryChildrenAuthByParentId(parentId,
-                    querier);
+                    authTypeId);
             if (!CollectionUtils.isEmpty(tempList)) {
                 resList.addAll(tempList);
             }
@@ -97,15 +96,15 @@ public class AuthManagerComposite {
     }
     
     /**
-     * @param params
+     * @param authTypeId
      * @return
      */
     public List<Auth> queryDescendantsByParentId(String parentId,
-            Querier querier) {
+            String authTypeId) {
         List<Auth> resList = new ArrayList<>();
         for (AuthManager rm : delegates) {
             List<Auth> tempList = rm.queryDescendantsAuthByParentId(parentId,
-                    querier);
+                    authTypeId);
             if (!CollectionUtils.isEmpty(tempList)) {
                 resList.addAll(tempList);
             }

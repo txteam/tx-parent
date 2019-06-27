@@ -7,14 +7,15 @@
 package com.tx.component.auth.context;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.cache.Cache;
+import org.springframework.core.OrderComparator;
 
 import com.tx.component.auth.model.AuthType;
 import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.querier.model.Querier;
 
 /**
  * 权限类型业务层<br/>
@@ -36,7 +37,8 @@ public class AuthTypeManagerComposite {
         this.delegates = new ArrayList<>();
         AssertUtils.notNull(cache, "cache is null.");
         
-        if (CollectionUtils.isEmpty(authTypeManagers)) {
+        if (!CollectionUtils.isEmpty(authTypeManagers)) {
+            Collections.sort(authTypeManagers, OrderComparator.INSTANCE);
             authTypeManagers.stream().forEach(atTemp -> {
                 if (atTemp instanceof CachingAuthTypeManager) {
                     this.delegates.add((CachingAuthTypeManager) atTemp);
@@ -63,21 +65,6 @@ public class AuthTypeManagerComposite {
             }
         }
         return authTypeTemp;
-    }
-    
-    /**
-     * @param params
-     * @return
-     */
-    public List<AuthType> queryList(Querier querier) {
-        List<AuthType> resList = new ArrayList<>();
-        for (AuthTypeManager rm : delegates) {
-            List<AuthType> tempList = rm.queryAuthTypeList(querier);
-            if (!CollectionUtils.isEmpty(tempList)) {
-                resList.addAll(tempList);
-            }
-        }
-        return resList;
     }
     
 }

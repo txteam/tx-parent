@@ -6,7 +6,9 @@ package tools.generator;
 import java.io.IOException;
 
 import com.tx.component.auth.model.AuthRefItem;
+import com.tx.component.role.model.RoleItem;
 import com.tx.component.role.model.RoleRefItem;
+import com.tx.component.role.model.RoleTypeItem;
 import com.tx.core.generator2.CodeGenerator;
 
 /**
@@ -30,8 +32,8 @@ public class SecurityCodeGenerator {
 
         //基础数据生成逻辑代码对应的数据库类型(mysql与oracle)在sqlMap中组装like条件是不一致的
         //CodeGenerator.generateDBScript(entityType);
-        CodeGenerator.generateSqlMap(entityType);
-        CodeGenerator.generateDao(entityType);
+        //CodeGenerator.generateSqlMap(entityType);
+        //CodeGenerator.generateDao(entityType);
         CodeGenerator.generateService(entityType);
         CodeGenerator.generateController(entityType);
         System.out.println("success");

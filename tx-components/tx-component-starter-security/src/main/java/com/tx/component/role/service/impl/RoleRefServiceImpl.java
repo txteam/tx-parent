@@ -18,10 +18,10 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.tx.component.role.context.RoleRegistry;
-import com.tx.component.role.dao.RoleRefItemDao;
 import com.tx.component.role.model.Role;
 import com.tx.component.role.model.RoleRef;
 import com.tx.component.role.model.RoleRefItem;
+import com.tx.component.role.service.RoleRefItemService;
 import com.tx.component.role.service.RoleRefService;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.querier.model.Querier;
@@ -38,7 +38,7 @@ import com.tx.core.querier.model.Querier;
 public class RoleRefServiceImpl implements RoleRefService {
     
     /** 角色引用项持久层 */
-    private RoleRefItemDao roleRefItemDao;
+    private RoleRefItemService roleRefItemService;
     
     /**
      * @param valid
@@ -50,7 +50,7 @@ public class RoleRefServiceImpl implements RoleRefService {
         querier = querier == null ? new Querier() : querier;
         querier.getParams().put("valid", valid);
         
-        List<RoleRef> roleRefList = roleRefItemDao.queryList(querier)
+        List<RoleRef> roleRefList = roleRefItemService.queryList(querier)
                 .stream()
                 .collect(Collectors.toList());
         return roleRefList;
@@ -66,7 +66,7 @@ public class RoleRefServiceImpl implements RoleRefService {
         params = params == null ? new HashMap<String, Object>() : params;
         params.put("valid", valid);
         
-        List<RoleRef> roleRefList = roleRefItemDao.queryList(params)
+        List<RoleRef> roleRefList = roleRefItemService.queryList(params)
                 .stream()
                 .collect(Collectors.toList());
         return roleRefList;
@@ -115,7 +115,8 @@ public class RoleRefServiceImpl implements RoleRefService {
             roleRef.setRefType(refType);
             roleRef.setRoleId(roleIdTemp);
         }
-        this.roleRefItemDao.batchInsert(roleRefList);
+        
+        this.roleRefItemService.batchInsert(roleRefList);
     }
     
     /**
@@ -161,7 +162,8 @@ public class RoleRefServiceImpl implements RoleRefService {
             roleRef.setRefType(refType);
             roleRef.setRoleId(roleId);
         }
-        this.roleRefItemDao.batchInsert(roleRefList);
+        
+        this.roleRefItemService.batchInsert(roleRefList);
     }
     
     /**

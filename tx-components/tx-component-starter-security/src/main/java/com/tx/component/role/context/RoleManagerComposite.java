@@ -14,7 +14,6 @@ import org.springframework.cache.Cache;
 
 import com.tx.component.role.model.Role;
 import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.querier.model.Querier;
 
 /**
  * 角色类型业务层<br/>
@@ -65,13 +64,13 @@ public class RoleManagerComposite {
     }
     
     /**
-     * @param params
+     * @param roleTypeId
      * @return
      */
-    public List<Role> queryList(Querier querier) {
+    public List<Role> queryList(String... roleTypeIds) {
         List<Role> resList = new ArrayList<>();
         for (RoleManager rm : delegates) {
-            List<Role> tempList = rm.queryRoleList(querier);
+            List<Role> tempList = rm.queryRoleList(roleTypeIds);
             if (!CollectionUtils.isEmpty(tempList)) {
                 resList.addAll(tempList);
             }
@@ -80,15 +79,15 @@ public class RoleManagerComposite {
     }
     
     /**
-     * @param params
+     * @param roleTypeId
      * @return
      */
     public List<Role> queryChildrenByParentId(String parentId,
-            Querier querier) {
+            String... roleTypeIds) {
         List<Role> resList = new ArrayList<>();
         for (RoleManager rm : delegates) {
             List<Role> tempList = rm.queryChildrenRoleByParentId(parentId,
-                    querier);
+                    roleTypeIds);
             if (!CollectionUtils.isEmpty(tempList)) {
                 resList.addAll(tempList);
             }
@@ -97,15 +96,15 @@ public class RoleManagerComposite {
     }
     
     /**
-     * @param params
+     * @param roleTypeId
      * @return
      */
     public List<Role> queryDescendantsByParentId(String parentId,
-            Querier querier) {
+            String... roleTypeIds) {
         List<Role> resList = new ArrayList<>();
         for (RoleManager rm : delegates) {
             List<Role> tempList = rm.queryDescendantsRoleByParentId(parentId,
-                    querier);
+                    roleTypeIds);
             if (!CollectionUtils.isEmpty(tempList)) {
                 resList.addAll(tempList);
             }

@@ -3,7 +3,7 @@ package com.tx.component.auth.model;
 import java.io.Serializable;
 import java.util.Date;
 
-import com.tx.component.security.auth.registry.AuthRegistry;
+import com.tx.component.auth.context.AuthRegistry;
 import com.tx.core.exceptions.util.AssertUtils;
 
 /**
@@ -111,7 +111,7 @@ public interface AuthRef extends Serializable {
     default Auth getAuth() {
         String authId = getAuthId();
         AssertUtils.notEmpty(authId, "authId is empty.");
-        Auth auth = AuthRegistry.getAuth(getAuthId());
+        Auth auth = AuthRegistry.getInstance().findById(getAuthId());
         return auth;
     }
 }

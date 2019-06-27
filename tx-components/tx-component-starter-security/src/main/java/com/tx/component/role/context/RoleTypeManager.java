@@ -6,12 +6,9 @@
  */
 package com.tx.component.role.context;
 
-import java.util.List;
-
 import org.springframework.cache.Cache;
 
 import com.tx.component.role.model.RoleType;
-import com.tx.core.querier.model.Querier;
 
 /**
  * 角色类型业务层实现<br/>
@@ -35,18 +32,6 @@ public interface RoleTypeManager {
      * @see [类、类#方法、类#成员]
      */
     public RoleType findRoleTypeById(String roleTypeId);
-    
-    /**
-     * 根据条件查询角色类型列表<br/>
-     * <功能详细描述>
-     * @param querier
-     * @return [参数说明]
-     * 
-     * @return List<RoleType> [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public List<RoleType> queryRoleTypeList(Querier querier);
     
     /**
      * 获取角色类型对应的缓存<br/>

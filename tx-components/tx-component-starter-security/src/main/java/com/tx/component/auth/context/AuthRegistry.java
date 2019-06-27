@@ -18,7 +18,6 @@ import org.springframework.context.ApplicationContextAware;
 
 import com.tx.component.auth.model.Auth;
 import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.querier.model.Querier;
 
 /**
  * 权限注册表<br/>
@@ -135,15 +134,52 @@ public class AuthRegistry
     /**
      * 查询权限列表<br/>
      * <功能详细描述>
-     * @param querier
+     * @param authTypeId
      * @return [参数说明]
      * 
      * @return List<Role> [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public List<Auth> queryList(Querier querier) {
-        List<Auth> resList = this.composite.queryList(querier);
+    public List<Auth> queryList(String authTypeId) {
+        List<Auth> resList = this.composite.queryList(authTypeId);
         return resList;
     }
+    
+    /**
+     * 根父节点查询子级角色列表<br/>
+     * <功能详细描述>
+     * @param parentId
+     * @param authTypeId
+     * @return [参数说明]
+     * 
+     * @return List<Auth> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public List<Auth> queryChildrenByParentId(String parentId,
+            String authTypeId) {
+        List<Auth> resList = this.composite.queryChildrenByParentId(parentId,
+                authTypeId);
+        return resList;
+    }
+    
+    /**
+     * 嵌套查询子级角色列表<br/>
+     * <功能详细描述>
+     * @param parentId
+     * @param authTypeId
+     * @return [参数说明]
+     * 
+     * @return List<Auth> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public List<Auth> queryDescendantsByParentId(String parentId,
+            String authTypeId){
+        List<Auth> resList = this.composite.queryDescendantsByParentId(parentId,
+                authTypeId);
+        return resList;
+    }
+    
 }

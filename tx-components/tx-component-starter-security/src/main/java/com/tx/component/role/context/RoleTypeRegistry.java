@@ -6,6 +6,7 @@
  */
 package com.tx.component.role.context;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.BeansException;
@@ -16,9 +17,9 @@ import org.springframework.cache.CacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+import com.tx.component.role.RoleConstants;
 import com.tx.component.role.model.RoleType;
 import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.querier.model.Querier;
 
 /**
  * 角色注册表<br/>
@@ -96,9 +97,14 @@ public class RoleTypeRegistry
     @Override
     public void afterPropertiesSet() throws Exception {
         AssertUtils.notNull(cacheManager, "cacheManager is null.");
-        AssertUtils.notEmpty(roleTypeManagers, "roleTypeManagers is empty.");
         
-        this.cache = this.cacheManager.getCache("roleTypeCache");
+        //角色类型业务层
+        this.roleTypeManagers = new ArrayList<>(applicationContext
+                .getBeansOfType(RoleTypeManager.class).values());
+        
+        //角色类型缓存
+        this.cache = this.cacheManager
+                .getCache(RoleConstants.CACHE_KEY_ROLE_TYPE);
         this.composite = new RoleTypeManagerComposite(roleTypeManagers,
                 this.cache);
     }
@@ -131,20 +137,5 @@ public class RoleTypeRegistry
         
         RoleType roleType = this.composite.findById(id);
         return roleType;
-    }
-    
-    /**
-     * 根据条件查询角色类型列表<br/>
-     * <功能详细描述>
-     * @param querier
-     * @return [参数说明]
-     * 
-     * @return List<RoleType> [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public List<RoleType> queryList(Querier querier) {
-        List<RoleType> resList = this.composite.queryList(querier);
-        return resList;
     }
 }

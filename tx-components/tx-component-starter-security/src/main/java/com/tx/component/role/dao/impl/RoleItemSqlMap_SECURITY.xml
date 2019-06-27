@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper 
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="roleItem">
+
+	<!-- auto generate default resultMap -->
+	<resultMap id="roleItemMap" 
+		type="com.tx.component.role.model.RoleItem">
+	</resultMap>
+	
+	<!-- auto generate default find -->
+	<select id="find" 
+		parameterType="com.tx.component.role.model.RoleItem"
+		resultMap="roleItemMap">
+		SELECT 
+				RI.id,
+				RI.name,
+				RI.roleTypeId,
+				RI.parentId,
+				RI.remark
+		  FROM SEC_ROLE RI
+		 WHERE
+		<trim prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
+	            AND RI.id = #{id}
+	        </if>
+		</trim>
+	</select>
+	
+	<!-- auto generate default query -->
+	<select id="query" 
+		parameterType="java.util.Map"
+		resultMap="roleItemMap">
+		SELECT 
+				RI.id,
+				RI.name,
+				RI.roleTypeId,
+				RI.parentId,
+				RI.remark
+		  FROM SEC_ROLE RI
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(conditions)">
+			<foreach collection="conditions" item="conditionTemp">
+			<choose>  
+		        <when test="conditionTemp.withoutValue">
+		        	AND ${conditionTemp.column} ${conditionTemp.operator}
+		        </when>
+		        <when test="conditionTemp.foreach">  
+		            AND ${conditionTemp.column} ${conditionTemp.operator} <foreach collection="conditionTemp.value" item="valueTemp" open="(" close=")" separator=",">#{valueTemp}</foreach>
+		        </when>
+		        <otherwise>  
+		            AND ${conditionTemp.column} ${conditionTemp.operator} #{conditionTemp.value}
+		        </otherwise>
+			</choose>
+			</foreach>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(parentIds)">  
+	            AND RI.parentId IN <foreach collection="parentIds" open="(" close=")" separator="," item="parentIdTemp">#{parentIdTemp}</foreach>
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(roleTypeIds)">  
+	            AND RI.roleTypeId IN <foreach collection="roleTypeIds" open="(" close=")" separator="," item="roleTypeIdTemp">#{roleTypeIdTemp}</foreach>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
+	            <![CDATA[ AND RI.id = #{id} ]]>
+	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(name)">  
+	            <![CDATA[ AND RI.name = #{name} ]]>
+	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(roleTypeId)">  
+	            <![CDATA[ AND RI.roleTypeId = #{roleTypeId} ]]>
+	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(parentId)">  
+	            <![CDATA[ AND RI.parentId = #{parentId} ]]>
+	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(remark)">  
+	            <![CDATA[ AND RI.remark = #{remark} ]]>
+	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(excludeId)">
+				<![CDATA[ AND RI.id <> #{excludeId} ]]>
+			</if>
+		</trim>
+		<choose>  
+	        <when test="@com.tx.core.util.OgnlUtils@isNotEmpty(orders)">  
+	            ORDER BY <foreach collection="orders" item="orderTemp" separator=",">${orderTemp.column} ${orderTemp.direction}</foreach>
+	        </when>
+	        <otherwise>  
+	            ORDER BY id DESC
+	        </otherwise>  
+	    </choose>
+	</select>
+
+	<!-- auto generate default count -->
+	<select id="queryCount" 
+		parameterType="java.util.Map"
+		resultType="java.lang.Integer">
+		SELECT COUNT(1)
+		  FROM SEC_ROLE RI
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(conditions)">
+			<foreach collection="conditions" item="conditionTemp">
+			<choose>  
+		        <when test="conditionTemp.withoutValue">
+		        	AND ${conditionTemp.column} ${conditionTemp.operator}
+		        </when>
+		        <when test="conditionTemp.foreach">  
+		            AND ${conditionTemp.column} ${conditionTemp.operator} <foreach collection="conditionTemp.value" item="valueTemp" open="(" close=")" separator=",">#{valueTemp}</foreach>
+		        </when>
+		        <otherwise>  
+		            AND ${conditionTemp.column} ${conditionTemp.operator} #{conditionTemp.value}
+		        </otherwise>
+			</choose>
+			</foreach>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(parentIds)">  
+	            AND RI.parentId IN <foreach collection="parentIds" open="(" close=")" separator="," item="parentIdTemp">#{parentIdTemp}</foreach>
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(roleTypeIds)">  
+	            AND RI.roleTypeId IN <foreach collection="roleTypeIds" open="(" close=")" separator="," item="roleTypeIdTemp">#{roleTypeIdTemp}</foreach>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
+	            <![CDATA[ AND RI.id = #{id} ]]>
+	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(name)">  
+	            <![CDATA[ AND RI.name = #{name} ]]>
+	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(roleTypeId)">  
+	            <![CDATA[ AND RI.roleTypeId = #{roleTypeId} ]]>
+	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(parentId)">  
+	            <![CDATA[ AND RI.parentId = #{parentId} ]]>
+	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(remark)">  
+	            <![CDATA[ AND RI.remark = #{remark} ]]>
+	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(excludeId)">
+				<![CDATA[ AND RI.id <> #{excludeId} ]]>
+			</if>
+		</trim>
+	</select>
+	
+	<!-- auto generate default insert -->
+    <insert id="insert" 
+		parameterType="com.tx.component.role.model.RoleItem">
+		INSERT INTO SEC_ROLE
+		(
+			id,
+			name,
+			roleTypeId,
+			parentId,
+			remark
+		)
+		VALUES
+		(
+			#{id},
+			#{name},
+			#{roleTypeId},
+			#{parentId},
+			#{remark}
+		)
+	</insert>
+	
+	<!-- auto generate default delete -->
+	<delete id="delete" 
+		parameterType="com.tx.component.role.model.RoleItem">
+		DELETE FROM SEC_ROLE  WHERE
+		<trim prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
+	            AND id = #{id}
+	        </if>
+		</trim>
+	</delete>
+	
+	<!-- auto generate default update -->
+	<update id="update"
+	    parameterType="java.util.Map">  
+	    UPDATE SEC_ROLE
+	    <trim prefix="SET" suffixOverrides=",">
+			<if test="_parameter.containsKey('name')">
+	    		name = #{name,javaType=java.lang.String},
+	    	</if>
+			<if test="_parameter.containsKey('roleTypeId')">
+	    		roleTypeId = #{roleTypeId,javaType=java.lang.String},
+	    	</if>
+			<if test="_parameter.containsKey('parentId')">
+	    		parentId = #{parentId,javaType=java.lang.String},
+	    	</if>
+			<if test="_parameter.containsKey('remark')">
+	    		remark = #{remark,javaType=java.lang.String},
+	    	</if>
+	    </trim>
+	    WHERE
+		<trim prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
+	            AND id = #{id}
+	        </if>
+		</trim>
+	</update> 
+
+</mapper>

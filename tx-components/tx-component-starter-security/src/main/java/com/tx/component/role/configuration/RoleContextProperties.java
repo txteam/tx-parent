@@ -1,0 +1,37 @@
+/*
+ * 描          述:  <描述>
+ * 修  改   人:  Administrator
+ * 修改时间:  2019年6月27日
+ * <修改描述:>
+ */
+package com.tx.component.role.configuration;
+
+
+/**
+ * 角色容器属性<br/>
+ * <功能详细描述>
+ * 
+ * @author  Administrator
+ * @version  [版本号, 2019年6月27日]
+ * @see  [相关类/方法]
+ * @since  [产品/模块版本]
+ */
+public class RoleContextProperties {
+    
+    /** 配置文件所在路径 */
+    private String configLocation = "classpath:context/role/*.xml";
+
+    /**
+     * @return 返回 configLocation
+     */
+    public String getConfigLocation() {
+        return configLocation;
+    }
+
+    /**
+     * @param 对configLocation进行赋值
+     */
+    public void setConfigLocation(String configLocation) {
+        this.configLocation = configLocation;
+    }
+}

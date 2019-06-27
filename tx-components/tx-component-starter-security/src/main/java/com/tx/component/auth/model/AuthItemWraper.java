@@ -114,16 +114,8 @@ public class AuthItemWraper<T> implements Auth {
      * @return
      */
     @Override
-    public String getAuthType() {
-        return this.adapter.getAuthType(this.targetBeanWrapper, this.parent);
-    }
-    
-    /**
-     * @return
-     */
-    @Override
-    public String getModule() {
-        return this.adapter.getModule(this.targetBeanWrapper, this.parent);
+    public String getAuthTypeId() {
+        return this.adapter.getAuthTypeId(this.targetBeanWrapper, this.parent);
     }
     
     /**
@@ -139,7 +131,6 @@ public class AuthItemWraper<T> implements Auth {
      */
     @Override
     public String getAttributes() {
-        // TODO Auto-generated method stub
         return null;
     }
     

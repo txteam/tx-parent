@@ -39,61 +39,62 @@ public class RoleTypeConfig {
     
     /** 子菜单项 */
     @XStreamImplicit(itemFieldName = "role")
-    private List<RoleConfig> roleList = new ArrayList<RoleConfig>();
-
+    private List<RoleConfig> roles = new ArrayList<RoleConfig>();
+    
     /**
      * @return 返回 id
      */
     public String getId() {
         return id;
     }
-
+    
     /**
      * @param 对id进行赋值
      */
     public void setId(String id) {
         this.id = id;
     }
-
+    
     /**
      * @return 返回 name
      */
     public String getName() {
         return name;
     }
-
+    
     /**
      * @param 对name进行赋值
      */
     public void setName(String name) {
         this.name = name;
     }
-
+    
     /**
      * @return 返回 remark
      */
     public String getRemark() {
         return remark;
     }
-
+    
     /**
      * @param 对remark进行赋值
      */
     public void setRemark(String remark) {
         this.remark = remark;
     }
-
+    
     /**
-     * @return 返回 roleList
+     * @return 返回 roles
      */
-    public List<RoleConfig> getRoleList() {
-        return roleList;
+    public List<RoleConfig> getRoles() {
+        return roles;
     }
-
+    
     /**
-     * @param 对roleList进行赋值
+     * @param 对roles进行赋值
      */
-    public void setRoleList(List<RoleConfig> roleList) {
-        this.roleList = roleList;
+    public void setRoles(List<RoleConfig> roles) {
+        this.roles = roles;
     }
+    
 }

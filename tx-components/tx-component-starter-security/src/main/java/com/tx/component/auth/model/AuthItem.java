@@ -47,10 +47,7 @@ public class AuthItem implements Auth {
     private String parentId;
     
     /** 权限类型 后续根据需要可以扩展相应的权限大类   比如: 产品权限\流程环节权限\通过多个纬度的权限交叉可以达到多纬度的授权体系*/
-    private String authType;
-    
-    /** 权限项所属模块 */
-    private String module;
+    private String authTypeId;
     
     /** 引用id */
     private String refId;
@@ -80,21 +77,18 @@ public class AuthItem implements Auth {
     }
     
     /** <默认构造函数> */
-    public AuthItem(String id, String authType, String module) {
+    public AuthItem(String id, String authTypeId) {
         super();
         this.id = id;
-        this.module = module;
-        this.authType = authType;
+        this.authTypeId = authTypeId;
     }
     
     /** <默认构造函数> */
-    public AuthItem(String id, String authType, String module, String name,
-            String refType, String refId) {
+    public AuthItem(String id, String authTypeId, String refType,
+            String refId) {
         super();
         this.id = id;
-        this.module = module;
-        this.authType = authType;
-        this.name = name;
+        this.authTypeId = authTypeId;
         this.refType = refType;
         this.refId = refId;
     }
@@ -131,8 +125,8 @@ public class AuthItem implements Auth {
     /**
      * @param authType
      */
-    public void setAuthType(String authType) {
-        this.authType = authType;
+    public void setAuthTypeId(String authTypeId) {
+        this.authTypeId = authTypeId;
     }
     
     /**
@@ -158,19 +152,11 @@ public class AuthItem implements Auth {
     }
     
     /**
-     * @return 返回 module
-     */
-    @Override
-    public String getModule() {
-        return module;
-    }
-    
-    /**
      * @return
      */
     @Override
-    public String getAuthType() {
-        return authType;
+    public String getAuthTypeId() {
+        return authTypeId;
     }
     
     /**
@@ -190,13 +176,6 @@ public class AuthItem implements Auth {
             return this.id;
         }
         return this.name;
-    }
-    
-    /**
-     * @param 对module进行赋值
-     */
-    public void setModule(String module) {
-        this.module = module;
     }
     
     /**

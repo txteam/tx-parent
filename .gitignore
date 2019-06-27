@@ -107,17 +107,17 @@
 /tx-components/tx-component-starter-file/.project
 /tx-components/tx-component-starter-file/.factorypath
 
-/tx-components/tx-component-file/target
-/tx-components/tx-component-file/.settings
-/tx-components/tx-component-file/.classpath
-/tx-components/tx-component-file/.project
-/tx-components/tx-component-file/.factorypath
+/tx-components/tx-component-starter-file/target
+/tx-components/tx-component-starter-file/.settings
+/tx-components/tx-component-starter-file/.classpath
+/tx-components/tx-component-starter-file/.project
+/tx-components/tx-component-starter-file/.factorypath
 
-/tx-components/tx-component-report/target
-/tx-components/tx-component-report/.settings
-/tx-components/tx-component-report/.classpath
-/tx-components/tx-component-report/.project
-/tx-components/tx-component-report/.factorypath
+/tx-components/tx-component-starter-report/target
+/tx-components/tx-component-starter-report/.settings
+/tx-components/tx-component-starter-report/.classpath
+/tx-components/tx-component-starter-report/.project
+/tx-components/tx-component-starter-report/.factorypath
 
 /tx-components/tx-component-rule/target
 /tx-components/tx-component-rule/.settings

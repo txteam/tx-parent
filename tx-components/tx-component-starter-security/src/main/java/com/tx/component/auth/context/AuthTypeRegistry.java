@@ -18,7 +18,6 @@ import org.springframework.context.ApplicationContextAware;
 
 import com.tx.component.auth.model.AuthType;
 import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.querier.model.Querier;
 
 /**
  * 权限类型注册表<br/>
@@ -131,20 +130,5 @@ public class AuthTypeRegistry
         
         AuthType roleType = this.composite.findById(id);
         return roleType;
-    }
-    
-    /**
-     * 根据条件查询权限类型类型列表<br/>
-     * <功能详细描述>
-     * @param querier
-     * @return [参数说明]
-     * 
-     * @return List<RoleType> [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public List<AuthType> queryList(Querier querier) {
-        List<AuthType> resList = this.composite.queryList(querier);
-        return resList;
     }
 }

@@ -93,16 +93,6 @@ public interface Auth extends Serializable, JSONAttributesSupport,
     }
     
     /**
-     * 获取权限项模块<br/>
-     * <功能详细描述>
-     * 
-     * @return [参数说明]
-     */
-    default String getModule() {
-        return "";
-    }
-    
-    /**
      * 获取父类角色类型<br/>
      * 角色的parent主要应用于角色继承的业务逻辑中<br/>
      * <功能详细描述>

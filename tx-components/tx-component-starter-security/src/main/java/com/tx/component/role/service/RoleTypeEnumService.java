@@ -7,17 +7,15 @@
 package com.tx.component.role.service;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.core.Ordered;
 
 import com.tx.component.role.context.RoleTypeManager;
 import com.tx.component.role.model.RoleType;
 import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.querier.model.Querier;
 import com.tx.core.util.ClassScanUtils;
 
 /**
@@ -29,7 +27,8 @@ import com.tx.core.util.ClassScanUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class RoleTypeEnumService implements RoleTypeManager, InitializingBean {
+public class RoleTypeEnumService
+        implements RoleTypeManager, InitializingBean, Ordered {
     
     /** 角色类型映射 */
     private final Map<String, RoleType> roleTypeMap = new HashMap<>();
@@ -51,6 +50,11 @@ public class RoleTypeEnumService implements RoleTypeManager, InitializingBean {
             }
             RoleType[] roleTypes = roleTypeClazzTemp.getEnumConstants();
             for (RoleType roleTypeTemp : roleTypes) {
+                AssertUtils.notEmpty(roleTypeTemp.getId(),
+                        "roleType.id is empty.");
+                AssertUtils.notEmpty(roleTypeTemp.getName(),
+                        "roleType.name is empty.");
+                
                 AssertUtils.isTrue(
                         !roleTypeClassMap.containsKey(roleTypeTemp.getId()),
                         "roleTypeId is duplicate.roleId:{},class1:{},class2:{}",
@@ -79,14 +83,11 @@ public class RoleTypeEnumService implements RoleTypeManager, InitializingBean {
     }
     
     /**
-     * @param querier
      * @return
      */
     @Override
-    public List<RoleType> queryRoleTypeList(Querier querier) {
-        List<RoleType> resList = roleTypeMap.values()
-                .stream()
-                .collect(Collectors.toList());
-        return resList;
+    public int getOrder() {
+        return Ordered.HIGHEST_PRECEDENCE;
     }
+    
 }

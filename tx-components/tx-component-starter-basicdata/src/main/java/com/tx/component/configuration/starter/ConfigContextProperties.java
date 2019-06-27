@@ -34,7 +34,7 @@ public class ConfigContextProperties {
     private String module;
     
     /** 配置文件所在路径 */
-    private String configLocation = "classpath:config/*.xml";
+    private String configLocation = "classpath:context/config/*.xml";
     
     /** 缓存manager的引用 */
     private String cacheManagerRef;

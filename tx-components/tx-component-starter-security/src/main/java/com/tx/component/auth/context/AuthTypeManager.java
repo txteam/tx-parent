@@ -6,12 +6,9 @@
  */
 package com.tx.component.auth.context;
 
-import java.util.List;
-
 import org.springframework.cache.Cache;
 
 import com.tx.component.auth.model.AuthType;
-import com.tx.core.querier.model.Querier;
 
 /**
  * 权限类型业务层实现<br/>
@@ -35,18 +32,6 @@ public interface AuthTypeManager {
      * @see [类、类#方法、类#成员]
      */
     public AuthType findAuthTypeById(String authTypeId);
-    
-    /**
-     * 根据条件查询权限类型列表<br/>
-     * <功能详细描述>
-     * @param querier
-     * @return [参数说明]
-     * 
-     * @return List<AuthType> [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public List<AuthType> queryAuthTypeList(Querier querier);
     
     /**
      * 获取权限类型对应的缓存<br/>

@@ -13,9 +13,6 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import com.tx.core.jdbc.sqlsource.annotation.QueryConditionEqual;
-import com.tx.core.jdbc.sqlsource.annotation.UpdateAble;
-
 /**
  * 任务状态<br/>
  * <功能详细描述>
@@ -34,87 +31,64 @@ public class TaskStatus implements Serializable {
     
     /** 唯一键 */
     @Id
-    @QueryConditionEqual
     private String id;
     
     /** 任务id */
-    @QueryConditionEqual
     private String taskId;
     
     /** 任务状态 */
-    @UpdateAble
-    @QueryConditionEqual
     private TaskStatusEnum status = TaskStatusEnum.WAIT_EXECUTE;
     
     /** 最后一次任务执行结果 */
-    @UpdateAble
-    @QueryConditionEqual
     private TaskResultEnum result;
     
     /** 最后执行时间：记录最后一次执行的时间 */
-    @UpdateAble
     private Date startDate;
     
     /** 最后执行时间：记录最后一次执行的时间 */
-    @UpdateAble
     private Date endDate;
     
     /** 最后一次陈功执行耗时 */
-    @UpdateAble
     private Long consuming;
     
     /** 执行所在机器的签名：根据singnature一致的情况下，才会有权对任务的状态进行重置（暂不提供自动重置）   */
-    @UpdateAble
-    @QueryConditionEqual
     private String signature;
     
     /** 执行总次数 */
-    @UpdateAble
     private int executeCount = 0;
     
     /** 最后一次成功执行时间 */
-    @UpdateAble
     private Date successStartDate;
     
     /** 最后一次成功执行时间 */
-    @UpdateAble
     private Date successEndDate;
     
     /** 最后一次执行耗时 */
-    @UpdateAble
     private Long successConsuming;
     
     /** 成功次数 */
-    @UpdateAble
     private int successCount = 0;
     
     /** 最后一次失败执行时间 */
-    @UpdateAble
     private Date failStartDate;
     
     /** 最后一次失败执行时间 */
-    @UpdateAble
     private Date failEndDate;
     
     /** 最后一次失败执行耗时 */
-    @UpdateAble
     private Long failConsuming;
     
     /** 执行失败总次数 */
-    @UpdateAble
     private int failCount = 0;
     
     /** attributes */
-    @UpdateAble
     private String attributes;
     
     /** 下次执行时间：如果当前时间大于该事件，则事务可以被启动,冗余字段，在attributes中也会记录 */
     //用于锁定重复执行，一旦检测到当前时间未到下次执行时间，或具备业务意义的时间对比该时间，不应该执行，可直接跳过，或抛出异常？
-    @UpdateAble
     private Date nextFireDate;
     
     /** 最后更新时间 */
-    @UpdateAble
     private Date lastUpdateDate;
     
     /** 创建时间 */

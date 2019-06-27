@@ -24,20 +24,20 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
 public class RoleContextConfig {
     
     /** 内容分类配置 */
-    @XStreamImplicit(itemFieldName = "category")
-    private List<RoleTypeConfig> categoryConfigList;
-    
+    @XStreamImplicit(itemFieldName = "type")
+    private List<RoleTypeConfig> types;
+
     /**
-     * @return 返回 categoryConfigList
+     * @return 返回 types
      */
-    public List<RoleTypeConfig> getCategoryConfigList() {
-        return categoryConfigList;
+    public List<RoleTypeConfig> getTypes() {
+        return types;
     }
-    
+
     /**
-     * @param 对categoryConfigList进行赋值
+     * @param 对types进行赋值
      */
-    public void setCategoryConfigList(List<RoleTypeConfig> categoryConfigList) {
-        this.categoryConfigList = categoryConfigList;
+    public void setTypes(List<RoleTypeConfig> types) {
+        this.types = types;
     }
 }

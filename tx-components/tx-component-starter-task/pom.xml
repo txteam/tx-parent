@@ -13,12 +13,19 @@
 	<url>http://maven.apache.org</url>
 
 	<dependencies>
+		<!-- tx-core -->
 		<dependency>
 			<groupId>com.tx</groupId>
 			<artifactId>tx-core</artifactId>
 		</dependency>
 
-		<!-- spring-boot -->
+		<!-- swagger2 -->
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger2</artifactId>
+		</dependency>
+
+		<!-- spring boot -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
@@ -32,19 +39,43 @@
 			<artifactId>spring-boot-starter-jdbc</artifactId>
 		</dependency>
 
+		<!-- cache -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-cache</artifactId>
+		</dependency>
+
+		<!-- redis -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-redis</artifactId>
+		</dependency>
+
 		<!-- mybatis -->
 		<dependency>
 			<groupId>org.mybatis.spring.boot</groupId>
 			<artifactId>mybatis-spring-boot-starter</artifactId>
 		</dependency>
 		
-		<!-- mysql-connector -->
+		<!-- hibernate: data-jpa jpa -->
 		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<optional>true</optional>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+
+		<!-- 根据xml加载初始化数据 -->
+		<dependency>
+			<groupId>com.thoughtworks.xstream</groupId>
+			<artifactId>xstream</artifactId>
 		</dependency>
 		
+		<!-- configurationProperties -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-configuration-processor</artifactId>
+			<optional>true</optional>
+		</dependency>
+
 		<!-- generator -->
 		<dependency>
 			<groupId>org.freemarker</groupId>
@@ -52,14 +83,26 @@
 			<optional>true</optional>
 		</dependency>
 
-		<!-- ConfigurationProperties Need -->
+		<!-- mysql -->
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-configuration-processor</artifactId>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
 			<optional>true</optional>
 		</dependency>
 
-		<!-- test -->
+		<!-- eureka、feign -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-openfeign</artifactId>
+			<optional>true</optional>
+		</dependency>
+
+		<!-- junit -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>

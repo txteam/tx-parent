@@ -6,6 +6,7 @@
  */
 package com.tx.component.role.context;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.BeansException;
@@ -16,9 +17,9 @@ import org.springframework.cache.CacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+import com.tx.component.role.RoleConstants;
 import com.tx.component.role.model.Role;
 import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.querier.model.Querier;
 
 /**
  * 角色注册表<br/>
@@ -96,9 +97,12 @@ public class RoleRegistry
     @Override
     public void afterPropertiesSet() throws Exception {
         AssertUtils.notNull(cacheManager, "cacheManager is null.");
-        AssertUtils.notEmpty(roleManagers, "roleManagers is empty.");
         
-        this.cache = this.cacheManager.getCache("roleTypeCache");
+        //角色类型业务层
+        this.roleManagers = new ArrayList<>(
+                applicationContext.getBeansOfType(RoleManager.class).values());
+        
+        this.cache = this.cacheManager.getCache(RoleConstants.CACHE_KEY_ROLE);
         this.composite = new RoleManagerComposite(roleManagers, this.cache);
     }
     
@@ -142,8 +146,46 @@ public class RoleRegistry
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public List<Role> queryList(Querier querier) {
-        List<Role> resList = this.composite.queryList(querier);
+    public List<Role> queryList(String roleTypeId) {
+        List<Role> resList = this.composite.queryList(roleTypeId);
+        return resList;
+    }
+    
+    /**
+     * 根父节点查询子级角色列表<br/>
+     * <功能详细描述>
+     * @param module
+     * @param parentId
+     * @param roleTypeId
+     * @return [参数说明]
+     * 
+     * @return List<Role> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public List<Role> queryChildrenByParentId(String parentId,
+            String roleTypeId) {
+        List<Role> resList = this.composite.queryChildrenByParentId(parentId,
+                roleTypeId);
+        return resList;
+    }
+    
+    /**
+     * 嵌套查询子级角色列表<br/>
+     * <功能详细描述>
+     * @param module
+     * @param parentId
+     * @param roleTypeId
+     * @return [参数说明]
+     * 
+     * @return List<Role> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public List<Role> queryDescendantsByParentId(String parentId,
+            String roleTypeId) {
+        List<Role> resList = this.composite.queryDescendantsByParentId(parentId,
+                roleTypeId);
         return resList;
     }
 }

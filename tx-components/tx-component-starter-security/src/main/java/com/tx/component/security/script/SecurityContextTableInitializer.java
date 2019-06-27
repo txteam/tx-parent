@@ -353,4 +353,98 @@ public class SecurityContextTableInitializer extends AbstractTableInitializer
         create index idx_auth_ref_his07 on auth_authref_his${tableSuffix}(invalidDate);
         */
     }
+    
+    /**
+     * 权限项<br/>
+     * <功能详细描述> [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    private String table_sec_role_type(TableDDLExecutor tableDDLExecutor,
+            boolean tableAutoInitialize) {
+        String tableName = "sec_role_type";
+        
+        CreateTableDDLBuilder createDDLBuilder = null;
+        AlterTableDDLBuilder alterDDLBuilder = null;
+        DDLBuilder<?> ddlBuilder = null;
+        
+        if (this.tableDDLExecutor.exists(tableName)) {
+            alterDDLBuilder = this.tableDDLExecutor
+                    .generateAlterTableDDLBuilder(tableName);
+            ddlBuilder = alterDDLBuilder;
+        } else {
+            createDDLBuilder = this.tableDDLExecutor
+                    .generateCreateTableDDLBuilder(tableName);
+            ddlBuilder = createDDLBuilder;
+        }
+        
+        sec_authitem(ddlBuilder);//写入表结构
+        
+        if (alterDDLBuilder != null
+                && alterDDLBuilder.compare().isNeedAlter()) {
+            if (tableAutoInitialize) {
+                tableDDLExecutor.alter(alterDDLBuilder);
+            }
+            return alterDDLBuilder.alterSql();
+        } else if (createDDLBuilder != null) {
+            if (tableAutoInitialize) {
+                tableDDLExecutor.create(createDDLBuilder);
+            }
+            return createDDLBuilder.createSql();
+        }
+        return "";
+    }
+    
+    /**
+     * 权限项<br/>
+     * <功能详细描述>
+     * @param ddlBuilder [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public void sec_authitem(DDLBuilder<?> ddlBuilder) {
+        /*
+        create table sec_authitem
+        (
+            id varchar(128) not null,             --权限项唯一键key
+            module varchar(64) not null,          --系统唯一键module
+            version integer not null,             --版本
+            authType varchar(64) not null,        --权限类型
+            parentId varchar(64),                 --父级权限id
+            refType varchar(64),
+            refId varchar(64),
+            name varchar(256) not null,           --权限项名 
+            remark varchar(512),                  --权限项目描述
+            attributes varchar(1024),             --权限项目描述
+            modifyAble bit not null default 1,    --是否可编辑
+            valid bit not null default 1,         --是否有效
+            configAble bit not null default 1,    --是否可配置
+            primary key(id)
+        );
+        create unique index idx_un_authitem_00 on sec_authitem(id,module,version);
+        create index idx_parentId on sec_authitem(parentId);
+        create index idx_module on sec_authitem(module);
+        */
+        ddlBuilder.newColumnOfVarchar(true, "id", 128, true, null)
+                .newColumnOfVarchar("module", 64, true, null)
+                .newColumnOfInteger("version", true, null)
+                .newColumnOfVarchar("authType", 64, true, null)
+                .newColumnOfVarchar("parentId", 64, false, null)
+                .newColumnOfVarchar("refType", 64, false, null)
+                .newColumnOfVarchar("refId", 64, false, null)
+                .newColumnOfVarchar("name", 255, true, null)
+                .newColumnOfVarchar("remark", 512, false, null)
+                .newColumnOfVarchar("attributes", 1024, false, null)
+                .newColumnOfBoolean("modifyAble", true, false)
+                .newColumnOfBoolean("valid", true, true)
+                .newColumnOfBoolean("configAble", true, true);
+        ddlBuilder.newIndex(true, "idx_un_authitem_00", "id,module,version");
+        ddlBuilder.newIndex(false, "idx_parentId", "parentId");
+        ddlBuilder.newIndex(false, "idx_module", "module");
+        //ddlBuilder.newIndex(true, "idx_unique_auth_01", "");
+    }
 }

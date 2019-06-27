@@ -13,8 +13,6 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import com.tx.core.jdbc.sqlsource.annotation.QueryConditionEqual;
-import com.tx.core.jdbc.sqlsource.annotation.UpdateAble;
 import com.tx.core.util.order.OrderedSupport;
 
 /**
@@ -35,65 +33,45 @@ public class TaskDef implements OrderedSupport, Serializable {
     
     /** 唯一键 */
     @Id
-    @QueryConditionEqual
     private String id;
     
     /** 父级任务编码：存在父级的任务都不能自动触发 */
-    @UpdateAble
-    @QueryConditionEqual
-    private String parentCode;
+    private String parentId;
     
     /** 事务定义code */
-    @QueryConditionEqual
     private String code;
     
     /** bean名 */
-    @QueryConditionEqual
     private String beanName;
     
     /** bean名 */
-    @QueryConditionEqual
     private String className;
     
     /** 方法名：启动期间将会自动判断类中是否有重写方法：原则上允许出现同名方法，避免出现code,beanName,methodName一致，但方法不一致的情形 */
-    @QueryConditionEqual
     private String methodName;
     
     /** module: 所属模块 */
-    @UpdateAble
-    @QueryConditionEqual
     private String module;
     
     /** 任务描述的参数Map */
-    @UpdateAble
-    @QueryConditionEqual
     private String attributes;
     
     /** 事务名 */
-    @UpdateAble
-    @QueryConditionEqual
     private String name;
     
     /** 描述 */
-    @UpdateAble
     private String remark;
     
     /** 是否有效 */
-    @UpdateAble
-    @QueryConditionEqual
     private boolean valid;
     
     /** 是否可执行 */
-    @UpdateAble
-    @QueryConditionEqual
     private boolean executable;
     
     /** 优先级 */
-    @UpdateAble
     private int orderPriority;
     
     /** 最后更新时间 */
-    @UpdateAble
     private Date lastUpdateDate;
     
     /** 创建时间 */
@@ -133,14 +111,14 @@ public class TaskDef implements OrderedSupport, Serializable {
     public String getModule() {
         return module;
     }
-
+    
     /**
      * @param 对module进行赋值
      */
     public void setModule(String module) {
         this.module = module;
     }
-
+    
     /**
      * @return 返回 code
      */
@@ -240,17 +218,17 @@ public class TaskDef implements OrderedSupport, Serializable {
     }
     
     /**
-     * @return 返回 parentCode
+     * @return 返回 parentId
      */
-    public String getParentCode() {
-        return parentCode;
+    public String getParentId() {
+        return parentId;
     }
     
     /**
-     * @param 对parentCode进行赋值
+     * @param 对parentId进行赋值
      */
-    public void setParentCode(String parentCode) {
-        this.parentCode = parentCode;
+    public void setParentId(String parentId) {
+        this.parentId = parentId;
     }
     
     /**

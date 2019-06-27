@@ -39,7 +39,7 @@ public abstract class BasicDataContextBuilder extends BasicDataContextConfigurat
      * @param name
      */
     @Override
-    public final void setBeanName(String name) {
+    public void setBeanName(String name) {
         BasicDataContextBuilder.beanName = name;
     }
     
@@ -47,7 +47,7 @@ public abstract class BasicDataContextBuilder extends BasicDataContextConfigurat
      * @throws Exception
      */
     @Override
-    protected final void doBuild() throws Exception {
+    protected void doBuild() throws Exception {
         //加载基础数据类<br/>
     }
     
@@ -96,40 +96,4 @@ public abstract class BasicDataContextBuilder extends BasicDataContextConfigurat
                 .getService(type);
         return service;
     }
-    
-    //    /**
-    //     * 根据类型获取对应的基础数据业务层<br/>
-    //     * <功能详细描述>
-    //     * @param type
-    //     * @return [参数说明]
-    //     * 
-    //     * @return BasicDataService<BDTYPE> [返回类型说明]
-    //     * @exception throws [异常类型] [异常说明]
-    //     * @see [类、类#方法、类#成员]
-    //     */
-    //    protected <BDTYPE extends TreeAbleBasicData<BDTYPE>> TreeAbleBasicDataService<BDTYPE> doGetTreeAbleBasicDataService(
-    //            String type) {
-    //        AssertUtils.notNull(type, "type is null.");
-    //        
-    //        TreeAbleBasicDataService<BDTYPE> service = null;
-    //        return service;
-    //    }
-    //    
-    //    /**
-    //     * 根据类型获取对应的基础数据业务层<br/>
-    //     * <功能详细描述>
-    //     * @param type
-    //     * @return [参数说明]
-    //     * 
-    //     * @return BasicDataService<BDTYPE> [返回类型说明]
-    //     * @exception throws [异常类型] [异常说明]
-    //     * @see [类、类#方法、类#成员]
-    //     */
-    //    protected <BDTYPE extends BasicData> BasicDataService<BDTYPE> doGetBasicDataService(
-    //            String type) {
-    //        AssertUtils.notNull(type, "type is null.");
-    //        
-    //        BasicDataService<BDTYPE> service = null;
-    //        return service;
-    //    }
 }

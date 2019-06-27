@@ -36,9 +36,6 @@ public abstract class BasicDataContextConfigurator
     /** 基础数据实体注册表 */
     protected BasicDataEntityRegistry basicDataEntityRegistry;
     
-    /** 基础数据业务层注册表 */
-    //protected BasicDataServiceRegistry basicDataServiceRegistry;
-    
     /** <默认构造函数> */
     public BasicDataContextConfigurator() {
         super();
@@ -79,20 +76,6 @@ public abstract class BasicDataContextConfigurator
      * 容器初始化<br/>
      */
     protected abstract void doInitContext() throws Exception;
-    
-    /**
-     * @return 返回 logger
-     */
-    public Logger getLogger() {
-        return logger;
-    }
-    
-    /**
-     * @param 对logger进行赋值
-     */
-    public void setLogger(Logger logger) {
-        this.logger = logger;
-    }
     
     /**
      * @return 返回 basicDataEntityRegistry

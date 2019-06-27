@@ -11,7 +11,6 @@ import java.util.List;
 import org.springframework.cache.Cache;
 
 import com.tx.component.role.model.Role;
-import com.tx.core.querier.model.Querier;
 
 /**
  * 角色类型业务层实现<br/>
@@ -39,42 +38,44 @@ public interface RoleManager {
     /**
      * 根据条件查询角色列表<br/>
      * <功能详细描述>
-     * @param querier
+     * @param roleTypeId
      * @return [参数说明]
      * 
      * @return List<Role> [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public List<Role> queryRoleList(Querier querier);
+    public List<Role> queryRoleList(String... roleTypeIds);
     
     /**
      * 根父节点查询子级角色列表<br/>
      * <功能详细描述>
      * @param module
      * @param parentId
-     * @param params
+     * @param roleTypeId
      * @return [参数说明]
      * 
      * @return List<Role> [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    List<Role> queryChildrenRoleByParentId(String parentId, Querier querier);
+    List<Role> queryChildrenRoleByParentId(String parentId,
+            String... roleTypeIds);
     
     /**
      * 嵌套查询子级角色列表<br/>
      * <功能详细描述>
      * @param module
      * @param parentId
-     * @param params
+     * @param roleTypeId
      * @return [参数说明]
      * 
      * @return List<Role> [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    List<Role> queryDescendantsRoleByParentId(String parentId, Querier querier);
+    List<Role> queryDescendantsRoleByParentId(String parentId,
+            String... roleTypeIds);
     
     /**
      * 获取角色类型对应的缓存<br/>

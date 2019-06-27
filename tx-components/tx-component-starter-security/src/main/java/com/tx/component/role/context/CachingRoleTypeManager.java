@@ -6,16 +6,12 @@
  */
 package com.tx.component.role.context;
 
-import java.util.List;
-
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.cache.Cache;
 import org.springframework.cache.Cache.ValueWrapper;
 import org.springframework.util.ClassUtils;
 
 import com.tx.component.role.model.RoleType;
 import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.querier.model.Querier;
 import com.tx.core.util.CacheUtils;
 
 /**
@@ -31,9 +27,6 @@ class CachingRoleTypeManager implements RoleTypeManager {
     
     private static final Class<?>[] FINDBYID_PARAMETER_TYPES = new Class<?>[] {
             String.class };
-    
-    private static final Class<?>[] QUERYLIST_PARAMETER_TYPES = new Class<?>[] {
-            Querier.class };
     
     private final Class<?> beanClass;
     
@@ -78,29 +71,5 @@ class CachingRoleTypeManager implements RoleTypeManager {
             this.roleTypeCache.put(cacheKey, roleType);
         }
         return roleType;
-    }
-    
-    /**
-     * @param params
-     * @return
-     */
-    @SuppressWarnings("unchecked")
-    public List<RoleType> queryRoleTypeList(Querier querier) {
-        String cacheKey = CacheUtils.generateStringCacheKey(this.beanClass,
-                "queryList",
-                QUERYLIST_PARAMETER_TYPES,
-                new Object[] { querier });
-        
-        ValueWrapper vw = this.roleTypeCache.get(cacheKey);
-        if (vw != null && vw.get() != null && List.class.isInstance(vw.get())) {
-            List<RoleType> resList = (List<RoleType>) vw.get();
-            return resList;
-        }
-        
-        List<RoleType> resList = this.delegate.queryRoleTypeList(querier);
-        if (!CollectionUtils.isEmpty(resList)) {
-            this.roleTypeCache.put(cacheKey, resList);
-        }
-        return resList;
     }
 }

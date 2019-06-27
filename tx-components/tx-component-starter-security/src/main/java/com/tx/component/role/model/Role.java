@@ -60,6 +60,17 @@ public interface Role extends Serializable {
     }
     
     /**
+     * 获取角色类型id<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    String getRoleTypeId();
+    
+    /**
      * 获取父级角色，用于角色集成体系<br/>
      * <功能详细描述>
      * @return [参数说明]
@@ -71,17 +82,6 @@ public interface Role extends Serializable {
     default String getParentId() {
         return null;
     }
-    
-    /**
-     * 获取角色类型id<br/>
-     * <功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return String [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    String getRoleTypeId();
     
     /**
      * 获取父类角色类型<br/>

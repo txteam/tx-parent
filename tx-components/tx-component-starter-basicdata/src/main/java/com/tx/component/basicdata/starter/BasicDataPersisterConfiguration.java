@@ -9,6 +9,7 @@ package com.tx.component.basicdata.starter;
 import javax.annotation.Resource;
 
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
@@ -26,6 +27,7 @@ import com.tx.component.basicdata.service.DataDictService;
 import com.tx.core.ddlutil.executor.TableDDLExecutor;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.mybatis.support.MyBatisDaoSupport;
+import com.tx.core.starter.component.ComponentConstants;
 
 /**
  * 基础数据持久层配置逻辑<br/>
@@ -97,7 +99,8 @@ public class BasicDataPersisterConfiguration {
     @DependsOn("basicdata.tableInitializer")
     @Configuration
     //jpa的实现尚未提供，此处实现暂时注释掉
-    //@ConditionalOnProperty(prefix = ComponentConstants.PERSISTER_PROPERTIES_PREFIX, value = "type", havingValue = "mybatis")
+    @ConditionalOnProperty(prefix = ComponentConstants.PERSISTER_PROPERTIES_PREFIX, value = "type", havingValue = "mybatis")
+    @ConditionalOnBean(name = { "tx.component.myBatisDaoSupport" })
     public static class MybatisBasicDataContextPersisterConfiguration
             implements InitializingBean {
         
@@ -170,7 +173,8 @@ public class BasicDataPersisterConfiguration {
     //     * @since  [产品/模块版本]
     //     */
     //    @Configuration
-    //    @ConditionalOnProperty(prefix = "tx.basicdata", value = "persister", havingValue = "mybatis")
+    //    @ConditionalOnProperty(prefix = ComponentConstants.PERSISTER_PROPERTIES_PREFIX, value = "type", havingValue = "mybatis")
+    //    @ConditionalOnMissingBean(name = { "tx.component.myBatisDaoSupport" })
     //    public static class MybatisBasicDataContextPersisterConfiguration
     //            extends AbstractMybatisConfiguration {
     //        

@@ -14,7 +14,6 @@ import org.springframework.cache.Cache;
 
 import com.tx.component.role.model.RoleType;
 import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.querier.model.Querier;
 
 /**
  * 角色类型业务层<br/>
@@ -63,21 +62,6 @@ public class RoleTypeManagerComposite {
             }
         }
         return roleTypeTemp;
-    }
-    
-    /**
-     * @param params
-     * @return
-     */
-    public List<RoleType> queryList(Querier querier) {
-        List<RoleType> resList = new ArrayList<>();
-        for (RoleTypeManager rm : delegates) {
-            List<RoleType> tempList = rm.queryRoleTypeList(querier);
-            if (!CollectionUtils.isEmpty(tempList)) {
-                resList.addAll(tempList);
-            }
-        }
-        return resList;
     }
     
 }

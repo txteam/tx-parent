@@ -11,7 +11,6 @@ import java.util.List;
 import org.springframework.cache.Cache;
 
 import com.tx.component.auth.model.Auth;
-import com.tx.core.querier.model.Querier;
 
 /**
  * 权限类型业务层实现<br/>
@@ -39,42 +38,40 @@ public interface AuthManager {
     /**
      * 根据条件查询角色列表<br/>
      * <功能详细描述>
-     * @param querier
+     * @param authTypeId
      * @return [参数说明]
      * 
      * @return List<Auth> [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    List<Auth> queryAuthList(Querier querier);
+    List<Auth> queryAuthList(String authTypeId);
     
     /**
      * 根父节点查询子级角色列表<br/>
      * <功能详细描述>
-     * @param module
      * @param parentId
-     * @param params
+     * @param authTypeId
      * @return [参数说明]
      * 
      * @return List<Auth> [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    List<Auth> queryChildrenAuthByParentId(String parentId, Querier querier);
+    List<Auth> queryChildrenAuthByParentId(String parentId, String authTypeId);
     
     /**
      * 嵌套查询子级角色列表<br/>
      * <功能详细描述>
-     * @param module
      * @param parentId
-     * @param params
+     * @param authTypeId
      * @return [参数说明]
      * 
      * @return List<Auth> [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    List<Auth> queryDescendantsAuthByParentId(String parentId, Querier querier);
+    List<Auth> queryDescendantsAuthByParentId(String parentId, String authTypeId);
     
     /**
      * 获取权限类型对应的缓存<br/>

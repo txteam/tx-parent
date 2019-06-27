@@ -15,7 +15,6 @@ import org.springframework.util.ClassUtils;
 
 import com.tx.component.role.model.Role;
 import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.querier.model.Querier;
 import com.tx.core.util.CacheUtils;
 
 /**
@@ -33,13 +32,13 @@ class CachingRoleManager implements RoleManager {
             String.class };
     
     private static final Class<?>[] QUERYLIST_PARAMETER_TYPES = new Class<?>[] {
-            Querier.class };
+            String[].class };
     
     private static final Class<?>[] QUERYCHILDREN_PARAMETER_TYPES = new Class<?>[] {
-            String.class, Querier.class };
+            String.class, String[].class };
     
     private static final Class<?>[] QUERYDESCENDANTS_PARAMETER_TYPES = new Class<?>[] {
-            String.class, Querier.class };
+            String.class, String[].class };
     
     private final Class<?> beanClass;
     
@@ -86,15 +85,15 @@ class CachingRoleManager implements RoleManager {
     }
     
     /**
-     * @param querier
+     * @param roleTypeId
      * @return
      */
     @Override
-    public List<Role> queryRoleList(Querier querier) {
+    public List<Role> queryRoleList(String... roleTypeIds) {
         String cacheKey = CacheUtils.generateStringCacheKey(this.beanClass,
                 "queryRoleList",
                 QUERYLIST_PARAMETER_TYPES,
-                new Object[] { querier });
+                new Object[] { roleTypeIds });
         
         ValueWrapper vw = this.roleCache.get(cacheKey);
         if (vw != null && vw.get() != null && List.class.isInstance(vw.get())) {
@@ -103,7 +102,7 @@ class CachingRoleManager implements RoleManager {
             return resList;
         }
         
-        List<Role> resList = this.delegate.queryRoleList(querier);
+        List<Role> resList = this.delegate.queryRoleList(roleTypeIds);
         if (!CollectionUtils.isEmpty(resList)) {
             this.roleCache.put(cacheKey, resList);
         }
@@ -117,11 +116,11 @@ class CachingRoleManager implements RoleManager {
      */
     @Override
     public List<Role> queryChildrenRoleByParentId(String parentId,
-            Querier querier) {
+            String... roleTypeIds) {
         String cacheKey = CacheUtils.generateStringCacheKey(this.beanClass,
                 "queryChildrenRoleByParentId",
                 QUERYCHILDREN_PARAMETER_TYPES,
-                new Object[] { parentId, querier });
+                new Object[] { parentId, roleTypeIds });
         
         ValueWrapper vw = this.roleCache.get(cacheKey);
         if (vw != null && vw.get() != null && List.class.isInstance(vw.get())) {
@@ -131,7 +130,7 @@ class CachingRoleManager implements RoleManager {
         }
         
         List<Role> resList = this.delegate.queryChildrenRoleByParentId(parentId,
-                querier);
+                roleTypeIds);
         if (!CollectionUtils.isEmpty(resList)) {
             this.roleCache.put(cacheKey, resList);
         }
@@ -145,11 +144,11 @@ class CachingRoleManager implements RoleManager {
      */
     @Override
     public List<Role> queryDescendantsRoleByParentId(String parentId,
-            Querier querier) {
+            String... roleTypeIds) {
         String cacheKey = CacheUtils.generateStringCacheKey(this.beanClass,
-                "queryDescendantsByParentId",
+                "queryDescendantsRoleByParentId",
                 QUERYDESCENDANTS_PARAMETER_TYPES,
-                new Object[] { parentId, querier });
+                new Object[] { parentId, roleTypeIds });
         
         ValueWrapper vw = this.roleCache.get(cacheKey);
         if (vw != null && vw.get() != null && List.class.isInstance(vw.get())) {
@@ -159,7 +158,7 @@ class CachingRoleManager implements RoleManager {
         }
         
         List<Role> resList = this.delegate.queryChildrenRoleByParentId(parentId,
-                querier);
+                roleTypeIds);
         if (!CollectionUtils.isEmpty(resList)) {
             this.roleCache.put(cacheKey, resList);
         }
