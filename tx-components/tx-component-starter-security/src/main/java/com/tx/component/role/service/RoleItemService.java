@@ -64,7 +64,7 @@ public class RoleItemService implements RoleManager {
     public Role findRoleById(String roleId) {
         AssertUtils.notEmpty(roleId, "roleId is empty.");
         
-        Role res = findRoleById(roleId);
+        Role res = findById(roleId);
         return res;
     }
     

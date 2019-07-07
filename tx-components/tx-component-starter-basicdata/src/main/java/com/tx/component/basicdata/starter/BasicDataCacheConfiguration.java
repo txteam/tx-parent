@@ -8,13 +8,16 @@ package com.tx.component.basicdata.starter;
 
 import java.time.Duration;
 
+import org.springframework.beans.BeansException;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.cache.transaction.TransactionAwareCacheManagerProxy;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
@@ -42,13 +45,16 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @since  [产品/模块版本]
  */
 @Configuration
-public class BasicDataCacheConfiguration {
+public class BasicDataCacheConfiguration implements ApplicationContextAware {
+    
+    /** spring容器句柄 */
+    private ApplicationContext applicationContext;
     
     /** 基础数据容器属性 */
     private BasicDataContextProperties properties;
     
     /** 缓存的有效期 */
-    private static Duration duration;
+    private Duration duration;
     
     /** <默认构造函数> */
     public BasicDataCacheConfiguration(BasicDataContextProperties properties) {
@@ -57,8 +63,46 @@ public class BasicDataCacheConfiguration {
         
         if (this.properties.getDuration() == null
                 || this.properties.getDuration().toMillis() <= 0) {
-            BasicDataCacheConfiguration.duration = Duration.ofDays(1);
+            this.duration = Duration.ofDays(1);
+        } else {
+            this.duration = this.properties.getDuration();
         }
+    }
+    
+    /**
+     * @param applicationContext
+     * @throws BeansException
+     */
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext)
+            throws BeansException {
+        this.applicationContext = applicationContext;
+    }
+    
+    /**
+     * 基础数据缓存定义<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return BasicDataCacheCustomizer [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @ConditionalOnMissingBean(BasicDataCacheCustomizer.class)
+    @ConditionalOnProperty(prefix = BasicDataContextConstants.PROPERTIES_PREFIX, value = "cacheManagerRef", matchIfMissing = false)
+    @Bean
+    public BasicDataCacheCustomizer basicDataCacheCustomizer() {
+        CacheManager cacheManager = null;
+        if (this.applicationContext
+                .containsBean(this.properties.getCacheManagerRef())) {
+            cacheManager = this.applicationContext.getBean(
+                    this.properties.getCacheManagerRef(), CacheManager.class);
+        }
+        
+        AssertUtils.notNull(cacheManager, "cacheManager is null.");
+        BasicDataCacheCustomizer customizer = new BasicDataCacheCustomizer();
+        customizer.setCacheManager(cacheManager);
+        return customizer;
     }
     
     /**
@@ -70,73 +114,59 @@ public class BasicDataCacheConfiguration {
      * @see  [相关类/方法]
      * @since  [产品/模块版本]
      */
-    @Configuration
+    //@Configuration
+    //@AutoConfigureAfter({ RedisAutoConfiguration.class })
+    @Bean
     @ConditionalOnClass(RedisOperations.class)
-    @ConditionalOnSingleCandidate(RedisConnectionFactory.class)
     @ConditionalOnMissingBean(BasicDataCacheCustomizer.class)
-    public static class BasicDataRedisCacheConfiguration {
+    @ConditionalOnProperty(prefix = BasicDataContextConstants.PROPERTIES_PREFIX, value = "cacheManagerRef", matchIfMissing = true)
+    public BasicDataCacheCustomizer basicDataRedisCacheCustomizer(
+            RedisConnectionFactory factory) {
+        CacheManager cacheManager = basicDataCacheManager(factory);
         
-        /** redis链接工厂 */
-        private RedisConnectionFactory factory;
+        AssertUtils.notNull(cacheManager, "cacheManager is null.");
+        BasicDataCacheCustomizer customizer = new BasicDataCacheCustomizer();
+        customizer.setCacheManager(cacheManager);
+        return customizer;
+    }
+    
+    /**
+     * 构建配置容器独立的缓存管理器<br/>
+     * <功能详细描述>
+     * @param factory
+     * @return [参数说明]
+     * 
+     * @return CacheManager [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    private CacheManager basicDataCacheManager(RedisConnectionFactory factory) {
+        RedisSerializer<String> redisSerializer = new StringRedisSerializer();
+        Jackson2JsonRedisSerializer<?> jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer(
+                Object.class);
         
-        /** <默认构造函数> */
-        public BasicDataRedisCacheConfiguration(
-                RedisConnectionFactory factory) {
-            super();
-            this.factory = factory;
-        }
+        //解决查询缓存转换异常的问题
+        ObjectMapper om = new ObjectMapper();
+        om.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
+        om.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
+        jackson2JsonRedisSerializer.setObjectMapper(om);
         
-        @Bean
-        public BasicDataCacheCustomizer basicDataCacheCustomizer() {
-            CacheManager cacheManager = basicDataCacheManager();
-            
-            AssertUtils.notNull(cacheManager, "cacheManager is null.");
-            BasicDataCacheCustomizer customizer = new BasicDataCacheCustomizer();
-            customizer.setCacheManager(cacheManager);
-            return customizer;
-        }
+        // 配置序列化（解决乱码的问题）
+        RedisCacheConfiguration config = RedisCacheConfiguration
+                .defaultCacheConfig()
+                //prefix?
+                .entryTtl(duration)
+                .serializeKeysWith(RedisSerializationContext.SerializationPair
+                        .fromSerializer(redisSerializer))
+                .serializeValuesWith(RedisSerializationContext.SerializationPair
+                        .fromSerializer(jackson2JsonRedisSerializer))
+                .disableCachingNullValues();
         
-        /**
-         * 基础数据缓存<br/>
-         * <功能详细描述>
-         * @return [参数说明]
-         * 
-         * @return CacheManager [返回类型说明]
-         * @exception throws [异常类型] [异常说明]
-         * @see [类、类#方法、类#成员]
-         */
-        @SuppressWarnings({ "unchecked", "rawtypes" })
-        @Bean("basicdata.cacheManager")
-        public CacheManager basicDataCacheManager() {
-            RedisSerializer<String> redisSerializer = new StringRedisSerializer();
-            Jackson2JsonRedisSerializer<?> jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer(
-                    Object.class);
-            
-            //解决查询缓存转换异常的问题
-            ObjectMapper om = new ObjectMapper();
-            om.setVisibility(PropertyAccessor.ALL,
-                    JsonAutoDetect.Visibility.ANY);
-            om.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
-            jackson2JsonRedisSerializer.setObjectMapper(om);
-            
-            // 配置序列化（解决乱码的问题）
-            RedisCacheConfiguration config = RedisCacheConfiguration
-                    .defaultCacheConfig()
-                    //prefix?
-                    .entryTtl(BasicDataCacheConfiguration.duration)
-                    .serializeKeysWith(
-                            RedisSerializationContext.SerializationPair
-                                    .fromSerializer(redisSerializer))
-                    .serializeValuesWith(
-                            RedisSerializationContext.SerializationPair
-                                    .fromSerializer(
-                                            jackson2JsonRedisSerializer))
-                    .disableCachingNullValues();
-            
-            RedisCacheManager cacheManager = RedisCacheManager
-                    .builder(this.factory).cacheDefaults(config).build();
-            return cacheManager;
-        }
+        RedisCacheManager cacheManager = RedisCacheManager.builder(factory)
+                .cacheDefaults(config)
+                .build();
+        return cacheManager;
     }
     
     /**
@@ -148,32 +178,19 @@ public class BasicDataCacheConfiguration {
      * @see  [相关类/方法]
      * @since  [产品/模块版本]
      */
-    @Configuration
-    @ConditionalOnMissingBean(BasicDataCacheCustomizer.class)
-    public static class BasicDataLocalCacheConfiguration {
+    @Bean
+    @ConditionalOnMissingClass({
+            "org.springframework.data.redis.core.RedisOperations" })
+    @ConditionalOnProperty(prefix = BasicDataContextConstants.PROPERTIES_PREFIX, value = "cacheManagerRef", matchIfMissing = true)
+    public BasicDataCacheCustomizer basicDataLocalCacheCustomizer() {
+        CacheManager local = new ConcurrentMapCacheManager();
+        CacheManager cacheManager = new TransactionAwareCacheManagerProxy(
+                local);
         
-        /**
-         * 基础数据缓存定义<br/>
-         * <功能详细描述>
-         * @return [参数说明]
-         * 
-         * @return BasicDataCacheCustomizer [返回类型说明]
-         * @exception throws [异常类型] [异常说明]
-         * @see [类、类#方法、类#成员]
-         */
-        @ConditionalOnMissingBean(RedisConnectionFactory.class)
-        @ConditionalOnProperty(prefix = BasicDataContextConstants.PROPERTIES_PREFIX, value = "cacheManagerRef", matchIfMissing = true)
-        @Bean
-        public BasicDataCacheCustomizer basicDataCacheCustomizer() {
-            CacheManager local = new ConcurrentMapCacheManager();
-            CacheManager cacheManager = new TransactionAwareCacheManagerProxy(
-                    local);
-            
-            AssertUtils.notNull(cacheManager, "cacheManager is null.");
-            BasicDataCacheCustomizer customizer = new BasicDataCacheCustomizer();
-            customizer.setCacheManager(cacheManager);
-            return customizer;
-        }
+        AssertUtils.notNull(cacheManager, "cacheManager is null.");
+        BasicDataCacheCustomizer customizer = new BasicDataCacheCustomizer();
+        customizer.setCacheManager(cacheManager);
+        return customizer;
     }
     
     /**
@@ -185,7 +202,7 @@ public class BasicDataCacheConfiguration {
      * @see  [相关类/方法]
      * @since  [产品/模块版本]
      */
-    public static class BasicDataCacheCustomizer {
+    static class BasicDataCacheCustomizer {
         
         /** 缓存manager */
         private CacheManager cacheManager;

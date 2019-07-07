@@ -27,6 +27,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 
 import com.tx.core.mybatis.support.MyBatisDaoSupport;
 import com.tx.core.mybatis.support.MyBatisDaoSupportHelper;
@@ -49,6 +50,7 @@ import com.tx.core.starter.mybatis.MybatisProperties;
 @ConditionalOnSingleCandidate(DataSource.class)
 @EnableConfigurationProperties(ComponentProperties.class)
 @AutoConfigureAfter(MybatisAutoConfiguration.class)
+@Import({ TableInitializerExecutor.class })
 public class ComponentSupportAutoConfiguration
         extends AbstractMybatisConfiguration
         implements InitializingBean, ApplicationContextAware {
@@ -88,8 +90,9 @@ public class ComponentSupportAutoConfiguration
         
         this.properties = (MybatisProperties) properties.clone();
         this.properties.setMapperLocations(new String[] {
-                "classpath*:com/tx/component/basicdata/dao/impl/*SqlMap_BASICDATA.xml",
-                "classpath*:com/tx/component/configuration/dao/impl/*SqlMap_CONFIGURATION.xml" });
+                "classpath*:com/tx/component/**/*SqlMap_BASICDATA.xml",
+                "classpath*:com/tx/component/**/*SqlMap_CONFIGURATION.xml",
+                "classpath*:com/tx/component/**/*SqlMap_SECURITY.xml" });
         
         this.dataSource = dataSource;
     }

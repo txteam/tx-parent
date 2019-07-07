@@ -6,8 +6,6 @@
  */
 package com.tx.component.basicdata.script;
 
-import org.springframework.beans.factory.InitializingBean;
-
 import com.tx.core.TxConstants;
 import com.tx.core.dbscript.initializer.AbstractTableInitializer;
 import com.tx.core.ddlutil.builder.DDLBuilder;
@@ -24,43 +22,11 @@ import com.tx.core.ddlutil.executor.TableDDLExecutor;
   * @see  [相关类/方法]
   * @since  [产品/模块版本]
   */
-public class BasicDataContextTableInitializer extends AbstractTableInitializer
-        implements InitializingBean {
-    
-    /** 表DDL执行器 */
-    private TableDDLExecutor tableDDLExecutor;
-    
-    /** 是否自动执行 */
-    private boolean tableAutoInitialize = false;
+public class BasicDataContextTableInitializer extends AbstractTableInitializer {
     
     /** <默认构造函数> */
     public BasicDataContextTableInitializer() {
         super();
-    }
-    
-    /** <默认构造函数> */
-    public BasicDataContextTableInitializer(TableDDLExecutor tableDDLExecutor) {
-        super();
-        this.tableDDLExecutor = tableDDLExecutor;
-    }
-    
-    /** <默认构造函数> */
-    public BasicDataContextTableInitializer(TableDDLExecutor tableDDLExecutor,
-            boolean tableAutoInitialize) {
-        super();
-        this.tableDDLExecutor = tableDDLExecutor;
-        this.tableAutoInitialize = tableAutoInitialize;
-    }
-    
-    /**
-     * @throws Exception
-     */
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        //初始化表定义
-        if (this.tableDDLExecutor != null && this.tableAutoInitialize) {
-            initialize(this.tableDDLExecutor, this.tableAutoInitialize);
-        }
     }
     
     /**

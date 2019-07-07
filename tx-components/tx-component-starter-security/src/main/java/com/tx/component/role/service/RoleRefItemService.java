@@ -62,6 +62,64 @@ public class RoleRefItemService {
      * @see [类、类#方法、类#成员]
      */
     @Transactional
+    public void insertToHis(RoleRefItem roleRefItem) {
+        //验证参数是否合法
+        AssertUtils.notNull(roleRefItem, "roleRefItem is null.");
+        AssertUtils.notEmpty(roleRefItem.getId(), "roleRef.id is empty.");
+        AssertUtils.notEmpty(roleRefItem.getRoleId(),
+                "roleRef.roleId is empty.");
+        AssertUtils.notEmpty(roleRefItem.getRefType(),
+                "roleRef.refType is empty.");
+        AssertUtils.notEmpty(roleRefItem.getRefId(), "roleRef.refId is empty.");
+        
+        //为添加的数据需要填入默认值的字段填入默认值
+        Date now = new Date();
+        roleRefItem.setLastUpdateDate(now);
+        
+        //调用数据持久层对实例进行持久化操作
+        this.roleRefItemDao.insertToHis(roleRefItem);
+    }
+    
+    /**
+     * 新增角色引用实例<br/>
+     * 将roleRefItem插入数据库中保存
+     * 1、如果roleRefItem 为空时抛出参数为空异常
+     * 2、如果roleRefItem 中部分必要参数为非法值时抛出参数不合法异常
+     * 
+     * @param roleRefItem [参数说明]
+     * @return void [返回类型说明]
+     * @exception throws
+     * @see [类、类#方法、类#成员]
+     */
+    @Transactional
+    public void batchInsertToHis(List<RoleRefItem> roleRefItems) {
+        if (CollectionUtils.isEmpty(roleRefItems)) {
+            return;
+        }
+        
+        Date now = new Date();
+        roleRefItems.stream().forEach(roleRef -> {
+            roleRef.setLastUpdateDate(now);
+            
+            AssertUtils.notEmpty(roleRef.getId(), "roleRef.id is empty.");
+        });
+        
+        //调用数据持久层对实例进行持久化操作
+        this.roleRefItemDao.batchInsertToHis(roleRefItems);
+    }
+    
+    /**
+     * 新增角色引用实例<br/>
+     * 将roleRefItem插入数据库中保存
+     * 1、如果roleRefItem 为空时抛出参数为空异常
+     * 2、如果roleRefItem 中部分必要参数为非法值时抛出参数不合法异常
+     * 
+     * @param roleRefItem [参数说明]
+     * @return void [返回类型说明]
+     * @exception throws
+     * @see [类、类#方法、类#成员]
+     */
+    @Transactional
     public void insert(RoleRefItem roleRefItem) {
         //验证参数是否合法
         AssertUtils.notNull(roleRefItem, "roleRefItem is null.");
@@ -137,6 +195,34 @@ public class RoleRefItemService {
         int resInt = this.roleRefItemDao.delete(condition);
         boolean flag = resInt > 0;
         return flag;
+    }
+    
+    /**
+     * 新增角色引用实例<br/>
+     * 将roleRefItem插入数据库中保存
+     * 1、如果roleRefItem 为空时抛出参数为空异常
+     * 2、如果roleRefItem 中部分必要参数为非法值时抛出参数不合法异常
+     * 
+     * @param roleRefItem [参数说明]
+     * @return void [返回类型说明]
+     * @exception throws
+     * @see [类、类#方法、类#成员]
+     */
+    @Transactional
+    public void batchDelete(List<RoleRefItem> roleRefItems) {
+        if (CollectionUtils.isEmpty(roleRefItems)) {
+            return;
+        }
+        
+        Date now = new Date();
+        roleRefItems.stream().forEach(roleRef -> {
+            roleRef.setLastUpdateDate(now);
+            
+            AssertUtils.notEmpty(roleRef.getId(), "roleRef.id is empty.");
+        });
+        
+        //调用数据持久层对实例进行持久化操作
+        this.roleRefItemDao.batchDelete(roleRefItems);
     }
     
     /**
@@ -368,13 +454,13 @@ public class RoleRefItemService {
         
         //生成需要更新字段的hashMap
         Map<String, Object> updateRowMap = new HashMap<String, Object>();
-        //FIXME:需要更新的字段
+        //需要更新的字段
         updateRowMap.put("refId", roleRefItem.getRefId());
         updateRowMap.put("refType", roleRefItem.getRefType());
         updateRowMap.put("roleId", roleRefItem.getRoleId());
-        updateRowMap.put("createOperatorId", roleRefItem.getCreateOperatorId());
         updateRowMap.put("expiryDate", roleRefItem.getExpiryDate());
         updateRowMap.put("effectiveDate", roleRefItem.getEffectiveDate());
+        updateRowMap.put("lastUpdateDate", new Date());
         
         boolean flag = this.roleRefItemDao.update(id, updateRowMap);
         //如果需要大于1时，抛出异常并回滚，需要在这里修改

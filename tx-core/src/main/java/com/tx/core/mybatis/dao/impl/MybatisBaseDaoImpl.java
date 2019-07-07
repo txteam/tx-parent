@@ -67,7 +67,6 @@ public abstract class MybatisBaseDaoImpl<T, ID extends Serializable>
     /**
      * @throws Exception
      */
-    
     @Override
     public void afterPropertiesSet() throws Exception {
         AssertUtils.notNull(getMyBatisDaoSupport(),

@@ -67,10 +67,10 @@ public class AuthManagerComposite {
      * @param authTypeId
      * @return
      */
-    public List<Auth> queryList(String authTypeId) {
+    public List<Auth> queryList(String... authTypeIds) {
         List<Auth> resList = new ArrayList<>();
         for (AuthManager rm : delegates) {
-            List<Auth> tempList = rm.queryAuthList(authTypeId);
+            List<Auth> tempList = rm.queryAuthList(authTypeIds);
             if (!CollectionUtils.isEmpty(tempList)) {
                 resList.addAll(tempList);
             }
@@ -83,11 +83,11 @@ public class AuthManagerComposite {
      * @return
      */
     public List<Auth> queryChildrenByParentId(String parentId,
-            String authTypeId) {
+            String... authTypeIds) {
         List<Auth> resList = new ArrayList<>();
         for (AuthManager rm : delegates) {
             List<Auth> tempList = rm.queryChildrenAuthByParentId(parentId,
-                    authTypeId);
+                    authTypeIds);
             if (!CollectionUtils.isEmpty(tempList)) {
                 resList.addAll(tempList);
             }
@@ -100,11 +100,11 @@ public class AuthManagerComposite {
      * @return
      */
     public List<Auth> queryDescendantsByParentId(String parentId,
-            String authTypeId) {
+            String... authTypeIds) {
         List<Auth> resList = new ArrayList<>();
         for (AuthManager rm : delegates) {
             List<Auth> tempList = rm.queryDescendantsAuthByParentId(parentId,
-                    authTypeId);
+                    authTypeIds);
             if (!CollectionUtils.isEmpty(tempList)) {
                 resList.addAll(tempList);
             }

@@ -6,7 +6,6 @@
  */
 package com.tx.component.basicdata.starter;
 
-import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang3.StringUtils;
@@ -16,7 +15,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -37,8 +35,6 @@ import com.tx.component.basicdata.registry.BasicDataEntityRegistry;
 import com.tx.component.basicdata.registry.BasicDataServiceRegistry;
 import com.tx.component.basicdata.service.DataDictService;
 import com.tx.component.basicdata.starter.BasicDataCacheConfiguration.BasicDataCacheCustomizer;
-import com.tx.component.configuration.context.ConfigContext;
-import com.tx.component.configuration.starter.ConfigContextAutoConfiguration;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.starter.component.ComponentSupportAutoConfiguration;
 
@@ -59,8 +55,8 @@ import com.tx.core.starter.component.ComponentSupportAutoConfiguration;
 @ConditionalOnBean(PlatformTransactionManager.class)
 @ConditionalOnProperty(prefix = BasicDataContextConstants.PROPERTIES_PREFIX, value = "enable", havingValue = "true")
 @Import({ BasicDataPersisterConfiguration.class,
-        BasicDataAPIClientConfiguration.class,
-        BasicDataCacheConfiguration.class })
+        BasicDataCacheConfiguration.class,
+        BasicDataAPIClientConfiguration.class })
 public class BasicDataContextAutoConfiguration
         implements InitializingBean, ApplicationContextAware {
     
@@ -213,24 +209,5 @@ public class BasicDataContextAutoConfiguration
     public BasicDataAPIController basicDataAPIController() {
         BasicDataAPIController controller = new BasicDataAPIController();
         return controller;
-    }
-    
-    /**
-     * 加载配置容器<br/>
-     * <功能详细描述>
-     * 
-     * @author  Administrator
-     * @version  [版本号, 2019年5月5日]
-     * @see  [相关类/方法]
-     * @since  [产品/模块版本]
-     */
-    @Configuration
-    @Import({ ConfigContextAutoConfiguration.class })
-    @ConditionalOnMissingBean(ConfigContext.class)
-    public static class ConfigContextNotFoundConfiguration {
-        
-        @PostConstruct
-        public void afterPropertiesSet() {
-        }
     }
 }

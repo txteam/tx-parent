@@ -54,10 +54,10 @@ public interface AuthRefItemFacade {
      * @see [类、类#方法、类#成员]
      */
     @ApiOperation(value = "根据主键删除权限引用")
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE) 
     public boolean deleteById(
-            @PathVariable(value = "id", required = true) String id);
-    
+    		@PathVariable(value = "id",required=true) String id);
+
     /**
      * 更新权限引用<br/>
      * <功能详细描述>
@@ -70,10 +70,9 @@ public interface AuthRefItemFacade {
      */
     @ApiOperation(value = "修改权限引用")
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    public boolean updateById(
-            @PathVariable(value = "id", required = true) String id,
-            @RequestBody AuthRefItem authRefItem);
-    
+    public boolean updateById(@PathVariable(value = "id",required=true) String id,
+    		@RequestBody AuthRefItem authRefItem);
+
     /**
      * 根据主键查询权限引用<br/>
      * <功能详细描述>
@@ -88,6 +87,7 @@ public interface AuthRefItemFacade {
     public AuthRefItem findById(
             @PathVariable(value = "id", required = true) String id);
     
+
     /**
      * 查询权限引用实例列表<br/>
      * <功能详细描述>
@@ -100,7 +100,9 @@ public interface AuthRefItemFacade {
      */
     @ApiOperation(value = "查询权限引用列表")
     @RequestMapping(value = "/list", method = RequestMethod.GET)
-    public List<AuthRefItem> queryList(@RequestBody Querier querier);
+    public List<AuthRefItem> queryList(
+    		@RequestBody Querier querier
+    	);
     
     /**
      * 查询权限引用分页列表<br/>
@@ -116,11 +118,13 @@ public interface AuthRefItemFacade {
      */
     @ApiOperation(value = "查询权限引用分页列表")
     @RequestMapping(value = "/pagedlist/{pageSize}/{pageNumber}", method = RequestMethod.GET)
-    public PagedList<AuthRefItem> queryPagedList(@RequestBody Querier querier,
-            @PathVariable(value = "pageNumber", required = true) int pageIndex,
-            @PathVariable(value = "pageSize", required = true) int pageSize);
+    public PagedList<AuthRefItem> queryPagedList(
+			@RequestBody Querier querier,
+			@PathVariable(value = "pageNumber", required = true) int pageIndex,
+            @PathVariable(value = "pageSize", required = true) int pageSize
+    	);
     
-    /**
+	/**
      * 查询权限引用数量<br/>
      * <功能详细描述>
      * @param querier
@@ -132,11 +136,12 @@ public interface AuthRefItemFacade {
      */
     @ApiOperation(value = "查询权限引用数量")
     @RequestMapping(value = "/count", method = RequestMethod.GET)
-    public int count(@RequestBody Querier querier);
-    
-    /**
+    public int count(
+            @RequestBody Querier querier);
+
+	/**
      * 查询权限引用是否存在<br/>
-     * @param excludeId
+	 * @param excludeId
      * @param querier
      * @return [参数说明]
      * 
@@ -146,6 +151,8 @@ public interface AuthRefItemFacade {
      */
     @ApiOperation(value = "查询权限引用是否存在")
     @RequestMapping(value = "/exists", method = RequestMethod.GET)
-    public boolean exists(@RequestBody Querier querier,
-            @RequestParam(value = "excludeId", required = false) String excludeId);
+    public boolean exists(
+    		@RequestBody Querier querier,
+            @RequestParam(value = "excludeId", required = false) String excludeId
+            );
 }

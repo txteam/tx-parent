@@ -7,12 +7,14 @@
 package com.tx.component.basicdata.service.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import com.tx.component.basicdata.context.BasicDataContext;
@@ -75,8 +77,18 @@ public class DefaultDBBasicDataService<T extends BasicData>
         if (StringUtils.isEmpty(dd.getType())) {
             dd.setType(type);
         }
+        Date now = new Date();
+        dd.setCreateDate(now);
+        dd.setLastUpdateDate(now);
         
-        this.dataDictService.insert(dd);
+        this.transactionTemplate
+                .execute(new TransactionCallbackWithoutResult() {
+                    @Override
+                    protected void doInTransactionWithoutResult(
+                            TransactionStatus status) {
+                        dataDictService.insert(dd);
+                    }
+                });
     }
     
     /**
@@ -131,7 +143,9 @@ public class DefaultDBBasicDataService<T extends BasicData>
         DataDict obj = JSONAttributesSupportUtils
                 .toJSONAttributesSupport(DataDict.class, data);
         AssertUtils.notEmpty(obj.getCode(), "data.code is empty.");
-        obj.setType(type);
+        
+        Date now = new Date();
+        obj.setLastUpdateDate(now);
         
         boolean flag = this.transactionTemplate
                 .execute(new TransactionCallback<Boolean>() {
@@ -155,6 +169,9 @@ public class DefaultDBBasicDataService<T extends BasicData>
         DataDict obj = JSONAttributesSupportUtils
                 .toJSONAttributesSupport(DataDict.class, data);
         AssertUtils.notEmpty(obj.getId(), "data.id is empty.");
+        
+        Date now = new Date();
+        obj.setLastUpdateDate(now);
         
         boolean flag = this.transactionTemplate
                 .execute(new TransactionCallback<Boolean>() {

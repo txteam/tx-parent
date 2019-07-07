@@ -6,6 +6,7 @@
  */
 package com.tx.component.auth.context;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.BeansException;
@@ -16,6 +17,7 @@ import org.springframework.cache.CacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+import com.tx.component.auth.AuthConstants;
 import com.tx.component.auth.model.AuthType;
 import com.tx.core.exceptions.util.AssertUtils;
 
@@ -84,7 +86,7 @@ public class AuthTypeRegistry
     private Cache cache;
     
     /** 权限类型类型管理器集 */
-    private List<AuthTypeManager> roleTypeManagers;
+    private List<AuthTypeManager> authTypeManagers;
     
     /** 权限类型类型 */
     private AuthTypeManagerComposite composite;
@@ -95,10 +97,17 @@ public class AuthTypeRegistry
     @Override
     public void afterPropertiesSet() throws Exception {
         AssertUtils.notNull(cacheManager, "cacheManager is null.");
-        AssertUtils.notEmpty(roleTypeManagers, "roleTypeManagers is empty.");
         
-        this.cache = this.cacheManager.getCache("roleTypeCache");
-        this.composite = new AuthTypeManagerComposite(roleTypeManagers,
+        //角色类型业务层
+        this.authTypeManagers = new ArrayList<>(applicationContext
+                .getBeansOfType(AuthTypeManager.class).values());
+        
+        AssertUtils.notEmpty(authTypeManagers, "authTypeManagers is empty.");
+        
+        //角色类型缓存
+        this.cache = this.cacheManager
+                .getCache(AuthConstants.CACHE_KEY_AUTH_TYPE);
+        this.composite = new AuthTypeManagerComposite(authTypeManagers,
                 this.cache);
     }
     
@@ -131,4 +140,12 @@ public class AuthTypeRegistry
         AuthType roleType = this.composite.findById(id);
         return roleType;
     }
+    
+    /**
+     * @param 对cacheManager进行赋值
+     */
+    public void setCacheManager(CacheManager cacheManager) {
+        this.cacheManager = cacheManager;
+    }
+    
 }

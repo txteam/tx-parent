@@ -57,13 +57,6 @@ public interface RoleRef extends Serializable {
     String getCreateOperatorId();
     
     /**
-     * 创建时间<br/>
-     * 
-     * @return 返回 createDate
-     */
-    Date getCreateDate();
-    
-    /**
      * 返回权限引用项生效时间
      * when isTemp() == true 有效
      *<功能详细描述>

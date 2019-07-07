@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.tx.component.role.context.RoleRegistry;
@@ -39,6 +40,17 @@ public class RoleRefServiceImpl implements RoleRefService {
     
     /** 角色引用项持久层 */
     private RoleRefItemService roleRefItemService;
+    
+    /** <默认构造函数> */
+    public RoleRefServiceImpl() {
+        super();
+    }
+    
+    /** <默认构造函数> */
+    public RoleRefServiceImpl(RoleRefItemService roleRefItemService) {
+        super();
+        this.roleRefItemService = roleRefItemService;
+    }
     
     /**
      * @param valid
@@ -114,6 +126,8 @@ public class RoleRefServiceImpl implements RoleRefService {
             roleRef.setRefId(refId);
             roleRef.setRefType(refType);
             roleRef.setRoleId(roleIdTemp);
+            
+            roleRefList.add(roleRef);
         }
         
         this.roleRefItemService.batchInsert(roleRefList);
@@ -161,6 +175,8 @@ public class RoleRefServiceImpl implements RoleRefService {
             roleRef.setRefId(refIdTemp);
             roleRef.setRefType(refType);
             roleRef.setRoleId(roleId);
+            
+            roleRefList.add(roleRef);
         }
         
         this.roleRefItemService.batchInsert(roleRefList);
@@ -172,8 +188,22 @@ public class RoleRefServiceImpl implements RoleRefService {
     @Override
     @Transactional
     public void batchMoveToHis(List<RoleRef> roleRefs) {
-        // TODO Auto-generated method stub
+        if (CollectionUtils.isEmpty(roleRefs)) {
+            return;
+        }
         
+        List<RoleRefItem> items = new ArrayList<>();
+        roleRefs.stream().forEach(item -> {
+            if (item instanceof RoleRefItem) {
+                items.add((RoleRefItem) item);
+            } else {
+                RoleRefItem newitem = new RoleRefItem();
+                BeanUtils.copyProperties(item, newitem);
+                items.add(newitem);
+            }
+        });
+        this.roleRefItemService.batchInsertToHis(items);
+        this.roleRefItemService.batchDelete(items);
     }
     
 }

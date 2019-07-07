@@ -102,6 +102,8 @@ public class RoleTypeRegistry
         this.roleTypeManagers = new ArrayList<>(applicationContext
                 .getBeansOfType(RoleTypeManager.class).values());
         
+        AssertUtils.notEmpty(roleTypeManagers, "roleTypeManagers is empty.");
+        
         //角色类型缓存
         this.cache = this.cacheManager
                 .getCache(RoleConstants.CACHE_KEY_ROLE_TYPE);
@@ -137,5 +139,12 @@ public class RoleTypeRegistry
         
         RoleType roleType = this.composite.findById(id);
         return roleType;
+    }
+
+    /**
+     * @param 对cacheManager进行赋值
+     */
+    public void setCacheManager(CacheManager cacheManager) {
+        this.cacheManager = cacheManager;
     }
 }

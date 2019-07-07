@@ -17,15 +17,17 @@ package com.tx.component.role;
  */
 public interface RoleConstants {
     
+    String DEFAULT_ROLE_CONFIG_PATH = "classpath:context/role/*.xml";
+    
     String BEAN_NAME_ROLE_ITEM_DAO = "security.roleItemDao";
+    
+    String BEAN_NAME_ROLE_ITEM_SERVICE = "security.roleItemService";
     
     String BEAN_NAME_ROLE_TYPE_ITEM_DAO = "security.roleTypeItemDao";
     
-    String BEAN_NAME_ROLE_REF_ITEM_DAO = "security.roleRefItemDao";
-    
-    String BEAN_NAME_ROLE_ITEM_SERVICE = "security.roleRefItemService";
-    
     String BEAN_NAME_ROLE_TYPE_ITEM_SERVICE = "security.roleTypeItemService";
+    
+    String BEAN_NAME_ROLE_REF_ITEM_DAO = "security.roleRefItemDao";
     
     String BEAN_NAME_ROLE_REF_ITEM_SERVICE = "security.roleRefItemService";
     

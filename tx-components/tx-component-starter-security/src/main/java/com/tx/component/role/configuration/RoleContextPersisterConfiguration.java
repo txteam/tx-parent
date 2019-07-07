@@ -54,7 +54,7 @@ public class RoleContextPersisterConfiguration {
     @Configuration
     @ConditionalOnProperty(prefix = ComponentConstants.PERSISTER_PROPERTIES_PREFIX, value = "type", havingValue = "mybatis")
     @ConditionalOnBean(name = { "tx.component.myBatisDaoSupport" })
-    public static class MybatisRolePersisterConfiguration
+    public static class MybatisRoleContextPersisterConfiguration
             implements InitializingBean {
         
         /** mybatis属性 */
@@ -66,7 +66,7 @@ public class RoleContextPersisterConfiguration {
         private TransactionTemplate transactionTemplate;
         
         /** <默认构造函数> */
-        public MybatisRolePersisterConfiguration(
+        public MybatisRoleContextPersisterConfiguration(
                 PlatformTransactionManager transactionManager) {
             this.transactionTemplate = new TransactionTemplate(
                     transactionManager);
@@ -90,7 +90,7 @@ public class RoleContextPersisterConfiguration {
          * @exception throws [异常类型] [异常说明]
          * @see [类、类#方法、类#成员]
          */
-        @Bean(RoleConstants.BEAN_NAME_ROLE_TYPE_ITEM_DAO)
+        @Bean(name = RoleConstants.BEAN_NAME_ROLE_TYPE_ITEM_DAO)
         public RoleTypeItemDao roleTypeItemDao() {
             RoleTypeItemDaoMybatisImpl dao = new RoleTypeItemDaoMybatisImpl();
             dao.setMyBatisDaoSupport(this.myBatisDaoSupport);
@@ -139,9 +139,10 @@ public class RoleContextPersisterConfiguration {
          * @see [类、类#方法、类#成员]
          */
         @Bean(RoleConstants.BEAN_NAME_ROLE_TYPE_ITEM_SERVICE)
-        public RoleTypeItemService roleTypeItemService() {
+        public RoleTypeItemService roleTypeItemService(
+                RoleTypeItemDao roleTypeItemDao) {
             RoleTypeItemService service = new RoleTypeItemService(
-                    roleTypeItemDao());
+                    roleTypeItemDao);
             return service;
         }
         
@@ -155,8 +156,8 @@ public class RoleContextPersisterConfiguration {
          * @see [类、类#方法、类#成员]
          */
         @Bean(RoleConstants.BEAN_NAME_ROLE_ITEM_SERVICE)
-        public RoleItemService roleItemService() {
-            RoleItemService service = new RoleItemService(roleItemDao());
+        public RoleItemService roleItemService(RoleItemDao roleItemDao) {
+            RoleItemService service = new RoleItemService(roleItemDao);
             return service;
         }
         
@@ -170,9 +171,9 @@ public class RoleContextPersisterConfiguration {
          * @see [类、类#方法、类#成员]
          */
         @Bean(RoleConstants.BEAN_NAME_ROLE_REF_ITEM_SERVICE)
-        public RoleRefItemService roleRefItemService() {
-            RoleRefItemService service = new RoleRefItemService(
-                    roleRefItemDao());
+        public RoleRefItemService roleRefItemService(
+                RoleRefItemDao roleRefItemDao) {
+            RoleRefItemService service = new RoleRefItemService(roleRefItemDao);
             return service;
         }
     }

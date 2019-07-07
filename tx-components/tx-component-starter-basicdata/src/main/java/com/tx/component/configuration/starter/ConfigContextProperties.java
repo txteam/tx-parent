@@ -27,9 +27,6 @@ public class ConfigContextProperties {
     /** 命令容器是否启动 */
     private boolean enable;
     
-    /** 表是否自动初始化 */
-    private boolean tableAutoInitialize = false;
-    
     /** 所属模块 */
     private String module;
     
@@ -96,20 +93,6 @@ public class ConfigContextProperties {
      */
     public void setEnable(boolean enable) {
         this.enable = enable;
-    }
-
-    /**
-     * @return 返回 tableAutoInitialize
-     */
-    public boolean isTableAutoInitialize() {
-        return tableAutoInitialize;
-    }
-
-    /**
-     * @param 对tableAutoInitialize进行赋值
-     */
-    public void setTableAutoInitialize(boolean tableAutoInitialize) {
-        this.tableAutoInitialize = tableAutoInitialize;
     }
 
     /**

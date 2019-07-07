@@ -20,17 +20,17 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @JsonSerialize(using = BasicDataEnumJsonSerializer.class)
 public enum BasicDataViewTypeEnum implements BasicDataEnum {
     
-    COMMON_LIST("LIST", "列表(通用)"),
+    COMMON_LIST("COMMON_LIST", "列表(通用)"),
     
-    COMMON_PAGEDLIST("LIST", "分页列表(通用)"),
+    COMMON_PAGEDLIST("COMMON_PAGEDLIST", "分页列表(通用)"),
     
-    COMMON_TREE("TREE", "树型列表(通用)"),
+    COMMON_TREELIST("COMMON_TREELIST", "树型列表(通用)"),
     
     LIST("LIST", "列表"),
     
-    PAGEDLIST("LIST", "分页列表"),
+    PAGEDLIST("PAGEDLIST", "分页列表"),
     
-    TREE("TREE", "树型列表");
+    TREELIST("TREELIST", "树型列表");
     
     private final String key;
     

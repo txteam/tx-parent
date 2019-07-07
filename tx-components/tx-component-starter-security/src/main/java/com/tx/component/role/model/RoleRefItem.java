@@ -58,6 +58,12 @@ public class RoleRefItem implements RoleRef {
     /** 权限引用项的创建(授予)时间 */
     private Date createDate;
     
+    /** 最后更新人 */
+    private String lastUpdateOperatorId;
+    
+    /** 最后更新时间 */
+    private Date lastUpdateDate;
+    
     /**
      * @param 对id进行赋值
      */
@@ -149,7 +155,6 @@ public class RoleRefItem implements RoleRef {
     /**
      * @return
      */
-    @Override
     public Date getCreateDate() {
         return this.createDate;
     }
@@ -178,4 +183,31 @@ public class RoleRefItem implements RoleRef {
         return this.roleId;
     }
     
+    /**
+     * @return 返回 lastUpdateOperatorId
+     */
+    public String getLastUpdateOperatorId() {
+        return lastUpdateOperatorId;
+    }
+    
+    /**
+     * @param 对lastUpdateOperatorId进行赋值
+     */
+    public void setLastUpdateOperatorId(String lastUpdateOperatorId) {
+        this.lastUpdateOperatorId = lastUpdateOperatorId;
+    }
+    
+    /**
+     * @return 返回 lastUpdateDate
+     */
+    public Date getLastUpdateDate() {
+        return lastUpdateDate;
+    }
+    
+    /**
+     * @param 对lastUpdateDate进行赋值
+     */
+    public void setLastUpdateDate(Date lastUpdateDate) {
+        this.lastUpdateDate = lastUpdateDate;
+    }
 }

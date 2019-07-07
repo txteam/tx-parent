@@ -32,7 +32,7 @@ import io.swagger.annotations.ApiModel;
  * @since  [产品/模块版本]
  */
 @Entity
-@Table(name = "sec_authref")
+@Table(name = "sec_auth")
 @ApiModel("权限项")
 public class AuthItem implements Auth {
     
@@ -49,20 +49,20 @@ public class AuthItem implements Auth {
     /** 权限类型 后续根据需要可以扩展相应的权限大类   比如: 产品权限\流程环节权限\通过多个纬度的权限交叉可以达到多纬度的授权体系*/
     private String authTypeId;
     
-    /** 引用id */
-    private String refId;
-    
     /** 引用类型 */
     private String refType;
+    
+    /** 引用id */
+    private String refId;
     
     /** 权限项名 */
     private String name;
     
+    /** 是否可配置（分配） */
+    private boolean configAble;
+    
     /** 权限项目描述 */
     private String remark;
-    
-    /** 是否可配置给 */
-    private boolean configAble = true;
     
     /** 属性值 */
     private String attributes;
@@ -77,17 +77,19 @@ public class AuthItem implements Auth {
     }
     
     /** <默认构造函数> */
-    public AuthItem(String id, String authTypeId) {
+    public AuthItem(String id, String name, String authTypeId) {
         super();
         this.id = id;
+        this.name = name;
         this.authTypeId = authTypeId;
     }
     
     /** <默认构造函数> */
-    public AuthItem(String id, String authTypeId, String refType,
+    public AuthItem(String id, String name, String authTypeId, String refType,
             String refId) {
         super();
         this.id = id;
+        this.name = name;
         this.authTypeId = authTypeId;
         this.refType = refType;
         this.refId = refId;

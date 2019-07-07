@@ -11,11 +11,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
+import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.tx.component.auth.dao.AuthRefItemDao;
@@ -34,14 +32,81 @@ import com.tx.core.querier.model.QuerierBuilder;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-@Component("authRefItemService")
 public class AuthRefItemService {
     
     @SuppressWarnings("unused")
     private Logger logger = LoggerFactory.getLogger(AuthRefItemService.class);
     
-    @Resource(name = "authRefItemDao")
     private AuthRefItemDao authRefItemDao;
+    
+    /** <默认构造函数> */
+    public AuthRefItemService() {
+        super();
+    }
+    
+    /** <默认构造函数> */
+    public AuthRefItemService(AuthRefItemDao authRefItemDao) {
+        super();
+        this.authRefItemDao = authRefItemDao;
+    }
+    
+    /**
+     * 新增角色引用实例<br/>
+     * 将roleRefItem插入数据库中保存
+     * 1、如果roleRefItem 为空时抛出参数为空异常
+     * 2、如果roleRefItem 中部分必要参数为非法值时抛出参数不合法异常
+     * 
+     * @param roleRefItem [参数说明]
+     * @return void [返回类型说明]
+     * @exception throws
+     * @see [类、类#方法、类#成员]
+     */
+    @Transactional
+    public void insertToHis(AuthRefItem authRefItem) {
+        //验证参数是否合法
+        AssertUtils.notNull(authRefItem, "authRef is null.");
+        AssertUtils.notEmpty(authRefItem.getId(), "authRef.id is empty.");
+        AssertUtils.notEmpty(authRefItem.getAuthId(),
+                "authRef.roleId is empty.");
+        AssertUtils.notEmpty(authRefItem.getRefType(),
+                "authRef.refType is empty.");
+        AssertUtils.notEmpty(authRefItem.getRefId(), "authRef.refId is empty.");
+        
+        //为添加的数据需要填入默认值的字段填入默认值
+        Date now = new Date();
+        authRefItem.setLastUpdateDate(now);
+        
+        //调用数据持久层对实例进行持久化操作
+        this.authRefItemDao.insertToHis(authRefItem);
+    }
+    
+    /**
+     * 新增角色引用实例<br/>
+     * 将roleRefItem插入数据库中保存
+     * 1、如果roleRefItem 为空时抛出参数为空异常
+     * 2、如果roleRefItem 中部分必要参数为非法值时抛出参数不合法异常
+     * 
+     * @param roleRefItem [参数说明]
+     * @return void [返回类型说明]
+     * @exception throws
+     * @see [类、类#方法、类#成员]
+     */
+    @Transactional
+    public void batchInsertToHis(List<AuthRefItem> roleRefItems) {
+        if (CollectionUtils.isEmpty(roleRefItems)) {
+            return;
+        }
+        
+        Date now = new Date();
+        roleRefItems.stream().forEach(roleRef -> {
+            roleRef.setLastUpdateDate(now);
+            
+            AssertUtils.notEmpty(roleRef.getId(), "authRef.id is empty.");
+        });
+        
+        //调用数据持久层对实例进行持久化操作
+        this.authRefItemDao.batchInsertToHis(roleRefItems);
+    }
     
     /**
      * 新增权限引用实例<br/>
@@ -57,19 +122,56 @@ public class AuthRefItemService {
     @Transactional
     public void insert(AuthRefItem authRefItem) {
         //验证参数是否合法
-        AssertUtils.notNull(authRefItem, "authRefItem is null.");
+        AssertUtils.notNull(authRefItem, "authRef is null.");
+        AssertUtils.notEmpty(authRefItem.getId(), "authRef.id is empty.");
         AssertUtils.notEmpty(authRefItem.getAuthId(),
-                "authRefItem.authId is empty.");
+                "authRef.authId is empty.");
         AssertUtils.notEmpty(authRefItem.getRefType(),
-                "authRefItem.refType is empty.");
-        AssertUtils.notEmpty(authRefItem.getRefId(),
-                "authRefItem.refId is empty.");
+                "authRef.refType is empty.");
+        AssertUtils.notEmpty(authRefItem.getRefId(), "authRef.refId is empty.");
         
         //为添加的数据需要填入默认值的字段填入默认值
-        authRefItem.setCreateDate(new Date());
+        Date now = new Date();
+        authRefItem.setCreateDate(now);
         
         //调用数据持久层对实例进行持久化操作
         this.authRefItemDao.insert(authRefItem);
+    }
+    
+    /**
+     * 新增角色引用实例<br/>
+     * 将authRefItem插入数据库中保存
+     * 1、如果authRefItem 为空时抛出参数为空异常
+     * 2、如果authRefItem 中部分必要参数为非法值时抛出参数不合法异常
+     * 
+     * @param authRefItem [参数说明]
+     * @return void [返回类型说明]
+     * @exception throws
+     * @see [类、类#方法、类#成员]
+     */
+    @Transactional
+    public void batchInsert(List<AuthRefItem> authRefItems) {
+        if (CollectionUtils.isEmpty(authRefItems)) {
+            return;
+        }
+        
+        Date now = new Date();
+        authRefItems.stream().forEach(authRef -> {
+            authRef.setCreateDate(now);
+            authRef.setLastUpdateDate(now);
+            if (authRef.getEffectiveDate() == null) {
+                authRef.setEffectiveDate(now);
+            }
+            
+            AssertUtils.notEmpty(authRef.getAuthId(),
+                    "authRef.roleId is empty.");
+            AssertUtils.notEmpty(authRef.getRefType(),
+                    "authRef.refType is empty.");
+            AssertUtils.notEmpty(authRef.getRefId(), "authRef.refId is empty.");
+        });
+        
+        //调用数据持久层对实例进行持久化操作
+        this.authRefItemDao.batchInsert(authRefItems);
     }
     
     /**
@@ -92,6 +194,34 @@ public class AuthRefItemService {
         int resInt = this.authRefItemDao.delete(condition);
         boolean flag = resInt > 0;
         return flag;
+    }
+    
+    /**
+     * 新增权限引用实例<br/>
+     * 将authRefItem插入数据库中保存
+     * 1、如果authRefItem 为空时抛出参数为空异常
+     * 2、如果authRefItem 中部分必要参数为非法值时抛出参数不合法异常
+     * 
+     * @param authRefItem [参数说明]
+     * @return void [返回类型说明]
+     * @exception throws
+     * @see [类、类#方法、类#成员]
+     */
+    @Transactional
+    public void batchDelete(List<AuthRefItem> authRefItems) {
+        if (CollectionUtils.isEmpty(authRefItems)) {
+            return;
+        }
+        
+        Date now = new Date();
+        authRefItems.stream().forEach(roleRef -> {
+            roleRef.setLastUpdateDate(now);
+            
+            AssertUtils.notEmpty(roleRef.getId(), "authRef.id is empty.");
+        });
+        
+        //调用数据持久层对实例进行持久化操作
+        this.authRefItemDao.batchDelete(authRefItems);
     }
     
     /**
@@ -124,6 +254,8 @@ public class AuthRefItemService {
      * @see [类、类#方法、类#成员]
      */
     public List<AuthRefItem> queryList(Map<String, Object> params) {
+        //判断条件合法性
+        
         //生成查询条件
         params = params == null ? new HashMap<String, Object>() : params;
         
@@ -144,6 +276,8 @@ public class AuthRefItemService {
      * @see [类、类#方法、类#成员]
      */
     public List<AuthRefItem> queryList(Querier querier) {
+        //判断条件合法性
+        
         //生成查询条件
         querier = querier == null ? QuerierBuilder.newInstance().querier()
                 : querier;
@@ -170,6 +304,8 @@ public class AuthRefItemService {
      */
     public PagedList<AuthRefItem> queryPagedList(Map<String, Object> params,
             int pageIndex, int pageSize) {
+        //T判断条件合法性
+        
         //生成查询条件
         params = params == null ? new HashMap<String, Object>() : params;
         
@@ -317,12 +453,15 @@ public class AuthRefItemService {
         
         //生成需要更新字段的hashMap
         Map<String, Object> updateRowMap = new HashMap<String, Object>();
-        //FIXME:需要更新的字段
+        
+        //需要更新的字段
         updateRowMap.put("refId", authRefItem.getRefId());
         updateRowMap.put("refType", authRefItem.getRefType());
         updateRowMap.put("authId", authRefItem.getAuthId());
+        updateRowMap.put("createOperatorId", authRefItem.getCreateOperatorId());
         updateRowMap.put("expiryDate", authRefItem.getExpiryDate());
         updateRowMap.put("effectiveDate", authRefItem.getEffectiveDate());
+        updateRowMap.put("lastUpdateDate", new Date());
         
         boolean flag = this.authRefItemDao.update(id, updateRowMap);
         //如果需要大于1时，抛出异常并回滚，需要在这里修改

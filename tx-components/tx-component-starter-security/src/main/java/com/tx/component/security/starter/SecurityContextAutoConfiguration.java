@@ -24,6 +24,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import com.tx.component.auth.configuration.AuthContextConfiguration;
 import com.tx.component.role.configuration.RoleContextConfiguration;
 import com.tx.component.security.SecurityContextConstants;
 import com.tx.component.security.context.SecurityContextFactory;
@@ -42,18 +43,18 @@ import com.tx.core.starter.component.ComponentSupportAutoConfiguration;
 @Configuration
 @AutoConfigureAfter({ ComponentSupportAutoConfiguration.class })
 @EnableConfigurationProperties(SecurityContextProperties.class)
+@ConditionalOnProperty(prefix = SecurityContextConstants.PROPERTIES_PREFIX, value = "enable", havingValue = "true")
 @ConditionalOnClass({ SecurityContextFactory.class })
 @ConditionalOnSingleCandidate(DataSource.class)
 @ConditionalOnBean(PlatformTransactionManager.class)
-@ConditionalOnProperty(prefix = SecurityContextConstants.PROPERTIES_PREFIX, value = "enable", havingValue = "true")
-@Import({ RoleContextConfiguration.class })
+@Import({ SecurityContextCacheConfiguration.class })
 public class SecurityContextAutoConfiguration
         implements InitializingBean, ApplicationContextAware {
     
-    private ApplicationContext applicationContext;
+    protected ApplicationContext applicationContext;
     
     /** 任务容器属性 */
-    private SecurityContextProperties properties;
+    protected SecurityContextProperties properties;
     
     /** 容器所属模块：当该值为空时，使用spring.application.name的内容 */
     private String module;
@@ -94,4 +95,13 @@ public class SecurityContextAutoConfiguration
         AssertUtils.notEmpty(this.module, "module is empty.");
     }
     
+    @Import({ RoleContextConfiguration.class })
+    @Configuration
+    public class RoleContextAutoConfiguration {
+    }
+    
+    @Import({ AuthContextConfiguration.class })
+    @Configuration
+    public class AuthContextAutoConfiguration {
+    }
 }

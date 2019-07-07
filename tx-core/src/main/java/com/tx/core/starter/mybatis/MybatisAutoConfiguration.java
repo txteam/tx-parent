@@ -38,6 +38,7 @@ import org.springframework.context.ResourceLoaderAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.type.AnnotationMetadata;
@@ -133,6 +134,7 @@ public class MybatisAutoConfiguration extends AbstractMybatisConfiguration
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
+    @Primary
     @Bean(name = "sqlSessionFactory")
     @ConditionalOnMissingBean(name = "sqlSessionFactory")
     public SqlSessionFactory sqlSessionFactory() throws Exception {
@@ -156,6 +158,7 @@ public class MybatisAutoConfiguration extends AbstractMybatisConfiguration
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
+    @Primary
     @Bean(name = "sqlSessionTemplate")
     @ConditionalOnMissingBean(name = "sqlSessionTemplate")
     public SqlSessionTemplate sqlSessionTemplate() throws Exception {
@@ -177,6 +180,7 @@ public class MybatisAutoConfiguration extends AbstractMybatisConfiguration
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
+    @Primary
     @Bean("myBatisDaoSupport")
     @ConditionalOnMissingBean(name = "myBatisDaoSupport")
     public MyBatisDaoSupport myBatisDaoSupport() throws Exception {

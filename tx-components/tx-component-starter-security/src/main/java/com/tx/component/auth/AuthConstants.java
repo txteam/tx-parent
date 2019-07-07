@@ -17,6 +17,36 @@ package com.tx.component.auth;
  */
 public interface AuthConstants {
     
+    String DEFAULT_AUTH_CONFIG_PATH = "classpath:context/auth/*.xml";
+    
+    String BEAN_NAME_AUTH_ITEM_DAO = "security.authItemDao";
+    
+    String BEAN_NAME_AUTH_ITEM_SERVICE = "security.authItemService";
+    
+    String BEAN_NAME_AUTH_TYPE_ITEM_DAO = "security.authTypeItemDao";
+    
+    String BEAN_NAME_AUTH_TYPE_ITEM_SERVICE = "security.authTypeItemService";
+    
+    String BEAN_NAME_AUTH_REF_ITEM_DAO = "security.authRefItemDao";
+    
+    String BEAN_NAME_AUTH_REF_ITEM_SERVICE = "security.authRefItemService";
+    
+    String BEAN_NAME_AUTH_TYPE_ENUM_SERVICE = "security.authTypeEnumService";
+    
+    String BEAN_NAME_AUTH_ENUM_SERVICE = "security.authEnumService";
+    
+    String BEAN_NAME_AUTH_CONFIG_SERVICE = "security.authConfigService";
+    
+    String BEAN_NAME_AUTH_REF_SERVICE = "security.authRefService";
+    
+    String BEAN_NAME_AUTH_REGISTRY = "security.authRegistry";
+    
+    String BEAN_NAME_AUTH_TYPE_REGISTRY = "security.authTypeRegistry";
+    
+    String CACHE_KEY_AUTH_TYPE = "security.auth_type.cache";
+    
+    String CACHE_KEY_AUTH = "security.auth.cache";
+    
     //----------------session 中获取权限的key --------------    
     
     //start-----------------------权限引用类型----------------------

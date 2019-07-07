@@ -21,7 +21,9 @@
 				ARI.createDate,
 				ARI.createOperatorId,
 				ARI.expiryDate,
-				ARI.effectiveDate
+				ARI.effectiveDate,
+				RRI.lastUpdateOperatorId,
+				RRI.lastUpdateDate
 		  FROM SEC_AUTHREF ARI
 		 WHERE
 		<trim prefixOverrides="AND | OR">
@@ -43,7 +45,9 @@
 				ARI.createDate,
 				ARI.createOperatorId,
 				ARI.expiryDate,
-				ARI.effectiveDate
+				ARI.effectiveDate,
+				RRI.lastUpdateOperatorId,
+				RRI.lastUpdateDate
 		  FROM SEC_AUTHREF ARI
 		<trim prefix="WHERE" prefixOverrides="AND | OR">
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(conditions)">
@@ -72,7 +76,22 @@
 	        </if>			
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authId)">  
 	            <![CDATA[ AND ARI.authId = #{authId} ]]>
-	        </if>			
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(effective)">  
+	        	<choose>  
+			        <when test="@com.tx.core.util.OgnlUtils@isTrue(effective)">  
+			            <![CDATA[ AND ((ARI.expiryDate IS NULL OR ARI.expiryDate <= now(6)) AND (ARI.effectiveDate IS NULL OR ARI.effective >= now(6))) ]]>
+			        </when>
+			        <otherwise>  
+			            <![CDATA[ AND ((ARI.expiryDate IS NOT NULL AND ARI.expiryDate > now(6)) AND (ARI.effectiveDate IS NOT NULL OR ARI.effective < now(6))) ]]>
+			        </otherwise>  
+			    </choose>
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(expried)">
+	        	<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(expried)">  
+		            AND ((ARI.expiryDate IS NOT NULL AND ARI.expiryDate > now(6))
+		        </if>
+	        </if>		
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(minCreateDate)">  
 	            <![CDATA[ AND ARI.createDate >= #{minCreateDate} ]]>
 	        </if>
@@ -129,7 +148,22 @@
 	        </if>			
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authId)">  
 	            <![CDATA[ AND ARI.authId = #{authId} ]]>
-	        </if>			
+	        </if>		
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(effective)">  
+	        	<choose>  
+			        <when test="@com.tx.core.util.OgnlUtils@isTrue(effective)">  
+			            <![CDATA[ AND ((ARI.expiryDate IS NULL OR ARI.expiryDate <= now(6)) AND (ARI.effectiveDate IS NULL OR ARI.effective >= now(6))) ]]>
+			        </when>
+			        <otherwise>  
+			            <![CDATA[ AND ((ARI.expiryDate IS NOT NULL AND ARI.expiryDate > now(6)) AND (ARI.effectiveDate IS NOT NULL OR ARI.effective < now(6))) ]]>
+			        </otherwise>  
+			    </choose>
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(expried)">
+	        	<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(expried)">  
+		            AND ((ARI.expiryDate IS NOT NULL AND ARI.expiryDate > now(6))
+		        </if>
+	        </if>		
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(minCreateDate)">  
 	            <![CDATA[ AND ARI.createDate >= #{minCreateDate} ]]>
 	        </if>
@@ -157,7 +191,9 @@
 			createDate,
 			createOperatorId,
 			expiryDate,
-			effectiveDate
+			effectiveDate,
+			lastUpdateOperatorId,
+			lastUpdateDate
 		)
 		VALUES
 		(
@@ -168,7 +204,39 @@
 			#{createDate},
 			#{createOperatorId},
 			#{expiryDate},
-			#{effectiveDate}
+			#{effectiveDate},
+			#{lastUpdateOperatorId},
+			#{lastUpdateDate}
+		)
+	</insert>
+	
+	<insert id="insertToHis" 
+		parameterType="com.tx.component.auth.model.AuthRefItem">
+		INSERT INTO SEC_AUTHREF_HIS
+		(
+			id,
+			refId,
+			refType,
+			authId,
+			createDate,
+			createOperatorId,
+			expiryDate,
+			effectiveDate,
+			lastUpdateOperatorId,
+			lastUpdateDate
+		)
+		VALUES
+		(
+			#{id},
+			#{refId},
+			#{refType},
+			#{authId},
+			#{createDate},
+			#{createOperatorId},
+			#{expiryDate},
+			#{effectiveDate},
+			#{lastUpdateOperatorId},
+			#{lastUpdateDate}
 		)
 	</insert>
 	
@@ -202,6 +270,12 @@
 	    	</if>
 			<if test="_parameter.containsKey('effectiveDate')">
 	    		effectiveDate = #{effectiveDate,javaType=java.util.Date},
+	    	</if>
+	    	<if test="_parameter.containsKey('lastUpdateDate')">
+	    		lastUpdateDate = #{lastUpdateDate,javaType=java.util.Date},
+	    	</if>	
+			<if test="_parameter.containsKey('lastUpdateOperatorId')">
+	    		lastUpdateOperatorId = #{lastUpdateOperatorId,javaType=java.lang.String},
 	    	</if>
 	    </trim>
 	    WHERE

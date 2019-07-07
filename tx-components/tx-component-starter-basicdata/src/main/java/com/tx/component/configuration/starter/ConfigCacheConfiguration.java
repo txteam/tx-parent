@@ -11,8 +11,8 @@ import java.time.Duration;
 import org.springframework.beans.BeansException;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.cache.transaction.TransactionAwareCacheManagerProxy;
@@ -54,7 +54,19 @@ public class ConfigCacheConfiguration implements ApplicationContextAware {
     private ConfigContextProperties properties;
     
     /** 缓存的有效期 */
-    private static Duration duration;
+    /*
+     * <pre>
+     *    "PT20.345S" -- parses as "20.345 seconds"
+     *    "PT15M"     -- parses as "15 minutes" (where a minute is 60 seconds)
+     *    "PT10H"     -- parses as "10 hours" (where an hour is 3600 seconds)
+     *    "P2D"       -- parses as "2 days" (where a day is 24 hours or 86400 seconds)
+     *    "P2DT3H4M"  -- parses as "2 days, 3 hours and 4 minutes"
+     *    "P-6H3M"    -- parses as "-6 hours and +3 minutes"
+     *    "-P6H3M"    -- parses as "-6 hours and -3 minutes"
+     *    "-P-6H+3M"  -- parses as "+6 hours and -3 minutes"
+     * </pre>
+     */
+    private Duration duration;
     
     /** <默认构造函数> */
     public ConfigCacheConfiguration(ConfigContextProperties properties) {
@@ -63,7 +75,9 @@ public class ConfigCacheConfiguration implements ApplicationContextAware {
         
         if (this.properties.getDuration() == null
                 || this.properties.getDuration().toMillis() <= 0) {
-            ConfigCacheConfiguration.duration = Duration.ofDays(1);
+            this.duration = Duration.ofDays(1);
+        } else {
+            this.duration = this.properties.getDuration();
         }
     }
     
@@ -112,73 +126,60 @@ public class ConfigCacheConfiguration implements ApplicationContextAware {
      * @see  [相关类/方法]
      * @since  [产品/模块版本]
      */
-    @Configuration
+    //@Configuration
+    //@AutoConfigureAfter({ RedisAutoConfiguration.class })
+    @Bean
     @ConditionalOnClass(RedisOperations.class)
-    @ConditionalOnSingleCandidate(RedisConnectionFactory.class)
+    @ConditionalOnProperty(prefix = ConfigContextConstants.PROPERTIES_PREFIX, value = "cacheManagerRef", matchIfMissing = true)
     @ConditionalOnMissingBean(ConfigCacheCustomizer.class)
-    public static class BasicDataRedisCacheConfiguration {
+    public ConfigCacheCustomizer configRedisCacheCustomizer(
+            RedisConnectionFactory factory) {
+        CacheManager cacheManager = configContextRedisCacheManager(factory);
         
-        /** redis链接工厂 */
-        private RedisConnectionFactory factory;
+        AssertUtils.notNull(cacheManager, "cacheManager is null.");
+        ConfigCacheCustomizer customizer = new ConfigCacheCustomizer();
+        customizer.setCacheManager(cacheManager);
+        return customizer;
+    }
+    
+    /**
+     * 生成RedisCacheManager<br/>
+     * <功能详细描述>
+     * @param factory
+     * @return [参数说明]
+     * 
+     * @return CacheManager [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public CacheManager configContextRedisCacheManager(
+            RedisConnectionFactory factory) {
+        RedisSerializer<String> redisSerializer = new StringRedisSerializer();
+        Jackson2JsonRedisSerializer<?> jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer(
+                Object.class);
         
-        /** <默认构造函数> */
-        public BasicDataRedisCacheConfiguration(
-                RedisConnectionFactory factory) {
-            super();
-            this.factory = factory;
-        }
+        //解决查询缓存转换异常的问题
+        ObjectMapper om = new ObjectMapper();
+        om.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
+        om.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
+        jackson2JsonRedisSerializer.setObjectMapper(om);
         
-        @Bean
-        public ConfigCacheCustomizer configCacheCustomizer() {
-            CacheManager cacheManager = configCacheManager();
-            
-            AssertUtils.notNull(cacheManager, "cacheManager is null.");
-            ConfigCacheCustomizer customizer = new ConfigCacheCustomizer();
-            customizer.setCacheManager(cacheManager);
-            return customizer;
-        }
+        // 配置序列化（解决乱码的问题）
+        RedisCacheConfiguration config = RedisCacheConfiguration
+                .defaultCacheConfig()
+                //prefix?
+                .entryTtl(duration)
+                .serializeKeysWith(RedisSerializationContext.SerializationPair
+                        .fromSerializer(redisSerializer))
+                .serializeValuesWith(RedisSerializationContext.SerializationPair
+                        .fromSerializer(jackson2JsonRedisSerializer))
+                .disableCachingNullValues();
         
-        /**
-         * 基础数据缓存<br/>
-         * <功能详细描述>
-         * @return [参数说明]
-         * 
-         * @return CacheManager [返回类型说明]
-         * @exception throws [异常类型] [异常说明]
-         * @see [类、类#方法、类#成员]
-         */
-        @SuppressWarnings({ "unchecked", "rawtypes" })
-        @Bean("config.cacheManager")
-        public CacheManager configCacheManager() {
-            RedisSerializer<String> redisSerializer = new StringRedisSerializer();
-            Jackson2JsonRedisSerializer<?> jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer(
-                    Object.class);
-            
-            //解决查询缓存转换异常的问题
-            ObjectMapper om = new ObjectMapper();
-            om.setVisibility(PropertyAccessor.ALL,
-                    JsonAutoDetect.Visibility.ANY);
-            om.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
-            jackson2JsonRedisSerializer.setObjectMapper(om);
-            
-            // 配置序列化（解决乱码的问题）
-            RedisCacheConfiguration config = RedisCacheConfiguration
-                    .defaultCacheConfig()
-                    //prefix?
-                    .entryTtl(ConfigCacheConfiguration.duration)
-                    .serializeKeysWith(
-                            RedisSerializationContext.SerializationPair
-                                    .fromSerializer(redisSerializer))
-                    .serializeValuesWith(
-                            RedisSerializationContext.SerializationPair
-                                    .fromSerializer(
-                                            jackson2JsonRedisSerializer))
-                    .disableCachingNullValues();
-            
-            RedisCacheManager cacheManager = RedisCacheManager
-                    .builder(this.factory).cacheDefaults(config).build();
-            return cacheManager;
-        }
+        RedisCacheManager cacheManager = RedisCacheManager.builder(factory)
+                .cacheDefaults(config)
+                .build();
+        return cacheManager;
     }
     
     /**
@@ -191,8 +192,10 @@ public class ConfigCacheConfiguration implements ApplicationContextAware {
      * @since  [产品/模块版本]
      */
     @Configuration
-    @ConditionalOnMissingBean(ConfigCacheCustomizer.class)
-    public static class BasicDataLocalCacheConfiguration {
+    @ConditionalOnMissingClass({
+            "org.springframework.data.redis.core.RedisOperations" })
+    @ConditionalOnProperty(prefix = ConfigContextConstants.PROPERTIES_PREFIX, value = "cacheManagerRef", matchIfMissing = true)
+    public class ConfigLocalCacheConfiguration {
         
         /**
          * 基础数据缓存定义<br/>
@@ -204,7 +207,6 @@ public class ConfigCacheConfiguration implements ApplicationContextAware {
          * @see [类、类#方法、类#成员]
          */
         @ConditionalOnMissingBean(RedisConnectionFactory.class)
-        @ConditionalOnProperty(prefix = ConfigContextConstants.PROPERTIES_PREFIX, value = "cacheManagerRef", matchIfMissing = true)
         @Bean
         public ConfigCacheCustomizer configCacheCustomizer() {
             CacheManager local = new ConcurrentMapCacheManager();
@@ -227,7 +229,7 @@ public class ConfigCacheConfiguration implements ApplicationContextAware {
      * @see  [相关类/方法]
      * @since  [产品/模块版本]
      */
-    public static class ConfigCacheCustomizer {
+    static class ConfigCacheCustomizer {
         
         /** 缓存manager */
         private CacheManager cacheManager;

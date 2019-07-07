@@ -32,13 +32,13 @@ class CachingAuthManager implements AuthManager {
             String.class };
     
     private static final Class<?>[] QUERYLIST_PARAMETER_TYPES = new Class<?>[] {
-            String.class };
+            String[].class };
     
     private static final Class<?>[] QUERYCHILDREN_PARAMETER_TYPES = new Class<?>[] {
-            String.class, String.class };
+            String.class, String[].class };
     
     private static final Class<?>[] QUERYDESCENDANTS_PARAMETER_TYPES = new Class<?>[] {
-            String.class, String.class };
+            String.class, String[].class };
     
     private final Class<?> beanClass;
     
@@ -89,11 +89,11 @@ class CachingAuthManager implements AuthManager {
      * @return
      */
     @Override
-    public List<Auth> queryAuthList(String authTypeId) {
+    public List<Auth> queryAuthList(String... authTypeIds) {
         String cacheKey = CacheUtils.generateStringCacheKey(this.beanClass,
                 "queryAuthList",
                 QUERYLIST_PARAMETER_TYPES,
-                new Object[] { authTypeId });
+                new Object[] { authTypeIds });
         
         ValueWrapper vw = this.authCache.get(cacheKey);
         if (vw != null && vw.get() != null && List.class.isInstance(vw.get())) {
@@ -102,7 +102,7 @@ class CachingAuthManager implements AuthManager {
             return resList;
         }
         
-        List<Auth> resList = this.delegate.queryAuthList(authTypeId);
+        List<Auth> resList = this.delegate.queryAuthList(authTypeIds);
         if (!CollectionUtils.isEmpty(resList)) {
             this.authCache.put(cacheKey, resList);
         }
@@ -116,11 +116,11 @@ class CachingAuthManager implements AuthManager {
      */
     @Override
     public List<Auth> queryChildrenAuthByParentId(String parentId,
-            String authTypeId) {
+            String... authTypeIds) {
         String cacheKey = CacheUtils.generateStringCacheKey(this.beanClass,
                 "queryChildrenAuthByParentId",
                 QUERYCHILDREN_PARAMETER_TYPES,
-                new Object[] { parentId, authTypeId });
+                new Object[] { parentId, authTypeIds });
         
         ValueWrapper vw = this.authCache.get(cacheKey);
         if (vw != null && vw.get() != null && List.class.isInstance(vw.get())) {
@@ -130,7 +130,7 @@ class CachingAuthManager implements AuthManager {
         }
         
         List<Auth> resList = this.delegate.queryChildrenAuthByParentId(parentId,
-                authTypeId);
+                authTypeIds);
         if (!CollectionUtils.isEmpty(resList)) {
             this.authCache.put(cacheKey, resList);
         }
@@ -144,11 +144,11 @@ class CachingAuthManager implements AuthManager {
      */
     @Override
     public List<Auth> queryDescendantsAuthByParentId(String parentId,
-            String authTypeId) {
+            String... authTypeIds) {
         String cacheKey = CacheUtils.generateStringCacheKey(this.beanClass,
                 "queryDescendantsAuthByParentId",
                 QUERYDESCENDANTS_PARAMETER_TYPES,
-                new Object[] { parentId, authTypeId });
+                new Object[] { parentId, authTypeIds });
         
         ValueWrapper vw = this.authCache.get(cacheKey);
         if (vw != null && vw.get() != null && List.class.isInstance(vw.get())) {
@@ -158,7 +158,7 @@ class CachingAuthManager implements AuthManager {
         }
         
         List<Auth> resList = this.delegate.queryChildrenAuthByParentId(parentId,
-                authTypeId);
+                authTypeIds);
         if (!CollectionUtils.isEmpty(resList)) {
             this.authCache.put(cacheKey, resList);
         }

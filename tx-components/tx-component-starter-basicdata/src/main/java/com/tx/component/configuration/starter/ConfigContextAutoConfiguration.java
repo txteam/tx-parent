@@ -224,8 +224,8 @@ public class ConfigContextAutoConfiguration
     @Bean
     public ConfigContextAPIController configAPIController(
             ConfigPropertyItemService configPropertyItemService) {
-        ConfigContextAPIController controller = new ConfigContextAPIController(module,
-                configPropertyItemService);
+        ConfigContextAPIController controller = new ConfigContextAPIController(
+                module, configPropertyItemService);
         return controller;
     }
 }

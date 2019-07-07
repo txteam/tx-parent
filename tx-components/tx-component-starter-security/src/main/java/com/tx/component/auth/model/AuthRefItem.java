@@ -12,8 +12,6 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import org.slf4j.helpers.MessageFormatter;
-
 import com.tx.core.util.ObjectUtils;
 
 import io.swagger.annotations.ApiModel;
@@ -70,6 +68,12 @@ public class AuthRefItem implements AuthRef {
     /** 权限引用项的创建(授予)时间 */
     @ApiModelProperty("创建时间")
     private Date createDate;
+    
+    /** 最后更新人 */
+    private String lastUpdateOperatorId;
+    
+    /** 最后更新时间 */
+    private Date lastUpdateDate;
     
     /** <默认构造函数> */
     public AuthRefItem() {
@@ -206,24 +210,30 @@ public class AuthRefItem implements AuthRef {
     }
     
     /**
-     * @return
+     * @return 返回 lastUpdateOperatorId
      */
-    @Override
-    public int hashCode() {
-        int hashCode = ObjectUtils.generateHashCode(super.hashCode(),
-                this,
-                "id");
-        return hashCode;
+    public String getLastUpdateOperatorId() {
+        return lastUpdateOperatorId;
     }
-    
+
     /**
-     * @return
+     * @param 对lastUpdateOperatorId进行赋值
      */
-    @Override
-    public String toString() {
-        return MessageFormatter.arrayFormat(
-                "authItemRef: {authId:{}_refId:{}_refType_{}_id:{},}",
-                new Object[] { this.authId, this.refId, this.refType, this.id })
-                .getMessage();
+    public void setLastUpdateOperatorId(String lastUpdateOperatorId) {
+        this.lastUpdateOperatorId = lastUpdateOperatorId;
+    }
+
+    /**
+     * @return 返回 lastUpdateDate
+     */
+    public Date getLastUpdateDate() {
+        return lastUpdateDate;
+    }
+
+    /**
+     * @param 对lastUpdateDate进行赋值
+     */
+    public void setLastUpdateDate(Date lastUpdateDate) {
+        this.lastUpdateDate = lastUpdateDate;
     }
 }

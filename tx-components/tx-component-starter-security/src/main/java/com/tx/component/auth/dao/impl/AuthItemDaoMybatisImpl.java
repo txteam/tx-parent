@@ -6,15 +6,13 @@
  */
 package com.tx.component.auth.dao.impl;
 
-import org.springframework.stereotype.Component;
-
-import com.tx.component.auth.dao.AuthRefItemDao;
-import com.tx.component.auth.model.AuthRefItem;
+import com.tx.component.auth.dao.AuthItemDao;
+import com.tx.component.auth.model.AuthItem;
 import com.tx.core.mybatis.dao.impl.MybatisBaseDaoImpl;
 import com.tx.core.mybatis.support.MyBatisDaoSupport;
 
 /**
- * AuthRefItem持久层
+ * AuthItem持久层
  * <功能详细描述>
  * 
  * @author  
@@ -22,19 +20,18 @@ import com.tx.core.mybatis.support.MyBatisDaoSupport;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-@Component("authRefItemDao")
-public class AuthRefItemDaoImpl extends MybatisBaseDaoImpl<AuthRefItem, String>
-        implements AuthRefItemDao {
+public class AuthItemDaoMybatisImpl extends MybatisBaseDaoImpl<AuthItem, String>
+        implements AuthItemDao {
     
     private MyBatisDaoSupport myBatisDaoSupport;
     
     /** <默认构造函数> */
-    public AuthRefItemDaoImpl() {
+    public AuthItemDaoMybatisImpl() {
         super();
     }
     
     /** <默认构造函数> */
-    public AuthRefItemDaoImpl(MyBatisDaoSupport myBatisDaoSupport) {
+    public AuthItemDaoMybatisImpl(MyBatisDaoSupport myBatisDaoSupport) {
         super();
         this.myBatisDaoSupport = myBatisDaoSupport;
     }

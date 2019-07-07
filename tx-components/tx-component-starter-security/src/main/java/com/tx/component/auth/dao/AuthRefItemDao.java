@@ -6,8 +6,10 @@
  */
 package com.tx.component.auth.dao;
 
-import com.tx.core.mybatis.dao.MybatisBaseDao;
+import java.util.List;
+
 import com.tx.component.auth.model.AuthRefItem;
+import com.tx.core.mybatis.dao.MybatisBaseDao;
 
 /**
  * AuthRefItem持久层
@@ -18,5 +20,27 @@ import com.tx.component.auth.model.AuthRefItem;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public interface AuthRefItemDao extends MybatisBaseDao<AuthRefItem, String>{
+public interface AuthRefItemDao extends MybatisBaseDao<AuthRefItem, String> {
+    /**
+     * 插入AuthRefItem对象实体
+     * 1、auto generate
+     * <功能详细描述>
+     * @param authRef [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public void insertToHis(AuthRefItem authRef);
+    
+    /**
+     * 批量插入AuthRefItem
+     * <功能详细描述>
+     * @param authRefs [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public void batchInsertToHis(List<AuthRefItem> authRefs);
 }

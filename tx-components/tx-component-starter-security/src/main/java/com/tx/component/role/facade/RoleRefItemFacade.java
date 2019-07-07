@@ -54,10 +54,10 @@ public interface RoleRefItemFacade {
      * @see [类、类#方法、类#成员]
      */
     @ApiOperation(value = "根据主键删除角色引用")
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE) 
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public boolean deleteById(
-    		@PathVariable(value = "id",required=true) String id);
-
+            @PathVariable(value = "id", required = true) String id);
+    
     /**
      * 更新角色引用<br/>
      * <功能详细描述>
@@ -70,9 +70,10 @@ public interface RoleRefItemFacade {
      */
     @ApiOperation(value = "修改角色引用")
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    public boolean updateById(@PathVariable(value = "id",required=true) String id,
-    		@RequestBody RoleRefItem roleRefItem);
-
+    public boolean updateById(
+            @PathVariable(value = "id", required = true) String id,
+            @RequestBody RoleRefItem roleRefItem);
+    
     /**
      * 根据主键查询角色引用<br/>
      * <功能详细描述>
@@ -87,7 +88,6 @@ public interface RoleRefItemFacade {
     public RoleRefItem findById(
             @PathVariable(value = "id", required = true) String id);
     
-
     /**
      * 查询角色引用实例列表<br/>
      * <功能详细描述>
@@ -100,9 +100,7 @@ public interface RoleRefItemFacade {
      */
     @ApiOperation(value = "查询角色引用列表")
     @RequestMapping(value = "/list", method = RequestMethod.GET)
-    public List<RoleRefItem> queryList(
-    		@RequestBody Querier querier
-    	);
+    public List<RoleRefItem> queryList(@RequestBody Querier querier);
     
     /**
      * 查询角色引用分页列表<br/>
@@ -118,13 +116,11 @@ public interface RoleRefItemFacade {
      */
     @ApiOperation(value = "查询角色引用分页列表")
     @RequestMapping(value = "/pagedlist/{pageSize}/{pageNumber}", method = RequestMethod.GET)
-    public PagedList<RoleRefItem> queryPagedList(
-			@RequestBody Querier querier,
-			@PathVariable(value = "pageNumber", required = true) int pageIndex,
-            @PathVariable(value = "pageSize", required = true) int pageSize
-    	);
+    public PagedList<RoleRefItem> queryPagedList(@RequestBody Querier querier,
+            @PathVariable(value = "pageNumber", required = true) int pageIndex,
+            @PathVariable(value = "pageSize", required = true) int pageSize);
     
-	/**
+    /**
      * 查询角色引用数量<br/>
      * <功能详细描述>
      * @param querier
@@ -136,12 +132,11 @@ public interface RoleRefItemFacade {
      */
     @ApiOperation(value = "查询角色引用数量")
     @RequestMapping(value = "/count", method = RequestMethod.GET)
-    public int count(
-            @RequestBody Querier querier);
-
-	/**
+    public int count(@RequestBody Querier querier);
+    
+    /**
      * 查询角色引用是否存在<br/>
-	 * @param excludeId
+     * @param excludeId
      * @param querier
      * @return [参数说明]
      * 
@@ -151,8 +146,6 @@ public interface RoleRefItemFacade {
      */
     @ApiOperation(value = "查询角色引用是否存在")
     @RequestMapping(value = "/exists", method = RequestMethod.GET)
-    public boolean exists(
-    		@RequestBody Querier querier,
-            @RequestParam(value = "excludeId", required = false) String excludeId
-            );
+    public boolean exists(@RequestBody Querier querier,
+            @RequestParam(value = "excludeId", required = false) String excludeId);
 }

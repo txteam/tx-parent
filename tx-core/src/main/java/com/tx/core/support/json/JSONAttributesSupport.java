@@ -7,6 +7,7 @@
 package com.tx.core.support.json;
 
 import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * 支持json_attributes的接口实现<br/>
@@ -50,6 +51,7 @@ public interface JSONAttributesSupport {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
+    @JsonIgnore
     public default JSONObject getAttributeJSONObject() {
         AttributesAbleJSONObjectChangeListener listener = new AttributesAbleJSONObjectChangeListener(
                 this);

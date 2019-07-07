@@ -21,18 +21,35 @@ public class ComponentPersisterProperties {
     
     /** 持久化类型 */
     private PersisterTypeEnum type = PersisterTypeEnum.mybatis;
-
+    
+    /** 表是否自动初始化 */
+    private boolean tableAutoInitialize = false;
+    
     /**
      * @return 返回 type
      */
     public PersisterTypeEnum getType() {
         return type;
     }
-
+    
     /**
      * @param 对type进行赋值
      */
     public void setType(PersisterTypeEnum type) {
         this.type = type;
+    }
+
+    /**
+     * @return 返回 tableAutoInitialize
+     */
+    public boolean isTableAutoInitialize() {
+        return tableAutoInitialize;
+    }
+
+    /**
+     * @param 对tableAutoInitialize进行赋值
+     */
+    public void setTableAutoInitialize(boolean tableAutoInitialize) {
+        this.tableAutoInitialize = tableAutoInitialize;
     }
 }

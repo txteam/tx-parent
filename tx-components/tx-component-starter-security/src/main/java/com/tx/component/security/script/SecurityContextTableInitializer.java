@@ -6,8 +6,6 @@
  */
 package com.tx.component.security.script;
 
-import org.springframework.beans.factory.InitializingBean;
-
 import com.tx.core.TxConstants;
 import com.tx.core.dbscript.initializer.AbstractTableInitializer;
 import com.tx.core.ddlutil.builder.DDLBuilder;
@@ -16,7 +14,7 @@ import com.tx.core.ddlutil.builder.create.CreateTableDDLBuilder;
 import com.tx.core.ddlutil.executor.TableDDLExecutor;
 
 /**
- * <功能简述>
+ * 安全容器表初始化器<br/>
  * <功能详细描述>
  * 
  * @author  Administrator
@@ -24,43 +22,11 @@ import com.tx.core.ddlutil.executor.TableDDLExecutor;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class SecurityContextTableInitializer extends AbstractTableInitializer
-        implements InitializingBean {
-    
-    /** 表DDL执行器 */
-    private TableDDLExecutor tableDDLExecutor;
-    
-    /** 表是否自动初始化 */
-    private boolean tableAutoInitialize = false;
+public class SecurityContextTableInitializer extends AbstractTableInitializer{
     
     /** <默认构造函数> */
     public SecurityContextTableInitializer() {
         super();
-    }
-    
-    /** <默认构造函数> */
-    public SecurityContextTableInitializer(TableDDLExecutor tableDDLExecutor) {
-        super();
-        this.tableDDLExecutor = tableDDLExecutor;
-    }
-    
-    /** <默认构造函数> */
-    public SecurityContextTableInitializer(TableDDLExecutor tableDDLExecutor,
-            boolean tableAutoInitialize) {
-        super();
-        this.tableDDLExecutor = tableDDLExecutor;
-        this.tableAutoInitialize = tableAutoInitialize;
-    }
-    
-    /**
-     * @throws Exception
-     */
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        //初始化表定义
-        if (this.tableDDLExecutor != null && this.tableAutoInitialize) {
-            initialize(tableDDLExecutor, tableAutoInitialize);
-        }
     }
     
     /**
@@ -94,6 +60,34 @@ public class SecurityContextTableInitializer extends AbstractTableInitializer
         table_sec_authref_his(tableDDLExecutor, tableAutoInitialize);
         sb.append(LINE_SEPARATOR);
         
+        sb.append(COMMENT_PREFIX)
+                .append("----------table:table_sec_role_type----------")
+                .append(COMMENT_SUFFIX)
+                .append(LINE_SEPARATOR);
+        table_sec_role_type(tableDDLExecutor, tableAutoInitialize);
+        sb.append(LINE_SEPARATOR);
+        
+        sb.append(COMMENT_PREFIX)
+                .append("----------table:table_sec_role----------")
+                .append(COMMENT_SUFFIX)
+                .append(LINE_SEPARATOR);
+        table_sec_role(tableDDLExecutor, tableAutoInitialize);
+        sb.append(LINE_SEPARATOR);
+        
+        sb.append(COMMENT_PREFIX)
+                .append("----------table:table_sec_roleref----------")
+                .append(COMMENT_SUFFIX)
+                .append(LINE_SEPARATOR);
+        table_sec_roleref(tableDDLExecutor, tableAutoInitialize);
+        sb.append(LINE_SEPARATOR);
+        
+        sb.append(COMMENT_PREFIX)
+                .append("----------table:table_sec_roleref_his----------")
+                .append(COMMENT_SUFFIX)
+                .append(LINE_SEPARATOR);
+        table_sec_roleref_his(tableDDLExecutor, tableAutoInitialize);
+        sb.append(LINE_SEPARATOR);
+        
         return sb.toString();
     }
     
@@ -113,12 +107,12 @@ public class SecurityContextTableInitializer extends AbstractTableInitializer
         AlterTableDDLBuilder alterDDLBuilder = null;
         DDLBuilder<?> ddlBuilder = null;
         
-        if (this.tableDDLExecutor.exists(tableName)) {
-            alterDDLBuilder = this.tableDDLExecutor
+        if (tableDDLExecutor.exists(tableName)) {
+            alterDDLBuilder = tableDDLExecutor
                     .generateAlterTableDDLBuilder(tableName);
             ddlBuilder = alterDDLBuilder;
         } else {
-            createDDLBuilder = this.tableDDLExecutor
+            createDDLBuilder = tableDDLExecutor
                     .generateCreateTableDDLBuilder(tableName);
             ddlBuilder = createDDLBuilder;
         }
@@ -207,12 +201,12 @@ public class SecurityContextTableInitializer extends AbstractTableInitializer
         AlterTableDDLBuilder alterDDLBuilder = null;
         DDLBuilder<?> ddlBuilder = null;
         
-        if (this.tableDDLExecutor.exists(tableName)) {
-            alterDDLBuilder = this.tableDDLExecutor
+        if (tableDDLExecutor.exists(tableName)) {
+            alterDDLBuilder = tableDDLExecutor
                     .generateAlterTableDDLBuilder(tableName);
             ddlBuilder = alterDDLBuilder;
         } else {
-            createDDLBuilder = this.tableDDLExecutor
+            createDDLBuilder = tableDDLExecutor
                     .generateCreateTableDDLBuilder(tableName);
             ddlBuilder = createDDLBuilder;
         }
@@ -301,12 +295,12 @@ public class SecurityContextTableInitializer extends AbstractTableInitializer
         AlterTableDDLBuilder alterDDLBuilder = null;
         DDLBuilder<?> ddlBuilder = null;
         
-        if (this.tableDDLExecutor.exists(tableName)) {
-            alterDDLBuilder = this.tableDDLExecutor
+        if (tableDDLExecutor.exists(tableName)) {
+            alterDDLBuilder = tableDDLExecutor
                     .generateAlterTableDDLBuilder(tableName);
             ddlBuilder = alterDDLBuilder;
         } else {
-            createDDLBuilder = this.tableDDLExecutor
+            createDDLBuilder = tableDDLExecutor
                     .generateCreateTableDDLBuilder(tableName);
             ddlBuilder = createDDLBuilder;
         }
@@ -370,17 +364,17 @@ public class SecurityContextTableInitializer extends AbstractTableInitializer
         AlterTableDDLBuilder alterDDLBuilder = null;
         DDLBuilder<?> ddlBuilder = null;
         
-        if (this.tableDDLExecutor.exists(tableName)) {
-            alterDDLBuilder = this.tableDDLExecutor
+        if (tableDDLExecutor.exists(tableName)) {
+            alterDDLBuilder = tableDDLExecutor
                     .generateAlterTableDDLBuilder(tableName);
             ddlBuilder = alterDDLBuilder;
         } else {
-            createDDLBuilder = this.tableDDLExecutor
+            createDDLBuilder = tableDDLExecutor
                     .generateCreateTableDDLBuilder(tableName);
             ddlBuilder = createDDLBuilder;
         }
         
-        sec_authitem(ddlBuilder);//写入表结构
+        sec_role_type(ddlBuilder);//写入表结构
         
         if (alterDDLBuilder != null
                 && alterDDLBuilder.compare().isNeedAlter()) {
@@ -406,45 +400,179 @@ public class SecurityContextTableInitializer extends AbstractTableInitializer
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public void sec_authitem(DDLBuilder<?> ddlBuilder) {
-        /*
-        create table sec_authitem
-        (
-            id varchar(128) not null,             --权限项唯一键key
-            module varchar(64) not null,          --系统唯一键module
-            version integer not null,             --版本
-            authType varchar(64) not null,        --权限类型
-            parentId varchar(64),                 --父级权限id
-            refType varchar(64),
-            refId varchar(64),
-            name varchar(256) not null,           --权限项名 
-            remark varchar(512),                  --权限项目描述
-            attributes varchar(1024),             --权限项目描述
-            modifyAble bit not null default 1,    --是否可编辑
-            valid bit not null default 1,         --是否有效
-            configAble bit not null default 1,    --是否可配置
-            primary key(id)
-        );
-        create unique index idx_un_authitem_00 on sec_authitem(id,module,version);
-        create index idx_parentId on sec_authitem(parentId);
-        create index idx_module on sec_authitem(module);
-        */
+    public void sec_role_type(DDLBuilder<?> ddlBuilder) {
         ddlBuilder.newColumnOfVarchar(true, "id", 128, true, null)
-                .newColumnOfVarchar("module", 64, true, null)
-                .newColumnOfInteger("version", true, null)
-                .newColumnOfVarchar("authType", 64, true, null)
+                .newColumnOfVarchar("name", 64, true, null)
+                .newColumnOfVarchar("remark", 512, false, null);
+    }
+    
+    /**
+     * 权限项<br/>
+     * <功能详细描述> [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    private String table_sec_role(TableDDLExecutor tableDDLExecutor,
+            boolean tableAutoInitialize) {
+        String tableName = "sec_role";
+        
+        CreateTableDDLBuilder createDDLBuilder = null;
+        AlterTableDDLBuilder alterDDLBuilder = null;
+        DDLBuilder<?> ddlBuilder = null;
+        
+        if (tableDDLExecutor.exists(tableName)) {
+            alterDDLBuilder = tableDDLExecutor
+                    .generateAlterTableDDLBuilder(tableName);
+            ddlBuilder = alterDDLBuilder;
+        } else {
+            createDDLBuilder = tableDDLExecutor
+                    .generateCreateTableDDLBuilder(tableName);
+            ddlBuilder = createDDLBuilder;
+        }
+        
+        sec_role(ddlBuilder);//写入表结构
+        
+        if (alterDDLBuilder != null
+                && alterDDLBuilder.compare().isNeedAlter()) {
+            if (tableAutoInitialize) {
+                tableDDLExecutor.alter(alterDDLBuilder);
+            }
+            return alterDDLBuilder.alterSql();
+        } else if (createDDLBuilder != null) {
+            if (tableAutoInitialize) {
+                tableDDLExecutor.create(createDDLBuilder);
+            }
+            return createDDLBuilder.createSql();
+        }
+        return "";
+    }
+    
+    /**
+     * 权限项<br/>
+     * <功能详细描述>
+     * @param ddlBuilder [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public void sec_role(DDLBuilder<?> ddlBuilder) {
+        ddlBuilder.newColumnOfVarchar(true, "id", 128, true, null)
                 .newColumnOfVarchar("parentId", 64, false, null)
-                .newColumnOfVarchar("refType", 64, false, null)
-                .newColumnOfVarchar("refId", 64, false, null)
-                .newColumnOfVarchar("name", 255, true, null)
-                .newColumnOfVarchar("remark", 512, false, null)
-                .newColumnOfVarchar("attributes", 1024, false, null)
-                .newColumnOfBoolean("modifyAble", true, false)
-                .newColumnOfBoolean("valid", true, true)
-                .newColumnOfBoolean("configAble", true, true);
-        ddlBuilder.newIndex(true, "idx_un_authitem_00", "id,module,version");
-        ddlBuilder.newIndex(false, "idx_parentId", "parentId");
-        ddlBuilder.newIndex(false, "idx_module", "module");
-        //ddlBuilder.newIndex(true, "idx_unique_auth_01", "");
+                .newColumnOfVarchar("roleTypeId", 64, true, null)
+                .newColumnOfVarchar("name", 64, true, null)
+                .newColumnOfVarchar("remark", 512, false, null);
+    }
+    
+    /**
+     * 权限引用<br/>
+     * <功能详细描述> [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    private String table_sec_roleref(TableDDLExecutor tableDDLExecutor,
+            boolean tableAutoInitialize) {
+        String tableName = "sec_roleref";
+        
+        CreateTableDDLBuilder createDDLBuilder = null;
+        AlterTableDDLBuilder alterDDLBuilder = null;
+        DDLBuilder<?> ddlBuilder = null;
+        
+        if (tableDDLExecutor.exists(tableName)) {
+            alterDDLBuilder = tableDDLExecutor
+                    .generateAlterTableDDLBuilder(tableName);
+            ddlBuilder = alterDDLBuilder;
+        } else {
+            createDDLBuilder = tableDDLExecutor
+                    .generateCreateTableDDLBuilder(tableName);
+            ddlBuilder = createDDLBuilder;
+        }
+        
+        sec_roleref(ddlBuilder);//写入表结构
+        
+        if (alterDDLBuilder != null
+                && alterDDLBuilder.compare().isNeedAlter()) {
+            if (tableAutoInitialize) {
+                tableDDLExecutor.alter(alterDDLBuilder);
+            }
+            return alterDDLBuilder.alterSql();
+        } else if (createDDLBuilder != null) {
+            if (tableAutoInitialize) {
+                tableDDLExecutor.create(createDDLBuilder);
+            }
+            return createDDLBuilder.createSql();
+        }
+        return "";
+    }
+    
+    /**
+     * 权限引用<br/>
+     * <功能详细描述> [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    private String table_sec_roleref_his(TableDDLExecutor tableDDLExecutor,
+            boolean tableAutoInitialize) {
+        String tableName = "sec_roleref_his";
+        
+        CreateTableDDLBuilder createDDLBuilder = null;
+        AlterTableDDLBuilder alterDDLBuilder = null;
+        DDLBuilder<?> ddlBuilder = null;
+        
+        if (tableDDLExecutor.exists(tableName)) {
+            alterDDLBuilder = tableDDLExecutor
+                    .generateAlterTableDDLBuilder(tableName);
+            ddlBuilder = alterDDLBuilder;
+        } else {
+            createDDLBuilder = tableDDLExecutor
+                    .generateCreateTableDDLBuilder(tableName);
+            ddlBuilder = createDDLBuilder;
+        }
+        
+        sec_roleref(ddlBuilder);//写入表结构
+        
+        if (alterDDLBuilder != null
+                && alterDDLBuilder.compare().isNeedAlter()) {
+            if (tableAutoInitialize) {
+                tableDDLExecutor.alter(alterDDLBuilder);
+            }
+            return alterDDLBuilder.alterSql();
+        } else if (createDDLBuilder != null) {
+            if (tableAutoInitialize) {
+                tableDDLExecutor.create(createDDLBuilder);
+            }
+            return createDDLBuilder.createSql();
+        }
+        return "";
+    }
+    
+    /**
+     * 权限引用建表语句<br/>
+     * <功能详细描述>
+     * @param ddlBuilder [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static void sec_roleref(DDLBuilder<?> ddlBuilder) {
+        ddlBuilder.newColumnOfVarchar(true, "id", 64, true, null)
+                .newColumnOfVarchar("refType", 64, true, null)
+                .newColumnOfVarchar("refId", 64, true, null)
+                .newColumnOfVarchar("roleId", 128, true, null)
+                .newColumnOfDate("effectiveDate", true, true)
+                .newColumnOfDate("expiryDate", false, false)
+                .newColumnOfDate("createDate", false, false)
+                .newColumnOfDate("lastUpdateDate", false, false)
+                .newColumnOfVarchar("createOperatorId", 64, false, null)
+                .newColumnOfVarchar("lastUpdateOperatorId", 64, false, null);
+        ddlBuilder.newIndex(false, "idx_roleId", "roleId");
+        ddlBuilder.newIndex(false, "idx_ref", "refId,refType");
     }
 }

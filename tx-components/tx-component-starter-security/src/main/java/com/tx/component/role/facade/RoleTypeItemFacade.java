@@ -39,7 +39,7 @@ public interface RoleTypeItemFacade {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @ApiOperation(value = "新增RoleTypeItem")
+    @ApiOperation(value = "新增角色类型")
     @RequestMapping(value = "", method = RequestMethod.POST)
     public RoleTypeItem insert(@RequestBody RoleTypeItem roleTypeItem);
     
@@ -53,11 +53,11 @@ public interface RoleTypeItemFacade {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @ApiOperation(value = "根据主键删除RoleTypeItem")
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE) 
+    @ApiOperation(value = "根据主键删除角色类型")
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public boolean deleteById(
-    		@PathVariable(value = "id",required=true) String id);
-
+            @PathVariable(value = "id", required = true) String id);
+    
     /**
      * 更新RoleTypeItem<br/>
      * <功能详细描述>
@@ -68,11 +68,12 @@ public interface RoleTypeItemFacade {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @ApiOperation(value = "修改RoleTypeItem")
+    @ApiOperation(value = "修改角色类型")
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    public boolean updateById(@PathVariable(value = "id",required=true) String id,
-    		@RequestBody RoleTypeItem roleTypeItem);
-
+    public boolean updateById(
+            @PathVariable(value = "id", required = true) String id,
+            @RequestBody RoleTypeItem roleTypeItem);
+    
     /**
      * 根据主键查询RoleTypeItem<br/>
      * <功能详细描述>
@@ -82,12 +83,11 @@ public interface RoleTypeItemFacade {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @ApiOperation(value = "根据主键查询RoleTypeItem")
+    @ApiOperation(value = "根据主键查询角色类型")
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public RoleTypeItem findById(
             @PathVariable(value = "id", required = true) String id);
     
-
     /**
      * 查询RoleTypeItem实例列表<br/>
      * <功能详细描述>
@@ -98,11 +98,9 @@ public interface RoleTypeItemFacade {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @ApiOperation(value = "查询RoleTypeItem列表")
+    @ApiOperation(value = "查询角色类型列表")
     @RequestMapping(value = "/list", method = RequestMethod.GET)
-    public List<RoleTypeItem> queryList(
-    		@RequestBody Querier querier
-    	);
+    public List<RoleTypeItem> queryList(@RequestBody Querier querier);
     
     /**
      * 查询RoleTypeItem分页列表<br/>
@@ -116,15 +114,13 @@ public interface RoleTypeItemFacade {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @ApiOperation(value = "查询RoleTypeItem分页列表")
+    @ApiOperation(value = "查询角色类型分页列表")
     @RequestMapping(value = "/pagedlist/{pageSize}/{pageNumber}", method = RequestMethod.GET)
-    public PagedList<RoleTypeItem> queryPagedList(
-			@RequestBody Querier querier,
-			@PathVariable(value = "pageNumber", required = true) int pageIndex,
-            @PathVariable(value = "pageSize", required = true) int pageSize
-    	);
+    public PagedList<RoleTypeItem> queryPagedList(@RequestBody Querier querier,
+            @PathVariable(value = "pageNumber", required = true) int pageIndex,
+            @PathVariable(value = "pageSize", required = true) int pageSize);
     
-	/**
+    /**
      * 查询RoleTypeItem数量<br/>
      * <功能详细描述>
      * @param querier
@@ -134,14 +130,13 @@ public interface RoleTypeItemFacade {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @ApiOperation(value = "查询RoleTypeItem数量")
+    @ApiOperation(value = "查询角色类型数量")
     @RequestMapping(value = "/count", method = RequestMethod.GET)
-    public int count(
-            @RequestBody Querier querier);
-
-	/**
+    public int count(@RequestBody Querier querier);
+    
+    /**
      * 查询RoleTypeItem是否存在<br/>
-	 * @param excludeId
+     * @param excludeId
      * @param querier
      * @return [参数说明]
      * 
@@ -149,10 +144,8 @@ public interface RoleTypeItemFacade {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @ApiOperation(value = "查询RoleTypeItem是否存在")
+    @ApiOperation(value = "查询角色类型是否存在")
     @RequestMapping(value = "/exists", method = RequestMethod.GET)
-    public boolean exists(
-    		@RequestBody Querier querier,
-            @RequestParam(value = "excludeId", required = false) String excludeId
-            );
+    public boolean exists(@RequestBody Querier querier,
+            @RequestParam(value = "excludeId", required = false) String excludeId);
 }

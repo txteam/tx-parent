@@ -6,6 +6,7 @@
  */
 package com.tx.component.auth.context;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.BeansException;
@@ -16,6 +17,7 @@ import org.springframework.cache.CacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+import com.tx.component.auth.AuthConstants;
 import com.tx.component.auth.model.Auth;
 import com.tx.core.exceptions.util.AssertUtils;
 
@@ -97,7 +99,14 @@ public class AuthRegistry
         AssertUtils.notNull(cacheManager, "cacheManager is null.");
         AssertUtils.notEmpty(authManagers, "roleManagers is empty.");
         
-        this.cache = this.cacheManager.getCache("roleTypeCache");
+        //角色类型业务层
+        this.authManagers = new ArrayList<>(
+                applicationContext.getBeansOfType(AuthManager.class).values());
+        
+        AssertUtils.notEmpty(authManagers, "authManagers is empty.");
+        
+        //角色类型缓存
+        this.cache = this.cacheManager.getCache(AuthConstants.CACHE_KEY_AUTH);
         this.composite = new AuthManagerComposite(authManagers, this.cache);
     }
     
@@ -176,10 +185,17 @@ public class AuthRegistry
      * @see [类、类#方法、类#成员]
      */
     public List<Auth> queryDescendantsByParentId(String parentId,
-            String authTypeId){
+            String authTypeId) {
         List<Auth> resList = this.composite.queryDescendantsByParentId(parentId,
                 authTypeId);
         return resList;
+    }
+    
+    /**
+     * @param 对cacheManager进行赋值
+     */
+    public void setCacheManager(CacheManager cacheManager) {
+        this.cacheManager = cacheManager;
     }
     
 }

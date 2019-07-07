@@ -6,6 +6,7 @@
  */
 package com.tx.component.role.configuration;
 
+import com.tx.component.role.RoleConstants;
 
 /**
  * 角色容器属性<br/>
@@ -19,7 +20,7 @@ package com.tx.component.role.configuration;
 public class RoleContextProperties {
     
     /** 配置文件所在路径 */
-    private String configLocation = "classpath:context/role/*.xml";
+    private String configLocation = RoleConstants.DEFAULT_ROLE_CONFIG_PATH;
 
     /**
      * @return 返回 configLocation

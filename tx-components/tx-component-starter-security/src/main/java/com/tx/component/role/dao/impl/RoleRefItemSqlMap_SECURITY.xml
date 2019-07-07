@@ -6,12 +6,12 @@
 
 	<!-- auto generate default resultMap -->
 	<resultMap id="roleRefItemMap" 
-		type="com.tx.component.security.role.model.RoleRefItem">
+		type="com.tx.component.role.model.RoleRefItem">
 	</resultMap>
 	
 	<!-- auto generate default find -->
 	<select id="find" 
-		parameterType="com.tx.component.security.role.model.RoleRefItem"
+		parameterType="com.tx.component.role.model.RoleRefItem"
 		resultMap="roleRefItemMap">
 		SELECT 
 				RRI.id,
@@ -21,7 +21,9 @@
 				RRI.effectiveDate,
 				RRI.expiryDate,
 				RRI.createOperatorId,
-				RRI.createDate
+				RRI.createDate,
+				RRI.lastUpdateOperatorId,
+				RRI.lastUpdateDate
 		  FROM sec_roleref RRI
 		 WHERE
 		<trim prefixOverrides="AND | OR">
@@ -43,7 +45,9 @@
 				RRI.effectiveDate,
 				RRI.expiryDate,
 				RRI.createOperatorId,
-				RRI.createDate
+				RRI.createDate,
+				RRI.lastUpdateOperatorId,
+				RRI.lastUpdateDate
 		  FROM sec_roleref RRI
 		<trim prefix="WHERE" prefixOverrides="AND | OR">
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(conditions)">
@@ -163,7 +167,7 @@
     
     <!-- auto generate default insert -->
     <insert id="insertToHis" 
-		parameterType="com.tx.component.security.role.model.RoleRefItem">
+		parameterType="com.tx.component.role.model.RoleRefItem">
 		INSERT INTO sec_roleref_his
 		(
 			id,
@@ -173,7 +177,9 @@
 			effectiveDate,
 			expiryDate,
 			createOperatorId,
-			createDate
+			createDate,
+			lastUpdateOperatorId,
+			lastUpdateDate
 		)
 		VALUES
 		(
@@ -184,12 +190,14 @@
 			#{effectiveDate},
 			#{expiryDate},
 			#{createOperatorId},
-			#{createDate}
+			#{createDate},
+			#{lastUpdateOperatorId},
+			#{lastUpdateDate}
 		)
 	</insert>
     
     <insert id="insert" 
-		parameterType="com.tx.component.security.role.model.RoleRefItem">
+		parameterType="com.tx.component.role.model.RoleRefItem">
 		INSERT INTO sec_roleref
 		(
 			id,
@@ -199,7 +207,9 @@
 			effectiveDate,
 			expiryDate,
 			createOperatorId,
-			createDate
+			createDate,
+			lastUpdateOperatorId,
+			lastUpdateDate
 		)
 		VALUES
 		(
@@ -210,13 +220,15 @@
 			#{effectiveDate},
 			#{expiryDate},
 			#{createOperatorId},
-			#{createDate}
+			#{createDate},
+			#{lastUpdateOperatorId},
+			#{lastUpdateDate}
 		)
 	</insert>
 	
 	<!-- auto generate default delete -->
 	<delete id="delete" 
-		parameterType="com.tx.component.security.role.model.RoleRefItem">
+		parameterType="com.tx.component.role.model.RoleRefItem">
 		DELETE FROM sec_roleref  WHERE
 		<trim prefixOverrides="AND | OR">
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
@@ -244,6 +256,12 @@
 	    	</if>	
 			<if test="_parameter.containsKey('expiryDate')">
 	    		expiryDate = #{expiryDate,javaType=java.util.Date},
+	    	</if>
+	    	<if test="_parameter.containsKey('lastUpdateDate')">
+	    		lastUpdateDate = #{lastUpdateDate,javaType=java.util.Date},
+	    	</if>	
+			<if test="_parameter.containsKey('lastUpdateOperatorId')">
+	    		lastUpdateOperatorId = #{lastUpdateOperatorId,javaType=java.lang.String},
 	    	</if>
 	    </trim>
 	    WHERE ID = #{id} 

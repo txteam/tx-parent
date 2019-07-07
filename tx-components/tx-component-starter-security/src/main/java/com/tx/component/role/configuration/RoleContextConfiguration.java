@@ -6,6 +6,7 @@
  */
 package com.tx.component.role.configuration;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -15,7 +16,12 @@ import com.tx.component.role.context.RoleRegistry;
 import com.tx.component.role.context.RoleTypeRegistry;
 import com.tx.component.role.service.RoleConfigService;
 import com.tx.component.role.service.RoleEnumService;
+import com.tx.component.role.service.RoleRefItemService;
+import com.tx.component.role.service.RoleRefService;
 import com.tx.component.role.service.RoleTypeEnumService;
+import com.tx.component.role.service.impl.RoleRefServiceImpl;
+import com.tx.component.security.starter.SecurityContextCacheConfiguration.SecurityContextCacheCustomizer;
+import com.tx.component.security.starter.SecurityContextProperties;
 
 /**
  * 角色容器自动配置项<br/>
@@ -26,17 +32,18 @@ import com.tx.component.role.service.RoleTypeEnumService;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-@Configuration
 @Import({ RoleContextPersisterConfiguration.class })
+@Configuration
 public class RoleContextConfiguration {
     
     /** 角色容器属性 */
     private RoleContextProperties properties;
     
     /** <默认构造函数> */
-    public RoleContextConfiguration(RoleContextProperties properties) {
+    public RoleContextConfiguration(SecurityContextProperties properties) {
         super();
-        this.properties = properties;
+        this.properties = properties.getRole() == null
+                ? new RoleContextProperties() : properties.getRole();
     }
     
     /**
@@ -81,7 +88,9 @@ public class RoleContextConfiguration {
     @Bean(name = RoleConstants.BEAN_NAME_ROLE_CONFIG_SERVICE)
     public RoleConfigService roleConfigService() {
         RoleConfigService config = new RoleConfigService(
-                this.properties.getConfigLocation());
+                StringUtils.isBlank(this.properties.getConfigLocation())
+                        ? RoleConstants.DEFAULT_ROLE_CONFIG_PATH
+                        : this.properties.getConfigLocation());
         return config;
     }
     
@@ -95,8 +104,10 @@ public class RoleContextConfiguration {
      * @see [类、类#方法、类#成员]
      */
     @Bean(name = RoleConstants.BEAN_NAME_ROLE_TYPE_REGISTRY)
-    public RoleTypeRegistry roleTypeRegistry() {
+    public RoleTypeRegistry roleTypeRegistry(
+            SecurityContextCacheCustomizer cacheCustomizer) {
         RoleTypeRegistry registry = new RoleTypeRegistry();
+        registry.setCacheManager(cacheCustomizer.getCacheManager());
         return registry;
     }
     
@@ -109,8 +120,27 @@ public class RoleContextConfiguration {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public RoleRegistry roleRegistry(){
+    @Bean(name = RoleConstants.BEAN_NAME_ROLE_REGISTRY)
+    public RoleRegistry roleRegistry(
+            SecurityContextCacheCustomizer cacheCustomizer) {
         RoleRegistry registry = new RoleRegistry();
+        registry.setCacheManager(cacheCustomizer.getCacheManager());
         return registry;
+    }
+    
+    /**
+     * 角色注册表<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return RoleRegistry [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @Bean(name = RoleConstants.BEAN_NAME_ROLE_REF_SERVICE)
+    public RoleRefService roleRefService(
+            RoleRefItemService roleRefItemService) {
+        RoleRefServiceImpl service = new RoleRefServiceImpl(roleRefItemService);
+        return service;
     }
 }

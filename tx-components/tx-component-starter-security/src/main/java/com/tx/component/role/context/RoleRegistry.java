@@ -102,6 +102,8 @@ public class RoleRegistry
         this.roleManagers = new ArrayList<>(
                 applicationContext.getBeansOfType(RoleManager.class).values());
         
+        AssertUtils.notEmpty(roleManagers, "roleManagers is empty.");
+        
         this.cache = this.cacheManager.getCache(RoleConstants.CACHE_KEY_ROLE);
         this.composite = new RoleManagerComposite(roleManagers, this.cache);
     }
@@ -187,5 +189,12 @@ public class RoleRegistry
         List<Role> resList = this.composite.queryDescendantsByParentId(parentId,
                 roleTypeId);
         return resList;
+    }
+    
+    /**
+     * @param 对cacheManager进行赋值
+     */
+    public void setCacheManager(CacheManager cacheManager) {
+        this.cacheManager = cacheManager;
     }
 }
