@@ -15,12 +15,13 @@
 		resultMap="authItemMap">
 		SELECT 
 				AI.id,
-				AI.refId,
-				AI.refType,
+				AI.resourceId,
+				AI.resourceType,
 				AI.authTypeId,
 				AI.name,
 				AI.parentId,
 				AI.remark,
+				AI.configAble,
 				AI.attributes
 		  FROM SEC_AUTH AI
 		 WHERE
@@ -37,12 +38,13 @@
 		resultMap="authItemMap">
 		SELECT 
 				AI.id,
-				AI.refId,
-				AI.refType,
+				AI.resourceId,
+				AI.resourceType,
 				AI.authTypeId,
 				AI.name,
 				AI.parentId,
 				AI.remark,
+				AI.configAble,
 				AI.attributes
 		  FROM SEC_AUTH AI
 		<trim prefix="WHERE" prefixOverrides="AND | OR">
@@ -88,7 +90,10 @@
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(remark)">  
 	            <![CDATA[ AND AI.remark = #{remark} ]]>
 	        </if>			
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(attributes)">  
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(configAble)">  
+	            <![CDATA[ AND AI.configAble = #{configAble} ]]>
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(attributes)">  
 	            <![CDATA[ AND AI.attributes = #{attributes} ]]>
 	        </if>			
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(excludeId)">
@@ -154,7 +159,10 @@
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(remark)">  
 	            <![CDATA[ AND AI.remark = #{remark} ]]>
 	        </if>			
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(attributes)">  
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(configAble)">  
+	            <![CDATA[ AND AI.configAble = #{configAble} ]]>
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(attributes)">  
 	            <![CDATA[ AND AI.attributes = #{attributes} ]]>
 	        </if>			
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(excludeId)">
@@ -169,22 +177,24 @@
 		INSERT INTO SEC_AUTH
 		(
 			id,
-			refId,
-			refType,
+			resourceId,
+			resourceType,
 			authTypeId,
 			name,
 			parentId,
+			configAble,
 			remark,
 			attributes
 		)
 		VALUES
 		(
 			#{id},
-			#{refId},
-			#{refType},
+			#{resourceId},
+			#{resourceType},
 			#{authTypeId},
 			#{name},
 			#{parentId},
+			#{configAble},
 			#{remark},
 			#{attributes}
 		)
@@ -206,20 +216,23 @@
 	    parameterType="java.util.Map">  
 	    UPDATE SEC_AUTH
 	    <trim prefix="SET" suffixOverrides=",">
+	    	<if test="_parameter.containsKey('authTypeId')">
+	    		authTypeId = #{authTypeId,javaType=java.lang.String},
+	    	</if>
 			<if test="_parameter.containsKey('refId')">
-	    		refId = #{refId,javaType=java.lang.String},
+	    		resourceId = #{resourceId,javaType=java.lang.String},
 	    	</if>
 			<if test="_parameter.containsKey('refType')">
-	    		refType = #{refType,javaType=java.lang.String},
-	    	</if>
-			<if test="_parameter.containsKey('authTypeId')">
-	    		authTypeId = #{authTypeId,javaType=java.lang.String},
+	    		resourceType = #{refType,javaType=java.lang.String},
 	    	</if>
 			<if test="_parameter.containsKey('name')">
 	    		name = #{name,javaType=java.lang.String},
 	    	</if>
 			<if test="_parameter.containsKey('parentId')">
 	    		parentId = #{parentId,javaType=java.lang.String},
+	    	</if>
+	    	<if test="_parameter.containsKey('configAble')">
+	    		configAble = #{configAble,javaType=boolean},
 	    	</if>
 			<if test="_parameter.containsKey('remark')">
 	    		remark = #{remark,javaType=java.lang.String},

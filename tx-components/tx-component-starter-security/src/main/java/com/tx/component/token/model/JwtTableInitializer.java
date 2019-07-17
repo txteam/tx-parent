@@ -6,8 +6,6 @@
  */
 package com.tx.component.token.model;
 
-import org.springframework.beans.factory.InitializingBean;
-
 import com.tx.core.TxConstants;
 import com.tx.core.dbscript.initializer.AbstractTableInitializer;
 import com.tx.core.ddlutil.builder.DDLBuilder;
@@ -24,43 +22,11 @@ import com.tx.core.ddlutil.executor.TableDDLExecutor;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class JwtTableInitializer extends AbstractTableInitializer
-        implements InitializingBean {
-    
-    /** 表DDL执行器 */
-    private TableDDLExecutor tableDDLExecutor;
-    
-    /** 表是否自动初始化 */
-    private boolean tableAutoInitialize = false;
+public class JwtTableInitializer extends AbstractTableInitializer {
     
     /** <默认构造函数> */
     public JwtTableInitializer() {
         super();
-    }
-    
-    /** <默认构造函数> */
-    public JwtTableInitializer(TableDDLExecutor tableDDLExecutor) {
-        super();
-        this.tableDDLExecutor = tableDDLExecutor;
-    }
-    
-    /** <默认构造函数> */
-    public JwtTableInitializer(TableDDLExecutor tableDDLExecutor,
-            boolean tableAutoInitialize) {
-        super();
-        this.tableDDLExecutor = tableDDLExecutor;
-        this.tableAutoInitialize = tableAutoInitialize;
-    }
-    
-    /**
-     * @throws Exception
-     */
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        //初始化表定义
-        if (this.tableDDLExecutor != null && this.tableAutoInitialize) {
-            initialize(tableDDLExecutor, tableAutoInitialize);
-        }
     }
     
     /**
@@ -99,12 +65,12 @@ public class JwtTableInitializer extends AbstractTableInitializer
         AlterTableDDLBuilder alterDDLBuilder = null;
         DDLBuilder<?> ddlBuilder = null;
         
-        if (this.tableDDLExecutor.exists(tableName)) {
-            alterDDLBuilder = this.tableDDLExecutor
+        if (tableDDLExecutor.exists(tableName)) {
+            alterDDLBuilder = tableDDLExecutor
                     .generateAlterTableDDLBuilder(tableName);
             ddlBuilder = alterDDLBuilder;
         } else {
-            createDDLBuilder = this.tableDDLExecutor
+            createDDLBuilder = tableDDLExecutor
                     .generateCreateTableDDLBuilder(tableName);
             ddlBuilder = createDDLBuilder;
         }

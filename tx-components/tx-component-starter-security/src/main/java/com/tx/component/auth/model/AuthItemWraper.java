@@ -74,7 +74,7 @@ public class AuthItemWraper<T> implements Auth {
      * @return
      */
     @Override
-    public String getRefId() {
+    public String getResourceId() {
         return this.adapter.getRefId(this.targetBeanWrapper, this.parent);
     }
     
@@ -82,7 +82,7 @@ public class AuthItemWraper<T> implements Auth {
      * @return
      */
     @Override
-    public String getRefType() {
+    public String getResourceType() {
         return this.adapter.getRefType(this.targetBeanWrapper, this.parent);
     }
     

@@ -200,7 +200,7 @@ public class AuthItem implements Auth {
      * @return 返回 refId
      */
     @Override
-    public String getRefId() {
+    public String getResourceId() {
         return refId;
     }
     
@@ -208,7 +208,7 @@ public class AuthItem implements Auth {
      * @return 返回 refType
      */
     @Override
-    public String getRefType() {
+    public String getResourceType() {
         return refType;
     }
     

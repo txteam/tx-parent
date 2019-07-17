@@ -1,5 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+
 	<parent>
 		<groupId>com.tx</groupId>
 		<artifactId>tx-components</artifactId>
@@ -12,22 +13,22 @@
 	<url>http://maven.apache.org</url>
 
 	<dependencies>
-		<!-- tx -->
+		<!-- tx-core -->
 		<dependency>
 			<groupId>com.tx</groupId>
 			<artifactId>tx-core</artifactId>
 		</dependency>
-		
+
 		<!-- swagger2 -->
 		<dependency>
 			<groupId>io.springfox</groupId>
 			<artifactId>springfox-swagger2</artifactId>
 		</dependency>
-		
+
 		<!-- spring boot -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter</artifactId>
+			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -35,19 +36,33 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-jdbc</artifactId>
+		</dependency>
+
+		<!-- cache -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-cache</artifactId>
 		</dependency>
+
+		<!-- redis -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-redis</artifactId>
 		</dependency>
-		
+
 		<!-- mybatis -->
 		<dependency>
 			<groupId>org.mybatis.spring.boot</groupId>
 			<artifactId>mybatis-spring-boot-starter</artifactId>
 		</dependency>
-		
+
+		<!-- hibernate: data-jpa jpa -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+
 		<!-- 根据xml加载初始化数据 -->
 		<dependency>
 			<groupId>com.thoughtworks.xstream</groupId>
@@ -71,13 +86,6 @@
 			<optional>true</optional>
 		</dependency>
 
-		<!-- spring boot -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-			<optional>true</optional>
-		</dependency>
-
 		<!-- generator -->
 		<dependency>
 			<groupId>org.freemarker</groupId>
@@ -95,26 +103,12 @@
 		<!-- eureka、feign -->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-eureka</artifactId>
+			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-feign</artifactId>
-			<optional>true</optional>
-		</dependency>
-
-		<!-- thymeleaf -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-thymeleaf</artifactId>
-			<optional>true</optional>
-		</dependency>
-
-		<!-- tomcat -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-tomcat</artifactId>
+			<artifactId>spring-cloud-starter-openfeign</artifactId>
 			<optional>true</optional>
 		</dependency>
 
@@ -129,34 +123,21 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<inherited>true</inherited>
 				<configuration>
-					<fork>true</fork><!-- fork:如果没有该配置，这个devtools不会起作用，即应用不会restart -->
+					<skip>false</skip>
 				</configuration>
+				<executions>
+					<execution>
+						<phase>install</phase>
+						<goals>
+							<goal>deploy</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-			</plugin>
-
-			<!--<plugin> -->
-			<!--<groupId>org.springframework.boot</groupId> -->
-			<!--<artifactId>spring-boot-maven-plugin</artifactId> -->
-			<!--<dependencies> -->
-			<!--&lt;!&ndash; spring热部署 &ndash;&gt; -->
-			<!--<dependency> -->
-			<!--<groupId>org.springframework</groupId> -->
-			<!--<artifactId>springloaded</artifactId> -->
-			<!--<version></version> -->
-			<!--</dependency> -->
-			<!--</dependencies> -->
-			<!--</plugin> -->
-
 		</plugins>
 	</build>
 

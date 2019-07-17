@@ -78,7 +78,7 @@ public interface Auth extends Serializable, JSONAttributesSupport,
      * 
      * @return [参数说明]
      */
-    default String getRefType() {
+    default String getResourceType() {
         return "";
     }
     
@@ -88,7 +88,7 @@ public interface Auth extends Serializable, JSONAttributesSupport,
      * 
      * @return String [返回类型说明]
      */
-    default String getRefId() {
+    default String getResourceId() {
         return "";
     }
     

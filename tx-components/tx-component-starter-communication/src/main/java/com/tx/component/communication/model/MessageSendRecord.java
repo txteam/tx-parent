@@ -6,15 +6,11 @@
  */
 package com.tx.component.communication.model;
 
-import com.tx.core.jdbc.sqlsource.annotation.QueryConditionEqual;
-import com.tx.core.jdbc.sqlsource.annotation.QueryConditionGreaterOrEqual;
-import com.tx.core.jdbc.sqlsource.annotation.QueryConditionLess;
-import com.tx.core.jdbc.sqlsource.annotation.UpdateAble;
+import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.util.Date;
 
 
 /**
@@ -35,13 +31,9 @@ public class MessageSendRecord {
    private String id;
 
    /** 消息类型 */
-   @UpdateAble
-   @QueryConditionEqual
    private MessageTypeEnum type;
 
    /** 状态 */
-   @UpdateAble
-   @QueryConditionEqual
    private MessageSendStatusEnum status;
 
    /** 消息接收人 */
@@ -66,15 +58,12 @@ public class MessageSendRecord {
    private String contentTemplateFileId;
 
    /** 短信是否发送成功 */
-   @UpdateAble
    private boolean success;
 
    /** 错误编码 */
-   @UpdateAble
    private String errorCode;
 
    /** 错误消息 */
-   @UpdateAble
    private String errorMessage;
 
    /** 备注 */
@@ -101,8 +90,6 @@ public class MessageSendRecord {
    private Date lastSendDate;
 
    /** 创建时间 */
-   @QueryConditionGreaterOrEqual(key="minCreateDate")
-   @QueryConditionLess(key="maxCreateDate")
    private Date createDate;
 
    /**

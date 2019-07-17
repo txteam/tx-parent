@@ -6,8 +6,11 @@
  */
 package com.tx.core.generator2;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.swing.JOptionPane;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -21,6 +24,7 @@ import com.tx.core.generator2.model.ServiceGeneratorModel;
 import com.tx.core.generator2.model.SqlMapGeneratorModel;
 import com.tx.core.generator2.model.ViewTypeEnum;
 import com.tx.core.util.FreeMarkerUtils;
+import com.tx.core.util.MessageUtils;
 import com.tx.core.util.dialect.DataSourceTypeEnum;
 
 /**
@@ -48,6 +52,9 @@ public class CodeGenerator {
     
     /** 数据源类型 */
     public static DataSourceTypeEnum DATASOURCE_TYPE = DataSourceTypeEnum.MYSQL;
+    
+    /** 是否需要确认当文件已存在时 */
+    public static boolean NEED_CONFIRM_WHEN_EXSITS = true;
     
     /** 脚本模板文件路径 */
     private static String dbScriptTemplateFilePath = "com/tx/core/generator2/defaultftl/dbscript.ftl";
@@ -122,11 +129,14 @@ public class CodeGenerator {
         
         String facadeFilePath = BASE_CODE_FOLDER + "/src/main/java/" + basePath
                 + "/facade/" + entityType.getSimpleName() + "Facade.java";
-        FreeMarkerUtils.fprint(LOAD_TEMPLATE_CLASS,
-                facadeTemplateFilePath,
-                data,
-                facadeFilePath);
         logger.info("facade存放路径:{}", facadeFilePath);
+        
+        if (isOverwrite(facadeFilePath)) {
+            FreeMarkerUtils.fprint(LOAD_TEMPLATE_CLASS,
+                    facadeTemplateFilePath,
+                    data,
+                    facadeFilePath);
+        }
     }
     
     /**
@@ -154,11 +164,13 @@ public class CodeGenerator {
                 + servicePath + "/" + entityType.getSimpleName()
                 + "Service.java";
         
-        FreeMarkerUtils.fprint(LOAD_TEMPLATE_CLASS,
-                serviceTemplateFilePath,
-                data,
-                serviceFilePath);
         logger.info("service存放路径:{}", serviceFilePath);
+        if (isOverwrite(serviceFilePath)) {
+            FreeMarkerUtils.fprint(LOAD_TEMPLATE_CLASS,
+                    serviceTemplateFilePath,
+                    data,
+                    serviceFilePath);
+        }
     }
     
     /**
@@ -186,17 +198,21 @@ public class CodeGenerator {
         String daoImplFilePath = BASE_CODE_FOLDER + "/src/main/java/" + daoPath
                 + "/impl/" + entityType.getSimpleName() + "DaoImpl.java";
         
-        FreeMarkerUtils.fprint(LOAD_TEMPLATE_CLASS,
-                daoTemplateFilePath,
-                data,
-                daoFilePath);
-        FreeMarkerUtils.fprint(LOAD_TEMPLATE_CLASS,
-                daoImplTemplateFilePath,
-                data,
-                daoImplFilePath);
-        
         logger.info("dao存放路径:{}", daoFilePath);
+        if (isOverwrite(daoFilePath)) {
+            FreeMarkerUtils.fprint(LOAD_TEMPLATE_CLASS,
+                    daoTemplateFilePath,
+                    data,
+                    daoFilePath);
+        }
+        
         logger.info("daoImpl存放路径:{}", daoImplFilePath);
+        if (isOverwrite(daoImplFilePath)) {
+            FreeMarkerUtils.fprint(LOAD_TEMPLATE_CLASS,
+                    daoImplTemplateFilePath,
+                    data,
+                    daoImplFilePath);
+        }
     }
     
     /**
@@ -222,11 +238,13 @@ public class CodeGenerator {
         String sqlmapFilePath = BASE_CODE_FOLDER + "/src/main/java/"
                 + sqlmapPath + "/" + entityType.getSimpleName() + "SqlMap.xml";
         
-        FreeMarkerUtils.fprint(LOAD_TEMPLATE_CLASS,
-                sqlMapTemplateFilePath,
-                data,
-                sqlmapFilePath);
         logger.info("sqlmap存放路径:{}", sqlmapPath);
+        if (isOverwrite(sqlmapFilePath)) {
+            FreeMarkerUtils.fprint(LOAD_TEMPLATE_CLASS,
+                    sqlMapTemplateFilePath,
+                    data,
+                    sqlmapFilePath);
+        }
     }
     
     /**
@@ -254,11 +272,15 @@ public class CodeGenerator {
                 + packageName + "/tables/"
                 + dbScript.getTableName().toLowerCase() + ".sql";
         
-        FreeMarkerUtils.fprint(LOAD_TEMPLATE_CLASS,
-                dbScriptTemplateFilePath,
-                data,
-                dbScriptPath);
         logger.info("mysql脚本存放路径:{}", dbScriptPath);
+        
+        if (isOverwrite(dbScriptPath)) {
+            FreeMarkerUtils.fprint(LOAD_TEMPLATE_CLASS,
+                    dbScriptTemplateFilePath,
+                    data,
+                    dbScriptPath);
+        }
+        
     }
     
     /**
@@ -280,4 +302,37 @@ public class CodeGenerator {
         String packageName = servicePaths[servicePaths.length - 1];
         return packageName;
     }
+    
+    /**
+     * 确认文件是否存在<br/>
+     * <功能详细描述>
+     * @param filePath
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static boolean isOverwrite(String filePath) {
+        File file = new File(filePath);
+        if (!file.exists()) {
+            return true;
+        }
+        if (NEED_CONFIRM_WHEN_EXSITS) {
+            int flag = JOptionPane.showConfirmDialog(null,
+                    MessageUtils.format("文件:[{}]已存在,是否确认覆盖?", filePath),
+                    "提示",
+                    JOptionPane.YES_NO_OPTION);
+            return flag == 0;
+        } else {
+            return false;
+        }
+    }
+    
+    //    public static void main(String[] args) {
+    //         (null,
+    //                MessageUtils.format("文件:[{}]已存在,是否确认覆盖?", "...test..."),
+    //                "提示",
+    //                JOptionPane.YES_NO_OPTION);
+    //    }
 }

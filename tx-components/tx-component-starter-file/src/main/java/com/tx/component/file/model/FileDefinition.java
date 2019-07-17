@@ -9,14 +9,12 @@ package com.tx.component.file.model;
 import java.util.Date;
 
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Transient;
+
+import org.springframework.data.annotation.Id;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tx.component.file.resource.FileResource;
-import com.tx.core.jdbc.sqlsource.annotation.QueryConditionEqual;
-import com.tx.core.jdbc.sqlsource.annotation.UpdateAble;
 import com.tx.core.support.json.JSONAttributesSupport;
 
 /**
@@ -34,45 +32,36 @@ public class FileDefinition implements JSONAttributesSupport {
     
     /** 文件的存储id */
     @Id
-    @QueryConditionEqual
     private String id;
     
     /** 所属模块:容器初始化时唯一确定，如果一个系统需要支撑多个模块 ,仅需要根据不同的module生成多个FileContext实现即可 */
-    @QueryConditionEqual
     private String module;
     
+    /** 所属目录 */
+    private String catalog;
+    
     /** 相对于文件容器的相对路径 */
-    @QueryConditionEqual
-    @UpdateAble
     private String relativePath;
     
     /** 文件名称 */
-    @QueryConditionEqual
-    @UpdateAble
     private String filename;
     
     /** 文件的后缀名 */
-    @QueryConditionEqual
-    @UpdateAble
     private String filenameExtension;
     
     /** 文件的额外存储属性 */
-    @UpdateAble
     private String attributes;
     
     /** 删除时间 */
-    @UpdateAble
     private Date deleteDate;
     
     /** 最后跟新时间 */
-    @UpdateAble
     private Date lastUpdateDate;
     
     /** 创建时间 */
     private Date createDate;
     
     /** 文件访问的真正路径：由FileContext加工后才会生成，非持久化字段 */
-    @Transient
     @JsonIgnore
     private FileResource resource;
     

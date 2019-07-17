@@ -1,23 +1,9 @@
-
 /*
  * 描          述:  <描述>
  * 修  改   人:  Administrator
  * 修改时间:  2015年11月8日
  * <修改描述:>
  */
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-
-import com.tx.component.auth.AuthConstants;
-import com.tx.component.auth.model.Auth;
-import com.tx.core.exceptions.util.AssertUtils;
 
 /**
  * 服务于Mybatis的SqlMap中时减少类及方法的调用长度<br/>

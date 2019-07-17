@@ -390,8 +390,8 @@ public class AuthItemService implements AuthManager {
         Map<String, Object> updateRowMap = new HashMap<String, Object>();
         
         //需要更新的字段
-        updateRowMap.put("refId", authItem.getRefId());
-        updateRowMap.put("refType", authItem.getRefType());
+        updateRowMap.put("resourceId", authItem.getResourceId());
+        updateRowMap.put("resourceType", authItem.getResourceType());
         updateRowMap.put("attributes", authItem.getAttributes());
         updateRowMap.put("authTypeId", authItem.getAuthTypeId());
         updateRowMap.put("name", authItem.getName());
