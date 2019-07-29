@@ -17,7 +17,7 @@ import org.springframework.beans.factory.FactoryBean;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class SecurityContextFactory extends SecurityContextImpl
+public class SecurityContextFactory extends SecurityContext
         implements FactoryBean<SecurityContext> {
     
     /**

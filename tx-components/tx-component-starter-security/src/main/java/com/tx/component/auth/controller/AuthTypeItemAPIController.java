@@ -68,7 +68,7 @@ public class AuthTypeItemAPIController implements AuthTypeItemFacade {
      */
     @Override
     public boolean deleteById(
-    		@PathVariable(value = "id",required=true) String id) {
+            @PathVariable(value = "id", required = true) String id) {
         boolean flag = this.authTypeItemService.deleteById(id);
         return flag;
     }
@@ -84,13 +84,13 @@ public class AuthTypeItemAPIController implements AuthTypeItemFacade {
      * @see [类、类#方法、类#成员]
      */
     @Override
-    public boolean updateById(@PathVariable(value = "id",required=true) String id,
-    		@RequestBody AuthTypeItem authTypeItem) {
-        boolean flag = this.authTypeItemService.updateById(id,authTypeItem);
+    public boolean updateById(
+            @PathVariable(value = "id", required = true) String id,
+            @RequestBody AuthTypeItem authTypeItem) {
+        boolean flag = this.authTypeItemService.updateById(id, authTypeItem);
         return flag;
     }
     
-
     /**
      * 根据主键查询权限类型<br/>
      * <功能详细描述>
@@ -107,7 +107,7 @@ public class AuthTypeItemAPIController implements AuthTypeItemFacade {
         
         return res;
     }
-
+    
     /**
      * 查询权限类型实例列表<br/>
      * <功能详细描述>
@@ -119,13 +119,10 @@ public class AuthTypeItemAPIController implements AuthTypeItemFacade {
      * @see [类、类#方法、类#成员]
      */
     @Override
-    public List<AuthTypeItem> queryList(
-    		@RequestBody Querier querier
-    	) {
-        List<AuthTypeItem> resList = this.authTypeItemService.queryList(
-			querier         
-        );
-  
+    public List<AuthTypeItem> queryList(@RequestBody Querier querier) {
+        List<AuthTypeItem> resList = this.authTypeItemService
+                .queryList(querier);
+        
         return resList;
     }
     
@@ -142,20 +139,15 @@ public class AuthTypeItemAPIController implements AuthTypeItemFacade {
      * @see [类、类#方法、类#成员]
      */
     @Override
-    public PagedList<AuthTypeItem> queryPagedList(
-			@RequestBody Querier querier,
-			@PathVariable(value = "pageNumber", required = true) int pageIndex,
-            @PathVariable(value = "pageSize", required = true) int pageSize
-    	) {
-        PagedList<AuthTypeItem> resPagedList = this.authTypeItemService.queryPagedList(
-			querier,
-			pageIndex,
-			pageSize
-        );
+    public PagedList<AuthTypeItem> queryPagedList(@RequestBody Querier querier,
+            @PathVariable(value = "pageNumber", required = true) int pageIndex,
+            @PathVariable(value = "pageSize", required = true) int pageSize) {
+        PagedList<AuthTypeItem> resPagedList = this.authTypeItemService
+                .queryPagedList(querier, pageIndex, pageSize);
         return resPagedList;
     }
     
-	/**
+    /**
      * 查询权限类型数量<br/>
      * <功能详细描述>
      * @param querier
@@ -166,17 +158,15 @@ public class AuthTypeItemAPIController implements AuthTypeItemFacade {
      * @see [类、类#方法、类#成员]
      */
     @Override
-    public int count(
-            @RequestBody Querier querier) {
-        int count = this.authTypeItemService.count(
-        	querier);
+    public int count(@RequestBody Querier querier) {
+        int count = this.authTypeItemService.count(querier);
         
         return count;
     }
-
-	/**
+    
+    /**
      * 查询权限类型是否存在<br/>
-	 * @param excludeId
+     * @param excludeId
      * @param querier
      * @return [参数说明]
      * 

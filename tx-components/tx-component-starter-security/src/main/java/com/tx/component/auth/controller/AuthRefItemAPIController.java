@@ -68,7 +68,7 @@ public class AuthRefItemAPIController implements AuthRefItemFacade {
      */
     @Override
     public boolean deleteById(
-    		@PathVariable(value = "id",required=true) String id) {
+            @PathVariable(value = "id", required = true) String id) {
         boolean flag = this.authRefItemService.deleteById(id);
         return flag;
     }
@@ -84,13 +84,13 @@ public class AuthRefItemAPIController implements AuthRefItemFacade {
      * @see [类、类#方法、类#成员]
      */
     @Override
-    public boolean updateById(@PathVariable(value = "id",required=true) String id,
-    		@RequestBody AuthRefItem authRefItem) {
-        boolean flag = this.authRefItemService.updateById(id,authRefItem);
+    public boolean updateById(
+            @PathVariable(value = "id", required = true) String id,
+            @RequestBody AuthRefItem authRefItem) {
+        boolean flag = this.authRefItemService.updateById(id, authRefItem);
         return flag;
     }
     
-
     /**
      * 根据主键查询权限引用<br/>
      * <功能详细描述>
@@ -107,7 +107,7 @@ public class AuthRefItemAPIController implements AuthRefItemFacade {
         
         return res;
     }
-
+    
     /**
      * 查询权限引用实例列表<br/>
      * <功能详细描述>
@@ -119,13 +119,9 @@ public class AuthRefItemAPIController implements AuthRefItemFacade {
      * @see [类、类#方法、类#成员]
      */
     @Override
-    public List<AuthRefItem> queryList(
-    		@RequestBody Querier querier
-    	) {
-        List<AuthRefItem> resList = this.authRefItemService.queryList(
-			querier         
-        );
-  
+    public List<AuthRefItem> queryList(@RequestBody Querier querier) {
+        List<AuthRefItem> resList = this.authRefItemService.queryList(querier);
+        
         return resList;
     }
     
@@ -142,20 +138,15 @@ public class AuthRefItemAPIController implements AuthRefItemFacade {
      * @see [类、类#方法、类#成员]
      */
     @Override
-    public PagedList<AuthRefItem> queryPagedList(
-			@RequestBody Querier querier,
-			@PathVariable(value = "pageNumber", required = true) int pageIndex,
-            @PathVariable(value = "pageSize", required = true) int pageSize
-    	) {
-        PagedList<AuthRefItem> resPagedList = this.authRefItemService.queryPagedList(
-			querier,
-			pageIndex,
-			pageSize
-        );
+    public PagedList<AuthRefItem> queryPagedList(@RequestBody Querier querier,
+            @PathVariable(value = "pageNumber", required = true) int pageIndex,
+            @PathVariable(value = "pageSize", required = true) int pageSize) {
+        PagedList<AuthRefItem> resPagedList = this.authRefItemService
+                .queryPagedList(querier, pageIndex, pageSize);
         return resPagedList;
     }
     
-	/**
+    /**
      * 查询权限引用数量<br/>
      * <功能详细描述>
      * @param querier
@@ -166,17 +157,15 @@ public class AuthRefItemAPIController implements AuthRefItemFacade {
      * @see [类、类#方法、类#成员]
      */
     @Override
-    public int count(
-            @RequestBody Querier querier) {
-        int count = this.authRefItemService.count(
-        	querier);
+    public int count(@RequestBody Querier querier) {
+        int count = this.authRefItemService.count(querier);
         
         return count;
     }
-
-	/**
+    
+    /**
      * 查询权限引用是否存在<br/>
-	 * @param excludeId
+     * @param excludeId
      * @param querier
      * @return [参数说明]
      * 

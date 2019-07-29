@@ -33,7 +33,7 @@ import io.swagger.annotations.Api;
  * @since [产品/模块版本]
  */
 @RestController
-@Api(tags = "RoleTypeItemAPI")
+@Api(tags = "角色类型API")
 @RequestMapping("/api/roleTypeItem")
 public class RoleTypeItemAPIController implements RoleTypeItemFacade {
     
@@ -68,7 +68,7 @@ public class RoleTypeItemAPIController implements RoleTypeItemFacade {
      */
     @Override
     public boolean deleteById(
-    		@PathVariable(value = "id",required=true) String id) {
+            @PathVariable(value = "id", required = true) String id) {
         boolean flag = this.roleTypeItemService.deleteById(id);
         return flag;
     }
@@ -84,13 +84,13 @@ public class RoleTypeItemAPIController implements RoleTypeItemFacade {
      * @see [类、类#方法、类#成员]
      */
     @Override
-    public boolean updateById(@PathVariable(value = "id",required=true) String id,
-    		@RequestBody RoleTypeItem roleTypeItem) {
-        boolean flag = this.roleTypeItemService.updateById(id,roleTypeItem);
+    public boolean updateById(
+            @PathVariable(value = "id", required = true) String id,
+            @RequestBody RoleTypeItem roleTypeItem) {
+        boolean flag = this.roleTypeItemService.updateById(id, roleTypeItem);
         return flag;
     }
     
-
     /**
      * 根据主键查询RoleTypeItem<br/>
      * <功能详细描述>
@@ -107,7 +107,7 @@ public class RoleTypeItemAPIController implements RoleTypeItemFacade {
         
         return res;
     }
-
+    
     /**
      * 查询RoleTypeItem实例列表<br/>
      * <功能详细描述>
@@ -119,13 +119,10 @@ public class RoleTypeItemAPIController implements RoleTypeItemFacade {
      * @see [类、类#方法、类#成员]
      */
     @Override
-    public List<RoleTypeItem> queryList(
-    		@RequestBody Querier querier
-    	) {
-        List<RoleTypeItem> resList = this.roleTypeItemService.queryList(
-			querier         
-        );
-  
+    public List<RoleTypeItem> queryList(@RequestBody Querier querier) {
+        List<RoleTypeItem> resList = this.roleTypeItemService
+                .queryList(querier);
+        
         return resList;
     }
     
@@ -142,20 +139,15 @@ public class RoleTypeItemAPIController implements RoleTypeItemFacade {
      * @see [类、类#方法、类#成员]
      */
     @Override
-    public PagedList<RoleTypeItem> queryPagedList(
-			@RequestBody Querier querier,
-			@PathVariable(value = "pageNumber", required = true) int pageIndex,
-            @PathVariable(value = "pageSize", required = true) int pageSize
-    	) {
-        PagedList<RoleTypeItem> resPagedList = this.roleTypeItemService.queryPagedList(
-			querier,
-			pageIndex,
-			pageSize
-        );
+    public PagedList<RoleTypeItem> queryPagedList(@RequestBody Querier querier,
+            @PathVariable(value = "pageNumber", required = true) int pageIndex,
+            @PathVariable(value = "pageSize", required = true) int pageSize) {
+        PagedList<RoleTypeItem> resPagedList = this.roleTypeItemService
+                .queryPagedList(querier, pageIndex, pageSize);
         return resPagedList;
     }
     
-	/**
+    /**
      * 查询RoleTypeItem数量<br/>
      * <功能详细描述>
      * @param querier
@@ -166,17 +158,15 @@ public class RoleTypeItemAPIController implements RoleTypeItemFacade {
      * @see [类、类#方法、类#成员]
      */
     @Override
-    public int count(
-            @RequestBody Querier querier) {
-        int count = this.roleTypeItemService.count(
-        	querier);
+    public int count(@RequestBody Querier querier) {
+        int count = this.roleTypeItemService.count(querier);
         
         return count;
     }
-
-	/**
+    
+    /**
      * 查询RoleTypeItem是否存在<br/>
-	 * @param excludeId
+     * @param excludeId
      * @param querier
      * @return [参数说明]
      * 

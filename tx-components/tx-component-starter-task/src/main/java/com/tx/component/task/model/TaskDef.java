@@ -38,9 +38,6 @@ public class TaskDef implements OrderedSupport, Serializable {
     /** 父级任务编码：存在父级的任务都不能自动触发 */
     private String parentId;
     
-    /** 事务定义code */
-    private String code;
-    
     /** bean名 */
     private String beanName;
     

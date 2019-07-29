@@ -68,7 +68,7 @@ public class RoleRefItemAPIController implements RoleRefItemFacade {
      */
     @Override
     public boolean deleteById(
-    		@PathVariable(value = "id",required=true) String id) {
+            @PathVariable(value = "id", required = true) String id) {
         boolean flag = this.roleRefItemService.deleteById(id);
         return flag;
     }
@@ -84,13 +84,13 @@ public class RoleRefItemAPIController implements RoleRefItemFacade {
      * @see [类、类#方法、类#成员]
      */
     @Override
-    public boolean updateById(@PathVariable(value = "id",required=true) String id,
-    		@RequestBody RoleRefItem roleRefItem) {
-        boolean flag = this.roleRefItemService.updateById(id,roleRefItem);
+    public boolean updateById(
+            @PathVariable(value = "id", required = true) String id,
+            @RequestBody RoleRefItem roleRefItem) {
+        boolean flag = this.roleRefItemService.updateById(id, roleRefItem);
         return flag;
     }
     
-
     /**
      * 根据主键查询角色引用<br/>
      * <功能详细描述>
@@ -107,7 +107,7 @@ public class RoleRefItemAPIController implements RoleRefItemFacade {
         
         return res;
     }
-
+    
     /**
      * 查询角色引用实例列表<br/>
      * <功能详细描述>
@@ -119,13 +119,9 @@ public class RoleRefItemAPIController implements RoleRefItemFacade {
      * @see [类、类#方法、类#成员]
      */
     @Override
-    public List<RoleRefItem> queryList(
-    		@RequestBody Querier querier
-    	) {
-        List<RoleRefItem> resList = this.roleRefItemService.queryList(
-			querier         
-        );
-  
+    public List<RoleRefItem> queryList(@RequestBody Querier querier) {
+        List<RoleRefItem> resList = this.roleRefItemService.queryList(querier);
+        
         return resList;
     }
     
@@ -142,20 +138,15 @@ public class RoleRefItemAPIController implements RoleRefItemFacade {
      * @see [类、类#方法、类#成员]
      */
     @Override
-    public PagedList<RoleRefItem> queryPagedList(
-			@RequestBody Querier querier,
-			@PathVariable(value = "pageNumber", required = true) int pageIndex,
-            @PathVariable(value = "pageSize", required = true) int pageSize
-    	) {
-        PagedList<RoleRefItem> resPagedList = this.roleRefItemService.queryPagedList(
-			querier,
-			pageIndex,
-			pageSize
-        );
+    public PagedList<RoleRefItem> queryPagedList(@RequestBody Querier querier,
+            @PathVariable(value = "pageNumber", required = true) int pageIndex,
+            @PathVariable(value = "pageSize", required = true) int pageSize) {
+        PagedList<RoleRefItem> resPagedList = this.roleRefItemService
+                .queryPagedList(querier, pageIndex, pageSize);
         return resPagedList;
     }
     
-	/**
+    /**
      * 查询角色引用数量<br/>
      * <功能详细描述>
      * @param querier
@@ -166,17 +157,15 @@ public class RoleRefItemAPIController implements RoleRefItemFacade {
      * @see [类、类#方法、类#成员]
      */
     @Override
-    public int count(
-            @RequestBody Querier querier) {
-        int count = this.roleRefItemService.count(
-        	querier);
+    public int count(@RequestBody Querier querier) {
+        int count = this.roleRefItemService.count(querier);
         
         return count;
     }
-
-	/**
+    
+    /**
      * 查询角色引用是否存在<br/>
-	 * @param excludeId
+     * @param excludeId
      * @param querier
      * @return [参数说明]
      * 

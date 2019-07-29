@@ -126,10 +126,13 @@ public interface JPABaseDao<T, ID extends Serializable> {
     void refresh(T entity, LockModeType lockModeType);
     
     /**
-     * 移除实体对象
+     * 移除实体对象<br/>
+     * <功能详细描述>
+     * @param entity [实体对象]
      * 
-     * @param entity
-     *            实体对象
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     void remove(T entity);
     

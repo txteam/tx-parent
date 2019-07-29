@@ -68,7 +68,7 @@ public class RoleItemAPIController implements RoleItemFacade {
      */
     @Override
     public boolean deleteById(
-    		@PathVariable(value = "id",required=true) String id) {
+            @PathVariable(value = "id", required = true) String id) {
         boolean flag = this.roleItemService.deleteById(id);
         return flag;
     }
@@ -84,13 +84,13 @@ public class RoleItemAPIController implements RoleItemFacade {
      * @see [类、类#方法、类#成员]
      */
     @Override
-    public boolean updateById(@PathVariable(value = "id",required=true) String id,
-    		@RequestBody RoleItem roleItem) {
-        boolean flag = this.roleItemService.updateById(id,roleItem);
+    public boolean updateById(
+            @PathVariable(value = "id", required = true) String id,
+            @RequestBody RoleItem roleItem) {
+        boolean flag = this.roleItemService.updateById(id, roleItem);
         return flag;
     }
     
-
     /**
      * 根据主键查询角色<br/>
      * <功能详细描述>
@@ -107,7 +107,7 @@ public class RoleItemAPIController implements RoleItemFacade {
         
         return res;
     }
-
+    
     /**
      * 查询角色实例列表<br/>
      * <功能详细描述>
@@ -119,13 +119,9 @@ public class RoleItemAPIController implements RoleItemFacade {
      * @see [类、类#方法、类#成员]
      */
     @Override
-    public List<RoleItem> queryList(
-    		@RequestBody Querier querier
-    	) {
-        List<RoleItem> resList = this.roleItemService.queryList(
-			querier         
-        );
-  
+    public List<RoleItem> queryList(@RequestBody Querier querier) {
+        List<RoleItem> resList = this.roleItemService.queryList(querier);
+        
         return resList;
     }
     
@@ -142,20 +138,15 @@ public class RoleItemAPIController implements RoleItemFacade {
      * @see [类、类#方法、类#成员]
      */
     @Override
-    public PagedList<RoleItem> queryPagedList(
-			@RequestBody Querier querier,
-			@PathVariable(value = "pageNumber", required = true) int pageIndex,
-            @PathVariable(value = "pageSize", required = true) int pageSize
-    	) {
-        PagedList<RoleItem> resPagedList = this.roleItemService.queryPagedList(
-			querier,
-			pageIndex,
-			pageSize
-        );
+    public PagedList<RoleItem> queryPagedList(@RequestBody Querier querier,
+            @PathVariable(value = "pageNumber", required = true) int pageIndex,
+            @PathVariable(value = "pageSize", required = true) int pageSize) {
+        PagedList<RoleItem> resPagedList = this.roleItemService
+                .queryPagedList(querier, pageIndex, pageSize);
         return resPagedList;
     }
     
-	/**
+    /**
      * 查询角色数量<br/>
      * <功能详细描述>
      * @param querier
@@ -166,17 +157,15 @@ public class RoleItemAPIController implements RoleItemFacade {
      * @see [类、类#方法、类#成员]
      */
     @Override
-    public int count(
-            @RequestBody Querier querier) {
-        int count = this.roleItemService.count(
-        	querier);
+    public int count(@RequestBody Querier querier) {
+        int count = this.roleItemService.count(querier);
         
         return count;
     }
-
-	/**
+    
+    /**
      * 查询角色是否存在<br/>
-	 * @param excludeId
+     * @param excludeId
      * @param querier
      * @return [参数说明]
      * 
@@ -191,8 +180,8 @@ public class RoleItemAPIController implements RoleItemFacade {
         
         return flag;
     }
-
-	/**
+    
+    /**
      * 根据条件查询基础数据分页列表<br/>
      * <功能详细描述>
      * @param parentId
@@ -204,16 +193,16 @@ public class RoleItemAPIController implements RoleItemFacade {
      * @see [类、类#方法、类#成员]
      */
     @Override
-    public List<RoleItem> queryChildrenByParentId(@PathVariable(value = "parentId", required = true) String parentId,
-            Querier querier){
-        List<RoleItem> resList = this.roleItemService.queryChildrenByParentId(parentId,
-			querier         
-        );
-  
+    public List<RoleItem> queryChildrenByParentId(
+            @PathVariable(value = "parentId", required = true) String parentId,
+            Querier querier) {
+        List<RoleItem> resList = this.roleItemService
+                .queryChildrenByParentId(parentId, querier);
+        
         return resList;
     }
-
-	/**
+    
+    /**
      * 根据条件查询基础数据分页列表<br/>
      * <功能详细描述>
      * @param parentId
@@ -225,12 +214,12 @@ public class RoleItemAPIController implements RoleItemFacade {
      * @see [类、类#方法、类#成员]
      */
     @Override
-    public List<RoleItem> queryDescendantsByParentId(@PathVariable(value = "parentId", required = true) String parentId,
-            Querier querier){
-        List<RoleItem> resList = this.roleItemService.queryDescendantsByParentId(parentId,
-			querier         
-        );
-  
+    public List<RoleItem> queryDescendantsByParentId(
+            @PathVariable(value = "parentId", required = true) String parentId,
+            Querier querier) {
+        List<RoleItem> resList = this.roleItemService
+                .queryDescendantsByParentId(parentId, querier);
+        
         return resList;
     }
 }

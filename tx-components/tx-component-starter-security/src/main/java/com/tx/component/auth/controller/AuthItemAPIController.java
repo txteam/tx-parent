@@ -68,7 +68,7 @@ public class AuthItemAPIController implements AuthItemFacade {
      */
     @Override
     public boolean deleteById(
-    		@PathVariable(value = "id",required=true) String id) {
+            @PathVariable(value = "id", required = true) String id) {
         boolean flag = this.authItemService.deleteById(id);
         return flag;
     }
@@ -84,13 +84,13 @@ public class AuthItemAPIController implements AuthItemFacade {
      * @see [类、类#方法、类#成员]
      */
     @Override
-    public boolean updateById(@PathVariable(value = "id",required=true) String id,
-    		@RequestBody AuthItem authItem) {
-        boolean flag = this.authItemService.updateById(id,authItem);
+    public boolean updateById(
+            @PathVariable(value = "id", required = true) String id,
+            @RequestBody AuthItem authItem) {
+        boolean flag = this.authItemService.updateById(id, authItem);
         return flag;
     }
     
-
     /**
      * 根据主键查询权限项<br/>
      * <功能详细描述>
@@ -107,7 +107,7 @@ public class AuthItemAPIController implements AuthItemFacade {
         
         return res;
     }
-
+    
     /**
      * 查询权限项实例列表<br/>
      * <功能详细描述>
@@ -119,13 +119,9 @@ public class AuthItemAPIController implements AuthItemFacade {
      * @see [类、类#方法、类#成员]
      */
     @Override
-    public List<AuthItem> queryList(
-    		@RequestBody Querier querier
-    	) {
-        List<AuthItem> resList = this.authItemService.queryList(
-			querier         
-        );
-  
+    public List<AuthItem> queryList(@RequestBody Querier querier) {
+        List<AuthItem> resList = this.authItemService.queryList(querier);
+        
         return resList;
     }
     
@@ -142,20 +138,15 @@ public class AuthItemAPIController implements AuthItemFacade {
      * @see [类、类#方法、类#成员]
      */
     @Override
-    public PagedList<AuthItem> queryPagedList(
-			@RequestBody Querier querier,
-			@PathVariable(value = "pageNumber", required = true) int pageIndex,
-            @PathVariable(value = "pageSize", required = true) int pageSize
-    	) {
-        PagedList<AuthItem> resPagedList = this.authItemService.queryPagedList(
-			querier,
-			pageIndex,
-			pageSize
-        );
+    public PagedList<AuthItem> queryPagedList(@RequestBody Querier querier,
+            @PathVariable(value = "pageNumber", required = true) int pageIndex,
+            @PathVariable(value = "pageSize", required = true) int pageSize) {
+        PagedList<AuthItem> resPagedList = this.authItemService
+                .queryPagedList(querier, pageIndex, pageSize);
         return resPagedList;
     }
     
-	/**
+    /**
      * 查询权限项数量<br/>
      * <功能详细描述>
      * @param querier
@@ -166,17 +157,15 @@ public class AuthItemAPIController implements AuthItemFacade {
      * @see [类、类#方法、类#成员]
      */
     @Override
-    public int count(
-            @RequestBody Querier querier) {
-        int count = this.authItemService.count(
-        	querier);
+    public int count(@RequestBody Querier querier) {
+        int count = this.authItemService.count(querier);
         
         return count;
     }
-
-	/**
+    
+    /**
      * 查询权限项是否存在<br/>
-	 * @param excludeId
+     * @param excludeId
      * @param querier
      * @return [参数说明]
      * 
@@ -191,8 +180,8 @@ public class AuthItemAPIController implements AuthItemFacade {
         
         return flag;
     }
-
-	/**
+    
+    /**
      * 根据条件查询基础数据分页列表<br/>
      * <功能详细描述>
      * @param parentId
@@ -204,16 +193,16 @@ public class AuthItemAPIController implements AuthItemFacade {
      * @see [类、类#方法、类#成员]
      */
     @Override
-    public List<AuthItem> queryChildrenByParentId(@PathVariable(value = "parentId", required = true) String parentId,
-            Querier querier){
-        List<AuthItem> resList = this.authItemService.queryChildrenByParentId(parentId,
-			querier         
-        );
-  
+    public List<AuthItem> queryChildrenByParentId(
+            @PathVariable(value = "parentId", required = true) String parentId,
+            Querier querier) {
+        List<AuthItem> resList = this.authItemService
+                .queryChildrenByParentId(parentId, querier);
+        
         return resList;
     }
-
-	/**
+    
+    /**
      * 根据条件查询基础数据分页列表<br/>
      * <功能详细描述>
      * @param parentId
@@ -225,12 +214,12 @@ public class AuthItemAPIController implements AuthItemFacade {
      * @see [类、类#方法、类#成员]
      */
     @Override
-    public List<AuthItem> queryDescendantsByParentId(@PathVariable(value = "parentId", required = true) String parentId,
-            Querier querier){
-        List<AuthItem> resList = this.authItemService.queryDescendantsByParentId(parentId,
-			querier         
-        );
-  
+    public List<AuthItem> queryDescendantsByParentId(
+            @PathVariable(value = "parentId", required = true) String parentId,
+            Querier querier) {
+        List<AuthItem> resList = this.authItemService
+                .queryDescendantsByParentId(parentId, querier);
+        
         return resList;
     }
 }
