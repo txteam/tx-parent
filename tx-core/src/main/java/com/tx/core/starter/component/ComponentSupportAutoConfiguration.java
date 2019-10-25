@@ -19,7 +19,7 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
@@ -49,7 +49,6 @@ import com.tx.core.starter.mybatis.MybatisProperties;
 @ConditionalOnClass({ SqlSessionFactory.class, SqlSessionFactoryBean.class })
 @ConditionalOnSingleCandidate(DataSource.class)
 @EnableConfigurationProperties(ComponentProperties.class)
-@AutoConfigureAfter(MybatisAutoConfiguration.class)
 @Import({ TableInitializerExecutor.class })
 public class ComponentSupportAutoConfiguration
         extends AbstractMybatisConfiguration
@@ -153,7 +152,7 @@ public class ComponentSupportAutoConfiguration
      */
     @Bean("tx.component.myBatisDaoSupport")
     @ConditionalOnMissingBean(name = "tx.component.myBatisDaoSupport")
-    public MyBatisDaoSupport myBatisDaoSupport() throws Exception {
+    public MyBatisDaoSupport myBatisDaoSupport(TableInitializerExecutor executor) throws Exception {
         MyBatisDaoSupport myBatisDaoSupport = new MyBatisDaoSupport(
                 sqlSessionTemplate());
         return myBatisDaoSupport;

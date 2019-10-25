@@ -27,6 +27,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.boot.autoconfigure.AutoConfigurationPackages;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
@@ -47,6 +48,7 @@ import org.springframework.util.StringUtils;
 
 import com.tx.core.mybatis.support.MyBatisDaoSupport;
 import com.tx.core.mybatis.support.MyBatisDaoSupportHelper;
+import com.tx.core.starter.component.ComponentSupportAutoConfiguration;
 import com.tx.core.starter.util.CoreAutoConfiguration;
 
 /**
@@ -64,6 +66,7 @@ import com.tx.core.starter.util.CoreAutoConfiguration;
 @EnableConfigurationProperties(MybatisProperties.class)
 @AutoConfigureAfter({ CoreAutoConfiguration.class,
         TransactionAutoConfiguration.class })
+@AutoConfigureBefore({ ComponentSupportAutoConfiguration.class })
 @Import({ MybatisPluginConfiguration.class })
 public class MybatisAutoConfiguration extends AbstractMybatisConfiguration
         implements InitializingBean, ApplicationContextAware {

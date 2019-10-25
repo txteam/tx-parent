@@ -18,6 +18,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
+import org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.ApplicationContext;
@@ -212,20 +213,36 @@ public class ConfigContextAutoConfiguration
     }
     
     /**
-     * 配置容器apicontroller实现
+     * 控制层自动配置层
      * <功能详细描述>
-     * @param configPropertyItemService
-     * @return [参数说明]
      * 
-     * @return ConfigAPIController [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
+     * @author  Administrator
+     * @version  [版本号, 2019年10月24日]
+     * @see  [相关类/方法]
+     * @since  [产品/模块版本]
      */
-    @Bean
-    public ConfigContextAPIController configAPIController(
-            ConfigPropertyItemService configPropertyItemService) {
-        ConfigContextAPIController controller = new ConfigContextAPIController(
-                module, configPropertyItemService);
-        return controller;
+    @Configuration
+    @AutoConfigureAfter({ DispatcherServletAutoConfiguration.class })
+    public class ControllerAutoConfiguration {
+        
+        /**
+         * 配置容器apicontroller实现
+         * <功能详细描述>
+         * @param configPropertyItemService
+         * @return [参数说明]
+         * 
+         * @return ConfigAPIController [返回类型说明]
+         * @exception throws [异常类型] [异常说明]
+         * @see [类、类#方法、类#成员]
+         */
+        @Bean
+        public ConfigContextAPIController configAPIController(
+                ConfigPropertyItemService configPropertyItemService) {
+            ConfigContextAPIController controller = new ConfigContextAPIController(
+                    module, configPropertyItemService);
+            return controller;
+        }
+        
     }
+    
 }

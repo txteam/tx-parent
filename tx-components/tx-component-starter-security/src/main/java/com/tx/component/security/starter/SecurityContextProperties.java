@@ -23,8 +23,6 @@ import com.tx.component.security.SecurityContextConstants;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-//SecurityContextConstants.PROPERTIES_PREFIX
-//"tx.component.security"
 @ConfigurationProperties(prefix = SecurityContextConstants.PROPERTIES_PREFIX)
 public class SecurityContextProperties {
     

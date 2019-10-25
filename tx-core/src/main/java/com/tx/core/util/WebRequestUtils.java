@@ -55,7 +55,7 @@ public class WebRequestUtils {
             contentType = request.getHeader("content-type");
         }
         if (!StringUtils.isEmpty(contentType) && StringUtils
-                .indexOfIgnoreCase(contentType, "application/json") != -1) {
+                .indexOfIgnoreCase(contentType, "application/json") > -1) {
             return true;
         }
         

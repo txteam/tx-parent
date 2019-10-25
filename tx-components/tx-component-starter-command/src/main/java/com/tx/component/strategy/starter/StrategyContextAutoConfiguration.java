@@ -4,7 +4,7 @@
  * 修改时间:  2018年5月1日
  * <修改描述:>
  */
-package com.tx.component.command.starter;
+package com.tx.component.strategy.starter;
 
 
 import javax.sql.DataSource;
@@ -25,9 +25,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import com.tx.component.command.context.CommandContext;
-import com.tx.component.command.context.CommandContextFactory;
-import com.tx.component.command.context.HelperFactory;
-import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.component.strategy.context.StrategyContext;
+import com.tx.component.strategy.context.StrategyContextFactory;
 import com.tx.core.starter.component.ComponentSupportAutoConfiguration;
 
 /**
@@ -40,23 +39,24 @@ import com.tx.core.starter.component.ComponentSupportAutoConfiguration;
  * @since  [产品/模块版本]
  */
 @Configuration
-@EnableConfigurationProperties(value = CommandContextProperties.class)
+@EnableConfigurationProperties(value = StrategyContextProperties.class)
 @ConditionalOnClass({ CommandContext.class })
 @ConditionalOnSingleCandidate(DataSource.class)
 @ConditionalOnBean(PlatformTransactionManager.class)
 @AutoConfigureAfter({ComponentSupportAutoConfiguration.class})
-@ConditionalOnProperty(prefix = "tx.component.command", value = "enable", havingValue = "true")
-public class CommandContextAutoConfiguration
+@ConditionalOnProperty(prefix = "tx.component.strategy", value = "enable", havingValue = "true")
+public class StrategyContextAutoConfiguration
         implements ApplicationContextAware, InitializingBean {
     
     protected ApplicationContext applicationContext;
     
-    protected final CommandContextProperties properties;
+    protected final StrategyContextProperties properties;
     
+    @SuppressWarnings("unused")
     private final PlatformTransactionManager transactionManager;
     
     /** <默认构造函数> */
-    public CommandContextAutoConfiguration(CommandContextProperties properties,
+    public StrategyContextAutoConfiguration(StrategyContextProperties properties,
             PlatformTransactionManager transactionManager) {
         super();
         this.properties = properties;
@@ -81,39 +81,19 @@ public class CommandContextAutoConfiguration
     }
     
     /**
-     * 当命令容器不存在时<br/>
+     * 自动加载策略容器<br/>
      * <功能详细描述>
      * @return [参数说明]
      * 
-     * @return CommandContextFactory [返回类型说明]
+     * @return StrategyContextFactory [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @Bean("commandContext")
-    @ConditionalOnMissingBean(CommandContext.class)
-    public CommandContextFactory commandContext() {
-        AssertUtils.notNull(this.transactionManager,
-                "transactionManager在系统中非唯一.需要手工通过command.transactionManagerBeanName指定transactionManager的BeanName.");
-        
-        CommandContextFactory factory = new CommandContextFactory();
-        factory.setTxManager(this.transactionManager);
+    @Bean("strategyContext")
+    @ConditionalOnMissingBean(StrategyContext.class)
+    public StrategyContextFactory strategyContext() {
+        StrategyContextFactory factory = new StrategyContextFactory();
         
         return factory;
-    }
-    
-    /**
-     * 帮助类工厂类<br/>
-     * <功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return HelperFactory [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    @Bean("helperFactory")
-    public HelperFactory helperFactory() {
-        HelperFactory helperFactory = new HelperFactory();
-        
-        return helperFactory;
     }
 }

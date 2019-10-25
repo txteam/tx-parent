@@ -9,6 +9,8 @@ package com.tx.core.starter.component;
 import java.lang.reflect.Constructor;
 import java.util.Set;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.lang3.reflect.ConstructorUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -37,6 +39,9 @@ public class TableInitializerExecutor implements InitializingBean {
     
     /** 表ddl自动执行器 */
     private TableDDLExecutor tableDDLExecutor;
+    
+    @Resource
+    private TableInitializerExecutor tableInitializerExecutor;
     
     /** 基础数据容器初始化构造函数 */
     public TableInitializerExecutor(ComponentProperties properties,
