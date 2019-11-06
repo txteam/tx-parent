@@ -12,7 +12,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.tx.core.ddlutil.executor.TableDDLExecutor;
 import com.tx.core.ddlutil.helper.TableDefHelper;
 import com.tx.core.ddlutil.model.TableColumnDef;
 import com.tx.core.ddlutil.model.TableDef;
@@ -29,6 +32,9 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @since  [产品/模块版本]
  */
 public class AlterTableComparetor {
+    
+    //日志记录器
+    private Logger logger = LoggerFactory.getLogger(TableDDLExecutor.class);
     
     /** 编辑表字段集合 */
     private Map<String, AlterTableColumn> alterTableColumnMap = new HashMap<>();
@@ -147,6 +153,37 @@ public class AlterTableComparetor {
                 continue;
             }
             if (alterColumn.isNeedAlter()) {
+                logger.info(
+                        "检测到表字段需要升级.tablename:'{}'.columnname:'{}' .remark:'{}'",
+                        this.getSourceTableDef().getTableName(),
+                        alterColumn.getColumnName(),
+                        alterColumn.getRemark());
+                
+                TableColumnDef sourceColumn = alterColumn.getSourceColumn();
+                if (sourceColumn != null) {
+                    logger.info(
+                            "scol: jdbcType:'{}',size:'{}',scale:'{}',comment:'{}',defaultvalue:'{}',isRequired:'{}',isPrimaryKey:'{}'",
+                            sourceColumn.getJdbcType(),
+                            sourceColumn.getSize(),
+                            sourceColumn.getScale(),
+                            sourceColumn.getComment(),
+                            sourceColumn.getDefaultValue(),
+                            sourceColumn.isRequired(),
+                            sourceColumn.isPrimaryKey());
+                }
+                TableColumnDef targetColumn = alterColumn.getTargetColumn();
+                if (targetColumn != null) {
+                    logger.info(
+                            "tcol: jdbcType:'{}',size:'{}',scale:'{}',comment:'{}',defaultvalue:'{}',isRequired:'{}',isPrimaryKey:'{}'",
+                            targetColumn.getJdbcType(),
+                            targetColumn.getSize(),
+                            targetColumn.getScale(),
+                            targetColumn.getComment(),
+                            targetColumn.getDefaultValue(),
+                            targetColumn.isRequired(),
+                            targetColumn.isPrimaryKey());
+                }
+                
                 this.needAlter = true;
                 this.alterTableColumns.add(alterColumn);
             }

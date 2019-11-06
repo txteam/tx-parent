@@ -47,10 +47,10 @@ public class AuthContextTableInitializer extends AbstractTableInitializer {
         
         //初始化表定义
         sb.append(COMMENT_PREFIX)
-                .append("----------table:sec_authitem----------")
+                .append("----------table:sec_auth----------")
                 .append(COMMENT_SUFFIX)
                 .append(LINE_SEPARATOR);
-        table_sec_authitem(tableDDLExecutor, tableAutoInitialize);
+        table_sec_auth(tableDDLExecutor, tableAutoInitialize);
         sb.append(LINE_SEPARATOR);
         
         sb.append(COMMENT_PREFIX)
@@ -136,9 +136,9 @@ public class AuthContextTableInitializer extends AbstractTableInitializer {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    private String table_sec_authitem(TableDDLExecutor tableDDLExecutor,
+    private String table_sec_auth(TableDDLExecutor tableDDLExecutor,
             boolean tableAutoInitialize) {
-        String tableName = "sec_authitem";
+        String tableName = "sec_auth";
         
         CreateTableDDLBuilder createDDLBuilder = null;
         AlterTableDDLBuilder alterDDLBuilder = null;
@@ -154,7 +154,7 @@ public class AuthContextTableInitializer extends AbstractTableInitializer {
             ddlBuilder = createDDLBuilder;
         }
         
-        sec_authitem(ddlBuilder);//写入表结构
+        sec_auth(ddlBuilder);//写入表结构
         
         if (alterDDLBuilder != null
                 && alterDDLBuilder.compare().isNeedAlter()) {
@@ -180,9 +180,9 @@ public class AuthContextTableInitializer extends AbstractTableInitializer {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public void sec_authitem(DDLBuilder<?> ddlBuilder) {
+    public void sec_auth(DDLBuilder<?> ddlBuilder) {
         ddlBuilder.newColumnOfVarchar(true, "id", 128, true, null)
-                .newColumnOfVarchar("authType", 64, true, null)
+                .newColumnOfVarchar("authTypeId", 64, true, null)
                 .newColumnOfVarchar("parentId", 64, false, null)
                 .newColumnOfVarchar("resourceType", 64, false, null)
                 .newColumnOfVarchar("resourceId", 64, false, null)

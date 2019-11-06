@@ -50,10 +50,10 @@ public class AuthItem implements Auth {
     private String authTypeId;
     
     /** 引用类型 */
-    private String refType;
+    private String resourceType;
     
     /** 引用id */
-    private String refId;
+    private String resourceId;
     
     /** 权限项名 */
     private String name;
@@ -85,14 +85,14 @@ public class AuthItem implements Auth {
     }
     
     /** <默认构造函数> */
-    public AuthItem(String id, String name, String authTypeId, String refType,
-            String refId) {
+    public AuthItem(String id, String name, String authTypeId, String resourceType,
+            String resourceId) {
         super();
         this.id = id;
         this.name = name;
         this.authTypeId = authTypeId;
-        this.refType = refType;
-        this.refId = refId;
+        this.resourceType = resourceType;
+        this.resourceId = resourceId;
     }
     
     /**
@@ -129,20 +129,6 @@ public class AuthItem implements Auth {
      */
     public void setAuthTypeId(String authTypeId) {
         this.authTypeId = authTypeId;
-    }
-    
-    /**
-     * @param 对refId进行赋值
-     */
-    public void setRefId(String refId) {
-        this.refId = refId;
-    }
-    
-    /**
-     * @param 对refType进行赋值
-     */
-    public void setRefType(String refType) {
-        this.refType = refType;
     }
     
     /**
@@ -197,21 +183,40 @@ public class AuthItem implements Auth {
     }
     
     /**
-     * @return 返回 refId
+     * @return 返回 resourceType
      */
-    @Override
-    public String getResourceId() {
-        return refId;
-    }
-    
-    /**
-     * @return 返回 refType
-     */
-    @Override
     public String getResourceType() {
-        return refType;
+        return resourceType;
     }
-    
+
+    /**
+     * @param 对resourceType进行赋值
+     */
+    public void setResourceType(String resourceType) {
+        this.resourceType = resourceType;
+    }
+
+    /**
+     * @return 返回 resourceId
+     */
+    public String getResourceId() {
+        return resourceId;
+    }
+
+    /**
+     * @param 对resourceId进行赋值
+     */
+    public void setResourceId(String resourceId) {
+        this.resourceId = resourceId;
+    }
+
+    /**
+     * @param 对configAble进行赋值
+     */
+    public void setConfigAble(boolean configAble) {
+        this.configAble = configAble;
+    }
+
     /**
      * @return 返回 attributes
      */
