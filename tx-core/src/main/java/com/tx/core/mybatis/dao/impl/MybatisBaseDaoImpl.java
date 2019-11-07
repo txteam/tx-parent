@@ -384,7 +384,7 @@ public abstract class MybatisBaseDaoImpl<T, ID extends Serializable>
      */
     @Override
     public int count(Map<String, Object> params, ID exclude) {
-        AssertUtils.notNull(exclude, "exclude is null.");
+        //AssertUtils.notNull(exclude, "exclude is null.");
         params = params == null ? new HashMap<String, Object>() : params;
         params.put(
                 "exclude" + StringUtils.capitalize(
