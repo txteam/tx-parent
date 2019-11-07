@@ -107,7 +107,7 @@
 	            ORDER BY <foreach collection="orders" item="orderTemp" separator=",">${orderTemp.column} ${orderTemp.direction}</foreach>
 	        </when>
 	        <otherwise>  
-	            ORDER BY type,createDate DESC
+	            ORDER BY type,code,createDate ASC
 	        </otherwise>  
 	    </choose>
 	</select>

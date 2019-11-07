@@ -9,17 +9,15 @@ package com.tx.component.servicelogger.starter;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang3.StringUtils;
-import org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -35,6 +33,7 @@ import com.tx.component.servicelogger.support.ServiceLoggerRegistry;
 import com.tx.core.ddlutil.executor.TableDDLExecutor;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.mybatis.support.MyBatisDaoSupport;
+import com.tx.core.starter.component.ComponentSupportAutoConfiguration;
 
 /**
  * 基础数据容器自动配置<br/>
@@ -46,11 +45,11 @@ import com.tx.core.mybatis.support.MyBatisDaoSupport;
  * @since  [产品/模块版本]
  */
 @Configuration
+@AutoConfigureAfter({ ComponentSupportAutoConfiguration.class })
 @EnableConfigurationProperties(ServiceLoggerContextProperties.class)
-@ConditionalOnBean({ DataSource.class, PlatformTransactionManager.class })
-@AutoConfigureAfter({ DataSourceAutoConfiguration.class,
-        DataSourceTransactionManagerAutoConfiguration.class,
-        MybatisAutoConfiguration.class })
+@ConditionalOnClass({ ServiceLoggerContextFactory.class })
+@ConditionalOnSingleCandidate(DataSource.class)
+@ConditionalOnBean(PlatformTransactionManager.class)
 @ConditionalOnProperty(prefix = "tx.servicelogger", value = "enable", havingValue = "true")
 public class ServiceLoggerContextAutoConfiguration
         implements ApplicationContextAware, InitializingBean {

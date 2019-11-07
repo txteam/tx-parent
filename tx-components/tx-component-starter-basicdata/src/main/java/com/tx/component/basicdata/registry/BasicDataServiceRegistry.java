@@ -243,6 +243,8 @@ public class BasicDataServiceRegistry
                     .genericBeanDefinition(defaultServiceType);
             builder.addPropertyValue("rawType", rawType);
             builder.addPropertyValue("dataDictService", this.dataDictService);
+            builder.addPropertyValue("transactionTemplate",
+                    this.dataDictService.getTransactionTemplate());
         }
         
         //注册，生成，并返回业务层
