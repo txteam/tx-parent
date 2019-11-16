@@ -35,50 +35,36 @@ public class TaskExecuteLog {
     private String id;
     
     /** 归属任务id */
-    @QueryConditionEqual
     private String taskId;
     
     /** 事务定义key */
-    @QueryConditionEqual
     private String code;
     
     /** 所属模块 */
-    @QueryConditionEqual
     private String module;
     
     /** 事务名 */
-    @UpdateAble
-    @QueryConditionEqual
     private String name;
     
     /** 描述 */
-    @UpdateAble
     private String remark;
     
     /** 最后一次任务执行结果 */
-    @UpdateAble
-    @QueryConditionEqual
     private TaskResultEnum result;
     
     /** 执行开始时间 */
-    @QueryConditionGreaterOrEqual(key = "minStartDate")
-    @QueryConditionLess(key = "maxStartDate")
     private Date startDate;
     
     /** 执行结束时间 */
-    @QueryConditionGreaterOrEqual(key = "minEndDate")
-    @QueryConditionLess(key = "maxEndDate")
     private Date endDate;
     
     /** 耗时 */
-    @UpdateAble
     private long consuming;
     
     /** 属性集：用于存放执行数据，例：最后一次执行期间的数据 */
     private String attributes;
     
     /** 执行所在机器的签名 */
-    @QueryConditionEqual
     private String signature;
     
     /**  事务执行人 */

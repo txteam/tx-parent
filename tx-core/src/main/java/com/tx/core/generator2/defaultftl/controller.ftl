@@ -45,7 +45,7 @@ public class ${controller.entityTypeSimpleName}Controller {
     @Resource(name = "${controller.entityTypeSimpleName?uncap_first}Service")
     private ${controller.entityTypeSimpleName}Service ${controller.entityTypeSimpleName?uncap_first}Service;
     
-<#if !(viewType??) || viewType == "LIST">
+<#if !(controller.viewType??) || controller.viewType == "LIST">
     /**
      * 跳转到查询${controller.entityComment}列表页面<br/>
      * <功能详细描述>
@@ -65,8 +65,9 @@ public class ${controller.entityTypeSimpleName}Controller {
 
         return "/${packageName}/query${controller.entityTypeSimpleName}List";
     }
+    
 </#if>
-<#if (viewType??) && viewType == "PAGEDLIST">
+<#if (controller.viewType??) && controller.viewType == "PAGEDLIST">
     /**
      * 跳转到查询${controller.entityComment}分页列表页面<br/>
      * <功能详细描述>
@@ -86,8 +87,9 @@ public class ${controller.entityTypeSimpleName}Controller {
 
         return "/${packageName}/query${controller.entityTypeSimpleName}PagedList";
     }
+    
 </#if>
-<#if !(viewType??) || viewType == "TREELIST">
+<#if (controller.viewType??) && controller.viewType == "TREELIST">
     /**
      * 跳转到查询${controller.entityComment}列表页面<br/>
      * <功能详细描述>
@@ -107,8 +109,8 @@ public class ${controller.entityTypeSimpleName}Controller {
 
         return "/${packageName}/query${controller.entityTypeSimpleName}TreeList";
     }
-</#if>
     
+</#if>
     /**
      * 跳转到新增${controller.entityComment}页面<br/>
      * <功能详细描述>
@@ -338,10 +340,10 @@ public class ${controller.entityTypeSimpleName}Controller {
         boolean flag = this.${controller.entityTypeSimpleName?uncap_first}Service.enableBy${controller.pkProperty.propertyName?cap_first}(${controller.pkProperty.propertyName});
         return flag;
     }
+    
 </#if>
-
 	/**
-     * 校验参数对应实例是否重复
+     * 校验是否重复<br/>
 	 * @param exclude${controller.pkProperty.propertyName?cap_first}
      * @param params
      * @return [参数说明]
@@ -352,7 +354,7 @@ public class ${controller.entityTypeSimpleName}Controller {
      */
     @ResponseBody
     @RequestMapping("/validate")
-    public Map<String, String> check(
+    public Map<String, String> validate(
             @RequestParam(value = "exclude${controller.pkProperty.propertyName?cap_first}", required = false) ${controller.pkProperty.propertyType.getSimpleName()} exclude${controller.pkProperty.propertyName?cap_first},
             @RequestParam Map<String, String> params) {
         boolean flag = this.${controller.entityTypeSimpleName?uncap_first}Service.exists(params, exclude${controller.pkProperty.propertyName?cap_first});
@@ -365,4 +367,59 @@ public class ${controller.entityTypeSimpleName}Controller {
         }
         return resMap;
     }
+    
+<#if controller.parentIdProperty??>
+    /**
+     * 根据条件查询${controller.entityComment}子级列表<br/>
+     * <功能详细描述>
+     * @param parentId
+     * @param valid
+     * @param request
+     * @return [参数说明]
+     * 
+     * @return PagedList<T> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @ResponseBody
+    @RequestMapping("/queryChildren")
+    public List<${controller.entityTypeSimpleName}> queryChildren(
+            @RequestParam(value = "parentId", required = true) String parentId,
+            @RequestParam(value = "valid", required = false) Boolean valid,
+            @RequestParam MultiValueMap<String, String> request) {
+        Map<String, Object> params = new HashMap<>();
+        
+        List<${controller.entityTypeSimpleName}> resList = this.${controller.entityTypeSimpleName?uncap_first}Service
+                .queryChildrenByParentId(parentId, valid, params);
+        
+        return resList;
+    }
+    
+    /**
+     * 根据条件查询${controller.entityComment}子、孙级列表<br/>
+     * <功能详细描述>
+     * @param parentId
+     * @param valid
+     * @param request
+     * @return [参数说明]
+     * 
+     * @return PagedList<T> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @ResponseBody
+    @RequestMapping("/queryDescendants")
+    public List<${controller.entityTypeSimpleName}> queryDescendants(
+            @RequestParam(value = "parentId", required = true) String parentId,
+            @RequestParam(value = "valid", required = false) Boolean valid,
+            @RequestParam MultiValueMap<String, String> request) {
+        Map<String, Object> params = new HashMap<>();
+        
+        List<${controller.entityTypeSimpleName}> resList = this.${controller.entityTypeSimpleName?uncap_first}Service
+                .queryDescendantsByParentId(parentId, valid, params);
+        
+        return resList;
+    }
+    
+</#if>
 }

@@ -241,7 +241,7 @@ public abstract class AbstractEntityMapperBuilderAssistant
      * @return String [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
+     */
     protected String formatNestedWhereAndItem(String columnName,
             String condition, String propertyName, String nestedPropertyName) {
         AssertUtils.notEmpty(columnName, "columnName is empty.");

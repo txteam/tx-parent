@@ -36,10 +36,10 @@ public @interface Task {
     int order() default 0;
     
     /** 任务关键字 */
-    String code() default "";
+    String value() default "";
     
     /** 父级任务编码 */
-    String parentCode() default "";
+    String parent() default "";
     
     /** 任务名 */
     String name() default "";

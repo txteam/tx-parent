@@ -18,6 +18,7 @@ import java.util.Map;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
@@ -406,6 +407,9 @@ public class JPAParseUtils {
         /** 字段注解 */
         protected final Column columnAnnotation;
         
+        /** 字段注解 */
+        protected JoinColumn joinColumnAnnotation;
+        
         /** 嵌套属性描述，如果不存在嵌套属性，则该值为空 */
         protected PropertyDescriptor nestedPropertyDescriptor;
         
@@ -419,6 +423,8 @@ public class JPAParseUtils {
             this.propertyDescriptor = propertyDescriptor;
             this.typeDescriptor = typeDescriptor;
             this.columnAnnotation = typeDescriptor.getAnnotation(Column.class);
+            this.joinColumnAnnotation = typeDescriptor
+                    .getAnnotation(JoinColumn.class);
             
             if (!BeanUtils
                     .isSimpleValueType(propertyDescriptor.getPropertyType())) {
@@ -447,6 +453,13 @@ public class JPAParseUtils {
          */
         public Column getColumnAnnotation() {
             return columnAnnotation;
+        }
+        
+        /**
+         * @return 返回 joinColumnAnnotation
+         */
+        public JoinColumn getJoinColumnAnnotation() {
+            return joinColumnAnnotation;
         }
         
         /**
@@ -500,10 +513,15 @@ public class JPAParseUtils {
          * @return 返回 columnName
          */
         public String getColumnName() {
-            return (columnAnnotation == null
-                    || StringUtils.isBlank(columnAnnotation.name()))
-                            ? this.propertyDescriptor.getName()
-                            : columnAnnotation.name();
+            if (this.columnAnnotation != null
+                    && !StringUtils.isEmpty(columnAnnotation.name())) {
+                return columnAnnotation.name();
+            }
+            if (this.joinColumnAnnotation != null
+                    && !StringUtils.isEmpty(joinColumnAnnotation.name())) {
+                return joinColumnAnnotation.name();
+            }
+            return this.propertyDescriptor.getName();
         }
         
         /**

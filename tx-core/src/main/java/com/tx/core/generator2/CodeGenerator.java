@@ -239,6 +239,7 @@ public class CodeGenerator {
                 + sqlmapPath + "/" + entityType.getSimpleName() + "SqlMap.xml";
         
         logger.info("sqlmap存放路径:{}", sqlmapPath);
+        
         if (isOverwrite(sqlmapFilePath)) {
             FreeMarkerUtils.fprint(LOAD_TEMPLATE_CLASS,
                     sqlMapTemplateFilePath,

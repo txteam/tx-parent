@@ -36,6 +36,12 @@ public abstract class SecurityContextBuilder extends SecurityContextConfigurator
     /** beanName实例 */
     protected static String beanName;
     
+    /** 权限注册表 */
+    private AuthRegistry authRegistry;
+    
+    /** 角色注册表 */
+    private RoleRegistry roleRegistry;
+    
     /**
      * @param name
      */
@@ -78,9 +84,12 @@ public abstract class SecurityContextBuilder extends SecurityContextConfigurator
      */
     @Override
     public RoleRegistry getRoleRegistry() {
-        RoleRegistry registry = applicationContext.getBean(
+        if (this.roleRegistry != null) {
+            return this.roleRegistry;
+        }
+        this.roleRegistry = applicationContext.getBean(
                 RoleConstants.BEAN_NAME_ROLE_REGISTRY, RoleRegistry.class);
-        return registry;
+        return this.roleRegistry;
     }
     
     /**
@@ -131,9 +140,12 @@ public abstract class SecurityContextBuilder extends SecurityContextConfigurator
      */
     @Override
     public AuthRegistry getAuthRegistry() {
-        AuthRegistry registry = applicationContext.getBean(
+        if (this.authRegistry != null) {
+            return this.authRegistry;
+        }
+        this.authRegistry = applicationContext.getBean(
                 AuthConstants.BEAN_NAME_AUTH_REGISTRY, AuthRegistry.class);
-        return registry;
+        return this.authRegistry;
     }
     
     /**
@@ -157,4 +169,5 @@ public abstract class SecurityContextBuilder extends SecurityContextConfigurator
                 AuthItemService.class);
         return service;
     }
+    
 }

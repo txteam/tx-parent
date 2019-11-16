@@ -20,6 +20,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandi
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -47,7 +48,8 @@ import com.tx.core.starter.component.ComponentSupportAutoConfiguration;
 @ConditionalOnClass({ SecurityContextFactory.class })
 @ConditionalOnSingleCandidate(DataSource.class)
 @ConditionalOnBean(PlatformTransactionManager.class)
-@Import({ SecurityContextCacheConfiguration.class })
+@Import({ SecurityContextCacheConfiguration.class,
+        RoleContextConfiguration.class, AuthContextConfiguration.class })
 public class SecurityContextAutoConfiguration
         implements InitializingBean, ApplicationContextAware {
     
@@ -95,13 +97,10 @@ public class SecurityContextAutoConfiguration
         AssertUtils.notEmpty(this.module, "module is empty.");
     }
     
-    @Import({ RoleContextConfiguration.class })
-    @Configuration
-    public class RoleContextAutoConfiguration {
+    @Bean("securityContext")
+    public SecurityContextFactory securityContext() {
+        SecurityContextFactory factory = new SecurityContextFactory();
+        return factory;
     }
     
-    @Import({ AuthContextConfiguration.class })
-    @Configuration
-    public class AuthContextAutoConfiguration {
-    }
 }

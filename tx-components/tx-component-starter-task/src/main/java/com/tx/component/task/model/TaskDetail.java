@@ -29,15 +29,12 @@ public class TaskDetail extends TaskDef {
     private String taskAttributes;
     
     /** 任务id */
-    @QueryConditionEqual
     private String taskId;
     
     /** 任务状态 */
-    @QueryConditionEqual
     private TaskStatusEnum status = TaskStatusEnum.WAIT_EXECUTE;
     
     /** 最后一次任务执行结果 */
-    @QueryConditionEqual
     private TaskResultEnum result;
     
     /** 最后执行时间：记录最后一次执行的时间 */

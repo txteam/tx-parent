@@ -44,7 +44,8 @@ public class ConfigPropertyServiceSupportCacheProxyCreator
     }
     
     /** <默认构造函数> */
-    public ConfigPropertyServiceSupportCacheProxyCreator(CacheManager cacheManager) {
+    public ConfigPropertyServiceSupportCacheProxyCreator(
+            CacheManager cacheManager) {
         super();
         this.cacheManager = cacheManager;
         setProxyTargetClass(true);
@@ -66,7 +67,18 @@ public class ConfigPropertyServiceSupportCacheProxyCreator
             
             Cache cache = this.cacheManager.getCache(cacheName);
             Object[] interceptors = new Object[] {
-                    new ServiceSupportCacheInterceptor(cache) };
+                    new ServiceSupportCacheInterceptor(cache) {
+                        /**/
+                        @Override
+                        protected boolean isUseCache(Method method,
+                                Object[] args) {
+                            String methodName = method.getName();
+                            boolean isQueryMethod = methodName
+                                    .startsWith("find");
+                            return isQueryMethod;
+                        }
+                        
+                    } };
             
             return interceptors;
         } else if (ConfigPropertyItemService.class
@@ -82,7 +94,7 @@ public class ConfigPropertyServiceSupportCacheProxyCreator
                                 Object[] args) {
                             return false;
                         }
-                    }};
+                    } };
             return interceptors;
         } else {
             return DO_NOT_PROXY;

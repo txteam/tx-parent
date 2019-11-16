@@ -35,6 +35,12 @@ public class TaskDef implements OrderedSupport, Serializable {
     @Id
     private String id;
     
+    /** 任务编码 */
+    private String code;
+    
+    /** module: 所属模块 */
+    private String module;
+    
     /** 父级任务编码：存在父级的任务都不能自动触发 */
     private String parentId;
     
@@ -46,9 +52,6 @@ public class TaskDef implements OrderedSupport, Serializable {
     
     /** 方法名：启动期间将会自动判断类中是否有重写方法：原则上允许出现同名方法，避免出现code,beanName,methodName一致，但方法不一致的情形 */
     private String methodName;
-    
-    /** module: 所属模块 */
-    private String module;
     
     /** 任务描述的参数Map */
     private String attributes;

@@ -625,7 +625,7 @@ public class ${service.entityTypeSimpleName}Service {
     }
     
     /**
-     * 根据条件查询基础数据分页列表<br/>
+     * 根据parentId查询${service.entityComment}子、孙级实例列表<br/>
      * <功能详细描述>
      * @param parentId
      * @param valid
@@ -694,7 +694,7 @@ public class ${service.entityTypeSimpleName}Service {
     }
     
     /**
-     * 根据条件查询基础数据分页列表<br/>
+     * 根据parentId查询${service.entityComment}子、孙级实例列表<br/>
      * <功能详细描述>
      * @param parentId
      * @param valid

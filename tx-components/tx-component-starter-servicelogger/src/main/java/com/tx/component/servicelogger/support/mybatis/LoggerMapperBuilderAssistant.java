@@ -132,7 +132,7 @@ public class LoggerMapperBuilderAssistant
     public List<String> getPrimaryProperyNameList() {
         List<String> resList = new ArrayList<>();
         for (JPAColumnInfo column : this.primaryKeyColumns) {
-            resList.add(column.getNestedPropertyName());
+            resList.add(column.getColumnPropertyName());
         }
         return resList;
     }
@@ -154,7 +154,7 @@ public class LoggerMapperBuilderAssistant
                 continue;
             }
             String columnName = column.getColumnName();
-            String propertyName = column.getNestedPropertyName();
+            String propertyName = column.getColumnPropertyName();
             sql.VALUES(columnName, formatProperty(propertyName));
         }
         
@@ -186,7 +186,7 @@ public class LoggerMapperBuilderAssistant
         Map<String, String> column2propertyMap = new HashMap<>();
         for (JPAColumnInfo column : this.tableColumns) {
             String columnName = column.getColumnName();
-            String propertyName = column.getNestedPropertyName();
+            String propertyName = column.getColumnPropertyName();
             
             //如果字段名和属性名不匹配时才回缴入customizeColumn2PropertyMap
             if (!StringUtils.equalsIgnoreCase(columnName, propertyName)) {
@@ -215,7 +215,7 @@ public class LoggerMapperBuilderAssistant
         sql.FROM(this.tableName);
         for (JPAColumnInfo column : this.primaryKeyColumns) {
             String columnName = column.getColumnName();
-            String propertyName = column.getNestedPropertyName();
+            String propertyName = column.getColumnPropertyName();
             
             String whereItem = formatWhereAndItem(columnName,
                     " = ",
@@ -284,13 +284,13 @@ public class LoggerMapperBuilderAssistant
         for (JPAColumnInfo column : this.tableColumns) {
             String columnName = column.getColumnName();
             String propertyName = column.getPropertyName();
-            String nestedPropertyName = column.getNestedPropertyName();
+            String columnPropertyName = column.getColumnPropertyName();
             
             if (column.hasNestedProperty()) {
                 String whereItem = formatNestedWhereAndItem(columnName,
                         " = ",
                         propertyName,
-                        nestedPropertyName);
+                        columnPropertyName);
                 sql.WHERE(whereItem);
             } else {
                 String whereItem = formatWhereAndItem(columnName,

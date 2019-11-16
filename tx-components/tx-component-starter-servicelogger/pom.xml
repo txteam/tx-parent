@@ -49,12 +49,18 @@
 			<artifactId>mybatis-spring-boot-starter</artifactId>
 		</dependency>
 
+		<!-- mybatis -->
+		<dependency>
+			<groupId>org.mybatis.spring.boot</groupId>
+			<artifactId>mybatis-spring-boot-starter</artifactId>
+		</dependency>
+
 		<!-- hibernate: data-jpa jpa -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
-
+		
 		<!-- mysql -->
 		<dependency>
 			<groupId>mysql</groupId>
@@ -62,6 +68,18 @@
 			<optional>true</optional>
 		</dependency>
 
+		<!-- eureka、feign -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-openfeign</artifactId>
+			<optional>true</optional>
+		</dependency>
+		
 		<!-- configurationProperties -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -69,7 +87,7 @@
 			<optional>true</optional>
 		</dependency>
 
-		<!-- junit -->
+		<!-- test -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>

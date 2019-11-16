@@ -24,7 +24,7 @@ public interface TaskExecutor {
     public String code();
     
     /** 父级任务编码 */
-    public String parentCode();
+    public String parent();
     
     /** 任务名 */
     public String name();
