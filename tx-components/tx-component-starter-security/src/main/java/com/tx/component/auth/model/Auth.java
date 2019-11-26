@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tx.component.auth.context.AuthRegistry;
 import com.tx.component.auth.context.AuthTypeRegistry;
 import com.tx.core.support.json.JSONAttributesSupport;
@@ -102,6 +103,7 @@ public interface Auth extends Serializable, JSONAttributesSupport,
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
+    @JsonIgnore
     default Auth getParent() {
         String parentId = getParentId();
         if (StringUtils.isEmpty(parentId)) {
@@ -120,6 +122,7 @@ public interface Auth extends Serializable, JSONAttributesSupport,
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
+    @JsonIgnore
     default AuthType getAuthType() {
         String authTypeId = getAuthTypeId();
         if (StringUtils.isEmpty(authTypeId)) {

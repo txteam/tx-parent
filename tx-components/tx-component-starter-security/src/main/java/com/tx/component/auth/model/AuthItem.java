@@ -17,7 +17,7 @@ import javax.persistence.Table;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.tx.core.util.ObjectUtils;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import io.swagger.annotations.ApiModel;
 
@@ -85,8 +85,8 @@ public class AuthItem implements Auth {
     }
     
     /** <默认构造函数> */
-    public AuthItem(String id, String name, String authTypeId, String resourceType,
-            String resourceId) {
+    public AuthItem(String id, String name, String authTypeId,
+            String resourceType, String resourceId) {
         super();
         this.id = id;
         this.name = name;
@@ -188,35 +188,35 @@ public class AuthItem implements Auth {
     public String getResourceType() {
         return resourceType;
     }
-
+    
     /**
      * @param 对resourceType进行赋值
      */
     public void setResourceType(String resourceType) {
         this.resourceType = resourceType;
     }
-
+    
     /**
      * @return 返回 resourceId
      */
     public String getResourceId() {
         return resourceId;
     }
-
+    
     /**
      * @param 对resourceId进行赋值
      */
     public void setResourceId(String resourceId) {
         this.resourceId = resourceId;
     }
-
+    
     /**
      * @param 对configAble进行赋值
      */
     public void setConfigAble(boolean configAble) {
         this.configAble = configAble;
     }
-
+    
     /**
      * @return 返回 attributes
      */
@@ -236,6 +236,7 @@ public class AuthItem implements Auth {
     /**
      * @return
      */
+    @JsonIgnore
     @Override
     public List<Auth> getChildren() {
         return children;
@@ -247,27 +248,5 @@ public class AuthItem implements Auth {
     @Override
     public void setChildren(List<Auth> children) {
         this.children = children;
-    }
-    
-    /**
-     * @param obj
-     * @return
-     */
-    @Override
-    public boolean equals(Object obj) {
-        return ObjectUtils.equals(this, obj, "id", "authType", "module");
-    }
-    
-    /**
-     * @return
-     */
-    @Override
-    public int hashCode() {
-        int resHashCode = ObjectUtils.generateHashCode(super.hashCode(),
-                this,
-                "id",
-                "authType",
-                "module");
-        return resHashCode;
     }
 }

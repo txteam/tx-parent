@@ -6,7 +6,9 @@
  */
 package com.tx.component.role.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -80,6 +82,15 @@ public class RoleTypeEnumService
         }
         RoleType roleType = roleTypeMap.get(roleTypeId);
         return roleType;
+    }
+    
+    /**
+     * @return
+     */
+    @Override
+    public List<RoleType> queryRoleTypeList() {
+        List<RoleType> resList = new ArrayList<RoleType>(roleTypeMap.values());
+        return resList;
     }
     
     /**

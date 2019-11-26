@@ -12,14 +12,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 import com.tx.component.auth.AuthConstants;
+import com.tx.component.auth.context.AuthRegistry;
 import com.tx.component.auth.context.AuthTypeRegistry;
 import com.tx.component.auth.service.AuthConfigService;
 import com.tx.component.auth.service.AuthEnumService;
+import com.tx.component.auth.service.AuthRefItemService;
+import com.tx.component.auth.service.AuthRefService;
 import com.tx.component.auth.service.AuthTypeEnumService;
-import com.tx.component.role.context.RoleRegistry;
-import com.tx.component.role.service.RoleRefItemService;
-import com.tx.component.role.service.RoleRefService;
-import com.tx.component.role.service.impl.RoleRefServiceImpl;
+import com.tx.component.auth.service.impl.AuthRefServiceImpl;
 import com.tx.component.security.starter.SecurityContextCacheConfiguration.SecurityContextCacheCustomizer;
 import com.tx.component.security.starter.SecurityContextProperties;
 
@@ -121,9 +121,9 @@ public class AuthContextConfiguration {
      * @see [类、类#方法、类#成员]
      */
     @Bean(name = AuthConstants.BEAN_NAME_AUTH_REGISTRY)
-    public RoleRegistry roleRegistry(
+    public AuthRegistry authRegistry(
             SecurityContextCacheCustomizer cacheCustomizer) {
-        RoleRegistry registry = new RoleRegistry();
+        AuthRegistry registry = new AuthRegistry();
         registry.setCacheManager(cacheCustomizer.getCacheManager());
         return registry;
     }
@@ -138,9 +138,9 @@ public class AuthContextConfiguration {
      * @see [类、类#方法、类#成员]
      */
     @Bean(name = AuthConstants.BEAN_NAME_AUTH_REF_SERVICE)
-    public RoleRefService roleRefService(
-            RoleRefItemService roleRefItemService) {
-        RoleRefServiceImpl service = new RoleRefServiceImpl(roleRefItemService);
+    public AuthRefService authRefService(
+            AuthRefItemService authRefItemService) {
+        AuthRefServiceImpl service = new AuthRefServiceImpl(authRefItemService);
         return service;
     }
 }

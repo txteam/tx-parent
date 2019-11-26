@@ -7,6 +7,7 @@
 package com.tx.component.role.dao.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import com.tx.component.role.dao.RoleRefItemDao;
 import com.tx.component.role.model.RoleRefItem;
@@ -51,7 +52,40 @@ public class RoleRefItemDaoMybatisImpl extends
      */
     @Override
     public void batchInsertToHis(List<RoleRefItem> roleRefs) {
-        this.myBatisDaoSupport.batchInsert("roleRefItem.insertToHis", roleRefs);
+        this.myBatisDaoSupport.batchInsert("roleRefItem.insertToHis",
+                roleRefs,
+                false);
+    }
+    
+    /**
+     * @param entityList
+     */
+    @Override
+    public void batchInsert(List<RoleRefItem> entityList) {
+        this.myBatisDaoSupport.batchInsertUseUUID("authRefItem.insert",
+                entityList,
+                "id",
+                false);
+    }
+    
+    /**
+     * @param entityList
+     */
+    @Override
+    public void batchDelete(List<RoleRefItem> entityList) {
+        this.myBatisDaoSupport.batchInsert("roleRefItem.delete",
+                entityList,
+                false);
+    }
+    
+    /**
+     * @param updateEntityMapList
+     */
+    @Override
+    public void batchUpdate(List<Map<String, Object>> updateEntityMapList) {
+        this.myBatisDaoSupport.batchInsert("roleRefItem.update",
+                updateEntityMapList,
+                false);
     }
     
     /**

@@ -39,16 +39,16 @@ import com.tx.core.util.ClassScanUtils;
 public class RoleEnumService implements RoleManager, InitializingBean, Ordered {
     
     /** 角色类型映射 */
-    private final Map<String, Role> roleMap = new HashMap<>();
+    private Map<String, Role> roleMap = new HashMap<>();
     
     /** 角色类型映射 */
-    private final MultiValueMap<String, Role> type2roleMap = new LinkedMultiValueMap<>();
+    private MultiValueMap<String, Role> type2roleMap = new LinkedMultiValueMap<>();
     
     /** 角色类型映射 */
-    private final MultiValueMap<String, Role> parent2roleMap = new LinkedMultiValueMap<>();
+    private MultiValueMap<String, Role> parent2roleMap = new LinkedMultiValueMap<>();
     
     /** 角色类型映射 */
-    private final Map<String, Class<? extends Role>> roleClassMap = new HashMap<>();
+    private Map<String, Class<? extends Role>> roleClassMap = new HashMap<>();
     
     /**
      * @throws Exception

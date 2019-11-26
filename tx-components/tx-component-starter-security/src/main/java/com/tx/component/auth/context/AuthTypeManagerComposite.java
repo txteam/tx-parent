@@ -8,7 +8,9 @@ package com.tx.component.auth.context;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.cache.Cache;
@@ -65,6 +67,35 @@ public class AuthTypeManagerComposite {
             }
         }
         return authTypeTemp;
+    }
+    
+    /**
+     * 查询权限类型列表<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return List<AuthType> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public List<AuthType> queryList() {
+        List<AuthType> resList = new ArrayList<>();
+        
+        Set<String> authTypeIdSet = new HashSet<>();
+        for (AuthTypeManager rm : delegates) {
+            List<AuthType> tempList = rm.queryAuthTypeList();
+            if(CollectionUtils.isEmpty(tempList)){
+                continue;
+            }
+            //过滤重复权限类型
+            tempList.stream().forEach(atTemp -> {
+                if (!authTypeIdSet.contains(atTemp.getId())) {
+                    resList.add(atTemp);
+                    authTypeIdSet.add(atTemp.getId());
+                }
+            });
+        }
+        return resList;
     }
     
 }

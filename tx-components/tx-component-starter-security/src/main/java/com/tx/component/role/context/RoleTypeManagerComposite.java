@@ -7,7 +7,9 @@
 package com.tx.component.role.context;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.cache.Cache;
@@ -62,6 +64,35 @@ public class RoleTypeManagerComposite {
             }
         }
         return roleTypeTemp;
+    }
+    
+    /**
+     * 查询角色类型列表<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return List<AuthType> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public List<RoleType> queryList() {
+        List<RoleType> resList = new ArrayList<>();
+        
+        Set<String> roleTypeIdSet = new HashSet<>();
+        for (RoleTypeManager rm : delegates) {
+            List<RoleType> tempList = rm.queryRoleTypeList();
+            if (CollectionUtils.isEmpty(tempList)) {
+                continue;
+            }
+            //过滤重复权限类型
+            tempList.stream().forEach(atTemp -> {
+                if (!roleTypeIdSet.contains(atTemp.getId())) {
+                    resList.add(atTemp);
+                    roleTypeIdSet.add(atTemp.getId());
+                }
+            });
+        }
+        return resList;
     }
     
 }

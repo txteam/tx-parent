@@ -58,6 +58,7 @@ class CachingRoleManager implements RoleManager {
         
         //对象可能已经被代理，这里需要取到被代理的类
         this.beanClass = ClassUtils.getUserClass(delegate);
+        this.roleCache.clear();
     }
     
     /**

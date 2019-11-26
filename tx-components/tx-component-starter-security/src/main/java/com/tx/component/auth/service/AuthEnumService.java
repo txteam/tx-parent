@@ -39,16 +39,16 @@ import com.tx.core.util.ClassScanUtils;
 public class AuthEnumService implements AuthManager, InitializingBean, Ordered {
     
     /** 权限映射 */
-    private final Map<String, Auth> authMap = new HashMap<>();
+    private Map<String, Auth> authMap = new HashMap<>();
     
     /** 权限映射 */
-    private final MultiValueMap<String, Auth> type2authMap = new LinkedMultiValueMap<>();
+    private MultiValueMap<String, Auth> type2authMap = new LinkedMultiValueMap<>();
     
     /** 权限映射 */
-    private final MultiValueMap<String, Auth> parent2authMap = new LinkedMultiValueMap<>();
+    private MultiValueMap<String, Auth> parent2authMap = new LinkedMultiValueMap<>();
     
     /** 权限映射 */
-    private final Map<String, Class<? extends Auth>> authClassMap = new HashMap<>();
+    private Map<String, Class<? extends Auth>> authClassMap = new HashMap<>();
     
     /**
      * @throws Exception

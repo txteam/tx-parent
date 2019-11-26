@@ -64,16 +64,16 @@ public class RoleConfigService
     private String configLocation;
     
     /** 角色类型映射 */
-    private final Map<String, RoleType> roleTypeMap = new HashMap<>();
+    private Map<String, RoleType> roleTypeMap = new HashMap<>();
     
     /** 角色映射 */
-    private final Map<String, Role> roleMap = new HashMap<>();
+    private Map<String, Role> roleMap = new HashMap<>();
     
     /** 角色类型映射 */
-    private final MultiValueMap<String, Role> type2roleMap = new LinkedMultiValueMap<>();
+    private MultiValueMap<String, Role> type2roleMap = new LinkedMultiValueMap<>();
     
     /** 角色类型映射 */
-    private final MultiValueMap<String, Role> parent2roleMap = new LinkedMultiValueMap<>();
+    private MultiValueMap<String, Role> parent2roleMap = new LinkedMultiValueMap<>();
     
     /** <默认构造函数> */
     public RoleConfigService() {
@@ -138,8 +138,6 @@ public class RoleConfigService
         }
         for (RoleTypeConfig typeConfig : types) {
             AssertUtils.notEmpty(typeConfig.getId(), "typeConfig.id is empty.");
-            AssertUtils.notEmpty(typeConfig.getName(),
-                    "typeConfig.name is empty.");
             
             RoleTypeItem type = new RoleTypeItem();
             type.setId(typeConfig.getId());
@@ -166,19 +164,19 @@ public class RoleConfigService
     private List<Role> initRole(RoleTypeItem type, RoleItem parent,
             List<RoleConfig> roleConfigList) {
         List<Role> roleList = new ArrayList<>();
-        if (CollectionUtils.isEmpty(roleList)) {
+        if (CollectionUtils.isEmpty(roleConfigList)) {
             return roleList;
         }
         for (RoleConfig configParserTemp : roleConfigList) {
             AssertUtils.notNull(type, "type is null.");
             AssertUtils.notEmpty(type.getId(), "type.id is empty.");
-            AssertUtils.notEmpty(type.getName(), "type.name is empty.");
             
             RoleItem role = new RoleItem();
             role.setParentId(parent == null ? null : parent.getId());
             role.setRoleTypeId(type.getId());
-            role.setName(type.getName());
-            role.setRemark(type.getRemark());
+            role.setId(configParserTemp.getId());
+            role.setName(configParserTemp.getName());
+            role.setRemark(configParserTemp.getRemark());
             //嵌套初始化配置属性
             List<Role> children = initRole(type,
                     role,
@@ -206,6 +204,15 @@ public class RoleConfigService
         
         RoleType type = roleTypeMap.get(roleTypeId);
         return type;
+    }
+    
+    /**
+     * @return
+     */
+    @Override
+    public List<RoleType> queryRoleTypeList() {
+        List<RoleType> resList = new ArrayList<>(roleTypeMap.values());
+        return resList;
     }
     
     /**

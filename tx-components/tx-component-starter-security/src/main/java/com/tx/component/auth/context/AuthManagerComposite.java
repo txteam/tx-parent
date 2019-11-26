@@ -7,10 +7,14 @@
 package com.tx.component.auth.context;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.cache.Cache;
+import org.springframework.core.OrderComparator;
 
 import com.tx.component.auth.model.Auth;
 import com.tx.core.exceptions.util.AssertUtils;
@@ -35,7 +39,8 @@ public class AuthManagerComposite {
         this.delegates = new ArrayList<>();
         AssertUtils.notNull(cache, "cache is null.");
         
-        if (CollectionUtils.isEmpty(roleManagers)) {
+        Collections.sort(roleManagers,OrderComparator.INSTANCE);
+        if (!CollectionUtils.isEmpty(roleManagers)) {
             roleManagers.stream().forEach(rmTemp -> {
                 if (rmTemp instanceof CachingAuthManager) {
                     this.delegates.add((CachingAuthManager) rmTemp);
@@ -69,11 +74,19 @@ public class AuthManagerComposite {
      */
     public List<Auth> queryList(String... authTypeIds) {
         List<Auth> resList = new ArrayList<>();
+        
+        Set<String> authIdSet = new HashSet<>();
         for (AuthManager rm : delegates) {
             List<Auth> tempList = rm.queryAuthList(authTypeIds);
-            if (!CollectionUtils.isEmpty(tempList)) {
-                resList.addAll(tempList);
+            if (CollectionUtils.isEmpty(tempList)) {
+                continue;
             }
+            tempList.forEach(auth -> {
+                if (!authIdSet.contains(auth.getId())) {
+                    resList.add(auth);
+                    authIdSet.add(auth.getId());
+                }
+            });
         }
         return resList;
     }
@@ -85,12 +98,20 @@ public class AuthManagerComposite {
     public List<Auth> queryChildrenByParentId(String parentId,
             String... authTypeIds) {
         List<Auth> resList = new ArrayList<>();
+        
+        Set<String> authIdSet = new HashSet<>();
         for (AuthManager rm : delegates) {
             List<Auth> tempList = rm.queryChildrenAuthByParentId(parentId,
                     authTypeIds);
-            if (!CollectionUtils.isEmpty(tempList)) {
-                resList.addAll(tempList);
+            if (CollectionUtils.isEmpty(tempList)) {
+                continue;
             }
+            tempList.forEach(auth -> {
+                if (!authIdSet.contains(auth.getId())) {
+                    resList.add(auth);
+                    authIdSet.add(auth.getId());
+                }
+            });
         }
         return resList;
     }
@@ -102,12 +123,21 @@ public class AuthManagerComposite {
     public List<Auth> queryDescendantsByParentId(String parentId,
             String... authTypeIds) {
         List<Auth> resList = new ArrayList<>();
+        
+        Set<String> authIdSet = new HashSet<>();
         for (AuthManager rm : delegates) {
             List<Auth> tempList = rm.queryDescendantsAuthByParentId(parentId,
                     authTypeIds);
-            if (!CollectionUtils.isEmpty(tempList)) {
-                resList.addAll(tempList);
+            if (CollectionUtils.isEmpty(tempList)) {
+                continue;
+                
             }
+            tempList.forEach(auth -> {
+                if (!authIdSet.contains(auth.getId())) {
+                    resList.add(auth);
+                    authIdSet.add(auth.getId());
+                }
+            });
         }
         return resList;
     }

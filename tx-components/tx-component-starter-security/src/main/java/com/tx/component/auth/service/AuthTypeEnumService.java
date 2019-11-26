@@ -6,7 +6,9 @@
  */
 package com.tx.component.auth.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -80,6 +82,15 @@ public class AuthTypeEnumService
         }
         AuthType authType = authTypeMap.get(authTypeId);
         return authType;
+    }
+    
+    /**
+     * @return
+     */
+    @Override
+    public List<AuthType> queryAuthTypeList() {
+        List<AuthType> resList = new ArrayList<AuthType>(authTypeMap.values());
+        return resList;
     }
     
     /**

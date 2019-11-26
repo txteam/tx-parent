@@ -15,6 +15,7 @@ import javax.persistence.OneToMany;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.PropertyAccessorFactory;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tx.core.exceptions.context.UnsupportedOperationException;
 import com.tx.core.exceptions.util.AssertUtils;
 
@@ -137,6 +138,7 @@ public class AuthItemWraper<T> implements Auth {
     /**
      * @return 返回 childs
      */
+    @JsonIgnore
     public List<Auth> getChildren() {
         return children;
     }

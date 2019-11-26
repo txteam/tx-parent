@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.transaction.annotation.Transactional;
@@ -158,11 +157,10 @@ public interface AuthRefService {
                 authId,
                 refType,
                 params);
-        Stream<AuthRef> sourceStream = sourceRefList.stream();
         
         //识别需要添加的权限列表
         List<String> sourceRefIds = new ArrayList<>();
-        sourceStream.forEach(authRefTemp -> {
+        sourceRefList.stream().forEach(authRefTemp -> {
             sourceRefIds.add(authRefTemp.getRefId());
         });
         List<String> needAddRefIds = refIds.stream().filter(refIdTemp -> {
@@ -204,11 +202,10 @@ public interface AuthRefService {
                 refType,
                 refId,
                 params);
-        Stream<AuthRef> sourceStream = sourceRefList.stream();
         
         //识别需要添加的权限列表
         List<String> sourceAuthIds = new ArrayList<>();
-        sourceStream.forEach(authRefTemp -> {
+        sourceRefList.stream().forEach(authRefTemp -> {
             sourceAuthIds.add(authRefTemp.getAuthId());
         });
         List<String> needAddAuthIds = authIds.stream().filter(authIdTemp -> {
@@ -251,14 +248,13 @@ public interface AuthRefService {
                 return filterRefIds.contains(authRefTemp.getRefId());
             }).collect(Collectors.toList());
         }
-        Stream<AuthRef> sourceStream = sourceRefList.stream();
         
         //识别需要删除的权限
         List<String> sourceRefIds = new ArrayList<>();
-        sourceStream.forEach(authRefTemp -> {
+        sourceRefList.stream().forEach(authRefTemp -> {
             sourceRefIds.add(authRefTemp.getRefId());
         });
-        List<AuthRef> needDeleteRefs = sourceStream.filter(authRefTemp -> {
+        List<AuthRef> needDeleteRefs = sourceRefList.stream().filter(authRefTemp -> {
             return !refIds.contains(authRefTemp.getRefId());
         }).collect(Collectors.toList());
         //移除到历史表
@@ -302,16 +298,17 @@ public interface AuthRefService {
                 return filterAuthIds.contains(authRefTemp.getAuthId());
             }).collect(Collectors.toList());
         }
-        Stream<AuthRef> sourceStream = sourceRefList.stream();
         
         //识别需要删除的权限
         List<String> sourceAuthIds = new ArrayList<>();
-        sourceStream.forEach(authRefTemp -> {
+        sourceRefList.stream().forEach(authRefTemp -> {
             sourceAuthIds.add(authRefTemp.getAuthId());
         });
-        List<AuthRef> needDeleteRefs = sourceStream.filter(authRefTemp -> {
-            return !authIds.contains(authRefTemp.getAuthId());
-        }).collect(Collectors.toList());
+        List<AuthRef> needDeleteRefs = sourceRefList.stream()
+                .filter(authRefTemp -> {
+                    return !authIds.contains(authRefTemp.getAuthId());
+                })
+                .collect(Collectors.toList());
         //移除到历史表
         batchMoveToHis(needDeleteRefs);
         

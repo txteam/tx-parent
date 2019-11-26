@@ -6,6 +6,8 @@
  */
 package com.tx.component.role.context;
 
+import java.util.List;
+
 import org.springframework.cache.Cache;
 
 import com.tx.component.role.model.RoleType;
@@ -32,6 +34,17 @@ public interface RoleTypeManager {
      * @see [类、类#方法、类#成员]
      */
     public RoleType findRoleTypeById(String roleTypeId);
+    
+    /**
+     * 查询角色类型列表<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return List<RoleType> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public List<RoleType> queryRoleTypeList();
     
     /**
      * 获取角色类型对应的缓存<br/>

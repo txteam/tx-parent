@@ -6,16 +6,23 @@
  */
 package com.tx.component.security.context;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.RememberMeAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import com.github.andrewoma.dexx.collection.ArrayList;
 import com.tx.component.auth.model.Auth;
 import com.tx.component.role.model.Role;
+import com.tx.component.security.util.SecurityContextUtils;
 import com.tx.core.exceptions.SILException;
 import com.tx.core.exceptions.util.AssertUtils;
 
@@ -36,6 +43,8 @@ public class SecurityContext extends SecurityContextBuilder {
     /** 单子模式权限容器唯一实例 */
     protected static SecurityContext context;
     
+    private Set<String> nullAuthIdSet = new HashSet<>();
+    
     /**
      * <默认构造函数>
      * 构造函数级别为子类可见<br/>
@@ -45,7 +54,7 @@ public class SecurityContext extends SecurityContextBuilder {
     
     /**
       * 获取权限容器实例
-      *<功能详细描述>
+      * <功能详细描述>
       * @return [参数说明]
       * 
       * @return AuthContext [返回类型说明]
@@ -69,7 +78,6 @@ public class SecurityContext extends SecurityContextBuilder {
      */
     @Override
     protected void doInitContext() throws Exception {
-        
     }
     
     /**
@@ -104,7 +112,13 @@ public class SecurityContext extends SecurityContextBuilder {
         if (StringUtils.isBlank(authId)) {
             return null;
         }
+        if (nullAuthIdSet.contains(authId)) {
+            return null;
+        }
         Auth auth = getAuthRegistry().findById(authId);
+        if (auth == null) {
+            nullAuthIdSet.add(authId);
+        }
         return auth;
     }
     
@@ -124,6 +138,8 @@ public class SecurityContext extends SecurityContextBuilder {
         }
         String[] authIds = StringUtils.splitByWholeSeparator(authsExpression,
                 ",");
+        
+        Set<String> authIdSet = new HashSet<>();
         for (String authIdTemp : authIds) {
             if (StringUtils.isBlank(authIdTemp)) {
                 continue;
@@ -133,9 +149,12 @@ public class SecurityContext extends SecurityContextBuilder {
             if (auth == null) {
                 continue;
             }
-            //判断是否有对应权限
+            
+            authIdSet.add(authIdTemp);
         }
-        return true;
+        boolean flag = SecurityContextUtils.getAccessExpressionHolder()
+                .hasAuth(authIdSet);
+        return flag;
     }
     
     /**
@@ -154,6 +173,8 @@ public class SecurityContext extends SecurityContextBuilder {
         }
         String[] authIds = StringUtils.splitByWholeSeparator(authsExpression,
                 ",");
+        
+        Set<String> authIdSet = new HashSet<>();
         for (String authIdTemp : authIds) {
             if (StringUtils.isBlank(authIdTemp)) {
                 continue;
@@ -163,9 +184,12 @@ public class SecurityContext extends SecurityContextBuilder {
             if (auth == null) {
                 continue;
             }
-            //判断是否有对应权限
+            
+            authIdSet.add(authIdTemp);
         }
-        return true;
+        boolean flag = SecurityContextUtils.getAccessExpressionHolder()
+                .hasAnyAuth(authIdSet);
+        return flag;
     }
     
     /**
@@ -177,6 +201,8 @@ public class SecurityContext extends SecurityContextBuilder {
         }
         String[] roleIds = StringUtils.splitByWholeSeparator(rolesExpression,
                 ",");
+        
+        Set<String> roleIdSet = new HashSet<>();
         for (String roleIdTemp : roleIds) {
             if (StringUtils.isBlank(roleIdTemp)) {
                 continue;
@@ -186,9 +212,12 @@ public class SecurityContext extends SecurityContextBuilder {
             if (role == null) {
                 continue;
             }
-            //判断是否有对应角色
+            
+            roleIdSet.add(roleIdTemp);
         }
-        return true;
+        boolean flag = SecurityContextUtils.getAccessExpressionHolder()
+                .hasRole(roleIdSet);
+        return flag;
     }
     
     /**
@@ -207,6 +236,8 @@ public class SecurityContext extends SecurityContextBuilder {
         }
         String[] roleIds = StringUtils.splitByWholeSeparator(rolesExpression,
                 ",");
+        
+        Set<String> roleIdSet = new HashSet<>();
         for (String roleIdTemp : roleIds) {
             if (StringUtils.isBlank(roleIdTemp)) {
                 continue;
@@ -216,9 +247,12 @@ public class SecurityContext extends SecurityContextBuilder {
             if (role == null) {
                 continue;
             }
-            //判断是否有对应角色
+            
+            roleIdSet.add(roleIdTemp);
         }
-        return true;
+        boolean flag = SecurityContextUtils.getAccessExpressionHolder()
+                .hasAnyRole(roleIdSet);
+        return flag;
     }
     
     /**
@@ -237,6 +271,8 @@ public class SecurityContext extends SecurityContextBuilder {
         }
         String[] authorities = StringUtils
                 .splitByWholeSeparator(authoritiesExpression, ",");
+        
+        Set<String> authoritySet = new HashSet<>();
         for (String authority : authorities) {
             if (StringUtils.isBlank(authority)) {
                 continue;
@@ -250,9 +286,12 @@ public class SecurityContext extends SecurityContextBuilder {
             if (role == null && auth == null) {
                 continue;
             }
-            //判断是否有对应角色或权限
+            
+            authoritySet.add(authority);
         }
-        return true;
+        boolean flag = SecurityContextUtils.getAccessExpressionHolder()
+                .hasAuthority(authoritySet);
+        return flag;
     }
     
     /**
@@ -271,6 +310,8 @@ public class SecurityContext extends SecurityContextBuilder {
         }
         String[] authorities = StringUtils
                 .splitByWholeSeparator(authoritiesExpression, ",");
+        
+        Set<String> authoritySet = new HashSet<>();
         for (String authority : authorities) {
             if (StringUtils.isBlank(authority)) {
                 continue;
@@ -284,9 +325,12 @@ public class SecurityContext extends SecurityContextBuilder {
             if (role == null && auth == null) {
                 continue;
             }
-            //判断是否有对应角色或权限
+            
+            authoritySet.add(authority);
         }
-        return true;
+        boolean flag = SecurityContextUtils.getAccessExpressionHolder()
+                .hasAnyAuthority(authoritySet);
+        return flag;
     }
     
     /**
@@ -299,7 +343,14 @@ public class SecurityContext extends SecurityContextBuilder {
      * @see [类、类#方法、类#成员]
      */
     public boolean isAnonymous() {
-        SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication = SecurityContextHolder.getContext()
+                .getAuthentication();
+        if (authentication == null) {
+            return false;
+        }
+        
+        boolean flag = AnonymousAuthenticationToken.class
+                .isAssignableFrom(authentication.getClass());
         return true;
     }
     
@@ -334,9 +385,11 @@ public class SecurityContext extends SecurityContextBuilder {
      * @see [类、类#方法、类#成员]
      */
     public boolean isAuthenticated() {
-        boolean flag = SecurityContextHolder.getContext()
-                .getAuthentication()
-                .isAuthenticated();
+        Authentication a = getAuthentication();
+        if (a == null) {
+            return false;
+        }
+        boolean flag = a.isAuthenticated();
         return flag;
     }
     
@@ -352,23 +405,6 @@ public class SecurityContext extends SecurityContextBuilder {
     public boolean isFullyAuthenticated() {
         boolean flag = isAuthenticated() && !isRememberMe();
         return flag;
-    }
-    
-    /**
-     * 总是返回true，表示允许所有的
-     * <功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return boolean [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public boolean permitAll() {
-        return true;
-    }
-    
-    public boolean denyAll() {
-        return false;
     }
     
     /**
@@ -417,13 +453,13 @@ public class SecurityContext extends SecurityContextBuilder {
      *    hasAuthority([authority]) 等同于hasRole or hasAuth
      *    hasAnyAuthority([authority1,authority2]) 等同于hasAnyRole or hasAuth
      *    
-     *    anonymous 当前用户是否是一个匿名用户
-     *    rememberMe 表示当前用户是否是通过Remember-Me自动登录的
-     *    authenticated 表示当前用户是否已经登录认证成功了
-     *    fullyAuthenticated 如果当前用户既不是一个匿名用户，同时又不是通过Remember-Me自动登录的，则返回true
+     *    isAnonymous() 当前用户是否是一个匿名用户
+     *    isRememberMe() 表示当前用户是否是通过Remember-Me自动登录的
+     *    isAuthenticated() 表示当前用户是否已经登录认证成功了
+     *    isFullyAuthenticated() 如果当前用户既不是一个匿名用户，同时又不是通过Remember-Me自动登录的，则返回true
+     *    
      *    permitAll 总是返回true，表示允许所有的
      *    denyAll 总是返回false，表示拒绝所有的
-     *    
      *    principle 代表当前用户的principle对象 
      *    authentication 直接从SecurityContext获取的当前Authentication对象
      * </pre>
@@ -440,6 +476,8 @@ public class SecurityContext extends SecurityContextBuilder {
         }
         String[] expressions = StringUtils
                 .splitByWholeSeparator(accessExpression, ",");
+        
+        boolean flag = true;
         for (String expressionTemp : expressions) {
             if (StringUtils.isBlank(expressionTemp)) {
                 continue;
@@ -448,33 +486,16 @@ public class SecurityContext extends SecurityContextBuilder {
             ExpressionParser parser = new SpelExpressionParser();
             //判断是否有对应角色或权限
             StandardEvaluationContext ctx = new StandardEvaluationContext();
-            //root
-            SecurityContext context = SecurityContext.getContext();
+            //设置root值
+            ctx.setRootObject(SecurityContextUtils.getAccessExpressionHolder());
             
-            parser.parseExpression(expressionTemp).getValue(ctx, context);
+            //解析值
+            flag = parser.parseExpression(expressionTemp).getValue(ctx,
+                    Boolean.class);
+            if (!flag) {
+                break;
+            }
         }
-        return true;
+        return flag;
     }
-    
-    /**
-     * hasAuth([role])
-     * hasAnyAuth([role1,role2])
-     * hasRole([role])
-     * hasAnyRole([role1,role2])
-     * hasAuthority([auth])
-     * hasAnyAuthority([auth1,auth2])
-     * <功能详细描述>
-     * @param expression
-     * @return [参数说明]
-     * 
-     * @return String [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    private static String preprocess(String expression) {
-        AssertUtils.notEmpty(expression, "expression is empty.");
-        
-        return null;
-    }
-    
 }

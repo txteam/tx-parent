@@ -103,4 +103,10 @@ public class SecurityContextAutoConfiguration
         return factory;
     }
     
+    //    @Bean("securityContext.webSecurityConfiguration")
+    //    public SecurityContextWebConfiguration configuration(){
+    //        SecurityContextWebConfiguration configuration = new SecurityContextWebConfiguration();
+    //        return configuration;
+    //    }
+    
 }

@@ -36,6 +36,9 @@ public class TaskStatus implements Serializable {
     /** 任务id */
     private String taskId;
     
+    /** 事务定义key */
+    private String code;
+    
     /** 任务状态 */
     private TaskStatusEnum status = TaskStatusEnum.WAIT_EXECUTE;
     

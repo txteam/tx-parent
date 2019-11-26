@@ -221,7 +221,7 @@ public class AuthContextTableInitializer extends AbstractTableInitializer {
         }
         
         sec_authref(ddlBuilder);//写入表结构
-        ddlBuilder.newIndex(false, "idx_parentId", "parentId");
+        ddlBuilder.newIndex(false, "idx_authId", "authId");
         ddlBuilder.newIndex(false, "idx_ref", "refId,refType");
         
         if (alterDDLBuilder != null
@@ -298,11 +298,13 @@ public class AuthContextTableInitializer extends AbstractTableInitializer {
         ddlBuilder.newColumnOfVarchar(true, "id", 64, true, null)
                 .newColumnOfVarchar("refType", 64, true, null)
                 .newColumnOfVarchar("refId", 64, true, null)
-                .newColumnOfVarchar("authTypeId", 64, true, null)
                 .newColumnOfVarchar("authId", 128, true, null)
-                .newColumnOfVarchar("parentId", 64, false, null)
-                .newColumnOfVarchar("name", 255, true, null)
-                .newColumnOfVarchar("remark", 512, false, null)
-                .newColumnOfBoolean("configAble", true, true);
+                .newColumnOfDate("effectiveDate", true, true)
+                .newColumnOfDate("expiryDate", false, false)
+                .newColumnOfDate("createDate", true, true)
+                .newColumnOfDate("lastUpdateDate", true, true)
+                .newColumnOfVarchar("createOperatorId", 64, false, null)
+                .newColumnOfVarchar("lastUpdateOperatorId", 64, false, null);
+        
     }
 }

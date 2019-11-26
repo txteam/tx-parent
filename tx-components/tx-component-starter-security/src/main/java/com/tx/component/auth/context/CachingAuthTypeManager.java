@@ -6,6 +6,8 @@
  */
 package com.tx.component.auth.context;
 
+import java.util.List;
+
 import org.springframework.cache.Cache;
 import org.springframework.cache.Cache.ValueWrapper;
 import org.springframework.util.ClassUtils;
@@ -47,6 +49,7 @@ class CachingAuthTypeManager implements AuthTypeManager {
         
         //对象可能已经被代理，这里需要取到被代理的类
         this.beanClass = ClassUtils.getUserClass(delegate);
+        this.authTypeCache.clear();
     }
     
     /**
@@ -71,5 +74,14 @@ class CachingAuthTypeManager implements AuthTypeManager {
             this.authTypeCache.put(cacheKey, authType);
         }
         return authType;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public List<AuthType> queryAuthTypeList() {
+        List<AuthType> resList = this.delegate.queryAuthTypeList();
+        return resList;
     }
 }

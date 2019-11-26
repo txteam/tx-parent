@@ -6,6 +6,9 @@
  */
 package com.tx.component.security.util;
 
+import com.tx.component.security.context.SecurityAccessExpressionHolder;
+import com.tx.component.security.context.SecurityResourceHolderStrategy;
+
 /**
  * 安全容器工具类<br/>
  * <功能详细描述>
@@ -17,5 +20,19 @@ package com.tx.component.security.util;
  */
 public class SecurityContextUtils {
     
+    /**
+     * 
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return SecurityAccessExpressionHolder [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static SecurityAccessExpressionHolder getAccessExpressionHolder() {
+        SecurityAccessExpressionHolder holder = SecurityResourceHolderStrategy
+                .get(SecurityAccessExpressionHolder.class);
+        return holder;
+    }
     
 }

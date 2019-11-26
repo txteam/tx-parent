@@ -97,7 +97,6 @@ public class AuthRegistry
     @Override
     public void afterPropertiesSet() throws Exception {
         AssertUtils.notNull(cacheManager, "cacheManager is null.");
-        AssertUtils.notEmpty(authManagers, "roleManagers is empty.");
         
         //角色类型业务层
         this.authManagers = new ArrayList<>(
@@ -150,8 +149,8 @@ public class AuthRegistry
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public List<Auth> queryList(String authTypeId) {
-        List<Auth> resList = this.composite.queryList(authTypeId);
+    public List<Auth> queryList(String... authTypeIds) {
+        List<Auth> resList = this.composite.queryList(authTypeIds);
         return resList;
     }
     
@@ -167,9 +166,9 @@ public class AuthRegistry
      * @see [类、类#方法、类#成员]
      */
     public List<Auth> queryChildrenByParentId(String parentId,
-            String authTypeId) {
+            String... authTypeIds) {
         List<Auth> resList = this.composite.queryChildrenByParentId(parentId,
-                authTypeId);
+                authTypeIds);
         return resList;
     }
     
@@ -185,9 +184,9 @@ public class AuthRegistry
      * @see [类、类#方法、类#成员]
      */
     public List<Auth> queryDescendantsByParentId(String parentId,
-            String authTypeId) {
+            String... authTypeIds) {
         List<Auth> resList = this.composite.queryDescendantsByParentId(parentId,
-                authTypeId);
+                authTypeIds);
         return resList;
     }
     

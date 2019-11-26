@@ -140,7 +140,21 @@ public class RoleTypeRegistry
         RoleType roleType = this.composite.findById(id);
         return roleType;
     }
-
+    
+    /**
+     * 查询角色类型列表<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return List<RoleType> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public List<RoleType> queryList() {
+        List<RoleType> resList = this.composite.queryList();
+        return resList;
+    }
+    
     /**
      * @param 对cacheManager进行赋值
      */

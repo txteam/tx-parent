@@ -22,8 +22,8 @@
 				ARI.createOperatorId,
 				ARI.expiryDate,
 				ARI.effectiveDate,
-				RRI.lastUpdateOperatorId,
-				RRI.lastUpdateDate
+				ARI.lastUpdateOperatorId,
+				ARI.lastUpdateDate
 		  FROM SEC_AUTHREF ARI
 		 WHERE
 		<trim prefixOverrides="AND | OR">
@@ -46,8 +46,8 @@
 				ARI.createOperatorId,
 				ARI.expiryDate,
 				ARI.effectiveDate,
-				RRI.lastUpdateOperatorId,
-				RRI.lastUpdateDate
+				ARI.lastUpdateOperatorId,
+				ARI.lastUpdateDate
 		  FROM SEC_AUTHREF ARI
 		<trim prefix="WHERE" prefixOverrides="AND | OR">
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(conditions)">

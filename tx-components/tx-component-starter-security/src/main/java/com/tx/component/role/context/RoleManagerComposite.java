@@ -7,10 +7,14 @@
 package com.tx.component.role.context;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.cache.Cache;
+import org.springframework.core.OrderComparator;
 
 import com.tx.component.role.model.Role;
 import com.tx.core.exceptions.util.AssertUtils;
@@ -35,7 +39,8 @@ public class RoleManagerComposite {
         this.delegates = new ArrayList<>();
         AssertUtils.notNull(cache, "cache is null.");
         
-        if (CollectionUtils.isEmpty(roleManagers)) {
+        Collections.sort(roleManagers,OrderComparator.INSTANCE);
+        if (!CollectionUtils.isEmpty(roleManagers)) {
             roleManagers.stream().forEach(rmTemp -> {
                 if (rmTemp instanceof CachingRoleManager) {
                     this.delegates.add((CachingRoleManager) rmTemp);
@@ -69,11 +74,19 @@ public class RoleManagerComposite {
      */
     public List<Role> queryList(String... roleTypeIds) {
         List<Role> resList = new ArrayList<>();
+        
+        Set<String> roleIdSet = new HashSet<>();
         for (RoleManager rm : delegates) {
             List<Role> tempList = rm.queryRoleList(roleTypeIds);
-            if (!CollectionUtils.isEmpty(tempList)) {
-                resList.addAll(tempList);
+            if (CollectionUtils.isEmpty(tempList)) {
+                continue;
             }
+            tempList.forEach(auth -> {
+                if (!roleIdSet.contains(auth.getId())) {
+                    resList.add(auth);
+                    roleIdSet.add(auth.getId());
+                }
+            });
         }
         return resList;
     }
@@ -85,12 +98,20 @@ public class RoleManagerComposite {
     public List<Role> queryChildrenByParentId(String parentId,
             String... roleTypeIds) {
         List<Role> resList = new ArrayList<>();
+        
+        Set<String> roleIdSet = new HashSet<>();
         for (RoleManager rm : delegates) {
             List<Role> tempList = rm.queryChildrenRoleByParentId(parentId,
                     roleTypeIds);
-            if (!CollectionUtils.isEmpty(tempList)) {
-                resList.addAll(tempList);
+            if (CollectionUtils.isEmpty(tempList)) {
+                continue;
             }
+            tempList.forEach(auth -> {
+                if (!roleIdSet.contains(auth.getId())) {
+                    resList.add(auth);
+                    roleIdSet.add(auth.getId());
+                }
+            });
         }
         return resList;
     }
@@ -102,12 +123,20 @@ public class RoleManagerComposite {
     public List<Role> queryDescendantsByParentId(String parentId,
             String... roleTypeIds) {
         List<Role> resList = new ArrayList<>();
+        
+        Set<String> roleIdSet = new HashSet<>();
         for (RoleManager rm : delegates) {
             List<Role> tempList = rm.queryDescendantsRoleByParentId(parentId,
                     roleTypeIds);
-            if (!CollectionUtils.isEmpty(tempList)) {
-                resList.addAll(tempList);
+            if (CollectionUtils.isEmpty(tempList)) {
+                continue;
             }
+            tempList.forEach(auth -> {
+                if (!roleIdSet.contains(auth.getId())) {
+                    resList.add(auth);
+                    roleIdSet.add(auth.getId());
+                }
+            });
         }
         return resList;
     }

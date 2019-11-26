@@ -168,29 +168,6 @@ public class MyBatisDaoSupport implements InitializingBean {
      * 1、数据批量插入，默认一次提交100条，当发生异常后继续提交异常行以后的数据，待集合全部进行提交后返回批量处理结果<br/>
      * 2、数据批量插入，如果需要回滚，当发生异常后，数据库异常即向外抛出，不会进行至全部执行后再抛出异常 <br/>
      * <功能详细描述>
-     * @param statement
-     * @param objectList
-     * @param nonIgnoreError [参数说明]
-     * 
-     * @return void [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    @Deprecated
-    public void batchInsert(String statement, List<?> objectList,
-            boolean nonIgnoreError) {
-        AssertUtils.notEmpty(statement, "statement is empty.");
-        AssertUtils.isTrue(nonIgnoreError, "nonIgnoreError is false.");
-        
-        //批量插入
-        batchInsert(statement, objectList, defaultDoFlushSize);
-    }
-    
-    /**
-     * 批量插入数据 <br/>
-     * 1、数据批量插入，默认一次提交100条，当发生异常后继续提交异常行以后的数据，待集合全部进行提交后返回批量处理结果<br/>
-     * 2、数据批量插入，如果需要回滚，当发生异常后，数据库异常即向外抛出，不会进行至全部执行后再抛出异常 <br/>
-     * <功能详细描述>
      * 
      * @param statement
      * @param objectCollection
@@ -204,7 +181,31 @@ public class MyBatisDaoSupport implements InitializingBean {
     public void batchInsert(String statement, List<?> objectList) {
         AssertUtils.notEmpty(statement, "statement is empty.");
         //批量插入
-        batchInsert(statement, objectList, defaultDoFlushSize);
+        batchInsert(statement, objectList, defaultDoFlushSize, true);
+    }
+    
+    /**
+     * 批量插入数据 <br/>
+     * 1、数据批量插入，默认一次提交100条，当发生异常后继续提交异常行以后的数据，待集合全部进行提交后返回批量处理结果<br/>
+     * 2、数据批量插入，如果需要回滚，当发生异常后，数据库异常即向外抛出，不会进行至全部执行后再抛出异常 <br/>
+     * <功能详细描述>
+     * @param statement
+     * @param objectList
+     * @param nonIgnoreError [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public void batchInsert(String statement, List<?> objectList,
+            boolean useBatchExecutor) {
+        AssertUtils.notEmpty(statement, "statement is empty.");
+        
+        //批量插入
+        batchInsert(statement,
+                objectList,
+                defaultDoFlushSize,
+                useBatchExecutor);
     }
     
     /**
@@ -220,7 +221,7 @@ public class MyBatisDaoSupport implements InitializingBean {
      */
     // 批量插入
     public void batchInsert(String statement, List<?> objectList,
-            int doFlushSize) {
+            int doFlushSize, boolean useBatchExecutor) {
         AssertUtils.notEmpty(statement, "statement is empty.");
         
         if (CollectionUtils.isEmpty(objectList)) {
@@ -233,10 +234,14 @@ public class MyBatisDaoSupport implements InitializingBean {
         // 本次flush的列表开始行行索引
         for (int index = 0; index < objectList.size(); index++) {
             Object object = objectList.get(index);
-            getBatchSqlSessionTemplate().insert(statement, object);
-            if ((index > 0 && index % doFlushSize == 0)
-                    || index == objectList.size() - 1) {
-                getBatchSqlSessionTemplate().flushStatements();
+            if (useBatchExecutor) {
+                getBatchSqlSessionTemplate().insert(statement, object);
+                if ((index > 0 && index % doFlushSize == 0)
+                        || index == objectList.size() - 1) {
+                    getBatchSqlSessionTemplate().flushStatements();
+                }
+            } else {
+                this.sqlSessionTemplate.insert(statement, object);
             }
         }
     }
@@ -253,13 +258,16 @@ public class MyBatisDaoSupport implements InitializingBean {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @Deprecated
     public void batchInsertUseUUID(String statement, List<?> objectList,
-            String keyPropertyName, boolean nonIgnoreError) {
+            String pkPropertyName, boolean useBatchExecutor) {
         AssertUtils.notEmpty(statement, "statement is empty.");
-        AssertUtils.isTrue(nonIgnoreError, "nonIgnoreError is false.");
+        AssertUtils.notEmpty(pkPropertyName, "pkPropertyName is empty.");
         
-        batchInsertUseUUID(statement, objectList, keyPropertyName);
+        batchInsertUseUUID(statement,
+                objectList,
+                pkPropertyName,
+                defaultDoFlushSize,
+                useBatchExecutor);
     }
     
     /**
@@ -278,13 +286,15 @@ public class MyBatisDaoSupport implements InitializingBean {
      * @see [类、类#方法、类#成员]
      */
     public void batchInsertUseUUID(String statement, List<?> objectList,
-            String keyPropertyName) {
+            String pkPropertyName) {
         AssertUtils.notEmpty(statement, "statement is empty.");
+        AssertUtils.notEmpty(pkPropertyName, "pkPropertyName is empty.");
         
         batchInsertUseUUID(statement,
                 objectList,
-                keyPropertyName,
-                defaultDoFlushSize);
+                pkPropertyName,
+                defaultDoFlushSize,
+                true);
     }
     
     /**
@@ -303,7 +313,7 @@ public class MyBatisDaoSupport implements InitializingBean {
      */
     // 批量插入
     public void batchInsertUseUUID(String statement, List<?> objectList,
-            String pkPropertyName, int doFlushSize) {
+            String pkPropertyName, int doFlushSize, boolean useBatchExecutor) {
         AssertUtils.notEmpty(statement, "statement is empty.");
         AssertUtils.notEmpty(pkPropertyName, "pkPropertyName is empty.");
         
@@ -329,7 +339,7 @@ public class MyBatisDaoSupport implements InitializingBean {
                 bw.setPropertyValue(pkPropertyName, generateUUID());
             }
         }
-        batchInsert(statement, objectList, doFlushSize);
+        batchInsert(statement, objectList, doFlushSize, useBatchExecutor);
     }
     
     /**
@@ -364,13 +374,14 @@ public class MyBatisDaoSupport implements InitializingBean {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @Deprecated
     public void batchDelete(String statement, List<?> objectList,
-            boolean nonIgnoreError) {
+            boolean useBatchExecutor) {
         AssertUtils.notEmpty(statement, "statement is empty.");
-        AssertUtils.isTrue(nonIgnoreError, "nonIgnoreError is false.");
         
-        batchDelete(statement, objectList, defaultDoFlushSize);
+        batchDelete(statement,
+                objectList,
+                defaultDoFlushSize,
+                useBatchExecutor);
     }
     
     /**
@@ -389,7 +400,7 @@ public class MyBatisDaoSupport implements InitializingBean {
     public void batchDelete(String statement, List<?> objectList) {
         AssertUtils.notEmpty(statement, "statement is empty.");
         
-        batchDelete(statement, objectList, defaultDoFlushSize);
+        batchDelete(statement, objectList, defaultDoFlushSize, true);
     }
     
     /**
@@ -408,7 +419,7 @@ public class MyBatisDaoSupport implements InitializingBean {
      */
     // 批量插入
     public void batchDelete(String statement, List<?> objectList,
-            int doFlushSize) {
+            int doFlushSize, boolean useBatchExecutor) {
         AssertUtils.notEmpty(statement, "statement is empty.");
         
         if (CollectionUtils.isEmpty(objectList)) {
@@ -421,10 +432,14 @@ public class MyBatisDaoSupport implements InitializingBean {
         // 本次flush的列表开始行行索引
         for (int index = 0; index < objectList.size(); index++) {
             Object object = objectList.get(index);
-            getBatchSqlSessionTemplate().delete(statement, object);
-            if ((index > 0 && index % doFlushSize == 0)
-                    || index == objectList.size() - 1) {
-                getBatchSqlSessionTemplate().flushStatements();
+            if (useBatchExecutor) {
+                getBatchSqlSessionTemplate().delete(statement, object);
+                if ((index > 0 && index % doFlushSize == 0)
+                        || index == objectList.size() - 1) {
+                    getBatchSqlSessionTemplate().flushStatements();
+                }
+            } else {
+                this.sqlSessionTemplate.delete(statement, object);
             }
         }
     }
@@ -461,13 +476,14 @@ public class MyBatisDaoSupport implements InitializingBean {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @Deprecated
     public void batchUpdate(String statement, List<?> objectList,
-            boolean nonIgnoreError) {
+            boolean useBatchExecutor) {
         AssertUtils.notEmpty(statement, "statement is empty.");
-        AssertUtils.isTrue(nonIgnoreError, "nonIgnoreError is false.");
         
-        batchUpdate(statement, objectList, defaultDoFlushSize);
+        batchUpdate(statement,
+                objectList,
+                defaultDoFlushSize,
+                useBatchExecutor);
     }
     
     /**
@@ -486,7 +502,7 @@ public class MyBatisDaoSupport implements InitializingBean {
     public void batchUpdate(String statement, List<?> objectList) {
         AssertUtils.notEmpty(statement, "statement is empty.");
         
-        batchUpdate(statement, objectList, defaultDoFlushSize);
+        batchUpdate(statement, objectList, defaultDoFlushSize, true);
     }
     
     /**
@@ -502,7 +518,7 @@ public class MyBatisDaoSupport implements InitializingBean {
      */
     // 批量插入
     public void batchUpdate(String statement, List<?> objectList,
-            int doFlushSize) {
+            int doFlushSize, boolean useBatchExecutor) {
         AssertUtils.notEmpty(statement, "statement is empty.");
         
         if (CollectionUtils.isEmpty(objectList)) {
@@ -515,10 +531,14 @@ public class MyBatisDaoSupport implements InitializingBean {
         // 本次flush的列表开始行行索引
         for (int index = 0; index < objectList.size(); index++) {
             Object object = objectList.get(index);
-            getBatchSqlSessionTemplate().update(statement, object);
-            if ((index > 0 && index % doFlushSize == 0)
-                    || index == objectList.size() - 1) {
-                getBatchSqlSessionTemplate().flushStatements();
+            if (useBatchExecutor) {
+                getBatchSqlSessionTemplate().update(statement, object);
+                if ((index > 0 && index % doFlushSize == 0)
+                        || index == objectList.size() - 1) {
+                    getBatchSqlSessionTemplate().flushStatements();
+                }
+            } else {
+                this.sqlSessionTemplate.update(statement, object);
             }
         }
     }

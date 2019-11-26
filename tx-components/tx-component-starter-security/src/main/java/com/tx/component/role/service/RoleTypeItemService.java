@@ -9,6 +9,7 @@ package com.tx.component.role.service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -123,6 +124,16 @@ public class RoleTypeItemService implements RoleTypeManager {
         
         RoleTypeItem res = this.roleTypeItemDao.find(condition);
         return res;
+    }
+    
+    /**
+     * @return
+     */
+    @Override
+    public List<RoleType> queryRoleTypeList() {
+        List<RoleType> resList = queryList((Map<String, Object>) null).stream()
+                .collect(Collectors.toList());
+        return resList;
     }
     
     /**

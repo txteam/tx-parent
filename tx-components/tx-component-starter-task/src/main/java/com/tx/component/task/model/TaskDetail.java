@@ -8,9 +8,6 @@ package com.tx.component.task.model;
 
 import java.util.Date;
 
-import com.tx.core.jdbc.sqlsource.annotation.QueryConditionEqual;
-import com.tx.core.jdbc.sqlsource.annotation.UpdateAble;
-
 /**
   * 任务详情<br/>
   * <功能详细描述>
@@ -25,14 +22,8 @@ public class TaskDetail extends TaskDef {
     /** 注释内容 */
     private static final long serialVersionUID = -6178042742842940900L;
     
-    /** attributes */
-    private String taskAttributes;
-    
-    /** 任务id */
-    private String taskId;
-    
     /** 任务状态 */
-    private TaskStatusEnum status = TaskStatusEnum.WAIT_EXECUTE;
+    private TaskStatusEnum status;
     
     /** 最后一次任务执行结果 */
     private TaskResultEnum result;
@@ -44,11 +35,9 @@ public class TaskDetail extends TaskDef {
     private Date endDate;
     
     /** 最后一次陈功执行耗时 */
-    @UpdateAble
     private Long consuming;
     
     /** 执行所在机器的签名：根据singnature一致的情况下，才会有权对任务的状态进行重置（暂不提供自动重置）   */
-    @QueryConditionEqual
     private String signature;
     
     /** 执行总次数 */

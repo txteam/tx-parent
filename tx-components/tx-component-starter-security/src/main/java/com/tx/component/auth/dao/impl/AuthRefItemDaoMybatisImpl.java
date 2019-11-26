@@ -7,6 +7,7 @@
 package com.tx.component.auth.dao.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import com.tx.component.auth.dao.AuthRefItemDao;
 import com.tx.component.auth.model.AuthRefItem;
@@ -51,7 +52,40 @@ public class AuthRefItemDaoMybatisImpl extends
      */
     @Override
     public void batchInsertToHis(List<AuthRefItem> authRefs) {
-        this.myBatisDaoSupport.batchInsert("authRefItem.insertToHis", authRefs);
+        this.myBatisDaoSupport.batchInsert("authRefItem.insertToHis",
+                authRefs,
+                false);
+    }
+    
+    /**
+     * @param entityList
+     */
+    @Override
+    public void batchInsert(List<AuthRefItem> entityList) {
+        this.myBatisDaoSupport.batchInsertUseUUID("authRefItem.insert",
+                entityList,
+                "id",
+                false);
+    }
+    
+    /**
+     * @param entityList
+     */
+    @Override
+    public void batchDelete(List<AuthRefItem> entityList) {
+        this.myBatisDaoSupport.batchDelete("authRefItem.delete",
+                entityList,
+                false);
+    }
+    
+    /**
+     * @param updateEntityMapList
+     */
+    @Override
+    public void batchUpdate(List<Map<String, Object>> updateEntityMapList) {
+        this.myBatisDaoSupport.batchUpdate("authRefItem.update",
+                updateEntityMapList,
+                false);
     }
     
     /**

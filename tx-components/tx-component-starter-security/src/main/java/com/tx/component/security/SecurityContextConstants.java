@@ -17,6 +17,9 @@ package com.tx.component.security;
  */
 public interface SecurityContextConstants {
     
+    /** 角色开头字母 */
+    String AUTHORITY_ROLE_STARTWITH = "ROLE_";
+    
     String PROPERTIES_PREFIX = "tx.component.security";
     
     /** 刷新token */

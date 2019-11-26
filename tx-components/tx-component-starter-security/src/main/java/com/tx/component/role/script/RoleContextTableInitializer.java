@@ -237,6 +237,8 @@ public class RoleContextTableInitializer extends AbstractTableInitializer {
         }
         
         sec_roleref(ddlBuilder);//写入表结构
+        ddlBuilder.newIndex(false, "idx_roleId", "roleId");
+        ddlBuilder.newIndex(false, "idx_ref", "refId,refType");
         
         if (alterDDLBuilder != null
                 && alterDDLBuilder.compare().isNeedAlter()) {
@@ -312,11 +314,9 @@ public class RoleContextTableInitializer extends AbstractTableInitializer {
                 .newColumnOfVarchar("roleId", 128, true, null)
                 .newColumnOfDate("effectiveDate", true, true)
                 .newColumnOfDate("expiryDate", false, false)
-                .newColumnOfDate("createDate", false, false)
-                .newColumnOfDate("lastUpdateDate", false, false)
+                .newColumnOfDate("createDate", true, true)
+                .newColumnOfDate("lastUpdateDate", true, true)
                 .newColumnOfVarchar("createOperatorId", 64, false, null)
                 .newColumnOfVarchar("lastUpdateOperatorId", 64, false, null);
-        ddlBuilder.newIndex(false, "idx_roleId", "roleId");
-        ddlBuilder.newIndex(false, "idx_ref", "refId,refType");
     }
 }

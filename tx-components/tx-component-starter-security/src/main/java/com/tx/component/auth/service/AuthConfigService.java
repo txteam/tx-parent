@@ -64,16 +64,16 @@ public class AuthConfigService
     private String configLocation;
     
     /** 角色类型映射 */
-    private final Map<String, AuthType> authTypeMap = new HashMap<>();
+    private Map<String, AuthType> authTypeMap = new HashMap<>();
     
     /** 角色映射 */
-    private final Map<String, Auth> authMap = new HashMap<>();
+    private Map<String, Auth> authMap = new HashMap<>();
     
     /** 角色类型映射 */
-    private final MultiValueMap<String, Auth> type2authMap = new LinkedMultiValueMap<>();
+    private MultiValueMap<String, Auth> type2authMap = new LinkedMultiValueMap<>();
     
     /** 角色类型映射 */
-    private final MultiValueMap<String, Auth> parent2authMap = new LinkedMultiValueMap<>();
+    private MultiValueMap<String, Auth> parent2authMap = new LinkedMultiValueMap<>();
     
     /** <默认构造函数> */
     public AuthConfigService() {
@@ -138,8 +138,6 @@ public class AuthConfigService
         }
         for (AuthTypeConfig typeConfig : types) {
             AssertUtils.notEmpty(typeConfig.getId(), "typeConfig.id is empty.");
-            AssertUtils.notEmpty(typeConfig.getName(),
-                    "typeConfig.name is empty.");
             
             AuthTypeItem type = new AuthTypeItem();
             type.setId(typeConfig.getId());
@@ -166,19 +164,21 @@ public class AuthConfigService
     private List<Auth> initAuth(AuthTypeItem type, AuthItem parent,
             List<AuthConfig> authConfigList) {
         List<Auth> authList = new ArrayList<>();
-        if (CollectionUtils.isEmpty(authList)) {
+        if (CollectionUtils.isEmpty(authConfigList)) {
             return authList;
         }
         for (AuthConfig configParserTemp : authConfigList) {
             AssertUtils.notNull(type, "type is null.");
             AssertUtils.notEmpty(type.getId(), "type.id is empty.");
-            AssertUtils.notEmpty(type.getName(), "type.name is empty.");
             
             AuthItem auth = new AuthItem();
             auth.setParentId(parent == null ? null : parent.getId());
             auth.setAuthTypeId(type.getId());
-            auth.setName(type.getName());
-            auth.setRemark(type.getRemark());
+            
+            auth.setId(configParserTemp.getId());
+            auth.setName(configParserTemp.getName());
+            auth.setRemark(configParserTemp.getRemark());
+            
             //嵌套初始化配置属性
             List<Auth> children = initAuth(type,
                     auth,
@@ -209,6 +209,15 @@ public class AuthConfigService
     }
     
     /**
+     * @return
+     */
+    @Override
+    public List<AuthType> queryAuthTypeList() {
+        List<AuthType> resList = new ArrayList<>(authTypeMap.values());
+        return resList;
+    }
+    
+    /**
      * @param authId
      * @return
      */
@@ -232,7 +241,8 @@ public class AuthConfigService
         
         if (!ArrayUtils.isEmpty(authTypeIds)) {
             List<String> authTypeIdList = Arrays.asList(authTypeIds);
-            resList = resList.stream().filter(auth -> {
+            
+            resList = authMap.values().stream().filter(auth -> {
                 return authTypeIdList.contains(auth.getAuthTypeId());
             }).collect(Collectors.toList());
         }

@@ -10,6 +10,7 @@ import java.io.Serializable;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tx.component.role.context.RoleTypeRegistry;
 
 /**
@@ -93,6 +94,7 @@ public interface Role extends Serializable {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
+    @JsonIgnore
     default RoleType getParent() {
         String parentId = getParentId();
         if (StringUtils.isEmpty(parentId)) {
@@ -111,6 +113,7 @@ public interface Role extends Serializable {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
+    @JsonIgnore
     default RoleType getRoleType() {
         String roleTypeId = getRoleTypeId();
         if (StringUtils.isEmpty(roleTypeId)) {

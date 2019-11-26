@@ -56,7 +56,8 @@ public interface RoleRefService {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public List<RoleRef> queryList(Boolean effective, Map<String, Object> params);
+    public List<RoleRef> queryList(Boolean effective,
+            Map<String, Object> params);
     
     /**
      * 根据关联类型映射查询角色关联<br/>
@@ -157,11 +158,9 @@ public interface RoleRefService {
                 roleId,
                 refType,
                 params);
-        Stream<RoleRef> sourceStream = sourceRefList.stream();
-        
         //识别需要添加的角色列表
         List<String> sourceRefIds = new ArrayList<>();
-        sourceStream.forEach(roleRefTemp -> {
+        sourceRefList.stream().forEach(roleRefTemp -> {
             sourceRefIds.add(roleRefTemp.getRefId());
         });
         List<String> needAddRefIds = refIds.stream().filter(refIdTemp -> {
@@ -203,11 +202,10 @@ public interface RoleRefService {
                 refType,
                 refId,
                 params);
-        Stream<RoleRef> sourceStream = sourceRefList.stream();
         
         //识别需要添加的角色列表
         List<String> sourceRoleIds = new ArrayList<>();
-        sourceStream.forEach(roleRefTemp -> {
+        sourceRefList.stream().forEach(roleRefTemp -> {
             sourceRoleIds.add(roleRefTemp.getRoleId());
         });
         List<String> needAddRoleIds = roleIds.stream().filter(roleIdTemp -> {
@@ -250,16 +248,17 @@ public interface RoleRefService {
                 return filterRefIds.contains(roleRefTemp.getRefId());
             }).collect(Collectors.toList());
         }
-        Stream<RoleRef> sourceStream = sourceRefList.stream();
         
         //识别需要删除的角色
         List<String> sourceRefIds = new ArrayList<>();
-        sourceStream.forEach(roleRefTemp -> {
+        sourceRefList.stream().forEach(roleRefTemp -> {
             sourceRefIds.add(roleRefTemp.getRefId());
         });
-        List<RoleRef> needDeleteRefs = sourceStream.filter(roleRefTemp -> {
-            return !refIds.contains(roleRefTemp.getRefId());
-        }).collect(Collectors.toList());
+        List<RoleRef> needDeleteRefs = sourceRefList.stream()
+                .filter(roleRefTemp -> {
+                    return !refIds.contains(roleRefTemp.getRefId());
+                })
+                .collect(Collectors.toList());
         //移除到历史表
         batchMoveToHis(needDeleteRefs);
         
@@ -301,16 +300,17 @@ public interface RoleRefService {
                 return filterRoleIds.contains(roleRefTemp.getRoleId());
             }).collect(Collectors.toList());
         }
-        Stream<RoleRef> sourceStream = sourceRefList.stream();
         
         //识别需要删除的角色
         List<String> sourceRoleIds = new ArrayList<>();
-        sourceStream.forEach(roleRefTemp -> {
+        sourceRefList.stream().forEach(roleRefTemp -> {
             sourceRoleIds.add(roleRefTemp.getRoleId());
         });
-        List<RoleRef> needDeleteRefs = sourceStream.filter(roleRefTemp -> {
-            return !roleIds.contains(roleRefTemp.getRoleId());
-        }).collect(Collectors.toList());
+        List<RoleRef> needDeleteRefs = sourceRefList.stream()
+                .filter(roleRefTemp -> {
+                    return !roleIds.contains(roleRefTemp.getRoleId());
+                })
+                .collect(Collectors.toList());
         //移除到历史表
         batchMoveToHis(needDeleteRefs);
         

@@ -9,6 +9,7 @@ package com.tx.component.auth.service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,8 +79,6 @@ public class AuthTypeItemService implements AuthTypeManager {
         //验证参数是否合法
         AssertUtils.notNull(authTypeItem, "authTypeItem is null.");
         
-        //FIXME:为添加的数据需要填入默认值的字段填入默认值
-        
         //调用数据持久层对实例进行持久化操作
         this.authTypeItemDao.insert(authTypeItem);
     }
@@ -144,6 +143,16 @@ public class AuthTypeItemService implements AuthTypeManager {
         //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
         List<AuthTypeItem> resList = this.authTypeItemDao.queryList(params);
         
+        return resList;
+    }
+    
+    /**
+     * @return
+     */
+    @Override
+    public List<AuthType> queryAuthTypeList() {
+        List<AuthType> resList = queryList((Map<String, Object>) null).stream()
+                .collect(Collectors.toList());
         return resList;
     }
     
