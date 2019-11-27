@@ -6,7 +6,6 @@
  */
 package com.tx.component.security.context;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -19,11 +18,9 @@ import org.springframework.security.authentication.RememberMeAuthenticationToken
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import com.github.andrewoma.dexx.collection.ArrayList;
 import com.tx.component.auth.model.Auth;
 import com.tx.component.role.model.Role;
 import com.tx.component.security.util.SecurityContextUtils;
-import com.tx.core.exceptions.SILException;
 import com.tx.core.exceptions.util.AssertUtils;
 
 /**
