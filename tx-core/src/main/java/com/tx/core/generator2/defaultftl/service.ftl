@@ -415,10 +415,9 @@ public class ${service.entityTypeSimpleName}Service {
         //生成查询条件
         Map<String, Object> params = new HashMap<String, Object>();
         params.putAll(key2valueMap);
-        params.put("exclude${service.pkColumn.propertyName?cap_first}", exclude${service.pkColumn.propertyName?cap_first});
         
         //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
-        int res = this.${service.entityTypeSimpleName?uncap_first}Dao.count(params);
+        int res = this.${service.entityTypeSimpleName?uncap_first}Dao.count(params,exclude${service.pkColumn.propertyName?cap_first});
         
         return res > 0;
     }

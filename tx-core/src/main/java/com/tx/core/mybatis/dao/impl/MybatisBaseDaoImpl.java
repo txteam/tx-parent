@@ -27,6 +27,7 @@ import com.tx.core.mybatis.support.MyBatisDaoSupport;
 import com.tx.core.paged.model.PagedList;
 import com.tx.core.querier.model.Querier;
 import com.tx.core.querier.model.QuerierBuilder;
+import com.tx.core.util.ObjectUtils;
 
 /**
  * 抽象持久层接口<br/>
@@ -386,10 +387,12 @@ public abstract class MybatisBaseDaoImpl<T, ID extends Serializable>
     public int count(Map<String, Object> params, ID exclude) {
         //AssertUtils.notNull(exclude, "exclude is null.");
         params = params == null ? new HashMap<String, Object>() : params;
-        params.put(
-                "exclude" + StringUtils.capitalize(
-                        this.assistant.getPkColumn().getPropertyName()),
-                exclude);
+        if (!ObjectUtils.isEmpty(exclude)) {
+            params.put(
+                    "exclude" + StringUtils.capitalize(
+                            this.assistant.getPkColumn().getPropertyName()),
+                    exclude);
+        }
         
         int count = getMyBatisDaoSupport()
                 .count(this.assistant.getCountStatmentName(), params);
@@ -408,10 +411,12 @@ public abstract class MybatisBaseDaoImpl<T, ID extends Serializable>
         if (querier.getParams() == null) {
             querier.setParams(new HashMap<>());
         }
-        querier.getParams()
-                .put("exclude" + StringUtils.capitalize(
-                        this.assistant.getPkColumn().getPropertyName()),
-                        exclude);
+        if (!ObjectUtils.isEmpty(exclude)) {
+            querier.getParams()
+                    .put("exclude" + StringUtils.capitalize(
+                            this.assistant.getPkColumn().getPropertyName()),
+                            exclude);
+        }
         
         int count = getMyBatisDaoSupport().count(
                 this.assistant.getCountStatmentName(),

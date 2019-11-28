@@ -355,8 +355,9 @@ public class ${controller.entityTypeSimpleName}Controller {
     @ResponseBody
     @RequestMapping("/validate")
     public Map<String, String> validate(
-            @RequestParam(value = "exclude${controller.pkProperty.propertyName?cap_first}", required = false) ${controller.pkProperty.propertyType.getSimpleName()} exclude${controller.pkProperty.propertyName?cap_first},
+            @RequestParam(value = "${controller.pkProperty.propertyName}", required = false) ${controller.pkProperty.propertyType.getSimpleName()} exclude${controller.pkProperty.propertyName?cap_first},
             @RequestParam Map<String, String> params) {
+        params.remove("${controller.pkProperty.propertyName}");
         boolean flag = this.${controller.entityTypeSimpleName?uncap_first}Service.exists(params, exclude${controller.pkProperty.propertyName?cap_first});
         
         Map<String, String> resMap = new HashMap<String, String>();

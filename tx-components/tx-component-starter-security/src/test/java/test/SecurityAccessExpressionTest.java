@@ -29,7 +29,18 @@ import com.tx.component.role.model.RoleItem;
  */
 public class SecurityAccessExpressionTest {
     
-    public static void main(String[] args)
+    public static void main(String[] args) {
+        ExpressionParser parser = new SpelExpressionParser();
+        StandardEvaluationContext ctx = new StandardEvaluationContext();
+        
+        Expression exp = parser.parseExpression("not true");
+        //取出解析结果
+        String result = exp.getValue().toString();
+        //输出结果
+        System.out.println(result);
+    }
+    
+    public static void main1(String[] args)
             throws NoSuchMethodException, SecurityException {
         //创建SpEL表达式的解析器
         ExpressionParser parser = new SpelExpressionParser();

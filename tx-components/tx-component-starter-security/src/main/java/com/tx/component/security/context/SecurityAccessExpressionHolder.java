@@ -18,7 +18,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import com.tx.component.security.SecurityContextConstants;
+import com.tx.component.security.model.AuthAuthority;
 
 /**
  * 用以支持表达式解析<br/>
@@ -57,6 +57,12 @@ public class SecurityAccessExpressionHolder implements SecurityResourceHolder {
     
     private Object principle;
     
+    private Object credentials;
+    
+    private String name;
+    
+    private Object details;
+    
     private Collection<? extends GrantedAuthority> authorities;
     
     private Map<String, GrantedAuthority> authorityMap = new HashMap<String, GrantedAuthority>();
@@ -82,19 +88,18 @@ public class SecurityAccessExpressionHolder implements SecurityResourceHolder {
         this.authorities = this.authentication != null
                 ? this.authentication.getAuthorities() : new ArrayList<>();
         
-        //this.authentication.getCredentials()
-        //this.authentication.getName();
-        //this.authentication.getDetails();
+        this.credentials = this.authentication.getCredentials();
+        this.name = this.authentication.getName();
+        this.details = this.authentication.getDetails();
         for (GrantedAuthority a : this.authorities) {
             String upperCaseAuthority = a.getAuthority().toUpperCase();
             
             authorityMap.put(upperCaseAuthority, a);
-            if (!StringUtils.startsWithIgnoreCase(upperCaseAuthority,
-                    SecurityContextConstants.AUTHORITY_ROLE_STARTWITH)) {
+            if (a instanceof AuthAuthority) {
                 authMap.put(upperCaseAuthority, a);
+                roleMap.put(upperCaseAuthority, a);
             } else {
                 roleMap.put(upperCaseAuthority, a);
-                authMap.put(upperCaseAuthority, a);
             }
         }
     }
@@ -104,7 +109,9 @@ public class SecurityAccessExpressionHolder implements SecurityResourceHolder {
      */
     @Override
     public void clear() {
-        
+        this.authMap.clear();
+        this.roleMap.clear();
+        this.authorityMap.clear();
     }
     
     /**
@@ -382,5 +389,26 @@ public class SecurityAccessExpressionHolder implements SecurityResourceHolder {
     public void setAuthorities(
             Collection<? extends GrantedAuthority> authorities) {
         this.authorities = authorities;
+    }
+    
+    /**
+     * @return 返回 name
+     */
+    public String getName() {
+        return name;
+    }
+    
+    /**
+     * @return 返回 details
+     */
+    public Object getDetails() {
+        return details;
+    }
+    
+    /**
+     * @return 返回 credentials
+     */
+    public Object getCredentials() {
+        return credentials;
     }
 }
