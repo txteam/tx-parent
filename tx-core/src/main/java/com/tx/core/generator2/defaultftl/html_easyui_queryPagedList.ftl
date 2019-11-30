@@ -101,7 +101,7 @@ $(document).ready(function(){
 	<#elseif (
 		property.propertyName == "lastUpdateDate" 
 		)>
-			{title:'<#if property.propertyComment??>${property.propertyComment}<#else>${property.propertyName}</#if>',width:100,hidden:true,field:'${property.propertyName}',formatter:$.Formatters.date},
+			{title:'<#if property.propertyComment??>${property.propertyComment}<#else>${property.propertyName}</#if>',width:100,hidden:true,field:'${property.propertyName}',formatter:$.Formatters.dateFun},
 	<#else>
 	</#if>
 </#list>
@@ -115,9 +115,9 @@ $(document).ready(function(){
 		)>
 	<#else>
 		<#if property.propertyType.getSimpleName() == 'boolean' || property.propertyType.getSimpleName() == 'Boolean'>
-			{title:'<#if property.propertyComment??>${property.propertyComment}<#else>${property.propertyName}</#if>',width:150,field:'${property.propertyName}',formatter:$.Formatters.boolean},
+			{title:'<#if property.propertyComment??>${property.propertyComment}<#else>${property.propertyName}</#if>',width:150,field:'${property.propertyName}',formatter:$.Formatters.booleanFun},
 		<#elseif property.propertyType.getSimpleName() == 'Date'>
-			{title:'<#if property.propertyComment??>${property.propertyComment}<#else>${property.propertyName}</#if>',width:150,field:'${property.propertyName}',formatter:$.Formatters.date},
+			{title:'<#if property.propertyComment??>${property.propertyComment}<#else>${property.propertyName}</#if>',width:150,field:'${property.propertyName}',formatter:$.Formatters.dateFun},
 		<#else>
 			{title:'<#if property.propertyComment??>${property.propertyComment}<#else>${property.propertyName}</#if>',width:150,field:'${property.propertyName}'},
 		</#if>
