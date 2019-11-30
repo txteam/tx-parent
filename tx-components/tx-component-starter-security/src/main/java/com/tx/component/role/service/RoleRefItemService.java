@@ -214,10 +214,7 @@ public class RoleRefItemService {
             return;
         }
         
-        Date now = new Date();
         roleRefItems.stream().forEach(roleRef -> {
-            roleRef.setLastUpdateDate(now);
-            
             AssertUtils.notEmpty(roleRef.getId(), "roleRef.id is empty.");
         });
         

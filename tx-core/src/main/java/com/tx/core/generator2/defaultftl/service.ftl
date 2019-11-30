@@ -467,7 +467,7 @@ public class ${service.entityTypeSimpleName}Service {
         Map<String, Object> updateRowMap = new HashMap<String, Object>();
         //FIXME:需要更新的字段
 <#list service.columnList as column>
-	<#if !column.isPrimaryKey() && column.isUpdatable() && "createDate" != column.propertyName && "lastUpdateDate" != column.propertyName>
+	<#if !column.isPrimaryKey() && column.isUpdatable() && "createDate" != column.propertyName && "lastUpdateDate" != column.propertyName && "valid" != column.propertyName>
 		updateRowMap.put("${column.propertyName}", ${service.entityTypeSimpleName?uncap_first}.${column.getPropertyDescriptor().getReadMethod().getName()}());
 	</#if>
 </#list>

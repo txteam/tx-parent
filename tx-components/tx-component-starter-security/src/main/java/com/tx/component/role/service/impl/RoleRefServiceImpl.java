@@ -58,9 +58,9 @@ public class RoleRefServiceImpl implements RoleRefService {
      * @return
      */
     @Override
-    public List<RoleRef> queryList(Boolean valid, Querier querier) {
+    public List<RoleRef> queryList(Boolean effective, Querier querier) {
         querier = querier == null ? new Querier() : querier;
-        querier.getParams().put("valid", valid);
+        querier.getParams().put("effective", effective);
         
         List<RoleRef> roleRefList = roleRefItemService.queryList(querier)
                 .stream()
@@ -74,9 +74,9 @@ public class RoleRefServiceImpl implements RoleRefService {
      * @return
      */
     @Override
-    public List<RoleRef> queryList(Boolean valid, Map<String, Object> params) {
+    public List<RoleRef> queryList(Boolean effective, Map<String, Object> params) {
         params = params == null ? new HashMap<String, Object>() : params;
-        params.put("valid", valid);
+        params.put("effective", effective);
         
         List<RoleRef> roleRefList = roleRefItemService.queryList(params)
                 .stream()

@@ -58,9 +58,9 @@ public class AuthRefServiceImpl implements AuthRefService {
      * @return
      */
     @Override
-    public List<AuthRef> queryList(Boolean valid, Querier querier) {
+    public List<AuthRef> queryList(Boolean effective, Querier querier) {
         querier = querier == null ? new Querier() : querier;
-        querier.getParams().put("valid", valid);
+        querier.getParams().put("effective", effective);
         
         List<AuthRef> authRefList = authRefItemService.queryList(querier)
                 .stream()
@@ -74,9 +74,9 @@ public class AuthRefServiceImpl implements AuthRefService {
      * @return
      */
     @Override
-    public List<AuthRef> queryList(Boolean valid, Map<String, Object> params) {
+    public List<AuthRef> queryList(Boolean effective, Map<String, Object> params) {
         params = params == null ? new HashMap<String, Object>() : params;
-        params.put("valid", valid);
+        params.put("effective", effective);
         
         List<AuthRef> authRefList = authRefItemService.queryList(params)
                 .stream()

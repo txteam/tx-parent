@@ -64,6 +64,9 @@ public class ViewGeneratorModel {
     /** 是否有是否有效的属性 */
     private EntityProperty validProperty;
     
+    /** 是否有是否有效的属性 */
+    private EntityProperty nameProperty;
+    
     /** 父节点id对应的属性 */
     private EntityProperty parentIdProperty;
     
@@ -73,8 +76,7 @@ public class ViewGeneratorModel {
     }
     
     /** <默认构造函数> */
-    public ViewGeneratorModel(Class<?> entityType,
-            ViewTypeEnum viewType) {
+    public ViewGeneratorModel(Class<?> entityType, ViewTypeEnum viewType) {
         super();
         String basePath = ClassUtils.convertClassNameToResourcePath(
                 entityType.getName()) + "/../..";
@@ -94,6 +96,9 @@ public class ViewGeneratorModel {
         }).collect(Collectors.toList()).get(0);
         AssertUtils.isTrue(this.pkProperty != null, "没有找到主键字段");
         
+        this.propertyList.stream().forEach(property -> {
+            parseValidateExpression(property);
+        });
         this.viewablePropertyList = this.propertyList.stream()
                 .filter(column -> {
                     if (column.getTypeDescriptor()
@@ -131,8 +136,54 @@ public class ViewGeneratorModel {
                         "parentId type:{} should equals pk type:{}.",
                         new Object[] { property.getPropertyType(),
                                 this.pkProperty.getPropertyType() });
+            } else if (StringUtils.equals("name", property.getPropertyName())) {
+                this.nameProperty = property;
             }
         });
+        
+        if (this.nameProperty == null) {
+            this.nameProperty = this.codeProperty;
+        }
+        if (this.nameProperty == null) {
+            this.nameProperty = this.pkProperty;
+        }
+    }
+    
+    /**
+     * 解析验证表达式<br/>
+     * <功能详细描述>
+     * @param property
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    private void parseValidateExpression(EntityProperty property) {
+        String validateExpression = null;
+        if (!property.isNullable()) {
+            //名称:required;length[2~16];
+            validateExpression = property.getPropertyComment()
+                    + ":required;length[1~" + property.getLength() + "]";
+        } else {
+            //名称:required;length[2~16];
+            validateExpression = property.getPropertyComment() + ":length[0~"
+                    + property.getLength() + "]";
+        }
+        if ("code".equals(property.getPropertyName())) {
+            //'编码:required;length[2~16];remote[' + @{/virtualCenter/validate} + ', name, id]'
+            validateExpression = "'编码:required;length[1~" + property.getLength()
+                    + "];remote[' + @{/"
+                    + StringUtils.uncapitalize(this.entityTypeSimpleName)
+                    + "/validate} + ', code, id]'";
+        } else if ("name".equals(property.getPropertyName())) {
+            //'名称:required;length[2~16];remote[' + @{/virtualCenter/validate} + ', name, id]'
+            validateExpression = "'编码:required;length[1~" + property.getLength()
+                    + "];remote[' + @{/"
+                    + StringUtils.uncapitalize(this.entityTypeSimpleName)
+                    + "/validate} + ', name, id]'";
+        }
+        property.setValidateExpression(validateExpression);
     }
     
     /**
@@ -211,11 +262,18 @@ public class ViewGeneratorModel {
     public EntityProperty getParentIdProperty() {
         return parentIdProperty;
     }
-
+    
     /**
      * @return 返回 viewType
      */
     public ViewTypeEnum getViewType() {
         return viewType;
+    }
+
+    /**
+     * @return 返回 nameProperty
+     */
+    public EntityProperty getNameProperty() {
+        return nameProperty;
     }
 }

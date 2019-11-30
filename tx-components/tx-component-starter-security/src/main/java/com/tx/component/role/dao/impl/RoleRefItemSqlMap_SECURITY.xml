@@ -74,6 +74,15 @@
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(refId)">  
 	            AND RRI.refId = #{refId,javaType=java.lang.String}
 	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(refMap)">
+	        	AND
+	        	<foreach index="refTypeTemp" item="refIdsTemp" collection="refMap.entrySet()" open="(" close=")" separator="OR">
+	        		<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(refIds)">
+	        			RRI.refType = #{refTypeTemp,javaType=java.lang.String}
+	        			AND RRI.refId IN <foreach item="refIdTemp" collection="refIdsTemp" open="(" close=")" separator=",">#{refIdTemp,javaType=java.lang.String}</foreach>
+	        		</if>
+	        	</foreach>
+	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(roleId)">  
 	            AND RRI.roleId = #{roleId,javaType=java.lang.String}
 	        </if>
@@ -138,6 +147,15 @@
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(refId)">  
 	            AND RRI.refId = #{refId,javaType=java.lang.String}
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(refMap)">
+	        	AND
+	        	<foreach index="refTypeTemp" item="refIdsTemp" collection="refMap.entrySet()" open="(" close=")" separator="OR">
+	        		<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(refIds)">
+	        			RRI.refType = #{refTypeTemp,javaType=java.lang.String}
+	        			AND RRI.refId IN <foreach item="refIdTemp" collection="refIdsTemp" open="(" close=")" separator=",">#{refIdTemp,javaType=java.lang.String}</foreach>
+	        		</if>
+	        	</foreach>
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(roleId)">  
 	            AND RRI.roleId = #{roleId,javaType=java.lang.String}

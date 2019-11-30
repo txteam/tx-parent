@@ -88,11 +88,28 @@ public class GeneratorUtils {
     
     public static class EntityProperty extends JPAColumnInfo {
         
+        /** 验证表达式 */
+        private String validateExpression;
+        
         /** <默认构造函数> */
         public EntityProperty(JPAColumnInfo column) {
             super(column.getPropertyDescriptor(), column.getTypeDescriptor());
             
             setPrimaryKey(column.isPrimaryKey());
+        }
+        
+        /**
+         * @return 返回 validateExpression
+         */
+        public String getValidateExpression() {
+            return validateExpression;
+        }
+        
+        /**
+         * @param 对validateExpression进行赋值
+         */
+        public void setValidateExpression(String validateExpression) {
+            this.validateExpression = validateExpression;
         }
         
         /**
@@ -124,7 +141,7 @@ public class GeneratorUtils {
             
             switch (propertyComment) {
                 case "id":
-                    propertyComment = "主键";
+                    propertyComment = "ID";
                     break;
                 case "parentId":
                     propertyComment = "上级ID";
@@ -135,8 +152,14 @@ public class GeneratorUtils {
                 case "type":
                     propertyComment = "类型";
                     break;
+                case "typeId":
+                    propertyComment = "类型ID";
+                    break;
                 case "catalog":
                     propertyComment = "分类";
+                    break;
+                case "catalogId":
+                    propertyComment = "分类ID";
                     break;
                 case "name":
                     propertyComment = "名称";

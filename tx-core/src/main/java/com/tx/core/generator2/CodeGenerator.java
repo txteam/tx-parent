@@ -22,6 +22,7 @@ import com.tx.core.generator2.model.DBScriptGeneratorModel;
 import com.tx.core.generator2.model.DaoGeneratorModel;
 import com.tx.core.generator2.model.ServiceGeneratorModel;
 import com.tx.core.generator2.model.SqlMapGeneratorModel;
+import com.tx.core.generator2.model.ViewGeneratorModel;
 import com.tx.core.generator2.model.ViewTypeEnum;
 import com.tx.core.util.FreeMarkerUtils;
 import com.tx.core.util.MessageUtils;
@@ -57,21 +58,139 @@ public class CodeGenerator {
     public static boolean NEED_CONFIRM_WHEN_EXSITS = true;
     
     /** 脚本模板文件路径 */
-    private static String dbScriptTemplateFilePath = "com/tx/core/generator2/defaultftl/dbscript.ftl";
+    public static String dbScriptTemplateFilePath = "com/tx/core/generator2/defaultftl/dbscript.ftl";
     
-    private static String sqlMapTemplateFilePath = "com/tx/core/generator2/defaultftl/sqlMap.ftl";
+    public static String sqlMapTemplateFilePath = "com/tx/core/generator2/defaultftl/sqlMap.ftl";
     
-    private static String daoImplTemplateFilePath = "com/tx/core/generator2/defaultftl/daoImpl.ftl";
+    public static String daoImplTemplateFilePath = "com/tx/core/generator2/defaultftl/daoImpl.ftl";
     
-    private static String daoTemplateFilePath = "com/tx/core/generator2/defaultftl/dao.ftl";
+    public static String daoTemplateFilePath = "com/tx/core/generator2/defaultftl/dao.ftl";
     
-    private static String serviceTemplateFilePath = "com/tx/core/generator2/defaultftl/service.ftl";
+    public static String serviceTemplateFilePath = "com/tx/core/generator2/defaultftl/service.ftl";
     
-    private static String controllerTemplateFilePath = "com/tx/core/generator2/defaultftl/controller.ftl";
+    public static String controllerTemplateFilePath = "com/tx/core/generator2/defaultftl/controller.ftl";
     
-    private static String apicontrollerTemplateFilePath = "com/tx/core/generator2/defaultftl/apicontroller.ftl";
+    public static String apicontrollerTemplateFilePath = "com/tx/core/generator2/defaultftl/apicontroller.ftl";
     
-    private static String facadeTemplateFilePath = "com/tx/core/generator2/defaultftl/facade.ftl";
+    public static String facadeTemplateFilePath = "com/tx/core/generator2/defaultftl/facade.ftl";
+    
+    public static String viewQueryListTemplateFilePath = "com/tx/core/generator2/defaultftl/html_easyui_queryList.ftl";
+    
+    public static String viewQueryTreeListTemplateFilePath = "com/tx/core/generator2/defaultftl/html_easyui_queryTreeList.ftl";
+    
+    public static String viewQueryPagedListTemplateFilePath = "com/tx/core/generator2/defaultftl/html_easyui_queryPagedList.ftl";
+    
+    public static String viewAddTemplateFilePath = "com/tx/core/generator2/defaultftl/html_easyui_add.ftl";
+    
+    public static String viewUpdateTemplateFilePath = "com/tx/core/generator2/defaultftl/html_easyui_update.ftl";
+    
+    /**
+     * 生成视图逻辑<br/>
+     * <功能详细描述>
+     * @param entityType [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static <T> void generateView(Class<?> entityType) {
+        generateView(entityType, ViewTypeEnum.LIST);
+    }
+    
+    /**
+     * 生成视图逻辑<br/>
+     * <功能详细描述>
+     * @param entityType
+     * @param viewType [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static <T> void generateView(Class<?> entityType,
+            ViewTypeEnum viewType) {
+        viewType = viewType == null ? ViewTypeEnum.LIST : viewType;
+        ViewGeneratorModel viewModel = new ViewGeneratorModel(entityType,
+                viewType);
+        
+        Map<String, Object> data = new HashMap<String, Object>();
+        String packageName = getPackageName(entityType);
+        data.put("view", viewModel);
+        data.put("packageName", packageName);
+        
+        String basePath = ClassUtils.convertClassNameToResourcePath(
+                entityType.getName()) + "/../..";
+        basePath = org.springframework.util.StringUtils.cleanPath(basePath);
+        
+        String addFilePath = BASE_CODE_FOLDER + "/src/main/resources/templates/"
+                + packageName + "/add" + entityType.getSimpleName() + ".html";
+        if (isOverwrite(addFilePath)) {
+            logger.info("addView存放路径:{}", addFilePath);
+            FreeMarkerUtils.fprint(LOAD_TEMPLATE_CLASS,
+                    viewAddTemplateFilePath,
+                    data,
+                    addFilePath);
+        }
+        
+        String updateFilePath = BASE_CODE_FOLDER
+                + "/src/main/resources/templates/" + packageName + "/update"
+                + entityType.getSimpleName() + ".html";
+        if (isOverwrite(updateFilePath)) {
+            logger.info("updateView存放路径:{}", updateFilePath);
+            FreeMarkerUtils.fprint(LOAD_TEMPLATE_CLASS,
+                    viewUpdateTemplateFilePath,
+                    data,
+                    updateFilePath);
+        }
+        
+        switch (viewType) {
+            case PAGEDLIST: {
+                String queryPagedListFilePath = BASE_CODE_FOLDER
+                        + "/src/main/resources/templates/" + packageName
+                        + "/query" + entityType.getSimpleName()
+                        + "PagedList.html";
+                if (isOverwrite(queryPagedListFilePath)) {
+                    logger.info("queryPagedListView存放路径:{}",
+                            queryPagedListFilePath);
+                    FreeMarkerUtils.fprint(LOAD_TEMPLATE_CLASS,
+                            viewQueryPagedListTemplateFilePath,
+                            data,
+                            queryPagedListFilePath);
+                }
+            }
+                
+                break;
+            case TREELIST: {
+                String queryTreeListFilePath = BASE_CODE_FOLDER
+                        + "/src/main/resources/templates/" + packageName
+                        + "/query" + entityType.getSimpleName()
+                        + "TreeList.html";
+                if (isOverwrite(queryTreeListFilePath)) {
+                    logger.info("queryTreeListView存放路径:{}",
+                            queryTreeListFilePath);
+                    FreeMarkerUtils.fprint(LOAD_TEMPLATE_CLASS,
+                            viewQueryTreeListTemplateFilePath,
+                            data,
+                            queryTreeListFilePath);
+                }
+            }
+                break;
+            case LIST:
+            default: {
+                String queryListFilePath = BASE_CODE_FOLDER
+                        + "/src/main/resources/templates/" + packageName
+                        + "/query" + entityType.getSimpleName() + "List.html";
+                if (isOverwrite(queryListFilePath)) {
+                    logger.info("queryListView存放路径:{}", queryListFilePath);
+                    FreeMarkerUtils.fprint(LOAD_TEMPLATE_CLASS,
+                            viewQueryListTemplateFilePath,
+                            data,
+                            queryListFilePath);
+                }
+            }
+                break;
+        }
+    }
     
     /**
      * 生成控制层逻辑<br/>
@@ -98,6 +217,7 @@ public class CodeGenerator {
      */
     public static <T> void generateController(Class<?> entityType,
             ViewTypeEnum viewType) {
+        viewType = viewType == null ? ViewTypeEnum.LIST : viewType;
         ControllerGeneratorModel controllerModel = new ControllerGeneratorModel(
                 entityType, viewType);
         
@@ -112,26 +232,29 @@ public class CodeGenerator {
         String controllerFilePath = BASE_CODE_FOLDER + "/src/main/java/"
                 + basePath + "/controller/" + entityType.getSimpleName()
                 + "Controller.java";
-        FreeMarkerUtils.fprint(LOAD_TEMPLATE_CLASS,
-                controllerTemplateFilePath,
-                data,
-                controllerFilePath);
-        logger.info("controller存放路径:{}", controllerFilePath);
+        if (isOverwrite(controllerFilePath)) {
+            logger.info("controller存放路径:{}", controllerFilePath);
+            FreeMarkerUtils.fprint(LOAD_TEMPLATE_CLASS,
+                    controllerTemplateFilePath,
+                    data,
+                    controllerFilePath);
+        }
         
         String apicontrollerFilePath = BASE_CODE_FOLDER + "/src/main/java/"
                 + basePath + "/controller/" + entityType.getSimpleName()
                 + "APIController.java";
-        FreeMarkerUtils.fprint(LOAD_TEMPLATE_CLASS,
-                apicontrollerTemplateFilePath,
-                data,
-                apicontrollerFilePath);
-        logger.info("apicontroller存放路径:{}", apicontrollerFilePath);
+        if (isOverwrite(apicontrollerFilePath)) {
+            logger.info("apicontroller存放路径:{}", apicontrollerFilePath);
+            FreeMarkerUtils.fprint(LOAD_TEMPLATE_CLASS,
+                    apicontrollerTemplateFilePath,
+                    data,
+                    apicontrollerFilePath);
+        }
         
         String facadeFilePath = BASE_CODE_FOLDER + "/src/main/java/" + basePath
                 + "/facade/" + entityType.getSimpleName() + "Facade.java";
-        logger.info("facade存放路径:{}", facadeFilePath);
-        
         if (isOverwrite(facadeFilePath)) {
+            logger.info("facade存放路径:{}", facadeFilePath);
             FreeMarkerUtils.fprint(LOAD_TEMPLATE_CLASS,
                     facadeTemplateFilePath,
                     data,
@@ -164,8 +287,8 @@ public class CodeGenerator {
                 + servicePath + "/" + entityType.getSimpleName()
                 + "Service.java";
         
-        logger.info("service存放路径:{}", serviceFilePath);
         if (isOverwrite(serviceFilePath)) {
+            logger.info("service存放路径:{}", serviceFilePath);
             FreeMarkerUtils.fprint(LOAD_TEMPLATE_CLASS,
                     serviceTemplateFilePath,
                     data,
@@ -198,16 +321,16 @@ public class CodeGenerator {
         String daoImplFilePath = BASE_CODE_FOLDER + "/src/main/java/" + daoPath
                 + "/impl/" + entityType.getSimpleName() + "DaoImpl.java";
         
-        logger.info("dao存放路径:{}", daoFilePath);
         if (isOverwrite(daoFilePath)) {
+            logger.info("dao存放路径:{}", daoFilePath);
             FreeMarkerUtils.fprint(LOAD_TEMPLATE_CLASS,
                     daoTemplateFilePath,
                     data,
                     daoFilePath);
         }
         
-        logger.info("daoImpl存放路径:{}", daoImplFilePath);
         if (isOverwrite(daoImplFilePath)) {
+            logger.info("daoImpl存放路径:{}", daoImplFilePath);
             FreeMarkerUtils.fprint(LOAD_TEMPLATE_CLASS,
                     daoImplTemplateFilePath,
                     data,
@@ -238,9 +361,8 @@ public class CodeGenerator {
         String sqlmapFilePath = BASE_CODE_FOLDER + "/src/main/java/"
                 + sqlmapPath + "/" + entityType.getSimpleName() + "SqlMap.xml";
         
-        logger.info("sqlmap存放路径:{}", sqlmapPath);
-        
         if (isOverwrite(sqlmapFilePath)) {
+            logger.info("sqlmap存放路径:{}", sqlmapPath);
             FreeMarkerUtils.fprint(LOAD_TEMPLATE_CLASS,
                     sqlMapTemplateFilePath,
                     data,
@@ -273,9 +395,8 @@ public class CodeGenerator {
                 + packageName + "/tables/"
                 + dbScript.getTableName().toLowerCase() + ".sql";
         
-        logger.info("mysql脚本存放路径:{}", dbScriptPath);
-        
         if (isOverwrite(dbScriptPath)) {
+            logger.info("mysql脚本存放路径:{}", dbScriptPath);
             FreeMarkerUtils.fprint(LOAD_TEMPLATE_CLASS,
                     dbScriptTemplateFilePath,
                     data,
@@ -326,7 +447,7 @@ public class CodeGenerator {
                     JOptionPane.YES_NO_OPTION);
             return flag == 0;
         } else {
-            return false;
+            return true;
         }
     }
     

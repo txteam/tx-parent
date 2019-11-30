@@ -100,7 +100,6 @@ public class AuthRefItemService {
         Date now = new Date();
         roleRefItems.stream().forEach(roleRef -> {
             roleRef.setLastUpdateDate(now);
-            
             AssertUtils.notEmpty(roleRef.getId(), "authRef.id is empty.");
         });
         
@@ -123,7 +122,6 @@ public class AuthRefItemService {
     public void insert(AuthRefItem authRefItem) {
         //验证参数是否合法
         AssertUtils.notNull(authRefItem, "authRef is null.");
-        AssertUtils.notEmpty(authRefItem.getId(), "authRef.id is empty.");
         AssertUtils.notEmpty(authRefItem.getAuthId(),
                 "authRef.authId is empty.");
         AssertUtils.notEmpty(authRefItem.getRefType(),
@@ -133,6 +131,7 @@ public class AuthRefItemService {
         //为添加的数据需要填入默认值的字段填入默认值
         Date now = new Date();
         authRefItem.setCreateDate(now);
+        authRefItem.setLastUpdateDate(now);
         
         //调用数据持久层对实例进行持久化操作
         this.authRefItemDao.insert(authRefItem);
@@ -213,11 +212,8 @@ public class AuthRefItemService {
             return;
         }
         
-        Date now = new Date();
-        authRefItems.stream().forEach(roleRef -> {
-            roleRef.setLastUpdateDate(now);
-            
-            AssertUtils.notEmpty(roleRef.getId(), "authRef.id is empty.");
+        authRefItems.stream().forEach(authRef -> {
+            AssertUtils.notEmpty(authRef.getId(), "authRef.id is empty.");
         });
         
         //调用数据持久层对实例进行持久化操作

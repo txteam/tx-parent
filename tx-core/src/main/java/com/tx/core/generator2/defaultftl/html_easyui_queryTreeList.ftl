@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-	<title>查询${view.entityComment}列表[query${view.entityTypeSimpleName}List]</title>
+	<title>查询${view.entityComment}树型列表[query${view.entityTypeSimpleName}TreeList]</title>
 	<meta charset="utf-8"/>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
@@ -56,7 +56,7 @@ $(document).ready(function(){
 	var  $disableALink = $("#disableALink");
 </#if>
 
-	grid = $('#grid').datagrid({
+	grid = $('#grid').treegrid({
 		url :/*[[@{/${view.entityTypeSimpleName?uncap_first}/queryList}]]*/'',
 		fit : true,
 <#if (view.propertyList?size gt 15) >
@@ -66,10 +66,15 @@ $(document).ready(function(){
 </#if>
 		border : false,
 		idField : '${view.pkProperty.propertyName}',
+		parentField : '${view.parentIdProperty.propertyName}',
+		treeField : '${view.nameProperty.propertyName}',
 		checkOnSelect : false,
 		selectOnCheck : false,
 		nowrap : true,
 		striped : true,
+		iconField : function(item){
+			return 'group_group';	
+		},
 		singleSelect : true,
 		frozenColumns: [ [ 
 			{title : '${view.pkProperty.propertyName}',width : 100,hidden:true,field:'${view.pkProperty.propertyName}'}
@@ -135,10 +140,10 @@ $(document).ready(function(){
 			}
 		] ],
 		toolbar : '#toolbar',
-		onDblClickRow : function(index, row){
+		onDblClickRow : function(row){
 			editFun(row[idFieldName], row[nameFieldName]);
 		},
-		onClickRow : function(index, row){
+		onClickRow : function(row){
 			$editALink.linkbutton('enable');
 			$deleteALink.linkbutton('enable');
 <#if view.validProperty??>
@@ -174,7 +179,7 @@ $(document).ready(function(){
  * 查询
  */
 function queryFun() {
-	grid.datagrid('load',$('#queryForm').serializeObject());
+	grid.treegrid('load',$('#queryForm').serializeObject());
 	return false;
 }
 /*

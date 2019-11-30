@@ -3,6 +3,7 @@ package com.tx.component.auth.model;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tx.component.auth.context.AuthRegistry;
 import com.tx.core.exceptions.util.AssertUtils;
 
@@ -108,6 +109,7 @@ public interface AuthRef extends Serializable {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
+    @JsonIgnore
     default Auth getAuth() {
         String authId = getAuthId();
         AssertUtils.notEmpty(authId, "authId is empty.");

@@ -73,10 +73,19 @@
 	        </if>			
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(refType)">  
 	            <![CDATA[ AND ARI.refType = #{refType} ]]>
-	        </if>			
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(refMap)">
+	        	AND
+	        	<foreach index="refTypeTemp" item="refIdsTemp" collection="refMap.entrySet()" open="(" close=")" separator="OR">
+	        		<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(refIds)">
+	        			ARI.refType = #{refTypeTemp,javaType=java.lang.String}
+	        			AND ARI.refId IN <foreach item="refIdTemp" collection="refIdsTemp" open="(" close=")" separator=",">#{refIdTemp,javaType=java.lang.String}</foreach>
+	        		</if>
+	        	</foreach>
+	        </if>		
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authId)">  
 	            <![CDATA[ AND ARI.authId = #{authId} ]]>
-	        </if>
+	        </if>		
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(effective)">  
 	        	<choose>  
 			        <when test="@com.tx.core.util.OgnlUtils@isTrue(effective)">  
@@ -145,7 +154,16 @@
 	        </if>			
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(refType)">  
 	            <![CDATA[ AND ARI.refType = #{refType} ]]>
-	        </if>			
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(refMap)">
+	        	AND
+	        	<foreach index="refTypeTemp" item="refIdsTemp" collection="refMap.entrySet()" open="(" close=")" separator="OR">
+	        		<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(refIds)">
+	        			ARI.refType = #{refTypeTemp,javaType=java.lang.String}
+	        			AND ARI.refId IN <foreach item="refIdTemp" collection="refIdsTemp" open="(" close=")" separator=",">#{refIdTemp,javaType=java.lang.String}</foreach>
+	        		</if>
+	        	</foreach>
+	        </if>		
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authId)">  
 	            <![CDATA[ AND ARI.authId = #{authId} ]]>
 	        </if>		
