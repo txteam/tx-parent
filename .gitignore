@@ -4,69 +4,81 @@
 /.classpath
 /.project
 /.factorypath
+/.springBeans
 
 /tx-core/target
 /tx-core/.settings
 /tx-core/.classpath
 /tx-core/.project
 /tx-core/.factorypath
+/tx-core/.springBeans
 
 /tx-components/target
 /tx-components/.settings
 /tx-components/.classpath
 /tx-components/.project
 /tx-components/.factorypath
+/tx-components/.springBeans
 
 /tx-components/tx-component-starter-basicdata/target
 /tx-components/tx-component-starter-basicdata/.settings
 /tx-components/tx-component-starter-basicdata/.classpath
 /tx-components/tx-component-starter-basicdata/.project
 /tx-components/tx-component-starter-basicdata/.factorypath
+/tx-components/tx-component-starter-basicdata/.springBeans
 
 /tx-components/tx-component-starter-command/target
 /tx-components/tx-component-starter-command/.settings
 /tx-components/tx-component-starter-command/.classpath
 /tx-components/tx-component-starter-command/.project
 /tx-components/tx-component-starter-command/.factorypath
+/tx-components/tx-component-starter-command/.springBeans
 
 /tx-components/tx-component-starter-communication/target
 /tx-components/tx-component-starter-communication/.settings
 /tx-components/tx-component-starter-communication/.classpath
 /tx-components/tx-component-starter-communication/.factorypath
 /tx-components/tx-component-starter-communication/.project
+/tx-components/tx-component-starter-communication/.springBeans
 
 /tx-components/tx-component-starter-event/target
 /tx-components/tx-component-starter-event/.settings
 /tx-components/tx-component-starter-event/.classpath
 /tx-components/tx-component-starter-event/.project
 /tx-components/tx-component-starter-event/.factorypath
+/tx-components/tx-component-starter-event/.springBeans
 
 /tx-components/tx-component-starter-file/target
 /tx-components/tx-component-starter-file/.settings
 /tx-components/tx-component-starter-file/.classpath
 /tx-components/tx-component-starter-file/.project
 /tx-components/tx-component-starter-file/.factorypath
+/tx-components/tx-component-starter-file/.springBeans
 
 /tx-components/tx-component-starter-report/target
 /tx-components/tx-component-starter-report/.settings
 /tx-components/tx-component-starter-report/.classpath
 /tx-components/tx-component-starter-report/.project
 /tx-components/tx-component-starter-report/.factorypath
+/tx-components/tx-component-starter-report/.springBeans
 
 /tx-components/tx-component-starter-security/target
 /tx-components/tx-component-starter-security/.settings
 /tx-components/tx-component-starter-security/.classpath
 /tx-components/tx-component-starter-security/.project
 /tx-components/tx-component-starter-security/.factorypath
+/tx-components/tx-component-starter-security/.springBeans
 
 /tx-components/tx-component-starter-servicelogger/target
 /tx-components/tx-component-starter-servicelogger/.settings
 /tx-components/tx-component-starter-servicelogger/.classpath
 /tx-components/tx-component-starter-servicelogger/.project
 /tx-components/tx-component-starter-servicelogger/.factorypath
+/tx-components/tx-component-starter-servicelogger/.springBeans
 
 /tx-components/tx-component-starter-task/target
 /tx-components/tx-component-starter-task/.settings
 /tx-components/tx-component-starter-task/.classpath
 /tx-components/tx-component-starter-task/.project
 /tx-components/tx-component-starter-task/.factorypath
+/tx-components/tx-component-starter-task/.springBeans
