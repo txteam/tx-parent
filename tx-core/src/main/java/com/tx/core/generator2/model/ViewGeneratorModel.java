@@ -70,6 +70,9 @@ public class ViewGeneratorModel {
     /** 父节点id对应的属性 */
     private EntityProperty parentIdProperty;
     
+    /** 验证表达式生成器 */
+    private ValidateExpressionGenerator validateExpressionGenerator;
+    
     /** <默认构造函数> */
     public ViewGeneratorModel(Class<?> entityType) {
         this(entityType, ViewTypeEnum.LIST);
@@ -96,9 +99,11 @@ public class ViewGeneratorModel {
         }).collect(Collectors.toList()).get(0);
         AssertUtils.isTrue(this.pkProperty != null, "没有找到主键字段");
         
-        this.propertyList.stream().forEach(property -> {
-            parseValidateExpression(property);
-        });
+        if (validateExpressionGenerator != null) {
+            this.propertyList.stream().forEach(property -> {
+                validateExpressionGenerator.generate(property, this.entityType);
+            });
+        }
         this.viewablePropertyList = this.propertyList.stream()
                 .filter(column -> {
                     if (column.getTypeDescriptor()
@@ -147,43 +152,6 @@ public class ViewGeneratorModel {
         if (this.nameProperty == null) {
             this.nameProperty = this.pkProperty;
         }
-    }
-    
-    /**
-     * 解析验证表达式<br/>
-     * <功能详细描述>
-     * @param property
-     * @return [参数说明]
-     * 
-     * @return String [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    private void parseValidateExpression(EntityProperty property) {
-        String validateExpression = null;
-        if (!property.isNullable()) {
-            //名称:required;length[2~16];
-            validateExpression = property.getPropertyComment()
-                    + ":required;length[1~" + property.getLength() + "]";
-        } else {
-            //名称:required;length[2~16];
-            validateExpression = property.getPropertyComment() + ":length[0~"
-                    + property.getLength() + "]";
-        }
-        if ("code".equals(property.getPropertyName())) {
-            //'编码:required;length[2~16];remote[' + @{/virtualCenter/validate} + ', name, id]'
-            validateExpression = "'编码:required;length[1~" + property.getLength()
-                    + "];remote[' + @{/"
-                    + StringUtils.uncapitalize(this.entityTypeSimpleName)
-                    + "/validate} + ', code, id]'";
-        } else if ("name".equals(property.getPropertyName())) {
-            //'名称:required;length[2~16];remote[' + @{/virtualCenter/validate} + ', name, id]'
-            validateExpression = "'编码:required;length[1~" + property.getLength()
-                    + "];remote[' + @{/"
-                    + StringUtils.uncapitalize(this.entityTypeSimpleName)
-                    + "/validate} + ', name, id]'";
-        }
-        property.setValidateExpression(validateExpression);
     }
     
     /**
@@ -269,11 +237,24 @@ public class ViewGeneratorModel {
     public ViewTypeEnum getViewType() {
         return viewType;
     }
-
+    
     /**
      * @return 返回 nameProperty
      */
     public EntityProperty getNameProperty() {
         return nameProperty;
+    }
+    
+    /**
+     * @param 对validateExpressionGenerator进行赋值
+     */
+    public void setValidateExpressionGenerator(
+            ValidateExpressionGenerator validateExpressionGenerator) {
+        this.validateExpressionGenerator = validateExpressionGenerator;
+        if (this.validateExpressionGenerator != null) {
+            this.propertyList.stream().forEach(property -> {
+                validateExpressionGenerator.generate(property, this.entityType);
+            });
+        }
     }
 }

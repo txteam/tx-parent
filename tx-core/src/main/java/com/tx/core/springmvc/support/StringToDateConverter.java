@@ -14,7 +14,7 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.core.convert.converter.Converter;
 
 /**
- * 字符串到时间类型的转换器
+ * 字符串到时间类型的转换器<br/>
  * <功能详细描述>
  * 
  * @author  brady
@@ -35,7 +35,7 @@ public class StringToDateConverter implements Converter<String, Date> {
      */
     @Override
     public Date convert(String source) {
-        if(StringUtils.isBlank(source)){
+        if (StringUtils.isBlank(source)) {
             return null;
         }
         Date changeDate = null;
@@ -43,7 +43,8 @@ public class StringToDateConverter implements Converter<String, Date> {
             changeDate = DateUtils.parseDate(source, commonDatePattern);
         } catch (ParseException e) {
             throw new IllegalArgumentException(
-                    "Cannot convert String [" + source + "] to target class [" + Date.class.getName() + "]");
+                    "Cannot convert String [" + source + "] to target class ["
+                            + Date.class.getName() + "]");
         }
         return changeDate;
     }

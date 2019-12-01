@@ -22,8 +22,10 @@ import com.tx.core.generator2.model.DBScriptGeneratorModel;
 import com.tx.core.generator2.model.DaoGeneratorModel;
 import com.tx.core.generator2.model.ServiceGeneratorModel;
 import com.tx.core.generator2.model.SqlMapGeneratorModel;
+import com.tx.core.generator2.model.ValidateExpressionGenerator;
 import com.tx.core.generator2.model.ViewGeneratorModel;
 import com.tx.core.generator2.model.ViewTypeEnum;
+import com.tx.core.generator2.util.GeneratorUtils.EntityProperty;
 import com.tx.core.util.FreeMarkerUtils;
 import com.tx.core.util.MessageUtils;
 import com.tx.core.util.dialect.DataSourceTypeEnum;
@@ -84,6 +86,54 @@ public class CodeGenerator {
     
     public static String viewUpdateTemplateFilePath = "com/tx/core/generator2/defaultftl/html_easyui_update.ftl";
     
+    /** easyui的验证表达式生成器 */
+    private final static ValidateExpressionGenerator HTML_EASYUI_VALIDATE_EXPRESSION_GENERATOR = new ValidateExpressionGenerator() {
+        @Override
+        public void generate(EntityProperty property, Class<?> entityType) {
+            String validateExpression = null;
+            if (CharSequence.class
+                    .isAssignableFrom(property.getPropertyType())) {
+                if ("code".equals(property.getPropertyName())) {
+                    //'编码:required;length[2~16];remote[' + @{/virtualCenter/validate} + ', name, id]'
+                    validateExpression = "th:data-rule=\"'编码:required;length[1~"
+                            + (int) (property.getLength() / 2)
+                            + "];remote[' + @{/"
+                            + StringUtils
+                                    .uncapitalize(entityType.getSimpleName())
+                            + "/validate} + ', code, id];'\"";
+                } else if ("name".equals(property.getPropertyName())) {
+                    //'名称:required;length[2~16];remote[' + @{/virtualCenter/validate} + ', name, id]'
+                    validateExpression = "th:data-rule=\"'名称:required;length[1~"
+                            + (int) (property.getLength() / 2)
+                            + "];remote[' + @{/"
+                            + StringUtils
+                                    .uncapitalize(entityType.getSimpleName())
+                            + "/validate} + ', name, id];'\"";
+                } else if (!property.isNullable()) {
+                    //名称:required;length[2~16];
+                    validateExpression = "data-rule=\""
+                            + property.getPropertyComment()
+                            + ":required;length[1~"
+                            + (int) (property.getLength() / 2) + "];\"";
+                } else {
+                    //名称:required;length[2~16];
+                    validateExpression = "data-rule=\""
+                            + property.getPropertyComment() + ":length[0~"
+                            + (int) (property.getLength() / 2) + "];\"";
+                }
+            } else {
+                if (!property.isNullable()) {
+                    //名称:required;length[2~16];
+                    validateExpression = "data-rule=\""
+                            + property.getPropertyComment() + ":required;\"";
+                }
+            }
+            property.setValidateExpression(validateExpression);
+        }
+    };
+    
+    public static ValidateExpressionGenerator validateExpressionGenerator = HTML_EASYUI_VALIDATE_EXPRESSION_GENERATOR;
+    
     /**
      * 生成视图逻辑<br/>
      * <功能详细描述>
@@ -113,6 +163,8 @@ public class CodeGenerator {
         ViewGeneratorModel viewModel = new ViewGeneratorModel(entityType,
                 viewType);
         
+        //设置验证器的生成器
+        viewModel.setValidateExpressionGenerator(validateExpressionGenerator);
         Map<String, Object> data = new HashMap<String, Object>();
         String packageName = getPackageName(entityType);
         data.put("view", viewModel);

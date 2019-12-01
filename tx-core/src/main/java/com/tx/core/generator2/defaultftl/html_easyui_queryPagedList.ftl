@@ -103,23 +103,12 @@ $(document).ready(function(){
 		)>
 			{title:'<#if property.propertyComment??>${property.propertyComment}<#else>${property.propertyName}</#if>',width:100,hidden:true,field:'${property.propertyName}',formatter:$.Formatters.dateFun},
 	<#else>
-	</#if>
-</#list>
-<#list view.propertyList as property>
-	<#if (property.isPrimaryKey()
-		|| property.propertyName == "vcid"
-		|| property.propertyName == "createOperatorId"
-		|| property.propertyName == "lastUpdateOperatorId"
-		|| property.propertyName == "parentId"
-		|| property.propertyName == "lastUpdateDate"
-		)>
-	<#else>
 		<#if property.propertyType.getSimpleName() == 'boolean' || property.propertyType.getSimpleName() == 'Boolean'>
-			{title:'<#if property.propertyComment??>${property.propertyComment}<#else>${property.propertyName}</#if>',width:150,field:'${property.propertyName}',formatter:$.Formatters.booleanFun},
+			{title:'<#if property.propertyComment??>${property.propertyComment}<#else>${property.propertyName}</#if>',width:80,field:'${property.propertyName}',formatter:$.Formatters.booleanFun},
 		<#elseif property.propertyType.getSimpleName() == 'Date'>
-			{title:'<#if property.propertyComment??>${property.propertyComment}<#else>${property.propertyName}</#if>',width:150,field:'${property.propertyName}',formatter:$.Formatters.dateFun},
+			{title:'<#if property.propertyComment??>${property.propertyComment}<#else>${property.propertyName}</#if>',width:100,field:'${property.propertyName}',formatter:$.Formatters.dateFun},
 		<#else>
-			{title:'<#if property.propertyComment??>${property.propertyComment}<#else>${property.propertyName}</#if>',width:150,field:'${property.propertyName}'},
+			{title:'<#if property.propertyComment??>${property.propertyComment}<#else>${property.propertyName}</#if>',width:100,field:'${property.propertyName}'},
 		</#if>
 	</#if>
 </#list>
@@ -192,6 +181,7 @@ function queryFun() {
 /*
  * 新增
  */
+<#assign dialog_width=view.propertyList?size*28+40>
 function addFun() {
 	DialogUtils.progress({
         text : '加载中，请等待....'
@@ -203,7 +193,7 @@ function addFun() {
 		"add${view.entityTypeSimpleName}",
 		"新增" + entityName,
 		$.formatString(addUrl),
-		500,${(view.propertyList?size*28+40)?string("#")},
+		500,${(dialog_width>650)?string('650','' + dialog_width)},
 		function(){
 			queryFun();
 		},{maximizable : true}
@@ -233,7 +223,7 @@ function editFun(id,name) {
 		"update${view.entityTypeSimpleName}",
 		"编辑" + entityName + ":" + name,
 		$.formatString(updateUrl,id),
-        500,${(view.propertyList?size*28+40)?string("#")},
+        500,${(dialog_width>650)?string('650','' + dialog_width)},
         function(){
 			queryFun();
 		},{maximizable : true}

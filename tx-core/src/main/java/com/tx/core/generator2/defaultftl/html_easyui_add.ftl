@@ -83,13 +83,14 @@ $(document).ready(function(){
 </script>
 </head>
 <body class="easyui-layout" data-options="fit:true,border:false">
-	<div data-options="region:'center',border:false" title="" style="overflow: hidden;">
+	<div data-options="region:'center',border:false" title="" style="overflow-x: hidden;overflow-y: auto;">
 		<form id="entityForm" method="post" class="form" th:object="${r"${"}${view.entityTypeSimpleName?uncap_first}}">
+			<input id="id" name="id" type="hidden" value="" th:value="*{id}"/>
 			<table class="table">
 <#list view.propertyList as property>
 	<#if (!property.isPrimaryKey()
-		&& property.propertyName != "id" 
-		&& property.propertyName != "parentId" 
+		&& property.propertyName != "id"
+		&& property.propertyName != "vcid"
 		&& property.propertyName != "createDate" 
 		&& property.propertyName != "createOperatorId" 
 		&& property.propertyName != "lastUpdateDate" 
@@ -105,29 +106,25 @@ $(document).ready(function(){
 			</#if>
 					<td>
 			<#if property.propertyType.getSimpleName() == 'boolean' || property.propertyType.getSimpleName() == 'Boolean'>
-						<select id="${property.propertyName}" name="${property.propertyName}"
-							<#if !property.isNullable()>th:data-rule="${property.validateExpression}"</#if>>
+						<select id="${property.propertyName}" name="${property.propertyName}" <#if property.validateExpression??>${property.validateExpression}</#if>>
 				<#if property.propertyType.getSimpleName() == 'Boolean'>
 							<option value="">--- 请选择 ---</option>
 				</#if>
-							<option value="true" th:selected="*{${property.propertyName} eq true}">是</form:option>
-							<option value="false" th:selected="*{${property.propertyName} eq false}">否</form:option>
+							<option value="true" th:selected="${r"${"}${view.entityTypeSimpleName?uncap_first}.${property.propertyName} eq true}">是</form:option>
+							<option value="false" th:selected="${r"${"}${view.entityTypeSimpleName?uncap_first}.${property.propertyName} eq false}">否</form:option>
 						</select>
 			<#elseif property.propertyType.isEnum()>
-						<select id="${property.propertyName}" name="${property.propertyName}"
-							<#if !property.isNullable()>th:data-rule="${property.validateExpression}"</#if>>
+						<select id="${property.propertyName}" name="${property.propertyName}" <#if property.validateExpression??>${property.validateExpression}</#if>>
 							<option value="">--- 请选择 ---</option>
-							<option th:each="${property.propertyName}Temp:${r"${"}${property.propertyName}List}" th:value="${r"${"}${property.propertyName}Temp.code}" th:text="${r"${"}${property.propertyName}Temp.name}"></option>
+							<option th:each="${property.propertyName}Temp:${r"${"}${property.propertyName}s}" th:value="${r"${"}${property.propertyName}Temp.code}" th:text="${r"${"}${property.propertyName}Temp.name}" th:selected="${r"${"}${view.entityTypeSimpleName?uncap_first}.${property.propertyName} eq ${property.propertyName}Temp}"></option>
 						</select>
 			<#elseif  property.propertyType.getSimpleName() == 'Date'>
 						<input id="${property.propertyName}" name="${property.propertyName}" type="text" readonly="readonly"
-							onclick="WdatePicker({readOnly:true,dateFmt:'yyyy-MM-dd',startDate:'%y-{%M-1}-%d'})"
-							th:value="${r"${"}#dates.format(${view.entityTypeSimpleName?uncap_first}.${property.propertyName},'yyyy-MM-dd HH:mm:ss')}"
-							<#if !property.isNullable()>th:data-rule="${property.validateExpression}"</#if>/>
+							onclick="WdatePicker({readOnly:true,dateFmt:'yyyy-MM-dd',startDate:'%y-{%M-1}-%d'})" <#if property.validateExpression??>${property.validateExpression}</#if>
+							th:value="${r"${"}#dates.format(${view.entityTypeSimpleName?uncap_first}.${property.propertyName},'yyyy-MM-dd HH:mm:ss')}"/>
 			<#else>
-						<input id="${property.propertyName}" name="${property.propertyName}" type="text" 
-							th:value="*{${property.propertyName}}"
-							<#if !property.isNullable()>th:data-rule="${property.validateExpression}"</#if>/>
+						<input id="${property.propertyName}" name="${property.propertyName}" type="text" <#if property.validateExpression??>${property.validateExpression}</#if>
+							th:value="*{${property.propertyName}}"/>
 			</#if>
 					</td>
 				</tr>			
@@ -137,11 +134,11 @@ $(document).ready(function(){
 					<th class="narrow" width="25%">${property.propertyComment}:<#if !property.isNullable()><span class="tRed">*</span></#if></th>
 			<#else>
 					<!--//TODO:修改字段是否必填,修改其中文名-->
-					<th class="narrow" width="25%">${property.propertyName}:<#if !property.isNullable()><span class="tRed">*</span></#if></th>
+					<th class="narrow" width="25%">${property.getColumnPropertyName()}:<#if !property.isNullable()><span class="tRed">*</span></#if></th>
 			</#if>
 					<td>
 						<!-- //TODO:修改其显示逻辑 -->
-						<input id="${property.propertyName}" name="${property.propertyName}" th:value="*{${property.propertyName}}"/>
+						<input id="${property.getColumnPropertyName()}" name="${property.getColumnPropertyName()}" th:value="*{${property.propertyDescriptor.getName()}?.${property.nestedPropertyDescriptor.getName()}}"/>
 					</td>
 				</tr>
 		</#if>

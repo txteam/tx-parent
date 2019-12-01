@@ -63,7 +63,7 @@ public class ${controller.entityTypeSimpleName}Controller {
     	</#if>
 	</#list>
 
-        return "/${packageName}/query${controller.entityTypeSimpleName}List";
+        return "${packageName}/query${controller.entityTypeSimpleName}List";
     }
     
 </#if>
@@ -85,7 +85,7 @@ public class ${controller.entityTypeSimpleName}Controller {
     	</#if>
 	</#list>
 
-        return "/${packageName}/query${controller.entityTypeSimpleName}PagedList";
+        return "${packageName}/query${controller.entityTypeSimpleName}PagedList";
     }
     
 </#if>
@@ -107,7 +107,7 @@ public class ${controller.entityTypeSimpleName}Controller {
     	</#if>
 	</#list>
 
-        return "/${packageName}/query${controller.entityTypeSimpleName}TreeList";
+        return "${packageName}/query${controller.entityTypeSimpleName}TreeList";
     }
     
 </#if>
@@ -130,7 +130,7 @@ public class ${controller.entityTypeSimpleName}Controller {
     </#if>
 </#list>
 
-        return "/${packageName}/add${controller.entityTypeSimpleName}";
+        return "${packageName}/add${controller.entityTypeSimpleName}";
     }
     
     /**
@@ -155,7 +155,7 @@ public class ${controller.entityTypeSimpleName}Controller {
     </#if>
 </#list>
         
-        return "/${packageName}/update${controller.entityTypeSimpleName}";
+        return "${packageName}/update${controller.entityTypeSimpleName}";
     }
 
     /**
