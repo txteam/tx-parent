@@ -207,7 +207,7 @@ public class SqlMapGeneratorModel {
     public JPAColumnInfo getParentIdColumn() {
         return parentIdColumn;
     }
-
+    
     /**
      * 生成表名缩写<br/>
      * <功能详细描述>
@@ -232,6 +232,28 @@ public class SqlMapGeneratorModel {
             }
             sb.append(columnTemp.charAt(0));
         }
-        return sb.toString().toUpperCase();
+        String simpleTableName = sb.toString().toUpperCase();
+        if (StringUtils.equalsAnyIgnoreCase("or", simpleTableName)) {
+            simpleTableName = "O";
+        }
+        if (StringUtils.equalsAnyIgnoreCase("and", simpleTableName)) {
+            simpleTableName = "A";
+        }
+        if (StringUtils.equalsAnyIgnoreCase("is", simpleTableName)) {
+            simpleTableName = "I";
+        }
+        if (StringUtils.equalsAnyIgnoreCase("NULL", simpleTableName)) {
+            simpleTableName = "N";
+        }
+        if (StringUtils.equalsAnyIgnoreCase("exists", simpleTableName)) {
+            simpleTableName = "E";
+        }
+        if (StringUtils.equalsAnyIgnoreCase("not", simpleTableName)) {
+            simpleTableName = "N";
+        }
+        if (StringUtils.equalsAnyIgnoreCase("in", simpleTableName)) {
+            simpleTableName = "I";
+        }
+        return simpleTableName;
     }
 }

@@ -352,11 +352,34 @@ function enableFun(id,name){
 </head>
 <body class="easyui-layout" data-options="fit:true,border:false">
 	<!--//FIXME: 修改查询条件框体高度 -->
-	<div data-options="region:'north',title:'查询条件',border:false" style="height: 140px; overflow: hidden;">
+	<div data-options="region:'north',title:'查询条件',border:false" style="height: 105px; overflow: hidden;">
 		<form id="queryForm" class="form">
 			<table class="table table-hover table-condensed">
 				<tr>
-					
+<#if view.codeProperty??>
+					<th width="20%">编码:</th>
+					<td width="30%"><input id="code" name="code"/></td>
+<#elseif view.nameProperty??>
+					<th width="20%">名称:</th>
+					<td width="30%"><input id="name" name="name"/></td>
+<#else>
+					<th width="20%">&nbsp;</th>
+					<td width="30%">&nbsp;</td>
+</#if>
+<#if view.validProperty??>
+					<th width="20%">是否有效</th>
+					<td width="30%">
+						<select id="valid" name="valid">
+							<option value="">--- 不限 ---</option>
+							<option value="true">是</option>
+							<option value="false">否</option>
+						</select>
+					</td>
+<#else>
+					<th width="20%">&nbsp;</th>
+					<td width="30%">&nbsp;</td>
+</#if>
+				</tr>
 				<tr>
 					<td colspan="4" class="button operRow">
 						<a id="queryBtn" onclick="queryFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'search'">查询</a>

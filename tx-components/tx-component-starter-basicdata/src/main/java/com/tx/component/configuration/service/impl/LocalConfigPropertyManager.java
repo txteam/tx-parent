@@ -7,10 +7,8 @@
 package com.tx.component.configuration.service.impl;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -64,8 +62,8 @@ public class LocalConfigPropertyManager
     /** 配置项业务层 */
     private ConfigPropertyItemService configPropertyItemService;
     
-    /** code的有效值域 */
-    private Set<String> codes = new HashSet<>();
+    //    /** code的有效值域 */
+    //    private Set<String> codes = new HashSet<>();
     
     /** <默认构造函数> */
     public LocalConfigPropertyManager(String module, String configLocation,
@@ -129,7 +127,7 @@ public class LocalConfigPropertyManager
             preprocessing(parent, configParserTemp);
             String codeTemp = configParserTemp.getCode();
             
-            codes.add(codeTemp);
+            //            codes.add(codeTemp);
             ConfigPropertyItem configPropertyItem = this.configPropertyItemService
                     .findByCode(this.module, codeTemp);
             if (configPropertyItem == null) {
@@ -344,9 +342,9 @@ public class LocalConfigPropertyManager
     public ConfigProperty findByCode(String module, String code) {
         AssertUtils.notEmpty(code, "code is empty.");
         
-        if (!codes.contains(code)) {
-            return null;
-        }
+        //        if (!codes.contains(code)) {
+        //            return null;
+        //        }
         
         ConfigProperty res = this.configPropertyItemService
                 .findByCode(this.module, code);
@@ -363,9 +361,9 @@ public class LocalConfigPropertyManager
                 .queryList(this.module, querier);
         List<ConfigProperty> resList = new ArrayList<ConfigProperty>();
         for (ConfigPropertyItem itemTemp : cpiList) {
-            if (!codes.contains(itemTemp.getCode())) {
-                continue;
-            }
+            //            if (!codes.contains(itemTemp.getCode())) {
+            //                continue;
+            //            }
             resList.add(itemTemp);
         }
         return resList;
@@ -384,9 +382,9 @@ public class LocalConfigPropertyManager
                 .queryChildrenByParentId(this.module, parentId, querier);
         List<ConfigProperty> resList = new ArrayList<ConfigProperty>();
         for (ConfigPropertyItem itemTemp : cpiList) {
-            if (!codes.contains(itemTemp.getCode())) {
-                continue;
-            }
+            //            if (!codes.contains(itemTemp.getCode())) {
+            //                continue;
+            //            }
             resList.add(itemTemp);
         }
         return resList;
@@ -405,9 +403,9 @@ public class LocalConfigPropertyManager
                 .queryDescendantsByParentId(this.module, parentId, querier);
         List<ConfigProperty> resList = new ArrayList<ConfigProperty>();
         for (ConfigPropertyItem itemTemp : cpiList) {
-            if (!codes.contains(itemTemp.getCode())) {
-                continue;
-            }
+            //            if (!codes.contains(itemTemp.getCode())) {
+            //                continue;
+            //            }
             resList.add(itemTemp);
         }
         return resList;

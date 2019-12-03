@@ -62,10 +62,16 @@ public class ControllerGeneratorModel {
     private EntityProperty codeProperty;
     
     /** 是否有是否有效的属性 */
+    private EntityProperty nameProperty;
+    
+    /** 是否有是否有效的属性 */
     private EntityProperty validProperty;
     
     /** 父节点id对应的属性 */
     private EntityProperty parentIdProperty;
+    
+    /** 父节点id对应的属性 */
+    private EntityProperty vcidProperty;
     
     /** <默认构造函数> */
     public ControllerGeneratorModel(Class<?> entityType) {
@@ -131,8 +137,19 @@ public class ControllerGeneratorModel {
                         "parentId type:{} should equals pk type:{}.",
                         new Object[] { property.getPropertyType(),
                                 this.pkProperty.getPropertyType() });
+            } else if (StringUtils.equals("name", property.getPropertyName())) {
+                this.nameProperty = property;
+            } else if (StringUtils.equals("vcid", property.getPropertyName())) {
+                this.vcidProperty = property;
             }
         });
+        
+        if (this.nameProperty == null) {
+            this.nameProperty = this.codeProperty;
+        }
+        if (this.nameProperty == null) {
+            this.nameProperty = this.pkProperty;
+        }
     }
     
     /**
@@ -210,6 +227,20 @@ public class ControllerGeneratorModel {
      */
     public EntityProperty getParentIdProperty() {
         return parentIdProperty;
+    }
+    
+    /**
+     * @return 返回 nameProperty
+     */
+    public EntityProperty getNameProperty() {
+        return nameProperty;
+    }
+
+    /**
+     * @return 返回 vcidProperty
+     */
+    public EntityProperty getVcidProperty() {
+        return vcidProperty;
     }
 
     /**

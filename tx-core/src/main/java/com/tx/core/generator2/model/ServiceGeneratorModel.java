@@ -58,6 +58,9 @@ public class ServiceGeneratorModel {
     /** 父节点id对应的属性 */
     private JPAColumnInfo parentIdColumn;
     
+    /** 父节点id对应的属性 */
+    private JPAColumnInfo lastUpdateDateColumn;
+    
     /** <默认构造函数> */
     public ServiceGeneratorModel(Class<?> entityType) {
         super();
@@ -101,6 +104,9 @@ public class ServiceGeneratorModel {
                         "parentId type:{} should equals pk type:{}.",
                         new Object[] { column.getPropertyType(),
                                 this.pkColumn.getPropertyType() });
+            } else if (StringUtils.equals("lastUpdateDate",
+                    column.getPropertyName())) {
+                this.lastUpdateDateColumn = column;
             }
         });
     }
@@ -173,5 +179,12 @@ public class ServiceGeneratorModel {
      */
     public JPAColumnInfo getParentIdColumn() {
         return parentIdColumn;
+    }
+
+    /**
+     * @return 返回 lastUpdateDateColumn
+     */
+    public JPAColumnInfo getLastUpdateDateColumn() {
+        return lastUpdateDateColumn;
     }
 }

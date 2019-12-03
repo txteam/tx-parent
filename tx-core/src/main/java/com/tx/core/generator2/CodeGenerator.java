@@ -93,7 +93,10 @@ public class CodeGenerator {
             String validateExpression = null;
             if (CharSequence.class
                     .isAssignableFrom(property.getPropertyType())) {
-                if ("code".equals(property.getPropertyName())) {
+                if (property.getPropertyName().endsWith("Id")
+                        || property.getPropertyName().endsWith("Code")) {
+                    return;
+                } else if ("code".equals(property.getPropertyName())) {
                     //'编码:required;length[2~16];remote[' + @{/virtualCenter/validate} + ', name, id]'
                     validateExpression = "th:data-rule=\"'编码:required;length[1~"
                             + (int) (property.getLength() / 2)

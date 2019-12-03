@@ -522,7 +522,10 @@ public class ${service.entityTypeSimpleName}Service {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("${service.pkColumn.propertyName}", ${service.pkColumn.propertyName});
         params.put("${service.validColumn.propertyName}", false);
-        
+	<#if service.lastUpdateDateColumn??>        
+		params.put("${service.lastUpdateDateColumn.propertyName}", new Date());
+	</#if>
+	        
         boolean flag = this.${service.entityTypeSimpleName?uncap_first}Dao.update(params) > 0;
         
         return flag;
@@ -546,7 +549,10 @@ public class ${service.entityTypeSimpleName}Service {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("${service.pkColumn.propertyName}", ${service.pkColumn.propertyName});
         params.put("${service.validColumn.propertyName}", true);
-        
+	<#if service.lastUpdateDateColumn??>        
+		params.put("${service.lastUpdateDateColumn.propertyName}", new Date());
+	</#if>
+	
         boolean flag = this.${service.entityTypeSimpleName?uncap_first}Dao.update(params) > 0;
         
         return flag;

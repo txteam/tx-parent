@@ -46,4 +46,18 @@ public interface RoleConstants {
     String CACHE_KEY_ROLE_TYPE = "security.role_type.cache";
     
     String CACHE_KEY_ROLE = "security.role.cache";
+    
+    //start-----------------------权限引用类型----------------------
+    /** 操作员权限引用项：操作员权限引用 */
+    public static final String ROLEREFTYPE_DEFAULT = "DEFAULT";
+    
+    /** 操作员权限引用项：操作员权限引用 */
+    public static final String ROLEREFTYPE_OPERATOR = "OPERATOR";
+    
+    /** 操作员权限引用项：职位权限引用 */
+    public static final String ROLEREFTYPE_POST = "POST";
+    
+    /** 操作员权限引用项：组织权限引用 */
+    public static final String ROLEREFTYPE_ORGANIZATION = "ORGANIZATION";
+    //end-----------------------权限引用类型----------------------
 }

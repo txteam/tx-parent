@@ -175,8 +175,13 @@ public class ${controller.entityTypeSimpleName}Controller {
 </#if>
     		@RequestParam MultiValueMap<String, String> request
     	) {
-        Map<String,Object> params = new HashMap<>();
-        //params.put("",request.getFirst(""));
+        Map<String, Object> params = new HashMap<>();
+	<#if controller.codeProperty??>
+		params.put("code", request.getFirst("code"));
+	</#if>
+	<#if controller.nameProperty??>
+		params.put("name", request.getFirst("name"));
+	</#if>
     	
         List<${controller.entityTypeSimpleName}> resList = this.${controller.entityTypeSimpleName?uncap_first}Service.queryList(
 <#if controller.validProperty??>
@@ -207,8 +212,13 @@ public class ${controller.entityTypeSimpleName}Controller {
             @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
             @RequestParam MultiValueMap<String, String> request
     	) {
-		Map<String,Object> params = new HashMap<>();
-		//params.put("",request.getFirst(""));
+		Map<String, Object> params = new HashMap<>();
+	<#if controller.codeProperty??>
+		params.put("code", request.getFirst("code"));
+	</#if>
+	<#if controller.nameProperty??>
+		params.put("name", request.getFirst("name"));
+	</#if>
 
         PagedList<${controller.entityTypeSimpleName}> resPagedList = this.${controller.entityTypeSimpleName?uncap_first}Service.queryPagedList(
 <#if controller.validProperty??>
@@ -389,6 +399,13 @@ public class ${controller.entityTypeSimpleName}Controller {
             @RequestParam(value = "valid", required = false) Boolean valid,
             @RequestParam MultiValueMap<String, String> request) {
         Map<String, Object> params = new HashMap<>();
+	<#if controller.codeProperty??>
+		params.put("code", request.getFirst("code"));
+	</#if>
+	<#if controller.nameProperty??>
+		params.put("name", request.getFirst("name"));
+	</#if>
+	
         
         List<${controller.entityTypeSimpleName}> resList = this.${controller.entityTypeSimpleName?uncap_first}Service
                 .queryChildrenByParentId(parentId, valid, params);
@@ -415,6 +432,12 @@ public class ${controller.entityTypeSimpleName}Controller {
             @RequestParam(value = "valid", required = false) Boolean valid,
             @RequestParam MultiValueMap<String, String> request) {
         Map<String, Object> params = new HashMap<>();
+	<#if controller.codeProperty??>
+		params.put("code", request.getFirst("code"));
+	</#if>
+	<#if controller.nameProperty??>
+		params.put("name", request.getFirst("name"));
+	</#if>
         
         List<${controller.entityTypeSimpleName}> resList = this.${controller.entityTypeSimpleName?uncap_first}Service
                 .queryDescendantsByParentId(parentId, valid, params);

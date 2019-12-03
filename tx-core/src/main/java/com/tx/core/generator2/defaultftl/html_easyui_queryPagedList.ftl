@@ -359,7 +359,7 @@ function enableFun(id,name){
 </head>
 <body class="easyui-layout" data-options="fit:true,border:false">
 	<!--//FIXME: 修改查询条件框体高度 -->
-	<div data-options="region:'north',title:'查询条件',border:false" style="height: 140px; overflow: hidden;">
+	<div data-options="region:'north',title:'查询条件',border:false" style="height: 105px; overflow: hidden;">
 		<form id="queryForm" class="form">
 			<table class="table table-hover table-condensed">
 				<tr>

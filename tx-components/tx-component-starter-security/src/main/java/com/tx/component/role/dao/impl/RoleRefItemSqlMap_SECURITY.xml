@@ -89,10 +89,10 @@
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(effective)">  
 	        	<choose>  
 			        <when test="@com.tx.core.util.OgnlUtils@isTrue(effective)">  
-			            <![CDATA[ AND ((RRI.expiryDate IS NULL OR RRI.expiryDate <= now(6)) AND (RRI.effectiveDate IS NULL OR RRI.effective >= now(6))) ]]>
+			            <![CDATA[ AND ((RRI.effectiveDate IS NULL OR RRI.effectiveDate <= now(6) AND (RRI.expiryDate IS NULL OR RRI.expiryDate > now(6)))) ]]>
 			        </when>
 			        <otherwise>  
-			            <![CDATA[ AND ((RRI.expiryDate IS NOT NULL AND RRI.expiryDate > now(6)) AND (RRI.effectiveDate IS NOT NULL OR RRI.effective < now(6))) ]]>
+			            <![CDATA[ AND ((RRI.effectiveDate IS NOT NULL OR RRI.effectiveDate > now(6)) AND (RRI.expiryDate IS NOT NULL OR RRI.expiryDate <= now(6))) ]]>
 			        </otherwise>  
 			    </choose>
 	        </if>
@@ -163,10 +163,10 @@
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(effective)">  
 	        	<choose>  
 			        <when test="@com.tx.core.util.OgnlUtils@isTrue(effective)">  
-			            <![CDATA[ AND ((RRI.expiryDate IS NULL OR RRI.expiryDate <= now(6)) AND (RRI.effectiveDate IS NULL OR RRI.effective >= now(6))) ]]>
+			            <![CDATA[ AND ((RRI.effectiveDate IS NULL OR RRI.effectiveDate <= now(6) AND (RRI.expiryDate IS NULL OR RRI.expiryDate > now(6)))) ]]>
 			        </when>
 			        <otherwise>  
-			            <![CDATA[ AND ((RRI.expiryDate IS NOT NULL AND RRI.expiryDate > now(6)) AND (RRI.effectiveDate IS NOT NULL OR RRI.effective < now(6))) ]]>
+			            <![CDATA[ AND ((RRI.effectiveDate IS NOT NULL OR RRI.effectiveDate > now(6)) AND (RRI.expiryDate IS NOT NULL OR RRI.expiryDate <= now(6))) ]]>
 			        </otherwise>  
 			    </choose>
 	        </if>
