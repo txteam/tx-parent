@@ -8,9 +8,14 @@ package com.tx.component.configuration.context;
 
 import java.util.List;
 
+import org.springframework.beans.BeanInstantiationException;
+import org.springframework.beans.BeanUtils;
+
+import com.tx.component.configuration.exception.ConfigAccessException;
 import com.tx.component.configuration.model.ConfigProperty;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.querier.model.Querier;
+import com.tx.core.util.MessageUtils;
 
 /**
  * 配置容器<br/>
@@ -35,6 +40,20 @@ public class ConfigContext extends ConfigContextBuilder {
      */
     @Override
     protected void doInitContext() throws Exception {
+    }
+    
+    public <T> T setup(Class<T> configEntity) {
+        AssertUtils.notNull(configEntity, "configEntity is null.");
+        T config = null;
+        try {
+            config = BeanUtils.instantiateClass(configEntity);
+        } catch (BeanInstantiationException e) {
+            throw new ConfigAccessException(MessageUtils.format(
+                    "类无法进行初始化.class:{configEntity}", new Object[] {}), e);
+        }
+        //parseCatalog
+        
+        return null;
     }
     
     /**

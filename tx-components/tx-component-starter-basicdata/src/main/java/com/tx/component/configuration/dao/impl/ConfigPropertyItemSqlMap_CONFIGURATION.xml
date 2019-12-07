@@ -25,8 +25,7 @@
 				CPI.module,
 				CPI.parentId,
 				CPI.remark,
-				CPI.validateExpression,
-				CPI.attributes
+				CPI.validateExpression
 		  FROM BD_CONFIG_CONTEXT CPI
 		 WHERE
 		<trim prefixOverrides="AND | OR">
@@ -58,8 +57,7 @@
 				CPI.module,
 				CPI.parentId,
 				CPI.remark,
-				CPI.validateExpression,
-				CPI.attributes
+				CPI.validateExpression
 		  FROM BD_CONFIG_CONTEXT CPI
 		<trim prefix="WHERE" prefixOverrides="AND | OR">
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(conditions)">
@@ -176,7 +174,6 @@
 			validateExpression,
 			modifyAble,
 			leaf,
-			attributes,
 			lastUpdateDate,
 			createDate
 		)
@@ -192,7 +189,6 @@
 			#{validateExpression},
 			#{modifyAble},
 			#{leaf},
-			#{attributes},
 			#{lastUpdateDate},
 			#{createDate}
 		)
@@ -237,9 +233,6 @@
 	    	</if>
 	    	<if test="_parameter.containsKey('validateExpression')">
 	    		validateExpression = #{validateExpression,javaType=java.lang.String},
-	    	</if>
-	    	<if test="_parameter.containsKey('attributes')">
-	    		attributes = #{attributes,javaType=java.lang.String},
 	    	</if>
 			<if test="_parameter.containsKey('leaf')">
 	    		leaf = #{leaf,javaType=boolean},

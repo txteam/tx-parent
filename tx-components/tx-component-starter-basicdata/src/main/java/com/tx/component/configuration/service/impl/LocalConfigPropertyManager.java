@@ -7,8 +7,9 @@
 package com.tx.component.configuration.service.impl;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
+import java.util.Set;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -16,10 +17,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.core.Ordered;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 
 import com.thoughtworks.xstream.XStream;
+import com.tx.component.configuration.config.ConfigCatalogParser;
+import com.tx.component.configuration.config.ConfigContentParser;
 import com.tx.component.configuration.config.ConfigPropertyParser;
 import com.tx.component.configuration.model.ConfigProperty;
 import com.tx.component.configuration.model.ConfigPropertyItem;
@@ -51,7 +55,7 @@ public class LocalConfigPropertyManager
     
     //配置解析句柄
     private XStream configXstream = XstreamUtils
-            .getXstream(ConfigPropertyParser.class);
+            .getXstream(ConfigContentParser.class);
     
     /** 所属模块 */
     private String module;
@@ -62,8 +66,8 @@ public class LocalConfigPropertyManager
     /** 配置项业务层 */
     private ConfigPropertyItemService configPropertyItemService;
     
-    //    /** code的有效值域 */
-    //    private Set<String> codes = new HashSet<>();
+    /** code的有效值域 */
+    private Set<String> codes = new HashSet<>();
     
     /** <默认构造函数> */
     public LocalConfigPropertyManager(String module, String configLocation,
@@ -90,7 +94,6 @@ public class LocalConfigPropertyManager
         
         org.springframework.core.io.Resource[] configResources = resourceResolver
                 .getResources(configLocation);
-        
         if (ArrayUtils.isEmpty(configResources)) {
             return;
         }
@@ -102,10 +105,53 @@ public class LocalConfigPropertyManager
             }
             
             //解析配置文件
-            ConfigPropertyParser parser = (ConfigPropertyParser) configXstream
+            ConfigContentParser parser = (ConfigContentParser) configXstream
                     .fromXML(configResource.getInputStream());
+            
             //初始化配置属性
-            initConfigProperties(null, parser.getConfigs());
+            initCatalogs(null, parser.getCatalogs());
+            initConfigs(null, parser.getConfigs());
+        }
+    }
+    
+    /**
+     * 初始化配置目录<br/>
+     * <功能详细描述>
+     * @param catalog
+     * @param catalogs [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    private void initCatalogs(ConfigPropertyItem parent,
+            List<ConfigCatalogParser> catalogs) {
+        if (CollectionUtils.isEmpty(catalogs)) {
+            return;
+        }
+        for (ConfigCatalogParser catalogTemp : catalogs) {
+            preprocessing(catalogTemp);
+            String codeTemp = catalogTemp.getCode();
+            codes.add(codeTemp);
+            
+            ConfigPropertyItem item = this.configPropertyItemService
+                    .findByCode(this.module, codeTemp);
+            if (item == null) {
+                item = doAdd(parent, catalogTemp);
+                logger.debug("...新增配置类目: code:{} | name:{}",
+                        new Object[] { item.getCode(), item.getName() });
+            } else if (!matches(item, parent, catalogTemp)) {
+                doUpdate(item, parent, catalogTemp);
+                logger.debug("...更新配置项: code:{} | name:{}",
+                        new Object[] { item.getCode(), item.getName() });
+            } else {
+                logger.debug("...加载配置项: code:{} | name:{}",
+                        new Object[] { item.getCode(), item.getName() });
+            }
+            
+            //嵌套初始化配置
+            initCatalogs(item, catalogTemp.getCatalogs());
+            initConfigs(item, catalogTemp.getConfigs());
         }
     }
     
@@ -118,88 +164,112 @@ public class LocalConfigPropertyManager
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    private void initConfigProperties(ConfigPropertyItem parent,
-            List<ConfigPropertyParser> parserList) {
-        if (CollectionUtils.isEmpty(parserList)) {
+    private void initConfigs(ConfigPropertyItem parent,
+            List<ConfigPropertyParser> configs) {
+        if (CollectionUtils.isEmpty(configs)) {
             return;
         }
-        for (ConfigPropertyParser configParserTemp : parserList) {
-            preprocessing(parent, configParserTemp);
-            String codeTemp = configParserTemp.getCode();
+        for (ConfigPropertyParser configTemp : configs) {
+            preprocessing(configTemp);
+            String codeTemp = configTemp.getCode();
+            codes.add(codeTemp);
             
-            //            codes.add(codeTemp);
-            ConfigPropertyItem configPropertyItem = this.configPropertyItemService
+            ConfigPropertyItem item = this.configPropertyItemService
                     .findByCode(this.module, codeTemp);
-            if (configPropertyItem == null) {
-                configPropertyItem = addConfigPropertyByParser(parent,
-                        configParserTemp);
+            if (item == null) {
+                item = doAdd(parent, configTemp);
                 logger.debug(
                         "...新增配置项: code:{} | name:{} | value:{} | remark:{} | parentId:{} | validateExpression:{}",
-                        new Object[] { configPropertyItem.getCode(),
-                                configPropertyItem.getName(),
-                                configPropertyItem.getValue(),
-                                configPropertyItem.getRemark(),
-                                configPropertyItem.getParentId(),
-                                configPropertyItem.getValidateExpression() });
-            } else if (!matches(parent, configParserTemp, configPropertyItem)) {
-                updateConfigPropertyByParser(configPropertyItem,
-                        parent,
-                        configParserTemp);
+                        new Object[] { item.getCode(), item.getName(),
+                                item.getValue(), item.getRemark(),
+                                item.getParentId(),
+                                item.getValidateExpression() });
+            } else if (!matches(item, parent, configTemp)) {
+                doUpdate(item, parent, configTemp);
                 logger.debug(
                         "...更新配置项: code:{} | name:{} | value:{} | remark:{} | parentId:{} | validateExpression:{}",
-                        new Object[] { configPropertyItem.getCode(),
-                                configPropertyItem.getName(),
-                                configPropertyItem.getValue(),
-                                configPropertyItem.getRemark(),
-                                configPropertyItem.getParentId(),
-                                configPropertyItem.getValidateExpression() });
+                        new Object[] { item.getCode(), item.getName(),
+                                item.getValue(), item.getRemark(),
+                                item.getParentId(),
+                                item.getValidateExpression() });
             } else {
                 logger.debug(
                         "...加载配置项: code:{} | name:{} | value:{} | remark:{} | parentId:{} | validateExpression:{}",
-                        new Object[] { configPropertyItem.getCode(),
-                                configPropertyItem.getName(),
-                                configPropertyItem.getValue(),
-                                configPropertyItem.getRemark(),
-                                configPropertyItem.getParentId(),
-                                configPropertyItem.getValidateExpression() });
+                        new Object[] { item.getCode(), item.getName(),
+                                item.getValue(), item.getRemark(),
+                                item.getParentId(),
+                                item.getValidateExpression() });
             }
-            //嵌套初始化配置属性
-            initConfigProperties(configPropertyItem,
-                    configParserTemp.getConfigs());
         }
     }
     
     /**
      * 配置值需要进行预处理<br/>
      * <功能详细描述>
-     * @param configParserTemp [参数说明]
+     * @param propertyConfig [参数说明]
      * 
      * @return void [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    private void preprocessing(ConfigPropertyItem parent,
-            ConfigPropertyParser configParserTemp) {
+    private void preprocessing(ConfigCatalogParser catalog) {
         //配置项中name,code不能均为空
         AssertUtils.notTrue(
-                StringUtils.isEmpty(configParserTemp.getCode())
-                        && StringUtils.isEmpty(configParserTemp.getName()),
+                StringUtils.isEmpty(catalog.getCode())
+                        && StringUtils.isEmpty(catalog.getName()),
                 "配置项中:code,name均为空.");
-        if (StringUtils.isEmpty(configParserTemp.getCode())) {
+        
+        //如果编码为空,则利用名称生成编码
+        if (StringUtils.isEmpty(catalog.getCode())) {
             //当code为空时需要根据name生成对应的code
-            String name = configParserTemp.getName();
+            String name = catalog.getName();
             String newcode = (new StringBuilder(PinyinUtils.parseToPY(name)))
                     .append("_").append(Math.abs(name.hashCode())).toString();
             if (newcode.length() > 32) {
                 newcode = newcode.substring(0, 32);
             }
-            configParserTemp.setCode(newcode);
+            catalog.setCode(newcode);
         }
-        if (StringUtils.isEmpty(configParserTemp.getName())) {
-            configParserTemp.setName(configParserTemp.getCode());
+        //如果名称为空，则用编码当做名称
+        if (StringUtils.isEmpty(catalog.getName())) {
+            catalog.setName(catalog.getCode());
         }
-        if (configParserTemp.getValue() == null) {
-            configParserTemp.setValue("");
+    }
+    
+    /**
+     * 配置值需要进行预处理<br/>
+     * <功能详细描述>
+     * @param config [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    private void preprocessing(ConfigPropertyParser config) {
+        //配置项中name,code不能均为空
+        AssertUtils.notTrue(
+                StringUtils.isEmpty(config.getCode())
+                        && StringUtils.isEmpty(config.getName()),
+                "配置项中:code,name均为空.");
+        
+        //如果编码为空,则利用名称生成编码
+        if (StringUtils.isEmpty(config.getCode())) {
+            //当code为空时需要根据name生成对应的code
+            String name = config.getName();
+            String newcode = (new StringBuilder(PinyinUtils.parseToPY(name)))
+                    .append("_").append(Math.abs(name.hashCode())).toString();
+            if (newcode.length() > 32) {
+                newcode = newcode.substring(0, 32);
+            }
+            config.setCode(newcode);
+        }
+        //如果名称为空，则用编码当做名称
+        if (StringUtils.isEmpty(config.getName())) {
+            config.setName(config.getCode());
+        }
+        //值不能为空，如果未空则更新为空字符串
+        if (config.getValue() == null) {
+            config.setValue("");
         }
     }
     
@@ -214,26 +284,22 @@ public class LocalConfigPropertyManager
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    private ConfigPropertyItem addConfigPropertyByParser(
-            ConfigPropertyItem parent, ConfigPropertyParser configParserTemp) {
-        ConfigPropertyItem configPropertyItem = new ConfigPropertyItem();
-        configPropertyItem.setCode(configParserTemp.getCode());
-        configPropertyItem.setModule(this.module);
+    private ConfigPropertyItem doAdd(ConfigPropertyItem parent,
+            ConfigCatalogParser catalog) {
+        ConfigPropertyItem item = new ConfigPropertyItem();
+        item.setCode(catalog.getCode());
+        item.setModule(this.module);
         
-        configPropertyItem.setName(configParserTemp.getName());
-        configPropertyItem.setValue(configParserTemp.getValue());
-        configPropertyItem.setRemark(configParserTemp.getRemark());
-        configPropertyItem.setValidateExpression(
-                configParserTemp.getValidateExpression());
-        configPropertyItem.setModifyAble(configParserTemp.isModifyAble());
+        item.setName(catalog.getName());
+        item.setValue("");
+        item.setRemark(null);
+        item.setValidateExpression(null);
+        item.setModifyAble(false);
+        item.setParentId(parent == null ? null : parent.getId());
+        item.setLeaf(false);
         
-        configPropertyItem.setParentId(parent == null ? null : parent.getId());
-        configPropertyItem
-                .setLeaf(CollectionUtils.isEmpty(configParserTemp.getConfigs())
-                        ? true : false);
-        
-        this.configPropertyItemService.insert(configPropertyItem);
-        return configPropertyItem;
+        this.configPropertyItemService.insert(item);
+        return item;
     }
     
     /** 
@@ -247,74 +313,150 @@ public class LocalConfigPropertyManager
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    private void updateConfigPropertyByParser(
-            ConfigPropertyItem configPropertyItem, ConfigPropertyItem parent,
-            ConfigPropertyParser configParserTemp) {
-        //configPropertyItem.setCode(configParserTemp.getCode());
-        //configPropertyItem.setModule(this.module);
+    private ConfigPropertyItem doAdd(ConfigPropertyItem parent,
+            ConfigPropertyParser config) {
+        ConfigPropertyItem item = new ConfigPropertyItem();
+        item.setCode(config.getCode());
+        item.setModule(this.module);
         
-        configPropertyItem.setName(configParserTemp.getName());
-        configPropertyItem.setValue(configParserTemp.getValue());
-        configPropertyItem.setRemark(configParserTemp.getRemark());
-        configPropertyItem.setValidateExpression(
-                configParserTemp.getValidateExpression());
-        configPropertyItem.setModifyAble(configParserTemp.isModifyAble());
-        configPropertyItem.setParentId(parent == null ? null : parent.getId());
-        configPropertyItem
-                .setLeaf(CollectionUtils.isEmpty(configParserTemp.getConfigs())
-                        ? true : false);
-        if (!configParserTemp.isModifyAble()) {
-            configPropertyItem.setValue(configParserTemp.getValue());
+        item.setName(config.getName());
+        item.setValidateExpression(config.getValidateExpression());
+        item.setParentId(parent == null ? null : parent.getId());
+        item.setModifyAble(config.isModifyAble());
+        item.setLeaf(true);
+        item.setRemark(config.getRemark());
+        item.setValue(config.getValue());
+        
+        this.configPropertyItemService.insert(item);
+        return item;
+    }
+    
+    /**
+     * 根据配置 更新配置属性<br/>
+     * <功能详细描述>
+     * @param item
+     * @param parent
+     * @param config [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    private void doUpdate(ConfigPropertyItem item, ConfigPropertyItem parent,
+            ConfigCatalogParser catalog) {
+        item.setCode(catalog.getCode());
+        item.setModule(this.module);
+        
+        item.setName(catalog.getName());
+        item.setValidateExpression(null);
+        item.setParentId(parent == null ? null : parent.getId());
+        item.setModifyAble(false);
+        item.setLeaf(false);
+        item.setRemark(null);
+        item.setValue("");
+        
+        this.configPropertyItemService.updateById(item);
+    }
+    
+    /**
+     * 根据配置 更新配置属性<br/>
+     * <功能详细描述>
+     * @param item
+     * @param parent
+     * @param config [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    private void doUpdate(ConfigPropertyItem item, ConfigPropertyItem parent,
+            ConfigPropertyParser config) {
+        item.setName(config.getName());
+        item.setRemark(config.getRemark());
+        item.setValidateExpression(config.getValidateExpression());
+        item.setModifyAble(config.isModifyAble());
+        item.setParentId(parent == null ? null : parent.getId());
+        item.setLeaf(true);
+        if (!config.isModifyAble()) {
+            item.setValue(config.getValue());
         }
         
-        this.configPropertyItemService.updateById(configPropertyItem);
+        this.configPropertyItemService.updateById(item);
     }
     
     /**
      * 判断配置属性是否需要进行初始化<br/>
      * <功能详细描述>
+     * @param item
      * @param parent
      * @param configParser
-     * @param configPropertyItem
      * @return [参数说明]
      * 
      * @return boolean [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    private boolean matches(ConfigPropertyItem parent,
-            ConfigPropertyParser configParser,
-            ConfigPropertyItem configPropertyItem) {
-        if (!StringUtils.equalsAnyIgnoreCase(configParser.getCode(),
-                configPropertyItem.getCode())) {
+    private boolean matches(ConfigPropertyItem item, ConfigPropertyItem parent,
+            ConfigCatalogParser catalog) {
+        if (!StringUtils.equalsAnyIgnoreCase(catalog.getCode(),
+                item.getCode())) {
             return false;
         }
-        if (!StringUtils.equalsAnyIgnoreCase(configParser.getName(),
-                configPropertyItem.getName())) {
-            return false;
-        }
-        if (!StringUtils.equalsAnyIgnoreCase(configParser.getRemark(),
-                configPropertyItem.getRemark())) {
+        if (!StringUtils.equalsAnyIgnoreCase(catalog.getName(),
+                item.getName())) {
             return false;
         }
         if (!StringUtils.equalsAnyIgnoreCase(
-                configParser.getValidateExpression(),
-                configPropertyItem.getValidateExpression())) {
+                parent == null ? null : parent.getId(), item.getParentId())) {
             return false;
         }
-        if (Objects.hashCode(configParser.getAttributes()) != Objects
-                .hashCode(configPropertyItem.getAttributes())) {
+        if (item.isLeaf()) {
+            return false;
+        }
+        return true;
+    }
+    
+    /**
+     * 判断配置属性是否需要进行初始化<br/>
+     * <功能详细描述>
+     * @param item
+     * @param parent
+     * @param config
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    private boolean matches(ConfigPropertyItem item, ConfigPropertyItem parent,
+            ConfigPropertyParser config) {
+        if (!StringUtils.equalsAnyIgnoreCase(config.getCode(),
+                item.getCode())) {
+            return false;
+        }
+        if (!StringUtils.equalsAnyIgnoreCase(config.getName(),
+                item.getName())) {
+            return false;
+        }
+        if (!StringUtils.equalsAnyIgnoreCase(config.getRemark(),
+                item.getRemark())) {
+            return false;
+        }
+        if (!StringUtils.equalsAnyIgnoreCase(config.getValidateExpression(),
+                item.getValidateExpression())) {
             return false;
         }
         if (!StringUtils.equalsAnyIgnoreCase(
-                parent == null ? null : parent.getId(),
-                configPropertyItem.getParentId())) {
+                parent == null ? null : parent.getId(), item.getParentId())) {
+            return false;
+        }
+        if (!item.isLeaf()) {
             return false;
         }
         //如果配置可编辑则，不需要对比value值，如果不可编辑,value值不一致，则使用配置的值
-        if (!configParser.isModifyAble()) {
-            if (!StringUtils.equalsAnyIgnoreCase(configParser.getValue(),
-                    configPropertyItem.getValue())) {
+        if (!config.isModifyAble()) {
+            if (!StringUtils.equalsAnyIgnoreCase(config.getValue(),
+                    item.getValue())) {
                 return false;
             }
         }
@@ -326,7 +468,7 @@ public class LocalConfigPropertyManager
      * @return
      */
     @Override
-    public boolean supportsModule(String module) {
+    public boolean supports(String module) {
         if (StringUtils.isEmpty(module)
                 || StringUtils.equalsAnyIgnoreCase(this.module, module)) {
             return true;
@@ -339,13 +481,12 @@ public class LocalConfigPropertyManager
      * @return
      */
     @Override
-    public ConfigProperty findByCode(String module, String code) {
+    public ConfigProperty findByCode(String code) {
         AssertUtils.notEmpty(code, "code is empty.");
         
-        //        if (!codes.contains(code)) {
-        //            return null;
-        //        }
-        
+        if (!codes.contains(code)) {
+            return null;
+        }
         ConfigProperty res = this.configPropertyItemService
                 .findByCode(this.module, code);
         return res;
@@ -356,77 +497,85 @@ public class LocalConfigPropertyManager
      * @return
      */
     @Override
-    public List<ConfigProperty> queryList(String module, Querier querier) {
+    public List<ConfigProperty> queryList(Querier querier) {
         List<ConfigPropertyItem> cpiList = this.configPropertyItemService
                 .queryList(this.module, querier);
         List<ConfigProperty> resList = new ArrayList<ConfigProperty>();
         for (ConfigPropertyItem itemTemp : cpiList) {
-            //            if (!codes.contains(itemTemp.getCode())) {
-            //                continue;
-            //            }
+            if (!codes.contains(itemTemp.getCode())) {
+                continue;
+            }
             resList.add(itemTemp);
         }
         return resList;
     }
     
     /**
-     * @param module
      * @param parentId
      * @param querier
      * @return
      */
     @Override
-    public List<ConfigProperty> queryChildrenByParentId(String module,
-            String parentId, Querier querier) {
+    public List<ConfigProperty> queryChildrenByParentId(String parentId,
+            Querier querier) {
         List<ConfigPropertyItem> cpiList = this.configPropertyItemService
                 .queryChildrenByParentId(this.module, parentId, querier);
         List<ConfigProperty> resList = new ArrayList<ConfigProperty>();
         for (ConfigPropertyItem itemTemp : cpiList) {
-            //            if (!codes.contains(itemTemp.getCode())) {
-            //                continue;
-            //            }
+            if (!codes.contains(itemTemp.getCode())) {
+                continue;
+            }
             resList.add(itemTemp);
         }
         return resList;
     }
     
     /**
-     * @param module
      * @param parentId
      * @param querier
      * @return
      */
     @Override
-    public List<ConfigProperty> queryDescendantsByParentId(String module,
-            String parentId, Querier querier) {
+    public List<ConfigProperty> queryDescendantsByParentId(String parentId,
+            Querier querier) {
         List<ConfigPropertyItem> cpiList = this.configPropertyItemService
                 .queryDescendantsByParentId(this.module, parentId, querier);
         List<ConfigProperty> resList = new ArrayList<ConfigProperty>();
         for (ConfigPropertyItem itemTemp : cpiList) {
-            //            if (!codes.contains(itemTemp.getCode())) {
-            //                continue;
-            //            }
+            if (!codes.contains(itemTemp.getCode())) {
+                continue;
+            }
             resList.add(itemTemp);
         }
         return resList;
     }
     
     /**
-     * @param module
      * @param code
      * @param value
      * @return
      */
     @Override
-    public boolean patch(String module, String code, String value) {
+    public boolean patch(String code, String value) {
         AssertUtils.notEmpty(module, "module is empty.");
         AssertUtils.notEmpty(code, "code is empty.");
-        value = value == null ? "" : value;
         
+        if(!codes.contains(code)){
+            return false;
+        }
+        value = value == null ? "" : value;
         boolean res = this.configPropertyItemService.patch(this.module,
                 code,
                 value);
         return res;
+    }
+    
+    /**
+     * @return
+     */
+    @Override
+    public int getOrder() {
+        return Ordered.HIGHEST_PRECEDENCE;
     }
     
 }

@@ -6,16 +6,19 @@
  */
 package com.tx.component.configuration.service;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.core.OrderComparator;
 
 import com.tx.component.configuration.model.ConfigProperty;
+import com.tx.component.configuration.registry.RemoteConfigPropertyManagerRegistry;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.querier.model.Querier;
 
 /**
- * <功能简述>
+ * 配置属性manager
  * <功能详细描述>
  * 
  * @author  Administrator
@@ -25,14 +28,32 @@ import com.tx.core.querier.model.Querier;
  */
 public class ConfigPropertyManagerComposite implements InitializingBean {
     
-    /** 配置属性持久器 */
-    private List<ConfigPropertyManager> persisters;
+    /** 当前项目的module */
+    private String module;
+    
+    /** 远端配置manager */
+    private List<ConfigPropertyManager> configPropertyManagers;
+    
+    /** 远程配置属性业务层 */
+    private RemoteConfigPropertyManagerRegistry remoteManagerRegistry;
     
     /** <默认构造函数> */
-    public ConfigPropertyManagerComposite(
-            List<ConfigPropertyManager> persisters) {
+    public ConfigPropertyManagerComposite(String module,
+            List<ConfigPropertyManager> configPropertyManagers) {
         super();
-        this.persisters = persisters;
+        this.module = module;
+        this.configPropertyManagers = configPropertyManagers;
+    }
+    
+    /** <默认构造函数> */
+    public ConfigPropertyManagerComposite(String module,
+            List<ConfigPropertyManager> configPropertyManagers,
+            RemoteConfigPropertyManagerRegistry remoteConfigPropertyServiceRegistry) {
+        super();
+        this.module = module;
+        this.configPropertyManagers = configPropertyManagers;
+        
+        this.remoteManagerRegistry = remoteConfigPropertyServiceRegistry;
     }
     
     /**
@@ -40,7 +61,12 @@ public class ConfigPropertyManagerComposite implements InitializingBean {
      */
     @Override
     public void afterPropertiesSet() throws Exception {
-        AssertUtils.notEmpty(persisters, "persisters is empty.");
+        AssertUtils.notEmpty(this.module, "module is empty.");
+        AssertUtils.notEmpty(this.configPropertyManagers,
+                "configPropertyManagers is null.");
+        
+        //将manager进行排序
+        Collections.sort(this.configPropertyManagers, OrderComparator.INSTANCE);
     }
     
     /**
@@ -53,21 +79,22 @@ public class ConfigPropertyManagerComposite implements InitializingBean {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    private ConfigPropertyManager getConfigPropertyPersister(String module) {
-        for (ConfigPropertyManager persister : persisters) {
-            if (persister.supportsModule(module)) {
-                return persister;
+    private ConfigPropertyManager getConfigPropertyManager(String module) {
+        ConfigPropertyManager manager = null;
+        for (ConfigPropertyManager m : this.configPropertyManagers) {
+            if (m.supports(module)) {
+                manager = m;
+                return manager;
             }
         }
-        return null;
-    }
-    
-    /**
-     * @param module
-     * @return
-     */
-    public boolean supportsModule(String module) {
-        return getConfigPropertyPersister(module) != null;
+        if (this.remoteManagerRegistry != null) {
+            manager = this.remoteManagerRegistry
+                    .buildRemoteConfigPropertyManager(module);
+        }
+        AssertUtils.notNull(manager,
+                "manager is not exists. module:{}.",
+                module);
+        return manager;
     }
     
     /**
@@ -76,9 +103,9 @@ public class ConfigPropertyManagerComposite implements InitializingBean {
      * @return
      */
     public ConfigProperty findByCode(String module, String code) {
-        ConfigPropertyManager persister = getConfigPropertyPersister(module);
+        ConfigPropertyManager persister = getConfigPropertyManager(module);
         
-        ConfigProperty cp = persister.findByCode(module, code);
+        ConfigProperty cp = persister.findByCode(code);
         return cp;
     }
     
@@ -88,9 +115,9 @@ public class ConfigPropertyManagerComposite implements InitializingBean {
      * @return
      */
     public List<ConfigProperty> queryList(String module, Querier querier) {
-        ConfigPropertyManager persister = getConfigPropertyPersister(module);
+        ConfigPropertyManager persister = getConfigPropertyManager(module);
         
-        List<ConfigProperty> cpList = persister.queryList(module, querier);
+        List<ConfigProperty> cpList = persister.queryList(querier);
         return cpList;
     }
     
@@ -102,11 +129,10 @@ public class ConfigPropertyManagerComposite implements InitializingBean {
      */
     public List<ConfigProperty> queryChildrenByParentId(String module,
             String parentId, Querier querier) {
-        ConfigPropertyManager persister = getConfigPropertyPersister(module);
+        ConfigPropertyManager persister = getConfigPropertyManager(module);
         
-        List<ConfigProperty> cpList = persister.queryChildrenByParentId(module,
-                parentId,
-                querier);
+        List<ConfigProperty> cpList = persister
+                .queryChildrenByParentId(parentId, querier);
         return cpList;
     }
     
@@ -118,10 +144,10 @@ public class ConfigPropertyManagerComposite implements InitializingBean {
      */
     public List<ConfigProperty> queryDescendantsByParentId(String module,
             String parentId, Querier querier) {
-        ConfigPropertyManager persister = getConfigPropertyPersister(module);
+        ConfigPropertyManager persister = getConfigPropertyManager(module);
         
         List<ConfigProperty> cpList = persister
-                .queryDescendantsByParentId(module, parentId, querier);
+                .queryDescendantsByParentId(parentId, querier);
         return cpList;
     }
     
@@ -132,9 +158,9 @@ public class ConfigPropertyManagerComposite implements InitializingBean {
      * @return
      */
     public boolean patch(String module, String code, String value) {
-        ConfigPropertyManager persister = getConfigPropertyPersister(module);
+        ConfigPropertyManager persister = getConfigPropertyManager(module);
         
-        boolean flag = persister.patch(module, code, value);
+        boolean flag = persister.patch(code, value);
         return flag;
     }
     

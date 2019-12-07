@@ -10,8 +10,10 @@ package com.tx.component.configuration.context;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 import com.tx.component.configuration.service.ConfigPropertyManagerComposite;
 
@@ -24,7 +26,8 @@ import com.tx.component.configuration.service.ConfigPropertyManagerComposite;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public abstract class ConfigContextConfigurator implements InitializingBean {
+public abstract class ConfigContextConfigurator
+        implements InitializingBean, ApplicationContextAware {
     
     /** 日志记录器 */
     protected static Logger logger = LoggerFactory
@@ -41,6 +44,16 @@ public abstract class ConfigContextConfigurator implements InitializingBean {
     
     /** 配置属性持久器集合 */
     protected ConfigPropertyManagerComposite composite;
+    
+    /**
+     * @param applicationContext
+     * @throws BeansException
+     */
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext)
+            throws BeansException {
+        ConfigContextConfigurator.applicationContext = applicationContext;
+    }
     
     /**
      * @throws Exception
@@ -79,28 +92,28 @@ public abstract class ConfigContextConfigurator implements InitializingBean {
      * @see [类、类#方法、类#成员]
      */
     protected abstract void doInitContext() throws Exception;
-
+    
     /**
      * @return 返回 module
      */
     public String getModule() {
         return module;
     }
-
+    
     /**
      * @param 对module进行赋值
      */
     public void setModule(String module) {
         this.module = module;
     }
-
+    
     /**
      * @return 返回 composite
      */
     public ConfigPropertyManagerComposite getComposite() {
         return composite;
     }
-
+    
     /**
      * @param 对composite进行赋值
      */

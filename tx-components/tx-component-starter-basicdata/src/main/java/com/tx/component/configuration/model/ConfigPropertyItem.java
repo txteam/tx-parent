@@ -59,7 +59,7 @@ public class ConfigPropertyItem implements ConfigProperty, Serializable {
     /** 是否可编辑 */
     private boolean modifyAble = true;
     
-    /** 是否叶节点 */
+    /** 是否叶节点:设置为true表明本节点没有子节点 */
     private boolean leaf = true;
     
     /** 创建时间 */
@@ -67,9 +67,6 @@ public class ConfigPropertyItem implements ConfigProperty, Serializable {
     
     /** 最后更新时间 */
     private Date lastUpdateDate;
-    
-    /** 配置属性额外属性 */
-    private String attributes;
     
     /** 子配置项 */
     private List<ConfigProperty> children;
@@ -240,20 +237,6 @@ public class ConfigPropertyItem implements ConfigProperty, Serializable {
      */
     public void setLastUpdateDate(Date lastUpdateDate) {
         this.lastUpdateDate = lastUpdateDate;
-    }
-    
-    /**
-     * @return 返回 attributes
-     */
-    public String getAttributes() {
-        return attributes;
-    }
-    
-    /**
-     * @param 对attributes进行赋值
-     */
-    public void setAttributes(String attributes) {
-        this.attributes = attributes;
     }
 
     /**

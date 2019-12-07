@@ -61,23 +61,23 @@ public class HttpClientUtils {
     private static Map<Class<?>, HttpClient> httpClientMap = new WeakHashMap<>();
     
     /**
-      * 构建HttpClient对象<br/>
-      * <功能详细描述>
-      * @param type
-      * @param connectionManagerTimeout
-      * @param connectionTimeout
-      * @param soTimeout
-      * @param maxTotalConnections
-      * @param maxConnectionsPerHost
-      * @return [参数说明]
-      * 
-      * @return HttpClient42x [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 构建HttpClient对象<br/>
+     * <功能详细描述>
+     * @param type
+     * @param connectionManagerTimeout
+     * @param connectionTimeout
+     * @param soTimeout
+     * @param maxTotalConnections
+     * @param maxConnectionsPerHost
+     * @return [参数说明]
+     * 
+     * @return HttpClient42x [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     public static HttpClient buildHttpClient(Class<?> type,
-            long connectionManagerTimeout, int connectionTimeout,
-            int soTimeout, int maxTotalConnections, int maxConnectionsPerHost,
+            long connectionManagerTimeout, int connectionTimeout, int soTimeout,
+            int maxTotalConnections, int maxConnectionsPerHost,
             boolean statleCheckingEnabled) {
         HttpClient httpClient42x = buildHttpClient(type,
                 connectionManagerTimeout,
@@ -112,8 +112,8 @@ public class HttpClientUtils {
       * @see [类、类#方法、类#成员]
      */
     public static HttpClient buildHttpClient(Class<?> type,
-            long connectionManagerTimeout, int connectionTimeout,
-            int soTimeout, int maxTotalConnections, int maxConnectionsPerHost,
+            long connectionManagerTimeout, int connectionTimeout, int soTimeout,
+            int maxTotalConnections, int maxConnectionsPerHost,
             boolean statleCheckingEnabled, boolean isRetry, int maxRetries,
             int retryInterval) {
         if (httpClientMap.containsKey(type)) {
@@ -203,7 +203,8 @@ public class HttpClientUtils {
             params.setIntParameter(CoreConnectionPNames.CONNECTION_TIMEOUT,
                     connectionTimeout);
             //在提交请求之前 测试连接是否可用
-            params.setBooleanParameter(CoreConnectionPNames.STALE_CONNECTION_CHECK,
+            params.setBooleanParameter(
+                    CoreConnectionPNames.STALE_CONNECTION_CHECK,
                     statleCheckingEnabled);
             return params;
         }
@@ -221,8 +222,8 @@ public class HttpClientUtils {
             //而我连接到xx 和 xx时，到每个主机的并发最多只有200；即加起来是400（但不能超过400）；所以起作用的设置是DefaultMaxPerRout
             builder.setMaxConnPerRoute(maxConnectionsPerHost);
             
-            
-            builder.setConnectionTimeToLive(this.connectionTimeout, TimeUnit.MILLISECONDS);
+            builder.setConnectionTimeToLive(this.connectionTimeout,
+                    TimeUnit.MILLISECONDS);
             //从连接池中取连接的超时时间
             SocketConfig socketConfig = SocketConfig.custom()
                     .setSoTimeout(soTimeout)
@@ -248,22 +249,23 @@ public class HttpClientUtils {
             return this.httpClient;
         }
         
-        public String post(String url, String requestMessage){
-            String response = post(url, requestMessage,"UTF-8","UTF-8");
+        public String post(String url, String requestMessage) {
+            String response = post(url, requestMessage, "UTF-8", "UTF-8");
             return response;
         }
-
+        
         public String post(String url, String requestMessage,
-                           String requestEncoding, String responseEncoding,Map<String,String> headerMap) {
+                String requestEncoding, String responseEncoding,
+                Map<String, String> headerMap) {
             String resStr = "";
-
+            
             HttpEntity requestEntity = null;
             //            try {
             requestEntity = new StringEntity(requestMessage, requestEncoding);
             //            } catch (UnsupportedEncodingException e) {
             //                throw new BeforeHttpExcuteException("Http请求参数字符集转换异常.", e);
             //            }
-
+            
             HttpResponse response = null;
             // 创建httppost
             HttpPost httppost = new HttpPost(url);
@@ -271,17 +273,18 @@ public class HttpClientUtils {
                 httppost.setHeader("accept", "*/*");
                 //httppost.setHeader(name, value);"Charset", "UTF-8"
                 httppost.setHeader("connection", "Keep-Alive");
-
-                if(headerMap!=null && headerMap.size()>0){
-                    for(Map.Entry<String,String> entry:headerMap.entrySet() ){
+                
+                if (headerMap != null && headerMap.size() > 0) {
+                    for (Map.Entry<String, String> entry : headerMap
+                            .entrySet()) {
                         httppost.setHeader(entry.getKey(), entry.getValue());
                     }
                 }
-
+                
                 httppost.setEntity(requestEntity);
-
+                
                 response = this.httpClient.execute(httppost);
-
+                
                 int statusCode = response.getStatusLine().getStatusCode();
                 String reasonPhrase = response.getStatusLine()
                         .getReasonPhrase();
@@ -295,22 +298,22 @@ public class HttpClientUtils {
                     }
                 }
                 HttpEntity entity = response.getEntity();
-
+                
                 if (entity != null) {
                     try {
-                        Charset responseCharset = Charset.forName(responseEncoding);
+                        Charset responseCharset = Charset
+                                .forName(responseEncoding);
                         if (responseCharset == null) {
-                            ContentType contentType = ContentType.getOrDefault(entity);
+                            ContentType contentType = ContentType
+                                    .getOrDefault(entity);
                             Charset defaultCharset = contentType.getCharset();
                             if (defaultCharset == null) {
                                 defaultCharset = HTTP.DEF_CONTENT_CHARSET;
                             }
-                            resStr = new String(
-                                    EntityUtils.toByteArray(entity),
+                            resStr = new String(EntityUtils.toByteArray(entity),
                                     defaultCharset);
                         } else {
-                            resStr = new String(
-                                    EntityUtils.toByteArray(entity),
+                            resStr = new String(EntityUtils.toByteArray(entity),
                                     responseCharset);
                         }
                     } catch (ParseException e) {
@@ -344,11 +347,15 @@ public class HttpClientUtils {
         
         public String post(String url, String requestMessage,
                 String requestEncoding, String responseEncoding) {
-           return post(url,requestMessage,requestEncoding,responseEncoding,null);
+            return post(url,
+                    requestMessage,
+                    requestEncoding,
+                    responseEncoding,
+                    null);
         }
         
-        public String post(String url, Map<String, String> params){
-            String response = post(url, params,"UTF-8","UTF-8");
+        public String post(String url, Map<String, String> params) {
+            String response = post(url, params, "UTF-8", "UTF-8");
             return response;
         }
         
@@ -405,19 +412,19 @@ public class HttpClientUtils {
                 
                 if (entity != null) {
                     try {
-                        Charset responseCharset = Charset.forName(responseEncoding);
+                        Charset responseCharset = Charset
+                                .forName(responseEncoding);
                         if (responseCharset == null) {
-                            ContentType contentType = ContentType.getOrDefault(entity);
+                            ContentType contentType = ContentType
+                                    .getOrDefault(entity);
                             Charset defaultCharset = contentType.getCharset();
                             if (defaultCharset == null) {
                                 defaultCharset = HTTP.DEF_CONTENT_CHARSET;
                             }
-                            resStr = new String(
-                                    EntityUtils.toByteArray(entity),
+                            resStr = new String(EntityUtils.toByteArray(entity),
                                     defaultCharset);
                         } else {
-                            resStr = new String(
-                                    EntityUtils.toByteArray(entity),
+                            resStr = new String(EntityUtils.toByteArray(entity),
                                     responseCharset);
                         }
                     } catch (ParseException e) {
@@ -474,19 +481,19 @@ public class HttpClientUtils {
                 HttpEntity entity = response.getEntity();
                 if (entity != null) {
                     try {
-                        Charset responseCharset = Charset.forName(responseEncoding);
+                        Charset responseCharset = Charset
+                                .forName(responseEncoding);
                         if (responseCharset == null) {
-                            ContentType contentType = ContentType.getOrDefault(entity);
+                            ContentType contentType = ContentType
+                                    .getOrDefault(entity);
                             Charset defaultCharset = contentType.getCharset();
                             if (defaultCharset == null) {
                                 defaultCharset = HTTP.DEF_CONTENT_CHARSET;
                             }
-                            resStr = new String(
-                                    EntityUtils.toByteArray(entity),
+                            resStr = new String(EntityUtils.toByteArray(entity),
                                     defaultCharset);
                         } else {
-                            resStr = new String(
-                                    EntityUtils.toByteArray(entity),
+                            resStr = new String(EntityUtils.toByteArray(entity),
                                     responseCharset);
                         }
                     } catch (ParseException e) {

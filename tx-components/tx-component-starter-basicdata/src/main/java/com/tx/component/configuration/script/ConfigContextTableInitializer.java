@@ -22,7 +22,7 @@ import com.tx.core.ddlutil.executor.TableDDLExecutor;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class ConfigContextTableInitializer extends AbstractTableInitializer{
+public class ConfigContextTableInitializer extends AbstractTableInitializer {
     
     /** <默认构造函数> */
     public ConfigContextTableInitializer() {
@@ -86,7 +86,7 @@ public class ConfigContextTableInitializer extends AbstractTableInitializer{
         }
         
         bd_config_context(ddlBuilder);//写入表结构
-        ddlBuilder.newIndex(true, "idx_bd_config_context_00", "code,module");
+        ddlBuilder.newIndex(true, "idx_bd_config_00", "code,module");
         
         if (alterDDLBuilder != null
                 && alterDDLBuilder.compare().isNeedAlter()) {
@@ -158,15 +158,14 @@ public class ConfigContextTableInitializer extends AbstractTableInitializer{
     public static void bd_config_context(DDLBuilder<?> ddlBuilder) {
         ddlBuilder.newColumnOfVarchar(true, "id", 64, true, null)
                 .newColumnOfVarchar("parentId", 64, false, null)
+                .newColumnOfVarchar("module", 64, true, null)
                 .newColumnOfVarchar("code", 64, true, null)
                 .newColumnOfVarchar("name", 64, true, null)
-                .newColumnOfVarchar("value", 256, true, null)
-                .newColumnOfVarchar("module", 64, true, null)
+                .newColumnOfVarchar("value", 256, false, null)
                 .newColumnOfVarchar("remark", 512, false, null)
                 .newColumnOfVarchar("validateExpression", 128, false, null)
                 .newColumnOfBoolean("modifyAble", true, true)
-                .newColumnOfBoolean("leaf", true, false)
-                .newColumnOfVarchar("attributes", 512, false, null)
+                .newColumnOfBoolean("leaf", true, true)
                 .newColumnOfDate("lastUpdateDate", true, true)
                 .newColumnOfDate("createDate", true, true);
     }

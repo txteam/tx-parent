@@ -1,5 +1,5 @@
 /*
- * 描          述:  <描述>
+0 * 描          述:  <描述>
  * 修  改   人:  Administrator
  * 修改时间:  2019年3月6日
  * <修改描述:>
@@ -133,39 +133,35 @@ public class ConfigPropertyItemServiceImpl
     }
     
     /**
-     * @param configPropertyItem
+     * @param item
      * @return
      */
     @Override
     @Transactional
-    public boolean updateById(ConfigPropertyItem configPropertyItem) {
-        AssertUtils.notNull(configPropertyItem, "configPropertyItem is null.");
-        AssertUtils.notEmpty(configPropertyItem.getId(),
-                "configPropertyItem.id is empty.");
-        AssertUtils.notEmpty(configPropertyItem.getName(),
-                "configPropertyItem.name is empty.");
-        if (configPropertyItem.getValue() == null) {
-            configPropertyItem.setValue("");
+    public boolean updateById(ConfigPropertyItem item) {
+        AssertUtils.notNull(item, "item is null.");
+        AssertUtils.notEmpty(item.getId(), "item.id is empty.");
+        AssertUtils.notEmpty(item.getName(), "item.name is empty.");
+        if (item.getValue() == null) {
+            item.setValue("");
         }
         
         Date now = new Date();
-        configPropertyItem.setLastUpdateDate(now);
+        item.setLastUpdateDate(now);
         
         final Map<String, Object> rowMap = new HashMap<>();
-        rowMap.put("id", configPropertyItem.getId());
+        rowMap.put("id", item.getId());
+        
         //rowMap.put("code", configPropertyItem.getCode());
         //rowMap.put("module", configPropertyItem.getModule());
-        
-        rowMap.put("parentId", configPropertyItem.getParentId());
-        rowMap.put("name", configPropertyItem.getName());
-        rowMap.put("value", configPropertyItem.getValue());
-        rowMap.put("remark", configPropertyItem.getRemark());
-        rowMap.put("attributes", configPropertyItem.getAttributes());
-        rowMap.put("validateExpression",
-                configPropertyItem.getValidateExpression());
-        rowMap.put("modifyAble", configPropertyItem.isModifyAble());
-        rowMap.put("leaf", configPropertyItem.isLeaf());
-        rowMap.put("lastUpdateDate", configPropertyItem.getLastUpdateDate());
+        rowMap.put("parentId", item.getParentId());
+        rowMap.put("name", item.getName());
+        rowMap.put("value", item.getValue());
+        rowMap.put("remark", item.getRemark());
+        rowMap.put("validateExpression", item.getValidateExpression());
+        rowMap.put("modifyAble", item.isModifyAble());
+        rowMap.put("leaf", item.isLeaf());
+        rowMap.put("lastUpdateDate", item.getLastUpdateDate());
         
         int rownum = configPropertyItemDao.update(rowMap);
         boolean res = rownum > 0;

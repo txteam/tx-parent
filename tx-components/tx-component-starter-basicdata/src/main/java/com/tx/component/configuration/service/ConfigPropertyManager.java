@@ -8,6 +8,8 @@ package com.tx.component.configuration.service;
 
 import java.util.List;
 
+import org.springframework.core.Ordered;
+
 import com.tx.component.configuration.model.ConfigProperty;
 import com.tx.core.querier.model.Querier;
 
@@ -20,10 +22,10 @@ import com.tx.core.querier.model.Querier;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public interface ConfigPropertyManager {
+public interface ConfigPropertyManager extends Ordered{
     
     /**
-     * 根据数据所属模块判断从何获取数据,自动匹配<br/>
+     * 是否匹配当前配置属性业务层<br/>
      * <功能详细描述>
      * @param module
      * @return [参数说明]
@@ -32,12 +34,11 @@ public interface ConfigPropertyManager {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public boolean supportsModule(String module);
+    public boolean supports(String module);
     
     /**
      * 根据关键字code获取配置属性实例<br/>
      * <功能详细描述>
-     * @param module
      * @param code
      * @return [参数说明]
      * 
@@ -45,12 +46,11 @@ public interface ConfigPropertyManager {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public ConfigProperty findByCode(String module, String code);
+    public ConfigProperty findByCode(String code);
     
     /**
      * 查询配置属性<br/>
      * <功能详细描述>
-     * @param module
      * @param querier
      * @return [参数说明]
      * 
@@ -58,12 +58,11 @@ public interface ConfigPropertyManager {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public List<ConfigProperty> queryList(String module, Querier querier);
+    public List<ConfigProperty> queryList(Querier querier);
     
     /**
      * 根父节点查询子节点<br/>
      * <功能详细描述>
-     * @param module
      * @param parentId
      * @param querier
      * @return [参数说明]
@@ -72,13 +71,12 @@ public interface ConfigPropertyManager {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    List<ConfigProperty> queryChildrenByParentId(String module, String parentId,
+    List<ConfigProperty> queryChildrenByParentId(String parentId,
             Querier querier);
     
     /**
      * 嵌套查询子级配置项<br/>
      * <功能详细描述>
-     * @param module
      * @param parentId
      * @param querier
      * @return [参数说明]
@@ -87,13 +85,12 @@ public interface ConfigPropertyManager {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    List<ConfigProperty> queryDescendantsByParentId(String module,
-            String parentId, Querier querier);
+    List<ConfigProperty> queryDescendantsByParentId(String parentId,
+            Querier querier);
     
     /**
      * 更新配置项<br/>
      * <功能详细描述>
-     * @param module
      * @param code
      * @param value
      * @return [参数说明]
@@ -102,5 +99,5 @@ public interface ConfigPropertyManager {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public boolean patch(String module, String code, String value);
+    public boolean patch(String code, String value);
 }

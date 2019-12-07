@@ -16,7 +16,6 @@ import org.springframework.cache.CacheManager;
 
 import com.tx.component.configuration.ConfigContextConstants;
 import com.tx.component.configuration.service.ConfigPropertyItemService;
-import com.tx.component.configuration.service.ConfigPropertyManager;
 import com.tx.core.spring.interceptor.ServiceSupportCacheInterceptor;
 
 /**
@@ -62,7 +61,7 @@ public class ConfigPropertyServiceSupportCacheProxyCreator
     protected Object[] getAdvicesAndAdvisorsForBean(Class<?> beanClass,
             String beanName, TargetSource customTargetSource)
             throws BeansException {
-        if (ConfigPropertyManager.class.isAssignableFrom(beanClass)) {
+        if (ConfigPropertyItemService.class.isAssignableFrom(beanClass)) {
             String cacheName = ConfigContextConstants.CACHE_NAME;
             
             Cache cache = this.cacheManager.getCache(cacheName);
@@ -76,23 +75,6 @@ public class ConfigPropertyServiceSupportCacheProxyCreator
                             boolean isQueryMethod = methodName
                                     .startsWith("find");
                             return isQueryMethod;
-                        }
-                        
-                    } };
-            
-            return interceptors;
-        } else if (ConfigPropertyItemService.class
-                .isAssignableFrom(beanClass)) {
-            String cacheName = ConfigContextConstants.CACHE_NAME;
-            
-            Cache cache = this.cacheManager.getCache(cacheName);
-            Object[] interceptors = new Object[] {
-                    new ServiceSupportCacheInterceptor(cache) {
-                        //itemservice只负责清空缓存，查询期间不使用缓存
-                        @Override
-                        protected boolean isUseCache(Method method,
-                                Object[] args) {
-                            return false;
                         }
                     } };
             return interceptors;

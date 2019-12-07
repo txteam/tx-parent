@@ -8,11 +8,11 @@ package com.tx.component.configuration.service.impl;
 
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.core.Ordered;
 
 import com.tx.component.configuration.client.ConfigContextAPIClient;
 import com.tx.component.configuration.model.ConfigProperty;
-import com.tx.component.configuration.registry.ConfigAPIClientRegistry;
 import com.tx.component.configuration.service.ConfigPropertyManager;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.querier.model.Querier;
@@ -26,33 +26,35 @@ import com.tx.core.querier.model.Querier;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class RemoteConfigPropertyManager implements ConfigPropertyManager {
+public class RemoteConfigPropertyManager
+        implements ConfigPropertyManager, InitializingBean, Ordered {
     
     /** 所属模块 */
     private String module;
     
-    /** 配置客户端注册表 */
-    private ConfigAPIClientRegistry configAPIClientRegistry;
+    /** 客户端 */
+    private ConfigContextAPIClient client;
     
     /** <默认构造函数> */
-    public RemoteConfigPropertyManager(String module,
-            ConfigAPIClientRegistry configAPIClientRegistry) {
+    public RemoteConfigPropertyManager() {
         super();
-        this.module = module;
-        this.configAPIClientRegistry = configAPIClientRegistry;
     }
     
     /**
-     * @param module
-     * @return
+     * @throws Exception
      */
     @Override
-    public boolean supportsModule(String module) {
-        if (StringUtils.isEmpty(module)
-                || StringUtils.equalsAnyIgnoreCase(this.module, module)) {
-            return false;
+    public void afterPropertiesSet() throws Exception {
+        AssertUtils.notEmpty(this.module, "module is empty.");
+        AssertUtils.notNull(this.client, "client is null.");
+    }
+    
+    @Override
+    public boolean supports(String module) {
+        if (this.module.equals(module)) {
+            return true;
         }
-        return true;
+        return false;
     }
     
     /**
@@ -62,12 +64,10 @@ public class RemoteConfigPropertyManager implements ConfigPropertyManager {
      * @return
      */
     @Override
-    public boolean patch(String module, String code, String value) {
+    public boolean patch(String code, String value) {
         AssertUtils.notEmpty(module, "module is empty.");
         AssertUtils.notEmpty(code, "code is empty.");
         
-        ConfigContextAPIClient client = configAPIClientRegistry
-                .getConfigAPIClient(module);
         value = value == null ? "" : value;
         
         boolean res = client.patch(code, value);
@@ -80,12 +80,9 @@ public class RemoteConfigPropertyManager implements ConfigPropertyManager {
      * @return
      */
     @Override
-    public ConfigProperty findByCode(String module, String code) {
+    public ConfigProperty findByCode(String code) {
         AssertUtils.notEmpty(module, "module is empty.");
         AssertUtils.notEmpty(code, "code is empty.");
-        
-        ConfigContextAPIClient client = configAPIClientRegistry
-                .getConfigAPIClient(module);
         
         ConfigProperty res = client.findByCode(code);
         return res;
@@ -97,11 +94,8 @@ public class RemoteConfigPropertyManager implements ConfigPropertyManager {
      * @return
      */
     @Override
-    public List<ConfigProperty> queryList(String module, Querier querier) {
+    public List<ConfigProperty> queryList(Querier querier) {
         AssertUtils.notEmpty(module, "module is empty.");
-        
-        ConfigContextAPIClient client = configAPIClientRegistry
-                .getConfigAPIClient(module);
         
         List<ConfigProperty> resList = client.queryList(querier);
         return resList;
@@ -114,13 +108,10 @@ public class RemoteConfigPropertyManager implements ConfigPropertyManager {
      * @return
      */
     @Override
-    public List<ConfigProperty> queryChildrenByParentId(String module,
-            String parentId, Querier querier) {
+    public List<ConfigProperty> queryChildrenByParentId(String parentId,
+            Querier querier) {
         AssertUtils.notEmpty(module, "module is empty.");
         AssertUtils.notEmpty(parentId, "parentId is empty.");
-        
-        ConfigContextAPIClient client = configAPIClientRegistry
-                .getConfigAPIClient(module);
         
         List<ConfigProperty> resList = client.queryChildrenByParentId(parentId,
                 querier);
@@ -134,17 +125,21 @@ public class RemoteConfigPropertyManager implements ConfigPropertyManager {
      * @return
      */
     @Override
-    public List<ConfigProperty> queryDescendantsByParentId(String module,
-            String parentId, Querier querier) {
+    public List<ConfigProperty> queryDescendantsByParentId(String parentId,
+            Querier querier) {
         AssertUtils.notEmpty(module, "module is empty.");
         AssertUtils.notEmpty(parentId, "parentId is empty.");
-        
-        ConfigContextAPIClient client = configAPIClientRegistry
-                .getConfigAPIClient(module);
         
         List<ConfigProperty> resList = client
                 .queryDescendantsByParentId(parentId, querier);
         return resList;
     }
     
+    /**
+     * @return
+     */
+    @Override
+    public int getOrder() {
+        return Ordered.LOWEST_PRECEDENCE;
+    }
 }

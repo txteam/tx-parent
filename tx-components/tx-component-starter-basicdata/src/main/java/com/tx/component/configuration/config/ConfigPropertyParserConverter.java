@@ -42,11 +42,13 @@ public class ConfigPropertyParserConverter extends AbstractReflectionConverter {
     //菜单项目配置属性映射
     private static final Map<String, PropertyDescriptor> TYPE_PD_MAP = new HashMap<>();
     
+    //将配置属性中存在的
     static {
         for (PropertyDescriptor pdTemp : BeanUtils
                 .getPropertyDescriptors(ConfigPropertyParser.class)) {
             if (pdTemp.getReadMethod() == null
-                    || pdTemp.getWriteMethod() == null) {
+                    || pdTemp.getWriteMethod() == null
+                    || "attributes".equals(pdTemp)) {
                 continue;
             }
             TYPE_PD_MAP.put(pdTemp.getName(), pdTemp);
@@ -153,7 +155,7 @@ public class ConfigPropertyParserConverter extends AbstractReflectionConverter {
             }
             attributesMap.put(attNameTemp, value);
         }
-        catalog.setAttributes(attributesMap);
+        //catalog.setAttributes(attributesMap);
         return catalog;
     }
     

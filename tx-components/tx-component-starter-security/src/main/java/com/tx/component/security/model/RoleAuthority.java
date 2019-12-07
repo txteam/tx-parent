@@ -8,6 +8,8 @@ package com.tx.component.security.model;
 
 import org.springframework.security.core.GrantedAuthority;
 
+import com.tx.component.role.model.Role;
+
 /**
  * 操作人员角色权限<br/>
  * <功能详细描述>
@@ -18,4 +20,15 @@ import org.springframework.security.core.GrantedAuthority;
  * @since  [产品/模块版本]
  */
 public interface RoleAuthority extends GrantedAuthority {
+
+    /**
+     * 获取对应的角色<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return Role [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public Role getRole();
 }

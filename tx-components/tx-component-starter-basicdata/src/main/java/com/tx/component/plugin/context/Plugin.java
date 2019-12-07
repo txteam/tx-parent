@@ -1,28 +1,35 @@
-/**
- * 文 件 名:  ConfigProperty.java
- * 版    权:  TX Workgroup . Copyright YYYY-YYYY,  All rights reserved
- * 描    述:  <描述>
- * 修 改 人:  PengQingyang
- * 修改时间:  2012-10-5
+/*
+ * 描          述:  <描述>
+ * 修  改   人:  Administrator
+ * 修改时间:  2019年12月4日
  * <修改描述:>
  */
-package com.tx.component.configuration.model;
-
-import java.util.Date;
+package com.tx.component.plugin.context;
 
 /**
- * 配置属性<br/>
+ * 插件接口<br/>
  * <功能详细描述>
  * 
- * @author  PengQingyang
- * @version  [版本号, 2012-10-5]
+ * @author  Administrator
+ * @version  [版本号, 2019年12月4日]
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public interface ConfigProperty{
+public interface Plugin<CONFIG extends PluginConfig> {
     
     /**
-     * 获取配置属性的唯一键<br/>
+     * 获取插件配置<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return PROS [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public CONFIG getConfig();
+    
+    /**
+     * 插件ID<br/>
      * <功能详细描述>
      * @return [参数说明]
      * 
@@ -33,29 +40,7 @@ public interface ConfigProperty{
     public String getId();
     
     /**
-     * 获取配置属性的父节点id<br/>
-     * <功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return String [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public String getParentId();
-    
-    /**
-     * 获取配置属性所属模块<br/>
-     * <功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return String [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public String getModule();
-    
-    /**
-     * 获取配置的属性名
+     * 插件名称<br/>
      * <功能详细描述>
      * @return [参数说明]
      * 
@@ -66,7 +51,7 @@ public interface ConfigProperty{
     public String getName();
     
     /**
-     * 获取配置的关键字code
+     * 插件版本<br/>
      * <功能详细描述>
      * @return [参数说明]
      * 
@@ -74,10 +59,10 @@ public interface ConfigProperty{
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public String getCode();
+    public String getVersion();
     
     /**
-     * 获取配置的实际值
+     * 获取网址<br/>
      * <功能详细描述>
      * @return [参数说明]
      * 
@@ -85,10 +70,10 @@ public interface ConfigProperty{
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public String getValue();
+    public String getSiteUrl();
     
     /**
-     * 获取验证表达式<br>
+     * 获取安装URL<br/>
      * <功能详细描述>
      * @return [参数说明]
      * 
@@ -96,10 +81,10 @@ public interface ConfigProperty{
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public String getValidateExpression();
+    public String getInstallUrl();
     
     /**
-     * 获取配置的描述信息<br/>
+     * 获取卸载URL<br/>
      * <功能详细描述>
      * @return [参数说明]
      * 
@@ -107,39 +92,29 @@ public interface ConfigProperty{
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public String getRemark();
+    public String getUninstallUrl();
     
     /**
-     * 对应配置属性是否能够修改<br/>
+     * 获取设置URL<br/>
      * <功能详细描述>
      * @return [参数说明]
      * 
-     * @return boolean [返回类型说明]
+     * @return String [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public boolean isModifyAble();
+    public String getSettingUrl();
     
     /**
-     * 是否为叶节点<br/>
+     * 获取插件作者<br/>
      * <功能详细描述>
      * @return [参数说明]
      * 
-     * @return boolean [返回类型说明]
+     * @return String [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public boolean isLeaf();
-    
-    /**
-     * 获取配置项的最后更新时间<br/>
-     *    可以用于使用场景中判断配置值是否发生了变化
-     * <功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return Date [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public Date getLastUpdateDate();
+    default String getAuthor() {
+        return "txteam";
+    }
 }

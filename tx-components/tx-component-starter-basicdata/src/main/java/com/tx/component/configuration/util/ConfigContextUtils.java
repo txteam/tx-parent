@@ -10,7 +10,9 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
+import com.tx.component.configuration.context.ConfigContext;
 import com.tx.component.configuration.model.ConfigProperty;
+import com.tx.core.exceptions.util.AssertUtils;
 
 /**
  * 配置容器工具类<br/>
@@ -24,6 +26,23 @@ import com.tx.component.configuration.model.ConfigProperty;
 public class ConfigContextUtils {
     
     /**
+     * 根据编码获取配置属性<br/>
+     * <功能详细描述>
+     * @param code
+     * @return [参数说明]
+     * 
+     * @return ConfigProperty [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static ConfigProperty get(String code) {
+        AssertUtils.notEmpty(code, "code is empty.");
+        
+        ConfigProperty property = ConfigContext.getContext().find(code);
+        return property;
+    }
+    
+    /**
      * 获取配置属性的实际值<br/>
      * <功能详细描述>
      * @param code
@@ -33,7 +52,9 @@ public class ConfigContextUtils {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public static String getValue(ConfigProperty configProperty) {
+    public static String getValue(String code) {
+        ConfigProperty configProperty = get(code);
+        
         String value = configProperty == null ? null
                 : configProperty.getValue();
         return value;
@@ -55,14 +76,14 @@ public class ConfigContextUtils {
      *   getValueBoolean("blue")  = null
      * </pre>
      * 
-     * @param key 键
+     * @param code 键
      * 
      * @return Boolean 值,可能为null
      * @exception [异常类型] [异常说明]
      * @see org.apache.commons.lang3.BooleanUtils#toBooleanObject(String)
      */
-    public static Boolean getBooleanValue(ConfigProperty configProperty) {
-        String value = getValue(configProperty);
+    public static Boolean getBooleanValue(String code) {
+        String value = getValue(code);
         if (value == null) {
             return null;
         }
@@ -101,17 +122,16 @@ public class ConfigContextUtils {
      *   getValueBoolean("blue")  = defaultBoolean
      * </pre>
      * 
-     * @param key 键
+     * @param code 键
      * @param defaultBoolean 默认值
      * 
      * @return boolean 值
      * @exception [异常类型] [异常说明]
      * @see org.apache.commons.lang3.BooleanUtils#toBooleanObject(String)
      */
-    public static Boolean getBooleanValue(ConfigProperty configProperty,
-            boolean defaultBoolean) {
+    public static Boolean getBooleanValue(String code, boolean defaultBoolean) {
         try {
-            Boolean b = getBooleanValue(configProperty);
+            Boolean b = getBooleanValue(code);
             return b == null ? defaultBoolean : b;
         } catch (Exception e) {
             return defaultBoolean;
@@ -127,8 +147,8 @@ public class ConfigContextUtils {
      * @exception [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public static Integer getIntegerValue(ConfigProperty configProperty) {
-        String value = getValue(configProperty);
+    public static Integer getIntegerValue(String code) {
+        String value = getValue(code);
         if (StringUtils.isBlank(value)) {
             return null;
         }
@@ -138,17 +158,16 @@ public class ConfigContextUtils {
     /**
      * 获取int类型的值
      * 
-     * @param key 键
+     * @param code 键
      * @param defaultLong 默认值
      * 
      * @return int 值
      * @exception [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public static Integer getIntegerValue(ConfigProperty configProperty,
-            int defaultInt) {
+    public static Integer getIntegerValue(String code, int defaultInt) {
         try {
-            Integer i = getIntegerValue(configProperty);
+            Integer i = getIntegerValue(code);
             return i == null ? defaultInt : i;
         } catch (Exception e) {
             return defaultInt;
@@ -158,14 +177,14 @@ public class ConfigContextUtils {
     /**
      * 获取Long类型的值
      * 
-     * @param key 键
+     * @param code 键
      * 
      * @return Long 值,可能为null
      * @exception [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public static Long getLongValue(ConfigProperty configProperty) {
-        String value = getValue(configProperty);
+    public static Long getLongValue(String code) {
+        String value = getValue(code);
         if (StringUtils.isBlank(value)) {
             return null;
         }
@@ -175,17 +194,16 @@ public class ConfigContextUtils {
     /**
      * 获取long类型的值
      * 
-     * @param key 键
+     * @param code 键
      * @param defaultLong 默认值
      * 
      * @return long 值
      * @exception [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public static Long getLongValue(ConfigProperty configProperty,
-            long defaultLong) {
+    public static Long getLongValue(String code, long defaultLong) {
         try {
-            Long l = getLongValue(configProperty);
+            Long l = getLongValue(code);
             return l == null ? defaultLong : l;
         } catch (Exception e) {
             return defaultLong;

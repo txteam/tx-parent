@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
 import org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoConfiguration;
@@ -35,11 +36,11 @@ import com.tx.component.configuration.context.ConfigContextFactory;
 import com.tx.component.configuration.context.ConfigPropertyServiceSupportCacheProxyCreator;
 import com.tx.component.configuration.controller.ConfigContextAPIController;
 import com.tx.component.configuration.registry.ConfigAPIClientRegistry;
+import com.tx.component.configuration.registry.RemoteConfigPropertyManagerRegistry;
 import com.tx.component.configuration.service.ConfigPropertyItemService;
 import com.tx.component.configuration.service.ConfigPropertyManager;
 import com.tx.component.configuration.service.ConfigPropertyManagerComposite;
 import com.tx.component.configuration.service.impl.LocalConfigPropertyManager;
-import com.tx.component.configuration.service.impl.RemoteConfigPropertyManager;
 import com.tx.component.configuration.starter.ConfigCacheConfiguration.ConfigCacheCustomizer;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.starter.component.ComponentSupportAutoConfiguration;
@@ -148,11 +149,11 @@ public class ConfigContextAutoConfiguration
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @Bean
+    @Bean(name = "localConfigPropertyManager")
     public LocalConfigPropertyManager localConfigPropertyManager(
             ConfigPropertyItemService configPropertyItemService) {
         LocalConfigPropertyManager manager = new LocalConfigPropertyManager(
-                module, configLocation, configPropertyItemService);
+                this.module, configLocation, configPropertyItemService);
         return manager;
     }
     
@@ -165,13 +166,13 @@ public class ConfigContextAutoConfiguration
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @Bean
+    @Bean(name = "remoteConfigPropertyManagerRegistry")
     @ConditionalOnBean(ConfigAPIClientRegistry.class)
-    public RemoteConfigPropertyManager remoteConfigPropertyManager(
+    public RemoteConfigPropertyManagerRegistry remoteConfigPropertyManagerRegistry(
             ConfigAPIClientRegistry configAPIClientRegistry) {
-        RemoteConfigPropertyManager manager = new RemoteConfigPropertyManager(
-                module, configAPIClientRegistry);
-        return manager;
+        RemoteConfigPropertyManagerRegistry registry = new RemoteConfigPropertyManagerRegistry(
+                this.module, configAPIClientRegistry);
+        return registry;
     }
     
     /**
@@ -184,11 +185,35 @@ public class ConfigContextAutoConfiguration
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @Bean
-    public ConfigPropertyManagerComposite configPropertyManagerComposite(
-            List<ConfigPropertyManager> persisters) {
+    @Bean(name = "configPropertyManagerComposite")
+    @ConditionalOnMissingBean({ ConfigPropertyManagerComposite.class })
+    @ConditionalOnBean(RemoteConfigPropertyManagerRegistry.class)
+    public ConfigPropertyManagerComposite configPropertyManagerComposite1(
+            List<ConfigPropertyManager> managers,
+            RemoteConfigPropertyManagerRegistry registry) {
         ConfigPropertyManagerComposite composite = new ConfigPropertyManagerComposite(
-                persisters);
+                this.module, managers, registry);
+        return composite;
+    }
+    
+    /**
+     * 当远程的rigsitry不存在，composite又未能成功注册时<br/>
+     * <功能详细描述>
+     * @param managers
+     * @param registry
+     * @return [参数说明]
+     * 
+     * @return ConfigPropertyManagerComposite [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @Bean(name = "configPropertyManagerComposite")
+    @ConditionalOnMissingBean({ RemoteConfigPropertyManagerRegistry.class,
+            ConfigPropertyManagerComposite.class })
+    public ConfigPropertyManagerComposite configPropertyManagerComposite2(
+            List<ConfigPropertyManager> managers) {
+        ConfigPropertyManagerComposite composite = new ConfigPropertyManagerComposite(
+                this.module, managers);
         return composite;
     }
     
@@ -203,6 +228,7 @@ public class ConfigContextAutoConfiguration
      * @see [类、类#方法、类#成员]
      */
     @Bean
+    @ConditionalOnBean(ConfigPropertyManagerComposite.class)
     public ConfigContextFactory configContext(
             ConfigPropertyManagerComposite composite) {
         ConfigContextFactory factory = new ConfigContextFactory();
@@ -242,7 +268,5 @@ public class ConfigContextAutoConfiguration
                     module, configPropertyItemService);
             return controller;
         }
-        
     }
-    
 }

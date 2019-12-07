@@ -32,13 +32,13 @@ public class BasicDataContext extends BasicDataContextBuilder {
     protected static BasicDataContext context;
     
     /**
-      * 获取基础数据容器实例<br/>
-      * <功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return BasicDataContext [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 获取基础数据容器实例<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return BasicDataContext [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     public static BasicDataContext getContext() {
         if (BasicDataContext.context != null) {
@@ -61,14 +61,14 @@ public class BasicDataContext extends BasicDataContextBuilder {
     }
     
     /**
-      * 装载对象属性<br/>
-      *    尽量不要在基础数据业务层中调用，如果造成嵌套循环，则会加载太多对象<br/>
-      * <功能详细描述>
-      * @param obj [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 装载对象属性<br/>
+     *    尽量不要在基础数据业务层中调用，如果造成嵌套循环，则会加载太多对象<br/>
+     * <功能详细描述>
+     * @param obj [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     public void setup(Object object) {
         if (object == null) {
@@ -82,14 +82,14 @@ public class BasicDataContext extends BasicDataContextBuilder {
     }
     
     /**
-      * 装载基础数据<br/>
-      *     尽量不要在基础数据业务层中调用，如果造成嵌套循环，则会加载太多对象<br/>
-      * <功能详细描述>
-      * @param objectList [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 装载基础数据<br/>
+     *     尽量不要在基础数据业务层中调用，如果造成嵌套循环，则会加载太多对象<br/>
+     * <功能详细描述>
+     * @param objectList [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     public void setup(Collection<?> objectList) {
         if (CollectionUtils.isEmpty(objectList)) {
@@ -101,13 +101,13 @@ public class BasicDataContext extends BasicDataContextBuilder {
     }
     
     /**
-      * 装载基础数据<br/>
-      * <功能详细描述>
-      * @param objectPagedList [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 装载基础数据<br/>
+     * <功能详细描述>
+     * @param objectPagedList [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     public void setup(PagedList<?> objectPagedList) {
         if (objectPagedList == null || objectPagedList.getList() == null) {
@@ -136,14 +136,14 @@ public class BasicDataContext extends BasicDataContextBuilder {
     }
     
     /**
-      * 获取基础数据业务层<br/>
-      * <功能详细描述>
-      * @param type
-      * @return [参数说明]
-      * 
-      * @return BasicDataService<BDTYPE> [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 获取基础数据业务层<br/>
+     * <功能详细描述>
+     * @param type
+     * @return [参数说明]
+     * 
+     * @return BasicDataService<BDTYPE> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     public <BDTYPE extends BasicData> BasicDataService<BDTYPE> getBasicDataService(
             Class<BDTYPE> type) {
@@ -160,45 +160,12 @@ public class BasicDataContext extends BasicDataContextBuilder {
      * @return BasicDataService<BDTYPE> [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
-    */
+     */
     public <BDTYPE extends TreeAbleBasicData<BDTYPE>> TreeAbleBasicDataService<BDTYPE> getTreeAbleBasicDataService(
             Class<BDTYPE> type) {
         TreeAbleBasicDataService<BDTYPE> service = doGetTreeAbleBasicDataService(
                 type);
         return service;
     }
-    
-    //    /**
-    //     * 获取基础数据业务层<br/>
-    //     * <功能详细描述>
-    //     * @param type
-    //     * @return [参数说明]
-    //     * 
-    //     * @return BasicDataService<BDTYPE> [返回类型说明]
-    //     * @exception throws [异常类型] [异常说明]
-    //     * @see [类、类#方法、类#成员]
-    //    */
-    //    public <BDTYPE extends BasicData> BasicDataService<BDTYPE> getBasicDataService(
-    //            String type) {
-    //        BasicDataService<BDTYPE> service = doGetBasicDataService(type);
-    //        return service;
-    //    }
-    //    
-    //    /**
-    //    * 根据类型获取对应的基础数据业务层<br/>
-    //    * <功能详细描述>
-    //    * @param type
-    //    * @return [参数说明]
-    //    * 
-    //    * @return BasicDataService<BDTYPE> [返回类型说明]
-    //    * @exception throws [异常类型] [异常说明]
-    //    * @see [类、类#方法、类#成员]
-    //    */
-    //    public <BDTYPE extends TreeAbleBasicData<BDTYPE>> TreeAbleBasicDataService<BDTYPE> getTreeAbleBasicDataService(
-    //            String type) {
-    //        TreeAbleBasicDataService<BDTYPE> service = doGetTreeAbleBasicDataService(
-    //                type);
-    //        return service;
-    //    }
     
 }

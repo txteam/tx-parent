@@ -16,6 +16,7 @@ import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 
 import com.tx.component.basicdata.service.BasicDataService;
+import com.tx.component.basicdata.service.impl.DefaultRemoteBasicDataService;
 import com.tx.core.spring.interceptor.ServiceSupportCacheInterceptor;
 
 /**
@@ -60,7 +61,9 @@ public class BasicDataServiceSupportCacheProxyCreator
     protected Object[] getAdvicesAndAdvisorsForBean(Class<?> beanClass,
             String beanName, TargetSource customTargetSource)
             throws BeansException {
-        if (BasicDataService.class.isAssignableFrom(beanClass)) {
+        if (BasicDataService.class.isAssignableFrom(beanClass)
+                && !DefaultRemoteBasicDataService.class
+                        .isAssignableFrom(beanClass)) {
             String cacheName = beanName;
             if (!beanName.startsWith("basicdata.")) {
                 cacheName = (new StringBuilder(beanName)).append(".cache")
