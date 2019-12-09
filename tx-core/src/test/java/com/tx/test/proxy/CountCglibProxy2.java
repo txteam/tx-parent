@@ -23,7 +23,8 @@ import org.springframework.cglib.proxy.Proxy;
   */
 public class CountCglibProxy2 implements InvocationHandler{
 
-    private Object target;  
+    private Object target;
+    
     /** 
      * 绑定委托对象并返回一个代理类 
      * @param target 

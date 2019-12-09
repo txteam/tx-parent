@@ -137,11 +137,19 @@ public class LocalConfigPropertyManager
             ConfigPropertyItem item = this.configPropertyItemService
                     .findByCode(this.module, codeTemp);
             if (item == null) {
-                item = doAdd(parent, catalogTemp);
+                item = doAdd(parent,
+                        catalogTemp.getCode(),
+                        catalogTemp.getName());
                 logger.debug("...新增配置类目: code:{} | name:{}",
                         new Object[] { item.getCode(), item.getName() });
-            } else if (!matches(item, parent, catalogTemp)) {
-                doUpdate(item, parent, catalogTemp);
+            } else if (!matches(item,
+                    parent,
+                    catalogTemp.getCode(),
+                    catalogTemp.getName())) {
+                doUpdate(item,
+                        parent,
+                        catalogTemp.getCode(),
+                        catalogTemp.getName());
                 logger.debug("...更新配置项: code:{} | name:{}",
                         new Object[] { item.getCode(), item.getName() });
             } else {
@@ -176,16 +184,17 @@ public class LocalConfigPropertyManager
             
             ConfigPropertyItem item = this.configPropertyItemService
                     .findByCode(this.module, codeTemp);
+            ConfigPropertyItem configItem = doBuild(parent, configTemp);
             if (item == null) {
-                item = doAdd(parent, configTemp);
+                item = doAdd(configItem);
                 logger.debug(
                         "...新增配置项: code:{} | name:{} | value:{} | remark:{} | parentId:{} | validateExpression:{}",
                         new Object[] { item.getCode(), item.getName(),
                                 item.getValue(), item.getRemark(),
                                 item.getParentId(),
                                 item.getValidateExpression() });
-            } else if (!matches(item, parent, configTemp)) {
-                doUpdate(item, parent, configTemp);
+            } else if (!matches(item, configItem)) {
+                doUpdate(item, configItem);
                 logger.debug(
                         "...更新配置项: code:{} | name:{} | value:{} | remark:{} | parentId:{} | validateExpression:{}",
                         new Object[] { item.getCode(), item.getName(),
@@ -284,13 +293,13 @@ public class LocalConfigPropertyManager
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    private ConfigPropertyItem doAdd(ConfigPropertyItem parent,
-            ConfigCatalogParser catalog) {
+    private ConfigPropertyItem doAdd(ConfigPropertyItem parent, String code,
+            String name) {
         ConfigPropertyItem item = new ConfigPropertyItem();
-        item.setCode(catalog.getCode());
+        item.setCode(code);
         item.setModule(this.module);
         
-        item.setName(catalog.getName());
+        item.setName(name);
         item.setValue("");
         item.setRemark(null);
         item.setValidateExpression(null);
@@ -313,7 +322,23 @@ public class LocalConfigPropertyManager
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    private ConfigPropertyItem doAdd(ConfigPropertyItem parent,
+    private ConfigPropertyItem doAdd(ConfigPropertyItem item) {
+        this.configPropertyItemService.insert(item);
+        return item;
+    }
+    
+    /**
+     * 构建配置属性<br/>
+     * <功能详细描述>
+     * @param parent
+     * @param config
+     * @return [参数说明]
+     * 
+     * @return ConfigPropertyItem [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    private ConfigPropertyItem doBuild(ConfigPropertyItem parent,
             ConfigPropertyParser config) {
         ConfigPropertyItem item = new ConfigPropertyItem();
         item.setCode(config.getCode());
@@ -326,8 +351,6 @@ public class LocalConfigPropertyManager
         item.setLeaf(true);
         item.setRemark(config.getRemark());
         item.setValue(config.getValue());
-        
-        this.configPropertyItemService.insert(item);
         return item;
     }
     
@@ -343,11 +366,11 @@ public class LocalConfigPropertyManager
      * @see [类、类#方法、类#成员]
      */
     private void doUpdate(ConfigPropertyItem item, ConfigPropertyItem parent,
-            ConfigCatalogParser catalog) {
-        item.setCode(catalog.getCode());
+            String code, String name) {
+        item.setCode(code);
         item.setModule(this.module);
         
-        item.setName(catalog.getName());
+        item.setName(name);
         item.setValidateExpression(null);
         item.setParentId(parent == null ? null : parent.getId());
         item.setModifyAble(false);
@@ -369,18 +392,17 @@ public class LocalConfigPropertyManager
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    private void doUpdate(ConfigPropertyItem item, ConfigPropertyItem parent,
-            ConfigPropertyParser config) {
-        item.setName(config.getName());
-        item.setRemark(config.getRemark());
-        item.setValidateExpression(config.getValidateExpression());
-        item.setModifyAble(config.isModifyAble());
-        item.setParentId(parent == null ? null : parent.getId());
+    private void doUpdate(ConfigPropertyItem item,
+            ConfigPropertyItem configItem) {
+        item.setName(configItem.getName());
+        item.setRemark(configItem.getRemark());
+        item.setValidateExpression(configItem.getValidateExpression());
+        item.setModifyAble(configItem.isModifyAble());
+        item.setParentId(configItem.getId());
         item.setLeaf(true);
-        if (!config.isModifyAble()) {
-            item.setValue(config.getValue());
+        if (!configItem.isModifyAble()) {
+            item.setValue(configItem.getValue());
         }
-        
         this.configPropertyItemService.updateById(item);
     }
     
@@ -389,7 +411,8 @@ public class LocalConfigPropertyManager
      * <功能详细描述>
      * @param item
      * @param parent
-     * @param configParser
+     * @param code
+     * @param name
      * @return [参数说明]
      * 
      * @return boolean [返回类型说明]
@@ -397,13 +420,11 @@ public class LocalConfigPropertyManager
      * @see [类、类#方法、类#成员]
      */
     private boolean matches(ConfigPropertyItem item, ConfigPropertyItem parent,
-            ConfigCatalogParser catalog) {
-        if (!StringUtils.equalsAnyIgnoreCase(catalog.getCode(),
-                item.getCode())) {
+            String code, String name) {
+        if (!StringUtils.equalsAnyIgnoreCase(code, item.getCode())) {
             return false;
         }
-        if (!StringUtils.equalsAnyIgnoreCase(catalog.getName(),
-                item.getName())) {
+        if (!StringUtils.equalsAnyIgnoreCase(name, item.getName())) {
             return false;
         }
         if (!StringUtils.equalsAnyIgnoreCase(
@@ -428,39 +449,117 @@ public class LocalConfigPropertyManager
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    private boolean matches(ConfigPropertyItem item, ConfigPropertyItem parent,
-            ConfigPropertyParser config) {
-        if (!StringUtils.equalsAnyIgnoreCase(config.getCode(),
+    private boolean matches(ConfigPropertyItem item,
+            ConfigPropertyItem configItem) {
+        if (!StringUtils.equalsAnyIgnoreCase(configItem.getCode(),
                 item.getCode())) {
             return false;
         }
-        if (!StringUtils.equalsAnyIgnoreCase(config.getName(),
+        if (!StringUtils.equalsAnyIgnoreCase(configItem.getName(),
                 item.getName())) {
             return false;
         }
-        if (!StringUtils.equalsAnyIgnoreCase(config.getRemark(),
+        if (!StringUtils.equalsAnyIgnoreCase(configItem.getRemark(),
                 item.getRemark())) {
             return false;
         }
-        if (!StringUtils.equalsAnyIgnoreCase(config.getValidateExpression(),
+        if (!StringUtils.equalsAnyIgnoreCase(configItem.getValidateExpression(),
                 item.getValidateExpression())) {
             return false;
         }
-        if (!StringUtils.equalsAnyIgnoreCase(
-                parent == null ? null : parent.getId(), item.getParentId())) {
+        if (!StringUtils.equalsAnyIgnoreCase(configItem.getParentId(),
+                item.getParentId())) {
             return false;
         }
         if (!item.isLeaf()) {
             return false;
         }
         //如果配置可编辑则，不需要对比value值，如果不可编辑,value值不一致，则使用配置的值
-        if (!config.isModifyAble()) {
-            if (!StringUtils.equalsAnyIgnoreCase(config.getValue(),
+        if (!configItem.isModifyAble()) {
+            if (!StringUtils.equalsAnyIgnoreCase(configItem.getValue(),
                     item.getValue())) {
                 return false;
             }
         }
         return true;
+    }
+    
+    /**
+     * 保存配置分类<br/>
+     * <功能详细描述>
+     * @param parent
+     * @param code
+     * @param name [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public ConfigPropertyItem saveCatalog(ConfigPropertyItem parent,
+            String code, String name) {
+        AssertUtils.notEmpty(code, "code is empty.");
+        codes.add(code);
+        
+        //查询对应的配置项是否存在
+        ConfigPropertyItem item = this.configPropertyItemService
+                .findByCode(this.module, code);
+        if (item == null) {
+            item = doAdd(parent, code, name);
+            logger.debug("...新增配置类目: code:{} | name:{}",
+                    new Object[] { item.getCode(), item.getName() });
+        } else if (!matches(item, parent, code, name)) {
+            doUpdate(item, parent, code, name);
+            logger.debug("...更新配置项: code:{} | name:{}",
+                    new Object[] { item.getCode(), item.getName() });
+        } else {
+            logger.debug("...加载配置项: code:{} | name:{}",
+                    new Object[] { item.getCode(), item.getName() });
+        }
+        return item;
+    }
+    
+    /**
+     * 保存配置项<br/>
+     * <功能详细描述>
+     * @param catalog
+     * @param code
+     * @param name
+     * @param defaultValue [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public void save(ConfigPropertyItem configItem) {
+        AssertUtils.notNull(configItem, "configItem is null.");
+        AssertUtils.notEmpty(configItem.getCode(), "configItem.code is empty.");
+        String code = configItem.getCode();
+        codes.add(configItem.getCode());
+        
+        configItem.setModule(this.module);
+        ConfigPropertyItem item = this.configPropertyItemService
+                .findByCode(this.module, code);
+        if (item == null) {
+            item = doAdd(configItem);
+            logger.debug(
+                    "...新增配置项: code:{} | name:{} | value:{} | remark:{} | parentId:{} | validateExpression:{}",
+                    new Object[] { item.getCode(), item.getName(),
+                            item.getValue(), item.getRemark(),
+                            item.getParentId(), item.getValidateExpression() });
+        } else if (!matches(item, configItem)) {
+            doUpdate(item, configItem);
+            logger.debug(
+                    "...更新配置项: code:{} | name:{} | value:{} | remark:{} | parentId:{} | validateExpression:{}",
+                    new Object[] { item.getCode(), item.getName(),
+                            item.getValue(), item.getRemark(),
+                            item.getParentId(), item.getValidateExpression() });
+        } else {
+            logger.debug(
+                    "...加载配置项: code:{} | name:{} | value:{} | remark:{} | parentId:{} | validateExpression:{}",
+                    new Object[] { item.getCode(), item.getName(),
+                            item.getValue(), item.getRemark(),
+                            item.getParentId(), item.getValidateExpression() });
+        }
     }
     
     /**
@@ -560,7 +659,7 @@ public class LocalConfigPropertyManager
         AssertUtils.notEmpty(module, "module is empty.");
         AssertUtils.notEmpty(code, "code is empty.");
         
-        if(!codes.contains(code)){
+        if (!codes.contains(code)) {
             return false;
         }
         value = value == null ? "" : value;

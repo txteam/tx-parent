@@ -14,7 +14,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 配置实例<br/>
+ * 配置实例实<br/>
  *  解析含有该注解的类，得到一个属性组<br/>
  * <功能详细描述>
  * 
@@ -27,19 +27,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE })
 @Inherited
-public @interface ConfigEntity {
-    
-    /**
-     * 配置项分类<br/>
-     *    如果为空，则将prefix当作catalog
-     * <功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return String [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    String catalog() default "";
+public @interface ConfigCatalog {
     
     /**
      * 配置编码<br>
@@ -50,7 +38,7 @@ public @interface ConfigEntity {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    String code() default "";
+    String code();
     
     /**
      * 配置对象名称<br/>

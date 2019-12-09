@@ -11,6 +11,7 @@ package com.tx.component.configuration.context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -27,7 +28,7 @@ import com.tx.component.configuration.service.ConfigPropertyManagerComposite;
  * @since [产品/模块版本]
  */
 public abstract class ConfigContextConfigurator
-        implements InitializingBean, ApplicationContextAware {
+        implements InitializingBean, ApplicationContextAware, BeanNameAware {
     
     /** 日志记录器 */
     protected static Logger logger = LoggerFactory
@@ -53,6 +54,14 @@ public abstract class ConfigContextConfigurator
     public void setApplicationContext(ApplicationContext applicationContext)
             throws BeansException {
         ConfigContextConfigurator.applicationContext = applicationContext;
+    }
+    
+    /**
+     * @param name
+     */
+    @Override
+    public void setBeanName(String name) {
+        ConfigContextConfigurator.beanName = name;
     }
     
     /**

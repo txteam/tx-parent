@@ -42,20 +42,6 @@ public class ConfigContext extends ConfigContextBuilder {
     protected void doInitContext() throws Exception {
     }
     
-    public <T> T setup(Class<T> configEntity) {
-        AssertUtils.notNull(configEntity, "configEntity is null.");
-        T config = null;
-        try {
-            config = BeanUtils.instantiateClass(configEntity);
-        } catch (BeanInstantiationException e) {
-            throw new ConfigAccessException(MessageUtils.format(
-                    "类无法进行初始化.class:{configEntity}", new Object[] {}), e);
-        }
-        //parseCatalog
-        
-        return null;
-    }
-    
     /**
      * 获取配置容器的唯一实例
      * 
@@ -74,6 +60,31 @@ public class ConfigContext extends ConfigContextBuilder {
         AssertUtils.notNull(ConfigContext.context, "context is null.");
         
         return ConfigContext.context;
+    }
+    
+    /**
+     * 装载配置实例<br/>
+     * <功能详细描述>
+     * @param configEntity
+     * @return [参数说明]
+     * 
+     * @return T [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public <INS> INS setup(Class<INS> configEntityType) {
+        AssertUtils.notNull(configEntityType, "configEntity is null.");
+        
+        INS config = null;
+        try {
+            config = BeanUtils.instantiateClass(configEntityType);
+        } catch (BeanInstantiationException e) {
+            throw new ConfigAccessException(MessageUtils.format(
+                    "类无法进行初始化.class:{configEntity}", new Object[] {}), e);
+        }
+        //parseCatalog
+        
+        return null;
     }
     
     /**
@@ -101,7 +112,6 @@ public class ConfigContext extends ConfigContextBuilder {
      * @see [类、类#方法、类#成员]
      */
     public boolean patch(String module, String code, String value) {
-        AssertUtils.notEmpty(module, "module is empty.");
         AssertUtils.notEmpty(code, "code is empty.");
         
         boolean flag = this.composite.patch(module, code, value);
@@ -133,7 +143,6 @@ public class ConfigContext extends ConfigContextBuilder {
      * @see [类、类#方法、类#成员]
      */
     public ConfigProperty find(String module, String code) {
-        AssertUtils.notEmpty(module, "module is empty.");
         AssertUtils.notEmpty(code, "code is empty.");
         
         ConfigProperty p = doFind(module, code);
@@ -167,8 +176,6 @@ public class ConfigContext extends ConfigContextBuilder {
      * @see [类、类#方法、类#成员]
      */
     public List<ConfigProperty> queryList(String module, Querier querier) {
-        AssertUtils.notEmpty(module, "module is empty.");
-        
         List<ConfigProperty> resList = doQueryList(module, querier);
         return resList;
     }
@@ -208,7 +215,6 @@ public class ConfigContext extends ConfigContextBuilder {
      */
     public List<ConfigProperty> queryChildrenByParentId(String module,
             String parentId, Querier querier) {
-        AssertUtils.notEmpty(module, "module is empty.");
         AssertUtils.notEmpty(parentId, "parentId is empty.");
         
         List<ConfigProperty> resList = doQueryChildrenByParentId(module,
@@ -252,7 +258,6 @@ public class ConfigContext extends ConfigContextBuilder {
      */
     public List<ConfigProperty> queryDescendantsByParentId(String module,
             String parentId, Querier querier) {
-        AssertUtils.notEmpty(module, "module is empty.");
         AssertUtils.notEmpty(parentId, "parentId is empty.");
         
         List<ConfigProperty> resList = doQueryDescendantsByParentId(module,

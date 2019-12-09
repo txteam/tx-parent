@@ -6,6 +6,7 @@
  */
 package com.tx.component.plugin.loginplugin;
 
+import com.tx.component.configuration.annotation.ConfigCatalog;
 import com.tx.component.plugin.context.PluginConfig;
 
 /**
@@ -17,6 +18,7 @@ import com.tx.component.plugin.context.PluginConfig;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
+@ConfigCatalog(code = "plugin.login", name = "登陆插件配置")
 public abstract class LoginPluginConfig extends PluginConfig {
     
     /** logo */

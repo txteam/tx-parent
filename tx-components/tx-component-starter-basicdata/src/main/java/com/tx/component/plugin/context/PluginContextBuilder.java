@@ -24,20 +24,9 @@ import org.springframework.beans.factory.BeanNameAware;
 public abstract class PluginContextBuilder extends PluginContextConfigurator
         implements BeanNameAware {
     
-    /** beanName实例 */
-    protected static String beanName;
-    
     /** 插件映射关联 */
     @SuppressWarnings("rawtypes")
     protected Map<String, Plugin> pluginMap = new HashMap<>();
-    
-    /**
-     * @param name
-     */
-    @Override
-    public void setBeanName(String name) {
-        PluginContextBuilder.beanName = name;
-    }
     
     /**
      * @throws Exception

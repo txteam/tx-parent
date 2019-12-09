@@ -6,7 +6,11 @@
  */
 package com.tx.component.config;
 
-import com.tx.component.configuration.annotation.ConfigEntity;
+import java.math.BigDecimal;
+import java.time.Duration;
+import java.util.Date;
+
+import com.tx.component.configuration.annotation.ConfigCatalog;
 import com.tx.component.plugin.loginplugin.LoginPluginConfig;
 
 /**
@@ -18,7 +22,7 @@ import com.tx.component.plugin.loginplugin.LoginPluginConfig;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-@ConfigEntity(catalog = "plugin.login", code = "plugin.login.qq", name = "QQ登陆插件配置")
+@ConfigCatalog(code = "plugin.login.qq", name = "QQ登陆插件配置")
 public class QQLoginPluginConfig extends LoginPluginConfig {
     
     private String methodName;
@@ -26,6 +30,70 @@ public class QQLoginPluginConfig extends LoginPluginConfig {
     private String test1;
     
     private String test2;
+    
+    private BigDecimal testBigDecimal;
+    
+    private Date testDate;
+    
+    private Duration duration;
+    
+    private Long testLong;
+    
+    /**
+     * @return 返回 testBigDecimal
+     */
+    public BigDecimal getTestBigDecimal() {
+        return testBigDecimal;
+    }
+    
+    /**
+     * @param 对testBigDecimal进行赋值
+     */
+    public void setTestBigDecimal(BigDecimal testBigDecimal) {
+        this.testBigDecimal = testBigDecimal;
+    }
+    
+    /**
+     * @return 返回 testDate
+     */
+    public Date getTestDate() {
+        return testDate;
+    }
+    
+    /**
+     * @param 对testDate进行赋值
+     */
+    public void setTestDate(Date testDate) {
+        this.testDate = testDate;
+    }
+    
+    /**
+     * @return 返回 duration
+     */
+    public Duration getDuration() {
+        return duration;
+    }
+    
+    /**
+     * @param 对duration进行赋值
+     */
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
+    
+    /**
+     * @return 返回 testLong
+     */
+    public Long getTestLong() {
+        return testLong;
+    }
+    
+    /**
+     * @param 对testLong进行赋值
+     */
+    public void setTestLong(Long testLong) {
+        this.testLong = testLong;
+    }
     
     /**
      * @return

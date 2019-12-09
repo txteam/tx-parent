@@ -9,8 +9,6 @@ package com.tx.component.basicdata.context;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.beans.factory.BeanNameAware;
-
 import com.tx.component.basicdata.model.BasicData;
 import com.tx.component.basicdata.model.TreeAbleBasicData;
 import com.tx.component.basicdata.service.BasicDataService;
@@ -26,22 +24,11 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public abstract class BasicDataContextBuilder extends BasicDataContextConfigurator
-        implements BeanNameAware {
-    
-    /** beanName实例 */
-    protected static String beanName;
+public abstract class BasicDataContextBuilder
+        extends BasicDataContextConfigurator {
     
     /** 类型2业务逻辑层的映射关联 */
     protected Map<Class<?>, BasicDataService<?>> type2serviceMap = new HashMap<>();
-    
-    /**
-     * @param name
-     */
-    @Override
-    public void setBeanName(String name) {
-        BasicDataContextBuilder.beanName = name;
-    }
     
     /**
      * @throws Exception
