@@ -7,6 +7,7 @@
 package com.tx.component.plugin.context;
 
 import com.tx.component.basicdata.context.BasicDataContext;
+import com.tx.component.plugin.service.PluginInstanceService;
 import com.tx.core.exceptions.util.AssertUtils;
 
 /**
@@ -62,9 +63,12 @@ public class PluginContext extends PluginContextBuilder {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
+    @SuppressWarnings("unchecked")
     public <PLUGIN extends Plugin<?>> PLUGIN getPlugin(
             Class<PLUGIN> pluginType) {
-        return null;
+        AssertUtils.notNull(pluginType, "pluginType is null.");
+        PLUGIN plugin = (PLUGIN) this.pluginTypeMap.get(pluginType);
+        return plugin;
     }
     
     /**
@@ -78,8 +82,42 @@ public class PluginContext extends PluginContextBuilder {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
+    @SuppressWarnings("unchecked")
+    public <PLUGIN extends Plugin<?>> PLUGIN getPlugin(String id) {
+        AssertUtils.notEmpty(id, "id is empty.");
+        PLUGIN plugin = (PLUGIN) this.pluginMap.get(id);
+        return plugin;
+    }
+    
+    /**
+     * 获取插件<br/>
+     * <功能详细描述>
+     * @param id
+     * @param pluginType
+     * @return [参数说明]
+     * 
+     * @return PLUGIN [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @SuppressWarnings("unchecked")
     public <PLUGIN extends Plugin<?>> PLUGIN getPlugin(String id,
             Class<PLUGIN> pluginType) {
-        return null;
+        AssertUtils.notEmpty(id, "id is empty.");
+        PLUGIN plugin = (PLUGIN) this.pluginMap.get(id);
+        return plugin;
+    }
+    
+    /**
+     * 获取插件实例<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return PLUGIN [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public PluginInstanceService getPluginInstanceService(){
+        return this.pluginInstanceService;
     }
 }

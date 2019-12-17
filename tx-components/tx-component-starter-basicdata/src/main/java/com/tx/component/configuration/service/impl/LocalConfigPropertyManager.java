@@ -398,7 +398,7 @@ public class LocalConfigPropertyManager
         item.setRemark(configItem.getRemark());
         item.setValidateExpression(configItem.getValidateExpression());
         item.setModifyAble(configItem.isModifyAble());
-        item.setParentId(configItem.getId());
+        item.setParentId(configItem.getParentId());
         item.setLeaf(true);
         if (!configItem.isModifyAble()) {
             item.setValue(configItem.getValue());
@@ -495,7 +495,7 @@ public class LocalConfigPropertyManager
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public ConfigPropertyItem saveCatalog(ConfigPropertyItem parent,
+    public ConfigPropertyItem setupCatalog(ConfigPropertyItem parent,
             String code, String name) {
         AssertUtils.notEmpty(code, "code is empty.");
         codes.add(code);
@@ -519,6 +519,24 @@ public class LocalConfigPropertyManager
     }
     
     /**
+     * 卸载配置项<br/>
+     * <功能详细描述>
+     * @param configItem [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public void uninstall(ConfigPropertyItem configItem) {
+        AssertUtils.notNull(configItem, "configItem is null.");
+        AssertUtils.notEmpty(configItem.getCode(), "configItem.code is empty.");
+        String code = configItem.getCode();
+        codes.remove(configItem.getCode());
+        
+        this.configPropertyItemService.deleteByCode(this.module, code);
+    }
+    
+    /**
      * 保存配置项<br/>
      * <功能详细描述>
      * @param catalog
@@ -530,7 +548,7 @@ public class LocalConfigPropertyManager
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public void save(ConfigPropertyItem configItem) {
+    public void install(ConfigPropertyItem configItem) {
         AssertUtils.notNull(configItem, "configItem is null.");
         AssertUtils.notEmpty(configItem.getCode(), "configItem.code is empty.");
         String code = configItem.getCode();

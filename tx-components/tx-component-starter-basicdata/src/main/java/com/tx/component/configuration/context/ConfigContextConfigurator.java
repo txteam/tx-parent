@@ -46,6 +46,9 @@ public abstract class ConfigContextConfigurator
     /** 配置属性持久器集合 */
     protected ConfigPropertyManagerComposite composite;
     
+    /** 代理工厂 */
+    protected ConfigEntityFactory configEntityFactory;
+    
     /**
      * @param applicationContext
      * @throws BeansException
@@ -69,15 +72,15 @@ public abstract class ConfigContextConfigurator
      */
     @Override
     public final void afterPropertiesSet() throws Exception {
-        logger.info("configContext init start. ");
+        logger.info("配置容器开始构建. ");
         
-        logger.info("......configContext doBuild. ");
+        logger.info("......配置容器开始构建... ");
         doBuild();
         
-        logger.info("......configContext doBuild. ");
+        logger.info("......配置容器开始初始化... ");
         doInitContext();
         
-        logger.info("configContext init start. ");
+        logger.info("配置容器构建完成. ");
     }
     
     /**
@@ -129,4 +132,20 @@ public abstract class ConfigContextConfigurator
     public void setComposite(ConfigPropertyManagerComposite composite) {
         this.composite = composite;
     }
+    
+    /**
+     * @return 返回 configEntityFactory
+     */
+    public ConfigEntityFactory getConfigEntityFactory() {
+        return configEntityFactory;
+    }
+    
+    /**
+     * @param 对configEntityFactory进行赋值
+     */
+    public void setConfigEntityFactory(
+            ConfigEntityFactory configEntityFactory) {
+        this.configEntityFactory = configEntityFactory;
+    }
+    
 }

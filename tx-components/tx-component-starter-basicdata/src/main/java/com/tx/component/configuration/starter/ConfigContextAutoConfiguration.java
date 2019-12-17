@@ -28,11 +28,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.StringUtils;
 
 import com.tx.component.basicdata.context.BasicDataContextFactory;
 import com.tx.component.configuration.ConfigContextConstants;
 import com.tx.component.configuration.context.ConfigContextFactory;
+import com.tx.component.configuration.context.ConfigEntityFactory;
 import com.tx.component.configuration.context.ConfigPropertyServiceSupportCacheProxyCreator;
 import com.tx.component.configuration.controller.ConfigContextAPIController;
 import com.tx.component.configuration.registry.ConfigAPIClientRegistry;
@@ -82,11 +84,15 @@ public class ConfigContextAutoConfiguration
     /** 配置文件所在路径 */
     private String configLocation = "classpath:config/*.xml";
     
+    private TransactionTemplate transactionTemplate;
+    
     /** <默认构造函数> */
-    public ConfigContextAutoConfiguration(ConfigContextProperties properties) {
+    public ConfigContextAutoConfiguration(ConfigContextProperties properties,
+            PlatformTransactionManager transactionManager) {
         super();
         
         this.properties = properties;
+        this.transactionTemplate = new TransactionTemplate(transactionManager);
     }
     
     /**
@@ -218,6 +224,24 @@ public class ConfigContextAutoConfiguration
     }
     
     /**
+     * 配置实体代理工厂<br/>
+     * <功能详细描述>
+     * @param localConfigPropertyManager
+     * @return [参数说明]
+     * 
+     * @return ConfigEntityProxyFactory [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @Bean(name = "configEntityFactory")
+    public ConfigEntityFactory configEntityFactory(
+            LocalConfigPropertyManager localConfigPropertyManager) {
+        ConfigEntityFactory factory = new ConfigEntityFactory(
+                this.transactionTemplate, localConfigPropertyManager);
+        return factory;
+    }
+    
+    /**
      * 配置容器<br/>
      * <功能详细描述>
      * @param composite
@@ -228,12 +252,13 @@ public class ConfigContextAutoConfiguration
      * @see [类、类#方法、类#成员]
      */
     @Bean
-    @ConditionalOnBean(ConfigPropertyManagerComposite.class)
     public ConfigContextFactory configContext(
-            ConfigPropertyManagerComposite composite) {
+            ConfigPropertyManagerComposite composite,
+            ConfigEntityFactory configEntityFactory) {
         ConfigContextFactory factory = new ConfigContextFactory();
-        factory.setComposite(composite);
         factory.setModule(module);
+        factory.setComposite(composite);
+        factory.setConfigEntityFactory(configEntityFactory);
         
         return factory;
     }

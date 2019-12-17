@@ -21,59 +21,8 @@ import com.tx.component.plugin.context.PluginConfig;
 @ConfigCatalog(code = "plugin.login", name = "登陆插件配置")
 public abstract class LoginPluginConfig extends PluginConfig {
     
-    /** logo */
-    private String logo;
-    
-    /** 登陆 action name */
-    private String loginActionName;
-    
-    /** 登陆view name */
-    private String loginViewName;
-    
     /** 登陆备注 */
     private String remark;
-    
-    /**
-     * @return 返回 logo
-     */
-    public String getLogo() {
-        return logo;
-    }
-    
-    /**
-     * @param 对logo进行赋值
-     */
-    public void setLogo(String logo) {
-        this.logo = logo;
-    }
-    
-    /**
-     * @return 返回 loginActionName
-     */
-    public String getLoginActionName() {
-        return loginActionName;
-    }
-    
-    /**
-     * @param 对loginActionName进行赋值
-     */
-    public void setLoginActionName(String loginActionName) {
-        this.loginActionName = loginActionName;
-    }
-    
-    /**
-     * @return 返回 loginViewName
-     */
-    public String getLoginViewName() {
-        return loginViewName;
-    }
-    
-    /**
-     * @param 对loginViewName进行赋值
-     */
-    public void setLoginViewName(String loginViewName) {
-        this.loginViewName = loginViewName;
-    }
     
     /**
      * @return 返回 remark

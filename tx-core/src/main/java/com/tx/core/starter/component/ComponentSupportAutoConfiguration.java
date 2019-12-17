@@ -19,7 +19,6 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
@@ -33,7 +32,6 @@ import com.tx.core.mybatis.support.MyBatisDaoSupport;
 import com.tx.core.mybatis.support.MyBatisDaoSupportHelper;
 import com.tx.core.starter.mybatis.AbstractMybatisConfiguration;
 import com.tx.core.starter.mybatis.ConfigurationCustomizer;
-import com.tx.core.starter.mybatis.MybatisAutoConfiguration;
 import com.tx.core.starter.mybatis.MybatisProperties;
 
 /**
@@ -91,6 +89,7 @@ public class ComponentSupportAutoConfiguration
         this.properties.setMapperLocations(new String[] {
                 "classpath*:com/tx/component/**/*SqlMap_BASICDATA.xml",
                 "classpath*:com/tx/component/**/*SqlMap_CONFIGURATION.xml",
+                "classpath*:com/tx/component/**/*SqlMap_PLUGIN.xml",
                 "classpath*:com/tx/component/**/*SqlMap_SECURITY.xml" });
         
         this.dataSource = dataSource;

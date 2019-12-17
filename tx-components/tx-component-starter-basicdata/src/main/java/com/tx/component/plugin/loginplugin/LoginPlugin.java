@@ -5,14 +5,10 @@
  */
 package com.tx.component.plugin.loginplugin;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.stereotype.Component;
-
 import com.tx.component.plugin.context.Plugin;
-import com.tx.component.plugin.service.PluginInstanceService;
 
 /**
  * 登陆插件<br/>
@@ -24,47 +20,14 @@ import com.tx.component.plugin.service.PluginInstanceService;
  * @since  [产品/模块版本]
  */
 public abstract class LoginPlugin<CONFIG extends LoginPluginConfig>
-        implements Plugin<CONFIG> {
-    
-    /** 插件实例业务层 */
-    @Resource
-    protected PluginInstanceService pluginInstanceService;
+        extends Plugin<CONFIG> {
     
     /**
-     * 获取登陆插件<br/>
      * @return
      */
     @Override
-    public String getId() {
-        return getClass().getAnnotation(Component.class).value();
-    }
-    
-    /**
-     * 获取是否已安装<br/>
-     * <功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return boolean [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public boolean getIsInstalled() {
-        boolean installed = this.pluginInstanceService.isInstalled(getId());
-        return installed;
-    }
-    
-    /**
-     * 获取是否已启用<br/>
-     * <功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return boolean [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public boolean getIsEnabled() {
-        //CONFIG pluginConfig = getConfig();
-        return false;
+    public String getCatalog() {
+        return "login";
     }
     
     /**
@@ -93,34 +56,6 @@ public abstract class LoginPlugin<CONFIG extends LoginPluginConfig>
      */
     public String getHeadImgUrl(HttpServletRequest request) {
         return "";
-    }
-    
-    /**
-     * 获取LOGO<br/>
-     * <功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return String [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public String getLogo() {
-        CONFIG config = getConfig();
-        return config.getLogo();
-    }
-    
-    /**
-     * 获取描述<br/>
-     * <功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return String [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public String getRemark() {
-        CONFIG config = getConfig();
-        return config.getRemark();
     }
     
     /**

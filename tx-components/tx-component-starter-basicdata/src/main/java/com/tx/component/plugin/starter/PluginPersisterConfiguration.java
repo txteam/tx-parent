@@ -4,7 +4,7 @@
  * 修改时间:  2019年4月30日
  * <修改描述:>
  */
-package com.tx.component.configuration.starter;
+package com.tx.component.plugin.starter;
 
 import javax.annotation.Resource;
 
@@ -17,10 +17,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import com.tx.component.configuration.dao.ConfigPropertyItemDao;
-import com.tx.component.configuration.dao.impl.ConfigPropertyItemDaoImpl;
-import com.tx.component.configuration.service.ConfigPropertyItemService;
-import com.tx.component.configuration.service.impl.ConfigPropertyItemServiceImpl;
+import com.tx.component.plugin.dao.PluginInstanceDao;
+import com.tx.component.plugin.dao.impl.PluginInstanceDaoImpl;
+import com.tx.component.plugin.service.PluginInstanceService;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.mybatis.support.MyBatisDaoSupport;
 import com.tx.core.starter.component.ComponentConstants;
@@ -35,10 +34,10 @@ import com.tx.core.starter.component.ComponentConstants;
  * @since  [产品/模块版本]
  */
 @Configuration
-public class ConfigPersisterConfiguration {
+public class PluginPersisterConfiguration {
     
     /** <默认构造函数> */
-    public ConfigPersisterConfiguration() {
+    public PluginPersisterConfiguration() {
         super();
     }
     
@@ -91,10 +90,10 @@ public class ConfigPersisterConfiguration {
          * @exception throws [异常类型] [异常说明]
          * @see [类、类#方法、类#成员]
          */
-        @Bean("config.configPropertyItemDao")
-        @ConditionalOnMissingBean(name = "config.configPropertyItemDao")
-        public ConfigPropertyItemDao configPropertyItemDao() throws Exception {
-            ConfigPropertyItemDao dao = new ConfigPropertyItemDaoImpl(
+        @Bean("plugin.pluginInstanceDao")
+        @ConditionalOnMissingBean(name = "plugin.pluginInstanceDao")
+        public PluginInstanceDao pluginInstanceDao() throws Exception {
+            PluginInstanceDao dao = new PluginInstanceDaoImpl(
                     this.myBatisDaoSupport);
             return dao;
         }
@@ -109,12 +108,12 @@ public class ConfigPersisterConfiguration {
          * @exception throws [异常类型] [异常说明]
          * @see [类、类#方法、类#成员]
          */
-        @Bean("config.configPropertyItemService")
-        @ConditionalOnMissingBean(name = "config.configPropertyItemService")
-        public ConfigPropertyItemService configPropertyItemService(
-                ConfigPropertyItemDao configPropertyItemDao) throws Exception {
-            ConfigPropertyItemService service = new ConfigPropertyItemServiceImpl(
-                    configPropertyItemDao);
+        @Bean("plugin.pluginInstanceService")
+        @ConditionalOnMissingBean(name = "plugin.pluginInstanceService")
+        public PluginInstanceService pluginInstanceService(
+                PluginInstanceDao pluginInstanceDao) throws Exception {
+            PluginInstanceService service = new PluginInstanceService(
+                    pluginInstanceDao);
             return service;
         }
     }

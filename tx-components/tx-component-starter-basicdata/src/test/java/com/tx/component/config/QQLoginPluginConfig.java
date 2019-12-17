@@ -96,15 +96,6 @@ public class QQLoginPluginConfig extends LoginPluginConfig {
     }
     
     /**
-     * @return
-     */
-    @Override
-    public boolean validate() {
-        // TODO Auto-generated method stub
-        return false;
-    }
-    
-    /**
      * @return 返回 methodName
      */
     public String getMethodName() {

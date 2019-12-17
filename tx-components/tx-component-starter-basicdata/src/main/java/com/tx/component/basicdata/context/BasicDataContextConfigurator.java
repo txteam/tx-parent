@@ -71,9 +71,11 @@ public abstract class BasicDataContextConfigurator
         logger.info("基础数据容器开始构建: ......");
         
         //进行容器构建
+        logger.info("......基础数据容器开始构建... ");
         doBuild();
         
         //初始化容器
+        logger.info("......基础数据容器开始初始化... ");
         doInitContext();
         
         logger.info("基础数据容器构建完成: ......");

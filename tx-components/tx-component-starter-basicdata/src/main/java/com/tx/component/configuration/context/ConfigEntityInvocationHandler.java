@@ -8,17 +8,16 @@ package com.tx.component.configuration.context;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.PropertyAccessorFactory;
 import org.springframework.cglib.proxy.InvocationHandler;
-import org.springframework.cglib.proxy.Proxy;
-import org.springframework.core.convert.support.DefaultConversionService;
+import org.springframework.core.convert.support.ConfigurableConversionService;
 
 import com.tx.component.configuration.model.ConfigProperty;
-import com.tx.core.exceptions.SILException;
 import com.tx.core.exceptions.util.AssertUtils;
 
 /**
@@ -30,10 +29,10 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class ConfigEntityProxy implements InvocationHandler {
+public class ConfigEntityInvocationHandler implements InvocationHandler {
     
     /** 转换业务层 */
-    private static DefaultConversionService conversionService = new DefaultConversionService();
+    private ConfigurableConversionService conversionService;
     
     /**  */
     private String prefix;
@@ -41,51 +40,44 @@ public class ConfigEntityProxy implements InvocationHandler {
     /** 目标对象 */
     private Object target;
     
-    /** 是否可编辑 */
-    private boolean modifyAble;
-    
-    /** 模块 */
-    private String module;
-    
     /** target对应的BeanWrapper对象 */
     private BeanWrapper targetBW;
     
     /** 方法到编码的映射 */
-    private Map<Method, String> method2codeMap = null;
+    private Map<Method, String> method2codeMap = new HashMap<Method, String>();
     
     /** set方法映射，映射到属性名 */
-    private Map<Method, String> setMethodMap = null;
+    private Map<Method, String> setMethodMap = new HashMap<>();
     
     /** get方法映射，映射到属性名 */
-    private Map<Method, String> getMethodMap = null;
+    private Map<Method, String> getMethodMap = new HashMap<>();
     
     /** <默认构造函数> */
-    private ConfigEntityProxy(Object target) {
+    public ConfigEntityInvocationHandler(String prefix, Object target) {
         super();
+        this.prefix = prefix;
         this.target = target;
-        this.modifyAble = true;
-        init();
     }
     
-    /** <默认构造函数> */
-    private ConfigEntityProxy(String module, Object target) {
-        super();
-        this.module = module;
-        this.target = target;
-        this.modifyAble = false;
-        init();
-    }
-    
-    private void init() {
+    /**
+     * 初始化<br/>
+     * <功能详细描述> [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public void init() {
         this.targetBW = PropertyAccessorFactory
                 .forBeanPropertyAccess(this.target);
+        
         for (PropertyDescriptor pd : this.targetBW.getPropertyDescriptors()) {
             if (pd.getReadMethod() == null || pd.getWriteMethod() == null) {
                 continue;
             }
             AssertUtils.isTrue(
-                    ConfigEntityProxy.conversionService
-                            .canConvert(pd.getPropertyType(), String.class),
+                    this.conversionService.canConvert(pd.getPropertyType(),
+                            String.class),
                     "property:{} can not be convert to String.",
                     pd.getName());
             
@@ -102,23 +94,6 @@ public class ConfigEntityProxy implements InvocationHandler {
         }
     }
     
-    /** 
-     * 绑定委托对象并返回一个代理类 
-     * @param target 
-     * @return 
-     */
-    @SuppressWarnings("unchecked")
-    public static <T> T proxy(T target, boolean modifyAble) {
-        AssertUtils.notNull(target, "target is null.");
-        
-        ConfigEntityProxy handler = new ConfigEntityProxy(target);
-        T proxy = (T) Proxy.newProxyInstance(target.getClass().getClassLoader(),
-                target.getClass().getInterfaces(),
-                handler);
-        
-        return proxy;
-    }
-    
     @Override
     /** 
      * 调用方法 
@@ -130,45 +105,42 @@ public class ConfigEntityProxy implements InvocationHandler {
             //执行方法  
             return method.invoke(target, args);
         }
-        //如果不能修改，则直接抛出异常
-        if (modifyAble == false && setMethodMap.containsKey(method)) {
-            throw new SILException("属性不能进行修改，出现不期望的调用.");
-        }
         
         //取值
         String code = method2codeMap.get(method);
-        
         if (getMethodMap.containsKey(method)) {
             AssertUtils.isTrue(ArrayUtils.isEmpty(args),
                     "getMethod args.length should == 0.method:{}",
                     new Object[] { method });
             
-            ConfigProperty cp = ConfigContext.getContext().find(this.module,
-                    code);
-            AssertUtils.notNull(cp,
-                    "ConfigProperty(module={},code={}) is not exists.",
-                    this.module,
-                    code);
-            
-            String value = ConfigContext.getContext()
-                    .find(this.module, code)
-                    .getValue();
+            //在get方法调用以前，将配置容器中的值读取写入到当前的bean中
             String property = getMethodMap.get(method);
+            ConfigProperty cp = ConfigContext.getContext().find(code);
+            AssertUtils.notNull(cp,
+                    "ConfigProperty(code={}) is not exists.",
+                    code);
+            String value = ConfigContext.getContext().find(code).getValue();
             this.targetBW.setPropertyValue(property, value);
-            
         } else if (setMethodMap.containsKey(method)) {
             AssertUtils.isTrue(args.length == 1,
                     "setMethod args.length should == 1.method:{}",
                     new Object[] { method });
             
-            this.targetBW.setPropertyValue(setMethodMap.get(method), args[0]);
-        } else {
-            //执行方法  
-            result = method.invoke(target, args);
+            //调用set方法以前先修改配置值
+            String newValue = this.conversionService.convert(args[0],
+                    String.class);
+            ConfigContext.getContext().patch(code, newValue);
         }
         //执行方法  
         result = method.invoke(target, args);
         return result;
     }
     
+    /**
+     * @param 对conversionService进行赋值
+     */
+    public void setConversionService(
+            ConfigurableConversionService conversionService) {
+        this.conversionService = conversionService;
+    }
 }

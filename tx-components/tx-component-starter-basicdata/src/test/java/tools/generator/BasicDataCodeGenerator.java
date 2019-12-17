@@ -5,8 +5,9 @@ package tools.generator;
 
 import java.io.IOException;
 
-import com.tx.component.configuration.model.ConfigPropertyItem;
+import com.tx.component.plugin.model.PluginInstance;
 import com.tx.core.generator2.CodeGenerator;
+import com.tx.core.generator2.model.ViewTypeEnum;
 
 /**
  * 基础数据生成类<br/>
@@ -19,18 +20,27 @@ import com.tx.core.generator2.CodeGenerator;
 public class BasicDataCodeGenerator {
     
     public static void main(String[] args) throws IOException {
-        Class<?> entityType = ConfigPropertyItem.class;
+        boolean toProjectPath = true;//是否生成覆盖到项目代码中，如果设置为false则会写入D盘的目录中
+        Class<?> entityType = PluginInstance.class;
+        ViewTypeEnum viewType = ViewTypeEnum.LIST;
+        boolean needConfirmOverwriteFile = true;//覆盖文件前是否需要提示
         
-        //基础数据逻辑代码生成存放目录
-        String project_path = org.springframework.util.StringUtils
-                .cleanPath(entityType.getResource("/").getPath() + "../..");
-        String codeBaseFolder = project_path;
-        CodeGenerator.BASE_CODE_FOLDER = codeBaseFolder;
+        //基础数据逻辑代码生成存放目录com.tx.component.basicdata.generator.
+        if (toProjectPath) {
+            String project_path = org.springframework.util.StringUtils
+                    .cleanPath(entityType.getResource("/").getPath() + "../..");
+            String codeBaseFolder = project_path;
+            CodeGenerator.BASE_CODE_FOLDER = codeBaseFolder;
+        }
         
+        //基础数据生成逻辑代码对应的数据库类型(mysql与oracle)在sqlMap中组装like条件是不一致的
+        CodeGenerator.NEED_CONFIRM_WHEN_EXSITS = needConfirmOverwriteFile;
         CodeGenerator.generateDBScript(entityType);
         CodeGenerator.generateSqlMap(entityType);
         CodeGenerator.generateDao(entityType);
         CodeGenerator.generateService(entityType);
-        CodeGenerator.generateController(entityType);
+        CodeGenerator.generateController(entityType, viewType);
+        
+        System.out.println("success");
     }
 }

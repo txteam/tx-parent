@@ -10,6 +10,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
+import com.tx.component.configuration.annotation.ConfigCatalog;
 import com.tx.component.configuration.context.ConfigContext;
 import com.tx.component.configuration.model.ConfigProperty;
 import com.tx.core.exceptions.util.AssertUtils;
@@ -24,6 +25,34 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @since  [产品/模块版本]
  */
 public class ConfigContextUtils {
+    
+    /**
+     * 预处理prefix参数<br/>
+     * <功能详细描述>
+     * @param prefix
+     * @param configEntityType
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static String preprocessPrefix(String prefix,
+            Class<?> configEntityType) {
+        if (StringUtils.isEmpty(prefix)) {
+            if (!configEntityType.isAnnotationPresent(ConfigCatalog.class)) {
+                prefix = configEntityType.getSimpleName();
+            } else {
+                ConfigCatalog catalogA = configEntityType
+                        .getAnnotation(ConfigCatalog.class);
+                prefix = catalogA.code();
+            }
+        }
+        if (!StringUtils.endsWith(prefix, ".")) {
+            prefix = prefix + ".";
+        }
+        return prefix;
+    }
     
     /**
      * 根据编码获取配置属性<br/>

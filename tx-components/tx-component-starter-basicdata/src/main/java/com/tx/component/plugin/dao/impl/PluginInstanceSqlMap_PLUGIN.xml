@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper 
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pluginInstance">
+
+	<!-- auto generate default resultMap -->
+	<resultMap id="pluginInstanceMap" 
+		type="com.tx.component.plugin.model.PluginInstance">
+	</resultMap>
+	
+	<!-- auto generate default find -->
+	<select id="find" 
+		parameterType="com.tx.component.plugin.model.PluginInstance"
+		resultMap="pluginInstanceMap">
+		SELECT 
+				PI.id,
+				PI.catalog,
+				PI.prefix,
+				PI.name,
+				PI.version,
+				PI.installed,
+				PI.valid,
+				PI.author,
+				PI.priority,
+				PI.remark,
+				PI.lastUpdateDate,
+				PI.createDate,
+				PI.settingUrl,
+				PI.describeUrl,
+				PI.installUrl,
+				PI.uninstallUrl
+		  FROM BD_PLUGIN_INSTANCE PI
+		 WHERE
+		<trim prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
+	            AND PI.id = #{id}
+	        </if>
+		</trim>
+	</select>
+	
+	<!-- auto generate default query -->
+	<select id="query" 
+		parameterType="java.util.Map"
+		resultMap="pluginInstanceMap">
+		SELECT 
+				PI.id,
+				PI.catalog,
+				PI.prefix,
+				PI.name,
+				PI.version,
+				PI.installed,
+				PI.valid,
+				PI.author,
+				PI.priority,
+				PI.remark,
+				PI.lastUpdateDate,
+				PI.createDate,
+				PI.settingUrl,
+				PI.describeUrl,
+				PI.installUrl,
+				PI.uninstallUrl
+		  FROM BD_PLUGIN_INSTANCE PI
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(conditions)">
+			<foreach collection="conditions" item="conditionTemp">
+			<choose>  
+		        <when test="conditionTemp.withoutValue">
+		        	AND ${conditionTemp.column} ${conditionTemp.operator}
+		        </when>
+		        <when test="conditionTemp.foreach">  
+		            AND ${conditionTemp.column} ${conditionTemp.operator} <foreach collection="conditionTemp.value" item="valueTemp" open="(" close=")" separator=",">#{valueTemp}</foreach>
+		        </when>
+		        <otherwise>  
+		            AND ${conditionTemp.column} ${conditionTemp.operator} #{conditionTemp.value}
+		        </otherwise>
+			</choose>
+			</foreach>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
+	            <![CDATA[ AND PI.id = #{id} ]]>
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(catalog)">  
+	            <![CDATA[ AND PI.catalog = #{catalog} ]]>
+	        </if>				
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(name)">  
+	            <![CDATA[ AND PI.name = #{name} ]]>
+	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(valid)">  
+	            <![CDATA[ AND PI.valid = #{valid} ]]>
+	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(author)">  
+	            <![CDATA[ AND PI.author = #{author} ]]>
+	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(minCreateDate)">  
+	            <![CDATA[ AND PI.createDate >= #{minCreateDate} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(maxCreateDate)">  
+	            <![CDATA[ AND PI.createDate < #{maxCreateDate} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(prefix)">  
+	            <![CDATA[ AND PI.prefix = #{prefix} ]]>
+	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(remark)">  
+	            <![CDATA[ AND PI.remark = #{remark} ]]>
+	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(installUrl)">  
+	            <![CDATA[ AND PI.installUrl = #{installUrl} ]]>
+	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(settingUrl)">  
+	            <![CDATA[ AND PI.settingUrl = #{settingUrl} ]]>
+	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(version)">  
+	            <![CDATA[ AND PI.version = #{version} ]]>
+	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(describeUrl)">  
+	            <![CDATA[ AND PI.describeUrl = #{describeUrl} ]]>
+	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(priority)">  
+	            <![CDATA[ AND PI.priority = #{priority} ]]>
+	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(installed)">  
+	            <![CDATA[ AND PI.installed = #{installed} ]]>
+	        </if>		
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(uninstallUrl)">  
+	            <![CDATA[ AND PI.uninstallUrl = #{uninstallUrl} ]]>
+	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(excludeId)">
+				<![CDATA[ AND PI.id <> #{excludeId} ]]>
+			</if>
+		</trim>
+		<choose>  
+	        <when test="@com.tx.core.util.OgnlUtils@isNotEmpty(orders)">  
+	            ORDER BY <foreach collection="orders" item="orderTemp" separator=",">${orderTemp.column} ${orderTemp.direction}</foreach>
+	        </when>
+	        <otherwise>  
+	            ORDER BY createDate DESC
+	        </otherwise>  
+	    </choose>
+	</select>
+
+	<!-- auto generate default count -->
+	<select id="queryCount" 
+		parameterType="java.util.Map"
+		resultType="java.lang.Integer">
+		SELECT COUNT(1)
+		  FROM BD_PLUGIN_INSTANCE PI
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(conditions)">
+			<foreach collection="conditions" item="conditionTemp">
+			<choose>  
+		        <when test="conditionTemp.withoutValue">
+		        	AND ${conditionTemp.column} ${conditionTemp.operator}
+		        </when>
+		        <when test="conditionTemp.foreach">  
+		            AND ${conditionTemp.column} ${conditionTemp.operator} <foreach collection="conditionTemp.value" item="valueTemp" open="(" close=")" separator=",">#{valueTemp}</foreach>
+		        </when>
+		        <otherwise>  
+		            AND ${conditionTemp.column} ${conditionTemp.operator} #{conditionTemp.value}
+		        </otherwise>
+			</choose>
+			</foreach>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
+	            <![CDATA[ AND PI.id = #{id} ]]>
+	        </if>	
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(catalog)">  
+	            <![CDATA[ AND PI.catalog = #{catalog} ]]>
+	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(name)">  
+	            <![CDATA[ AND PI.name = #{name} ]]>
+	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(valid)">  
+	            <![CDATA[ AND PI.valid = #{valid} ]]>
+	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(author)">  
+	            <![CDATA[ AND PI.author = #{author} ]]>
+	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(minCreateDate)">  
+	            <![CDATA[ AND PI.createDate >= #{minCreateDate} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(maxCreateDate)">  
+	            <![CDATA[ AND PI.createDate < #{maxCreateDate} ]]>
+	        </if>		
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(prefix)">  
+	            <![CDATA[ AND PI.prefix = #{prefix} ]]>
+	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(remark)">  
+	            <![CDATA[ AND PI.remark = #{remark} ]]>
+	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(installUrl)">  
+	            <![CDATA[ AND PI.installUrl = #{installUrl} ]]>
+	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(settingUrl)">  
+	            <![CDATA[ AND PI.settingUrl = #{settingUrl} ]]>
+	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(version)">  
+	            <![CDATA[ AND PI.version = #{version} ]]>
+	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(describeUrl)">  
+	            <![CDATA[ AND PI.describeUrl = #{describeUrl} ]]>
+	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(priority)">  
+	            <![CDATA[ AND PI.priority = #{priority} ]]>
+	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(installed)">  
+	            <![CDATA[ AND PI.installed = #{installed} ]]>
+	        </if>		
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(uninstallUrl)">  
+	            <![CDATA[ AND PI.uninstallUrl = #{uninstallUrl} ]]>
+	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(excludeId)">
+				<![CDATA[ AND PI.id <> #{excludeId} ]]>
+			</if>
+		</trim>
+	</select>
+	
+	<!-- auto generate default insert -->
+    <insert id="insert" 
+		parameterType="com.tx.component.plugin.model.PluginInstance">
+		INSERT INTO BD_PLUGIN_INSTANCE
+		(
+			id,
+			catalog,
+			lastUpdateDate,
+			name,
+			valid,
+			author,
+			createDate,
+			prefix,
+			remark,
+			installUrl,
+			settingUrl,
+			version,
+			describeUrl,
+			priority,
+			installed,
+			uninstallUrl
+		)
+		VALUES
+		(
+			#{id},
+			#{catalog},
+			#{lastUpdateDate},
+			#{name},
+			#{valid},
+			#{author},
+			#{createDate},
+			#{prefix},
+			#{remark},
+			#{installUrl},
+			#{settingUrl},
+			#{version},
+			#{describeUrl},
+			#{priority},
+			#{installed},
+			#{uninstallUrl}
+		)
+	</insert>
+	
+	<!-- auto generate default delete -->
+	<delete id="delete" 
+		parameterType="com.tx.component.plugin.model.PluginInstance">
+		DELETE FROM BD_PLUGIN_INSTANCE  WHERE
+		<trim prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
+	            AND id = #{id}
+	        </if>
+		</trim>
+	</delete>
+	
+	<!-- auto generate default update -->
+	<update id="update"
+	    parameterType="java.util.Map">  
+	    UPDATE BD_PLUGIN_INSTANCE
+	    <trim prefix="SET" suffixOverrides=",">
+			<if test="_parameter.containsKey('lastUpdateDate')">
+	    		lastUpdateDate = #{lastUpdateDate,javaType=java.util.Date},
+	    	</if>
+	    	<if test="_parameter.containsKey('catalog')">
+	    		catalog = #{catalog,javaType=java.lang.String},
+	    	</if>
+			<if test="_parameter.containsKey('name')">
+	    		name = #{name,javaType=java.lang.String},
+	    	</if>
+			<if test="_parameter.containsKey('valid')">
+	    		valid = #{valid,javaType=boolean},
+	    	</if>
+			<if test="_parameter.containsKey('author')">
+	    		author = #{author,javaType=java.lang.String},
+	    	</if>
+			<if test="_parameter.containsKey('prefix')">
+	    		prefix = #{prefix,javaType=java.lang.String},
+	    	</if>
+			<if test="_parameter.containsKey('remark')">
+	    		remark = #{remark,javaType=java.lang.String},
+	    	</if>
+			<if test="_parameter.containsKey('installUrl')">
+	    		installUrl = #{installUrl,javaType=java.lang.String},
+	    	</if>
+			<if test="_parameter.containsKey('settingUrl')">
+	    		settingUrl = #{settingUrl,javaType=java.lang.String},
+	    	</if>
+			<if test="_parameter.containsKey('version')">
+	    		version = #{version,javaType=java.lang.String},
+	    	</if>
+			<if test="_parameter.containsKey('describeUrl')">
+	    		describeUrl = #{describeUrl,javaType=java.lang.String},
+	    	</if>
+			<if test="_parameter.containsKey('priority')">
+	    		priority = #{priority,javaType=int},
+	    	</if>
+			<if test="_parameter.containsKey('installed')">
+	    		installed = #{installed,javaType=boolean},
+	    	</if>
+			<if test="_parameter.containsKey('uninstallUrl')">
+	    		uninstallUrl = #{uninstallUrl,javaType=java.lang.String},
+	    	</if>
+	    </trim>
+	    WHERE
+		<trim prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
+	            AND id = #{id}
+	        </if>
+		</trim>
+	</update> 
+
+</mapper>

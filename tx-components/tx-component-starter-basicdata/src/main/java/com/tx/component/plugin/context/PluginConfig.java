@@ -24,17 +24,6 @@ public abstract class PluginConfig {
     private boolean enable = false;
     
     /**
-     * 验证插件配置是否合法<br/>
-     * <功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return boolean [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public abstract boolean validate();
-    
-    /**
      * @return 返回 enable
      */
     public boolean isEnable() {

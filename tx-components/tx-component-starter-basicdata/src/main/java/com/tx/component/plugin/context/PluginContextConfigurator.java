@@ -14,6 +14,8 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+import com.tx.component.plugin.service.PluginInstanceService;
+
 /**
  * 插件容器配置器<br/>
  * <功能详细描述>
@@ -34,6 +36,12 @@ public abstract class PluginContextConfigurator
     
     /** beanName实例 */
     protected static String beanName;
+    
+    /** 所属项目（模块） */
+    protected String module;
+    
+    /** 插件实例业务层 */
+    protected PluginInstanceService pluginInstanceService;
     
     /** <默认构造函数> */
     public PluginContextConfigurator() {
@@ -64,10 +72,13 @@ public abstract class PluginContextConfigurator
     @Override
     public final void afterPropertiesSet() throws Exception {
         logger.info("插件容器开始构建: ......");
+        
         //进行容器构建
+        logger.info("......插件容器开始构建... ");
         doBuild();
         
         //初始化容器
+        logger.info("......插件容器开始初始化... ");
         doInitContext();
         
         logger.info("插件容器构建完成: ......");
@@ -82,4 +93,34 @@ public abstract class PluginContextConfigurator
      * 容器初始化<br/>
      */
     protected abstract void doInitContext() throws Exception;
+    
+    /**
+     * @return 返回 module
+     */
+    public String getModule() {
+        return module;
+    }
+    
+    /**
+     * @param 对module进行赋值
+     */
+    public void setModule(String module) {
+        this.module = module;
+    }
+    
+    /**
+     * @return 返回 pluginInstanceService
+     */
+    public PluginInstanceService getPluginInstanceService() {
+        return pluginInstanceService;
+    }
+    
+    /**
+     * @param 对pluginInstanceService进行赋值
+     */
+    public void setPluginInstanceService(
+            PluginInstanceService pluginInstanceService) {
+        this.pluginInstanceService = pluginInstanceService;
+    }
+    
 }

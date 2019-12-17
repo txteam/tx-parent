@@ -7,23 +7,33 @@
 package com.tx.component.configuration.context;
 
 import java.beans.PropertyDescriptor;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanInstantiationException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.PropertyAccessorFactory;
 import org.springframework.core.convert.TypeDescriptor;
+import org.springframework.core.convert.support.ConfigurableConversionService;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import com.tx.component.configuration.annotation.ConfigCatalog;
 import com.tx.component.configuration.exception.ConfigAccessException;
+import com.tx.component.configuration.model.ConfigProperty;
 import com.tx.component.configuration.model.ConfigPropertyItem;
 import com.tx.component.configuration.service.impl.LocalConfigPropertyManager;
+import com.tx.component.configuration.util.ConfigContextUtils;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.util.MessageUtils;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiModelProperty.AccessMode;
 
 /**
  * 配置装载支撑类<br/>
@@ -36,12 +46,60 @@ import io.swagger.annotations.ApiModelProperty;
  */
 public class ConfigEntityInitializer {
     
+    /** 转换业务层 */
+    private ConfigurableConversionService conversionService;
+    
+    /** 事务控制 */
+    private TransactionTemplate transactionTemplate;
+    
     /** 本地配置属性管理器 */
     private LocalConfigPropertyManager localConfigPropertyManager;
     
     /** <默认构造函数> */
     public ConfigEntityInitializer() {
         super();
+    }
+    
+    /** <默认构造函数> */
+    public ConfigEntityInitializer(
+            ConfigurableConversionService conversionService,
+            TransactionTemplate transactionTemplate,
+            LocalConfigPropertyManager localConfigPropertyManager) {
+        super();
+        this.conversionService = conversionService;
+        this.transactionTemplate = transactionTemplate;
+        this.localConfigPropertyManager = localConfigPropertyManager;
+    }
+    
+    /**
+     * 将配置类解析为具体的配置项<br/>
+     * <功能详细描述>
+     * @param prefix
+     * @param configEntityType
+     * @return [参数说明]
+     * 
+     * @return List<ConfigProperty> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public List<ConfigProperty> parse(String prefix,
+            Class<?> configEntityType) {
+        AssertUtils.notNull(this.localConfigPropertyManager,
+                "localConfigPropertyManager is null.");
+        AssertUtils.notNull(configEntityType, "configEntityType is null.");
+        
+        List<ConfigProperty> resList = new ArrayList<ConfigProperty>();
+        
+        BeanWrapper bw = new BeanWrapperImpl(configEntityType);
+        for (PropertyDescriptor pd : bw.getPropertyDescriptors()) {
+            if (pd.getReadMethod() == null || pd.getWriteMethod() == null) {
+                //忽略get,set不存在的属性
+                continue;
+            }
+            String code = doBuildProperty(prefix, null, bw, pd).getCode();
+            resList.add(ConfigContext.getContext().find(code));
+        }
+        return resList;
     }
     
     /**
@@ -55,7 +113,70 @@ public class ConfigEntityInitializer {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    private <INS> INS initialize(String prefix, Class<INS> configEntityType) {
+    public void uninstall(String prefix, Class<?> configEntityType) {
+        AssertUtils.notNull(this.transactionTemplate,
+                "transactionTemplate is null.");
+        AssertUtils.notNull(this.localConfigPropertyManager,
+                "localConfigPropertyManager is null.");
+        AssertUtils.notNull(configEntityType, "configEntityType is null.");
+        
+        final String newprefix = ConfigContextUtils.preprocessPrefix(prefix,
+                configEntityType);
+        BeanWrapper bw = new BeanWrapperImpl(configEntityType);
+        
+        this.transactionTemplate
+                .execute(new TransactionCallbackWithoutResult() {
+                    @Override
+                    protected void doInTransactionWithoutResult(
+                            TransactionStatus status) {
+                        doUninstallProperties(newprefix, bw);
+                    }
+                });
+    }
+    
+    /**
+     * 卸载属性<br/>
+     * <功能详细描述>
+     * @param prefix
+     * @param parent
+     * @param bw [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    private void doUninstallProperties(String prefix, BeanWrapper bw) {
+        for (PropertyDescriptor pd : bw.getPropertyDescriptors()) {
+            if (pd.getReadMethod() == null || pd.getWriteMethod() == null) {
+                //忽略get,set不存在的属性
+                continue;
+            }
+            ConfigPropertyItem item = doBuildProperty(prefix, null, bw, pd);
+            //如果存在
+            this.localConfigPropertyManager.uninstall(item);
+        }
+    }
+    
+    /**
+     * 根据配置实体类初始化配置实体<br/>
+     * <功能详细描述>
+     * @param prefix
+     * @param configEntityType
+     * @return [参数说明]
+     * 
+     * @return INS [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public <INS> INS install(String prefix, Class<INS> configEntityType) {
+        AssertUtils.notNull(this.transactionTemplate,
+                "transactionTemplate is null.");
+        AssertUtils.notNull(this.localConfigPropertyManager,
+                "localConfigPropertyManager is null.");
+        AssertUtils.notNull(configEntityType, "configEntityType is null.");
+        
+        final String newprefix = ConfigContextUtils.preprocessPrefix(prefix,
+                configEntityType);
         INS config = null;
         try {
             config = BeanUtils.instantiateClass(configEntityType);
@@ -63,28 +184,42 @@ public class ConfigEntityInitializer {
             throw new ConfigAccessException(MessageUtils.format(
                     "类无法进行初始化.class:{configEntity}", new Object[] {}), e);
         }
-        ConfigPropertyItem parent = doSetupCatalog(configEntityType);
-        if (StringUtils.isEmpty(prefix)) {
-            prefix = parent.getCode() + ".";
-        }
-        if (!StringUtils.endsWith(prefix, ".")) {
-            prefix = prefix + ".";
-        }
         BeanWrapper bw = PropertyAccessorFactory.forBeanPropertyAccess(config);
-        doSetupProperties(prefix, parent, bw);
+        
+        this.transactionTemplate
+                .execute(new TransactionCallbackWithoutResult() {
+                    @Override
+                    protected void doInTransactionWithoutResult(
+                            TransactionStatus status) {
+                        ConfigPropertyItem parent = doSetupCatalog(
+                                configEntityType);
+                        doInstallProperties(newprefix, parent, bw);
+                    }
+                });
         return config;
     }
     
-    private void doSetupProperties(String prefix, ConfigPropertyItem parent,
+    /**
+     * 安装属性<br/>
+     * <功能详细描述>
+     * @param prefix
+     * @param parent
+     * @param bw [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    private void doInstallProperties(String prefix, ConfigPropertyItem parent,
             BeanWrapper bw) {
         for (PropertyDescriptor pd : bw.getPropertyDescriptors()) {
             if (pd.getReadMethod() == null || pd.getWriteMethod() == null) {
                 //忽略get,set不存在的属性
                 continue;
             }
-            ConfigPropertyItem item = doSetupProperty(prefix, parent, bw, pd);
+            ConfigPropertyItem item = doBuildProperty(prefix, parent, bw, pd);
             //如果存在
-            this.localConfigPropertyManager.save(item);
+            this.localConfigPropertyManager.install(item);
         }
     }
     
@@ -100,33 +235,40 @@ public class ConfigEntityInitializer {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public ConfigPropertyItem doSetupProperty(String prefix,
+    private ConfigPropertyItem doBuildProperty(String prefix,
             ConfigPropertyItem parent, BeanWrapper bw, PropertyDescriptor pd) {
-        AssertUtils.notNull(parent, "parent is null.");
+        //AssertUtils.notNull(parent, "parent is null.");卸载期间为空
         AssertUtils.notNull(bw, "bw is null.");
         AssertUtils.notNull(pd, "pd is null.");
         
         String code = prefix + pd.getName();
-        String name = code;
+        String name = pd.getName();
+        boolean modifyAble = true;//默认为可编辑
         
-        TypeDescriptor td = bw.getPropertyTypeDescriptor(code);
+        String defaultValue = this.conversionService
+                .convert(bw.getPropertyValue(pd.getName()), String.class);
+        TypeDescriptor td = bw.getPropertyTypeDescriptor(pd.getName());
         if (td.hasAnnotation(ApiModelProperty.class)) {
-            name = td.getAnnotation(ApiModelProperty.class).value();
+            ApiModelProperty proinfo = td.getAnnotation(ApiModelProperty.class);
+            name = proinfo.value();
+            //复用属性注解，使用其中accessMode表示属性不可编辑
+            modifyAble = proinfo.accessMode() == AccessMode.READ_ONLY ? false
+                    : true;
         }
+        
         if (StringUtils.isEmpty(name)) {
-            name = code;
+            name = pd.getName();
         }
         
         ConfigPropertyItem item = new ConfigPropertyItem();
         item.setCode(code);
         item.setName(name);
-        
+        item.setModifyAble(modifyAble);
         item.setParentId(parent == null ? null : parent.getId());
-        item.setModifyAble(true);
         item.setLeaf(true);
         item.setValidateExpression("");
         item.setRemark("");
-        item.setValue("");
+        item.setValue(defaultValue);
         return item;
     }
     
@@ -151,7 +293,6 @@ public class ConfigEntityInitializer {
                 name = configEntityType.getAnnotation(ApiModel.class).value();
             }
         } else {
-            
             ConfigCatalog catalogA = configEntityType
                     .getAnnotation(ConfigCatalog.class);
             code = catalogA.code();
@@ -170,7 +311,7 @@ public class ConfigEntityInitializer {
         
         //保存并返回便于下一级配置项目录进行存储
         ConfigPropertyItem item = this.localConfigPropertyManager
-                .saveCatalog(parent, code, name);
+                .setupCatalog(parent, code, name);
         return item;
     }
     
@@ -205,8 +346,23 @@ public class ConfigEntityInitializer {
         
         //保存并返回便于下一级配置项目录进行存储
         ConfigPropertyItem item = this.localConfigPropertyManager
-                .saveCatalog(parent, code, name);
+                .setupCatalog(parent, code, name);
         return item;
     }
     
+    /**
+     * @param 对transactionTemplate进行赋值
+     */
+    public void setTransactionTemplate(
+            TransactionTemplate transactionTemplate) {
+        this.transactionTemplate = transactionTemplate;
+    }
+    
+    /**
+     * @param 对localConfigPropertyManager进行赋值
+     */
+    public void setLocalConfigPropertyManager(
+            LocalConfigPropertyManager localConfigPropertyManager) {
+        this.localConfigPropertyManager = localConfigPropertyManager;
+    }
 }

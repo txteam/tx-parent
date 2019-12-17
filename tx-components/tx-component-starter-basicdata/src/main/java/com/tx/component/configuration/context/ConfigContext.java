@@ -8,14 +8,10 @@ package com.tx.component.configuration.context;
 
 import java.util.List;
 
-import org.springframework.beans.BeanInstantiationException;
-import org.springframework.beans.BeanUtils;
-
-import com.tx.component.configuration.exception.ConfigAccessException;
 import com.tx.component.configuration.model.ConfigProperty;
+import com.tx.component.configuration.util.ConfigContextUtils;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.querier.model.Querier;
-import com.tx.core.util.MessageUtils;
 
 /**
  * 配置容器<br/>
@@ -63,7 +59,72 @@ public class ConfigContext extends ConfigContextBuilder {
     }
     
     /**
-     * 装载配置实例<br/>
+     * 根据code获取对应的配置属性实例<br/>
+     * <功能详细描述>
+     * @param prefix
+     * @param configEntityType
+     * @param property
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public String code(String prefix, Class<?> configEntityType,
+            String property) {
+        AssertUtils.notNull(configEntityType, "configEntityType is null.");
+        AssertUtils.notEmpty(property, "property is empty.");
+        
+        prefix = ConfigContextUtils.preprocessPrefix(prefix, configEntityType);
+        String code = prefix + property;
+        
+        return code;
+    }
+    
+    /**
+     * 解析配置类返回配置属性集合<br/>
+     * <功能详细描述>
+     * @param prefix
+     * @param configEntityType
+     * @return [参数说明]
+     * 
+     * @return List<ConfigProperty> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public List<ConfigProperty> setupConfigProperties(String prefix,
+            Class<?> configEntityType) {
+        AssertUtils.notNull(configEntityType, "configEntityType is null.");
+        
+        prefix = ConfigContextUtils.preprocessPrefix(prefix, configEntityType);
+        List<ConfigProperty> resList = this.configEntityFactory.parse(prefix,
+                configEntityType);
+        return resList;
+    }
+    
+    /**
+     * 安装配置实例<br/>
+     * <功能详细描述>
+     * @param prefix
+     * @param configEntityType
+     * @return [参数说明]
+     * 
+     * @return INS [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public <INS> INS setupConfigEntity(String prefix,
+            Class<INS> configEntityType) {
+        AssertUtils.notNull(configEntityType, "configEntityType is null.");
+        prefix = ConfigContextUtils.preprocessPrefix(prefix, configEntityType);
+        
+        INS configEntity = this.configEntityFactory.setup(prefix,
+                configEntityType);
+        return configEntity;
+    }
+    
+    /**
+     * 卸载配置实例<br/>
      * <功能详细描述>
      * @param configEntity
      * @return [参数说明]
@@ -72,19 +133,11 @@ public class ConfigContext extends ConfigContextBuilder {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public <INS> INS setup(Class<INS> configEntityType) {
-        AssertUtils.notNull(configEntityType, "configEntity is null.");
+    public <INS> void uninstall(String prefix, Class<INS> configEntityType) {
+        AssertUtils.notNull(configEntityType, "configEntityType is null.");
+        prefix = ConfigContextUtils.preprocessPrefix(prefix, configEntityType);
         
-        INS config = null;
-        try {
-            config = BeanUtils.instantiateClass(configEntityType);
-        } catch (BeanInstantiationException e) {
-            throw new ConfigAccessException(MessageUtils.format(
-                    "类无法进行初始化.class:{configEntity}", new Object[] {}), e);
-        }
-        //parseCatalog
-        
-        return null;
+        this.configEntityFactory.uninstall(prefix, configEntityType);
     }
     
     /**
