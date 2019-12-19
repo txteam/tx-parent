@@ -11,7 +11,6 @@ import java.time.Duration;
 import java.util.Date;
 
 import com.tx.component.configuration.annotation.ConfigCatalog;
-import com.tx.component.plugin.loginplugin.LoginPluginConfig;
 
 /**
  * QQ登陆插件配置<br/>

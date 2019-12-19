@@ -25,11 +25,7 @@
 				PI.priority,
 				PI.remark,
 				PI.lastUpdateDate,
-				PI.createDate,
-				PI.settingUrl,
-				PI.describeUrl,
-				PI.installUrl,
-				PI.uninstallUrl
+				PI.createDate
 		  FROM BD_PLUGIN_INSTANCE PI
 		 WHERE
 		<trim prefixOverrides="AND | OR">
@@ -55,11 +51,7 @@
 				PI.priority,
 				PI.remark,
 				PI.lastUpdateDate,
-				PI.createDate,
-				PI.settingUrl,
-				PI.describeUrl,
-				PI.installUrl,
-				PI.uninstallUrl
+				PI.createDate
 		  FROM BD_PLUGIN_INSTANCE PI
 		<trim prefix="WHERE" prefixOverrides="AND | OR">
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(conditions)">
@@ -104,27 +96,15 @@
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(remark)">  
 	            <![CDATA[ AND PI.remark = #{remark} ]]>
 	        </if>			
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(installUrl)">  
-	            <![CDATA[ AND PI.installUrl = #{installUrl} ]]>
-	        </if>			
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(settingUrl)">  
-	            <![CDATA[ AND PI.settingUrl = #{settingUrl} ]]>
-	        </if>			
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(version)">  
 	            <![CDATA[ AND PI.version = #{version} ]]>
-	        </if>			
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(describeUrl)">  
-	            <![CDATA[ AND PI.describeUrl = #{describeUrl} ]]>
-	        </if>			
+	        </if>		
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(priority)">  
 	            <![CDATA[ AND PI.priority = #{priority} ]]>
 	        </if>			
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(installed)">  
 	            <![CDATA[ AND PI.installed = #{installed} ]]>
 	        </if>		
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(uninstallUrl)">  
-	            <![CDATA[ AND PI.uninstallUrl = #{uninstallUrl} ]]>
-	        </if>			
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(excludeId)">
 				<![CDATA[ AND PI.id <> #{excludeId} ]]>
 			</if>
@@ -163,10 +143,10 @@
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
 	            <![CDATA[ AND PI.id = #{id} ]]>
-	        </if>	
+	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(catalog)">  
 	            <![CDATA[ AND PI.catalog = #{catalog} ]]>
-	        </if>			
+	        </if>				
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(name)">  
 	            <![CDATA[ AND PI.name = #{name} ]]>
 	        </if>			
@@ -181,34 +161,22 @@
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(maxCreateDate)">  
 	            <![CDATA[ AND PI.createDate < #{maxCreateDate} ]]>
-	        </if>		
+	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(prefix)">  
 	            <![CDATA[ AND PI.prefix = #{prefix} ]]>
 	        </if>			
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(remark)">  
 	            <![CDATA[ AND PI.remark = #{remark} ]]>
 	        </if>			
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(installUrl)">  
-	            <![CDATA[ AND PI.installUrl = #{installUrl} ]]>
-	        </if>			
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(settingUrl)">  
-	            <![CDATA[ AND PI.settingUrl = #{settingUrl} ]]>
-	        </if>			
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(version)">  
 	            <![CDATA[ AND PI.version = #{version} ]]>
-	        </if>			
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(describeUrl)">  
-	            <![CDATA[ AND PI.describeUrl = #{describeUrl} ]]>
-	        </if>			
+	        </if>		
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(priority)">  
 	            <![CDATA[ AND PI.priority = #{priority} ]]>
 	        </if>			
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(installed)">  
 	            <![CDATA[ AND PI.installed = #{installed} ]]>
 	        </if>		
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(uninstallUrl)">  
-	            <![CDATA[ AND PI.uninstallUrl = #{uninstallUrl} ]]>
-	        </if>			
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(excludeId)">
 				<![CDATA[ AND PI.id <> #{excludeId} ]]>
 			</if>
@@ -229,13 +197,9 @@
 			createDate,
 			prefix,
 			remark,
-			installUrl,
-			settingUrl,
 			version,
-			describeUrl,
 			priority,
-			installed,
-			uninstallUrl
+			installed
 		)
 		VALUES
 		(
@@ -248,13 +212,9 @@
 			#{createDate},
 			#{prefix},
 			#{remark},
-			#{installUrl},
-			#{settingUrl},
 			#{version},
-			#{describeUrl},
 			#{priority},
-			#{installed},
-			#{uninstallUrl}
+			#{installed}
 		)
 	</insert>
 	
@@ -295,26 +255,14 @@
 			<if test="_parameter.containsKey('remark')">
 	    		remark = #{remark,javaType=java.lang.String},
 	    	</if>
-			<if test="_parameter.containsKey('installUrl')">
-	    		installUrl = #{installUrl,javaType=java.lang.String},
-	    	</if>
-			<if test="_parameter.containsKey('settingUrl')">
-	    		settingUrl = #{settingUrl,javaType=java.lang.String},
-	    	</if>
 			<if test="_parameter.containsKey('version')">
 	    		version = #{version,javaType=java.lang.String},
-	    	</if>
-			<if test="_parameter.containsKey('describeUrl')">
-	    		describeUrl = #{describeUrl,javaType=java.lang.String},
 	    	</if>
 			<if test="_parameter.containsKey('priority')">
 	    		priority = #{priority,javaType=int},
 	    	</if>
 			<if test="_parameter.containsKey('installed')">
 	    		installed = #{installed,javaType=boolean},
-	    	</if>
-			<if test="_parameter.containsKey('uninstallUrl')">
-	    		uninstallUrl = #{uninstallUrl,javaType=java.lang.String},
 	    	</if>
 	    </trim>
 	    WHERE

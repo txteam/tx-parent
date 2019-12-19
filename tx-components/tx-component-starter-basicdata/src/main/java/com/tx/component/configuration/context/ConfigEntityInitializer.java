@@ -29,6 +29,8 @@ import com.tx.component.configuration.model.ConfigPropertyItem;
 import com.tx.component.configuration.service.impl.LocalConfigPropertyManager;
 import com.tx.component.configuration.util.ConfigContextUtils;
 import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.querier.model.Filter;
+import com.tx.core.querier.model.QuerierBuilder;
 import com.tx.core.util.MessageUtils;
 
 import io.swagger.annotations.ApiModel;
@@ -118,20 +120,54 @@ public class ConfigEntityInitializer {
                 "transactionTemplate is null.");
         AssertUtils.notNull(this.localConfigPropertyManager,
                 "localConfigPropertyManager is null.");
-        AssertUtils.notNull(configEntityType, "configEntityType is null.");
         
         final String newprefix = ConfigContextUtils.preprocessPrefix(prefix,
                 configEntityType);
-        BeanWrapper bw = new BeanWrapperImpl(configEntityType);
         
-        this.transactionTemplate
-                .execute(new TransactionCallbackWithoutResult() {
-                    @Override
-                    protected void doInTransactionWithoutResult(
-                            TransactionStatus status) {
-                        doUninstallProperties(newprefix, bw);
-                    }
-                });
+        if (configEntityType != null) {
+            //如果存在类型则直接进行精确删除
+            BeanWrapper bw = new BeanWrapperImpl(configEntityType);
+            this.transactionTemplate
+                    .execute(new TransactionCallbackWithoutResult() {
+                        @Override
+                        protected void doInTransactionWithoutResult(
+                                TransactionStatus status) {
+                            doUninstallProperties(newprefix, bw);
+                        }
+                    });
+        } else {
+            //兼容配置类型为空的形式，考虑到插件重构，原来的类型根本就不存在的情形，这个时候直接根据prefix匹配上进行删除
+            //当然也可能存在配置值误删的可能性，但通过命名约定是能够规避这种情形的
+            this.transactionTemplate
+                    .execute(new TransactionCallbackWithoutResult() {
+                        @Override
+                        protected void doInTransactionWithoutResult(
+                                TransactionStatus status) {
+                            doUninstallPropertiesByPrefix(newprefix);
+                        }
+                    });
+        }
+    }
+    
+    /**
+     * 卸载属性<br/>
+     * <功能详细描述>
+     * @param prefix
+     * @param parent
+     * @param bw [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    private void doUninstallPropertiesByPrefix(String prefix) {
+        List<ConfigProperty> cpList = this.localConfigPropertyManager
+                .queryList(QuerierBuilder.newInstance()
+                        .addFilter(Filter.like("code", prefix + "%"))
+                        .querier());
+        for (ConfigProperty cp : cpList) {
+            this.localConfigPropertyManager.uninstall(cp);
+        }
     }
     
     /**

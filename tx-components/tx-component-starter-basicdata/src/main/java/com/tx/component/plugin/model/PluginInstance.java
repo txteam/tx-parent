@@ -31,7 +31,7 @@ public class PluginInstance implements Serializable {
     /** 插件实例唯一键 */
     private String id;
     
-    /** 插件配置前置参数 */
+    /** 插件分类:一个插件可能存在多个分类，可以既是支付，又是登陆，又是其他...,多个分类以逗号进行分隔 */
     private String catalog;
     
     /** 插件配置前置参数 */
@@ -58,241 +58,173 @@ public class PluginInstance implements Serializable {
     /** 备注 */
     private String remark;
     
-    /** 获取插件描述的url */
-    private String describeUrl;
-    
-    /** 获取插件安装的url */
-    private String installUrl;
-    
-    /** 获取插件卸载的url */
-    private String uninstallUrl;
-    
-    /** 获取插件配置的url */
-    private String settingUrl;
-    
     /** 最后更新时间 */
     private Date lastUpdateDate;
     
     /** 创建时间 */
     private Date createDate;
-
+    
     /**
      * @return 返回 id
      */
     public String getId() {
         return id;
     }
-
+    
     /**
      * @param 对id进行赋值
      */
     public void setId(String id) {
         this.id = id;
     }
-
+    
     /**
      * @return 返回 catalog
      */
     public String getCatalog() {
         return catalog;
     }
-
+    
     /**
      * @param 对catalog进行赋值
      */
     public void setCatalog(String catalog) {
         this.catalog = catalog;
     }
-
+    
     /**
      * @return 返回 prefix
      */
     public String getPrefix() {
         return prefix;
     }
-
+    
     /**
      * @param 对prefix进行赋值
      */
     public void setPrefix(String prefix) {
         this.prefix = prefix;
     }
-
+    
     /**
      * @return 返回 name
      */
     public String getName() {
         return name;
     }
-
+    
     /**
      * @param 对name进行赋值
      */
     public void setName(String name) {
         this.name = name;
     }
-
+    
     /**
      * @return 返回 version
      */
     public String getVersion() {
         return version;
     }
-
+    
     /**
      * @param 对version进行赋值
      */
     public void setVersion(String version) {
         this.version = version;
     }
-
+    
     /**
      * @return 返回 author
      */
     public String getAuthor() {
         return author;
     }
-
+    
     /**
      * @param 对author进行赋值
      */
     public void setAuthor(String author) {
         this.author = author;
     }
-
+    
     /**
      * @return 返回 installed
      */
     public boolean isInstalled() {
         return installed;
     }
-
+    
     /**
      * @param 对installed进行赋值
      */
     public void setInstalled(boolean installed) {
         this.installed = installed;
     }
-
+    
     /**
      * @return 返回 valid
      */
     public boolean isValid() {
         return valid;
     }
-
+    
     /**
      * @param 对valid进行赋值
      */
     public void setValid(boolean valid) {
         this.valid = valid;
     }
-
+    
     /**
      * @return 返回 priority
      */
     public int getPriority() {
         return priority;
     }
-
+    
     /**
      * @param 对priority进行赋值
      */
     public void setPriority(int priority) {
         this.priority = priority;
     }
-
+    
     /**
      * @return 返回 remark
      */
     public String getRemark() {
         return remark;
     }
-
+    
     /**
      * @param 对remark进行赋值
      */
     public void setRemark(String remark) {
         this.remark = remark;
     }
-
-    /**
-     * @return 返回 describeUrl
-     */
-    public String getDescribeUrl() {
-        return describeUrl;
-    }
-
-    /**
-     * @param 对describeUrl进行赋值
-     */
-    public void setDescribeUrl(String describeUrl) {
-        this.describeUrl = describeUrl;
-    }
-
-    /**
-     * @return 返回 installUrl
-     */
-    public String getInstallUrl() {
-        return installUrl;
-    }
-
-    /**
-     * @param 对installUrl进行赋值
-     */
-    public void setInstallUrl(String installUrl) {
-        this.installUrl = installUrl;
-    }
-
-    /**
-     * @return 返回 uninstallUrl
-     */
-    public String getUninstallUrl() {
-        return uninstallUrl;
-    }
-
-    /**
-     * @param 对uninstallUrl进行赋值
-     */
-    public void setUninstallUrl(String uninstallUrl) {
-        this.uninstallUrl = uninstallUrl;
-    }
-
-    /**
-     * @return 返回 settingUrl
-     */
-    public String getSettingUrl() {
-        return settingUrl;
-    }
-
-    /**
-     * @param 对settingUrl进行赋值
-     */
-    public void setSettingUrl(String settingUrl) {
-        this.settingUrl = settingUrl;
-    }
-
+    
     /**
      * @return 返回 lastUpdateDate
      */
     public Date getLastUpdateDate() {
         return lastUpdateDate;
     }
-
+    
     /**
      * @param 对lastUpdateDate进行赋值
      */
     public void setLastUpdateDate(Date lastUpdateDate) {
         this.lastUpdateDate = lastUpdateDate;
     }
-
+    
     /**
      * @return 返回 createDate
      */
     public Date getCreateDate() {
         return createDate;
     }
-
+    
     /**
      * @param 对createDate进行赋值
      */

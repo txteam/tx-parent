@@ -9,6 +9,7 @@ package com.tx.component.plugin.context;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
@@ -49,6 +50,12 @@ public abstract class PluginContextBuilder extends PluginContextConfigurator
         Collection<Plugin> plugins = applicationContext
                 .getBeansOfType(Plugin.class).values();
         
+        //查询数据库中已经存在的插件实例
+        List<PluginInstance> dbList = this.pluginInstanceService.queryList(null,
+                (Map<String, Object>) null);
+        Map<String, PluginInstance> insMap = new HashMap<>();
+        dbList.stream().forEach(ins -> insMap.put(ins.getId(), ins));
+        
         //通过插件实例，存储插件实例信息
         for (Plugin pluginTemp : plugins) {
             AssertUtils.isTrue(!pluginMap.containsKey(pluginTemp.getId()),
@@ -74,7 +81,18 @@ public abstract class PluginContextBuilder extends PluginContextConfigurator
             //插件装载茹映射中
             pluginMap.put(pluginTemp.getId(), pluginTemp);
             pluginTypeMap.put(type, pluginTemp);
+            
+            insMap.remove(ins.getId());
         }
+        
+        //删除已经不存在的插件
+        insMap.forEach((idTemp, ins) -> {
+            if (ins.isInstalled()) {
+                //根据前缀卸载原插件中的所有配置
+                ConfigContext.getContext().uninstall(ins.getPrefix(), null);
+            }
+            this.pluginInstanceService.deleteById(idTemp);
+        });
     }
     
     /**
@@ -160,10 +178,6 @@ public abstract class PluginContextBuilder extends PluginContextConfigurator
             ins.setName(buildIns.getName());
             ins.setCatalog(buildIns.getCatalog());
             ins.setRemark(buildIns.getRemark());
-            ins.setDescribeUrl(buildIns.getDescribeUrl());
-            ins.setInstallUrl(buildIns.getInstallUrl());
-            ins.setUninstallUrl(buildIns.getUninstallUrl());
-            ins.setSettingUrl(buildIns.getSettingUrl());
             ins.setPriority(buildIns.getPriority());
             
             //版本号变化、前缀变化、归属模块变化  需要特殊处理，需要标定插件为未安装，需要重新安装
@@ -178,23 +192,11 @@ public abstract class PluginContextBuilder extends PluginContextConfigurator
                 || !StringUtils.equals(ins.getName(), buildIns.getName())
                 || !StringUtils.equals(ins.getRemark(), buildIns.getRemark())
                 || !StringUtils.equals(ins.getCatalog(), buildIns.getCatalog())
-                || !StringUtils.equals(ins.getDescribeUrl(),
-                        buildIns.getDescribeUrl())
-                || !StringUtils.equals(ins.getInstallUrl(),
-                        buildIns.getInstallUrl())
-                || !StringUtils.equals(ins.getUninstallUrl(),
-                        buildIns.getUninstallUrl())
-                || !StringUtils.equals(ins.getSettingUrl(),
-                        buildIns.getSettingUrl())
                 || ins.getPriority() != buildIns.getPriority()) {
             ins.setAuthor(buildIns.getAuthor());
             ins.setName(buildIns.getName());
             ins.setCatalog(buildIns.getCatalog());
             ins.setRemark(buildIns.getRemark());
-            ins.setDescribeUrl(buildIns.getDescribeUrl());
-            ins.setInstallUrl(buildIns.getInstallUrl());
-            ins.setUninstallUrl(buildIns.getUninstallUrl());
-            ins.setSettingUrl(buildIns.getSettingUrl());
             ins.setPriority(buildIns.getPriority());
             
             //更新插件
@@ -226,11 +228,6 @@ public abstract class PluginContextBuilder extends PluginContextConfigurator
         
         pi.setValid(false);
         pi.setInstalled(false);
-        
-        pi.setDescribeUrl(plugin.getDescribeUrl());
-        pi.setInstallUrl(plugin.getInstallUrl());
-        pi.setUninstallUrl(plugin.getUninstallUrl());
-        pi.setSettingUrl(plugin.getSettingUrl());
         
         Date now = new Date();
         pi.setCreateDate(now);

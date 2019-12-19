@@ -4,7 +4,7 @@
  * 修改时间:  2019年12月4日
  * <修改描述:>
  */
-package com.tx.component.plugin.loginplugin;
+package com.tx.component.config;
 
 import com.tx.component.configuration.annotation.ConfigCatalog;
 import com.tx.component.plugin.context.PluginConfig;

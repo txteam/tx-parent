@@ -3,10 +3,12 @@
  * Support: http://www.cqtianxin.com
  * License: http://www.cqtianxin.com/license
  */
-package com.tx.component.plugin.loginplugin;
+package com.tx.component.config;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.web.servlet.ModelAndView;
 
 import com.tx.component.plugin.context.Plugin;
 
@@ -45,34 +47,6 @@ public abstract class LoginPlugin<CONFIG extends LoginPluginConfig>
     }
     
     /**
-     * 获取第三方的头像ImageUrl<br/>
-     * <功能详细描述>
-     * @param request
-     * @return [参数说明]
-     * 
-     * @return String [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public String getHeadImgUrl(HttpServletRequest request) {
-        return "";
-    }
-    
-    /**
-     * 是否支持当前请求<br/>
-     * <功能详细描述>
-     * @param request
-     * @return [参数说明]
-     * 
-     * @return boolean [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public boolean supports(HttpServletRequest request) {
-        return true;
-    }
-    
-    /**
      * 获取唯一ID<br/>
      * <功能详细描述>
      * @param request
@@ -85,19 +59,16 @@ public abstract class LoginPlugin<CONFIG extends LoginPluginConfig>
     public abstract String getUniqueId(HttpServletRequest request);
     
     /**
-     * 获取客户信息<br/>
-     * <功能详细描述>
-     * @param uniqueId
-     * @param accessToken
-     * @param request
-     * @param response [参数说明]
-     * 
-     * @return void [返回类型说明]
+     * 登录处理
+     * @param loginPlugin  登录插件
+     * @param extra        附加内容
+     * @param request      HttpServletRequest
+     * @param response     HttpServletResponse
+     * @param modelAndView ModelAndView
      * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
      */
-    public abstract void getUserInfo(String uniqueId, String accessToken,
-            HttpServletRequest request, HttpServletResponse response);
+    public abstract void signInHandle(HttpServletRequest request,
+            HttpServletResponse response, ModelAndView modelAndView);
     
     /**
      * 判断是否登录成功<br/>
@@ -112,7 +83,7 @@ public abstract class LoginPlugin<CONFIG extends LoginPluginConfig>
      * @see [类、类#方法、类#成员]
      */
     public abstract boolean isSignInSuccess(HttpServletRequest request,
-            HttpServletResponse response) throws Exception;
+            HttpServletResponse response);
     
     //    /**
     //     * 登录前处理

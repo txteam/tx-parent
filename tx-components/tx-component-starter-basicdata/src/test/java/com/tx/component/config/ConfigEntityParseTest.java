@@ -7,7 +7,6 @@
 package com.tx.component.config;
 
 import java.beans.PropertyDescriptor;
-import java.beans.PropertyEditor;
 
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;

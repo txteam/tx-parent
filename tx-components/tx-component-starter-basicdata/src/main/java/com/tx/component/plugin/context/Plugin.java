@@ -176,58 +176,6 @@ public abstract class Plugin<CONFIG extends PluginConfig>
     }
     
     /**
-     * 获取描述网址<br/>
-     * <功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return String [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public String getDescribeUrl() {
-        return "";
-    }
-    
-    /**
-     * 获取安装URL<br/>
-     * <功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return String [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public String getInstallUrl() {
-        return "";
-    }
-    
-    /**
-     * 获取卸载URL<br/>
-     * <功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return String [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public String getUninstallUrl() {
-        return "";
-    }
-    
-    /**
-     * 获取设置URL<br/>
-     * <功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return String [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public String getSettingUrl() {
-        return "";
-    }
-    
-    /**
      * 获取插件优先级<br/>
      * <功能详细描述>
      * @return [参数说明]

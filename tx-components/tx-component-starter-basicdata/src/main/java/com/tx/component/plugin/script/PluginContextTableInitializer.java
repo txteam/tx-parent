@@ -109,11 +109,7 @@ public class PluginContextTableInitializer extends AbstractTableInitializer {
                 .newColumnOfVarchar("author", 64, true, null)
                 .newColumnOfBoolean("installed", true, false)
                 .newColumnOfBoolean("valid", true, false)
-                .newColumnOfVarchar("describeUrl", 255, false, null)
-                .newColumnOfVarchar("installUrl", 255, false, null)
-                .newColumnOfVarchar("uninstallUrl", 255, false, null)
-                .newColumnOfVarchar("settingUrl", 255, false, null)
-                .newColumnOfVarchar("remark", 512, false, null)
+                .newColumnOfVarchar("remark", 255, false, null)
                 .newColumnOfInteger("priority", true, 0)
                 .newColumnOfDate("lastUpdateDate", true, true)
                 .newColumnOfDate("createDate", true, true);

@@ -160,8 +160,6 @@ public class ConfigEntityFactory implements InitializingBean {
      */
     public synchronized void uninstall(String prefix,
             Class<?> configEntityType) {
-        AssertUtils.notNull(configEntityType, "configEntityType is null.");
-        
         //预处理前置
         prefix = ConfigContextUtils.preprocessPrefix(prefix, configEntityType);
         if (!configEntityMap.containsKey(configEntityType)) {

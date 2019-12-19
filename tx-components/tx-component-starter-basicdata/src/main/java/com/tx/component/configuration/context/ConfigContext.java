@@ -134,8 +134,8 @@ public class ConfigContext extends ConfigContextBuilder {
      * @see [类、类#方法、类#成员]
      */
     public <INS> void uninstall(String prefix, Class<INS> configEntityType) {
-        AssertUtils.notNull(configEntityType, "configEntityType is null.");
-        prefix = ConfigContextUtils.preprocessPrefix(prefix, configEntityType);
+        prefix = ConfigContextUtils.preprocessPrefix(prefix,
+                configEntityType);
         
         this.configEntityFactory.uninstall(prefix, configEntityType);
     }

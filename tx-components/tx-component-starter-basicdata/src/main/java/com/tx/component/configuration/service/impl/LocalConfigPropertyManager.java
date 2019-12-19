@@ -527,11 +527,11 @@ public class LocalConfigPropertyManager
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public void uninstall(ConfigPropertyItem configItem) {
-        AssertUtils.notNull(configItem, "configItem is null.");
-        AssertUtils.notEmpty(configItem.getCode(), "configItem.code is empty.");
-        String code = configItem.getCode();
-        codes.remove(configItem.getCode());
+    public void uninstall(ConfigProperty config) {
+        AssertUtils.notNull(config, "config is null.");
+        AssertUtils.notEmpty(config.getCode(), "config.code is empty.");
+        String code = config.getCode();
+        codes.remove(config.getCode());
         
         this.configPropertyItemService.deleteByCode(this.module, code);
     }

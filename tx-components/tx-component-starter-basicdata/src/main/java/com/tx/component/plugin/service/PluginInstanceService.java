@@ -356,10 +356,6 @@ public class PluginInstanceService {
         
         updateRowMap.put("name", pluginInstance.getName());
         updateRowMap.put("author", pluginInstance.getAuthor());
-        updateRowMap.put("describeUrl", pluginInstance.getDescribeUrl());
-        updateRowMap.put("uninstallUrl", pluginInstance.getUninstallUrl());
-        updateRowMap.put("installUrl", pluginInstance.getInstallUrl());
-        updateRowMap.put("settingUrl", pluginInstance.getSettingUrl());
         updateRowMap.put("priority", pluginInstance.getPriority());
         updateRowMap.put("remark", pluginInstance.getRemark());
         
