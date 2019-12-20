@@ -20,7 +20,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @since  [产品/模块版本]
  */
 @ConfigurationProperties(prefix = HttpClientProperties.HTTP_CLIENT_PREFIX)
-public class HttpClientProperties implements Cloneable {
+public class HttpClientProperties {
     
     /** 常量 */
     public static final String HTTP_CLIENT_PREFIX = "tx.core.httpclient";
@@ -45,9 +45,10 @@ public class HttpClientProperties implements Cloneable {
     
     public static final boolean DEFAULT_FOLLOW_REDIRECTS = true;
     
-    /** */
+    /** 默认的链接超时时间 */
     public static final int DEFAULT_CONNECTION_TIMEOUT = 2000;
     
+    /** 默认的重试时间 */
     public static final int DEFAULT_CONNECTION_TIMER_REPEAT = 3000;
     
     private boolean disableSslValidation = DEFAULT_DISABLE_SSL_VALIDATION;

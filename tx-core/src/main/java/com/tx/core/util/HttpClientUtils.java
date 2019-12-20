@@ -1,520 +1,571 @@
-///*
-// * 描          述:  <描述>
-// * 修  改   人:  Administrator
-// * 修改时间:  2016年7月2日
-// * <修改描述:>
-// */
-//package com.tx.core.util;
-//
-//import java.io.IOException;
-//import java.io.UnsupportedEncodingException;
-//import java.net.ConnectException;
-//import java.net.NoRouteToHostException;
-//import java.nio.charset.Charset;
-//import java.util.ArrayList;
-//import java.util.List;
-//import java.util.Map;
-//import java.util.Map.Entry;
-//import java.util.WeakHashMap;
-//import java.util.concurrent.TimeUnit;
-//
-//import org.apache.commons.collections4.MapUtils;
-//import org.apache.http.HttpEntity;
-//import org.apache.http.HttpResponse;
-//import org.apache.http.NameValuePair;
-//import org.apache.http.ParseException;
-//import org.apache.http.client.ClientProtocolException;
-//import org.apache.http.client.entity.UrlEncodedFormEntity;
-//import org.apache.http.client.methods.HttpGet;
-//import org.apache.http.client.methods.HttpPost;
-//import org.apache.http.client.params.ClientPNames;
-//import org.apache.http.config.SocketConfig;
-//import org.apache.http.conn.ConnectTimeoutException;
-//import org.apache.http.entity.ContentType;
-//import org.apache.http.entity.StringEntity;
-//import org.apache.http.impl.client.CloseableHttpClient;
-//import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
-//import org.apache.http.impl.client.HttpClientBuilder;
-//import org.apache.http.message.BasicNameValuePair;
-//import org.apache.http.params.BasicHttpParams;
-//import org.apache.http.params.CoreConnectionPNames;
-//import org.apache.http.params.HttpParams;
-//import org.apache.http.protocol.HTTP;
-//import org.apache.http.util.EntityUtils;
-//
-//import com.tx.core.exceptions.remote.AfterHttpExcuteException;
-//import com.tx.core.exceptions.remote.BeforeHttpExcuteException;
-//import com.tx.core.exceptions.remote.HttpExcutingException;
-//
-///**
-// * HttpClient实现<br/>
-// * <功能详细描述>
-// * 
-// * @author  Administrator
-// * @version  [版本号, 2016年7月2日]
-// * @see  [相关类/方法]
-// * @since  [产品/模块版本]
-// */
-//public class HttpClientUtils {
-//    
-//    //获取httpClient默认实现
-//    private static Map<Class<?>, HttpClient> httpClientMap = new WeakHashMap<>();
-//    
-//    /**
-//     * 构建HttpClient对象<br/>
-//     * <功能详细描述>
-//     * @param type
-//     * @param connectionManagerTimeout
-//     * @param connectionTimeout
-//     * @param soTimeout
-//     * @param maxTotalConnections
-//     * @param maxConnectionsPerHost
-//     * @return [参数说明]
-//     * 
-//     * @return HttpClient42x [返回类型说明]
-//     * @exception throws [异常类型] [异常说明]
-//     * @see [类、类#方法、类#成员]
-//     */
-//    public static HttpClient buildHttpClient(Class<?> type,
-//            long connectionManagerTimeout, int connectionTimeout, int soTimeout,
-//            int maxTotalConnections, int maxConnectionsPerHost,
-//            boolean statleCheckingEnabled) {
-//        HttpClient httpClient42x = buildHttpClient(type,
-//                connectionManagerTimeout,
-//                connectionTimeout,
-//                soTimeout,
-//                maxTotalConnections,
-//                maxConnectionsPerHost,
-//                statleCheckingEnabled,
-//                true,
-//                3,
-//                3000);
-//        return httpClient42x;
-//    }
-//    
-//    /**
-//      * 构建42x版本的HttpClient对象<br/>
-//      * <功能详细描述>
-//      * @param type
-//      * @param connectionManagerTimeout
-//      * @param connectionTimeout
-//      * @param soTimeout
-//      * @param maxTotalConnections
-//      * @param maxConnectionsPerHost
-//      * @param statleCheckingEnabled
-//      * @param isRetry
-//      * @param maxRetries
-//      * @param retryInterval
-//      * @return [参数说明]
-//      * 
-//      * @return HttpClient42x [返回类型说明]
-//      * @exception throws [异常类型] [异常说明]
-//      * @see [类、类#方法、类#成员]
-//     */
-//    public static HttpClient buildHttpClient(Class<?> type,
-//            long connectionManagerTimeout, int connectionTimeout, int soTimeout,
-//            int maxTotalConnections, int maxConnectionsPerHost,
-//            boolean statleCheckingEnabled, boolean isRetry, int maxRetries,
-//            int retryInterval) {
-//        if (httpClientMap.containsKey(type)) {
-//            return httpClientMap.get(type);
-//        }
-//        
-//        HttpClient httpClient42x = new HttpClient(connectionManagerTimeout,
-//                connectionTimeout, soTimeout, maxTotalConnections,
-//                maxConnectionsPerHost, statleCheckingEnabled, isRetry,
-//                maxRetries, retryInterval);
-//        httpClientMap.put(type, httpClient42x);
-//        return httpClient42x;
-//    }
-//    
-//    public static class HttpClient {
-//        //定义了当从ClientConnectionManager中检索ManagedClientConnection实例时使用的毫秒级的超时时间
-//        //这个参数期望得到一个java.lang.Long类型的值。如果这个参数没有被设置，默认等于CONNECTION_TIMEOUT，因此一定要设置
-//        private long connectionManagerTimeout = 500L;
-//        
-//        //连接超时.定义了通过网络与服务器建立连接的超时时间。
-//        //Httpclient包中通过一个异步线程去创建与服务器的socket连接，这就是该socket连接的超时时间，此处设置为5秒
-//        private int connectionTimeout = 5000;
-//        
-//        //请求超时:这定义了Socket读数据的超时时间，即从服务器获取响应数据需要等待的时间，此处设置为60秒。
-//        private int soTimeout = (60 * 1000);
-//        
-//        //在提交请求之前 测试连接是否可用
-//        private boolean statleCheckingEnabled = true;
-//        
-//        //最大连接数
-//        private int maxTotalConnections = 50;
-//        
-//        //每主机最大连接数
-//        private int maxConnectionsPerHost = 10;
-//        
-//        //客户链接
-//        private CloseableHttpClient httpClient;
-//        
-//        //是否重发
-//        private boolean isRetry;
-//        
-//        //最大重发次数
-//        private int maxRetries = 3;
-//        
-//        //重发频次
-//        private int retryInterval = 3000;
-//        
-//        /** <默认构造函数> */
-//        public HttpClient(long connectionManagerTimeout, int connectionTimeout,
-//                int soTimeout, int maxTotalConnections,
-//                int maxConnectionsPerHost, boolean statleCheckingEnabled,
-//                boolean isRetry, int maxRetries, int retryInterval) {
-//            super();
-//            this.connectionManagerTimeout = connectionManagerTimeout;
-//            this.connectionTimeout = connectionTimeout;
-//            this.soTimeout = soTimeout;
-//            this.maxTotalConnections = maxTotalConnections;
-//            this.maxConnectionsPerHost = maxConnectionsPerHost;
-//            this.statleCheckingEnabled = statleCheckingEnabled;
-//            
-//            this.isRetry = isRetry;
-//            this.maxRetries = maxRetries;
-//            this.retryInterval = retryInterval;
-//            
-//            buildHttpClient();
-//        }
-//        
-//        /**
-//         * 构建HttpParams
-//         * <功能详细描述>
-//         * @param connectionManagerTimeout //该值就是连接不够用的时候等待超时时间
-//         * @param connectionTimeout //连接超时.定义了通过网络与服务器建立连接的超时时间
-//         * @param soTimeout //从连接池中取连接的超时时间
-//         * @param statleCheckingEnabled //在提交请求之前 测试连接是否可用
-//         * @return [参数说明]
-//         * 
-//         * @return HttpParams [返回类型说明]
-//         * @exception throws [异常类型] [异常说明]
-//         * @see [类、类#方法、类#成员]
-//        */
-//        private HttpParams buildHttpParams() {
-//            HttpParams params = new BasicHttpParams();
-//            //该值就是连接不够用的时候等待超时时间
-//            params.setLongParameter(ClientPNames.CONN_MANAGER_TIMEOUT,
-//                    connectionManagerTimeout);
-//            //连接超时.定义了通过网络与服务器建立连接的超时时间
-//            params.setIntParameter(CoreConnectionPNames.CONNECTION_TIMEOUT,
-//                    connectionTimeout);
-//            //在提交请求之前 测试连接是否可用
-//            params.setBooleanParameter(
-//                    CoreConnectionPNames.STALE_CONNECTION_CHECK,
-//                    statleCheckingEnabled);
-//            return params;
-//        }
-//        
-//        private void buildHttpClient() {
-//            HttpClientBuilder builder = HttpClientBuilder.create();
-//            //是路由的默认最大连接（该值默认为2），限制数量实际使用DefaultMaxPerRoute并非MaxTotal。
-//            //设置过小无法支持大并发(ConnectionPoolTimeoutException: Timeout waiting for connection from pool)，路由是对maxTotal的细分。
-//            builder.setMaxConnTotal(maxTotalConnections);
-//            //此处解释下MaxtTotal和DefaultMaxPerRoute的区别：
-//            //1、MaxtTotal是整个池子的大小；
-//            //2、DefaultMaxPerRoute是根据连接到的主机对MaxTotal的一个细分；比如：
-//            //MaxtTotal=400 DefaultMaxPerRoute=200
-//            //而我只连接到xx时，到这个主机的并发最多只有200；而不是400；
-//            //而我连接到xx 和 xx时，到每个主机的并发最多只有200；即加起来是400（但不能超过400）；所以起作用的设置是DefaultMaxPerRout
-//            builder.setMaxConnPerRoute(maxConnectionsPerHost);
-//            
-//            builder.setConnectionTimeToLive(this.connectionTimeout,
-//                    TimeUnit.MILLISECONDS);
-//            //从连接池中取连接的超时时间
-//            SocketConfig socketConfig = SocketConfig.custom()
-//                    .setSoTimeout(soTimeout)
-//                    .setSoReuseAddress(true)
-//                    .setSoKeepAlive(true)
-//                    .build();
-//            builder.setDefaultSocketConfig(socketConfig);
-//            //ConnectionConfig connnectionConfig = ConnectionConfig.custom().setCharset(Charset.defaultCharset()).setBufferSize(bufferSize);
-//            //builder.setDefaultConnectionConfig(config);
-//            //设置自动重试
-//            if (this.isRetry) {
-//                DefaultHttpRequestRetryHandler retryHandler = new DefaultHttpRequestRetryHandler(
-//                        this.maxRetries, this.isRetry);
-//                builder.setRetryHandler(retryHandler);
-//            } else {
-//                builder.disableAutomaticRetries();
-//            }
-//            //是否自动重发
-//            this.httpClient = builder.build();
-//        }
-//        
-//        public CloseableHttpClient getHttpClient() {
-//            return this.httpClient;
-//        }
-//        
-//        public String post(String url, String requestMessage) {
-//            String response = post(url, requestMessage, "UTF-8", "UTF-8");
-//            return response;
-//        }
-//        
-//        public String post(String url, String requestMessage,
-//                String requestEncoding, String responseEncoding,
-//                Map<String, String> headerMap) {
-//            String resStr = "";
-//            
-//            HttpEntity requestEntity = null;
-//            //            try {
-//            requestEntity = new StringEntity(requestMessage, requestEncoding);
-//            //            } catch (UnsupportedEncodingException e) {
-//            //                throw new BeforeHttpExcuteException("Http请求参数字符集转换异常.", e);
-//            //            }
-//            
-//            HttpResponse response = null;
-//            // 创建httppost
-//            HttpPost httppost = new HttpPost(url);
-//            try {
-//                httppost.setHeader("accept", "*/*");
-//                //httppost.setHeader(name, value);"Charset", "UTF-8"
-//                httppost.setHeader("connection", "Keep-Alive");
-//                
-//                if (headerMap != null && headerMap.size() > 0) {
-//                    for (Map.Entry<String, String> entry : headerMap
-//                            .entrySet()) {
-//                        httppost.setHeader(entry.getKey(), entry.getValue());
-//                    }
-//                }
-//                
-//                httppost.setEntity(requestEntity);
-//                
-//                response = this.httpClient.execute(httppost);
-//                
-//                int statusCode = response.getStatusLine().getStatusCode();
-//                String reasonPhrase = response.getStatusLine()
-//                        .getReasonPhrase();
-//                if (200 != statusCode) {
-//                    if (503 == statusCode) {
-//                        throw new HttpExcutingException(false, "Http请求返回失败.",
-//                                statusCode, reasonPhrase);
-//                    } else {
-//                        throw new HttpExcutingException(true, "Http请求返回失败.",
-//                                statusCode, reasonPhrase);
-//                    }
-//                }
-//                HttpEntity entity = response.getEntity();
-//                
-//                if (entity != null) {
-//                    try {
-//                        Charset responseCharset = Charset
-//                                .forName(responseEncoding);
-//                        if (responseCharset == null) {
-//                            ContentType contentType = ContentType
-//                                    .getOrDefault(entity);
-//                            Charset defaultCharset = contentType.getCharset();
-//                            if (defaultCharset == null) {
-//                                defaultCharset = HTTP.DEF_CONTENT_CHARSET;
-//                            }
-//                            resStr = new String(EntityUtils.toByteArray(entity),
-//                                    defaultCharset);
-//                        } else {
-//                            resStr = new String(EntityUtils.toByteArray(entity),
-//                                    responseCharset);
-//                        }
-//                    } catch (ParseException e) {
-//                        throw new AfterHttpExcuteException("Http请求返回解析异常", e);
-//                    } catch (IOException e) {
-//                        throw new AfterHttpExcuteException("Http请求返回解析异常", e);
-//                    }
-//                }
-//            } catch (ClientProtocolException e1) {
-//                throw new HttpExcutingException(false, "Http请求协议异常.", e1);
-//            } catch (ConnectException e1) {
-//                throw new HttpExcutingException(false, "Http请求IO流异常.", e1);
-//            } catch (ConnectTimeoutException e1) {
-//                throw new HttpExcutingException(false, "Http请求IO流异常.", e1);
-//            } catch (NoRouteToHostException e1) {
-//                throw new HttpExcutingException(false, "Http请求IO流异常.", e1);
-//            } catch (IOException e1) {
-//                throw new HttpExcutingException(true, "Http请求IO流异常.", e1);
-//            } finally {
-//                if (response != null) {
-//                    try {
-//                        //会自动释放连接
-//                        EntityUtils.consume(response.getEntity());
-//                    } catch (IOException e) {
-//                        //do nothing
-//                    }
-//                }
-//            }
-//            return resStr;
-//        }
-//        
-//        public String post(String url, String requestMessage,
-//                String requestEncoding, String responseEncoding) {
-//            return post(url,
-//                    requestMessage,
-//                    requestEncoding,
-//                    responseEncoding,
-//                    null);
-//        }
-//        
-//        public String post(String url, Map<String, String> params) {
-//            String response = post(url, params, "UTF-8", "UTF-8");
-//            return response;
-//        }
-//        
-//        /**
-//         * 发送 post请求访问本地应用并根据传递参数不同返回不同结果
-//         * @throws IOException 
-//         * @throws ParseException 
-//         */
-//        public String post(String url, Map<String, String> params,
-//                String requestEncoding, String responseEncoding) {
-//            String resStr = "";
-//            
-//            // 创建参数队列
-//            List<NameValuePair> requestParamList = new ArrayList<>();
-//            if (!MapUtils.isEmpty(params)) {
-//                for (Entry<String, String> entryTemp : params.entrySet()) {
-//                    if (StringUtils.isEmpty(entryTemp.getKey())) {
-//                        continue;
-//                    }
-//                    requestParamList.add(new BasicNameValuePair(
-//                            entryTemp.getKey(), entryTemp.getValue()));
-//                }
-//            }
-//            UrlEncodedFormEntity uefEntity;
-//            try {
-//                uefEntity = new UrlEncodedFormEntity(requestParamList,
-//                        requestEncoding);
-//            } catch (UnsupportedEncodingException e) {
-//                throw new BeforeHttpExcuteException("Http请求参数字符集转换异常.", e);
-//            }
-//            
-//            HttpResponse response = null;
-//            // 创建httppost
-//            HttpPost httppost = new HttpPost(url);
-//            try {
-//                httppost.setHeader("accept", "*/*");
-//                httppost.setHeader("connection", "Keep-Alive");
-//                httppost.setEntity(uefEntity);
-//                
-//                response = this.httpClient.execute(httppost);
-//                int statusCode = response.getStatusLine().getStatusCode();
-//                String reasonPhrase = response.getStatusLine()
-//                        .getReasonPhrase();
-//                if (200 != statusCode) {
-//                    if (503 == statusCode) {
-//                        throw new HttpExcutingException(false, "Http请求返回失败.",
-//                                statusCode, reasonPhrase);
-//                    } else {
-//                        throw new HttpExcutingException(true, "Http请求返回失败.",
-//                                statusCode, reasonPhrase);
-//                    }
-//                }
-//                HttpEntity entity = response.getEntity();
-//                
-//                if (entity != null) {
-//                    try {
-//                        Charset responseCharset = Charset
-//                                .forName(responseEncoding);
-//                        if (responseCharset == null) {
-//                            ContentType contentType = ContentType
-//                                    .getOrDefault(entity);
-//                            Charset defaultCharset = contentType.getCharset();
-//                            if (defaultCharset == null) {
-//                                defaultCharset = HTTP.DEF_CONTENT_CHARSET;
-//                            }
-//                            resStr = new String(EntityUtils.toByteArray(entity),
-//                                    defaultCharset);
-//                        } else {
-//                            resStr = new String(EntityUtils.toByteArray(entity),
-//                                    responseCharset);
-//                        }
-//                    } catch (ParseException e) {
-//                        throw new AfterHttpExcuteException("Http请求返回解析异常", e);
-//                    } catch (IOException e) {
-//                        throw new AfterHttpExcuteException("Http请求返回解析异常", e);
-//                    }
-//                }
-//            } catch (ClientProtocolException e1) {
-//                throw new HttpExcutingException(false, "Http请求协议异常.", e1);
-//            } catch (IOException e1) {
-//                throw new HttpExcutingException(true, "Http请求IO流异常.", e1);
-//            } finally {
-//                try {
-//                    //会自动释放连接
-//                    this.httpClient.close();
-//                } catch (IOException e) {
-//                    //do nothing
-//                }
-//            }
-//            return resStr;
-//        }
-//        
-//        /**
-//         * 发送 get请求
-//         */
-//        public String get(String url, String requestEncoding,
-//                String responseEncoding) {
-//            String resStr = "";
-//            HttpResponse response = null;
-//            try {
-//                // 创建httpget.
-//                HttpGet httpget = new HttpGet(url);
-//                httpget.setHeader("accept", "*/*");
-//                httpget.setHeader("connection", "Keep-Alive");
-//                
-//                // 执行get请求.
-//                response = this.httpClient.execute(httpget);
-//                
-//                // 获取响应实体
-//                int statusCode = response.getStatusLine().getStatusCode();
-//                String reasonPhrase = response.getStatusLine()
-//                        .getReasonPhrase();
-//                if (200 != statusCode) {
-//                    if (503 == statusCode) {
-//                        throw new HttpExcutingException(false, "Http请求返回失败.",
-//                                statusCode, reasonPhrase);
-//                    } else {
-//                        throw new HttpExcutingException(true, "Http请求返回失败.",
-//                                statusCode, reasonPhrase);
-//                    }
-//                }
-//                
-//                HttpEntity entity = response.getEntity();
-//                if (entity != null) {
-//                    try {
-//                        Charset responseCharset = Charset
-//                                .forName(responseEncoding);
-//                        if (responseCharset == null) {
-//                            ContentType contentType = ContentType
-//                                    .getOrDefault(entity);
-//                            Charset defaultCharset = contentType.getCharset();
-//                            if (defaultCharset == null) {
-//                                defaultCharset = HTTP.DEF_CONTENT_CHARSET;
-//                            }
-//                            resStr = new String(EntityUtils.toByteArray(entity),
-//                                    defaultCharset);
-//                        } else {
-//                            resStr = new String(EntityUtils.toByteArray(entity),
-//                                    responseCharset);
-//                        }
-//                    } catch (ParseException e) {
-//                        throw new AfterHttpExcuteException("Http请求返回解析异常", e);
-//                    } catch (IOException e) {
-//                        throw new AfterHttpExcuteException("Http请求返回解析异常", e);
-//                    }
-//                }
-//            } catch (ClientProtocolException e1) {
-//                throw new HttpExcutingException(false, "Http请求协议异常.", e1);
-//            } catch (IOException e1) {
-//                throw new HttpExcutingException(true, "Http请求IO流异常.", e1);
-//            } finally {
-//                try {
-//                    //会自动释放连接
-//                    this.httpClient.close();
-//                } catch (IOException e) {
-//                    //do nothing
-//                }
-//            }
-//            return resStr;
-//        }
-//    }
-//}
+/*
+ * 描          述:  <描述>
+ * 修  改   人:  Administrator
+ * 修改时间:  2016年7月2日
+ * <修改描述:>
+ */
+package com.tx.core.util;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.ConnectException;
+import java.net.NoRouteToHostException;
+import java.nio.charset.UnsupportedCharsetException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.NameValuePair;
+import org.apache.http.ParseException;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.config.Registry;
+import org.apache.http.config.RegistryBuilder;
+import org.apache.http.conn.ConnectTimeoutException;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.conn.socket.PlainConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
+
+import com.tx.core.exceptions.remote.AfterHttpExcuteException;
+import com.tx.core.exceptions.remote.BeforeHttpExcuteException;
+import com.tx.core.exceptions.remote.HttpExcutingException;
+import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.starter.httpclient.HttpClientProperties;
+
+/**
+ * HttpClient实现<br/>
+ *    参考代码： org.springframework.cloud.openfeign.FeignAutoConfiguration<br/>
+ * <功能详细描述>
+ * 
+ * @author  Administrator
+ * @version  [版本号, 2016年7月2日]
+ * @see  [相关类/方法]
+ * @since  [产品/模块版本]
+ */
+public class HttpClientUtils {
+    
+    /** PoolingHttpClientConnectionManager */
+    private static final PoolingHttpClientConnectionManager HTTP_CLIENT_CONNECTION_MANAGER;
+    
+    /** http client 工具类中链接管理计时器 */
+    private static final Timer HTTP_CLIENT_CONNECTION_MANAGER_TIMER = new Timer(
+            "HttpClientUtils.connectionManagerTimer", true);
+    
+    /** CloseableHttpClient */
+    private static final CloseableHttpClient HTTP_CLIENT;
+    
+    static {
+        //构造httpclient
+        HttpClientProperties props = new HttpClientProperties();
+        props.setConnectionTimeout(6000);
+        props.setConnectionTimerRepeat(9000);
+        
+        Registry<ConnectionSocketFactory> registry = RegistryBuilder
+                .<ConnectionSocketFactory> create()
+                .register("http", PlainConnectionSocketFactory.INSTANCE)
+                .register("https",
+                        SSLConnectionSocketFactory.getSocketFactory())
+                .build();
+        HTTP_CLIENT_CONNECTION_MANAGER = new PoolingHttpClientConnectionManager(
+                registry, null, null, null, props.getTimeToLive(),
+                props.getTimeToLiveUnit());
+        HTTP_CLIENT_CONNECTION_MANAGER.setMaxTotal(props.getMaxConnections());
+        HTTP_CLIENT_CONNECTION_MANAGER
+                .setDefaultMaxPerRoute(props.getMaxConnectionsPerRoute());
+        HTTP_CLIENT_CONNECTION_MANAGER_TIMER.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                HTTP_CLIENT_CONNECTION_MANAGER.closeExpiredConnections();
+            }
+        }, 30000, props.getConnectionTimerRepeat());
+        
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setConnectTimeout(props.getConnectionTimeout())
+                .setRedirectsEnabled(props.isFollowRedirects())
+                .setConnectionRequestTimeout(props.getConnectionTimeout())
+                .setSocketTimeout(props.getConnectionTimeout())
+                .build();
+        HTTP_CLIENT = HttpClientBuilder.create()
+                .setConnectionManager(HTTP_CLIENT_CONNECTION_MANAGER)
+                .setDefaultRequestConfig(requestConfig)
+                .build();
+    }
+    
+    /**
+     * 返回httpclient对象<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return CloseableHttpClient [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static CloseableHttpClient getHttpClient() {
+        CloseableHttpClient httpclient = HTTP_CLIENT;
+        return httpclient;
+    }
+    
+    /**
+     * 获取通用报文头<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return Map<String,String> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static Map<String, String> commonHeaders() {
+        //httppost.setHeader("accept", "*/*");
+        //httppost.setHeader("connection", "Keep-Alive");
+        Map<String, String> headers = new HashMap<String, String>();
+        headers.put("accept", "*/*");
+        headers.put("connection", "Keep-Alive");
+        return null;
+    }
+    
+    /**
+     * 通过post发送请求报文<br/>
+     * <功能详细描述>
+     * @param url
+     * @param msg
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static String post(String url, String msg) {
+        AssertUtils.notEmpty(url, "url is empty.");
+        
+        String result = post(url, msg, "UTF-8", "UTF-8");
+        return result;
+    }
+    
+    /**
+     * 通过post发送请求报文<br/>
+     * <功能详细描述>
+     * @param url
+     * @param msg
+     * @param requestEncoding
+     * @param responseEncoding
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static String post(String url, String msg, String requestEncoding,
+            String responseEncoding) {
+        return post(url, msg, requestEncoding, responseEncoding, null);
+    }
+    
+    /**
+     * 通过post发送请求报文<br/>
+     * <功能详细描述>
+     * @param url
+     * @param msg
+     * @param requestEncoding
+     * @param responseEncoding
+     * @param headerMap
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static String post(String url, String msg, String requestEncoding,
+            String responseEncoding, Map<String, String> headerMap) {
+        AssertUtils.notEmpty(url, "url is empty.");
+        String result = "";
+        
+        HttpEntity requestEntity = null;
+        try {
+            if (StringUtils.isEmpty(requestEncoding)) {
+                requestEntity = new StringEntity(msg);
+            } else {
+                requestEntity = new StringEntity(msg, requestEncoding);
+            }
+        } catch (UnsupportedCharsetException e) {
+            throw new BeforeHttpExcuteException("Http请求参数字符集转换异常.", e);
+        } catch (UnsupportedEncodingException e) {
+            throw new BeforeHttpExcuteException("Http请求参数字符集转换异常.", e);
+        }
+        
+        //可关闭的response
+        CloseableHttpResponse response = null;
+        // 创建httppost
+        HttpPost httppost = new HttpPost(url);
+        try {
+            if (!MapUtils.isEmpty(headerMap)) {
+                //httppost.setHeader("accept", "*/*");
+                //httppost.setHeader("connection", "Keep-Alive");
+                for (Map.Entry<String, String> entry : headerMap.entrySet()) {
+                    if (StringUtils.isEmpty(entry.getKey())
+                            || StringUtils.isEmpty(entry.getValue())) {
+                        continue;
+                    }
+                    httppost.setHeader(entry.getKey(), entry.getValue());
+                }
+            }
+            httppost.setEntity(requestEntity);
+            
+            response = HTTP_CLIENT.execute(httppost);
+            int statusCode = response.getStatusLine().getStatusCode();
+            String reasonPhrase = response.getStatusLine().getReasonPhrase();
+            if (200 != statusCode) {
+                if (503 == statusCode) {
+                    throw new HttpExcutingException(false, "Http请求返回失败.",
+                            statusCode, reasonPhrase);
+                } else {
+                    throw new HttpExcutingException(true, "Http请求返回失败.",
+                            statusCode, reasonPhrase);
+                }
+            }
+            
+            HttpEntity entity = response.getEntity();
+            if (entity != null) {
+                try {
+                    if (StringUtils.isEmpty(responseEncoding)) {
+                        result = EntityUtils.toString(entity);
+                    } else {
+                        result = EntityUtils.toString(entity, responseEncoding);
+                    }
+                } catch (ParseException e) {
+                    throw new AfterHttpExcuteException("Http请求返回解析异常", e);
+                } catch (IOException e) {
+                    throw new AfterHttpExcuteException("Http请求返回解析异常", e);
+                } finally {
+                    //会自动释放连接
+                    EntityUtils.consume(response.getEntity());
+                }
+            }
+        } catch (ClientProtocolException e1) {
+            throw new HttpExcutingException(false, "Http请求协议异常.", e1);
+        } catch (ConnectException e1) {
+            throw new HttpExcutingException(false, "Http请求IO流异常.", e1);
+        } catch (ConnectTimeoutException e1) {
+            throw new HttpExcutingException(false, "Http请求IO流异常.", e1);
+        } catch (NoRouteToHostException e1) {
+            throw new HttpExcutingException(false, "Http请求IO流异常.", e1);
+        } catch (IOException e1) {
+            throw new HttpExcutingException(true, "Http请求IO流异常.", e1);
+        } finally {
+            if (response != null) {
+                try {
+                    //对response进行关闭
+                    response.close();
+                } catch (IOException e) {
+                    //do nothing
+                }
+            }
+        }
+        return result;
+    }
+    
+    /**
+     * 根据请求参数map获取url请求后返回的数据<br/>
+     * <功能详细描述>
+     * @param url
+     * @param params
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public String post(String url, Map<String, String> params) {
+        String result = post(url, params, "UTF-8", "UTF-8", null);
+        return result;
+    }
+    
+    /**
+     * 根据请求参数map获取url请求后返回的数据<br/>
+     * <功能详细描述>
+     * @param url
+     * @param params
+     * @param requestEncoding
+     * @param responseEncoding
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public String post(String url, Map<String, String> params,
+            String requestEncoding, String responseEncoding) {
+        String result = post(url,
+                params,
+                requestEncoding,
+                responseEncoding,
+                null);
+        return result;
+    }
+    
+    /**
+     * 根据请求参数map获取url请求后返回的数据<br/>
+     * <功能详细描述>
+     * @param url
+     * @param params
+     * @param requestEncoding
+     * @param responseEncoding
+     * @param headerMap
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public String post(String url, Map<String, String> params,
+            String requestEncoding, String responseEncoding,
+            Map<String, String> headerMap) {
+        AssertUtils.notEmpty(url, "url is empty.");
+        
+        String result = "";
+        // 创建参数队列
+        List<NameValuePair> nameValuePairs = new ArrayList<>();
+        if (!MapUtils.isEmpty(params)) {
+            for (Entry<String, String> entryTemp : params.entrySet()) {
+                if (StringUtils.isEmpty(entryTemp.getKey())) {
+                    continue;
+                }
+                nameValuePairs.add(new BasicNameValuePair(entryTemp.getKey(),
+                        entryTemp.getValue()));
+            }
+        }
+        
+        UrlEncodedFormEntity uefEntity = null;
+        try {
+            uefEntity = new UrlEncodedFormEntity(nameValuePairs,
+                    requestEncoding);
+        } catch (UnsupportedEncodingException e) {
+            throw new BeforeHttpExcuteException("Http请求参数字符集转换异常.", e);
+        }
+        
+        CloseableHttpResponse response = null;
+        // 创建httppost
+        HttpPost httppost = new HttpPost(url);
+        try {
+            if (!MapUtils.isEmpty(headerMap)) {
+                //httppost.setHeader("accept", "*/*");
+                //httppost.setHeader("connection", "Keep-Alive");
+                for (Map.Entry<String, String> entry : headerMap.entrySet()) {
+                    if (StringUtils.isEmpty(entry.getKey())
+                            || StringUtils.isEmpty(entry.getValue())) {
+                        continue;
+                    }
+                    httppost.setHeader(entry.getKey(), entry.getValue());
+                }
+            }
+            httppost.setEntity(uefEntity);
+            
+            response = HTTP_CLIENT.execute(httppost);
+            int statusCode = response.getStatusLine().getStatusCode();
+            String reasonPhrase = response.getStatusLine().getReasonPhrase();
+            if (200 != statusCode) {
+                if (503 == statusCode) {
+                    throw new HttpExcutingException(false, "Http请求返回失败.",
+                            statusCode, reasonPhrase);
+                } else {
+                    throw new HttpExcutingException(true, "Http请求返回失败.",
+                            statusCode, reasonPhrase);
+                }
+            }
+            HttpEntity entity = response.getEntity();
+            if (entity != null) {
+                try {
+                    if (StringUtils.isEmpty(responseEncoding)) {
+                        result = EntityUtils.toString(entity);
+                    } else {
+                        result = EntityUtils.toString(entity, responseEncoding);
+                    }
+                } catch (ParseException e) {
+                    throw new AfterHttpExcuteException("Http请求返回解析异常", e);
+                } catch (IOException e) {
+                    throw new AfterHttpExcuteException("Http请求返回解析异常", e);
+                } finally {
+                    //会自动释放连接
+                    EntityUtils.consume(response.getEntity());
+                }
+            }
+        } catch (ClientProtocolException e1) {
+            throw new HttpExcutingException(false, "Http请求协议异常.", e1);
+        } catch (ConnectException e1) {
+            throw new HttpExcutingException(false, "Http请求IO流异常.", e1);
+        } catch (ConnectTimeoutException e1) {
+            throw new HttpExcutingException(false, "Http请求IO流异常.", e1);
+        } catch (NoRouteToHostException e1) {
+            throw new HttpExcutingException(false, "Http请求IO流异常.", e1);
+        } catch (IOException e1) {
+            throw new HttpExcutingException(true, "Http请求IO流异常.", e1);
+        } finally {
+            if (response != null) {
+                try {
+                    //会自动释放连接
+                    response.close();
+                } catch (IOException e) {
+                    //do nothing
+                }
+            }
+        }
+        return result;
+    }
+    
+    /**
+     * 通过GET请求发起http请求至远端<br/>
+     * <功能详细描述>
+     * @param url
+     * @param params
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static String get(String url, Map<String, String> params) {
+        String result = get(url, params, "UTF-8", "UTF-8", null);
+        return result;
+    }
+    
+    /**
+     * 通过GET请求发起http请求至远端<br/>
+     * <功能详细描述>
+     * @param url
+     * @param params
+     * @param requestEncoding
+     * @param responseEncoding
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static String get(String url, Map<String, String> params,
+            String requestEncoding, String responseEncoding) {
+        String result = get(url,
+                params,
+                requestEncoding,
+                responseEncoding,
+                null);
+        return result;
+    }
+    
+    /**
+     * 通过GET请求发起http请求至远端<br/>
+     * <功能详细描述>
+     * @param url
+     * @param params
+     * @param requestEncoding
+     * @param responseEncoding
+     * @param headerMap
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static String get(String url, Map<String, String> params,
+            String requestEncoding, String responseEncoding,
+            Map<String, String> headerMap) {
+        AssertUtils.notEmpty(url, "url is empty.");
+        
+        HttpGet httpget = null;
+        List<NameValuePair> nameValuePairs = new ArrayList<>();
+        if (!MapUtils.isEmpty(params)) {
+            for (Entry<String, String> entryTemp : params.entrySet()) {
+                if (StringUtils.isEmpty(entryTemp.getKey())) {
+                    continue;
+                }
+                nameValuePairs.add(new BasicNameValuePair(entryTemp.getKey(),
+                        entryTemp.getValue()));
+            }
+            try {
+                httpget = new HttpGet(
+                        url + (StringUtils.contains(url, "?") ? "&" : "?")
+                                + EntityUtils.toString(new UrlEncodedFormEntity(
+                                        nameValuePairs, "UTF-8")));
+            } catch (ParseException | IOException e) {
+                throw new BeforeHttpExcuteException("Http请求参数字符集转换异常.", e);
+            }
+        } else {
+            httpget = new HttpGet(url);
+        }
+        
+        String result = "";
+        CloseableHttpResponse response = null;
+        try {
+            // 创建httpget
+            if (!MapUtils.isEmpty(headerMap)) {
+                //httppost.setHeader("accept", "*/*");
+                //httppost.setHeader("connection", "Keep-Alive");
+                for (Map.Entry<String, String> entry : headerMap.entrySet()) {
+                    if (StringUtils.isEmpty(entry.getKey())
+                            || StringUtils.isEmpty(entry.getValue())) {
+                        continue;
+                    }
+                    httpget.setHeader(entry.getKey(), entry.getValue());
+                }
+            }
+            // 执行get请求.
+            response = HTTP_CLIENT.execute(httpget);
+            // 获取响应实体
+            int statusCode = response.getStatusLine().getStatusCode();
+            String reasonPhrase = response.getStatusLine().getReasonPhrase();
+            if (200 != statusCode) {
+                if (503 == statusCode) {
+                    throw new HttpExcutingException(false, "Http请求返回失败.",
+                            statusCode, reasonPhrase);
+                } else {
+                    throw new HttpExcutingException(true, "Http请求返回失败.",
+                            statusCode, reasonPhrase);
+                }
+            }
+            
+            HttpEntity entity = response.getEntity();
+            if (entity != null) {
+                try {
+                    if (StringUtils.isEmpty(responseEncoding)) {
+                        result = EntityUtils.toString(entity);
+                    } else {
+                        result = EntityUtils.toString(entity, responseEncoding);
+                    }
+                } catch (ParseException e) {
+                    throw new AfterHttpExcuteException("Http请求返回解析异常", e);
+                } catch (IOException e) {
+                    throw new AfterHttpExcuteException("Http请求返回解析异常", e);
+                } finally {
+                    //会自动释放连接
+                    EntityUtils.consume(response.getEntity());
+                }
+            }
+        } catch (ClientProtocolException e1) {
+            throw new HttpExcutingException(false, "Http请求协议异常.", e1);
+        } catch (IOException e1) {
+            throw new HttpExcutingException(true, "Http请求IO流异常.", e1);
+        } finally {
+            try {
+                //会自动释放连接
+                HTTP_CLIENT.close();
+            } catch (IOException e) {
+                //do nothing
+            }
+        }
+        return result;
+    }
+}
