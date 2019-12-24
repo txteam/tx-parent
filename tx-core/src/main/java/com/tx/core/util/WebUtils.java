@@ -10,12 +10,25 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.NameValuePair;
+import org.apache.http.ParseException;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -33,7 +46,151 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class WebRequestUtils {
+public class WebUtils {
+    
+    /**
+     * 参数解析<br/>
+     * <功能详细描述>
+     * @param uri
+     * @param encoding
+     * @return [参数说明]
+     * 
+     * @return Map<String,String> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static Map<String, String> parse(String uri, String encoding) {
+        AssertUtils.notEmpty(uri, "uri is empty.");
+        
+        Charset charset = Charset.forName("UTF-8");
+        if (StringUtils.isNotEmpty(encoding)) {
+            charset = Charset.forName(encoding);
+        }
+        
+        List<NameValuePair> nameValuePairs = URLEncodedUtils.parse(uri,
+                charset);
+        Map<String, String> params = new HashMap<>();
+        for (NameValuePair nameValuePair : nameValuePairs) {
+            params.put(nameValuePair.getName(), nameValuePair.getValue());
+        }
+        return params;
+    }
+    
+    /**
+     * 解析参数<br/>
+     * <功能详细描述>
+     * @param uri
+     * @return [参数说明]
+     * 
+     * @return Map<String,String> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static Map<String, String> parse(String uri) {
+        AssertUtils.notEmpty(uri, "uri is empty.");
+        
+        Map<String, String> params = parse(uri, null);
+        return params;
+    }
+    
+    /**
+     * 将参数拼接入url中<br/>
+     * <功能详细描述>
+     * @param url
+     * @param params
+     * @param encoding
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static String apply(String url, Map<String, String> params,
+            String encoding) {
+        AssertUtils.notEmpty(url, "url is empty.");
+        
+        List<NameValuePair> nameValuePairs = new ArrayList<>();
+        if (!MapUtils.isEmpty(params)) {
+            for (Entry<String, String> entryTemp : params.entrySet()) {
+                if (StringUtils.isEmpty(entryTemp.getKey())) {
+                    continue;
+                }
+                nameValuePairs.add(new BasicNameValuePair(entryTemp.getKey(),
+                        entryTemp.getValue()));
+            }
+        }
+        try {
+            url = url + (StringUtils.contains(url, "?") ? "&" : "?")
+                    + EntityUtils.toString(
+                            new UrlEncodedFormEntity(nameValuePairs, encoding));
+        } catch (ParseException | IOException e) {
+            throw new SILException("build redirectUrl exception.");
+        }
+        return url;
+    }
+    
+    /**
+     * 拼接请求链接<br/>
+     * <功能详细描述>
+     * @param url
+     * @param params
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static String apply(String url, Map<String, String> params) {
+        String res = apply(url, params, "UTF-8");
+        return res;
+    }
+    
+    /**
+     * 获取contextUrl<br/>
+     * 01. getServletPath():获取能够与“url-pattern”中匹配的路径，注意是完全匹配的部分，*的部分不包括。  /login.jsp
+     * 02. getPageInfo():与getServletPath()获取的路径互补，能够得到的是“url-pattern”中*d的路径部分
+     * 03. getContextPath():获取项目的根路径 /test
+     * 04. getRequestURI:获取根路径到地址结尾 /test/login.jsp                      
+     * 05. getRequestURL:获取请求的地址链接（浏览器中输入的地址） http://localhost:8080/test/login.jsp
+     * 06. getServletContext().getRealPath(“/”):获取“/”在机器中的实际地址
+     * 07. getScheme():获取的是使用的协议(http 或https)
+     * 08. getProtocol():获取的是协议的名称(HTTP/1.11)
+     * 09. getServerName():获取的是域名(xxx.com)
+     * 10. getLocalName:获取到的是IP
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static String getBaseUrl() {
+        String contextUrl = getBaseUrl(getRequest());
+        return contextUrl;
+    }
+    
+    /**
+     * 获取contextUrl
+     * <功能详细描述>
+     * @param request
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static String getBaseUrl(HttpServletRequest request) {
+        AssertUtils.notNull(request, "request is null.");
+        
+        StringBuffer url = request.getRequestURL();
+        String contextUrl = url
+                .delete(url.length() - request.getRequestURI().length(),
+                        url.length())
+                .append(request.getContextPath())
+                .append("/")
+                .toString();
+        return contextUrl;
+    }
     
     /**
      * 获取HttpServletRequest
@@ -71,25 +228,6 @@ public class WebRequestUtils {
                         ? ((ServletRequestAttributes) requestAttributes)
                                 .getResponse()
                         : null;
-    }
-    
-    /**
-     * 获取请求Url<br/>
-     * <功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return String [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public static String getUrl() {
-        StringBuffer url = getRequest().getRequestURL();
-        String tempContextUrl = url
-                .delete(url.length() - getRequest().getRequestURI().length(),
-                        url.length())
-                .append("/")
-                .toString();
-        return tempContextUrl;
     }
     
     /**

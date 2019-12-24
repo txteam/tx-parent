@@ -104,6 +104,7 @@ public class HttpClientUtils {
                 .build();
         HTTP_CLIENT = HttpClientBuilder.create()
                 .setConnectionManager(HTTP_CLIENT_CONNECTION_MANAGER)
+                .setConnectionManagerShared(true)
                 .setDefaultRequestConfig(requestConfig)
                 .build();
     }
@@ -290,7 +291,7 @@ public class HttpClientUtils {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public String post(String url, Map<String, String> params) {
+    public static String post(String url, Map<String, String> params) {
         String result = post(url, params, "UTF-8", "UTF-8", null);
         return result;
     }
@@ -308,7 +309,7 @@ public class HttpClientUtils {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public String post(String url, Map<String, String> params,
+    public static String post(String url, Map<String, String> params,
             String requestEncoding, String responseEncoding) {
         String result = post(url,
                 params,
@@ -332,7 +333,7 @@ public class HttpClientUtils {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public String post(String url, Map<String, String> params,
+    public static String post(String url, Map<String, String> params,
             String requestEncoding, String responseEncoding,
             Map<String, String> headerMap) {
         AssertUtils.notEmpty(url, "url is empty.");
