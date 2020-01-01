@@ -158,17 +158,14 @@ public class AuthRegistry
      * 根父节点查询子级角色列表<br/>
      * <功能详细描述>
      * @param parentId
-     * @param authTypeId
      * @return [参数说明]
      * 
      * @return List<Auth> [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public List<Auth> queryChildrenByParentId(String parentId,
-            String... authTypeIds) {
-        List<Auth> resList = this.composite.queryChildrenByParentId(parentId,
-                authTypeIds);
+    public List<Auth> queryChildrenByParentId(String parentId) {
+        List<Auth> resList = this.composite.queryChildrenByParentId(parentId);
         return resList;
     }
     
@@ -176,17 +173,15 @@ public class AuthRegistry
      * 嵌套查询子级角色列表<br/>
      * <功能详细描述>
      * @param parentId
-     * @param authTypeId
      * @return [参数说明]
      * 
      * @return List<Auth> [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public List<Auth> queryDescendantsByParentId(String parentId,
-            String... authTypeIds) {
-        List<Auth> resList = this.composite.queryDescendantsByParentId(parentId,
-                authTypeIds);
+    public List<Auth> queryDescendantsByParentId(String parentId) {
+        List<Auth> resList = this.composite
+                .queryDescendantsByParentId(parentId);
         return resList;
     }
     

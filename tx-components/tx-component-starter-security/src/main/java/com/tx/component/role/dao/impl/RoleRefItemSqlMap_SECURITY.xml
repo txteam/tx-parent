@@ -75,11 +75,9 @@
 	            AND RRI.refId = #{refId,javaType=java.lang.String}
 	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(refMap)">
-	        	AND
-	        	<foreach index="refTypeTemp" item="refIdsTemp" collection="refMap.entrySet()" open="(" close=")" separator="OR">
-	        		<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(refIds)">
-	        			RRI.refType = #{refTypeTemp,javaType=java.lang.String}
-	        			AND RRI.refId IN <foreach item="refIdTemp" collection="refIdsTemp" open="(" close=")" separator=",">#{refIdTemp,javaType=java.lang.String}</foreach>
+	        	AND <foreach index="refTypeTemp" item="refIdsTemp" collection="refMap.entrySet()" open="(" close=")" separator="OR">
+	        		<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(refIdsTemp)">
+	        			(RRI.refType = #{refTypeTemp,javaType=java.lang.String} AND RRI.refId IN <foreach item="refIdTemp" collection="refIdsTemp" open="(" close=")" separator=",">#{refIdTemp,javaType=java.lang.String}</foreach>)
 	        		</if>
 	        	</foreach>
 	        </if>
@@ -89,7 +87,7 @@
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(effective)">  
 	        	<choose>  
 			        <when test="@com.tx.core.util.OgnlUtils@isTrue(effective)">  
-			            <![CDATA[ AND ((RRI.effectiveDate IS NULL OR RRI.effectiveDate <= now(6) AND (RRI.expiryDate IS NULL OR RRI.expiryDate > now(6)))) ]]>
+			            <![CDATA[ AND ((RRI.effectiveDate IS NULL OR RRI.effectiveDate <= now(6)) AND (RRI.expiryDate IS NULL OR RRI.expiryDate > now(6))) ]]>
 			        </when>
 			        <otherwise>  
 			            <![CDATA[ AND ((RRI.effectiveDate IS NOT NULL OR RRI.effectiveDate > now(6)) AND (RRI.expiryDate IS NOT NULL OR RRI.expiryDate <= now(6))) ]]>
@@ -149,11 +147,9 @@
 	            AND RRI.refId = #{refId,javaType=java.lang.String}
 	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(refMap)">
-	        	AND
-	        	<foreach index="refTypeTemp" item="refIdsTemp" collection="refMap.entrySet()" open="(" close=")" separator="OR">
-	        		<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(refIds)">
-	        			RRI.refType = #{refTypeTemp,javaType=java.lang.String}
-	        			AND RRI.refId IN <foreach item="refIdTemp" collection="refIdsTemp" open="(" close=")" separator=",">#{refIdTemp,javaType=java.lang.String}</foreach>
+	        	AND <foreach index="refTypeTemp" item="refIdsTemp" collection="refMap.entrySet()" open="(" close=")" separator="OR">
+	        		<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(refIdsTemp)">
+	        			(RRI.refType = #{refTypeTemp,javaType=java.lang.String} AND RRI.refId IN <foreach item="refIdTemp" collection="refIdsTemp" open="(" close=")" separator=",">#{refIdTemp,javaType=java.lang.String}</foreach>)
 	        		</if>
 	        	</foreach>
 	        </if>
@@ -163,7 +159,7 @@
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(effective)">  
 	        	<choose>  
 			        <when test="@com.tx.core.util.OgnlUtils@isTrue(effective)">  
-			            <![CDATA[ AND ((RRI.effectiveDate IS NULL OR RRI.effectiveDate <= now(6) AND (RRI.expiryDate IS NULL OR RRI.expiryDate > now(6)))) ]]>
+			            <![CDATA[ AND ((RRI.effectiveDate IS NULL OR RRI.effectiveDate <= now(6)) AND (RRI.expiryDate IS NULL OR RRI.expiryDate > now(6))) ]]>
 			        </when>
 			        <otherwise>  
 			            <![CDATA[ AND ((RRI.effectiveDate IS NOT NULL OR RRI.effectiveDate > now(6)) AND (RRI.expiryDate IS NOT NULL OR RRI.expiryDate <= now(6))) ]]>

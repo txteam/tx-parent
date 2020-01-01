@@ -58,8 +58,7 @@ public interface AuthManager {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    List<Auth> queryChildrenAuthByParentId(String parentId,
-            String... authTypeIds);
+    List<Auth> queryChildrenAuthByParentId(String parentId);
     
     /**
      * 嵌套查询子级角色列表<br/>
@@ -72,8 +71,7 @@ public interface AuthManager {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    List<Auth> queryDescendantsAuthByParentId(String parentId,
-            String... authTypeIds);
+    List<Auth> queryDescendantsAuthByParentId(String parentId);
     
     /**
      * 获取权限类型对应的缓存<br/>

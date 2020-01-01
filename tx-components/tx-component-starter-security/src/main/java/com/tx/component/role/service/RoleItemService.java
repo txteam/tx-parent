@@ -88,10 +88,8 @@ public class RoleItemService implements RoleManager {
      * @return
      */
     @Override
-    public List<Role> queryChildrenRoleByParentId(String parentId,
-            String... roleTypeIds) {
+    public List<Role> queryChildrenRoleByParentId(String parentId) {
         Map<String, Object> params = new HashMap<>();
-        params.put("roleTypeIds", roleTypeIds);
         
         List<Role> resList = queryChildrenByParentId(parentId, params).stream()
                 .collect(Collectors.toList());
@@ -104,10 +102,8 @@ public class RoleItemService implements RoleManager {
      * @return
      */
     @Override
-    public List<Role> queryDescendantsRoleByParentId(String parentId,
-            String... roleTypeIds) {
+    public List<Role> queryDescendantsRoleByParentId(String parentId) {
         Map<String, Object> params = new HashMap<>();
-        params.put("roleTypeIds", roleTypeIds);
         
         List<Role> resList = queryDescendantsByParentId(parentId, params)
                 .stream().collect(Collectors.toList());

@@ -119,17 +119,10 @@ public class AuthEnumService implements AuthManager, InitializingBean, Ordered {
      * @return
      */
     @Override
-    public List<Auth> queryChildrenAuthByParentId(String parentId,
-            String... authTypeIds) {
+    public List<Auth> queryChildrenAuthByParentId(String parentId) {
         AssertUtils.notEmpty(parentId, "parentId is empty.");
         
         List<Auth> resList = parent2authMap.get(parentId);
-        if (!ArrayUtils.isEmpty(authTypeIds)) {
-            List<String> roleTypeIdList = Arrays.asList(authTypeIds);
-            resList = resList.stream().filter(role -> {
-                return roleTypeIdList.contains(role.getAuthTypeId());
-            }).collect(Collectors.toList());
-        }
         return resList;
     }
     
@@ -139,8 +132,7 @@ public class AuthEnumService implements AuthManager, InitializingBean, Ordered {
      * @return
      */
     @Override
-    public List<Auth> queryDescendantsAuthByParentId(String parentId,
-            String... authTypeIds) {
+    public List<Auth> queryDescendantsAuthByParentId(String parentId) {
         AssertUtils.notEmpty(parentId, "parentId is empty.");
         
         //生成查询条件
@@ -148,7 +140,7 @@ public class AuthEnumService implements AuthManager, InitializingBean, Ordered {
         Set<String> parentIds = new HashSet<>();
         parentIds.add(parentId);
         
-        List<Auth> resList = doNestedQueryChildren(ids, parentIds, authTypeIds);
+        List<Auth> resList = doNestedQueryChildren(ids, parentIds);
         return resList;
     }
     
@@ -165,7 +157,7 @@ public class AuthEnumService implements AuthManager, InitializingBean, Ordered {
      * @see [类、类#方法、类#成员]
      */
     private List<Auth> doNestedQueryChildren(Set<String> ids,
-            Set<String> parentIds, String... authTypeIds) {
+            Set<String> parentIds) {
         if (CollectionUtils.isEmpty(parentIds)) {
             return new ArrayList<Auth>();
         }
@@ -174,12 +166,6 @@ public class AuthEnumService implements AuthManager, InitializingBean, Ordered {
         List<Auth> resList = new ArrayList<>();
         for (String parentId : parentIds) {
             resList.addAll(parent2authMap.get(parentId));
-        }
-        if (!ArrayUtils.isEmpty(authTypeIds)) {
-            List<String> roleTypeIdList = Arrays.asList(authTypeIds);
-            resList = resList.stream().filter(role -> {
-                return roleTypeIdList.contains(role.getAuthTypeId());
-            }).collect(Collectors.toList());
         }
         
         Set<String> newParentIds = new HashSet<>();
@@ -190,7 +176,7 @@ public class AuthEnumService implements AuthManager, InitializingBean, Ordered {
             ids.add(bdTemp.getId());
         }
         //嵌套查询下一层级
-        resList.addAll(doNestedQueryChildren(ids, newParentIds, authTypeIds));
+        resList.addAll(doNestedQueryChildren(ids, newParentIds));
         return resList;
     }
     

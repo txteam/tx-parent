@@ -53,6 +53,28 @@ public class PluginContext extends PluginContextBuilder {
     }
     
     /**
+     * 获取插件配置<br/>
+     *    如果插件尚未执行安装，将默认根据配置类返回其实例对象，其中enable=false
+     * <功能详细描述>
+     * @param pluginType
+     * @return [参数说明]
+     * 
+     * @return PLUGIN [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @SuppressWarnings("unchecked")
+    public <CONFIG extends PluginConfig> CONFIG getConfig(
+            Class<? extends Plugin<CONFIG>> pluginType) {
+        AssertUtils.notNull(pluginType, "pluginType is null.");
+        
+        Plugin<CONFIG> plugin = (Plugin<CONFIG>) this.pluginTypeMap
+                .get(pluginType);
+        CONFIG config = plugin.getConfig();
+        return config;
+    }
+    
+    /**
      * 获取插件<br/>
      *   如果有多个同一类型的插件，则抛出异常
      * <功能详细描述>
@@ -117,7 +139,7 @@ public class PluginContext extends PluginContextBuilder {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public PluginInstanceService getPluginInstanceService(){
+    public PluginInstanceService getPluginInstanceService() {
         return this.pluginInstanceService;
     }
 }

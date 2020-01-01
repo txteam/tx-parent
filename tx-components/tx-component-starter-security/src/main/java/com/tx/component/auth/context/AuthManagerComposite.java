@@ -39,7 +39,7 @@ public class AuthManagerComposite {
         this.delegates = new ArrayList<>();
         AssertUtils.notNull(cache, "cache is null.");
         
-        Collections.sort(roleManagers,OrderComparator.INSTANCE);
+        Collections.sort(roleManagers, OrderComparator.INSTANCE);
         if (!CollectionUtils.isEmpty(roleManagers)) {
             roleManagers.stream().forEach(rmTemp -> {
                 if (rmTemp instanceof CachingAuthManager) {
@@ -95,14 +95,12 @@ public class AuthManagerComposite {
      * @param authTypeId
      * @return
      */
-    public List<Auth> queryChildrenByParentId(String parentId,
-            String... authTypeIds) {
+    public List<Auth> queryChildrenByParentId(String parentId) {
         List<Auth> resList = new ArrayList<>();
         
         Set<String> authIdSet = new HashSet<>();
         for (AuthManager rm : delegates) {
-            List<Auth> tempList = rm.queryChildrenAuthByParentId(parentId,
-                    authTypeIds);
+            List<Auth> tempList = rm.queryChildrenAuthByParentId(parentId);
             if (CollectionUtils.isEmpty(tempList)) {
                 continue;
             }
@@ -120,14 +118,12 @@ public class AuthManagerComposite {
      * @param authTypeId
      * @return
      */
-    public List<Auth> queryDescendantsByParentId(String parentId,
-            String... authTypeIds) {
+    public List<Auth> queryDescendantsByParentId(String parentId) {
         List<Auth> resList = new ArrayList<>();
         
         Set<String> authIdSet = new HashSet<>();
         for (AuthManager rm : delegates) {
-            List<Auth> tempList = rm.queryDescendantsAuthByParentId(parentId,
-                    authTypeIds);
+            List<Auth> tempList = rm.queryDescendantsAuthByParentId(parentId);
             if (CollectionUtils.isEmpty(tempList)) {
                 continue;
                 

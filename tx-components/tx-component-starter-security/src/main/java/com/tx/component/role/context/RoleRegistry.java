@@ -148,46 +148,39 @@ public class RoleRegistry
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public List<Role> queryList(String roleTypeId) {
-        List<Role> resList = this.composite.queryList(roleTypeId);
+    public List<Role> queryList(String... roleTypeIds) {
+        List<Role> resList = this.composite.queryList(roleTypeIds);
         return resList;
     }
     
     /**
      * 根父节点查询子级角色列表<br/>
      * <功能详细描述>
-     * @param module
      * @param parentId
-     * @param roleTypeId
      * @return [参数说明]
      * 
      * @return List<Role> [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public List<Role> queryChildrenByParentId(String parentId,
-            String roleTypeId) {
-        List<Role> resList = this.composite.queryChildrenByParentId(parentId,
-                roleTypeId);
+    public List<Role> queryChildrenByParentId(String parentId) {
+        List<Role> resList = this.composite.queryChildrenByParentId(parentId);
         return resList;
     }
     
     /**
      * 嵌套查询子级角色列表<br/>
      * <功能详细描述>
-     * @param module
      * @param parentId
-     * @param roleTypeId
      * @return [参数说明]
      * 
      * @return List<Role> [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public List<Role> queryDescendantsByParentId(String parentId,
-            String roleTypeId) {
-        List<Role> resList = this.composite.queryDescendantsByParentId(parentId,
-                roleTypeId);
+    public List<Role> queryDescendantsByParentId(String parentId) {
+        List<Role> resList = this.composite
+                .queryDescendantsByParentId(parentId);
         return resList;
     }
     

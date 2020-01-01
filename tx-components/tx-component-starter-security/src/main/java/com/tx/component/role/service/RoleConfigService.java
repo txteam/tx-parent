@@ -252,17 +252,10 @@ public class RoleConfigService
      * @return
      */
     @Override
-    public List<Role> queryChildrenRoleByParentId(String parentId,
-            String... roleTypeIds) {
+    public List<Role> queryChildrenRoleByParentId(String parentId) {
         AssertUtils.notEmpty(parentId, "parentId is empty.");
         
         List<Role> resList = parent2roleMap.get(parentId);
-        if (!ArrayUtils.isEmpty(roleTypeIds)) {
-            List<String> roleTypeIdList = Arrays.asList(roleTypeIds);
-            resList = resList.stream().filter(role -> {
-                return roleTypeIdList.contains(role.getRoleTypeId());
-            }).collect(Collectors.toList());
-        }
         return resList;
     }
     
@@ -272,8 +265,7 @@ public class RoleConfigService
      * @return
      */
     @Override
-    public List<Role> queryDescendantsRoleByParentId(String parentId,
-            String... roleTypeIds) {
+    public List<Role> queryDescendantsRoleByParentId(String parentId) {
         AssertUtils.notEmpty(parentId, "parentId is empty.");
         
         //生成查询条件
@@ -281,7 +273,7 @@ public class RoleConfigService
         Set<String> parentIds = new HashSet<>();
         parentIds.add(parentId);
         
-        List<Role> resList = doNestedQueryChildren(ids, parentIds, roleTypeIds);
+        List<Role> resList = doNestedQueryChildren(ids, parentIds);
         return resList;
     }
     
@@ -298,7 +290,7 @@ public class RoleConfigService
      * @see [类、类#方法、类#成员]
      */
     private List<Role> doNestedQueryChildren(Set<String> ids,
-            Set<String> parentIds, String... roleTypeIds) {
+            Set<String> parentIds) {
         if (CollectionUtils.isEmpty(parentIds)) {
             return new ArrayList<Role>();
         }
@@ -307,12 +299,6 @@ public class RoleConfigService
         List<Role> resList = new ArrayList<>();
         for (String parentId : parentIds) {
             resList.addAll(parent2roleMap.get(parentId));
-        }
-        if (!ArrayUtils.isEmpty(roleTypeIds)) {
-            List<String> roleTypeIdList = Arrays.asList(roleTypeIds);
-            resList = resList.stream().filter(role -> {
-                return roleTypeIdList.contains(role.getRoleTypeId());
-            }).collect(Collectors.toList());
         }
         
         Set<String> newParentIds = new HashSet<>();
@@ -323,7 +309,7 @@ public class RoleConfigService
             ids.add(bdTemp.getId());
         }
         //嵌套查询下一层级
-        resList.addAll(doNestedQueryChildren(ids, newParentIds, roleTypeIds));
+        resList.addAll(doNestedQueryChildren(ids, newParentIds));
         return resList;
     }
     

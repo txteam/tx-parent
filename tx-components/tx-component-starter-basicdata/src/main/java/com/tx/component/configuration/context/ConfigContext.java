@@ -92,7 +92,7 @@ public class ConfigContext extends ConfigContextBuilder {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public List<ConfigProperty> setupConfigProperties(String prefix,
+    public List<ConfigProperty> parse(String prefix,
             Class<?> configEntityType) {
         AssertUtils.notNull(configEntityType, "configEntityType is null.");
         

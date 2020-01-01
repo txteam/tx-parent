@@ -50,32 +50,26 @@ public interface RoleManager {
     /**
      * 根父节点查询子级角色列表<br/>
      * <功能详细描述>
-     * @param module
      * @param parentId
-     * @param roleTypeId
      * @return [参数说明]
      * 
      * @return List<Role> [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    List<Role> queryChildrenRoleByParentId(String parentId,
-            String... roleTypeIds);
+    List<Role> queryChildrenRoleByParentId(String parentId);
     
     /**
      * 嵌套查询子级角色列表<br/>
      * <功能详细描述>
-     * @param module
      * @param parentId
-     * @param roleTypeId
      * @return [参数说明]
      * 
      * @return List<Role> [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    List<Role> queryDescendantsRoleByParentId(String parentId,
-            String... roleTypeIds);
+    List<Role> queryDescendantsRoleByParentId(String parentId);
     
     /**
      * 获取角色类型对应的缓存<br/>

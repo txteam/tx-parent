@@ -88,10 +88,8 @@ public class AuthItemService implements AuthManager {
      * @return
      */
     @Override
-    public List<Auth> queryChildrenAuthByParentId(String parentId,
-            String... authTypeIds) {
+    public List<Auth> queryChildrenAuthByParentId(String parentId) {
         Map<String, Object> params = new HashMap<>();
-        params.put("authTypeIds", authTypeIds);
         
         List<Auth> resList = queryChildrenByParentId(parentId, params).stream()
                 .collect(Collectors.toList());
@@ -104,10 +102,8 @@ public class AuthItemService implements AuthManager {
      * @return
      */
     @Override
-    public List<Auth> queryDescendantsAuthByParentId(String parentId,
-            String... authTypeIds) {
+    public List<Auth> queryDescendantsAuthByParentId(String parentId) {
         Map<String, Object> params = new HashMap<>();
-        params.put("authTypeIds", authTypeIds);
         
         List<Auth> resList = queryDescendantsByParentId(parentId, params)
                 .stream().collect(Collectors.toList());

@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.tx.component.configuration.context.ConfigContext;
 import com.tx.component.plugin.model.PluginInstance;
 import com.tx.component.plugin.service.PluginInstanceService;
+import com.tx.core.exceptions.SILException;
 import com.tx.core.exceptions.util.AssertUtils;
 
 /**
@@ -231,8 +232,17 @@ public abstract class Plugin<CONFIG extends PluginConfig>
         if (this.isInstalled() && this.config == null) {
             this.config = ConfigContext.getContext()
                     .setupConfigEntity(getPrefix(), this.configEntityType);
+            return this.config;
+        }else if(this.config != null){
+            return this.config;
+        }else{
+            try {
+                CONFIG config = this.configEntityType.newInstance();
+                return config;
+            } catch (InstantiationException | IllegalAccessException e) {
+                throw new SILException("实例化配置实体类型失败.可能为不存在可访问的无参构造函数。");
+            }
         }
-        return this.config;
     }
     
     /**

@@ -101,8 +101,7 @@ public class RoleManagerComposite {
         
         Set<String> roleIdSet = new HashSet<>();
         for (RoleManager rm : delegates) {
-            List<Role> tempList = rm.queryChildrenRoleByParentId(parentId,
-                    roleTypeIds);
+            List<Role> tempList = rm.queryChildrenRoleByParentId(parentId);
             if (CollectionUtils.isEmpty(tempList)) {
                 continue;
             }
@@ -120,14 +119,12 @@ public class RoleManagerComposite {
      * @param roleTypeId
      * @return
      */
-    public List<Role> queryDescendantsByParentId(String parentId,
-            String... roleTypeIds) {
+    public List<Role> queryDescendantsByParentId(String parentId) {
         List<Role> resList = new ArrayList<>();
         
         Set<String> roleIdSet = new HashSet<>();
         for (RoleManager rm : delegates) {
-            List<Role> tempList = rm.queryDescendantsRoleByParentId(parentId,
-                    roleTypeIds);
+            List<Role> tempList = rm.queryDescendantsRoleByParentId(parentId);
             if (CollectionUtils.isEmpty(tempList)) {
                 continue;
             }
