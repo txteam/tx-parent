@@ -62,7 +62,7 @@ public class RoleRefItemDaoMybatisImpl extends
      */
     @Override
     public void batchInsert(List<RoleRefItem> entityList) {
-        this.myBatisDaoSupport.batchInsertUseUUID("authRefItem.insert",
+        this.myBatisDaoSupport.batchInsertUseUUID("roleRefItem.insert",
                 entityList,
                 "id",
                 false);
