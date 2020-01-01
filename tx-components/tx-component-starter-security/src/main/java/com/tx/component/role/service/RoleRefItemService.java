@@ -130,10 +130,11 @@ public class RoleRefItemService {
         AssertUtils.notEmpty(roleRefItem.getRefId(), "roleRef.refId is empty.");
         
         //为添加的数据需要填入默认值的字段填入默认值
-        Date createDate = new Date();
-        roleRefItem.setCreateDate(createDate);
+        Date now = new Date();
+        roleRefItem.setCreateDate(now);
+        roleRefItem.setLastUpdateDate(now);
         if (roleRefItem.getEffectiveDate() == null) {
-            roleRefItem.setEffectiveDate(createDate);
+            roleRefItem.setEffectiveDate(now);
         }
         
         //调用数据持久层对实例进行持久化操作
@@ -157,11 +158,12 @@ public class RoleRefItemService {
             return;
         }
         
-        Date createDate = new Date();
+        Date now = new Date();
         roleRefItems.stream().forEach(roleRef -> {
-            roleRef.setCreateDate(createDate);
+            roleRef.setCreateDate(now);
+            roleRef.setLastUpdateDate(now);
             if (roleRef.getEffectiveDate() == null) {
-                roleRef.setEffectiveDate(createDate);
+                roleRef.setEffectiveDate(now);
             }
             
             AssertUtils.notEmpty(roleRef.getRoleId(),

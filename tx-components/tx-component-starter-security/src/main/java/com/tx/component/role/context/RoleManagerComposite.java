@@ -39,7 +39,7 @@ public class RoleManagerComposite {
         this.delegates = new ArrayList<>();
         AssertUtils.notNull(cache, "cache is null.");
         
-        Collections.sort(roleManagers,OrderComparator.INSTANCE);
+        Collections.sort(roleManagers, OrderComparator.INSTANCE);
         if (!CollectionUtils.isEmpty(roleManagers)) {
             roleManagers.stream().forEach(rmTemp -> {
                 if (rmTemp instanceof CachingRoleManager) {
@@ -81,10 +81,10 @@ public class RoleManagerComposite {
             if (CollectionUtils.isEmpty(tempList)) {
                 continue;
             }
-            tempList.forEach(auth -> {
-                if (!roleIdSet.contains(auth.getId())) {
-                    resList.add(auth);
-                    roleIdSet.add(auth.getId());
+            tempList.forEach(role -> {
+                if (!roleIdSet.contains(role.getId())) {
+                    resList.add(role);
+                    roleIdSet.add(role.getId());
                 }
             });
         }
@@ -95,8 +95,7 @@ public class RoleManagerComposite {
      * @param roleTypeId
      * @return
      */
-    public List<Role> queryChildrenByParentId(String parentId,
-            String... roleTypeIds) {
+    public List<Role> queryChildrenByParentId(String parentId) {
         List<Role> resList = new ArrayList<>();
         
         Set<String> roleIdSet = new HashSet<>();
@@ -105,10 +104,10 @@ public class RoleManagerComposite {
             if (CollectionUtils.isEmpty(tempList)) {
                 continue;
             }
-            tempList.forEach(auth -> {
-                if (!roleIdSet.contains(auth.getId())) {
-                    resList.add(auth);
-                    roleIdSet.add(auth.getId());
+            tempList.forEach(role -> {
+                if (!roleIdSet.contains(role.getId())) {
+                    resList.add(role);
+                    roleIdSet.add(role.getId());
                 }
             });
         }
