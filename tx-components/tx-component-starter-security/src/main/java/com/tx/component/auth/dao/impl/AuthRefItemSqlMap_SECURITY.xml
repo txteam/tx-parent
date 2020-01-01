@@ -80,10 +80,7 @@
 	        			(ARI.refType = #{refTypeTemp,javaType=java.lang.String} AND ARI.refId IN <foreach item="refIdTemp" collection="refIdsTemp" open="(" close=")" separator=",">#{refIdTemp,javaType=java.lang.String}</foreach>)
 	        		</if>
 	        	</foreach>
-	        </if>		
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authId)">  
-	            <![CDATA[ AND ARI.authId = #{authId} ]]>
-	        </if>		
+	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(effective)">  
 	        	<choose>  
 			        <when test="@com.tx.core.util.OgnlUtils@isTrue(effective)">  
@@ -96,21 +93,18 @@
 	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(expried)">
 	        	<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(expried)">  
-		            AND ((ARI.expiryDate IS NOT NULL AND ARI.expiryDate > now(6))
+		            <![CDATA[ AND ((ARI.expiryDate IS NOT NULL AND ARI.expiryDate < now(6)) ]]>
 		        </if>
-	        </if>		
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(minCreateDate)">  
-	            <![CDATA[ AND ARI.createDate >= #{minCreateDate} ]]>
 	        </if>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(maxCreateDate)">  
-	            <![CDATA[ AND ARI.createDate < #{maxCreateDate} ]]>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authId)">  
+	            <![CDATA[ AND ARI.authId = #{authId} ]]>
 	        </if>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(createOperatorId)">  
-	            <![CDATA[ AND ARI.createOperatorId = #{createOperatorId} ]]>
-	        </if>			
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(excludeId)">
 				<![CDATA[ AND ARI.id <> #{excludeId} ]]>
 			</if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(refIds)">  
+	            ARI RRI.refId IN <foreach item="refIdTemp" collection="refIds" open="(" close=")" separator=",">#{refIdTemp,javaType=java.lang.String}</foreach>
+	        </if>
 		</trim>
 		<choose>  
 	        <when test="@com.tx.core.util.OgnlUtils@isNotEmpty(orders)">  
@@ -159,11 +153,8 @@
 	        			(ARI.refType = #{refTypeTemp,javaType=java.lang.String} AND ARI.refId IN <foreach item="refIdTemp" collection="refIdsTemp" open="(" close=")" separator=",">#{refIdTemp,javaType=java.lang.String}</foreach>)
 	        		</if>
 	        	</foreach>
-	        </if>	
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authId)">  
-	            <![CDATA[ AND ARI.authId = #{authId} ]]>
-	        </if>		
-	       	<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(effective)">  
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(effective)">  
 	        	<choose>  
 			        <when test="@com.tx.core.util.OgnlUtils@isTrue(effective)">  
 			            <![CDATA[ AND ((ARI.effectiveDate IS NULL OR ARI.effectiveDate <= now(6)) AND (ARI.expiryDate IS NULL OR ARI.expiryDate > now(6))) ]]>
@@ -175,21 +166,18 @@
 	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(expried)">
 	        	<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(expried)">  
-		            AND ((ARI.expiryDate IS NOT NULL AND ARI.expiryDate > now(6))
+		            <![CDATA[ AND ((ARI.expiryDate IS NOT NULL AND ARI.expiryDate < now(6)) ]]>
 		        </if>
-	        </if>		
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(minCreateDate)">  
-	            <![CDATA[ AND ARI.createDate >= #{minCreateDate} ]]>
 	        </if>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(maxCreateDate)">  
-	            <![CDATA[ AND ARI.createDate < #{maxCreateDate} ]]>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(authId)">  
+	            <![CDATA[ AND ARI.authId = #{authId} ]]>
 	        </if>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(createOperatorId)">  
-	            <![CDATA[ AND ARI.createOperatorId = #{createOperatorId} ]]>
-	        </if>			
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(excludeId)">
 				<![CDATA[ AND ARI.id <> #{excludeId} ]]>
 			</if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(refIds)">  
+	            ARI RRI.refId IN <foreach item="refIdTemp" collection="refIds" open="(" close=")" separator=",">#{refIdTemp,javaType=java.lang.String}</foreach>
+	        </if>
 		</trim>
 	</select>
 	

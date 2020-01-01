@@ -72,8 +72,6 @@ public interface RoleRefService {
             MultiValueMap<String, String> refMap) {
         AssertUtils.notEmpty(refMap, "refMap is empty.");
         
-        
-        
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("refMap", refMap);
         

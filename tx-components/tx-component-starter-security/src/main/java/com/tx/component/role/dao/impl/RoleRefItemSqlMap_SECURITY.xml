@@ -81,9 +81,6 @@
 	        		</if>
 	        	</foreach>
 	        </if>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(roleId)">  
-	            AND RRI.roleId = #{roleId,javaType=java.lang.String}
-	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(effective)">  
 	        	<choose>  
 			        <when test="@com.tx.core.util.OgnlUtils@isTrue(effective)">  
@@ -96,13 +93,14 @@
 	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(expried)">
 	        	<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(expried)">  
-		            AND ((RRI.expiryDate IS NOT NULL AND RRI.expiryDate > now(6))
+		            <![CDATA[ AND ((RRI.expiryDate IS NOT NULL AND RRI.expiryDate < now(6)) ]]>
 		        </if>
 	        </if>
-			<if test="role != null">
-				<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(role.id)">  
-		            AND RRI.role = #{role.id,javaType=java.lang.String}
-		        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(roleId)">  
+	            AND RRI.roleId = #{roleId,javaType=java.lang.String}
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(refIds)">  
+	            AND RRI.refId IN <foreach item="refIdTemp" collection="refIds" open="(" close=")" separator=",">#{refIdTemp,javaType=java.lang.String}</foreach>
 	        </if>
 		</trim>
 		<choose>  
@@ -153,9 +151,6 @@
 	        		</if>
 	        	</foreach>
 	        </if>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(roleId)">  
-	            AND RRI.roleId = #{roleId,javaType=java.lang.String}
-	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(effective)">  
 	        	<choose>  
 			        <when test="@com.tx.core.util.OgnlUtils@isTrue(effective)">  
@@ -168,21 +163,21 @@
 	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(expried)">
 	        	<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(expried)">  
-		            AND ((RRI.expiryDate IS NOT NULL AND RRI.expiryDate > now(6))
+		            <![CDATA[ AND ((RRI.expiryDate IS NOT NULL AND RRI.expiryDate < now(6)) ]]>
 		        </if>
 	        </if>
-			<if test="role != null">
-				<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(role.id)">  
-		            AND RRI.role = #{role.id,javaType=java.lang.String}
-		        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(roleId)">  
+	            AND RRI.roleId = #{roleId,javaType=java.lang.String}
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(refIds)">  
+	            AND RRI.refId IN <foreach item="refIdTemp" collection="refIds" open="(" close=")" separator=",">#{refIdTemp,javaType=java.lang.String}</foreach>
 	        </if>
 		</trim>
 	</select>
     
-    <!-- auto generate default insert -->
-    <insert id="insertToHis" 
+    <insert id="insert" 
 		parameterType="com.tx.component.role.model.RoleRefItem">
-		INSERT INTO sec_roleref_his
+		INSERT INTO sec_roleref
 		(
 			id,
 			refType,
@@ -209,10 +204,11 @@
 			#{lastUpdateDate}
 		)
 	</insert>
-    
-    <insert id="insert" 
+	
+	<!-- auto generate default insert -->
+    <insert id="insertToHis" 
 		parameterType="com.tx.component.role.model.RoleRefItem">
-		INSERT INTO sec_roleref
+		INSERT INTO sec_roleref_his
 		(
 			id,
 			refType,
