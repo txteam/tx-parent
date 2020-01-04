@@ -8,7 +8,6 @@ package com.tx.component.servicelogger.support.mybatis;
 
 import java.lang.reflect.Type;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.transaction.TransactionStatus;
@@ -19,6 +18,7 @@ import com.tx.component.servicelogger.support.ServiceLogger;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.mybatis.support.MyBatisDaoSupport;
 import com.tx.core.paged.model.PagedList;
+import com.tx.core.querier.model.Querier;
 
 /**
  * 默认的实体自动持久层<br/>
@@ -165,9 +165,9 @@ public class DefaultServiceLoggerImpl<T> implements ServiceLogger<T> {
      * @return
      */
     @Override
-    public List<T> queryList(Map<String, Object> params) {
+    public List<T> queryList(Querier querier) {
         return this.myBatisDaoSupport
-                .queryList(this.assistant.getQueryStatementName(), params);
+                .queryList(this.assistant.getQueryStatementName(), querier);
     }
     
     /**
@@ -175,9 +175,9 @@ public class DefaultServiceLoggerImpl<T> implements ServiceLogger<T> {
      * @return
      */
     @Override
-    public int count(Map<String, Object> params) {
+    public int count(Querier querier) {
         return this.myBatisDaoSupport
-                .count(this.assistant.getCountStatmentName(), params);
+                .count(this.assistant.getCountStatmentName(), querier);
     }
     
     /**
@@ -187,11 +187,11 @@ public class DefaultServiceLoggerImpl<T> implements ServiceLogger<T> {
      * @return
      */
     @Override
-    public PagedList<T> queryPagedList(Map<String, Object> params,
-            int pageIndex, int pageSize) {
+    public PagedList<T> queryPagedList(Querier querier, int pageIndex,
+            int pageSize) {
         return this.myBatisDaoSupport.queryPagedList(
                 this.assistant.getQueryStatementName(),
-                params,
+                querier,
                 pageIndex,
                 pageSize);
     }

@@ -22,6 +22,7 @@ import com.tx.core.ddlutil.model.JPAEntityTableDef;
 import com.tx.core.ddlutil.model.TableDef;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.util.ClassScanUtils;
+import com.tx.core.util.JPAParseUtils;
 
 /**
  * 自动持久化实体表初始化实现<br/>
@@ -34,6 +35,7 @@ import com.tx.core.util.ClassScanUtils;
  */
 public class ServiceLogTableInitializer extends AbstractTableInitializer implements InitializingBean{
     
+    /** 基础包路径 */
     private String basePackages = "com.tx";
     
     /** 表DDL执行器 */
@@ -94,10 +96,9 @@ public class ServiceLogTableInitializer extends AbstractTableInitializer impleme
                             tableDDLExecutor.getDDLDialect());
             ServiceLog annotation = AnnotationUtils.findAnnotation(type,
                     ServiceLog.class);
-            if (!StringUtils.isBlank(annotation.tablename())) {
+            if (annotation != null && !StringUtils.isBlank(annotation.tablename())) {
                 td.setTableName(annotation.tablename());
             }
-            
             sb.append(COMMENT_PREFIX)
                     .append("----------table:")
                     .append(td.getTableName())

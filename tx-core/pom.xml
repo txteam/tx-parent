@@ -313,6 +313,13 @@
 			<artifactId>h2</artifactId>
 			<optional>true</optional>
 		</dependency>
+		
+		<!-- druid -->
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>druid-spring-boot-starter</artifactId>
+			<optional>true</optional>
+		</dependency>
 
 		<!-- test scope:test -->
 		<dependency>

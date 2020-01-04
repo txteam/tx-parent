@@ -2,9 +2,9 @@ package com.tx.component.servicelogger.support;
 
 import java.lang.reflect.Type;
 import java.util.List;
-import java.util.Map;
 
 import com.tx.core.paged.model.PagedList;
+import com.tx.core.querier.model.Querier;
 
 /**
  * 业务日志接口
@@ -69,7 +69,7 @@ public interface ServiceLogger<T> {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public List<T> queryList(Map<String, Object> params);
+    public List<T> queryList(Querier querier);
     
     /**
      * 根据条件查询T列表总数
@@ -82,7 +82,7 @@ public interface ServiceLogger<T> {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    public int count(Map<String, Object> params);
+    public int count(Querier querier);
     
     /**
      * 分页查询T列表
@@ -97,6 +97,6 @@ public interface ServiceLogger<T> {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public PagedList<T> queryPagedList(Map<String, Object> params,
+    public PagedList<T> queryPagedList(Querier querier,
             int pageIndex, int pageSize);
 }

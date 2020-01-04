@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
 import org.springframework.core.annotation.AliasFor;
 
 /**
- * <功能简述>
+ * 业务日志类注解<br/>
  * <功能详细描述>
  * 
  * @author  Administrator

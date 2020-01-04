@@ -10,6 +10,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.alibaba.druid.pool.DruidDataSource;
 import com.tx.core.datasource.DataSourceFinder;
 import com.tx.core.exceptions.util.AssertUtils;
 
@@ -75,9 +76,8 @@ public class SimpleDataSourceFinder implements DataSourceFinder {
         logger.info("Try to init SimpleDataSource.");
         
         try {
-            BasicDataSource bds = null;
+            DruidDataSource bds = new DruidDataSource();
             
-            bds = new BasicDataSource();
             //设置驱动程序
             bds.setDriverClassName(driverClassName);
             //设置连接用户名
@@ -88,13 +88,16 @@ public class SimpleDataSourceFinder implements DataSourceFinder {
             bds.setUrl(url);
             
             //设置初始化连接总数
-            bds.setInitialSize(NumberUtils.toInt(maxIdle, 10));
+            bds.setInitialSize(NumberUtils.toInt(maxIdle, 5));
+            bds.setMaxActive(NumberUtils.toInt(maxIdle, 20));
+            bds.setMaxIdle(NumberUtils.toInt(maxIdle, 5));
+            bds.setMaxWait(6000l);
             //设置同时应用的连接总数
-            bds.setMaxTotal(NumberUtils.toInt(maxActive, -1));
+            //bds.setMaxTotal(NumberUtils.toInt(maxActive, -1));
             //设置在缓冲池的最大连接数
-            bds.setMaxIdle(NumberUtils.toInt(maxIdle, -1));
+            
             //设置最长的等待时间
-            bds.setMaxWaitMillis(NumberUtils.toInt(maxWait, -1));
+            //bds.setMaxWaitMillis(NumberUtils.toInt(maxWait, -1));
             //设置在缓冲池的最小连接数
             bds.setMinIdle(0);
             
