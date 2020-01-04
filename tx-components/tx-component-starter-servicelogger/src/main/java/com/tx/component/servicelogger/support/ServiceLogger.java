@@ -1,6 +1,5 @@
 package com.tx.component.servicelogger.support;
 
-import java.lang.reflect.Type;
 import java.util.List;
 
 import com.tx.core.paged.model.PagedList;
@@ -25,7 +24,7 @@ public interface ServiceLogger<T> {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public Type getLoggerType();
+    public Class<T> getLogEntityClass();
     
     /**
      * 批量插入对象实体
@@ -97,6 +96,6 @@ public interface ServiceLogger<T> {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public PagedList<T> queryPagedList(Querier querier,
-            int pageIndex, int pageSize);
+    public PagedList<T> queryPagedList(Querier querier, int pageIndex,
+            int pageSize);
 }

@@ -8,19 +8,20 @@ package com.tx.core.support.json;
 
 import java.beans.PropertyDescriptor;
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.apache.commons.lang3.reflect.FieldUtils;
-import org.springframework.beans.BeanUtils;
+import org.apache.commons.collections4.MapUtils;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.PropertyAccessorFactory;
+import org.springframework.core.convert.TypeDescriptor;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
-import com.tx.core.exceptions.SILException;
 
 /**
  * 基础数据json序列化器<br/>
@@ -49,28 +50,37 @@ public class BaseEnumJsonSerializer extends JsonSerializer<BaseEnum> {
         }
         
         generator.writeStartObject();
-        PropertyDescriptor[] pds = BeanUtils
-                .getPropertyDescriptors(value.getClass());
-        for (PropertyDescriptor pd : pds) {
+        BeanWrapper bw = PropertyAccessorFactory.forBeanPropertyAccess(value);
+        Map<String, Object> objMap = new HashMap<String, Object>();
+        for (PropertyDescriptor pd : bw.getPropertyDescriptors()) {
+            //判断是否忽略该节点
             String pdName = pd.getName();
-            if ("class".equals(pdName) || "declaringClass".equals(pdName)) {
+            if ("class".equals(pdName) || "declaringClass".equals(pdName)
+                    || pd.getReadMethod() == null) {
                 continue;
             }
             //判断是否忽略该节点
-            boolean isIgnore = isIgnore(value, pd);
+            TypeDescriptor td = bw.getPropertyTypeDescriptor(pdName);
+            boolean isIgnore = isIgnore(td, bw);
             if (isIgnore) {
                 continue;
             }
-            generator.writeFieldName(pdName);
-            try {
-                Object object = pd.getReadMethod().invoke(value);
-                if (object != null) {
-                    generator.writeString(object.toString());
-                }
-            } catch (IllegalAccessException | IllegalArgumentException
-                    | InvocationTargetException e) {
-                throw new SILException(e.getMessage(), e);
-            }
+            objMap.put(pdName, bw.getPropertyValue(pdName));
+            //generator.writeFieldName(pdName);
+            //try {
+            //    Object object = pd.getReadMethod().invoke(value);
+            //    if (object != null) {
+            //        generator.writeString(object.toString());
+            //    }
+            //} catch (IllegalAccessException | IllegalArgumentException
+            //        | InvocationTargetException e) {
+            //    throw new SILException(e.getMessage(), e);
+            //}
+        }
+        if (MapUtils.isEmpty(objMap)) {
+            generator.writeObject(value);
+        } else {
+            generator.writeObject(objMap);
         }
         generator.writeEndObject();
     }
@@ -86,17 +96,16 @@ public class BaseEnumJsonSerializer extends JsonSerializer<BaseEnum> {
      * @throws throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    private boolean isIgnore(BaseEnum value, PropertyDescriptor pd) {
+    private boolean isIgnore(TypeDescriptor td, BeanWrapper bw) {
         try {
-            Method method = pd.getReadMethod();
-            if (method == null
-                    || method.isAnnotationPresent(JsonIgnore.class)) {
+            if (td.hasAnnotation(JsonIgnore.class)) {
                 return true;
             }
-            String pdName = pd.getName();
-            Field field = FieldUtils.getField(value.getClass(), pdName, true);
-            if (field != null && field.isAnnotationPresent(JsonIgnore.class)) {
-                return true;
+            if (td.hasAnnotation(JSONField.class)) {
+                JSONField a = td.getAnnotation(JSONField.class);
+                if (!a.serialize()) {
+                    return true;
+                }
             }
         } catch (Exception e1) {
             return true;

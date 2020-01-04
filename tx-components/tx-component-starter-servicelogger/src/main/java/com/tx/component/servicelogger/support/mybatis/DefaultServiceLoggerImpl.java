@@ -6,7 +6,6 @@
  */
 package com.tx.component.servicelogger.support.mybatis;
 
-import java.lang.reflect.Type;
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -65,7 +64,7 @@ public class DefaultServiceLoggerImpl<T> implements ServiceLogger<T> {
      * @return
      */
     @Override
-    public Type getLoggerType() {
+    public Class<T> getLogEntityClass() {
         return this.beanType;
     }
     

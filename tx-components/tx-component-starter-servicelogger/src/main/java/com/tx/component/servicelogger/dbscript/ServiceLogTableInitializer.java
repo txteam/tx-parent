@@ -22,7 +22,6 @@ import com.tx.core.ddlutil.model.JPAEntityTableDef;
 import com.tx.core.ddlutil.model.TableDef;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.util.ClassScanUtils;
-import com.tx.core.util.JPAParseUtils;
 
 /**
  * 自动持久化实体表初始化实现<br/>

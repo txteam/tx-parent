@@ -90,7 +90,7 @@ public class SimpleDataSourceFinder implements DataSourceFinder {
             //设置初始化连接总数
             bds.setInitialSize(NumberUtils.toInt(maxIdle, 5));
             bds.setMaxActive(NumberUtils.toInt(maxIdle, 20));
-            bds.setMaxIdle(NumberUtils.toInt(maxIdle, 5));
+            //bds.setMaxIdle(NumberUtils.toInt(maxIdle, 5));
             bds.setMaxWait(6000l);
             //设置同时应用的连接总数
             //bds.setMaxTotal(NumberUtils.toInt(maxActive, -1));

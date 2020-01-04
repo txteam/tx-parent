@@ -8,6 +8,7 @@ package com.tx.component.servicelogger.model;
 
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Id;
 
 import com.tx.component.servicelogger.annotation.ServiceLog;
@@ -28,6 +29,7 @@ public abstract class AbstractServiceLogger {
     private String id;
     
     /** 业务日志记录时间 */
+    @Column(nullable = false,updatable=false)
     private Date createDate;
     
     /**

@@ -245,12 +245,12 @@ public class ServiceLoggerRegistry implements ApplicationContextAware,
         for (Entry<String, ServiceLogger> entry : loggerServiceMap.entrySet()) {
             ServiceLogger dao = entry.getValue();
             String beanName = entry.getKey();
-            if (dao.getLoggerType() == null
-                    || !Class.class.isInstance(dao.getLoggerType())
-                    || Object.class.equals(dao.getLoggerType())) {
+            if (dao.getLogEntityClass() == null
+                    || !Class.class.isInstance(dao.getLogEntityClass())
+                    || Object.class.equals(dao.getLogEntityClass())) {
                 continue;
             }
-            Class<?> beanType = (Class<?>) dao.getLoggerType();
+            Class<?> beanType = (Class<?>) dao.getLogEntityClass();
             if (!beanType.isAnnotationPresent(ServiceLog.class)) {
                 continue;
             }
@@ -269,8 +269,8 @@ public class ServiceLoggerRegistry implements ApplicationContextAware,
         //扫描遍历，如果已经存在持久层的实体类，则不再添加
         String[] basePackageArray = StringUtils
                 .splitByWholeSeparator(basePackages, ",");
-        Set<Class<?>> types = ClassScanUtils.scanByAnnotation(
-                ServiceLog.class, basePackageArray);
+        Set<Class<?>> types = ClassScanUtils.scanByAnnotation(ServiceLog.class,
+                basePackageArray);
         for (Class<?> beanType : types) {
             //注册实体持久层
             BeanDefinition daoBeanDefinition = generateServiceLoggerBeanDefinition(
