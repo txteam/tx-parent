@@ -174,10 +174,10 @@ public class AuthConfigService
             AuthItem auth = new AuthItem();
             auth.setParentId(parent == null ? null : parent.getId());
             auth.setAuthTypeId(type.getId());
-            
             auth.setId(configParserTemp.getId());
             auth.setName(configParserTemp.getName());
             auth.setRemark(configParserTemp.getRemark());
+            auth.setConfigAble(configParserTemp.isConfigAble());
             
             //嵌套初始化配置属性
             List<Auth> children = initAuth(type,

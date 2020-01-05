@@ -41,6 +41,10 @@ public class AuthConfig {
     @XStreamAsAttribute
     private String name;
     
+    /** 内容信息类型名 */
+    @XStreamAsAttribute
+    private boolean configAble = true;
+    
     /** 内容信息类型备注 */
     @XStreamAsAttribute
     private String remark;
@@ -61,6 +65,20 @@ public class AuthConfig {
      */
     public void setId(String id) {
         this.id = id;
+    }
+    
+    /**
+     * @return 返回 configAble
+     */
+    public boolean isConfigAble() {
+        return configAble;
+    }
+    
+    /**
+     * @param 对configAble进行赋值
+     */
+    public void setConfigAble(boolean configAble) {
+        this.configAble = configAble;
     }
     
     /**
@@ -104,28 +122,28 @@ public class AuthConfig {
     public void setChildren(List<AuthConfig> children) {
         this.children = children;
     }
-
+    
     /**
      * @return 返回 type
      */
     public AuthTypeConfig getType() {
         return type;
     }
-
+    
     /**
      * @param 对type进行赋值
      */
     public void setType(AuthTypeConfig type) {
         this.type = type;
     }
-
+    
     /**
      * @return 返回 parent
      */
     public AuthConfig getParent() {
         return parent;
     }
-
+    
     /**
      * @param 对parent进行赋值
      */
