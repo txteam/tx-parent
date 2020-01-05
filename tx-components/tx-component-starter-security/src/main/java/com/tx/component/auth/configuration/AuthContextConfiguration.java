@@ -42,7 +42,7 @@ public class AuthContextConfiguration {
     /** <默认构造函数> */
     public AuthContextConfiguration(SecurityContextProperties properties) {
         super();
-        this.properties = properties.getRole() == null
+        this.properties = properties.getAuth() == null
                 ? new AuthContextProperties() : properties.getAuth();
     }
     

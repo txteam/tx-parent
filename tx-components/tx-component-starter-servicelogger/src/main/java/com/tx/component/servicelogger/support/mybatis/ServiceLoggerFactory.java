@@ -31,11 +31,15 @@ public class ServiceLoggerFactory<T>
     private Logger logger = org.slf4j.LoggerFactory
             .getLogger(ServiceLoggerFactory.class);
     
+    /** 日志类型 */
     private Class<T> beanType;
     
+    /** myBatisDaoSupport句柄 */
     private MyBatisDaoSupport myBatisDaoSupport;
     
+    /** 事务句柄 */
     private TransactionTemplate transactionTemplate;
+    
     
     protected SqlSessionFactory sqlSessionFactory;
     
@@ -43,7 +47,7 @@ public class ServiceLoggerFactory<T>
     
     private LoggerMapperBuilderAssistant assistant;
     
-    private ServiceLogger<T> loggerService;
+    private ServiceLogger<T> serviceLogger;
     
     /** <默认构造函数> */
     public ServiceLoggerFactory(Class<T> beanType,
@@ -74,19 +78,11 @@ public class ServiceLoggerFactory<T>
                 this.assistant.getCurrentNamespace());
         
         //构建Dao
-        this.loggerService = new DefaultServiceLoggerImpl<>(this.beanType,
+        this.serviceLogger = new DefaultServiceLoggerImpl<>(this.beanType,
                 this.myBatisDaoSupport, this.transactionTemplate,
                 this.assistant);
         
         logger.info("构建实体自动持久层：完成.beanType:{}", this.beanType.getName());
-    }
-    
-    /**
-     * @return
-     */
-    @Override
-    public Class<?> getObjectType() {
-        return ServiceLogger.class;
     }
     
     /**
@@ -99,10 +95,18 @@ public class ServiceLoggerFactory<T>
     
     /**
      * @return
+     */
+    @Override
+    public Class<?> getObjectType() {
+        return ServiceLogger.class;
+    }
+    
+    /**
+     * @return
      * @throws Exception
      */
     @Override
     public ServiceLogger<T> getObject() throws Exception {
-        return this.loggerService;
+        return this.serviceLogger;
     }
 }

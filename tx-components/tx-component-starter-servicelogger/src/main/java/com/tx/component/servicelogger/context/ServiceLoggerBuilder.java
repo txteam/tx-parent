@@ -29,4 +29,11 @@ public class ServiceLoggerBuilder extends ServiceLoggerConfigurator
         ServiceLoggerBuilder.beanName = name;
     }
     
+    /**
+     * @throws Exception
+     */
+    @Override
+    protected void doBuild() throws Exception {
+    }
+    
 }

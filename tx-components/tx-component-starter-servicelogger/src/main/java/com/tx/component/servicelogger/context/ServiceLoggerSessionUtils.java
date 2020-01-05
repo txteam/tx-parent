@@ -50,13 +50,11 @@ public class ServiceLoggerSessionUtils {
             AssertUtils.isTrue(
                     ServiceLoggerSession.class.isInstance(loggerSessionObject),
                     "logger session should is LoggerSession instance.");
-            
             return (ServiceLoggerSession) loggerSessionObject;
         }
         
         ServiceLoggerSession loggerSession = new ServiceLoggerSession();
         TransactionSynchronizationManager.bindResource(INSTANCE, loggerSession);
-        
         //如果事务的现成变量中
         TransactionSynchronizationManager.registerSynchronization(
                 new TransactionSynchronizationAdapter() {
@@ -67,7 +65,6 @@ public class ServiceLoggerSessionUtils {
                                 .unbindResource(INSTANCE);
                     }
                 });
-        
         return loggerSession;
     }
 }

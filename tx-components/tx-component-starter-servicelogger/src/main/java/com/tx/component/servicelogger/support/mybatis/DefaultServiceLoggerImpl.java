@@ -8,7 +8,6 @@ package com.tx.component.servicelogger.support.mybatis;
 
 import java.util.List;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -64,7 +63,7 @@ public class DefaultServiceLoggerImpl<T> implements ServiceLogger<T> {
      * @return
      */
     @Override
-    public Class<T> getLogEntityClass() {
+    public Class<T> getEntityType() {
         return this.beanType;
     }
     
@@ -94,19 +93,10 @@ public class DefaultServiceLoggerImpl<T> implements ServiceLogger<T> {
      * @see [类、类#方法、类#成员]
      */
     private void doBatchInsert(List<T> objectList) {
-        List<String> primaryPropertyList = this.assistant
-                .getPrimaryProperyNameList();
-        if (CollectionUtils.isEmpty(primaryPropertyList)
-                || primaryPropertyList.size() > 1) {
-            this.myBatisDaoSupport.batchInsert(
-                    this.assistant.getInsertStatementName(), objectList, true);
-        } else {
-            this.myBatisDaoSupport.batchInsertUseUUID(
-                    this.assistant.getInsertStatementName(),
-                    objectList,
-                    primaryPropertyList.get(0),
-                    true);
-        }
+        String primaryPropertyName = this.assistant.getPrimaryProperyName();
+        this.myBatisDaoSupport.batchInsert(primaryPropertyName,
+                objectList,
+                false);
     }
     
     /**
@@ -135,18 +125,10 @@ public class DefaultServiceLoggerImpl<T> implements ServiceLogger<T> {
      * @see [类、类#方法、类#成员]
      */
     private void doInsert(T condition) {
-        List<String> primaryPropertyList = this.assistant
-                .getPrimaryProperyNameList();
-        if (CollectionUtils.isEmpty(primaryPropertyList)
-                || primaryPropertyList.size() > 1) {
-            this.myBatisDaoSupport
-                    .insert(this.assistant.getInsertStatementName(), condition);
-        } else {
-            this.myBatisDaoSupport.insertUseUUID(
-                    this.assistant.getInsertStatementName(),
-                    condition,
-                    primaryPropertyList.get(0));
-        }
+        String primaryPropertyName = this.assistant.getPrimaryProperyName();
+        this.myBatisDaoSupport.insertUseUUID(primaryPropertyName,
+                condition,
+                primaryPropertyName);
     }
     
     /**

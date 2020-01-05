@@ -6,7 +6,10 @@
  */
 package com.tx.component.servicelogger.context;
 
+import com.tx.component.servicelogger.support.ServiceLogger;
+import com.tx.component.servicelogger.support.ServiceLoggerRegistry;
 import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.util.MessageUtils;
 
 /**
  * 业务日志容器<br/>
@@ -20,6 +23,7 @@ public class ServiceLoggerContext extends ServiceLoggerBuilder {
     
     protected static ServiceLoggerContext context;
     
+    /** 日业务日志容器构造方法 */
     protected ServiceLoggerContext() {
         super();
     }
@@ -36,24 +40,27 @@ public class ServiceLoggerContext extends ServiceLoggerBuilder {
         return ServiceLoggerContext.context;
     }
     
+    /**
+     * 获取日志对象<br/>
+     *
+     * @param logObjectType
+     *            
+     * @return ServiceLogger<T> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     * @version [版本号, 2015年11月24日]
+     * @author rain
+     */
+    public <T> ServiceLogger<T> getLogger(Class<T> beanType) {
+        ServiceLogger<T> logger = serviceLoggerRegistry
+                .getServiceLogger(beanType);
+        AssertUtils.notNull(logger,
+                MessageUtils.format("logger:[{}] is not exists.",
+                        new Object[] { beanType }));
+        return logger;
+    }
+    
     //    /**
-    //     * 获取日志对象<br/>
-    //     *
-    //     * @param logObjectType
-    //     *            
-    //     * @return ServiceLogger<T> [返回类型说明]
-    //     * @exception throws [异常类型] [异常说明]
-    //     * @see [类、类#方法、类#成员]
-    //     * @version [版本号, 2015年11月24日]
-    //     * @author rain
-    //     */
-    //    public static <T> ServiceLogger<T> getLogger(Class<T> beanType) {
-    //        ServiceLoggerRegistry.getInstance().getLoggerService(beanType);
-    //        return ServiceLoggerRegistry.getServiceLogger(logObjectType);
-    //    }
-    //    
-    //    /**
-    //     * 
     //     * 记录日志<br>
     //     *
     //     * @param log 日志
@@ -65,7 +72,7 @@ public class ServiceLoggerContext extends ServiceLoggerBuilder {
     //     * @version [版本号, 2015年12月17日]
     //     * @author rain
     //     */
-    //    public static <T> void log(T log, Class<T> logObjectType) {
+    //    public static <T> void info(T log, Class<T> logObjectType) {
     //        ServiceLoggerContext.getLogger(logObjectType).log(log);
     //    }
 }

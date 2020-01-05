@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -23,16 +22,12 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.context.annotation.Import;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.support.TransactionTemplate;
 
+import com.tx.component.servicelogger.ServiceLoggerConstants;
 import com.tx.component.servicelogger.context.ServiceLoggerContextFactory;
-import com.tx.component.servicelogger.dbscript.ServiceLogTableInitializer;
 import com.tx.component.servicelogger.support.ServiceLoggerRegistry;
-import com.tx.core.ddlutil.executor.TableDDLExecutor;
-import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.mybatis.support.MyBatisDaoSupport;
 import com.tx.core.starter.component.ComponentSupportAutoConfiguration;
 
 /**
@@ -50,13 +45,10 @@ import com.tx.core.starter.component.ComponentSupportAutoConfiguration;
 @ConditionalOnClass({ ServiceLoggerContextFactory.class })
 @ConditionalOnSingleCandidate(DataSource.class)
 @ConditionalOnBean(PlatformTransactionManager.class)
-@ConditionalOnProperty(prefix = "tx.servicelogger", value = "enable", havingValue = "true")
+@ConditionalOnProperty(prefix = ServiceLoggerConstants.PROPERTIES_PREFIX, value = "enable", havingValue = "true")
+@Import({ ServiceLoggerPersisterConfiguration.class })
 public class ServiceLoggerContextAutoConfiguration
         implements ApplicationContextAware, InitializingBean {
-    
-    /** mybatis配置文件 */
-    protected String[] mybatisMapperLocations = new String[] {
-            "classpath*:com/tx/component/basicdata/dao/impl/*SqlMap_BASICDATA.xml" };
     
     /** 包名 */
     protected String basePackages = "com.tx";
@@ -66,18 +58,6 @@ public class ServiceLoggerContextAutoConfiguration
     
     /** spring 容器句柄 */
     private ApplicationContext applicationContext;
-    
-    /** 数据源:dataSource */
-    protected DataSource dataSource;
-    
-    /** transactionManager */
-    protected PlatformTransactionManager transactionManager;
-    
-    /** transactionTemplate: 如果存在事务则在当前事务中执行 */
-    protected MyBatisDaoSupport myBatisDaoSupport;
-    
-    /** transactionTemplate: 如果存在事务则在当前事务中执行 */
-    protected TransactionTemplate transactionTemplate;
     
     /** 容器所属模块：当该值为空时，使用spring.application.name的内容 */
     protected String module;
@@ -108,125 +88,17 @@ public class ServiceLoggerContextAutoConfiguration
      */
     @Override
     public void afterPropertiesSet() throws Exception {
-        //设置dataSource
-        if (StringUtils.isNotBlank(this.properties.getDataSourceRef())
-                && this.applicationContext
-                        .containsBean(this.properties.getDataSourceRef())) {
-            this.dataSource = this.applicationContext.getBean(
-                    this.properties.getDataSourceRef(), DataSource.class);
-        } else if (this.applicationContext.getBeansOfType(DataSource.class)
-                .size() == 1) {
-            this.dataSource = this.applicationContext.getBean(DataSource.class);
-        }
-        AssertUtils.notEmpty(this.dataSource,
-                "dataSource is null.存在多个数据源，需要通过basicdata.dataSource指定使用的数据源,或为数据源设置为Primary.");
-        
-        //设置dataSource
-        if (StringUtils.isNotBlank(this.properties.getMybatisDaoSupportRef())
-                && this.applicationContext.containsBean(
-                        this.properties.getMybatisDaoSupportRef())) {
-            this.myBatisDaoSupport = this.applicationContext.getBean(
-                    this.properties.getMybatisDaoSupportRef(),
-                    MyBatisDaoSupport.class);
-        } else if (this.applicationContext
-                .getBeansOfType(MyBatisDaoSupport.class).size() == 1) {
-            this.myBatisDaoSupport = this.applicationContext
-                    .getBean(MyBatisDaoSupport.class);
-        }
-        AssertUtils.notEmpty(this.myBatisDaoSupport,
-                "myBatisDaoSupport is null.存在多个数据源，需要通过basicdata.myBatisDaoSupport指定使用的mybatis句柄,或为mybatis句柄设置为Primary.");
-        
-        //设置transactionManager
-        if (StringUtils.isNotBlank(this.properties.getTransactionManagerRef())
-                && this.applicationContext.containsBean(
-                        this.properties.getTransactionManagerRef())) {
-            this.transactionManager = this.applicationContext.getBean(
-                    this.properties.getTransactionManagerRef(),
-                    PlatformTransactionManager.class);
-        } else if (this.applicationContext
-                .getBeansOfType(PlatformTransactionManager.class).size() == 1) {
-            this.transactionManager = this.applicationContext
-                    .getBean(PlatformTransactionManager.class);
-        } else {
-            this.transactionManager = new DataSourceTransactionManager(
-                    this.dataSource);
-        }
-        AssertUtils.notEmpty(this.transactionManager,
-                "transactionManager is null.存在多个事务管理器，需要通过basicdata.transactionManager指定使用的数据源,或为数据源设置为Primary.");
-        
         //初始化包名
         if (!StringUtils.isEmpty(this.properties.getBasePackages())) {
             this.basePackages = this.properties.getBasePackages();
         }
+        
         if (!StringUtils.isBlank(this.properties.getModule())) {
             this.module = this.properties.getModule();
         }
         if (!StringUtils.isBlank(this.applicationName)) {
             this.module = this.applicationName;
         }
-        
-        this.transactionTemplate = new TransactionTemplate(
-                this.transactionManager);
-    }
-    
-    /**
-     * 该类会优先加载:基础数据容器表初始化器<br/>
-     * <功能详细描述>
-     * 
-     * @author  Administrator
-     * @version  [版本号, 2018年5月5日]
-     * @see  [相关类/方法]
-     * @since  [产品/模块版本]
-     */
-    @Configuration
-    @ConditionalOnBean({ TableDDLExecutor.class })
-    @ConditionalOnSingleCandidate(TableDDLExecutor.class)
-    @ConditionalOnProperty(prefix = "tx.servicelogger", value = "table-auto-initialize", havingValue = "true")
-    @ConditionalOnMissingBean(ServiceLogTableInitializer.class)
-    public static class BasicDataContextTableInitializerConfiguration {
-        
-        /** 表ddl自动执行器 */
-        private TableDDLExecutor tableDDLExecutor;
-        
-        public BasicDataContextTableInitializerConfiguration(
-                TableDDLExecutor tableDDLExecutor) {
-            this.tableDDLExecutor = tableDDLExecutor;
-        }
-        
-        /**
-         * 当命令容器不存在时<br/>
-         * <功能详细描述>
-         * @return [参数说明]
-         * 
-         * @return CommandContextFactory [返回类型说明]
-         * @exception throws [异常类型] [异常说明]
-         * @see [类、类#方法、类#成员]
-         */
-        @Bean("servicelogger.tableInitializer")
-        public ServiceLogTableInitializer tableInitializer() {
-            ServiceLogTableInitializer initializer = new ServiceLogTableInitializer(
-                    tableDDLExecutor);
-            
-            return initializer;
-        }
-    }
-    
-    /**
-     * 业务日志注册表<br/>
-     * <功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return ServiceLoggerRegistry [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    @Bean(name = "serviceLoggerRegistry")
-    public ServiceLoggerRegistry serviceLoggerRegistry() {
-        ServiceLoggerRegistry registry = new ServiceLoggerRegistry(
-                this.basePackages, this.myBatisDaoSupport,
-                this.transactionTemplate);
-        
-        return registry;
     }
     
     /**

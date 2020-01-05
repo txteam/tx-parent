@@ -6,7 +6,6 @@
  */
 package com.tx.component.servicelogger.support.mybatis;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,17 +44,11 @@ public class LoggerMapperBuilderAssistant
     //表字段
     protected List<JPAColumnInfo> tableColumns;
     
-    //排序字段
-    protected List<String> orderBys;
+    //主键字段
+    protected JPAColumnInfo primaryKeyColumn;
     
     //queryOrderBy
-    protected String queryOrderBy;
-    
-    //主键字段
-    protected List<JPAColumnInfo> primaryKeyColumns;
-    
-    //非主键字段
-    protected List<JPAColumnInfo> notPrimaryKeyColumns;
+    protected String orders;
     
     /** <默认构造函数> */
     public LoggerMapperBuilderAssistant(Configuration configuration,
@@ -79,13 +72,9 @@ public class LoggerMapperBuilderAssistant
         this.tableColumns = JPAParseUtils.parseTableColumns(this.beanType);
         
         //主键字段以及非主键字段集合记录
-        this.primaryKeyColumns = new ArrayList<>();
-        this.notPrimaryKeyColumns = new ArrayList<>();
         for (JPAColumnInfo column : this.tableColumns) {
-            if (column.isPrimaryKey()) {
-                this.primaryKeyColumns.add(column);
-            } else {
-                this.notPrimaryKeyColumns.add(column);
+            if (column.isPrimaryKey() && this.primaryKeyColumn == null) {
+                this.primaryKeyColumn = column;
             }
             
             //判断是否具备typeHandler,也不存在嵌套属性描述时需要抛出异常
@@ -105,16 +94,12 @@ public class LoggerMapperBuilderAssistant
         }
         
         //必须存在主键字段
-        AssertUtils.notEmpty(this.primaryKeyColumns,
+        AssertUtils.notNull(this.primaryKeyColumn,
                 "实体无法判断主键字段，不支持自动生成SqlMap.type:{}",
                 new Object[] { this.beanType });
         
         //解析排序字段
-        this.orderBys = JPAParseUtils.parseOrderBys(beanType,
-                this.tableColumns,
-                "createDate",
-                "id");
-        this.queryOrderBy = JPAParseUtils.parseOrderBy(beanType,
+        this.orders = JPAParseUtils.parseOrderBy(beanType,
                 this.tableColumns,
                 "createDate",
                 "id");
@@ -129,37 +114,9 @@ public class LoggerMapperBuilderAssistant
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public List<String> getPrimaryProperyNameList() {
-        List<String> resList = new ArrayList<>();
-        for (JPAColumnInfo column : this.primaryKeyColumns) {
-            resList.add(column.getColumnPropertyName());
-        }
-        return resList;
-    }
-    
-    /**
-     * @return
-     */
-    @Override
-    protected String getInsertSQL() {
-        if (StringUtils.isNotBlank(annotation.insertSQL())) {
-            return annotation.insertSQL();
-        }
-        
-        SqlMapSQLBuilder sql = new SqlMapSQLBuilder();
-        sql.INSERT_INTO(this.tableName);
-        
-        for (JPAColumnInfo column : this.tableColumns) {
-            if (!column.isInsertable()) {
-                continue;
-            }
-            String columnName = column.getColumnName();
-            String propertyName = column.getColumnPropertyName();
-            sql.VALUES(columnName, formatProperty(propertyName));
-        }
-        
-        String insertSQL = sql.toString();
-        return insertSQL;
+    public String getPrimaryProperyName() {
+        String propertyName = this.primaryKeyColumn.getColumnPropertyName();
+        return propertyName;
     }
     
     /**
@@ -182,18 +139,35 @@ public class LoggerMapperBuilderAssistant
      * @return
      */
     @Override
+    protected String getInsertSQL() {
+        SqlMapSQLBuilder sql = new SqlMapSQLBuilder();
+        sql.INSERT_INTO(this.tableName);
+        for (JPAColumnInfo column : this.tableColumns) {
+            if (!column.isInsertable()) {
+                continue;
+            }
+            String columnName = column.getColumnName();
+            String propertyName = column.getColumnPropertyName();
+            sql.VALUES(columnName, formatProperty(propertyName));
+        }
+        String insertSQL = sql.toString();
+        return insertSQL;
+    }
+    
+    /**
+     * @return
+     */
+    @Override
     protected Map<String, String> getCustomizeColumn2PropertyMap() {
         Map<String, String> column2propertyMap = new HashMap<>();
         for (JPAColumnInfo column : this.tableColumns) {
             String columnName = column.getColumnName();
             String propertyName = column.getColumnPropertyName();
-            
             //如果字段名和属性名不匹配时才回缴入customizeColumn2PropertyMap
             if (!StringUtils.equalsIgnoreCase(columnName, propertyName)) {
                 column2propertyMap.put(columnName, propertyName);
             }
         }
-        
         return column2propertyMap;
     }
     
@@ -202,10 +176,6 @@ public class LoggerMapperBuilderAssistant
      */
     @Override
     protected String getFindSQL() {
-        if (StringUtils.isNotBlank(annotation.findSQL())) {
-            return annotation.findSQL();
-        }
-        
         SqlMapSQLBuilder sql = new SqlMapSQLBuilder();
         for (JPAColumnInfo column : this.tableColumns) {
             String columnName = column.getColumnName();
@@ -213,16 +183,11 @@ public class LoggerMapperBuilderAssistant
             sql.FIND(columnName);
         }
         sql.FROM(this.tableName);
-        for (JPAColumnInfo column : this.primaryKeyColumns) {
-            String columnName = column.getColumnName();
-            String propertyName = column.getColumnPropertyName();
-            
-            String whereItem = formatWhereAndItem(columnName,
-                    " = ",
-                    propertyName);
-            sql.WHERE(whereItem);
-        }
         
+        String columnName = this.primaryKeyColumn.getColumnName();
+        String propertyName = this.primaryKeyColumn.getColumnPropertyName();
+        String whereItem = formatWhereAndItem(columnName, " = ", propertyName);
+        sql.WHERE(whereItem);
         String findSQL = sql.toString();
         return findSQL;
     }
@@ -232,10 +197,6 @@ public class LoggerMapperBuilderAssistant
      */
     @Override
     protected String getQuerySQL() {
-        if (StringUtils.isNotBlank(annotation.querySQL())) {
-            return annotation.querySQL();
-        }
-        
         SqlMapSQLBuilder sql = new SqlMapSQLBuilder();
         for (JPAColumnInfo column : this.tableColumns) {
             String columnName = column.getColumnName();
@@ -244,10 +205,10 @@ public class LoggerMapperBuilderAssistant
         }
         sql.FROM(this.tableName);
         
-        buildQueryCondition(sql);//构建查询条件
+        //构建查询条件
+        buildQueryCondition(sql);
         
-        sql.ORDER_BY(this.queryOrderBy);
-        
+        sql.ORDER_BY(this.orders);
         String querySQL = sql.toString();
         return querySQL;
     }
@@ -257,10 +218,6 @@ public class LoggerMapperBuilderAssistant
      */
     @Override
     protected String getCountSQL() {
-        if (StringUtils.isNotBlank(annotation.countSQL())) {
-            return annotation.countSQL();
-        }
-        
         SqlMapSQLBuilder sql = new SqlMapSQLBuilder();
         sql.COUNT();
         sql.FROM(this.tableName);
@@ -286,7 +243,17 @@ public class LoggerMapperBuilderAssistant
             String propertyName = column.getPropertyName();
             String columnPropertyName = column.getColumnPropertyName();
             
-            if (column.hasNestedProperty()) {
+            //这里以后可以做成子类可扩展的
+            if ("createDate".equals(propertyName)) {
+                String minWhereItem = formatWhereAndItem(columnName,
+                        " >= ",
+                        "minCreateDate");
+                sql.WHERE(minWhereItem);
+                String maxWhereItem = formatWhereAndItem(columnName,
+                        " < ",
+                        "maxCreateDate");
+                sql.WHERE(maxWhereItem);
+            } else if (column.hasNestedProperty()) {
                 String whereItem = formatNestedWhereAndItem(columnName,
                         " = ",
                         propertyName,
@@ -297,19 +264,6 @@ public class LoggerMapperBuilderAssistant
                         " = ",
                         propertyName);
                 sql.WHERE(whereItem);
-            }
-            
-            //这里以后可以做成子类可扩展的
-            if ("createDate".equals(propertyName)) {
-                String minWhereItem = formatWhereAndItem(columnName,
-                        " >= ",
-                        "minCreateDate");
-                sql.WHERE(minWhereItem);
-                
-                String maxWhereItem = formatWhereAndItem(columnName,
-                        " < ",
-                        "maxCreateDate");
-                sql.WHERE(maxWhereItem);
             }
         }
     }

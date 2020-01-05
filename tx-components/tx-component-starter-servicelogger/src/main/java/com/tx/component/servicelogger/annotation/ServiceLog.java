@@ -50,47 +50,4 @@ public @interface ServiceLog {
      */
     @AliasFor("value")
     String tablename() default "";
-    
-    /**
-     * 插入语句<br/>
-     * <功能详细描述>
-     * 
-     * @return String [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    String insertSQL() default "";
-    
-    /**
-     * 查询语句<br/>
-     * <功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return String [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    String findSQL() default "";
-    
-    /**
-     * 查询列表语句<br/>
-     * <功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return String [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    String querySQL() default "";
-    
-    /**
-     * 统计语句<br/>
-     * <功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return String [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    String countSQL() default "";
 }

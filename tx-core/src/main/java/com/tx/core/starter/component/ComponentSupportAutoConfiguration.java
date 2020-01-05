@@ -91,7 +91,6 @@ public class ComponentSupportAutoConfiguration
                 "classpath*:com/tx/component/**/*SqlMap_CONFIGURATION.xml",
                 "classpath*:com/tx/component/**/*SqlMap_PLUGIN.xml",
                 "classpath*:com/tx/component/**/*SqlMap_SECURITY.xml" });
-        
         this.dataSource = dataSource;
     }
     
@@ -151,7 +150,7 @@ public class ComponentSupportAutoConfiguration
      */
     @Bean("tx.component.myBatisDaoSupport")
     @ConditionalOnMissingBean(name = "tx.component.myBatisDaoSupport")
-    public MyBatisDaoSupport myBatisDaoSupport(TableInitializerExecutor executor) throws Exception {
+    public MyBatisDaoSupport myBatisDaoSupport() throws Exception {
         MyBatisDaoSupport myBatisDaoSupport = new MyBatisDaoSupport(
                 sqlSessionTemplate());
         return myBatisDaoSupport;
