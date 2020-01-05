@@ -24,6 +24,7 @@ import com.tx.core.util.ClassScanUtils;
 /**
  * 权限类型枚举业务层<br/>
  * <功能详细描述>
+ * 1、修改权限容器：通过auth,role ..EnumService获取值时不再获取枚举实例，而是根据枚举实例构造的item对象考虑到缓存以后需要反序列化可能出的异常做出的调整
  * 
  * @author  Administrator
  * @version  [版本号, 2019年6月22日]
