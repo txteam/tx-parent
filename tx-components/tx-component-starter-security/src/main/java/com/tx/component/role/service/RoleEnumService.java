@@ -24,6 +24,7 @@ import org.springframework.util.MultiValueMap;
 
 import com.tx.component.role.context.RoleManager;
 import com.tx.component.role.model.Role;
+import com.tx.component.role.model.RoleItem;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.util.ClassScanUtils;
 
@@ -76,10 +77,10 @@ public class RoleEnumService implements RoleManager, InitializingBean, Ordered {
                                 roleClazzTemp });
                 roleClassMap.put(roleTemp.getId(), roleClazzTemp);
                 
-                roleMap.put(roleTemp.getId(), roleTemp);
-                
-                type2roleMap.add(roleTemp.getRoleTypeId(), roleTemp);
-                parent2roleMap.add(roleTemp.getParentId(), roleTemp);
+                RoleItem roleWrapper = new RoleItem(roleTemp);
+                roleMap.put(roleWrapper.getId(), roleWrapper);
+                type2roleMap.add(roleWrapper.getRoleTypeId(), roleWrapper);
+                parent2roleMap.add(roleWrapper.getParentId(), roleWrapper);
             }
         }
     }

@@ -15,6 +15,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.tx.core.exceptions.util.AssertUtils;
+
 import io.swagger.annotations.ApiModel;
 
 /**
@@ -53,6 +55,23 @@ public class RoleItem implements Role {
     /** 子权限列表 */
     @OneToMany(fetch = FetchType.LAZY)
     private List<Role> children = new ArrayList<Role>();
+    
+    /** <默认构造函数> */
+    public RoleItem() {
+        super();
+    }
+    
+    /** <默认构造函数> */
+    public RoleItem(Role role) {
+        super();
+        AssertUtils.notNull(role, "role is null.");
+        
+        this.id = role.getId();
+        this.parentId = role.getParentId();
+        this.roleTypeId = role.getRoleTypeId();
+        this.name = role.getName();
+        this.remark = role.getRemark();
+    }
     
     /**
      * @return 返回 id

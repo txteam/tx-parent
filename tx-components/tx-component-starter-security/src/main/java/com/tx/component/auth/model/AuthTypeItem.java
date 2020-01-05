@@ -9,6 +9,8 @@ package com.tx.component.auth.model;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import com.tx.core.exceptions.util.AssertUtils;
+
 import io.swagger.annotations.ApiModel;
 
 /**
@@ -36,42 +38,56 @@ public class AuthTypeItem implements AuthType {
     
     /** 权限类型描述 */
     private String remark;
-
+    
+    /** <默认构造函数> */
+    public AuthTypeItem() {
+        super();
+    }
+    
+    /** <默认构造函数> */
+    public AuthTypeItem(AuthType authType) {
+        super();
+        AssertUtils.notNull(authType, "authType is null.");
+        this.id = authType.getId();
+        this.name = authType.getName();
+        this.remark = authType.getRemark();
+    }
+    
     /**
      * @return 返回 id
      */
     public String getId() {
         return id;
     }
-
+    
     /**
      * @param 对id进行赋值
      */
     public void setId(String id) {
         this.id = id;
     }
-
+    
     /**
      * @return 返回 name
      */
     public String getName() {
         return name;
     }
-
+    
     /**
      * @param 对name进行赋值
      */
     public void setName(String name) {
         this.name = name;
     }
-
+    
     /**
      * @return 返回 remark
      */
     public String getRemark() {
         return remark;
     }
-
+    
     /**
      * @param 对remark进行赋值
      */

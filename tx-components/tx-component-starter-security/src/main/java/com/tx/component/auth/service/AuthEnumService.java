@@ -24,6 +24,7 @@ import org.springframework.util.MultiValueMap;
 
 import com.tx.component.auth.context.AuthManager;
 import com.tx.component.auth.model.Auth;
+import com.tx.component.auth.model.AuthItem;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.util.ClassScanUtils;
 
@@ -76,10 +77,10 @@ public class AuthEnumService implements AuthManager, InitializingBean, Ordered {
                                 authClazzTemp });
                 authClassMap.put(authTemp.getId(), authClazzTemp);
                 
-                authMap.put(authTemp.getId(), authTemp);
-                
-                type2authMap.add(authTemp.getAuthTypeId(), authTemp);
-                parent2authMap.add(authTemp.getParentId(), authTemp);
+                AuthItem authWrapper = new AuthItem(authTemp);
+                authMap.put(authTemp.getId(), authWrapper);
+                type2authMap.add(authTemp.getAuthTypeId(), authWrapper);
+                parent2authMap.add(authTemp.getParentId(), authWrapper);
             }
         }
     }

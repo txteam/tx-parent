@@ -18,6 +18,7 @@ import javax.persistence.Table;
 import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.tx.core.exceptions.util.AssertUtils;
 
 import io.swagger.annotations.ApiModel;
 
@@ -74,6 +75,22 @@ public class AuthItem implements Auth {
     /** <默认构造函数> */
     public AuthItem() {
         super();
+    }
+    
+    /** <默认构造函数> */
+    public AuthItem(Auth auth) {
+        super();
+        AssertUtils.notNull(auth, "auth is null.");
+        
+        this.id = auth.getId();
+        this.parentId = auth.getParentId();
+        this.attributes = auth.getAttributes();
+        this.authTypeId = auth.getAuthTypeId();
+        this.configAble = auth.isConfigAble();
+        this.name = auth.getName();
+        this.remark = auth.getRemark();
+        this.resourceId = auth.getResourceId();
+        this.resourceType = auth.getResourceType();
     }
     
     /** <默认构造函数> */
@@ -234,19 +251,19 @@ public class AuthItem implements Auth {
     }
     
     /**
+     * @param childs
+     */
+    @Override
+    public void setChildren(List<Auth> children) {
+        this.children = children;
+    }
+    
+    /**
      * @return
      */
     @JsonIgnore
     @Override
     public List<Auth> getChildren() {
         return children;
-    }
-    
-    /**
-     * @param childs
-     */
-    @Override
-    public void setChildren(List<Auth> children) {
-        this.children = children;
     }
 }

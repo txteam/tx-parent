@@ -17,6 +17,7 @@ import org.springframework.core.Ordered;
 
 import com.tx.component.role.context.RoleTypeManager;
 import com.tx.component.role.model.RoleType;
+import com.tx.component.role.model.RoleTypeItem;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.util.ClassScanUtils;
 
@@ -63,9 +64,10 @@ public class RoleTypeEnumService
                         new Object[] { roleTypeTemp.getId(),
                                 roleTypeClassMap.get(roleTypeTemp.getId()),
                                 roleTypeTemp });
-                
                 roleTypeClassMap.put(roleTypeTemp.getId(), roleTypeClazzTemp);
-                roleTypeMap.put(roleTypeTemp.getId(), roleTypeTemp);
+                
+                RoleTypeItem rtWrapper = new RoleTypeItem(roleTypeTemp);
+                roleTypeMap.put(roleTypeTemp.getId(), rtWrapper);
             }
         }
     }

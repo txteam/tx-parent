@@ -9,6 +9,8 @@ package com.tx.component.role.model;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import com.tx.core.exceptions.util.AssertUtils;
+
 import io.swagger.annotations.ApiModel;
 
 /**
@@ -36,6 +38,20 @@ public class RoleTypeItem implements RoleType {
     
     /** 角色类型备注 */
     private String remark;
+    
+    /** <默认构造函数> */
+    public RoleTypeItem() {
+        super();
+    }
+    
+    /** <默认构造函数> */
+    public RoleTypeItem(RoleType roleType) {
+        super();
+        AssertUtils.notNull(roleType,"roleType is null.");
+        this.id = roleType.getId();
+        this.name = roleType.getName();
+        this.remark = roleType.getRemark();
+    }
     
     /**
      * @return 返回 id

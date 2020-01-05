@@ -8,10 +8,8 @@ package com.tx.core.support.json;
 
 import java.beans.PropertyDescriptor;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
-import org.apache.commons.collections4.MapUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.PropertyAccessorFactory;
 import org.springframework.core.convert.TypeDescriptor;
@@ -22,6 +20,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import com.tx.core.util.JsonUtils;
 
 /**
  * 基础数据json序列化器<br/>
@@ -51,7 +50,6 @@ public class BaseEnumJsonSerializer extends JsonSerializer<BaseEnum> {
         
         generator.writeStartObject();
         BeanWrapper bw = PropertyAccessorFactory.forBeanPropertyAccess(value);
-        Map<String, Object> objMap = new HashMap<String, Object>();
         for (PropertyDescriptor pd : bw.getPropertyDescriptors()) {
             //判断是否忽略该节点
             String pdName = pd.getName();
@@ -65,22 +63,22 @@ public class BaseEnumJsonSerializer extends JsonSerializer<BaseEnum> {
             if (isIgnore) {
                 continue;
             }
-            objMap.put(pdName, bw.getPropertyValue(pdName));
-            //generator.writeFieldName(pdName);
-            //try {
-            //    Object object = pd.getReadMethod().invoke(value);
-            //    if (object != null) {
-            //        generator.writeString(object.toString());
-            //    }
-            //} catch (IllegalAccessException | IllegalArgumentException
-            //        | InvocationTargetException e) {
-            //    throw new SILException(e.getMessage(), e);
-            //}
-        }
-        if (MapUtils.isEmpty(objMap)) {
-            generator.writeObject(value);
-        } else {
-            generator.writeObject(objMap);
+            generator.writeFieldName(pdName);
+            Object obj = bw.getPropertyValue(pdName);
+            Class<?> clazz = bw.getPropertyType(pdName);
+            if (BeanUtils.isSimpleValueType(clazz)) {
+                if (obj == null) {
+                    generator.writeNull();
+                } else {
+                    generator.writeString(JsonUtils.toJson(obj));
+                }
+            } else {
+                if (obj == null) {
+                    generator.writeNull();
+                } else {
+                    generator.writeString(JsonUtils.toJson(obj));
+                }
+            }
         }
         generator.writeEndObject();
     }
@@ -112,4 +110,12 @@ public class BaseEnumJsonSerializer extends JsonSerializer<BaseEnum> {
         }
         return false;
     }
+    
+    //public static void main(String[] args) {
+    //    System.out.println(Number.class.isAssignableFrom(int.class));
+    //    System.out.println(JsonUtils.toJson(1));
+    //    System.out.println(JsonUtils.toJson("12312asdfasdf"));
+    //    System.out.println(JsonUtils.toJson(111111111111111l));
+    //    System.out.println(JsonUtils.toJson(true));
+    //}
 }

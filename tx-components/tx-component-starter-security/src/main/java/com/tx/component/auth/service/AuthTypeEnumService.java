@@ -17,6 +17,7 @@ import org.springframework.core.Ordered;
 
 import com.tx.component.auth.context.AuthTypeManager;
 import com.tx.component.auth.model.AuthType;
+import com.tx.component.auth.model.AuthTypeItem;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.util.ClassScanUtils;
 
@@ -63,9 +64,10 @@ public class AuthTypeEnumService
                         new Object[] { authTypeTemp.getId(),
                                 authTypeClassMap.get(authTypeTemp.getId()),
                                 authTypeTemp });
-                
                 authTypeClassMap.put(authTypeTemp.getId(), authTypeClazzTemp);
-                authTypeMap.put(authTypeTemp.getId(), authTypeTemp);
+                
+                AuthTypeItem atiWrapper = new AuthTypeItem(authTypeTemp);
+                authTypeMap.put(authTypeTemp.getId(), atiWrapper);
             }
         }
     }
