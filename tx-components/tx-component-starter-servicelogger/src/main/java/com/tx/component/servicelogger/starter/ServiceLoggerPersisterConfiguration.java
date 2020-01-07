@@ -23,7 +23,11 @@ import org.springframework.transaction.support.TransactionTemplate;
 import com.tx.component.servicelogger.support.LogArgumentHandler;
 import com.tx.component.servicelogger.support.ServiceLoggerAop;
 import com.tx.component.servicelogger.support.ServiceLoggerRegistry;
+import com.tx.component.servicelogger.support.handler.ClientIpAddressLogArgHandler;
 import com.tx.component.servicelogger.support.handler.CreateDateLogArgHandler;
+import com.tx.component.servicelogger.support.handler.RealIpAddressLogArgHandler;
+import com.tx.component.servicelogger.support.handler.RemoteIpAddressLogArgHandler;
+import com.tx.component.servicelogger.support.handler.SessionAttributesLogArgHandler;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.mybatis.support.MyBatisDaoSupport;
 import com.tx.core.starter.component.ComponentConstants;
@@ -41,9 +45,33 @@ import com.tx.core.starter.component.ComponentConstants;
 @Configuration
 public class ServiceLoggerPersisterConfiguration {
     
+    @Bean(name = "clientIpAddressLogArgHandler")
+    public ClientIpAddressLogArgHandler clientIpAddressLogArgHandler() {
+        ClientIpAddressLogArgHandler handler = new ClientIpAddressLogArgHandler();
+        return handler;
+    }
+    
+    @Bean(name = "realIpAddressLogArgHandler")
+    public RealIpAddressLogArgHandler realIpAddressLogArgHandler() {
+        RealIpAddressLogArgHandler handler = new RealIpAddressLogArgHandler();
+        return handler;
+    }
+    
+    @Bean(name = "remoteIpAddressLogArgHandler")
+    public RemoteIpAddressLogArgHandler remoteIpAddressLogArgHandler() {
+        RemoteIpAddressLogArgHandler handler = new RemoteIpAddressLogArgHandler();
+        return handler;
+    }
+    
     @Bean(name = "createDateLogArgHandler")
     public CreateDateLogArgHandler createDateLogArgHandler() {
         CreateDateLogArgHandler handler = new CreateDateLogArgHandler();
+        return handler;
+    }
+    
+    @Bean(name = "sessionAttributesLogArgHandler")
+    public SessionAttributesLogArgHandler sessionAttributesLogArgHandler() {
+        SessionAttributesLogArgHandler handler = new SessionAttributesLogArgHandler();
         return handler;
     }
     

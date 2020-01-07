@@ -23,7 +23,7 @@ import com.tx.core.util.WebUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class RemoteIpAddressLogArgHandler3 implements LogArgumentHandler {
+public class RemoteIpAddressLogArgHandler implements LogArgumentHandler {
     
     private static final String FIELD_NAME = "remoteIpAddress";
     
