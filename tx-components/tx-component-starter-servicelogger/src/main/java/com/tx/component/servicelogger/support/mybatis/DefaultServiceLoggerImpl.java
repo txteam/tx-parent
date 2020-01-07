@@ -94,8 +94,9 @@ public class DefaultServiceLoggerImpl<T> implements ServiceLogger<T> {
      */
     private void doBatchInsert(List<T> objectList) {
         String primaryPropertyName = this.assistant.getPrimaryProperyName();
-        this.myBatisDaoSupport.batchInsert(primaryPropertyName,
+        this.myBatisDaoSupport.batchInsertUseUUID(this.assistant.getInsertStatementName(),
                 objectList,
+                primaryPropertyName,
                 false);
     }
     
@@ -126,7 +127,7 @@ public class DefaultServiceLoggerImpl<T> implements ServiceLogger<T> {
      */
     private void doInsert(T condition) {
         String primaryPropertyName = this.assistant.getPrimaryProperyName();
-        this.myBatisDaoSupport.insertUseUUID(primaryPropertyName,
+        this.myBatisDaoSupport.insertUseUUID(this.assistant.getInsertStatementName(),
                 condition,
                 primaryPropertyName);
     }

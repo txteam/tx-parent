@@ -41,8 +41,8 @@ import com.tx.core.util.ClassScanUtils;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class ServiceLoggerRegistry implements ApplicationContextAware,
-        InitializingBean, BeanFactoryAware{
+public class ServiceLoggerRegistry
+        implements ApplicationContextAware, InitializingBean, BeanFactoryAware {
     
     private Logger logger = LoggerFactory
             .getLogger(ServiceLoggerRegistry.class);
@@ -85,8 +85,6 @@ public class ServiceLoggerRegistry implements ApplicationContextAware,
         this.myBatisDaoSupport = myBatisDaoSupport;
         this.transactionTemplate = transactionTemplate;
     }
-    
-    
     
     /**
      * @param applicationContext
@@ -154,27 +152,29 @@ public class ServiceLoggerRegistry implements ApplicationContextAware,
                 .getBeansOfType(ServiceLogger.class);
         
         for (Entry<String, ServiceLogger> entry : loggerServiceMap.entrySet()) {
-            ServiceLogger dao = entry.getValue();
+            ServiceLogger logger = entry.getValue();
             String beanName = entry.getKey();
-            if (dao.getEntityType() == null
-                    || !Class.class.isInstance(dao.getEntityType())
-                    || Object.class.equals(dao.getEntityType())) {
+            if (logger.getEntityType() == null
+                    || !Class.class.isInstance(logger.getEntityType())
+                    || Object.class.equals(logger.getEntityType())) {
                 continue;
             }
-            Class<?> entityType = (Class<?>) dao.getEntityType();
+            Class<?> entityType = (Class<?>) logger.getEntityType();
             if (!entityType.isAnnotationPresent(ServiceLog.class)) {
                 continue;
             }
             
-            String generateDaoName = generateServiceLoggerName(
-                    entityType);
+            String loggerServiceName = generateServiceLoggerName(entityType);
             //注册单例Bean进入Spring容器
             //registerSingletonBean(beanName, service);
-            if (!beanName.equals(generateDaoName)) {
-                registerAlise(beanName, generateDaoName);
+            if (!beanName.equals(loggerServiceName)) {
+                registerAlise(beanName, loggerServiceName);
             }
             //注册处理的业务类型
-            ServiceLoggerRegistry.type2nameMap.put(entityType, generateDaoName);
+            ServiceLoggerRegistry.type2nameMap.put(entityType,
+                    loggerServiceName);
+            ServiceLoggerRegistry.name2serviceMap.put(loggerServiceName,
+                    logger);
         }
         
         //扫描遍历，如果已经存在持久层的实体类，则不再添加
@@ -190,10 +190,13 @@ public class ServiceLoggerRegistry implements ApplicationContextAware,
             //注册实体持久层
             BeanDefinition daoBeanDefinition = generateServiceLoggerBeanDefinition(
                     beanType, this.myBatisDaoSupport, this.transactionTemplate);
-            String loggerServiceName = generateServiceLoggerName(
-                    beanType);
+            String loggerServiceName = generateServiceLoggerName(beanType);
             registerBeanDefinition(loggerServiceName, daoBeanDefinition);
             ServiceLoggerRegistry.type2nameMap.put(beanType, loggerServiceName);
+            
+            ServiceLogger<?> serviceLogger = (ServiceLogger<?>) this.applicationContext
+                    .getBean(loggerServiceName);
+            name2serviceMap.put(loggerServiceName, serviceLogger);
         }
     }
     
@@ -223,7 +226,7 @@ public class ServiceLoggerRegistry implements ApplicationContextAware,
             AssertUtils.notNull(this.applicationContext,
                     "applicationContext is null.");
             serviceLogger = (ServiceLogger<T>) applicationContext
-                    .getBean(entityDaoName, Logger.class);
+                    .getBean(entityDaoName, ServiceLogger.class);
             name2serviceMap.put(entityDaoName, serviceLogger);
         }
         return serviceLogger;

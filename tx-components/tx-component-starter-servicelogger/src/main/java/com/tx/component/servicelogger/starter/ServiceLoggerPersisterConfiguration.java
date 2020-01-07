@@ -6,6 +6,8 @@
  */
 package com.tx.component.servicelogger.starter;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
@@ -14,10 +16,14 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import com.tx.component.servicelogger.support.LogArgumentHandler;
+import com.tx.component.servicelogger.support.ServiceLoggerAop;
 import com.tx.component.servicelogger.support.ServiceLoggerRegistry;
+import com.tx.component.servicelogger.support.handler.CreateDateLogArgHandler;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.mybatis.support.MyBatisDaoSupport;
 import com.tx.core.starter.component.ComponentConstants;
@@ -31,8 +37,31 @@ import com.tx.core.starter.component.ComponentConstants;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
+@EnableAspectJAutoProxy
 @Configuration
 public class ServiceLoggerPersisterConfiguration {
+    
+    @Bean(name = "createDateLogArgHandler")
+    public CreateDateLogArgHandler createDateLogArgHandler() {
+        CreateDateLogArgHandler handler = new CreateDateLogArgHandler();
+        return handler;
+    }
+    
+    /**
+     * 注入aspect切面<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return ServiceLoggerAop [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @Bean(name = "serviceLoggerAop")
+    public ServiceLoggerAop serviceLoggerAop(
+            List<LogArgumentHandler> handlers) {
+        ServiceLoggerAop aop = new ServiceLoggerAop(handlers);
+        return aop;
+    }
     
     /**
      * mybatis持久层逻辑实现<br/>

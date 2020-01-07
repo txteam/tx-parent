@@ -7,7 +7,6 @@
 package com.tx.component.servicelogger.context;
 
 import com.tx.component.servicelogger.support.ServiceLogger;
-import com.tx.component.servicelogger.support.ServiceLoggerRegistry;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.util.MessageUtils;
 
@@ -42,7 +41,6 @@ public class ServiceLoggerContext extends ServiceLoggerBuilder {
     
     /**
      * 获取日志对象<br/>
-     *
      * @param logObjectType
      *            
      * @return ServiceLogger<T> [返回类型说明]
@@ -60,19 +58,5 @@ public class ServiceLoggerContext extends ServiceLoggerBuilder {
         return logger;
     }
     
-    //    /**
-    //     * 记录日志<br>
-    //     *
-    //     * @param log 日志
-    //     * @param logObjectType 日志类型
-    //     *            
-    //     * @return void [返回类型说明]
-    //     * @exception throws [异常类型] [异常说明]
-    //     * @see [类、类#方法、类#成员]
-    //     * @version [版本号, 2015年12月17日]
-    //     * @author rain
-    //     */
-    //    public static <T> void info(T log, Class<T> logObjectType) {
-    //        ServiceLoggerContext.getLogger(logObjectType).log(log);
-    //    }
+    
 }

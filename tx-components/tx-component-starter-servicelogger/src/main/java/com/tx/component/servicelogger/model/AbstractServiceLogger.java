@@ -30,7 +30,7 @@ public abstract class AbstractServiceLogger {
     
     /** 业务日志记录时间 */
     @Column(nullable = false,updatable=false)
-    private Date createDate;
+    private Date createDate = new Date();
     
     /**
      * @return 返回 id

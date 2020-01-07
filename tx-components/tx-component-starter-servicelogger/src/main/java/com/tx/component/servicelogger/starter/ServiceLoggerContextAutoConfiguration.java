@@ -54,10 +54,10 @@ public class ServiceLoggerContextAutoConfiguration
     protected String basePackages = "com.tx";
     
     /** 属性文件 */
-    private ServiceLoggerContextProperties properties;
+    protected ServiceLoggerContextProperties properties;
     
     /** spring 容器句柄 */
-    private ApplicationContext applicationContext;
+    protected ApplicationContext applicationContext;
     
     /** 容器所属模块：当该值为空时，使用spring.application.name的内容 */
     protected String module;

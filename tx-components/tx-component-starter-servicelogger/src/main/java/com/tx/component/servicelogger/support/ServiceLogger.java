@@ -1,11 +1,7 @@
 package com.tx.component.servicelogger.support;
 
 import java.util.List;
-import java.util.Map;
 
-import com.tx.component.servicelogger.context.ServiceLoggerSession;
-import com.tx.component.servicelogger.context.ServiceLoggerSessionUtils;
-import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.paged.model.PagedList;
 import com.tx.core.querier.model.Querier;
 
@@ -102,60 +98,4 @@ public interface ServiceLogger<T> {
      */
     public PagedList<T> queryPagedList(Querier querier, int pageIndex,
             int pageSize);
-    
-    /**
-     * 从线程变量中获取日志属性map
-     * <功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return Map<String,Object> [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    default Map<String, Object> getLoggerAttributes() {
-        ServiceLoggerSession session = ServiceLoggerSessionUtils
-                .getLoggerSession();
-        Map<String, Object> attrMap = session.getAttributes();
-        return attrMap;
-    }
-    
-    /**
-     * 向会话中写入属性<br/>
-     * <功能详细描述>
-     * @param key
-     * @param value [参数说明]
-     * 
-     * @return void [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    default void setAttributes(String key, Object value) {
-        AssertUtils.notEmpty(key, "key is empty.");
-        AssertUtils.notNull(value, "value is empty.");
-        
-        ServiceLoggerSession session = ServiceLoggerSessionUtils
-                .getLoggerSession();
-        session.setAttribute(key, value);
-    }
-    
-    /**
-     * 获取指定属性的值<br/>
-     * <功能详细描述>
-     * @param key
-     * @return [参数说明]
-     * 
-     * @return Object [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    default Object getAttributes(String key) {
-        AssertUtils.notEmpty(key, "key is empty.");
-        
-        ServiceLoggerSession session = ServiceLoggerSessionUtils
-                .getLoggerSession();
-        Object res = session.getAttribute(key);
-        
-        return res;
-        
-    }
 }

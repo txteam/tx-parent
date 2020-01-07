@@ -35,9 +35,6 @@ public class TaskDef implements OrderedSupport, Serializable {
     @Id
     private String id;
     
-    /** 任务编码 */
-    private String code;
-    
     /** module: 所属模块 */
     private String module;
     
@@ -117,20 +114,6 @@ public class TaskDef implements OrderedSupport, Serializable {
      */
     public void setModule(String module) {
         this.module = module;
-    }
-    
-    /**
-     * @return 返回 code
-     */
-    public String getCode() {
-        return code;
-    }
-    
-    /**
-     * @param 对code进行赋值
-     */
-    public void setCode(String code) {
-        this.code = code;
     }
     
     /**
