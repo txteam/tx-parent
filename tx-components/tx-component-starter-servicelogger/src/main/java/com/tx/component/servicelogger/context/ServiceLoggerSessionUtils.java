@@ -39,9 +39,10 @@ public class ServiceLoggerSessionUtils {
      * @see [类、类#方法、类#成员]
      */
     public static ServiceLoggerSession getLoggerSession() {
-        AssertUtils.isTrue(
-                TransactionSynchronizationManager.isSynchronizationActive(),
-                "日志会话应存在于事务开启后调用.");
+        if(!TransactionSynchronizationManager.isSynchronizationActive()){
+            //由于在非事务中存在线程对象可能不会被回收的情况，这里可以认为非事务环境中是个空的loggerSession
+            return new ServiceLoggerSession();            
+        }
         
         Object loggerSessionObject = TransactionSynchronizationManager
                 .getResource(INSTANCE);
