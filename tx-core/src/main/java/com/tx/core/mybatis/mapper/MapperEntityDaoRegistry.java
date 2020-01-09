@@ -44,7 +44,8 @@ import com.tx.core.util.ClassScanUtils;
 public class MapperEntityDaoRegistry implements ApplicationContextAware,
         InitializingBean, BeanFactoryAware, BeanNameAware {
     
-    private Logger logger = LoggerFactory.getLogger(MapperEntityDaoRegistry.class);
+    private Logger logger = LoggerFactory
+            .getLogger(MapperEntityDaoRegistry.class);
     
     private static String beanName;
     
@@ -62,7 +63,7 @@ public class MapperEntityDaoRegistry implements ApplicationContextAware,
     private static Map<Class<?>, String> type2nameMap = new HashMap<Class<?>, String>();
     
     /** 实体持久层实现映射 */
-    private static Map<String, MapperEntityDao<?>> name2daoMap = new HashMap<String, MapperEntityDao<?>>();
+    private static Map<String, MapperEntityDao<?, ?>> name2daoMap = new HashMap<String, MapperEntityDao<?, ?>>();
     
     /** 扫描包范围 */
     private String basePackages;
@@ -93,14 +94,17 @@ public class MapperEntityDaoRegistry implements ApplicationContextAware,
      * @see [类、类#方法、类#成员]
     */
     public static MapperEntityDaoRegistry getInstance() {
-        AssertUtils.notEmpty(MapperEntityDaoRegistry.beanName, "beanName is empty.");
+        AssertUtils.notEmpty(MapperEntityDaoRegistry.beanName,
+                "beanName is empty.");
         
         if (MapperEntityDaoRegistry.instance == null) {
             MapperEntityDaoRegistry.instance = applicationContext.getBean(
-                    MapperEntityDaoRegistry.beanName, MapperEntityDaoRegistry.class);
+                    MapperEntityDaoRegistry.beanName,
+                    MapperEntityDaoRegistry.class);
         }
         
-        AssertUtils.notNull(MapperEntityDaoRegistry.instance, "factory not inited.");
+        AssertUtils.notNull(MapperEntityDaoRegistry.instance,
+                "factory not inited.");
         
         return instance;
     }
@@ -114,18 +118,17 @@ public class MapperEntityDaoRegistry implements ApplicationContextAware,
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    public static MapperEntityDao<?> getEntityDao(Class<?> modelType) {
+    public static MapperEntityDao<?, ?> getEntityDao(Class<?> modelType) {
         AssertUtils.notNull(modelType, "modelType is null.");
         AssertUtils.isTrue(type2nameMap.containsKey(modelType),
                 "type2nameMap is not contains:{}",
                 new Object[] { modelType });
-        
         AssertUtils.notNull(MapperEntityDaoRegistry.applicationContext,
                 "applicationContext is null.");
         
         //实体持久层Bean名称
         String entityDaoName = type2nameMap.get(modelType);
-        MapperEntityDao<?> entityDao = null;
+        MapperEntityDao<?, ?> entityDao = null;
         if (name2daoMap.containsKey(entityDaoName)) {
             entityDao = name2daoMap.get(entityDaoName);
         } else {
@@ -228,8 +231,9 @@ public class MapperEntityDaoRegistry implements ApplicationContextAware,
         //查找spring容器中已经存在的业务层
         Map<String, MapperEntityDao> basicDataServiceMap = MapperEntityDaoRegistry.applicationContext
                 .getBeansOfType(MapperEntityDao.class);
-        for (Entry<String, MapperEntityDao> entry : basicDataServiceMap.entrySet()) {
-            MapperEntityDao<?> dao = entry.getValue();
+        for (Entry<String, MapperEntityDao> entry : basicDataServiceMap
+                .entrySet()) {
+            MapperEntityDao<?, ?> dao = entry.getValue();
             String beanName = entry.getKey();
             if (dao.getEntityType() == null
                     || !Class.class.isInstance(dao.getEntityType())
@@ -247,7 +251,6 @@ public class MapperEntityDaoRegistry implements ApplicationContextAware,
             if (!beanName.equals(generateDaoName)) {
                 registerAlise(beanName, generateDaoName);
             }
-            
             //注册处理的业务类型
             MapperEntityDaoRegistry.type2nameMap.put(beanType, generateDaoName);
         }
@@ -255,17 +258,15 @@ public class MapperEntityDaoRegistry implements ApplicationContextAware,
         //扫描遍历，如果已经存在持久层的实体类，则不再添加
         String[] basePackageArray = StringUtils
                 .splitByWholeSeparator(basePackages, ",");
-        Set<Class<?>> types = ClassScanUtils.scanByAnnotation(
-                MapperEntity.class, basePackageArray);
+        Set<Class<?>> types = ClassScanUtils
+                .scanByAnnotation(MapperEntity.class, basePackageArray);
         
         for (Class<?> beanType : types) {
             //注册实体持久层
             BeanDefinition daoBeanDefinition = generateEntityDaoBeanDefinition(
                     beanType, myBatisDaoSupport);
             String entityDaoName = generateDaoNameByType(beanType);
-            
             registerBeanDefinition(entityDaoName, daoBeanDefinition);
-            
             MapperEntityDaoRegistry.type2nameMap.put(beanType, entityDaoName);
         }
     }

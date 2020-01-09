@@ -535,6 +535,7 @@ public class WebUtils {
     
     /**
      * 根据request获取请求客户端ip地址<br/>
+     * xxx.xxx.xxx.xxx  15个字长
      * <功能详细描述>
      * @param request
      * @return [参数说明]
@@ -544,14 +545,43 @@ public class WebUtils {
      * @see [类、类#方法、类#成员]
      */
     public static String getForwardedIpAddress(HttpServletRequest request) {
+        String forwardedIpAddress = getForwardedIpAddress(request, 20);
+        return forwardedIpAddress;
+    }
+    
+    /**
+     * 根据request获取请求客户端ip地址<br/>
+     * xxx.xxx.xxx.xxx  15个字长
+     * <功能详细描述>
+     * @param request
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static String getForwardedIpAddress(HttpServletRequest request,
+            int count) {
+        if (count <= 0) {
+            count = 1;
+        }
         String forwardedIpAddress = request.getHeader("x-forwarded-for");
         if (forwardedIpAddress == null || forwardedIpAddress.length() == 0
                 || "unknown".equalsIgnoreCase(forwardedIpAddress)) {
             forwardedIpAddress = request.getHeader("HTTP_X_FORWARDED_FOR");
         }
         //如果forwaredIpAddress长度超过512，则截断
-        if (forwardedIpAddress != null && forwardedIpAddress.length() > 512) {
-            forwardedIpAddress = forwardedIpAddress.substring(0, 512);
+        if (!StringUtils.isEmpty(forwardedIpAddress)) {
+            StringBuilder sb = new StringBuilder();
+            String[] ips = StringUtils.splitByWholeSeparator(forwardedIpAddress,
+                    ",");
+            count = Math.min(count, ips.length);
+            for (int i = 0; i < count; i++) {
+                sb.append(ips[i]);
+                if (i < count - 1) {
+                    sb.append(",");
+                }
+            }
         }
         return forwardedIpAddress;
     }

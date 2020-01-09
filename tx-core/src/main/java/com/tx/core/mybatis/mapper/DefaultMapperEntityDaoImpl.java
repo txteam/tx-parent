@@ -6,15 +6,11 @@
  */
 package com.tx.core.mybatis.mapper;
 
-import java.lang.reflect.Type;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.collections4.CollectionUtils;
+import java.io.Serializable;
 
 import com.tx.core.exceptions.util.AssertUtils;
+import com.tx.core.mybatis.dao.impl.MybatisBaseDaoImpl;
 import com.tx.core.mybatis.support.MyBatisDaoSupport;
-import com.tx.core.paged.model.PagedList;
 
 /**
  * 默认的实体自动持久层<br/>
@@ -25,7 +21,8 @@ import com.tx.core.paged.model.PagedList;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class DefaultMapperEntityDaoImpl<T> implements MapperEntityDao<T> {
+public class DefaultMapperEntityDaoImpl<T, ID extends Serializable>
+        extends MybatisBaseDaoImpl<T, ID> implements MapperEntityDao<T, ID> {
     
     /** bean类型 */
     private Class<T> beanType;
@@ -33,150 +30,30 @@ public class DefaultMapperEntityDaoImpl<T> implements MapperEntityDao<T> {
     /** mybatis句柄 */
     private MyBatisDaoSupport myBatisDaoSupport;
     
-    /** 实体Mpper构建辅助类 */
-    private EntityMapperBuilderAssistant assistant;
-    
     /** <默认构造函数> */
     public DefaultMapperEntityDaoImpl(Class<T> beanType,
-            MyBatisDaoSupport myBatisDaoSupport,
-            EntityMapperBuilderAssistant assistant) {
-        super();
-        AssertUtils.notNull(beanType, "beanType is null.");
+            Class<ID> pkPropertyType, MyBatisDaoSupport myBatisDaoSupport) {
+        super(beanType, pkPropertyType);
         AssertUtils.notNull(myBatisDaoSupport, "myBatisDaoSupport is null.");
-        AssertUtils.notNull(assistant, "assistant is null.");
         
         this.beanType = beanType;
         this.myBatisDaoSupport = myBatisDaoSupport;
-        this.assistant = assistant;
+        super.afterPropertiesSet();
     }
     
     /**
      * @return
      */
     @Override
-    public Type getEntityType() {
+    public Class<T> getEntityType() {
         return this.beanType;
     }
-    
+
     /**
-     * @param condition
-     */
-    @Override
-    public void batchInsert(List<T> objectList) {
-        List<String> primaryPropertyList = this.assistant
-                .getPrimaryProperyNameList();
-        if (CollectionUtils.isEmpty(primaryPropertyList)
-                || primaryPropertyList.size() > 1) {
-            this.myBatisDaoSupport.batchInsert(
-                    this.assistant.getInsertStatementName(), objectList);
-        } else {
-            this.myBatisDaoSupport.batchInsertUseUUID(
-                    this.assistant.getInsertStatementName(),
-                    objectList,
-                    primaryPropertyList.get(0));
-        }
-    }
-    
-    /**
-     * @param condition
-     */
-    @Override
-    public void insert(T condition) {
-        List<String> primaryPropertyList = this.assistant
-                .getPrimaryProperyNameList();
-        if (CollectionUtils.isEmpty(primaryPropertyList)
-                || primaryPropertyList.size() > 1) {
-            this.myBatisDaoSupport
-                    .insert(this.assistant.getInsertStatementName(), condition);
-        } else {
-            this.myBatisDaoSupport.insertUseUUID(
-                    this.assistant.getInsertStatementName(),
-                    condition,
-                    primaryPropertyList.get(0));
-        }
-    }
-    
-    /**
-     * @param condition
      * @return
      */
     @Override
-    public int delete(T condition) {
-        return this.myBatisDaoSupport
-                .delete(this.assistant.getDeleteStatementName(), condition);
-    }
-    
-    /**
-     * @param condition
-     */
-    @Override
-    public void batchDelete(List<T> condition) {
-        this.myBatisDaoSupport.batchDelete(
-                this.assistant.getDeleteStatementName(), condition);
-    }
-    
-    /**
-     * @param condition
-     * @return
-     */
-    @Override
-    public T find(T condition) {
-        return this.myBatisDaoSupport
-                .find(this.assistant.getFindStatementName(), condition);
-    }
-    
-    /**
-     * @param params
-     * @return
-     */
-    @Override
-    public List<T> queryList(Map<String, Object> params) {
-        return this.myBatisDaoSupport
-                .queryList(this.assistant.getQueryStatementName(), params);
-    }
-    
-    /**
-     * @param params
-     * @return
-     */
-    @Override
-    public int count(Map<String, Object> params) {
-        return this.myBatisDaoSupport
-                .count(this.assistant.getCountStatmentName(), params);
-    }
-    
-    /**
-     * @param params
-     * @param pageIndex
-     * @param pageSize
-     * @return
-     */
-    @Override
-    public PagedList<T> queryPagedList(Map<String, Object> params,
-            int pageIndex, int pageSize) {
-        return this.myBatisDaoSupport.queryPagedList(
-                this.assistant.getQueryStatementName(),
-                params,
-                pageIndex,
-                pageSize);
-    }
-    
-    /**
-     * @param updateRowMap
-     * @return
-     */
-    @Override
-    public int update(Map<String, Object> updateRowMap) {
-        return this.myBatisDaoSupport
-                .update(this.assistant.getUpdateStatementName(), updateRowMap);
-    }
-    
-    /**
-     * @param updateRowMapList
-     */
-    @Override
-    public void batchUpdate(List<Map<String, Object>> updateRowMapList) {
-        this.myBatisDaoSupport.batchUpdate(
-                this.assistant.getUpdateStatementName(), updateRowMapList);
+    public MyBatisDaoSupport getMyBatisDaoSupport() {
+        return this.myBatisDaoSupport;
     }
 }

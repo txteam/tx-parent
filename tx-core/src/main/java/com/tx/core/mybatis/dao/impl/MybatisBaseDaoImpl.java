@@ -65,11 +65,21 @@ public abstract class MybatisBaseDaoImpl<T, ID extends Serializable>
         this.pkPropertyType = (Class) p.getActualTypeArguments()[1];
     }
     
+    public MybatisBaseDaoImpl(Class<T> entityType, Class<ID> pkPropertyType) {
+        super();
+        AssertUtils.notNull(entityType, "entityType is null.");
+        AssertUtils.notNull(pkPropertyType, "pkPropertyType is null.");
+        
+        //getActualTypeArguments获取参数化类型的数组，泛型可能有多个  
+        this.entityType = entityType;
+        this.pkPropertyType = pkPropertyType;
+    }
+    
     /**
      * @throws Exception
      */
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         AssertUtils.notNull(getMyBatisDaoSupport(),
                 "myBatisDaoSupport is null.");
         AssertUtils.notNull(this.entityType, "entityType is null.");
@@ -429,4 +439,11 @@ public abstract class MybatisBaseDaoImpl<T, ID extends Serializable>
      * @return 返回 myBatisDaoSupport
      */
     public abstract MyBatisDaoSupport getMyBatisDaoSupport();
+
+    /**
+     * @return 返回 assistant
+     */
+    public BaseDaoMapperBuilderAssistant getAssistant() {
+        return assistant;
+    }
 }

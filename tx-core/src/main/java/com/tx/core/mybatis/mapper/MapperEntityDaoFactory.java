@@ -14,6 +14,8 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 
 import com.tx.core.mybatis.support.MyBatisDaoSupport;
+import com.tx.core.util.JPAParseUtils;
+import com.tx.core.util.JPAParseUtils.JPAColumnInfo;
 
 /**
  * 实体持久层注册器<br/>
@@ -24,12 +26,14 @@ import com.tx.core.mybatis.support.MyBatisDaoSupport;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class MapperEntityDaoFactory<T>
-        implements FactoryBean<MapperEntityDao<T>>, InitializingBean {
+@SuppressWarnings("rawtypes")
+public class MapperEntityDaoFactory
+        implements FactoryBean<MapperEntityDao>, InitializingBean {
     
-    private Logger logger = LoggerFactory.getLogger(MapperEntityDaoFactory.class);
+    protected Logger logger = LoggerFactory
+            .getLogger(MapperEntityDaoFactory.class);
     
-    private Class<T> beanType;
+    private Class<?> beanType;
     
     private MyBatisDaoSupport myBatisDaoSupport;
     
@@ -37,12 +41,10 @@ public class MapperEntityDaoFactory<T>
     
     protected Configuration configuration;
     
-    private EntityMapperBuilderAssistant assistant;
-    
-    private MapperEntityDao<T> entityDao;
+    private DefaultMapperEntityDaoImpl entityDao;
     
     /** <默认构造函数> */
-    public MapperEntityDaoFactory(Class<T> beanType,
+    public MapperEntityDaoFactory(Class<?> beanType,
             MyBatisDaoSupport myBatisDaoSupport) {
         super();
         this.beanType = beanType;
@@ -56,30 +58,16 @@ public class MapperEntityDaoFactory<T>
     /**
      * @throws Exception
      */
+    @SuppressWarnings("unchecked")
     @Override
     public void afterPropertiesSet() {
-        logger.info("始构建实体自动持久层，开始.beanType:{}", this.beanType.getName());
-        
-        //构建SqlMap
-        this.assistant = new EntityMapperBuilderAssistant(this.configuration,
-                beanType);
-        this.assistant.registe();
-        logger.info("构建实体自动持久层：sqlmap:{}",
-                this.assistant.getCurrentNamespace());
-        
+        //logger.info("始构建实体自动持久层，开始.beanType:{}", this.beanType.getName());
         //构建Dao
-        this.entityDao = new DefaultMapperEntityDaoImpl<>(this.beanType,
-                this.myBatisDaoSupport, this.assistant);
-        
-        logger.info("构建实体自动持久层：完成.beanType:{}", this.beanType.getName());
-    }
-    
-    /**
-     * @return
-     */
-    @Override
-    public Class<?> getObjectType() {
-        return MapperEntityDao.class;
+        JPAColumnInfo pk = JPAParseUtils.parsePKTableColumn(beanType);
+        this.entityDao = new DefaultMapperEntityDaoImpl(this.beanType,
+                pk.getPropertyType(), this.myBatisDaoSupport);
+        //logger.info(" --- 构建实体自动持久层.namespace:{}",this.entityDao.getAssistant().getNamespace());
+        //logger.info("构建实体自动持久层：完成.beanType:{}", this.beanType.getName());
     }
     
     /**
@@ -92,10 +80,18 @@ public class MapperEntityDaoFactory<T>
     
     /**
      * @return
+     */
+    @Override
+    public Class<?> getObjectType() {
+        return MapperEntityDao.class;
+    }
+    
+    /**
+     * @return
      * @throws Exception
      */
     @Override
-    public MapperEntityDao<T> getObject() throws Exception {
+    public MapperEntityDao getObject() throws Exception {
         return this.entityDao;
     }
 }

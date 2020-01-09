@@ -93,10 +93,11 @@ public class DefaultServiceLoggerImpl<T> implements ServiceLogger<T> {
      * @see [类、类#方法、类#成员]
      */
     private void doBatchInsert(List<T> objectList) {
-        String primaryPropertyName = this.assistant.getPrimaryProperyName();
-        this.myBatisDaoSupport.batchInsertUseUUID(this.assistant.getInsertStatementName(),
+        String pkPropertyName = this.assistant.getPKProperyName();
+        this.myBatisDaoSupport.batchInsertUseUUID(
+                this.assistant.getInsertStatementName(),
                 objectList,
-                primaryPropertyName,
+                pkPropertyName,
                 false);
     }
     
@@ -126,10 +127,11 @@ public class DefaultServiceLoggerImpl<T> implements ServiceLogger<T> {
      * @see [类、类#方法、类#成员]
      */
     private void doInsert(T condition) {
-        String primaryPropertyName = this.assistant.getPrimaryProperyName();
-        this.myBatisDaoSupport.insertUseUUID(this.assistant.getInsertStatementName(),
+        String pkPropertyName = this.assistant.getPKProperyName();
+        this.myBatisDaoSupport.insertUseUUID(
+                this.assistant.getInsertStatementName(),
                 condition,
-                primaryPropertyName);
+                pkPropertyName);
     }
     
     /**
@@ -158,8 +160,9 @@ public class DefaultServiceLoggerImpl<T> implements ServiceLogger<T> {
      */
     @Override
     public int count(Querier querier) {
-        return this.myBatisDaoSupport
-                .count(this.assistant.getCountStatmentName(), querier);
+        int count = this.myBatisDaoSupport.count(
+                this.assistant.getCountStatmentName(), this.beanType, querier);
+        return count;
     }
     
     /**
@@ -171,11 +174,13 @@ public class DefaultServiceLoggerImpl<T> implements ServiceLogger<T> {
     @Override
     public PagedList<T> queryPagedList(Querier querier, int pageIndex,
             int pageSize) {
-        return this.myBatisDaoSupport.queryPagedList(
+        PagedList<T> resPagedList = this.myBatisDaoSupport.queryPagedList(
                 this.assistant.getQueryStatementName(),
+                this.beanType,
                 querier,
                 pageIndex,
                 pageSize);
+        return resPagedList;
     }
     
     /**

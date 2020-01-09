@@ -316,10 +316,6 @@ public abstract class AbstractBaseDaoMapperBuilderAssistant
      * @see [类、类#方法、类#成员]
      */
     public void registe() {
-        //String namespace = this.getCurrentNamespace();
-        
-        //logger.info("<!-- --------------- 检测是否需要自动注入SqlMap:[{}] START --------------- -->",namespace);
-        
         //添加resultMap
         Map<String, String> customizeColumn2PropertyMap = getColumn2PropertyMap();
         List<ResultMapping> resultMappings = new ArrayList<>();
@@ -423,8 +419,6 @@ public abstract class AbstractBaseDaoMapperBuilderAssistant
                         Integer.class);
             }
         }
-        
-        //logger.info("<!-- --------------- 检测是否需要自动注入SqlMap:[{}]  END  --------------- -->",namespace);
     }
     
     /**

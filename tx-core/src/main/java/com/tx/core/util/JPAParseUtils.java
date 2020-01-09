@@ -147,6 +147,59 @@ public class JPAParseUtils {
     }
     
     /**
+     * 解析表主键字段<br/>
+     *    当主键字段不存在，或超过一个时抛出异常.
+     * <功能详细描述>
+     * @param beanType
+     * @param jpaPropertySimpleTypeFilter
+     * @return [参数说明]
+     * 
+     * @return List<JPAProperty> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static JPAColumnInfo parsePKTableColumn(Class<?> beanType) {
+        AssertUtils.notNull(beanType, "beanType is null.");
+        
+        //解析jpa属性
+        List<JPAColumnInfo> columns = parseTableColumns(beanType);
+        List<JPAColumnInfo> pkColumns = new ArrayList<>();
+        columns.stream().forEach(c -> {
+            if(c.isPrimaryKey()){
+                pkColumns.add(c);
+            }
+        });
+        
+        AssertUtils.notEmpty(pkColumns, "无主键字段.type:{}",new Object[]{beanType});
+        AssertUtils.isTrue(pkColumns.size() == 1, "主键字段不唯一.type:{}",new Object[]{beanType});
+        return pkColumns.get(0);
+    }
+    
+    /**
+     * 解析表主键字段<br/>
+     * <功能详细描述>
+     * @param beanType
+     * @return [参数说明]
+     * 
+     * @return List<JPAColumnInfo> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static List<JPAColumnInfo> parsePKTableColumns(Class<?> beanType) {
+        AssertUtils.notNull(beanType, "beanType is null.");
+        
+        //解析jpa属性
+        List<JPAColumnInfo> columns = parseTableColumns(beanType);
+        List<JPAColumnInfo> pkColumns = new ArrayList<>();
+        columns.stream().forEach(c -> {
+            if(c.isPrimaryKey()){
+                pkColumns.add(c);
+            }
+        });
+        return pkColumns;
+    }
+    
+    /**
      * 解析表排序字段<br/>
      * <功能详细描述>
      * @param beanType

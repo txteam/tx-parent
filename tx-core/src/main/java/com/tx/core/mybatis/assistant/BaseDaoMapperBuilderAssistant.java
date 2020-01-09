@@ -61,7 +61,7 @@ public class BaseDaoMapperBuilderAssistant
     private JPAColumnInfo parentIdColumn;
     
     /** 排序字段 */
-    private String defaultOrderBy;
+    private String orderBy;
     
     /** <默认构造函数> */
     public BaseDaoMapperBuilderAssistant(Configuration configuration,
@@ -136,7 +136,7 @@ public class BaseDaoMapperBuilderAssistant
         }
         
         //解析排序字段
-        this.defaultOrderBy = JPAParseUtils.parseOrderBy(entityType,
+        this.orderBy = JPAParseUtils.parseOrderBy(entityType,
                 this.tableColumns,
                 "createDate",
                 "id",
@@ -305,13 +305,9 @@ public class BaseDaoMapperBuilderAssistant
         }
         sql.FROM(this.tableName);
         
-        sql.WHERE(FORMATTER_OF_QUERIER);//查询的其他条件
-        if(this.parentIdColumn != null){
-            sql.WHERE(FORMATTER_OF_PARENTID);
-        }
         buildQueryCondition(sql);//构建查询条件
         
-        sql.ORDER_BY(defaultOrderBy);
+        sql.ORDER_BY(orderBy);
         
         String querySQL = sql.toString();
         return querySQL;
@@ -347,6 +343,10 @@ public class BaseDaoMapperBuilderAssistant
      * @see [类、类#方法、类#成员]
      */
     protected void buildQueryCondition(SqlMapSQLBuilder sql) {
+        sql.WHERE(FORMATTER_OF_QUERIER);//查询的其他条件
+        if(this.parentIdColumn != null){
+            sql.WHERE(FORMATTER_OF_PARENTID);
+        }
         for (JPAColumnInfo column : this.tableColumns) {
             if (Date.class.isAssignableFrom(column.getPropertyType())
                     || java.sql.Date.class
@@ -445,6 +445,6 @@ public class BaseDaoMapperBuilderAssistant
      * @return 返回 defaultOrderBy
      */
     public String getDefaultOrderBy() {
-        return defaultOrderBy;
+        return orderBy;
     }
 }

@@ -47,7 +47,7 @@ public class EntityDaoFactoryTest {
     public static void main(String[] args) throws Exception {
         DataSourceFinder finder = new SimpleDataSourceFinder(
                 "com.mysql.jdbc.Driver",
-                "jdbc:mysql://120.24.75.25:3306/test_pqy", "pqy", "pqy");
+                "jdbc:mysql://120.24.75.25:3306/webdemo_new", "pqy", "pqy");
         DataSource ds = finder.getDataSource();
         
         JdbcTemplate jt = new JdbcTemplate(ds);
@@ -75,10 +75,10 @@ public class EntityDaoFactoryTest {
             ddlExecutor.create(createBuilder);
         }
         
-        MapperEntityDaoFactory<TestDemo> entityDaoFactory = new MapperEntityDaoFactory<>(
-                TestDemo.class, myBatisDaoSupport);
+        MapperEntityDaoFactory entityDaoFactory = new MapperEntityDaoFactory(TestDemo.class, myBatisDaoSupport);
         entityDaoFactory.afterPropertiesSet();
-        MapperEntityDao<TestDemo> dao = entityDaoFactory.getObject();
+        @SuppressWarnings("unchecked")
+        MapperEntityDao<TestDemo,String> dao = entityDaoFactory.getObject();
         
         String id1 = UUIDUtils.generateUUID();
         TestDemo td1 = new TestDemo();
@@ -128,7 +128,7 @@ public class EntityDaoFactoryTest {
         updateRowMap2.put("demo", superDemo);
         dao.update(updateRowMap2);
         
-        List<TestDemo> tdList = dao.queryList(null);
+        List<TestDemo> tdList = dao.queryList((Map<String, Object>)null);
         for (TestDemo tdTemp : tdList) {
             System.out.println(tdTemp.getId() + " | " + tdTemp.getCode() + " | "
                     + tdTemp.getName() + " | " + tdTemp.getRemark() + " | "

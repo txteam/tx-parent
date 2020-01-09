@@ -20,7 +20,7 @@ import com.tx.core.ddlutil.executor.TableDDLExecutor;
 import com.tx.core.ddlutil.executor.impl.MysqlTableDDLExecutor;
 import com.tx.core.ddlutil.helper.JPAEntityDDLHelper;
 import com.tx.core.ddlutil.model.TableDef;
-import com.tx.core.mybatis.mapper.EntityMapperBuilderAssistant;
+import com.tx.core.mybatis.assistant.BaseDaoMapperBuilderAssistant;
 import com.tx.core.mybatis.support.MyBatisDaoSupport;
 import com.tx.core.mybatis.support.MyBatisDaoSupportHelper;
 import com.tx.core.util.dialect.DataSourceTypeEnum;
@@ -68,7 +68,7 @@ public class EntityMapperBuilderTest {
             ddlExecutor.create(createBuilder);
         }
         
-        EntityMapperBuilderAssistant assistant = new EntityMapperBuilderAssistant(
+        BaseDaoMapperBuilderAssistant assistant = new BaseDaoMapperBuilderAssistant(
                 myBatisDaoSupport.getSqlSessionFactory().getConfiguration(),
                 TestDemo.class);
         assistant.registe();

@@ -7,7 +7,6 @@
 package com.tx.component.servicelogger.support.mybatis;
 
 import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.SqlSessionFactory;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
@@ -40,9 +39,6 @@ public class ServiceLoggerFactory<T>
     /** 事务句柄 */
     private TransactionTemplate transactionTemplate;
     
-    
-    protected SqlSessionFactory sqlSessionFactory;
-    
     protected Configuration configuration;
     
     private LoggerMapperBuilderAssistant assistant;
@@ -58,7 +54,6 @@ public class ServiceLoggerFactory<T>
         this.myBatisDaoSupport = myBatisDaoSupport;
         this.transactionTemplate = transactionTemplate;
         
-        this.sqlSessionFactory = this.myBatisDaoSupport.getSqlSessionFactory();
         this.configuration = this.myBatisDaoSupport.getSqlSessionFactory()
                 .getConfiguration();
     }
@@ -68,21 +63,18 @@ public class ServiceLoggerFactory<T>
      */
     @Override
     public void afterPropertiesSet() {
-        logger.info("始构建实体自动持久层，开始.beanType:{}", this.beanType.getName());
-        
         //构建SqlMap
         this.assistant = new LoggerMapperBuilderAssistant(this.configuration,
                 beanType);
         this.assistant.registe();
-        logger.info("构建实体自动持久层：sqlmap:{}",
+        logger.info("   --- 构业务日志SqlMap.{}",
                 this.assistant.getCurrentNamespace());
         
         //构建Dao
         this.serviceLogger = new DefaultServiceLoggerImpl<>(this.beanType,
                 this.myBatisDaoSupport, this.transactionTemplate,
                 this.assistant);
-        
-        logger.info("构建实体自动持久层：完成.beanType:{}", this.beanType.getName());
+        logger.info("   --- 构建业务日志句柄.BeanType:{}", this.beanType.getName());
     }
     
     /**
