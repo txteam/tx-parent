@@ -255,7 +255,9 @@ public class ConfigEntityInitializer {
             }
             ConfigPropertyItem item = doBuildProperty(prefix, parent, bw, pd);
             //如果存在
-            this.localConfigPropertyManager.install(item);
+            if(item != null){
+                this.localConfigPropertyManager.install(item);
+            }
         }
     }
     

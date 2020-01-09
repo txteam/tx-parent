@@ -13,6 +13,8 @@ import javax.persistence.Id;
 
 import com.tx.component.servicelogger.annotation.ServiceLog;
 
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * 基础业务日志类
  * 
@@ -29,12 +31,13 @@ public abstract class AbstractServiceLogger {
     private String id;
     
     /** 业务日志记录时间 */
-    @Column(nullable = false,updatable=false)
+    @Column(nullable = false, updatable = false)
     private Date createDate = new Date();
     
     /**
      * @return 返回 id
      */
+    @ApiModelProperty(value = "主键", position = Integer.MIN_VALUE)
     public String getId() {
         return id;
     }
@@ -49,6 +52,7 @@ public abstract class AbstractServiceLogger {
     /**
      * @return 返回 createDate
      */
+    @ApiModelProperty(value = "操作记录", position = Integer.MAX_VALUE)
     public Date getCreateDate() {
         return createDate;
     }

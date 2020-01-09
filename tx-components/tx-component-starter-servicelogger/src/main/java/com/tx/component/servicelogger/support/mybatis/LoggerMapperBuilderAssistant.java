@@ -40,7 +40,7 @@ public class LoggerMapperBuilderAssistant
                 ServiceLog.class);
         this.tableName = StringUtils.isBlank(this.annotation.tablename())
                 ? JPAParseUtils.parseTableName(beanType)
-                : this.annotation.tablename();
+                : this.annotation.tablename().toUpperCase();
     }
     
     /**
