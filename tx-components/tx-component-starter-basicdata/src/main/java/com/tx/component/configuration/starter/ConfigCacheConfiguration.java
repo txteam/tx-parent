@@ -100,10 +100,10 @@ public class ConfigCacheConfiguration implements ApplicationContextAware {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @ConditionalOnMissingBean(ConfigCacheCustomizer.class)
-    @ConditionalOnProperty(prefix = ConfigContextConstants.PROPERTIES_PREFIX, value = "cacheManagerRef", matchIfMissing = false)
     @Bean
-    public ConfigCacheCustomizer configCacheCustomizer() {
+    @ConditionalOnMissingBean(ConfigCacheCustomizer.class)
+    @ConditionalOnProperty(prefix = ConfigContextConstants.PROPERTIES_PREFIX, value = "cache-manager-ref", matchIfMissing = false) 
+    public ConfigCacheCustomizer configRefCacheCustomizer() {
         CacheManager cacheManager = null;
         if (this.applicationContext
                 .containsBean(this.properties.getCacheManagerRef())) {
@@ -126,12 +126,10 @@ public class ConfigCacheConfiguration implements ApplicationContextAware {
      * @see  [相关类/方法]
      * @since  [产品/模块版本]
      */
-    //@Configuration
-    //@AutoConfigureAfter({ RedisAutoConfiguration.class })
     @Bean
-    @ConditionalOnClass(RedisOperations.class)
-    @ConditionalOnProperty(prefix = ConfigContextConstants.PROPERTIES_PREFIX, value = "cacheManagerRef", matchIfMissing = true)
     @ConditionalOnMissingBean(ConfigCacheCustomizer.class)
+    @ConditionalOnClass(RedisOperations.class)
+    @ConditionalOnProperty(prefix = ConfigContextConstants.PROPERTIES_PREFIX, value = "cache-manager-ref", matchIfMissing = true)
     public ConfigCacheCustomizer configRedisCacheCustomizer(
             RedisConnectionFactory factory) {
         CacheManager cacheManager = configContextRedisCacheManager(factory);
@@ -153,7 +151,7 @@ public class ConfigCacheConfiguration implements ApplicationContextAware {
      * @see [类、类#方法、类#成员]
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public CacheManager configContextRedisCacheManager(
+    private CacheManager configContextRedisCacheManager(
             RedisConnectionFactory factory) {
         RedisSerializer<String> redisSerializer = new StringRedisSerializer();
         Jackson2JsonRedisSerializer<?> jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer(
@@ -175,7 +173,6 @@ public class ConfigCacheConfiguration implements ApplicationContextAware {
                 .serializeValuesWith(RedisSerializationContext.SerializationPair
                         .fromSerializer(jackson2JsonRedisSerializer))
                 .disableCachingNullValues();
-        
         RedisCacheManager cacheManager = RedisCacheManager.builder(factory)
                 .cacheDefaults(config)
                 .build();
@@ -191,33 +188,20 @@ public class ConfigCacheConfiguration implements ApplicationContextAware {
      * @see  [相关类/方法]
      * @since  [产品/模块版本]
      */
-    @Configuration
+    @Bean
+    @ConditionalOnMissingBean(ConfigCacheCustomizer.class)
     @ConditionalOnMissingClass({
             "org.springframework.data.redis.core.RedisOperations" })
-    @ConditionalOnProperty(prefix = ConfigContextConstants.PROPERTIES_PREFIX, value = "cacheManagerRef", matchIfMissing = true)
-    public class ConfigLocalCacheConfiguration {
+    @ConditionalOnProperty(prefix = ConfigContextConstants.PROPERTIES_PREFIX, value = "cache-manager-ref", matchIfMissing = true)
+    public ConfigCacheCustomizer configLocalCacheCustomizer() {
+        CacheManager local = new ConcurrentMapCacheManager();
+        CacheManager cacheManager = new TransactionAwareCacheManagerProxy(
+                local);
         
-        /**
-         * 基础数据缓存定义<br/>
-         * <功能详细描述>
-         * @return [参数说明]
-         * 
-         * @return BasicDataCacheCustomizer [返回类型说明]
-         * @exception throws [异常类型] [异常说明]
-         * @see [类、类#方法、类#成员]
-         */
-        @ConditionalOnMissingBean(RedisConnectionFactory.class)
-        @Bean
-        public ConfigCacheCustomizer configCacheCustomizer() {
-            CacheManager local = new ConcurrentMapCacheManager();
-            CacheManager cacheManager = new TransactionAwareCacheManagerProxy(
-                    local);
-            
-            AssertUtils.notNull(cacheManager, "cacheManager is null.");
-            ConfigCacheCustomizer customizer = new ConfigCacheCustomizer();
-            customizer.setCacheManager(cacheManager);
-            return customizer;
-        }
+        AssertUtils.notNull(cacheManager, "cacheManager is null.");
+        ConfigCacheCustomizer customizer = new ConfigCacheCustomizer();
+        customizer.setCacheManager(cacheManager);
+        return customizer;
     }
     
     /**
@@ -229,7 +213,7 @@ public class ConfigCacheConfiguration implements ApplicationContextAware {
      * @see  [相关类/方法]
      * @since  [产品/模块版本]
      */
-    static class ConfigCacheCustomizer {
+    public static class ConfigCacheCustomizer {
         
         /** 缓存manager */
         private CacheManager cacheManager;

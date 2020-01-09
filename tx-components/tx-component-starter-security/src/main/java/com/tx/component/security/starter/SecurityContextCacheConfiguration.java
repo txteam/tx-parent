@@ -92,8 +92,8 @@ public class SecurityContextCacheConfiguration
      */
     @Bean
     @ConditionalOnMissingBean(SecurityContextCacheCustomizer.class)
-    @ConditionalOnProperty(prefix = SecurityContextConstants.PROPERTIES_PREFIX, value = "cacheManagerRef", matchIfMissing = false)
-    public SecurityContextCacheCustomizer configCacheCustomizer() {
+    @ConditionalOnProperty(prefix = SecurityContextConstants.PROPERTIES_PREFIX, value = "cache-manager-ref", matchIfMissing = false)
+    public SecurityContextCacheCustomizer configRefCacheCustomizer() {
         CacheManager cacheManager = null;
         if (this.applicationContext
                 .containsBean(this.properties.getCacheManagerRef())) {
@@ -118,7 +118,7 @@ public class SecurityContextCacheConfiguration
      */
     @Bean
     @ConditionalOnClass(RedisOperations.class)
-    @ConditionalOnProperty(prefix = SecurityContextConstants.PROPERTIES_PREFIX, value = "cacheManagerRef", matchIfMissing = true)
+    @ConditionalOnProperty(prefix = SecurityContextConstants.PROPERTIES_PREFIX, value = "cache-manager-ref", matchIfMissing = true)
     @ConditionalOnMissingBean(SecurityContextCacheCustomizer.class)
     public SecurityContextCacheCustomizer securityRedisCacheCustomizer(
             RedisConnectionFactory factory) {
@@ -179,10 +179,10 @@ public class SecurityContextCacheConfiguration
      * @since  [产品/模块版本]
      */
     @Bean
+    @ConditionalOnMissingBean({SecurityContextCacheCustomizer.class})
     @ConditionalOnMissingClass({
             "org.springframework.data.redis.core.RedisOperations" })
-    @ConditionalOnProperty(prefix = SecurityContextConstants.PROPERTIES_PREFIX, value = "cacheManagerRef", matchIfMissing = true)
-    @ConditionalOnMissingBean(RedisConnectionFactory.class)
+    @ConditionalOnProperty(prefix = SecurityContextConstants.PROPERTIES_PREFIX, value = "cache-manager-ref", matchIfMissing = true)
     public SecurityContextCacheCustomizer securityLocalCacheCustomizer() {
         CacheManager local = new ConcurrentMapCacheManager();
         CacheManager cacheManager = new TransactionAwareCacheManagerProxy(

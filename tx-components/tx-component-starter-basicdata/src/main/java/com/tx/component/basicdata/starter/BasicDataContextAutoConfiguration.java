@@ -176,27 +176,6 @@ public class BasicDataContextAutoConfiguration
     }
     
     /**
-     * 基础数据业务层缓存代理<br/>
-     * <功能详细描述>
-     * @param customizer
-     * @return [参数说明]
-     * 
-     * @return BasicDataServiceSupportCacheProxyCreator [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    @Bean(name = "basicDataServiceSupportCacheProxyCreator")
-    public BasicDataServiceSupportCacheProxyCreator basicDataServiceSupportCacheProxyCreator(
-            BasicDataCacheCustomizer customizer) {
-        CacheManager cacheManager = customizer.getCacheManager();
-        AssertUtils.notNull(cacheManager, "cacheManager is null.");
-        
-        BasicDataServiceSupportCacheProxyCreator creator = new BasicDataServiceSupportCacheProxyCreator(
-                cacheManager);
-        return creator;
-    }
-    
-    /**
      * 控制层自动配置层
      * <功能详细描述>
      * 
@@ -225,6 +204,27 @@ public class BasicDataContextAutoConfiguration
             return controller;
         }
         
+    }
+    
+    /**
+     * 基础数据业务层缓存代理<br/>
+     * <功能详细描述>
+     * @param customizer
+     * @return [参数说明]
+     * 
+     * @return BasicDataServiceSupportCacheProxyCreator [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @Bean(name = "basicDataServiceSupportCacheProxyCreator")
+    public BasicDataServiceSupportCacheProxyCreator basicDataServiceSupportCacheProxyCreator(
+            BasicDataCacheCustomizer customizer) {
+        CacheManager cacheManager = customizer.getCacheManager();
+        AssertUtils.notNull(cacheManager, "cacheManager is null.");
+        
+        BasicDataServiceSupportCacheProxyCreator creator = new BasicDataServiceSupportCacheProxyCreator(
+                cacheManager);
+        return creator;
     }
     
 }

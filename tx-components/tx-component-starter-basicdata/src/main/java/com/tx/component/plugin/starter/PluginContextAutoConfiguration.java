@@ -28,6 +28,7 @@ import org.springframework.util.StringUtils;
 
 import com.tx.component.configuration.ConfigContextConstants;
 import com.tx.component.configuration.context.ConfigContext;
+import com.tx.component.configuration.starter.ConfigContextAutoConfiguration;
 import com.tx.component.plugin.context.PluginContextFactory;
 import com.tx.component.plugin.controller.PluginContextAPIController;
 import com.tx.component.plugin.service.PluginInstanceService;
@@ -49,7 +50,7 @@ import com.tx.core.starter.component.ComponentSupportAutoConfiguration;
 @ConditionalOnBean({ PlatformTransactionManager.class, ConfigContext.class })
 @EnableConfigurationProperties(PluginContextProperties.class)
 @Configuration
-@AutoConfigureAfter({ ComponentSupportAutoConfiguration.class })
+@AutoConfigureAfter({ ComponentSupportAutoConfiguration.class,ConfigContextAutoConfiguration.class })
 @ConditionalOnClass({ PluginContextFactory.class })
 @ConditionalOnSingleCandidate(DataSource.class)
 @Import({ PluginPersisterConfiguration.class })

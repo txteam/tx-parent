@@ -88,10 +88,10 @@ public class BasicDataCacheConfiguration implements ApplicationContextAware {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @ConditionalOnMissingBean(BasicDataCacheCustomizer.class)
-    @ConditionalOnProperty(prefix = BasicDataContextConstants.PROPERTIES_PREFIX, value = "cacheManagerRef", matchIfMissing = false)
     @Bean
-    public BasicDataCacheCustomizer basicDataCacheCustomizer() {
+    @ConditionalOnMissingBean(BasicDataCacheCustomizer.class)
+    @ConditionalOnProperty(prefix = BasicDataContextConstants.PROPERTIES_PREFIX, value = "cache-manager-ref", matchIfMissing = false) 
+    public BasicDataCacheCustomizer basicDataRefCacheCustomizer() {
         CacheManager cacheManager = null;
         if (this.applicationContext
                 .containsBean(this.properties.getCacheManagerRef())) {
@@ -119,7 +119,7 @@ public class BasicDataCacheConfiguration implements ApplicationContextAware {
     @Bean
     @ConditionalOnClass(RedisOperations.class)
     @ConditionalOnMissingBean(BasicDataCacheCustomizer.class)
-    @ConditionalOnProperty(prefix = BasicDataContextConstants.PROPERTIES_PREFIX, value = "cacheManagerRef", matchIfMissing = true)
+    @ConditionalOnProperty(prefix = BasicDataContextConstants.PROPERTIES_PREFIX, value = "cache-manager-ref", matchIfMissing = true)
     public BasicDataCacheCustomizer basicDataRedisCacheCustomizer(
             RedisConnectionFactory factory) {
         CacheManager cacheManager = basicDataCacheManager(factory);
@@ -162,7 +162,6 @@ public class BasicDataCacheConfiguration implements ApplicationContextAware {
                 .serializeValuesWith(RedisSerializationContext.SerializationPair
                         .fromSerializer(jackson2JsonRedisSerializer))
                 .disableCachingNullValues();
-        
         RedisCacheManager cacheManager = RedisCacheManager.builder(factory)
                 .cacheDefaults(config)
                 .build();
@@ -179,9 +178,10 @@ public class BasicDataCacheConfiguration implements ApplicationContextAware {
      * @since  [产品/模块版本]
      */
     @Bean
+    @ConditionalOnMissingBean(BasicDataCacheCustomizer.class)
     @ConditionalOnMissingClass({
             "org.springframework.data.redis.core.RedisOperations" })
-    @ConditionalOnProperty(prefix = BasicDataContextConstants.PROPERTIES_PREFIX, value = "cacheManagerRef", matchIfMissing = true)
+    @ConditionalOnProperty(prefix = BasicDataContextConstants.PROPERTIES_PREFIX, value = "cache-manager-ref", matchIfMissing = true)
     public BasicDataCacheCustomizer basicDataLocalCacheCustomizer() {
         CacheManager local = new ConcurrentMapCacheManager();
         CacheManager cacheManager = new TransactionAwareCacheManagerProxy(
@@ -202,7 +202,7 @@ public class BasicDataCacheConfiguration implements ApplicationContextAware {
      * @see  [相关类/方法]
      * @since  [产品/模块版本]
      */
-    static class BasicDataCacheCustomizer {
+    public static class BasicDataCacheCustomizer {
         
         /** 缓存manager */
         private CacheManager cacheManager;

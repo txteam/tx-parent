@@ -31,7 +31,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.StringUtils;
 
-import com.tx.component.basicdata.context.BasicDataContextFactory;
 import com.tx.component.configuration.ConfigContextConstants;
 import com.tx.component.configuration.context.ConfigContextFactory;
 import com.tx.component.configuration.context.ConfigEntityFactory;
@@ -56,15 +55,15 @@ import com.tx.core.starter.component.ComponentSupportAutoConfiguration;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-@EnableConfigurationProperties(ConfigContextProperties.class)
 @Configuration
 @AutoConfigureAfter({ ComponentSupportAutoConfiguration.class })
-@ConditionalOnClass({ BasicDataContextFactory.class })
+@EnableConfigurationProperties(ConfigContextProperties.class)
+@ConditionalOnClass({ ConfigContextFactory.class })
 @ConditionalOnSingleCandidate(DataSource.class)
 @ConditionalOnBean(PlatformTransactionManager.class)
 @ConditionalOnProperty(prefix = ConfigContextConstants.PROPERTIES_PREFIX, value = "enable", havingValue = "true")
-@Import({ ConfigPersisterConfiguration.class,
-        ConfigAPIClientConfiguration.class, ConfigCacheConfiguration.class })
+@Import({ ConfigCacheConfiguration.class, ConfigPersisterConfiguration.class,
+        ConfigAPIClientConfiguration.class })
 public class ConfigContextAutoConfiguration
         implements ApplicationContextAware, InitializingBean {
     
@@ -123,27 +122,6 @@ public class ConfigContextAutoConfiguration
             this.module = this.properties.getModule();
         }
         AssertUtils.notEmpty(this.module, "module is empty.");
-    }
-    
-    /**
-     * 基础数据业务层缓存代理<br/>
-     * <功能详细描述>
-     * @param customizer
-     * @return [参数说明]
-     * 
-     * @return BasicDataServiceSupportCacheProxyCreator [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    @Bean(name = "configPropertyServiceSupportCacheProxyCreator")
-    public ConfigPropertyServiceSupportCacheProxyCreator configPropertyServiceSupportCacheProxyCreator(
-            ConfigCacheCustomizer customizer) {
-        CacheManager cacheManager = customizer.getCacheManager();
-        AssertUtils.notNull(cacheManager, "cacheManager is null.");
-        
-        ConfigPropertyServiceSupportCacheProxyCreator creator = new ConfigPropertyServiceSupportCacheProxyCreator(
-                cacheManager);
-        return creator;
     }
     
     /**
@@ -293,5 +271,26 @@ public class ConfigContextAutoConfiguration
                     module, configPropertyItemService);
             return controller;
         }
+    }
+    
+    /**
+     * 基础数据业务层缓存代理<br/>
+     * <功能详细描述>
+     * @param customizer
+     * @return [参数说明]
+     * 
+     * @return BasicDataServiceSupportCacheProxyCreator [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @Bean(name = "configPropertyServiceSupportCacheProxyCreator")
+    public ConfigPropertyServiceSupportCacheProxyCreator configPropertyServiceSupportCacheProxyCreator(
+            ConfigCacheCustomizer customizer) {
+        CacheManager cacheManager = customizer.getCacheManager();
+        AssertUtils.notNull(cacheManager, "cacheManager is null.");
+        
+        ConfigPropertyServiceSupportCacheProxyCreator creator = new ConfigPropertyServiceSupportCacheProxyCreator(
+                cacheManager);
+        return creator;
     }
 }
