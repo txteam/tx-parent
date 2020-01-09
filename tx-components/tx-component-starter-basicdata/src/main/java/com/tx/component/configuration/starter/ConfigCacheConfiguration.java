@@ -103,7 +103,8 @@ public class ConfigCacheConfiguration implements ApplicationContextAware {
     @Bean
     @ConditionalOnMissingBean(ConfigCacheCustomizer.class)
     @ConditionalOnProperty(prefix = ConfigContextConstants.PROPERTIES_PREFIX, value = "cache-manager-ref", matchIfMissing = false) 
-    public ConfigCacheCustomizer configRefCacheCustomizer() {
+    //这里不知道为何，去掉1以后，系统启动异常，排查很久没有定位怀疑是，springboot中某个机制导致
+    public ConfigCacheCustomizer configRefCacheCustomizer1() {
         CacheManager cacheManager = null;
         if (this.applicationContext
                 .containsBean(this.properties.getCacheManagerRef())) {
