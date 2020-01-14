@@ -439,7 +439,7 @@ public abstract class MybatisBaseDaoImpl<T, ID extends Serializable>
      * @return 返回 myBatisDaoSupport
      */
     public abstract MyBatisDaoSupport getMyBatisDaoSupport();
-
+    
     /**
      * @return 返回 assistant
      */

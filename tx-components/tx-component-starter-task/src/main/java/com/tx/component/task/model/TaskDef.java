@@ -35,11 +35,11 @@ public class TaskDef implements OrderedSupport, Serializable {
     @Id
     private String id;
     
-    /** module: 所属模块 */
-    private String module;
-    
     /** 父级任务编码：存在父级的任务都不能自动触发 */
     private String parentId;
+    
+    /** module: 所属模块 */
+    private String module;
     
     /** bean名 */
     private String beanName;
@@ -66,7 +66,7 @@ public class TaskDef implements OrderedSupport, Serializable {
     private boolean executable;
     
     /** 优先级 */
-    private int orderPriority;
+    private int priority;
     
     /** 最后更新时间 */
     private Date lastUpdateDate;
@@ -172,19 +172,7 @@ public class TaskDef implements OrderedSupport, Serializable {
         this.executable = executable;
     }
     
-    /**
-     * @return 返回 orderPriority
-     */
-    public int getOrderPriority() {
-        return orderPriority;
-    }
     
-    /**
-     * @param 对orderPriority进行赋值
-     */
-    public void setOrderPriority(int orderPriority) {
-        this.orderPriority = orderPriority;
-    }
     
     /**
      * @return 返回 attributes

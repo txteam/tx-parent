@@ -6,6 +6,7 @@
  */
 package com.tx.component.servicelogger.annotation;
 
+import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
@@ -23,6 +24,7 @@ import org.springframework.core.annotation.AliasFor;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
+@Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE })
 @Inherited

@@ -181,7 +181,7 @@ public class MyBatisDaoSupport implements InitializingBean {
     public void batchInsert(String statement, List<?> objectList) {
         AssertUtils.notEmpty(statement, "statement is empty.");
         //批量插入
-        batchInsert(statement, objectList, defaultDoFlushSize, true);
+        batchInsert(statement, objectList, defaultDoFlushSize, false);
     }
     
     /**
@@ -294,7 +294,7 @@ public class MyBatisDaoSupport implements InitializingBean {
                 objectList,
                 pkPropertyName,
                 defaultDoFlushSize,
-                true);
+                false);
     }
     
     /**
@@ -400,7 +400,7 @@ public class MyBatisDaoSupport implements InitializingBean {
     public void batchDelete(String statement, List<?> objectList) {
         AssertUtils.notEmpty(statement, "statement is empty.");
         
-        batchDelete(statement, objectList, defaultDoFlushSize, true);
+        batchDelete(statement, objectList, defaultDoFlushSize, false);
     }
     
     /**
@@ -502,7 +502,7 @@ public class MyBatisDaoSupport implements InitializingBean {
     public void batchUpdate(String statement, List<?> objectList) {
         AssertUtils.notEmpty(statement, "statement is empty.");
         
-        batchUpdate(statement, objectList, defaultDoFlushSize, true);
+        batchUpdate(statement, objectList, defaultDoFlushSize, false);
     }
     
     /**

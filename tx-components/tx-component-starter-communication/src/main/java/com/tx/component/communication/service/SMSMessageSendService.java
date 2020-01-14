@@ -38,9 +38,7 @@ public class SMSMessageSendService {
 
     private Logger logger = LoggerFactory.getLogger(SMSMessageSendService.class);
 
-    /**
-     * 消息发送记录
-     */
+    /** 消息发送记录 */
     @Resource(name = "messageSendRecordService")
     private MessageSendRecordService messageSendRecordService;
 

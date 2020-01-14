@@ -386,6 +386,13 @@ public class BaseDaoMapperBuilderAssistant
     }
     
     /**
+     * @param 对tableName进行赋值
+     */
+    public void setTableName(String tableName) {
+        this.tableName = tableName;
+    }
+
+    /**
      * @return 返回 pkColumn
      */
     public JPAColumnInfo getPkColumn() {
