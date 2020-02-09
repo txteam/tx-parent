@@ -16,14 +16,14 @@ import com.tx.core.ddlutil.builder.create.CreateTableDDLBuilder;
 import com.tx.core.ddlutil.executor.TableDDLExecutor;
 
 /**
-  * 任务容器表初始器<br/>
-  * <功能详细描述>
-  * 
-  * @author  Administrator
-  * @version  [版本号, 2017年10月15日]
-  * @see  [相关类/方法]
-  * @since  [产品/模块版本]
-  */
+ * 任务容器表初始器<br/>
+ * <功能详细描述>
+ * 
+ * @author Administrator
+ * @version  [版本号, 2017年10月15日]
+ * @see [相关类/方法]
+ * @since  [产品/模块版本]
+ */
 public class TaskContextTableInitializer extends AbstractTableInitializer
         implements InitializingBean {
     
@@ -77,7 +77,7 @@ public class TaskContextTableInitializer extends AbstractTableInitializer
                 .append("----------table:task_def----------")
                 .append(COMMENT_SUFFIX)
                 .append(LINE_SEPARATOR);
-        table_task_def(tableDDLExecutor, tableAutoInitialize);
+        table_td_task_def(tableDDLExecutor, tableAutoInitialize);
         sb.append(LINE_SEPARATOR);
         
         sb.append(COMMENT_PREFIX)
@@ -105,7 +105,7 @@ public class TaskContextTableInitializer extends AbstractTableInitializer
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
     */
-    public String table_task_def(TableDDLExecutor tableDDLExecutor,
+    public String table_td_task_def(TableDDLExecutor tableDDLExecutor,
             boolean tableAutoInitialize) {
         String tableName = "task_def";
         

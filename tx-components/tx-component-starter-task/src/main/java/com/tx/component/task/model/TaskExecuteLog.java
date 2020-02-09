@@ -12,11 +12,6 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import com.tx.core.jdbc.sqlsource.annotation.QueryConditionEqual;
-import com.tx.core.jdbc.sqlsource.annotation.QueryConditionGreaterOrEqual;
-import com.tx.core.jdbc.sqlsource.annotation.QueryConditionLess;
-import com.tx.core.jdbc.sqlsource.annotation.UpdateAble;
-
 /**
  * 事务执行记录<br/>
  * <功能详细描述>
@@ -27,12 +22,18 @@ import com.tx.core.jdbc.sqlsource.annotation.UpdateAble;
  * @since  [产品/模块版本]
  */
 @Entity
-@Table(name = "task_execute_log")
+@Table(name = "TD_EXECUTE_LOG")
 public class TaskExecuteLog {
     
     /** 日志id */
     @Id
     private String id;
+    
+    /** 事务执行虚中心 */
+    private String vcid;
+    
+    /**  事务执行人 */
+    private String userId;
     
     /** 归属任务id */
     private String taskId;
@@ -53,10 +54,10 @@ public class TaskExecuteLog {
     private TaskResultEnum result;
     
     /** 执行开始时间 */
-    private Date startDate;
+    private Date start;
     
     /** 执行结束时间 */
-    private Date endDate;
+    private Date end;
     
     /** 耗时 */
     private long consuming;
@@ -66,211 +67,200 @@ public class TaskExecuteLog {
     
     /** 执行所在机器的签名 */
     private String signature;
-    
-    /**  事务执行人 */
-    private String operatorId;
-    
-    /** 事务执行虚中心 */
-    private String vcid;
-    
-    /** <默认构造函数> */
-    public TaskExecuteLog() {
-        super();
-    }
-    
+
     /**
      * @return 返回 id
      */
     public String getId() {
         return id;
     }
-    
+
     /**
      * @param 对id进行赋值
      */
     public void setId(String id) {
         this.id = id;
     }
-    
-    /**
-     * @return 返回 taskId
-     */
-    public String getTaskId() {
-        return taskId;
-    }
-    
-    /**
-     * @param 对taskId进行赋值
-     */
-    public void setTaskId(String taskId) {
-        this.taskId = taskId;
-    }
-    
-    /**
-     * @return 返回 code
-     */
-    public String getCode() {
-        return code;
-    }
-    
-    /**
-     * @param 对code进行赋值
-     */
-    public void setCode(String code) {
-        this.code = code;
-    }
-    
-    /**
-     * @return 返回 name
-     */
-    public String getName() {
-        return name;
-    }
-    
-    /**
-     * @param 对name进行赋值
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-    
-    /**
-     * @return 返回 remark
-     */
-    public String getRemark() {
-        return remark;
-    }
-    
-    /**
-     * @param 对remark进行赋值
-     */
-    public void setRemark(String remark) {
-        this.remark = remark;
-    }
-    
-    /**
-     * @return 返回 result
-     */
-    public TaskResultEnum getResult() {
-        return result;
-    }
-    
-    /**
-     * @param 对result进行赋值
-     */
-    public void setResult(TaskResultEnum result) {
-        this.result = result;
-    }
-    
-    /**
-     * @return 返回 startDate
-     */
-    public Date getStartDate() {
-        return startDate;
-    }
-    
-    /**
-     * @param 对startDate进行赋值
-     */
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
-    }
-    
-    /**
-     * @return 返回 endDate
-     */
-    public Date getEndDate() {
-        return endDate;
-    }
-    
-    /**
-     * @param 对endDate进行赋值
-     */
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
-    }
-    
-    /**
-     * @return 返回 consuming
-     */
-    public long getConsuming() {
-        return consuming;
-    }
-    
-    /**
-     * @param 对consuming进行赋值
-     */
-    public void setConsuming(long consuming) {
-        this.consuming = consuming;
-    }
-    
-    /**
-     * @return 返回 attributes
-     */
-    public String getAttributes() {
-        return attributes;
-    }
-    
-    /**
-     * @param 对attributes进行赋值
-     */
-    public void setAttributes(String attributes) {
-        this.attributes = attributes;
-    }
-    
-    /**
-     * @return 返回 signature
-     */
-    public String getSignature() {
-        return signature;
-    }
-    
-    /**
-     * @param 对signature进行赋值
-     */
-    public void setSignature(String signature) {
-        this.signature = signature;
-    }
-    
-    /**
-     * @return 返回 module
-     */
-    public String getModule() {
-        return module;
-    }
-    
-    /**
-     * @param 对module进行赋值
-     */
-    public void setModule(String module) {
-        this.module = module;
-    }
-    
-    /**
-     * @return 返回 operatorId
-     */
-    public String getOperatorId() {
-        return operatorId;
-    }
-    
-    /**
-     * @param 对operatorId进行赋值
-     */
-    public void setOperatorId(String operatorId) {
-        this.operatorId = operatorId;
-    }
-    
+
     /**
      * @return 返回 vcid
      */
     public String getVcid() {
         return vcid;
     }
-    
+
     /**
      * @param 对vcid进行赋值
      */
     public void setVcid(String vcid) {
         this.vcid = vcid;
+    }
+
+    /**
+     * @return 返回 userId
+     */
+    public String getUserId() {
+        return userId;
+    }
+
+    /**
+     * @param 对userId进行赋值
+     */
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    /**
+     * @return 返回 taskId
+     */
+    public String getTaskId() {
+        return taskId;
+    }
+
+    /**
+     * @param 对taskId进行赋值
+     */
+    public void setTaskId(String taskId) {
+        this.taskId = taskId;
+    }
+
+    /**
+     * @return 返回 code
+     */
+    public String getCode() {
+        return code;
+    }
+
+    /**
+     * @param 对code进行赋值
+     */
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    /**
+     * @return 返回 module
+     */
+    public String getModule() {
+        return module;
+    }
+
+    /**
+     * @param 对module进行赋值
+     */
+    public void setModule(String module) {
+        this.module = module;
+    }
+
+    /**
+     * @return 返回 name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * @param 对name进行赋值
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * @return 返回 remark
+     */
+    public String getRemark() {
+        return remark;
+    }
+
+    /**
+     * @param 对remark进行赋值
+     */
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
+    /**
+     * @return 返回 result
+     */
+    public TaskResultEnum getResult() {
+        return result;
+    }
+
+    /**
+     * @param 对result进行赋值
+     */
+    public void setResult(TaskResultEnum result) {
+        this.result = result;
+    }
+
+    /**
+     * @return 返回 start
+     */
+    public Date getStart() {
+        return start;
+    }
+
+    /**
+     * @param 对start进行赋值
+     */
+    public void setStart(Date start) {
+        this.start = start;
+    }
+
+    /**
+     * @return 返回 end
+     */
+    public Date getEnd() {
+        return end;
+    }
+
+    /**
+     * @param 对end进行赋值
+     */
+    public void setEnd(Date end) {
+        this.end = end;
+    }
+
+    /**
+     * @return 返回 consuming
+     */
+    public long getConsuming() {
+        return consuming;
+    }
+
+    /**
+     * @param 对consuming进行赋值
+     */
+    public void setConsuming(long consuming) {
+        this.consuming = consuming;
+    }
+
+    /**
+     * @return 返回 attributes
+     */
+    public String getAttributes() {
+        return attributes;
+    }
+
+    /**
+     * @param 对attributes进行赋值
+     */
+    public void setAttributes(String attributes) {
+        this.attributes = attributes;
+    }
+
+    /**
+     * @return 返回 signature
+     */
+    public String getSignature() {
+        return signature;
+    }
+
+    /**
+     * @param 对signature进行赋值
+     */
+    public void setSignature(String signature) {
+        this.signature = signature;
     }
 }

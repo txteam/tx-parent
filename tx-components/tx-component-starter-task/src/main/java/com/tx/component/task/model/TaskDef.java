@@ -9,11 +9,10 @@ package com.tx.component.task.model;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-
-import com.tx.core.util.order.OrderedSupport;
 
 /**
  * 事务定义<br/>
@@ -25,38 +24,51 @@ import com.tx.core.util.order.OrderedSupport;
  * @since  [产品/模块版本]
  */
 @Entity
-@Table(name = "task_def")
-public class TaskDef implements OrderedSupport, Serializable {
+@Table(name = "TD_TASK_DEF")
+public class TaskDef implements Serializable {
     
     /** 注释内容 */
     private static final long serialVersionUID = -2388525566988400621L;
     
     /** 唯一键 */
     @Id
+    @Column(nullable = false, length = 64)
     private String id;
     
     /** 父级任务编码：存在父级的任务都不能自动触发 */
+    @Column(nullable = true, length = 64)
     private String parentId;
     
+    /** 任务编码 */
+    @Column(nullable = false, length = 64)
+    private String code;
+    
     /** module: 所属模块 */
+    @Column(nullable = false, length = 64)
     private String module;
     
     /** bean名 */
+    @Column(nullable = true, length = 64)
     private String beanName;
     
     /** bean名 */
+    @Column(nullable = true, length = 256)
     private String className;
     
     /** 方法名：启动期间将会自动判断类中是否有重写方法：原则上允许出现同名方法，避免出现code,beanName,methodName一致，但方法不一致的情形 */
+    @Column(nullable = true, length = 64)
     private String methodName;
     
     /** 任务描述的参数Map */
+    @Column(nullable = true, length = 4000)
     private String attributes;
     
     /** 事务名 */
+    @Column(nullable = true, length = 64)
     private String name;
     
     /** 描述 */
+    @Column(nullable = true, length = 1000)
     private String remark;
     
     /** 是否有效 */
@@ -89,17 +101,31 @@ public class TaskDef implements OrderedSupport, Serializable {
     }
     
     /**
-     * @return 返回 className
+     * @return 返回 parentId
      */
-    public String getClassName() {
-        return className;
+    public String getParentId() {
+        return parentId;
     }
     
     /**
-     * @param 对className进行赋值
+     * @param 对parentId进行赋值
      */
-    public void setClassName(String className) {
-        this.className = className;
+    public void setParentId(String parentId) {
+        this.parentId = parentId;
+    }
+    
+    /**
+     * @return 返回 code
+     */
+    public String getCode() {
+        return code;
+    }
+    
+    /**
+     * @param 对code进行赋值
+     */
+    public void setCode(String code) {
+        this.code = code;
     }
     
     /**
@@ -114,6 +140,62 @@ public class TaskDef implements OrderedSupport, Serializable {
      */
     public void setModule(String module) {
         this.module = module;
+    }
+    
+    /**
+     * @return 返回 beanName
+     */
+    public String getBeanName() {
+        return beanName;
+    }
+    
+    /**
+     * @param 对beanName进行赋值
+     */
+    public void setBeanName(String beanName) {
+        this.beanName = beanName;
+    }
+    
+    /**
+     * @return 返回 className
+     */
+    public String getClassName() {
+        return className;
+    }
+    
+    /**
+     * @param 对className进行赋值
+     */
+    public void setClassName(String className) {
+        this.className = className;
+    }
+    
+    /**
+     * @return 返回 methodName
+     */
+    public String getMethodName() {
+        return methodName;
+    }
+    
+    /**
+     * @param 对methodName进行赋值
+     */
+    public void setMethodName(String methodName) {
+        this.methodName = methodName;
+    }
+    
+    /**
+     * @return 返回 attributes
+     */
+    public String getAttributes() {
+        return attributes;
+    }
+    
+    /**
+     * @param 对attributes进行赋值
+     */
+    public void setAttributes(String attributes) {
+        this.attributes = attributes;
     }
     
     /**
@@ -172,62 +254,18 @@ public class TaskDef implements OrderedSupport, Serializable {
         this.executable = executable;
     }
     
-    
-    
     /**
-     * @return 返回 attributes
+     * @return 返回 priority
      */
-    public String getAttributes() {
-        return attributes;
+    public int getPriority() {
+        return priority;
     }
     
     /**
-     * @param 对attributes进行赋值
+     * @param 对priority进行赋值
      */
-    public void setAttributes(String attributes) {
-        this.attributes = attributes;
-    }
-    
-    /**
-     * @return 返回 parentId
-     */
-    public String getParentId() {
-        return parentId;
-    }
-    
-    /**
-     * @param 对parentId进行赋值
-     */
-    public void setParentId(String parentId) {
-        this.parentId = parentId;
-    }
-    
-    /**
-     * @return 返回 beanName
-     */
-    public String getBeanName() {
-        return beanName;
-    }
-    
-    /**
-     * @param 对beanName进行赋值
-     */
-    public void setBeanName(String beanName) {
-        this.beanName = beanName;
-    }
-    
-    /**
-     * @return 返回 methodName
-     */
-    public String getMethodName() {
-        return methodName;
-    }
-    
-    /**
-     * @param 对methodName进行赋值
-     */
-    public void setMethodName(String methodName) {
-        this.methodName = methodName;
+    public void setPriority(int priority) {
+        this.priority = priority;
     }
     
     /**

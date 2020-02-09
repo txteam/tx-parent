@@ -8,10 +8,13 @@ package com.tx.component.task.annotations;
 
 import static java.lang.annotation.ElementType.METHOD;
 
+import java.lang.annotation.Documented;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import org.springframework.core.annotation.AliasFor;
 
 /**
  * 任务<br/>
@@ -30,13 +33,19 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ METHOD })
 @Inherited
+@Documented
 public @interface Task {
+    
+    /** 任务关键字 */
+    @AliasFor("code")
+    String value() default "";
+    
+    /** 任务关键字 */
+    @AliasFor("value")
+    String code() default "";
     
     /** 排序值 */
     int order() default 0;
-    
-    /** 任务关键字 */
-    String value() default "";
     
     /** 父级任务编码 */
     String parent() default "";

@@ -23,7 +23,7 @@ import javax.persistence.Table;
  * @since  [产品/模块版本]
  */
 @Entity
-@Table(name = "task_status")
+@Table(name = "TD_TASK_STATUS")
 public class TaskStatus implements Serializable {
     
     /** 注释内容 */
@@ -46,10 +46,10 @@ public class TaskStatus implements Serializable {
     private TaskResultEnum result;
     
     /** 最后执行时间：记录最后一次执行的时间 */
-    private Date startDate;
+    private Date start;
     
     /** 最后执行时间：记录最后一次执行的时间 */
-    private Date endDate;
+    private Date end;
     
     /** 最后一次陈功执行耗时 */
     private Long consuming;
@@ -126,6 +126,20 @@ public class TaskStatus implements Serializable {
     }
     
     /**
+     * @return 返回 code
+     */
+    public String getCode() {
+        return code;
+    }
+    
+    /**
+     * @param 对code进行赋值
+     */
+    public void setCode(String code) {
+        this.code = code;
+    }
+    
+    /**
      * @return 返回 status
      */
     public TaskStatusEnum getStatus() {
@@ -137,6 +151,62 @@ public class TaskStatus implements Serializable {
      */
     public void setStatus(TaskStatusEnum status) {
         this.status = status;
+    }
+    
+    /**
+     * @return 返回 result
+     */
+    public TaskResultEnum getResult() {
+        return result;
+    }
+    
+    /**
+     * @param 对result进行赋值
+     */
+    public void setResult(TaskResultEnum result) {
+        this.result = result;
+    }
+    
+    /**
+     * @return 返回 start
+     */
+    public Date getStart() {
+        return start;
+    }
+    
+    /**
+     * @param 对start进行赋值
+     */
+    public void setStart(Date start) {
+        this.start = start;
+    }
+    
+    /**
+     * @return 返回 end
+     */
+    public Date getEnd() {
+        return end;
+    }
+    
+    /**
+     * @param 对end进行赋值
+     */
+    public void setEnd(Date end) {
+        this.end = end;
+    }
+    
+    /**
+     * @return 返回 consuming
+     */
+    public Long getConsuming() {
+        return consuming;
+    }
+    
+    /**
+     * @param 对consuming进行赋值
+     */
+    public void setConsuming(Long consuming) {
+        this.consuming = consuming;
     }
     
     /**
@@ -154,17 +224,17 @@ public class TaskStatus implements Serializable {
     }
     
     /**
-     * @return 返回 attributes
+     * @return 返回 executeCount
      */
-    public String getAttributes() {
-        return attributes;
+    public int getExecuteCount() {
+        return executeCount;
     }
     
     /**
-     * @param 对attributes进行赋值
+     * @param 对executeCount进行赋值
      */
-    public void setAttributes(String attributes) {
-        this.attributes = attributes;
+    public void setExecuteCount(int executeCount) {
+        this.executeCount = executeCount;
     }
     
     /**
@@ -210,6 +280,20 @@ public class TaskStatus implements Serializable {
     }
     
     /**
+     * @return 返回 successCount
+     */
+    public int getSuccessCount() {
+        return successCount;
+    }
+    
+    /**
+     * @param 对successCount进行赋值
+     */
+    public void setSuccessCount(int successCount) {
+        this.successCount = successCount;
+    }
+    
+    /**
      * @return 返回 failStartDate
      */
     public Date getFailStartDate() {
@@ -252,90 +336,6 @@ public class TaskStatus implements Serializable {
     }
     
     /**
-     * @return 返回 result
-     */
-    public TaskResultEnum getResult() {
-        return result;
-    }
-    
-    /**
-     * @param 对result进行赋值
-     */
-    public void setResult(TaskResultEnum result) {
-        this.result = result;
-    }
-    
-    /**
-     * @return 返回 startDate
-     */
-    public Date getStartDate() {
-        return startDate;
-    }
-    
-    /**
-     * @param 对startDate进行赋值
-     */
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
-    }
-    
-    /**
-     * @return 返回 endDate
-     */
-    public Date getEndDate() {
-        return endDate;
-    }
-    
-    /**
-     * @param 对endDate进行赋值
-     */
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
-    }
-    
-    /**
-     * @return 返回 consuming
-     */
-    public Long getConsuming() {
-        return consuming;
-    }
-    
-    /**
-     * @param 对consuming进行赋值
-     */
-    public void setConsuming(Long consuming) {
-        this.consuming = consuming;
-    }
-    
-    /**
-     * @return 返回 nextFireDate
-     */
-    public Date getNextFireDate() {
-        return nextFireDate;
-    }
-
-    /**
-     * @param 对nextFireDate进行赋值
-     */
-    public void setNextFireDate(Date nextFireDate) {
-        this.nextFireDate = nextFireDate;
-    }
-
-    /**
-     * @return 返回 executeCount
-     */
-    public int getExecuteCount() {
-        return executeCount;
-    }
-    
-    /**
-     * @param 对executeCount进行赋值
-     */
-    public void setExecuteCount(int executeCount) {
-        this.executeCount = executeCount;
-    }
-    
-    /**
      * @return 返回 failCount
      */
     public int getFailCount() {
@@ -350,17 +350,31 @@ public class TaskStatus implements Serializable {
     }
     
     /**
-     * @return 返回 successCount
+     * @return 返回 attributes
      */
-    public int getSuccessCount() {
-        return successCount;
+    public String getAttributes() {
+        return attributes;
     }
     
     /**
-     * @param 对successCount进行赋值
+     * @param 对attributes进行赋值
      */
-    public void setSuccessCount(int successCount) {
-        this.successCount = successCount;
+    public void setAttributes(String attributes) {
+        this.attributes = attributes;
+    }
+    
+    /**
+     * @return 返回 nextFireDate
+     */
+    public Date getNextFireDate() {
+        return nextFireDate;
+    }
+    
+    /**
+     * @param 对nextFireDate进行赋值
+     */
+    public void setNextFireDate(Date nextFireDate) {
+        this.nextFireDate = nextFireDate;
     }
     
     /**

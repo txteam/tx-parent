@@ -396,7 +396,9 @@ public class ${controller.entityTypeSimpleName}Controller {
     @RequestMapping("/queryChildren")
     public List<${controller.entityTypeSimpleName}> queryChildren(
             @RequestParam(value = "parentId", required = true) String parentId,
-            @RequestParam(value = "valid", required = false) Boolean valid,
+	<#if controller.validProperty??>
+			@RequestParam(value="${controller.validProperty.propertyName}",required=false) Boolean ${controller.validProperty.propertyName},
+	</#if>
             @RequestParam MultiValueMap<String, String> request) {
         Map<String, Object> params = new HashMap<>();
 	<#if controller.codeProperty??>
@@ -408,7 +410,7 @@ public class ${controller.entityTypeSimpleName}Controller {
 	
         
         List<${controller.entityTypeSimpleName}> resList = this.${controller.entityTypeSimpleName?uncap_first}Service
-                .queryChildrenByParentId(parentId, valid, params);
+                .queryChildrenByParentId(parentId,<#if controller.validProperty??> valid,</#if> params);
         
         return resList;
     }
@@ -429,7 +431,9 @@ public class ${controller.entityTypeSimpleName}Controller {
     @RequestMapping("/queryDescendants")
     public List<${controller.entityTypeSimpleName}> queryDescendants(
             @RequestParam(value = "parentId", required = true) String parentId,
-            @RequestParam(value = "valid", required = false) Boolean valid,
+	<#if controller.validProperty??>
+			@RequestParam(value="${controller.validProperty.propertyName}",required=false) Boolean ${controller.validProperty.propertyName},
+	</#if>
             @RequestParam MultiValueMap<String, String> request) {
         Map<String, Object> params = new HashMap<>();
 	<#if controller.codeProperty??>
@@ -440,7 +444,7 @@ public class ${controller.entityTypeSimpleName}Controller {
 	</#if>
         
         List<${controller.entityTypeSimpleName}> resList = this.${controller.entityTypeSimpleName?uncap_first}Service
-                .queryDescendantsByParentId(parentId, valid, params);
+                .queryDescendantsByParentId(parentId,<#if controller.validProperty??> valid,</#if> params);
         
         return resList;
     }
