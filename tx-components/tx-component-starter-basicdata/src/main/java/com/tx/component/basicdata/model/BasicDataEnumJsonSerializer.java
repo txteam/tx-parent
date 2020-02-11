@@ -8,13 +8,13 @@ package com.tx.component.basicdata.model;
 
 import java.beans.PropertyDescriptor;
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
-import org.apache.commons.lang3.reflect.FieldUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.PropertyAccessorFactory;
+import org.springframework.core.convert.TypeDescriptor;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -49,27 +49,36 @@ public class BasicDataEnumJsonSerializer extends JsonSerializer<BasicDataEnum> {
         }
 
         generator.writeStartObject();
-        PropertyDescriptor[] pds = BeanUtils.getPropertyDescriptors(value.getClass());
-        for (PropertyDescriptor pd : pds) {
+        BeanWrapper bw = PropertyAccessorFactory.forBeanPropertyAccess(value);
+        for (PropertyDescriptor pd : bw.getPropertyDescriptors()) {
             String pdName = pd.getName();
             if ("class".equals(pdName) || "declaringClass".equals(pdName)) {
                 continue;
             }
             //判断是否忽略该节点
-            boolean isIgnore = isIgnore(value, pd);
+            TypeDescriptor td = bw.getPropertyTypeDescriptor(pdName);
+            boolean isIgnore = isIgnore(td, bw);
             if (isIgnore) {
                 continue;
             }
             generator.writeFieldName(pdName);
-            try {
-                Object object = pd.getReadMethod().invoke(value);
-                if (object != null) {
-                    generator.writeString(object.toString());
+            Object obj = bw.getPropertyValue(pdName);
+            Class<?> clazz = bw.getPropertyType(pdName);
+            if (BeanUtils.isSimpleValueType(clazz)) {
+                if (obj == null) {
+                    generator.writeNull();
+                } else {
+                    if (CharSequence.class.isInstance(obj)) {
+                        generator.writeString(obj.toString());
+                    } else if (Number.class.isInstance(obj)) {
+                        generator.writeNumber(obj.toString());
+                    } else if (Boolean.class.isInstance(obj)) {
+                        generator.writeBoolean((Boolean)obj);
+                    }
                 }
-            } catch (IllegalAccessException | IllegalArgumentException
-                    | InvocationTargetException e) {
-                throw new SILException(e.getMessage(), e);
+                continue;
             }
+            throw new SILException("枚举对象属性为复杂对象，不能使用该json序列化转换器.");
         }
         generator.writeEndObject();
     }
@@ -85,16 +94,16 @@ public class BasicDataEnumJsonSerializer extends JsonSerializer<BasicDataEnum> {
      * @throws throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    private boolean isIgnore(BasicDataEnum value, PropertyDescriptor pd) {
+    private boolean isIgnore(TypeDescriptor td, BeanWrapper bw) {
         try {
-            Method method = pd.getReadMethod();
-            if (method == null || method.isAnnotationPresent(JsonIgnore.class)) {
+            if (td.hasAnnotation(JsonIgnore.class)) {
                 return true;
             }
-            String pdName = pd.getName();
-            Field field = FieldUtils.getField(value.getClass(), pdName, true);
-            if (field != null && field.isAnnotationPresent(JsonIgnore.class)) {
-                return true;
+            if (td.hasAnnotation(JSONField.class)) {
+                JSONField a = td.getAnnotation(JSONField.class);
+                if (!a.serialize()) {
+                    return true;
+                }
             }
         } catch (Exception e1) {
             return true;

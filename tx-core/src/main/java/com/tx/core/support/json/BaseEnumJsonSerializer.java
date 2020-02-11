@@ -20,7 +20,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
-import com.tx.core.util.JsonUtils;
+import com.tx.core.exceptions.SILException;
 
 /**
  * 基础数据json序列化器<br/>
@@ -70,15 +70,17 @@ public class BaseEnumJsonSerializer extends JsonSerializer<BaseEnum> {
                 if (obj == null) {
                     generator.writeNull();
                 } else {
-                    generator.writeString(JsonUtils.toJson(obj));
+                    if (CharSequence.class.isInstance(obj)) {
+                        generator.writeString(obj.toString());
+                    } else if (Number.class.isInstance(obj)) {
+                        generator.writeNumber(obj.toString());
+                    } else if (Boolean.class.isInstance(obj)) {
+                        generator.writeBoolean((Boolean)obj);
+                    }
                 }
-            } else {
-                if (obj == null) {
-                    generator.writeNull();
-                } else {
-                    generator.writeString(JsonUtils.toJson(obj));
-                }
+                continue;
             }
+            throw new SILException("枚举对象属性为复杂对象，不能使用该json序列化转换器.");
         }
         generator.writeEndObject();
     }
