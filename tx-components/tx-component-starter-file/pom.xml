@@ -13,6 +13,19 @@
 	<url>http://maven.apache.org</url>
 
 	<dependencies>
+		<!-- 对oss,vfs支持 -->
+		<dependency>
+			<groupId>com.aliyun.oss</groupId>
+			<artifactId>aliyun-sdk-oss</artifactId>
+			<version>3.8.0</version>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-vfs2</artifactId>
+			<optional>true</optional>
+		</dependency>
+
 		<!-- tx-core -->
 		<dependency>
 			<groupId>com.tx</groupId>

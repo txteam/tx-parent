@@ -23,27 +23,27 @@ import com.tx.component.file.resource.FileResource;
 public interface ViewHandler {
     
     /**
-      * 视图处理器名称<br/>
-      * <功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return String [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 视图处理器名称<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     String name();
     
     /**
-      * 获取文件定义资源<br/>
-      * <功能详细描述>
-      * @param fileId
-      * @param request
-      * @param path
-      * @return [参数说明]
-      * 
-      * @return FileDefinitionResource [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 获取文件定义资源<br/>
+     * <功能详细描述>
+     * @param fileId
+     * @param request
+     * @param path
+     * @return [参数说明]
+     * 
+     * @return FileDefinitionResource [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     FileResource getResource(FileDefinition fileDefinition,
             HttpServletRequest request, String path, String fileId,

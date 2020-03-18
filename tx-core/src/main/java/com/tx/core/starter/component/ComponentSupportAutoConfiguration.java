@@ -90,7 +90,8 @@ public class ComponentSupportAutoConfiguration
                 "classpath*:com/tx/component/**/*SqlMap_BASICDATA.xml",
                 "classpath*:com/tx/component/**/*SqlMap_CONFIGURATION.xml",
                 "classpath*:com/tx/component/**/*SqlMap_PLUGIN.xml",
-                "classpath*:com/tx/component/**/*SqlMap_SECURITY.xml" });
+                "classpath*:com/tx/component/**/*SqlMap_SECURITY.xml",
+                "classpath*:com/tx/component/**/*SqlMap_File.xml"});
         this.dataSource = dataSource;
     }
     

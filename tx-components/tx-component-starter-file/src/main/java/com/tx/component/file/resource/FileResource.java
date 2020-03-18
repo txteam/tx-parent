@@ -8,6 +8,10 @@ package com.tx.component.file.resource;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
+
+import com.tx.component.file.model.FileDefinition;
 
 /**
  * 文件定义资源实体<br/>
@@ -23,6 +27,59 @@ import java.io.InputStream;
 public interface FileResource {
     
     /**
+     * 获取文件定义<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return FileDefinition [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    FileDefinition getFileDefinition();
+    
+    /**
+     * 获取文件存储相对路径<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    default String getRelativePath() {
+        String relativePath = getFileDefinition().getRelativePath();
+        return relativePath;
+    }
+    
+    /**
+     * 获取文件名<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    default String getFilename() {
+        String filename = getFileDefinition().getFilename();
+        return filename;
+    }
+    
+    /**
+     * 获取文件名后缀<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    default String getFilenameExtension() {
+        String filenameExtension = getFileDefinition().getFilenameExtension();
+        return filenameExtension;
+    }
+    
+    /**
      * 判断文件定义是否存在<br/>
      * <功能详细描述>
      * @return [参数说明]
@@ -34,26 +91,15 @@ public interface FileResource {
     boolean exists();
     
     /**
-     * 访问资源的ViewUrl:可能为相对路径|获绝对路径|或http访问的路径<br/>
+     * 删除文件<br/>
      * <功能详细描述>
      * @return [参数说明]
      * 
-     * @return String [返回类型说明]
+     * @return boolean [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public String getViewUrl();
-    
-    /**
-     * 获取文件名<br/>
-     * <功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return String [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    String getFilename();
+    public void delete();
     
     /**
      * 存储输入流,如果资源已经存在，则覆盖已存在的资源<br/>
@@ -78,17 +124,6 @@ public interface FileResource {
     public void add(InputStream inputStream);
     
     /**
-     * 删除文件<br/>
-     * <功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return boolean [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    public void delete();
-    
-    /**
      * 获取输入流<br/>
      * <功能详细描述>
      * @return [参数说明]
@@ -98,4 +133,18 @@ public interface FileResource {
      * @see [类、类#方法、类#成员]
      */
     public InputStream getInputStream() throws IOException;
+    
+    /**
+     * 获取读取通道<br/>
+     * <功能详细描述>
+     * @return
+     * @throws IOException [参数说明]
+     * 
+     * @return ReadableByteChannel [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    default ReadableByteChannel readableChannel() throws IOException {
+        return Channels.newChannel(getInputStream());
+    }
 }

@@ -138,7 +138,7 @@ $(document).ready(function(){
 			</#if>
 					<td>
 						<!-- //TODO:修改其显示逻辑 -->
-						<input id="${property.getColumnPropertyName()}" name="${property.getColumnPropertyName()}" th:value="*{${property.propertyDescriptor.getName()}?.${property.nestedPropertyDescriptor.getName()}}"/>
+						<input id="${property.getColumnPropertyName()}" name="${property.getColumnPropertyName()}" th:value="*{<#if property.nestedPropertyDescriptor??>${property.propertyDescriptor.getName()}?.${property.nestedPropertyDescriptor.getName()}<#else>${property.propertyDescriptor.getName()}</#if>}"/>
 					</td>
 				</tr>
 		</#if>

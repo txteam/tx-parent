@@ -20,7 +20,7 @@ import com.tx.core.ddlutil.model.TableColumnDef;
 import com.tx.core.ddlutil.model.TableDef;
 import com.tx.core.exceptions.SILException;
 import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.util.order.OrderedSupportComparator;
+import com.tx.core.util.order.PrioritySupportComparator;
 
 /**
  * 抽象的修改表DDL构建器<br/>
@@ -315,7 +315,7 @@ public abstract class AbstractAlterTableDDLBuilder
         if (CollectionUtils.isEmpty(addColumns)) {
             return;
         }
-        OrderedSupportComparator.sort(addColumns);
+        PrioritySupportComparator.sort(addColumns);
         for (TableColumnDef column : addColumns) {
             print("   ADD COLUMN ");//输出缩进
             writeColumn(column);
@@ -356,7 +356,7 @@ public abstract class AbstractAlterTableDDLBuilder
             return;
         }
         
-        OrderedSupportComparator.sort(modifyColumns);
+        PrioritySupportComparator.sort(modifyColumns);
         for (TableColumnDef column : modifyColumns) {
             print("   MODIFY COLUMN ");//输出缩进
             writeColumn(column);

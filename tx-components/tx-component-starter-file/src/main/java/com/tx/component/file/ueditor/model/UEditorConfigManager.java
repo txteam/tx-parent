@@ -9,13 +9,13 @@ import com.tx.component.file.ueditor.define.ActionMap;
 import com.tx.core.exceptions.util.AssertUtils;
 
 /**
-  * UEditor配置管理器<br/>
-  * <功能详细描述>
-  * 
-  * @author  PengQY
-  * @version  [版本号, 2017年3月9日]
-  * @see  [相关类/方法]
-  * @since  [产品/模块版本]
+ * UEditor配置管理器<br/>
+ * <功能详细描述>
+ * 
+ * @author  PengQY
+ * @version  [版本号, 2017年3月9日]
+ * @see  [相关类/方法]
+ * @since  [产品/模块版本]
  */
 public final class UEditorConfigManager {
     

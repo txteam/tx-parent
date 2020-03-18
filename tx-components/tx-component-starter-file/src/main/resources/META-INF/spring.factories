@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.tx.component.command.starter.CommandContextAutoConfiguration,\
+com.tx.component.strategy.starter.StrategyContextAutoConfiguration

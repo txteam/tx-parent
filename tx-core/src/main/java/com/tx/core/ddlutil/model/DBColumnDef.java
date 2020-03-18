@@ -28,7 +28,7 @@ public class DBColumnDef extends AbstractColumnDef implements Serializable {
     private String tableName;
     
     /** 排序优先级 */
-    private int orderPriority = 0;
+    private int priority = 0;
     
     /** <默认构造函数> */
     public DBColumnDef() {
@@ -67,15 +67,15 @@ public class DBColumnDef extends AbstractColumnDef implements Serializable {
     /**
      * @return 返回 orderPriority
      */
-    public int getOrderPriority() {
-        return orderPriority;
+    public int getPriority() {
+        return priority;
     }
     
     /**
      * @param 对orderPriority进行赋值
      */
-    public void setOrderPriority(int orderPriority) {
-        this.orderPriority = orderPriority;
+    public void setPriority(int priority) {
+        this.priority = priority;
     }
     
     /**

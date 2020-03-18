@@ -11,8 +11,12 @@ import com.tx.component.file.ueditor.Encoder;
 /**
  * 多状态集合状态
  * 其包含了多个状态的集合, 其本身自己也是一个状态
- * @author hancong03@baidu.com
- *
+ * <功能详细描述>
+ * 
+ * @author  Administrator
+ * @version  [版本号, 2020年3月13日]
+ * @see  [相关类/方法]
+ * @since  [产品/模块版本]
  */
 public class MultiState implements State {
     

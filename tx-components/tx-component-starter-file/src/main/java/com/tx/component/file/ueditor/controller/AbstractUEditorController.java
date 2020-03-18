@@ -35,8 +35,9 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
-import com.tx.component.file.context.FileContext;
+import com.tx.component.file.context.FileContextImpl;
 import com.tx.component.file.model.FileDefinition;
+import com.tx.component.file.model.FileDefinitionDetail;
 import com.tx.component.file.ueditor.model.DefaultUEditorResult;
 import com.tx.component.file.ueditor.model.MultiUEditorResult;
 import com.tx.component.file.ueditor.model.UEditorActionMap;
@@ -110,14 +111,14 @@ public abstract class AbstractUEditorController
     }
     
     /**
-      * 验证Callback名<br/>
-      * <功能详细描述>
-      * @param callback
-      * @return [参数说明]
-      * 
-      * @return boolean [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 验证Callback名<br/>
+     * <功能详细描述>
+     * @param callback
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     protected boolean validateCallback(String callback) {
         if (!CALLBACK_PATTERN.matcher(callback).matches()) {
@@ -263,13 +264,13 @@ public abstract class AbstractUEditorController
     }
     
     /**
-      * 文件存储模块<br/>
-      * <功能详细描述>
-      * @return [参数说明]
-      * 
-      * @return String [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 文件存储模块<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     protected abstract String module();
     
@@ -349,16 +350,16 @@ public abstract class AbstractUEditorController
     }
     
     /**
-      * 删除上传文件<br/>
-      * <功能详细描述>
-      * @param request
-      * @param config
-      * @param fileType
-      * @return [参数说明]
-      * 
-      * @return UEditorResult [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 删除上传文件<br/>
+     * <功能详细描述>
+     * @param request
+     * @param config
+     * @param fileType
+     * @return [参数说明]
+     * 
+     * @return UEditorResult [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     protected UEditorResult deleteFile(HttpServletRequest request,
             String fileType) {
@@ -366,30 +367,29 @@ public abstract class AbstractUEditorController
         if (StringUtils.isEmpty(fileId)) {
             return new DefaultUEditorResult(false, "文件id为空.");
         }
-        FileDefinition fd = FileContext.getContext().findById(fileId);
+        FileDefinition fd = FileContextImpl.getContext().findById(fileId);
         if (fd == null) {
             return new DefaultUEditorResult(false, "文件不存在.");
         }
         
-        FileContext.getContext().deleteById(fileId);
-        
+        //进行可回收(不删目标文件，仅删除fileDefinition对象)
+        FileContextImpl.getContext().deleteById(fileId, true);
         UEditorResult result = new DefaultUEditorResult(true);
-        
         doAfterDeleteFile(request, fileType, fd);
         return result;
     }
     
     /**
-      * 查询历史已经上传的文件<br/>
-      * <功能详细描述>
-      * @param request
-      * @param config
-      * @param fileType
-      * @return [参数说明]
-      * 
-      * @return UEditorResult [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 查询历史已经上传的文件<br/>
+     * <功能详细描述>
+     * @param request
+     * @param config
+     * @param fileType
+     * @return [参数说明]
+     * 
+     * @return UEditorResult [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     protected UEditorResult listFile(HttpServletRequest request,
             Map<String, Object> config, String fileType) {
@@ -402,7 +402,7 @@ public abstract class AbstractUEditorController
                 config,
                 fileType,
                 null);
-        List<FileDefinition> fdList = FileContext.getContext()
+        List<FileDefinitionDetail> fddList = FileContextImpl.getContext()
                 .queryList(module(), relativeFolder, filenameExtensions, null);
         
         MultiUEditorResult result = null;
@@ -416,24 +416,23 @@ public abstract class AbstractUEditorController
             }
             
             result = new MultiUEditorResult(true);
-            for (FileDefinition fd : subFdList) {
-                if (fd == null) {
+            for (FileDefinitionDetail fdd : fddList) {
+                if (fdd == null) {
                     break;
                 }
                 UEditorResult fdResult = new DefaultUEditorResult(true);
-                fdResult.putInfo("id", fd.getId());
-                fdResult.putInfo("relativePath", fd.getRelativePath());
-                fdResult.putInfo("url", fd.getViewUrl());
-                fdResult.putInfo("type", fd.getFilenameExtension());
-                fdResult.putInfo("fileName", fd.getFilename());
-                fdResult.putInfo("original", fd.getFilename());
-                
+                fdResult.putInfo("id", fdd.getId());
+                fdResult.putInfo("relativePath", fdd.getRelativePath());
+                fdResult.putInfo("url", fdd.getViewUrl());
+                fdResult.putInfo("type", fdd.getFilenameExtension());
+                fdResult.putInfo("fileName", fdd.getFilename());
+                fdResult.putInfo("original", fdd.getFilename());
                 result.addResult(fdResult);
             }
         }
         
         result.putInfo("start", startIndex);
-        result.putInfo("total", fdList.size());
+        result.putInfo("total", fddList.size());
         return result;
     }
     
@@ -481,7 +480,7 @@ public abstract class AbstractUEditorController
                 filename);
         FileDefinition fd = null;
         try {
-            fd = FileContext.getContext().save(module(),
+            fd = FileContextImpl.getContext().save(module(),
                     relativePath,
                     inputResource);
             result = new DefaultUEditorResult(true);
@@ -573,21 +572,21 @@ public abstract class AbstractUEditorController
                 fileType,
                 filename);
         InputStream input = null;
-        FileDefinition fd = null;
+        FileDefinitionDetail fdd = null;
         try {
             input = upfile.getInputStream();
-            fd = FileContext.getContext().save(module(), relativePath, input);
+            fdd = FileContextImpl.getContext().save(module(), relativePath, input);
             result = new DefaultUEditorResult(true);
             
             //调用后置逻辑
             doAfterSaveFile(multiRequest, config, fileType, fd);
             
-            result.putInfo("id", fd.getId());
-            result.putInfo("relativePath", fd.getRelativePath());
-            result.putInfo("url", fd.getViewUrl());
-            result.putInfo("type", fd.getFilenameExtension());
-            result.putInfo("fileName", fd.getFilename());
-            result.putInfo("original", fd.getFilename());
+            result.putInfo("id", fdd.getId());
+            result.putInfo("relativePath", fdd.getRelativePath());
+            result.putInfo("url", fdd.getViewUrl());
+            result.putInfo("type", fdd.getFilenameExtension());
+            result.putInfo("fileName", fdd.getFilename());
+            result.putInfo("original", fdd.getFilenameExtension());
         } catch (SILException e) {
             logger.info(e.getMessage(), e);
             
@@ -632,14 +631,14 @@ public abstract class AbstractUEditorController
     }
     
     /**
-      * 获取上传的文件<br/>
-      * <功能详细描述>
-      * @param multiRequest
-      * @return [参数说明]
-      * 
-      * @return MultipartFile [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 获取上传的文件<br/>
+     * <功能详细描述>
+     * @param multiRequest
+     * @return [参数说明]
+     * 
+     * @return MultipartFile [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     protected MultipartFile getUploadFile(
             MultipartHttpServletRequest multiRequest,

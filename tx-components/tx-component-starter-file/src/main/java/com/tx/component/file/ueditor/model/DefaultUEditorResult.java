@@ -5,13 +5,13 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
-  * 默认的UEditorResult<br/>
-  * <功能详细描述>
-  * 
-  * @author  Administrator
-  * @version  [版本号, 2017年3月9日]
-  * @see  [相关类/方法]
-  * @since  [产品/模块版本]
+ * 默认的UEditorResult<br/>
+ * <功能详细描述>
+ * 
+ * @author  Administrator
+ * @version  [版本号, 2017年3月9日]
+ * @see  [相关类/方法]
+ * @since  [产品/模块版本]
  */
 public class DefaultUEditorResult implements UEditorResult {
     
@@ -108,7 +108,8 @@ public class DefaultUEditorResult implements UEditorResult {
      */
     public String toString() {
         String key = null;
-        String stateVal = this.isSuccess() ? UEditorResultCode.getStateInfo(UEditorResultCode.SUCCESS)
+        String stateVal = this.isSuccess()
+                ? UEditorResultCode.getStateInfo(UEditorResultCode.SUCCESS)
                 : this.info;
         
         StringBuilder builder = new StringBuilder();
@@ -116,8 +117,8 @@ public class DefaultUEditorResult implements UEditorResult {
         Iterator<String> iterator = this.infoMap.keySet().iterator();
         while (iterator.hasNext()) {
             key = iterator.next();
-            builder.append(",\"" + key + "\": \"" + this.infoMap.get(key)
-                    + "\"");
+            builder.append(
+                    ",\"" + key + "\": \"" + this.infoMap.get(key) + "\"");
         }
         builder.append("}");
         

@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.tx.core.ddlutil.model.TableColumnDef;
-import com.tx.core.util.order.OrderedSupportComparator;
+import com.tx.core.util.order.PrioritySupportComparator;
 
 /**
  * ddlutil模块中工具类<br/>
@@ -44,7 +44,7 @@ public abstract class TableDefHelper {
                 pkColumns.add(columnTemp);
             }
         }
-        OrderedSupportComparator.sort(pkColumns);
+        PrioritySupportComparator.sort(pkColumns);
         
         int index2 = 0;
         for (TableColumnDef columnTemp : pkColumns) {

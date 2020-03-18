@@ -20,7 +20,7 @@ import org.springframework.util.StringUtils;
 import com.tx.component.file.FileContextConstants;
 import com.tx.component.file.model.FileDefinition;
 import com.tx.component.file.resource.FileResource;
-import com.tx.component.file.resource.impl.SystemFileResource;
+import com.tx.component.file.resource.resourceimpl.SystemFileResource;
 import com.tx.component.file.util.ThumbnailImageUtils;
 import com.tx.component.file.viewhandler.AbstractViewHandler;
 import com.tx.core.exceptions.SILException;

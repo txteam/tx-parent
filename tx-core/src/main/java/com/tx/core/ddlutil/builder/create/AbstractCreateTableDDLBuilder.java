@@ -22,7 +22,7 @@ import com.tx.core.ddlutil.model.TableDef;
 import com.tx.core.ddlutil.model.TableIndexDef;
 import com.tx.core.exceptions.SILException;
 import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.util.order.OrderedSupportComparator;
+import com.tx.core.util.order.PrioritySupportComparator;
 
 /**
  * 创建表DDL构建器<br/>
@@ -182,7 +182,7 @@ public abstract class AbstractCreateTableDDLBuilder
      */
     protected void writeCreateTableAddColumnsStmt() throws IOException {
         //输出字段
-        OrderedSupportComparator.sort(this.columns);
+        PrioritySupportComparator.sort(this.columns);
         int columnSize = this.columns.size();
         int index = 0;
         for (TableColumnDef column : this.columns) {
@@ -262,7 +262,7 @@ public abstract class AbstractCreateTableDDLBuilder
             return;
         }
         MultiValueMap<String, TableIndexDef> idxMutiMap = new LinkedMultiValueMap<>();
-        OrderedSupportComparator.sort(this.indexes);
+        PrioritySupportComparator.sort(this.indexes);
         
         for (TableIndexDef idx : this.indexes) {
             idxMutiMap.add(idx.getIndexName().toUpperCase(), idx);

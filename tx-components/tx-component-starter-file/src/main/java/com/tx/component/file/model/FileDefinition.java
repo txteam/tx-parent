@@ -8,13 +8,13 @@ package com.tx.component.file.model;
 
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.util.StringUtils;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.tx.component.file.resource.FileResource;
 import com.tx.core.support.json.JSONAttributesSupport;
 
 /**
@@ -34,36 +34,62 @@ public class FileDefinition implements JSONAttributesSupport {
     @Id
     private String id;
     
-    /** 所属模块:容器初始化时唯一确定，如果一个系统需要支撑多个模块 ,仅需要根据不同的module生成多个FileContext实现即可 */
-    private String module;
-    
     /** 所属目录 */
+    @Column(nullable = false, length = 64)
     private String catalog;
     
     /** 相对于文件容器的相对路径 */
+    @Column(nullable = false, length = 256)
     private String relativePath;
     
     /** 文件名称 */
+    @Column(nullable = false, length = 128)
     private String filename;
     
     /** 文件的后缀名 */
+    @Column(nullable = true, length = 128)
     private String filenameExtension;
     
+    /** 关联业务类型 */
+    @Column(nullable = true, length = 64)
+    private String refType;
+    
+    /** 关联业务类型的数据项id */
+    @Column(nullable = true, length = 64)
+    private String refId;
+    
     /** 文件的额外存储属性 */
+    @Column(nullable = true, length = 500)
     private String attributes;
+    
+    /** 是否删除：文件的删除包含两种，一种是弱删除，及修改deleted=true,然后等待系统回收，另外一种是直接真正删除 */
+    private boolean deleted = false;
     
     /** 删除时间 */
     private Date deleteDate;
     
     /** 最后跟新时间 */
+    @Column(nullable = false, length = 500)
     private Date lastUpdateDate;
     
     /** 创建时间 */
+    @Column(nullable = false, length = 500)
     private Date createDate;
     
-    /** 文件访问的真正路径：由FileContext加工后才会生成，非持久化字段 */
-    @JsonIgnore
-    private FileResource resource;
+    /** <默认构造函数> */
+    public FileDefinition() {
+        super();
+    }
+    
+    /** <默认构造函数> */
+    public FileDefinition(String relativePath) {
+        super();
+        this.relativePath = relativePath;
+        this.filename = StringUtils.getFilename(relativePath);
+        this.filenameExtension = StringUtils.getFilenameExtension(relativePath);
+        this.filenameExtension = this.filenameExtension != null
+                ? this.filenameExtension.toLowerCase() : null;
+    }
     
     /**
      * @return 返回 id
@@ -80,17 +106,17 @@ public class FileDefinition implements JSONAttributesSupport {
     }
     
     /**
-     * @return 返回 module
+     * @return 返回 catalog
      */
-    public String getModule() {
-        return module;
+    public String getCatalog() {
+        return catalog;
     }
     
     /**
-     * @param 对module进行赋值
+     * @param 对catalog进行赋值
      */
-    public void setModule(String module) {
-        this.module = module;
+    public void setCatalog(String catalog) {
+        this.catalog = catalog;
     }
     
     /**
@@ -105,6 +131,13 @@ public class FileDefinition implements JSONAttributesSupport {
      */
     public void setRelativePath(String relativePath) {
         this.relativePath = relativePath;
+        if (!StringUtils.isEmpty(this.relativePath)) {
+            this.filename = StringUtils.getFilename(relativePath);
+            this.filenameExtension = StringUtils
+                    .getFilenameExtension(relativePath);
+            this.filenameExtension = this.filenameExtension != null
+                    ? this.filenameExtension.toLowerCase() : null;
+        }
     }
     
     /**
@@ -136,6 +169,76 @@ public class FileDefinition implements JSONAttributesSupport {
     }
     
     /**
+     * @return 返回 refType
+     */
+    public String getRefType() {
+        return refType;
+    }
+    
+    /**
+     * @param 对refType进行赋值
+     */
+    public void setRefType(String refType) {
+        this.refType = refType;
+    }
+    
+    /**
+     * @return 返回 refId
+     */
+    public String getRefId() {
+        return refId;
+    }
+    
+    /**
+     * @param 对refId进行赋值
+     */
+    public void setRefId(String refId) {
+        this.refId = refId;
+    }
+    
+    /**
+     * @return 返回 attributes
+     */
+    public String getAttributes() {
+        return attributes;
+    }
+    
+    /**
+     * @param 对attributes进行赋值
+     */
+    public void setAttributes(String attributes) {
+        this.attributes = attributes;
+    }
+    
+    /**
+     * @return 返回 deleted
+     */
+    public boolean isDeleted() {
+        return deleted;
+    }
+    
+    /**
+     * @param 对deleted进行赋值
+     */
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+    
+    /**
+     * @return 返回 deleteDate
+     */
+    public Date getDeleteDate() {
+        return deleteDate;
+    }
+    
+    /**
+     * @param 对deleteDate进行赋值
+     */
+    public void setDeleteDate(Date deleteDate) {
+        this.deleteDate = deleteDate;
+    }
+    
+    /**
      * @return 返回 lastUpdateDate
      */
     public Date getLastUpdateDate() {
@@ -161,47 +264,5 @@ public class FileDefinition implements JSONAttributesSupport {
      */
     public void setCreateDate(Date createDate) {
         this.createDate = createDate;
-    }
-    
-    /**
-     * @return 返回 deleteDate
-     */
-    public Date getDeleteDate() {
-        return deleteDate;
-    }
-    
-    /**
-     * @param 对deleteDate进行赋值
-     */
-    public void setDeleteDate(Date deleteDate) {
-        this.deleteDate = deleteDate;
-    }
-    
-    /**
-     * @return 返回 attributes
-     */
-    public String getAttributes() {
-        return attributes;
-    }
-    
-    /**
-     * @param 对attributes进行赋值
-     */
-    public void setAttributes(String attributes) {
-        this.attributes = attributes;
-    }
-    
-    /**
-     * @return 返回 resource
-     */
-    public FileResource getResource() {
-        return resource;
-    }
-    
-    /**
-     * @param 对resource进行赋值
-     */
-    public void setResource(FileResource resource) {
-        this.resource = resource;
     }
 }

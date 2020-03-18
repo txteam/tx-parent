@@ -1,7 +1,7 @@
 package com.tx.core.ddlutil.model;
 
 import com.tx.core.ddlutil.dialect.Dialect4DDL;
-import com.tx.core.util.order.OrderedSupport;
+import com.tx.core.util.order.PrioritySupport;
 
 /**
  * 字段接口<br/>
@@ -12,7 +12,7 @@ import com.tx.core.util.order.OrderedSupport;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public interface TableColumnDef extends OrderedSupport {
+public interface TableColumnDef extends PrioritySupport {
     
     /**
      * 返回字段名<br/> 

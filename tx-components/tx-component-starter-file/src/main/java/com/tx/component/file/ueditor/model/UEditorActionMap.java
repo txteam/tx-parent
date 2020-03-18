@@ -4,13 +4,13 @@ import java.util.Map;
 import java.util.HashMap;
 
 /**
-  * 定义请求action类型<br/>
-  * <功能详细描述>
-  * 
-  * @author  Administrator
-  * @version  [版本号, 2017年3月9日]
-  * @see  [相关类/方法]
-  * @since  [产品/模块版本]
+ * 定义请求action类型<br/>
+ * <功能详细描述>
+ * 
+ * @author  Administrator
+ * @version  [版本号, 2017年3月9日]
+ * @see  [相关类/方法]
+ * @since  [产品/模块版本]
  */
 @SuppressWarnings("serial")
 public final class UEditorActionMap {

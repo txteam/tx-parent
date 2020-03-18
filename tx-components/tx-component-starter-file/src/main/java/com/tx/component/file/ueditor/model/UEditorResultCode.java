@@ -4,13 +4,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
-  * UEditorResult错误编码<br/>
-  * <功能详细描述>
-  * 
-  * @author  PengQY
-  * @version  [版本号, 2017年3月8日]
-  * @see  [相关类/方法]
-  * @since  [产品/模块版本]
+ * UEditorResult错误编码<br/>
+ * <功能详细描述>
+ * 
+ * @author  PengQY
+ * @version  [版本号, 2017年3月8日]
+ * @see  [相关类/方法]
+ * @since  [产品/模块版本]
  */
 @SuppressWarnings("serial")
 public final class UEditorResultCode {

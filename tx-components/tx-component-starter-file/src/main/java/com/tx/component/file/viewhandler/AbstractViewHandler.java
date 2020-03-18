@@ -10,7 +10,7 @@ import javax.annotation.Resource;
 
 import org.springframework.beans.factory.InitializingBean;
 
-import com.tx.component.file.context.FileContext;
+import com.tx.component.file.context.FileContextImpl;
 
 /**
  * 抽象视图处理器<br/>
@@ -25,7 +25,7 @@ public abstract class AbstractViewHandler implements ViewHandler,InitializingBea
     
     /** 文件容器 */
     @Resource(name = "fileContext")
-    protected FileContext fileContext;
+    protected FileContextImpl fileContext;
     
     /**
      * @throws Exception

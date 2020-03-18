@@ -10,9 +10,7 @@ public class FileType {
     
     private static final Map<String, String> types = new HashMap<String, String>() {
         {
-            
             put(FileType.JPG, ".jpg");
-            
         }
     };
     
