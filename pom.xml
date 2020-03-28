@@ -987,6 +987,5 @@
 	<modules>
 		<module>tx-core</module>
 		<module>tx-components</module>
-		<module>?</module>
 	</modules>
 </project>
