@@ -12,10 +12,8 @@ import org.springframework.core.Ordered;
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;
 import com.tx.component.file.catalog.FileCatalog;
-import com.tx.component.file.model.FileDefinition;
 import com.tx.component.file.resource.FileResourceLoader;
 import com.tx.component.file.resource.impl.OSSFileResourceLoader;
-import com.tx.core.TxConstants;
 import com.tx.core.exceptions.util.AssertUtils;
 
 /**
@@ -90,20 +88,6 @@ public class OSSFileCatalog implements FileCatalog, InitializingBean {
     @Override
     public String getCatalog() {
         return this.catalog;
-    }
-    
-    /**
-     * @param fd
-     * @return
-     */
-    @Override
-    public String getViewUrl(FileDefinition fd) {
-        StringBuilder sb = new StringBuilder(TxConstants.INITIAL_STR_LENGTH);
-        sb.append("/file/")
-                .append(getCatalog())
-                .append("/")
-                .append(fd.getRelativePath());
-        return sb.toString();
     }
     
     /**

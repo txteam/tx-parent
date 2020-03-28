@@ -35,7 +35,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
-import com.tx.component.file.context.FileContextImpl;
+import com.tx.component.file.context.FileContext;
 import com.tx.component.file.model.FileDefinition;
 import com.tx.component.file.model.FileDefinitionDetail;
 import com.tx.component.file.ueditor.model.DefaultUEditorResult;
@@ -111,23 +111,6 @@ public abstract class AbstractUEditorController
     }
     
     /**
-     * 验证Callback名<br/>
-     * <功能详细描述>
-     * @param callback
-     * @return [参数说明]
-     * 
-     * @return boolean [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    protected boolean validateCallback(String callback) {
-        if (!CALLBACK_PATTERN.matcher(callback).matches()) {
-            return false;
-        }
-        return true;
-    }
-    
-    /**
       * 获取配置<br/>
       * 服务于getConfig的请求，jsonp调用的返回.
       * <功能详细描述>
@@ -155,7 +138,6 @@ public abstract class AbstractUEditorController
         //            }
         //            System.out.println("");
         //        }
-        
         String json = null;
         if (!StringUtils.isEmpty(callback) && !validateCallback(callback)) {
             //callback不为空，并且验证不通过时
@@ -367,13 +349,13 @@ public abstract class AbstractUEditorController
         if (StringUtils.isEmpty(fileId)) {
             return new DefaultUEditorResult(false, "文件id为空.");
         }
-        FileDefinition fd = FileContextImpl.getContext().findById(fileId);
+        FileDefinition fd = FileContext.getContext().findById(fileId);
         if (fd == null) {
             return new DefaultUEditorResult(false, "文件不存在.");
         }
         
         //进行可回收(不删目标文件，仅删除fileDefinition对象)
-        FileContextImpl.getContext().deleteById(fileId, true);
+        FileContext.getContext().deleteById(fileId, true);
         UEditorResult result = new DefaultUEditorResult(true);
         doAfterDeleteFile(request, fileType, fd);
         return result;
@@ -402,7 +384,7 @@ public abstract class AbstractUEditorController
                 config,
                 fileType,
                 null);
-        List<FileDefinitionDetail> fddList = FileContextImpl.getContext()
+        List<FileDefinitionDetail> fddList = FileContext.getContext()
                 .queryList(module(), relativeFolder, filenameExtensions, null);
         
         MultiUEditorResult result = null;
@@ -480,7 +462,7 @@ public abstract class AbstractUEditorController
                 filename);
         FileDefinition fd = null;
         try {
-            fd = FileContextImpl.getContext().save(module(),
+            fd = FileContext.getContext().save(module(),
                     relativePath,
                     inputResource);
             result = new DefaultUEditorResult(true);
@@ -575,7 +557,7 @@ public abstract class AbstractUEditorController
         FileDefinitionDetail fdd = null;
         try {
             input = upfile.getInputStream();
-            fdd = FileContextImpl.getContext().save(module(), relativePath, input);
+            fdd = FileContext.getContext().save(module(), relativePath, input);
             result = new DefaultUEditorResult(true);
             
             //调用后置逻辑
@@ -658,5 +640,22 @@ public abstract class AbstractUEditorController
             }
         }
         return null;
+    }
+    
+    /**
+     * 验证Callback名<br/>
+     * <功能详细描述>
+     * @param callback
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    protected boolean validateCallback(String callback) {
+        if (!CALLBACK_PATTERN.matcher(callback).matches()) {
+            return false;
+        }
+        return true;
     }
 }

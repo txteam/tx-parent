@@ -38,9 +38,6 @@ public class FileContextConfigurator
     /** beanName实例 */
     protected static String beanName;
     
-    /** 配置容器所属模块 */
-    protected String module;
-    
     /** 文件定义业务层 */
     protected FileDefinitionService fileDefinitionService;
     
@@ -101,20 +98,4 @@ public class FileContextConfigurator
      */
     protected void doInitContext() throws Exception {
     }
-    
-    /**
-     * @param 对module进行赋值
-     */
-    public void setModule(String module) {
-        this.module = module;
-    }
-    
-    /**
-     * @param 对fileDefinitionService进行赋值
-     */
-    public void setFileDefinitionService(
-            FileDefinitionService fileDefinitionService) {
-        this.fileDefinitionService = fileDefinitionService;
-    }
-    
 }

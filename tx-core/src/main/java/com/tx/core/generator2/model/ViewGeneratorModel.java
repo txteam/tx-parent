@@ -70,6 +70,9 @@ public class ViewGeneratorModel {
     /** 父节点id对应的属性 */
     private EntityProperty parentIdProperty;
     
+    /** 父节点id对应的属性 */
+    private EntityProperty parentProperty;
+    
     /** 验证表达式生成器 */
     private ValidateExpressionGenerator validateExpressionGenerator;
     
@@ -143,6 +146,14 @@ public class ViewGeneratorModel {
                                 this.pkProperty.getPropertyType() });
             } else if (StringUtils.equals("name", property.getPropertyName())) {
                 this.nameProperty = property;
+            } else if (StringUtils.equals("parent",
+                    property.getPropertyName())) {
+                this.parentProperty = property;
+                AssertUtils.isTrue(
+                        property.getPropertyType().equals(this.entityType),
+                        "parent type:{} should equals entity type:{}.",
+                        new Object[] { property.getPropertyType(),
+                                this.entityType });
             }
         });
         
@@ -152,6 +163,13 @@ public class ViewGeneratorModel {
         if (this.nameProperty == null) {
             this.nameProperty = this.pkProperty;
         }
+    }
+    
+    /**
+     * @return 返回 parentProperty
+     */
+    public EntityProperty getParentProperty() {
+        return parentProperty;
     }
     
     /**

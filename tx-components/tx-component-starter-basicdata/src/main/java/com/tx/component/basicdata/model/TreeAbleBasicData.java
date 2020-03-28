@@ -23,6 +23,17 @@ public interface TreeAbleBasicData<T extends TreeAbleBasicData<T>>
         extends BasicData, TreeAble<List<T>, T> {
     
     /**
+     * @return
+     */
+    @Override
+    default String getParentId() {
+        if (getParent() == null) {
+            return null;
+        }
+        return getParent().getId();
+    }
+    
+    /**
       * 获取父节点对象<br/>
       * <功能详细描述>
       * @return [参数说明]

@@ -8,7 +8,9 @@ package com.tx.component.file.starter;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -19,7 +21,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import com.tx.component.file.dao.FileDefinitionDao;
 import com.tx.component.file.dao.impl.FileDefinitionDaoImpl;
 import com.tx.component.file.service.FileDefinitionService;
-import com.tx.component.file.service.impl.FileDefinitionServiceImpl;
+import com.tx.component.file.service.impl.MybatisFileDefinitionServiceImpl;
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.mybatis.support.MyBatisDaoSupport;
 import com.tx.core.starter.component.ComponentConstants;
@@ -63,11 +65,23 @@ public class FileContextPersisterConfiguration {
         @SuppressWarnings("unused")
         private TransactionTemplate transactionTemplate;
         
+        /** application.name */
+        @Value(value = "${spring.application.name}")
+        private String applicationName;
+        
+        /** 属性文件 */
+        private FileContextProperties properties;
+        
+        /** 容器所属模块：当该值为空时，使用spring.application.name的内容 */
+        private String module;
+        
         /** <默认构造函数> */
         public MybatisFileContextPersisterConfiguration(
-                PlatformTransactionManager transactionManager) {
+                PlatformTransactionManager transactionManager,
+                FileContextProperties properties) {
             this.transactionTemplate = new TransactionTemplate(
                     transactionManager);
+            this.properties = properties;
         }
         
         /**
@@ -77,6 +91,15 @@ public class FileContextPersisterConfiguration {
         public void afterPropertiesSet() throws Exception {
             AssertUtils.notNull(this.myBatisDaoSupport,
                     "myBatisDaoSupport is null.");
+            
+            //初始化包名
+            if (!StringUtils.isBlank(this.applicationName)) {
+                this.module = this.applicationName;
+            }
+            if (!StringUtils.isEmpty(this.properties.getModule())) {
+                this.module = this.properties.getModule();
+            }
+            AssertUtils.notEmpty(this.module, "module is empty.");
         }
         
         /**
@@ -109,8 +132,8 @@ public class FileContextPersisterConfiguration {
         @Bean("file.fileDefinitionService")
         public FileDefinitionService fileDefinitionService(
                 FileDefinitionDao fileDefinitionDao) throws Exception {
-            FileDefinitionService service = new FileDefinitionServiceImpl(
-                    fileDefinitionDao);
+            FileDefinitionService service = new MybatisFileDefinitionServiceImpl(
+                    fileDefinitionDao, this.module);
             return service;
         }
     }

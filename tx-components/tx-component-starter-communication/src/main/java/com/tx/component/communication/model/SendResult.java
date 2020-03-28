@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * 发送结果<br/>
  * <功能详细描述>
@@ -22,57 +24,45 @@ import java.util.Set;
 public class SendResult {
     
     /** 发送是否成功 */
-    private boolean success;
+    /** 返回码，0-成功，1-通用错误， 其他-详见错误码定义 */
+    //之所以只放错误码，如果多一个boolean字段，感觉和错误码重复了，明明可以只用一个字段表示，没有必要引入更多的字段表示
+    @ApiModelProperty(value = "返回码，0-成功，非0-失败", required = true, example = "0")
+    private int code = -1;
     
-    /** 错误编码 */
-    private String errorCode;
+    /** 提示消息 */
+    @ApiModelProperty(value = "返回消息", required = true, example = "成功")
+    private String message;
     
-    /** 错误消息 */
-    private String errorMessage;
-    
-    /** 其他消息 */
+    /** 返回的数据 */
+    @ApiModelProperty(value = "返回数据", required = true)
     private final Map<String, Object> attributes = new HashMap<>();
     
     /**
-     * @return 返回 success
+     * @return 返回 code
      */
-    public boolean isSuccess() {
-        return success;
+    public int getCode() {
+        return code;
     }
     
     /**
-     * @param 对success进行赋值
+     * @param 对code进行赋值
      */
-    public void setSuccess(boolean success) {
-        this.success = success;
+    public void setCode(int code) {
+        this.code = code;
     }
     
     /**
-     * @return 返回 errorCode
+     * @return 返回 message
      */
-    public String getErrorCode() {
-        return errorCode;
+    public String getMessage() {
+        return message;
     }
     
     /**
-     * @param 对errorCode进行赋值
+     * @param 对message进行赋值
      */
-    public void setErrorCode(String errorCode) {
-        this.errorCode = errorCode;
-    }
-    
-    /**
-     * @return 返回 errorMessage
-     */
-    public String getErrorMessage() {
-        return errorMessage;
-    }
-    
-    /**
-     * @param 对errorMessage进行赋值
-     */
-    public void setErrorMessage(String errorMessage) {
-        this.errorMessage = errorMessage;
+    public void setMessage(String message) {
+        this.message = message;
     }
     
     /**

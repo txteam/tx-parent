@@ -13,8 +13,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.transaction.support.TransactionSynchronizationAdapter;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-import com.tx.component.file.model.FileDefinition;
-
 /**
  * 事务环绕文件资源代理<br/>
  * <功能详细描述>
@@ -58,14 +56,6 @@ public class TransactionAwareFileResourceProxy
             throw new IllegalArgumentException(
                     "Property 'targetFileResource' is required.");
         }
-    }
-    
-    /**
-     * @return
-     */
-    @Override
-    public FileDefinition getFileDefinition() {
-        return this.targetFileResource.getFileDefinition();
     }
     
     /**

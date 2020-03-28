@@ -6,23 +6,23 @@
  */
 package ${service.basePackage}.service;
 
-<#if service.parentIdColumn??>
+<#if service.parentIdColumn?? || service.parentColumn??>
 import java.util.ArrayList;
 </#if>
 import java.util.Date;
 import java.util.HashMap;
-<#if service.parentIdColumn??>
+<#if service.parentIdColumn?? || service.parentColumn??>
 import java.util.HashSet;
 </#if>
 import java.util.List;
 import java.util.Map;
-<#if service.parentIdColumn??>
+<#if service.parentIdColumn?? || service.parentColumn??>
 import java.util.Set;
 </#if>
 
 import javax.annotation.Resource;
 
-<#if service.parentIdColumn??>
+<#if service.parentIdColumn?? || service.parentColumn??>
 import org.apache.commons.collections4.CollectionUtils;
 </#if>
 import org.slf4j.Logger;
@@ -34,7 +34,7 @@ import ${service.basePackage}.dao.${service.entityTypeSimpleName}Dao;
 import ${service.basePackage}.model.${service.entityTypeSimpleName};
 import com.tx.core.exceptions.util.AssertUtils;
 import com.tx.core.paged.model.PagedList;
-<#if service.validColumn?? || service.parentIdColumn??>
+<#if service.validColumn?? || service.parentIdColumn?? || service.parentColumn??>
 import com.tx.core.querier.model.Filter;
 </#if>
 import com.tx.core.querier.model.Querier;
@@ -747,6 +747,218 @@ public class ${service.entityTypeSimpleName}Service {
 	</#if>
     		Set<${service.pkColumn.propertyType.getSimpleName()}> ${service.pkColumn.propertyName}s,
     		Set<${service.parentIdColumn.propertyType.getSimpleName()}> parentIds,
+    		Querier querier) {
+        if (CollectionUtils.isEmpty(parentIds)) {
+            return new ArrayList<${service.entityTypeSimpleName}>();
+        }
+        
+        //ids避免数据出错时导致无限循环
+        Querier querierClone = (Querier)querier.clone();
+        querierClone.getFilters().add(Filter.in("parentId", parentIds));
+        List<${service.entityTypeSimpleName}> resList = queryList(<#if service.validColumn??>valid, </#if>querierClone);
+        
+        Set<${service.pkColumn.propertyType.getSimpleName()}> newParentIds = new HashSet<>();
+        for (${service.entityTypeSimpleName} bdTemp : resList) {
+            if (!ids.contains(bdTemp.getId())) {
+                newParentIds.add(bdTemp.getId());
+            }
+            ids.add(bdTemp.getId());
+        }
+        //嵌套查询下一层级
+        resList.addAll(doNestedQueryChildren(<#if service.validColumn??>valid,</#if> ${service.pkColumn.propertyName}s, newParentIds, querier));
+        return resList;
+    }
+</#if>
+<#if (!(service.parentIdColumn??) && service.parentColumn??)>
+
+    /**
+     * 根据parentId查询${service.entityComment}子级实例列表<br/>
+     * <功能详细描述>
+     * @param parentId
+     * @param valid
+     * @param params
+     * @return [参数说明]
+     * 
+     * @return List<T> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public List<${service.entityTypeSimpleName}> queryChildrenBy${service.parentColumn.propertyName?cap_first}Id(${service.pkColumn.propertyType.getSimpleName()} ${service.parentColumn.propertyName}Id,
+	<#if service.validColumn??>
+			Boolean ${service.validColumn.propertyName},
+	</#if>
+			Map<String,Object> params) {
+        //判断条件合法性
+        AssertUtils.notEmpty(${service.parentColumn.propertyName}Id,"${service.parentColumn.propertyName}Id is empty.");
+        
+        //生成查询条件
+        params = params == null ? new HashMap<String, Object>() : params;
+        params.put("${service.parentColumn.propertyName}Id", ${service.parentColumn.propertyName}Id);
+	<#if service.validColumn??>
+		params.put("${service.validColumn.propertyName}",${service.validColumn.propertyName});
+	</#if>
+
+        //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
+        List<${service.entityTypeSimpleName}> resList = this.${service.entityTypeSimpleName?uncap_first}Dao.queryList(params);
+        
+        return resList;
+    }
+    
+    /**
+     * 根据parentId查询${service.entityComment}子级实例列表<br/>
+     * <功能详细描述>
+     * @param parentId
+     * @param valid
+     * @param querier
+     * @return [参数说明]
+     * 
+     * @return List<T> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public List<${service.entityTypeSimpleName}> queryChildrenBy${service.parentColumn.propertyName?cap_first}Id(${service.pkColumn.propertyType.getSimpleName()} ${service.parentColumn.propertyName}Id,
+	<#if service.validColumn??>
+			Boolean ${service.validColumn.propertyName},
+	</#if>
+			Querier querier) {
+        //判断条件合法性
+        AssertUtils.notEmpty(${service.parentColumn.propertyName}Id,"${service.parentColumn.propertyName}Id is empty.");
+        
+        //生成查询条件
+        querier = querier == null ? QuerierBuilder.newInstance().querier()
+                : querier;
+	<#if service.validColumn??>
+		if (valid != null) {
+            querier.getFilters().add(Filter.eq("valid", valid));
+        }
+	</#if>
+		querier.getFilters().add(Filter.eq("${service.parentColumn.columnName}", ${service.parentColumn.propertyName}Id));
+
+        //根据实际情况，填入排序字段等条件，根据是否需要排序，选择调用dao内方法
+        List<${service.entityTypeSimpleName}> resList = this.${service.entityTypeSimpleName?uncap_first}Dao.queryList(querier);
+        
+        return resList;
+    }
+    
+    /**
+     * 根据parentId查询${service.entityComment}子、孙级实例列表<br/>
+     * <功能详细描述>
+     * @param parentId
+     * @param valid
+     * @param params
+     * @return [参数说明]
+     * 
+     * @return PagedList<T> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public List<${service.entityTypeSimpleName}> queryDescendantsBy${service.parentColumn.propertyName?cap_first}Id(${service.pkColumn.propertyType.getSimpleName()} ${service.parentColumn.propertyName}Id,
+	<#if service.validColumn??>
+			Boolean ${service.validColumn.propertyName},
+	</#if>
+            Map<String, Object> params) {
+        //判断条件合法性
+        AssertUtils.notEmpty(${service.parentColumn.propertyName}Id,"${service.parentColumn.propertyName}Id is empty.");
+        
+        //生成查询条件
+        params = params == null ? new HashMap<String, Object>() : params;
+        Set<${service.pkColumn.propertyType.getSimpleName()}> ids = new HashSet<>();
+        Set<${service.pkColumn.propertyType.getSimpleName()}> parentIds = new HashSet<>();
+        parentIds.add(${service.parentColumn.propertyName}Id);
+        
+        List<${service.entityTypeSimpleName}> resList = doNestedQueryChildren(<#if service.validColumn??>valid, </#if>ids, parentIds, params);
+        return resList;
+    }
+    
+    /**
+     * 查询嵌套列表<br/>
+     * <功能详细描述>
+     * @param ids
+     * @param parentIds
+     * @param params
+     * @return [参数说明]
+     * 
+     * @return List<${service.entityTypeSimpleName}> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    private List<${service.entityTypeSimpleName}> doNestedQueryChildren(
+	<#if service.validColumn??>
+			Boolean ${service.validColumn.propertyName},
+	</#if>
+    		Set<${service.pkColumn.propertyType.getSimpleName()}> ${service.pkColumn.propertyName}s,
+    		Set<${service.pkColumn.propertyType.getSimpleName()}> parentIds,Map<String, Object> params) {
+        if (CollectionUtils.isEmpty(parentIds)) {
+            return new ArrayList<${service.entityTypeSimpleName}>();
+        }
+        
+        //ids避免数据出错时导致无限循环
+        Map<String, Object> queryParams = new HashMap<>();
+        queryParams.putAll(params);
+        queryParams.put("parentIds", parentIds);
+        List<${service.entityTypeSimpleName}> resList = queryList(<#if service.validColumn??>valid,</#if> queryParams);
+        
+        Set<${service.pkColumn.propertyType.getSimpleName()}> newParentIds = new HashSet<>();
+        for (${service.entityTypeSimpleName} bdTemp : resList) {
+            if (!ids.contains(bdTemp.getId())) {
+                newParentIds.add(bdTemp.getId());
+            }
+            ids.add(bdTemp.getId());
+        }
+        //嵌套查询下一层级
+        resList.addAll(doNestedQueryChildren(<#if service.validColumn??>valid,</#if> ${service.pkColumn.propertyName}s, newParentIds, params));
+        return resList;
+    }
+    
+    /**
+     * 根据parentId查询${service.entityComment}子、孙级实例列表<br/>
+     * <功能详细描述>
+     * @param parentId
+     * @param valid
+     * @param querier
+     * @return [参数说明]
+     * 
+     * @return PagedList<T> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public List<${service.entityTypeSimpleName}> queryDescendantsBy${service.parentColumn.propertyName?cap_first}Id(${service.pkColumn.propertyType.getSimpleName()} ${service.parentColumn.propertyName}Id,
+	<#if service.validColumn??>
+			Boolean ${service.validColumn.propertyName},
+	</#if>
+            Querier querier) {
+        //判断条件合法性
+        AssertUtils.notEmpty(${service.parentColumn.propertyName}Id,"${service.parentColumn.propertyName}Id is empty.");
+        
+        //生成查询条件
+        querier = querier == null ? QuerierBuilder.newInstance().querier()
+                : querier;
+        Set<${service.pkColumn.propertyType.getSimpleName()}> ids = new HashSet<>();
+        Set<${service.pkColumn.propertyType.getSimpleName()}> parentIds = new HashSet<>();
+        parentIds.add(${service.parentColumn.propertyName}Id);
+        
+        List<${service.entityTypeSimpleName}> resList = doNestedQueryChildren(<#if service.validColumn??>valid, </#if>ids, parentIds, querier);
+        return resList;
+    }
+    
+    /**
+     * 嵌套查询列表<br/>
+     * <功能详细描述>
+     * @param ids
+     * @param parentIds
+     * @param querier
+     * @return [参数说明]
+     * 
+     * @return List<${service.entityTypeSimpleName}> [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    private List<${service.entityTypeSimpleName}> doNestedQueryChildren(
+	<#if service.validColumn??>
+			Boolean ${service.validColumn.propertyName},
+	</#if>
+    		Set<${service.pkColumn.propertyType.getSimpleName()}> ${service.pkColumn.propertyName}s,
+    		Set<${service.pkColumn.propertyType.getSimpleName()}> parentIds,
     		Querier querier) {
         if (CollectionUtils.isEmpty(parentIds)) {
             return new ArrayList<${service.entityTypeSimpleName}>();

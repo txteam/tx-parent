@@ -7,6 +7,7 @@
 	<!-- auto generate default resultMap -->
 	<resultMap id="fileDefinitionMap" 
 		type="com.tx.component.file.model.FileDefinition">
+		<result column="folderId" property="folder.id"/>
 	</resultMap>
 	
 	<!-- auto generate default find -->
@@ -15,8 +16,10 @@
 		resultMap="fileDefinitionMap">
 		SELECT 
 				FD.id,
+				FD.module,
 				FD.catalog,
 				FD.relativePath,
+				FD.folderId,
 				FD.filename,
 				FD.filenameExtension,
 				FD.deleted,
@@ -26,23 +29,26 @@
 				FD.attributes,
 				FD.lastUpdateDate,
 				FD.createDate
-		  FROM FILE_DEFINITION FD
+		  FROM FC_FILE_DEFINITION FD
 		 WHERE
 		<trim prefixOverrides="AND | OR">
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
 	            AND FD.id = #{id}
 	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(relativePath)">  
+	            AND FD.relativePath = #{relativePath}
+	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(catalog)">  
 	            AND FD.catalog = #{catalog}
 	        </if>
-	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(relativePath)">  
-	            AND FD.relativePath = #{relativePath}
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(refId)">  
+	            AND FD.refId = #{refId}
 	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(refType)">  
 	            AND FD.refType = #{refType}
 	        </if>
-	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(refId)">  
-	            AND FD.refId = #{refId}
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(module)">  
+	            AND FD.module = #{module}
 	        </if>
 		</trim>
 	</select>
@@ -53,8 +59,10 @@
 		resultMap="fileDefinitionMap">
 		SELECT 
 				FD.id,
+				FD.module,
 				FD.catalog,
 				FD.relativePath,
+				FD.folderId,
 				FD.filename,
 				FD.filenameExtension,
 				FD.deleted,
@@ -64,7 +72,7 @@
 				FD.attributes,
 				FD.lastUpdateDate,
 				FD.createDate
-		  FROM FILE_DEFINITION FD
+		  FROM FC_FILE_DEFINITION FD
 		<trim prefix="WHERE" prefixOverrides="AND | OR">
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(conditions)">
 			<foreach collection="conditions" item="conditionTemp">
@@ -81,26 +89,37 @@
 			</choose>
 			</foreach>
 	        </if>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
-	            <![CDATA[ AND FD.id = #{id} ]]>
-	        </if>			
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(minCreateDate)">  
+	        <if test="folder != null">
+				<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(folder.id)">  
+		            <![CDATA[ AND O.folderId = #{folder.id} ]]>
+		        </if>
+	        </if>	
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(folderId)">  
+	            <![CDATA[ AND FD.folderId = #{folderId} ]]>
+	        </if>	
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(minCreateDate)">  
 	            <![CDATA[ AND FD.createDate >= #{minCreateDate} ]]>
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(maxCreateDate)">  
 	            <![CDATA[ AND FD.createDate < #{maxCreateDate} ]]>
-	        </if>		
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
+	            <![CDATA[ AND FD.id = #{id} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(module)">  
+	            <![CDATA[ AND FD.module = #{module} ]]>
+	        </if>			
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(catalog)">  
 	            <![CDATA[ AND FD.catalog = #{catalog} ]]>
-	        </if>			
+	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(deleted)">  
 	            <![CDATA[ AND FD.deleted = #{deleted} ]]>
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(relativePath)">  
 	            <![CDATA[ AND FD.relativePath = #{relativePath} ]]>
 	        </if>
-	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(relativeFolder)">  
-	            <![CDATA[ AND FD.relativePath like concat(#{relativeFolder}, '%') ]]>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(folderRelativePath)">  
+	            <![CDATA[ AND FD.relativePath like concat(#{folderRelativePath}, '%') ]]>
 	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(filename)">  
 	            <![CDATA[ AND FD.filename = #{filename} ]]>
@@ -133,7 +152,7 @@
 		parameterType="java.util.Map"
 		resultType="java.lang.Integer">
 		SELECT COUNT(1)
-		  FROM FILE_DEFINITION FD
+		  FROM FC_FILE_DEFINITION FD
 		<trim prefix="WHERE" prefixOverrides="AND | OR">
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(conditions)">
 			<foreach collection="conditions" item="conditionTemp">
@@ -150,26 +169,37 @@
 			</choose>
 			</foreach>
 	        </if>
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
-	            <![CDATA[ AND FD.id = #{id} ]]>
-	        </if>			
-			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(minCreateDate)">  
+	        <if test="folder != null">
+				<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(folder.id)">  
+		            <![CDATA[ AND O.folderId = #{folder.id} ]]>
+		        </if>
+	        </if>	
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(folderId)">  
+	            <![CDATA[ AND FD.folderId = #{folderId} ]]>
+	        </if>	
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(minCreateDate)">  
 	            <![CDATA[ AND FD.createDate >= #{minCreateDate} ]]>
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(maxCreateDate)">  
 	            <![CDATA[ AND FD.createDate < #{maxCreateDate} ]]>
-	        </if>		
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
+	            <![CDATA[ AND FD.id = #{id} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(module)">  
+	            <![CDATA[ AND FD.module = #{module} ]]>
+	        </if>			
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(catalog)">  
 	            <![CDATA[ AND FD.catalog = #{catalog} ]]>
-	        </if>			
+	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(deleted)">  
 	            <![CDATA[ AND FD.deleted = #{deleted} ]]>
 	        </if>
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(relativePath)">  
 	            <![CDATA[ AND FD.relativePath = #{relativePath} ]]>
 	        </if>
-	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(relativeFolder)">  
-	            <![CDATA[ AND FD.relativePath like concat(#{relativeFolder}, '%') ]]>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(folderRelativePath)">  
+	            <![CDATA[ AND FD.relativePath like concat(#{folderRelativePath}, '%') ]]>
 	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(filename)">  
 	            <![CDATA[ AND FD.filename = #{filename} ]]>
@@ -192,10 +222,12 @@
 	<!-- auto generate default insert -->
     <insert id="insert" 
 		parameterType="com.tx.component.file.model.FileDefinition">
-		INSERT INTO FILE_DEFINITION
+		INSERT INTO FC_FILE_DEFINITION
 		(
 			id,
+			module,
 			catalog,
+			folderId,
 			deleted,
 			deleteDate,
 			filename,
@@ -210,7 +242,9 @@
 		VALUES
 		(
 			#{id},
+			#{module},
 			#{catalog},
+			#{folder.id},
 			#{deleted},
 			#{deleteDate},
 			#{filename},
@@ -227,10 +261,12 @@
 	<!-- auto generate default insert -->
     <insert id="insertToHis" 
 		parameterType="com.tx.component.file.model.FileDefinition">
-		INSERT INTO FILE_DEFINITION_HIS
+		INSERT INTO FC_FILE_DEFINITION_HIS
 		(
 			id,
+			module,
 			catalog,
+			folderId,
 			deleted,
 			deleteDate,
 			filename,
@@ -245,7 +281,9 @@
 		VALUES
 		(
 			#{id},
+			#{module},
 			#{catalog},
+			#{folder.id},
 			#{deleted},
 			#{deleteDate},
 			#{filename},
@@ -262,33 +300,50 @@
 	<!-- auto generate default delete -->
 	<delete id="delete" 
 		parameterType="com.tx.component.file.model.FileDefinition">
-		DELETE FROM FILE_DEFINITION  WHERE
+		DELETE FROM FC_FILE_DEFINITION  WHERE
 		<trim prefixOverrides="AND | OR">
 			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
 	            AND id = #{id}
 	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(relativePath)">  
+	            AND relativePath = #{relativePath}
+	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(catalog)">  
 	            AND catalog = #{catalog}
 	        </if>
-	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(refType)">  
-	            AND refType = #{refType}
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(module)">  
+	            AND module = #{module}
 	        </if>
 	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(refId)">  
 	            AND refId = #{refId}
 	        </if>
-	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(relativePath)">  
-	            AND relativePath = #{relativePath}
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(refType)">  
+	            AND refType = #{refType}
 	        </if>
+	        <if test="folder != null">
+				<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(folder.id)">  
+		            AND folderId = #{folder.id}
+		        </if>
+	        </if>	
 		</trim>
 	</delete>
 	
 	<!-- auto generate default update -->
 	<update id="update"
 	    parameterType="java.util.Map">  
-	    UPDATE FILE_DEFINITION
+	    UPDATE FC_FILE_DEFINITION
 	    <trim prefix="SET" suffixOverrides=",">
+			<!-- <if test="_parameter.containsKey('module')"> -->
+			<!-- module = #{module,javaType=java.lang.String}, -->
+			<!-- </if> -->
 			<if test="_parameter.containsKey('catalog')">
 	    		catalog = #{catalog,javaType=java.lang.String},
+	    	</if>
+	    	<if test="folder != null">
+	    		folderId = #{folder.id,javaType=java.lang.String},
+	        </if>	
+	    	<if test="_parameter.containsKey('folderId')">
+	    		folderId = #{folderId,javaType=java.lang.String},
 	    	</if>
 	    	<if test="_parameter.containsKey('deleted')">
 	    		deleted = #{deleted,javaType=boolean},

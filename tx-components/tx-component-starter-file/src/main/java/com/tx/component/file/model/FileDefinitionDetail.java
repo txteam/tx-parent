@@ -40,23 +40,19 @@ public class FileDefinitionDetail extends FileDefinition {
     }
     
     /** <默认构造函数> */
-    public FileDefinitionDetail(String relativePath) {
-        super(relativePath);
-    }
-    
-    /** <默认构造函数> */
     public FileDefinitionDetail(FileDefinition fd) {
         super();
         
         setId(fd.getId());
+        setModule(fd.getModule());
         setCatalog(fd.getCatalog());
         setDeleted(fd.isDeleted());
         setDeleteDate(fd.getDeleteDate());
+        setRelativePath(fd.getRelativePath());
         setFilename(fd.getFilename());
         setFilenameExtension(fd.getFilenameExtension());
-        setRelativePath(fd.getRelativePath());
-        setRefType(fd.getRefType());
         setRefId(fd.getRefId());
+        setRefType(fd.getRefType());
         setLastUpdateDate(fd.getLastUpdateDate());
         setCreateDate(fd.getCreateDate());
         setAttributes(fd.getAttributes());
@@ -117,4 +113,5 @@ public class FileDefinitionDetail extends FileDefinition {
     public void setResource(FileResource resource) {
         this.resource = resource;
     }
+    
 }

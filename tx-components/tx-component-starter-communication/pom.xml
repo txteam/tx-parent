@@ -18,11 +18,9 @@
 			<groupId>com.tx</groupId>
 			<artifactId>tx-core</artifactId>
 		</dependency>
-	
-		<!-- swagger2 -->
 		<dependency>
-			<groupId>io.springfox</groupId>
-			<artifactId>springfox-swagger2</artifactId>
+			<groupId>com.tx</groupId>
+			<artifactId>tx-component-starter-basicdata</artifactId>
 		</dependency>
 
 		<!-- aliyun -->
@@ -46,7 +44,7 @@
 			<artifactId>aliyun-java-sdk-core</artifactId>
 			<version>3.1.0</version>
 		</dependency>
-		
+
 		<!-- spring boot -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -96,7 +94,7 @@
 			<groupId>org.mybatis.spring.boot</groupId>
 			<artifactId>mybatis-spring-boot-starter</artifactId>
 		</dependency>
-		
+
 		<!-- configurationProperties -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

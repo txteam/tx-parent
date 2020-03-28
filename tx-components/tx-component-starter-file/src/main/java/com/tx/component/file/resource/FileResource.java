@@ -11,7 +11,7 @@ import java.io.InputStream;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 
-import com.tx.component.file.model.FileDefinition;
+import org.springframework.util.StringUtils;
 
 /**
  * 文件定义资源实体<br/>
@@ -27,17 +27,6 @@ import com.tx.component.file.model.FileDefinition;
 public interface FileResource {
     
     /**
-     * 获取文件定义<br/>
-     * <功能详细描述>
-     * @return [参数说明]
-     * 
-     * @return FileDefinition [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    FileDefinition getFileDefinition();
-    
-    /**
      * 获取文件存储相对路径<br/>
      * <功能详细描述>
      * @return [参数说明]
@@ -46,10 +35,7 @@ public interface FileResource {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    default String getRelativePath() {
-        String relativePath = getFileDefinition().getRelativePath();
-        return relativePath;
-    }
+    String getRelativePath();
     
     /**
      * 获取文件名<br/>
@@ -61,7 +47,7 @@ public interface FileResource {
      * @see [类、类#方法、类#成员]
      */
     default String getFilename() {
-        String filename = getFileDefinition().getFilename();
+        String filename = StringUtils.getFilename(getRelativePath());
         return filename;
     }
     
@@ -75,7 +61,8 @@ public interface FileResource {
      * @see [类、类#方法、类#成员]
      */
     default String getFilenameExtension() {
-        String filenameExtension = getFileDefinition().getFilenameExtension();
+        String filenameExtension = StringUtils
+                .getFilenameExtension(getRelativePath());
         return filenameExtension;
     }
     

@@ -30,7 +30,7 @@ public class DefaultsFileCatalogProperties {
     private String ossSecretAccessKey;
     
     /** 目录 */
-    private String bucketName;
+    private String ossBucketName;
     
     /**
      * @return 返回 path
@@ -89,17 +89,17 @@ public class DefaultsFileCatalogProperties {
     }
     
     /**
-     * @return 返回 bucketName
+     * @return 返回 ossBucketName
      */
-    public String getBucketName() {
-        return bucketName;
+    public String getOssBucketName() {
+        return ossBucketName;
     }
     
     /**
-     * @param 对bucketName进行赋值
+     * @param 对ossBucketName进行赋值
      */
-    public void setBucketName(String bucketName) {
-        this.bucketName = bucketName;
+    public void setOssBucketName(String ossBucketName) {
+        this.ossBucketName = ossBucketName;
     }
     
 }

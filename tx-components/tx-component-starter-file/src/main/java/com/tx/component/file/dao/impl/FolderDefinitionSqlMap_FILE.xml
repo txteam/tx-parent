@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper 
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="folderDefinition">
+
+	<!-- auto generate default resultMap -->
+	<resultMap id="folderDefinitionMap" 
+		type="com.tx.component.file.model.FolderDefinition">
+	</resultMap>
+	
+	<!-- auto generate default find -->
+	<select id="find" 
+		parameterType="com.tx.component.file.model.FolderDefinition"
+		resultMap="folderDefinitionMap">
+		SELECT 
+				FD.id,
+				FD.refId,
+				FD.refType,
+				FD.lastUpdateDate,
+				FD.createDate,
+				FD.deleteDate,
+				FD.module,
+				FD.parentId,
+				FD.catalog,
+				FD.deleted,
+				FD.filename,
+				FD.relativePath,
+				FD.attributes
+		  FROM FC_FOLDER_DEFINITION FD
+		 WHERE
+		<trim prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
+	            AND FD.id = #{id}
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(relativePath)">  
+	            AND FD.relativePath = #{relativePath}
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(catalog)">  
+	            AND FD.catalog = #{catalog}
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(module)">  
+	            AND FD.module = #{module}
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(refId)">  
+	            AND FD.refId = #{refId}
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(refType)">  
+	            AND FD.refType = #{refType}
+	        </if>
+		</trim>
+	</select>
+	
+	<!-- auto generate default query -->
+	<select id="query" 
+		parameterType="java.util.Map"
+		resultMap="folderDefinitionMap">
+		SELECT 
+				FD.id,
+				FD.refId,
+				FD.refType,
+				FD.lastUpdateDate,
+				FD.createDate,
+				FD.deleteDate,
+				FD.module,
+				FD.parentId,
+				FD.catalog,
+				FD.deleted,
+				FD.filename,
+				FD.relativePath,
+				FD.attributes
+		  FROM FC_FOLDER_DEFINITION FD
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(conditions)">
+			<foreach collection="conditions" item="conditionTemp">
+			<choose>  
+		        <when test="conditionTemp.withoutValue">
+		        	AND ${conditionTemp.column} ${conditionTemp.operator}
+		        </when>
+		        <when test="conditionTemp.foreach">  
+		            AND ${conditionTemp.column} ${conditionTemp.operator} <foreach collection="conditionTemp.value" item="valueTemp" open="(" close=")" separator=",">#{valueTemp}</foreach>
+		        </when>
+		        <otherwise>  
+		            AND ${conditionTemp.column} ${conditionTemp.operator} #{conditionTemp.value}
+		        </otherwise>
+			</choose>
+			</foreach>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(parentIds)">  
+	            AND FD.parentId IN <foreach collection="parentIds" open="(" close=")" separator="," item="parentIdTemp">#{parentIdTemp}</foreach>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
+	            <![CDATA[ AND FD.id = #{id} ]]>
+	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(refId)">  
+	            <![CDATA[ AND FD.refId = #{refId} ]]>
+	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(refType)">  
+	            <![CDATA[ AND FD.refType = #{refType} ]]>
+	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(minCreateDate)">  
+	            <![CDATA[ AND FD.createDate >= #{minCreateDate} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(maxCreateDate)">  
+	            <![CDATA[ AND FD.createDate < #{maxCreateDate} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(module)">  
+	            <![CDATA[ AND FD.module = #{module} ]]>
+	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(parentId)">  
+	            <![CDATA[ AND FD.parentId = #{parentId} ]]>
+	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(catalog)">  
+	            <![CDATA[ AND FD.catalog = #{catalog} ]]>
+	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(deleted)">  
+	            <![CDATA[ AND FD.deleted = #{deleted} ]]>
+	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(filename)">  
+	            <![CDATA[ AND FD.filename = #{filename} ]]>
+	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(relativePath)">  
+	            <![CDATA[ AND FD.relativePath = #{relativePath} ]]>
+	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(attributes)">  
+	            <![CDATA[ AND FD.attributes = #{attributes} ]]>
+	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(excludeId)">
+				<![CDATA[ AND FD.id <> #{excludeId} ]]>
+			</if>
+		</trim>
+		<choose>  
+	        <when test="@com.tx.core.util.OgnlUtils@isNotEmpty(orders)">  
+	            ORDER BY <foreach collection="orders" item="orderTemp" separator=",">${orderTemp.column} ${orderTemp.direction}</foreach>
+	        </when>
+	        <otherwise>  
+	            ORDER BY createDate DESC
+	        </otherwise>  
+	    </choose>
+	</select>
+
+	<!-- auto generate default count -->
+	<select id="queryCount" 
+		parameterType="java.util.Map"
+		resultType="java.lang.Integer">
+		SELECT COUNT(1)
+		  FROM FC_FOLDER_DEFINITION FD
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(conditions)">
+			<foreach collection="conditions" item="conditionTemp">
+			<choose>  
+		        <when test="conditionTemp.withoutValue">
+		        	AND ${conditionTemp.column} ${conditionTemp.operator}
+		        </when>
+		        <when test="conditionTemp.foreach">  
+		            AND ${conditionTemp.column} ${conditionTemp.operator} <foreach collection="conditionTemp.value" item="valueTemp" open="(" close=")" separator=",">#{valueTemp}</foreach>
+		        </when>
+		        <otherwise>  
+		            AND ${conditionTemp.column} ${conditionTemp.operator} #{conditionTemp.value}
+		        </otherwise>
+			</choose>
+			</foreach>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(parentIds)">  
+	            AND FD.parentId IN <foreach collection="parentIds" open="(" close=")" separator="," item="parentIdTemp">#{parentIdTemp}</foreach>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
+	            <![CDATA[ AND FD.id = #{id} ]]>
+	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(refId)">  
+	            <![CDATA[ AND FD.refId = #{refId} ]]>
+	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(refType)">  
+	            <![CDATA[ AND FD.refType = #{refType} ]]>
+	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(minCreateDate)">  
+	            <![CDATA[ AND FD.createDate >= #{minCreateDate} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(maxCreateDate)">  
+	            <![CDATA[ AND FD.createDate < #{maxCreateDate} ]]>
+	        </if>
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(module)">  
+	            <![CDATA[ AND FD.module = #{module} ]]>
+	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(parentId)">  
+	            <![CDATA[ AND FD.parentId = #{parentId} ]]>
+	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(catalog)">  
+	            <![CDATA[ AND FD.catalog = #{catalog} ]]>
+	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(deleted)">  
+	            <![CDATA[ AND FD.deleted = #{deleted} ]]>
+	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(filename)">  
+	            <![CDATA[ AND FD.filename = #{filename} ]]>
+	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(relativePath)">  
+	            <![CDATA[ AND FD.relativePath = #{relativePath} ]]>
+	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(attributes)">  
+	            <![CDATA[ AND FD.attributes = #{attributes} ]]>
+	        </if>			
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(excludeId)">
+				<![CDATA[ AND FD.id <> #{excludeId} ]]>
+			</if>
+		</trim>
+	</select>
+	
+	<!-- auto generate default insert -->
+    <insert id="insert" 
+		parameterType="com.tx.component.file.model.FolderDefinition">
+		INSERT INTO FC_FOLDER_DEFINITION
+		(
+			id,
+			refId,
+			refType,
+			lastUpdateDate,
+			createDate,
+			deleteDate,
+			module,
+			parentId,
+			catalog,
+			deleted,
+			filename,
+			relativePath,
+			attributes
+		)
+		VALUES
+		(
+			#{id},
+			#{refId},
+			#{refType},
+			#{lastUpdateDate},
+			#{createDate},
+			#{deleteDate},
+			#{module},
+			#{parentId},
+			#{catalog},
+			#{deleted},
+			#{filename},
+			#{relativePath},
+			#{attributes}
+		)
+	</insert>
+	
+	<!-- auto generate default delete -->
+	<delete id="delete" 
+		parameterType="com.tx.component.file.model.FolderDefinition">
+		DELETE FROM FC_FOLDER_DEFINITION  WHERE
+		<trim prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
+	            AND id = #{id}
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(relativePath)">  
+	            AND relativePath = #{relativePath}
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(catalog)">  
+	            AND catalog = #{catalog}
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(module)">  
+	            AND module = #{module}
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(refId)">  
+	            AND refId = #{refId}
+	        </if>
+	        <if test="@com.tx.core.util.OgnlUtils@isNotEmpty(refType)">  
+	            AND refType = #{refType}
+	        </if>
+		</trim>
+	</delete>
+	
+	<!-- auto generate default update -->
+	<update id="update"
+	    parameterType="java.util.Map">  
+	    UPDATE FC_FOLDER_DEFINITION
+	    <trim prefix="SET" suffixOverrides=",">
+			<if test="_parameter.containsKey('refId')">
+	    		refId = #{refId,javaType=java.lang.String},
+	    	</if>
+			<if test="_parameter.containsKey('refType')">
+	    		refType = #{refType,javaType=java.lang.String},
+	    	</if>
+			<if test="_parameter.containsKey('lastUpdateDate')">
+	    		lastUpdateDate = #{lastUpdateDate,javaType=java.util.Date},
+	    	</if>
+			<if test="_parameter.containsKey('deleteDate')">
+	    		deleteDate = #{deleteDate,javaType=java.util.Date},
+	    	</if>
+			<if test="_parameter.containsKey('module')">
+	    		module = #{module,javaType=java.lang.String},
+	    	</if>
+			<if test="_parameter.containsKey('parentId')">
+	    		parentId = #{parentId,javaType=java.lang.String},
+	    	</if>
+			<if test="_parameter.containsKey('catalog')">
+	    		catalog = #{catalog,javaType=java.lang.String},
+	    	</if>
+			<if test="_parameter.containsKey('deleted')">
+	    		deleted = #{deleted,javaType=boolean},
+	    	</if>
+			<if test="_parameter.containsKey('filename')">
+	    		filename = #{filename,javaType=java.lang.String},
+	    	</if>
+			<if test="_parameter.containsKey('relativePath')">
+	    		relativePath = #{relativePath,javaType=java.lang.String},
+	    	</if>
+			<if test="_parameter.containsKey('attributes')">
+	    		attributes = #{attributes,javaType=java.lang.String},
+	    	</if>
+	    </trim>
+	    WHERE
+		<trim prefixOverrides="AND | OR">
+			<if test="@com.tx.core.util.OgnlUtils@isNotEmpty(id)">  
+	            AND id = #{id}
+	        </if>
+		</trim>
+	</update> 
+
+</mapper>

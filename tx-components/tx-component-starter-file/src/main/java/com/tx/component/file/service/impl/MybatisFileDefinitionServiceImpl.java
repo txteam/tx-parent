@@ -36,26 +36,31 @@ import com.tx.core.querier.model.Querier;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public class FileDefinitionServiceImpl
+public class MybatisFileDefinitionServiceImpl
         implements InitializingBean, FileDefinitionService {
     
     /** 日志 */
     @SuppressWarnings("unused")
     private Logger logger = LoggerFactory
-            .getLogger(FileDefinitionServiceImpl.class);
+            .getLogger(MybatisFileDefinitionServiceImpl.class);
     
     /** 文件定义Dao层 */
     private FileDefinitionDao fileDefinitionDao;
     
+    /** 所属模块 */
+    private String module;
+    
     /** <默认构造函数> */
-    public FileDefinitionServiceImpl() {
+    public MybatisFileDefinitionServiceImpl() {
         super();
     }
     
     /** <默认构造函数> */
-    public FileDefinitionServiceImpl(FileDefinitionDao fileDefinitionDao) {
+    public MybatisFileDefinitionServiceImpl(FileDefinitionDao fileDefinitionDao,
+            String module) {
         super();
         this.fileDefinitionDao = fileDefinitionDao;
+        this.module = module;
     }
     
     /**
@@ -63,12 +68,14 @@ public class FileDefinitionServiceImpl
      */
     @Override
     public void afterPropertiesSet() throws Exception {
+        AssertUtils.notEmpty(this.module, "module is empty.");
     }
     
     /**
      * @param fileDefinition
      */
     @Override
+    @Transactional
     public FileDefinition save(FileDefinition fileDefinition) {
         AssertUtils.notNull(fileDefinition, "fileDefinition is null.");
         AssertUtils.notEmpty(fileDefinition.getCatalog(),
@@ -109,12 +116,12 @@ public class FileDefinitionServiceImpl
         AssertUtils.notEmpty(fileDefinition.getRelativePath(),
                 "fileDefinition.relativePath is empty.");
         
+        fileDefinition.setModule(this.module);
         fileDefinition.setFilename(
                 StringUtils.getFilename(fileDefinition.getRelativePath()));
-        String filenameExtension = fileDefinition.getRelativePath();
-        filenameExtension = filenameExtension != null
-                ? filenameExtension.toLowerCase() : null;
-        fileDefinition.setFilenameExtension(filenameExtension);
+        fileDefinition.setFilenameExtension(StringUtils
+                .getFilenameExtension(fileDefinition.getRelativePath())
+                .toLowerCase());
         
         Date now = new Date();
         fileDefinition.setCreateDate(now);
@@ -196,8 +203,10 @@ public class FileDefinitionServiceImpl
         AssertUtils.notEmpty(catalog, "catalog is empty.");
         
         FileDefinition condition = new FileDefinition();
+        condition.setModule(this.module);
         condition.setRelativePath(relativePath);
         condition.setCatalog(catalog);
+        condition.setModule(module);
         boolean flag = this.fileDefinitionDao.delete(condition) == 1;
         return flag;
     }
@@ -227,6 +236,7 @@ public class FileDefinitionServiceImpl
         AssertUtils.notEmpty(catalog, "catalog is empty.");
         
         FileDefinition condition = new FileDefinition();
+        condition.setModule(this.module);
         condition.setCatalog(catalog);
         condition.setRelativePath(relativePath);
         
@@ -236,45 +246,20 @@ public class FileDefinitionServiceImpl
     
     /**
      * @param catalog
-     * @param relativeFolder
-     * @param filenameExtensions
-     * @param params
-     * @return
-     */
-    @Override
-    public List<FileDefinition> queryList(String catalog, String relativeFolder,
-            String[] filenameExtensions, Map<String, Object> params) {
-        AssertUtils.notEmpty(catalog, "catalog is empty.");
-        
-        params = params == null ? new HashMap<String, Object>() : params;
-        params.put("catalog", catalog);
-        params.put("relativeFolder", relativeFolder);
-        if (!ArrayUtils.isEmpty(filenameExtensions)) {
-            params.put("filenameExtensions",
-                    Arrays.asList(filenameExtensions)
-                            .stream()
-                            .map(fe -> fe.toLowerCase())
-                            .collect(Collectors.toList()));
-        }
-        List<FileDefinition> resList = this.fileDefinitionDao.queryList(params);
-        return resList;
-    }
-    
-    /**
-     * @param catalog
-     * @param relativeFolder
+     * @param folderId
      * @param filenameExtensions
      * @param querier
      * @return
      */
     @Override
-    public List<FileDefinition> queryList(String catalog, String relativeFolder,
+    public List<FileDefinition> queryList(String catalog, String folderId,
             String[] filenameExtensions, Querier querier) {
         AssertUtils.notEmpty(catalog, "catalog is empty.");
         
         querier = querier == null ? new Querier() : querier;
+        querier.getParams().put("module", this.module);
         querier.getParams().put("catalog", catalog);
-        querier.getParams().put("relativeFolder", relativeFolder);
+        querier.getParams().put("folderId", folderId);
         if (!ArrayUtils.isEmpty(filenameExtensions)) {
             querier.getParams().put("filenameExtensions",
                     Arrays.asList(filenameExtensions)
@@ -289,37 +274,7 @@ public class FileDefinitionServiceImpl
     
     /**
      * @param catalog
-     * @param relativeFolder
-     * @param filenameExtensions
-     * @param params
-     * @param pageIndex
-     * @param pageSize
-     * @return
-     */
-    @Override
-    public PagedList<FileDefinition> queryPagedList(String catalog,
-            String relativeFolder, String[] filenameExtensions,
-            Map<String, Object> params, int pageIndex, int pageSize) {
-        AssertUtils.notEmpty(catalog, "catalog is empty.");
-        
-        params = params == null ? new HashMap<String, Object>() : params;
-        params.put("catalog", catalog);
-        params.put("relativeFolder", relativeFolder);
-        if (!ArrayUtils.isEmpty(filenameExtensions)) {
-            params.put("filenameExtensions",
-                    Arrays.asList(filenameExtensions)
-                            .stream()
-                            .map(fe -> fe.toLowerCase())
-                            .collect(Collectors.toList()));
-        }
-        PagedList<FileDefinition> resPagedList = this.fileDefinitionDao
-                .queryPagedList(params, pageIndex, pageSize);
-        return resPagedList;
-    }
-    
-    /**
-     * @param catalog
-     * @param relativeFolder
+     * @param folderId
      * @param filenameExtensions
      * @param querier
      * @param pageIndex
@@ -328,13 +283,14 @@ public class FileDefinitionServiceImpl
      */
     @Override
     public PagedList<FileDefinition> queryPagedList(String catalog,
-            String relativeFolder, String[] filenameExtensions, Querier querier,
+            String folderId, String[] filenameExtensions, Querier querier,
             int pageIndex, int pageSize) {
         AssertUtils.notEmpty(catalog, "catalog is empty.");
         
         querier = querier == null ? new Querier() : querier;
+        querier.getParams().put("module", this.module);
         querier.getParams().put("catalog", catalog);
-        querier.getParams().put("relativeFolder", relativeFolder);
+        querier.getParams().put("folderId", folderId);
         if (!ArrayUtils.isEmpty(filenameExtensions)) {
             querier.getParams().put("filenameExtensions",
                     Arrays.asList(filenameExtensions)
@@ -372,6 +328,7 @@ public class FileDefinitionServiceImpl
                         .getFilenameExtension(
                                 fileDefinition.getFilenameExtension())
                         .toLowerCase());
+        
         updateRowMap.put("lastUpdateDate", new Date());
         
         return this.fileDefinitionDao.update(updateRowMap);

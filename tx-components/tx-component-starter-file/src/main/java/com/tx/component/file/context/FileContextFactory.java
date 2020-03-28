@@ -16,8 +16,8 @@ import org.springframework.beans.factory.FactoryBean;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public class FileContextFactory extends FileContextImpl
-        implements FactoryBean<FileContextImpl> {
+public class FileContextFactory extends FileContext
+        implements FactoryBean<FileContext> {
     
     /**
      * 文件容器工厂<br/>
@@ -25,7 +25,7 @@ public class FileContextFactory extends FileContextImpl
      * @throws Exception
      */
     @Override
-    public FileContextImpl getObject() throws Exception {
+    public FileContext getObject() throws Exception {
         if (FileContextFactory.context == null) {
             return this;
         } else {
@@ -39,7 +39,7 @@ public class FileContextFactory extends FileContextImpl
      */
     @Override
     public Class<?> getObjectType() {
-        return FileContextImpl.class;
+        return FileContext.class;
     }
     
     /**

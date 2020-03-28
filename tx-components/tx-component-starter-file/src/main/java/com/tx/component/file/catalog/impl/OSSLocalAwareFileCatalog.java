@@ -12,11 +12,9 @@ import org.springframework.core.Ordered;
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;
 import com.tx.component.file.catalog.FileCatalog;
-import com.tx.component.file.model.FileDefinition;
 import com.tx.component.file.resource.FileResourceLoader;
 import com.tx.component.file.resource.impl.LocalAwareFileResourceLoader;
 import com.tx.component.file.resource.impl.OSSFileResourceLoader;
-import com.tx.core.TxConstants;
 import com.tx.core.exceptions.util.AssertUtils;
 
 /**
@@ -103,20 +101,6 @@ public class OSSLocalAwareFileCatalog implements FileCatalog, InitializingBean {
     }
     
     /**
-     * @param fd
-     * @return
-     */
-    @Override
-    public String getViewUrl(FileDefinition fd) {
-        StringBuilder sb = new StringBuilder(TxConstants.INITIAL_STR_LENGTH);
-        sb.append("/file/")
-                .append(getCatalog())
-                .append("/")
-                .append(fd.getRelativePath());
-        return sb.toString();
-    }
-    
-    /**
      * @return
      */
     @Override
@@ -165,5 +149,19 @@ public class OSSLocalAwareFileCatalog implements FileCatalog, InitializingBean {
      */
     public void setSecretAccessKey(String secretAccessKey) {
         this.secretAccessKey = secretAccessKey;
+    }
+    
+    /**
+     * @param 对path进行赋值
+     */
+    public void setPath(String path) {
+        this.path = path;
+    }
+    
+    /**
+     * @param 对bucketName进行赋值
+     */
+    public void setBucketName(String bucketName) {
+        this.bucketName = bucketName;
     }
 }

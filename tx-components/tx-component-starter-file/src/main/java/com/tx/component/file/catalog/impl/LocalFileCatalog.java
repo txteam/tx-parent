@@ -10,10 +10,8 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.Ordered;
 
 import com.tx.component.file.catalog.FileCatalog;
-import com.tx.component.file.model.FileDefinition;
 import com.tx.component.file.resource.FileResourceLoader;
 import com.tx.component.file.resource.impl.LocalFileResourceLoader;
-import com.tx.core.TxConstants;
 import com.tx.core.exceptions.util.AssertUtils;
 
 /**
@@ -70,20 +68,6 @@ public class LocalFileCatalog implements FileCatalog, InitializingBean {
     }
     
     /**
-     * @param fd
-     * @return
-     */
-    @Override
-    public String getViewUrl(FileDefinition fd) {
-        StringBuilder sb = new StringBuilder(TxConstants.INITIAL_STR_LENGTH);
-        sb.append("/file/")
-                .append(getCatalog())
-                .append("/")
-                .append(fd.getRelativePath());
-        return sb.toString();
-    }
-    
-    /**
      * @return
      */
     @Override
@@ -97,13 +81,6 @@ public class LocalFileCatalog implements FileCatalog, InitializingBean {
     @Override
     public int getOrder() {
         return Ordered.LOWEST_PRECEDENCE;
-    }
-    
-    /**
-     * @param 对fileResourceLoader进行赋值
-     */
-    public void setFileResourceLoader(FileResourceLoader fileResourceLoader) {
-        this.fileResourceLoader = fileResourceLoader;
     }
     
     /**

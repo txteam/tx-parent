@@ -1,7 +1,6 @@
 package com.tx.component.file.service;
 
 import java.util.List;
-import java.util.Map;
 
 import com.tx.component.file.model.FileDefinition;
 import com.tx.core.paged.model.PagedList;
@@ -113,24 +112,8 @@ public interface FileDefinitionService {
      * 根据条件查询文件定义<br/>
      * <功能详细描述>
      * @param catalog
-     * @param relativeFolder
-     * @param filenameExtensions
-     * @param params
-     * @return [参数说明]
-     * 
-     * @return List<FileDefinition> [返回类型说明]
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    List<FileDefinition> queryList(String catalog, String relativeFolder,
-            String[] filenameExtensions, Map<String, Object> params);
-    
-    /**
-     * 根据条件查询文件定义<br/>
-     * <功能详细描述>
-     * @param catalog
-     * @param relativeFolder
-     * @param filenameExtensions
+     * @param folderId 可以为空
+     * @param filenameExtensions 可以为空
      * @param querier
      * @return [参数说明]
      * 
@@ -138,38 +121,24 @@ public interface FileDefinitionService {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    List<FileDefinition> queryList(String catalog, String relativeFolder,
+    List<FileDefinition> queryList(String catalog, String folderId,
             String[] filenameExtensions, Querier querier);
     
     /**
      * 根据所属模块以及所在目录查询文件定义<br/>
      * <功能详细描述>
      *
-     * @param catalog
-     * @param relativeFolder
-     * @param params
+     * @param catalog 不为空
+     * @param folderId 可以为空
+     * @param filenameExtensions 可以为空
+     * @param querier
      * @return List<FileDefinition> [返回类型说明]
      * @throws throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    PagedList<FileDefinition> queryPagedList(String catalog,
-            String relativeFolder, String[] filenameExtensions,
-            Map<String, Object> params, int pageIndex, int pageSize);
-    
-    /**
-     * 根据所属模块以及所在目录查询文件定义<br/>
-     * <功能详细描述>
-     *
-     * @param catalog
-     * @param relativeFolder
-     * @param params
-     * @return List<FileDefinition> [返回类型说明]
-     * @throws throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     */
-    PagedList<FileDefinition> queryPagedList(String catalog,
-            String relativeFolder, String[] filenameExtensions, Querier querier,
-            int pageIndex, int pageSize);
+    PagedList<FileDefinition> queryPagedList(String catalog, String folderId,
+            String[] filenameExtensions, Querier querier, int pageIndex,
+            int pageSize);
     
     /**
      * 更新<br/>

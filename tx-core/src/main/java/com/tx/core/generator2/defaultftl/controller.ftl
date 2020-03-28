@@ -379,7 +379,7 @@ public class ${controller.entityTypeSimpleName}Controller {
         return resMap;
     }
     
-<#if controller.parentIdProperty??>
+<#if (controller.parentIdProperty?? || controller.parentProperty??)>
     /**
      * 根据条件查询${controller.entityComment}子级列表<br/>
      * <功能详细描述>

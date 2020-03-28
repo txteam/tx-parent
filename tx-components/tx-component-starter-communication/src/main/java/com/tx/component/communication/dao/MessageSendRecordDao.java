@@ -81,7 +81,8 @@ public interface MessageSendRecordDao {
       * @see [类、类#方法、类#成员]
      */
     //auto generate
-    public List<MessageSendRecord> queryMessageSendRecord(Map<String, Object> params);
+    public List<MessageSendRecord> queryMessageSendRecord(
+            Map<String, Object> params);
     
     /**
       * 根据指定查询条件以及排序列查询MessageSendRecord列表
@@ -96,8 +97,8 @@ public interface MessageSendRecordDao {
       * @see [类、类#方法、类#成员]
      */
     //auto generate
-//    public List<MessageSendRecord> queryMessageSendRecord(Map<String, Object> params,
-//                                                          List<Order> orderList);
+    //    public List<MessageSendRecord> queryMessageSendRecord(Map<String, Object> params,
+    //                                                          List<Order> orderList);
     
     /**
       * 根据条件查询MessageSendRecord列表总数
@@ -111,10 +112,6 @@ public interface MessageSendRecordDao {
       * @see [类、类#方法、类#成员]
      */
     public int queryMessageSendRecordCount(Map<String, Object> params);
-    
-
-    
-
     
     /**
       * 更新MessageSendRecord实体，

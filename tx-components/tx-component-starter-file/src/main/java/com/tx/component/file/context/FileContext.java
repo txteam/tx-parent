@@ -6,28 +6,19 @@ s * 描          述:  <描述>
  */
 package com.tx.component.file.context;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.core.io.Resource;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import com.tx.component.file.FileContextConstants;
-import com.tx.component.file.catalog.FileCatalog;
 import com.tx.component.file.model.FileDefinition;
 import com.tx.component.file.model.FileDefinitionDetail;
 import com.tx.component.file.resource.FileResource;
-import com.tx.component.file.resource.TransactionAwareFileResourceProxy;
 import com.tx.component.file.service.FileDefinitionService;
-import com.tx.component.file.util.FileContextUtils;
 import com.tx.core.exceptions.resource.ResourceIsExistException;
 import com.tx.core.exceptions.util.AssertUtils;
-import com.tx.core.paged.model.PagedList;
-import com.tx.core.querier.model.Querier;
 
 /**
  * 文件处理容器<br/>
@@ -46,11 +37,11 @@ import com.tx.core.querier.model.Querier;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public class FileContextImpl extends FileContextBuilder
+public class FileContext extends FileContextBuilder
         implements InitializingBean {
     
     /** 文件容器自我引用 */
-    public static FileContextImpl context;
+    public static FileContext context;
     
     /**
      * 获取文件容器句柄<br/>
@@ -61,17 +52,17 @@ public class FileContextImpl extends FileContextBuilder
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public static FileContextImpl getContext() {
-        if (FileContextImpl.context != null) {
-            return FileContextImpl.context;
+    public static FileContext getContext() {
+        if (FileContext.context != null) {
+            return FileContext.context;
         }
-        synchronized (FileContextImpl.class) {
-            FileContextImpl.context = applicationContext.getBean(beanName,
-                    FileContextImpl.class);
+        synchronized (FileContext.class) {
+            FileContext.context = applicationContext.getBean(beanName,
+                    FileContext.class);
         }
-        AssertUtils.notNull(FileContextImpl.context, "context is null.");
+        AssertUtils.notNull(FileContext.context, "context is null.");
         
-        return FileContextImpl.context;
+        return FileContext.context;
     }
     
     /**
@@ -100,7 +91,6 @@ public class FileContextImpl extends FileContextBuilder
         FileDefinition fd = new FileDefinition(relativePath);
         fd.setCatalog(catalog);
         fd.setRelativePath(relativePath);
-        
         FileDefinitionDetail fdd = save(fd, input);
         return fdd;
     }
@@ -127,7 +117,7 @@ public class FileContextImpl extends FileContextBuilder
                 "relativePath.relativePath is empty.");
         AssertUtils.notNull(input, "input is null.");
         
-        this.fileDefinitionService.save(fd);
+        fd = this.fileDefinitionService.save(fd);
         FileDefinitionDetail fdd = this.fileCatalogComposite.setup(fd);
         fdd.getResource().save(input);
         return fdd;
@@ -187,61 +177,161 @@ public class FileContextImpl extends FileContextBuilder
         this.fileDefinitionService.insert(fd);
         FileDefinitionDetail fdd = this.fileCatalogComposite.setup(fd);
         fdd.getResource().add(input);
-        
         return fdd;
     }
     
     /**
-     * 根据文件定义id删除对应的文件定义及对应的资源<br/>
-     * 删除对应数据库文件资源数据以及存储中对应的文件资源
-     *
-     * @param fileDefinitionId 文件定义id
-     * @return void
-     * @throws [异常类型] [异常说明]
+     * 根据Id删除文件，并一并删除对应的资源<br/>
+     * <功能详细描述>
+     * @param id
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
     @Transactional
-    public boolean deleteById(String id, boolean deleteResource) {
-        AssertUtils.notEmpty(id, "fileDefinitionId is empty.");
-        
-        FileDefinition fd = this.fileDefinitionService.findById(id);
-        
-        if (deleteResource) {
-            
-        }
-        getFileDefinitionPersistService().evict(fileId);
-        getFileDefinitionService().moveToHis(fileDefinition);//删除
-        
-        String module = fileDefinition.getModule();
-        FileCatalog fm = getFileModule(module);
-        FileResourceDriver driver = fm.getDriver();
-        FileResource resource = driver.getResource(fileDefinition);
-        
-        resource.delete();
+    public boolean deleteById(String id) {
+        boolean flag = deleteById(id, true);
         return flag;
     }
     
     /**
      * 根据文件定义id删除对应的文件定义及对应的资源<br/>
      * 删除对应数据库文件资源数据以及存储中对应的文件资源
-     *
-     * @param fileDefinitionId 文件定义id
-     * @return void
-     * @throws [异常类型] [异常说明]
+     * <功能详细描述>
+     * @param id
+     * @param recycleAble 是否可回收
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
     @Transactional
+    public boolean deleteById(String id, boolean recycleAble) {
+        AssertUtils.notEmpty(id, "fileDefinitionId is empty.");
+        
+        FileDefinition fd = this.fileDefinitionService.findById(id);
+        if (fd == null) {
+            return true;
+        }
+        boolean flag = false;
+        if (recycleAble) {
+            //可回收资源，仅移动数据至历史表，实际资源不进行删除
+            flag = this.fileDefinitionService.moveToHis(fd);
+        } else {
+            //不可回收，则直接删除数据，以及资源
+            FileDefinitionDetail fdd = this.fileCatalogComposite.setup(fd);
+            FileResource fr = fdd.getResource();
+            //删除数据
+            flag = this.fileDefinitionService.deleteById(id) > 0;
+            //删除资源
+            fr.delete();
+        }
+        return flag;
+    }
+    
+    /**
+     * 根据相对路径删除文件定义<br/>
+     * <功能详细描述>
+     * @param catalog
+     * @param relativePath
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
     public boolean deleteByByRelativePath(String catalog, String relativePath) {
+        boolean flag = deleteByByRelativePath(catalog, relativePath, true);
+        return flag;
+    }
+    
+    /**
+     * 根据文件定义id删除对应的文件定义及对应的资源<br/>
+     * 删除对应数据库文件资源数据以及存储中对应的文件资源
+     * <功能详细描述>
+     * @param catalog
+     * @param relativePath
+     * @param recycleAble
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @Transactional
+    public boolean deleteByByRelativePath(String catalog, String relativePath,
+            boolean recycleAble) {
         AssertUtils.notEmpty(relativePath, "relativePath is empty.");
         AssertUtils.notEmpty(catalog, "catalog is empty.");
         
-        FileDefinition fileDefinition = doFindByRelativePath(relativePath,
-                catalog);
-        if (fileDefinition == null) {
-            return false;
+        FileDefinition fd = this.fileDefinitionService
+                .findByRelativePath(catalog, relativePath);
+        if (fd == null) {
+            return true;
         }
-        boolean flag = doDeleteById(fileDefinition.getId());
+        boolean flag = false;
+        if (recycleAble) {
+            //可回收资源，仅移动数据至历史表，实际资源不进行删除
+            flag = this.fileDefinitionService.moveToHis(fd);
+        } else {
+            //不可回收，则直接删除数据，以及资源
+            FileDefinitionDetail fdd = this.fileCatalogComposite.setup(fd);
+            FileResource fr = fdd.getResource();
+            //删除数据
+            flag = this.fileDefinitionService.deleteById(fd.getId()) > 0;
+            //删除资源
+            fr.delete();
+        }
         return flag;
+    }
+    
+    /**
+     * 查询文件详情<br/>
+     * <功能详细描述>
+     * @param fileId
+     * @return [参数说明]
+     * 
+     * @return FileDefinitionDetail [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public FileDefinitionDetail findById(String fileId) {
+        AssertUtils.notEmpty(fileId, "fileId is empty.");
+        
+        FileDefinition fd = this.fileDefinitionService.findById(fileId);
+        if (fd == null) {
+            return null;
+        }
+        FileDefinitionDetail fdd = this.fileCatalogComposite.setup(fd);
+        return fdd;
+    }
+    
+    /**
+     * 根据目录和相对路径查询文件详情<br/>
+     * <功能详细描述>
+     * @param catalog
+     * @param relativePath
+     * @return [参数说明]
+     * 
+     * @return FileDefinitionDetail [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public FileDefinitionDetail findByRelativePath(String catalog,
+            String relativePath) {
+        AssertUtils.notEmpty(catalog, "catalog is empty.");
+        AssertUtils.notEmpty(relativePath, "relativePath is empty.");
+        
+        FileDefinition fd = this.fileDefinitionService
+                .findByRelativePath(catalog, relativePath);
+        if (fd == null) {
+            return null;
+        }
+        FileDefinitionDetail fdd = this.fileCatalogComposite.setup(fd);
+        return fdd;
     }
     
     /**

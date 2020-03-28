@@ -60,6 +60,9 @@ public class SqlMapGeneratorModel {
     /** 父节点id对应的属性 */
     private JPAColumnInfo parentIdColumn;
     
+    /** 父节点id对应的属性 */
+    private JPAColumnInfo parentColumn;
+    
     /** 排序字段 */
     private String defaultOrderBy;
     
@@ -113,6 +116,13 @@ public class SqlMapGeneratorModel {
                         "parentId type:{} should equals pk type:{}.",
                         new Object[] { column.getPropertyType(),
                                 this.pkColumn.getPropertyType() });
+            } else if (StringUtils.equals("parent", column.getPropertyName())) {
+                this.parentColumn = column;
+                AssertUtils.isTrue(
+                        column.getPropertyType().equals(this.entityType),
+                        "parent type:{} should equals entity type:{}.",
+                        new Object[] { column.getPropertyType(),
+                                this.entityType });
             }
         });
         
@@ -206,6 +216,13 @@ public class SqlMapGeneratorModel {
      */
     public JPAColumnInfo getParentIdColumn() {
         return parentIdColumn;
+    }
+    
+    /**
+     * @return 返回 parentColumn
+     */
+    public JPAColumnInfo getParentColumn() {
+        return parentColumn;
     }
     
     /**

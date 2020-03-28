@@ -27,12 +27,16 @@ import com.tx.core.support.json.JSONAttributesSupport;
  * @since [产品/模块版本]
  */
 @Entity
-@Table(name = "file_definition")
+@Table(name = "fc_file_definition")
 public class FileDefinition implements JSONAttributesSupport {
     
     /** 文件的存储id */
     @Id
     private String id;
+    
+    /** 所属模块:module */
+    @Column(nullable = false, length = 64)
+    private String module;
     
     /** 所属目录 */
     @Column(nullable = false, length = 64)
@@ -42,8 +46,12 @@ public class FileDefinition implements JSONAttributesSupport {
     @Column(nullable = false, length = 256)
     private String relativePath;
     
+    /** 所属目录 */
+    @Column(name = "folderId", nullable = true, length = 64)
+    private FolderDefinition folder;
+    
     /** 文件名称 */
-    @Column(nullable = false, length = 128)
+    @Column(nullable = true, length = 128)
     private String filename;
     
     /** 文件的后缀名 */
@@ -83,12 +91,14 @@ public class FileDefinition implements JSONAttributesSupport {
     
     /** <默认构造函数> */
     public FileDefinition(String relativePath) {
+        this(null, relativePath);
+    }
+    
+    /** <默认构造函数> */
+    public FileDefinition(String catalog, String relativePath) {
         super();
+        this.catalog = catalog;
         this.relativePath = relativePath;
-        this.filename = StringUtils.getFilename(relativePath);
-        this.filenameExtension = StringUtils.getFilenameExtension(relativePath);
-        this.filenameExtension = this.filenameExtension != null
-                ? this.filenameExtension.toLowerCase() : null;
     }
     
     /**
@@ -103,6 +113,20 @@ public class FileDefinition implements JSONAttributesSupport {
      */
     public void setId(String id) {
         this.id = id;
+    }
+    
+    /**
+     * @return 返回 module
+     */
+    public String getModule() {
+        return module;
+    }
+    
+    /**
+     * @param 对module进行赋值
+     */
+    public void setModule(String module) {
+        this.module = module;
     }
     
     /**
@@ -131,20 +155,16 @@ public class FileDefinition implements JSONAttributesSupport {
      */
     public void setRelativePath(String relativePath) {
         this.relativePath = relativePath;
-        if (!StringUtils.isEmpty(this.relativePath)) {
-            this.filename = StringUtils.getFilename(relativePath);
-            this.filenameExtension = StringUtils
-                    .getFilenameExtension(relativePath);
-            this.filenameExtension = this.filenameExtension != null
-                    ? this.filenameExtension.toLowerCase() : null;
-        }
     }
     
     /**
      * @return 返回 filename
      */
     public String getFilename() {
-        return filename;
+        if (StringUtils.isEmpty(this.filename)) {
+            return StringUtils.getFilename(this.relativePath);
+        }
+        return this.filename;
     }
     
     /**
@@ -158,7 +178,10 @@ public class FileDefinition implements JSONAttributesSupport {
      * @return 返回 filenameExtension
      */
     public String getFilenameExtension() {
-        return filenameExtension;
+        if (StringUtils.isEmpty(this.filenameExtension)) {
+            return StringUtils.getFilenameExtension(this.relativePath);
+        }
+        return this.filenameExtension;
     }
     
     /**

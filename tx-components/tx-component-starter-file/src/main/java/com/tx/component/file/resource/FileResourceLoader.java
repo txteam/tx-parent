@@ -6,8 +6,6 @@
  */
 package com.tx.component.file.resource;
 
-import com.tx.component.file.model.FileDefinition;
-
 /**
  * 文件资源加载器<br/>
  * <功能详细描述>
@@ -20,14 +18,26 @@ import com.tx.component.file.model.FileDefinition;
 public interface FileResourceLoader {
     
     /**
-     * 获取文件定义<br/>
+     * 获取文件资源<br/>
      * <功能详细描述>
-     * @param fd
+     * @param relativePath 相对路径
      * @return [参数说明]
      * 
      * @return FileResource [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public FileResource getResource(FileDefinition fd);
+    FileResource getFile(String relativePath);
+    
+    /**
+     * 获取文件夹资源<br/>
+     * <功能详细描述>
+     * @param relativePath 相对路径
+     * @return [参数说明]
+     * 
+     * @return FileResource [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    FolderResource getFolder(String relativePath);
 }

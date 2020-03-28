@@ -5,7 +5,6 @@ import java.util.Map;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.tx.component.file.ueditor.define.ActionMap;
 import com.tx.core.exceptions.util.AssertUtils;
 
 /**
@@ -73,7 +72,7 @@ public final class UEditorConfigManager {
         Map<String, Object> conf = new HashMap<String, Object>();
         String savePath = null;
         switch (type) {
-            case ActionMap.UPLOAD_FILE:
+            case UEditorActionMap.UPLOAD_FILE:
                 conf.put("fieldName",
                         this.jsonConfig.getString("fileFieldName"));
                 conf.put("maxSize", this.jsonConfig.getLong("fileMaxSize"));
@@ -82,7 +81,7 @@ public final class UEditorConfigManager {
                 conf.put("allowFiles", this.getArray("fileAllowFiles"));
                 savePath = this.jsonConfig.getString("filePathFormat");
                 break;
-            case ActionMap.UPLOAD_IMAGE:
+            case UEditorActionMap.UPLOAD_IMAGE:
                 conf.put("fieldName",
                         this.jsonConfig.getString("imageFieldName"));
                 conf.put("maxSize", this.jsonConfig.getLong("imageMaxSize"));
@@ -91,7 +90,7 @@ public final class UEditorConfigManager {
                 conf.put("allowFiles", this.getArray("imageAllowFiles"));
                 savePath = this.jsonConfig.getString("imagePathFormat");
                 break;
-            case ActionMap.UPLOAD_VIDEO:
+            case UEditorActionMap.UPLOAD_VIDEO:
                 conf.put("fieldName",
                         this.jsonConfig.getString("videoFieldName"));
                 conf.put("maxSize", this.jsonConfig.getLong("videoMaxSize"));
@@ -99,7 +98,7 @@ public final class UEditorConfigManager {
                 conf.put("allowFiles", this.getArray("videoAllowFiles"));
                 savePath = this.jsonConfig.getString("videoPathFormat");
                 break;
-            case ActionMap.UPLOAD_SCRAWL:
+            case UEditorActionMap.UPLOAD_SCRAWL:
                 conf.put("fieldName",
                         this.jsonConfig.getString("scrawlFieldName"));
                 conf.put("maxSize", this.jsonConfig.getLong("scrawlMaxSize"));
@@ -107,7 +106,7 @@ public final class UEditorConfigManager {
                 conf.put("isBase64", "true");
                 savePath = this.jsonConfig.getString("scrawlPathFormat");
                 break;
-            case ActionMap.CATCH_IMAGE:
+            case UEditorActionMap.CATCH_IMAGE:
                 conf.put("fieldName",
                         this.jsonConfig.getString("catcherFieldName") + "[]");
                 conf.put("maxSize", this.jsonConfig.getLong("catcherMaxSize"));
@@ -116,14 +115,14 @@ public final class UEditorConfigManager {
                 conf.put("allowFiles", this.getArray("catcherAllowFiles"));
                 savePath = this.jsonConfig.getString("catcherPathFormat");
                 break;
-            case ActionMap.LIST_IMAGE:
+            case UEditorActionMap.LIST_IMAGE:
                 conf.put("allowFiles", this.getArray("imageManagerAllowFiles"));
                 conf.put("dir",
                         this.jsonConfig.getString("imageManagerListPath"));
                 conf.put("count",
                         this.jsonConfig.getInteger("imageManagerListSize"));
                 break;
-            case ActionMap.LIST_FILE:
+            case UEditorActionMap.LIST_FILE:
                 conf.put("allowFiles", this.getArray("fileManagerAllowFiles"));
                 conf.put("dir",
                         this.jsonConfig.getString("fileManagerListPath"));

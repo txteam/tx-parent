@@ -26,6 +26,20 @@ public abstract class FileContextUtils {
     /**
      * 生成UUID的文件名<br/>
      * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static String generateUUIDFilename() {
+        String filename = UUID.randomUUID().toString();
+        return filename;
+    }
+    
+    /**
+     * 生成UUID的文件名<br/>
+     * <功能详细描述>
      * @param filenameExtension
      * @return [参数说明]
      * 
@@ -34,7 +48,13 @@ public abstract class FileContextUtils {
      * @see [类、类#方法、类#成员]
      */
     public static String generateUUIDFilename(String filenameExtension) {
-        String filename = UUID.randomUUID().toString();
+        String filename = generateUUIDFilename();
+        //如果入参传入了后缀，则对后缀名进行核对
+        if (!StringUtils.isEmpty(filenameExtension)) {
+            //如果指定后缀名不为空，则进行文件名核对，如果不是这个后缀，则直接增加文件后缀
+            //如果文件名不以指定后缀名
+            filename = filename + "." + filenameExtension;
+        }
         return filename;
     }
     
@@ -52,9 +72,37 @@ public abstract class FileContextUtils {
         AssertUtils.notEmpty(relativePath, "relativePath is empty.");
         
         //整理存储的relativePath相对路径
+        relativePath = handleRelativePath(relativePath, null);
+        return relativePath;
+    }
+    
+    /**
+     * 处理文件保存路径,去除相对路径前面的"/",相对路径应以"."或"字符"作为起始字符<br/>
+     * <功能详细描述>
+     * @param relativePath
+     * @return [参数说明]
+     * 
+     * @return String [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static String handleRelativePath(String relativePath,
+            String filenameExtension) {
+        AssertUtils.notEmpty(relativePath, "relativePath is empty.");
+        
+        //整理存储的relativePath相对路径
         while (relativePath.startsWith("/")) {
             //去除相对路径前面的"/"
             relativePath = relativePath.substring(1, relativePath.length());
+        }
+        //如果入参传入了后缀，则对后缀名进行核对
+        if (!StringUtils.isEmpty(filenameExtension)) {
+            //如果指定后缀名不为空，则进行文件名核对，如果不是这个后缀，则直接增加文件后缀
+            if (!org.apache.commons.lang3.StringUtils
+                    .endsWithIgnoreCase(relativePath, filenameExtension)) {
+                //如果文件名不以指定后缀名
+                relativePath = relativePath + "." + filenameExtension;
+            }
         }
         return relativePath;
     }
@@ -70,9 +118,9 @@ public abstract class FileContextUtils {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public static String handleRelativePath(String relativeFolderPath,
+    public static String handleRelativeFolderPath(String relativeFolderPath,
             String filename) {
-        String relativePath = handleRelativePath(relativeFolderPath,
+        String relativePath = handleRelativeFolderPath(relativeFolderPath,
                 filename,
                 null);
         return relativePath;
@@ -89,7 +137,7 @@ public abstract class FileContextUtils {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public static String handleRelativePath(String relativeFolderPath,
+    public static String handleRelativeFolderPath(String relativeFolderPath,
             String filename, String filenameExtension) {
         AssertUtils.notEmpty(relativeFolderPath,
                 "relativeFolderPath is empty.");

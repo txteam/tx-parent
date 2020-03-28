@@ -108,14 +108,14 @@ public class ErrorCodeRegistry implements InitializingBean {
     }
     
     /**
-      * 注册错误编码<br/>
-      * <功能详细描述>
-      * @param code
-      * @param errorCode [参数说明]
-      * 
-      * @return void [返回类型说明]
-      * @exception throws [异常类型] [异常说明]
-      * @see [类、类#方法、类#成员]
+     * 注册错误编码<br/>
+     * <功能详细描述>
+     * @param code
+     * @param errorCode [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
      */
     public void registeErrorCode(ErrorCode errorCode) {
         if (errorCode == null || errorCode.getCode() < 0) {

@@ -66,7 +66,7 @@ $(document).ready(function(){
 </#if>
 		border : false,
 		idField : '${view.pkProperty.propertyName}',
-		parentField : '${view.parentIdProperty.propertyName}',
+		parentField : 'parentId',
 		treeField : '${view.nameProperty.propertyName}',
 		checkOnSelect : false,
 		selectOnCheck : false,
