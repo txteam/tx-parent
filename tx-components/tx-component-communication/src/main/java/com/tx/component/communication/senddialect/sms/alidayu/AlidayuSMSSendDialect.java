@@ -6,19 +6,22 @@
  */
 package com.tx.component.communication.senddialect.sms.alidayu;
 
-import java.util.Map;
-
-import org.apache.commons.collections.MapUtils;
-
-import com.taobao.api.ApiException;
-import com.taobao.api.DefaultTaobaoClient;
-import com.taobao.api.TaobaoClient;
-import com.taobao.api.request.AlibabaAliqinFcSmsNumSendRequest;
-import com.taobao.api.response.AlibabaAliqinFcSmsNumSendResponse;
+import com.alibaba.fastjson.JSON;
+import com.aliyuncs.CommonRequest;
+import com.aliyuncs.CommonResponse;
+import com.aliyuncs.DefaultAcsClient;
+import com.aliyuncs.IAcsClient;
+import com.aliyuncs.exceptions.ClientException;
+import com.aliyuncs.exceptions.ServerException;
+import com.aliyuncs.http.MethodType;
+import com.aliyuncs.profile.DefaultProfile;
 import com.tx.component.communication.model.SendMessage;
 import com.tx.component.communication.model.SendResult;
 import com.tx.component.communication.senddialect.sms.AbstractSMSMessageSendDialect;
 import com.tx.core.exceptions.util.AssertUtils;
+import org.apache.commons.collections.MapUtils;
+
+import java.util.Map;
 
 /**
  * 阿里大鱼短信发送方言<br/>
@@ -29,7 +32,10 @@ import com.tx.core.exceptions.util.AssertUtils;
  * @since [产品/模块版本]
  */
 public class AlidayuSMSSendDialect extends AbstractSMSMessageSendDialect {
-    
+    private static  final  String VERSION = "2017-05-25";
+    private static  final  String DOMAIN = "dysmsapi.aliyuncs.com";
+    private static  final  String RegionId = "cn-hangzhou";
+
     /** 请求地址 */
     private static final String HTTP_URL = "http://gw.api.taobao.com/router/rest";
     
@@ -56,7 +62,7 @@ public class AlidayuSMSSendDialect extends AbstractSMSMessageSendDialect {
     private String appSecret;
     
     /** 短信发送客户端 */
-    private TaobaoClient sendSMSClient = null;
+    private IAcsClient sendSMSClient = null;
     
     /**
      * @throws Exception
@@ -65,11 +71,12 @@ public class AlidayuSMSSendDialect extends AbstractSMSMessageSendDialect {
     public void afterPropertiesSet() throws Exception {
         AssertUtils.notEmpty(appKey, "appKey[应用key] is empty!");
         AssertUtils.notEmpty(appSecret, "appSecret[应用秘钥] is empty!");
-        
-        this.sendSMSClient = new DefaultTaobaoClient(HTTP_URL, this.appKey,
-                this.appSecret, SEND_MESSAGE_FORMAT_TYPE, this.connectTimeout,
-                this.readTimeout);
-        
+
+        logger.info("appKey[应用key]"+this.appKey);
+        logger.info("appSecret[应用秘钥]"+this.appSecret);
+
+        DefaultProfile profile =  DefaultProfile.getProfile(RegionId, this.appKey, this.appSecret);
+        this.sendSMSClient =new DefaultAcsClient(profile);
         super.afterPropertiesSet();
     }
     
@@ -88,23 +95,25 @@ public class AlidayuSMSSendDialect extends AbstractSMSMessageSendDialect {
     @Override
     protected SendResult doSend(SendMessage message) {
         SendResult result = new SendResult();
-        AlibabaAliqinFcSmsNumSendRequest req = buildSendSMSRequest(message);
+        CommonRequest request = buildSendSMSRequest(message);
         try {
-            AlibabaAliqinFcSmsNumSendResponse response = this.sendSMSClient.execute(req);
-            
-            if (response.isSuccess()) {
-                result.setSuccess(true);
-            } else {
-                result.setSuccess(false);
-                result.setErrorCode(response.getErrorCode());
-                result.setErrorMessage(response.getMsg());
-                if (!MapUtils.isEmpty(response.getParams())) {
-                    result.getAttributes().putAll(response.getParams());
-                }
-            }
-        } catch (ApiException e) {
+            org.apache.commons.io.IOUtils ioUtils;
+            CommonResponse response = this.sendSMSClient.getCommonResponse(request);
+
+            System.out.printf(JSON.toJSONString(response));
+            result.setSuccess(true);
+        } catch (ServerException e) {
             logger.warn("调用阿里云短信接口发送短信失败.ServerException", e);
             
+            result.setSuccess(false);
+            result.setErrorCode(e.getErrCode());
+            result.setErrorMessage(e.getErrMsg());
+            result.getAttributes()
+                    .put("localizedMessage", e.getLocalizedMessage());
+            result.getAttributes().put("message", e.getMessage());
+        }  catch (ClientException e) {
+            logger.warn("调用阿里云短信接口发送短信失败.ServerException", e);
+
             result.setSuccess(false);
             result.setErrorCode(e.getErrCode());
             result.setErrorMessage(e.getErrMsg());
@@ -125,7 +134,7 @@ public class AlidayuSMSSendDialect extends AbstractSMSMessageSendDialect {
       * @exception throws [异常类型] [异常说明]
       * @see [类、类#方法、类#成员]
      */
-    private AlibabaAliqinFcSmsNumSendRequest buildSendSMSRequest(
+    private CommonRequest buildSendSMSRequest(
             SendMessage message) {
         //公共回传参数，在“消息返回”中会透传回该参数；
         //举例：用户可以传入自己下级的会员ID，在消息返回时，该会员ID会包含在内，用户可以根据该会员ID识别是哪位会员使用了你的应用
@@ -148,17 +157,23 @@ public class AlidayuSMSSendDialect extends AbstractSMSMessageSendDialect {
         String smsTemplateCode = smsContentInfo.getTemplateCode();
         //示例：针对模板“验证码${code}，您正在进行${product}身份验证，打死不要告诉别人哦！”，传参时需传入{"code":"1234","product":"alidayu"}
         String smsParam = toSmsParam(smsContentInfo.getParams());//message.getAttributes();
+
+        CommonRequest request = new CommonRequest();
+        request.setMethod(MethodType.POST);
+        request.setAction("SendSms");
+        request.setDomain(DOMAIN);
+        request.setVersion(VERSION);
+
+        request.putQueryParameter("RegionId", RegionId);
+
         
-        AlibabaAliqinFcSmsNumSendRequest req = new AlibabaAliqinFcSmsNumSendRequest();
-        req.setExtend(extend);
-        req.setRecNum(recNum);
-        req.setSmsType(smsType);
+        request.putQueryParameter("PhoneNumbers", recNum);
+        request.putQueryParameter("SignName", smsFreeSignName);
+        request.putQueryParameter("TemplateCode", smsTemplateCode);
+        request.putQueryParameter("TemplateParam", smsParam);
+
         
-        req.setSmsFreeSignName(smsFreeSignName);
-        req.setSmsParam(smsParam);
-        req.setSmsTemplateCode(smsTemplateCode);
-        
-        return req;
+        return request;
     }
     
     /**
@@ -220,4 +235,29 @@ public class AlidayuSMSSendDialect extends AbstractSMSMessageSendDialect {
     public void setAppSecret(String appSecret) {
         this.appSecret = appSecret;
     }
+
+//    public static void main(String[] args) {
+//        DefaultProfile profile = DefaultProfile.getProfile("cn-hangzhou", "LTAI4G73qFBWrdfveWVK6rxi", "MU8xtB00FfPfzeBTxk8P7Sec4uXbOa");
+//        IAcsClient client = new DefaultAcsClient(profile);
+//
+//        CommonRequest request = new CommonRequest();
+//        request.setMethod(MethodType.POST);
+//        request.setAction("SendSms");
+//        request.setDomain("dysmsapi.aliyuncs.com");
+//        request.setVersion("2017-05-25");
+//
+//        request.putQueryParameter("RegionId", "cn-hangzhou");
+//        request.putQueryParameter("PhoneNumbers", "17383152159");
+//        request.putQueryParameter("SignName", "贵州酱香酒交易中心");
+//        request.putQueryParameter("TemplateCode", "SMS_188490116");
+//        request.putQueryParameter("TemplateParam", "{\"code\":\"4455\"}");
+//        try {
+//            CommonResponse response = client.getCommonResponse(request);
+//            System.out.println(response.getData());
+//        } catch (ServerException e) {
+//            e.printStackTrace();
+//        } catch (ClientException e) {
+//            e.printStackTrace();
+//        }
+//    }
 }
