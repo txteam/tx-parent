@@ -98,7 +98,6 @@ public class AlidayuSMSSendDialect extends AbstractSMSMessageSendDialect {
         SendResult result = new SendResult();
         CommonRequest request = buildSendSMSRequest(message);
         try {
-            org.apache.commons.io.IOUtils ioUtils;
             CommonResponse response = this.sendSMSClient.getCommonResponse(request);
 
             //{"data":"{\"Message\":\"OK\",\"RequestId\":\"7A00071D-C605-42B9-B343-09A13C9C8871\",\"BizId\":\"967722487630864925^0\",\"Code\":\"OK\"}","httpResponse":{"encoding":"UTF-8","headers":{"Access-Control-Allow-Headers":"X-Requested-With, X-Sequence, _aop_secret, _aop_signature","Access-Control-Allow-Methods":"POST, GET, OPTIONS","Access-Control-Allow-Origin":"*","Access-Control-Max-Age":"172800","Connection":"keep-alive","Content-Length":"110","Content-Type":"application/json;charset=utf-8","Date":"Thu, 23 Apr 2020 08:34:25 GMT"},"httpContent":"eyJNZXNzYWdlIjoiT0siLCJSZXF1ZXN0SWQiOiI3QTAwMDcxRC1DNjA1LTQyQjktQjM0My0wOUExM0M5Qzg4NzEiLCJCaXpJZCI6Ijk2NzcyMjQ4NzYzMDg2NDkyNV4wIiwiQ29kZSI6Ik9LIn0=","httpContentString":"{\"Message\":\"OK\",\"RequestId\":\"7A00071D-C605-42B9-B343-09A13C9C8871\",\"BizId\":\"967722487630864925^0\",\"Code\":\"OK\"}","httpContentType":"JSON","status":200,"success":true,"url":"http://dysmsapi.aliyuncs.com/"},"httpStatus":200}
@@ -108,6 +107,7 @@ public class AlidayuSMSSendDialect extends AbstractSMSMessageSendDialect {
             if("OK".equalsIgnoreCase(jsonObject.getString("Code"))){
                 result.setSuccess(true);
             }else{
+                logger.error("【阿里大鱼4.0】短信发送返回："+data);
                 result.setSuccess(false);
                 result.setErrorCode(jsonObject.getString("Code"));
                 result.setErrorMessage(jsonObject.getString("Message"));
@@ -168,7 +168,12 @@ public class AlidayuSMSSendDialect extends AbstractSMSMessageSendDialect {
         //短信模板ID，传入的模板必须是在阿里大鱼“管理中心-短信模板管理”中的可用模板。示例：SMS_585014
         String smsTemplateCode = smsContentInfo.getTemplateCode();
         //示例：针对模板“验证码${code}，您正在进行${product}身份验证，打死不要告诉别人哦！”，传参时需传入{"code":"1234","product":"alidayu"}
-        String smsParam = toSmsParam(smsContentInfo.getParams());//message.getAttributes();
+
+
+
+        String smsParam = JSONObject.toJSONString(smsContentInfo.getParams());//message.getAttributes();
+
+        //验证码类的短信，参数中只能含有 字母和数字
 
         CommonRequest request = new CommonRequest();
         request.setMethod(MethodType.POST);
@@ -188,37 +193,37 @@ public class AlidayuSMSSendDialect extends AbstractSMSMessageSendDialect {
         return request;
     }
     
-    /**
-     * 
-     * 把 Map 类型的模板参数转成阿里大渔参数格式字符串<br />
-     * 如果参数为空,则返回 null
-     *
-     * @param smsParams 模板参数
-     *            
-     * @return String 参数 json 字符串
-     * @exception throws [异常类型] [异常说明]
-     * @see [类、类#方法、类#成员]
-     * @version [版本号, 2015年11月20日]
-     * @author rain
-     */
-    private String toSmsParam(Map<String, String> smsParams) {
-        if (MapUtils.isEmpty(smsParams)) {
-            return null;
-        }
-        StringBuilder json = new StringBuilder();
-        json.append('{');
-        for (Map.Entry<String, String> entry : smsParams.entrySet()) {
-            String key = entry.getKey().replace("'", "\\'");
-            String value = entry.getValue().replace("'", "\\'");
-            json.append('\'')
-                    .append(key)
-                    .append("':'")
-                    .append(value)
-                    .append("', ");
-        }
-        json.deleteCharAt(json.length() - 2).append('}');
-        return json.toString();
-    }
+//    /**
+//     *
+//     * 把 Map 类型的模板参数转成阿里大渔参数格式字符串<br />
+//     * 如果参数为空,则返回 null
+//     *
+//     * @param smsParams 模板参数
+//     *
+//     * @return String 参数 json 字符串
+//     * @exception throws [异常类型] [异常说明]
+//     * @see [类、类#方法、类#成员]
+//     * @version [版本号, 2015年11月20日]
+//     * @author rain
+//     */
+//    private String toSmsParam(Map<String, String> smsParams) {
+//        if (MapUtils.isEmpty(smsParams)) {
+//            return null;
+//        }
+//        StringBuilder json = new StringBuilder();
+//        json.append('{');
+//        for (Map.Entry<String, String> entry : smsParams.entrySet()) {
+//            String key = entry.getKey().replace("'", "\\'");
+//            String value = entry.getValue().replace("'", "\\'");
+//            json.append('\'')
+//                    .append(key)
+//                    .append("':'")
+//                    .append(value)
+//                    .append("', ");
+//        }
+//        json.deleteCharAt(json.length() - 2).append('}');
+//        return json.toString();
+//    }
     
     /**
      * @param 对connectTimeout进行赋值
