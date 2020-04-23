@@ -7,6 +7,7 @@
 package com.tx.component.communication.senddialect.sms.alidayu;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.aliyuncs.CommonRequest;
 import com.aliyuncs.CommonResponse;
 import com.aliyuncs.DefaultAcsClient;
@@ -100,8 +101,19 @@ public class AlidayuSMSSendDialect extends AbstractSMSMessageSendDialect {
             org.apache.commons.io.IOUtils ioUtils;
             CommonResponse response = this.sendSMSClient.getCommonResponse(request);
 
-            System.out.printf(JSON.toJSONString(response));
-            result.setSuccess(true);
+            //{"data":"{\"Message\":\"OK\",\"RequestId\":\"7A00071D-C605-42B9-B343-09A13C9C8871\",\"BizId\":\"967722487630864925^0\",\"Code\":\"OK\"}","httpResponse":{"encoding":"UTF-8","headers":{"Access-Control-Allow-Headers":"X-Requested-With, X-Sequence, _aop_secret, _aop_signature","Access-Control-Allow-Methods":"POST, GET, OPTIONS","Access-Control-Allow-Origin":"*","Access-Control-Max-Age":"172800","Connection":"keep-alive","Content-Length":"110","Content-Type":"application/json;charset=utf-8","Date":"Thu, 23 Apr 2020 08:34:25 GMT"},"httpContent":"eyJNZXNzYWdlIjoiT0siLCJSZXF1ZXN0SWQiOiI3QTAwMDcxRC1DNjA1LTQyQjktQjM0My0wOUExM0M5Qzg4NzEiLCJCaXpJZCI6Ijk2NzcyMjQ4NzYzMDg2NDkyNV4wIiwiQ29kZSI6Ik9LIn0=","httpContentString":"{\"Message\":\"OK\",\"RequestId\":\"7A00071D-C605-42B9-B343-09A13C9C8871\",\"BizId\":\"967722487630864925^0\",\"Code\":\"OK\"}","httpContentType":"JSON","status":200,"success":true,"url":"http://dysmsapi.aliyuncs.com/"},"httpStatus":200}
+            String data = response.getData();
+            JSONObject jsonObject = JSON.parseObject(data);
+
+            if("OK".equalsIgnoreCase(jsonObject.getString("Code"))){
+                result.setSuccess(true);
+            }else{
+                result.setSuccess(false);
+                result.setErrorCode(jsonObject.getString("Code"));
+                result.setErrorMessage(jsonObject.getString("Message"));
+            }
+
+
         } catch (ServerException e) {
             logger.warn("调用阿里云短信接口发送短信失败.ServerException", e);
             
