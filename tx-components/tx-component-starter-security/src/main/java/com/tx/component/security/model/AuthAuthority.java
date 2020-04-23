@@ -9,6 +9,7 @@ package com.tx.component.security.model;
 import org.springframework.security.core.GrantedAuthority;
 
 import com.tx.component.auth.model.Auth;
+import com.tx.core.exceptions.util.AssertUtils;
 
 /**
  * 操作人员角色权限<br/>
@@ -20,6 +21,18 @@ import com.tx.component.auth.model.Auth;
  * @since  [产品/模块版本]
  */
 public interface AuthAuthority extends GrantedAuthority {
+    
+    /**
+     * @return
+     */
+    @Override
+    default String getAuthority() {
+        AssertUtils.notNull(getAuth(), "auth is null.");
+        AssertUtils.notEmpty(getAuth().getId(), "auth.id is empty.");
+        
+        String authority = getAuth().getId();
+        return authority;
+    }
     
     /**
      * 获取对应的权限<br/>

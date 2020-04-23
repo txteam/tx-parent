@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.RememberMeAuthenticationToken;
@@ -18,7 +19,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import com.tx.component.auth.context.AuthRegistry;
+import com.tx.component.auth.model.Auth;
+import com.tx.component.role.context.RoleRegistry;
+import com.tx.component.role.model.Role;
 import com.tx.component.security.model.AuthAuthority;
+import com.tx.component.security.model.RoleAuthority;
 
 /**
  * 用以支持表达式解析<br/>
@@ -71,6 +77,10 @@ public class SecurityAccessExpressionHolder implements SecurityResourceHolder {
     
     private Map<String, GrantedAuthority> roleMap = new HashMap<String, GrantedAuthority>();
     
+    private AuthRegistry authRegistry;
+    
+    private RoleRegistry roleRegistry;
+    
     /** <默认构造函数> */
     public SecurityAccessExpressionHolder() {
         super();
@@ -92,14 +102,24 @@ public class SecurityAccessExpressionHolder implements SecurityResourceHolder {
         this.name = this.authentication.getName();
         this.details = this.authentication.getDetails();
         for (GrantedAuthority a : this.authorities) {
-            String upperCaseAuthority = a.getAuthority().toUpperCase();
             
-            authorityMap.put(upperCaseAuthority, a);
+            String authority = a.getAuthority();
+            authorityMap.put(authority, a);
             if (a instanceof AuthAuthority) {
-                authMap.put(upperCaseAuthority, a);
-                roleMap.put(upperCaseAuthority, a);
+                authMap.put(((AuthAuthority) a).getAuth().getId(), a);
+            } else if (a instanceof RoleAuthority) {
+                roleMap.put(((RoleAuthority) a).getRole().getId(), a);
+                if (!StringUtils.equals(((RoleAuthority) a).getRole().getId(),
+                        a.getAuthority())) {
+                    //如果authority不是id,则在role中多添加一个authority对应的映射
+                    roleMap.put(a.getAuthority(), a);
+                }
             } else {
-                roleMap.put(upperCaseAuthority, a);
+                if (StringUtils.startsWithIgnoreCase(authority, "ROLE_")) {
+                    roleMap.put(authority, a);
+                } else {
+                    authMap.put(authority, a);
+                }
             }
         }
     }
@@ -117,20 +137,26 @@ public class SecurityAccessExpressionHolder implements SecurityResourceHolder {
     /**
      * 是否拥有所有的指定权限<br/>
      * <功能详细描述>
-     * @param auths
+     * @param authAuthorities
      * @return [参数说明]
      * 
      * @return boolean [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public boolean hasAuth(Collection<String> auths) {
+    public boolean hasAuth(Collection<String> authAuthorities) {
+        if (CollectionUtils.isEmpty(authAuthorities)) {
+            return true;
+        }
         boolean flag = true;
-        for (String authTemp : auths) {
+        for (String authTemp : authAuthorities) {
             if (StringUtils.isEmpty(authTemp)) {
                 continue;
             }
-            if (!authMap.containsKey(authTemp.toUpperCase())) {
+            if (getAuthById(authTemp) == null) {
+                continue;
+            }
+            if (!authMap.containsKey(authTemp)) {
                 flag = false;
                 break;
             }
@@ -141,20 +167,26 @@ public class SecurityAccessExpressionHolder implements SecurityResourceHolder {
     /**
      * 是否有其中任意权限<br/>
      * <功能详细描述>
-     * @param auths
+     * @param authAuthorities
      * @return [参数说明]
      * 
      * @return boolean [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public boolean hasAnyAuth(Collection<String> auths) {
+    public boolean hasAnyAuth(Collection<String> authAuthorities) {
+        if (CollectionUtils.isEmpty(authAuthorities)) {
+            return true;
+        }
         boolean flag = true;
-        for (String authTemp : auths) {
+        for (String authTemp : authAuthorities) {
             if (StringUtils.isEmpty(authTemp)) {
                 continue;
             }
-            if (!authMap.containsKey(authTemp.toUpperCase())) {
+            if (getAuthById(authTemp) == null) {
+                continue;
+            }
+            if (!authMap.containsKey(authTemp)) {
                 flag = false;
             } else {
                 flag = true;
@@ -167,20 +199,20 @@ public class SecurityAccessExpressionHolder implements SecurityResourceHolder {
     /**
      * 是否拥有指定角色<br/>
      * <功能详细描述>
-     * @param roles
+     * @param roleAuthorities
      * @return [参数说明]
      * 
      * @return boolean [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public boolean hasRole(Collection<String> roles) {
+    public boolean hasRole(Collection<String> roleAuthorities) {
         boolean flag = true;
-        for (String roleTemp : roles) {
+        for (String roleTemp : roleAuthorities) {
             if (StringUtils.isEmpty(roleTemp)) {
                 continue;
             }
-            if (!roleMap.containsKey(roleTemp.toUpperCase())) {
+            if (!roleMap.containsKey(roleTemp)) {
                 flag = false;
                 break;
             }
@@ -191,20 +223,20 @@ public class SecurityAccessExpressionHolder implements SecurityResourceHolder {
     /**
      * 是否拥有任意指定角色<br/>
      * <功能详细描述>
-     * @param roles
+     * @param roleAuthorities
      * @return [参数说明]
      * 
      * @return boolean [返回类型说明]
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public boolean hasAnyRole(Collection<String> roles) {
+    public boolean hasAnyRole(Collection<String> roleAuthorities) {
         boolean flag = true;
-        for (String roleTemp : roles) {
+        for (String roleTemp : roleAuthorities) {
             if (StringUtils.isEmpty(roleTemp)) {
                 continue;
             }
-            if (!roleMap.containsKey(roleTemp.toUpperCase())) {
+            if (!roleMap.containsKey(roleTemp)) {
                 flag = false;
             } else {
                 flag = true;
@@ -230,7 +262,7 @@ public class SecurityAccessExpressionHolder implements SecurityResourceHolder {
             if (StringUtils.isEmpty(authorityTemp)) {
                 continue;
             }
-            if (!authorityMap.containsKey(authorityTemp.toUpperCase())) {
+            if (!authorityMap.containsKey(authorityTemp)) {
                 flag = false;
                 break;
             }
@@ -254,7 +286,7 @@ public class SecurityAccessExpressionHolder implements SecurityResourceHolder {
             if (StringUtils.isEmpty(authorityTemp)) {
                 continue;
             }
-            if (!authorityMap.containsKey(authorityTemp.toUpperCase())) {
+            if (!authorityMap.containsKey(authorityTemp)) {
                 flag = false;
             } else {
                 flag = true;
@@ -410,5 +442,75 @@ public class SecurityAccessExpressionHolder implements SecurityResourceHolder {
      */
     public Object getCredentials() {
         return credentials;
+    }
+    
+    /**
+     * 获取权限注册机<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return AuthRegistry [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    private AuthRegistry getAuthRegistry() {
+        if (this.authRegistry != null) {
+            return this.authRegistry;
+        }
+        this.authRegistry = AuthRegistry.getInstance();
+        return this.authRegistry;
+    }
+    
+    /**
+     * 根据角色id获取权限实例<br/>
+     * <功能详细描述>
+     * @param authId
+     * @return [参数说明]
+     * 
+     * @return Role [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    protected Auth getAuthById(String authId) {
+        if (StringUtils.isBlank(authId)) {
+            return null;
+        }
+        Auth auth = getAuthRegistry().findById(authId);
+        return auth;
+    }
+    
+    /**
+     * 获取角色注册机<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return RoleRegistry [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    private RoleRegistry getRoleRegistry() {
+        if (this.roleRegistry != null) {
+            return this.roleRegistry;
+        }
+        this.roleRegistry = RoleRegistry.getInstance();
+        return this.roleRegistry;
+    }
+    
+    /**
+     * 根据角色id获取角色实例<br/>
+     * <功能详细描述>
+     * @param roleId
+     * @return [参数说明]
+     * 
+     * @return Role [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    protected Role getRoleById(String roleId) {
+        if (StringUtils.isBlank(roleId)) {
+            return null;
+        }
+        Role role = getRoleRegistry().findById(roleId);
+        return role;
     }
 }

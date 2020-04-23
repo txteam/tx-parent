@@ -9,6 +9,7 @@ package com.tx.component.security.model;
 import org.springframework.security.core.GrantedAuthority;
 
 import com.tx.component.role.model.Role;
+import com.tx.core.exceptions.util.AssertUtils;
 
 /**
  * 操作人员角色权限<br/>
@@ -20,7 +21,23 @@ import com.tx.component.role.model.Role;
  * @since  [产品/模块版本]
  */
 public interface RoleAuthority extends GrantedAuthority {
-
+    
+    /**
+     * 角色如果没有前缀ROLE_则自动添加<br/>
+     * @return
+     */
+    @Override
+    default String getAuthority() {
+        AssertUtils.notNull(getRole(), "role is null.");
+        AssertUtils.notEmpty(getRole().getId(), "role.id is empty.");
+        
+        String authority = getRole().getId();
+        if (!authority.startsWith("ROLE_")) {
+            authority = "ROLE_" + authority;
+        }
+        return authority;
+    }
+    
     /**
      * 获取对应的角色<br/>
      * <功能详细描述>

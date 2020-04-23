@@ -40,8 +40,6 @@ public class SecurityContext extends SecurityContextBuilder {
     /** 单子模式权限容器唯一实例 */
     protected static SecurityContext context;
     
-    private Set<String> nullAuthIdSet = new HashSet<>();
-    
     /**
      * <默认构造函数>
      * 构造函数级别为子类可见<br/>
@@ -109,13 +107,7 @@ public class SecurityContext extends SecurityContextBuilder {
         if (StringUtils.isBlank(authId)) {
             return null;
         }
-        if (nullAuthIdSet.contains(authId)) {
-            return null;
-        }
         Auth auth = getAuthRegistry().findById(authId);
-        if (auth == null) {
-            nullAuthIdSet.add(authId);
-        }
         return auth;
     }
     
@@ -133,24 +125,18 @@ public class SecurityContext extends SecurityContextBuilder {
         if (StringUtils.isBlank(authsExpression)) {
             return true;
         }
-        String[] authIds = StringUtils.splitByWholeSeparator(authsExpression,
-                ",");
+        String[] authorities = StringUtils
+                .splitByWholeSeparator(authsExpression, ",");
         
-        Set<String> authIdSet = new HashSet<>();
-        for (String authIdTemp : authIds) {
-            if (StringUtils.isBlank(authIdTemp)) {
+        Set<String> authoritySet = new HashSet<>();
+        for (String authorityTemp : authorities) {
+            if (StringUtils.isBlank(authorityTemp)) {
                 continue;
             }
-            
-            Auth auth = getAuthById(authIdTemp);
-            if (auth == null) {
-                continue;
-            }
-            
-            authIdSet.add(authIdTemp);
+            authoritySet.add(authorityTemp);
         }
         boolean flag = SecurityContextUtils.getAccessExpressionHolder()
-                .hasAuth(authIdSet);
+                .hasAuth(authoritySet);
         return flag;
     }
     
@@ -168,24 +154,18 @@ public class SecurityContext extends SecurityContextBuilder {
         if (StringUtils.isBlank(authsExpression)) {
             return true;
         }
-        String[] authIds = StringUtils.splitByWholeSeparator(authsExpression,
-                ",");
+        String[] authorities = StringUtils
+                .splitByWholeSeparator(authsExpression, ",");
         
-        Set<String> authIdSet = new HashSet<>();
-        for (String authIdTemp : authIds) {
-            if (StringUtils.isBlank(authIdTemp)) {
+        Set<String> authoritySet = new HashSet<>();
+        for (String authorityTemp : authorities) {
+            if (StringUtils.isBlank(authorityTemp)) {
                 continue;
             }
-            
-            Auth auth = getAuthById(authIdTemp);
-            if (auth == null) {
-                continue;
-            }
-            
-            authIdSet.add(authIdTemp);
+            authoritySet.add(authorityTemp);
         }
         boolean flag = SecurityContextUtils.getAccessExpressionHolder()
-                .hasAnyAuth(authIdSet);
+                .hasAnyAuth(authoritySet);
         return flag;
     }
     
@@ -196,24 +176,18 @@ public class SecurityContext extends SecurityContextBuilder {
         if (StringUtils.isBlank(rolesExpression)) {
             return true;
         }
-        String[] roleIds = StringUtils.splitByWholeSeparator(rolesExpression,
-                ",");
+        String[] authorities = StringUtils
+                .splitByWholeSeparator(rolesExpression, ",");
         
-        Set<String> roleIdSet = new HashSet<>();
-        for (String roleIdTemp : roleIds) {
+        Set<String> authoritySet = new HashSet<>();
+        for (String roleIdTemp : authorities) {
             if (StringUtils.isBlank(roleIdTemp)) {
                 continue;
             }
-            
-            Role role = getRoleById(roleIdTemp);
-            if (role == null) {
-                continue;
-            }
-            
-            roleIdSet.add(roleIdTemp);
+            authoritySet.add(roleIdTemp);
         }
         boolean flag = SecurityContextUtils.getAccessExpressionHolder()
-                .hasRole(roleIdSet);
+                .hasRole(authoritySet);
         return flag;
     }
     
@@ -231,24 +205,19 @@ public class SecurityContext extends SecurityContextBuilder {
         if (StringUtils.isBlank(rolesExpression)) {
             return true;
         }
-        String[] roleIds = StringUtils.splitByWholeSeparator(rolesExpression,
-                ",");
+        String[] authorities = StringUtils
+                .splitByWholeSeparator(rolesExpression, ",");
         
-        Set<String> roleIdSet = new HashSet<>();
-        for (String roleIdTemp : roleIds) {
+        Set<String> authoritySet = new HashSet<>();
+        for (String roleIdTemp : authorities) {
             if (StringUtils.isBlank(roleIdTemp)) {
                 continue;
             }
             
-            Role role = getRoleById(roleIdTemp);
-            if (role == null) {
-                continue;
-            }
-            
-            roleIdSet.add(roleIdTemp);
+            authoritySet.add(roleIdTemp);
         }
         boolean flag = SecurityContextUtils.getAccessExpressionHolder()
-                .hasAnyRole(roleIdSet);
+                .hasAnyRole(authoritySet);
         return flag;
     }
     
@@ -274,16 +243,6 @@ public class SecurityContext extends SecurityContextBuilder {
             if (StringUtils.isBlank(authority)) {
                 continue;
             }
-            
-            Auth auth = null;
-            Role role = getRoleById(authority);
-            if (role == null) {
-                auth = getAuthById(authority);
-            }
-            if (role == null && auth == null) {
-                continue;
-            }
-            
             authoritySet.add(authority);
         }
         boolean flag = SecurityContextUtils.getAccessExpressionHolder()
@@ -313,16 +272,6 @@ public class SecurityContext extends SecurityContextBuilder {
             if (StringUtils.isBlank(authority)) {
                 continue;
             }
-            
-            Auth auth = null;
-            Role role = getRoleById(authority);
-            if (role == null) {
-                auth = getAuthById(authority);
-            }
-            if (role == null && auth == null) {
-                continue;
-            }
-            
             authoritySet.add(authority);
         }
         boolean flag = SecurityContextUtils.getAccessExpressionHolder()
