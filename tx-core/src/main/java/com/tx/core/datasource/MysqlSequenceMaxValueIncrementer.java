@@ -6,7 +6,6 @@
  */
 package com.tx.core.datasource;
 
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.incrementer.AbstractSequenceMaxValueIncrementer;
 
 /**
@@ -19,9 +18,7 @@ import org.springframework.jdbc.support.incrementer.AbstractSequenceMaxValueIncr
  * @since  [产品/模块版本]
  */
 public class MysqlSequenceMaxValueIncrementer
-        extends AbstractSequenceMaxValueIncrementer{
-    
-    private JdbcTemplate jdbcTemplate;
+        extends AbstractSequenceMaxValueIncrementer {
     
     /**
      * 
@@ -30,7 +27,7 @@ public class MysqlSequenceMaxValueIncrementer
     public void afterPropertiesSet() {
         super.afterPropertiesSet();
     }
-
+    
     /**
      * @return
      */
