@@ -6,7 +6,6 @@
  */
 package com.tx.component.statistical.context.register;
 
-import com.alibaba.druid.sql.visitor.functions.Char;
 import com.tx.component.statistical.context.StatisticalResourceRegister;
 import com.tx.component.statistical.mapping.ReportStatement;
 import com.tx.component.statistical.mapping.SqlMapperItem;
@@ -42,7 +41,7 @@ public abstract class AbstractStatisticalResourceRegister
 
         typeMap.put("boolean", Boolean.class);
         typeMap.put("byte", Byte.class);
-        typeMap.put("char", Char.class);
+        typeMap.put("char", Character.class);
         typeMap.put("int", Integer.class);
         typeMap.put("short", Short.class);
         typeMap.put("float", Float.class);

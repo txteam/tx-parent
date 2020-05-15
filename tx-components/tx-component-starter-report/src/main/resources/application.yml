@@ -4,9 +4,9 @@ server:
 spring:
     datasource:
         name: test
-        url: jdbc:mysql://127.0.0.1:3306/tjs
-        username: root
-        password: 123456
+        url: jdbc:mysql://120.24.75.25:3306/b2b2c_db
+        username: pqy
+        password: pqy
         # 使用druid数据源
         type: com.alibaba.druid.pool.DruidDataSource
         driver-class-name: com.mysql.jdbc.Driver

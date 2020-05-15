@@ -14,7 +14,7 @@ public class StatisticalPagedList<T> extends PagedList<T> {
     private T totalStatisticalRecord;
 
     public StatisticalPagedList(PageInfo<T> pagedList) {
-        setCount(pagedList.getTotal());
+        setCount((int)pagedList.getTotal());
         setList(pagedList.getList());
         setPageIndex(pagedList.getPageNum());
         setPageSize(pagedList.getPageSize());
