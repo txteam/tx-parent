@@ -33,7 +33,7 @@ public class MysqlSequenceMaxValueIncrementer
      */
     @Override
     protected String getSequenceQuery() {
-        return "select nextval(" + getIncrementerName() + ")";
+        return "select nextval('" + getIncrementerName() + "')";
     }
     
 }
