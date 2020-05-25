@@ -1,13 +1,16 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
 	<parent>
-		<artifactId>tx-components</artifactId>
 		<groupId>com.tx</groupId>
+		<artifactId>tx-components</artifactId>
 		<version>4.0.x-SNAPSHOT</version>
 	</parent>
 
-	<modelVersion>4.0.0</modelVersion>
 	<artifactId>tx-component-starter-report</artifactId>
+	<name>tx-component-starter-report</name>
+	<packaging>jar</packaging>
+	<url>http://maven.apache.org</url>
 
 	<dependencies>
 		<!-- tx-core -->
@@ -54,7 +57,6 @@
 			<artifactId>mybatis-spring-boot-starter</artifactId>
 		</dependency>
 
-
 		<!-- hibernate: data-jpa jpa -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -65,6 +67,16 @@
 		<dependency>
 			<groupId>com.thoughtworks.xstream</groupId>
 			<artifactId>xstream</artifactId>
+		</dependency>
+
+		<!-- poi -->
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
 		</dependency>
 
 		<!-- configurationProperties -->
@@ -88,17 +100,17 @@
 			<optional>true</optional>
 		</dependency>
 
-		<!-- eureka、feign -->
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-openfeign</artifactId>
-			<optional>true</optional>
-		</dependency>
+<!--		&lt;!&ndash; eureka、feign &ndash;&gt;-->
+<!--		<dependency>-->
+<!--			<groupId>org.springframework.cloud</groupId>-->
+<!--			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>-->
+<!--			<optional>true</optional>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>org.springframework.cloud</groupId>-->
+<!--			<artifactId>spring-cloud-starter-openfeign</artifactId>-->
+<!--			<optional>true</optional>-->
+<!--		</dependency>-->
 
 		<!-- junit -->
 		<dependency>
@@ -106,49 +118,41 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.github.pagehelper</groupId>
+			<artifactId>pagehelper</artifactId>
+			<version>5.1.2</version>
+		</dependency>
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>druid</artifactId>
+			<version>1.1.16</version>
+		</dependency>
+		<dependency>
+			<groupId>jaxen</groupId>
+			<artifactId>jaxen</artifactId>
+			<version>1.1.4</version>
+		</dependency>
 	</dependencies>
 
 	<build>
-		<resources>
-			<resource>
-				<directory>src/main/java</directory>
-				<includes>
-					<include>**/*.xml</include>
-				</includes>
-			</resource>
-		</resources>
 		<plugins>
 			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<inherited>true</inherited>
 				<configuration>
-					<fork>true</fork><!-- fork:如果没有该配置，这个devtools不会起作用，即应用不会restart -->
+					<skip>false</skip>
 				</configuration>
+				<executions>
+					<execution>
+						<phase>install</phase>
+						<goals>
+							<goal>deploy</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-			</plugin>
-
-			<!--<plugin> -->
-			<!--<groupId>org.springframework.boot</groupId> -->
-			<!--<artifactId>spring-boot-maven-plugin</artifactId> -->
-			<!--<dependencies> -->
-			<!--&lt;!&ndash; spring热部署 &ndash;&gt; -->
-			<!--<dependency> -->
-			<!--<groupId>org.springframework</groupId> -->
-			<!--<artifactId>springloaded</artifactId> -->
-			<!--<version></version> -->
-			<!--</dependency> -->
-			<!--</dependencies> -->
-			<!--</plugin> -->
-
 		</plugins>
 	</build>
-
-
 </project>

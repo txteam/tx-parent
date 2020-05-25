@@ -2,7 +2,6 @@ package com.tx.component.statistical.service;
 
 import com.github.pagehelper.PageInfo;
 import com.tx.component.statistical.mapping.ReportStatement;
-import com.tx.core.mybatis.model.Order;
 
 import java.util.List;
 import java.util.Map;
@@ -21,8 +20,8 @@ public interface StatisticalReportService {
     List queryList(String sqlMapId, String reportCode,
                    Map<String, Object> params);
 
-    List queryList(String sqlMapId, String reportCode,
-                   Map<String, Object> params, Order... orders);
+//    List queryList(String sqlMapId, String reportCode,
+//                   Map<String, Object> params, Order... orders);
 
     List queryList(String fullId,
                    Map<String, Object> params);
@@ -40,9 +39,9 @@ public interface StatisticalReportService {
                             Map<String, Object> params, int pagesize, int pageIndex);
 
 
-    PageInfo queryPagedList(String sqlMapId, String reportCode,
-                            Map<String, Object> params, int pageSize, int pageIndex,
-                            Order... orders);
+//    PageInfo queryPagedList(String sqlMapId, String reportCode,
+//                            Map<String, Object> params, int pageSize, int pageIndex,
+//                            Order... orders);
 
     int count(String sqlMapId, String reportCode, Map<String, Object> params);
 

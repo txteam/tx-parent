@@ -1,7 +1,6 @@
 package com.tx.component.statistical.mapping;
 
 import com.tx.component.statistical.context.StatisticalResourceRegister;
-import org.apache.commons.collections.map.HashedMap;
 import org.springframework.core.io.Resource;
 
 import java.util.ArrayList;
@@ -14,7 +13,7 @@ import java.util.Map;
  */
 public class ReportStatement extends BaseAttrEntry {
     private static final Map<String, ReportStatement> reportStatementMap = new HashMap<>();
-    private static final Map<String, SqlMapperItem> sqlMapperItemMap = new HashedMap();
+    private static final Map<String, SqlMapperItem> sqlMapperItemMap = new HashMap();
 
     /**
      * 唯一

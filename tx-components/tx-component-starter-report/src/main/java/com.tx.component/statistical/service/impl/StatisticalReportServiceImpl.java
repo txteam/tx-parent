@@ -5,7 +5,7 @@ import com.tx.component.statistical.dao.StatisticalReportDao;
 import com.tx.component.statistical.mapping.ReportStatement;
 import com.tx.component.statistical.mapping.ViewItem;
 import com.tx.component.statistical.service.StatisticalReportService;
-import com.tx.core.mybatis.model.Order;
+//import com.tx.core.mybatis.model.Order;
 import com.tx.core.util.StringUtils;
 import org.apache.commons.collections.CollectionUtils;
 
@@ -35,14 +35,14 @@ public class StatisticalReportServiceImpl
     @Override
     public List queryList(String sqlMapId, String reportCode, Map<String, Object> params) {
         String statementId = reportCode + "." + sqlMapId;
-        return statisticalReportDao.queryList(statementId, params, null);
+        return statisticalReportDao.queryList(statementId, params);
     }
 
-    @Override
-    public List queryList(String sqlMapId, String reportCode, Map<String, Object> params, Order... orders) {
-        String statementId = reportCode + "." + sqlMapId;
-        return statisticalReportDao.queryList(statementId, params, orders);
-    }
+//    @Override
+//    public List queryList(String sqlMapId, String reportCode, Map<String, Object> params, Order... orders) {
+//        String statementId = reportCode + "." + sqlMapId;
+//        return statisticalReportDao.queryList(statementId, params, orders);
+//    }
 
     @Override
     public List queryList(String statementId, Map<String, Object> params) {
@@ -63,12 +63,12 @@ public class StatisticalReportServiceImpl
         return statisticalReportDao.queryPagedList(statementId, params, pageSize, pageIndex);
     }
 
-    @Override
-    public PageInfo queryPagedList(String sqlMapId, String reportCode, Map<String, Object> params, int pageSize, int pageIndex, Order... orders) {
-        String statementId = reportCode + "." + sqlMapId;
-        return statisticalReportDao.queryPagedList(statementId, params, pageSize, pageIndex, orders);
-
-    }
+//    @Override
+//    public PageInfo queryPagedList(String sqlMapId, String reportCode, Map<String, Object> params, int pageSize, int pageIndex, Order... orders) {
+//        String statementId = reportCode + "." + sqlMapId;
+//        return statisticalReportDao.queryPagedList(statementId, params, pageSize, pageIndex, orders);
+//
+//    }
 
     @Override
     public int count(String sqlMapId, String reportCode, Map<String, Object> params) {
@@ -82,7 +82,7 @@ public class StatisticalReportServiceImpl
         String statementId = reportStatement.getCode() + "." + reportStatement.getViewMap().getSqlMapperId() + "Statistical";
         params.put("statisticalColumn", generatorStatisticalColumn(reportStatement));
 
-        List list = statisticalReportDao.queryList(statementId, params, null);
+        List list = statisticalReportDao.queryList(statementId, params);
         if (CollectionUtils.isNotEmpty(list)) {
             return list.get(0);
         }
@@ -103,7 +103,7 @@ public class StatisticalReportServiceImpl
         newParams.put("limitStart", limitStart);
         newParams.put("limitSize", limitSize);
 
-        List list = statisticalReportDao.queryList(statementId, newParams, null);
+        List list = statisticalReportDao.queryList(statementId, newParams);
         if (CollectionUtils.isNotEmpty(list)) {
             return list.get(0);
         }
