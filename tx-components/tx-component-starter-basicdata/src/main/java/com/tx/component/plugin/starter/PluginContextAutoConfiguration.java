@@ -22,6 +22,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Import;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.util.StringUtils;
@@ -50,7 +51,8 @@ import com.tx.core.starter.component.ComponentSupportAutoConfiguration;
 @ConditionalOnBean({ PlatformTransactionManager.class, ConfigContext.class })
 @EnableConfigurationProperties(PluginContextProperties.class)
 @Configuration
-@AutoConfigureAfter({ ComponentSupportAutoConfiguration.class,ConfigContextAutoConfiguration.class })
+@AutoConfigureAfter({ ComponentSupportAutoConfiguration.class,
+        ConfigContextAutoConfiguration.class })
 @ConditionalOnClass({ PluginContextFactory.class })
 @ConditionalOnSingleCandidate(DataSource.class)
 @Import({ PluginPersisterConfiguration.class })
@@ -113,7 +115,8 @@ public class PluginContextAutoConfiguration
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    @Bean
+    @Bean("pluginContext")
+    @DependsOn("configContext")
     public PluginContextFactory pluginContext(
             PluginInstanceService pluginInstanceService) {
         PluginContextFactory factory = new PluginContextFactory();
