@@ -52,6 +52,9 @@ public interface RoleConstants {
     public static final String ROLEREFTYPE_DEFAULT = "DEFAULT";
     
     /** 操作员权限引用项：操作员权限引用 */
+    public static final String ROLEREFTYPE_CLIENT = "CLIENT";
+    
+    /** 操作员权限引用项：操作员权限引用 */
     public static final String ROLEREFTYPE_OPERATOR = "OPERATOR";
     
     /** 操作员权限引用项：职位权限引用 */

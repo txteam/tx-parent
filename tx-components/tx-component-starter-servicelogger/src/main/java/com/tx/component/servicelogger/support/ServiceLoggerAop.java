@@ -6,7 +6,6 @@
  */
 package com.tx.component.servicelogger.support;
 
-import java.beans.PropertyDescriptor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -102,18 +101,16 @@ public class ServiceLoggerAop implements InitializingBean {
      * @see [类、类#方法、类#成员]
      */
     private void handle(BeanWrapper bw) {
-        for (PropertyDescriptor pd : bw.getPropertyDescriptors()) {
-            if (pd.getReadMethod() == null || pd.getWriteMethod() == null) {
-                continue;
-            }
-            
-            for (LogArgumentHandler handler : this.handlers) {
-                if (handler.support(bw)) {
-                    handler.handle(bw);
-                    break;
-                }
+        for (LogArgumentHandler handler : this.handlers) {
+            if (handler.support(bw)) {
+                handler.handle(bw);
             }
         }
+        //for (PropertyDescriptor pd : bw.getPropertyDescriptors()) {
+        //    if (pd.getReadMethod() == null || pd.getWriteMethod() == null) {
+        //        continue;
+        //    }
+        //}
     }
     
     //@Pointcut("execution(public void com.tx..ServiceLogger.insert(..))")
