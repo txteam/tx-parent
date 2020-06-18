@@ -10,6 +10,7 @@ package ${service.basePackage}.service;
 import java.util.ArrayList;
 </#if>
 import java.util.Date;
+import java.beans.PropertyDescriptor;
 import java.util.HashMap;
 <#if service.parentIdColumn?? || service.parentColumn??>
 import java.util.HashSet;
@@ -21,6 +22,7 @@ import java.util.Set;
 </#if>
 
 import javax.annotation.Resource;
+import javax.persistence.Column;
 
 <#if service.parentIdColumn?? || service.parentColumn??>
 import org.apache.commons.collections4.CollectionUtils;
@@ -28,6 +30,9 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.PropertyAccessorFactory;
+import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.transaction.annotation.Transactional;
 
 import ${service.basePackage}.dao.${service.entityTypeSimpleName}Dao;
@@ -453,6 +458,32 @@ public class ${service.entityTypeSimpleName}Service {
      * @see [类、类#方法、类#成员]
      */
     @Transactional
+    public boolean updateBy${service.pkColumn.propertyName?cap_first}(${service.pkColumn.propertyType.getSimpleName()} ${service.pkColumn.propertyName},Map<String, Object> updateRowMap) {
+        //验证参数是否合法，必填字段是否填写
+        AssertUtils.notEmpty(${service.pkColumn.propertyName}, "${service.pkColumn.propertyName} is empty.");
+        AssertUtils.notEmpty(updateRowMap, "updateRowMap is empty.");
+
+<#list service.columnList as column>
+	<#if "lastUpdateDate" == column.propertyName>
+		updateRowMap.put("${column.propertyName}", new Date());
+	</#if>
+</#list>
+        boolean flag = this.${service.entityTypeSimpleName?uncap_first}Dao.update(${service.pkColumn.propertyName},updateRowMap); 
+        //如果需要大于1时，抛出异常并回滚，需要在这里修改
+        return flag;
+    }
+    
+    /**
+     * 根据${service.pkColumn.propertyName}更新${service.entityComment}实例<br/>
+     * <功能详细描述>
+     * @param ${service.entityTypeSimpleName?uncap_first}
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    @Transactional
     public boolean updateBy${service.pkColumn.propertyName?cap_first}(${service.pkColumn.propertyType.getSimpleName()} ${service.pkColumn.propertyName},${service.entityTypeSimpleName} ${service.entityTypeSimpleName?uncap_first}) {
         //验证参数是否合法，必填字段是否填写
         AssertUtils.notNull(${service.entityTypeSimpleName?uncap_first}, "${service.entityTypeSimpleName?uncap_first} is null.");
@@ -498,7 +529,23 @@ public class ${service.entityTypeSimpleName}Service {
         AssertUtils.notNull(${service.entityTypeSimpleName?uncap_first}, "${service.entityTypeSimpleName?uncap_first} is null.");
         AssertUtils.notEmpty(${service.entityTypeSimpleName?uncap_first}.${service.pkColumn.getPropertyDescriptor().getReadMethod().getName()}(), "${service.entityTypeSimpleName?uncap_first}.${service.pkColumn.propertyName} is empty.");
 
-        boolean flag = updateBy${service.pkColumn.propertyName?cap_first}(${service.entityTypeSimpleName?uncap_first}.${service.pkColumn.getPropertyDescriptor().getReadMethod().getName()}(),${service.entityTypeSimpleName?uncap_first}); 
+		Map<String, Object> updateRowMap = new HashMap<String, Object>();
+        BeanWrapper bw = PropertyAccessorFactory.forBeanPropertyAccess(${service.entityTypeSimpleName?uncap_first});
+        for (PropertyDescriptor pd : bw.getPropertyDescriptors()) {
+            if (pd.getWriteMethod() == null || pd.getReadMethod() == null) {
+                continue;
+            }
+            if ("id".equals(pd.getName())) {
+                continue;
+            }
+            TypeDescriptor td1 = bw.getPropertyTypeDescriptor(pd.getName());
+            if (td1.hasAnnotation(Column.class)
+                    && !td1.getAnnotation(Column.class).updatable()) {
+                continue;
+            }
+            updateRowMap.put(pd.getName(), bw.getPropertyValue(pd.getName()));
+        }
+        boolean flag = updateBy${service.pkColumn.propertyName?cap_first}(${service.entityTypeSimpleName?uncap_first}.${service.pkColumn.getPropertyDescriptor().getReadMethod().getName()}(),updateRowMap); 
         //如果需要大于1时，抛出异常并回滚，需要在这里修改
         return flag;
     }
