@@ -27,7 +27,8 @@ import com.tx.component.basicdata.model.BasicDataViewTypeEnum;
 @Target({ ElementType.TYPE })
 @Inherited
 public @interface BasicDataEntity {
-    
+
+
     /**
      * 基础数据归属模块<br/>
      *    如果为空，则默认为当前项目的基础数据<br/>
