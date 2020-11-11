@@ -43,28 +43,35 @@ public class RoleContextTableInitializer extends AbstractTableInitializer {
                 .append("----------table:table_sec_role_type----------")
                 .append(COMMENT_SUFFIX)
                 .append(LINE_SEPARATOR);
-        table_sec_role_type(tableDDLExecutor, tableAutoInitialize);
+        String secRoleType = table_sec_role_type(tableDDLExecutor,
+                tableAutoInitialize);
+        sb.append(secRoleType);
         sb.append(LINE_SEPARATOR);
         
         sb.append(COMMENT_PREFIX)
                 .append("----------table:table_sec_role----------")
                 .append(COMMENT_SUFFIX)
                 .append(LINE_SEPARATOR);
-        table_sec_role(tableDDLExecutor, tableAutoInitialize);
+        String secRole = table_sec_role(tableDDLExecutor, tableAutoInitialize);
+        sb.append(secRole);
         sb.append(LINE_SEPARATOR);
         
         sb.append(COMMENT_PREFIX)
                 .append("----------table:table_sec_roleref----------")
                 .append(COMMENT_SUFFIX)
                 .append(LINE_SEPARATOR);
-        table_sec_roleref(tableDDLExecutor, tableAutoInitialize);
+        String secRoleRef = table_sec_roleref(tableDDLExecutor,
+                tableAutoInitialize);
+        sb.append(secRoleRef);
         sb.append(LINE_SEPARATOR);
         
         sb.append(COMMENT_PREFIX)
                 .append("----------table:table_sec_roleref_his----------")
                 .append(COMMENT_SUFFIX)
                 .append(LINE_SEPARATOR);
-        table_sec_roleref_his(tableDDLExecutor, tableAutoInitialize);
+        String secRoleRefHis = table_sec_roleref_his(tableDDLExecutor,
+                tableAutoInitialize);
+        sb.append(secRoleRefHis);
         sb.append(LINE_SEPARATOR);
         
         return sb.toString();

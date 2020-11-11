@@ -42,7 +42,9 @@ public class AuthContextTableInitializer extends AbstractTableInitializer {
                 .append("----------table:table_sec_auth_type----------")
                 .append(COMMENT_SUFFIX)
                 .append(LINE_SEPARATOR);
-        table_sec_auth_type(tableDDLExecutor, tableAutoInitialize);
+        String secAuthType = table_sec_auth_type(tableDDLExecutor,
+                tableAutoInitialize);
+        sb.append(secAuthType);
         sb.append(LINE_SEPARATOR);
         
         //初始化表定义
@@ -50,21 +52,26 @@ public class AuthContextTableInitializer extends AbstractTableInitializer {
                 .append("----------table:sec_auth----------")
                 .append(COMMENT_SUFFIX)
                 .append(LINE_SEPARATOR);
-        table_sec_auth(tableDDLExecutor, tableAutoInitialize);
+        String secAuth = table_sec_auth(tableDDLExecutor, tableAutoInitialize);
+        sb.append(secAuth);
         sb.append(LINE_SEPARATOR);
         
         sb.append(COMMENT_PREFIX)
                 .append("----------table:sec_authref----------")
                 .append(COMMENT_SUFFIX)
                 .append(LINE_SEPARATOR);
-        table_sec_authref(tableDDLExecutor, tableAutoInitialize);
+        String secAuthRef = table_sec_authref(tableDDLExecutor,
+                tableAutoInitialize);
+        sb.append(secAuthRef);
         sb.append(LINE_SEPARATOR);
         
         sb.append(COMMENT_PREFIX)
                 .append("----------table:table_sec_authref_his----------")
                 .append(COMMENT_SUFFIX)
                 .append(LINE_SEPARATOR);
-        table_sec_authref_his(tableDDLExecutor, tableAutoInitialize);
+        String secAuthRefHis = table_sec_authref_his(tableDDLExecutor,
+                tableAutoInitialize);
+        sb.append(secAuthRefHis);
         sb.append(LINE_SEPARATOR);
         
         return sb.toString();

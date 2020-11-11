@@ -27,7 +27,7 @@ import com.tx.core.support.json.JSONAttributesSupport;
  * @since [产品/模块版本]
  */
 @Entity
-@Table(name = "fc_file_definition")
+@Table(name = "FC_FILE_DEFINITION")
 public class FileDefinition implements JSONAttributesSupport {
     
     /** 文件的存储id */
@@ -222,6 +222,7 @@ public class FileDefinition implements JSONAttributesSupport {
     /**
      * @return 返回 attributes
      */
+    @Override
     public String getAttributes() {
         return attributes;
     }
@@ -229,6 +230,7 @@ public class FileDefinition implements JSONAttributesSupport {
     /**
      * @param 对attributes进行赋值
      */
+    @Override
     public void setAttributes(String attributes) {
         this.attributes = attributes;
     }
