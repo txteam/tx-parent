@@ -1,7 +1,10 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<!-- 作为tx-parent 的微服务基础框架： 考虑到：项目进度，以及前期系统搭建的技术债务问题 多数据源，以及多数据源事务，跨库的公共能力协调 数据一致性问题，在该版本中不作太多的设计调整 考虑后台公库，待后期业务需要再进行系统框架演进即可 -->
+	<!-- 作为tx-parent 的微服务基础框架： 考虑到：项目进度，以及前期系统搭建的技术债务问题 多数据源，以及多数据源事务，跨库的公共能力协调 
+		数据一致性问题，在该版本中不作太多的设计调整 考虑后台公库，待后期业务需要再进行系统框架演进即可 -->
 	<!-- relativePath元素中的地址–本地仓库–远程仓库 设定一个空值将始终从仓库中获取，不从本地路径获取 -->
 	<!-- 依赖于spring-boot-dependencies，如果升级改版本，需要根据官方依赖修改properties -->
 	<parent>
@@ -90,7 +93,8 @@
 		<java.version>1.8</java.version>
 
 		<!-- 其他属性 -->
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding><!-- base info -->
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding><!-- 
+			base info -->
 		<skipTests>true</skipTests><!-- projectInfo -->
 
 		<!-- lib info -->
@@ -242,7 +246,8 @@
 			</dependency>
 
 			<!-- cglib dependency by mybatis -->
-			<!-- Spring 3.2开始, 不需要定义CGLIB 依赖关系(现在升级到了CGLIB3.0)—— 它已经被重新打包(现在所有 net.sf.cglib 包变成了 org.springframework.cglib包)并直接集成在 spring-core 这个 JAR包中 -->
+			<!-- Spring 3.2开始, 不需要定义CGLIB 依赖关系(现在升级到了CGLIB3.0)—— 它已经被重新打包(现在所有 net.sf.cglib 
+				包变成了 org.springframework.cglib包)并直接集成在 spring-core 这个 JAR包中 -->
 			<!-- <dependency> -->
 			<!-- <groupId>cglib</groupId> -->
 			<!-- <artifactId>cglib-nodep</artifactId> -->
@@ -685,8 +690,11 @@
 
 			<!-- spring-boot-dependencies 中已包含import spring-framework-bom -->
 			<!-- 这个jar 文件包含支持UI模版（Velocity，FreeMarker JasperReports），邮件服务，脚本服务 (JRuby)，缓存Cache（EHCache），任务计划Scheduling（uartz）方面的类。 -->
-			<!-- 外部依赖spring-context, (spring-jdbc, Velocity, FreeMarker, JasperReports, BSH, Groovy, JRuby, Quartz, EHCache) -->
-			<!-- 未引入spring-dao,如有需要，以后再进行维护 spring-dao.jar 这个jar 文件包含Spring DAO、Spring Transaction 进行数据访问的所有类。为了使用声明型事务支持，还需在自己的应用里包含spring-aop.jar。外部依赖spring-core，(spring-aop， spring-context， JTA API)。 -->
+			<!-- 外部依赖spring-context, (spring-jdbc, Velocity, FreeMarker, JasperReports, 
+				BSH, Groovy, JRuby, Quartz, EHCache) -->
+			<!-- 未引入spring-dao,如有需要，以后再进行维护 spring-dao.jar 这个jar 文件包含Spring DAO、Spring 
+				Transaction 进行数据访问的所有类。为了使用声明型事务支持，还需在自己的应用里包含spring-aop.jar。外部依赖spring-core，(spring-aop， 
+				spring-context， JTA API)。 -->
 			<!--这个jar 文件包含对Spring 对JDBC 数据访问进行封装的所有类。 -->
 			<!-- 外部依赖spring-beans，spring-dao。 -->
 			<!-- spring orm基础框架：数据库持久 -->
@@ -715,7 +723,9 @@
 			<!-- <artifactId>spring-boot-starter-jdbc</artifactId> -->
 			<!-- </dependency> -->
 			<!-- spring-boot-starter-jdbc 中已包含 -->
-			<!-- <dependency> <groupId>org.springframework</groupId> <artifactId>spring-jdbc</artifactId> <version>${spring.version}</version> </dependency> <dependency> <groupId>org.springframework</groupId> <artifactId>spring-tx</artifactId> <version>${spring.version}</version> </dependency> -->
+			<!-- <dependency> <groupId>org.springframework</groupId> <artifactId>spring-jdbc</artifactId> 
+				<version>${spring.version}</version> </dependency> <dependency> <groupId>org.springframework</groupId> 
+				<artifactId>spring-tx</artifactId> <version>${spring.version}</version> </dependency> -->
 
 			<!-- spring-boot-starter-web Dependencies -->
 			<!-- spring-boot-dependencies 中已包含 -->
@@ -730,21 +740,43 @@
 			<!-- spring-boot-starter-web 中已包含 -->
 			<!-- spring 框架核心工具类 Spring 其它组件要都要使用到这个包里的类，是其它组件的基本核心，当然你也可以在自己的应用系统中使用这些工具类 -->
 			<!-- 外部依赖Commons Logging， (Log4J) -->
-			<!-- 这个jar 文件为Spring 核心提供了大量扩展。可以找到使用Spring ApplicationContext特性时所需的全部类，JDNI 所需的全部类，instrumentation组件以及校验Validation 方面的相关类。 -->
+			<!-- 这个jar 文件为Spring 核心提供了大量扩展。可以找到使用Spring ApplicationContext特性时所需的全部类，JDNI 
+				所需的全部类，instrumentation组件以及校验Validation 方面的相关类。 -->
 			<!-- 外部依赖spring-beans,(spring-aop)。 -->
-			<!-- 这个jar 文件是所有应用都要用到的，它包含访问配置文件、创建和管理bean 以及进行Inversion of Control / Dependency Injection（IoC/DI）操作相关的所有类。 -->
+			<!-- 这个jar 文件是所有应用都要用到的，它包含访问配置文件、创建和管理bean 以及进行Inversion of Control / 
+				Dependency Injection（IoC/DI）操作相关的所有类。 -->
 			<!-- 如果应用只需基本的IoC/DI 支持，引入spring-core.jar 及spring-beans.jar 文件就可以了。 -->
-			<!-- 这个jar 文件包含在应用中使用Spring 的AOP 特性时所需的类和源码级元数据支持。使用基于AOP 的Spring特性，如声明型事务管理（Declarative Transaction Management），也要在应用里包含这个jar包 -->
+			<!-- 这个jar 文件包含在应用中使用Spring 的AOP 特性时所需的类和源码级元数据支持。使用基于AOP 的Spring特性，如声明型事务管理（Declarative 
+				Transaction Management），也要在应用里包含这个jar包 -->
 			<!-- 外部依赖spring-core， (spring-beans，AOP Alliance， CGLIB，Commons Attributes) -->
 			<!-- 外部依赖spring-core，(CGLIB)。Code Generator -->
-			<!-- 这个jar 文件包含Web 应用开发时，用到Spring 框架时所需的核心类，包括自动载入Web Application Context 特性的类、Struts 与JSF 集成类、文件上传的支持类、Filter 类和大量工具辅助类。 -->
-			<!-- 外部依赖spring-context, Servlet API, (JSP API, JSTL, Commons FileUpload, COS)。 -->
-			<!-- spring-portlet.jar spring自己实现的一个类似Spring MVC的框架。包括一个MVC框架和控制器。外部依赖spring-web， Portlet API，(spring-webmvc)。 spring-struts.jar Struts框架支持，可以更方便更容易的集成Struts框架。外部依赖spring-web，Struts。 spring-remoting.jar 这个jar 文件包含支持EJB、远程调用Remoting（RMI、Hessian、Burlap、Http Invoker、JAX-RPC）方面的类。外部依赖spring-aop， (spring-context，spring-web，Hessian，Burlap，JAX-RPC，EJB API)。 spring-jmx.jar Java Management Extemsion 这个jar包提供了对JMX 1.0/1.2的支持类。外部依赖spring-beans，spring-aop， JMX API。 -->
-			<!-- 这个jar 文件包含Spring MVC 框架相关的所有类。包括框Servlets，Web MVC框架，控制器和视图支持。当然，如果你的应用使用了独立的MVC 框架，则无需这个JAR 文件里的任何类。 -->
+			<!-- 这个jar 文件包含Web 应用开发时，用到Spring 框架时所需的核心类，包括自动载入Web Application Context 
+				特性的类、Struts 与JSF 集成类、文件上传的支持类、Filter 类和大量工具辅助类。 -->
+			<!-- 外部依赖spring-context, Servlet API, (JSP API, JSTL, Commons FileUpload, 
+				COS)。 -->
+			<!-- spring-portlet.jar spring自己实现的一个类似Spring MVC的框架。包括一个MVC框架和控制器。外部依赖spring-web， 
+				Portlet API，(spring-webmvc)。 spring-struts.jar Struts框架支持，可以更方便更容易的集成Struts框架。外部依赖spring-web，Struts。 
+				spring-remoting.jar 这个jar 文件包含支持EJB、远程调用Remoting（RMI、Hessian、Burlap、Http 
+				Invoker、JAX-RPC）方面的类。外部依赖spring-aop， (spring-context，spring-web，Hessian，Burlap，JAX-RPC，EJB 
+				API)。 spring-jmx.jar Java Management Extemsion 这个jar包提供了对JMX 1.0/1.2的支持类。外部依赖spring-beans，spring-aop， 
+				JMX API。 -->
+			<!-- 这个jar 文件包含Spring MVC 框架相关的所有类。包括框Servlets，Web MVC框架，控制器和视图支持。当然，如果你的应用使用了独立的MVC 
+				框架，则无需这个JAR 文件里的任何类。 -->
 			<!-- 外部依赖spring-web, (spring-support，Tiles，iText，POI)。 -->
-			<!-- <dependency> <groupId>org.springframework</groupId> <artifactId>spring-boot</artifactId> <version>${spring.version}</version> </dependency> <dependency> <groupId>org.springframework</groupId> <artifactId>spring-core</artifactId> <version>${spring.version}</version> </dependency> <dependency> <groupId>org.springframework</groupId> <artifactId>spring-context</artifactId> <version>${spring.version}</version> </dependency> <dependency> <groupId>org.springframework</groupId> <artifactId>spring-beans</artifactId> 
-				<version>${spring.version}</version> </dependency> <dependency> <groupId>org.springframework</groupId> <artifactId>spring-aop</artifactId> <version>${spring.version}</version> </dependency> <dependency> <groupId>org.springframework</groupId> <artifactId>spring-web</artifactId> <version>${spring.version}</version> </dependency> <dependency> <groupId>org.springframework</groupId> <artifactId>spring-webmvc</artifactId> <version>${spring.version}</version> </dependency> <dependency> <groupId>org.springframework</groupId> 
-				<artifactId>spring-expression</artifactId> <version>${spring.version}</version> </dependency> <dependency> <groupId>org.springframework</groupId> <artifactId>spring-jcl</artifactId> <version>${spring.version}</version> </dependency> -->
+			<!-- <dependency> <groupId>org.springframework</groupId> <artifactId>spring-boot</artifactId> 
+				<version>${spring.version}</version> </dependency> <dependency> <groupId>org.springframework</groupId> 
+				<artifactId>spring-core</artifactId> <version>${spring.version}</version> 
+				</dependency> <dependency> <groupId>org.springframework</groupId> <artifactId>spring-context</artifactId> 
+				<version>${spring.version}</version> </dependency> <dependency> <groupId>org.springframework</groupId> 
+				<artifactId>spring-beans</artifactId> <version>${spring.version}</version> 
+				</dependency> <dependency> <groupId>org.springframework</groupId> <artifactId>spring-aop</artifactId> 
+				<version>${spring.version}</version> </dependency> <dependency> <groupId>org.springframework</groupId> 
+				<artifactId>spring-web</artifactId> <version>${spring.version}</version> 
+				</dependency> <dependency> <groupId>org.springframework</groupId> <artifactId>spring-webmvc</artifactId> 
+				<version>${spring.version}</version> </dependency> <dependency> <groupId>org.springframework</groupId> 
+				<artifactId>spring-expression</artifactId> <version>${spring.version}</version> 
+				</dependency> <dependency> <groupId>org.springframework</groupId> <artifactId>spring-jcl</artifactId> 
+				<version>${spring.version}</version> </dependency> -->
 			<!-- Jackson Dependencies -->
 			<!-- spring-boot-dependencies 中已包含,spring-boot-starter-web已有依赖 -->
 			<!-- <dependency> -->
