@@ -6,10 +6,7 @@
  */
 package com.tx.component.event.event.impl;
 
-import java.util.Map;
-
 import com.tx.component.event.event.EventCallbackHandler;
-import com.tx.core.exceptions.util.AssertUtils;
 
 /**
  * 事件的简单实现<br/>
@@ -22,12 +19,6 @@ import com.tx.core.exceptions.util.AssertUtils;
  */
 public class EventImpl extends AbstractEvent {
     
-    /** 事件类型名 */
-    private String type;
-    
-    /** 事件回调方法 */
-    private EventCallbackHandler callback;
-    
     /** <默认构造函数> */
     public EventImpl() {
         super();
@@ -35,40 +26,11 @@ public class EventImpl extends AbstractEvent {
     
     /** <默认构造函数> */
     public EventImpl(String type) {
-        super();
-        this.type = type;
+        super(type);
     }
     
     /** <默认构造函数> */
     public EventImpl(String type, EventCallbackHandler callback) {
         super(type, callback);
-    }
-    
-    /**
-     * @return
-     */
-    @Override
-    public String type() {
-        return type;
-    }
-    
-    /**
-     * @param callback
-     */
-    @Override
-    public void register(EventCallbackHandler callback) {
-        AssertUtils.notNull(callback, "callback is null.");
-        
-        this.callback = callback;
-    }
-    
-    /**
-     * @param params
-     */
-    @Override
-    public void callback(Map<String, Object> params) {
-        if (this.callback != null) {
-            this.callback.handle(params);
-        }
     }
 }
