@@ -49,7 +49,7 @@ public class SecurityUtils {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public Auth getAuthById(String authId) {
+    public static Auth getAuthById(String authId) {
         if (StringUtils.isBlank(authId)) {
             return null;
         }
@@ -66,7 +66,7 @@ public class SecurityUtils {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public boolean hasAuth(String authsExpression) {
+    public static boolean hasAuth(String authsExpression) {
         if (StringUtils.isBlank(authsExpression)) {
             return true;
         }
@@ -83,7 +83,7 @@ public class SecurityUtils {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public boolean hasAnyAuth(String authsExpression) {
+    public static boolean hasAnyAuth(String authsExpression) {
         if (StringUtils.isBlank(authsExpression)) {
             return true;
         }
@@ -100,7 +100,7 @@ public class SecurityUtils {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public boolean hasRole(String rolesExpression) {
+    public static boolean hasRole(String rolesExpression) {
         if (StringUtils.isBlank(rolesExpression)) {
             return true;
         }
@@ -117,11 +117,11 @@ public class SecurityUtils {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public boolean hasAnyRole(String rolesExpression) {
+    public static boolean hasAnyRole(String rolesExpression) {
         if (StringUtils.isBlank(rolesExpression)) {
             return true;
         }
-        return SecurityContext.getContext().hasAnyAuth(rolesExpression);
+        return SecurityContext.getContext().hasAnyRole(rolesExpression);
     }
     
     /**
@@ -134,7 +134,7 @@ public class SecurityUtils {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public boolean hasAuthority(String authoritiesExpression) {
+    public static boolean hasAuthority(String authoritiesExpression) {
         if (StringUtils.isBlank(authoritiesExpression)) {
             return true;
         }
@@ -151,7 +151,7 @@ public class SecurityUtils {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public boolean hasAnyAuthority(String authoritiesExpression) {
+    public static boolean hasAnyAuthority(String authoritiesExpression) {
         if (StringUtils.isBlank(authoritiesExpression)) {
             return true;
         }
@@ -168,7 +168,7 @@ public class SecurityUtils {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public boolean isAnonymous() {
+    public static boolean isAnonymous() {
         return SecurityContext.getContext().isAnonymous();
     }
     
@@ -181,7 +181,7 @@ public class SecurityUtils {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public boolean isRememberMe() {
+    public static boolean isRememberMe() {
         return SecurityContext.getContext().isRememberMe();
     }
     
@@ -194,7 +194,7 @@ public class SecurityUtils {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public boolean isAuthenticated() {
+    public static boolean isAuthenticated() {
         return SecurityContext.getContext().isAuthenticated();
     }
     
@@ -207,7 +207,7 @@ public class SecurityUtils {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public boolean isFullyAuthenticated() {
+    public static boolean isFullyAuthenticated() {
         return SecurityContext.getContext().isFullyAuthenticated();
     }
     
@@ -220,7 +220,7 @@ public class SecurityUtils {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public Authentication getAuthentication() {
+    public static Authentication getAuthentication() {
         return SecurityContext.getContext().getAuthentication();
     }
     
@@ -233,7 +233,7 @@ public class SecurityUtils {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public Object getPrincipal() {
+    public static Object getPrincipal() {
         return SecurityContext.getContext().getPrincipal();
     }
     
@@ -266,7 +266,7 @@ public class SecurityUtils {
      * @exception throws [异常类型] [异常说明]
      * @see [类、类#方法、类#成员]
      */
-    public boolean access(String accessExpression) {
+    public static boolean access(String accessExpression) {
         if (StringUtils.isBlank(accessExpression)) {
             return true;
         }
