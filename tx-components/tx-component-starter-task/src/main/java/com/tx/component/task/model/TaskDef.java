@@ -39,10 +39,6 @@ public class TaskDef implements Serializable {
     @Column(nullable = true, length = 64)
     private String parentId;
     
-    /** 任务编码 */
-    @Column(nullable = false, length = 64)
-    private String code;
-    
     /** module: 所属模块 */
     @Column(nullable = false, length = 64)
     private String module;

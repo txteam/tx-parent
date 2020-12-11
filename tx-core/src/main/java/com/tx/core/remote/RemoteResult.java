@@ -26,6 +26,8 @@ public class RemoteResult<T> implements Serializable {
     /** 注释内容 */
     private static final long serialVersionUID = -4513656123138973055L;
     
+    public static final int CODE_SUCCESS = 0;
+    
     /** 返回码，0-成功，1-通用错误， 其他-详见错误码定义 */
     //之所以只放错误码，如果多一个boolean字段，感觉和错误码重复了，明明可以只用一个字段表示，没有必要引入更多的字段表示
     @ApiModelProperty(value = "返回码，0-成功，非0-失败", required = true, example = "0")
@@ -74,6 +76,22 @@ public class RemoteResult<T> implements Serializable {
         this.code = code;
         this.message = message;
         this.data = data;
+    }
+    
+    /**
+     * 是否成功<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public boolean isSuccess() {
+        if (CODE_SUCCESS == this.code) {
+            return true;
+        }
+        return false;
     }
     
     /**
@@ -170,4 +188,5 @@ public class RemoteResult<T> implements Serializable {
                 errorMessage, data);
         return remoteResult;
     }
+    
 }

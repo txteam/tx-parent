@@ -1,3 +1,10 @@
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.security.core.Authentication;
+
+import com.tx.component.auth.model.Auth;
+import com.tx.component.role.model.Role;
+import com.tx.component.security.context.SecurityContext;
+
 /*
  * 描          述:  <描述>
  * 修  改   人:  Administrator
@@ -15,284 +22,254 @@
  */
 public class SecurityUtils {
     
-    //    /**
-    //      * 判断是否设置了根据指定属性的数据权限查询<br/>
-    //      * <功能详细描述>
-    //      * @param propertyName
-    //      * @return [参数说明]
-    //      * 
-    //      * @return boolean [返回类型说明]
-    //      * @exception throws [异常类型] [异常说明]
-    //      * @see [类、类#方法、类#成员]
-    //     */
-    //    public static boolean isQueryByAuth(String propertyName) {
-    //        boolean flag = AuthSessionContext.isContainsInQueryAuthMap(propertyName);
-    //        return flag;
-    //    }
-    //    
-    //    /**
-    //      * 校验对应的权限引用ID是否非空<br/>
-    //      * <功能详细描述>
-    //      * @param propertyName
-    //      * @return [参数说明]
-    //      * 
-    //      * @return boolean [返回类型说明]
-    //      * @exception throws [异常类型] [异常说明]
-    //      * @see [类、类#方法、类#成员]
-    //     */
-    //    public static boolean isNotEmptyOfQueryAuthRefIds(String propertyName) {
-    //        String authKey = AuthSessionContext.getAuthKeyFromQueryAuthMap(propertyName);
-    //        Set<String> refIds = getChildDataAuthRefIdsByAuthKey(authKey);
-    //        return CollectionUtils.isNotEmpty(refIds);
-    //    }
-    //    
-    //    /**
-    //     * 校验对应的权限引用ID是否非空<br/>
-    //     * <功能详细描述>
-    //     * @param propertyName
-    //     * @return [参数说明]
-    //     * 
-    //     * @return boolean [返回类型说明]
-    //     * @exception throws [异常类型] [异常说明]
-    //     * @see [类、类#方法、类#成员]
-    //    */
-    //    public static boolean isEmptyOfQueryAuthRefIds(String propertyName) {
-    //        String authKey = AuthSessionContext.getAuthKeyFromQueryAuthMap(propertyName);
-    //        Set<String> refIds = getChildDataAuthRefIdsByAuthKey(authKey);
-    //        return CollectionUtils.isEmpty(refIds);
-    //    }
-    //    
-    //    /**
-    //      * 获取引用的权限id集合<br/>
-    //      * <功能详细描述>
-    //      * @param propertyName
-    //      * @return [参数说明]
-    //      * 
-    //      * @return Set<String> [返回类型说明]
-    //      * @exception throws [异常类型] [异常说明]
-    //      * @see [类、类#方法、类#成员]
-    //     */
-    //    public static Set<String> getQueryAuthRefIds(String propertyName) {
-    //        String authKey = AuthSessionContext.getAuthKeyFromQueryAuthMap(propertyName);
-    //        Set<String> refIds = getChildDataAuthRefIdsByAuthKey(authKey);
-    //        return refIds;
-    //    }
-    //    
-    //    /**
-    //      * 设置当前逻辑之后的查询可依赖某数据权限进行查询<br/>
-    //      * <功能详细描述>
-    //      * @param authKey [参数说明]
-    //      * 
-    //      * @return void [返回类型说明]
-    //      * @exception throws [异常类型] [异常说明]
-    //      * @see [类、类#方法、类#成员]
-    //     */
-    //    public static void setQueryByAuth(String propertyName, String authKey) {
-    //        AuthSessionContext.putToQueryAuthMap(propertyName, authKey);
-    //    }
-    //    
-    //    /**
-    //      * 设置当前逻辑之后的查询可依赖某数据权限进行查询<br/>
-    //      * <功能详细描述>
-    //      * @param propertyName2authKeyMap [参数说明]
-    //      * 
-    //      * @return void [返回类型说明]
-    //      * @exception throws [异常类型] [异常说明]
-    //      * @see [类、类#方法、类#成员]
-    //     */
-    //    public static void setQueryByAuth(
-    //            Map<String, String> propertyName2authKeyMap) {
-    //        AuthSessionContext.getQueryAuthMap().putAll(propertyName2authKeyMap);
-    //    }
-    //    
-    //    /**
-    //      * 清除根据权限查询的设置<br/>
-    //      * <功能详细描述> [参数说明]
-    //      * 
-    //      * @return void [返回类型说明]
-    //      * @exception throws [异常类型] [异常说明]
-    //      * @see [类、类#方法、类#成员]
-    //     */
-    //    public static void clearQueryByAuth() {
-    //        AuthSessionContext.clearQueryAuthMap();
-    //    }
-    //    
-    //    //public static Set<String> 
-    //    
-    //    /**
-    //     * 辅助判断是否有某权限<br/>
-    //     * <功能详细描述>
-    //     * @param authKey
-    //     * @return [参数说明]
-    //     * 
-    //     * @return boolean [返回类型说明]
-    //     * @exception throws [异常类型] [异常说明]
-    //     * @see [类、类#方法、类#成员]
-    //    */
-    //    public static boolean isHasAuth(String authKey) {
-    //        AssertUtils.notEmpty(authKey, "authKey is empty.");
-    //        boolean isHasAuth = SecurityContextImpl.getContext().hasAuth(authKey);
-    //        return isHasAuth;
-    //    }
-    //    
-    //    /**
-    //     * 辅助判断是否有某权限<br/>
-    //     * <功能详细描述>
-    //     * @param authKey
-    //     * @return [参数说明]
-    //     * 
-    //     * @return boolean [返回类型说明]
-    //     * @exception throws [异常类型] [异常说明]
-    //     * @see [类、类#方法、类#成员]
-    //    */
-    //    public static boolean isHasAuth(String... authKeys) {
-    //        AssertUtils.notEmpty(authKeys, "authKeys is empty.");
-    //        for (String authKeyTemp : authKeys) {
-    //            if (!isHasAuth(authKeyTemp)) {
-    //                return false;
-    //            }
-    //        }
-    //        return true;
-    //    }
-    //    
-    //    /**
-    //      * 获取子集数据权限的引用Id集合<br/>
-    //      * <功能详细描述>
-    //      * @param authKey
-    //      * @return [参数说明]
-    //      * 
-    //      * @return Set<String> [返回类型说明]
-    //      * @exception throws [异常类型] [异常说明]
-    //      * @see [类、类#方法、类#成员]
-    //     */
-    //    public static Set<String> getChildDataAuthRefIdsByAuthKey(String authKey) {
-    //        AssertUtils.notEmpty(authKey, "authKey is empty.");
-    //        Set<String> resSet = new HashSet<>();
-    //        Set<Auth> authItemSet = getChildDataAuthItemListByAuthKey(authKey);
-    //        if (CollectionUtils.isEmpty(authItemSet)) {
-    //            return resSet;
-    //        }
-    //        for (Auth authTemp : authItemSet) {
-    //            if (StringUtils.isEmpty(authTemp.getRefId())) {
-    //                continue;
-    //            }
-    //            //如果不为空压入
-    //            resSet.add(authTemp.getRefId());
-    //        }
-    //        return resSet;
-    //    }
-    //    
-    //    /**
-    //      * 根据权限Key获取子集数据权限集合<br/>
-    //      * <功能详细描述>
-    //      * @param authKey
-    //      * @return [参数说明]
-    //      * 
-    //      * @return Set<AuthItem> [返回类型说明]
-    //      * @exception throws [异常类型] [异常说明]
-    //      * @see [类、类#方法、类#成员]
-    //     */
-    //    public static Set<Auth> getChildDataAuthItemListByAuthKey(String authKey) {
-    //        AssertUtils.notEmpty(authKey, "authKey is empty.");
-    //        Set<Auth> resSet = getChildAuthItemListByAuthTypeAndParentId(AuthConstants.AUTHTYPE_DATA,
-    //                authKey);
-    //        return resSet;
-    //    }
-    //    
-    //    /**
-    //      * 根据父级权限id以及权限类型
-    //      * <功能详细描述>
-    //      * @param authType
-    //      * @param parentId
-    //      * @return [参数说明]
-    //      * 
-    //      * @return List<AuthItem> [返回类型说明]
-    //      * @exception throws [异常类型] [异常说明]
-    //      * @see [类、类#方法、类#成员]
-    //     */
-    //    public static Set<Auth> getChildAuthItemListByAuthTypeAndParentId(
-    //            String authType, String parentId) {
-    //        AssertUtils.notEmpty(parentId, "parentId is empty.");
-    //        AssertUtils.notEmpty(authType, "authType is empty.");
-    //        
-    //        Set<Auth> resSet = new HashSet<Auth>();
-    //        List<Auth> authItems = AuthSessionContext.getAuthItemListByAuthTypeAndParentIdFromSession(authType,
-    //                parentId);
-    //        nestedLoadChildAuthItems(authType, authItems, resSet);
-    //        return resSet;
-    //    }
-    //    
-    //    /**
-    //      * 嵌套加载子集权限<br/>
-    //      * <功能详细描述>
-    //      * @param authItems
-    //      * @param resList [参数说明]
-    //      * 
-    //      * @return void [返回类型说明]
-    //      * @exception throws [异常类型] [异常说明]
-    //      * @see [类、类#方法、类#成员]
-    //     */
-    //    private static void nestedLoadChildAuthItems(String authType,
-    //            List<Auth> authItems, Set<Auth> resSet) {
-    //        List<Auth> newAuthItems = new ArrayList<Auth>();
-    //        for (Auth authItemTemp : authItems) {
-    //            List<Auth> authItems3 = AuthSessionContext.getAuthItemListByAuthTypeAndParentIdFromSession(authType,
-    //                    authItemTemp.getId());
-    //            if (CollectionUtils.isNotEmpty(authItems3)) {
-    //                newAuthItems.addAll(authItems3);
-    //            }
-    //            resSet.add(authItemTemp);
-    //        }
-    //        if (CollectionUtils.isNotEmpty(newAuthItems)) {
-    //            nestedLoadChildAuthItems(authType, newAuthItems, resSet);
-    //        }
-    //    }
-    //    
-    //    /**
-    //     * 根据父级权限id以及权限类型
-    //     *     该方便一般不建议使用，有时候存在数据权限以及非数据权限中重复的的情况<br/>
-    //     * @param authType
-    //     * @param parentId
-    //     * @return [参数说明]
-    //     * 
-    //     * @return List<AuthItem> [返回类型说明]
-    //     * @exception throws [异常类型] [异常说明]
-    //     * @see [类、类#方法、类#成员]
-    //    */
-    //    @Deprecated
-    //    public static Set<Auth> getChildAuthItemListByParentId(String parentId) {
-    //        AssertUtils.notEmpty(parentId, "parentId is empty.");
-    //        
-    //        Set<Auth> resSet = new HashSet<Auth>();
-    //        List<Auth> authItems = AuthSessionContext.getAuthItemListByParentIdFromSession(parentId);
-    //    nestedLoadChildAuthItems(authItems, resSet);
-    //        return resSet;
-    //    }
-    //    
-    //    /**
-    //     * 嵌套加载子集权限<br/>
-    //     * <功能详细描述>
-    //     * @param authItems
-    //     * @param resList [参数说明]
-    //     * 
-    //     * @return void [返回类型说明]
-    //     * @exception throws [异常类型] [异常说明]
-    //     * @see [类、类#方法、类#成员]
-    //    */
-    //    private static void nestedLoadChildAuthItems(List<Auth> authItems,
-    //            Set<Auth> resSet) {
-    //        List<Auth> newAuthItems = new ArrayList<Auth>();
-    //        for (Auth authItemTemp : authItems) {
-    //            List<Auth> authItems3 = AuthSessionContext
-    //                    .getAuthItemListByParentIdFromSession(authItemTemp.getId());
-    //            if (CollectionUtils.isNotEmpty(authItems3)) {
-    //                newAuthItems.addAll(authItems3);
-    //            } else {
-    //                resSet.add(authItemTemp);
-    //            }
-    //        }
-    //        if (CollectionUtils.isNotEmpty(newAuthItems)) {
-    //            nestedLoadChildAuthItems(newAuthItems, resSet);
-    //        }
-    //    }
+    /**
+     * 根据角色id获取角色实例<br/>
+     * <功能详细描述>
+     * @param roleId
+     * @return [参数说明]
+     * 
+     * @return Role [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public static Role getRoleById(String roleId) {
+        if (StringUtils.isBlank(roleId)) {
+            return null;
+        }
+        return SecurityContext.getContext().getRoleById(roleId);
+    }
+    
+    /**
+     * 根据角色id获取权限实例<br/>
+     * <功能详细描述>
+     * @param authId
+     * @return [参数说明]
+     * 
+     * @return Role [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public Auth getAuthById(String authId) {
+        if (StringUtils.isBlank(authId)) {
+            return null;
+        }
+        return SecurityContext.getContext().getAuthById(authId);
+    }
+    
+    /**
+     * 是否拥有指定权限<br/>
+     * <功能详细描述>
+     * @param authsExpression
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public boolean hasAuth(String authsExpression) {
+        if (StringUtils.isBlank(authsExpression)) {
+            return true;
+        }
+        return SecurityContext.getContext().hasAuth(authsExpression);
+    }
+    
+    /**
+     * 多个角色是一个以逗号进行分隔的字符串。如果当前用户拥有指定权限中的任意一个则返回true<br/>
+     * <功能详细描述>
+     * @param authsExpression
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public boolean hasAnyAuth(String authsExpression) {
+        if (StringUtils.isBlank(authsExpression)) {
+            return true;
+        }
+        return SecurityContext.getContext().hasAnyAuth(authsExpression);
+    }
+    
+    /**
+     * 是否拥有指定角色<br/>
+     * <功能详细描述>
+     * @param rolesExpression
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public boolean hasRole(String rolesExpression) {
+        if (StringUtils.isBlank(rolesExpression)) {
+            return true;
+        }
+        return SecurityContext.getContext().hasRole(rolesExpression);
+    }
+    
+    /**
+     * 多个角色是一个以逗号进行分隔的字符串。如果当前用户拥有指定角色中的任意一个则返回true<br/>
+     * <功能详细描述>
+     * @param rolesExpression
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public boolean hasAnyRole(String rolesExpression) {
+        if (StringUtils.isBlank(rolesExpression)) {
+            return true;
+        }
+        return SecurityContext.getContext().hasAnyAuth(rolesExpression);
+    }
+    
+    /**
+     * 是否拥有对应的权限或角色<br/>
+     * <功能详细描述>
+     * @param authoritiesExpression
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public boolean hasAuthority(String authoritiesExpression) {
+        if (StringUtils.isBlank(authoritiesExpression)) {
+            return true;
+        }
+        return SecurityContext.getContext().hasAuthority(authoritiesExpression);
+    }
+    
+    /**
+     * 
+     * <功能详细描述>
+     * @param authoritiesExpression
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public boolean hasAnyAuthority(String authoritiesExpression) {
+        if (StringUtils.isBlank(authoritiesExpression)) {
+            return true;
+        }
+        return SecurityContext.getContext()
+                .hasAnyAuthority(authoritiesExpression);
+    }
+    
+    /**
+     * 当前用户是否是一个匿名用户<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public boolean isAnonymous() {
+        return SecurityContext.getContext().isAnonymous();
+    }
+    
+    /**
+     * 是否通过记住我进行登录<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public boolean isRememberMe() {
+        return SecurityContext.getContext().isRememberMe();
+    }
+    
+    /**
+     * 表示当前用户是否已经登录认证成功了<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public boolean isAuthenticated() {
+        return SecurityContext.getContext().isAuthenticated();
+    }
+    
+    /**
+     * 如果当前用户既不是一个匿名用户，同时又不是通过Remember-Me自动登录的，则返回true<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public boolean isFullyAuthenticated() {
+        return SecurityContext.getContext().isFullyAuthenticated();
+    }
+    
+    /**
+     * 直接从SecurityContext获取的当前Authentication对象<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return Authentication [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public Authentication getAuthentication() {
+        return SecurityContext.getContext().getAuthentication();
+    }
+    
+    /**
+     * 代表当前用户的principle对象<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return Object [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public Object getPrincipal() {
+        return SecurityContext.getContext().getPrincipal();
+    }
+    
+    /**
+     * 判断是否可访问<br/>
+     * <pre>
+     *    support 'and' 'or'
+     *    
+     *    hasAuth([auth]) 当前用户是否拥有指定角色
+     *    hasAnyAuth([auth1,auth2])  多个角色是一个以逗号进行分隔的字符串。如果当前用户拥有指定角色中的任意一个则返回true
+     *    hasRole([role]) 当前用户是否拥有指定角色
+     *    hasAnyRole([role1,role2])  多个角色是一个以逗号进行分隔的字符串。如果当前用户拥有指定角色中的任意一个则返回true
+     *    hasAuthority([authority]) 等同于hasRole or hasAuth
+     *    hasAnyAuthority([authority1,authority2]) 等同于hasAnyRole or hasAuth
+     *    
+     *    isAnonymous() 当前用户是否是一个匿名用户
+     *    isRememberMe() 表示当前用户是否是通过Remember-Me自动登录的
+     *    isAuthenticated() 表示当前用户是否已经登录认证成功了
+     *    isFullyAuthenticated() 如果当前用户既不是一个匿名用户，同时又不是通过Remember-Me自动登录的，则返回true
+     *    
+     *    permitAll 总是返回true，表示允许所有的
+     *    denyAll 总是返回false，表示拒绝所有的
+     *    principle 代表当前用户的principle对象 
+     *    authentication 直接从SecurityContext获取的当前Authentication对象
+     * </pre>
+     * @param accessExpression
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public boolean access(String accessExpression) {
+        if (StringUtils.isBlank(accessExpression)) {
+            return true;
+        }
+        return SecurityContext.getContext().access(accessExpression);
+    }
 }

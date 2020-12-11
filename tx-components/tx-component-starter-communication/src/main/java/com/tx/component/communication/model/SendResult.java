@@ -6,6 +6,7 @@
  */
 package com.tx.component.communication.model;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -21,7 +22,12 @@ import io.swagger.annotations.ApiModelProperty;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class SendResult {
+public class SendResult implements Serializable {
+    
+    /** 注释内容 */
+    private static final long serialVersionUID = -7886370428957204051L;
+    
+    public static final int CODE_SUCCESS = 0;
     
     /** 发送是否成功 */
     /** 返回码，0-成功，1-通用错误， 其他-详见错误码定义 */
@@ -36,6 +42,22 @@ public class SendResult {
     /** 返回的数据 */
     @ApiModelProperty(value = "返回数据", required = true)
     private final Map<String, Object> attributes = new HashMap<>();
+    
+    /**
+     * 是否成功<br/>
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
+    public boolean isSuccess() {
+        if (CODE_SUCCESS == this.code) {
+            return true;
+        }
+        return false;
+    }
     
     /**
      * @return 返回 code
@@ -136,4 +158,5 @@ public class SendResult {
         boolean res = this.attributes.containsKey(key);
         return res;
     }
+    
 }
