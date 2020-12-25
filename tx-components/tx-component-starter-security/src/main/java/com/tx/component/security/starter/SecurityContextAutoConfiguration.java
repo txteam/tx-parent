@@ -49,6 +49,7 @@ import com.tx.core.starter.component.ComponentSupportAutoConfiguration;
 @ConditionalOnSingleCandidate(DataSource.class)
 @ConditionalOnBean(PlatformTransactionManager.class)
 @Import({ SecurityContextCacheConfiguration.class,
+        SecurityContextSupportConfiguration.class,
         RoleContextConfiguration.class, AuthContextConfiguration.class })
 public class SecurityContextAutoConfiguration
         implements InitializingBean, ApplicationContextAware {

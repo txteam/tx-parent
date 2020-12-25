@@ -98,7 +98,8 @@ public class SecurityContextCacheConfiguration
         if (this.applicationContext
                 .containsBean(this.properties.getCacheManagerRef())) {
             cacheManager = this.applicationContext.getBean(
-                    this.properties.getCacheManagerRef(), CacheManager.class);
+                    this.properties.getCacheManagerRef(),
+                    CacheManager.class);
         }
         
         AssertUtils.notNull(cacheManager, "cacheManager is null.");
@@ -179,7 +180,7 @@ public class SecurityContextCacheConfiguration
      * @since  [产品/模块版本]
      */
     @Bean
-    @ConditionalOnMissingBean({SecurityContextCacheCustomizer.class})
+    @ConditionalOnMissingBean({ SecurityContextCacheCustomizer.class })
     @ConditionalOnMissingClass({
             "org.springframework.data.redis.core.RedisOperations" })
     @ConditionalOnProperty(prefix = SecurityContextConstants.PROPERTIES_PREFIX, value = "cache-manager-ref", matchIfMissing = true)

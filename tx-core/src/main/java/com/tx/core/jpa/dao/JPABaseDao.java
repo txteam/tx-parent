@@ -299,14 +299,51 @@ public interface JPABaseDao<T, ID extends Serializable> {
     public PagedList<T> queryPagedList(Map<String, Object> params,
             int pageIndex, int pageSize);
     
-    
-    
+    /**
+     * 锁定指定对象
+     * <功能详细描述>
+     * @param entity
+     * @param lockMode [参数说明]
+     * 
+     * @return void [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
     public void lock(Object entity, LockModeType lockMode);
     
+    /**
+     * 查询是否包含指定对象<br/>
+     * <功能详细描述>
+     * @param entity
+     * @return [参数说明]
+     * 
+     * @return boolean [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
     public boolean contains(Object entity);
     
+    /**
+     * getFlushMode
+     * <功能详细描述>
+     * @return [参数说明]
+     * 
+     * @return FlushModeType [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
     public FlushModeType getFlushMode();
     
+    /**
+     * getLockMode
+     * <功能详细描述>
+     * @param entity
+     * @return [参数说明]
+     * 
+     * @return LockModeType [返回类型说明]
+     * @exception throws [异常类型] [异常说明]
+     * @see [类、类#方法、类#成员]
+     */
     public LockModeType getLockMode(Object entity);
     
     /**
@@ -364,7 +401,6 @@ public interface JPABaseDao<T, ID extends Serializable> {
         int res = count(querier, null);
         return res;
     }
-    
     
     /**
      * 设置为游离状态

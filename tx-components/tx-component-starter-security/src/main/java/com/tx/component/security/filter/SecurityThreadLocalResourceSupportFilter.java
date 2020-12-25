@@ -26,8 +26,9 @@ import com.tx.component.security.context.SecurityResourceHolderStrategy;
  * @see  [相关类/方法]
  * @since  [产品/模块版本]
  */
-public class SecurityThreadLocalResourceSupportFilter extends GenericFilterBean{
-
+public class SecurityThreadLocalResourceSupportFilter
+        extends GenericFilterBean {
+    
     /**
      * @param request
      * @param response
@@ -38,12 +39,12 @@ public class SecurityThreadLocalResourceSupportFilter extends GenericFilterBean{
     @Override
     public void doFilter(ServletRequest request, ServletResponse response,
             FilterChain chain) throws IOException, ServletException {
-        try{
-            //System.out.println(((HttpServletRequest)request).getRequestURI());
+        try {
+            //线程变量开启和关闭<br/>
             SecurityResourceHolderStrategy.open();
             //执行链路
             chain.doFilter(request, response);
-        }finally {
+        } finally {
             SecurityResourceHolderStrategy.close();
         }
     }
