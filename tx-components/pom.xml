@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.tx</groupId>
 		<artifactId>tx-parent</artifactId>
-		<version>4.0.x-SNAPSHOT</version>
+		<version>4.5.x-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>tx-components</artifactId>

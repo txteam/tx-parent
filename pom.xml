@@ -10,14 +10,15 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-dependencies</artifactId>
-		<version>2.0.5.RELEASE</version>
+		<version>2.1.18.RELEASE</version>
+<!-- 		<version>2.0.5.RELEASE</version> -->
 		<!-- <version>1.5.14.RELEASE</version> -->
 		<relativePath />
 	</parent>
 
 	<!-- tx-parent5.0版本开始，系统全面向微服务进行支撑 -->
 	<!-- tx-parent将专注于基础components,以及基础services的提供 -->
-	<version>4.0.x-SNAPSHOT</version>
+	<version>4.5.x-SNAPSHOT</version>
 	<groupId>com.tx</groupId>
 	<artifactId>tx-parent</artifactId>
 	<packaging>pom</packaging>
@@ -98,10 +99,9 @@
 		<skipTests>true</skipTests><!-- projectInfo -->
 
 		<!-- lib info -->
-		<tx.version>4.0.x-SNAPSHOT</tx.version>
+		<tx.version>4.5.x-SNAPSHOT</tx.version>
 
 		<!-- 无参考版本信息 -->
-		<!-- <activiti.version>5.22.0</activiti.version> -->
 		<activiti.version>7.0.0.SR1</activiti.version>
 		<drools.version>6.5.0.Final</drools.version>
 		<poi.version>4.1.0</poi.version>
@@ -145,7 +145,8 @@
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-dependencies</artifactId>
 				<!-- <version>Dalston.SR5</version> -->
-				<version>Finchley.SR3</version>
+				<!-- <version>Finchley.SR3</version> -->
+				<version>Greenwich.SR6</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
