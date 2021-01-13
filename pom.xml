@@ -11,7 +11,7 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-dependencies</artifactId>
 		<version>2.1.18.RELEASE</version>
-<!-- 		<version>2.0.5.RELEASE</version> -->
+		<!-- <version>2.0.5.RELEASE</version> -->
 		<!-- <version>1.5.14.RELEASE</version> -->
 		<relativePath />
 	</parent>
@@ -107,7 +107,7 @@
 		<poi.version>4.1.0</poi.version>
 
 		<!-- 覆盖默认父属性：改变版本 -->
-		<thymeleaf.version>3.0.9.RELEASE</thymeleaf.version>
+		<thymeleaf.version>3.0.11.RELEASE</thymeleaf.version>
 		<thymeleaf-layout-dialect.version>2.3.0</thymeleaf-layout-dialect.version>
 	</properties>
 
@@ -263,7 +263,7 @@
 			<dependency>
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-vfs2</artifactId>
-				<version>2.4.1</version>
+				<version>2.7.0</version>
 				<exclusions>
 					<exclusion>
 						<artifactId>commons-logging</artifactId>
@@ -278,7 +278,7 @@
 			<dependency>
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-collections4</artifactId>
-				<version>4.3</version>
+				<version>4.4</version>
 				<exclusions>
 					<exclusion>
 						<artifactId>commons-logging</artifactId>
@@ -418,7 +418,7 @@
 			<dependency>
 				<groupId>io.springfox</groupId>
 				<artifactId>springfox-swagger2</artifactId>
-				<version>2.9.2</version>
+				<version>2.10.5</version>
 				<exclusions>
 					<exclusion>
 						<groupId>org.springframework</groupId>
@@ -468,21 +468,21 @@
 				</exclusions>
 			</dependency>
 			<dependency>
+				<groupId>io.springfox</groupId>
+				<artifactId>springfox-swagger-ui</artifactId>
+				<version>2.10.5</version>
+				<!-- <version>2.9.2</version> -->
+			</dependency>
+			<dependency>
 				<groupId>io.swagger</groupId>
 				<artifactId>swagger-annotations</artifactId>
 				<version>1.5.20</version>
 			</dependency>
-			<dependency>
-				<groupId>io.springfox</groupId>
-				<artifactId>springfox-swagger-ui</artifactId>
-				<version>2.9.2</version>
-				<!-- <version>2.9.2</version> -->
-			</dependency>
-			<dependency>
-				<groupId>com.github.xiaoymin</groupId>
-				<artifactId>swagger-bootstrap-ui</artifactId>
-				<version>1.7.6</version>
-			</dependency>
+			<!-- <dependency> -->
+			<!-- <groupId>com.github.xiaoymin</groupId> -->
+			<!-- <artifactId>swagger-bootstrap-ui</artifactId> -->
+			<!-- <version>1.7.6</version> -->
+			<!-- </dependency> -->
 
 			<!-- google工具类 : 验证码 -->
 			<dependency>
@@ -575,7 +575,7 @@
 			<dependency>
 				<groupId>org.mybatis.spring.boot</groupId>
 				<artifactId>mybatis-spring-boot-starter</artifactId>
-				<version>2.0.1</version>
+				<version>2.1.4</version>
 				<exclusions>
 					<exclusion>
 						<groupId>org.mybatis.spring.boot</groupId>
@@ -859,7 +859,6 @@
 			<!-- <groupId>org.freemarker</groupId> -->
 			<!-- <artifactId>freemarker</artifactId> -->
 			<!-- </dependency> -->
-
 			<!-- Aspectj Dependencies -->
 			<!-- spring-boot-dependencies 中已包含 -->
 			<!-- <dependency> -->
@@ -963,13 +962,6 @@
 					<artifactId>sonar-maven3-plugin</artifactId>
 					<version>4.5.7</version>
 				</plugin>
-
-				<!-- maven中添加bundle类型的依赖包 -->
-				<!-- <plugin> -->
-				<!-- <groupId>org.apache.felix</groupId> -->
-				<!-- <artifactId>maven-bundle-plugin</artifactId> -->
-				<!-- <extensions>true</extensions> -->
-				<!-- </plugin> -->
 			</plugins>
 		</pluginManagement>
 
