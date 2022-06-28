@@ -104,7 +104,7 @@
 		<!-- 无参考版本信息 -->
 		<activiti.version>7.0.0.SR1</activiti.version>
 		<drools.version>6.5.0.Final</drools.version>
-		<poi.version>4.1.0</poi.version>
+		<poi.version>4.1.1</poi.version>
 
 		<!-- 覆盖默认父属性：改变版本 -->
 		<thymeleaf.version>3.0.11.RELEASE</thymeleaf.version>
